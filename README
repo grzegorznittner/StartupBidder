@@ -1,0 +1,14 @@
+#############################################
+##                                         ##
+##            STARTUPBIDDER.COM            ##
+##                                         ##
+#############################################
+
+Folder contains StartupBidder project files.
+
+If you're using Eclipse (Google Plugin required)
+then you can directly import project and run it.
+
+Later I'm going to provide ant script which will
+allow for building and running project in dev mode.
+
