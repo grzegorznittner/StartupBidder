@@ -2,13 +2,13 @@ package com.startupbidder.dto;
 
 import com.google.appengine.api.datastore.Key;
 
-public class ValuationDTO {
+public class RatingDTO {
 	private Key id;
 	private String businessPlan;
 	private String user;
 	private int value;
 	
-	public ValuationDTO() {
+	public RatingDTO() {
 	}
 
 	public Key getId() {
@@ -45,7 +45,7 @@ public class ValuationDTO {
 
 	@Override
 	public String toString() {
-		return "ValuationDTO [id=" + id + ", businessPlan=" + businessPlan
+		return "RatingDTO [id=" + id + ", businessPlan=" + businessPlan
 				+ ", user=" + user + ", value=" + value + "]";
 	}
 	

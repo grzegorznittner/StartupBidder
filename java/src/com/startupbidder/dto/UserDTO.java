@@ -15,7 +15,7 @@ public class UserDTO {
 	private String facebook;
 	private String twitter;
 	private String linkedin;
-	private boolean accredited;
+	private boolean accreditedInvestor;
 	private Date   joined;
 	private Date   lastLoggedIn;
 	private Date   modified;
@@ -94,12 +94,12 @@ public class UserDTO {
 		this.linkedin = linkedin;
 	}
 
-	public boolean isAccredited() {
-		return accredited;
+	public boolean isAccreditedInvestor() {
+		return accreditedInvestor;
 	}
 
-	public void setAccredited(boolean accredited) {
-		this.accredited = accredited;
+	public void setAccreditedInvestor(boolean accreditedInvestor) {
+		this.accreditedInvestor = accreditedInvestor;
 	}
 
 	public Date getJoined() {
@@ -132,7 +132,7 @@ public class UserDTO {
 				+ firstName + ", lastName=" + lastName + ", email=" + email
 				+ ", title=" + title + ", organization=" + organization
 				+ ", facebook=" + facebook + ", twitter=" + twitter
-				+ ", linkedin=" + linkedin + ", accredited=" + accredited
+				+ ", linkedin=" + linkedin + ", accreditedInvestor=" + accreditedInvestor
 				+ ", joined=" + joined + ", lastLoggedIn=" + lastLoggedIn
 				+ ", modified=" + modified + "]";
 	}

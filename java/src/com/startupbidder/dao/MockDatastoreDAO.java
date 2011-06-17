@@ -2,14 +2,18 @@ package com.startupbidder.dao;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
+import com.startupbidder.dto.BidDTO;
 import com.startupbidder.dto.BusinessPlanDTO;
 import com.startupbidder.dto.CommentDTO;
 import com.startupbidder.dto.UserDTO;
@@ -22,10 +26,23 @@ import com.startupbidder.dto.UserDTO;
  * @author greg
  *
  */
-public class MockDatastoreDAO {
+public class MockDatastoreDAO implements DatastoreDAO {
+	private static final Logger log = Logger.getLogger(MockDatastoreDAO.class.getName());
+	
+	static MockDatastoreDAO instance;
+	
+	public static DatastoreDAO getInstance() {
+		if (instance == null) {
+			instance = new MockDatastoreDAO();
+		}
+		return instance;
+	}
+	
 	Map<Key, BusinessPlanDTO> bpCache = new HashMap<Key, BusinessPlanDTO>();
-	Map<Key, Integer> bpValuationCache = new HashMap<Key, Integer>();
-	Map<Key, CommentDTO> bpCommentCache = new HashMap<Key, CommentDTO>();
+	Map<Key, Integer> ratingCache = new HashMap<Key, Integer>();
+	Map<Key, CommentDTO> commentCache = new HashMap<Key, CommentDTO>();
+	Map<Key, Integer> bpCommentCache = new HashMap<Key, Integer>();
+	Map<Key, BidDTO> bidCache = new HashMap<Key, BidDTO>();
 	Map<Key, UserDTO> userCache = new HashMap<Key, UserDTO>();
 
 	public MockDatastoreDAO() {
@@ -54,26 +71,79 @@ public class MockDatastoreDAO {
 	}
 	
 	public void updateUser(UserDTO user) {
+		user.setModified(new Date(System.currentTimeMillis()));
+		log.log(Level.INFO, "Updating user " + user.getId());
 		userCache.put(user.getId(), user);
 	}
 	
 	public List<BusinessPlanDTO> getTopBusinessPlans(int maxItems) {
-		List<BusinessPlanDTO> list = new ArrayList<BusinessPlanDTO>(bpCache.values());
-		list.subList(0, (list.size() < maxItems ? list.size() : maxItems));
+		List<BusinessPlanDTO> list = new ArrayList<BusinessPlanDTO>();
+		
+		// sort rating cache
+		List<Map.Entry<Key, Integer>> rating = new ArrayList<Map.Entry<Key, Integer>>(ratingCache.entrySet());
+		Collections.sort(rating, new Comparator<Map.Entry<Key, Integer>> () {
+			@Override
+			public int compare(Map.Entry<Key, Integer> left, Map.Entry<Key, Integer> right) {
+				if (left.getValue() == right.getValue()) {
+					return 0;
+				} else if (left.getValue() > right.getValue()) {
+					return -1;
+				} else {
+					return 1;
+				}
+			}
+		});
+		for (Map.Entry<Key, Integer> bpEntry : rating) {
+			log.log(Level.INFO, "BP " + bpEntry.getKey() + " - rating " + bpEntry.getValue());
+			if (maxItems-- > 0) {
+				list.add(bpCache.get(bpEntry.getKey()));
+			}
+		}
 		return list;
 	}
 
 	public List<BusinessPlanDTO> getActiveBusinessPlans(int maxItems) {
-		List<BusinessPlanDTO> list = new ArrayList<BusinessPlanDTO>(bpCache.values());
-		Collections.shuffle(list);
-		list.subList(0, (list.size() < maxItems ? list.size() : maxItems));
+		List<BusinessPlanDTO> list = new ArrayList<BusinessPlanDTO>();
+		
+		// create activity list
+		Map<String, Integer> sortedBP = new HashMap<String, Integer>();
+		for (CommentDTO comment : commentCache.values()) {
+			if (!sortedBP.containsKey(comment.getBusinessPlan())) {
+				sortedBP.put(comment.getBusinessPlan(), 1);
+			} else {
+				sortedBP.put(comment.getBusinessPlan(), sortedBP.get(comment.getBusinessPlan()) + 1);
+			}
+		}
+		
+		// sort activity list
+		List<Map.Entry<String, Integer>> active = new ArrayList<Map.Entry<String, Integer>>(sortedBP.entrySet());
+		Collections.sort(active, new Comparator<Map.Entry<String, Integer>> () {
+			@Override
+			public int compare(Map.Entry<String, Integer> left, Map.Entry<String, Integer> right) {
+				if (left.getValue() == right.getValue()) {
+					return 0;
+				} else if (left.getValue() > right.getValue()) {
+					return -1;
+				} else {
+					return 1;
+				}
+			}
+		});
+		for (Map.Entry<String, Integer> bpEntry : active) {
+			log.log(Level.INFO, "BP " + bpEntry.getKey() + " - activity " + bpEntry.getValue());
+			if (maxItems-- > 0) {
+				list.add(bpCache.get(KeyFactory.stringToKey(bpEntry.getKey())));
+			}
+		}
 		return list;
 	}
 	
 	public List<BusinessPlanDTO> getUserBusinessPlans(String userId, int maxItems) {
+		log.log(Level.INFO, "Business plans owned by " + userId);
 		List<BusinessPlanDTO> list = new ArrayList<BusinessPlanDTO>();
 		for (BusinessPlanDTO bp : bpCache.values()) {
-			if (bp.getOwner().equals(KeyFactory.stringToKey(userId))) {
+			if (bp.getOwner().equals(userId)) {
+				log.log(Level.INFO, "BP " + bp.getId());
 				list.add(bp);
 			}
 		}
@@ -81,54 +151,128 @@ public class MockDatastoreDAO {
 		return list;
 	}
 	
-	public void valueUpBusinessPlan(String businessPlanId) {
-		Key bpKey = KeyFactory.stringToKey(businessPlanId);
-		Integer valuation = bpValuationCache.get(bpKey);
+	public int valueUpBusinessPlan(String businessPlanId, String userId) {
+		Key bpKey = KeyFactory.createKey(BusinessPlanDTO.class.getSimpleName(), businessPlanId);
+		Integer valuation = ratingCache.get(bpKey);
 		if (valuation == null) {
-			bpValuationCache.put(bpKey, 1);
+			log.log(Level.INFO, "Up valuation for " + businessPlanId + " -> 1");
+			ratingCache.put(bpKey, 1);
 		} else {
-			bpValuationCache.put(bpKey, valuation + 1);
+			log.log(Level.INFO, "Up valuation for " + businessPlanId + " -> " + (valuation + 1));
+			ratingCache.put(bpKey, valuation + 1);
 		}
+		return ratingCache.get(bpKey);
 	}
 
-	public void valueDownBusinessPlan(String businessPlanId) {
-		Key bpKey = KeyFactory.stringToKey(businessPlanId);
-		Integer valuation = bpValuationCache.get(bpKey);
+	public int valueDownBusinessPlan(String businessPlanId, String userId) {
+		Key bpKey = KeyFactory.createKey(BusinessPlanDTO.class.getSimpleName(), businessPlanId);
+		Integer valuation = ratingCache.get(bpKey);
 		if (valuation == null) {
-			bpValuationCache.put(bpKey, -1);
+			log.log(Level.INFO, "Down valuation for " + businessPlanId + " -> -1");
+			ratingCache.put(bpKey, -1);
 		} else {
-			bpValuationCache.put(bpKey, valuation - 1);
+			log.log(Level.INFO, "Down valuation for " + businessPlanId + " -> " + (valuation - 1));
+			ratingCache.put(bpKey, valuation - 1);
 		}
+		return ratingCache.get(bpKey);
 	}
 
+	@Override
+	public List<CommentDTO> getComments(String businessPlanId) {
+		List<CommentDTO> comments = new ArrayList<CommentDTO>();
+		for (CommentDTO comment : commentCache.values()) {
+			if (comment.getBusinessPlan().equals(businessPlanId)) {
+				comments.add(comment);
+			}
+		}
+		return comments;
+	}
 
+	@Override
+	public List<BidDTO> getBids(String businessPlanId) {
+		List<BidDTO> bids = new ArrayList<BidDTO>();
+		for (BidDTO bid : bidCache.values()) {
+			if (bid.getBusinessPlan().equals(businessPlanId)) {
+				bids.add(bid);
+			}
+		}
+		return bids;
+	}
+
+	@Override
+	public int getRating(String businessPlanId) {
+		Integer rating = ratingCache.get(KeyFactory.createKey(BusinessPlanDTO.class.getSimpleName(), businessPlanId));
+		log.log(Level.INFO, "Rating for " + businessPlanId + " is " + rating);
+		return rating == null ? 0 : rating.intValue();
+	}
+
+	@Override
+	public int getActivity(String businessPlanId) {
+		Integer activity = bpCommentCache.get(KeyFactory.createKey(BusinessPlanDTO.class.getSimpleName(), businessPlanId));
+		log.log(Level.INFO, "Activity for " + businessPlanId + " is " + activity);
+		return activity == null ? 0 : activity.intValue();
+	}
+
+	/**
+	 * Generates random comments for business plans
+	 */
 	private void generateComments() {
 		List<UserDTO> users = new ArrayList<UserDTO>(userCache.values());
 		for (BusinessPlanDTO bp : bpCache.values()) {
 			int commentNum = new Random().nextInt(30);
+			String bpId = KeyFactory.keyToString(bp.getId());
 			while (--commentNum > 0) {
 				CommentDTO comment = new CommentDTO();
 				comment.setId(KeyFactory.createKey("commentdto", commentNum));
-				comment.setBusinessPlan(KeyFactory.keyToString(bp.getId()));
+				comment.setBusinessPlan(bpId);
 				comment.setUser(KeyFactory.keyToString(users.get(new Random().nextInt(users.size())).getId()));
 				comment.setCommentedOn(new Date(System.currentTimeMillis() - commentNum * 45 * 60 * 1000));
 				comment.setComment("Comment " + commentNum);
 				
-				bpCommentCache.put(comment.getId(), comment);
+				commentCache.put(comment.getId(), comment);
+				
+				if (bpCommentCache.containsKey(bp.getId())) {
+					bpCommentCache.put(bp.getId(), bpCommentCache.get(bp.getId()) + 1);
+				} else {
+					bpCommentCache.put(bp.getId(), 1);
+				}
 			}
 		}
 	}	
 
+	/**
+	 * Generates random bids for business plans
+	 */
 	private void generateBids() {
+		List<UserDTO> users = new ArrayList<UserDTO>();
+		for (UserDTO user : userCache.values()) {
+			if (user.isAccreditedInvestor()) {
+				users.add(user);
+			}
+		}
 		
 		for (BusinessPlanDTO bp : bpCache.values()) {
 			int bidNum = new Random().nextInt(15);
+			while (--bidNum > 0) {
+				BidDTO bid = new BidDTO();
+				bid.setUser(KeyFactory.keyToString(users.get(new Random().nextInt(users.size())).getId()));
+				bid.setBusinessPlan(KeyFactory.keyToString(bp.getId()));
+				bid.setFundType(new Random().nextInt(2) > 0 ? BidDTO.FundType.SYNDICATE : BidDTO.FundType.SOLE_INVESTOR);
+				bid.setPercentOfCompany(new Random().nextInt(50) + 10);
+				bid.setPlaced(new Date(System.currentTimeMillis() - bidNum * 53 * 60 * 1000));
+				bid.setValue(new Random().nextInt(50) * 1000 + bp.getStartingValuation());
+				
+				bidCache.put(bid.getId(), bid);
+			}
 		}
 	}
 	
+	/**
+	 * Generates mock users
+	 */
 	private void createMockUsers() {
 		UserDTO user = new UserDTO();
-		user.setId(KeyFactory.stringToKey("deadahmed"));
+		user.setId(KeyFactory.createKey(UserDTO.class.getSimpleName(), "deadahmed"));
 		user.setNickname("Dead");
 		user.setFirstName("Ahmed");
 		user.setLastName("The Terrorist");
@@ -137,7 +281,7 @@ public class MockDatastoreDAO {
 		userCache.put(user.getId(), user);
 
 		user = new UserDTO();
-		user.setId(KeyFactory.stringToKey("jpfowler"));
+		user.setId(KeyFactory.createKey(UserDTO.class.getSimpleName(), "jpfowler"));
 		user.setNickname("fowler");
 		user.setFirstName("Jackob");
 		user.setLastName("Fowler");
@@ -146,7 +290,7 @@ public class MockDatastoreDAO {
 		userCache.put(user.getId(), user);
 
 		user = new UserDTO();
-		user.setId(KeyFactory.stringToKey("businessinsider"));
+		user.setId(KeyFactory.createKey(UserDTO.class.getSimpleName(), "businessinsider"));
 		user.setNickname("Insider");
 		user.setFirstName("The");
 		user.setLastName("Business");
@@ -155,39 +299,42 @@ public class MockDatastoreDAO {
 		userCache.put(user.getId(), user);
 
 		user = new UserDTO();
-		user.setId(KeyFactory.stringToKey("dragonsden"));
+		user.setId(KeyFactory.createKey(UserDTO.class.getSimpleName(), "dragonsden"));
 		user.setNickname("The Dragon");
 		user.setFirstName("Mark");
 		user.setLastName("Den");
 		user.setEmail("dragon@startupbidder.com");
 		user.setJoined(new Date(System.currentTimeMillis() - 6 * 24 * 60 * 60 * 1000));
-		user.setAccredited(true);
+		user.setAccreditedInvestor(true);
 		userCache.put(user.getId(), user);
 
 		user = new UserDTO();
-		user.setId(KeyFactory.stringToKey("crazyinvestor"));
+		user.setId(KeyFactory.createKey(UserDTO.class.getSimpleName(), "crazyinvestor"));
 		user.setNickname("MadMax");
 		user.setFirstName("Mad");
 		user.setLastName("Max");
 		user.setEmail("madmax@startupbidder.com");
 		user.setJoined(new Date(System.currentTimeMillis() - 5 * 24 * 60 * 60 * 1000));
-		user.setAccredited(true);
+		user.setAccreditedInvestor(true);
 		userCache.put(user.getId(), user);
 
 		user = new UserDTO();
-		user.setId(KeyFactory.stringToKey("chinise"));
+		user.setId(KeyFactory.createKey(UserDTO.class.getSimpleName(), "chinese"));
 		user.setNickname("The One");
 		user.setFirstName("Bruce");
 		user.setLastName("Leen");
 		user.setEmail("madmax@startupbidder.com");
 		user.setJoined(new Date(System.currentTimeMillis() - 1 * 24 * 60 * 60 * 1000));
-		user.setAccredited(true);
+		user.setAccreditedInvestor(true);
 		userCache.put(user.getId(), user);
 	}
 
+	/**
+	 * Generates mock business plans
+	 */
 	private void createMockBusinessPlans() {
 		BusinessPlanDTO bp = new BusinessPlanDTO();
-		bp.setId(KeyFactory.stringToKey("mislead"));
+		bp.setId(KeyFactory.createKey(BusinessPlanDTO.class.getSimpleName(), "mislead"));
 		bp.setName("MisLead");
 		bp.setOwner("jpfowler");
 		bp.setStartingValuation(20000);
@@ -197,11 +344,11 @@ public class MockDatastoreDAO {
 		bp.setClosingOn(new Date(System.currentTimeMillis() + 12 * 24 * 60 * 60 * 1000));
 		bp.setSummary("Executive summary for <b>MisLead</b>");
 		bpCache.put(bp.getId(), bp);
-		bpValuationCache.put(bp.getId(), 5);
+		ratingCache.put(bp.getId(), 5);
 
 	
 		bp = new BusinessPlanDTO();
-		bp.setId(KeyFactory.stringToKey("semanticsearch"));
+		bp.setId(KeyFactory.createKey(BusinessPlanDTO.class.getSimpleName(), "semanticsearch"));
 		bp.setName("Semantic Search");
 		bp.setOwner("businessinsider");
 		bp.setStartingValuation(40000);
@@ -215,10 +362,10 @@ public class MockDatastoreDAO {
 				"Cuil flopped. Wolfram Alpha is irrelevant. Powerset, which was a semantic" + 
 				" search engine was bailed out by Microsoft, which acquired it.");
 		bpCache.put(bp.getId(), bp);
-		bpValuationCache.put(bp.getId(), 8);
+		ratingCache.put(bp.getId(), 8);
 
 		bp = new BusinessPlanDTO();
-		bp.setId(KeyFactory.stringToKey("socialrecommendations"));
+		bp.setId(KeyFactory.createKey(BusinessPlanDTO.class.getSimpleName(), "socialrecommendations"));
 		bp.setName("Social recommendations");
 		bp.setOwner("businessinsider");
 		bp.setStartingValuation(15000);
@@ -233,10 +380,10 @@ public class MockDatastoreDAO {
 				"Hunch is pivoting towards non-consumer-facing white label business. " +
 				"Get Glue has had some success of late, but it's hardly a breakout business.");
 		bpCache.put(bp.getId(), bp);
-		bpValuationCache.put(bp.getId(), 45);
+		ratingCache.put(bp.getId(), 45);
 
 		bp = new BusinessPlanDTO();
-		bp.setId(KeyFactory.stringToKey("localnewssites"));
+		bp.setId(KeyFactory.createKey(BusinessPlanDTO.class.getSimpleName(), "localnewssites"));
 		bp.setName("Local news sites");
 		bp.setOwner("businessinsider");
 		bp.setStartingValuation(49000);
@@ -251,10 +398,10 @@ public class MockDatastoreDAO {
 				"businesses, and classifieds. But, it appears to be too niche to scale into a big" +
 				" business.");
 		bpCache.put(bp.getId(), bp);
-		bpValuationCache.put(bp.getId(), -6);
+		ratingCache.put(bp.getId(), -6);
 
 		bp = new BusinessPlanDTO();
-		bp.setId(KeyFactory.stringToKey("micropayments"));
+		bp.setId(KeyFactory.createKey(BusinessPlanDTO.class.getSimpleName(), "micropayments"));
 		bp.setName("Micropayments");
 		bp.setOwner("businessinsider");
 		bp.setStartingValuation(5000);
@@ -268,10 +415,10 @@ public class MockDatastoreDAO {
 				" or pay for a small design you could with ease. So far, these micropayment" +
 				" plans have not worked.");
 		bpCache.put(bp.getId(), bp);
-		bpValuationCache.put(bp.getId(), 0);
+		ratingCache.put(bp.getId(), 0);
 
 		bp = new BusinessPlanDTO();
-		bp.setId(KeyFactory.stringToKey("kill email"));
+		bp.setId(KeyFactory.createKey(BusinessPlanDTO.class.getSimpleName(), "kill email"));
 		bp.setName("Kill email");
 		bp.setOwner("businessinsider");
 		bp.setStartingValuation(40000);
@@ -285,10 +432,10 @@ public class MockDatastoreDAO {
 				"Google Wave. It was supposed to change email forever. It was going to " +
 				"displace email. Didn't happen.");
 		bpCache.put(bp.getId(), bp);
-		bpValuationCache.put(bp.getId(), -38);
+		ratingCache.put(bp.getId(), -38);
 
 		bp = new BusinessPlanDTO();
-		bp.setId(KeyFactory.stringToKey("better company car"));
+		bp.setId(KeyFactory.createKey(BusinessPlanDTO.class.getSimpleName(), "better company car"));
 		bp.setName("Better company car");
 		bp.setOwner("businessinsider");
 		bp.setStartingValuation(100000);
@@ -303,6 +450,6 @@ public class MockDatastoreDAO {
 				"It's far from certain it will succeed. Even when its next car comes out, Nissan " +
 				"could be making a luxury electric car that competes with Tesla.");
 		bpCache.put(bp.getId(), bp);
-		bpValuationCache.put(bp.getId(), 9);
-	}
+		ratingCache.put(bp.getId(), 9);
+	}	
 }
