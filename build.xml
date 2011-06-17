@@ -1,6 +1,10 @@
 <project>
   <property environment="env"/>
   <import file="${env.APPENGINE_HOME}/config/user/ant-macros.xml" />
+	
+  <target name="check-appengine-home" unless="env.APPENGINE_HOME">
+  	<echo message="Set \'APPENGINE_HOME\' environment variable to folder where you installed AppEngine SDK"/> 
+  </target>
 
   <path id="project.classpath">
     <pathelement path="war/WEB-INF/classes" />
@@ -12,7 +16,7 @@
     </fileset>
   </path>
   
-  <target name="copyjars" description="Copies the App Engine JARs to the WAR.">
+  <target name="copyjars" depends="check-appengine-home" description="Copies the App Engine JARs to the WAR.">
     <copy
         todir="war/WEB-INF/lib"
         flatten="true">
@@ -57,7 +61,7 @@
     </dev_appserver>
   </target>
   
-  <target name="clean" description="Cleans project">
+  <target name="clean" depends="check-appengine-home" description="Cleans project">
     <delete includeEmptyDirs="true" failonerror="false">
       <fileset dir="war/WEB-INF/classes"/>
     </delete>
