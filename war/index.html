@@ -1,0 +1,1877 @@
+<!DOCTYPE HTML>
+<html>
+        
+<head>
+        <meta http-equiv="Content-Type" content="text/html; charset=windows-1252"/> <!-- should be iso-8859-1 -->
+    <meta name="description" content="Startupbidder - list, bid, comment and vote on startup businesses worldwide"/>
+    <meta name="keywords" content="startupbidder startup company auction bid business plan"/>
+    <title>Startupbidder - list, bid, comment, vote on startups</title>
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.0/jquery.min.js"></script>
+<!--	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.8/jquery-ui.min.js"></script> -->
+    <link rel="canonical" href="http://startupbidder.appspot.com"/>
+
+<!-- google analytics -->
+<!--
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-23942052-1']);
+  _gaq.push(['_trackPageview']);
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+-->
+<!-- javascript code -->
+
+<script type="text/javascript">
+// http://jquery-howto.blogspot.com/2009/09/get-url-parameters-values-with-jquery.html
+$.extend({
+  getUrlVars: function(){
+    var vars = [], hash;
+    var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+    for(var i = 0; i < hashes.length; i++)
+    {
+      hash = hashes[i].split('=');
+      vars.push(hash[0]);
+      vars[hash[0]] = hash[1];
+    }
+    return vars;
+  },
+  getUrlVar: function(name){
+    return $.getUrlVars()[name];
+  }
+});
+
+/**
+* jQuery.UI.iPad plugin
+* Copyright (c) 2010 Stephen von Takach
+* licensed under MIT.
+* Date: 27/8/2010
+*
+* Project Home: 
+* http://code.google.com/p/jquery-ui-for-ipad-and-iphone/
+*/
+
+
+$(function() {
+	//
+	// Extend jQuery feature detection
+	//
+	$.extend($.support, {
+		touch: typeof Touch == "object"
+	});
+	
+	//
+	// Hook up touch events
+	//
+	$.fn.addTouch = function()
+	{
+		if ($.support.touch) {
+			this.each(function(i,el){
+				el.addEventListener("touchstart", iPadTouchHandler, false);
+				el.addEventListener("touchmove", iPadTouchHandler, false);
+				el.addEventListener("touchend", iPadTouchHandler, false);
+				el.addEventListener("touchcancel", iPadTouchHandler, false);
+			});
+		}
+
+		return this;
+	}
+});
+
+
+var lastTap = null;			// Holds last tapped element (so we can compare for double tap)
+var tapValid = false;			// Are we still in the .6 second window where a double tap can occur
+var tapTimeout = null;			// The timeout reference
+
+function cancelTap() {
+	tapValid = false;
+}
+
+
+var rightClickPending = false;	// Is a right click still feasible
+var rightClickEvent = null;		// the original event
+var holdTimeout = null;			// timeout reference
+var cancelMouseUp = false;		// prevents a click from occuring as we want the context menu
+
+
+function cancelHold() {
+	if (rightClickPending) {
+		window.clearTimeout(holdTimeout);
+		rightClickPending = false;
+		rightClickEvent = null;
+	}
+}
+
+function startHold(event) {
+	if (rightClickPending)
+		return;
+
+	rightClickPending = true; // We could be performing a right click
+	rightClickEvent = (event.changedTouches)[0];
+	holdTimeout = window.setTimeout("doRightClick();", 800);
+}
+
+
+function doRightClick() {
+	rightClickPending = false;
+
+	//
+	// We need to mouse up (as we were down)
+	//
+	var first = rightClickEvent,
+		simulatedEvent = document.createEvent("MouseEvent");
+	simulatedEvent.initMouseEvent("mouseup", true, true, window, 1, first.screenX, first.screenY, first.clientX, first.clientY,
+			false, false, false, false, 0, null);
+	first.target.dispatchEvent(simulatedEvent);
+
+	//
+	// emulate a right click
+	//
+	simulatedEvent = document.createEvent("MouseEvent");
+	simulatedEvent.initMouseEvent("mousedown", true, true, window, 1, first.screenX, first.screenY, first.clientX, first.clientY,
+			false, false, false, false, 2, null);
+	first.target.dispatchEvent(simulatedEvent);
+
+	//
+	// Show a context menu
+	//
+	simulatedEvent = document.createEvent("MouseEvent");
+	simulatedEvent.initMouseEvent("contextmenu", true, true, window, 1, first.screenX + 50, first.screenY + 5, first.clientX + 50, first.clientY + 5,
+                                  false, false, false, false, 2, null);
+	first.target.dispatchEvent(simulatedEvent);
+
+
+	//
+	// Note:: I don't mouse up the right click here however feel free to add if required
+	//
+
+
+	cancelMouseUp = true;
+	rightClickEvent = null; // Release memory
+}
+
+
+//
+// mouse over event then mouse down
+//
+function iPadTouchStart(event) {
+	var touches = event.changedTouches,
+		first = touches[0],
+		type = "mouseover",
+		simulatedEvent = document.createEvent("MouseEvent");
+	//
+	// Mouse over first - I have live events attached on mouse over
+	//
+	simulatedEvent.initMouseEvent(type, true, true, window, 1, first.screenX, first.screenY, first.clientX, first.clientY,
+                            false, false, false, false, 0, null);
+	first.target.dispatchEvent(simulatedEvent);
+
+	type = "mousedown";
+	simulatedEvent = document.createEvent("MouseEvent");
+
+	simulatedEvent.initMouseEvent(type, true, true, window, 1, first.screenX, first.screenY, first.clientX, first.clientY,
+                            false, false, false, false, 0, null);
+	first.target.dispatchEvent(simulatedEvent);
+
+
+	if (!tapValid) {
+		lastTap = first.target;
+		tapValid = true;
+		tapTimeout = window.setTimeout("cancelTap();", 600);
+		startHold(event);
+	}
+	else {
+		window.clearTimeout(tapTimeout);
+
+		//
+		// If a double tap is still a possibility and the elements are the same
+		//	Then perform a double click
+		//
+		if (first.target == lastTap) {
+			lastTap = null;
+			tapValid = false;
+
+			type = "click";
+			simulatedEvent = document.createEvent("MouseEvent");
+
+			simulatedEvent.initMouseEvent(type, true, true, window, 1, first.screenX, first.screenY, first.clientX, first.clientY,
+                         	false, false, false, false, 0/*left*/, null);
+			first.target.dispatchEvent(simulatedEvent);
+
+			type = "dblclick";
+			simulatedEvent = document.createEvent("MouseEvent");
+
+			simulatedEvent.initMouseEvent(type, true, true, window, 1, first.screenX, first.screenY, first.clientX, first.clientY,
+                         	false, false, false, false, 0/*left*/, null);
+			first.target.dispatchEvent(simulatedEvent);
+		}
+		else {
+			lastTap = first.target;
+			tapValid = true;
+			tapTimeout = window.setTimeout("cancelTap();", 600);
+			startHold(event);
+		}
+	}
+}
+
+function iPadTouchHandler(event) {
+	var type = "",
+		button = 0; /*left*/
+
+    if (event.touches.length > 1)
+		return;
+
+	switch (event.type) {
+		case "touchstart":
+			if ($(event.changedTouches[0].target).is("select")) {
+				return;
+			}
+			iPadTouchStart(event); /*We need to trigger two events here to support one touch drag and drop*/
+			event.preventDefault();
+			return false;
+			break;
+
+		case "touchmove":
+			cancelHold();
+			type = "mousemove";
+			event.preventDefault();
+			break;
+
+		case "touchend":
+			if (cancelMouseUp) {
+				cancelMouseUp = false;
+				event.preventDefault();
+				return false;
+			}
+			cancelHold();
+			type = "mouseup";
+			break;
+
+		default:
+			return;
+	}
+
+	var touches = event.changedTouches,
+		first = touches[0],
+		simulatedEvent = document.createEvent("MouseEvent");
+
+	simulatedEvent.initMouseEvent(type, true, true, window, 1, first.screenX, first.screenY, first.clientX, first.clientY,
+                            false, false, false, false, button, null);
+
+	first.target.dispatchEvent(simulatedEvent);
+
+	if (type == "mouseup" && tapValid && first.target == lastTap) {	// This actually emulates the ipads default behaviour (which we prevented)
+		simulatedEvent = document.createEvent("MouseEvent");		// This check avoids click being emulated on a double tap
+
+		simulatedEvent.initMouseEvent("click", true, true, window, 1, first.screenX, first.screenY, first.clientX, first.clientY,
+                            false, false, false, false, button, null);
+
+		first.target.dispatchEvent(simulatedEvent);
+	}
+}
+
+/* startupbidder javascript code */
+
+$(function(){
+	var $ = jQuery;
+
+    $('body').addTouch(); // enable for touch devices
+
+    var Util = function() {
+        var self = {};
+        self.controller = null;
+        self.setup = function(controller) {
+            self.controller = controller;
+        }
+        self.addCommas = function(num) {
+            var nStr = num + '';
+            var x = nStr.split('.');
+            var x1 = x[0];
+            var x2 = x.length > 1 ? '.' + x[1] : '';
+            var rgx = /(\d+)(\d{3})/;
+            while (rgx.test(x1)) {
+              x1 = x1.replace(rgx, '$1' + ',' + '$2');
+            }
+            return x1 + x2;
+        };
+        self.generateGuid = function() { // rfc4122 compliant
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+                return v.toString(16);
+            });
+        };
+        return self;
+    };
+
+    var Datastore = function() {
+        var self = {};
+        self.db = {};
+        self.controller = null;
+        self.setup = function(controller) {
+            self.controller = controller;
+            self.genRandomDb();
+        }
+        self.firstNameComponents = [
+            'Bob', 
+            'Mark',
+            'Prateep',
+            'Ming',
+            'Grzegorz',
+            'Matteo',
+            'Cindy',
+            'Mariella',
+            'Batuku',
+            'Hitomi',
+            'Brad',
+            'John',
+            'Hans',
+            'Ingo',
+            'Pierre',
+            'Xiaoping',
+            'Jay',
+            'Malhaz',
+            'Mohammed',
+            'Sergio',
+            'Paulo',
+            'Alberto',
+            'Joao',
+            'Klaus',
+            'Vladimir',
+            'Rajiv'
+        ];
+        self.lastNameComponents = [
+            'Peters',
+            'Livingston',
+            'Ramasubramanian',
+            'Hu',
+            'Nittner',
+            'Pavesi',
+            'Lu',
+            'Ianieri',
+            'Kakimbwe',
+            'Yokoshima',
+            'Etienne',
+            'Rogdriguez',
+            'Steinmann',
+            'Obermeyer',
+            'Cohen',
+            'Solomon',
+            'Malonkov',
+            'Korzinsky',
+            'Wang',
+            'Powers',
+            'Kuroda',
+            'Patel'
+        ];
+        self.startupNameComponents = [
+            'book',
+            'trendz',
+            'square',
+            'shout',
+            'oogle',
+            'bidder',
+            'cloud',
+            'pix',
+            'on',
+            'motion',
+            'fusion',
+            'fluid',
+            'box',
+            'kick',
+            'pop',
+            'space',
+            'net',
+            'group',
+            'bo',
+            'face',
+            'you',
+            'tube',
+            'mee',
+            'my',
+            'space',
+            'it',
+            'sana',
+            'sumu',
+            'net',
+            'connect',
+            'drop',
+            'media',
+            'common',
+            'floor',
+            'diff',
+            'lane',
+            'flip',
+            'bhi',
+            'snap',
+            'mind',
+            'quilt',
+            'fi',
+            'soc',
+            'wala',
+            'beam',
+            'info',
+            'ink',
+            'tol',
+            'nap',
+            'circle',
+            'us',
+            'shop',
+            'fund',
+            'goto',
+            'aba',
+            'social',
+            'dala',
+            'crowd',
+            'sprout',
+            'edge',
+            'bay',
+            'a',
+            'e',
+            'u',
+            'i',
+            'o',
+            'y'
+        ];
+        self.startupVerbs = [
+            'bridge',
+            'bring',
+            'make',
+            'create',
+            'lead',
+            'draw',
+            'find',
+            'solve',
+            'unite',
+            'drive',
+            'build',
+            'bind',
+            'acquire',
+            'enhance',
+            'join',
+            'branch',
+            'evolve',
+            'encourage',
+            'intertwine',
+            'project'
+        ];
+        self.startupNouns = [
+            'networks',
+            'businesses',
+            'enterprises',
+            'groups',
+            'connections',
+            'solutions',
+            'communications',
+            'meetings',
+            'applications',
+            'statistics',
+            'methods',
+            'revolutions',
+            'advancements',
+            'technologies',
+            'financials',
+            'exchanges',
+            'enablers',
+            'processes',
+            'systems',
+            'infrastructures',
+            'leadership methods',
+            'economics',
+            'patterns',
+            'sources',
+            'links',
+            'software applications',
+            'smartphones',
+            'marketing strategies',
+            'measurements',
+            'kiosks',
+            'decisions',
+            'industries',
+            'markets',
+            'games',
+            'apps',
+            'media',
+            'methodologies',
+            'conferences',
+            'collaborations',
+            'pipelines',
+            'presentations',
+            'accounting methods',
+            'approaches to finance',
+            'funds',
+            'venture funds',
+            'angels',
+            'seed funds',
+            'commodities',
+            'currencies',
+            'bandwidth measures',
+            'messaging systems',
+            'telecommuniciations',
+            'transports',
+            'energies',
+            'retail stores',
+            'warehouses',
+            'data',
+            'vehicles',
+            'entertainment companies',
+            'insurance companies',
+            'government organizations',
+            'organizations',
+            'mindshares',
+            'memes',
+            'process controls',
+            'branding strategies',
+            'biofuels',
+            'best practices',
+            'rightsizing practicies',
+            'downsizing inevitabilities',
+            'offshoring methods',
+            'outsourcing justifications',
+            'resources',
+            'databases',
+            'planning activities',
+            'forclosures',
+            'deals',
+            'business cases',
+            'bidding processes',
+            'artificial intelligence applications',
+            'decision trees',
+            'decisions'
+        ];
+        self.startupAdjectives = [
+            'social',
+            'end-to-end',
+            'upvoting',
+            'science-fiction-like',
+            'high performance',
+            'next generation',
+            'revolutionary',
+            'cutting edge',
+            'efficient',
+            'evolved',
+            'web scale',
+            'backend',
+            'customer facing',
+            'client',
+            'visionary',
+            'performance enhancing',
+            'cloud enabled',
+            'patented',
+            'proven',
+            'location aware',
+            'mobile',
+            'tablet',
+            'healthcare',
+            'automated',
+            'market',
+            'prepackaged',
+            'automotive',
+            'tommorow\'s',
+            'low impact',
+            'ecological',
+            'progressive',
+            'positive',
+            'enhanced',
+            'optimized',
+            'genetically modified',
+            'engineered',
+            'implanted',
+            'best-of-breed',
+            'improved',
+            'best class',
+            'world class',
+            'second-to-none',
+            'online',
+            'peer-to-peer',
+            'networked',
+            'connected',
+            'passive',
+            'monitored',
+            'scalable',
+            'unmatched',
+            'secure',
+            'securitized',
+            'synchronized',
+            'interactive',
+            'engaging',
+            'addictive',
+            'massive',
+            'virtualized',
+            'startup',
+            'entrepreneurial',
+            'second-to-none',
+            'high speed',
+            'agile',
+            'consumer-friendly',
+            'friendly',
+            'time-proven',
+            'award-winning',
+            'enlightened',
+            'self-aware',
+            'intelligent',
+            'scientifically proven',
+            'doctor approved',
+            'kinetic',
+            'energetic',
+            'global',
+            'strategic',
+            'worldwide',
+            'cross-cultural',
+            'practical',
+            'filtered',
+            'previously unknown',
+            'structured',
+            'interconnected'
+        ];
+        self.startupPrepositions = [
+            'in',
+            'on',
+            'through',
+            'with',
+            'by',
+            'together with',
+            'around',
+            'to',
+            'from',
+            'across',
+            'within',
+            'inside',
+            'at'
+        ];
+        self.genRandomNounPhrase = function() {
+            var np = self.startupNouns[Math.floor(Math.random()*self.startupNouns.length)];
+            np = self.startupAdjectives[Math.floor(Math.random()*self.startupAdjectives.length)] + ' ' + np;
+            if (Math.floor(Math.random()*2)) {
+                np = self.startupAdjectives[Math.floor(Math.random()*self.startupAdjectives.length)] + ' ' + np;
+            }
+            return np;
+        };
+        self.genRandomPrepPhrase = function() {
+            return self.startupPrepositions[Math.floor(Math.random()*self.startupPrepositions.length)] + ' ' + self.genRandomNounPhrase();
+        };
+        self.genRandomVerbPhrase = function() {
+            var verb = self.startupVerbs[Math.floor(Math.random()*self.startupVerbs.length)];
+            if (verb[verb.length - 1] == 'e') {
+               verb = verb.substr(0, verb.length - 1);
+            }
+            var gerund = verb + 'ing';
+            return gerund;
+        };
+        self.genRandomStartupDesc = function() {
+            var desc = '';
+            if (Math.floor(Math.random()*2)) {
+                desc += self.genRandomVerbPhrase() + ' ';
+            }
+            desc += self.genRandomNounPhrase();
+            if (Math.floor(Math.random()*2)) {
+                desc += ' ' + self.genRandomPrepPhrase();
+            }
+            if (Math.floor(Math.random()*2)) {
+                desc += ' ' + self.genRandomPrepPhrase();
+            }
+            return desc;
+        };
+        self.genRandomStartupName = function() {
+            var i = Math.floor(Math.random() * self.startupNameComponents.length);
+            var j = i;
+            while (i==j) { // avoid repeats
+                j = Math.floor(Math.random() * self.startupNameComponents.length);
+            }
+            var name = self.startupNameComponents[i] + self.startupNameComponents[j];
+            return name;
+        };
+        self.genRandomAuthorId = function() {
+            var firstIdx = Math.floor(Math.random() * self.firstNameComponents.length);
+            var lastIdx = Math.floor(Math.random() * self.lastNameComponents.length);
+            var first = self.firstNameComponents[firstIdx];
+            var last = self.lastNameComponents[lastIdx];
+            var idSuffix = Math.floor(Math.random() * 100);
+            return first + last + idSuffix;
+        };
+        self.genRandomListing = function() {
+            var listing = {};
+            listing.listing_id = self.controller.getManaged('util').generateGuid();
+            listing.title = self.genRandomStartupName() + ': ' + self.genRandomStartupDesc();
+            listing.points = Math.floor(Math.random()*100);
+            listing.median_value = 50000 * Math.floor(Math.random()*200);
+            listing.num_bids = Math.floor(Math.random()*20);
+            listing.num_comments = 0; // we'll add later
+            listing.author_id = self.genRandomAuthorId();
+            listing.days_to_closing = Math.floor(Math.random()*30);       
+            return listing;
+        };
+        self.genRandomListings = function() {
+            var numListings = 20;
+            var listings = {};
+            var listing;
+            for (var i = 0; i < numListings; i++) {
+                listing = self.genRandomListing();
+                listings[listing.listing_id] = listing;
+            }
+            self.db.listings = listings;
+        };
+        self.genRandomVerb = function() {
+            return self.startupVerbs[Math.floor(Math.random()*self.startupVerbs.length)];
+        };
+        self.genRandomCommentText = function() {
+            var text = '';
+            if (Math.floor(Math.random()*2)) {
+                text = self.startupAdjectives[Math.floor(Math.random()*self.startupAdjectives.length)];
+            }
+            else {
+                text = self.genRandomNounPhrase();
+                if (Math.floor(Math.random()*2)) {
+                    text += ' ' + self.genRandomVerb() + ' ' + self.genRandomNounPhrase();
+                    if (Math.floor(Math.random()*2)) {
+                        text += ' ' + self.genRandomPrepPhrase();
+                    }
+                }
+            }
+            var punctuation = ['', '.', '!', '?', '...'];
+            text += punctuation[Math.floor(Math.random()*punctuation.length)];
+            return text;
+        };
+        self.genRandomDate = function(setMonth) {
+            var year = 2011;
+            var month = setMonth ? setMonth : Math.floor(Math.random()*12) + 1;
+            var day = Math.floor(Math.random()*31) + 1;
+            if (month in {4:1,6:1,9:1,11:1} && day > 30) {
+                day = 30;
+            }
+            if (month == 2) {
+                if (year % 4 == 0 && year % 100 != 0) { // leap year
+                    if (day > 29) {
+                        day = 29;
+                    }
+                }
+                else {
+                    if (day > 28) {
+                        day = 28;
+                    }
+                }
+            }
+            return '' + year + (month < 10 ? '0' : '') + month + (day < 10 ? '0' : '') + day;
+        };
+        self.genRandomCommentForListing = function(listing_id) {
+            var comment = {};
+            comment.comment_id = self.controller.getManaged('util').generateGuid();
+            comment.listing_id = listing_id;
+            comment.text = self.genRandomCommentText();
+            comment.comment_date = self.genRandomDate();
+            comment.author_id = self.genRandomAuthorId();
+            return comment;
+        };
+        self.genRandomCommentsForListing = function(listing_id) {
+            var commentsForListing = {};
+            var maxCommentsPerListing = 20;
+            var numComments = Math.floor(Math.random() * maxCommentsPerListing);
+            var comment;
+            for (var i = 0; i < numComments; i++) {
+                comment = self.genRandomCommentForListing(listing_id);
+                commentsForListing[comment.comment_id] = comment;
+            }
+            self.db.listings[listing_id].num_comments = numComments; // update db with comment count
+            return commentsForListing;
+        };
+        self.genRandomComments = function() {
+            var comments = {};
+            var commentsForListing = {};
+            for (var listing_id in self.db.listings) {
+                commentsForListing = self.genRandomCommentsForListing(listing_id);
+                for (var comment_id in commentsForListing) { // add to comments list
+                    comments[comment_id] = commentsForListing[comment_id];
+                }
+            }
+            self.db.comments = comments;
+        };
+        self.genRandomDb = function() {
+            self.db = {};
+            self.genRandomListings();
+            self.genRandomComments();
+        };
+        self.searchListings = function(args) {
+            var results = [];
+            var result;
+            var i = 0;
+            for (var listing_id in self.db.listings) { // just full db for now
+                result = self.db.listings[listing_id];
+                result.num = i + 1;
+                results.push(result);
+                i++;
+            }
+            return results;
+        };
+        self.commentsForListing = function(listing_id) {
+            var comments = [];
+            var comment;
+            for (var comment_id in self.db.comments){
+                comment = self.db.comments[comment_id];
+                if (comment.listing_id == listing_id) {
+                    comments.push(comment);
+                }
+            }
+            comments.sort(function(a,b){
+                return a.comment_date - b.comment_date;
+            });
+            for (var i = 0; i < comments.length; i++) {
+                comments[i].num = i + 1;
+            }
+            return comments;
+        };
+        return self;
+    };
+
+    var User = function() {
+        var self = {};
+        self.controller = null;
+        self.loggedin = false;
+        self.username = 'johnarleyburns';
+        self.setup = function(controller) {
+            self.controller = controller;
+            controller.getManaged('header').displayUser(self);
+        };
+        self.hasVoted = function(listing_id) {
+            // look in cookie to see if user has voted on this listing
+            return false;
+        };
+        self.login = function() {
+            // set cookie
+            self.loggedin = true;
+            self.controller.getManaged('header').displayUser(self);
+            return 'home';
+        };
+        self.logout = function() {
+            // remove cookie
+            self.loggedin = false;
+            self.controller.getManaged('header').displayUser(self);
+            return 'home';
+        };
+        return self;
+    };
+
+    var Uploader = function() {
+        var self = {};
+        self.controller = null;
+        self.setup = function(controller) {
+            self.controller = controller;
+            $('#business_plan').change(function() {
+                var filename = $(this).val();
+                if (!/\.doc|\.docx|\.pdf$/.test(filename)) {
+                    alert('Only doc or docx or pdf files are allowed for the business plan');
+                    $(this).val('');
+                }
+            });
+            $('#presentation').change(function() {
+                var filename = $(this).val();
+                if (!/\.ppt|\.pdf$/.test(filename)) {
+                    alert('Only ppt or pdf files are allowed for the business plan');
+                    $(this).val('');
+                }
+            });
+        };
+        return self;
+    };
+
+    var Header = function() {
+        var self = {};
+        self.controller = null;
+        self.setup = function(controller) {
+            self.controller = controller;
+            $('#header-logo,#header-title-link').unbind().bind('click', function(){
+                self.controller.execute({page:'home'});
+            });
+            $('#header-menu-command-login').unbind().bind('click', function(){
+                self.controller.execute({page:'login'});
+            });
+            $('#header-menu-command-logout').unbind().bind('click', function(){
+                self.controller.execute({page:'logout'});
+            });
+            $('#header-menu-bar-submit').unbind().bind('click', function(){
+                self.controller.execute({page:'listing',type:'submit'});
+            });
+            $('#header-menu-bar-top').unbind().bind('click', function(){
+                self.controller.execute({page:'home',search_type:'top'});
+            });
+            $('#header-menu-bar-active').unbind().bind('click', function(){
+                self.controller.execute({page:'home',search_type:'active'});
+            });
+            $('#header-menu-bar-popular').unbind().bind('click', function(){
+                self.controller.execute({page:'home',search_type:'popular'});
+            });
+            $('#header-menu-bar-discussed').unbind().bind('click', function(){
+                self.controller.execute({page:'home',search_type:'discussed'});
+            });
+            $('#header-menu-bar-latest').unbind().bind('click', function(){
+                self.controller.execute({page:'home',search_type:'latest'});
+            });
+            $('#header-menu-bar-faq').unbind().bind('click', function(){
+                self.controller.execute({page:'faq'});
+            });
+        };
+        self.displayUser = function(user) {
+            if (user.loggedin) {
+                $('#header-menu-name-login').hide();
+                $('#header-menu-name-username').html(user.username).show().unbind().bind('click', function(){
+                    self.controller.execute({page:'profile', account_id:user.account_id});
+                });
+                $('#header-menu-command-login').hide();
+                $('#header-menu-command-logout').show();
+                $('#header-menu-bar-submit-spacer').show();
+                $('#header-menu-bar-submit').show();
+            }
+            else {
+                $('#header-menu-name-login').show();
+                $('#header-menu-name-username').html(null).hide();
+                $('#header-menu-command-login').show();
+                $('#header-menu-command-logout').hide();
+                $('#header-menu-bar-submit-spacer').hide();
+                $('#header-menu-bar-submit').hide();
+            }
+        };
+        return self;
+    };
+
+    var Search = function() {
+        var self = {};
+        self.controller = null;
+        self.defaultSearchType = 'top';
+        self.setup = function(controller) {
+            self.controller = controller;
+            $('#content-search-submit').unbind().bind('click', function(){
+                self.controller.execute({page:'home', search_type:'keyword'});
+            });
+            $('#content-search-keywords').unbind().bind('keyup', function(e){
+                if (e.keyCode == 13) { // return key
+                    self.controller.execute({page:'home', search_type:'keyword'});
+                }
+            });
+        };
+        self.execute = function(args) {
+            var searchType = args['search_type'];
+            if (!searchType) {
+                searchType = self.defaultSearchType;
+            }
+            var searchText = 'type:'+searchType;
+            var keywords;
+            if (searchType == 'keyword') {
+                keywords = $('#content-search-keywords').val();
+                if (keywords) {
+                    keywords = keywords.replace(/\btype:\w*/g, '').replace(/\s+/g, ' ').trim();
+                    searchText += ' ' + keywords;
+                    args.keywords = keywords;
+                }
+            }
+            $('#content-search-keywords').val(searchText);
+            var results = self.doSearch(args);
+            self.displayResults(results);
+            return 'home';
+        };
+        self.doSearch = function(args){
+            return self.controller.getManaged('datastore').searchListings(args);
+        };
+        self.displayResults = function(results){
+            var resultsHtml = '';
+            var listing;
+            for (var i = 0; i < results.length; i++) { // create results
+                listing = results[i];
+                resultsHtml += self.generateResultHtml(i, listing);
+            }
+            if (resultsHtml == '') {
+                resultsHtml = '<i>no listings found</i>';
+            }
+            $('#home-content-results-list').html(resultsHtml);
+            for (var j = 0; j < results.length; j++) { // bind results
+                listing = results[j];
+                $('#content-results-list-item-title-'+j).data('listing_id',listing.listing_id).unbind().bind('click', function(){
+                    self.controller.execute({page:'listing', listing_id:$(this).data('listing_id')});
+                });           
+                $('#content-results-list-item-author-'+j).data('author_id',listing.author_id).unbind().bind('click', function(){
+                    self.controller.execute({page:'profile', profile_id:$(this).data('author_id')});
+                });           
+                $('#content-results-list-item-comments-'+j).data('listing_id',listing.listing_id).unbind().bind('click', function(){
+                    console.log('j:'+$(this).attr('id')+' page:comments listing_id:'+$(this).data('listing_id'));
+                    self.controller.execute({page:'comments', listing_id:$(this).data('listing_id')});
+                }); 
+                $('#content-results-list-item-bids-'+j).data('listing_id',listing.listing_id).unbind().bind('click', function(){
+                    self.controller.execute({page:'bidhistory', listing_id:$(this).data('listing_id')});
+                }); 
+            }
+        };
+        self.generateResultHtml = function(i, listing) {
+            var resultHtml = '';
+            var evenOdd = (i % 2 == 0) ? 'even' : 'odd';
+            resultHtml += '<div class="content-results-list-item content-results-list-item-' + evenOdd + '">';
+            resultHtml += '<div class="content-results-list-item-num">' + listing.num + '</div>';
+            resultHtml += '<div class="content-results-list-item-upvote"></div>';
+            resultHtml += '<div class="content-results-list-item-title link" id="content-results-list-item-title-' + i + '">';
+            resultHtml += listing.title;
+            resultHtml += '</div>';
+            resultHtml += '<div class="content-results-list-item-author link" id="content-results-list-item-author-' + i + '">';
+            resultHtml += '(' + listing.author_id + ')';
+            resultHtml += '</div>';
+            resultHtml += '<div class="content-results-list-item-clear"></div>';
+            resultHtml += '<div class="content-results-list-item-detail">';
+            resultHtml += listing.points + ' points | ';
+            resultHtml += '<span class="link" id="content-results-list-item-comments-' + i + '">';
+            resultHtml += listing.num_comments + ' comment' + (listing.num_comments==1?'':'s');
+            resultHtml += '</span> | ';
+            resultHtml += '$' + self.controller.getManaged('util').addCommas(listing.median_value) + ' after ';
+            resultHtml += '<span class="link" id="content-results-list-item-bids-' + i + '">';
+            resultHtml += listing.num_bids + ' bid' + (listing.num_bids==1?'':'s');
+            resultHtml += '</span> | ';
+            resultHtml += 'closing in ' + listing.days_to_closing + ' day' + (listing.days_to_closing==1?'':'s');
+            resultHtml += '</div>';
+            resultHtml += '</div>';
+            resultHtml += '<div class="content-results-list-item-clear"></div>';
+            return resultHtml;
+        };
+        return self;
+    };
+
+    var Comments = function() {
+        self.controller = null;
+        self.defaultSearchType = 'top';
+        self.setup = function(controller) {
+            self.controller = controller;
+        }
+        self.execute = function(args) {
+            var listing_id = args['listing_id'];
+            console.log('received query for comments for listing_id:'+listing_id);
+            var results = self.doQuery(listing_id);
+            self.displayResults(results);
+            return 'comments';
+        };
+        self.doQuery = function(listing_id){
+            var results = self.controller.getManaged('datastore').commentsForListing(listing_id);
+            results.push(self.controller.getManaged('datastore').db.listings[listing_id]);
+            return results;
+        };
+        self.displayResults = function(results){
+            var resultsHtml = '';
+            var comment;
+            var listing = results.pop();
+            var listingTitle = listing ? listing.title : '<em>no listing found for listing_id=' + listing.listing_id+ '</em>';
+            var listingAuthor = listing ? '(' + listing.author_id + ')' : '';
+            for (var i = 0; i < results.length; i++) { // create results
+                comment = results[i];
+                resultsHtml += self.generateResultHtml(i, comment);
+            }
+            if (resultsHtml == '') {
+                resultsHtml = '<em>no comments found</em>';
+            }
+            // add html
+            $('#comments-listing-title').html(listingTitle);
+            $('#comments-listing-author').html(listingAuthor);
+            $('#comments-content-results-list').html(resultsHtml);
+            // bind results
+            if (listing) {
+                $('#comments-listing-title').data('listing_id',listing.listing_id).unbind().bind('click', function(){
+                    self.controller.execute({page:'listing', profile_id:$(this).data('listing_id')});
+                });           
+                $('#comments-listing-author').data('author_id',listing.author_id).unbind().bind('click', function(){
+                    self.controller.execute({page:'profile', profile_id:$(this).data('author_id')});
+                });           
+            }
+            for (var i = 0; i < results.length; i++) {
+                comment = results[i];
+                $('#content-results-list-item-author-'+i).data('author_id',comment.author_id).unbind().bind('click', function(){
+                    self.controller.execute({page:'profile', profile_id:$(this).data('author_id')});
+                });           
+            }
+            return resultsHtml;
+        };
+        self.generateResultHtml = function(i, comment) {
+            var resultHtml = '';
+            resultHtml += '<div class="content-results-list-item">';
+            resultHtml += '<div class="content-results-list-item-num">' + comment.num + '</div>';
+            resultHtml += '<div class="content-results-list-item-title">';
+            resultHtml += comment.text;
+            resultHtml += '</div>';
+            resultHtml += '<div class="content-results-list-item-clear"></div>';
+            resultHtml += '<div class="content-results-list-item-detail">';
+            resultHtml += 'by ';
+            resultHtml += '<span class="link" id="content-results-list-item-author-' + i + '">'
+            resultHtml += comment.author_id;
+            resultHtml += '</span>'
+            resultHtml += ' on ';
+            resultHtml += comment.comment_date;
+            resultHtml += '</div>';
+            resultHtml += '</div>'
+            resultHtml += '<div class="content-results-list-item-clear"></div>';
+            return resultHtml;
+        };
+        return self;
+    };
+
+    var Controller = function() {
+        var self = {};
+        self.managed = {};
+        self.actionPages = {};
+        self.defaultPage = 'home';
+        self.setup = function() {
+        };
+
+        self.addManaged = function(name, obj) {
+            self.managed[name] = obj;
+        };
+        self.getManaged = function(name) {
+            return self.managed[name];
+        };
+        self.setupManaged = function() {
+            for (var i in self.managed) {
+                self.managed[i].setup(self);
+            }
+            controller.loadActionPages();
+        };
+        self.execute = function(args) {
+            if (!args) {
+                args = { page: 'home' };
+            }
+            console.log('execute listing_id:'+args.listing_id);
+            var page = args['page'];
+            if (!page) {
+                page = self.defaultPage;
+            }
+            if (page in self.actionPages) {
+                page = self.actionPages[page](args);
+            }
+            self.displayPage(page);
+        };
+        self.displayPage = function(page) {
+            $('.page').filter(':visible').hide(); // hide all
+            var pageSel = '#' + page + 'page';
+            $(pageSel).show();
+        };
+        self.loadActionPages = function() {
+            self.actionPages = {
+                login: self.getManaged('user').login,
+                logout: self.getManaged('user').logout,
+                home: self.getManaged('search').execute,
+                comments: self.getManaged('comments').execute
+            };
+        };
+        return self;
+    };
+
+    var controller = new Controller();
+    window.controller = controller;
+    controller.setup();
+    controller.addManaged('util', new Util());
+    controller.addManaged('datastore', new Datastore());
+    controller.addManaged('user', new User());
+    controller.addManaged('uploader', new Uploader());
+    controller.addManaged('header', new Header());
+    controller.addManaged('search', new Search());
+    controller.addManaged('comments', new Comments());
+    controller.setupManaged();
+    controller.execute();
+
+});
+</script>
+
+<style type="text/css">
+/* reset all defaults */
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, font, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  font-weight: inherit;
+  font-style: inherit;
+  font-size: 100%;
+  font-family: inherit;
+  vertical-align: baseline;
+}
+ol, ul {
+  list-style: none;
+}
+table {
+  border-collapse: separate;
+  border-spacing: 0;
+  vertical-align: middle;
+}
+caption, th, td {
+  text-align: left;
+  font-weight: normal;
+  vertical-align: middle;
+}
+q, blockquote {
+  quotes: "" "";
+}
+q:before, q:after, blockquote:before, blockquote:after {
+  content: "";
+}
+a img {
+  border: none;
+}
+html, body {
+  width: 100%;
+  height: 100%;
+/*  overflow: hidden; */
+  min-height: 100%;
+}
+body {
+  line-height: 1;
+  color: black;
+  background: white;
+  font-family: sans-serif;
+}
+a,
+a:hover,
+a:focus,
+a:active 
+{
+text-decoration: none;
+}
+
+/* startupbidder styles */
+.gradient-bg {
+    background: #eeeeee;
+    background: -moz-linear-gradient(top,#ffffff,#dddddd);
+    background: -o-linear-gradient(#ffffff,#dddddd);
+    background: -webkit-linear-gradient(#fffff,#dddddd);
+    background: -webkit-gradient(linear,left top,right bottom,from(#ffffff),to(#dddddd));
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff',endColorstr='#dddddd');
+}
+.site {
+    position: absolute;
+    width: 100%;
+}
+.link {
+    color: blue;
+}
+.link:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}
+.header {
+    font-size: 12px;
+    position: absolute;
+    width: 100%;
+    height: 40px;
+    border-bottom: 2px solid black;
+}
+.content {
+    position: absolute;
+    width: 100%;
+    top: 40px;
+}
+.header-title {
+    position: absolute;
+    top: 3px;
+    height: 20px;
+    left: 100px;
+    font-weight: bold;
+    font-size: 16px;
+}
+.header-menu {
+    position: absolute;
+    left: 100px;
+    right: 0px;
+}
+.header-menu-name {
+    position: absolute;
+    height: 15px;
+    right: 55px;
+    top: 5px;
+    text-align: right;
+}
+.header-menu-command {
+    font-size: 12px;
+    position: absolute;
+    height: 15px;
+    right: 5px;
+    top: 5px;
+    text-align: right;
+}
+.header-menu-bar {
+    position: absolute;
+    top: 26px;
+    left: 0px;
+    text-align: left;
+}
+.content-search {
+    margin-top: 2px;
+    margin-left: 2px;
+}
+.content-header {
+    margin-top: 5px;
+    margin-left: 5px;
+    font-size: 18px;
+}
+.content-header-title-small {
+    font-size: 14px;
+}
+.content-comment {
+    margin-top: 5px;
+    margin-left: 5px;
+    font-size: 14px;
+}
+.content-comment-textarea {
+    font-family: sans-serif;
+}
+.content-comment-label {
+    margin-left: 4px;
+    margin-bottom: 2px;
+    font-size: 12px;
+}
+.content-results {
+    margin-top: 5px;
+    margin-left: 5px;
+}
+.content-results-list {
+}
+.content-results-list-item {
+    float:left;
+    width: 100%;
+    padding: 5px;
+}
+.content-results-list-item {
+    background: #eeeeee;
+    background: -moz-linear-gradient(top,#ffffff,#dddddd);
+    background: -o-linear-gradient(#ffffff,#dddddd);
+    background: -webkit-linear-gradient(#ffffff,#dddddd);
+/*    background: -webkit-gradient(linear,left top,right bottom,from(#ffffff),to(#dddddd)); */
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff',endColorstr='#dddddd');
+}
+.content-results-list-item-odd {
+    background: #eeeeee;
+    background: -moz-linear-gradient(top,#ffffff,#dddddd);
+    background: -o-linear-gradient(#ffffff,#dddddd);
+    background: -webkit-linear-gradient(#ffffff,#dddddd);
+/*    background: -webkit-gradient(linear,left top,right bottom,from(#ffffff),to(#dddddd)); */
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff',endColorstr='#dddddd');
+}
+.content-results-list-item-even {
+    background: #ffffff;
+    background: -moz-linear-gradient(top,#ffffff,#dddddd);
+    background: -o-linear-gradient(#ffffff,#dddddd);
+    background: -webkit-linear-gradient(#ffffff,#dddddd);
+/*    background: -webkit-gradient(linear,left top,right bottom,from(#ffffff),to(#dddddd)); */
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff',endColorstr='#dddddd');
+}
+.content-results-list-item-num {
+    float: left;
+    width: 20px;
+}
+.content-results-list-item-upvote {
+    float: left;
+    width: 10px;
+    height: 10px;
+    background-repeat: no-repeat;
+    background-image: url(data:image/gif;base64,R0lGODlhCgAKALMJANPT06enp/b29r+/v52dnfn5+bq6usLCwpqamv///wAAAAAAAAAAAAAAAAAAAAAAACH5BAEAAAkALAAAAAAKAAoAAAQcMMlJq712GIzQDV1QFV0nUETZTYDaAdIhz3ISAQA7);
+}
+.content-results-list-item-clear {
+    clear: both;
+    height: 0px;
+}
+.content-results-list-item-title {
+    float: left;
+    margin-left: 5px;
+}
+.content-results-list-item-author {
+    float: left;
+    margin-left: 5px;
+    font-size: 12px;
+    line-height: 18px;
+}
+.content-results-list-item-detail {
+    float: left;
+    margin-top: 5px;
+    margin-left: 35px;
+    font-size: 12px;
+    margin-bottom: 5px;
+}
+.content-results-footer {
+    float: left;
+    font-size: 12px;
+}
+.content-form {
+    margin-left: 5px;
+    margin-top: 5px;
+}
+.content-form-line, .content-form-line-emphasized, .content-form-mainline, .content-form-linkline {
+    float: left;
+    margin-left: 5px;
+    text-align: left;
+    font-size: 14px;
+    line-height: 26px;
+}
+.content-form-line-emphasized {
+    font-weight: bold;
+}
+.content-form-mainline {
+    font-weight: bold;
+}
+.content-form-linkline {
+    font-size: 12px;
+    line-height: 20px;
+}
+.content-form-inputline, .content-form-maininputline {
+    float: left;
+    margin-left: 5px;
+    text-align: left;
+    font-size: 12px;
+}
+.content-form-maininputline {
+    font-weight: bold;
+}
+.content-form-inputline-textarea {
+    font-family: sans-serif;
+}
+.content-form-label {
+    float: left;
+    text-align: right;
+    width: 100px;
+    font-size: 14px;
+    line-height: 24px;
+}
+.content-form-value {
+    float: left;
+    text-align: left;
+    font-size: 14px;
+    height: 25px;
+    margin-left: 5px;
+    margin-top: 5px;
+}
+.content-form-input {
+    float: left;
+    text-align: left;
+    font-size: 12px;
+    height: 30px;
+}
+.content-form-clear {
+    clear: both;
+    height: 0px;
+}
+.header-logo {
+    position: absolute;
+    top: 3px;
+    height: 37px;
+    left: 2px;
+    width: 98px;
+}
+.header-logo {
+/*
+width: 90px;
+height: 36px;
+*/
+background-repeat: no-repeat;
+background-image: url(data:image/png;base64,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);
+}
+.content-form-login-facebook {
+    width: 48px;
+    height: 48px;
+    background-position: 0px 0px;
+}
+.content-form-login-twitter {
+    width: 48px;
+    height: 48px;
+    background-position: -48px 0px;
+}
+.content-form-login-google {
+    width: 48px;
+    height: 48px;
+    background-position: -96px 0px;
+}
+.content-form-login-yahoo {
+    width: 48px;
+    height: 48px;
+    background-position: -144px 0px;
+}
+.content-form-login {
+/*
+width: 192px;
+height: 48px;
+*/
+float: left;
+background-repeat: no-repeat;
+background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIAAADILOJJAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH2wMQEQc42TOMHQAAAB10RVh0Q29tbWVudABDcmVhdGVkIHdpdGggVGhlIEdJTVDvZCVuAAAgAElEQVR42u19aZBc13Xed5e39r7MTPfsGwb7SpAASAIiadK0IpmUREmWpdLmuGI7peSPf2SplP845YqdqlSlUo4T2VFkWXYUR1FsyxJFi6SskkiRBLHvmBnMvi+9ve633nvzo2dAkASBGQCSIFunXr3q6Xl9b3ffb75zznfOfUMe/dU/xoZNEYQUgNJlxFTEIIiCApVgNTdK51oWllZisZhtmK5TiVu8XK3oiZwgVBEpVSSEUEpSSimloR/Ytu07PmOapVue51PFKKWv/OWn8XP72TF+rwZKp9Ou6yYSiVgsVquUPK8RMxNx2wqEp0CUEpQqjRHGCOeUEOJLmEwyg0opoEJKJKSSgvx8Sf4xAUhRQDYfhiJyHCebbxUijAI/nbQ5lSIMOZGcKUrBKCFSRH4QVP0wDA3dorBtpvuhiELfYCazNEa1ny/JP3wA0Xf+RADq1OqaplFKl5cXTQ2ZTGpxbjL0HIWw0JrpH+jt6+0strTEbYtzzggpVWoKLIzouYvD5y+M1j03dIOIbRRA5wJUBFIMu/WfL+LPFICoAsi7EUU55/FkSikRBZ4Ri9eqJadW2rtj8OMffX9rS6q7PZFOgiogghIAwPWiACIJiODq5Su1yA1CaNS67Rs4HuCvy1gNwIAQyOp4NoFD1v345Y5WUa1gZQnlMjwPtVoFJGwrpgtFbloAAWHY3/aP14VRQKqmIyOglEZR5IdhLGYzpurV0tahvs9/7hM7hhIpG5SAKbAm+JpzBggiaCaEX687qwA37FgsHr/1lK+7+JMl5Cl2mdABB5j28MV5+C04Fr9fvtMLJUyO4+rw8vCV0cmpGbfugVDPdQmlnFGmUUPnqUyyu7Oz2JH+nlptaU31dvW2FzAQ2+gUjeFpmzGICLUaWtIIHEgXmoLGQBkUhaRoBpRENmo1e+fB+wVABApq7bEEpWusRAHluq6UUTymR0GtrTXz0Q9/8OD+hAZwgAGQQOgDEoSCcHBmAIqCa1BKcN0KAU+IW8/+9bJgAAEmPEiAAgwwGL6ximNx9lOHzolRXLiAE6evnT71ytzyNaVKdor2dOc7etoiP9CMhPC06enKzER1+Aq7Yq7EU8k9B7fOz8nhyzOcwLZ5T2fLvt10S/5Ws0QnJo5/81u8WrZdT1ZWivlUubJkJu2AyYhSQagAIRIkpBEhS763KsXWY1cPfuaTd/ipJsa8UsXct+8eMpBcD4QkFJWgADFNI4hCgFIGp1Ht3zd47NFOuu7uojDUCKAzKAqF5tN+CE2HBJGUUV2PIuIH4S1m/aGLRQ85Bm8tcEcTbhpQA37o4NGfHgmNlnH+THTh3MT3v/fG7OysbgVPHtvz0MNb0lnihcth1IjFYgS6DO3Ij4debGkhOHNy9Mz50b/569newa1Dg/2WoY9fWzjx2vkXvi2yGfzBv/3F92Z+slRaotVqm6nZMT2TT+ss4IQIEfpe0AjChuvV3dD3wwboUqCWOe10ozv7XP7I+bHjJ6cuXRl484SdTcW6OxIHj9zDIJo2g2gJ6tZdO2F7jZrGpW1qR48cVAIMcH1oNLQ1TYoQQUQ1HWEApoFAj8GTEFQPFKuW66m2zvJK+RbzVgUUIHGdAd+CsxCYC39q6HlzGq+/OvXKy6evXDqv5PSxo9sPHT6SSptBtCIaYSbBLTtl27YUREmupJRRUMiJ7vbWY491ffcHM8fPjM3PTifjMYZwbno4nzPKq2Mnjr/4xf/2+wNtN9E16APdD2kfnRsb8VYW6vXqa8uLDWd+d093WHEJZLlW8aSITHbg2MPJ3gFku8tUM3vb3zbEa5cgQqgQhoQOUBUKJQgxYBEHKBSgBb6zYuzYYyQTVqm0w7LDC1cDzr/zR1+K93UH6eSHfu1z9rYdmwYQUaAACMh69i4JlKIAZYxJKYUMhZAxi7fkkwkbBLANAJoEIqkM3QRBSEyuIQghFCoeFI8l0m1hI+SayQ3zVrwnIeQaht4BIPmuJ38yNlzH1ZHG3GTtey+9dv7E8GBf/rFHtxULWj4tDSOwMvFMNhFPWJRC13UpJadm2s4AmFsq1RytXDdTbb0D23u/+8KL8zPnk4m4aYXDVy+mk9i+ba+SAWDcdN7uPTu79+xcE1Cuvu5OzX7vL772yM69CyPX2traxienBaLx6bE9H/kwVDzd0/q2MOB3//PiqdMtXsDrVUZCmLRC5Ir0IttKJfJJR5egU6IcxtTT/+TJnd2dQWVZK7lmuaYCka00Fs5cSuzaaktyT4RECkWbMRAhTCklZSSjKJbU24sJvv7HE4Yh1TSu6QIYn1g5eeqiG8hyxQ+hh9S8NrW0sFIJoREjeKdE8E6giEAISddAc50DRTO4Apqx1k/SxqZx4vTEuROXzp+/kEtnHnlo/87+WC5FUulYPGF19LW81wuLLZliSwZAtoyuwe64vfXrf3n2xBvfzWfSUla2bz+wd29P4JeB2ydp2tAhLTOxb3hqaXy6v33gyulTQ8XO85cvVaJJnDmLX/7QO65P9BQvnngthiAPaZUbyvfjSaMtHZ9sBPMzV2oiGXGtlJQt7cVCX9Fqy7d3FphcqM4shE4YU8orrwy2tmDH9jsCEFHrJ0BRKKoIkW/9UmmMK+UZmp5JgwAyUjongYigaQJQwA9+dPpvv/PSStnlRtKPmGYnI8UjQbiuMUITpn2r2QXCEFXAYm8BLQAcgZ+K+3r+EkbGa5eHp1999dViNv3MBx/dNdhm66v5bKJ/V/cGBxlM40R95qMfPtjVpn7/98aWl5a27+n7lY893VHIyqg+s7TQ0bKBRL+lp+eZ50ovfHfh6uiWXfumRq/mUum663znz/786Y5+cmDPjdc+/ZmPDxaz5tgUrlzzz15tLCw5jbCKupU0WlsKne1DVqFN788lu9Kdu7aFM1Or9bIoLRoUIaKQipaujgOPHL7rNF7RGx5QEKKUklKZli58BRXpFAQgMmBglrEmD7ohxmaWVh0peZIaGUVUKDXGzUTcjJQSnivlbRyRlGiE8CUMCgJIIJCIxE8BPW/MY3xWnjo3+uap855f3bd398F9LSZd3TaUSSY3960+0NEB4Le/8ocjF1/7xMc/9Uu/+HQqEWvLpZK2sSH0NK29I/PE4yu+H8vmTK+2OnK1p6fn70+eeenPvvpk4gvY8jZADzz1JAB8+WtjYzOy4tSdsOrJ/kN7HvjA+/Xe7RgsgK2t7/LVq8oyjVymUfJKJJqJ/K0PPJw6sPcuAETkehB7PceCIlCEShlqGlMhFEQzTyNUApQRogABMI66K5iesGIZx4UkRERgSjJCiYiiwFdK3ZqBIkAHAoFAvC2SF8CrZbHkwd9gDinEriR7OnmHLu/SCs5eFAsr7punLo1cG33yyM4jR7bG4+W2FM21dt3ZmJ/5+K/888//JgQVQhRyLT3F9nQmsbkhenoGn/nA8Lee79mxzWBYvTbek86Ov/HmZP/z3dYz6CzeeG39r7557dSpK1evOKVKx47tjzz1WPGJR3Fw7zuGXJxbjPtC+ZJaVl2VZMIeOngQ7d13oQOpG9P4t2DEGPP8hq0YIYTS5q8VZ1ChS7hFABBQAtePPF8ECN2Acc0kRCkBzWQWp5IpxsitF14C4l0kFQE6RQTMh4Ju7FM4Aq9PiRdt8R/7Nl0KmVjB9KyamF44Pzp3ZXQ0lU8feWTfwJZMJrba09txx5R2aO/jjBq1muO6bj6VSWfuSJNo7+zYu2v+zVPdBw9Nvnm6mEiJRvTGN77B4rzj8//0LVj87//30pe+SquOr2v5wwf2PPds2yefu3mA5ah4pEc+JDTPF4NDO1v3P/Deda1NJPIUikFxoiiFokqYPGJRlYuqgYZBIw5QRQjRCLebsa0IwQEO12ahxXyLNhKGMJkgwpeBHwSB64euL25JQFACAu88CJDXkAR8AXdjhwa0mxh28Jujm/Z/yy5mVt2A6KdOnw0qy7u2dBVzlgEvEdfJXRSDO3tTTqliMm3vwa6O3jtXtOyHjqR6ek4fP3Hoo5/wFAop23JWLn//RfHCXzUvmPrin37rj78a1aOapMUjh9//2//yvdADwJ1fULW6CqNGEK4GQWH7NmwZuCsdSBEQRRU0CY2CMiWJCgmp5xP6h558NPCXSVTram9tlOvpeAyUg6x5PJNjcaH2wcf27+zJ1RqhFctVnDCZ6zh3efzchWuJXCFsGL4kt/U+73ZyGtCQcPxNUilgUsw0xJ8s4tdbN+HLTo7UZyrk/PCE26hZpHF4qL0rrhUSmWJrN+7Otuy9N4Wx1Ac+UBTsR6fO5bdvc8/9qGCr2uToG3/8P444avq1U8MXJkjZX6Z48NlfPvDcB9m2937bY2d44GiKSiaqKqBt2e3vf+oeKNEKIM0gWlFAEkQM/o6hvl/92KMJa61wQQBIRCFCAilhcHCGttbEU48fUkcfJJwqoB4ioviLr/OrI5OO49R9QnXr1hG0lBDvIkONQYpN60AU4AARGK9v4lVnVrDa4Cu1cHx63qmupmOstzXe3ZLu6+3G/WRte3bPVJyxU6/v6+uujTiiXK+Pjo9/9WsTs6XhqQW92PGJ3/j1lkP7+bZbvm0RMCIY58TkK0Gjbdsgtm2/ewBFIBSEQOkgUkIQEioiGp5jWogUJCSHIJHUuMF1MAIJEAWpJCUKlBCNNrlEM6CAulsLwgZ0btkW1/it6UeId4dAkIzdgYwo1vhM+JsRkCYnVanSWCnV5+fn/KCebU0UirlcLo37zXo7eivba9NXqrMrAbjO7JAGw1eu6plc7+7+gx/8QO7Jh9DTeZtBwkjpesRN1/EbUAcOHLj7WpgEkc2CqKKBVJQpCUSSyCiKALi+TJiUAZIKQEShZLoGgBApVCilopRC8TCColRxeD4Wl+YJlYbJPaGcenmzLkwCEcBv5tpu68IEEElmsU34r6mJ5bojy6WaEIJzls3ZsbimcdyHlt27c29p4dyXL7bZLVSEOpeutyS4vu99D+eePnZ79AALS4shZQ2QxUY9WSi07tp5y7rWRrMwRSBAIhABIhQNFVGKSNmMdShVzbUkCkRxnUTCo4gAyShljBFCCaWEU8qb16NWqyklhAwgAxG5t8nCJIR42xEKeOFafWNThwKcEFKIg/YmPv7iUt3zUHcCpRTjKp20DJPqxn3aiZt+7ImQZ/Nd+4VMK5Uyk4VqiLaHDmFoaCMvrzV8I51HLBFasZ7du9G39e4Z6B05NSSRBJICghAFcB2hQKRCRKFmaoDSGFvv/2jGRbyJm0CCUIDAaXh+FArP081EOpO8Tfh1s1inLgMhWEzbXCmjHAaNEE8VrWfyG33VTAm1ahCqWMMNG55Lo8CyuW2yVCaN+9Vae9uzxd7hc6d8v65iLCQusgGWTtVFw4XQIsQ0ixsJWFkYbyuZKd+puZ6UqlFtNAjr37XnpuPfgQ7EoEiTuhQBAVWESsLtWMaTsCg4A4PBuBGKIAp9wzCiKCKUcqZL0FAgFKAcoQAhqNbheqFlJyQ0KaFu2Q8kIaQUN412GkI0QhBsKCdvwjlj41d7rM9uJv8qleG6KmDEbYQiklIJTWOU4f61xWst7Rz9NEgtBmadp/WWvLVU/v5SPVBpy1dCkzSmWXFqW4aVyLcg2S2jPsozAMLVmSiSlWqjslxKJFNs34P3BEB0XQSiAECoAiQYVdrCQuWllycM6pOokc+ahw5s05muMX2tYK+oBK3U/PGJuaXVWig1MDsQ3HGjsbG5VK4QsxN+IGtO47akJ28GCAUczesfKbDVYEPhc1zHsc3L0I0GokgKBd+PDCMmIp1wLYjkyvJ8Ll+4L/mnv1SZbqN2lPXzbbl8T0vn4R1IURqFdVplIoRAEMqlekBKJFtPZ1tW9UICyADQi1sH+hbmqWHoya07d73XDJsEkCJQGr1hFRVhABWgo+MLo3/yv0wWyqDS15U/9MC/FgocAKGMGoRBSMTixl9+/VvnLo4qakliCaJJaKlMQUled0IFYuq3iUeEvAmAms90JfBg8sfLBpQiiiLHdZhmgPBYPH38+Lnf+JVfuk/RA2DsbK28vHCp3rK9c9eh3SjEwVw/coSopRO2s7ISy6QsIxHV3KDk1pan/GqYcmLpfg0esFLNHjyWvV0r7Ob7gRRvVsQUgSLXPQKRikJJqbhSgVKGWicGIkHWf1CAVJaApWBJmFLpEkyBSzCAgtwmopcCEvLmAJKIxI/dl3AN1Wop1AxKOWdm0GCgFtdS9yN0RkdBCFZKUjGezG7bvxOdaeihUvrM2HxXdxtlWl8xXadiZnbWIFp3W6cgtfqqqCxNJY0EFfapV0+L8NXWYq/UY72PHb1HDLTmwm7U9taeJKBQSqlIKg9KUwpvU5XVGp4E0QQMBUPBkNAVmFwfk0h6e+UmhNRuBqCfSEHejqPqLATxOGOMspjr04CblXI0Nlnp675fYPTyl79Unp5T9UZ7OgO/UixuyxY7yK4daCwvVpecav3b3zx1YP+evfv3mJn45Wsj33n5bGdroe3YjpTZKo2KCv0zb77cFu9KmlRLplZKq9Pl6VsA6E5qYUSBrpVUpVqnoiaRKHAFTa7jUpL1gj2BJM3kmSpwSbggXNyAniaLgcjbiEASUtzs+In0Iw4VoFTd9apSRpxZUsY8Vzt1alSq+2VX0dKli6Nj185fvHDpysWRa8OjE+PxQp5k0/C8hVKtHqDSwOxifezaMkSCyaRfZY2SFJ4eRnoEy06mYjGCsLQ8f802aCqVqHuu4OyeuTAAREkAIBGIkkSuN7fSJhIkoZJAEUjyFjbJdZVv/VcSVIIqcuOYTf5Rt2Y/9R5XKKAWip9AR2ImZ87MLrsgXIvZZqvw/FdeufChXzry45jLj2Bscn1atu945BfeJx58QAujlKatrk6YHToGEm5p1owjn27L5ePPfOzD7a2t3DbBWF9Hx9NHjxXb2+IJs7K8GjeJ5yzv3NF54fj4hYsnIzpbEvbgkaP3EEByTc1Z0xKlJLS5olLRG9Zf3rD5MAIByPWJmqQlFbnhYkiyVlq4lRkMQop3k40ClMRoJQB+7NtUt23temP0shOZGm+1rBwLnZHh2avDM9v6N93I8aNh59rkzOx8yYglY3ZSM+KGnpBCLS+vLi3Mjly+cPn88cHe1i/85qePPbCJHqMdx96qd+bOv4RUGTEsjc9T3QpFVHe9Yk9fMp6ICBNOkNASu/p3JVN2RESDSMvUfFnTTSuMnGyuI9M5VJKJA0ffdy8ZiEIAUpAARCjabAySUHqzARFEKSIVEetUEYGEIADWyvJyTbaWikgJCgjajLQRQUlySwYqaIzh5t5KAVdK4UlHHPgx7w7bd2DrV54/G4QepCLS0LSU31h8/jsvbdvxkaGujfZgnJqonzx78cSpc8Pjs1ayM5UttrZ05lqsXJZBYb6kxqedUxcnOwoDR588uin0vFN34Eq3NT1yrwyPUUE5jxHDtDK55XIg/VDUGgnChd8gOgl1TDuLjFWGsv7C0gTjcmhbf/zA0T5j4F5mYSBKQlJEzb6y5k5TsZ7ggyhB5XrL9I2eRzbXWAKKQK5pj1AAFJFEsY3VsX4hw+I6qwaC3wxAlQD/7qz7pw/GW36cN2gYGshbPNDgRa6DkIPFidX6dz8899xnfnloYwt9bcm5evXCzMxoOsUeObw7ne0NpVn3ebXSqDia58mJ8bmx4alSyT38wK7O9sLpMScVC/pas3fwbgPTSubi5fpiEJEYs4rZ9v6BIZ5uQSgRTyIQkAxCIHBgkuz82OzcmUrlzUQmkcqnx2dnd3Uuout2AFKbLOMoSKlAFGGCScKa20wlmAKVgCDNeJmsxdqEA5Bgch1AAlpT/oFqxtqUQqpmi6OSitzGi+3Oa9+bEjetflJgvBY++8Pqc73mvjQsMPnewXic4cAdiUa70vjC55/7N7/zZU238tktKwuLdqzoB7X/8KW/if/BZ/db77EN5wbrb4n3P3Vo5EDncmm1UXOiWq3mOPV46+XJysRcLZSJmbna4qLjOW4xk44TkaTRnaEHgEfskh81XMKszEvPv2xFfEt7P9zIombcSCihGDd9qVZ91yGyKgPHvfKxZ1sbXi1gdjUIke+5vbSx6RoYAQWIoqQZOSsqKWtKOIrgenDTzNTI2hTyutyn1sUeSagCJQrre1WlJJTejooO5dnLE0K+x9IzoByI/34h4BSE3aqUwYCOhP7pPvNTxU2HTT0F65EDAydPr1RLhgCXzLAynRevTX3xy9/7nd96vHdjg8Q1rmJmiimlNfT21jIKYwtjMzMzNc9cXFipVCq6FDpVcYPlkuYd8yUzTL82l7HM1kR8YWz84g8m+rOvdCXaWmNZDbrTcF0lpWlUlZirrjqhrydLTx55YteevjNny1a8B1b77QFENtsHoeiNGRYAqpSClKSZqjfTLIBcd2WymZM1e6eJklQpQEJJCUnV5nSEXyvqf57UJ8uB/h7IJ4DWTOfEbSSlkeXgd1eDC4Ox39u2uSR8oCf3wfc/dPHC/1lcqba0DroNJ5JBRLQXXzh5YOuWLzzRuZFBCsm2QvJt/YffP5kIgsB1wyB0oqjBpMs1FYsZqcydAyhl6zOjF1NpdGj+tozlWtiaSvVn2gyppeMZP+bWQpcndZcHV2fm6srr2dWbjCW5mZuYHn74kSc3KAxeZ4cNnRVZw9A7lg3N/YVqDSLNx820u7mftSkJMSVJM5KGoJAgkqz1GIFuDMmf2mJe78e4xXFb0zlCiW9e8/7v3OZUyO1ZHDs88NjRQaZmA2+Sk0rQqKXtbNiwv/Ll5799rj7RuJPFTibTLS3ZTCZmWUTTJZTHuNQNiruweHIgrSnirLQa9JFdWw7vbOvOxDJalGIip4stxdSWgp033BQpJbHSHmts78319mwZGVt1PK2tvW9DACJrK7qhc9NPSdrMp27UmhVdl3ianou8dRshCUiiwFSz1VVS1ewAkQSiqQBtloSOdMYadSi51uR6xwcF3EB8Z8Hd7MLsLuBzn3zikQfbG+VLCBcsTbpVj8nE8oL2h//1pRdeqt3BYsfiyWTcFpEbuKuM1EFdSj1CI9ydtbUVDUWJzrYO9nR3ZN36fKk8Ho97nR3G4M6WbVuySdvjWCnm2K4tLTu39KyWo5PnZweGHrRzG0oK+Jr4u/Gz4pKAEkA1XZUka3cKolStbfppQu0tDKl1/RpgSlEloSK5Rjxr4Ta5yZ7397SvHrAer4Sjq4GlbboR8R3htBCo3ZGM/fjubPWfPduof+X0hREr3tMIjVi8NZZOn7+0QunJan3/4YeSj/ZvRh+hqFWX52dGyqtTVFYpXAVPKv8uAYREezg3wyRJd/Y8+NjDo5mkM7cQy/Mo5SAel8QLTZco2lHs6OjvTbd2vnhuOpLZQ0c/gNjghgBE1Sa+Pkno22+DKa9n6RSQkHRdpiHXd0CD3rjIRDX5S0GtJ19rWvUNGN2A/dGDsc+/LqaWhWXcBX4EbnK/tQ3bs0e3rC6//2vfePnqtbIf1MOAlctBKhG/eHV0fnHiykj/xGN7D+5NbN3A9sClALMzU5Njl1cWJwJ3xeAuVE3KhkJwtwAyH9YKge+UfLFobx3sSdKxi6dqIki0ipVYOTCUxYsF0mOnclosNVZWwig+8MDhROGhDQ7PN39bizXQNL0VEElyPZBaJ55m9ZQ014beUMtYL4spEKIIJK7Dl9wYaW1AEY6zrx5K/ovT9bMzgcbB7kg+FAAFBuJ3Hmd8/sMPt7Tmvvg//+qV45ejwA88m8hWxtiqoG8ePz8+Nvrals4jD+3es7t1V8utxhmdwtXLF2Ynh5Vf46hHXonDJWh2A9+tsdbHWGpkdOkHMpSpYkdHnKZjrF4tVf0A1Ep39oDGQ6VNzq2eGxl77EOf3fHQMxsffLNZmGxubSZr9YemnCiVAhilnMnI5YxJiSACAXS6xluEIAxBdBBCKKWRCCnXlSJAtEZCShK1CQYCMBBn3340+fuj7p9eqlXr0Chl2ub+DqIIg63s3w/d1X2phgayX/itjzx6bOzF7x9/7fUrQUPKyKhJVeJ8dT6+MBWePbFqm1Zvd1dbW0tXZ3suA8YhAigBMDkzdfbV1//+zIUrbiCJiKLGimXKzq7i4QNHs0lLqgD3xIzB3gP24tSp2emLjsui1Uo8ZiRTeQJzfr48OTNKWGLrjv0ff+Iz+d7DmxqY79y5fRMpPKERYQCokhSKrfOHBPXDgDHGmeDKb0nqmg4iEETQdQAQBKECB4odnZLFCI+Fgkrw64RF3tJoNmf/asD6eLv1X645P5oP58vXd/3IDbAo3dPB/vCB5N1q04WWoUJLoZDs7kw9/ODOv/u7k7WKXC3XPVfUa3XfdVYWVwjRRkamdV3XDU3KKAgbIvIJUTp3uZoXopaIJ7Zt7S8UO1LpWCZj5TNmtTzTXmwxTQP3yGytvbe/3Uzm3fJQ4JaX5qYXGl7oR1am/9DWx9s6ejKZNmYNbHZYTjfjwkTz5lLNjc0qasZPCpQSGIYBSEoIgVCE+iEsDYwiuN4YxCEA3bC55obRDZhcC5TuvCGjz8J/2hnHTrywHJyvYDkU1fBWzdUKiFHsz1qfLt6zwtmejjbbDHo6E4cPds3OLg+PTk9OLi0s1kqlarm8VKv7C7M13dDshJlKx1vaU+2FXKGYz6bs/sJTSTuuaXoQRFJGlqFzTSrp7hzcm4gb8fg9vmtfIX8IeQDYuhsAouoET/bczYBcSnlDLHybc7OQDoBIqSCafKEgFaimaRKEEsWIHgp1bVKmbWoaaHieZEyCS0UA+BEo15UQUsjmXX6vB+CbioFuak/n9afz+GlZeyqeMLBkiqSdLbSYzu6eMGKR0oXgoYBpx4SKpApBAsYjrimuEaZoWGmYpmFoTEekM5bNJTKpGGPoLPwkOtTuEj0AuKE3N+WRjZwVIAkFJFOEqbUiqCBUgq2sroJyzeAaFavLq3/7/F3yE/wAAAFQSURBVPORW/O9upmMR0I2/IAyQzcSU1NzsViGabpxQ/vzDdGPws+s2TxjxzNt8TX55NriYtVx6w3PD4VQUdUpgQjKpK5BNyhnEiRCxFu7+kxmd+Zzxv25PfG2AAqCzSkNqtkPJKWElEoBEIQJ8EKh4IeCcsKoZFRWHY9EwvVDt+oKQv0wskxL+sKOp1LprBTKdf0bymsA1GaD6Pvc+ltb0QoAoRRe6JUaZQVBoRiFzhmnjBNKqW7rmZ/pj8k524QOst5YSDghFCCqGQ8RSkgQeDWnIRQMkyGSUgbphKWZhhMGum5QTVqxlO8HhGsNzy+Xq9lUupnSA4woBdIUBf4B/rMVjTLNiCWMGP4h2iZ3Zaw18KxtUSeQCnRNbRZSEWhcSyRiRJi1ymIUyYbfYKYlCfWCCNRzvYAzMxaLvV37VTfkRve7SYQAKH7+T2HW7P8DbT4O5K64zuYAAAAASUVORK5CYII=);
+}
+
+/* null display to start with */
+.page {
+    display: none;
+}
+.header-menu-name-username {
+    display: none;
+}
+.header-menu-command-logout {
+    display: none;
+}
+.header-menu-bar-submit-spacer {
+    display: none;
+}
+.header-menu-bar-submit {
+    display: none;
+}
+</style>
+
+</head>
+
+<body class="gradient-bg">
+
+<div class="site">
+    <div class="header">
+        <div id="header-logo" class="header-logo" alt="logo"></div>
+        <div class="header-title">
+            <span class="link" id="header-title-link">startupbidder</span>
+        </div>
+        <div class="header-menu">
+            <div class="header-menu-name">
+                <span class="header-menu-name-username link" id="header-menu-name-username"></span>
+            </div>
+            <div class="header-menu-command">
+                <span class="header-menu-command-login link" id="header-menu-command-login">(login)</span>
+                <span class="header-menu-command-logout link" id="header-menu-command-logout">(logout)</span>
+            </div>
+            <div class="header-menu-bar">
+                <span class="link" id="header-menu-bar-top">top</span>
+                <span> | </span>
+                <span class="link" id="header-menu-bar-active">active</span>
+                <span> | </span>
+                <span class="link" id="header-menu-bar-popular">popular</span>
+                <span> | </span>
+                <span class="link" id="header-menu-bar-discussed">discussed</span>
+                <span> | </span>
+                <span class="link" id="header-menu-bar-latest">latest</span>
+                <span> | </span>
+                <span class="link" id="header-menu-bar-faq">faq</span>
+                <span class="header-menu-bar-submit-spacer" id="header-menu-bar-submit-spacer"> | </span>
+                <span class="header-menu-bar-submit link" id="header-menu-bar-submit">submit</span>
+            </div>
+        </div>
+    </div>
+    <div id="homepage" class="content page">
+        <div class="content-search">
+            <input id="content-search-keywords" name="keywords" type="text" size="30"/>
+            <button id="content-search-submit">search</button>
+        </div>
+        <div class="content-results">
+            <div id="home-content-results-list" class="content-results-list"></div>
+            <div class="content-results-footer">
+                <a href="?page=home&amp;search_type=fill_in_type&amp;start=index_num_plus_chunk_size">more results</a>
+            </div>
+            <div class="content-results-list-item-clear"></div>
+        </div>
+    </div>
+
+
+    <div id="commentspage" class="content page">
+        <div class="content-header">
+            <div class="content-header-title">
+                <span class="link" id="comments-listing-title"></span>
+                <span class="content-header-title-small link" id="comments-listing-author"></span>
+            </div>
+        </div>
+        <form action="#" method="post">
+        <div class="content-comment">
+                <div class="content-comment-label">your comment:</div>
+                <input name="page" type="hidden" value="comments"/>
+                <textarea class="content-comment-textarea" name="comment" cols="55" rows="6" wrap="soft"></textarea>
+                <br/>
+                <input type="submit" value="save"/>
+        </div>
+        </form>
+        <div class="content-results">
+            <div class="content-results-list" id="comments-content-results-list">
+                <div class="content-results-list-item">
+            </div>
+            <div class="content-results-footer">
+                <a href="?page=home&amp;search_type=fill_in_type&amp;start=index_num_plus_chunk_size">more results</a>
+            </div>
+            <div class="content-results-list-item-clear"></div>
+        </div>
+    </div>
+    
+    <div id="profilepage" class="content page">
+        <form action="#" method="post">
+            <input name="page" type="hidden" value="profile"/>
+
+            <div class="content-form">
+
+                <div class="content-form-maininputline"><input name="name" type="text" size="40" value="John Arley Burns"/></div>
+                <div class="content-form-clear"></div>
+
+                <div class="content-form-line">is the </div>
+                <div class="content-form-inputline"><input name="title" type="text" size="10" value="CEO"/></div>
+                <div class="content-form-line">at</div>
+                <div class="content-form-inputline"><input name="organization" type="text" size="20" value="Steinwasser, Inc."/></div>
+                <div class="content-form-clear"></div>
+
+                <div class="content-form-line">Reachable on email at</div>
+                <div class="content-form-clear"></div>
+                <div class="content-form-inputline"><input name="email" type="text" size="40" value="johnarleyburns@gmail.com"/></div>
+                <div class="content-form-clear"></div>
+
+                <div class="content-form-label">on facebook at</div>
+                <div class="content-form-input"><input name="facebook" type="text" size="20" value="johnarleyburns"/></div>
+                <div class="content-form-clear"></div>
+
+                <div class="content-form-label">on twitter at</div>
+                <div class="content-form-input"><input name="twitter" type="text" size="20" value="jarleyburns"/></div>
+                <div class="content-form-clear"></div>
+
+                <div class="content-form-label">on linkedin at</div>
+                <div class="content-form-input"><input name="linkedin" type="text" size="20" value=""/></div>
+                <div class="content-form-clear"></div>
+
+                <div class="content-form-line">Investor</div>
+                <div class="content-form-inputline"><input name="investor" type="checkbox" checked="checked"/></div>
+                <div class="content-form-clear"></div>
+                
+                <div class="content-form-clear"></div>
+                <div class="content-form-line">Member since 15 June 2011</div>
+                <div class="content-form-clear"></div>
+
+                <div class="content-form-line">Linked via OpenID johnarleyburns</div>
+                <div class="content-form-clear"></div>
+
+                <div class="content-form-inputline"><input name="submit" type="submit" value="save"/></div>
+                <div class="content-form-clear"></div>
+
+                <div class="content-form-linkline">
+                    <a href="?page=home&amp;search_type=lister&amp;lister_id=johnarleyburns">3 listings</a>  |
+                    <a href="?page=home&amp;search_type=bidder&amp;bidder_id=johnarleyburns">5 bids</a>  |
+                    <a href="?page=comments&amp;commenter_id=johnarleyburns">12 comments</a>
+                </div>
+                <div class="content-form-clear"></div>
+
+                <div class="content-form-linkline">
+                    <a href="?page=profile&amp;remove_id=johnarleyburns">(remove account)</a>
+                </div>
+                <div class="content-form-clear"></div>
+            </div>
+        </form>
+    </div>
+    
+    <div id="faqpage" class="content page">
+        <div class="content-header">
+            <div class="content-header-title">
+                FAQ - Frequently Asked Questions
+            </div>
+        </div>
+        <div class="content-results">
+            <div class="content-results-list">
+                <div class="content-results-list-item">
+                    <div class="content-results-list-item-num">1.</div>
+                    <div class="content-results-list-item-desc">
+                        <div class="content-results-list-item-desc-title">
+                            What is Startupbidder?
+                        </div>
+                        <div class="content-results-list-item-desc-detail">
+                            A crowdsourced startup company information site. On it you can place your business plan,
+                            comment on business plans, up or down vote a business plan, and if you're an investor,
+                            bid for a stake in the company!
+                        </div>
+                    </div>
+                </div>
+                <div class="content-results-list-item-spacer">&nbsp;</div>
+                <div class="content-results-list-item">
+                    <div class="content-results-list-item-num">2.</div>
+                    <div class="content-results-list-item-desc">
+                        <div class="content-results-list-item-desc-title">
+                            Who runs Startupbidder?
+                        </div>
+                        <div class="content-results-list-item-desc-detail">
+                            Two guys who wanted to bring more visibility to the otherwise opaque world of
+                            startup business plan valuation.  That, and they were bored.
+                        </div>
+                    </div>
+                </div>
+                <div class="content-results-list-item-spacer">&nbsp;</div>
+                <div class="content-results-list-item">
+                    <div class="content-results-list-item-num">3.</div>
+                    <div class="content-results-list-item-desc">
+                        <div class="content-results-list-item-desc-title">
+                            How can we reach you?
+                        </div>
+                        <div class="content-results-list-item-desc-detail">
+                            Try admin@startupbidder.com, or +49 162.179.2450 by phone.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="listingpage" class="content page">
+       <div class="content-form">
+            <form action="#" method="post" enctype="multipart/form-data">
+                <input name="page" type="hidden" value="listing"/>
+
+                <div class="content-form-maininputline"><input name="title" type="text" size="40" value="MisLead: social networking for misanthropes"/></div>
+                <div class="content-form-line">by <a href="?page=profile&amp;account_id=jpfowler">JP Fowler</a></div>
+                <div class="content-form-clear"></div>
+
+                <div class="content-form-line">Listed on 17 June 2011, closing on</div>
+                <div class="content-form-inputline"><input name="closing_date" type="text" size="10" maxlength="10" value="2011-07-31"/></div>
+                <div class="content-form-clear"></div>
+
+                <div class="content-form-line">Opening bid at $</div>
+                <div class="content-form-inputline"><input name="opening_bid_amt" type="text" size="9" maxlength="9" value="30,000"/></div>
+                <div class="content-form-line">for</div>
+                <div class="content-form-inputline"><input name="opening_bid_pct" type="text" size="2" maxlength="2" value="10"/></div>
+                <div class="content-form-line">% equity</div>
+                <div class="content-form-clear"></div>
+
+                <div class="content-form-line">Median valuation is $1.2m after <a href="?page=bidhistory&amp;listing_id=7">7 bids</a></div>
+                <div class="content-form-clear"></div>
+
+                <div class="content-form-line">Executive Summary</div>
+                <div class="content-form-clear"></div>
+                <div class="content-form-inputline">
+                    <textarea class="content-form-inputline-textarea" name="executive_summary" rows="10" cols="50" wrap="soft">
+MisLead is a revolution in social networking.  Previously, social networking has been for people with friends, those outgoing on the internet, those who don't have trouble communicating online.  There is an untapped market in those who not only have difficulty making social connections, but frequently dislike social situations and social crowds.  With MisLead, you are only allowed a maximum of five friends at any one time.  However, you are more intimately connected with them, including real-time location updates, frequent SMS on activities, and heavy linking into any goings-on for connected individuals in a plethora of other networks.
+                    </textarea>
+                </div>
+                <div class="content-form-clear"></div>
+
+                <div class="content-form-label">Business plan</div>
+                <div class="content-form-input"><input id="business_plan" name="business_plan" type="file"/></div> <!-- size="40" -->
+                <div class="content-form-clear"></div>
+
+                <div class="content-form-label">Presentation</div>
+                <div class="content-form-input"><input id="presentation" name="presentation" type="file"/></div> <!-- size="40" -->
+                <div class="content-form-clear"></div>
+                
+                <div class="content-form-inputline"><input name="submit" type="submit" value="save"/></div>
+                <div class="content-form-clear"></div>
+
+                <div class="content-form-linkline"><a href="?page=comments&amp;commenter_id=johnarleyburns">12 comments</a></div>
+                <div class="content-form-clear"></div>
+
+                <div class="content-form-linkline"><a href="?page=listing&amp;withdraw_id=7">(withdraw listing)</a></div>
+                <div class="content-form-clear"></div>
+            </form>
+        </div>
+    </div>
+    
+    <div id="bidhistorypage" class="content page">
+        <div class="content-header">
+            <div class="content-header-title">
+                <a href="?page=listing&amp;listing_id=7">MisLead: social networking for misanthropes</a>
+                by <a href="?page=profile&amp;account_id=jpfowler">JP Fowler</a>
+            </div>
+        </div>
+        <div class="content-form">
+            <div class="content-form-line">Listed on 17 June 2011, closing on 31 July 2011</div>
+            <div class="content-form-clear"></div>
+
+            <div class="content-form-line-emphasized"><a href="?page=bidding&amp;listing=7">Make a bid</a></div>
+            <div class="content-form-clear"></div>
+
+            <div class="content-form-line">Median valuation is $1.2m after 7 bids:</div>
+            <div class="content-form-clear"></div>
+        </div>
+        <div class="content-results">
+            <div class="content-results-list">
+                <div class="content-results-list-item">
+                    <div class="content-results-list-item-num">1.</div>
+                    <div class="content-results-list-item-desc">
+                        <div class="content-results-list-item-desc-title">
+                            Valued at $375,000 on 19 June 2011 by <a href="?page=profile&amp;account_id=dragonsden">Dragon's Den, LLC</a>
+                        </div>
+                        <div class="content-results-list-item-desc-detail">
+                            Bid $150,000 for 40% equity with Common Stock
+                        </div>
+                    </div>
+                </div>
+                <div class="content-results-list-item-spacer">&nbsp;</div>
+                <div class="content-results-list-item">
+                    <div class="content-results-list-item-num">2.</div>
+                    <div class="content-results-list-item-desc">
+                        <div class="content-results-list-item-desc-title">
+                            Valued at $500,000 on 22 June 2011 by <a href="?page=profile&amp;account_id=nitterinv">Nittner Investments, LP</a>
+                        </div>
+                        <div class="content-results-list-item-desc-detail">
+                            Bid $50,000 for 10% equity with a Convertible Note @ 8%
+                            <a href="?page=bidhistory&amp;withdraw_bid_id=28">(withdraw)</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="biddingpage" class="content page">
+        <div class="content-header">
+            <div class="content-header-title">
+                <a href="?page=listing&amp;listing_id=7">MisLead: social networking for misanthropes</a>
+                by <a href="?page=profile&amp;account_id=jpfowler">JP Fowler</a>
+            </div>
+        </div>
+        <div class="content-form">
+            <form action="#" method="post" enctype="multipart/form-data">
+                <input name="page" type="hidden" value="listing"/>
+
+                <div class="content-form-line">Listed on 17 June 2011, closing on</div>
+                <div class="content-form-inputline"><input name="closing_date" type="text" size="10" maxlength="10" value="2011-07-31"/></div>
+                <div class="content-form-clear"></div>
+
+                <div class="content-form-line">Median valuation is $1.2m after <a href="?page=bidhistory&amp;listing_id=7">7 bids</a></div>
+                <div class="content-form-clear"></div>
+
+                <div class="content-form-line">Place bid of $</div>
+                <div class="content-form-inputline"><input name="bid_amt" type="text" size="9" maxlength="9" value="30,000"/></div>
+                <div class="content-form-line">for</div>
+                <div class="content-form-inputline"><input name="bid_pct" type="text" size="2" maxlength="2" value="10"/></div>
+                <div class="content-form-line">% equity (fully diluted)</div>
+                <div class="content-form-clear"></div>
+
+                <div class="content-form-line">As</div>
+                <div class="content-form-line">
+                    <select name="bid_type">
+                        <option value="common">Common Stock</option>
+                        <option value="preferred">Preferred Stock</option>
+                        <option value="note">Convertible Note</option>
+                    </select>
+                </div>
+                <div class="content-form-line">@</div>
+                <div class="content-form-inputline"><input name="bid_rate" type="text" size="2" maxlength="2" value="10"/></div>
+                <div class="content-form-line">% interest</div>
+                <div class="content-form-clear"></div>
+
+                <div class="content-form-line">Your calculated valuation is $1.35m</div>
+                <div class="content-form-clear"></div>
+
+                <div class="content-form-inputline"><input name="submit" type="submit" value="Place Bid"/></div>
+                <div class="content-form-clear"></div>
+            </form>
+        </div>
+    </div>
+
+    <div id="loginpage" class="content page">
+        <div class="content-header">
+            <div class="content-header-title">
+                Sign in via:
+            </div>
+        </div>
+        <div class="content-form">
+            <div class="content-form-line">
+                <a href="?page=profile&amp;account_id=11"><div class="content-form-login content-form-login-google"></div>Google</a>
+            </div>
+            <div class="content-form-clear"></div>
+            <div class="content-form-line">
+                <a href="?page=profile&amp;account_id=11"><div class="content-form-login content-form-login-yahoo"></div>Yahoo</a>
+            </div>
+        </div>
+    </div>
+    
+</div>
+
+
+</body>
+
+</html>
