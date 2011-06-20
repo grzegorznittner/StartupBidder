@@ -6,9 +6,15 @@
 
 Folder contains StartupBidder project files.
 
-If you're using Eclipse (Google Plugin required)
-then you can directly import project and run it.
+If you're using Eclipse (Google Plugin required) then you can directly import project and run it.
 
-Later I'm going to provide ant script which will
-allow for building and running project in dev mode.
+How to upload war to appengine:
+1. Set APPENGINE_HOME variable to your AppEngine SDK location
+2. Set APPENGINE_EMAIL to your AppEngine user name
+3. First upload has to be manual to store your credentials:
+   cd <<your startupbidder project>>
+   $APPENGINE_HOME/bin/appcfg.sh --sdk_root=$APPENGINE_HOME --email=$APPENGINE_EMAIL update war
+   
+   %APPENGINE_HOME%/bin/appcfg.cmd --sdk_root=%APPENGINE_HOME% --email=%APPENGINE_EMAIL% update war
+4. After first successful usage of appcfg you can use ant script to upload application
 
