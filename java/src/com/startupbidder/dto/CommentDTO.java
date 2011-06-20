@@ -2,10 +2,7 @@ package com.startupbidder.dto;
 
 import java.util.Date;
 
-import com.google.appengine.api.datastore.Key;
-
-public class CommentDTO {
-	private Key    id;
+public class CommentDTO extends AbstractDTO {
 	private String businessPlan;
 	private String user;
 	private String comment;
@@ -14,12 +11,8 @@ public class CommentDTO {
 	public CommentDTO() {
 	}
 
-	public Key getId() {
-		return id;
-	}
-
-	public void setId(Key id) {
-		this.id = id;
+	public String getKind() {
+		return "Comment";
 	}
 
 	public String getBusinessPlan() {

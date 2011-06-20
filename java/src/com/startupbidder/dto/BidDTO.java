@@ -2,12 +2,9 @@ package com.startupbidder.dto;
 
 import java.util.Date;
 
-import com.google.appengine.api.datastore.Key;
-
-public class BidDTO {
+public class BidDTO extends AbstractDTO {
 	public enum FundType {SYNDICATE, SOLE_INVESTOR};
 	
-	private Key id;
 	private String user;
 	private String businessPlan;
 	private Date   placed;
@@ -17,13 +14,9 @@ public class BidDTO {
 	
 	public BidDTO() {
 	}
-
-	public Key getId() {
-		return id;
-	}
-
-	public void setId(Key id) {
-		this.id = id;
+	
+	public String getKind() {
+		return "Bid";
 	}
 
 	public String getUser() {

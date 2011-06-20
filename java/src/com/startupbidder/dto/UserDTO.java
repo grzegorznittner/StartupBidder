@@ -2,10 +2,7 @@ package com.startupbidder.dto;
 
 import java.util.Date;
 
-import com.google.appengine.api.datastore.Key;
-
-public class UserDTO {
-	private Key id;
+public class UserDTO extends AbstractDTO {
 	private String nickname;
 	private String firstName;
 	private String lastName;
@@ -23,12 +20,10 @@ public class UserDTO {
 	public UserDTO() {
 	}
 	
-	public Key getId() {
-		return id;
+	public String getKind() {
+		return "User";
 	}
-	public void setId(Key id) {
-		this.id = id;
-	}
+
 	public String getNickname() {
 		return nickname;
 	}

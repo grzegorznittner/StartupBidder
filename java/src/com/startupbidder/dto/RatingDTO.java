@@ -1,9 +1,7 @@
 package com.startupbidder.dto;
 
-import com.google.appengine.api.datastore.Key;
 
-public class RatingDTO {
-	private Key id;
+public class RatingDTO extends AbstractDTO {
 	private String businessPlan;
 	private String user;
 	private int value;
@@ -11,12 +9,8 @@ public class RatingDTO {
 	public RatingDTO() {
 	}
 
-	public Key getId() {
-		return id;
-	}
-
-	public void setId(Key id) {
-		this.id = id;
+	public String getKind() {
+		return "Rating";
 	}
 
 	public String getBusinessPlan() {

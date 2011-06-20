@@ -2,13 +2,10 @@ package com.startupbidder.dto;
 
 import java.util.Date;
 
-import com.google.appengine.api.datastore.Key;
-
-public class BusinessPlanDTO {
+public class BusinessPlanDTO extends AbstractDTO {
 
 	public enum State {CREATED, ACTIVE, CLOSED, WITHDRAWN};
 	
-	private Key   id;
 	private String name;
 	private int   startingValuation;
 	private Date  startingValuationDate;
@@ -23,14 +20,10 @@ public class BusinessPlanDTO {
 	public BusinessPlanDTO() {
 	}
 
-	public Key getId() {
-		return id;
+	public String getKind() {
+		return "BusinessPlan";
 	}
 
-	public void setId(Key id) {
-		this.id = id;
-	}
-	
 	public String getName() {
 		return name;
 	}

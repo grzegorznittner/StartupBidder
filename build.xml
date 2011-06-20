@@ -1,10 +1,31 @@
-<project>
+<project name="StartupBidder.com">
   <property environment="env"/>
   <import file="${env.APPENGINE_HOME}/config/user/ant-macros.xml" />
 	
   <target name="check-appengine-home" unless="env.APPENGINE_HOME">
-  	<echo message="Set \'APPENGINE_HOME\' environment variable to folder where you installed AppEngine SDK"/> 
+  	<echo message="Set \'APPENGINE_HOME\' environment variable to folder where you installed AppEngine SDK."/> 
+  	<echo message="Set \'APPENGINE_EMAIL\' environment variable to email address of AppEngine adminstator of your application."/> 
+  	<echo message="Set \'http_proxy\' and \'https_proxy\' environment variables if you use proxy to connect to appengine website."/> 
   </target>
+
+  <scriptdef name="extract_host_and_port" language="javascript">
+    <attribute name="proxy" />
+    <attribute name="host_property" />
+    <attribute name="port_property" />
+	 <![CDATA[
+	   var proxy = attributes.get("proxy");
+  	   var host_start = proxy.indexOf("//");
+  	   var last_colon = proxy.lastIndexOf(":");
+  	   var host = "";
+	   var port = "";
+  	   if (last_colon != -1 && host_start != -1) {
+  	      host = proxy.substring(host_start + 2, last_colon);
+  	      port = proxy.substring(last_colon + 1);
+  	   }
+	   project.setProperty(attributes.get("host_property"), host);
+  	   project.setProperty(attributes.get("port_property"), port);
+	 ]]>
+  </scriptdef>
 
   <path id="project.classpath">
     <pathelement path="war/WEB-INF/classes" />
@@ -26,7 +47,7 @@
     </copy>
   </target>
   
-  <target name="compile" depends="copyjars"
+  <target name="compile" depends="check-appengine-home, copyjars"
       description="Compiles Java source and copies other source files to the WAR.">
     <mkdir dir="war/WEB-INF/classes" />
     <copy todir="war/WEB-INF/classes">
@@ -46,19 +67,64 @@
     <enhance_war war="war" />
   </target>
   
-  <target name="runserver" depends="datanucleusenhance"
-      description="Starts the development server.">
-    <dev_appserver war="war" port="7777" >
+  <target name="runserver" depends="datanucleusenhance" description="Starts the development server.">
+  	<extract_host_and_port proxy="${env.http_proxy}" host_property="http_proxy_host" port_property="http_proxy_port"/>
+  	<extract_host_and_port proxy="${env.https_proxy}" host_property="https_proxy_host" port_property="https_proxy_port"/>
+  	<dev_appserver war="war" port="7777" >
       <options>
-        <arg value="--jvm_flag=-Xdebug"/>
-        <arg value="--jvm_flag=-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=7778"/>
-        <arg value="--jvm_flag=-Dhttp.proxyHost=localhost"/>
-        <arg value="--jvm_flag=-Dhttp.proxyPort=11111"/>
-        <arg value="--jvm_flag=-Dhttps.proxyHost=localhost"/>
-        <arg value="--jvm_flag=-Dhttps.proxyPort=11111"/>
+        <!-- arg value="- -jvm_flag=-Xdebug"/>
+        <arg value="- -jvm_flag=-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=7778"/ -->
+        <arg value="--jvm_flag=-Dhttp.proxyHost=${http_proxy_host}"/>
+        <arg value="--jvm_flag=-Dhttp.proxyPort=${http_proxy_port}"/>
+        <arg value="--jvm_flag=-Dhttps.proxyHost=${https_proxy_host}"/>
+        <arg value="--jvm_flag=-Dhttps.proxyPort=${https_proxy_port}"/>
         <arg value="--jvm_flag=-Dhttp.nonProxyHosts=local*|127*"/>         
       </options>
     </dev_appserver>
+  </target>
+
+  <target name="update" depends="datanucleusenhance" description="Uploads the application to App Engine.">
+	<appcfg action="update" war="war">
+	   <options>
+	   	  <arg value="--email=${env.APPENGINE_EMAIL}"/>
+	   	  <arg value="--proxy=${env.http_proxy}"/>
+	   	  <arg value="--proxy_https=${env.https_proxy}"/>
+	   </options>
+	</appcfg>
+  </target>
+
+  <target name="update_indexes" depends="datanucleusenhance" description="Uploads just the datastore index configuration to App Engine.">
+	<appcfg action="update_indexes" war="war">
+	   <options>
+	   	  <arg value="--email=${env.APPENGINE_EMAIL}"/>
+	   	  <arg value="--proxy=${env.http_proxy}"/>
+	   	  <arg value="--proxy_https=${env.https_proxy}"/>
+	   </options>
+	</appcfg>
+  </target>
+
+  <target name="rollback" depends="datanucleusenhance" description="Rolls back an interrupted application update.">
+	<appcfg action="rollback" war="war">
+	   <options>
+	   	  <arg value="--email=${env.APPENGINE_EMAIL}"/>
+	   	  <arg value="--proxy=${env.http_proxy}"/>
+	   	  <arg value="--proxy_https=${env.https_proxy}"/>
+	   </options>
+	</appcfg>
+  </target>
+
+  <target name="request_logs" depends="check-appengine-home" description="Downloads log data from App Engine for the application.">
+	<appcfg action="request_logs" war="war">
+	   <options>
+	   	  <arg value="--email=${env.APPENGINE_EMAIL}"/>
+	   	  <arg value="--proxy=${env.http_proxy}"/>
+	   	  <arg value="--proxy_https=${env.https_proxy}"/>
+	      <arg value="--num_days=5"/>
+	   </options>
+	   <args>
+	      <arg value="logs.txt"/>
+	   </args>
+	</appcfg>
   </target>
   
   <target name="clean" depends="check-appengine-home" description="Cleans project">
@@ -66,4 +132,11 @@
       <fileset dir="war/WEB-INF/classes"/>
     </delete>
   </target>
+
+  <target name="test_extract_host_and_port" description="Runs simple test of extract_host_and_port scriptlet">
+  	 <echo message="http_proxy = ${env.http_proxy}"/>
+	 <extract_host_and_port proxy="${env.http_proxy}" host_property="http_proxy_host" port_property="http_proxy_port"/>
+	 <echo message="${env.http_proxy}   = > ${http_proxy_host} : ${http_proxy_port}" />
+  </target>
+	
 </project>
