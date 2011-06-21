@@ -286,6 +286,12 @@ $(function(){
         self.setup = function(controller) {
             self.controller = controller;
         }
+        self.formatDate = function(yyyymmdd) {
+            var year  = yyyymmdd.substr(0,4);
+            var month = yyyymmdd.substr(4,2);
+            var day   = yyyymmdd.substr(6,2);
+            return year + '-' + month + '-' + day;
+        };
         self.addCommas = function(num) {
             var nStr = num + '';
             var x = nStr.split('.');
@@ -696,8 +702,8 @@ $(function(){
             listing.listing_id = self.controller.getManaged('util').generateGuid();
             listing.title = self.genRandomStartupName() + ': ' + self.genRandomStartupDesc();
             listing.points = Math.floor(Math.random()*100);
-            listing.median_value = 50000 * Math.floor(Math.random()*200);
-            listing.num_bids = Math.floor(Math.random()*20);
+            listing.median_valuation = 0; // we'll add later
+            listing.num_bids = 0; // we'll add later
             listing.num_comments = 0; // we'll add later
             listing.author_id = self.genRandomAuthorId();
             listing.days_to_closing = Math.floor(Math.random()*30);       
@@ -764,6 +770,48 @@ $(function(){
             comment.author_id = self.genRandomAuthorId();
             return comment;
         };
+        self.genRandomBidType = function() {
+            var bid_type;
+            var rnd = Math.floor(Math.random()*3);
+            if (rnd == 0) {
+                bid_type = 'common';
+            }
+            else if (rnd == 1) {
+                bid_type = 'preferred';
+            }
+            else {
+                bid_type = 'note';
+            }
+            return bid_type;
+        };
+        self.genRandomInterestRate = function(bid_type) {
+            var maxInterestRateMinus5 = 15;
+            return (bid_type in {preferred:1,note:1}) ? 5 + Math.floor(Math.random()*maxInterestRateMinus5) : 0;
+        };
+        self.genRandomEquityPct = function() {
+            var maxEquityPctDiv5 = 20; // 100 / 5
+            var equity_pct = Math.floor(5*Math.floor(Math.random()*maxEquityPctDiv5));
+            if (equity_pct < 5)
+                equity_pct = 5;
+            return equity_pct;
+        };
+        self.genRandomAmount = function() {
+            var maxBidAmountDiv25k = 39; // 25k + ($1m / 25k)
+            return 25000 + Math.floor(25000*Math.floor(Math.random()*maxBidAmountDiv25k));
+        };
+        self.genRandomBidForListing = function(listing_id) {
+            var bid = {};
+            bid.bid_id = self.controller.getManaged('util').generateGuid();
+            bid.listing_id = listing_id;
+            bid.bid_date = self.genRandomDate();
+            bid.author_id = self.genRandomAuthorId();
+            bid.amount = self.genRandomAmount();
+            bid.bid_type = self.genRandomBidType();
+            bid.interest_rate = self.genRandomInterestRate(bid.bid_type);
+            bid.equity_pct = self.genRandomEquityPct();
+            bid.valuation = self.controller.getManaged('bids').calculateValuation(bid.amount, bid.equity_pct);
+            return bid;
+        };
         self.genRandomCommentsForListing = function(listing_id) {
             var commentsForListing = {};
             var maxCommentsPerListing = 20;
@@ -776,6 +824,26 @@ $(function(){
             self.db.listings[listing_id].num_comments = numComments; // update db with comment count
             return commentsForListing;
         };
+        self.genRandomBidsForListing = function(listing_id) {
+            var bidsForListing = {};
+            var maxBidsPerListing = 10;
+            var numBids = Math.floor(Math.random() * maxBidsPerListing);
+            var valuations = [];
+            var bid;
+            for (var i = 0; i < numBids; i++) {
+                bid = self.genRandomBidForListing(listing_id);
+                bidsForListing[bid.bid_id] = bid;
+                valuations.push(bid.valuation);
+            }
+            valuations.sort(function(a,b){
+                return a - b;
+            });
+            var medianIdx = Math.floor(numBids / 2);
+            var medianValuation = numBids == 0 ? 0 : valuations[medianIdx];
+            self.db.listings[listing_id].num_bids = numBids; // update db with bid count
+            self.db.listings[listing_id].median_valuation = medianValuation;
+            return bidsForListing;
+        };
         self.genRandomComments = function() {
             var comments = {};
             var commentsForListing = {};
@@ -787,10 +855,22 @@ $(function(){
             }
             self.db.comments = comments;
         };
+        self.genRandomBids = function() {
+            var bids = {};
+            var bidsForListing = {};
+            for (var listing_id in self.db.listings) {
+                bidsForListing = self.genRandomBidsForListing(listing_id);
+                for (var bid_id in bidsForListing) { // add to bids list
+                    bids[bid_id] = bidsForListing[bid_id];
+                }
+            }
+            self.db.bids = bids;
+        };
         self.genRandomDb = function() {
             self.db = {};
             self.genRandomListings();
             self.genRandomComments();
+            self.genRandomBids();
         };
         self.searchListings = function(args) {
             var results = [];
@@ -820,6 +900,23 @@ $(function(){
                 comments[i].num = i + 1;
             }
             return comments;
+        };
+        self.bidsForListing = function(listing_id) {
+            var bids = [];
+            var bid;
+            for (var bid_id in self.db.bids){
+                bid = self.db.bids[bid_id];
+                if (bid.listing_id == listing_id) {
+                    bids.push(bid);
+                }
+            }
+            bids.sort(function(a,b){
+                return a.bid_date - b.bid_date;
+            });
+            for (var i = 0; i < bids.length; i++) {
+                bids[i].num = i + 1;
+            }
+            return bids;
         };
         return self;
     };
@@ -992,11 +1089,11 @@ $(function(){
                     self.controller.execute({page:'profile', profile_id:$(this).data('author_id')});
                 });           
                 $('#content-results-list-item-comments-'+j).data('listing_id',listing.listing_id).unbind().bind('click', function(){
-                    console.log('j:'+$(this).attr('id')+' page:comments listing_id:'+$(this).data('listing_id'));
                     self.controller.execute({page:'comments', listing_id:$(this).data('listing_id')});
                 }); 
                 $('#content-results-list-item-bids-'+j).data('listing_id',listing.listing_id).unbind().bind('click', function(){
-                    self.controller.execute({page:'bidhistory', listing_id:$(this).data('listing_id')});
+                    console.log('going to bids...');
+                    self.controller.execute({page:'bids', listing_id:$(this).data('listing_id')});
                 }); 
             }
         };
@@ -1018,7 +1115,7 @@ $(function(){
             resultHtml += '<span class="link" id="content-results-list-item-comments-' + i + '">';
             resultHtml += listing.num_comments + ' comment' + (listing.num_comments==1?'':'s');
             resultHtml += '</span> | ';
-            resultHtml += '$' + self.controller.getManaged('util').addCommas(listing.median_value) + ' after ';
+            resultHtml += '$' + self.controller.getManaged('util').addCommas(listing.median_valuation) + ' after ';
             resultHtml += '<span class="link" id="content-results-list-item-bids-' + i + '">';
             resultHtml += listing.num_bids + ' bid' + (listing.num_bids==1?'':'s');
             resultHtml += '</span> | ';
@@ -1032,20 +1129,21 @@ $(function(){
     };
 
     var Comments = function() {
+        var self = {};
         self.controller = null;
-        self.defaultSearchType = 'top';
         self.setup = function(controller) {
             self.controller = controller;
         }
         self.execute = function(args) {
+            console.log('execute');
             var listing_id = args['listing_id'];
-            console.log('received query for comments for listing_id:'+listing_id);
             var results = self.doQuery(listing_id);
             self.displayResults(results);
             return 'comments';
         };
         self.doQuery = function(listing_id){
             var results = self.controller.getManaged('datastore').commentsForListing(listing_id);
+            console.log('results:'+results);
             results.push(self.controller.getManaged('datastore').db.listings[listing_id]);
             return results;
         };
@@ -1077,11 +1175,10 @@ $(function(){
             }
             for (var i = 0; i < results.length; i++) {
                 comment = results[i];
-                $('#content-results-list-item-author-'+i).data('author_id',comment.author_id).unbind().bind('click', function(){
+                $('#comments-item-author-'+i).data('author_id',comment.author_id).unbind().bind('click', function(){
                     self.controller.execute({page:'profile', profile_id:$(this).data('author_id')});
                 });           
             }
-            return resultsHtml;
         };
         self.generateResultHtml = function(i, comment) {
             var resultHtml = '';
@@ -1093,15 +1190,116 @@ $(function(){
             resultHtml += '<div class="content-results-list-item-clear"></div>';
             resultHtml += '<div class="content-results-list-item-detail">';
             resultHtml += 'by ';
-            resultHtml += '<span class="link" id="content-results-list-item-author-' + i + '">'
+            resultHtml += '<span class="link" id="comments-item-author-' + i + '">'
             resultHtml += comment.author_id;
             resultHtml += '</span>'
             resultHtml += ' on ';
-            resultHtml += comment.comment_date;
+            resultHtml += self.controller.getManaged('util').formatDate(comment.comment_date);
             resultHtml += '</div>';
             resultHtml += '</div>'
             resultHtml += '<div class="content-results-list-item-clear"></div>';
             return resultHtml;
+        };
+        return self;
+    };
+
+    var Bids = function() {
+        var self = {};
+        self.controller = null;
+        self.setup = function(controller) {
+            self.controller = controller;
+        }
+        self.execute = function(args) {
+            var listing_id = args['listing_id'];
+            var results = self.doQuery(listing_id);
+            self.displayResults(results);
+            return 'bids';
+        };
+        self.doQuery = function(listing_id){
+            var results = self.controller.getManaged('datastore').bidsForListing(listing_id);
+            results.push(self.controller.getManaged('datastore').db.listings[listing_id]);
+            return results;
+        };
+        self.displayResults = function(results){
+            var resultsHtml = '';
+            var bid;
+            var listing = results.pop();
+            var listingTitle = listing ? listing.title : '<em>no listing found for listing_id=' + listing.listing_id+ '</em>';
+            var listingAuthor = listing ? '(' + listing.author_id + ')' : '';
+            var listingValuation = listing ? self.controller.getManaged('util').addCommas(listing.median_valuation) : '';
+            var listingNumBids = listing ? listing.num_bids : '';
+            for (var i = 0; i < results.length; i++) { // create results
+                bid = results[i];
+                resultsHtml += self.generateResultHtml(i, bid);
+            }
+            if (resultsHtml == '') {
+                resultsHtml = '<em>no bids found</em>';
+            }
+            console.log('bids:displayResults:'+listingTitle+' '+listingAuthor+' '+resultsHtml);
+            // add html
+            $('#bids-listing-title').html(listingTitle);
+            $('#bids-listing-author').html(listingAuthor);
+            $('#bids-listing-valuation').html(listingValuation);
+            $('#bids-listing-num-bids').html(listingNumBids);
+            $('#bids-content-results-list').html(resultsHtml);
+            // bind results
+            if (listing) {
+                $('#bids-listing-title').data('listing_id',listing.listing_id).unbind().bind('click', function(){
+                    self.controller.execute({page:'listing', listing_id:$(this).data('listing_id')});
+                });           
+                $('#bids-listing-author').data('author_id',listing.author_id).unbind().bind('click', function(){
+                    self.controller.execute({page:'profile', profile_id:$(this).data('author_id')});
+                });           
+
+                $('#bids-bidding-link').data('listing_id',listing.listing_id).unbind().bind('click', function(){
+                    self.controller.execute({page:'bidding', listing_id:$(this).data('listing_id')});
+                });           
+
+            }
+            for (var i = 0; i < results.length; i++) {
+                bid = results[i];
+                $('#bids-item-author-'+i).data('author_id',bid.author_id).unbind().bind('click', function(){
+                    self.controller.execute({page:'profile', profile_id:$(this).data('author_id')});
+                });           
+            }
+        };
+        self.formatBidType = function(bid_type) {
+            var visualMapping = {
+                common: 'common stock',
+                preferred: 'preferred stock',
+                note: 'a convertible note'
+            };
+            return visualMapping[bid_type];
+        };
+        self.generateResultHtml = function(i, bid) {
+            var resultHtml = '';
+            resultHtml += '<div class="content-results-list-item">';
+            resultHtml += '<div class="content-results-list-item-num">' + bid.num + '</div>';
+            resultHtml += '<div class="content-results-list-item-title">';
+            resultHtml += 'Valued at ';
+            resultHtml += '$' + self.controller.getManaged('util').addCommas(bid.valuation);
+            resultHtml += ' with a bid of ';
+            resultHtml += '$' + self.controller.getManaged('util').addCommas(bid.amount);
+            resultHtml += ' for ' + bid.equity_pct + '%';
+            resultHtml += ' with ' + self.formatBidType(bid.bid_type);
+            resultHtml += bid.interest_rate ? ' @ ' + bid.interest_rate + '%' : '';
+            resultHtml += '</div>';
+            resultHtml += '<div class="content-results-list-item-clear"></div>';
+            resultHtml += '<div class="content-results-list-item-detail">';
+            resultHtml += 'by ';
+            resultHtml += '<span class="link" id="bids-item-author-' + i + '">'
+            resultHtml += bid.author_id;
+            resultHtml += '</span>'
+            resultHtml += ' on ';
+            resultHtml += self.controller.getManaged('util').formatDate(bid.bid_date);
+            resultHtml += '</div>';
+            resultHtml += '</div>'
+            resultHtml += '<div class="content-results-list-item-clear"></div>';
+            return resultHtml;
+        };
+        self.calculateValuation = function(amount, equity_pct) {
+            var valuation = Math.floor(1000 * Math.floor((100 * amount / equity_pct) / 1000));
+            return valuation;
         };
         return self;
     };
@@ -1130,7 +1328,6 @@ $(function(){
             if (!args) {
                 args = { page: 'home' };
             }
-            console.log('execute listing_id:'+args.listing_id);
             var page = args['page'];
             if (!page) {
                 page = self.defaultPage;
@@ -1150,7 +1347,8 @@ $(function(){
                 login: self.getManaged('user').login,
                 logout: self.getManaged('user').logout,
                 home: self.getManaged('search').execute,
-                comments: self.getManaged('comments').execute
+                comments: self.getManaged('comments').execute,
+                bids: self.getManaged('bids').execute
             };
         };
         return self;
@@ -1166,6 +1364,7 @@ $(function(){
     controller.addManaged('header', new Header());
     controller.addManaged('search', new Search());
     controller.addManaged('comments', new Comments());
+    controller.addManaged('bids', new Bids());
     controller.setupManaged();
     controller.execute();
 
@@ -1567,7 +1766,6 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
         </div>
     </div>
 
-
     <div id="commentspage" class="content page">
         <div class="content-header">
             <div class="content-header-title">
@@ -1585,13 +1783,7 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
         </div>
         </form>
         <div class="content-results">
-            <div class="content-results-list" id="comments-content-results-list">
-                <div class="content-results-list-item">
-            </div>
-            <div class="content-results-footer">
-                <a href="?page=home&amp;search_type=fill_in_type&amp;start=index_num_plus_chunk_size">more results</a>
-            </div>
-            <div class="content-results-list-item-clear"></div>
+            <div class="content-results-list" id="comments-content-results-list"></div>
         </div>
     </div>
     
@@ -1726,7 +1918,7 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
                 <div class="content-form-line">% equity</div>
                 <div class="content-form-clear"></div>
 
-                <div class="content-form-line">Median valuation is $1.2m after <a href="?page=bidhistory&amp;listing_id=7">7 bids</a></div>
+                <div class="content-form-line">Median valuation is $1.2m after <a href="?page=bids&amp;listing_id=7">7 bids</a></div>
                 <div class="content-form-clear"></div>
 
                 <div class="content-form-line">Executive Summary</div>
@@ -1758,53 +1950,26 @@ MisLead is a revolution in social networking.  Previously, social networking has
         </div>
     </div>
     
-    <div id="bidhistorypage" class="content page">
+    <div id="bidspage" class="content page">
         <div class="content-header">
             <div class="content-header-title">
-                <a href="?page=listing&amp;listing_id=7">MisLead: social networking for misanthropes</a>
-                by <a href="?page=profile&amp;account_id=jpfowler">JP Fowler</a>
+                <span class="link" id="bids-listing-title"></span>
+                <span class="content-header-title-small link" id="bids-listing-author"></span>
             </div>
         </div>
         <div class="content-form">
-            <div class="content-form-line">Listed on 17 June 2011, closing on 31 July 2011</div>
+            <div class="content-form-line">Median Valuation is $<span id="bids-listing-valuation"></span> after <span id="bids-listing-num-bids"></span> bids</div>
             <div class="content-form-clear"></div>
-
-            <div class="content-form-line-emphasized"><a href="?page=bidding&amp;listing=7">Make a bid</a></div>
-            <div class="content-form-clear"></div>
-
-            <div class="content-form-line">Median valuation is $1.2m after 7 bids:</div>
+            <div class="content-form-line-emphasized">
+                <span class="link" id="bids-bidding-link">Make a bid</span>, existing bids are:
+            </div>
             <div class="content-form-clear"></div>
         </div>
         <div class="content-results">
-            <div class="content-results-list">
-                <div class="content-results-list-item">
-                    <div class="content-results-list-item-num">1.</div>
-                    <div class="content-results-list-item-desc">
-                        <div class="content-results-list-item-desc-title">
-                            Valued at $375,000 on 19 June 2011 by <a href="?page=profile&amp;account_id=dragonsden">Dragon's Den, LLC</a>
-                        </div>
-                        <div class="content-results-list-item-desc-detail">
-                            Bid $150,000 for 40% equity with Common Stock
-                        </div>
-                    </div>
-                </div>
-                <div class="content-results-list-item-spacer">&nbsp;</div>
-                <div class="content-results-list-item">
-                    <div class="content-results-list-item-num">2.</div>
-                    <div class="content-results-list-item-desc">
-                        <div class="content-results-list-item-desc-title">
-                            Valued at $500,000 on 22 June 2011 by <a href="?page=profile&amp;account_id=nitterinv">Nittner Investments, LP</a>
-                        </div>
-                        <div class="content-results-list-item-desc-detail">
-                            Bid $50,000 for 10% equity with a Convertible Note @ 8%
-                            <a href="?page=bidhistory&amp;withdraw_bid_id=28">(withdraw)</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <div class="content-results-list" id="bids-content-results-list"></div>
         </div>
     </div>
-    
+  
     <div id="biddingpage" class="content page">
         <div class="content-header">
             <div class="content-header-title">
@@ -1820,7 +1985,7 @@ MisLead is a revolution in social networking.  Previously, social networking has
                 <div class="content-form-inputline"><input name="closing_date" type="text" size="10" maxlength="10" value="2011-07-31"/></div>
                 <div class="content-form-clear"></div>
 
-                <div class="content-form-line">Median valuation is $1.2m after <a href="?page=bidhistory&amp;listing_id=7">7 bids</a></div>
+                <div class="content-form-line">Median valuation is $1.2m after <a href="?page=bids&amp;listing_id=7">7 bids</a></div>
                 <div class="content-form-clear"></div>
 
                 <div class="content-form-line">Place bid of $</div>
