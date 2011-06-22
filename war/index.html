@@ -434,6 +434,30 @@ $(function(){
             'sprout',
             'edge',
             'bay',
+            'hop',
+            'stop',
+            'era',
+            'azza',
+            'ity',
+            'ad',
+            'studio',
+            'r',
+            'kas',
+            'ardia',
+            'z',
+            'kubu',
+            'stream',
+            'matcher',
+            'm',
+            'bit',
+            'prima',
+            'met',
+            'play',
+            'ster',
+            'vitosha',
+            'nect',
+            'vision',
+            'soft',
             'a',
             'e',
             'u',
@@ -442,26 +466,23 @@ $(function(){
             'y'
         ];
         self.startupVerbs = [
-            'bridge',
-            'bring',
             'make',
             'create',
             'lead',
-            'draw',
             'find',
-            'solve',
-            'unite',
-            'drive',
             'build',
-            'bind',
-            'acquire',
             'enhance',
             'join',
-            'branch',
             'evolve',
-            'encourage',
             'intertwine',
-            'project'
+            'optimize',
+            'enable',
+            'disrupt',
+            'unify',
+            'promote',
+            'improve',
+            'market',
+            'crowdsource'
         ];
         self.startupNouns = [
             'networks',
@@ -480,7 +501,6 @@ $(function(){
             'technologies',
             'financials',
             'exchanges',
-            'enablers',
             'processes',
             'systems',
             'infrastructures',
@@ -503,7 +523,6 @@ $(function(){
             'methodologies',
             'conferences',
             'collaborations',
-            'pipelines',
             'presentations',
             'accounting methods',
             'approaches to finance',
@@ -517,11 +536,10 @@ $(function(){
             'messaging systems',
             'telecommuniciations',
             'transports',
-            'energies',
+            'synergies',
             'retail stores',
             'warehouses',
             'data',
-            'vehicles',
             'entertainment companies',
             'insurance companies',
             'government organizations',
@@ -530,7 +548,6 @@ $(function(){
             'memes',
             'process controls',
             'branding strategies',
-            'biofuels',
             'best practices',
             'rightsizing practicies',
             'downsizing inevitabilities',
@@ -539,7 +556,6 @@ $(function(){
             'resources',
             'databases',
             'planning activities',
-            'forclosures',
             'deals',
             'business cases',
             'bidding processes',
@@ -550,45 +566,41 @@ $(function(){
         self.startupAdjectives = [
             'social',
             'end-to-end',
-            'upvoting',
+            'up-voted',
             'science-fiction-like',
-            'high performance',
-            'next generation',
+            'high-performance',
+            'next-generation',
             'revolutionary',
             'cutting edge',
             'efficient',
             'evolved',
-            'web scale',
+            'web-scale',
             'backend',
-            'customer facing',
+            'customer-facing',
             'client',
             'visionary',
-            'performance enhancing',
-            'cloud enabled',
+            'performance-enhancing',
+            'cloud-enabled',
             'patented',
             'proven',
-            'location aware',
+            'location-aware',
             'mobile',
             'tablet',
             'healthcare',
             'automated',
             'market',
             'prepackaged',
-            'automotive',
-            'tommorow\'s',
-            'low impact',
-            'ecological',
+            'low-impact',
+            'carbon-neutral',
             'progressive',
             'positive',
             'enhanced',
             'optimized',
-            'genetically modified',
             'engineered',
-            'implanted',
             'best-of-breed',
             'improved',
-            'best class',
-            'world class',
+            'best-class',
+            'world-class',
             'second-to-none',
             'online',
             'peer-to-peer',
@@ -609,28 +621,25 @@ $(function(){
             'startup',
             'entrepreneurial',
             'second-to-none',
-            'high speed',
+            'high-speed',
             'agile',
             'consumer-friendly',
             'friendly',
-            'time-proven',
+            'market-tested',
             'award-winning',
             'enlightened',
             'self-aware',
             'intelligent',
-            'scientifically proven',
-            'doctor approved',
-            'kinetic',
-            'energetic',
+            'scientifically-proven',
             'global',
             'strategic',
             'worldwide',
             'cross-cultural',
             'practical',
             'filtered',
-            'previously unknown',
             'structured',
-            'interconnected'
+            'interconnected',
+            'disruptive'
         ];
         self.startupPrepositions = [
             'in',
@@ -639,13 +648,8 @@ $(function(){
             'with',
             'by',
             'together with',
-            'around',
-            'to',
-            'from',
-            'across',
-            'within',
-            'inside',
-            'at'
+            'for',
+            'from'
         ];
         self.genRandomNounPhrase = function() {
             var np = self.startupNouns[Math.floor(Math.random()*self.startupNouns.length)];
@@ -707,6 +711,8 @@ $(function(){
             listing.num_comments = 0; // we'll add later
             listing.author_id = self.genRandomAuthorId();
             listing.days_to_closing = Math.floor(Math.random()*30);       
+            listing.listed_date =  self.genRandomDate();
+            listing.closing_date = self.genRandomDate(listing.listed_date);
             return listing;
         };
         self.genRandomListings = function() {
@@ -740,9 +746,9 @@ $(function(){
             text += punctuation[Math.floor(Math.random()*punctuation.length)];
             return text;
         };
-        self.genRandomDate = function(setMonth) {
+        self.genRandomDate = function(earliestDate) {
             var year = 2011;
-            var month = setMonth ? setMonth : Math.floor(Math.random()*12) + 1;
+            var month = Math.floor(Math.random()*12) + 1;
             var day = Math.floor(Math.random()*31) + 1;
             if (month in {4:1,6:1,9:1,11:1} && day > 30) {
                 day = 30;
@@ -759,14 +765,15 @@ $(function(){
                     }
                 }
             }
-            return '' + year + (month < 10 ? '0' : '') + month + (day < 10 ? '0' : '') + day;
+            var date = '' + year + (month < 10 ? '0' : '') + month + (day < 10 ? '0' : '') + day;
+            return (date > earliestDate) ? self.genRandomDate(earliestDate) : date;
         };
         self.genRandomCommentForListing = function(listing_id) {
             var comment = {};
             comment.comment_id = self.controller.getManaged('util').generateGuid();
             comment.listing_id = listing_id;
             comment.text = self.genRandomCommentText();
-            comment.comment_date = self.genRandomDate();
+            comment.comment_date = self.genRandomDate(self.db.listings[listing_id].listing_date);
             comment.author_id = self.genRandomAuthorId();
             return comment;
         };
@@ -803,7 +810,7 @@ $(function(){
             var bid = {};
             bid.bid_id = self.controller.getManaged('util').generateGuid();
             bid.listing_id = listing_id;
-            bid.bid_date = self.genRandomDate();
+            bid.bid_date = self.genRandomDate(self.db.listings[listing_id].listing_date);
             bid.author_id = self.genRandomAuthorId();
             bid.amount = self.genRandomAmount();
             bid.bid_type = self.genRandomBidType();
@@ -1092,7 +1099,6 @@ $(function(){
                     self.controller.execute({page:'comments', listing_id:$(this).data('listing_id')});
                 }); 
                 $('#content-results-list-item-bids-'+j).data('listing_id',listing.listing_id).unbind().bind('click', function(){
-                    console.log('going to bids...');
                     self.controller.execute({page:'bids', listing_id:$(this).data('listing_id')});
                 }); 
             }
@@ -1135,7 +1141,6 @@ $(function(){
             self.controller = controller;
         }
         self.execute = function(args) {
-            console.log('execute');
             var listing_id = args['listing_id'];
             var results = self.doQuery(listing_id);
             self.displayResults(results);
@@ -1143,7 +1148,6 @@ $(function(){
         };
         self.doQuery = function(listing_id){
             var results = self.controller.getManaged('datastore').commentsForListing(listing_id);
-            console.log('results:'+results);
             results.push(self.controller.getManaged('datastore').db.listings[listing_id]);
             return results;
         };
@@ -1164,6 +1168,15 @@ $(function(){
             $('#comments-listing-title').html(listingTitle);
             $('#comments-listing-author').html(listingAuthor);
             $('#comments-content-results-list').html(resultsHtml);
+            // enable editable if logged in
+            if (self.controller.getManaged('user').loggedin) {
+                $('#comment-loggedin-add').show();
+                $('#comment-not-loggedin-msg').hide();
+            }
+            else {
+                $('#comment-loggedin-add').hide();
+                $('#comment-not-loggedin-msg').show();
+            }
             // bind results
             if (listing) {
                 $('#comments-listing-title').data('listing_id',listing.listing_id).unbind().bind('click', function(){
@@ -1226,6 +1239,7 @@ $(function(){
             var listing = results.pop();
             var listingTitle = listing ? listing.title : '<em>no listing found for listing_id=' + listing.listing_id+ '</em>';
             var listingAuthor = listing ? '(' + listing.author_id + ')' : '';
+            var listingClosingDate = listing ? self.controller.getManaged('util').formatDate(listing.closing_date) : '';
             var listingValuation = listing ? self.controller.getManaged('util').addCommas(listing.median_valuation) : '';
             var listingNumBids = listing ? listing.num_bids : '';
             for (var i = 0; i < results.length; i++) { // create results
@@ -1235,13 +1249,22 @@ $(function(){
             if (resultsHtml == '') {
                 resultsHtml = '<em>no bids found</em>';
             }
-            console.log('bids:displayResults:'+listingTitle+' '+listingAuthor+' '+resultsHtml);
             // add html
             $('#bids-listing-title').html(listingTitle);
             $('#bids-listing-author').html(listingAuthor);
+            $('#bids-listing-closing-date').html(listingClosingDate);
             $('#bids-listing-valuation').html(listingValuation);
             $('#bids-listing-num-bids').html(listingNumBids);
             $('#bids-content-results-list').html(resultsHtml);
+            // set login visibility
+            if (self.controller.getManaged('user').loggedin) {
+                $('#bids-form-loggedin').show();
+                $('#bids-form-not-loggedin').hide();
+            }
+            else {
+                $('#bids-form-loggedin').hide();
+                $('#bids-form-not-loggedin').show();
+            }
             // bind results
             if (listing) {
                 $('#bids-listing-title').data('listing_id',listing.listing_id).unbind().bind('click', function(){
@@ -1250,11 +1273,6 @@ $(function(){
                 $('#bids-listing-author').data('author_id',listing.author_id).unbind().bind('click', function(){
                     self.controller.execute({page:'profile', profile_id:$(this).data('author_id')});
                 });           
-
-                $('#bids-bidding-link').data('listing_id',listing.listing_id).unbind().bind('click', function(){
-                    self.controller.execute({page:'bidding', listing_id:$(this).data('listing_id')});
-                });           
-
             }
             for (var i = 0; i < results.length; i++) {
                 bid = results[i];
@@ -1774,12 +1792,15 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
             </div>
         </div>
         <form action="#" method="post">
-        <div class="content-comment">
+        <div class="content-comment" id="comment-loggedin-add">
                 <div class="content-comment-label">your comment:</div>
                 <input name="page" type="hidden" value="comments"/>
                 <textarea class="content-comment-textarea" name="comment" cols="55" rows="6" wrap="soft"></textarea>
                 <br/>
                 <input type="submit" value="save"/>
+        </div>
+        <div class="content-comment" id="comment-not-loggedin-msg">
+            <em>You must be logged in to comment</em>
         </div>
         </form>
         <div class="content-results">
@@ -1956,38 +1977,14 @@ MisLead is a revolution in social networking.  Previously, social networking has
                 <span class="link" id="bids-listing-title"></span>
                 <span class="content-header-title-small link" id="bids-listing-author"></span>
             </div>
-        </div>
-        <div class="content-form">
+            <div class="content-form-line">Closing on <span id="bids-listing-closing-date"></span></div>
+            <div class="content-form-clear"></div>
             <div class="content-form-line">Median Valuation is $<span id="bids-listing-valuation"></span> after <span id="bids-listing-num-bids"></span> bids</div>
             <div class="content-form-clear"></div>
-            <div class="content-form-line-emphasized">
-                <span class="link" id="bids-bidding-link">Make a bid</span>, existing bids are:
-            </div>
-            <div class="content-form-clear"></div>
         </div>
-        <div class="content-results">
-            <div class="content-results-list" id="bids-content-results-list"></div>
-        </div>
-    </div>
-  
-    <div id="biddingpage" class="content page">
-        <div class="content-header">
-            <div class="content-header-title">
-                <a href="?page=listing&amp;listing_id=7">MisLead: social networking for misanthropes</a>
-                by <a href="?page=profile&amp;account_id=jpfowler">JP Fowler</a>
-            </div>
-        </div>
-        <div class="content-form">
+        <div class="content-form" id="bids-form-loggedin">
             <form action="#" method="post" enctype="multipart/form-data">
                 <input name="page" type="hidden" value="listing"/>
-
-                <div class="content-form-line">Listed on 17 June 2011, closing on</div>
-                <div class="content-form-inputline"><input name="closing_date" type="text" size="10" maxlength="10" value="2011-07-31"/></div>
-                <div class="content-form-clear"></div>
-
-                <div class="content-form-line">Median valuation is $1.2m after <a href="?page=bids&amp;listing_id=7">7 bids</a></div>
-                <div class="content-form-clear"></div>
-
                 <div class="content-form-line">Place bid of $</div>
                 <div class="content-form-inputline"><input name="bid_amt" type="text" size="9" maxlength="9" value="30,000"/></div>
                 <div class="content-form-line">for</div>
@@ -2015,8 +2012,18 @@ MisLead is a revolution in social networking.  Previously, social networking has
                 <div class="content-form-clear"></div>
             </form>
         </div>
+        <div class="content-form" id="bids-form-not-loggedin">
+            <em>You must be logged in to bid.</em>
+        </div>
+        <div class="content-form">
+            <div class="content-form-line-emphasized">Existing bids:</div>
+            <div class="content-form-clear"></div>
+        </div>
+        <div class="content-results">
+            <div class="content-results-list" id="bids-content-results-list"></div>
+        </div>
     </div>
-
+  
     <div id="loginpage" class="content page">
         <div class="content-header">
             <div class="content-header-title">
