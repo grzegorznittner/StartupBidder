@@ -710,9 +710,9 @@ $(function(){
             listing.num_bids = 0; // we'll add later
             listing.num_comments = 0; // we'll add later
             listing.author_id = self.genRandomAuthorId();
-            listing.days_to_closing = Math.floor(Math.random()*30);       
-            listing.listed_date =  self.genRandomDate();
-            listing.closing_date = self.genRandomDate(listing.listed_date);
+            listing.listing_date =  self.genRandomDate(20110101, self.getToday());
+            listing.closing_date = self.genRandomDate(listing.listing_date);
+            listing.status = (listing.closing_date < self.getToday() ? (Math.floor(Math.random()*5) == 0 ? 'withdrawn' : 'closed') : 'active');
             return listing;
         };
         self.genRandomListings = function() {
@@ -746,7 +746,15 @@ $(function(){
             text += punctuation[Math.floor(Math.random()*punctuation.length)];
             return text;
         };
-        self.genRandomDate = function(earliestDate) {
+        self.getToday = function() {
+            if (!self.today) {
+                var today = new Date();
+                var numericDate = self.constructNumericDate(today.getFullYear(), today.getMonth()+1, today.getDate());
+                self.today = numericDate;
+            }
+            return self.today;
+        };
+        self.genRandomDate = function(earliestDate, latestDate) {
             var year = 2011;
             var month = Math.floor(Math.random()*12) + 1;
             var day = Math.floor(Math.random()*31) + 1;
@@ -765,15 +773,24 @@ $(function(){
                     }
                 }
             }
+            var date = self.constructNumericDate(year, month, day);
+            if ((earliestDate && date < earliestDate) || (latestDate && date > latestDate)) {
+                return self.genRandomDate(earliestDate, latestDate);
+            }
+            else {
+                return date;
+            }
+        };
+        self.constructNumericDate = function(year, month, day) {
             var date = '' + year + (month < 10 ? '0' : '') + month + (day < 10 ? '0' : '') + day;
-            return (date > earliestDate) ? self.genRandomDate(earliestDate) : date;
+            return date;
         };
         self.genRandomCommentForListing = function(listing_id) {
             var comment = {};
             comment.comment_id = self.controller.getManaged('util').generateGuid();
             comment.listing_id = listing_id;
             comment.text = self.genRandomCommentText();
-            comment.comment_date = self.genRandomDate(self.db.listings[listing_id].listing_date);
+            comment.comment_date = self.genRandomDate(self.db.listings[listing_id].listing_date, self.getToday());
             comment.author_id = self.genRandomAuthorId();
             return comment;
         };
@@ -810,7 +827,7 @@ $(function(){
             var bid = {};
             bid.bid_id = self.controller.getManaged('util').generateGuid();
             bid.listing_id = listing_id;
-            bid.bid_date = self.genRandomDate(self.db.listings[listing_id].listing_date);
+            bid.bid_date = self.genRandomDate(self.db.listings[listing_id].listing_date, self.getToday());
             bid.author_id = self.genRandomAuthorId();
             bid.amount = self.genRandomAmount();
             bid.bid_type = self.genRandomBidType();
@@ -879,17 +896,68 @@ $(function(){
             self.genRandomComments();
             self.genRandomBids();
         };
-        self.searchListings = function(args) {
+        self.searchListings = function(searchType, keywords) {
             var results = [];
             var result;
-            var i = 0;
             for (var listing_id in self.db.listings) { // just full db for now
                 result = self.db.listings[listing_id];
-                result.num = i + 1;
-                results.push(result);
-                i++;
+                if (self.filterResultByType(result, searchType)) {
+                    results.push(result);
+                }
             }
+            self.sortResultsByType(results, searchType);
+            self.paintWithNumber(results);
             return results;
+        };
+        self.paintWithNumber = function(results) {
+            for (var i = 0; i < results.length; i++) {
+                results[i].num = i + 1;
+            }
+        };
+        self.filterResultByType = function(result, searchType) {
+            var applicable = 1;
+            if (searchType == 'active') {
+                applicable = (result.status == 'active') ? 1 : 0;
+            }
+            else if (searchType == 'closing soon') {
+                applicable = (result.status == 'active') ? 1 : 0;
+            }
+            else {
+                applicable = 1;
+            }
+            return applicable;
+        };
+        self.sortResultsByType = function(results, searchType) {
+            if (searchType == 'top') {
+                results.sort(function(listing_a, listing_b){
+                    return listing_a.median_valuation - listing_b.median_valuation;
+                }).reverse();
+            }
+            else if (searchType == 'active') {
+                results.sort(function(listing_a, listing_b){
+                    return listing_a.num_bids - listing_b.num_bids;
+                }).reverse();
+            }
+            else if (searchType == 'popular') {
+                results.sort(function(listing_a, listing_b){
+                    return listing_a.points - listing_b.points;
+                }).reverse();
+            }
+            else if (searchType == 'discussed') {
+                results.sort(function(listing_a, listing_b){
+                    return listing_a.num_comments - listing_b.num_comments;
+                }).reverse();
+            }
+            else if (searchType == 'latest') {
+                results.sort(function(listing_a, listing_b){
+                    return listing_a.listing_date - listing_b.listing_date;
+                }).reverse();
+            }
+            else if (searchType == 'closing soon') {
+                results.sort(function(listing_a, listing_b){
+                    return listing_a.closing_date - listing_b.closing_date;
+                });
+            }
         };
         self.commentsForListing = function(listing_id) {
             var comments = [];
@@ -1011,6 +1079,9 @@ $(function(){
             $('#header-menu-bar-latest').unbind().bind('click', function(){
                 self.controller.execute({page:'home',search_type:'latest'});
             });
+            $('#header-menu-bar-closing-soon').unbind().bind('click', function(){
+                self.controller.execute({page:'home',search_type:'closing soon'});
+            });
             $('#header-menu-bar-faq').unbind().bind('click', function(){
                 self.controller.execute({page:'faq'});
             });
@@ -1069,19 +1140,19 @@ $(function(){
                 }
             }
             $('#content-search-keywords').val(searchText);
-            var results = self.doSearch(args);
+            var results = self.doSearch(searchType, keywords);
             self.displayResults(results);
             return 'home';
         };
-        self.doSearch = function(args){
-            return self.controller.getManaged('datastore').searchListings(args);
+        self.doSearch = function(searchType, keywords){
+            return self.controller.getManaged('datastore').searchListings(searchType, keywords);
         };
         self.displayResults = function(results){
             var resultsHtml = '';
             var listing;
             for (var i = 0; i < results.length; i++) { // create results
                 listing = results[i];
-                resultsHtml += self.generateResultHtml(i, listing);
+                resultsHtml += self.controller.getManaged('listing').generateListingSnippetHtml(i, listing);
             }
             if (resultsHtml == '') {
                 resultsHtml = '<i>no listings found</i>';
@@ -1089,26 +1160,81 @@ $(function(){
             $('#home-content-results-list').html(resultsHtml);
             for (var j = 0; j < results.length; j++) { // bind results
                 listing = results[j];
-                $('#content-results-list-item-title-'+j).data('listing_id',listing.listing_id).unbind().bind('click', function(){
-                    self.controller.execute({page:'listing', listing_id:$(this).data('listing_id')});
-                });           
-                $('#content-results-list-item-author-'+j).data('author_id',listing.author_id).unbind().bind('click', function(){
-                    self.controller.execute({page:'profile', profile_id:$(this).data('author_id')});
-                });           
-                $('#content-results-list-item-comments-'+j).data('listing_id',listing.listing_id).unbind().bind('click', function(){
-                    self.controller.execute({page:'comments', listing_id:$(this).data('listing_id')});
-                }); 
-                $('#content-results-list-item-bids-'+j).data('listing_id',listing.listing_id).unbind().bind('click', function(){
-                    self.controller.execute({page:'bids', listing_id:$(this).data('listing_id')});
-                }); 
+                self.controller.getManaged('listing').bindListingSnippet(j, listing);
             }
         };
-        self.generateResultHtml = function(i, listing) {
+        return self;
+    };
+
+    var Listing = function() {
+        var self = {};
+        self.controller = null;
+        self.setup = function(controller) {
+            self.controller = controller;
+        }
+        self.execute = function(args) {
+            var listing_id = args['listing_id'];
+            var listing = self.doQuery(listing_id);
+            self.displayListing(listing);
+            return 'listing';
+        };
+        self.doQuery = function(listing_id){
+            return self.controller.getManaged('datastore').db.listings[listing_id];
+        };
+        self.displayListing = function(listing){
+            var resultsHtml = '';
+            if (listing) {
+                $('#listing-snippet').html(self.controller.getManaged('listing').generateListingSnippetHtml('listing', listing));
+                self.controller.getManaged('listing').bindListingSnippet('listing', listing);
+            }
+            else {
+                $('#listing-snippet').html('<em>no listings found</em>');
+            }
+            // enable editable if logged in
+            if (self.controller.getManaged('user').loggedin) {
+                $('#listing-form-editable').show();
+                $('#listing-form-readonly').hide();
+                $('#listing-form-title').val(listing.title);
+                $('#listing-form-closing-date').val(listing.closing_date);
+            }
+            else {
+                $('#listing-form-editable').hide();
+                $('#listing-form-readonly').show();
+            }
+        };
+        self.bindListingSnippet = function(i, listing) {
+            $('#content-results-list-item-title-'+i).data('listing_id',listing.listing_id).unbind().bind('click', function(){
+                self.controller.execute({page:'listing', listing_id:$(this).data('listing_id')});
+            });           
+            $('#content-results-list-item-author-'+i).data('author_id',listing.author_id).unbind().bind('click', function(){
+                self.controller.execute({page:'profile', profile_id:$(this).data('author_id')});
+            });           
+            $('#content-results-list-item-comments-'+i).data('listing_id',listing.listing_id).unbind().bind('click', function(){
+                self.controller.execute({page:'comments', listing_id:$(this).data('listing_id')});
+            }); 
+            $('#content-results-list-item-bids-'+i).data('listing_id',listing.listing_id).unbind().bind('click', function(){
+                self.controller.execute({page:'bids', listing_id:$(this).data('listing_id')});
+            });
+            if (isFinite(i)) {
+                $('#content-results-list-item-upvote-'+i).data('listing_id',listing.listing_id).unbind().bind('click', function(){
+                    self.controller.execute({page:'home', listing_id:$(this).data('listing_id'), action:'upvote'});
+                });
+            }
+        };
+        self.generateListingSnippetHtml = function(i, listing) {
             var resultHtml = '';
-            var evenOdd = (i % 2 == 0) ? 'even' : 'odd';
-            resultHtml += '<div class="content-results-list-item content-results-list-item-' + evenOdd + '">';
-            resultHtml += '<div class="content-results-list-item-num">' + listing.num + '</div>';
-            resultHtml += '<div class="content-results-list-item-upvote"></div>';
+            var evenOdd;
+            if (isFinite(i)) {
+                evenOdd = (i % 2 == 0) ? 'even' : 'odd';
+                resultHtml += '<div class="content-results-list-item content-results-list-item-' + evenOdd + '">';
+                resultHtml += '<div class="content-results-list-item-num">' + listing.num + '</div>';
+                resultHtml += '<div class="content-results-list-item-upvote id="content-results-list-item-upvote-' + i + '"></div>';
+            }
+            else {
+                resultHtml += '<div class="content-results-list-item>';
+                resultHtml += '<div class="content-results-list-item-num"></div>';
+                resultHtml += '<div class="content-results-list-item-upvote-filler"></div>';
+            }
             resultHtml += '<div class="content-results-list-item-title link" id="content-results-list-item-title-' + i + '">';
             resultHtml += listing.title;
             resultHtml += '</div>';
@@ -1125,14 +1251,16 @@ $(function(){
             resultHtml += '<span class="link" id="content-results-list-item-bids-' + i + '">';
             resultHtml += listing.num_bids + ' bid' + (listing.num_bids==1?'':'s');
             resultHtml += '</span> | ';
-            resultHtml += 'closing in ' + listing.days_to_closing + ' day' + (listing.days_to_closing==1?'':'s');
+            resultHtml += 'listed ' + self.controller.getManaged('util').formatDate(listing.listing_date) + ' | ';
+            resultHtml += 'closing ' + self.controller.getManaged('util').formatDate(listing.closing_date) + ' | ';
+            resultHtml += 'bid is <em>' + listing.status + '</em>';
             resultHtml += '</div>';
             resultHtml += '</div>';
             resultHtml += '<div class="content-results-list-item-clear"></div>';
             return resultHtml;
-        };
-        return self;
-    };
+       }
+       return self;
+    }
 
     var Comments = function() {
         var self = {};
@@ -1155,8 +1283,10 @@ $(function(){
             var resultsHtml = '';
             var comment;
             var listing = results.pop();
-            var listingTitle = listing ? listing.title : '<em>no listing found for listing_id=' + listing.listing_id+ '</em>';
-            var listingAuthor = listing ? '(' + listing.author_id + ')' : '';
+            if (listing) {
+                $('#comments-listing-snippet').html(self.controller.getManaged('listing').generateListingSnippetHtml('comments', listing));
+                self.controller.getManaged('listing').bindListingSnippet('comments', listing);
+            }
             for (var i = 0; i < results.length; i++) { // create results
                 comment = results[i];
                 resultsHtml += self.generateResultHtml(i, comment);
@@ -1165,8 +1295,6 @@ $(function(){
                 resultsHtml = '<em>no comments found</em>';
             }
             // add html
-            $('#comments-listing-title').html(listingTitle);
-            $('#comments-listing-author').html(listingAuthor);
             $('#comments-content-results-list').html(resultsHtml);
             // enable editable if logged in
             if (self.controller.getManaged('user').loggedin) {
@@ -1178,14 +1306,6 @@ $(function(){
                 $('#comment-not-loggedin-msg').show();
             }
             // bind results
-            if (listing) {
-                $('#comments-listing-title').data('listing_id',listing.listing_id).unbind().bind('click', function(){
-                    self.controller.execute({page:'listing', profile_id:$(this).data('listing_id')});
-                });           
-                $('#comments-listing-author').data('author_id',listing.author_id).unbind().bind('click', function(){
-                    self.controller.execute({page:'profile', profile_id:$(this).data('author_id')});
-                });           
-            }
             for (var i = 0; i < results.length; i++) {
                 comment = results[i];
                 $('#comments-item-author-'+i).data('author_id',comment.author_id).unbind().bind('click', function(){
@@ -1235,13 +1355,12 @@ $(function(){
         };
         self.displayResults = function(results){
             var resultsHtml = '';
-            var bid;
             var listing = results.pop();
-            var listingTitle = listing ? listing.title : '<em>no listing found for listing_id=' + listing.listing_id+ '</em>';
-            var listingAuthor = listing ? '(' + listing.author_id + ')' : '';
-            var listingClosingDate = listing ? self.controller.getManaged('util').formatDate(listing.closing_date) : '';
-            var listingValuation = listing ? self.controller.getManaged('util').addCommas(listing.median_valuation) : '';
-            var listingNumBids = listing ? listing.num_bids : '';
+            if (listing) {
+                $('#bids-listing-snippet').html(self.controller.getManaged('listing').generateListingSnippetHtml('bids', listing));
+                self.controller.getManaged('listing').bindListingSnippet('bids', listing);
+            }
+            var bid;
             for (var i = 0; i < results.length; i++) { // create results
                 bid = results[i];
                 resultsHtml += self.generateResultHtml(i, bid);
@@ -1250,11 +1369,6 @@ $(function(){
                 resultsHtml = '<em>no bids found</em>';
             }
             // add html
-            $('#bids-listing-title').html(listingTitle);
-            $('#bids-listing-author').html(listingAuthor);
-            $('#bids-listing-closing-date').html(listingClosingDate);
-            $('#bids-listing-valuation').html(listingValuation);
-            $('#bids-listing-num-bids').html(listingNumBids);
             $('#bids-content-results-list').html(resultsHtml);
             // set login visibility
             if (self.controller.getManaged('user').loggedin) {
@@ -1264,15 +1378,6 @@ $(function(){
             else {
                 $('#bids-form-loggedin').hide();
                 $('#bids-form-not-loggedin').show();
-            }
-            // bind results
-            if (listing) {
-                $('#bids-listing-title').data('listing_id',listing.listing_id).unbind().bind('click', function(){
-                    self.controller.execute({page:'listing', listing_id:$(this).data('listing_id')});
-                });           
-                $('#bids-listing-author').data('author_id',listing.author_id).unbind().bind('click', function(){
-                    self.controller.execute({page:'profile', profile_id:$(this).data('author_id')});
-                });           
             }
             for (var i = 0; i < results.length; i++) {
                 bid = results[i];
@@ -1365,6 +1470,7 @@ $(function(){
                 login: self.getManaged('user').login,
                 logout: self.getManaged('user').logout,
                 home: self.getManaged('search').execute,
+                listing: self.getManaged('listing').execute,
                 comments: self.getManaged('comments').execute,
                 bids: self.getManaged('bids').execute
             };
@@ -1381,6 +1487,7 @@ $(function(){
     controller.addManaged('uploader', new Uploader());
     controller.addManaged('header', new Header());
     controller.addManaged('search', new Search());
+    controller.addManaged('listing', new Listing());
     controller.addManaged('comments', new Comments());
     controller.addManaged('bids', new Bids());
     controller.setupManaged();
@@ -1588,6 +1695,15 @@ text-decoration: none;
     height: 10px;
     background-repeat: no-repeat;
     background-image: url(data:image/gif;base64,R0lGODlhCgAKALMJANPT06enp/b29r+/v52dnfn5+bq6usLCwpqamv///wAAAAAAAAAAAAAAAAAAAAAAACH5BAEAAAkALAAAAAAKAAoAAAQcMMlJq712GIzQDV1QFV0nUETZTYDaAdIhz3ISAQA7);
+    margin-right: 5px;
+}
+.content-results-list-item-upvote:hover {
+    cursor: pointer;
+    background-color: #aaffaa;
+}
+.content-results-list-item-upvote-filler {
+    float: left;
+    width: 20px;
 }
 .content-results-list-item-clear {
     clear: both;
@@ -1595,7 +1711,6 @@ text-decoration: none;
 }
 .content-results-list-item-title {
     float: left;
-    margin-left: 5px;
 }
 .content-results-list-item-author {
     float: left;
@@ -1624,6 +1739,12 @@ text-decoration: none;
     text-align: left;
     font-size: 14px;
     line-height: 26px;
+}
+.content-form-multiline {
+    float: left;
+    margin-left: 5px;
+    text-align: left;
+    font-size: 14px;
 }
 .content-form-line-emphasized {
     font-weight: bold;
@@ -1671,6 +1792,10 @@ text-decoration: none;
 .content-form-clear {
     clear: both;
     height: 0px;
+}
+.listing-download-button {
+    margin-top: 10px;
+    width: 150px;
 }
 .header-logo {
     position: absolute;
@@ -1764,12 +1889,15 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
                 <span> | </span>
                 <span class="link" id="header-menu-bar-latest">latest</span>
                 <span> | </span>
+                <span class="link" id="header-menu-bar-closing-soon">closing soon</span>
+                <span> | </span>
                 <span class="link" id="header-menu-bar-faq">faq</span>
                 <span class="header-menu-bar-submit-spacer" id="header-menu-bar-submit-spacer"> | </span>
                 <span class="header-menu-bar-submit link" id="header-menu-bar-submit">submit</span>
             </div>
         </div>
     </div>
+
     <div id="homepage" class="content page">
         <div class="content-search">
             <input id="content-search-keywords" name="keywords" type="text" size="30"/>
@@ -1786,10 +1914,7 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
 
     <div id="commentspage" class="content page">
         <div class="content-header">
-            <div class="content-header-title">
-                <span class="link" id="comments-listing-title"></span>
-                <span class="content-header-title-small link" id="comments-listing-author"></span>
-            </div>
+            <div class="content-results-list" id="comments-listing-snippet"></div>
         </div>
         <form action="#" method="post">
         <div class="content-comment" id="comment-loggedin-add">
@@ -1799,10 +1924,10 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
                 <br/>
                 <input type="submit" value="save"/>
         </div>
+        </form>
         <div class="content-comment" id="comment-not-loggedin-msg">
             <em>You must be logged in to comment</em>
         </div>
-        </form>
         <div class="content-results">
             <div class="content-results-list" id="comments-content-results-list"></div>
         </div>
@@ -1920,16 +2045,20 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
     </div>
     
     <div id="listingpage" class="content page">
-       <div class="content-form">
-            <form action="#" method="post" enctype="multipart/form-data">
+        <div class="content-header">
+            <div class="content-results-list" id="listing-snippet"></div>
+        </div>
+        <div class="content-form" id="listing-form-editable">
+                
+                <form action="#" method="post" enctype="multipart/form-data">
                 <input name="page" type="hidden" value="listing"/>
 
-                <div class="content-form-maininputline"><input name="title" type="text" size="40" value="MisLead: social networking for misanthropes"/></div>
-                <div class="content-form-line">by <a href="?page=profile&amp;account_id=jpfowler">JP Fowler</a></div>
+                <div class="content-form-line">Title: </div>
+                <div class="content-form-maininputline"><input id="listing-form-title" name="title" type="text" size="40" value="type listing title here"/></div>
                 <div class="content-form-clear"></div>
 
-                <div class="content-form-line">Listed on 17 June 2011, closing on</div>
-                <div class="content-form-inputline"><input name="closing_date" type="text" size="10" maxlength="10" value="2011-07-31"/></div>
+                <div class="content-form-line">Closing Date: </div>
+                <div class="content-form-inputline"><input id="listing-form-closing-date" name="closing_date" type="text" size="10" maxlength="10" value="YYYY-MM-DD"/></div>
                 <div class="content-form-clear"></div>
 
                 <div class="content-form-line">Opening bid at $</div>
@@ -1937,9 +2066,6 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
                 <div class="content-form-line">for</div>
                 <div class="content-form-inputline"><input name="opening_bid_pct" type="text" size="2" maxlength="2" value="10"/></div>
                 <div class="content-form-line">% equity</div>
-                <div class="content-form-clear"></div>
-
-                <div class="content-form-line">Median valuation is $1.2m after <a href="?page=bids&amp;listing_id=7">7 bids</a></div>
                 <div class="content-form-clear"></div>
 
                 <div class="content-form-line">Executive Summary</div>
@@ -1962,25 +2088,30 @@ MisLead is a revolution in social networking.  Previously, social networking has
                 <div class="content-form-inputline"><input name="submit" type="submit" value="save"/></div>
                 <div class="content-form-clear"></div>
 
-                <div class="content-form-linkline"><a href="?page=comments&amp;commenter_id=johnarleyburns">12 comments</a></div>
-                <div class="content-form-clear"></div>
-
                 <div class="content-form-linkline"><a href="?page=listing&amp;withdraw_id=7">(withdraw listing)</a></div>
                 <div class="content-form-clear"></div>
-            </form>
+
+                </form>
         </div>
+        <div class="content-form" id="listing-form-readonly">
+                <div class="content-form-line-emphasized">Executive Summary</div>
+                <div class="content-form-clear"></div>
+                <div class="content-form-multiline">
+MisLead is a revolution in social networking.  Previously, social networking has been for people with friends, those outgoing on the internet, those who don't have trouble communicating online.  There is an untapped market in those who not only have difficulty making social connections, but frequently dislike social situations and social crowds.  With MisLead, you are only allowed a maximum of five friends at any one time.  However, you are more intimately connected with them, including real-time location updates, frequent SMS on activities, and heavy linking into any goings-on for connected individuals in a plethora of other networks.
+                </div>
+                <div class="content-form-clear"></div>
+
+                <div class="content-form-line"><button class="listing-download-button">View Business Plan</button></div>
+                <div class="content-form-clear"></div>
+
+                <div class="content-form-line"><button class="listing-download-button">View Presentation</button></div>
+                <div class="content-form-clear"></div>
+         </div>
     </div>
     
     <div id="bidspage" class="content page">
         <div class="content-header">
-            <div class="content-header-title">
-                <span class="link" id="bids-listing-title"></span>
-                <span class="content-header-title-small link" id="bids-listing-author"></span>
-            </div>
-            <div class="content-form-line">Closing on <span id="bids-listing-closing-date"></span></div>
-            <div class="content-form-clear"></div>
-            <div class="content-form-line">Median Valuation is $<span id="bids-listing-valuation"></span> after <span id="bids-listing-num-bids"></span> bids</div>
-            <div class="content-form-clear"></div>
+            <div class="content-results-list" id="bids-listing-snippet"></div>
         </div>
         <div class="content-form" id="bids-form-loggedin">
             <form action="#" method="post" enctype="multipart/form-data">
