@@ -11,7 +11,6 @@
     <link rel="canonical" href="http://startupbidder.appspot.com"/>
 
 <!-- google analytics -->
-<!--
 <script type="text/javascript">
   var _gaq = _gaq || [];
   _gaq.push(['_setAccount', 'UA-23942052-1']);
@@ -22,9 +21,8 @@
     var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
   })();
 </script>
--->
-<!-- javascript code -->
 
+<!-- javascript code -->
 <script type="text/javascript">
 // http://jquery-howto.blogspot.com/2009/09/get-url-parameters-values-with-jquery.html
 $.extend({
@@ -50,7 +48,6 @@ $.extend({
 * licensed under MIT.
 * Date: 27/8/2010
 *
-* Project Home: 
 * http://code.google.com/p/jquery-ui-for-ipad-and-iphone/
 */
 
@@ -283,9 +280,37 @@ $(function(){
     var Util = function() {
         var self = {};
         self.controller = null;
+        self.keyCache = {};
         self.setup = function(controller) {
             self.controller = controller;
+        };
+        self.constructNumericDate = function(year, month, day) {
+            var date = '' + year + (month < 10 ? '0' : '') + month + (day < 10 ? '0' : '') + day;
+            return date;
+        };
+        self.today = function() {
+            if (!self.todayCache) {
+                var today = new Date();
+                var numericDate = self.constructNumericDate(today.getFullYear(), today.getMonth()+1, today.getDate());
+                self.todayCache = numericDate;
+            }
+            return self.todayCache;
+        };
+        self.randomElement = function(array) {
+            return array[Math.floor(Math.random()*array.length)];
+        };
+        self.randomKey = function(name, assocArray) {
+            if (!self.keyCache[name]) { // caching
+                self.keyCache[name] = [];
+                for (var key in assocArray) {
+                    self.keyCache[name].push(key);
+                }
+            }
+            return self.randomElement(self.keyCache[name]);
         }
+        self.ucFirst = function(string) {
+            return string.charAt(0).toUpperCase() + string.slice(1);
+        };
         self.formatDate = function(yyyymmdd) {
             var year  = yyyymmdd.substr(0,4);
             var month = yyyymmdd.substr(4,2);
@@ -346,7 +371,11 @@ $(function(){
             'Joao',
             'Klaus',
             'Vladimir',
-            'Rajiv'
+            'Rajiv',
+            'Joe',
+            'Massimo',
+            'Antonio',
+            'Maribel'
         ];
         self.lastNameComponents = [
             'Peters',
@@ -370,7 +399,13 @@ $(function(){
             'Wang',
             'Powers',
             'Kuroda',
-            'Patel'
+            'Patel',
+            'Burns',
+            'Edwards',
+            'Bettiol',
+            'Valanju',
+            'Signore',
+            'Scott'
         ];
         self.startupNameComponents = [
             'book',
@@ -651,6 +686,35 @@ $(function(){
             'for',
             'from'
         ];
+        self.profileTitles = [
+            'CEO',
+            'President',
+            'Freelancer',
+            'Managing Director',
+            'Board Member',
+            'Chairman',
+            'Executive Director',
+            'Programmer',
+            'Founder',
+            'Co-Founder',
+            'CTO',
+            'VP Sales',
+            'EVP',
+            'Manager',
+            'Member',
+            'Managing Member',
+            'CMO'
+        ];
+        self.emailDomains = [
+            'yahoo.com',
+            'yahoo.co.jp',
+            'google.com',
+            'google.de',
+            'google.co.uk',
+            'hotmail.com',
+            'facebook.com',
+            'aol.com'
+        ];
         self.genRandomNounPhrase = function() {
             var np = self.startupNouns[Math.floor(Math.random()*self.startupNouns.length)];
             np = self.startupAdjectives[Math.floor(Math.random()*self.startupAdjectives.length)] + ' ' + np;
@@ -693,26 +757,48 @@ $(function(){
             var name = self.startupNameComponents[i] + self.startupNameComponents[j];
             return name;
         };
-        self.genRandomAuthorId = function() {
+        self.genRandomFirstName = function() {
             var firstIdx = Math.floor(Math.random() * self.firstNameComponents.length);
-            var lastIdx = Math.floor(Math.random() * self.lastNameComponents.length);
             var first = self.firstNameComponents[firstIdx];
+            return first;
+        };
+        self.genRandomLastName = function() {
+            var lastIdx = Math.floor(Math.random() * self.lastNameComponents.length);
             var last = self.lastNameComponents[lastIdx];
+            return last;
+        };
+        self.genRandomUsername = function(firstName, lastName) {
+            var first = firstName ? firstName : self.genRandomFirstName();
+            var last = lastName ? lastName : self.genRandomLastName();
             var idSuffix = Math.floor(Math.random() * 100);
             return first + last + idSuffix;
         };
+        self.selectRandomProfileId = function(except_this_profile_id) {
+            var profile_id = self.controller.util.randomKey('profile_ids', self.db.profiles);
+            if (profile_id != except_this_profile_id) {
+                return profile_id;
+            }
+            else {
+                return self.selectRandomProfileId(except_this_profile_id);
+            }
+        };
         self.genRandomListing = function() {
             var listing = {};
-            listing.listing_id = self.controller.getManaged('util').generateGuid();
+            listing.listing_id = self.controller.util.generateGuid();
             listing.title = self.genRandomStartupName() + ': ' + self.genRandomStartupDesc();
-            listing.points = Math.floor(Math.random()*100);
             listing.median_valuation = 0; // we'll add later
+            listing.num_votes = Math.floor(Math.random()*100);
             listing.num_bids = 0; // we'll add later
             listing.num_comments = 0; // we'll add later
-            listing.author_id = self.genRandomAuthorId();
-            listing.listing_date =  self.genRandomDate(20110101, self.getToday());
+            listing.author_id = self.selectRandomProfileId();
+            self.db.profiles[listing.author_id].num_listings++;
+            listing.author_username = self.db.profiles[listing.author_id].username;
+            listing.listing_date =  self.genRandomDate(20110101, self.controller.util.today());
             listing.closing_date = self.genRandomDate(listing.listing_date);
-            listing.status = (listing.closing_date < self.getToday() ? (Math.floor(Math.random()*5) == 0 ? 'withdrawn' : 'closed') : 'active');
+            listing.status = (listing.closing_date < self.controller.util.today() ? (Math.floor(Math.random()*5) == 0 ? 'withdrawn' : 'closed') : 'active');
+            if (listing.status == 'withdrawn') {
+                listing.closing_date = self.genRandomDate(listing.listing_date, self.controller.util.today());
+            }
             return listing;
         };
         self.genRandomListings = function() {
@@ -724,6 +810,91 @@ $(function(){
                 listings[listing.listing_id] = listing;
             }
             self.db.listings = listings;
+        };
+        self.orgWords = [
+            'Investments',
+            'Industries',
+            'Capital',
+            'Fund',
+            'Ventures',
+            'Partners',
+            'Group',
+            'Combinator',
+            'Seed Fund',
+            'Angels',
+            'Advisors',
+            'Venture',
+            'Venture Partners',
+            'Technologies',
+            'Catalyst',
+            'Capital Group',
+            'Associates',
+            'Equity Partners'
+        ];
+        self.orgTypes = [
+            'LLC',
+            'Inc.',
+            'LP',
+            'LLP',
+            'GmbH',
+            'Ltd',
+            'Limited',
+            'Ltd BVI',
+            'SA',
+            'SRL',
+            'PLC',
+            'AG',
+            'NV',
+            'Corp',
+            'SPA',
+            '有限公司',
+            'AMBA',
+            'Oy',
+            'SARL',
+            '株式会社',
+            '유한회사',
+            'BV',
+            'LTD',
+            'AS',
+            'AB'
+        ];
+        self.genRandomOrganization = function(isInvestor) {
+            var root = self.controller.util.ucFirst(self.genRandomStartupName());
+            var suffix = isInvestor ? self.controller.util.randomElement(self.orgWords) : '';
+            var type = self.controller.util.randomElement(self.orgTypes);
+            return root + ' ' + suffix + (suffix?' ':'') + type;
+        };
+        self.genRandomProfile = function() {
+            var profile = {};
+            var first = self.genRandomFirstName();
+            var last = self.genRandomLastName();
+            profile.profile_id = self.controller.util.generateGuid();
+            profile.username = self.genRandomUsername(first, last);
+            profile.name = first + ' ' + last;
+            profile.title = self.controller.util.randomElement(self.profileTitles);
+            profile.investor = Math.floor(Math.random() * 2);
+            profile.organization = self.genRandomOrganization(profile.investor);
+            profile.email = profile.username + '@' + self.controller.util.randomElement(self.emailDomains);
+            profile.open_id = profile.email;
+            profile.facebook = self.genRandomUsername(first, last) + 'fb';
+            profile.twitter = self.genRandomUsername(first, last) + 'tw';
+            profile.linkedin = self.genRandomUsername(first, last) + 'li';
+            profile.num_listings = 0; // add later
+            profile.num_bids = 0; // add later
+            profile.num_comments = 0; // add later
+            profile.status = 'active';
+            profile.joined_date =  self.genRandomDate(20110101, self.controller.util.today());
+            return profile;
+        };
+        self.genRandomProfiles = function() {
+            var numProfiles = 20;
+            var profiles = {};
+            var profile;
+            for (var i = 0; i < numProfiles; i++) {
+                profile = self.genRandomProfile();
+                profiles[profile.profile_id] = profile;
+            }
+            self.db.profiles = profiles;
         };
         self.genRandomVerb = function() {
             return self.startupVerbs[Math.floor(Math.random()*self.startupVerbs.length)];
@@ -746,14 +917,6 @@ $(function(){
             text += punctuation[Math.floor(Math.random()*punctuation.length)];
             return text;
         };
-        self.getToday = function() {
-            if (!self.today) {
-                var today = new Date();
-                var numericDate = self.constructNumericDate(today.getFullYear(), today.getMonth()+1, today.getDate());
-                self.today = numericDate;
-            }
-            return self.today;
-        };
         self.genRandomDate = function(earliestDate, latestDate) {
             var year = 2011;
             var month = Math.floor(Math.random()*12) + 1;
@@ -773,7 +936,7 @@ $(function(){
                     }
                 }
             }
-            var date = self.constructNumericDate(year, month, day);
+            var date = self.controller.util.constructNumericDate(year, month, day);
             if ((earliestDate && date < earliestDate) || (latestDate && date > latestDate)) {
                 return self.genRandomDate(earliestDate, latestDate);
             }
@@ -781,17 +944,15 @@ $(function(){
                 return date;
             }
         };
-        self.constructNumericDate = function(year, month, day) {
-            var date = '' + year + (month < 10 ? '0' : '') + month + (day < 10 ? '0' : '') + day;
-            return date;
-        };
         self.genRandomCommentForListing = function(listing_id) {
             var comment = {};
-            comment.comment_id = self.controller.getManaged('util').generateGuid();
+            comment.comment_id = self.controller.util.generateGuid();
             comment.listing_id = listing_id;
             comment.text = self.genRandomCommentText();
-            comment.comment_date = self.genRandomDate(self.db.listings[listing_id].listing_date, self.getToday());
-            comment.author_id = self.genRandomAuthorId();
+            comment.comment_date = self.genRandomDate(self.db.listings[listing_id].listing_date, self.controller.util.today());
+            comment.author_id = self.selectRandomProfileId();
+            self.db.profiles[comment.author_id].num_comments++;
+            comment.author_username = self.db.profiles[comment.author_id].username;
             return comment;
         };
         self.genRandomBidType = function() {
@@ -825,15 +986,17 @@ $(function(){
         };
         self.genRandomBidForListing = function(listing_id) {
             var bid = {};
-            bid.bid_id = self.controller.getManaged('util').generateGuid();
+            bid.bid_id = self.controller.util.generateGuid();
             bid.listing_id = listing_id;
-            bid.bid_date = self.genRandomDate(self.db.listings[listing_id].listing_date, self.getToday());
-            bid.author_id = self.genRandomAuthorId();
+            bid.bid_date = self.genRandomDate(self.db.listings[listing_id].listing_date, self.controller.util.today());
+            bid.author_id = self.selectRandomProfileId(self.db.listings[listing_id].author_id);
+            self.db.profiles[bid.author_id].num_bids++;
+            bid.author_username = self.db.profiles[bid.author_id].username;
             bid.amount = self.genRandomAmount();
             bid.bid_type = self.genRandomBidType();
             bid.interest_rate = self.genRandomInterestRate(bid.bid_type);
             bid.equity_pct = self.genRandomEquityPct();
-            bid.valuation = self.controller.getManaged('bids').calculateValuation(bid.amount, bid.equity_pct);
+            bid.valuation = self.controller.bids.calculateValuation(bid.amount, bid.equity_pct);
             return bid;
         };
         self.genRandomCommentsForListing = function(listing_id) {
@@ -892,6 +1055,7 @@ $(function(){
         };
         self.genRandomDb = function() {
             self.db = {};
+            self.genRandomProfiles();
             self.genRandomListings();
             self.genRandomComments();
             self.genRandomBids();
@@ -914,6 +1078,28 @@ $(function(){
                 results[i].num = i + 1;
             }
         };
+        self.calculateScores = function(results) {
+/*
+p = votes (points) from users.
+b = number of bids
+c = number of comments
+v = median valuation (normalized / $100,000)
+t = time since submission in days
+s = score
+putting it together:
+s = (p + b + c + v) / (t + 2)^1.5
+*/
+            for (var i = 0; i < results.length; i++) {
+                var r = results[i];
+                var p = r.num_votes;
+                var b = r.num_bids;
+                var c = r.num_comments;
+                var v = r.median_valuation / 100000;
+                var t = self.controller.util.today() - r.listing_date;
+                var s = (p + b + c + v) / Math.pow(t + 2, 1.5);
+                r.score = s;
+            }
+        };
         self.filterResultByType = function(result, searchType) {
             var applicable = 1;
             if (searchType == 'active') {
@@ -929,6 +1115,12 @@ $(function(){
         };
         self.sortResultsByType = function(results, searchType) {
             if (searchType == 'top') {
+                self.calculateScores(results);
+                results.sort(function(listing_a, listing_b){
+                    return listing_a.score - listing_b.score;
+                }).reverse();
+            }
+            else if (searchType == 'valuation') {
                 results.sort(function(listing_a, listing_b){
                     return listing_a.median_valuation - listing_b.median_valuation;
                 }).reverse();
@@ -940,7 +1132,7 @@ $(function(){
             }
             else if (searchType == 'popular') {
                 results.sort(function(listing_a, listing_b){
-                    return listing_a.points - listing_b.points;
+                    return listing_a.num_votes - listing_b.num_votes;
                 }).reverse();
             }
             else if (searchType == 'discussed') {
@@ -1003,7 +1195,7 @@ $(function(){
         self.username = 'johnarleyburns';
         self.setup = function(controller) {
             self.controller = controller;
-            controller.getManaged('header').displayUser(self);
+            controller.header.displayUser(self);
         };
         self.hasVoted = function(listing_id) {
             // look in cookie to see if user has voted on this listing
@@ -1012,14 +1204,14 @@ $(function(){
         self.login = function() {
             // set cookie
             self.loggedin = true;
-            self.controller.getManaged('header').displayUser(self);
-            return 'home';
+            self.controller.header.displayUser(self);
+            return 'search';
         };
         self.logout = function() {
             // remove cookie
             self.loggedin = false;
-            self.controller.getManaged('header').displayUser(self);
-            return 'home';
+            self.controller.header.displayUser(self);
+            return 'search';
         };
         return self;
     };
@@ -1053,7 +1245,7 @@ $(function(){
         self.setup = function(controller) {
             self.controller = controller;
             $('#header-logo,#header-title-link').unbind().bind('click', function(){
-                self.controller.execute({page:'home'});
+                self.controller.execute({page:'search'});
             });
             $('#header-menu-command-login').unbind().bind('click', function(){
                 self.controller.execute({page:'login'});
@@ -1065,22 +1257,25 @@ $(function(){
                 self.controller.execute({page:'listing',type:'submit'});
             });
             $('#header-menu-bar-top').unbind().bind('click', function(){
-                self.controller.execute({page:'home',search_type:'top'});
+                self.controller.execute({page:'search',search_type:'top'});
+            });
+            $('#header-menu-bar-valuation').unbind().bind('click', function(){
+                self.controller.execute({page:'search',search_type:'valuation'});
             });
             $('#header-menu-bar-active').unbind().bind('click', function(){
-                self.controller.execute({page:'home',search_type:'active'});
+                self.controller.execute({page:'search',search_type:'active'});
             });
             $('#header-menu-bar-popular').unbind().bind('click', function(){
-                self.controller.execute({page:'home',search_type:'popular'});
+                self.controller.execute({page:'search',search_type:'popular'});
             });
             $('#header-menu-bar-discussed').unbind().bind('click', function(){
-                self.controller.execute({page:'home',search_type:'discussed'});
+                self.controller.execute({page:'search',search_type:'discussed'});
             });
             $('#header-menu-bar-latest').unbind().bind('click', function(){
-                self.controller.execute({page:'home',search_type:'latest'});
+                self.controller.execute({page:'search',search_type:'latest'});
             });
             $('#header-menu-bar-closing-soon').unbind().bind('click', function(){
-                self.controller.execute({page:'home',search_type:'closing soon'});
+                self.controller.execute({page:'search',search_type:'closing soon'});
             });
             $('#header-menu-bar-faq').unbind().bind('click', function(){
                 self.controller.execute({page:'faq'});
@@ -1116,11 +1311,11 @@ $(function(){
         self.setup = function(controller) {
             self.controller = controller;
             $('#content-search-submit').unbind().bind('click', function(){
-                self.controller.execute({page:'home', search_type:'keyword'});
+                self.controller.execute({page:'search', search_type:'keyword'});
             });
             $('#content-search-keywords').unbind().bind('keyup', function(e){
                 if (e.keyCode == 13) { // return key
-                    self.controller.execute({page:'home', search_type:'keyword'});
+                    self.controller.execute({page:'search', search_type:'keyword'});
                 }
             });
         };
@@ -1139,28 +1334,92 @@ $(function(){
                     args.keywords = keywords;
                 }
             }
-            $('#content-search-keywords').val(searchText);
             var results = self.doSearch(searchType, keywords);
             self.displayResults(results);
-            return 'home';
+            return 'search';
         };
         self.doSearch = function(searchType, keywords){
-            return self.controller.getManaged('datastore').searchListings(searchType, keywords);
+            return self.controller.datastore.searchListings(searchType, keywords);
         };
         self.displayResults = function(results){
             var resultsHtml = '';
             var listing;
             for (var i = 0; i < results.length; i++) { // create results
                 listing = results[i];
-                resultsHtml += self.controller.getManaged('listing').generateListingSnippetHtml(i, listing);
+                resultsHtml += self.controller.listing.generateListingSnippetHtml(i, listing);
             }
             if (resultsHtml == '') {
                 resultsHtml = '<i>no listings found</i>';
             }
-            $('#home-content-results-list').html(resultsHtml);
+            $('#search-content-results-list').html(resultsHtml);
             for (var j = 0; j < results.length; j++) { // bind results
                 listing = results[j];
-                self.controller.getManaged('listing').bindListingSnippet(j, listing);
+                self.controller.listing.bindListingSnippet(j, listing);
+            }
+        };
+        return self;
+    };
+
+    var Profile = function() {
+        var self = {};
+        self.controller = null;
+        self.setup = function(controller) {
+            self.controller = controller;
+        }
+        self.execute = function(args) {
+            var profile_id = args['profile_id'];
+            var profile = self.doQuery(profile_id);
+            self.displayprofile(profile);
+            return 'profile';
+        };
+        self.doQuery = function(profile_id){
+            return self.controller.datastore.db.profiles[profile_id];
+        };
+        self.displayprofile = function(profile){
+            // enable editable if logged in
+            if (profile && self.controller.user.loggedin) {
+                $('#profile-form-editable').show();
+                $('#profile-form-readonly').hide();
+
+                $('#profile-edit-profile-id').val(profile.profile_id);
+                $('#profile-edit-username').html(profile.username);
+                $('#profile-edit-name').val(profile.name);
+                $('#profile-edit-title').val(profile.title);
+                $('#profile-edit-organization').val(profile.organization);
+                $('#profile-edit-email').val(profile.email);
+                $('#profile-edit-facebook').val(profile.facebook);
+                $('#profile-edit-twitter').val(profile.twitter);
+                $('#profile-edit-linkedin').val(profile.linkedin);
+                $('#profile-edit-investor').attr('checked', profile.investor);
+                $('#profile-edit-joined-date').html(profile.joined_date);
+                $('#profile-edit-open-id').html(profile.open_id);
+                $('#profile-edit-num-listings').html(profile.num_listings);
+                $('#profile-edit-num-bids').html(profile.num_bids);
+                $('#profile-edit-num-comments').html(profile.num_comments);
+            }
+            else if (profile) {
+                $('#profile-form-editable').hide();
+                $('#profile-form-readonly').show();
+
+                $('#profile-username').html(profile.username);
+                $('#profile-name').html(profile.name);
+                $('#profile-title').html(profile.title);
+                $('#profile-organization').html(profile.organization);
+                $('#profile-email').html(profile.email);
+                $('#profile-facebook').html(profile.facebook);
+                $('#profile-twitter').html(profile.twitter);
+                $('#profile-linkedin').html(profile.linkedin);
+                $('#profile-investor').attr('checked', profile.investor);
+                $('#profile-joined-date').html(profile.joined_date);
+                $('#profile-open-id').html(profile.open_id);
+                $('#profile-num-listings').html(profile.num_listings);
+                $('#profile-num-bids').html(profile.num_bids);
+                $('#profile-num-comments').html(profile.num_comments);
+            }
+            else {
+                $('#profile-form-editable').hide();
+                $('#profile-form-readonly').show();
+                $('#profile-username').html('<em>no profiles found</em>');
             }
         };
         return self;
@@ -1179,19 +1438,19 @@ $(function(){
             return 'listing';
         };
         self.doQuery = function(listing_id){
-            return self.controller.getManaged('datastore').db.listings[listing_id];
+            return self.controller.datastore.db.listings[listing_id];
         };
         self.displayListing = function(listing){
             var resultsHtml = '';
             if (listing) {
-                $('#listing-snippet').html(self.controller.getManaged('listing').generateListingSnippetHtml('listing', listing));
-                self.controller.getManaged('listing').bindListingSnippet('listing', listing);
+                $('#listing-snippet').html(self.controller.listing.generateListingSnippetHtml('listing', listing));
+                self.controller.listing.bindListingSnippet('listing', listing);
             }
             else {
                 $('#listing-snippet').html('<em>no listings found</em>');
             }
             // enable editable if logged in
-            if (self.controller.getManaged('user').loggedin) {
+            if (self.controller.user.loggedin) {
                 $('#listing-form-editable').show();
                 $('#listing-form-readonly').hide();
                 $('#listing-form-title').val(listing.title);
@@ -1216,19 +1475,38 @@ $(function(){
                 self.controller.execute({page:'bids', listing_id:$(this).data('listing_id')});
             });
             if (isFinite(i)) {
-                $('#content-results-list-item-upvote-'+i).data('listing_id',listing.listing_id).unbind().bind('click', function(){
-                    self.controller.execute({page:'home', listing_id:$(this).data('listing_id'), action:'upvote'});
+                $('#content-results-list-item-upvote-'+i)
+                .data('index', i)
+                .data('listing_id', listing.listing_id)
+                .data('num_votes', listing.num_votes)
+                .unbind()
+                .bind('click', function(){
+                    var index = $(this).data('index');
+                    var listing_id = $(this).data('listing_id');
+                    var num_votes = $(this).data('num_votes');
+                    if (self.upvoteListing(listing_id)) {
+                        num_votes++;
+                        $(this).data('num_votes', num_votes);
+                        $('#content-results-list-item-votes-'+index).html(num_votes);
+                    }
                 });
             }
         };
+        self.upvoteListing = function(listing_id) {
+            // send post to server, someday
+            self.controller.datastore.db.listings[listing_id].num_votes++;
+            return 1;
+        }
         self.generateListingSnippetHtml = function(i, listing) {
+            listing.days_ago = self.controller.util.today() - listing.listing_date; /* paint with time proximity */
+            listing.days_left = listing.closing_date - self.controller.util.today(); /* paint with time proximity */
             var resultHtml = '';
             var evenOdd;
             if (isFinite(i)) {
                 evenOdd = (i % 2 == 0) ? 'even' : 'odd';
                 resultHtml += '<div class="content-results-list-item content-results-list-item-' + evenOdd + '">';
                 resultHtml += '<div class="content-results-list-item-num">' + listing.num + '</div>';
-                resultHtml += '<div class="content-results-list-item-upvote id="content-results-list-item-upvote-' + i + '"></div>';
+                resultHtml += '<div class="content-results-list-item-upvote" id="content-results-list-item-upvote-' + i + '"></div>';
             }
             else {
                 resultHtml += '<div class="content-results-list-item>';
@@ -1239,21 +1517,30 @@ $(function(){
             resultHtml += listing.title;
             resultHtml += '</div>';
             resultHtml += '<div class="content-results-list-item-author link" id="content-results-list-item-author-' + i + '">';
-            resultHtml += '(' + listing.author_id + ')';
+            resultHtml += '(' + listing.author_username + ')';
             resultHtml += '</div>';
             resultHtml += '<div class="content-results-list-item-clear"></div>';
             resultHtml += '<div class="content-results-list-item-detail">';
-            resultHtml += listing.points + ' points | ';
+            resultHtml += '<span id="content-results-list-item-votes-' + i + '">' + listing.num_votes + '</span>' + ' votes | ';
+            resultHtml += (listing.days_ago == 0) ? 'listed today' : listing.days_ago + ' day' + (listing.days_ago>1?'s':'')  + ' ago';
+            resultHtml += ' | ';
+            resultHtml += (listing.status == 'active' && listing.days_left == 0) ? 'closing today!' : '';
+            resultHtml += (listing.status == 'active' && listing.days_left < 0) ? 'listing closed' : '';
+            resultHtml += (listing.status == 'active' && listing.days_left > 0) ? 'closing in ' + listing.days_left + ' day' + (listing.days_left>1?'s':'') : '';
+            resultHtml += (listing.status == 'closed') ? 'listing closed' : '';
+            resultHtml += (listing.status == 'withdrawn') ? 'listing withdrawn' : '';
+            resultHtml += ' | ';
             resultHtml += '<span class="link" id="content-results-list-item-comments-' + i + '">';
             resultHtml += listing.num_comments + ' comment' + (listing.num_comments==1?'':'s');
             resultHtml += '</span> | ';
-            resultHtml += '$' + self.controller.getManaged('util').addCommas(listing.median_valuation) + ' after ';
+            resultHtml += '$' + self.controller.util.addCommas(listing.median_valuation) + ' after ';
             resultHtml += '<span class="link" id="content-results-list-item-bids-' + i + '">';
             resultHtml += listing.num_bids + ' bid' + (listing.num_bids==1?'':'s');
             resultHtml += '</span> | ';
-            resultHtml += 'listed ' + self.controller.getManaged('util').formatDate(listing.listing_date) + ' | ';
-            resultHtml += 'closing ' + self.controller.getManaged('util').formatDate(listing.closing_date) + ' | ';
-            resultHtml += 'bid is <em>' + listing.status + '</em>';
+            resultHtml += 'listed ' + self.controller.util.formatDate(listing.listing_date) + ' | ';
+            resultHtml += (listing.status == 'active') ? 'closing ' + self.controller.util.formatDate(listing.closing_date) : '';
+            resultHtml += (listing.status == 'closed') ? 'closed ' + self.controller.util.formatDate(listing.closing_date) : '';
+            resultHtml += (listing.status == 'withdrawn') ? 'withdrawn ' + self.controller.util.formatDate(listing.closing_date) : '';
             resultHtml += '</div>';
             resultHtml += '</div>';
             resultHtml += '<div class="content-results-list-item-clear"></div>';
@@ -1275,8 +1562,8 @@ $(function(){
             return 'comments';
         };
         self.doQuery = function(listing_id){
-            var results = self.controller.getManaged('datastore').commentsForListing(listing_id);
-            results.push(self.controller.getManaged('datastore').db.listings[listing_id]);
+            var results = self.controller.datastore.commentsForListing(listing_id);
+            results.push(self.controller.datastore.db.listings[listing_id]);
             return results;
         };
         self.displayResults = function(results){
@@ -1284,8 +1571,8 @@ $(function(){
             var comment;
             var listing = results.pop();
             if (listing) {
-                $('#comments-listing-snippet').html(self.controller.getManaged('listing').generateListingSnippetHtml('comments', listing));
-                self.controller.getManaged('listing').bindListingSnippet('comments', listing);
+                $('#comments-listing-snippet').html(self.controller.listing.generateListingSnippetHtml('comments', listing));
+                self.controller.listing.bindListingSnippet('comments', listing);
             }
             for (var i = 0; i < results.length; i++) { // create results
                 comment = results[i];
@@ -1297,7 +1584,7 @@ $(function(){
             // add html
             $('#comments-content-results-list').html(resultsHtml);
             // enable editable if logged in
-            if (self.controller.getManaged('user').loggedin) {
+            if (self.controller.user.loggedin) {
                 $('#comment-loggedin-add').show();
                 $('#comment-not-loggedin-msg').hide();
             }
@@ -1324,10 +1611,10 @@ $(function(){
             resultHtml += '<div class="content-results-list-item-detail">';
             resultHtml += 'by ';
             resultHtml += '<span class="link" id="comments-item-author-' + i + '">'
-            resultHtml += comment.author_id;
+            resultHtml += comment.author_username;
             resultHtml += '</span>'
             resultHtml += ' on ';
-            resultHtml += self.controller.getManaged('util').formatDate(comment.comment_date);
+            resultHtml += self.controller.util.formatDate(comment.comment_date);
             resultHtml += '</div>';
             resultHtml += '</div>'
             resultHtml += '<div class="content-results-list-item-clear"></div>';
@@ -1349,16 +1636,16 @@ $(function(){
             return 'bids';
         };
         self.doQuery = function(listing_id){
-            var results = self.controller.getManaged('datastore').bidsForListing(listing_id);
-            results.push(self.controller.getManaged('datastore').db.listings[listing_id]);
+            var results = self.controller.datastore.bidsForListing(listing_id);
+            results.push(self.controller.datastore.db.listings[listing_id]);
             return results;
         };
         self.displayResults = function(results){
             var resultsHtml = '';
             var listing = results.pop();
             if (listing) {
-                $('#bids-listing-snippet').html(self.controller.getManaged('listing').generateListingSnippetHtml('bids', listing));
-                self.controller.getManaged('listing').bindListingSnippet('bids', listing);
+                $('#bids-listing-snippet').html(self.controller.listing.generateListingSnippetHtml('bids', listing));
+                self.controller.listing.bindListingSnippet('bids', listing);
             }
             var bid;
             for (var i = 0; i < results.length; i++) { // create results
@@ -1371,7 +1658,7 @@ $(function(){
             // add html
             $('#bids-content-results-list').html(resultsHtml);
             // set login visibility
-            if (self.controller.getManaged('user').loggedin) {
+            if (self.controller.user.loggedin) {
                 $('#bids-form-loggedin').show();
                 $('#bids-form-not-loggedin').hide();
             }
@@ -1400,9 +1687,9 @@ $(function(){
             resultHtml += '<div class="content-results-list-item-num">' + bid.num + '</div>';
             resultHtml += '<div class="content-results-list-item-title">';
             resultHtml += 'Valued at ';
-            resultHtml += '$' + self.controller.getManaged('util').addCommas(bid.valuation);
+            resultHtml += '$' + self.controller.util.addCommas(bid.valuation);
             resultHtml += ' with a bid of ';
-            resultHtml += '$' + self.controller.getManaged('util').addCommas(bid.amount);
+            resultHtml += '$' + self.controller.util.addCommas(bid.amount);
             resultHtml += ' for ' + bid.equity_pct + '%';
             resultHtml += ' with ' + self.formatBidType(bid.bid_type);
             resultHtml += bid.interest_rate ? ' @ ' + bid.interest_rate + '%' : '';
@@ -1411,10 +1698,10 @@ $(function(){
             resultHtml += '<div class="content-results-list-item-detail">';
             resultHtml += 'by ';
             resultHtml += '<span class="link" id="bids-item-author-' + i + '">'
-            resultHtml += bid.author_id;
+            resultHtml += bid.author_username;
             resultHtml += '</span>'
             resultHtml += ' on ';
-            resultHtml += self.controller.getManaged('util').formatDate(bid.bid_date);
+            resultHtml += self.controller.util.formatDate(bid.bid_date);
             resultHtml += '</div>';
             resultHtml += '</div>'
             resultHtml += '<div class="content-results-list-item-clear"></div>';
@@ -1431,12 +1718,12 @@ $(function(){
         var self = {};
         self.managed = {};
         self.actionPages = {};
-        self.defaultPage = 'home';
+        self.defaultPage = 'search';
         self.setup = function() {
         };
-
         self.addManaged = function(name, obj) {
             self.managed[name] = obj;
+            self[name] = obj; /* shortcut */
         };
         self.getManaged = function(name) {
             return self.managed[name];
@@ -1449,7 +1736,7 @@ $(function(){
         };
         self.execute = function(args) {
             if (!args) {
-                args = { page: 'home' };
+                args = { page: 'search' };
             }
             var page = args['page'];
             if (!page) {
@@ -1467,12 +1754,13 @@ $(function(){
         };
         self.loadActionPages = function() {
             self.actionPages = {
-                login: self.getManaged('user').login,
-                logout: self.getManaged('user').logout,
-                home: self.getManaged('search').execute,
-                listing: self.getManaged('listing').execute,
-                comments: self.getManaged('comments').execute,
-                bids: self.getManaged('bids').execute
+                login: self.user.login,
+                logout: self.user.logout,
+                search: self.search.execute,
+                listing: self.listing.execute,
+                comments: self.comments.execute,
+                bids: self.bids.execute,
+                profile: self.profile.execute
             };
         };
         return self;
@@ -1487,6 +1775,7 @@ $(function(){
     controller.addManaged('uploader', new Uploader());
     controller.addManaged('header', new Header());
     controller.addManaged('search', new Search());
+    controller.addManaged('profile', new Profile());
     controller.addManaged('listing', new Listing());
     controller.addManaged('comments', new Comments());
     controller.addManaged('bids', new Bids());
@@ -1670,7 +1959,7 @@ text-decoration: none;
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff',endColorstr='#dddddd');
 }
 .content-results-list-item-odd {
-    background: #eeeeee;
+    background: #eeeeff;
     background: -moz-linear-gradient(top,#ffffff,#dddddd);
     background: -o-linear-gradient(#ffffff,#dddddd);
     background: -webkit-linear-gradient(#ffffff,#dddddd);
@@ -1881,6 +2170,8 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
             <div class="header-menu-bar">
                 <span class="link" id="header-menu-bar-top">top</span>
                 <span> | </span>
+                <span class="link" id="header-menu-bar-valuation">valuation</span>
+                <span> | </span>
                 <span class="link" id="header-menu-bar-active">active</span>
                 <span> | </span>
                 <span class="link" id="header-menu-bar-popular">popular</span>
@@ -1898,15 +2189,15 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
         </div>
     </div>
 
-    <div id="homepage" class="content page">
+    <div id="searchpage" class="content page">
         <div class="content-search">
             <input id="content-search-keywords" name="keywords" type="text" size="30"/>
             <button id="content-search-submit">search</button>
         </div>
         <div class="content-results">
-            <div id="home-content-results-list" class="content-results-list"></div>
+            <div id="search-content-results-list" class="content-results-list"></div>
             <div class="content-results-footer">
-                <a href="?page=home&amp;search_type=fill_in_type&amp;start=index_num_plus_chunk_size">more results</a>
+                <a href="?page=search&amp;search_type=fill_in_type&amp;start=index_num_plus_chunk_size">more results</a>
             </div>
             <div class="content-results-list-item-clear"></div>
         </div>
@@ -1934,64 +2225,103 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
     </div>
     
     <div id="profilepage" class="content page">
-        <form action="#" method="post">
+        <div class="content-form" id="profile-form-editable">
+            <form action="#" method="post">
             <input name="page" type="hidden" value="profile"/>
+            <input id="profile-edit-profile-id" name="profile-id" type="hidden" value=""/>
 
-            <div class="content-form">
+            <div class="content-form-line-emphasized"><span id="profile-edit-username">johnarleyburns32</span></div>
+            <div class="content-form-clear"></div>
+            <div class="content-form-line">who is </div>
+            <div class="content-form-inputline"><input id="profile-edit-name" name="name" type="text" size="40" value="John Arley Burns"/></div>
+            <div class="content-form-clear"></div>
+            <div class="content-form-line">is the </div>
+            <div class="content-form-inputline"><input id="profile-edit-title" name="title" type="text" size="10" value="CEO"/></div>
+            <div class="content-form-line">at</div>
+            <div class="content-form-inputline"><input id="profile-edit-organization" name="organization" type="text" size="20" value="Steinwasser, Inc."/></div>
+            <div class="content-form-clear"></div>
 
-                <div class="content-form-maininputline"><input name="name" type="text" size="40" value="John Arley Burns"/></div>
-                <div class="content-form-clear"></div>
+            <div class="content-form-line">Reachable on email at</div>
+            <div class="content-form-clear"></div>
+            <div class="content-form-inputline"><input id="profile-edit-email" name="email" type="text" size="40" value="johnarleyburns@gmail.com"/></div>
+            <div class="content-form-clear"></div>
 
-                <div class="content-form-line">is the </div>
-                <div class="content-form-inputline"><input name="title" type="text" size="10" value="CEO"/></div>
-                <div class="content-form-line">at</div>
-                <div class="content-form-inputline"><input name="organization" type="text" size="20" value="Steinwasser, Inc."/></div>
-                <div class="content-form-clear"></div>
+            <div class="content-form-label">on facebook at</div>
+            <div class="content-form-input"><input id="profile-edit-facebook" name="facebook" type="text" size="20" value="johnarleyburns"/></div>
+            <div class="content-form-clear"></div>
 
-                <div class="content-form-line">Reachable on email at</div>
-                <div class="content-form-clear"></div>
-                <div class="content-form-inputline"><input name="email" type="text" size="40" value="johnarleyburns@gmail.com"/></div>
-                <div class="content-form-clear"></div>
+            <div class="content-form-label">on twitter at</div>
+            <div class="content-form-input"><input id="profile-edit-twitter" name="twitter" type="text" size="20" value="jarleyburns"/></div>
+            <div class="content-form-clear"></div>
 
-                <div class="content-form-label">on facebook at</div>
-                <div class="content-form-input"><input name="facebook" type="text" size="20" value="johnarleyburns"/></div>
-                <div class="content-form-clear"></div>
+            <div class="content-form-label">on linkedin at</div>
+            <div class="content-form-input"><input id="profile-edit-linkedin" name="linkedin" type="text" size="20" value=""/></div>
+            <div class="content-form-clear"></div>
 
-                <div class="content-form-label">on twitter at</div>
-                <div class="content-form-input"><input name="twitter" type="text" size="20" value="jarleyburns"/></div>
-                <div class="content-form-clear"></div>
+            <div class="content-form-line">Investor</div>
+            <div class="content-form-inputline"><input id="profile-edit-investor" name="investor" type="checkbox" checked="checked"/></div>
+            <div class="content-form-clear"></div>
+            
+            <div class="content-form-clear"></div>
+            <div class="content-form-line">Member since <span id="profile-edit-joined-date">15 June 2011</span></div>
+            <div class="content-form-clear"></div>
 
-                <div class="content-form-label">on linkedin at</div>
-                <div class="content-form-input"><input name="linkedin" type="text" size="20" value=""/></div>
-                <div class="content-form-clear"></div>
+            <div class="content-form-line">Linked via OpenID <span id="profile-edit-open-id">johnarleyburns32.google.com</div>
+            <div class="content-form-clear"></div>
 
-                <div class="content-form-line">Investor</div>
-                <div class="content-form-inputline"><input name="investor" type="checkbox" checked="checked"/></div>
-                <div class="content-form-clear"></div>
-                
-                <div class="content-form-clear"></div>
-                <div class="content-form-line">Member since 15 June 2011</div>
-                <div class="content-form-clear"></div>
+            <div class="content-form-inputline"><input name="submit" type="submit" value="save"/></div>
+            <div class="content-form-clear"></div>
 
-                <div class="content-form-line">Linked via OpenID johnarleyburns</div>
-                <div class="content-form-clear"></div>
-
-                <div class="content-form-inputline"><input name="submit" type="submit" value="save"/></div>
-                <div class="content-form-clear"></div>
-
-                <div class="content-form-linkline">
-                    <a href="?page=home&amp;search_type=lister&amp;lister_id=johnarleyburns">3 listings</a>  |
-                    <a href="?page=home&amp;search_type=bidder&amp;bidder_id=johnarleyburns">5 bids</a>  |
-                    <a href="?page=comments&amp;commenter_id=johnarleyburns">12 comments</a>
-                </div>
-                <div class="content-form-clear"></div>
-
-                <div class="content-form-linkline">
-                    <a href="?page=profile&amp;remove_id=johnarleyburns">(remove account)</a>
-                </div>
-                <div class="content-form-clear"></div>
+            <div class="content-form-linkline">
+                <a href="?page=search&amp;search_type=lister&amp;author_id=johnarleyburns"><span id="profile-edit-num-listings">3</span> listings</a>  |
+                <a href="?page=bids&amp;search_type=bidder&amp;bidder_id=johnarleyburns"><span id="profile-edit-num-bids">7</span> bids</a>  |
+                <a href="?page=comments&amp;author_id=johnarleyburns"><span id="profile-edit-num-comments">12</span> comments</a>
             </div>
-        </form>
+            <div class="content-form-clear"></div>
+
+            <div class="content-form-linkline">
+                <a href="?page=profile&amp;remove_id=johnarleyburns">(remove account)</a>
+            </div>
+            <div class="content-form-clear"></div>
+            </form>
+        </div>
+        <div class="content-form" id="profile-form-readonly">
+            <div class="content-form-line-emphasized"><span id="profile-username">johnarleyburns32</span></div>
+            <div class="content-form-clear"></div>
+            <div class="content-form-line">who is <span id="profile-name">John Arley Burns</span></div>
+            <div class="content-form-clear"></div>
+            <div class="content-form-line">is a <span id="profile-title">CEO</span></div>
+            <div class="content-form-line">at <span id="profile-organization">Steinwasser, Inc.</span></div>
+            <div class="content-form-clear"></div>
+
+            <div class="content-form-line">Reachable on email at <span id="profile-email">johnarleyburns@gmail.com</span></div>
+            <div class="content-form-clear"></div>
+
+            <div class="content-form-line">on facebook at <span id="profile-facebook">johnarleyburns59</span></div>
+            <div class="content-form-clear"></div>
+            <div class="content-form-line">on twitter at <span id="profile-twitter">johnarleyburns21</span></div>
+            <div class="content-form-clear"></div>
+            <div class="content-form-line">on linkedin at <span id="profile-linkedin">johnarleyburns63</span></div>
+            <div class="content-form-clear"></div>
+
+            <div class="content-form-line">Investor</div>
+            <div class="content-form-inputline"><input id="profile-investor" name="investor" type="checkbox" readonly="readonly"/></div>
+            <div class="content-form-clear"></div>
+            
+            <div class="content-form-clear"></div>
+            <div class="content-form-line">Member since <span id="profile-joined-date">15 June 2011</span></div>
+            <div class="content-form-clear"></div>
+
+            <div class="content-form-line">Linked via OpenID <span id="profile-open-id">johnarleyburns32.google.com</div>
+            <div class="content-form-clear"></div>
+
+            <div class="content-form-linkline">
+                <a href="?page=search&amp;search_type=lister&amp;author_id=johnarleyburns"><span id="profile-num-listings">3</span> listings</a>  |
+                <a href="?page=bids&amp;search_type=bidder&amp;bidder_id=johnarleyburns"><span id="profile-num-bids">7</span> bids</a>  |
+                <a href="?page=comments&amp;author_id=johnarleyburns"><span id="profile-num-comments">12</span> comments</a>
+            </div>
+            <div class="content-form-clear"></div>
+        </div>
     </div>
     
     <div id="faqpage" class="content page">
@@ -2002,44 +2332,73 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
         </div>
         <div class="content-results">
             <div class="content-results-list">
-                <div class="content-results-list-item">
+                <div class="content-results-list-item content-results-list-item-odd">
                     <div class="content-results-list-item-num">1.</div>
-                    <div class="content-results-list-item-desc">
-                        <div class="content-results-list-item-desc-title">
-                            What is Startupbidder?
-                        </div>
-                        <div class="content-results-list-item-desc-detail">
-                            A crowdsourced startup company information site. On it you can place your business plan,
-                            comment on business plans, up or down vote a business plan, and if you're an investor,
-                            bid for a stake in the company!
-                        </div>
+                    <div class="content-results-list-item-upvote-filler"></div>
+                    <div class="content-results-list-item-title">
+                        What is Startupbidder?
+                    </div>
+                    <div class="content-results-list-item-clear"></div>
+                    <div class="content-results-list-item-detail">
+                        A crowdsourced startup company information site. On it you can place your business plan,
+                        comment on business plans, up or down vote a business plan, and if you're an investor,
+                        bid for a stake in the company!
                     </div>
                 </div>
-                <div class="content-results-list-item-spacer">&nbsp;</div>
-                <div class="content-results-list-item">
+                <div class="content-results-list-item-clear"></div>
+                <div class="content-results-list-item content-results-list-item-even">
                     <div class="content-results-list-item-num">2.</div>
-                    <div class="content-results-list-item-desc">
-                        <div class="content-results-list-item-desc-title">
-                            Who runs Startupbidder?
-                        </div>
-                        <div class="content-results-list-item-desc-detail">
-                            Two guys who wanted to bring more visibility to the otherwise opaque world of
-                            startup business plan valuation.  That, and they were bored.
-                        </div>
+                    <div class="content-results-list-item-upvote-filler"></div>
+                    <div class="content-results-list-item-title">
+                        Who runs Startupbidder?
+                    </div>
+                    <div class="content-results-list-item-clear"></div>
+                    <div class="content-results-list-item-detail">
+                        Two guys who wanted to bring more visibility to the otherwise opaque world of
+                        startup business plan valuation.  That, and they were bored.
                     </div>
                 </div>
-                <div class="content-results-list-item-spacer">&nbsp;</div>
-                <div class="content-results-list-item">
+                <div class="content-results-list-item-clear"></div>
+                <div class="content-results-list-item content-results-list-item-odd">
                     <div class="content-results-list-item-num">3.</div>
-                    <div class="content-results-list-item-desc">
-                        <div class="content-results-list-item-desc-title">
-                            How can we reach you?
-                        </div>
-                        <div class="content-results-list-item-desc-detail">
-                            Try admin@startupbidder.com, or +49 162.179.2450 by phone.
-                        </div>
+                    <div class="content-results-list-item-upvote-filler"></div>
+                    <div class="content-results-list-item-title">
+                        How can we reach you?
+                    </div>
+                    <div class="content-results-list-item-clear"></div>
+                    <div class="content-results-list-item-detail">
+                        Try admin@startupbidder.com, or +49 162.179.2450 by phone.
                     </div>
                 </div>
+                <div class="content-results-list-item-clear"></div>
+                <div class="content-results-list-item content-results-list-item-even">
+                    <div class="content-results-list-item-num">4.</div>
+                    <div class="content-results-list-item-upvote-filler"></div>
+                    <div class="content-results-list-item-title">
+                        What is the algorithm you use to rank stories?
+                    </div>
+                    <div class="content-results-list-item-clear"></div>
+                    <div class="content-results-list-item-detail">
+<pre>
+Used by search for the 'top' query:
+
+p = votes (points) from users.
+b = number of bids
+c = number of comments
+v = median valuation (normalized / $100,000)
+t = time since submission in days
+s = score
+
+putting it together:
+
+s = (p + b + c + v) / (t + 2)^1.5
+
+Reference:
+</pre>
+<a href="http://www.seomoz.org/blog/reddit-stumbleupon-delicious-and-hacker-news-algorithms-exposed">seomoz.org</a>
+                    </div>
+                </div>
+                <div class="content-results-list-item-clear"></div>
             </div>
         </div>
     </div>
