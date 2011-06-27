@@ -849,12 +849,9 @@ $(function(){
             'NV',
             'Corp',
             'SPA',
-            '有限公司',
             'AMBA',
             'Oy',
             'SARL',
-            '株式会社',
-            '유한회사',
             'BV',
             'LTD',
             'AS',
@@ -950,6 +947,7 @@ $(function(){
             var comment = {};
             comment.comment_id = self.controller.util.generateGuid();
             comment.listing_id = listing_id;
+            comment.listing_title = self.db.listings[listing_id].title;
             comment.text = self.genRandomCommentText();
             comment.comment_date = self.genRandomDate(self.db.listings[listing_id].listing_date, self.controller.util.today());
             comment.profile_id = self.selectRandomProfileId();
@@ -990,6 +988,7 @@ $(function(){
             var bid = {};
             bid.bid_id = self.controller.util.generateGuid();
             bid.listing_id = listing_id;
+            bid.listing_title = self.db.listings[listing_id].title;
             bid.bid_date = self.genRandomDate(self.db.listings[listing_id].listing_date, self.controller.util.today());
             bid.profile_id = self.selectRandomProfileId(self.db.listings[listing_id].profile_id);
             self.db.profiles[bid.profile_id].num_bids++;
@@ -1062,13 +1061,13 @@ $(function(){
             self.genRandomComments();
             self.genRandomBids();
         };
-        self.searchListings = function(searchType, keywords) {
+        self.searchListings = function(searchType, keywords, profile_id) {
+            var keywordArray = keywords ? keywords.split(' ') : [];
             var results = [];
             var result;
-            var profile_id = keywords && keywords.match(/\bprofile_id:([A-Za-z0-9-]+)/) ? RegExp.$1 : null;
             for (var listing_id in self.db.listings) { // just full db for now
                 result = self.db.listings[listing_id];
-                var applicable = self.filterResultByType(result, searchType)
+                var applicable = self.filterResultByType(result, searchType, keywordArray)
                     && (profile_id ? self.filterResultByProfileId(result, profile_id) : 1);
                 if (applicable) 
                     results.push(result);
@@ -1104,124 +1103,132 @@ s = (p + b + c + v) / (t + 2)^1.5
                 r.score = s;
             }
         };
-        self.filterResultByType = function(result, searchType) {
+        self.filterResultByType = function(result, searchType, keywordArray) {
             var applicable = 1;
             if (searchType == 'active') {
                 applicable = (result.status == 'active') ? 1 : 0;
             }
-            else if (searchType == 'closing soon') {
+            else if (searchType == 'closing') {
                 applicable = (result.status == 'active') ? 1 : 0;
             }
-            else {
-                applicable = 1;
-            }
-            return applicable;
-        };
-        self.filterResultByProfileId = function(result, profile_id) {
-            return result.profile_id == profile_id;
-        };
-        self.sortResultsByType = function(results, searchType) {
-            if (searchType == 'top') {
-                self.calculateScores(results);
-                results.sort(function(listing_a, listing_b){
-                    return listing_a.score - listing_b.score;
-                }).reverse();
-            }
-            else if (searchType == 'valuation') {
-                results.sort(function(listing_a, listing_b){
-                    return listing_a.median_valuation - listing_b.median_valuation;
-                }).reverse();
-            }
-            else if (searchType == 'active') {
-                results.sort(function(listing_a, listing_b){
-                    return listing_a.num_bids - listing_b.num_bids;
-                }).reverse();
-            }
-            else if (searchType == 'popular') {
-                results.sort(function(listing_a, listing_b){
-                    return listing_a.num_votes - listing_b.num_votes;
-                }).reverse();
-            }
-            else if (searchType == 'discussed') {
-                results.sort(function(listing_a, listing_b){
-                    return listing_a.num_comments - listing_b.num_comments;
-                }).reverse();
-            }
-            else if (searchType == 'latest') {
-                results.sort(function(listing_a, listing_b){
-                    return listing_a.listing_date - listing_b.listing_date;
-                }).reverse();
-            }
-            else if (searchType == 'closing soon') {
-                results.sort(function(listing_a, listing_b){
-                    return listing_a.closing_date - listing_b.closing_date;
+            else if (searchType == 'keyword') {
+                var keywordMatches = 0;
+                for (var i = 0; i < keywordArray.length; i++) {
+                    if (result.title.indexOf(keywordArray[i]) != -1)
+                        keywordMatches++;
+                    else
+                        break;
+                    }
+                    applicable = keywordMatches == keywordArray.length ? 1 : 0;
+                }
+                else {
+                    applicable = 1;
+                }
+                return applicable;
+            };
+            self.filterResultByProfileId = function(result, profile_id) {
+                return result.profile_id == profile_id;
+            };
+            self.sortResultsByType = function(results, searchType) {
+                if (searchType == 'top' || searchType == 'keyword') {
+                    self.calculateScores(results);
+                    results.sort(function(listing_a, listing_b){
+                        return listing_a.score - listing_b.score;
+                    }).reverse();
+                }
+                else if (searchType == 'valuation') {
+                    results.sort(function(listing_a, listing_b){
+                        return listing_a.median_valuation - listing_b.median_valuation;
+                    }).reverse();
+                }
+                else if (searchType == 'active') {
+                    results.sort(function(listing_a, listing_b){
+                        return listing_a.num_bids - listing_b.num_bids;
+                    }).reverse();
+                }
+                else if (searchType == 'popular') {
+                    results.sort(function(listing_a, listing_b){
+                        return listing_a.num_votes - listing_b.num_votes;
+                    }).reverse();
+                }
+                else if (searchType == 'discussed') {
+                    results.sort(function(listing_a, listing_b){
+                        return listing_a.num_comments - listing_b.num_comments;
+                    }).reverse();
+                }
+                else if (searchType == 'latest' || searchType == 'profile') {
+                    results.sort(function(listing_a, listing_b){
+                        return listing_a.listing_date - listing_b.listing_date;
+                    }).reverse();
+                }
+                else if (searchType == 'closing') {
+                    results.sort(function(listing_a, listing_b){
+                        return listing_a.closing_date - listing_b.closing_date;
+                    });
+                }
+            };
+            self.commentsForListing = function(listing_id) {
+                var comments = [];
+                var comment;
+                for (var comment_id in self.db.comments){
+                    comment = self.db.comments[comment_id];
+                    if (comment.listing_id == listing_id)
+                        comments.push(comment);
+                }
+                comments.sort(function(a,b){
+                    return a.comment_date - b.comment_date;
                 });
-            }
-        };
-        self.commentsForListing = function(listing_id) {
-            var comments = [];
-            var comment;
-            for (var comment_id in self.db.comments){
-                comment = self.db.comments[comment_id];
-                if (comment.listing_id == listing_id)
-                    comments.push(comment);
-            }
-            comments.sort(function(a,b){
-                return a.comment_date - b.comment_date;
-            });
-            for (var i = 0; i < comments.length; i++) {
-                comments[i].num = i + 1;
-            }
-            return comments;
-        };
-        self.commentsForProfile = function(profile_id) {
-            var comments = [];
-            var comment;
-            console.log('profid:'+profile_id);
-            for (var comment_id in self.db.comments){
-                comment = self.db.comments[comment_id];
-                console.log('cmtpid:'+comment.profile_id);
-                if (comment.profile_id == profile_id)
-                    comments.push(comment);
-            }
-            comments.sort(function(a,b){
-                return a.comment_date - b.comment_date;
-            });
-            for (var i = 0; i < comments.length; i++) {
-                comments[i].num = i + 1;
-            }
-            return comments;
-        };
-        self.bidsForListing = function(listing_id) {
-            var bids = [];
-            var bid;
-            for (var bid_id in self.db.bids){
-                bid = self.db.bids[bid_id];
-                if (bid.listing_id == listing_id)
-                    bids.push(bid);
-            }
-            bids.sort(function(a,b){
-                return a.bid_date - b.bid_date;
-            });
-            for (var i = 0; i < bids.length; i++) {
-                bids[i].num = i + 1;
-            }
-            return bids;
-        };
-        self.bidsForProfile = function(profile_id) {
-            var bids = [];
-            var bid;
-            for (var bid_id in self.db.bids){
-                bid = self.db.bids[bid_id];
-                if (bid.profile_id == profile_id)
-                    bids.push(bid);
-            }
-            bids.sort(function(a,b){
-                return a.bid_date - b.bid_date;
-            });
-            for (var i = 0; i < bids.length; i++) {
-                bids[i].num = i + 1;
-            }
+                for (var i = 0; i < comments.length; i++) {
+                    comments[i].num = i + 1;
+                }
+                return comments;
+            };
+            self.commentsForProfile = function(profile_id) {
+                var comments = [];
+                var comment;
+                for (var comment_id in self.db.comments){
+                    comment = self.db.comments[comment_id];
+                    if (comment.profile_id == profile_id)
+                        comments.push(comment);
+                }
+                comments.sort(function(a,b){
+                    return a.comment_date - b.comment_date;
+                });
+                for (var i = 0; i < comments.length; i++) {
+                    comments[i].num = i + 1;
+                }
+                return comments;
+            };
+            self.bidsForListing = function(listing_id) {
+                var bids = [];
+                var bid;
+                for (var bid_id in self.db.bids){
+                    bid = self.db.bids[bid_id];
+                    if (bid.listing_id == listing_id)
+                        bids.push(bid);
+                }
+                bids.sort(function(a,b){
+                    return a.bid_date - b.bid_date;
+                });
+                for (var i = 0; i < bids.length; i++) {
+                    bids[i].num = i + 1;
+                }
+                return bids;
+            };
+            self.bidsForProfile = function(profile_id) {
+                var bids = [];
+                var bid;
+                for (var bid_id in self.db.bids){
+                    bid = self.db.bids[bid_id];
+                    if (bid.profile_id == profile_id)
+                        bids.push(bid);
+                }
+                bids.sort(function(a,b){
+                    return a.bid_date - b.bid_date;
+                });
+                for (var i = 0; i < bids.length; i++) {
+                    bids[i].num = i + 1;
+                }
             return bids;
         };
         return self;
@@ -1314,7 +1321,7 @@ s = (p + b + c + v) / (t + 2)^1.5
                 self.controller.execute({page:'search',search_type:'latest'});
             });
             $('#header-menu-bar-closing-soon').unbind().bind('click', function(){
-                self.controller.execute({page:'search',search_type:'closing soon'});
+                self.controller.execute({page:'search',search_type:'closing'});
             });
             $('#header-menu-bar-faq').unbind().bind('click', function(){
                 self.controller.execute({page:'faq'});
@@ -1360,24 +1367,23 @@ s = (p + b + c + v) / (t + 2)^1.5
         };
         self.execute = function(args) {
             var searchType = args['search_type'];
+            var profile_id = args['profile_id'];
+            var keywords = $('#content-search-keywords').val();
             if (!searchType) {
                 searchType = self.defaultSearchType;
             }
-            var keywords = $('#content-search-keywords').val();
-            if (!keywords) {
-                keywords = '';
+            if (keywords) {
+                keywords = keywords.replace(/\btype:\w*/g, '').replace(/\s+/g, ' ').trim();
             }
-            if (args['profile_id']) {
-                keywords += ' profile_id:' + args['profile_id'];
-            }
-            keywords = keywords.replace(/\btype:\w*/g, '').replace(/\s+/g, ' ').trim();
             $('#content-search-keywords').val(keywords);
-            var results = self.doSearch(searchType, keywords);
+            var results = self.doSearch(searchType, keywords, profile_id);
+            console.log('incoming json:' + JSON.stringify(args, null, '\t'));
+            console.log('returned json:' + JSON.stringify(results, null, '\t'));
             self.displayResults(results);
             return 'search';
         };
-        self.doSearch = function(searchType, keywords){
-            return self.controller.datastore.searchListings(searchType, keywords);
+        self.doSearch = function(searchType, keywords, profile_id){
+            return self.controller.datastore.searchListings(searchType, keywords, profile_id);
         };
         self.displayResults = function(results){
             var resultsHtml = '';
@@ -1407,6 +1413,8 @@ s = (p + b + c + v) / (t + 2)^1.5
         self.execute = function(args) {
             var profile_id = args['profile_id'];
             var profile = self.doQuery(profile_id);
+            console.log('incoming json:' + JSON.stringify(args, null, '\t'));
+            console.log('returned json:' + JSON.stringify(profile, null, '\t'));
             self.displayprofile(profile);
             return 'profile';
         };
@@ -1468,7 +1476,7 @@ s = (p + b + c + v) / (t + 2)^1.5
             $(bidsSel).html(profile.num_bids);
             $(commentsSel).html(profile.num_comments);
             $(listingsSel+'-link').unbind().data('profile_id',profile.profile_id).bind('click',function(){
-                self.controller.execute({page:'search',search_type:'latest',profile_id:$(this).data('profile_id')});
+                self.controller.execute({page:'search',search_type:'profile',profile_id:$(this).data('profile_id')});
             });
             $(bidsSel+'-link').unbind().data('profile_id',profile.profile_id).bind('click',function(){
                 self.controller.execute({page:'bids',profile_id:$(this).data('profile_id')});
@@ -1489,6 +1497,8 @@ s = (p + b + c + v) / (t + 2)^1.5
         self.execute = function(args) {
             var listing_id = args['listing_id'];
             var listing = self.doQuery(listing_id);
+            console.log('incoming json:' + JSON.stringify(args, null, '\t'));
+            console.log('returned json:' + JSON.stringify(listing, null, '\t'));
             self.displayListing(listing);
             return 'listing';
         };
@@ -1614,13 +1624,14 @@ s = (p + b + c + v) / (t + 2)^1.5
             var listing_id = args['listing_id'];
             var profile_id = args['profile_id'];
             var results;
-            console.log('args.lid:'+listing_id+' args.pid:'+profile_id);
             if (listing_id) {
                 results = self.commentsForListing(listing_id);
             }
             else if (profile_id) {
                 results = self.commentsForProfile(profile_id);
             }
+            console.log('incoming json:' + JSON.stringify(args, null, '\t'));
+            console.log('returned json:' + JSON.stringify(results, null, '\t'));
             self.displayResults(results);
             return 'comments';
         };
@@ -1640,7 +1651,7 @@ s = (p + b + c + v) / (t + 2)^1.5
             var listing = results.pop();
             for (var i = 0; i < results.length; i++) { // create results
                 comment = results[i];
-                resultsHtml += self.generateResultHtml(i, comment);
+                resultsHtml += self.generateResultHtml(i, comment, listing);
             }
             if (resultsHtml == '') {
                 resultsHtml = '<em>no comments found</em>';
@@ -1661,7 +1672,7 @@ s = (p + b + c + v) / (t + 2)^1.5
                 }
             }
             else {
-                $('#comments-listing-snippet').html('Comments for Profile:');
+                $('#comments-listing-snippet').html('Comments:');
                 $('#comment-loggedin-add').hide();
                 $('#comment-not-loggedin-msg').hide();
             }
@@ -1671,9 +1682,12 @@ s = (p + b + c + v) / (t + 2)^1.5
                 $('#comments-item-profile-'+i).data('profile_id',comment.profile_id).unbind().bind('click', function(){
                     self.controller.execute({page:'profile', profile_id:$(this).data('profile_id')});
                 });           
+                $('#comments-item-listing-'+i).data('listing_id',comment.listing_id).unbind().bind('click', function(){
+                    self.controller.execute({page:'listing', listing_id:$(this).data('listing_id')});
+                });           
             }
         };
-        self.generateResultHtml = function(i, comment) {
+        self.generateResultHtml = function(i, comment, listing) {
             var resultHtml = '';
             resultHtml += '<div class="content-results-list-item">';
             resultHtml += '<div class="content-results-list-item-num">' + comment.num + '</div>';
@@ -1688,6 +1702,7 @@ s = (p + b + c + v) / (t + 2)^1.5
             resultHtml += '</span>'
             resultHtml += ' on ';
             resultHtml += self.controller.util.formatDate(comment.comment_date);
+            resultHtml += listing ? '' : ' for <span class="link" id="comments-item-listing-' + i + '">' + comment.listing_title + '</span>';
             resultHtml += '</div>';
             resultHtml += '</div>'
             resultHtml += '<div class="content-results-list-item-clear"></div>';
@@ -1712,6 +1727,8 @@ s = (p + b + c + v) / (t + 2)^1.5
             else if (profile_id) {
                 results = self.bidsForProfile(profile_id);
             }
+            console.log('incoming json:' + JSON.stringify(args, null, '\t'));
+            console.log('returned json:' + JSON.stringify(results, null, '\t'));
             self.displayResults(results);
             return 'bids';
         };
@@ -1731,7 +1748,7 @@ s = (p + b + c + v) / (t + 2)^1.5
             var bid;
             for (var i = 0; i < results.length; i++) { // create results
                 bid = results[i];
-                resultsHtml += self.generateResultHtml(i, bid);
+                resultsHtml += self.generateResultHtml(i, bid, listing);
             }
             if (resultsHtml == '') {
                 resultsHtml = '<em>no bids found</em>';
@@ -1754,12 +1771,15 @@ s = (p + b + c + v) / (t + 2)^1.5
             else {
                 $('#bids-form-loggedin').hide();
                 $('#bids-form-not-loggedin').hide();
-                $('#bids-listing-snippet').html('Bids for Profile:');
+                $('#bids-listing-snippet').html('');
             }
             for (var i = 0; i < results.length; i++) {
                 bid = results[i];
                 $('#bids-item-profile-'+i).data('profile_id',bid.profile_id).unbind().bind('click', function(){
                     self.controller.execute({page:'profile', profile_id:$(this).data('profile_id')});
+                });           
+                $('#bids-item-listing-'+i).data('listing_id',bid.listing_id).unbind().bind('click', function(){
+                    self.controller.execute({page:'listing', listing_id:$(this).data('listing_id')});
                 });           
             }
         };
@@ -1771,7 +1791,7 @@ s = (p + b + c + v) / (t + 2)^1.5
             };
             return visualMapping[bid_type];
         };
-        self.generateResultHtml = function(i, bid) {
+        self.generateResultHtml = function(i, bid, listing) {
             var resultHtml = '';
             resultHtml += '<div class="content-results-list-item">';
             resultHtml += '<div class="content-results-list-item-num">' + bid.num + '</div>';
@@ -1792,6 +1812,7 @@ s = (p + b + c + v) / (t + 2)^1.5
             resultHtml += '</span>'
             resultHtml += ' on ';
             resultHtml += self.controller.util.formatDate(bid.bid_date);
+            resultHtml += listing ? '' : ' for <span class="link" id="bids-item-listing-' + i + '">' + bid.listing_title + '</span>';
             resultHtml += '</div>';
             resultHtml += '</div>'
             resultHtml += '<div class="content-results-list-item-clear"></div>';
@@ -2270,7 +2291,7 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
                 <span> | </span>
                 <span class="link" id="header-menu-bar-latest">latest</span>
                 <span> | </span>
-                <span class="link" id="header-menu-bar-closing-soon">closing soon</span>
+                <span class="link" id="header-menu-bar-closing-soon">closing</span>
                 <span> | </span>
                 <span class="link" id="header-menu-bar-faq">faq</span>
                 <span class="header-menu-bar-submit-spacer" id="header-menu-bar-submit-spacer"> | </span>
@@ -2287,7 +2308,7 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
         <div class="content-results">
             <div id="search-content-results-list" class="content-results-list"></div>
             <div class="content-results-footer">
-                <a href="?page=search&amp;search_type=fill_in_type&amp;start=index_num_plus_chunk_size">more results</a>
+                    <!-- <a href="?page=search&amp;search_type=fill_in_type&amp;start=index_num_plus_chunk_size">more results</a> -->
             </div>
             <div class="content-results-list-item-clear"></div>
         </div>
@@ -2322,7 +2343,6 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
 
             <div class="content-form-line-emphasized"><span id="profile-edit-username">johnarleyburns32</span></div>
             <div class="content-form-clear"></div>
-            <div class="content-form-line">who is </div>
             <div class="content-form-inputline"><input id="profile-edit-name" name="name" type="text" size="40" value="John Arley Burns"/></div>
             <div class="content-form-clear"></div>
             <div class="content-form-line">is the </div>
@@ -2378,7 +2398,7 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
         <div class="content-form" id="profile-form-readonly">
             <div class="content-form-line-emphasized"><span id="profile-username">johnarleyburns32</span></div>
             <div class="content-form-clear"></div>
-            <div class="content-form-line">who is <span id="profile-name">John Arley Burns</span></div>
+            <div class="content-form-line"><span id="profile-name">John Arley Burns</span></div>
             <div class="content-form-clear"></div>
             <div class="content-form-line">is a <span id="profile-title">CEO</span></div>
             <div class="content-form-line">at <span id="profile-organization">Steinwasser, Inc.</span></div>
@@ -2596,7 +2616,7 @@ MisLead is a revolution in social networking.  Previously, social networking has
             <em>You must be logged in to bid.</em>
         </div>
         <div class="content-form">
-            <div class="content-form-line-emphasized">Existing bids:</div>
+            <div class="content-form-line-emphasized">Bid history:</div>
             <div class="content-form-clear"></div>
         </div>
         <div class="content-results">
