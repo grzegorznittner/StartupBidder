@@ -881,8 +881,20 @@ $(function(){
             profile.num_listings = 0; // add later
             profile.num_bids = 0; // add later
             profile.num_comments = 0; // add later
-            profile.status = 'active';
+            profile.status = 'active'; // or 'deactivated'
             profile.joined_date =  self.genRandomDate(20110101, self.controller.util.today());
+            return profile;
+        };
+        self.genArleyProfile = function() {
+            var profile = self.genRandomProfile();
+            profile.username = 'johnarleyburns';
+            profile.name = 'John Arley Burns';
+            profile.email = 'johnarleyburns@gmail.com';
+            profile.openid = 'johnarleyburns@gmail.com';
+            profile.facebook = 'johnarleyburns';
+            profile.twitter = 'jarleyburns';
+            profile.linkedin = '';
+            profile.open_id = 'johnarleyburns@google.com';
             return profile;
         };
         self.genRandomProfiles = function() {
@@ -890,7 +902,7 @@ $(function(){
             var profiles = {};
             var profile;
             for (var i = 0; i < numProfiles; i++) {
-                profile = self.genRandomProfile();
+                profile = i == 0 ? self.genArleyProfile() : self.genRandomProfile();
                 profiles[profile.profile_id] = profile;
             }
             self.db.profiles = profiles;
@@ -1231,14 +1243,21 @@ s = (p + b + c + v) / (t + 2)^1.5
                 }
             return bids;
         };
+        self.profileForUsername = function(username) {
+            var profile = null;
+            for (var profile_id in self.db.profiles) {
+                if (self.db.profiles[profile_id].username == username)
+                    profile = self.db.profiles[profile_id];
+            }
+            return profile;
+        };
         return self;
     };
 
     var User = function() {
         var self = {};
         self.controller = null;
-        self.loggedin = false;
-        self.username = 'johnarleyburns';
+        self.profile = null;
         self.setup = function(controller) {
             self.controller = controller;
             controller.header.displayUser(self);
@@ -1248,14 +1267,13 @@ s = (p + b + c + v) / (t + 2)^1.5
             return false;
         };
         self.login = function() {
-            // set cookie
-            self.loggedin = true;
+            self.profile = self.controller.datastore.profileForUsername('johnarleyburns'); // auto login
             self.controller.header.displayUser(self);
             return 'search';
         };
         self.logout = function() {
             // remove cookie
-            self.loggedin = false;
+            self.profile = null; // auto logout
             self.controller.header.displayUser(self);
             return 'search';
         };
@@ -1328,10 +1346,10 @@ s = (p + b + c + v) / (t + 2)^1.5
             });
         };
         self.displayUser = function(user) {
-            if (user.loggedin) {
+            if (user.profile) {
                 $('#header-menu-name-login').hide();
-                $('#header-menu-name-username').html(user.username).show().unbind().bind('click', function(){
-                    self.controller.execute({page:'profile', account_id:user.account_id});
+                $('#header-menu-name-username').html(user.profile.username).show().unbind().bind('click', function(){
+                    self.controller.execute({page:'profile', profile_id:user.profile.profile_id});
                 });
                 $('#header-menu-command-login').hide();
                 $('#header-menu-command-logout').show();
@@ -1412,23 +1430,40 @@ s = (p + b + c + v) / (t + 2)^1.5
         }
         self.execute = function(args) {
             var profile_id = args['profile_id'];
-            var profile = self.doQuery(profile_id);
+            var profile;
+            if (args.action == 'deactivate')
+                profile = self.deactivateProfile(profile_id);
+            else if (args.action == 'activate')
+                profile = self.activateProfile(profile_id);
+            else
+                profile = self.doQuery(profile_id);
             console.log('incoming json:' + JSON.stringify(args, null, '\t'));
             console.log('returned json:' + JSON.stringify(profile, null, '\t'));
             self.displayprofile(profile);
             return 'profile';
+        };
+        self.activateProfile = function(profile_id){
+            var profile = self.doQuery(profile_id);
+            profile.status = 'active';
+            return profile;
+        };
+        self.deactivateProfile = function(profile_id){
+            var profile = self.doQuery(profile_id);
+            profile.status = 'deactivated';
+            return profile;
         };
         self.doQuery = function(profile_id){
             return self.controller.datastore.db.profiles[profile_id];
         };
         self.displayprofile = function(profile){
             // enable editable if logged in
-            if (profile && self.controller.user.loggedin) {
+            var deactivatedText = profile.status == 'active' ? '' : ' <span class="attention">DEACTIVATED</span>';
+            if (profile && self.controller.user.profile && self.controller.user.profile.profile_id == profile.profile_id) {
                 $('#profile-form-editable').show();
                 $('#profile-form-readonly').hide();
 
                 $('#profile-edit-profile-id').val(profile.profile_id);
-                $('#profile-edit-username').html(profile.username);
+                $('#profile-edit-username').html(profile.username + deactivatedText);
                 $('#profile-edit-name').val(profile.name);
                 $('#profile-edit-title').val(profile.title);
                 $('#profile-edit-organization').val(profile.organization);
@@ -1445,7 +1480,7 @@ s = (p + b + c + v) / (t + 2)^1.5
                 $('#profile-form-editable').hide();
                 $('#profile-form-readonly').show();
 
-                $('#profile-username').html(profile.username);
+                $('#profile-username').html(profile.username + deactivatedText);
                 $('#profile-name').html(profile.name);
                 $('#profile-title').html(profile.title);
                 $('#profile-organization').html(profile.organization);
@@ -1465,7 +1500,7 @@ s = (p + b + c + v) / (t + 2)^1.5
             else {
                 $('#profile-form-editable').hide();
                 $('#profile-form-readonly').show();
-                $('#profile-username').html('<em>no profiles found</em>');
+                $('#profile-username').html('<em>no profile found</em>');
             }
         };
         self.setProfileLinks = function(profile, editable) {
@@ -1484,6 +1519,19 @@ s = (p + b + c + v) / (t + 2)^1.5
             $(commentsSel+'-link').unbind().data('profile_id',profile.profile_id).bind('click',function(){
                 self.controller.execute({page:'comments',profile_id:$(this).data('profile_id')});
             });
+            if (editable)
+                if (profile.status == 'active') {
+                    $('#profile-activate-link').hide();
+                    $('#profile-deactivate-link').show().unbind().data('profile_id',profile.profile_id).bind('click',function(){
+                        self.controller.execute({page:'profile',action:'deactivate',profile_id:$(this).data('profile_id')});
+                    });
+                }
+                else {
+                    $('#profile-activate-link').show().unbind().data('profile_id',profile.profile_id).bind('click',function(){
+                        self.controller.execute({page:'profile',action:'activate',profile_id:$(this).data('profile_id')});
+                    });
+                    $('#profile-deactivate-link').hide();
+                }
         };
         return self;
     };
@@ -1515,7 +1563,7 @@ s = (p + b + c + v) / (t + 2)^1.5
                 $('#listing-snippet').html('<em>no listings found</em>');
             }
             // enable editable if logged in
-            if (self.controller.user.loggedin) {
+            if (self.controller.user.profile) {
                 $('#listing-form-editable').show();
                 $('#listing-form-readonly').hide();
                 $('#listing-form-title').val(listing.title);
@@ -1662,7 +1710,7 @@ s = (p + b + c + v) / (t + 2)^1.5
             if (listing) {
                 $('#comments-listing-snippet').html(self.controller.listing.generateListingSnippetHtml('comments', listing));
                 self.controller.listing.bindListingSnippet('comments', listing);
-                if (self.controller.user.loggedin) {
+                if (self.controller.user.profile) {
                     $('#comment-loggedin-add').show();
                     $('#comment-not-loggedin-msg').hide();
                 }
@@ -1979,6 +2027,9 @@ text-decoration: none;
     text-decoration: underline;
     cursor: pointer;
 }
+.attention {
+    color: red;
+}
 .header {
     font-size: 12px;
     position: absolute;
@@ -2161,6 +2212,9 @@ text-decoration: none;
     margin-left: 5px;
     text-align: left;
     font-size: 12px;
+}
+.content-form-checkbox {
+    line-height: 30px;
 }
 .content-form-maininputline {
     font-weight: bold;
@@ -2346,9 +2400,10 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
             <div class="content-form-inputline"><input id="profile-edit-name" name="name" type="text" size="40" value="John Arley Burns"/></div>
             <div class="content-form-clear"></div>
             <div class="content-form-line">is the </div>
-            <div class="content-form-inputline"><input id="profile-edit-title" name="title" type="text" size="10" value="CEO"/></div>
+            <div class="content-form-inputline"><input id="profile-edit-title" name="title" type="text" size="20" value="CEO"/></div>
+            <div class="content-form-clear"></div>
             <div class="content-form-line">at</div>
-            <div class="content-form-inputline"><input id="profile-edit-organization" name="organization" type="text" size="20" value="Steinwasser, Inc."/></div>
+            <div class="content-form-inputline"><input id="profile-edit-organization" name="organization" type="text" size="35" value="Steinwasser, Inc."/></div>
             <div class="content-form-clear"></div>
 
             <div class="content-form-line">Reachable on email at</div>
@@ -2369,7 +2424,7 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
             <div class="content-form-clear"></div>
 
             <div class="content-form-line">Investor</div>
-            <div class="content-form-inputline"><input id="profile-edit-investor" name="investor" type="checkbox" checked="checked"/></div>
+            <div class="content-form-inputline content-form-checkbox"><input id="profile-edit-investor" name="investor" type="checkbox" checked="checked"/></div>
             <div class="content-form-clear"></div>
             
             <div class="content-form-clear"></div>
@@ -2390,7 +2445,8 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
             <div class="content-form-clear"></div>
 
             <div class="content-form-linkline">
-                <a href="?page=profile&amp;remove_id=johnarleyburns">(remove account)</a>
+                <span class="link" id="profile-deactivate-link">(deactivate profile)</span>
+                <span class="link" id="profile-activate-link">(activate profile)</span>
             </div>
             <div class="content-form-clear"></div>
             </form>
@@ -2415,7 +2471,7 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
             <div class="content-form-clear"></div>
 
             <div class="content-form-line">Investor</div>
-            <div class="content-form-inputline"><input id="profile-investor" name="investor" type="checkbox" readonly="readonly" disabled="disabled"/></div>
+            <div class="content-form-inputline content-form-checkbox"><input id="profile-investor" name="investor" type="checkbox" readonly="readonly" disabled="disabled"/></div>
             <div class="content-form-clear"></div>
             
             <div class="content-form-clear"></div>
@@ -2632,11 +2688,11 @@ MisLead is a revolution in social networking.  Previously, social networking has
         </div>
         <div class="content-form">
             <div class="content-form-line">
-                <a href="?page=profile&amp;account_id=11"><div class="content-form-login content-form-login-google"></div>Google</a>
+                <a href="#"><div class="content-form-login content-form-login-google"></div>Google</a>
             </div>
             <div class="content-form-clear"></div>
             <div class="content-form-line">
-                <a href="?page=profile&amp;account_id=11"><div class="content-form-login content-form-login-yahoo"></div>Yahoo</a>
+                <a href="#"><div class="content-form-login content-form-login-yahoo"></div>Yahoo</a>
             </div>
         </div>
     </div>
