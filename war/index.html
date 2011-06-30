@@ -967,6 +967,20 @@ $(function(){
             comment.profile_username = self.db.profiles[comment.profile_id].username;
             return comment;
         };
+        self.addCommentForListingAndProfile = function(listing_id, profile_id, comment_text){
+            var comment = {};
+            comment.comment_id = self.controller.util.generateGuid();
+            comment.listing_id = listing_id;
+            self.db.listings[listing_id].num_comments++;
+            comment.listing_title = self.db.listings[listing_id].title;
+            comment.text = comment_text;
+            comment.comment_date = self.controller.util.today();
+            comment.profile_id = profile_id;
+            self.db.profiles[comment.profile_id].num_comments++;
+            comment.profile_username = self.db.profiles[comment.profile_id].username;
+            self.db.comments[comment.comment_id] = comment;
+            return comment;
+        };
         self.genRandomBidType = function() {
             var bid_type;
             var rnd = Math.floor(Math.random()*3);
@@ -1695,16 +1709,32 @@ s = (p + b + c + v) / (t + 2)^1.5
             var listing_id = args['listing_id'];
             var profile_id = args['profile_id'];
             var results;
-            if (listing_id) {
+            $('#comment-save-message').html('');
+            if (listing_id && profile_id && args['action'] == 'save') {
+                results = self.saveComment(listing_id, profile_id);
+            }
+            else if (listing_id) {
+                $('#comment-textarea').val('');
                 results = self.commentsForListing(listing_id);
             }
             else if (profile_id) {
+                $('#comment-textarea').val('');
                 results = self.commentsForProfile(profile_id);
             }
             console.log('incoming json:' + JSON.stringify(args, null, '\t'));
             console.log('returned json:' + JSON.stringify(results, null, '\t'));
             self.displayResults(results);
             return 'comments';
+        };
+        self.saveComment = function(listing_id, profile_id){
+            var commentText = $('#comment-textarea').val();
+            var comment = self.controller.datastore.addCommentForListingAndProfile(listing_id, profile_id, commentText);
+            if (comment) {
+                $('#comment-save-message').html('comment saved');
+                $('#comment-textarea').val('');
+            }
+            var results = self.commentsForListing(listing_id);
+            return results;
         };
         self.commentsForListing = function(listing_id){
             var results = self.controller.datastore.commentsForListing(listing_id);
@@ -1733,9 +1763,14 @@ s = (p + b + c + v) / (t + 2)^1.5
             if (listing) {
                 $('#comments-listing-snippet').html(self.controller.listing.generateListingSnippetHtml('comments', listing));
                 self.controller.listing.bindListingSnippet('comments', listing);
-                if (self.controller.user.profile) {
+                var profile = self.controller.user.profile;
+                if (profile) {
                     $('#comment-loggedin-add').show();
                     $('#comment-not-loggedin-msg').hide();
+                    $('#comment-save-button').show().unbind().data('listing_id',listing.listing_id).data('profile_id',profile.profile_id).bind('click',function(e){
+                        e.preventDefault();
+                        self.controller.execute({page:'comments',action:'save',listing_id:$(this).data('listing_id'),profile_id:$(this).data('profile_id')});
+                    });
                 }
                 else {
                     $('#comment-loggedin-add').hide();
@@ -2399,9 +2434,9 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
         <div class="content-comment" id="comment-loggedin-add">
                 <div class="content-comment-label">your comment:</div>
                 <input name="page" type="hidden" value="comments"/>
-                <textarea class="content-comment-textarea" name="comment" cols="55" rows="6" wrap="soft"></textarea>
+                <textarea class="content-comment-textarea" id="comment-textarea" name="comment" cols="55" rows="6" wrap="soft"></textarea>
                 <br/>
-                <input type="submit" value="save"/>
+                <button id="comment-save-button">Save</button><em><span id="comment-save-message"></span></em>
         </div>
         </form>
         <div class="content-comment" id="comment-not-loggedin-msg">
