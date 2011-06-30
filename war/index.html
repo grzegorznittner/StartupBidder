@@ -1431,10 +1431,13 @@ s = (p + b + c + v) / (t + 2)^1.5
         self.execute = function(args) {
             var profile_id = args['profile_id'];
             var profile;
+            $('#profile-save-message').html('');
             if (args.action == 'deactivate')
                 profile = self.deactivateProfile(profile_id);
             else if (args.action == 'activate')
                 profile = self.activateProfile(profile_id);
+            else if (args.action == 'save')
+                profile = self.saveProfile(profile_id);
             else
                 profile = self.doQuery(profile_id);
             console.log('incoming json:' + JSON.stringify(args, null, '\t'));
@@ -1450,6 +1453,21 @@ s = (p + b + c + v) / (t + 2)^1.5
         self.deactivateProfile = function(profile_id){
             var profile = self.doQuery(profile_id);
             profile.status = 'deactivated';
+            return profile;
+        };
+        self.saveProfile = function(profile_id){
+            var profile = self.doQuery(profile_id);
+            profile.name = $('#profile-edit-name').val();
+            profile.title = $('#profile-edit-title').val();
+            profile.organization = $('#profile-edit-organization').val();
+            profile.email = $('#profile-edit-email').val();
+            profile.facebook = $('#profile-edit-facebook').val();
+            profile.twitter = $('#profile-edit-twitter').val();
+            profile.linkedin = $('#profile-edit-linkedin').val();
+            profile.investor = $('#profile-edit-investor').attr('checked') ? 1 : 0;
+            self.controller.datastore.db.profiles[profile_id] = profile;
+            if (profile)
+                $('#profile-save-message').html('profile saved');
             return profile;
         };
         self.doQuery = function(profile_id){
@@ -1519,7 +1537,11 @@ s = (p + b + c + v) / (t + 2)^1.5
             $(commentsSel+'-link').unbind().data('profile_id',profile.profile_id).bind('click',function(){
                 self.controller.execute({page:'comments',profile_id:$(this).data('profile_id')});
             });
-            if (editable)
+            if (editable) {
+                $('#profile-save-link').show().unbind().data('profile_id',profile.profile_id).bind('click',function(e){
+                    e.preventDefault();
+                    self.controller.execute({page:'profile',action:'save',profile_id:$(this).data('profile_id')});
+                });
                 if (profile.status == 'active') {
                     $('#profile-activate-link').hide();
                     $('#profile-deactivate-link').show().unbind().data('profile_id',profile.profile_id).bind('click',function(){
@@ -1532,6 +1554,7 @@ s = (p + b + c + v) / (t + 2)^1.5
                     });
                     $('#profile-deactivate-link').hide();
                 }
+            }
         };
         return self;
     };
@@ -2320,7 +2343,7 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
 
 <div class="site">
     <div class="header">
-        <div id="header-logo" class="header-logo" alt="logo"></div>
+        <div id="header-logo" class="header-logo"></div>
         <div class="header-title">
             <span class="link" id="header-title-link">startupbidder</span>
         </div>
@@ -2431,10 +2454,10 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
             <div class="content-form-line">Member since <span id="profile-edit-joined-date">15 June 2011</span></div>
             <div class="content-form-clear"></div>
 
-            <div class="content-form-line">Linked via OpenID <span id="profile-edit-open-id">johnarleyburns32.google.com</div>
+            <div class="content-form-line">Linked via OpenID <span id="profile-edit-open-id">johnarleyburns32.google.com</span></div>
             <div class="content-form-clear"></div>
 
-            <div class="content-form-inputline"><input name="submit" type="submit" value="save"/></div>
+            <div class="content-form-inputline"><button id="profile-save-link">Save</button><em><span id="profile-save-message"></span></em></div>
             <div class="content-form-clear"></div>
 
             <div class="content-form-linkline">
@@ -2471,14 +2494,14 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
             <div class="content-form-clear"></div>
 
             <div class="content-form-line">Investor</div>
-            <div class="content-form-inputline content-form-checkbox"><input id="profile-investor" name="investor" type="checkbox" readonly="readonly" disabled="disabled"/></div>
+            <div class="content-form-inputline content-form-checkbox"><input id="profile-investor" name="investor" type="checkbox" disabled="disabled"/></div>
             <div class="content-form-clear"></div>
             
             <div class="content-form-clear"></div>
             <div class="content-form-line">Member since <span id="profile-joined-date">15 June 2011</span></div>
             <div class="content-form-clear"></div>
 
-            <div class="content-form-line">Linked via OpenID <span id="profile-open-id">johnarleyburns32.google.com</div>
+            <div class="content-form-line">Linked via OpenID <span id="profile-open-id">johnarleyburns32.google.com</span></div>
             <div class="content-form-clear"></div>
 
             <div class="content-form-linkline">
