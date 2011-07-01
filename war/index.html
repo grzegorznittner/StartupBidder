@@ -965,6 +965,7 @@ $(function(){
             comment.profile_id = self.selectRandomProfileId();
             self.db.profiles[comment.profile_id].num_comments++;
             comment.profile_username = self.db.profiles[comment.profile_id].username;
+            comment.status = 'active';
             return comment;
         };
         self.addCommentForListingAndProfile = function(listing_id, profile_id, comment_text){
@@ -978,8 +979,17 @@ $(function(){
             comment.profile_id = profile_id;
             self.db.profiles[comment.profile_id].num_comments++;
             comment.profile_username = self.db.profiles[comment.profile_id].username;
+            comment.status = 'active';
             self.db.comments[comment.comment_id] = comment;
             return comment;
+        };
+        self.deleteComment = function(comment_id) {
+            var comment = self.db.comments[comment_id];
+            if (comment) {
+                comment.status = 'deleted';
+                self.db.listings[comment.listing_id].num_comments--;
+                self.db.profiles[comment.profile_id].num_comments--;
+            }
         };
         self.genRandomBidType = function() {
             var bid_type;
@@ -1198,7 +1208,7 @@ s = (p + b + c + v) / (t + 2)^1.5
                 var comment;
                 for (var comment_id in self.db.comments){
                     comment = self.db.comments[comment_id];
-                    if (comment.listing_id == listing_id)
+                    if (comment.listing_id == listing_id && comment.status == 'active')
                         comments.push(comment);
                 }
                 comments.sort(function(a,b){
@@ -1214,7 +1224,7 @@ s = (p + b + c + v) / (t + 2)^1.5
                 var comment;
                 for (var comment_id in self.db.comments){
                     comment = self.db.comments[comment_id];
-                    if (comment.profile_id == profile_id)
+                    if (comment.profile_id == profile_id && comment.status == 'active')
                         comments.push(comment);
                 }
                 comments.sort(function(a,b){
@@ -1708,9 +1718,15 @@ s = (p + b + c + v) / (t + 2)^1.5
         self.execute = function(args) {
             var listing_id = args['listing_id'];
             var profile_id = args['profile_id'];
+            var comment_id = args['comment_id'];
             var results;
             $('#comment-save-message').html('');
-            if (listing_id && profile_id && args['action'] == 'save') {
+            if (comment_id && args['action'] == 'delete') {
+                self.deleteComment(comment_id);
+                delete args['action'];
+                return self.execute(args);
+            }
+            else if (listing_id && profile_id && args['action'] == 'save') {
                 results = self.saveComment(listing_id, profile_id);
             }
             else if (listing_id) {
@@ -1725,6 +1741,9 @@ s = (p + b + c + v) / (t + 2)^1.5
             console.log('returned json:' + JSON.stringify(results, null, '\t'));
             self.displayResults(results);
             return 'comments';
+        };
+        self.deleteComment = function(comment_id){
+            self.controller.datastore.deleteComment(comment_id);
         };
         self.saveComment = function(listing_id, profile_id){
             var commentText = $('#comment-textarea').val();
@@ -1750,9 +1769,10 @@ s = (p + b + c + v) / (t + 2)^1.5
             var resultsHtml = '';
             var comment;
             var listing = results.pop();
+            var profile = self.controller.user.profile;
             for (var i = 0; i < results.length; i++) { // create results
                 comment = results[i];
-                resultsHtml += self.generateResultHtml(i, comment, listing);
+                resultsHtml += self.generateResultHtml(i, comment, listing, profile);
             }
             if (resultsHtml == '') {
                 resultsHtml = '<em>no comments found</em>';
@@ -1763,7 +1783,6 @@ s = (p + b + c + v) / (t + 2)^1.5
             if (listing) {
                 $('#comments-listing-snippet').html(self.controller.listing.generateListingSnippetHtml('comments', listing));
                 self.controller.listing.bindListingSnippet('comments', listing);
-                var profile = self.controller.user.profile;
                 if (profile) {
                     $('#comment-loggedin-add').show();
                     $('#comment-not-loggedin-msg').hide();
@@ -1791,15 +1810,32 @@ s = (p + b + c + v) / (t + 2)^1.5
                 $('#comments-item-listing-'+i).data('listing_id',comment.listing_id).unbind().bind('click', function(){
                     self.controller.execute({page:'listing', listing_id:$(this).data('listing_id')});
                 });           
+                if (profile && profile.profile_id == comment.profile_id)
+                    $('#comments-item-delete-'+i)
+                        .data('comment_id', comment.comment_id)
+                        .data('profile_id', profile ? comment.profile_id : '')
+                        .data('listing_id', listing ? comment.listing_id : '')
+                        .unbind().bind('click', function(){
+                        self.controller.execute({
+                            page:'comments',
+                            action:'delete',
+                            comment_id:$(this).data('comment_id'),
+                            profile_id:$(this).data('profile_id'),
+                            listing_id:$(this).data('listing_id')
+                        });
+                    });           
             }
         };
-        self.generateResultHtml = function(i, comment, listing) {
+        self.generateResultHtml = function(i, comment, listing, profile) {
             var resultHtml = '';
             resultHtml += '<div class="content-results-list-item">';
             resultHtml += '<div class="content-results-list-item-num">' + comment.num + '</div>';
             resultHtml += '<div class="content-results-list-item-title">';
             resultHtml += comment.text;
             resultHtml += '</div>';
+            resultHtml += (profile && profile.profile_id == comment.profile_id)
+                              ? '<div class="content-results-list-item-profile link" id="comments-item-delete-' + i + '">(delete comment)</div>'
+                              : '';
             resultHtml += '<div class="content-results-list-item-clear"></div>';
             resultHtml += '<div class="content-results-list-item-detail">';
             resultHtml += 'by ';
