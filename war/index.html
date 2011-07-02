@@ -773,13 +773,14 @@ $(function(){
             var idSuffix = Math.floor(Math.random() * 100);
             return first + last + idSuffix;
         };
-        self.selectRandomProfileId = function(except_this_profile_id) {
+        self.selectRandomProfileId = function(except_this_profile_id, onlyInvestors) {
             var profile_id = self.controller.util.randomKey('profile_ids', self.db.profiles);
-            if (profile_id != except_this_profile_id) {
+            var profile = self.db.profiles[profile_id];
+            if (profile_id != except_this_profile_id && (!onlyInvestors || profile.investor)) {
                 return profile_id;
             }
             else {
-                return self.selectRandomProfileId(except_this_profile_id);
+                return self.selectRandomProfileId(except_this_profile_id, onlyInvestors);
             }
         };
         self.genRandomListing = function() {
@@ -903,6 +904,8 @@ $(function(){
             var profile;
             for (var i = 0; i < numProfiles; i++) {
                 profile = i == 0 ? self.genArleyProfile() : self.genRandomProfile();
+                if (i == numProfiles-1)
+                    profile.investor = 1; // ensure always at least one investor
                 profiles[profile.profile_id] = profile;
             }
             self.db.profiles = profiles;
@@ -983,12 +986,52 @@ $(function(){
             self.db.comments[comment.comment_id] = comment;
             return comment;
         };
+        self.addBidForListingAndProfile = function(listing_id, profile_id, bid_amt, bid_pct, bid_type, bid_rate){
+            var bid = {};
+            bid.bid_id = self.controller.util.generateGuid();
+            bid.listing_id = listing_id;
+            self.db.listings[listing_id].num_bids++;
+            bid.listing_title = self.db.listings[listing_id].title;
+            bid.bid_date = self.controller.util.today();
+            bid.profile_id = profile_id;
+            self.db.profiles[bid.profile_id].num_bids++;
+            bid.profile_username = self.db.profiles[bid.profile_id].username;
+
+            var raw_amt = bid_amt || '';
+            raw_amt = raw_amt.replace(/[^\d]/g,'');
+            bid.amount = raw_amt != '' ? raw_amt : 0;
+
+            var raw_type = bid_type || '';
+            bid.bid_type = raw_type in {common:1,preferred:1,note:1} ? raw_type : 'common';
+
+            var raw_rate = bid_rate || '';
+            raw_rate = raw_rate.replace(/[^\d]/g,'');
+            bid.interest_rate = raw_rate != '' ? raw_rate : 0;
+
+            var raw_pct = bid_pct || '';
+            raw_pct = raw_pct.replace(/[^\d]/g,'');
+            bid.equity_pct = raw_pct != '' ? raw_pct : 0;
+
+            bid.valuation = self.controller.bids.calculateValuation(bid.amount, bid.equity_pct);
+
+            bid.status = 'active';
+            self.db.bids[bid.bid_id] = bid;
+            return bid;
+        };
         self.deleteComment = function(comment_id) {
             var comment = self.db.comments[comment_id];
             if (comment) {
                 comment.status = 'deleted';
                 self.db.listings[comment.listing_id].num_comments--;
                 self.db.profiles[comment.profile_id].num_comments--;
+            }
+        };
+        self.deleteBid = function(bid_id) {
+            var bid = self.db.bids[bid_id];
+            if (bid) {
+                bid.status = 'deleted';
+                self.db.listings[bid.listing_id].num_bids--;
+                self.db.profiles[bid.profile_id].num_bids--;
             }
         };
         self.genRandomBidType = function() {
@@ -1026,7 +1069,7 @@ $(function(){
             bid.listing_id = listing_id;
             bid.listing_title = self.db.listings[listing_id].title;
             bid.bid_date = self.genRandomDate(self.db.listings[listing_id].listing_date, self.controller.util.today());
-            bid.profile_id = self.selectRandomProfileId(self.db.listings[listing_id].profile_id);
+            bid.profile_id = self.selectRandomProfileId(self.db.listings[listing_id].profile_id, true);
             self.db.profiles[bid.profile_id].num_bids++;
             bid.profile_username = self.db.profiles[bid.profile_id].username;
             bid.amount = self.genRandomAmount();
@@ -1034,6 +1077,7 @@ $(function(){
             bid.interest_rate = self.genRandomInterestRate(bid.bid_type);
             bid.equity_pct = self.genRandomEquityPct();
             bid.valuation = self.controller.bids.calculateValuation(bid.amount, bid.equity_pct);
+            bid.status = 'active';
             return bid;
         };
         self.genRandomCommentsForListing = function(listing_id) {
@@ -1240,7 +1284,7 @@ s = (p + b + c + v) / (t + 2)^1.5
                 var bid;
                 for (var bid_id in self.db.bids){
                     bid = self.db.bids[bid_id];
-                    if (bid.listing_id == listing_id)
+                    if (bid.listing_id == listing_id && bid.status == 'active')
                         bids.push(bid);
                 }
                 bids.sort(function(a,b){
@@ -1256,7 +1300,7 @@ s = (p + b + c + v) / (t + 2)^1.5
                 var bid;
                 for (var bid_id in self.db.bids){
                     bid = self.db.bids[bid_id];
-                    if (bid.profile_id == profile_id)
+                    if (bid.profile_id == profile_id && bid.status == 'active')
                         bids.push(bid);
                 }
                 bids.sort(function(a,b){
@@ -1455,7 +1499,7 @@ s = (p + b + c + v) / (t + 2)^1.5
         self.execute = function(args) {
             var profile_id = args['profile_id'];
             var profile;
-            $('#profile-save-message').html('');
+            $('#profile-save-message').attr('class', 'attention').html('');
             if (args.action == 'deactivate')
                 profile = self.deactivateProfile(profile_id);
             else if (args.action == 'activate')
@@ -1491,7 +1535,7 @@ s = (p + b + c + v) / (t + 2)^1.5
             profile.investor = $('#profile-edit-investor').attr('checked') ? 1 : 0;
             self.controller.datastore.db.profiles[profile_id] = profile;
             if (profile)
-                $('#profile-save-message').html('profile saved');
+                $('#profile-save-message').attr('class', 'confirmed').html('profile saved');
             return profile;
         };
         self.doQuery = function(profile_id){
@@ -1499,7 +1543,7 @@ s = (p + b + c + v) / (t + 2)^1.5
         };
         self.displayprofile = function(profile){
             // enable editable if logged in
-            var deactivatedText = profile.status == 'active' ? '' : ' <span class="attention">DEACTIVATED</span>';
+            var deactivatedText = profile.status == 'active' ? '' : ' <span class="message">DEACTIVATED</span>';
             if (profile && self.controller.user.profile && self.controller.user.profile.profile_id == profile.profile_id) {
                 $('#profile-form-editable').show();
                 $('#profile-form-readonly').hide();
@@ -1720,7 +1764,7 @@ s = (p + b + c + v) / (t + 2)^1.5
             var profile_id = args['profile_id'];
             var comment_id = args['comment_id'];
             var results;
-            $('#comment-save-message').html('');
+            $('#comment-save-message').attr('class', 'attention').html('');
             if (comment_id && args['action'] == 'delete') {
                 self.deleteComment(comment_id);
                 delete args['action'];
@@ -1749,7 +1793,7 @@ s = (p + b + c + v) / (t + 2)^1.5
             var commentText = $('#comment-textarea').val();
             var comment = self.controller.datastore.addCommentForListingAndProfile(listing_id, profile_id, commentText);
             if (comment) {
-                $('#comment-save-message').html('comment saved');
+                $('#comment-save-message').attr('class', 'confirmed').html('comment saved');
                 $('#comment-textarea').val('');
             }
             var results = self.commentsForListing(listing_id);
@@ -1862,8 +1906,20 @@ s = (p + b + c + v) / (t + 2)^1.5
         self.execute = function(args) {
             var listing_id = args['listing_id'];
             var profile_id= args['profile_id'];
+            var bid_id = args['bid_id'];
             var results;
-            if (listing_id) {
+            if (args['action'] != 'save')
+                self.clearBidFields();
+            $('#bid-save-message').attr('class', 'attention').html('');
+            if (bid_id && args['action'] == 'delete') {
+                self.deleteBid(bid_id);
+                delete args['action'];
+                return self.execute(args);
+            }
+            else if (listing_id && profile_id && args['action'] == 'save') {
+                results = self.saveBid(listing_id, profile_id);
+            }
+            else if (listing_id) {
                 results = self.bidsForListing(listing_id);
             }
             else if (profile_id) {
@@ -1873,6 +1929,76 @@ s = (p + b + c + v) / (t + 2)^1.5
             console.log('returned json:' + JSON.stringify(results, null, '\t'));
             self.displayResults(results);
             return 'bids';
+        };
+        self.deleteBid = function(bid_id) {
+            self.controller.datastore.deleteBid(bid_id);
+        };
+        self.saveBid = function(listing_id, profile_id){
+            var raw_amt  = $('#bid-amt').val() || '';
+            var raw_pct  = $('#bid-pct').val() || '';
+            var raw_type = $('#bid-type').val() || '';
+            var raw_rate = $('#bid-rate').val() || '';
+
+            raw_amt = raw_amt.replace(/[^\d]+/g,'');
+            raw_pct = raw_pct.replace(/[^\d]+/g,'');
+            raw_rate = raw_rate.replace(/[^\d]+/g,'');
+
+            var bid_amt  = raw_amt != '' ? raw_amt : 0;
+            var bid_type = raw_type in {common:1,preferred:1,note:1} ? raw_type : 'common';
+            var bid_rate = raw_rate != '' ? raw_rate : 0;
+            var bid_pct  = raw_pct != '' ? raw_pct : 0;
+
+            var valuation = self.calculateValuation(bid_amt, bid_pct);
+
+            var validationMsg = self.validateBid(bid_amt, bid_type, bid_rate, bid_pct, valuation);
+            if (validationMsg == '') {
+                var bid = self.controller.datastore.addBidForListingAndProfile(listing_id, profile_id, bid_amt, bid_pct, bid_type, bid_rate);
+                if (bid) {
+                    $('#bid-save-message').attr('class', 'confirmed').html('bid saved');
+                    self.clearBidFields();
+                }
+            }
+            else {
+                $('#bid-save-message').attr('class', 'attention').html(validationMsg);
+            }
+            var results = self.bidsForListing(listing_id);
+            return results;
+        };
+        self.validateBid = function(bid_amt, bid_type, bid_rate, bid_pct, valuation) {
+            var msg;
+            if (bid_amt < 1000) {
+                msg = 'your bid must be at least $1,000';
+            }
+            else if (bid_amt > 1000000) {
+                msg = 'your bid must be no more than $1,000,000';
+            }
+            else if (bid_pct < 1) {
+                msg = 'your bid percentage must be at least 1%';
+            }
+            else if (bid_pct > 50) {
+                msg = 'your bid percentage must be no more than 50%';
+            }
+            else if (bid_type != 'common' && bid_rate < 1) {
+                msg = 'your bid preferred or note rate must be at least 1%';
+            }
+            else if (bid_type != 'common' && bid_rate > 20) {
+                msg = 'your bid interest rate must be no more than 20%';
+            }
+            else if (valuation < 10000) {
+                msg = 'your calculated valuation must be at least $10,000';
+            }
+            else {
+                msg = '';
+            }
+            return msg;
+        };
+        self.clearBidFields = function() {
+            $('#bid-amt').val('');
+            $('#bid-pct').val('');
+            $('#bid-type').val('common');
+            $('#bid-rate').val('');
+            $('#bid-rate').attr('disabled', true);
+            $('#bid-calculated-valuation').html('');
         };
         self.bidsForListing = function(listing_id){
             var results = self.controller.datastore.bidsForListing(listing_id);
@@ -1887,10 +2013,11 @@ s = (p + b + c + v) / (t + 2)^1.5
         self.displayResults = function(results){
             var resultsHtml = '';
             var listing = results.pop();
+            var profile = self.controller.user.profile;
             var bid;
             for (var i = 0; i < results.length; i++) { // create results
                 bid = results[i];
-                resultsHtml += self.generateResultHtml(i, bid, listing);
+                resultsHtml += self.generateResultHtml(i, bid, listing, profile);
             }
             if (resultsHtml == '') {
                 resultsHtml = '<em>no bids found</em>';
@@ -1901,13 +2028,38 @@ s = (p + b + c + v) / (t + 2)^1.5
             if (listing) {
                 $('#bids-listing-snippet').html(self.controller.listing.generateListingSnippetHtml('bids', listing));
                 self.controller.listing.bindListingSnippet('bids', listing);
-                if (self.controller.user.loggedin) {
+                if (listing.status != 'active') {
+                    $('#bids-form-loggedin').hide();
+                    $('#bids-form-not-loggedin').show().html('This bid is no longer active');
+                }
+                else if (profile && profile.profile_id == listing.profile_id) {
+                    $('#bids-form-loggedin').hide();
+                    $('#bids-form-not-loggedin').show().html('You may not bid on your own listing');
+                }
+                else if (profile && profile.investor) {
                     $('#bids-form-loggedin').show();
                     $('#bids-form-not-loggedin').hide();
+                    $('#bid-save-button').show().unbind().data('listing_id',listing.listing_id).data('profile_id',profile.profile_id).bind('click',function(e){
+                        e.preventDefault();
+                        self.controller.execute({page:'bids',action:'save',listing_id:$(this).data('listing_id'),profile_id:$(this).data('profile_id')});
+                    });
+                    $('#bid-amt,#bid-pct,#bid-type,#bid-rate').unbind().bind('change',function(e){
+                        self.recalculateValuation();
+                    });
+                    $('#bid-type').unbind().bind('change',function(e){
+                        if ($('#bid-type').val() == 'common')
+                            $('#bid-rate').attr('disabled', true);
+                        else 
+                            $('#bid-rate').removeAttr('disabled');
+                    });
+                }
+                else if (profile && !profile.investor) {
+                    $('#bids-form-loggedin').hide();
+                    $('#bids-form-not-loggedin').show().html('You must be an investor to place a bid');
                 }
                 else {
                     $('#bids-form-loggedin').hide();
-                    $('#bids-form-not-loggedin').show();
+                    $('#bids-form-not-loggedin').show().html('You must be a logged in investor to place a bid');
                 }
             }
             else {
@@ -1923,6 +2075,21 @@ s = (p + b + c + v) / (t + 2)^1.5
                 $('#bids-item-listing-'+i).data('listing_id',bid.listing_id).unbind().bind('click', function(){
                     self.controller.execute({page:'listing', listing_id:$(this).data('listing_id')});
                 });           
+                if (profile && profile.profile_id == bid.profile_id) {
+                    $('#bids-item-delete-'+i)
+                        .data('bid_id', bid.bid_id)
+                        .data('profile_id', profile ? bid.profile_id : '')
+                        .data('listing_id', listing ? bid.listing_id : '')
+                        .unbind().bind('click', function(){
+                        self.controller.execute({
+                            page:'bids',
+                            action:'delete',
+                            bid_id:$(this).data('bid_id'),
+                            profile_id:$(this).data('profile_id'),
+                            listing_id:$(this).data('listing_id')
+                        });
+                    });           
+                }
             }
         };
         self.formatBidType = function(bid_type) {
@@ -1933,7 +2100,7 @@ s = (p + b + c + v) / (t + 2)^1.5
             };
             return visualMapping[bid_type];
         };
-        self.generateResultHtml = function(i, bid, listing) {
+        self.generateResultHtml = function(i, bid, listing, profile) {
             var resultHtml = '';
             resultHtml += '<div class="content-results-list-item">';
             resultHtml += '<div class="content-results-list-item-num">' + bid.num + '</div>';
@@ -1946,6 +2113,9 @@ s = (p + b + c + v) / (t + 2)^1.5
             resultHtml += ' with ' + self.formatBidType(bid.bid_type);
             resultHtml += bid.interest_rate ? ' @ ' + bid.interest_rate + '%' : '';
             resultHtml += '</div>';
+            resultHtml += (profile && profile.profile_id == bid.profile_id)
+                              ? '<div class="content-results-list-item-profile link" id="bids-item-delete-' + i + '">(withdraw bid)</div>'
+                              : '';
             resultHtml += '<div class="content-results-list-item-clear"></div>';
             resultHtml += '<div class="content-results-list-item-detail">';
             resultHtml += 'by ';
@@ -1960,8 +2130,31 @@ s = (p + b + c + v) / (t + 2)^1.5
             resultHtml += '<div class="content-results-list-item-clear"></div>';
             return resultHtml;
         };
-        self.calculateValuation = function(amount, equity_pct) {
-            var valuation = Math.floor(1000 * Math.floor((100 * amount / equity_pct) / 1000));
+        self.recalculateValuation = function(){
+            var bid_amt  = $('#bid-amt').val() || '';
+            var bid_pct  = $('#bid-pct').val() || '';
+            var bid_type = $('#bid-type').val() || '';
+            var bid_rate = $('#bid-rate').val() || '';
+            bid_amt  = bid_amt.replace(/[^\d]/g,'');
+            bid_pct  = bid_pct.replace(/[^\d]/g,'');
+            bid_rate = bid_rate.replace(/[^\d]/g,'');
+            var valuation = self.calculateValuation(bid_amt, bid_pct);
+            var validationMsg = self.validateBid(bid_amt, bid_type, bid_rate, bid_pct, valuation);
+            $('#bid-save-message').attr('class', 'attention').html(validationMsg);
+            var displayVal = valuation ? self.controller.util.addCommas(valuation) : '';
+            $('#bid-calculated-valuation').html(displayVal);
+        };
+        self.calculateValuation = function(amount, equity_pct, thousands) {
+            var valuation;
+            if (amount >= 1000 && equity_pct >= 1) {
+                if (thousands)
+                    valuation = Math.floor(1000 * Math.floor((100 * amount / equity_pct) / 1000));
+                else
+                    valuation = Math.floor(100 * amount / equity_pct);
+            }
+            else {
+                valuation = 0;
+            }
             return valuation;
         };
         return self;
@@ -2123,6 +2316,9 @@ text-decoration: none;
 }
 .attention {
     color: red;
+}
+.confirmed {
+    color: green;
 }
 .header {
     font-size: 12px;
@@ -2472,7 +2668,7 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
                 <input name="page" type="hidden" value="comments"/>
                 <textarea class="content-comment-textarea" id="comment-textarea" name="comment" cols="55" rows="6" wrap="soft"></textarea>
                 <br/>
-                <button id="comment-save-button">Save</button><em><span id="comment-save-message"></span></em>
+                <button id="comment-save-button">Save</button><em><span class="attention" id="comment-save-message"></span></em>
         </div>
         </form>
         <div class="content-comment" id="comment-not-loggedin-msg">
@@ -2528,7 +2724,7 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
             <div class="content-form-line">Linked via OpenID <span id="profile-edit-open-id">johnarleyburns32.google.com</span></div>
             <div class="content-form-clear"></div>
 
-            <div class="content-form-inputline"><button id="profile-save-link">Save</button><em><span id="profile-save-message"></span></em></div>
+            <div class="content-form-inputline"><button id="profile-save-link">Save</button><em><span class="attention" id="profile-save-message"></span></em></div>
             <div class="content-form-clear"></div>
 
             <div class="content-form-linkline">
@@ -2571,10 +2767,10 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
             <div class="content-form-clear"></div>
             <div class="content-form-line">Member since <span id="profile-joined-date">15 June 2011</span></div>
             <div class="content-form-clear"></div>
-
+<!--
             <div class="content-form-line">Linked via OpenID <span id="profile-open-id">johnarleyburns32.google.com</span></div>
             <div class="content-form-clear"></div>
-
+            -->
             <div class="content-form-linkline">
                 <span id="profile-num-listings-link" class="link"><span id="profile-num-listings" class="link">3</span> listings</span>  |
                 <span id="profile-num-bids-link" class="link"><span id="profile-num-bids" class="link">7</span> bids</span>  |
@@ -2672,19 +2868,22 @@ Reference:
                 <form action="#" method="post" enctype="multipart/form-data">
                 <input name="page" type="hidden" value="listing"/>
 
-                <div class="content-form-line">Title: </div>
+                <div class="content-form-line">Title is </div>
                 <div class="content-form-maininputline"><input id="listing-form-title" name="title" type="text" size="40" value="type listing title here"/></div>
                 <div class="content-form-clear"></div>
 
-                <div class="content-form-line">Closing Date: </div>
+                <div class="content-form-line">Closing date </div>
                 <div class="content-form-inputline"><input id="listing-form-closing-date" name="closing_date" type="text" size="10" maxlength="10" value="YYYY-MM-DD"/></div>
                 <div class="content-form-clear"></div>
 
-                <div class="content-form-line">Opening bid at $</div>
-                <div class="content-form-inputline"><input name="opening_bid_amt" type="text" size="9" maxlength="9" value="30,000"/></div>
+                <div class="content-form-line">Suggested bid of </div>
+                <div class="content-form-inputline">$<input id="listing-form-editable-suggested-amt" name="suggested_bid_amt" type="text" size="9" maxlength="9" value="30,000"/></div>
                 <div class="content-form-line">for</div>
-                <div class="content-form-inputline"><input name="opening_bid_pct" type="text" size="2" maxlength="2" value="10"/></div>
-                <div class="content-form-line">% equity</div>
+                <div class="content-form-inputline"><input id="listing-form-editable-suggested-pct" name="suggested_bid_pct" type="text" size="2" maxlength="2" value="10"/>%</div>
+                <div class="content-form-line"> equity</div>
+                <div class="content-form-clear"></div>
+
+                <div class="content-form-line">Calculated opening valuation is $<span id="listing-form-editable-valuation">1m</span></div>
                 <div class="content-form-clear"></div>
 
                 <div class="content-form-line">Executive Summary</div>
@@ -2713,6 +2912,14 @@ MisLead is a revolution in social networking.  Previously, social networking has
                 </form>
         </div>
         <div class="content-form" id="listing-form-readonly">
+                <div class="content-form-line">
+                    Suggested bid of $<span id="listing-form-readonly-suggested-amt">30,000</span>
+                    for <span id="listing-form-readonly-suggested-pct">10</span>% equity
+                </div>
+                <div class="content-form-clear"></div>
+                <div class="content-form-line">Calculated opening valuation is $<span id="listing-form-readonly-valuation">300,000</span></div>
+                <div class="content-form-clear"></div>
+
                 <div class="content-form-line-emphasized">Executive Summary</div>
                 <div class="content-form-clear"></div>
                 <div class="content-form-multiline">
@@ -2736,29 +2943,31 @@ MisLead is a revolution in social networking.  Previously, social networking has
             <form action="#" method="post" enctype="multipart/form-data">
                 <input name="page" type="hidden" value="listing"/>
                 <div class="content-form-line">Place bid of $</div>
-                <div class="content-form-inputline"><input name="bid_amt" type="text" size="9" maxlength="9" value="30,000"/></div>
+                <div class="content-form-inputline"><input id="bid-amt" name="bid_amt" type="text" size="9" maxlength="9" value="30,000"/></div>
                 <div class="content-form-line">for</div>
-                <div class="content-form-inputline"><input name="bid_pct" type="text" size="2" maxlength="2" value="10"/></div>
+                <div class="content-form-inputline"><input id="bid-pct" name="bid_pct" type="text" size="2" maxlength="2" value="10"/></div>
                 <div class="content-form-line">% equity (fully diluted)</div>
                 <div class="content-form-clear"></div>
 
                 <div class="content-form-line">As</div>
                 <div class="content-form-line">
-                    <select name="bid_type">
+                    <select id="bid-type" name="bid_type">
                         <option value="common">Common Stock</option>
                         <option value="preferred">Preferred Stock</option>
                         <option value="note">Convertible Note</option>
                     </select>
                 </div>
                 <div class="content-form-line">@</div>
-                <div class="content-form-inputline"><input name="bid_rate" type="text" size="2" maxlength="2" value="10"/></div>
+                <div class="content-form-inputline"><input id="bid-rate" name="bid_rate" type="text" size="2" maxlength="2" value="10" disabled/></div>
                 <div class="content-form-line">% interest</div>
                 <div class="content-form-clear"></div>
 
-                <div class="content-form-line">Your calculated valuation is $1.35m</div>
+                <div class="content-form-line">Your calculated valuation is $<span id="bid-calculated-valuation">1.35m</span></div>
                 <div class="content-form-clear"></div>
 
-                <div class="content-form-inputline"><input name="submit" type="submit" value="Place Bid"/></div>
+                <div class="content-form-line">
+                    <button id="bid-save-button">Place Bid</button> <em><span class="attention" id="bid-save-message"></span></em>
+                </div>
                 <div class="content-form-clear"></div>
             </form>
         </div>
