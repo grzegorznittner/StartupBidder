@@ -35,6 +35,9 @@
     <fileset dir="${env.APPENGINE_HOME}/lib">
       <include name="shared/**/*.jar" />
     </fileset>
+    <fileset dir="lib">
+      <include name="**/*.jar" />
+    </fileset>
   </path>
   
   <target name="copyjars" depends="check-appengine-home" description="Copies the App Engine JARs to the WAR.">
@@ -86,6 +89,7 @@
   <target name="update" depends="datanucleusenhance" description="Uploads the application to App Engine.">
 	<appcfg action="update" war="war">
 	   <options>
+	   	  <arg value="--passin"/>
 	   	  <arg value="--email=${env.APPENGINE_EMAIL}"/>
 	   	  <arg value="--proxy=${env.http_proxy}"/>
 	   	  <arg value="--proxy_https=${env.https_proxy}"/>

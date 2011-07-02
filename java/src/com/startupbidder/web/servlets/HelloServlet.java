@@ -7,6 +7,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import test.com.startupbidder.jackson.VoTest;
+
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.users.User;
@@ -18,6 +20,7 @@ import com.startupbidder.dto.BidDTO;
 import com.startupbidder.dto.BusinessPlanDTO;
 import com.startupbidder.dto.CommentDTO;
 import com.startupbidder.dto.UserDTO;
+import com.startupbidder.vo.DtoToVoConverter;
 
 @SuppressWarnings("serial")
 public class HelloServlet extends HttpServlet {
@@ -40,12 +43,15 @@ public class HelloServlet extends HttpServlet {
 			out.println("<html><body>");
 			out.println("<p>Hello, " + user.getNickname() + "</p>");
 			
-			if (!user.getNickname().contains("grzegorz.nittner")) {
+			if (!user.getNickname().contains("grzegorz.nittner") || !user.getNickname().contains("johnarleyburns")) {
 				out.println("<p>Sorry, you're not authorized to view contents!!!</p>");
 				return;
 			} else {
 				out.println("<p>Place content here!</p>");
 			}
+			
+			//out.println("<p><b>Jackson tests</b></p>");
+			//out.println(VoTest.getArrayNodeString(DtoToVoConverter.convertBusinessPlans(datastore.getActiveBusinessPlans(10))));
 			
 			out.println("<p><b>Datastore key function test:</b></p>");
 			Key testStringKey = KeyFactory.createKey(BusinessPlanDTO.class.getSimpleName(), "bpId");

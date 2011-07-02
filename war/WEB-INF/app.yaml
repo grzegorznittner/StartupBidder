@@ -1,8 +1,14 @@
-application: startupbidder
+application: gn-test-00001
 version: 1
 runtime: java
 
 handlers:
+#  - url: /*
+#    filter: org.apache.struts2.dispatcher.ng.filter.StrutsPrepareAndExecuteFilter
+#    init_params:
+#      actionPackages: com.startupbidder.web.actions
+#      struts.devMode: true
   - url: /hello/*
     servlet: com.startupbidder.web.servlets.HelloServlet
-
+  - url: /*
+    servlet: com.startupbidder.web.FrontController
