@@ -1,19 +1,11 @@
 package com.startupbidder.web;
 
-import java.io.IOException;
 import java.util.List;
-
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.node.ArrayNode;
-import org.codehaus.jackson.node.JsonNodeFactory;
 
 import com.startupbidder.dao.DatastoreDAO;
 import com.startupbidder.dao.MockDatastoreDAO;
-import com.startupbidder.dto.BusinessPlanDTO;
 import com.startupbidder.dto.UserDTO;
+import com.startupbidder.dto.UserStatistics;
 import com.startupbidder.dto.VoToDtoConverter;
 import com.startupbidder.vo.BidVO;
 import com.startupbidder.vo.BusinessPlanVO;
@@ -42,8 +34,14 @@ public class ServiceFacade {
 	 * @return User data as JsonNode
 	 */
 	public UserVO getUser(String userId) {
-		UserDTO userDTO = getDAO().getUser(userId);
-		return DtoToVoConverter.convert(userDTO);
+		UserVO user = DtoToVoConverter.convert(getDAO().getUser(userId));
+		
+		UserStatistics stat = getDAO().getUserStatistics(userId);
+		user.setNumberOfListings(stat.getNumberOfListings());
+		user.setNumberOfBids(stat.getNumberOfBids());
+		user.setNumberOfComments(stat.getNumberOfComments());
+		
+		return user;
 	}
 	
 	/**

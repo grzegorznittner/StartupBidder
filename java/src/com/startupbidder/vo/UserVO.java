@@ -18,6 +18,10 @@ public class UserVO {
 	private Date   lastLoggedIn;
 	private Date   modified;
 	
+	private int numberOfListings;
+	private int numberOfBids;
+	private int numberOfComments;
+	
 	public UserVO() {
 	}
 	public String getId() {
@@ -122,15 +126,34 @@ public class UserVO {
 	public void setModified(Date modified) {
 		this.modified = modified;
 	}
-
+	public int getNumberOfListings() {
+		return numberOfListings;
+	}
+	public void setNumberOfListings(int numberOfListings) {
+		this.numberOfListings = numberOfListings;
+	}
+	public int getNumberOfBids() {
+		return numberOfBids;
+	}
+	public void setNumberOfBids(int numberOfBids) {
+		this.numberOfBids = numberOfBids;
+	}
+	public int getNumberOfComments() {
+		return numberOfComments;
+	}
+	public void setNumberOfComments(int numberOfComments) {
+		this.numberOfComments = numberOfComments;
+	}
 	@Override
 	public String toString() {
-		return "UserDTO [id=" + id + ", nickname=" + nickname + ", firstName="
+		return "UserVO [id=" + id + ", nickname=" + nickname + ", firstName="
 				+ firstName + ", lastName=" + lastName + ", email=" + email
 				+ ", title=" + title + ", organization=" + organization
 				+ ", facebook=" + facebook + ", twitter=" + twitter
-				+ ", linkedin=" + linkedin + ", accreditedInvestor=" + accreditedInvestor
-				+ ", joined=" + joined + ", lastLoggedIn=" + lastLoggedIn
-				+ ", modified=" + modified + "]";
+				+ ", linkedin=" + linkedin + ", accreditedInvestor="
+				+ accreditedInvestor + ", joined=" + joined + ", lastLoggedIn="
+				+ lastLoggedIn + ", modified=" + modified
+				+ ", numberOfListings=" + numberOfListings + ", numberOfBids="
+				+ numberOfBids + ", numberOfComments=" + numberOfComments + "]";
 	}
 }

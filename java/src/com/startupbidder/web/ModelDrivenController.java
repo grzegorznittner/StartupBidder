@@ -19,6 +19,11 @@ import org.codehaus.jackson.node.JsonNodeFactory;
 public abstract class ModelDrivenController {
 	private String command[];
 	
+	/**
+	 * Executes action handler for particular controller
+	 * @param request 
+	 * @return Http headers and return code
+	 */
 	abstract protected HttpHeaders executeAction(HttpServletRequest request);
 	
 	public HttpHeaders execute(HttpServletRequest request) {
@@ -26,7 +31,10 @@ public abstract class ModelDrivenController {
 		
 		return executeAction(request);
 	}
-	
+
+	/**
+	 * Returns object which should be trasformed into one of the result types (JSON, HTML)
+	 */
 	abstract public Object getModel();
 	
 	@SuppressWarnings("rawtypes")
@@ -53,7 +61,15 @@ public abstract class ModelDrivenController {
 			e.printStackTrace();
 		}
 	}
-	
+
+	/**
+	 * Returns command encoded in the path info.
+	 * eg. for request uri: /listings/top.json?maxItems=5&cursor=qerqsdfgsdfgh43t6dsfhg
+	 *     available commands are: listings (0), top (1)
+	 * 
+	 * @param index Command order number
+	 * @return String representing command or empty string
+	 */
 	protected String getCommand(int index) {
 		return index < command.length ? command[index] : "";
 	}

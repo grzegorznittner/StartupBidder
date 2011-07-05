@@ -6,6 +6,7 @@ import com.startupbidder.dto.BidDTO;
 import com.startupbidder.dto.BusinessPlanDTO;
 import com.startupbidder.dto.CommentDTO;
 import com.startupbidder.dto.UserDTO;
+import com.startupbidder.dto.UserStatistics;
 
 public interface DatastoreDAO {
 	/**
@@ -15,6 +16,12 @@ public interface DatastoreDAO {
 	 * @return User data
 	 */
 	UserDTO getUser(String userId);
+
+	/**
+	 * Return user statistics like number of comments, bids, etc
+	 * @param userId User identifier
+	 */
+	UserStatistics getUserStatistics(String userId);
 	
 	/**
 	 * Updates/creates user data

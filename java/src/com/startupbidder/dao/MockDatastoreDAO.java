@@ -15,6 +15,7 @@ import com.startupbidder.dto.BidDTO;
 import com.startupbidder.dto.BusinessPlanDTO;
 import com.startupbidder.dto.CommentDTO;
 import com.startupbidder.dto.UserDTO;
+import com.startupbidder.dto.UserStatistics;
 
 /**
  * Data access object which handles all interaction with underlying persistence layer.
@@ -65,6 +66,36 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		}
 		
 		return user;
+	}
+	
+	public UserStatistics getUserStatistics(String userId) {
+		UserStatistics stat = new UserStatistics();
+		
+		int numberOfListings = 0;		
+		for (BusinessPlanDTO bp : bpCache.values()) {
+			if (userId.equals(bp.getOwner())) {
+				numberOfListings++;
+			}
+		}
+		stat.setNumberOfListings(numberOfListings);
+		
+		int numberOfBids = 0;
+		for (BidDTO bid : bidCache.values()) {
+			if (userId.equals(bid.getUser())) {
+				numberOfBids++;
+			}
+		}
+		stat.setNumberOfBids(numberOfBids);
+		
+		int numberOfComments = 0;
+		for (CommentDTO comment : commentCache.values()) {
+			if (userId.equals(comment.getUser())) {
+				numberOfComments++;
+			}
+		}
+		stat.setNumberOfComments(numberOfComments);
+		
+		return stat;
 	}
 	
 	public void updateUser(UserDTO user) {
