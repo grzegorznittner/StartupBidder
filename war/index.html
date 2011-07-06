@@ -800,6 +800,12 @@ $(function(){
             if (listing.status == 'withdrawn') {
                 listing.closing_date = self.genRandomDate(listing.listing_date, self.controller.util.today());
             }
+            listing.suggested_amt = Math.floor(Math.random()*100) * 1000;
+            listing.suggested_pct = Math.floor(Math.random()*50);
+            listing.suggested_val = self.controller.bids.calculateValuation(listing.suggested_amt, listing.suggested_pct, true);
+            listing.summary = 'Foo is the bar of the baz market.';
+            listing.business_plan_url = 'http://news.ycombinator.com';
+            listing.presentation_url = 'http://www.reddit.com';
             return listing;
         };
         self.genRandomListings = function() {
@@ -1012,7 +1018,7 @@ $(function(){
             raw_pct = raw_pct.replace(/[^\d]/g,'');
             bid.equity_pct = raw_pct != '' ? raw_pct : 0;
 
-            bid.valuation = self.controller.bids.calculateValuation(bid.amount, bid.equity_pct);
+            bid.valuation = self.controller.bids.calculateValuation(bid.amount, bid.equity_pct, true);
 
             bid.status = 'active';
             self.db.bids[bid.bid_id] = bid;
@@ -1076,7 +1082,7 @@ $(function(){
             bid.bid_type = self.genRandomBidType();
             bid.interest_rate = self.genRandomInterestRate(bid.bid_type);
             bid.equity_pct = self.genRandomEquityPct();
-            bid.valuation = self.controller.bids.calculateValuation(bid.amount, bid.equity_pct);
+            bid.valuation = self.controller.bids.calculateValuation(bid.amount, bid.equity_pct, true);
             bid.status = 'active';
             return bid;
         };
@@ -1353,14 +1359,14 @@ s = (p + b + c + v) / (t + 2)^1.5
         self.controller = null;
         self.setup = function(controller) {
             self.controller = controller;
-            $('#business_plan').change(function() {
+            $('#listing-upload-business-plan').change(function() {
                 var filename = $(this).val();
                 if (!/\.doc|\.docx|\.pdf$/.test(filename)) {
                     alert('Only doc or docx or pdf files are allowed for the business plan');
                     $(this).val('');
                 }
             });
-            $('#presentation').change(function() {
+            $('#listing-upload-presentation').change(function() {
                 var filename = $(this).val();
                 if (!/\.ppt|\.pdf$/.test(filename)) {
                     alert('Only ppt or pdf files are allowed for the business plan');
@@ -1635,7 +1641,14 @@ s = (p + b + c + v) / (t + 2)^1.5
         }
         self.execute = function(args) {
             var listing_id = args['listing_id'];
-            var listing = self.doQuery(listing_id);
+            var listing;
+            $('#listing-save-message').attr('class', 'attention').html('');
+            if (args.action == 'withdraw')
+                listing = self.withdrawListing(listing_id);
+            else if (args.action == 'save')
+                listing = self.saveListing(listing_id);
+            else
+                listing = self.doQuery(listing_id);
             console.log('incoming json:' + JSON.stringify(args, null, '\t'));
             console.log('returned json:' + JSON.stringify(listing, null, '\t'));
             self.displayListing(listing);
@@ -1644,8 +1657,29 @@ s = (p + b + c + v) / (t + 2)^1.5
         self.doQuery = function(listing_id){
             return self.controller.datastore.db.listings[listing_id];
         };
+        self.withdrawListing = function(listing_id){
+            var listing = self.doQuery(listing_id);
+            listing.status = 'withdrawn';
+            return listing;
+        };
+        self.saveListing = function(listing_id){
+            var listing = self.doQuery(listing_id);
+            listing.title = $('#listing-edit-title').val();
+            listing.closing_date = $('#listing-edit-closing-date').val();
+            listing.suggested_amt = $('#listing-edit-suggested-amt').val();
+            listing.suggested_pct = $('#listing-edit-suggested-pct').val();
+            listing.suggested_val = $('#listing-edit-suggested-val').val();
+            listing.summary = $('#listing-edit-summary').val();
+            //listing.business_plan_url = $('#listing-upload-business-plan').val();
+            //listing.presentation_url = $('#listing-upload-presentation').val();
+            self.controller.datastore.db.listings[listing_id] = listing;
+            if (listing)
+                $('#listing-save-message').attr('class', 'confirmed').html('listing saved');
+            return listing;
+        };
         self.displayListing = function(listing){
             var resultsHtml = '';
+            var profile = self.controller.user.profile;
             if (listing) {
                 $('#listing-snippet').html(self.controller.listing.generateListingSnippetHtml('listing', listing));
                 self.controller.listing.bindListingSnippet('listing', listing);
@@ -1653,17 +1687,80 @@ s = (p + b + c + v) / (t + 2)^1.5
             else {
                 $('#listing-snippet').html('<em>no listings found</em>');
             }
+
+            // set listing message
+            var msg = '';
+            var class = 'attention';
+            if (profile && profile.profile_id == listing.profile_id && listing.status == 'withdrawn') {
+                msg = 'You may not change your listing now that it is withdrawn.';
+            }
+            else if (profile && profile.profile_id == listing.profile_id && listing.status == 'closed') {
+                msg = 'You may not change your listing now that it is closed.';
+            }
+            else if (listing.status == 'withdrawn') {
+                msg = 'This listing is withdrawn and thus bidding is suspended.';
+            }
+            else if (listing.status == 'closed') {
+                msg = 'This listing is withdrawn and accepts no more bids.';
+            }
+            else {
+                msg = 'This listing is active and accepting bids.';
+                class = 'confirmed';
+            }
+            $('#listing-form-message').attr('class', class).html(msg);
+
             // enable editable if logged in
-            if (self.controller.user.profile) {
+            if (profile && profile.profile_id == listing.profile_id && listing.status == 'active') {
                 $('#listing-form-editable').show();
                 $('#listing-form-readonly').hide();
-                $('#listing-form-title').val(listing.title);
-                $('#listing-form-closing-date').val(listing.closing_date);
+                $('#listing-edit-title').val(listing.title);
+                $('#listing-edit-closing-date').val(listing.closing_date);
+                $('#listing-edit-suggested-amt').val(self.controller.util.addCommas(listing.suggested_amt));
+                $('#listing-edit-suggested-pct').val(listing.suggested_pct);
+                $('#listing-edit-suggested-val').val(self.controller.util.addCommas(listing.suggested_val));
+                $('#listing-edit-summary').val(listing.summary);
+                $('#listing-edit-suggested-amt, #listing-edit-suggested-pct').unbind().bind('change',function(e){
+                    self.recalculateSuggestedValuation();
+                });
+                $('#listing-save-link').unbind().data('listing_id',listing.listing_id).bind('click',function(e){
+                    e.preventDefault();
+                    self.controller.execute({page:'listing',action:'save',listing_id:$(this).data('listing_id')});
+                });
+                $('#listing-withdraw-link').unbind().data('listing_id',listing.listing_id).bind('click',function(){
+                    self.controller.execute({page:'listing',action:'withdraw',listing_id:$(this).data('listing_id')});
+                });
+                $('#listing-edit-business-plan-link').unbind().data('business_plan_url',listing.business_plan_url).bind('click',function(){
+                    document.location = $(this).data('business_plan_url');
+                });
+                $('#listing-edit-presentation-link').unbind().data('presentation_url',listing.presentation_url).bind('click',function(){
+                    document.location = $(this).data('presentation_url');
+                });
             }
             else {
                 $('#listing-form-editable').hide();
                 $('#listing-form-readonly').show();
-            }
+                $('#listing-readonly-suggested-amt').html(self.controller.util.addCommas(listing.suggested_amt));
+                $('#listing-readonly-suggested-pct').html(listing.suggested_pct);
+                $('#listing-readonly-suggested-val').html(self.controller.util.addCommas(listing.suggested_val));
+                $('#listing-readonly-summary').html(listing.summary);
+                $('#listing-readonly-business-plan-link').unbind().data('business_plan_url',listing.business_plan_url).bind('click',function(){
+                    document.location = $(this).data('business_plan_url');
+                });
+                $('#listing-readonly-presentation-link').unbind().data('presentation_url',listing.presentation_url).bind('click',function(){
+                    document.location = $(this).data('presentation_url');
+                });
+             }
+        };
+        self.recalculateSuggestedValuation = function() {
+            var suggested_amt  = $('#listing-edit-suggested-amt').val() || '';
+            var suggested_pct  = $('#listing-edit-suggested-pct').val() || '';
+            suggested_amt  = suggested_amt.replace(/[^\d]/g,'');
+            suggested_pct  = suggested_pct.replace(/[^\d]/g,'');
+            var valuation = self.controller.bids.calculateValuation(suggested_amt, suggested_pct, true);
+            var validationMsg = self.controller.bids.validateBid(suggested_amt, 'common', 0, suggested_pct, valuation);
+            $('#listing-save-message').attr('class', 'attention').html(validationMsg);
+            var displayVal = valuation ? self.controller.util.addCommas(valuation) : '';
+            $('#listing-edit-suggested-val').html(displayVal);
         };
         self.bindListingSnippet = function(i, listing) {
             $('#content-results-list-item-title-'+i).data('listing_id',listing.listing_id).unbind().bind('click', function(){
@@ -1948,7 +2045,7 @@ s = (p + b + c + v) / (t + 2)^1.5
             var bid_rate = raw_rate != '' ? raw_rate : 0;
             var bid_pct  = raw_pct != '' ? raw_pct : 0;
 
-            var valuation = self.calculateValuation(bid_amt, bid_pct);
+            var valuation = self.calculateValuation(bid_amt, bid_pct, true);
 
             var validationMsg = self.validateBid(bid_amt, bid_type, bid_rate, bid_pct, valuation);
             if (validationMsg == '') {
@@ -2138,7 +2235,7 @@ s = (p + b + c + v) / (t + 2)^1.5
             bid_amt  = bid_amt.replace(/[^\d]/g,'');
             bid_pct  = bid_pct.replace(/[^\d]/g,'');
             bid_rate = bid_rate.replace(/[^\d]/g,'');
-            var valuation = self.calculateValuation(bid_amt, bid_pct);
+            var valuation = self.calculateValuation(bid_amt, bid_pct, true);
             var validationMsg = self.validateBid(bid_amt, bid_type, bid_rate, bid_pct, valuation);
             $('#bid-save-message').attr('class', 'attention').html(validationMsg);
             var displayVal = valuation ? self.controller.util.addCommas(valuation) : '';
@@ -2863,74 +2960,82 @@ Reference:
         <div class="content-header">
             <div class="content-results-list" id="listing-snippet"></div>
         </div>
+        <div class="content-form-line" id="listing-form-message"></div>
+        <div class="content-form-clear"></div>
         <div class="content-form" id="listing-form-editable">
                 
                 <form action="#" method="post" enctype="multipart/form-data">
                 <input name="page" type="hidden" value="listing"/>
+                <input id="listing-edit-listing-id" name="listing-id" type="hidden" value=""/>
 
                 <div class="content-form-line">Title is </div>
-                <div class="content-form-maininputline"><input id="listing-form-title" name="title" type="text" size="40" value="type listing title here"/></div>
+                <div class="content-form-maininputline"><input id="listing-edit-title" name="title" type="text" size="40" value="type listing title here"/></div>
                 <div class="content-form-clear"></div>
 
                 <div class="content-form-line">Closing date </div>
-                <div class="content-form-inputline"><input id="listing-form-closing-date" name="closing_date" type="text" size="10" maxlength="10" value="YYYY-MM-DD"/></div>
+                <div class="content-form-inputline"><input id="listing-edit-closing-date" name="closing_date" type="text" size="10" maxlength="10" value="YYYY-MM-DD"/></div>
                 <div class="content-form-clear"></div>
 
                 <div class="content-form-line">Suggested bid of </div>
-                <div class="content-form-inputline">$<input id="listing-form-editable-suggested-amt" name="suggested_bid_amt" type="text" size="9" maxlength="9" value="30,000"/></div>
+                <div class="content-form-inputline">$<input id="listing-edit-suggested-amt" name="suggested_bid_amt" type="text" size="9" maxlength="9" value="30,000"/></div>
                 <div class="content-form-line">for</div>
-                <div class="content-form-inputline"><input id="listing-form-editable-suggested-pct" name="suggested_bid_pct" type="text" size="2" maxlength="2" value="10"/>%</div>
+                <div class="content-form-inputline"><input id="listing-edit-suggested-pct" name="suggested_bid_pct" type="text" size="2" maxlength="2" value="10"/>%</div>
                 <div class="content-form-line"> equity</div>
                 <div class="content-form-clear"></div>
 
-                <div class="content-form-line">Calculated opening valuation is $<span id="listing-form-editable-valuation">1m</span></div>
+                <div class="content-form-line">Suggested valuation is $<span id="listing-edit-suggested-val">1m</span></div>
                 <div class="content-form-clear"></div>
 
                 <div class="content-form-line">Executive Summary</div>
                 <div class="content-form-clear"></div>
                 <div class="content-form-inputline">
-                    <textarea class="content-form-inputline-textarea" name="executive_summary" rows="10" cols="50" wrap="soft">
+                    <textarea class="content-form-inputline-textarea" id="listing-edit-summary" name="executive_summary" rows="10" cols="50" wrap="soft">
 MisLead is a revolution in social networking.  Previously, social networking has been for people with friends, those outgoing on the internet, those who don't have trouble communicating online.  There is an untapped market in those who not only have difficulty making social connections, but frequently dislike social situations and social crowds.  With MisLead, you are only allowed a maximum of five friends at any one time.  However, you are more intimately connected with them, including real-time location updates, frequent SMS on activities, and heavy linking into any goings-on for connected individuals in a plethora of other networks.
                     </textarea>
                 </div>
                 <div class="content-form-clear"></div>
 
+                <div class="content-form-line"><span class="link" id="listing-edit-business-plan-link">view business plan</span></div>
+                <div class="content-form-clear"></div>
+                <div class="content-form-line"><span class="link" id="listing-edit-presentationn-link">view presentation</span></div>
+                <div class="content-form-clear"></div>
+
                 <div class="content-form-label">Business plan</div>
-                <div class="content-form-input"><input id="business_plan" name="business_plan" type="file"/></div> <!-- size="40" -->
+                <div class="content-form-input"><input id="listing-upload-business-plan" name="business-plan" type="file"/></div> <!-- size="40" -->
                 <div class="content-form-clear"></div>
 
                 <div class="content-form-label">Presentation</div>
-                <div class="content-form-input"><input id="presentation" name="presentation" type="file"/></div> <!-- size="40" -->
+                <div class="content-form-input"><input id="listing-upload-presentation" name="presentation" type="file"/></div> <!-- size="40" -->
                 <div class="content-form-clear"></div>
                 
-                <div class="content-form-inputline"><input name="submit" type="submit" value="save"/></div>
+                <div class="content-form-inputline"><button id="listing-save-link">Save</button><span class="attention" id="listing-save-message"></span></div>
                 <div class="content-form-clear"></div>
 
-                <div class="content-form-linkline"><a href="?page=listing&amp;withdraw_id=7">(withdraw listing)</a></div>
+                <div class="content-form-linkline"><span class="link" id="listing-withdraw-link">(withdraw listing)</span></div>
                 <div class="content-form-clear"></div>
 
                 </form>
         </div>
         <div class="content-form" id="listing-form-readonly">
                 <div class="content-form-line">
-                    Suggested bid of $<span id="listing-form-readonly-suggested-amt">30,000</span>
-                    for <span id="listing-form-readonly-suggested-pct">10</span>% equity
+                    Suggested bid of $<span id="listing-readonly-suggested-amt">30,000</span>
+                    for <span id="listing-readonly-suggested-pct">10</span>% equity
                 </div>
                 <div class="content-form-clear"></div>
-                <div class="content-form-line">Calculated opening valuation is $<span id="listing-form-readonly-valuation">300,000</span></div>
+                <div class="content-form-line">Suggested valuation is $<span id="listing-readonly-suggested-val">300,000</span></div>
                 <div class="content-form-clear"></div>
 
                 <div class="content-form-line-emphasized">Executive Summary</div>
                 <div class="content-form-clear"></div>
-                <div class="content-form-multiline">
+                <div class="content-form-multiline" id="listing-readonly-summary">
 MisLead is a revolution in social networking.  Previously, social networking has been for people with friends, those outgoing on the internet, those who don't have trouble communicating online.  There is an untapped market in those who not only have difficulty making social connections, but frequently dislike social situations and social crowds.  With MisLead, you are only allowed a maximum of five friends at any one time.  However, you are more intimately connected with them, including real-time location updates, frequent SMS on activities, and heavy linking into any goings-on for connected individuals in a plethora of other networks.
                 </div>
                 <div class="content-form-clear"></div>
 
-                <div class="content-form-line"><button class="listing-download-button">View Business Plan</button></div>
+                <div class="content-form-line"><span class="link" id="listing-readonly-business-plan-link">view business plan</span></div>
                 <div class="content-form-clear"></div>
 
-                <div class="content-form-line"><button class="listing-download-button">View Presentation</button></div>
+                <div class="content-form-line"><span class="link" id="listing-readonly-presentation-link">view presentation</span></div>
                 <div class="content-form-clear"></div>
          </div>
     </div>
