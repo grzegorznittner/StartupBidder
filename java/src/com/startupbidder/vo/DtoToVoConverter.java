@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.startupbidder.dto.BidDTO;
-import com.startupbidder.dto.BusinessPlanDTO;
+import com.startupbidder.dto.ListingDTO;
 import com.startupbidder.dto.CommentDTO;
 import com.startupbidder.dto.RatingDTO;
 import com.startupbidder.dto.UserDTO;
@@ -13,7 +13,7 @@ public class DtoToVoConverter {
 	public static BidVO convert(BidDTO bidDTO) {
 		BidVO bid = new BidVO();
 		bid.setId(bidDTO.getIdAsString());
-		bid.setBusinessPlan(bidDTO.getBusinessPlan());
+		bid.setListing(bidDTO.getListing());
 		bid.setFundType(bidDTO.getFundType().toString());
 		bid.setPercentOfCompany(bidDTO.getPercentOfCompany());
 		bid.setPlaced(bidDTO.getPlaced());
@@ -22,8 +22,8 @@ public class DtoToVoConverter {
 		return bid;
 	}
 	
-	public static BusinessPlanVO convert(BusinessPlanDTO bpDTO) {
-		BusinessPlanVO bp = new BusinessPlanVO();
+	public static ListingVO convert(ListingDTO bpDTO) {
+		ListingVO bp = new ListingVO();
 		bp.setId(bpDTO.getIdAsString());
 		bp.setAverageValuation(bpDTO.getAverageValuation());
 		bp.setClosingOn(bpDTO.getClosingOn());
@@ -50,7 +50,7 @@ public class DtoToVoConverter {
 	public static RatingVO convert(RatingDTO ratingDTO) {
 		RatingVO rating = new RatingVO();
 		rating.setId(ratingDTO.getIdAsString());
-		rating.setBusinessPlan(ratingDTO.getBusinessPlan());
+		rating.setListing(ratingDTO.getListing());
 		rating.setUser(ratingDTO.getUser());
 		rating.setValue(ratingDTO.getValue());
 		return rating;
@@ -75,10 +75,10 @@ public class DtoToVoConverter {
 		return user;
 	}
 	
-	public static List<BusinessPlanVO> convertBusinessPlans(List<BusinessPlanDTO> bpDtoList) {
-		List<BusinessPlanVO> bpVoList = new ArrayList<BusinessPlanVO>();
-		for (BusinessPlanDTO bpDTO : bpDtoList) {
-			BusinessPlanVO bpVO = convert(bpDTO);
+	public static List<ListingVO> convertListings(List<ListingDTO> bpDtoList) {
+		List<ListingVO> bpVoList = new ArrayList<ListingVO>();
+		for (ListingDTO bpDTO : bpDtoList) {
+			ListingVO bpVO = convert(bpDTO);
 			bpVoList.add(bpVO);
 		}
 		return bpVoList;

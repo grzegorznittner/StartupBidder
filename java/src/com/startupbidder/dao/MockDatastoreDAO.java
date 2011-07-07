@@ -12,7 +12,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.startupbidder.dto.BidDTO;
-import com.startupbidder.dto.BusinessPlanDTO;
+import com.startupbidder.dto.ListingDTO;
 import com.startupbidder.dto.CommentDTO;
 import com.startupbidder.dto.UserDTO;
 import com.startupbidder.dto.UserStatistics;
@@ -37,16 +37,16 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		return instance;
 	}
 	
-	Map<String, BusinessPlanDTO> bpCache = new HashMap<String, BusinessPlanDTO>();
+	Map<String, ListingDTO> lCache = new HashMap<String, ListingDTO>();
 	Map<String, Integer> ratingCache = new HashMap<String, Integer>();
 	Map<String, CommentDTO> commentCache = new HashMap<String, CommentDTO>();
-	Map<String, Integer> bpCommentCache = new HashMap<String, Integer>();
+	Map<String, Integer> lCommentCache = new HashMap<String, Integer>();
 	Map<String, BidDTO> bidCache = new HashMap<String, BidDTO>();
 	Map<String, UserDTO> userCache = new HashMap<String, UserDTO>();
 
 	public MockDatastoreDAO() {
 		createMockUsers();
-		createMockBusinessPlans();
+		createMockListings();
 		generateComments();
 		generateBids();
 	}
@@ -72,7 +72,7 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		UserStatistics stat = new UserStatistics();
 		
 		int numberOfListings = 0;		
-		for (BusinessPlanDTO bp : bpCache.values()) {
+		for (ListingDTO bp : lCache.values()) {
 			if (userId.equals(bp.getOwner())) {
 				numberOfListings++;
 			}
@@ -104,8 +104,8 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		userCache.put(user.getIdAsString(), user);
 	}
 	
-	public List<BusinessPlanDTO> getTopBusinessPlans(int maxItems) {
-		List<BusinessPlanDTO> list = new ArrayList<BusinessPlanDTO>();
+	public List<ListingDTO> getTopListings(int maxItems) {
+		List<ListingDTO> list = new ArrayList<ListingDTO>();
 		
 		// sort rating cache
 		List<Map.Entry<String, Integer>> rating = new ArrayList<Map.Entry<String, Integer>>(ratingCache.entrySet());
@@ -124,22 +124,22 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		for (Map.Entry<String, Integer> bpEntry : rating) {
 			log.log(Level.INFO, "BP " + bpEntry.getKey() + " - rating " + bpEntry.getValue());
 			if (maxItems-- > 0) {
-				list.add(bpCache.get(bpEntry.getKey()));
+				list.add(lCache.get(bpEntry.getKey()));
 			}
 		}
 		return list;
 	}
 
-	public List<BusinessPlanDTO> getActiveBusinessPlans(int maxItems) {
-		List<BusinessPlanDTO> list = new ArrayList<BusinessPlanDTO>();
+	public List<ListingDTO> getActiveListings(int maxItems) {
+		List<ListingDTO> list = new ArrayList<ListingDTO>();
 		
 		// create activity list
 		Map<String, Integer> sortedBP = new HashMap<String, Integer>();
 		for (CommentDTO comment : commentCache.values()) {
-			if (!sortedBP.containsKey(comment.getBusinessPlan())) {
-				sortedBP.put(comment.getBusinessPlan(), 1);
+			if (!sortedBP.containsKey(comment.getListing())) {
+				sortedBP.put(comment.getListing(), 1);
 			} else {
-				sortedBP.put(comment.getBusinessPlan(), sortedBP.get(comment.getBusinessPlan()) + 1);
+				sortedBP.put(comment.getListing(), sortedBP.get(comment.getListing()) + 1);
 			}
 		}
 		
@@ -160,16 +160,16 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		for (Map.Entry<String, Integer> bpEntry : active) {
 			log.log(Level.INFO, "BP " + bpEntry.getKey() + " - activity " + bpEntry.getValue());
 			if (maxItems-- > 0) {
-				list.add(bpCache.get(bpEntry.getKey()));
+				list.add(lCache.get(bpEntry.getKey()));
 			}
 		}
 		return list;
 	}
 	
-	public List<BusinessPlanDTO> getUserBusinessPlans(String userId, int maxItems) {
+	public List<ListingDTO> getUserListings(String userId, int maxItems) {
 		log.log(Level.INFO, "Business plans owned by " + userId);
-		List<BusinessPlanDTO> list = new ArrayList<BusinessPlanDTO>();
-		for (BusinessPlanDTO bp : bpCache.values()) {
+		List<ListingDTO> list = new ArrayList<ListingDTO>();
+		for (ListingDTO bp : lCache.values()) {
 			if (bp.getOwner().equals(userId)) {
 				log.log(Level.INFO, "BP " + bp.getKey());
 				list.add(bp);
@@ -179,35 +179,35 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		return list;
 	}
 	
-	public int valueUpBusinessPlan(String businessPlanId, String userId) {
-		Integer valuation = ratingCache.get(businessPlanId);
+	public int valueUpListing(String listingId, String userId) {
+		Integer valuation = ratingCache.get(listingId);
 		if (valuation == null) {
-			log.log(Level.INFO, "Up valuation for " + businessPlanId + " -> 1");
-			ratingCache.put(businessPlanId, 1);
+			log.log(Level.INFO, "Up valuation for " + listingId + " -> 1");
+			ratingCache.put(listingId, 1);
 		} else {
-			log.log(Level.INFO, "Up valuation for " + businessPlanId + " -> " + (valuation + 1));
-			ratingCache.put(businessPlanId, valuation + 1);
+			log.log(Level.INFO, "Up valuation for " + listingId + " -> " + (valuation + 1));
+			ratingCache.put(listingId, valuation + 1);
 		}
-		return ratingCache.get(businessPlanId);
+		return ratingCache.get(listingId);
 	}
 
-	public int valueDownBusinessPlan(String businessPlanId, String userId) {
-		Integer valuation = ratingCache.get(businessPlanId);
+	public int valueDownListing(String listingId, String userId) {
+		Integer valuation = ratingCache.get(listingId);
 		if (valuation == null) {
-			log.log(Level.INFO, "Down valuation for " + businessPlanId + " -> -1");
-			ratingCache.put(businessPlanId, -1);
+			log.log(Level.INFO, "Down valuation for " + listingId + " -> -1");
+			ratingCache.put(listingId, -1);
 		} else {
-			log.log(Level.INFO, "Down valuation for " + businessPlanId + " -> " + (valuation - 1));
-			ratingCache.put(businessPlanId, valuation - 1);
+			log.log(Level.INFO, "Down valuation for " + listingId + " -> " + (valuation - 1));
+			ratingCache.put(listingId, valuation - 1);
 		}
-		return ratingCache.get(businessPlanId);
+		return ratingCache.get(listingId);
 	}
 
 	@Override
-	public List<CommentDTO> getComments(String businessPlanId) {
+	public List<CommentDTO> getComments(String listingId) {
 		List<CommentDTO> comments = new ArrayList<CommentDTO>();
 		for (CommentDTO comment : commentCache.values()) {
-			if (comment.getBusinessPlan().equals(businessPlanId)) {
+			if (comment.getListing().equals(listingId)) {
 				comments.add(comment);
 			}
 		}
@@ -215,10 +215,10 @@ public class MockDatastoreDAO implements DatastoreDAO {
 	}
 
 	@Override
-	public List<BidDTO> getBids(String businessPlanId) {
+	public List<BidDTO> getBids(String listingId) {
 		List<BidDTO> bids = new ArrayList<BidDTO>();
 		for (BidDTO bid : bidCache.values()) {
-			if (bid.getBusinessPlan().equals(businessPlanId)) {
+			if (bid.getListing().equals(listingId)) {
 				bids.add(bid);
 			}
 		}
@@ -226,16 +226,16 @@ public class MockDatastoreDAO implements DatastoreDAO {
 	}
 
 	@Override
-	public int getRating(String businessPlanId) {
-		Integer rating = ratingCache.get(businessPlanId);
-		log.log(Level.INFO, "Rating for " + businessPlanId + " is " + rating);
+	public int getRating(String listingId) {
+		Integer rating = ratingCache.get(listingId);
+		log.log(Level.INFO, "Rating for " + listingId + " is " + rating);
 		return rating == null ? 0 : rating.intValue();
 	}
 
 	@Override
-	public int getActivity(String businessPlanId) {
-		Integer activity = bpCommentCache.get(businessPlanId);
-		log.log(Level.INFO, "Activity for " + businessPlanId + " is " + activity);
+	public int getActivity(String listingId) {
+		Integer activity = lCommentCache.get(listingId);
+		log.log(Level.INFO, "Activity for " + listingId + " is " + activity);
 		return activity == null ? 0 : activity.intValue();
 	}
 
@@ -244,29 +244,29 @@ public class MockDatastoreDAO implements DatastoreDAO {
 	 */
 	private void generateComments() {
 		List<UserDTO> users = new ArrayList<UserDTO>(userCache.values());
-		for (BusinessPlanDTO bp : bpCache.values()) {
+		for (ListingDTO bp : lCache.values()) {
 			int commentNum = new Random().nextInt(30);
 			while (--commentNum > 0) {
 				CommentDTO comment = new CommentDTO();
 				comment.createKey(commentNum + "_" + bp.hashCode());
-				comment.setBusinessPlan(bp.getIdAsString());
+				comment.setListing(bp.getIdAsString());
 				comment.setUser(users.get(new Random().nextInt(users.size())).getIdAsString());
 				comment.setCommentedOn(new Date(System.currentTimeMillis() - commentNum * 45 * 60 * 1000));
 				comment.setComment("Comment " + commentNum);
 				
 				commentCache.put(comment.getIdAsString(), comment);
 				
-				if (bpCommentCache.containsKey(bp.getIdAsString())) {
-					bpCommentCache.put(bp.getIdAsString(), bpCommentCache.get(bp.getIdAsString()) + 1);
+				if (lCommentCache.containsKey(bp.getIdAsString())) {
+					lCommentCache.put(bp.getIdAsString(), lCommentCache.get(bp.getIdAsString()) + 1);
 				} else {
-					bpCommentCache.put(bp.getIdAsString(), 1);
+					lCommentCache.put(bp.getIdAsString(), 1);
 				}
 			}
 		}
 	}	
 
 	/**
-	 * Generates random bids for business plans
+	 * Generates random bids for listings
 	 */
 	private void generateBids() {
 		List<UserDTO> users = new ArrayList<UserDTO>();
@@ -276,13 +276,13 @@ public class MockDatastoreDAO implements DatastoreDAO {
 			}
 		}
 		
-		for (BusinessPlanDTO bp : bpCache.values()) {
+		for (ListingDTO bp : lCache.values()) {
 			int bidNum = new Random().nextInt(15);
 			while (--bidNum > 0) {
 				BidDTO bid = new BidDTO();
 				bid.createKey(bidNum + "_" + bp.hashCode());
 				bid.setUser(users.get(new Random().nextInt(users.size())).getIdAsString());
-				bid.setBusinessPlan(bp.getIdAsString());
+				bid.setListing(bp.getIdAsString());
 				bid.setFundType(new Random().nextInt(2) > 0 ? BidDTO.FundType.SYNDICATE : BidDTO.FundType.SOLE_INVESTOR);
 				bid.setPercentOfCompany(new Random().nextInt(50) + 10);
 				bid.setPlaced(new Date(System.currentTimeMillis() - bidNum * 53 * 60 * 1000));
@@ -356,51 +356,51 @@ public class MockDatastoreDAO implements DatastoreDAO {
 	}
 
 	/**
-	 * Generates mock business plans
+	 * Generates mock listings
 	 */
-	private void createMockBusinessPlans() {
+	private void createMockListings() {
 		List<String> userIds = new ArrayList<String>(userCache.keySet());
 		int bpNum = 0;
 	
-		BusinessPlanDTO bp = new BusinessPlanDTO();
+		ListingDTO bp = new ListingDTO();
 		bp.createKey("mislead");
 		bp.setName("MisLead");
 		bp.setOwner(userIds.get(bpNum++ % userIds.size()));
 		bp.setStartingValuation(20000);
 		bp.setStartingValuationDate(new Date(System.currentTimeMillis() - 45 * 60 * 60 * 1000));
 		bp.setListedOn(new Date(System.currentTimeMillis() - 45 * 60 * 60 * 1000));
-		bp.setState(BusinessPlanDTO.State.ACTIVE);
+		bp.setState(ListingDTO.State.ACTIVE);
 		bp.setClosingOn(new Date(System.currentTimeMillis() + 12 * 24 * 60 * 60 * 1000));
 		bp.setSummary("Executive summary for <b>MisLead</b>");
-		bpCache.put(bp.getIdAsString(), bp);
+		lCache.put(bp.getIdAsString(), bp);
 		ratingCache.put(bp.getIdAsString(), 5);
 
 	
-		bp = new BusinessPlanDTO();
+		bp = new ListingDTO();
 		bp.createKey("semanticsearch");
 		bp.setName("Semantic Search");
 		bp.setOwner(userIds.get(bpNum++ % userIds.size()));
 		bp.setStartingValuation(40000);
 		bp.setStartingValuationDate(new Date(System.currentTimeMillis() - 15 * 60 * 60 * 1000));
 		bp.setListedOn(new Date(System.currentTimeMillis() - 15 * 60 * 60 * 1000));
-		bp.setState(BusinessPlanDTO.State.ACTIVE);
+		bp.setState(ListingDTO.State.ACTIVE);
 		bp.setClosingOn(new Date(System.currentTimeMillis() + 24 * 24 * 60 * 60 * 1000));
 		bp.setSummary("The fact of the matter is Google, and to a much lesser extent Bing, " + 
 				"own the search market. Ask Barry Diller, if you don't believe us." +
 				"Yet, startups still spring up hoping to disrupt the incumbents. " +
 				"Cuil flopped. Wolfram Alpha is irrelevant. Powerset, which was a semantic" + 
 				" search engine was bailed out by Microsoft, which acquired it.");
-		bpCache.put(bp.getIdAsString(), bp);
+		lCache.put(bp.getIdAsString(), bp);
 		ratingCache.put(bp.getIdAsString(), 8);
 
-		bp = new BusinessPlanDTO();
+		bp = new ListingDTO();
 		bp.createKey("socialrecommendations");
 		bp.setName("Social recommendations");
 		bp.setOwner(userIds.get(bpNum++ % userIds.size()));
 		bp.setStartingValuation(15000);
 		bp.setStartingValuationDate(new Date(System.currentTimeMillis() - 20 * 60 * 60 * 1000));
 		bp.setListedOn(new Date(System.currentTimeMillis() - 20 * 60 * 60 * 1000));
-		bp.setState(BusinessPlanDTO.State.ACTIVE);
+		bp.setState(ListingDTO.State.ACTIVE);
 		bp.setClosingOn(new Date(System.currentTimeMillis() + 30 * 24 * 60 * 60 * 1000));
 		bp.setSummary("It's a very tempting idea. Collect data from people about their tastes" +
 				" and preferences. Then use that data to create recommendations for others. " +
@@ -408,17 +408,17 @@ public class MockDatastoreDAO implements DatastoreDAO {
 				"the information. It doesn't work. The latest to try is Hunch and Get Glue." +
 				"Hunch is pivoting towards non-consumer-facing white label business. " +
 				"Get Glue has had some success of late, but it's hardly a breakout business.");
-		bpCache.put(bp.getIdAsString(), bp);
+		lCache.put(bp.getIdAsString(), bp);
 		ratingCache.put(bp.getIdAsString(), 45);
 
-		bp = new BusinessPlanDTO();
+		bp = new ListingDTO();
 		bp.createKey("localnewssites");
 		bp.setName("Local news sites");
 		bp.setOwner(userIds.get(bpNum++ % userIds.size()));
 		bp.setStartingValuation(49000);
 		bp.setStartingValuationDate(new Date(System.currentTimeMillis() - 3 * 60 * 60 * 1000));
 		bp.setListedOn(new Date(System.currentTimeMillis() - 3 * 60 * 60 * 1000));
-		bp.setState(BusinessPlanDTO.State.ACTIVE);
+		bp.setState(ListingDTO.State.ACTIVE);
 		bp.setClosingOn(new Date(System.currentTimeMillis() + 27 * 24 * 60 * 60 * 1000));
 		bp.setSummary("Maybe Tim Armstrong, AOL, and Patch will prove it wrong, but to this point" +
 				" nobody has been able to crack the local news market and make a sustainable business." +
@@ -426,51 +426,51 @@ public class MockDatastoreDAO implements DatastoreDAO {
 				" idea. You build a community, there's a baked in advertising group with local " +
 				"businesses, and classifieds. But, it appears to be too niche to scale into a big" +
 				" business.");
-		bpCache.put(bp.getIdAsString(), bp);
+		lCache.put(bp.getIdAsString(), bp);
 		ratingCache.put(bp.getIdAsString(), -6);
 
-		bp = new BusinessPlanDTO();
+		bp = new ListingDTO();
 		bp.createKey("micropayments");
 		bp.setName("Micropayments");
 		bp.setOwner(userIds.get(bpNum++ % userIds.size()));
 		bp.setStartingValuation(5000);
 		bp.setStartingValuationDate(new Date(System.currentTimeMillis() - 23 * 60 * 60 * 1000));
 		bp.setListedOn(new Date(System.currentTimeMillis() - 23 * 60 * 60 * 1000));
-		bp.setState(BusinessPlanDTO.State.ACTIVE);
+		bp.setState(ListingDTO.State.ACTIVE);
 		bp.setClosingOn(new Date(System.currentTimeMillis() + 15 * 24 * 60 * 60 * 1000));
 		bp.setSummary("Micropayments are one idea that's tossed around to solve the problem" +
 				" of paying for content on the Web. If you want to read a New York Times " +
 				"story it would only cost a nickel! Or on Tumblr, if you want to tip a blogger" +
 				" or pay for a small design you could with ease. So far, these micropayment" +
 				" plans have not worked.");
-		bpCache.put(bp.getIdAsString(), bp);
+		lCache.put(bp.getIdAsString(), bp);
 		ratingCache.put(bp.getIdAsString(), 0);
 
-		bp = new BusinessPlanDTO();
+		bp = new ListingDTO();
 		bp.createKey("kill email");
 		bp.setName("Kill email");
 		bp.setOwner(userIds.get(bpNum++ % userIds.size()));
 		bp.setStartingValuation(40000);
 		bp.setStartingValuationDate(new Date(System.currentTimeMillis() - 6 * 60 * 60 * 1000));
 		bp.setListedOn(new Date(System.currentTimeMillis() - 6 * 60 * 60 * 1000));
-		bp.setState(BusinessPlanDTO.State.ACTIVE);
+		bp.setState(ListingDTO.State.ACTIVE);
 		bp.setClosingOn(new Date(System.currentTimeMillis() + 78 * 24 * 60 * 60 * 1000));
 		bp.setSummary("If any startup says it's going to eliminate email, it's destined for failure. " +
 				"You can iterate on the inbox, and try to improve it, but even that's " +
 				"not much of a business. The latest high profile flop in this arena is " +
 				"Google Wave. It was supposed to change email forever. It was going to " +
 				"displace email. Didn't happen.");
-		bpCache.put(bp.getIdAsString(), bp);
+		lCache.put(bp.getIdAsString(), bp);
 		ratingCache.put(bp.getIdAsString(), -38);
 
-		bp = new BusinessPlanDTO();
+		bp = new ListingDTO();
 		bp.createKey("better company car");
 		bp.setName("Better company car");
 		bp.setOwner(userIds.get(bpNum++ % userIds.size()));
 		bp.setStartingValuation(100000);
 		bp.setStartingValuationDate(new Date(System.currentTimeMillis() - 8 * 60 * 60 * 1000));
 		bp.setListedOn(new Date(System.currentTimeMillis() - 8 * 60 * 60 * 1000));
-		bp.setState(BusinessPlanDTO.State.ACTIVE);
+		bp.setState(ListingDTO.State.ACTIVE);
 		bp.setClosingOn(new Date(System.currentTimeMillis() + 30 * 24 * 60 * 60 * 1000));
 		bp.setSummary("Considering how frustrated people are with car companies, you'd think " +
 				"launching a new one would be perfect for a startup. So far, that's not the case. " +
@@ -478,7 +478,7 @@ public class MockDatastoreDAO implements DatastoreDAO {
 				"against it. But, Tesla has sold fewer than 2,000 cars since it was founded in 2003. " +
 				"It's far from certain it will succeed. Even when its next car comes out, Nissan " +
 				"could be making a luxury electric car that competes with Tesla.");
-		bpCache.put(bp.getIdAsString(), bp);
+		lCache.put(bp.getIdAsString(), bp);
 		ratingCache.put(bp.getIdAsString(), 9);
 	}	
 }

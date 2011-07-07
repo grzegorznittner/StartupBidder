@@ -17,7 +17,7 @@ import com.google.appengine.api.users.UserServiceFactory;
 import com.startupbidder.dao.DatastoreDAO;
 import com.startupbidder.dao.MockDatastoreDAO;
 import com.startupbidder.dto.BidDTO;
-import com.startupbidder.dto.BusinessPlanDTO;
+import com.startupbidder.dto.ListingDTO;
 import com.startupbidder.dto.CommentDTO;
 import com.startupbidder.dto.UserDTO;
 import com.startupbidder.vo.DtoToVoConverter;
@@ -54,8 +54,8 @@ public class HelloServlet extends HttpServlet {
 			//out.println(VoTest.getArrayNodeString(DtoToVoConverter.convertBusinessPlans(datastore.getActiveBusinessPlans(10))));
 			
 			out.println("<p><b>Datastore key function test:</b></p>");
-			Key testStringKey = KeyFactory.createKey(BusinessPlanDTO.class.getSimpleName(), "bpId");
-			Key testLongKey = KeyFactory.createKey(BusinessPlanDTO.class.getSimpleName(), 1234L);
+			Key testStringKey = KeyFactory.createKey(ListingDTO.class.getSimpleName(), "bpId");
+			Key testLongKey = KeyFactory.createKey(ListingDTO.class.getSimpleName(), 1234L);
 			out.println("testStringKey.toString() = " + testStringKey.toString() + "</br>");
 			out.println("testLongKey.toString() = " + testLongKey.toString() + "</br>");
 			out.println("KeyFactory.keyToString(testStringKey) = " + KeyFactory.keyToString(testStringKey) + "</br>");
@@ -74,50 +74,50 @@ public class HelloServlet extends HttpServlet {
 			out.println("<p>" + currentUser + "</p>");
 			
 			out.println("<p><b>Current user business plans:</b></p>");
-			for (BusinessPlanDTO bp : datastore.getUserBusinessPlans(currentUser.getIdAsString(), 10)) {
+			for (ListingDTO bp : datastore.getUserListings(currentUser.getIdAsString(), 10)) {
 				int rating = datastore.getRating(bp.getIdAsString());
 				int activity = datastore.getActivity(bp.getIdAsString());
 				out.println("<p>" + "<b>R=" + rating + "</b>" + "<b>A=" + activity + "</b>" + bp + "</p>");
-				datastore.valueUpBusinessPlan(bp.getIdAsString(), currentUser.getIdAsString());
+				datastore.valueUpListing(bp.getIdAsString(), currentUser.getIdAsString());
 			}
 			
 			out.println("<p><b>Top business plans:</b></p>");
-			for (BusinessPlanDTO bp : datastore.getTopBusinessPlans(10)) {
+			for (ListingDTO bp : datastore.getTopListings(10)) {
 				int rating = datastore.getRating(bp.getIdAsString());
 				int activity = datastore.getActivity(bp.getIdAsString());
 				out.println("<p>" + "<b>R=" + rating + "</b>" + "<b>A=" + activity + "</b>" + bp + "</p>");
-				datastore.valueUpBusinessPlan(bp.getIdAsString(), currentUser.getIdAsString());
+				datastore.valueUpListing(bp.getIdAsString(), currentUser.getIdAsString());
 			}
 			out.println("<p><b>Active business plans:</b></p>");
-			for (BusinessPlanDTO bp : datastore.getActiveBusinessPlans(10)) {
+			for (ListingDTO bp : datastore.getActiveListings(10)) {
 				int rating = datastore.getRating(bp.getIdAsString());
 				int activity = datastore.getActivity(bp.getIdAsString());
 				out.println("<p>" + "<b>R=" + rating + "</b>" + "<b>A=" + activity + "</b>" + bp + "</p>");
-				datastore.valueDownBusinessPlan(bp.getIdAsString(), currentUser.getIdAsString());
+				datastore.valueDownListing(bp.getIdAsString(), currentUser.getIdAsString());
 			}
 			
 			out.println("<p><b>Top business plans (2):</b></p>");
-			for (BusinessPlanDTO bp : datastore.getTopBusinessPlans(10)) {
+			for (ListingDTO bp : datastore.getTopListings(10)) {
 				int rating = datastore.getRating(bp.getIdAsString());
 				int activity = datastore.getActivity(bp.getIdAsString());
 				out.println("<p>" + "<b>R=" + rating + "</b>" + "<b>A=" + activity + "</b>" + bp + "</p>");
-				datastore.valueUpBusinessPlan(bp.getIdAsString(), currentUser.getIdAsString());
+				datastore.valueUpListing(bp.getIdAsString(), currentUser.getIdAsString());
 			}
 			out.println("<p><b>Active business plans (2):</b></p>");
-			for (BusinessPlanDTO bp : datastore.getActiveBusinessPlans(10)) {
+			for (ListingDTO bp : datastore.getActiveListings(10)) {
 				int rating = datastore.getRating(bp.getIdAsString());
 				int activity = datastore.getActivity(bp.getIdAsString());
 				out.println("<p>" + "<b>R=" + rating + "</b>" + "<b>A=" + activity + "</b>" + bp + "</p>");
-				datastore.valueDownBusinessPlan(bp.getIdAsString(), currentUser.getIdAsString());
+				datastore.valueDownListing(bp.getIdAsString(), currentUser.getIdAsString());
 			}
 
-			BusinessPlanDTO topBP = datastore.getTopBusinessPlans(1).get(0);
+			ListingDTO topBP = datastore.getTopListings(1).get(0);
 			out.println("<p><b>Bids for top business plan '" + topBP + "</b></p>");
 			for (BidDTO bid : datastore.getBids(topBP.getIdAsString())) {
 				out.println("<p>" + bid + "</p>");
 			}
 
-			BusinessPlanDTO topActiveBP = datastore.getActiveBusinessPlans(1).get(0);
+			ListingDTO topActiveBP = datastore.getActiveListings(1).get(0);
 			out.println("<p><b>Comments for most active business plan '" + topActiveBP + "</b></p>");
 			for (CommentDTO comment : datastore.getComments(topActiveBP.getIdAsString())) {
 				out.println("<p>" + comment + "</p>");

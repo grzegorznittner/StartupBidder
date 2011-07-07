@@ -2,7 +2,7 @@ package com.startupbidder.dto;
 
 
 public class RatingDTO extends AbstractDTO {
-	private String businessPlan;
+	private String listing;
 	private String user;
 	private int value;
 	
@@ -13,12 +13,12 @@ public class RatingDTO extends AbstractDTO {
 		return "Rating";
 	}
 
-	public String getBusinessPlan() {
-		return businessPlan;
+	public String getListing() {
+		return listing;
 	}
 
-	public void setBusinessPlan(String businessPlan) {
-		this.businessPlan = businessPlan;
+	public void setListing(String listing) {
+		this.listing = listing;
 	}
 
 	public String getUser() {
@@ -39,7 +39,7 @@ public class RatingDTO extends AbstractDTO {
 
 	@Override
 	public String toString() {
-		return "RatingDTO [id=" + id + ", businessPlan=" + businessPlan
+		return "RatingDTO [id=" + id + ", listing=" + listing
 				+ ", user=" + user + ", value=" + value + "]";
 	}
 	

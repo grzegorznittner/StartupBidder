@@ -18,7 +18,7 @@ import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestC
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.startupbidder.dao.DatastoreDAO;
 import com.startupbidder.dao.MockDatastoreDAO;
-import com.startupbidder.vo.BusinessPlanVO;
+import com.startupbidder.vo.ListingVO;
 import com.startupbidder.vo.DtoToVoConverter;
 
 public class VoTest {
@@ -38,12 +38,12 @@ public class VoTest {
 	
 	@Test
 	public void arrayNodeTest() {
-		List<BusinessPlanVO> bpList = DtoToVoConverter.convertBusinessPlans(datastore.getActiveBusinessPlans(10));
+		List<ListingVO> bpList = DtoToVoConverter.convertListings(datastore.getActiveListings(10));
 		ArrayNode rootNode = JsonNodeFactory.instance.arrayNode();
 		
 		assertEquals(7, bpList.size());
 		
-		for (BusinessPlanVO bp : bpList) {
+		for (ListingVO bp : bpList) {
 			rootNode.addPOJO(bp);
 		}
 		

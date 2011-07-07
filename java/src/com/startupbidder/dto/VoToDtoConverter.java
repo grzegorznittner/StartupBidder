@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.startupbidder.vo.BidVO;
-import com.startupbidder.vo.BusinessPlanVO;
+import com.startupbidder.vo.ListingVO;
 import com.startupbidder.vo.CommentVO;
 import com.startupbidder.vo.RatingVO;
 import com.startupbidder.vo.UserVO;
@@ -13,7 +13,7 @@ public class VoToDtoConverter {
 	public static BidDTO convert(BidVO bidVO) {
 		BidDTO bid = new BidDTO();
 		bid.setIdFromString(bidVO.getId());
-		bid.setBusinessPlan(bidVO.getBusinessPlan());
+		bid.setListing(bidVO.getListing());
 		bid.setFundType(BidDTO.FundType.valueOf(bidVO.getFundType()));
 		bid.setPercentOfCompany(bidVO.getPercentOfCompany());
 		bid.setPlaced(bidVO.getPlaced());
@@ -22,8 +22,8 @@ public class VoToDtoConverter {
 		return bid;
 	}
 	
-	public static BusinessPlanDTO convert(BusinessPlanVO bpVO) {
-		BusinessPlanDTO bp = new BusinessPlanDTO();
+	public static ListingDTO convert(ListingVO bpVO) {
+		ListingDTO bp = new ListingDTO();
 		bp.setIdFromString(bpVO.getId());
 		bp.setAverageValuation(bpVO.getAverageValuation());
 		bp.setClosingOn(bpVO.getClosingOn());
@@ -33,7 +33,7 @@ public class VoToDtoConverter {
 		bp.setOwner(bpVO.getOwner());
 		bp.setStartingValuation(bpVO.getStartingValuation());
 		bp.setStartingValuationDate(bpVO.getStartingValuationDate());
-		bp.setState(BusinessPlanDTO.State.valueOf(bpVO.getState()));
+		bp.setState(ListingDTO.State.valueOf(bpVO.getState()));
 		bp.setSummary(bpVO.getSummary());
 		return bp;
 	}
@@ -50,7 +50,7 @@ public class VoToDtoConverter {
 	public static RatingDTO convert(RatingVO ratingVO) {
 		RatingDTO rating = new RatingDTO();
 		rating.setIdFromString(ratingVO.getId());
-		rating.setBusinessPlan(ratingVO.getBusinessPlan());
+		rating.setListing(ratingVO.getListing());
 		rating.setUser(ratingVO.getUser());
 		rating.setValue(ratingVO.getValue());
 		return rating;
@@ -75,10 +75,10 @@ public class VoToDtoConverter {
 		return user;
 	}
 
-	public static List<BusinessPlanDTO> convertBusinessPlans(List<BusinessPlanVO> bpVOList) {
-		List<BusinessPlanDTO> bpDtoList = new ArrayList<BusinessPlanDTO>();
-		for (BusinessPlanVO bpVO : bpVOList) {
-			BusinessPlanDTO bpDTO = convert(bpVO);
+	public static List<ListingDTO> convertListings(List<ListingVO> bpVOList) {
+		List<ListingDTO> bpDtoList = new ArrayList<ListingDTO>();
+		for (ListingVO bpVO : bpVOList) {
+			ListingDTO bpDTO = convert(bpVO);
 			bpDtoList.add(bpDTO);
 		}
 		return bpDtoList;

@@ -7,15 +7,15 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.struts2.rest.DefaultHttpHeaders;
 import org.apache.struts2.rest.HttpHeaders;
 
-import com.startupbidder.vo.BusinessPlanVO;
+import com.startupbidder.vo.ListingVO;
 import com.startupbidder.web.ModelDrivenController;
 import com.startupbidder.web.ServiceFacade;
 
 public class ListingController extends ModelDrivenController {
 	private static int DEFAULT_MAX_RESULTS = 5;
 	
-	private List<BusinessPlanVO> listings = null;
-	private BusinessPlanVO listing = null;
+	private List<ListingVO> listings = null;
+	private ListingVO listing = null;
 	
 	public HttpHeaders executeAction(HttpServletRequest request) {
 		if ("GET".equalsIgnoreCase(request.getMethod())) {

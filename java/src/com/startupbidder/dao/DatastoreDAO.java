@@ -3,7 +3,7 @@ package com.startupbidder.dao;
 import java.util.List;
 
 import com.startupbidder.dto.BidDTO;
-import com.startupbidder.dto.BusinessPlanDTO;
+import com.startupbidder.dto.ListingDTO;
 import com.startupbidder.dto.CommentDTO;
 import com.startupbidder.dto.UserDTO;
 import com.startupbidder.dto.UserStatistics;
@@ -38,7 +38,7 @@ public interface DatastoreDAO {
 	 * @param maxItems Maximum number of items returned in the call
 	 * @return List of business plans
 	 */
-	List<BusinessPlanDTO> getUserBusinessPlans(String userId, int maxItems);
+	List<ListingDTO> getUserListings(String userId, int maxItems);
 	
 	/**
 	 * Returns top rated business plans
@@ -46,7 +46,7 @@ public interface DatastoreDAO {
 	 * @param maxItems Maximum number of items returned in the call
 	 * @return List of business plans
 	 */
-	List<BusinessPlanDTO> getTopBusinessPlans(int maxItems);
+	List<ListingDTO> getTopListings(int maxItems);
 	
 	/**
 	 * Returns most active business plans
@@ -55,52 +55,57 @@ public interface DatastoreDAO {
 	 * @param maxItems Maximum number of items returned in the call
 	 * @return List of business plans
 	 */
-	List<BusinessPlanDTO> getActiveBusinessPlans(int maxItems);
+	List<ListingDTO> getActiveListings(int maxItems);
 	
 	/**
-	 * Value up business plan
+	 * Value up listing
 	 *
-	 * @param businessPlanId Business plan identifier
+	 * @param listingId Listing identifier
 	 * @param userId User identifier
-	 * @return Business plan rating
+	 * @return Listing rating
 	 */
-	int valueUpBusinessPlan(String businessPlanId, String userId);
+	int valueUpListing(String listingId, String userId);
 	
 	/**
-	 * Value down business plan
+	 * Value down listing
 	 *
-	 * @param businessPlanId Business plan identifier
+	 * @param listingId Listing identifier
 	 * @param userId User identifier
-	 * @return Business plan rating
+	 * @return Listing's rating
 	 */
-	int valueDownBusinessPlan(String businessPlanId, String userId);
+	int valueDownListing(String listingId, String userId);
 	
 	/**
-	 * Returns list of business plan's comments
+	 * Returns list of listing's comments
 	 * 
-	 * @param businessPlanId Business plan id
+	 * @param listingId Listing id
 	 * @return List of comments
 	 */
-	List<CommentDTO> getComments(String businessPlanId);
+	List<CommentDTO> getComments(String listingId);
 	
 	/**
-	 * Returns list of business plan's bids
-	 * @param businessPlanId Business plan id
+	 * Returns list of listing's bids
+	 * @param listingId Listing id
 	 * @return List of bids
 	 */
-	List<BidDTO> getBids(String businessPlanId);
+	List<BidDTO> getBids(String listingId);
 	
 	/**
-	 * Returns business plan's rating
-	 * @param businessPlanId Business plan id
+	 * Returns listing's rating
+	 * @param listingId Listing id
 	 * @return Current rating
 	 */
-	int getRating(String businessPlanId);
+	int getRating(String listingId);
 	
 	/**
-	 * Returns business plan's activity (number of comments)
-	 * @param businessPlanId Business plan id
+	 * Returns listing's activity (number of comments)
+	 * @param listingId Listing id
 	 * @return Activity
 	 */
-	int getActivity(String businessPlanId);
+	int getActivity(String listingId);
+
+	/**
+	 * Returns bid
+	 */
+	BidDTO getBid(String bidId);
 }

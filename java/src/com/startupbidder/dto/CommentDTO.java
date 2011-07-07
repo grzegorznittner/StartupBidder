@@ -3,7 +3,7 @@ package com.startupbidder.dto;
 import java.util.Date;
 
 public class CommentDTO extends AbstractDTO {
-	private String businessPlan;
+	private String listing;
 	private String user;
 	private String comment;
 	private Date   commentedOn;
@@ -15,12 +15,12 @@ public class CommentDTO extends AbstractDTO {
 		return "Comment";
 	}
 
-	public String getBusinessPlan() {
-		return businessPlan;
+	public String getListing() {
+		return listing;
 	}
 
-	public void setBusinessPlan(String businessPlan) {
-		this.businessPlan = businessPlan;
+	public void setListing(String listing) {
+		this.listing = listing;
 	}
 
 	public String getUser() {
@@ -49,7 +49,7 @@ public class CommentDTO extends AbstractDTO {
 
 	@Override
 	public String toString() {
-		return "CommentDTO [id=" + id + ", businessPlan=" + businessPlan
+		return "CommentDTO [id=" + id + ", listing=" + listing
 				+ ", user=" + user + ", comment=" + comment + ", commentedOn="
 				+ commentedOn + "]";
 	}

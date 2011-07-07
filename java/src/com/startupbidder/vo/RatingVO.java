@@ -3,7 +3,7 @@ package com.startupbidder.vo;
 
 public class RatingVO {
 	private String id;
-	private String businessPlan;
+	private String listing;
 	private String user;
 	private int value;
 	
@@ -17,12 +17,12 @@ public class RatingVO {
 		this.id = id;
 	}
 
-	public String getBusinessPlan() {
-		return businessPlan;
+	public String getListing() {
+		return listing;
 	}
 
-	public void setBusinessPlan(String businessPlan) {
-		this.businessPlan = businessPlan;
+	public void setListing(String listing) {
+		this.listing = listing;
 	}
 
 	public String getUser() {
@@ -43,7 +43,7 @@ public class RatingVO {
 
 	@Override
 	public String toString() {
-		return "RatingDTO [id=" + id + ", businessPlan=" + businessPlan
+		return "RatingDTO [id=" + id + ", listing=" + listing
 				+ ", user=" + user + ", value=" + value + "]";
 	}
 	

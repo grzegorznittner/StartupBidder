@@ -1,11 +1,9 @@
-package com.startupbidder.dto;
+package com.startupbidder.vo;
 
 import java.util.Date;
 
-public class BusinessPlanDTO extends AbstractDTO {
-
-	public enum State {CREATED, ACTIVE, CLOSED, WITHDRAWN};
-	
+public class ListingVO {
+	private String id;
 	private String name;
 	private int   startingValuation;
 	private Date  startingValuationDate;
@@ -13,15 +11,21 @@ public class BusinessPlanDTO extends AbstractDTO {
 	private int   medianValuation;
 	private Date  listedOn;
 	private Date  closingOn;
-	private State state;
+	private String state;
 	private String summary;
 	private String owner;
+	private int numberOfComments;
+	private int numberOfBids;
+	private int rating;
 	
-	public BusinessPlanDTO() {
+	public ListingVO() {
 	}
 
-	public String getKind() {
-		return "BusinessPlan";
+	public String getId() {
+		return id;
+	}
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public String getName() {
@@ -72,11 +76,11 @@ public class BusinessPlanDTO extends AbstractDTO {
 		this.closingOn = closingOn;
 	}
 
-	public State getState() {
+	public String getState() {
 		return state;
 	}
 
-	public void setState(State state) {
+	public void setState(String state) {
 		this.state = state;
 	}
 
@@ -104,15 +108,41 @@ public class BusinessPlanDTO extends AbstractDTO {
 		this.owner = owner;
 	}
 
+	public int getNumberOfComments() {
+		return numberOfComments;
+	}
+
+	public void setNumberOfComments(int numberOfComments) {
+		this.numberOfComments = numberOfComments;
+	}
+
+	public int getNumberOfBids() {
+		return numberOfBids;
+	}
+
+	public void setNumberOfBids(int numberOfBids) {
+		this.numberOfBids = numberOfBids;
+	}
+
+	public int getRating() {
+		return rating;
+	}
+
+	public void setRating(int rating) {
+		this.rating = rating;
+	}
+
 	@Override
 	public String toString() {
-		return "BusinessPlanDTO [id=" + id + ", name=" + name + ", startingValuation="
-				+ startingValuation + ", startingValuationDate="
-				+ startingValuationDate + ", averageValuation="
-				+ averageValuation + ", medianValuation=" + medianValuation
-				+ ", listedOn=" + listedOn + ", closingOn=" + closingOn
-				+ ", state=" + state + ", summary=" + summary + ", owner="
-				+ owner + "]";
+		return "ListingVO [id=" + id + ", name=" + name
+				+ ", startingValuation=" + startingValuation
+				+ ", startingValuationDate=" + startingValuationDate
+				+ ", averageValuation=" + averageValuation
+				+ ", medianValuation=" + medianValuation + ", listedOn="
+				+ listedOn + ", closingOn=" + closingOn + ", state=" + state
+				+ ", summary=" + summary + ", owner=" + owner
+				+ ", numberOfComments=" + numberOfComments + ", numberOfBids="
+				+ numberOfBids + ", rating=" + rating + "]";
 	}
 
 }

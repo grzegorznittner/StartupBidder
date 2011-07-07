@@ -9,6 +9,7 @@ import org.apache.struts2.rest.HttpHeaders;
 
 import com.startupbidder.vo.BidVO;
 import com.startupbidder.web.ModelDrivenController;
+import com.startupbidder.web.ServiceFacade;
 
 public class BidController extends ModelDrivenController {
 
@@ -23,7 +24,7 @@ public class BidController extends ModelDrivenController {
 			if("all".equalsIgnoreCase(getCommand(1))) {
 				return all(request);
 			} else {
-				return index(request);
+				return get(request);
 			}
 		} else if ("PUT".equalsIgnoreCase(request.getMethod()) ||
 				"POST".equalsIgnoreCase(request.getMethod())) {
@@ -46,9 +47,10 @@ public class BidController extends ModelDrivenController {
 		return headers;
 	}
 
-	private HttpHeaders index(HttpServletRequest request) {
-		HttpHeaders headers = new DefaultHttpHeaders("create");
-		headers.setStatus(501);
+	private HttpHeaders get(HttpServletRequest request) {
+		HttpHeaders headers = new DefaultHttpHeaders("get");
+		String bidId = getCommand(2).length() > 0 ? getCommand(2) : request.getParameter("bid");
+		bid = ServiceFacade.instance().getBid(bidId);
 		return headers;
 	}
 

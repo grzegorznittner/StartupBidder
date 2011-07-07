@@ -5,7 +5,7 @@ import java.util.Date;
 public class BidVO {
 	private String id;
 	private String user;
-	private String businessPlan;
+	private String listing;
 	private Date   placed;
 	private int    value;
 	private int    percentOfCompany;
@@ -29,12 +29,12 @@ public class BidVO {
 		this.user = user;
 	}
 
-	public String getBusinessPlan() {
-		return businessPlan;
+	public String getListing() {
+		return listing;
 	}
 
-	public void setBusinessPlan(String businessPlan) {
-		this.businessPlan = businessPlan;
+	public void setListing(String listing) {
+		this.listing = listing;
 	}
 
 	public Date getPlaced() {
@@ -71,8 +71,8 @@ public class BidVO {
 
 	@Override
 	public String toString() {
-		return "BidVO [id=" + id + ", user=" + user + ", businessPlan="
-				+ businessPlan + ", placed=" + placed + ", value=" + value
+		return "BidVO [id=" + id + ", user=" + user + ", listing="
+				+ listing + ", placed=" + placed + ", value=" + value
 				+ ", percentOfCompany=" + percentOfCompany + ", fundType="
 				+ fundType + "]";
 	}

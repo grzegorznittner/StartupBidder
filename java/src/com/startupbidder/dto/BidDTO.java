@@ -6,7 +6,7 @@ public class BidDTO extends AbstractDTO {
 	public enum FundType {SYNDICATE, SOLE_INVESTOR};
 	
 	private String user;
-	private String businessPlan;
+	private String listing;
 	private Date   placed;
 	private int    value;
 	private int    percentOfCompany;
@@ -27,12 +27,12 @@ public class BidDTO extends AbstractDTO {
 		this.user = user;
 	}
 
-	public String getBusinessPlan() {
-		return businessPlan;
+	public String getListing() {
+		return listing;
 	}
 
-	public void setBusinessPlan(String businessPlan) {
-		this.businessPlan = businessPlan;
+	public void setListing(String businessPlan) {
+		this.listing = businessPlan;
 	}
 
 	public Date getPlaced() {
@@ -69,8 +69,8 @@ public class BidDTO extends AbstractDTO {
 
 	@Override
 	public String toString() {
-		return "BidDTO [id=" + id + ", user=" + user + ", businessPlan="
-				+ businessPlan + ", placed=" + placed + ", value=" + value
+		return "BidDTO [id=" + id + ", user=" + user + ", listing="
+				+ listing + ", placed=" + placed + ", value=" + value
 				+ ", percentOfCompany=" + percentOfCompany + ", fundType="
 				+ fundType + "]";
 	}

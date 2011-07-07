@@ -8,7 +8,7 @@ import com.startupbidder.dto.UserDTO;
 import com.startupbidder.dto.UserStatistics;
 import com.startupbidder.dto.VoToDtoConverter;
 import com.startupbidder.vo.BidVO;
-import com.startupbidder.vo.BusinessPlanVO;
+import com.startupbidder.vo.ListingVO;
 import com.startupbidder.vo.CommentVO;
 import com.startupbidder.vo.DtoToVoConverter;
 import com.startupbidder.vo.UserVO;
@@ -63,9 +63,9 @@ public class ServiceFacade {
 	 * @param cursor Cursor string
 	 * @return List of business plans as JsonNode's tree
 	 */
-	public List<BusinessPlanVO> getUserBusinessPlans(String userId, int maxItems, String cursor) {
-		List<BusinessPlanVO> bpList = DtoToVoConverter.convertBusinessPlans(getDAO().getUserBusinessPlans(userId, maxItems));
-		for (BusinessPlanVO bp : bpList) {
+	public List<ListingVO> getUserBusinessPlans(String userId, int maxItems, String cursor) {
+		List<ListingVO> bpList = DtoToVoConverter.convertListings(getDAO().getUserListings(userId, maxItems));
+		for (ListingVO bp : bpList) {
 			bp.setNumberOfComments(getDAO().getActivity(bp.getId()));
 			bp.setRating(getDAO().getRating(bp.getId()));
 			bp.setNumberOfBids(getDAO().getBids(bp.getId()).size());
@@ -80,9 +80,9 @@ public class ServiceFacade {
 	 * @param cursor Cursor string
 	 * @return List of business plans
 	 */
-	public List<BusinessPlanVO> getTopBusinessPlans(int maxItems, String cursor) {
-		List<BusinessPlanVO> bpList = DtoToVoConverter.convertBusinessPlans(getDAO().getTopBusinessPlans(maxItems));
-		for (BusinessPlanVO bp : bpList) {
+	public List<ListingVO> getTopBusinessPlans(int maxItems, String cursor) {
+		List<ListingVO> bpList = DtoToVoConverter.convertListings(getDAO().getTopListings(maxItems));
+		for (ListingVO bp : bpList) {
 			bp.setNumberOfComments(getDAO().getActivity(bp.getId()));
 			bp.setRating(getDAO().getRating(bp.getId()));
 			bp.setNumberOfBids(getDAO().getBids(bp.getId()).size());
@@ -98,9 +98,9 @@ public class ServiceFacade {
 	 * @param cursor Cursor string
 	 * @return List of business plans
 	 */
-	public List<BusinessPlanVO> getActiveBusinessPlans(int maxItems, String cursor) {
-		List<BusinessPlanVO> bpList = DtoToVoConverter.convertBusinessPlans(getDAO().getActiveBusinessPlans(maxItems));
-		for (BusinessPlanVO bp : bpList) {
+	public List<ListingVO> getActiveBusinessPlans(int maxItems, String cursor) {
+		List<ListingVO> bpList = DtoToVoConverter.convertListings(getDAO().getActiveListings(maxItems));
+		for (ListingVO bp : bpList) {
 			bp.setNumberOfComments(getDAO().getActivity(bp.getId()));
 			bp.setRating(getDAO().getRating(bp.getId()));
 			bp.setNumberOfBids(getDAO().getBids(bp.getId()).size());
@@ -116,7 +116,7 @@ public class ServiceFacade {
 	 * @return Business plan rating
 	 */
 	public int valueUpBusinessPlan(String businessPlanId, String userId) {
-		return getDAO().valueUpBusinessPlan(businessPlanId, userId);
+		return getDAO().valueUpListing(businessPlanId, userId);
 	}
 	
 	/**
@@ -127,7 +127,7 @@ public class ServiceFacade {
 	 * @return Business plan rating
 	 */
 	public int valueDownBusinessPlan(String businessPlanId, String userId) {
-		return getDAO().valueDownBusinessPlan(businessPlanId, userId);
+		return getDAO().valueDownListing(businessPlanId, userId);
 	}
 	
 	/**
@@ -167,6 +167,10 @@ public class ServiceFacade {
 	 */
 	public int getActivity(String businessPlanId) {
 		return getDAO().getActivity(businessPlanId);
+	}
+
+	public BidVO getBid(String bidId) {
+		return DtoToVoConverter.convert(getDAO().getBid(bidId));
 	}
 
 }
