@@ -808,8 +808,8 @@ $(function(){
             listing.presentation_url = 'http://www.reddit.com';
             return listing;
         };
-        self.genRandomListings = function() {
-            var numListings = 20;
+        self.genRandomListings = function(num_listings) {
+            var numListings = num_listings || 20;
             var listings = {};
             var listing;
             for (var i = 0; i < numListings; i++) {
@@ -904,8 +904,8 @@ $(function(){
             profile.open_id = 'johnarleyburns@google.com';
             return profile;
         };
-        self.genRandomProfiles = function() {
-            var numProfiles = 20;
+        self.genRandomProfiles = function(num_profiles) {
+            var numProfiles = num_profiles || 20;
             var profiles = {};
             var profile;
             for (var i = 0; i < numProfiles; i++) {
@@ -1142,12 +1142,12 @@ $(function(){
         };
         self.genRandomDb = function() {
             self.db = {};
-            self.genRandomProfiles();
-            self.genRandomListings();
+            self.genRandomProfiles(105);
+            self.genRandomListings(234);
             self.genRandomComments();
             self.genRandomBids();
         };
-        self.searchListings = function(searchType, keywords, profile_id) {
+        self.searchListings = function(searchType, keywords, profile_id, start_index, max_results) {
             var keywordArray = keywords ? keywords.split(' ') : [];
             var results = [];
             var result;
@@ -1160,7 +1160,25 @@ $(function(){
             }
             self.sortResultsByType(results, searchType);
             self.paintWithNumber(results);
-            return results;
+            var limited_results = self.limitResults(results, start_index, max_results);
+            var result_json = {
+                results: limited_results,
+                num_results: limited_results.length,
+                total_results: results.length
+            };
+            return result_json;
+        };
+        self.limitResults = function(results, start_index, max_results) {
+            var limited_results = [];
+            var start = (start_index && start_index >= 0) ? start_index : 0;
+            var max = (max_results && max_results >= 0) ? max_results : 20;
+            var end = (start + max) < results.length ? (start + max) : results.length;
+            var j = 0;
+            for (var i = start; i < end; i++) {
+                limited_results[j] = results[i];
+                j++;
+            }
+            return limited_results;
         };
         self.paintWithNumber = function(results) {
             for (var i = 0; i < results.length; i++) {
@@ -1458,26 +1476,31 @@ s = (p + b + c + v) / (t + 2)^1.5
             });
         };
         self.execute = function(args) {
-            var searchType = args['search_type'];
-            var profile_id = args['profile_id'];
+            var search_type = args.search_type;
+            var profile_id = args.profile_id;
+            var start_index = args.start_index || 0;
+            var max_results = 20;
             var keywords = $('#content-search-keywords').val();
-            if (!searchType) {
-                searchType = self.defaultSearchType;
+            if (!search_type) {
+                search_type = self.defaultSearchType;
             }
             if (keywords) {
                 keywords = keywords.replace(/\btype:\w*/g, '').replace(/\s+/g, ' ').trim();
             }
             $('#content-search-keywords').val(keywords);
-            var results = self.doSearch(searchType, keywords, profile_id);
+            var results_json = self.doSearch(search_type, keywords, profile_id, start_index, max_results);
             console.log('incoming json:' + JSON.stringify(args, null, '\t'));
-            console.log('returned json:' + JSON.stringify(results, null, '\t'));
-            self.displayResults(results);
+            console.log('returned json:' + JSON.stringify(results_json, null, '\t'));
+            var results = results_json.results;
+            var num_results = results_json.num_results;
+            var total_results = results_json.total_results;
+            self.displayResults(results, search_type, keywords, profile_id, start_index, num_results, total_results);
             return 'search';
         };
-        self.doSearch = function(searchType, keywords, profile_id){
-            return self.controller.datastore.searchListings(searchType, keywords, profile_id);
+        self.doSearch = function(searchType, keywords, profile_id, start_index, max_results){
+            return self.controller.datastore.searchListings(searchType, keywords, profile_id, start_index, max_results);
         };
-        self.displayResults = function(results){
+        self.displayResults = function(results, search_type, keywords, profile_id, start_index, num_results, total_results){
             var resultsHtml = '';
             var listing;
             for (var i = 0; i < results.length; i++) { // create results
@@ -1491,6 +1514,41 @@ s = (p + b + c + v) / (t + 2)^1.5
             for (var j = 0; j < results.length; j++) { // bind results
                 listing = results[j];
                 self.controller.listing.bindListingSnippet(j, listing);
+            }
+            // set pagination
+            var args = {
+                page: 'search',
+                search_type: search_type,
+                keywords: keywords,
+                profile_id: profile_id,
+                start_index: start_index
+            }
+            var prevargs, nextargs;
+            if (start_index > 0) {
+                prevargs = $.extend(true, {}, args);
+                prevargs.start_index = start_index - 20;
+                $('#search-prev-results').show().unbind()
+                    .data('args', prevargs)
+                    .bind('click',function(){
+                        console.log('prevargs:',$(this).data('args'));
+                        self.controller.execute($(this).data('args'));
+                    });
+            }
+            else {
+                $('#search-prev-results').hide();
+            }
+            if (start_index + num_results < total_results) {
+                nextargs = $.extend(true, {}, args);
+                nextargs.start_index = start_index + 20;
+                $('#search-next-results').show().unbind()
+                    .data('args', nextargs)
+                    .bind('click',function(){
+                        console.log('nextargs:',$(this).data('args'));
+                        self.controller.execute($(this).data('args'));
+                    });
+            }
+            else {
+                $('#search-next-results').hide();
             }
         };
         return self;
@@ -2749,7 +2807,8 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
         <div class="content-results">
             <div id="search-content-results-list" class="content-results-list"></div>
             <div class="content-results-footer">
-                    <!-- <a href="?page=search&amp;search_type=fill_in_type&amp;start=index_num_plus_chunk_size">more results</a> -->
+                <span class="link" id="search-prev-results">prev</span>
+                <span class="link" id="search-next-results">next</span>
             </div>
             <div class="content-results-list-item-clear"></div>
         </div>
