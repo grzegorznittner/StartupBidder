@@ -1163,6 +1163,10 @@ $(function(){
             var limited_results = self.limitResults(results, start_index, max_results);
             var result_json = {
                 results: limited_results,
+                search_type: searchType,
+                keywords:  keywords,
+                profile_id: profile_id,
+                start_index: start_index,
                 num_results: limited_results.length,
                 total_results: results.length
             };
@@ -2362,6 +2366,21 @@ s = (p + b + c + v) / (t + 2)^1.5
         self.getListing = function(listing_id) {
         };
         self.searchListings = function(searchType, keywords, profile_id, start_index, max_results) {
+            if (searchType == 'top') {
+                $.getJSON('/listings', function(results_json) {
+                    var results = results_json.results;
+                    var search_type = results_json.search_type;
+                    var keywords = results_json.keywords;
+                    var profile_id = results_json.profile_id;
+                    var start_index = results_json.start_index;
+                    var num_results = results_json.num_results;
+                    var total_results = results_json.total_results;
+                    self.controller.search.displayResults(results, search_type, keywords, profile_id, start_index, num_results, total_results);
+                });
+            }
+            else {
+                return null;
+            }
         };
         self.saveListing = function(listing) {
         };
