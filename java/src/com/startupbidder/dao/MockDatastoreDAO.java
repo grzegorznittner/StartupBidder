@@ -110,7 +110,6 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		// sort rating cache
 		List<Map.Entry<String, Integer>> rating = new ArrayList<Map.Entry<String, Integer>>(ratingCache.entrySet());
 		Collections.sort(rating, new Comparator<Map.Entry<String, Integer>> () {
-			@Override
 			public int compare(Map.Entry<String, Integer> left, Map.Entry<String, Integer> right) {
 				if (left.getValue() == right.getValue()) {
 					return 0;
@@ -146,7 +145,6 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		// sort activity list
 		List<Map.Entry<String, Integer>> active = new ArrayList<Map.Entry<String, Integer>>(sortedBP.entrySet());
 		Collections.sort(active, new Comparator<Map.Entry<String, Integer>> () {
-			@Override
 			public int compare(Map.Entry<String, Integer> left, Map.Entry<String, Integer> right) {
 				if (left.getValue() == right.getValue()) {
 					return 0;
@@ -203,7 +201,6 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		return ratingCache.get(businessPlanId);
 	}
 
-	@Override
 	public List<CommentDTO> getComments(String businessPlanId) {
 		List<CommentDTO> comments = new ArrayList<CommentDTO>();
 		for (CommentDTO comment : commentCache.values()) {
@@ -214,7 +211,6 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		return comments;
 	}
 
-	@Override
 	public List<BidDTO> getBids(String businessPlanId) {
 		List<BidDTO> bids = new ArrayList<BidDTO>();
 		for (BidDTO bid : bidCache.values()) {
@@ -225,14 +221,12 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		return bids;
 	}
 
-	@Override
 	public int getRating(String businessPlanId) {
 		Integer rating = ratingCache.get(businessPlanId);
 		log.log(Level.INFO, "Rating for " + businessPlanId + " is " + rating);
 		return rating == null ? 0 : rating.intValue();
 	}
 
-	@Override
 	public int getActivity(String businessPlanId) {
 		Integer activity = bpCommentCache.get(businessPlanId);
 		log.log(Level.INFO, "Activity for " + businessPlanId + " is " + activity);
