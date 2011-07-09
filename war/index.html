@@ -977,7 +977,7 @@ $(function(){
             comment.status = 'active';
             return comment;
         };
-        self.addCommentForListingAndProfile = function(listing_id, profile_id, comment_text){
+        self.addComment = function(listing_id, profile_id, comment_text){
             var comment = {};
             comment.comment_id = self.controller.util.generateGuid();
             comment.listing_id = listing_id;
@@ -992,7 +992,7 @@ $(function(){
             self.db.comments[comment.comment_id] = comment;
             return comment;
         };
-        self.addBidForListingAndProfile = function(listing_id, profile_id, bid_amt, bid_pct, bid_type, bid_rate){
+        self.addBid = function(listing_id, profile_id, bid_amt, bid_pct, bid_type, bid_rate){
             var bid = {};
             bid.bid_id = self.controller.util.generateGuid();
             bid.listing_id = listing_id;
@@ -1222,118 +1222,136 @@ s = (p + b + c + v) / (t + 2)^1.5
                         keywordMatches++;
                     else
                         break;
-                    }
-                    applicable = keywordMatches == keywordArray.length ? 1 : 0;
                 }
-                else {
-                    applicable = 1;
-                }
-                return applicable;
-            };
-            self.filterResultByProfileId = function(result, profile_id) {
-                return result.profile_id == profile_id;
-            };
-            self.sortResultsByType = function(results, searchType) {
-                if (searchType == 'top' || searchType == 'keyword') {
-                    self.calculateScores(results);
-                    results.sort(function(listing_a, listing_b){
-                        return listing_a.score - listing_b.score;
-                    }).reverse();
-                }
-                else if (searchType == 'valuation') {
-                    results.sort(function(listing_a, listing_b){
-                        return listing_a.median_valuation - listing_b.median_valuation;
-                    }).reverse();
-                }
-                else if (searchType == 'active') {
-                    results.sort(function(listing_a, listing_b){
-                        return listing_a.num_bids - listing_b.num_bids;
-                    }).reverse();
-                }
-                else if (searchType == 'popular') {
-                    results.sort(function(listing_a, listing_b){
-                        return listing_a.num_votes - listing_b.num_votes;
-                    }).reverse();
-                }
-                else if (searchType == 'discussed') {
-                    results.sort(function(listing_a, listing_b){
-                        return listing_a.num_comments - listing_b.num_comments;
-                    }).reverse();
-                }
-                else if (searchType == 'latest' || searchType == 'profile') {
-                    results.sort(function(listing_a, listing_b){
-                        return listing_a.listing_date - listing_b.listing_date;
-                    }).reverse();
-                }
-                else if (searchType == 'closing') {
-                    results.sort(function(listing_a, listing_b){
-                        return listing_a.closing_date - listing_b.closing_date;
-                    });
-                }
-            };
-            self.commentsForListing = function(listing_id) {
-                var comments = [];
-                var comment;
-                for (var comment_id in self.db.comments){
-                    comment = self.db.comments[comment_id];
-                    if (comment.listing_id == listing_id && comment.status == 'active')
-                        comments.push(comment);
-                }
-                comments.sort(function(a,b){
-                    return a.comment_date - b.comment_date;
+                applicable = keywordMatches == keywordArray.length ? 1 : 0;
+            }
+            else {
+                applicable = 1;
+            }
+            return applicable;
+        };
+        self.filterResultByProfileId = function(result, profile_id) {
+            return result.profile_id == profile_id;
+        };
+        self.sortResultsByType = function(results, searchType) {
+            if (searchType == 'top' || searchType == 'keyword') {
+                self.calculateScores(results);
+                results.sort(function(listing_a, listing_b){
+                    return listing_a.score - listing_b.score;
+                }).reverse();
+            }
+            else if (searchType == 'valuation') {
+                results.sort(function(listing_a, listing_b){
+                    return listing_a.median_valuation - listing_b.median_valuation;
+                }).reverse();
+            }
+            else if (searchType == 'active') {
+                results.sort(function(listing_a, listing_b){
+                    return listing_a.num_bids - listing_b.num_bids;
+                }).reverse();
+            }
+            else if (searchType == 'popular') {
+                results.sort(function(listing_a, listing_b){
+                    return listing_a.num_votes - listing_b.num_votes;
+                }).reverse();
+            }
+            else if (searchType == 'discussed') {
+                results.sort(function(listing_a, listing_b){
+                    return listing_a.num_comments - listing_b.num_comments;
+                }).reverse();
+            }
+            else if (searchType == 'latest' || searchType == 'profile') {
+                results.sort(function(listing_a, listing_b){
+                    return listing_a.listing_date - listing_b.listing_date;
+                }).reverse();
+            }
+            else if (searchType == 'closing') {
+                results.sort(function(listing_a, listing_b){
+                    return listing_a.closing_date - listing_b.closing_date;
                 });
-                for (var i = 0; i < comments.length; i++) {
-                    comments[i].num = i + 1;
-                }
-                return comments;
+            }
+        };
+        self.commentsForListing = function(listing_id) {
+            var listing = self.getListing(listing_id);
+            var comments = [];
+            var comment;
+            for (var comment_id in self.db.comments){
+                comment = self.db.comments[comment_id];
+                if (comment.listing_id == listing_id && comment.status == 'active')
+                    comments.push(comment);
+            }
+            comments.sort(function(a,b){
+                return b.comment_date - a.comment_date;
+            });
+            for (var i = 0; i < comments.length; i++) {
+                comments[i].num = i + 1;
+            }
+            var comments_json = {
+                comments: comments,
+                listing: listing
+            }
+            return comments_json;
+        };
+        self.commentsForProfile = function(profile_id) {
+            var comments = [];
+            var comment;
+            for (var comment_id in self.db.comments){
+                comment = self.db.comments[comment_id];
+                if (comment.profile_id == profile_id && comment.status == 'active')
+                    comments.push(comment);
+            }
+            comments.sort(function(a,b){
+                return b.comment_date - a.comment_date;
+            });
+            for (var i = 0; i < comments.length; i++) {
+                comments[i].num = i + 1;
+            }
+            var comments_json = {
+                comments: comments,
+                listing: null
+            }
+            return comments_json;
+        };
+        self.bidsForListing = function(listing_id) {
+            var listing = self.getListing(listing_id);
+            var bids = [];
+            var bid;
+            for (var bid_id in self.db.bids){
+                bid = self.db.bids[bid_id];
+                if (bid.listing_id == listing_id && bid.status == 'active')
+                    bids.push(bid);
+            }
+            bids.sort(function(a,b){
+                return b.bid_date - a.bid_date;
+            });
+            for (var i = 0; i < bids.length; i++) {
+                bids[i].num = i + 1;
+            }
+            var bids_json = {
+                bids: bids,
+                listing: listing
             };
-            self.commentsForProfile = function(profile_id) {
-                var comments = [];
-                var comment;
-                for (var comment_id in self.db.comments){
-                    comment = self.db.comments[comment_id];
-                    if (comment.profile_id == profile_id && comment.status == 'active')
-                        comments.push(comment);
-                }
-                comments.sort(function(a,b){
-                    return a.comment_date - b.comment_date;
-                });
-                for (var i = 0; i < comments.length; i++) {
-                    comments[i].num = i + 1;
-                }
-                return comments;
+            return bids_json;
+        };
+        self.bidsForProfile = function(profile_id) {
+            var bids = [];
+            var bid;
+            for (var bid_id in self.db.bids){
+                bid = self.db.bids[bid_id];
+                if (bid.profile_id == profile_id && bid.status == 'active')
+                    bids.push(bid);
+            }
+            bids.sort(function(a,b){
+                return b.bid_date - a.bid_date;
+            });
+            for (var i = 0; i < bids.length; i++) {
+                bids[i].num = i + 1;
+            }
+            var bids_json = {
+                bids: bids,
+                listing: null
             };
-            self.bidsForListing = function(listing_id) {
-                var bids = [];
-                var bid;
-                for (var bid_id in self.db.bids){
-                    bid = self.db.bids[bid_id];
-                    if (bid.listing_id == listing_id && bid.status == 'active')
-                        bids.push(bid);
-                }
-                bids.sort(function(a,b){
-                    return a.bid_date - b.bid_date;
-                });
-                for (var i = 0; i < bids.length; i++) {
-                    bids[i].num = i + 1;
-                }
-                return bids;
-            };
-            self.bidsForProfile = function(profile_id) {
-                var bids = [];
-                var bid;
-                for (var bid_id in self.db.bids){
-                    bid = self.db.bids[bid_id];
-                    if (bid.profile_id == profile_id && bid.status == 'active')
-                        bids.push(bid);
-                }
-                bids.sort(function(a,b){
-                    return a.bid_date - b.bid_date;
-                });
-                for (var i = 0; i < bids.length; i++) {
-                    bids[i].num = i + 1;
-                }
-            return bids;
+            return bids_json;
         };
         self.profileForUsername = function(username) {
             var profile = null;
@@ -1342,6 +1360,26 @@ s = (p + b + c + v) / (t + 2)^1.5
                     profile = self.db.profiles[profile_id];
             }
             return profile;
+        };
+        self.saveProfile = function(profile) {
+            if (profile)
+                self.db.profiles[profile.profile_id] = profile;
+        };
+        self.getProfile = function(profile_id) {
+            if (profile_id)
+                return self.db.profiles[profile_id];
+        };
+        self.getListing = function(listing_id) {
+            if (listing_id)
+                return self.db.listings[listing_id];
+        };
+        self.saveListing = function(listing) {
+            if (listing)
+                self.db.listings[listing.listing_id] = listing;
+        };
+        self.upvoteListing = function(listing_id) {
+            self.db.listings[listing_id].num_votes++;
+            return 1;
         };
         return self;
     };
@@ -1359,7 +1397,7 @@ s = (p + b + c + v) / (t + 2)^1.5
             return false;
         };
         self.login = function() {
-            self.profile = self.controller.datastore.profileForUsername('johnarleyburns'); // auto login
+            self.profile = self.controller.backend.profileForUsername('johnarleyburns'); // auto login
             self.controller.header.displayUser(self);
             return 'search';
         };
@@ -1498,7 +1536,7 @@ s = (p + b + c + v) / (t + 2)^1.5
             return 'search';
         };
         self.doSearch = function(searchType, keywords, profile_id, start_index, max_results){
-            return self.controller.datastore.searchListings(searchType, keywords, profile_id, start_index, max_results);
+            return self.controller.backend.searchListings(searchType, keywords, profile_id, start_index, max_results);
         };
         self.displayResults = function(results, search_type, keywords, profile_id, start_index, num_results, total_results){
             var resultsHtml = '';
@@ -1597,13 +1635,13 @@ s = (p + b + c + v) / (t + 2)^1.5
             profile.twitter = $('#profile-edit-twitter').val();
             profile.linkedin = $('#profile-edit-linkedin').val();
             profile.investor = $('#profile-edit-investor').attr('checked') ? 1 : 0;
-            self.controller.datastore.db.profiles[profile_id] = profile;
+            self.controller.backend.saveProfile(profile);
             if (profile)
                 $('#profile-save-message').attr('class', 'confirmed').html('profile saved');
             return profile;
         };
         self.doQuery = function(profile_id){
-            return self.controller.datastore.db.profiles[profile_id];
+            return self.controller.backend.getProfile(profile_id);
         };
         self.displayprofile = function(profile){
             // enable editable if logged in
@@ -1713,7 +1751,7 @@ s = (p + b + c + v) / (t + 2)^1.5
             return 'listing';
         };
         self.doQuery = function(listing_id){
-            return self.controller.datastore.db.listings[listing_id];
+            return self.controller.backend.getListing(listing_id);
         };
         self.withdrawListing = function(listing_id){
             var listing = self.doQuery(listing_id);
@@ -1730,7 +1768,7 @@ s = (p + b + c + v) / (t + 2)^1.5
             listing.summary = $('#listing-edit-summary').val();
             //listing.business_plan_url = $('#listing-upload-business-plan').val();
             //listing.presentation_url = $('#listing-upload-presentation').val();
-            self.controller.datastore.db.listings[listing_id] = listing;
+            self.controller.backend.saveListing(listing);
             if (listing)
                 $('#listing-save-message').attr('class', 'confirmed').html('listing saved');
             return listing;
@@ -1852,9 +1890,7 @@ s = (p + b + c + v) / (t + 2)^1.5
             }
         };
         self.upvoteListing = function(listing_id) {
-            // send post to server, someday
-            self.controller.datastore.db.listings[listing_id].num_votes++;
-            return 1;
+            return self.controller.backend.upvoteListing(listing_id);
         }
         self.generateListingSnippetHtml = function(i, listing) {
             listing.days_ago = self.controller.util.today() - listing.listing_date; /* paint with time proximity */
@@ -1942,11 +1978,11 @@ s = (p + b + c + v) / (t + 2)^1.5
             return 'comments';
         };
         self.deleteComment = function(comment_id){
-            self.controller.datastore.deleteComment(comment_id);
+            self.controller.backend.deleteComment(comment_id);
         };
         self.saveComment = function(listing_id, profile_id){
             var commentText = $('#comment-textarea').val();
-            var comment = self.controller.datastore.addCommentForListingAndProfile(listing_id, profile_id, commentText);
+            var comment = self.controller.backend.addComment(listing_id, profile_id, commentText);
             if (comment) {
                 $('#comment-save-message').attr('class', 'confirmed').html('comment saved');
                 $('#comment-textarea').val('');
@@ -1955,22 +1991,19 @@ s = (p + b + c + v) / (t + 2)^1.5
             return results;
         };
         self.commentsForListing = function(listing_id){
-            var results = self.controller.datastore.commentsForListing(listing_id);
-            results.push(self.controller.datastore.db.listings[listing_id]);
-            return results;
+            return self.controller.backend.commentsForListing(listing_id);
         };
         self.commentsForProfile = function(profile_id){
-            var results = self.controller.datastore.commentsForProfile(profile_id);
-            results.push(null);
-            return results;
+            return self.controller.backend.commentsForProfile(profile_id);
         };
         self.displayResults = function(results){
+            var listing = results.listing;
+            var comments = results.comments;
+            var profile = self.controller.user.profile;
             var resultsHtml = '';
             var comment;
-            var listing = results.pop();
-            var profile = self.controller.user.profile;
-            for (var i = 0; i < results.length; i++) { // create results
-                comment = results[i];
+            for (var i = 0; i < comments.length; i++) { // create results
+                comment = comments[i];
                 resultsHtml += self.generateResultHtml(i, comment, listing, profile);
             }
             if (resultsHtml == '') {
@@ -2001,8 +2034,8 @@ s = (p + b + c + v) / (t + 2)^1.5
                 $('#comment-not-loggedin-msg').hide();
             }
             // bind results
-            for (var i = 0; i < results.length; i++) {
-                comment = results[i];
+            for (var i = 0; i < comments.length; i++) {
+                comment = comments[i];
                 $('#comments-item-profile-'+i).data('profile_id',comment.profile_id).unbind().bind('click', function(){
                     self.controller.execute({page:'profile', profile_id:$(this).data('profile_id')});
                 });           
@@ -2086,7 +2119,7 @@ s = (p + b + c + v) / (t + 2)^1.5
             return 'bids';
         };
         self.deleteBid = function(bid_id) {
-            self.controller.datastore.deleteBid(bid_id);
+            self.controller.backend.deleteBid(bid_id);
         };
         self.saveBid = function(listing_id, profile_id){
             var raw_amt  = $('#bid-amt').val() || '';
@@ -2107,7 +2140,7 @@ s = (p + b + c + v) / (t + 2)^1.5
 
             var validationMsg = self.validateBid(bid_amt, bid_type, bid_rate, bid_pct, valuation);
             if (validationMsg == '') {
-                var bid = self.controller.datastore.addBidForListingAndProfile(listing_id, profile_id, bid_amt, bid_pct, bid_type, bid_rate);
+                var bid = self.controller.backend.addBid(listing_id, profile_id, bid_amt, bid_pct, bid_type, bid_rate);
                 if (bid) {
                     $('#bid-save-message').attr('class', 'confirmed').html('bid saved');
                     self.clearBidFields();
@@ -2156,22 +2189,19 @@ s = (p + b + c + v) / (t + 2)^1.5
             $('#bid-calculated-valuation').html('');
         };
         self.bidsForListing = function(listing_id){
-            var results = self.controller.datastore.bidsForListing(listing_id);
-            results.push(self.controller.datastore.db.listings[listing_id]);
-            return results;
+            return self.controller.backend.bidsForListing(listing_id);
         };
         self.bidsForProfile = function(profile_id){
-            var results = self.controller.datastore.bidsForProfile(profile_id);
-            results.push(null);
-            return results;
+            return self.controller.backend.bidsForProfile(profile_id);
         };
         self.displayResults = function(results){
-            var resultsHtml = '';
-            var listing = results.pop();
+            var listing = results.listing;
+            var bids = results.bids;
             var profile = self.controller.user.profile;
+            var resultsHtml = '';
             var bid;
-            for (var i = 0; i < results.length; i++) { // create results
-                bid = results[i];
+            for (var i = 0; i < bids.length; i++) { // create results
+                bid = bids[i];
                 resultsHtml += self.generateResultHtml(i, bid, listing, profile);
             }
             if (resultsHtml == '') {
@@ -2222,8 +2252,8 @@ s = (p + b + c + v) / (t + 2)^1.5
                 $('#bids-form-not-loggedin').hide();
                 $('#bids-listing-snippet').html('');
             }
-            for (var i = 0; i < results.length; i++) {
-                bid = results[i];
+            for (var i = 0; i < bids.length; i++) {
+                bid = bids[i];
                 $('#bids-item-profile-'+i).data('profile_id',bid.profile_id).unbind().bind('click', function(){
                     self.controller.execute({page:'profile', profile_id:$(this).data('profile_id')});
                 });           
@@ -2315,6 +2345,111 @@ s = (p + b + c + v) / (t + 2)^1.5
         return self;
     };
 
+    var RestBackend = function() {
+        var self = {};
+        self.controller = null;
+        self.setup = function(controller) {
+            self.controller = controller;
+        }
+        // profile methods
+        self.getProfile = function(profile_id) {
+        };
+        self.profileForUsername = function(username) {
+        };
+        self.saveProfile = function(profile) {
+        };
+        // listing methods
+        self.getListing = function(listing_id) {
+        };
+        self.searchListings = function(searchType, keywords, profile_id, start_index, max_results) {
+        };
+        self.saveListing = function(listing) {
+        };
+        self.upvoteListing = function(listing_id) {
+        };
+        // comment methods
+        self.commentsForListing = function(listing_id) {
+        };
+        self.commentsForProfile = function(profile_id) {
+        };
+        self.addComment = function(listing_id, profile_id, commentText) {
+        };
+        self.deleteComment = function(comment_id) {
+        };
+        // bid methods
+        self.bidsForListing = function(listing_id) {
+        };
+        self.bidsForProfile = function(profile_id) {
+        };
+        self.addBid = function(listing_id, profile_id, bid_amt, bid_pct, bid_type, bid_rate) {
+        };
+        self.deleteBid = function(bid_id) {
+        };
+        return self;
+    };
+
+    var Backend = function() {
+        var self = {};
+        self.controller = null;
+        self.backend = null;
+        self.setup = function(controller) {
+            self.controller = controller;
+            self.backend = new Datastore();
+            //self.backend = new RestBackend();
+            self.backend.setup(controller);
+        };
+        // profile methods
+        self.saveProfile = function(profile) {
+            return self.backend.saveProfile(profile);
+        };
+        self.getProfile = function(profile_id) {
+            return self.backend.getProfile(profile_id);
+        };
+        self.profileForUsername = function(username) {
+            return self.backend.profileForUsername(username);
+        };
+        // listing methods
+        self.searchListings = function(searchType, keywords, profile_id, start_index, max_results) {
+            return self.backend.searchListings(searchType, keywords, profile_id, start_index, max_results);
+        };
+        self.getListing = function(listing_id) {
+            return self.backend.getListing(listing_id);
+        };
+        self.saveListing = function(listing) {
+            return self.backend.saveListing(listing);
+        };
+        self.upvoteListing = function(listing_id) {
+            return self.backend.upvoteListing(listing_id);
+        };
+        // comment methods
+        self.commentsForListing = function(listing_id) {
+            return self.backend.commentsForListing(listing_id);
+        };
+        self.commentsForProfile = function(profile_id) {
+            return self.backend.commentsForProfile(profile_id);
+        };
+        self.addComment = function(listing_id, profile_id, commentText) {
+            return self.backend.addComment(listing_id, profile_id, commentText);
+        };
+        self.deleteComment = function(comment_id) {
+            return self.backend.deleteComment(comment_id);
+        };
+        // bid methods
+        self.bidsForListing = function(listing_id) {
+            return self.backend.bidsForListing(listing_id);
+        };
+        self.bidsForProfile = function(profile_id) {
+            return self.backend.bidsForProfile(profile_id);
+        };
+        self.addBid = function(listing_id, profile_id, bid_amt, bid_pct, bid_type, bid_rate) {
+            return self.backend.addBid(listing_id, profile_id, bid_amt, bid_pct, bid_type, bid_rate);
+        };
+        self.deleteBid = function(bid_id) {
+            return self.backend.deleteBid(bid_id);
+        };
+        return self;
+    };
+
     var Controller = function() {
         var self = {};
         self.managed = {};
@@ -2371,7 +2506,7 @@ s = (p + b + c + v) / (t + 2)^1.5
     window.controller = controller;
     controller.setup();
     controller.addManaged('util', new Util());
-    controller.addManaged('datastore', new Datastore());
+    controller.addManaged('backend', new Backend());
     controller.addManaged('user', new User());
     controller.addManaged('uploader', new Uploader());
     controller.addManaged('header', new Header());
