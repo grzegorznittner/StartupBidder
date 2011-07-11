@@ -110,7 +110,6 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		// sort rating cache
 		List<Map.Entry<String, Integer>> rating = new ArrayList<Map.Entry<String, Integer>>(ratingCache.entrySet());
 		Collections.sort(rating, new Comparator<Map.Entry<String, Integer>> () {
-			@Override
 			public int compare(Map.Entry<String, Integer> left, Map.Entry<String, Integer> right) {
 				if (left.getValue() == right.getValue()) {
 					return 0;
@@ -146,7 +145,6 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		// sort activity list
 		List<Map.Entry<String, Integer>> active = new ArrayList<Map.Entry<String, Integer>>(sortedBP.entrySet());
 		Collections.sort(active, new Comparator<Map.Entry<String, Integer>> () {
-			@Override
 			public int compare(Map.Entry<String, Integer> left, Map.Entry<String, Integer> right) {
 				if (left.getValue() == right.getValue()) {
 					return 0;
@@ -238,6 +236,12 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		log.log(Level.INFO, "Activity for " + listingId + " is " + activity);
 		return activity == null ? 0 : activity.intValue();
 	}
+
+	@Override
+	public BidDTO getBid(String bidId) {
+		// TODO Auto-generated method stub
+		return null;
+	}	
 
 	/**
 	 * Generates random comments for business plans
@@ -480,5 +484,5 @@ public class MockDatastoreDAO implements DatastoreDAO {
 				"could be making a luxury electric car that competes with Tesla.");
 		lCache.put(bp.getIdAsString(), bp);
 		ratingCache.put(bp.getIdAsString(), 9);
-	}	
+	}
 }
