@@ -21,6 +21,7 @@ import com.startupbidder.dto.ListingDTO;
 import com.startupbidder.dto.CommentDTO;
 import com.startupbidder.dto.UserDTO;
 import com.startupbidder.vo.DtoToVoConverter;
+import com.startupbidder.vo.ListPropertiesVO;
 
 @SuppressWarnings("serial")
 public class HelloServlet extends HttpServlet {
@@ -73,8 +74,11 @@ public class HelloServlet extends HttpServlet {
 			out.println("<p><b>Updated current user data:</b></p>");
 			out.println("<p>" + currentUser + "</p>");
 			
+			ListPropertiesVO listProperties = new ListPropertiesVO();
+			listProperties.setMaxResults(10);
+			
 			out.println("<p><b>Current user business plans:</b></p>");
-			for (ListingDTO bp : datastore.getUserListings(currentUser.getIdAsString(), 10)) {
+			for (ListingDTO bp : datastore.getUserListings(currentUser.getIdAsString(), listProperties)) {
 				int rating = datastore.getRating(bp.getIdAsString());
 				int activity = datastore.getActivity(bp.getIdAsString());
 				out.println("<p>" + "<b>R=" + rating + "</b>" + "<b>A=" + activity + "</b>" + bp + "</p>");
@@ -82,14 +86,14 @@ public class HelloServlet extends HttpServlet {
 			}
 			
 			out.println("<p><b>Top business plans:</b></p>");
-			for (ListingDTO bp : datastore.getTopListings(10)) {
+			for (ListingDTO bp : datastore.getTopListings(listProperties)) {
 				int rating = datastore.getRating(bp.getIdAsString());
 				int activity = datastore.getActivity(bp.getIdAsString());
 				out.println("<p>" + "<b>R=" + rating + "</b>" + "<b>A=" + activity + "</b>" + bp + "</p>");
 				datastore.valueUpListing(bp.getIdAsString(), currentUser.getIdAsString());
 			}
 			out.println("<p><b>Active business plans:</b></p>");
-			for (ListingDTO bp : datastore.getActiveListings(10)) {
+			for (ListingDTO bp : datastore.getActiveListings(listProperties)) {
 				int rating = datastore.getRating(bp.getIdAsString());
 				int activity = datastore.getActivity(bp.getIdAsString());
 				out.println("<p>" + "<b>R=" + rating + "</b>" + "<b>A=" + activity + "</b>" + bp + "</p>");
@@ -97,29 +101,29 @@ public class HelloServlet extends HttpServlet {
 			}
 			
 			out.println("<p><b>Top business plans (2):</b></p>");
-			for (ListingDTO bp : datastore.getTopListings(10)) {
+			for (ListingDTO bp : datastore.getTopListings(listProperties)) {
 				int rating = datastore.getRating(bp.getIdAsString());
 				int activity = datastore.getActivity(bp.getIdAsString());
 				out.println("<p>" + "<b>R=" + rating + "</b>" + "<b>A=" + activity + "</b>" + bp + "</p>");
 				datastore.valueUpListing(bp.getIdAsString(), currentUser.getIdAsString());
 			}
 			out.println("<p><b>Active business plans (2):</b></p>");
-			for (ListingDTO bp : datastore.getActiveListings(10)) {
+			for (ListingDTO bp : datastore.getActiveListings(listProperties)) {
 				int rating = datastore.getRating(bp.getIdAsString());
 				int activity = datastore.getActivity(bp.getIdAsString());
 				out.println("<p>" + "<b>R=" + rating + "</b>" + "<b>A=" + activity + "</b>" + bp + "</p>");
 				datastore.valueDownListing(bp.getIdAsString(), currentUser.getIdAsString());
 			}
 
-			ListingDTO topBP = datastore.getTopListings(1).get(0);
+			ListingDTO topBP = datastore.getTopListings(listProperties).get(0);
 			out.println("<p><b>Bids for top business plan '" + topBP + "</b></p>");
-			for (BidDTO bid : datastore.getBids(topBP.getIdAsString())) {
+			for (BidDTO bid : datastore.getBidsForListing(topBP.getIdAsString())) {
 				out.println("<p>" + bid + "</p>");
 			}
 
-			ListingDTO topActiveBP = datastore.getActiveListings(1).get(0);
+			ListingDTO topActiveBP = datastore.getActiveListings(listProperties).get(0);
 			out.println("<p><b>Comments for most active business plan '" + topActiveBP + "</b></p>");
-			for (CommentDTO comment : datastore.getComments(topActiveBP.getIdAsString())) {
+			for (CommentDTO comment : datastore.getCommentsForListing(topActiveBP.getIdAsString())) {
 				out.println("<p>" + comment + "</p>");
 			}
 		} catch (Exception e) {

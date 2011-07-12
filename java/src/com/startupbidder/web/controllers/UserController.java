@@ -22,6 +22,8 @@ public class UserController extends ModelDrivenController {
 			
 			if("all".equalsIgnoreCase(getCommand(1))) {
 				return all(request);
+			} else if("get".equalsIgnoreCase(getCommand(1))) {
+				return get(request);
 			} else {
 				return index(request);
 			}
@@ -52,8 +54,14 @@ public class UserController extends ModelDrivenController {
 		return headers;
 	}
 
+	private HttpHeaders get(HttpServletRequest request) {
+    	String userId = getCommandOrParameter(request, 2, "id");
+    	user = ServiceFacade.instance().getUser(userId);
+        return new DefaultHttpHeaders("index").disableCaching();
+	}
+
 	private HttpHeaders index(HttpServletRequest request) {
-    	String userId = request.getParameter("user");
+    	String userId = getCommandOrParameter(request, 1, "id");
     	user = ServiceFacade.instance().getUser(userId);
         return new DefaultHttpHeaders("index").disableCaching();
 	}

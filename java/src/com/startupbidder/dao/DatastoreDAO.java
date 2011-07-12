@@ -7,6 +7,7 @@ import com.startupbidder.dto.ListingDTO;
 import com.startupbidder.dto.CommentDTO;
 import com.startupbidder.dto.UserDTO;
 import com.startupbidder.dto.UserStatistics;
+import com.startupbidder.vo.ListPropertiesVO;
 
 public interface DatastoreDAO {
 	/**
@@ -32,30 +33,36 @@ public interface DatastoreDAO {
 	void updateUser(UserDTO user);
 	
 	/**
+	 * Returns listing by id
+	 * @param listingId
+	 */
+	ListingDTO getListing(String listingId);
+	
+	/**
 	 * Returns business plans created by specified user
 	 * 
 	 * @param userId User identifier
-	 * @param maxItems Maximum number of items returned in the call
+	 * @param listingProperties Standard query parameters (maxResults and cursors)
 	 * @return List of business plans
 	 */
-	List<ListingDTO> getUserListings(String userId, int maxItems);
+	List<ListingDTO> getUserListings(String userId, ListPropertiesVO listingProperties);
 	
 	/**
 	 * Returns top rated business plans
 	 * 
-	 * @param maxItems Maximum number of items returned in the call
+	 * @param listingProperties Standard query parameters (maxResults and cursors)
 	 * @return List of business plans
 	 */
-	List<ListingDTO> getTopListings(int maxItems);
+	List<ListingDTO> getTopListings(ListPropertiesVO listingProperties);
 	
 	/**
 	 * Returns most active business plans
 	 * 
 	 * @param userId User identifier
-	 * @param maxItems Maximum number of items returned in the call
+	 * @param listingProperties Standard query parameters (maxResults and cursors)
 	 * @return List of business plans
 	 */
-	List<ListingDTO> getActiveListings(int maxItems);
+	List<ListingDTO> getActiveListings(ListPropertiesVO listingProperties);
 	
 	/**
 	 * Value up listing
@@ -81,14 +88,27 @@ public interface DatastoreDAO {
 	 * @param listingId Listing id
 	 * @return List of comments
 	 */
-	List<CommentDTO> getComments(String listingId);
+	List<CommentDTO> getCommentsForListing(String listingId);
 	
+	/**
+	 * Returns list of user's comments
+	 * @param userId User id
+	 */
+	List<CommentDTO> getCommentsForUser(String userId);
+
 	/**
 	 * Returns list of listing's bids
 	 * @param listingId Listing id
 	 * @return List of bids
 	 */
-	List<BidDTO> getBids(String listingId);
+	List<BidDTO> getBidsForListing(String listingId);
+	
+	/**
+	 * Returns list of user's bids
+	 * @param userId Listing id
+	 * @return List of bids
+	 */
+	List<BidDTO> getBidsForUser(String userId);
 	
 	/**
 	 * Returns listing's rating
@@ -108,4 +128,10 @@ public interface DatastoreDAO {
 	 * Returns bid
 	 */
 	BidDTO getBid(String bidId);
+
+	/**
+	 * Returns comment
+	 */
+	CommentDTO getComment(String commentId);
+
 }

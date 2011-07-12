@@ -7,14 +7,14 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.struts2.rest.DefaultHttpHeaders;
 import org.apache.struts2.rest.HttpHeaders;
 
+import com.startupbidder.vo.ListPropertiesVO;
+import com.startupbidder.vo.ListingListVO;
 import com.startupbidder.vo.ListingVO;
 import com.startupbidder.web.ModelDrivenController;
 import com.startupbidder.web.ServiceFacade;
 
 public class ListingController extends ModelDrivenController {
-	private static int DEFAULT_MAX_RESULTS = 5;
-	
-	private List<ListingVO> listings = null;
+	private ListingListVO listings = null;
 	private ListingVO listing = null;
 	
 	public HttpHeaders executeAction(HttpServletRequest request) {
@@ -68,65 +68,63 @@ public class ListingController extends ModelDrivenController {
 
 	// GET /listings/closing
 	private HttpHeaders closing(HttpServletRequest request) {
-		HttpHeaders headers = new DefaultHttpHeaders("create");
-		headers.setStatus(501);
-		return headers;
+		ListPropertiesVO listingProperties = getListProperties(request);
+    	listings = ServiceFacade.instance().getTopBusinessPlans(listingProperties);
+        return new DefaultHttpHeaders("valued").disableCaching();
 	}
 
 	// GET /listings/latest
 	private HttpHeaders latest(HttpServletRequest request) {
-		HttpHeaders headers = new DefaultHttpHeaders("create");
-		headers.setStatus(501);
-		return headers;
+		ListPropertiesVO listingProperties = getListProperties(request);
+    	listings = ServiceFacade.instance().getTopBusinessPlans(listingProperties);
+        return new DefaultHttpHeaders("valued").disableCaching();
 	}
 
 	// GET /listings/discussed
 	private HttpHeaders discussed(HttpServletRequest request) {
-		HttpHeaders headers = new DefaultHttpHeaders("create");
-		headers.setStatus(501);
-		return headers;
+		ListPropertiesVO listingProperties = getListProperties(request);
+    	listings = ServiceFacade.instance().getTopBusinessPlans(listingProperties);
+        return new DefaultHttpHeaders("valued").disableCaching();
 	}
 
 	// GET /listings/popular
 	private HttpHeaders popular(HttpServletRequest request) {
-		HttpHeaders headers = new DefaultHttpHeaders("create");
-		headers.setStatus(501);
-		return headers;
+		ListPropertiesVO listingProperties = getListProperties(request);
+    	listings = ServiceFacade.instance().getTopBusinessPlans(listingProperties);
+        return new DefaultHttpHeaders("valued").disableCaching();
 	}
 
 	// GET /listings/valued
 	private HttpHeaders valued(HttpServletRequest request) {
-		HttpHeaders headers = new DefaultHttpHeaders("create");
-		headers.setStatus(501);
-		return headers;
+		ListPropertiesVO listingProperties = getListProperties(request);
+    	listings = ServiceFacade.instance().getTopBusinessPlans(listingProperties);
+        return new DefaultHttpHeaders("valued").disableCaching();
 	}
 
 	// GET /listings/top
     private HttpHeaders top(HttpServletRequest request) {
-    	String maxItemsStr = request.getParameter("maxItems");
-    	int maxItems = maxItemsStr != null ? Integer.parseInt(maxItemsStr) : DEFAULT_MAX_RESULTS;
-    	listings = ServiceFacade.instance().getTopBusinessPlans(maxItems, request.getParameter("cursor"));
+    	ListPropertiesVO listingProperties = getListProperties(request);
+    	listings = ServiceFacade.instance().getTopBusinessPlans(listingProperties);
         return new DefaultHttpHeaders("top").disableCaching();
     }
 
     // GET /listings/active
     private HttpHeaders active(HttpServletRequest request) {
-    	String maxItemsStr = request.getParameter("maxItems");
-    	int maxItems = maxItemsStr != null ? Integer.parseInt(maxItemsStr) : DEFAULT_MAX_RESULTS;
-    	listings = ServiceFacade.instance().getActiveBusinessPlans(maxItems, request.getParameter("cursor"));
+		ListPropertiesVO listingProperties = getListProperties(request);
+    	listings = ServiceFacade.instance().getActiveBusinessPlans(listingProperties);
         return new DefaultHttpHeaders("active").disableCaching();
     }
 
     // GET /listings/user
     private HttpHeaders user(HttpServletRequest request) {
-    	String maxItemsStr = request.getParameter("maxItems");
-    	int maxItems = maxItemsStr != null ? Integer.parseInt(maxItemsStr) : DEFAULT_MAX_RESULTS;
     	String userId = request.getParameter("user");
-    	listings = ServiceFacade.instance().getUserBusinessPlans(userId, maxItems, request.getParameter("cursor"));
+		ListPropertiesVO listingProperties = getListProperties(request);
+
+    	listings = ServiceFacade.instance().getUserBusinessPlans(userId, listingProperties);
         return new DefaultHttpHeaders("active").disableCaching();
     }
 
-    public Object getModel() {
+	public Object getModel() {
     	return listings != null ? listings : listing;
     }
 }

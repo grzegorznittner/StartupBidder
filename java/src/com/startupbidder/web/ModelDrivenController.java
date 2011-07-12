@@ -4,19 +4,23 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.struts2.rest.HttpHeaders;
 import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.node.ArrayNode;
-import org.codehaus.jackson.node.JsonNodeFactory;
+
+import com.startupbidder.vo.ListPropertiesVO;
 
 public abstract class ModelDrivenController {
+	private static final Logger log = Logger.getLogger(ModelDrivenController.class.getName());
+	
+	private static int DEFAULT_MAX_RESULTS = 5;
 	private String command[];
 	
 	/**
@@ -39,20 +43,9 @@ public abstract class ModelDrivenController {
 	
 	@SuppressWarnings("rawtypes")
 	public void generateJson(HttpServletResponse response) {
-		Object model = getModel();
-		JsonNode rootNode = null;
-		if (model instanceof List) {
-			rootNode = JsonNodeFactory.instance.arrayNode();
-	    	for (Object item : (List)model) {
-				((ArrayNode)rootNode).addPOJO(item);
-			}
-		} else {
-			
-		}
-		
 		ObjectMapper mapper = new ObjectMapper();
 		try {
-			mapper.writeValue(response.getWriter(), rootNode);
+			mapper.writeValue(response.getWriter(), getModel());
 		} catch (JsonGenerationException e) {
 			e.printStackTrace();
 		} catch (JsonMappingException e) {
@@ -75,14 +68,38 @@ public abstract class ModelDrivenController {
 	}
 	
 	private String[] decomposeRequest(String path) {
-		List<String> pathElements = new ArrayList<String>();
+		int dotPos = path.indexOf('.');
+		int questionPos = path.indexOf('.');
+		path = path.substring(0, dotPos > questionPos ? questionPos : dotPos);
 		StringTokenizer tokenizer = new StringTokenizer(path, "/");
 		
+		List<String> pathElements = new ArrayList<String>();
 		while (tokenizer.hasMoreTokens()) {
 			pathElements.add(tokenizer.nextToken());
 		}
 		
+		log.log(Level.INFO, "Commands: " + pathElements.toString());
 		return pathElements.toArray(new String[0]);
 	}
 
+	protected ListPropertiesVO getListProperties(HttpServletRequest request) {
+		ListPropertiesVO listingProperties = new ListPropertiesVO();
+		
+		String maxItemsStr = request.getParameter("max_results");
+		
+		int maxItems = maxItemsStr != null ? Integer.parseInt(maxItemsStr) : DEFAULT_MAX_RESULTS;
+		listingProperties.setMaxResults(maxItems);
+		listingProperties.setNextCursor(request.getParameter("next_cursor"));
+		listingProperties.setPrevCursor(request.getParameter("prev_cursor"));
+		
+		return listingProperties;
+	}
+
+	protected String getCommandOrParameter(HttpServletRequest request, int commandNum, String parameter) {
+		if ("".equals(getCommand(commandNum))) {
+			return request.getParameter(parameter);
+		} else {
+			return getCommand(commandNum);
+		}
+	}
 }

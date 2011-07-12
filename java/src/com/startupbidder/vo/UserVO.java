@@ -2,25 +2,49 @@ package com.startupbidder.vo;
 
 import java.util.Date;
 
+import org.codehaus.jackson.annotate.JsonProperty;
+
 public class UserVO {
+	@JsonProperty("num")
+	private int orderNumber;
+	@JsonProperty("profile_id")
 	private String id;
+	@JsonProperty("username")
 	private String nickname;
+	@JsonProperty("name")
 	private String firstName;
+	@JsonProperty("surename")
 	private String lastName;
+	@JsonProperty("email")
 	private String email;
+	@JsonProperty("open_id")
+	private String openId;
+	@JsonProperty("title")
 	private String title;
+	@JsonProperty("organization")
 	private String organization;
+	@JsonProperty("facebook")
 	private String facebook;
+	@JsonProperty("twitter")
 	private String twitter;
+	@JsonProperty("linkedin")
 	private String linkedin;
+	@JsonProperty("investor")
 	private boolean accreditedInvestor;
+	@JsonProperty("joined_date")
 	private Date   joined;
+	@JsonProperty("last_login")
 	private Date   lastLoggedIn;
+	@JsonProperty("modified")
 	private Date   modified;
-	
+	@JsonProperty("num_listings")
 	private int numberOfListings;
+	@JsonProperty("num_bids")
 	private int numberOfBids;
+	@JsonProperty("num_comments")
 	private int numberOfComments;
+	@JsonProperty("status")
+	private String status;
 	
 	public UserVO() {
 	}
@@ -144,16 +168,36 @@ public class UserVO {
 	public void setNumberOfComments(int numberOfComments) {
 		this.numberOfComments = numberOfComments;
 	}
+	public String getOpenId() {
+		return openId;
+	}
+	public void setOpenId(String openId) {
+		this.openId = openId;
+	}
+	public String getStatus() {
+		return status;
+	}
+	public void setStatus(String status) {
+		this.status = status;
+	}
+	public int getOrderNumber() {
+		return orderNumber;
+	}
+	public void setOrderNumber(int orderNumber) {
+		this.orderNumber = orderNumber;
+	}
 	@Override
 	public String toString() {
-		return "UserVO [id=" + id + ", nickname=" + nickname + ", firstName="
-				+ firstName + ", lastName=" + lastName + ", email=" + email
-				+ ", title=" + title + ", organization=" + organization
-				+ ", facebook=" + facebook + ", twitter=" + twitter
-				+ ", linkedin=" + linkedin + ", accreditedInvestor="
+		return "UserVO [orderNumber=" + orderNumber + ", id=" + id
+				+ ", nickname=" + nickname + ", firstName=" + firstName
+				+ ", lastName=" + lastName + ", email=" + email + ", openId="
+				+ openId + ", title=" + title + ", organization="
+				+ organization + ", facebook=" + facebook + ", twitter="
+				+ twitter + ", linkedin=" + linkedin + ", accreditedInvestor="
 				+ accreditedInvestor + ", joined=" + joined + ", lastLoggedIn="
 				+ lastLoggedIn + ", modified=" + modified
 				+ ", numberOfListings=" + numberOfListings + ", numberOfBids="
-				+ numberOfBids + ", numberOfComments=" + numberOfComments + "]";
+				+ numberOfBids + ", numberOfComments=" + numberOfComments
+				+ ", status=" + status + "]";
 	}
 }

@@ -1,34 +1,28 @@
 package test.com.startupbidder.jackson;
 
-import static org.junit.Assert.assertEquals;
-
 import java.io.IOException;
-import java.util.List;
 
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.node.ArrayNode;
-import org.codehaus.jackson.node.JsonNodeFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
-import com.startupbidder.dao.DatastoreDAO;
-import com.startupbidder.dao.MockDatastoreDAO;
-import com.startupbidder.vo.ListingVO;
-import com.startupbidder.vo.DtoToVoConverter;
+import com.startupbidder.vo.CommentListVO;
+import com.startupbidder.vo.ListPropertiesVO;
+import com.startupbidder.vo.ListingListVO;
+import com.startupbidder.web.ServiceFacade;
 
 public class VoTest {
 	private final LocalServiceTestHelper helper = new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
-	private DatastoreDAO datastore;
+	ServiceFacade service = ServiceFacade.instance();
 	
 	@Before
 	public void setUp() {
 		helper.setUp();
-		datastore = MockDatastoreDAO.getInstance();
 	}
 	
 	@After
@@ -38,18 +32,19 @@ public class VoTest {
 	
 	@Test
 	public void arrayNodeTest() {
-		List<ListingVO> bpList = DtoToVoConverter.convertListings(datastore.getActiveListings(10));
-		ArrayNode rootNode = JsonNodeFactory.instance.arrayNode();
+		ListPropertiesVO listingProperties = new ListPropertiesVO();
+		listingProperties.setMaxResults(10);
+		ListingListVO listings = service.getTopBusinessPlans(listingProperties);
 		
-		assertEquals(7, bpList.size());
+		CommentListVO comments = service.getCommentsForListing(listings.getListings().get(0).getId(), listingProperties);
 		
-		for (ListingVO bp : bpList) {
-			rootNode.addPOJO(bp);
-		}
-		
+		//assertEquals(7, bpList.size());
+				
 		ObjectMapper mapper = new ObjectMapper();
 		try {
-			mapper.writeValue(System.out, rootNode);
+			mapper.writeValue(System.out, listings);
+			System.out.println();
+			mapper.writeValue(System.out, comments);
 		} catch (JsonGenerationException e) {
 			e.printStackTrace();
 		} catch (JsonMappingException e) {

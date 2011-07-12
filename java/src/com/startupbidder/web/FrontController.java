@@ -1,6 +1,8 @@
 package com.startupbidder.web;
 
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -10,11 +12,14 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.struts2.rest.HttpHeaders;
 
+import com.startupbidder.web.controllers.BidController;
+import com.startupbidder.web.controllers.CommentController;
 import com.startupbidder.web.controllers.ListingController;
 import com.startupbidder.web.controllers.UserController;
 
 @SuppressWarnings("serial")
 public class FrontController extends HttpServlet {
+	private static final Logger log = Logger.getLogger(FrontController.class.getName());
 	
 	@Override
 	public void init(ServletConfig config) throws ServletException {
@@ -24,23 +29,31 @@ public class FrontController extends HttpServlet {
 	@Override
 	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String pathInfo = request.getPathInfo();
+		log.log(Level.INFO, "pathInfo=" + pathInfo);
 		
 		ModelDrivenController controller = null;
 		HttpHeaders headers = null;
-		if (pathInfo.startsWith("user")) {
+		if (pathInfo.startsWith("/user")) {
 			controller = new UserController();
-			headers = ((UserController)controller).execute(request);
-		} else if (pathInfo.contains("listing")) {
+		} else if (pathInfo.startsWith("/listing")) {
 			controller = new ListingController();
-			headers = ((ListingController)controller).execute(request);
-		} else if (pathInfo.contains("bid")) {
-			controller = new ListingController();
-			headers = ((ListingController)controller).execute(request);
-		} else if (pathInfo.contains("comment")) {
-			controller = new ListingController();
-			headers = ((ListingController)controller).execute(request);
-		}  else {
-			
+		} else if (pathInfo.startsWith("/bid")) {
+			controller = new BidController();
+		} else if (pathInfo.startsWith("/comment")) {
+			controller = new CommentController();
+		}
+		
+		if (controller != null) {
+			log.log(Level.INFO, "Created controller: " + controller.getClass().getCanonicalName());
+			headers = ((ModelDrivenController)controller).execute(request);
+			if (controller.getModel() != null) {
+				log.log(Level.INFO, "Returned object: " + controller.getModel().getClass().getCanonicalName());
+			} else {
+				log.log(Level.SEVERE, "Returned object is NULL");
+			}
+		} else {
+			response.setStatus(501);
+			return;
 		}
 		
 		if (headers != null) {

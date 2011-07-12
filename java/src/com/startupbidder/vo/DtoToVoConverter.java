@@ -11,6 +11,9 @@ import com.startupbidder.dto.UserDTO;
 
 public class DtoToVoConverter {
 	public static BidVO convert(BidDTO bidDTO) {
+		if (bidDTO == null) {
+			return null;
+		}
 		BidVO bid = new BidVO();
 		bid.setId(bidDTO.getIdAsString());
 		bid.setListing(bidDTO.getListing());
@@ -23,6 +26,9 @@ public class DtoToVoConverter {
 	}
 	
 	public static ListingVO convert(ListingDTO bpDTO) {
+		if (bpDTO == null) {
+			return null;
+		}
 		ListingVO bp = new ListingVO();
 		bp.setId(bpDTO.getIdAsString());
 		bp.setAverageValuation(bpDTO.getAverageValuation());
@@ -39,6 +45,9 @@ public class DtoToVoConverter {
 	}
 	
 	public static CommentVO convert(CommentDTO commentDTO) {
+		if (commentDTO == null) {
+			return null;
+		}
 		CommentVO comment = new CommentVO();
 		comment.setId(commentDTO.getIdAsString());
 		comment.setComment(commentDTO.getComment());
@@ -48,6 +57,9 @@ public class DtoToVoConverter {
 	}
 	
 	public static RatingVO convert(RatingDTO ratingDTO) {
+		if (ratingDTO == null) {
+			return null;
+		}
 		RatingVO rating = new RatingVO();
 		rating.setId(ratingDTO.getIdAsString());
 		rating.setListing(ratingDTO.getListing());
@@ -57,6 +69,9 @@ public class DtoToVoConverter {
 	}
 	
 	public static UserVO convert(UserDTO userDTO) {
+		if (userDTO == null) {
+			return null;
+		}
 		UserVO user = new UserVO();
 		user.setId(userDTO.getIdAsString());
 		user.setAccreditedInvestor(userDTO.isAccreditedInvestor());
@@ -76,6 +91,9 @@ public class DtoToVoConverter {
 	}
 	
 	public static List<ListingVO> convertListings(List<ListingDTO> bpDtoList) {
+		if (bpDtoList == null) {
+			return null;
+		}
 		List<ListingVO> bpVoList = new ArrayList<ListingVO>();
 		for (ListingDTO bpDTO : bpDtoList) {
 			ListingVO bpVO = convert(bpDTO);
@@ -85,6 +103,9 @@ public class DtoToVoConverter {
 	}
 
 	public static List<CommentVO> convertComments(List<CommentDTO> commentDtoList) {
+		if (commentDtoList == null) {
+			return null;
+		}
 		List<CommentVO> commentVoList = new ArrayList<CommentVO>();
 		for (CommentDTO commentDTO : commentDtoList) {
 			CommentVO commentVO = convert(commentDTO);
@@ -94,6 +115,9 @@ public class DtoToVoConverter {
 	}
 
 	public static List<BidVO> convertBids(List<BidDTO> bidDtoList) {
+		if (bidDtoList == null) {
+			return null;
+		}
 		List<BidVO> bidVoList = new ArrayList<BidVO>();
 		for (BidDTO bidDTO : bidDtoList) {
 			BidVO bidVO = convert(bidDTO);

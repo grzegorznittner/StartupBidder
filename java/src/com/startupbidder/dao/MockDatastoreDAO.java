@@ -16,6 +16,7 @@ import com.startupbidder.dto.ListingDTO;
 import com.startupbidder.dto.CommentDTO;
 import com.startupbidder.dto.UserDTO;
 import com.startupbidder.dto.UserStatistics;
+import com.startupbidder.vo.ListPropertiesVO;
 
 /**
  * Data access object which handles all interaction with underlying persistence layer.
@@ -104,7 +105,14 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		userCache.put(user.getIdAsString(), user);
 	}
 	
-	public List<ListingDTO> getTopListings(int maxItems) {
+	public ListingDTO getListing(String listingId) {
+		if (!lCache.containsKey(listingId)) {
+			log.log(Level.WARNING, "Listing '" + listingId + "' not found");
+		}
+		return lCache.get(listingId);
+	}
+	
+	public List<ListingDTO> getTopListings(ListPropertiesVO listingProperties) {
 		List<ListingDTO> list = new ArrayList<ListingDTO>();
 		
 		// sort rating cache
@@ -120,6 +128,8 @@ public class MockDatastoreDAO implements DatastoreDAO {
 				}
 			}
 		});
+		
+		int maxItems = listingProperties.getMaxResults();
 		for (Map.Entry<String, Integer> bpEntry : rating) {
 			log.log(Level.INFO, "BP " + bpEntry.getKey() + " - rating " + bpEntry.getValue());
 			if (maxItems-- > 0) {
@@ -129,7 +139,7 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		return list;
 	}
 
-	public List<ListingDTO> getActiveListings(int maxItems) {
+	public List<ListingDTO> getActiveListings(ListPropertiesVO listingProperties) {
 		List<ListingDTO> list = new ArrayList<ListingDTO>();
 		
 		// create activity list
@@ -155,6 +165,7 @@ public class MockDatastoreDAO implements DatastoreDAO {
 				}
 			}
 		});
+		int maxItems = listingProperties.getMaxResults();
 		for (Map.Entry<String, Integer> bpEntry : active) {
 			log.log(Level.INFO, "BP " + bpEntry.getKey() + " - activity " + bpEntry.getValue());
 			if (maxItems-- > 0) {
@@ -164,7 +175,7 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		return list;
 	}
 	
-	public List<ListingDTO> getUserListings(String userId, int maxItems) {
+	public List<ListingDTO> getUserListings(String userId, ListPropertiesVO listingProperties) {
 		log.log(Level.INFO, "Business plans owned by " + userId);
 		List<ListingDTO> list = new ArrayList<ListingDTO>();
 		for (ListingDTO bp : lCache.values()) {
@@ -173,6 +184,7 @@ public class MockDatastoreDAO implements DatastoreDAO {
 				list.add(bp);
 			}
 		}
+		int maxItems = listingProperties.getMaxResults();
 		list.subList(0, (list.size() < maxItems ? list.size() : maxItems));
 		return list;
 	}
@@ -202,7 +214,7 @@ public class MockDatastoreDAO implements DatastoreDAO {
 	}
 
 	@Override
-	public List<CommentDTO> getComments(String listingId) {
+	public List<CommentDTO> getCommentsForListing(String listingId) {
 		List<CommentDTO> comments = new ArrayList<CommentDTO>();
 		for (CommentDTO comment : commentCache.values()) {
 			if (comment.getListing().equals(listingId)) {
@@ -213,10 +225,31 @@ public class MockDatastoreDAO implements DatastoreDAO {
 	}
 
 	@Override
-	public List<BidDTO> getBids(String listingId) {
+	public List<CommentDTO> getCommentsForUser(String userId) {
+		List<CommentDTO> comments = new ArrayList<CommentDTO>();
+		for (CommentDTO comment : commentCache.values()) {
+			if (comment.getUser().equals(userId)) {
+				comments.add(comment);
+			}
+		}
+		return comments;
+	}
+
+	@Override
+	public List<BidDTO> getBidsForListing(String listingId) {
 		List<BidDTO> bids = new ArrayList<BidDTO>();
 		for (BidDTO bid : bidCache.values()) {
 			if (bid.getListing().equals(listingId)) {
+				bids.add(bid);
+			}
+		}
+		return bids;
+	}
+	
+	public List<BidDTO> getBidsForUser(String userId) {
+		List<BidDTO> bids = new ArrayList<BidDTO>();
+		for (BidDTO bid : bidCache.values()) {
+			if (bid.getUser().equals(userId)) {
 				bids.add(bid);
 			}
 		}
@@ -239,10 +272,14 @@ public class MockDatastoreDAO implements DatastoreDAO {
 
 	@Override
 	public BidDTO getBid(String bidId) {
-		// TODO Auto-generated method stub
-		return null;
+		return bidCache.get(bidId);
 	}	
 
+	@Override
+	public CommentDTO getComment(String commentId) {
+		return commentCache.get(commentId);
+	}
+	
 	/**
 	 * Generates random comments for business plans
 	 */

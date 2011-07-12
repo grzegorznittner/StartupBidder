@@ -2,11 +2,24 @@ package com.startupbidder.vo;
 
 import java.util.Date;
 
+import org.codehaus.jackson.annotate.JsonProperty;
+
 public class CommentVO {
+	@JsonProperty("num")
+	private int orderNumber;
+	@JsonProperty("comment_id")
 	private String id;
+	@JsonProperty("listing_id")
 	private String listing;
+	@JsonProperty("listing_title")
+	private String listingName;
+	@JsonProperty("profile_id")
 	private String user;
+	@JsonProperty("profile_username")
+	private String userName;
+	@JsonProperty("text")
 	private String comment;
+	@JsonProperty("comment_date")
 	private Date   commentedOn;
 	
 	public CommentVO() {
@@ -51,11 +64,35 @@ public class CommentVO {
 		this.commentedOn = commentedOn;
 	}
 
+	public String getListingName() {
+		return listingName;
+	}
+
+	public void setListingName(String listingName) {
+		this.listingName = listingName;
+	}
+
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+
+	public int getOrderNumber() {
+		return orderNumber;
+	}
+
+	public void setOrderNumber(int orderNumber) {
+		this.orderNumber = orderNumber;
+	}
+
 	@Override
 	public String toString() {
-		return "CommentDTO [id=" + id + ", listing=" + listing
-				+ ", user=" + user + ", comment=" + comment + ", commentedOn="
-				+ commentedOn + "]";
+		return "CommentVO [orderNumber=" + orderNumber + ", id=" + id
+				+ ", listing=" + listing + ", listingName=" + listingName
+				+ ", user=" + user + ", userName=" + userName + ", comment="
+				+ comment + ", commentedOn=" + commentedOn + "]";
 	}
-	
 }
