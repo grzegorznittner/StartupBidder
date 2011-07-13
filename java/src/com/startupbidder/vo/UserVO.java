@@ -2,8 +2,12 @@ package com.startupbidder.vo;
 
 import java.util.Date;
 
+import org.codehaus.jackson.annotate.JsonAutoDetect;
 import org.codehaus.jackson.annotate.JsonProperty;
+import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 
+@JsonAutoDetect(getterVisibility=Visibility.NONE,
+		setterVisibility=Visibility.NONE, fieldVisibility=Visibility.NONE)
 public class UserVO {
 	@JsonProperty("num")
 	private int orderNumber;

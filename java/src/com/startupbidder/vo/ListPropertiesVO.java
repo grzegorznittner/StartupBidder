@@ -1,6 +1,8 @@
 package com.startupbidder.vo;
 
+import org.codehaus.jackson.annotate.JsonAutoDetect;
 import org.codehaus.jackson.annotate.JsonProperty;
+import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 
 /**
  * Contains properties which describes various list results.
@@ -8,6 +10,8 @@ import org.codehaus.jackson.annotate.JsonProperty;
  * 
  * @author greg
  */
+@JsonAutoDetect(getterVisibility=Visibility.NONE,
+		setterVisibility=Visibility.NONE, fieldVisibility=Visibility.NONE)
 public class ListPropertiesVO {
 	@JsonProperty("start_index")
 	private int startIndex;

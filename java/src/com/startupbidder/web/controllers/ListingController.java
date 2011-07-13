@@ -1,7 +1,5 @@
 package com.startupbidder.web.controllers;
 
-import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.struts2.rest.DefaultHttpHeaders;
