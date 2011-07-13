@@ -31,7 +31,12 @@ public interface DatastoreDAO {
 	 * @param user User data object
 	 */
 	void updateUser(UserDTO user);
-	
+
+	/**
+	 * Returns user which posted most of bids
+	 */
+	UserDTO getTopInvestor();
+
 	/**
 	 * Returns listing by id
 	 * @param listingId

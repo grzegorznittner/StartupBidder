@@ -50,7 +50,7 @@ public class VoteDTO extends AbstractDTO {
 
 	@Override
 	public String toString() {
-		return "VoteDTO [listing=" + listing + ", user=" + user + ", value="
+		return "VoteDTO [idAsString" + getIdAsString() + ", listing=" + listing + ", user=" + user + ", value="
 				+ value + ", commentedOn=" + commentedOn + "]";
 	}
 

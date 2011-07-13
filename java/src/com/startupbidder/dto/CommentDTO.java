@@ -49,7 +49,7 @@ public class CommentDTO extends AbstractDTO {
 
 	@Override
 	public String toString() {
-		return "CommentDTO [id=" + id + ", listing=" + listing
+		return "CommentDTO [idAsString" + getIdAsString() + ", listing=" + listing
 				+ ", user=" + user + ", comment=" + comment + ", commentedOn="
 				+ commentedOn + "]";
 	}

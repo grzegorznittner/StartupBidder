@@ -52,6 +52,7 @@ public class DtoToVoConverter {
 		comment.setId(commentDTO.getIdAsString());
 		comment.setComment(commentDTO.getComment());
 		comment.setCommentedOn(commentDTO.getCommentedOn());
+		comment.setListing(commentDTO.getListing());
 		comment.setUser(commentDTO.getUser());
 		return comment;
 	}

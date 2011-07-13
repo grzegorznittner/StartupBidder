@@ -106,11 +106,12 @@ public class ListingDTO extends AbstractDTO {
 
 	@Override
 	public String toString() {
-		return "ListingDTO [name=" + name + ", suggestedValuation="
+		return "ListingDTO [idAsString" + getIdAsString() + ", name=" + name + ", suggestedValuation="
 				+ suggestedValuation + ", suggestedPercentage="
 				+ suggestedPercentage + ", suggestedAmount=" + suggestedAmount
 				+ ", medianValuation=" + medianValuation + ", listedOn="
 				+ listedOn + ", closingOn=" + closingOn + ", state=" + state
 				+ ", summary=" + summary + ", owner=" + owner + "]";
 	}
+
 }

@@ -24,6 +24,8 @@ public class UserController extends ModelDrivenController {
 				return all(request);
 			} else if("get".equalsIgnoreCase(getCommand(1))) {
 				return get(request);
+			} else if("topinvestor".equalsIgnoreCase(getCommand(1))) {
+				return topInvestor(request);
 			} else {
 				return index(request);
 			}
@@ -52,6 +54,11 @@ public class UserController extends ModelDrivenController {
 		HttpHeaders headers = new DefaultHttpHeaders("all");
 		headers.setStatus(501);
 		return headers;
+	}
+
+	private HttpHeaders topInvestor(HttpServletRequest request) {
+    	user = ServiceFacade.instance().getTopInvestor();
+        return new DefaultHttpHeaders("index").disableCaching();
 	}
 
 	private HttpHeaders get(HttpServletRequest request) {

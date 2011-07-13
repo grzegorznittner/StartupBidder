@@ -47,6 +47,7 @@ public class HelloServlet extends HttpServlet {
 				return;
 			}
 			
+			UserDTO topInvestor = datastore.getTopInvestor();
 			UserDTO currentUser = datastore.getUser(user.getNickname());
 			ListPropertiesVO listProperties = new ListPropertiesVO();
 			listProperties.setMaxResults(1);
@@ -56,6 +57,7 @@ public class HelloServlet extends HttpServlet {
 			out.println("<p>Test links:</p>");
 
 			out.println("<a href=\"/listings/get/" + topListing.getIdAsString() + "/.html\">Top listing data</a><br/>");
+			out.println("<a href=\"/user/topinvestor/.html\">Top investor data</a><br/>");
 			out.println("<a href=\"/user/get/" + currentUser.getIdAsString() + "/.html\">Current user data</a><br/>");
 			out.println("<br/>");
 			
@@ -65,15 +67,15 @@ public class HelloServlet extends HttpServlet {
 			out.println("<a href=\"/listings/popular/.html\">Most popular listings</a><br/>");
 			out.println("<a href=\"/listings/latest/.html\">Latest listings</a><br/>");
 			out.println("<a href=\"/listings/closing/.html\">Closing listings</a><br/>");
-			out.println("<a href=\"/listings/user/" + currentUser.getIdAsString() + "/.html\">Current user's listings</a><br/>");
+			out.println("<a href=\"/listings/user/" + topInvestor.getIdAsString() + "/.html\">Top investor's listings</a><br/>");
 			out.println("<br/>");
 
 			out.println("<a href=\"/bids/listing/" + topListing.getIdAsString() + "/.html\">Bids for top listing</a><br/>");
-			out.println("<a href=\"/bids/user/" + currentUser.getIdAsString() + "/.html\">Bids for current user</a><br/>");
+			out.println("<a href=\"/bids/user/" + topInvestor.getIdAsString() + "/.html\">Bids for top investor</a><br/>");
 			out.println("<br/>");
 			
 			out.println("<a href=\"/comments/listing/" + topListing.getIdAsString() + "/.html\">Comments for top listing</a><br/>");
-			out.println("<a href=\"/comments/user/" + currentUser.getIdAsString() + "/.html\">Comments for current user</a><br/>");
+			out.println("<a href=\"/comments/user/" + topInvestor.getIdAsString() + "/.html\">Comments for top investor</a><br/>");
 			out.println("<br/>");
 
 		} catch (Exception e) {

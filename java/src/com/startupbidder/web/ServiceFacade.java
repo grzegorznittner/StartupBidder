@@ -70,6 +70,20 @@ public class ServiceFacade {
 		return DtoToVoConverter.convert(getDAO().getUser(userData.getId()));
 	}
 	
+	/**
+	 * Returns investor which put the highest number of bids
+	 */
+	public UserVO getTopInvestor() {
+		UserVO user = DtoToVoConverter.convert(getDAO().getTopInvestor());
+		
+		UserStatistics stat = getDAO().getUserStatistics(user.getId());
+		user.setNumberOfListings(stat.getNumberOfListings());
+		user.setNumberOfBids(stat.getNumberOfBids());
+		user.setNumberOfComments(stat.getNumberOfComments());
+		
+		return user;
+	}
+
 	private void computeListingData(ListingVO listing) {
 		// set user data
 		UserDTO user = getDAO().getUser(listing.getOwner());
@@ -165,7 +179,7 @@ public class ServiceFacade {
 			listing.setOrderNumber(index++);
 		}
 		ListingListVO list = new ListingListVO();
-		list.setListings(listings);
+		list.setListings(listings);		
 		list.setListingsProperties(listingProperties);
 
 		return list;
@@ -205,15 +219,25 @@ public class ServiceFacade {
 		ListingVO listing = DtoToVoConverter.convert(getDAO().getListing(listingId));
 		if (listing == null) {
 			log.log(Level.WARNING, "Listing '" + listingId + "' not found");
+
+			commentProperties.setNumberOfResults(0);
+			commentProperties.setStartIndex(0);
+			commentProperties.setTotalResults(0);
 		} else {
 			List<CommentVO> comments = DtoToVoConverter.convertComments(getDAO().getCommentsForListing(listingId));
+			int index = commentProperties.getStartIndex();
 			for (CommentVO comment : comments) {
 				comment.setUserName(getDAO().getUser(comment.getUser()).getNickname());
+				comment.setOrderNumber(index++);
 			}
 			list.setComments(comments);
-			list.setCommentsProperties(commentProperties);
 			list.setListing(listing);
+
+			commentProperties.setNumberOfResults(comments.size());
+			commentProperties.setStartIndex(0);
+			commentProperties.setTotalResults(comments.size());
 		}
+		list.setCommentsProperties(commentProperties);
 
 		return list;
 	}
@@ -230,8 +254,12 @@ public class ServiceFacade {
 		UserVO user = DtoToVoConverter.convert(getDAO().getUser(userId));
 		if (user == null) {
 			log.log(Level.WARNING, "User '" + userId + "' not found");
+			commentProperties.setNumberOfResults(0);
+			commentProperties.setStartIndex(0);
+			commentProperties.setTotalResults(0);
 		} else {
 			List<CommentVO> comments = DtoToVoConverter.convertComments(getDAO().getCommentsForUser(userId));
+			int index = commentProperties.getStartIndex();
 			for (CommentVO comment : comments) {
 				comment.setUserName(user.getNickname());
 				ListingDTO listing = getDAO().getListing(comment.getListing());
@@ -239,11 +267,15 @@ public class ServiceFacade {
 					log.log(Level.SEVERE, "Comment '" + comment.getId() + "' doesn't have listing id");
 				}
 				comment.setListingName(listing.getName());
+				comment.setOrderNumber(index++);
 			}
-
 			list.setComments(comments);
-			list.setCommentsProperties(commentProperties);
+
+			commentProperties.setNumberOfResults(comments.size());
+			commentProperties.setStartIndex(0);
+			commentProperties.setTotalResults(comments.size());
 		}
+		list.setCommentsProperties(commentProperties);
 		return list;
 	}
 	
@@ -258,16 +290,24 @@ public class ServiceFacade {
 		ListingVO listing = DtoToVoConverter.convert(getDAO().getListing(listingId));
 		if (listing == null) {
 			log.log(Level.WARNING, "Listing '" + listingId + "' not found");
+			bidProperties.setNumberOfResults(0);
+			bidProperties.setStartIndex(0);
+			bidProperties.setTotalResults(0);
 		} else {
 			List<BidVO> bids = DtoToVoConverter.convertBids(getDAO().getBidsForListing(listingId));
+			int index = bidProperties.getStartIndex();
 			for (BidVO bid : bids) {
 				bid.setUserName(getDAO().getUser(bid.getUser()).getNickname());
-			}
-			
+				bid.setOrderNumber(index++);
+			}			
 			list.setBids(bids);
-			list.setBidsProperties(bidProperties);
 			list.setListing(listing);
+			
+			bidProperties.setNumberOfResults(bids.size());
+			bidProperties.setStartIndex(0);
+			bidProperties.setTotalResults(bids.size());
 		}
+		list.setBidsProperties(bidProperties);
 		
 		return list;
 	}
@@ -284,16 +324,23 @@ public class ServiceFacade {
 		UserVO user = DtoToVoConverter.convert(getDAO().getUser(userId));
 		if (user == null) {
 			log.log(Level.WARNING, "User '" + userId + "' not found");
+			bidProperties.setNumberOfResults(0);
+			bidProperties.setStartIndex(0);
+			bidProperties.setTotalResults(0);
 		} else {
 			List<BidVO> bids = DtoToVoConverter.convertBids(getDAO().getBidsForUser(userId));
+			int index = bidProperties.getStartIndex();
 			for (BidVO bid : bids) {
 				bid.setUserName(user.getNickname());
 				bid.setListingName(getDAO().getListing(bid.getListing()).getName());
+				bid.setOrderNumber(index++);
 			}
-
 			list.setBids(bids);
-			list.setBidsProperties(bidProperties);
+			bidProperties.setNumberOfResults(bids.size());
+			bidProperties.setStartIndex(0);
+			bidProperties.setTotalResults(bids.size());
 		}
+		list.setBidsProperties(bidProperties);
 		return list;
 	}
 	

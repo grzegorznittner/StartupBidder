@@ -42,7 +42,6 @@ public class MockDatastoreDAO implements DatastoreDAO {
 	Map<String, ListingDTO> lCache = new HashMap<String, ListingDTO>();
 	Map<String, VoteDTO> voteCache = new HashMap<String, VoteDTO>();
 	Map<String, CommentDTO> commentCache = new HashMap<String, CommentDTO>();
-	Map<String, Integer> lCommentCache = new HashMap<String, Integer>();
 	Map<String, BidDTO> bidCache = new HashMap<String, BidDTO>();
 	Map<String, UserDTO> userCache = new HashMap<String, UserDTO>();
 
@@ -104,6 +103,32 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		user.setModified(new Date(System.currentTimeMillis()));
 		log.log(Level.INFO, "Updating user " + user.getKey());
 		userCache.put(user.getIdAsString(), user);
+	}
+	
+	public UserDTO getTopInvestor() {
+		// computes number of bids posted by users <user_id, number of bids>
+		Map<String, Integer> userBids = new HashMap<String, Integer>();
+		for(BidDTO bid : bidCache.values()) {
+			if(userBids.containsKey(bid.getUser())) {
+				userBids.put(bid.getUser(), userBids.get(bid.getUser()) + 1);
+			} else {
+				userBids.put(bid.getUser(), 1);
+			}
+		}
+		// sort rating cache
+		List<Map.Entry<String, Integer>> bidsPerUser = new ArrayList<Map.Entry<String, Integer>>(userBids.entrySet());
+		Collections.sort(bidsPerUser, new Comparator<Map.Entry<String, Integer>> () {
+			public int compare(Map.Entry<String, Integer> left, Map.Entry<String, Integer> right) {
+				if (left.getValue() == right.getValue()) {
+					return 0;
+				} else if (left.getValue() > right.getValue()) {
+					return -1;
+				} else {
+					return 1;
+				}
+			}
+		});
+		return userCache.get(bidsPerUser.get(0).getKey());
 	}
 	
 	public ListingDTO getListing(String listingId) {
@@ -298,9 +323,14 @@ public class MockDatastoreDAO implements DatastoreDAO {
 
 	@Override
 	public int getActivity(String listingId) {
-		Integer activity = lCommentCache.get(listingId);
+		int activity = 0;
+		for (CommentDTO comment : commentCache.values()) {
+			if (comment.getListing().equals(listingId)) {
+				activity++;
+			}
+		}
 		log.log(Level.INFO, "Activity for " + listingId + " is " + activity);
-		return activity == null ? 0 : activity.intValue();
+		return activity;
 	}
 
 	@Override
@@ -328,13 +358,8 @@ public class MockDatastoreDAO implements DatastoreDAO {
 				comment.setCommentedOn(new Date(System.currentTimeMillis() - commentNum * 45 * 60 * 1000));
 				comment.setComment("Comment " + commentNum);
 				
+				log.log(Level.INFO, comment.toString());
 				commentCache.put(comment.getIdAsString(), comment);
-				
-				if (lCommentCache.containsKey(bp.getIdAsString())) {
-					lCommentCache.put(bp.getIdAsString(), lCommentCache.get(bp.getIdAsString()) + 1);
-				} else {
-					lCommentCache.put(bp.getIdAsString(), 1);
-				}
 			}
 		}
 	}	
@@ -350,18 +375,19 @@ public class MockDatastoreDAO implements DatastoreDAO {
 			}
 		}
 		
-		for (ListingDTO bp : lCache.values()) {
+		for (ListingDTO listing : lCache.values()) {
 			int bidNum = new Random().nextInt(15);
 			while (--bidNum > 0) {
 				BidDTO bid = new BidDTO();
-				bid.createKey(bidNum + "_" + bp.hashCode());
+				bid.createKey(bidNum + "_" + listing.hashCode());
 				bid.setUser(users.get(new Random().nextInt(users.size())).getIdAsString());
-				bid.setListing(bp.getIdAsString());
+				bid.setListing(listing.getIdAsString());
 				bid.setFundType(new Random().nextInt(2) > 0 ? BidDTO.FundType.SYNDICATE : BidDTO.FundType.SOLE_INVESTOR);
 				bid.setPercentOfCompany(new Random().nextInt(50) + 10);
 				bid.setPlaced(new Date(System.currentTimeMillis() - bidNum * 53 * 60 * 1000));
-				bid.setValue(new Random().nextInt(50) * 1000 + bp.getSuggestedValuation());
+				bid.setValue(new Random().nextInt(50) * 1000 + listing.getSuggestedValuation());
 				
+				log.log(Level.INFO, bid.toString());
 				bidCache.put(bid.getIdAsString(), bid);
 			}
 		}
@@ -379,6 +405,7 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		user.setEmail("deadahmed@startupbidder.com");
 		user.setJoined(new Date(System.currentTimeMillis() - 2 * 24 * 60 * 60 * 1000));
 		userCache.put(user.getIdAsString(), user);
+		log.log(Level.INFO, user.toString());
 
 		user = new UserDTO();
 		user.createKey("jpfowler");
@@ -388,6 +415,7 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		user.setEmail("jpfowler@startupbidder.com");
 		user.setJoined(new Date(System.currentTimeMillis() - 3 * 24 * 60 * 60 * 1000));
 		userCache.put(user.getIdAsString(), user);
+		log.log(Level.INFO, user.toString());
 
 		user = new UserDTO();
 		user.createKey("businessinsider");
@@ -397,6 +425,7 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		user.setEmail("insider@startupbidder.com");
 		user.setJoined(new Date(System.currentTimeMillis() - 3 * 24 * 60 * 60 * 1000));
 		userCache.put(user.getIdAsString(), user);
+		log.log(Level.INFO, user.toString());
 
 		user = new UserDTO();
 		user.createKey("dragonsden");
@@ -407,6 +436,7 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		user.setJoined(new Date(System.currentTimeMillis() - 6 * 24 * 60 * 60 * 1000));
 		user.setAccreditedInvestor(true);
 		userCache.put(user.getIdAsString(), user);
+		log.log(Level.INFO, user.toString());
 
 		user = new UserDTO();
 		user.createKey("crazyinvestor");
@@ -417,6 +447,7 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		user.setJoined(new Date(System.currentTimeMillis() - 5 * 24 * 60 * 60 * 1000));
 		user.setAccreditedInvestor(true);
 		userCache.put(user.getIdAsString(), user);
+		log.log(Level.INFO, user.toString());
 
 		user = new UserDTO();
 		user.createKey("chinese");
@@ -427,6 +458,7 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		user.setJoined(new Date(System.currentTimeMillis() - 1 * 24 * 60 * 60 * 1000));
 		user.setAccreditedInvestor(true);
 		userCache.put(user.getIdAsString(), user);
+		log.log(Level.INFO, user.toString());
 	}
 	
 	private void createMockVotes(ListingDTO listing) {
@@ -462,6 +494,7 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		bp.setClosingOn(new Date(System.currentTimeMillis() + 12 * 24 * 60 * 60 * 1000));
 		bp.setSummary("Executive summary for <b>MisLead</b>");
 		lCache.put(bp.getIdAsString(), bp);
+		log.log(Level.INFO, bp.toString());
 		createMockVotes(bp);
 	
 		bp = new ListingDTO();
@@ -480,6 +513,7 @@ public class MockDatastoreDAO implements DatastoreDAO {
 				"Cuil flopped. Wolfram Alpha is irrelevant. Powerset, which was a semantic" + 
 				" search engine was bailed out by Microsoft, which acquired it.");
 		lCache.put(bp.getIdAsString(), bp);
+		log.log(Level.INFO, bp.toString());
 		createMockVotes(bp);
 
 		bp = new ListingDTO();
@@ -499,6 +533,7 @@ public class MockDatastoreDAO implements DatastoreDAO {
 				"Hunch is pivoting towards non-consumer-facing white label business. " +
 				"Get Glue has had some success of late, but it's hardly a breakout business.");
 		lCache.put(bp.getIdAsString(), bp);
+		log.log(Level.INFO, bp.toString());
 		createMockVotes(bp);
 
 		bp = new ListingDTO();
@@ -518,6 +553,7 @@ public class MockDatastoreDAO implements DatastoreDAO {
 				"businesses, and classifieds. But, it appears to be too niche to scale into a big" +
 				" business.");
 		lCache.put(bp.getIdAsString(), bp);
+		log.log(Level.INFO, bp.toString());
 		createMockVotes(bp);
 
 		bp = new ListingDTO();
@@ -536,6 +572,7 @@ public class MockDatastoreDAO implements DatastoreDAO {
 				" or pay for a small design you could with ease. So far, these micropayment" +
 				" plans have not worked.");
 		lCache.put(bp.getIdAsString(), bp);
+		log.log(Level.INFO, bp.toString());
 		createMockVotes(bp);
 
 		bp = new ListingDTO();
@@ -554,6 +591,7 @@ public class MockDatastoreDAO implements DatastoreDAO {
 				"Google Wave. It was supposed to change email forever. It was going to " +
 				"displace email. Didn't happen.");
 		lCache.put(bp.getIdAsString(), bp);
+		log.log(Level.INFO, bp.toString());
 		createMockVotes(bp);
 
 		bp = new ListingDTO();
@@ -573,6 +611,7 @@ public class MockDatastoreDAO implements DatastoreDAO {
 				"It's far from certain it will succeed. Even when its next car comes out, Nissan " +
 				"could be making a luxury electric car that competes with Tesla.");
 		lCache.put(bp.getIdAsString(), bp);
+		log.log(Level.INFO, bp.toString());
 		createMockVotes(bp);
 	}
 }

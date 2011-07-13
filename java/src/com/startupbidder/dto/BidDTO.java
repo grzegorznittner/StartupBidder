@@ -69,7 +69,7 @@ public class BidDTO extends AbstractDTO {
 
 	@Override
 	public String toString() {
-		return "BidDTO [id=" + id + ", user=" + user + ", listing="
+		return "BidDTO [id=" + id + ", idAsString" + getIdAsString() + ", user=" + user + ", listing="
 				+ listing + ", placed=" + placed + ", value=" + value
 				+ ", percentOfCompany=" + percentOfCompany + ", fundType="
 				+ fundType + "]";

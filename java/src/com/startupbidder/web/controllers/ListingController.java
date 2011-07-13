@@ -117,7 +117,7 @@ public class ListingController extends ModelDrivenController {
 
     // GET /listings/user
     private HttpHeaders user(HttpServletRequest request) {
-    	String userId = request.getParameter("user");
+    	String userId = getCommandOrParameter(request, 2, "id");
 		ListPropertiesVO listingProperties = getListProperties(request);
 
     	listings = ServiceFacade.instance().getUserListings(userId, listingProperties);
