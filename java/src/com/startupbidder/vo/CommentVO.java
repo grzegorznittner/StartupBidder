@@ -5,6 +5,9 @@ import java.util.Date;
 import org.codehaus.jackson.annotate.JsonAutoDetect;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+
+import com.startupbidder.util.DateSerializer;
 
 @JsonAutoDetect(getterVisibility=Visibility.NONE,
 		setterVisibility=Visibility.NONE, fieldVisibility=Visibility.NONE)
@@ -24,6 +27,7 @@ public class CommentVO {
 	@JsonProperty("text")
 	private String comment;
 	@JsonProperty("comment_date")
+	@JsonSerialize(using=DateSerializer.class)
 	private Date   commentedOn;
 	
 	public CommentVO() {

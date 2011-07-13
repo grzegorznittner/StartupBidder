@@ -1,10 +1,13 @@
 package com.startupbidder.dto;
 
+import java.util.Date;
+
 
 public class VoteDTO extends AbstractDTO {
 	private String listing;
 	private String user;
 	private int value;
+	private Date commentedOn;
 	
 	public VoteDTO() {
 	}
@@ -37,10 +40,18 @@ public class VoteDTO extends AbstractDTO {
 		this.value = value;
 	}
 
+	public Date getCommentedOn() {
+		return commentedOn;
+	}
+
+	public void setCommentedOn(Date commentedOn) {
+		this.commentedOn = commentedOn;
+	}
+
 	@Override
 	public String toString() {
-		return "VoteDTO [id=" + id + ", listing=" + listing
-				+ ", user=" + user + ", value=" + value + "]";
+		return "VoteDTO [listing=" + listing + ", user=" + user + ", value="
+				+ value + ", commentedOn=" + commentedOn + "]";
 	}
-	
+
 }

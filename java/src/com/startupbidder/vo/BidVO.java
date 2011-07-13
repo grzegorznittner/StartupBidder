@@ -5,6 +5,9 @@ import java.util.Date;
 import org.codehaus.jackson.annotate.JsonAutoDetect;
 import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 import org.codehaus.jackson.annotate.JsonProperty;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+
+import com.startupbidder.util.DateSerializer;
 
 @JsonAutoDetect(getterVisibility=Visibility.NONE,
 		setterVisibility=Visibility.NONE, fieldVisibility=Visibility.NONE)
@@ -22,6 +25,7 @@ public class BidVO {
 	@JsonProperty("listing_title")
 	private String listingName;
 	@JsonProperty("bid_date")
+	@JsonSerialize(using=DateSerializer.class)
 	private Date   placed;
 	@JsonProperty("amount")
 	private int    value;

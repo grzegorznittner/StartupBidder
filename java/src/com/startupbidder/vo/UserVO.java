@@ -5,6 +5,9 @@ import java.util.Date;
 import org.codehaus.jackson.annotate.JsonAutoDetect;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+
+import com.startupbidder.util.DateSerializer;
 
 @JsonAutoDetect(getterVisibility=Visibility.NONE,
 		setterVisibility=Visibility.NONE, fieldVisibility=Visibility.NONE)
@@ -36,10 +39,13 @@ public class UserVO {
 	@JsonProperty("investor")
 	private boolean accreditedInvestor;
 	@JsonProperty("joined_date")
+	@JsonSerialize(using=DateSerializer.class)
 	private Date   joined;
 	@JsonProperty("last_login")
+	@JsonSerialize(using=DateSerializer.class)
 	private Date   lastLoggedIn;
 	@JsonProperty("modified")
+	@JsonSerialize(using=DateSerializer.class)
 	private Date   modified;
 	@JsonProperty("num_listings")
 	private int numberOfListings;

@@ -5,6 +5,10 @@ import java.util.Date;
 import org.codehaus.jackson.annotate.JsonAutoDetect;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+
+import com.startupbidder.util.DateSerializer;
+import com.startupbidder.util.LowecaseSerializer;
 
 @JsonAutoDetect(getterVisibility=Visibility.NONE,
 		setterVisibility=Visibility.NONE, fieldVisibility=Visibility.NONE)
@@ -24,10 +28,13 @@ public class ListingVO {
 	@JsonProperty("median_valuation")
 	private int   medianValuation;
 	@JsonProperty("listing_date")
+	@JsonSerialize(using=DateSerializer.class)
 	private Date  listedOn;
 	@JsonProperty("closing_date")
+	@JsonSerialize(using=DateSerializer.class)
 	private Date  closingOn;
 	@JsonProperty("status")
+	@JsonSerialize(using=LowecaseSerializer.class)
 	private String state;
 	@JsonProperty("summary")
 	private String summary;
