@@ -1174,7 +1174,7 @@ $(function(){
             var limited_results = self.limitResults(results, start_index, max_results);
             var result_json = {
                 listings: limited_results,
-                listingsProperties: {
+                listings_props: {
                     search_type: searchType,
                     keywords:  keywords,
                     profile_id: profile_id,
@@ -1556,12 +1556,10 @@ s = (p + b + c + v) / (t + 2)^1.5
             }
             $('#content-search-keywords').val(keywords);
             var results_json = self.doSearch(search_type, keywords, profile_id, start_index, max_results);
-            console.log('incoming json:' + JSON.stringify(args, null, '\t'));
-            console.log('returned json:' + JSON.stringify(results_json, null, '\t'));
             if (results_json) {
                 var results = results_json.listings;
-                var num_results = results_json.listingsProperties.num_results;
-                var total_results = results_json.listingsProperties.total_results;
+                var num_results = results_json.listings_props.num_results;
+                var total_results = results_json.listings_props.total_results;
                 self.displayResults(results, search_type, keywords, profile_id, start_index, num_results, total_results);
             }
             else {
@@ -1985,8 +1983,8 @@ s = (p + b + c + v) / (t + 2)^1.5
             return self.controller.backend.upvoteListing(listing_id);
         }
         self.generateListingSnippetHtml = function(i, listing) {
-            listing.days_ago = listing.days_ago != null ? listing.days_ago : self.controller.util.today() - listing.listing_date; /* paint with time proximity */
-            listing.days_left = listing.days_left != null ? listing.days_left : listing.closing_date - self.controller.util.today(); /* paint with time proximity */
+            var days_ago = listing.days_ago != null ? listing.days_ago : self.controller.util.today() - listing.listing_date; /* paint with time proximity */
+            var days_left = listing.days_left != null ? listing.days_left : listing.closing_date - self.controller.util.today(); /* paint with time proximity */
             var resultHtml = '';
             var evenOdd;
             if (isFinite(i)) {
@@ -2009,11 +2007,11 @@ s = (p + b + c + v) / (t + 2)^1.5
             resultHtml += '<div class="content-results-list-item-clear"></div>';
             resultHtml += '<div class="content-results-list-item-detail">';
             resultHtml += '<span id="content-results-list-item-votes-' + i + '">' + listing.num_votes + '</span>' + ' votes | ';
-            resultHtml += (listing.days_ago == 0) ? 'listed today' : listing.days_ago + ' day' + (listing.days_ago>1?'s':'')  + ' ago';
+            resultHtml += (days_ago == 0) ? 'listed today' : days_ago + ' day' + (days_ago>1?'s':'')  + ' ago';
             resultHtml += ' | ';
-            resultHtml += (listing.status == 'active' && listing.days_left == 0) ? 'closing today!' : '';
-            resultHtml += (listing.status == 'active' && listing.days_left < 0) ? 'listing closed' : '';
-            resultHtml += (listing.status == 'active' && listing.days_left > 0) ? 'closing in ' + listing.days_left + ' day' + (listing.days_left>1?'s':'') : '';
+            resultHtml += (listing.status == 'active' && days_left == 0) ? 'closing today!' : '';
+            resultHtml += (listing.status == 'active' && days_left < 0) ? 'listing closed' : '';
+            resultHtml += (listing.status == 'active' && days_left > 0) ? 'closing in ' + days_left + ' day' + (days_left>1?'s':'') : '';
             resultHtml += (listing.status == 'closed') ? 'listing closed' : '';
             resultHtml += (listing.status == 'withdrawn') ? 'listing withdrawn' : '';
             resultHtml += ' | ';
@@ -2456,7 +2454,9 @@ s = (p + b + c + v) / (t + 2)^1.5
         self.searchListings = function(searchType, keywords, profile_id, start_index, max_results) {
             if (searchType == 'top') {
                 $.getJSON('/listings/top/', function(results_json) {
-                    if (results_json && results_json.listingsProperties) {
+                    //console.log('incoming json:' + JSON.stringify(args, null, '\t'));
+                    console.log('/listings/top/ -> ' + JSON.stringify(results_json, null, '\t'));
+                    if (results_json && results_json.listings_props) {
                         var results = results_json.listings;
                         var search_type = results_json.search_type;
                         var keywords = results_json.keywords;
@@ -2464,16 +2464,16 @@ s = (p + b + c + v) / (t + 2)^1.5
                         var start_index = results_json.start_index;
                         var num_results = results_json.num_results;
                         var total_results = results_json.total_results;
-                        var result;
-                        for (var i = 0; i < results.length; i++) { // reformat unix dates
-                            result = results[i];
-                            result.listing_date = self.controller.util.epochToNumericDate(result.listing_date);
-                            result.closing_date = self.controller.util.epochToNumericDate(result.closing_date);
-                        }
+                        //var result;
+                        //for (var i = 0; i < results.length; i++) { // reformat unix dates
+                        //    result = results[i];
+                        //    result.listing_date = self.controller.util.epochToNumericDate(result.listing_date);
+                        //    result.closing_date = self.controller.util.epochToNumericDate(result.closing_date);
+                        //}
                         self.controller.search.displayResults(results, search_type, keywords, profile_id, start_index, num_results, total_results);
                     }
                     else {
-                        self.displayResultsHtml('<i>unable to retrieve listings</i>');
+                        self.controller.search.displayResultsHtml('<i>unable to retrieve listings</i>');
                     }
                 });
             }
