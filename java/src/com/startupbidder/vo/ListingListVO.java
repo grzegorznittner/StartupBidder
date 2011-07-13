@@ -2,8 +2,16 @@ package com.startupbidder.vo;
 
 import java.util.List;
 
+import org.codehaus.jackson.annotate.JsonAutoDetect;
+import org.codehaus.jackson.annotate.JsonProperty;
+import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
+
+@JsonAutoDetect(getterVisibility=Visibility.NONE,
+		setterVisibility=Visibility.NONE, fieldVisibility=Visibility.NONE)
 public class ListingListVO {
+	@JsonProperty("listings")
 	private List<ListingVO> listings;
+	@JsonProperty("listings_props")
 	private ListPropertiesVO listingsProperties;
 	
 	public List<ListingVO> getListings() {

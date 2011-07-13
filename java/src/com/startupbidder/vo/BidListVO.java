@@ -2,9 +2,18 @@ package com.startupbidder.vo;
 
 import java.util.List;
 
+import org.codehaus.jackson.annotate.JsonAutoDetect;
+import org.codehaus.jackson.annotate.JsonProperty;
+import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
+
+@JsonAutoDetect(getterVisibility=Visibility.NONE,
+		setterVisibility=Visibility.NONE, fieldVisibility=Visibility.NONE)
 public class BidListVO {
+	@JsonProperty("bids")
 	private List<BidVO> bids;
+	@JsonProperty("bids_props")
 	private ListPropertiesVO bidsProperties;
+	@JsonProperty("listing")
 	private ListingVO listing;
 	
 	public List<BidVO> getBids() {
