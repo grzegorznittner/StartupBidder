@@ -2452,31 +2452,23 @@ s = (p + b + c + v) / (t + 2)^1.5
         self.getListing = function(listing_id) {
         };
         self.searchListings = function(searchType, keywords, profile_id, start_index, max_results) {
-            if (searchType == 'top') {
-                $.getJSON('/listings/top/', function(results_json) {
-                    //console.log('incoming json:' + JSON.stringify(args, null, '\t'));
-                    console.log('/listings/top/ -> ' + JSON.stringify(results_json, null, '\t'));
-                    if (results_json && results_json.listings_props) {
-                        var results = results_json.listings;
-                        var search_type = results_json.search_type;
-                        var keywords = results_json.keywords;
-                        var profile_id = results_json.profile_id;
-                        var start_index = results_json.start_index;
-                        var num_results = results_json.num_results;
-                        var total_results = results_json.total_results;
-                        //var result;
-                        //for (var i = 0; i < results.length; i++) { // reformat unix dates
-                        //    result = results[i];
-                        //    result.listing_date = self.controller.util.epochToNumericDate(result.listing_date);
-                        //    result.closing_date = self.controller.util.epochToNumericDate(result.closing_date);
-                        //}
-                        self.controller.search.displayResults(results, search_type, keywords, profile_id, start_index, num_results, total_results);
-                    }
-                    else {
-                        self.controller.search.displayResultsHtml('<i>unable to retrieve listings</i>');
-                    }
-                });
-            }
+            var url = '/listings/' + searchType + '/';
+            $.getJSON(url, function(results_json) {
+                console.log(url + ' -> ' + JSON.stringify(results_json, null, '\t'));
+                if (results_json && results_json.listings_props) {
+                    var results = results_json.listings;
+                    var search_type = results_json.search_type;
+                    var keywords = results_json.keywords;
+                    var profile_id = results_json.profile_id;
+                    var start_index = results_json.start_index;
+                    var num_results = results_json.num_results;
+                    var total_results = results_json.total_results;
+                    self.controller.search.displayResults(results, search_type, keywords, profile_id, start_index, num_results, total_results);
+                }
+                else {
+                    self.controller.search.displayResultsHtml('<i>unable to retrieve listings</i>');
+                }
+            });
             return null;
         };
         self.saveListing = function(listing) {
