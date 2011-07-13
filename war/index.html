@@ -288,6 +288,17 @@ $(function(){
             var date = '' + year + (month < 10 ? '0' : '') + month + (day < 10 ? '0' : '') + day;
             return date;
         };
+        self.numericFromDateObj = function(date) {
+            if (date)
+                return self.constructNumericDate(date.getFullYear(), date.getUTCMonth(), date.getUTCDate());
+        };
+        self.epochToNumericDate = function(epoch) {
+            var date;
+            if (epoch) {
+                date = new Date(epoch);
+                return self.controller.util.numericFromDateObj(date);
+            }
+        };
         self.today = function() {
             if (!self.todayCache) {
                 var today = new Date();
@@ -1162,13 +1173,15 @@ $(function(){
             self.paintWithNumber(results);
             var limited_results = self.limitResults(results, start_index, max_results);
             var result_json = {
-                results: limited_results,
-                search_type: searchType,
-                keywords:  keywords,
-                profile_id: profile_id,
-                start_index: start_index,
-                num_results: limited_results.length,
-                total_results: results.length
+                listings: limited_results,
+                listingsProperties: {
+                    search_type: searchType,
+                    keywords:  keywords,
+                    profile_id: profile_id,
+                    start_index: start_index,
+                    num_results: limited_results.length,
+                    total_results: results.length
+                }
             };
             return result_json;
         };
@@ -1545,11 +1558,19 @@ s = (p + b + c + v) / (t + 2)^1.5
             var results_json = self.doSearch(search_type, keywords, profile_id, start_index, max_results);
             console.log('incoming json:' + JSON.stringify(args, null, '\t'));
             console.log('returned json:' + JSON.stringify(results_json, null, '\t'));
-            var results = results_json.results;
-            var num_results = results_json.num_results;
-            var total_results = results_json.total_results;
-            self.displayResults(results, search_type, keywords, profile_id, start_index, num_results, total_results);
+            if (results_json) {
+                var results = results_json.listings;
+                var num_results = results_json.listingsProperties.num_results;
+                var total_results = results_json.listingsProperties.total_results;
+                self.displayResults(results, search_type, keywords, profile_id, start_index, num_results, total_results);
+            }
+            else {
+                self.displayResultsHtml('<i>loading...</i>');
+            }
             return 'search';
+        };
+        self.displayResultsHtml = function(resultsHtml) {
+            $('#search-content-results-list').html(resultsHtml);
         };
         self.doSearch = function(searchType, keywords, profile_id, start_index, max_results){
             return self.controller.backend.searchListings(searchType, keywords, profile_id, start_index, max_results);
@@ -1564,7 +1585,7 @@ s = (p + b + c + v) / (t + 2)^1.5
             if (resultsHtml == '') {
                 resultsHtml = '<i>no listings found</i>';
             }
-            $('#search-content-results-list').html(resultsHtml);
+            self.displayResultsHtml(resultsHtml);
             for (var j = 0; j < results.length; j++) { // bind results
                 listing = results[j];
                 self.controller.listing.bindListingSnippet(j, listing);
@@ -1964,8 +1985,8 @@ s = (p + b + c + v) / (t + 2)^1.5
             return self.controller.backend.upvoteListing(listing_id);
         }
         self.generateListingSnippetHtml = function(i, listing) {
-            listing.days_ago = self.controller.util.today() - listing.listing_date; /* paint with time proximity */
-            listing.days_left = listing.closing_date - self.controller.util.today(); /* paint with time proximity */
+            listing.days_ago = listing.days_ago != null ? listing.days_ago : self.controller.util.today() - listing.listing_date; /* paint with time proximity */
+            listing.days_left = listing.days_left != null ? listing.days_left : listing.closing_date - self.controller.util.today(); /* paint with time proximity */
             var resultHtml = '';
             var evenOdd;
             if (isFinite(i)) {
@@ -2434,20 +2455,29 @@ s = (p + b + c + v) / (t + 2)^1.5
         };
         self.searchListings = function(searchType, keywords, profile_id, start_index, max_results) {
             if (searchType == 'top') {
-                $.getJSON('/listings', function(results_json) {
-                    var results = results_json.results;
-                    var search_type = results_json.search_type;
-                    var keywords = results_json.keywords;
-                    var profile_id = results_json.profile_id;
-                    var start_index = results_json.start_index;
-                    var num_results = results_json.num_results;
-                    var total_results = results_json.total_results;
-                    self.controller.search.displayResults(results, search_type, keywords, profile_id, start_index, num_results, total_results);
+                $.getJSON('/listings/top/', function(results_json) {
+                    if (results_json && results_json.listingsProperties) {
+                        var results = results_json.listings;
+                        var search_type = results_json.search_type;
+                        var keywords = results_json.keywords;
+                        var profile_id = results_json.profile_id;
+                        var start_index = results_json.start_index;
+                        var num_results = results_json.num_results;
+                        var total_results = results_json.total_results;
+                        var result;
+                        for (var i = 0; i < results.length; i++) { // reformat unix dates
+                            result = results[i];
+                            result.listing_date = self.controller.util.epochToNumericDate(result.listing_date);
+                            result.closing_date = self.controller.util.epochToNumericDate(result.closing_date);
+                        }
+                        self.controller.search.displayResults(results, search_type, keywords, profile_id, start_index, num_results, total_results);
+                    }
+                    else {
+                        self.displayResultsHtml('<i>unable to retrieve listings</i>');
+                    }
                 });
             }
-            else {
-                return null;
-            }
+            return null;
         };
         self.saveListing = function(listing) {
         };
@@ -2480,8 +2510,8 @@ s = (p + b + c + v) / (t + 2)^1.5
         self.backend = null;
         self.setup = function(controller) {
             self.controller = controller;
-            self.backend = new Datastore();
-            //self.backend = new RestBackend();
+            //self.backend = new Datastore();
+            self.backend = new RestBackend();
             self.backend.setup(controller);
         };
         // profile methods
