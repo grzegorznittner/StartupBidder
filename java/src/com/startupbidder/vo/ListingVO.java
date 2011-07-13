@@ -11,12 +11,12 @@ public class ListingVO {
 	private String id;
 	@JsonProperty("title")
 	private String name;
-	@JsonProperty("")
-	private int   startingValuation;
-	@JsonProperty("")
-	private Date  startingValuationDate;
-	@JsonProperty("")
-	private int   averageValuation;
+	@JsonProperty("suggested_amt")
+	private int suggestedAmount;
+	@JsonProperty("suggested_pct")
+	private int suggestedPercentage;
+	@JsonProperty("suggested_val")
+	private int suggestedValuation;
 	@JsonProperty("median_valuation")
 	private int   medianValuation;
 	@JsonProperty("listing_date")
@@ -35,16 +35,9 @@ public class ListingVO {
 	private int numberOfComments;
 	@JsonProperty("num_bids")
 	private int numberOfBids;
-	@JsonProperty("score")
-	private int rating;
 	@JsonProperty("num_votes")
 	private int numberOfVotes;
-	@JsonProperty("suggested_amt")
-	private int suggestedAmount;
-	@JsonProperty("suggested_pct")
-	private int suggestedPercentage;
-	@JsonProperty("suggested_val")
-	private int suggestedValuation;
+	
 	@JsonProperty("days_ago")
 	private int daysAgo;
 	@JsonProperty("days_left")
@@ -67,31 +60,7 @@ public class ListingVO {
 	public void setName(String name) {
 		this.name = name;
 	}
-
-	public int getStartingValuation() {
-		return startingValuation;
-	}
-
-	public void setStartingValuation(int startingValuation) {
-		this.startingValuation = startingValuation;
-	}
-
-	public Date getStartingValuationDate() {
-		return startingValuationDate;
-	}
-
-	public void setStartingValuationDate(Date startingValuationDate) {
-		this.startingValuationDate = startingValuationDate;
-	}
-
-	public int getAverageValuation() {
-		return averageValuation;
-	}
-
-	public void setAverageValuation(int averageValuation) {
-		this.averageValuation = averageValuation;
-	}
-
+	
 	public int getMedianValuation() {
 		return medianValuation;
 	}
@@ -154,14 +123,6 @@ public class ListingVO {
 
 	public void setNumberOfBids(int numberOfBids) {
 		this.numberOfBids = numberOfBids;
-	}
-
-	public int getRating() {
-		return rating;
-	}
-
-	public void setRating(int rating) {
-		this.rating = rating;
 	}
 
 	public int getOrderNumber() {
@@ -231,14 +192,12 @@ public class ListingVO {
 	@Override
 	public String toString() {
 		return "ListingVO [orderNumber=" + orderNumber + ", id=" + id
-				+ ", name=" + name + ", startingValuation=" + startingValuation
-				+ ", startingValuationDate=" + startingValuationDate
-				+ ", averageValuation=" + averageValuation
+				+ ", name=" + name
 				+ ", medianValuation=" + medianValuation + ", listedOn="
 				+ listedOn + ", closingOn=" + closingOn + ", state=" + state
 				+ ", summary=" + summary + ", owner=" + owner + ", ownerName="
 				+ ownerName + ", numberOfComments=" + numberOfComments
-				+ ", numberOfBids=" + numberOfBids + ", rating=" + rating
+				+ ", numberOfBids=" + numberOfBids
 				+ ", numberOfVotes=" + numberOfVotes + ", suggestedAmount="
 				+ suggestedAmount + ", suggestedPercentage="
 				+ suggestedPercentage + ", suggestedValuation="

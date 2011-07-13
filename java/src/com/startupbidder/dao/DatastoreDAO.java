@@ -111,11 +111,11 @@ public interface DatastoreDAO {
 	List<BidDTO> getBidsForUser(String userId);
 	
 	/**
-	 * Returns listing's rating
+	 * Returns number of votes for listing
 	 * @param listingId Listing id
-	 * @return Current rating
+	 * @return Number of votes
 	 */
-	int getRating(String listingId);
+	int getNumberOfVotes(String listingId);
 	
 	/**
 	 * Returns listing's activity (number of comments)

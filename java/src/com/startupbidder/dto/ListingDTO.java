@@ -7,9 +7,9 @@ public class ListingDTO extends AbstractDTO {
 	public enum State {CREATED, ACTIVE, CLOSED, WITHDRAWN};
 	
 	private String name;
-	private int   startingValuation;
-	private Date  startingValuationDate;
-	private int   averageValuation;
+	private int   suggestedValuation;
+	private int   suggestedPercentage;
+	private int   suggestedAmount;
 	private int   medianValuation;
 	private Date  listedOn;
 	private Date  closingOn;
@@ -32,28 +32,28 @@ public class ListingDTO extends AbstractDTO {
 		this.name = name;
 	}
 
-	public int getStartingValuation() {
-		return startingValuation;
+	public int getSuggestedPercentage() {
+		return suggestedPercentage;
 	}
 
-	public void setStartingValuation(int startingValuation) {
-		this.startingValuation = startingValuation;
+	public void setSuggestedPercentage(int suggestedPercentage) {
+		this.suggestedPercentage = suggestedPercentage;
 	}
 
-	public Date getStartingValuationDate() {
-		return startingValuationDate;
+	public int getSuggestedAmount() {
+		return suggestedAmount;
 	}
 
-	public void setStartingValuationDate(Date startingValuationDate) {
-		this.startingValuationDate = startingValuationDate;
+	public void setSuggestedAmount(int suggestedAmount) {
+		this.suggestedAmount = suggestedAmount;
 	}
 
-	public int getAverageValuation() {
-		return averageValuation;
+	public int getSuggestedValuation() {
+		return suggestedValuation;
 	}
 
-	public void setAverageValuation(int averageValuation) {
-		this.averageValuation = averageValuation;
+	public void setSuggestedValuation(int suggestedValuation) {
+		this.suggestedValuation = suggestedValuation;
 	}
 
 	public int getMedianValuation() {
@@ -106,13 +106,11 @@ public class ListingDTO extends AbstractDTO {
 
 	@Override
 	public String toString() {
-		return "ListingDTO [id=" + id + ", name=" + name + ", startingValuation="
-				+ startingValuation + ", startingValuationDate="
-				+ startingValuationDate + ", averageValuation="
-				+ averageValuation + ", medianValuation=" + medianValuation
-				+ ", listedOn=" + listedOn + ", closingOn=" + closingOn
-				+ ", state=" + state + ", summary=" + summary + ", owner="
-				+ owner + "]";
+		return "ListingDTO [name=" + name + ", suggestedValuation="
+				+ suggestedValuation + ", suggestedPercentage="
+				+ suggestedPercentage + ", suggestedAmount=" + suggestedAmount
+				+ ", medianValuation=" + medianValuation + ", listedOn="
+				+ listedOn + ", closingOn=" + closingOn + ", state=" + state
+				+ ", summary=" + summary + ", owner=" + owner + "]";
 	}
-
 }

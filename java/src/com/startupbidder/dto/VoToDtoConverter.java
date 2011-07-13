@@ -6,7 +6,7 @@ import java.util.List;
 import com.startupbidder.vo.BidVO;
 import com.startupbidder.vo.ListingVO;
 import com.startupbidder.vo.CommentVO;
-import com.startupbidder.vo.RatingVO;
+import com.startupbidder.vo.VoteVO;
 import com.startupbidder.vo.UserVO;
 
 public class VoToDtoConverter {
@@ -25,14 +25,14 @@ public class VoToDtoConverter {
 	public static ListingDTO convert(ListingVO bpVO) {
 		ListingDTO bp = new ListingDTO();
 		bp.setIdFromString(bpVO.getId());
-		bp.setAverageValuation(bpVO.getAverageValuation());
 		bp.setClosingOn(bpVO.getClosingOn());
 		bp.setListedOn(bpVO.getListedOn());
 		bp.setMedianValuation(bpVO.getMedianValuation());
 		bp.setName(bpVO.getName());
 		bp.setOwner(bpVO.getOwner());
-		bp.setStartingValuation(bpVO.getStartingValuation());
-		bp.setStartingValuationDate(bpVO.getStartingValuationDate());
+		bp.setSuggestedValuation(bpVO.getSuggestedValuation());
+		bp.setSuggestedPercentage(bpVO.getSuggestedPercentage());
+		bp.setSuggestedAmount(bpVO.getSuggestedAmount());
 		bp.setState(ListingDTO.State.valueOf(bpVO.getState()));
 		bp.setSummary(bpVO.getSummary());
 		return bp;
@@ -47,8 +47,8 @@ public class VoToDtoConverter {
 		return comment;
 	}
 	
-	public static RatingDTO convert(RatingVO ratingVO) {
-		RatingDTO rating = new RatingDTO();
+	public static VoteDTO convert(VoteVO ratingVO) {
+		VoteDTO rating = new VoteDTO();
 		rating.setIdFromString(ratingVO.getId());
 		rating.setListing(ratingVO.getListing());
 		rating.setUser(ratingVO.getUser());

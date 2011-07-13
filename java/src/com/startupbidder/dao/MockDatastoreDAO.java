@@ -16,6 +16,7 @@ import com.startupbidder.dto.ListingDTO;
 import com.startupbidder.dto.CommentDTO;
 import com.startupbidder.dto.UserDTO;
 import com.startupbidder.dto.UserStatistics;
+import com.startupbidder.dto.VoteDTO;
 import com.startupbidder.vo.ListPropertiesVO;
 
 /**
@@ -39,7 +40,7 @@ public class MockDatastoreDAO implements DatastoreDAO {
 	}
 	
 	Map<String, ListingDTO> lCache = new HashMap<String, ListingDTO>();
-	Map<String, Integer> ratingCache = new HashMap<String, Integer>();
+	Map<String, VoteDTO> voteCache = new HashMap<String, VoteDTO>();
 	Map<String, CommentDTO> commentCache = new HashMap<String, CommentDTO>();
 	Map<String, Integer> lCommentCache = new HashMap<String, Integer>();
 	Map<String, BidDTO> bidCache = new HashMap<String, BidDTO>();
@@ -115,8 +116,17 @@ public class MockDatastoreDAO implements DatastoreDAO {
 	public List<ListingDTO> getTopListings(ListPropertiesVO listingProperties) {
 		List<ListingDTO> list = new ArrayList<ListingDTO>();
 		
+		// calculates vote number per listing
+		Map<String, Integer> accVotes = new HashMap<String, Integer>();
+		for(VoteDTO vote : voteCache.values()) {
+			if(accVotes.containsKey(vote.getListing())) {
+				accVotes.put(vote.getListing(), accVotes.get(vote.getListing()) + 1);
+			} else {
+				accVotes.put(vote.getListing(), 1);
+			}
+		}
 		// sort rating cache
-		List<Map.Entry<String, Integer>> rating = new ArrayList<Map.Entry<String, Integer>>(ratingCache.entrySet());
+		List<Map.Entry<String, Integer>> rating = new ArrayList<Map.Entry<String, Integer>>(accVotes.entrySet());
 		Collections.sort(rating, new Comparator<Map.Entry<String, Integer>> () {
 			public int compare(Map.Entry<String, Integer> left, Map.Entry<String, Integer> right) {
 				if (left.getValue() == right.getValue()) {
@@ -136,6 +146,9 @@ public class MockDatastoreDAO implements DatastoreDAO {
 				list.add(lCache.get(bpEntry.getKey()));
 			}
 		}
+		
+		listingProperties.setNumberOfResults(list.size());
+		listingProperties.setTotalResults(lCache.size());
 		return list;
 	}
 
@@ -172,6 +185,9 @@ public class MockDatastoreDAO implements DatastoreDAO {
 				list.add(lCache.get(bpEntry.getKey()));
 			}
 		}
+		
+		listingProperties.setNumberOfResults(list.size());
+		listingProperties.setTotalResults(lCache.size());
 		return list;
 	}
 	
@@ -185,32 +201,45 @@ public class MockDatastoreDAO implements DatastoreDAO {
 			}
 		}
 		int maxItems = listingProperties.getMaxResults();
+		listingProperties.setTotalResults(list.size());
+		
 		list.subList(0, (list.size() < maxItems ? list.size() : maxItems));
+		listingProperties.setNumberOfResults(list.size());
 		return list;
 	}
 	
 	public int valueUpListing(String listingId, String userId) {
-		Integer valuation = ratingCache.get(listingId);
-		if (valuation == null) {
-			log.log(Level.INFO, "Up valuation for " + listingId + " -> 1");
-			ratingCache.put(listingId, 1);
-		} else {
-			log.log(Level.INFO, "Up valuation for " + listingId + " -> " + (valuation + 1));
-			ratingCache.put(listingId, valuation + 1);
+		int numberOfVotes = 0;
+		boolean alreadyVoted = false;
+		for (VoteDTO vote : voteCache.values()) {
+			if (vote.getListing().equals(listingId)) {
+				numberOfVotes++;
+				if (vote.getUser().equals(userId)) {
+					// user has already voted for that listing
+					alreadyVoted = true;
+				}
+			}
 		}
-		return ratingCache.get(listingId);
+		if (!alreadyVoted) {
+			VoteDTO vote = new VoteDTO();
+			vote.setListing(listingId);
+			vote.setUser(userId);
+			vote.setValue(1);
+			vote.createKey(String.valueOf(vote.hashCode()));
+			numberOfVotes++;
+		}
+		return numberOfVotes;
 	}
 
 	public int valueDownListing(String listingId, String userId) {
-		Integer valuation = ratingCache.get(listingId);
-		if (valuation == null) {
-			log.log(Level.INFO, "Down valuation for " + listingId + " -> -1");
-			ratingCache.put(listingId, -1);
-		} else {
-			log.log(Level.INFO, "Down valuation for " + listingId + " -> " + (valuation - 1));
-			ratingCache.put(listingId, valuation - 1);
+		log.log(Level.SEVERE, "valueDownListing is not supported now, we only care about number of votes");
+		int numberOfVotes = 0;
+		for (VoteDTO vote : voteCache.values()) {
+			if (vote.getListing().equals(listingId)) {
+				numberOfVotes++;
+			}
 		}
-		return ratingCache.get(listingId);
+		return numberOfVotes;
 	}
 
 	@Override
@@ -257,10 +286,14 @@ public class MockDatastoreDAO implements DatastoreDAO {
 	}
 
 	@Override
-	public int getRating(String listingId) {
-		Integer rating = ratingCache.get(listingId);
-		log.log(Level.INFO, "Rating for " + listingId + " is " + rating);
-		return rating == null ? 0 : rating.intValue();
+	public int getNumberOfVotes(String listingId) {
+		int numberOfVotes = 0;
+		for (VoteDTO vote : voteCache.values()) {
+			if (vote.getListing().equals(listingId)) {
+				numberOfVotes++;
+			}
+		}
+		return numberOfVotes;
 	}
 
 	@Override
@@ -327,7 +360,7 @@ public class MockDatastoreDAO implements DatastoreDAO {
 				bid.setFundType(new Random().nextInt(2) > 0 ? BidDTO.FundType.SYNDICATE : BidDTO.FundType.SOLE_INVESTOR);
 				bid.setPercentOfCompany(new Random().nextInt(50) + 10);
 				bid.setPlaced(new Date(System.currentTimeMillis() - bidNum * 53 * 60 * 1000));
-				bid.setValue(new Random().nextInt(50) * 1000 + bp.getStartingValuation());
+				bid.setValue(new Random().nextInt(50) * 1000 + bp.getSuggestedValuation());
 				
 				bidCache.put(bid.getIdAsString(), bid);
 			}
@@ -395,6 +428,20 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		user.setAccreditedInvestor(true);
 		userCache.put(user.getIdAsString(), user);
 	}
+	
+	private void createMockVotes(ListingDTO listing) {
+		List<UserDTO> users = new ArrayList<UserDTO>(userCache.values());
+		int numOfVotes = new Random().nextInt(users.size());
+		while (numOfVotes > 0) {
+			VoteDTO vote = new VoteDTO();
+			vote.setListing(listing.getIdAsString());
+			vote.setUser(users.get(numOfVotes).getIdAsString());
+			vote.setValue(1);
+			vote.createKey(String.valueOf(vote.hashCode()));
+			voteCache.put(vote.getIdAsString(), vote);
+			numOfVotes--;
+		}
+	}
 
 	/**
 	 * Generates mock listings
@@ -407,22 +454,23 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		bp.createKey("mislead");
 		bp.setName("MisLead");
 		bp.setOwner(userIds.get(bpNum++ % userIds.size()));
-		bp.setStartingValuation(20000);
-		bp.setStartingValuationDate(new Date(System.currentTimeMillis() - 45 * 60 * 60 * 1000));
+		bp.setSuggestedValuation(20000);
+		bp.setSuggestedPercentage(25);
+		bp.setSuggestedAmount(bp.getSuggestedValuation()*bp.getSuggestedPercentage()/100);
 		bp.setListedOn(new Date(System.currentTimeMillis() - 45 * 60 * 60 * 1000));
 		bp.setState(ListingDTO.State.ACTIVE);
 		bp.setClosingOn(new Date(System.currentTimeMillis() + 12 * 24 * 60 * 60 * 1000));
 		bp.setSummary("Executive summary for <b>MisLead</b>");
 		lCache.put(bp.getIdAsString(), bp);
-		ratingCache.put(bp.getIdAsString(), 5);
-
+		createMockVotes(bp);
 	
 		bp = new ListingDTO();
 		bp.createKey("semanticsearch");
 		bp.setName("Semantic Search");
 		bp.setOwner(userIds.get(bpNum++ % userIds.size()));
-		bp.setStartingValuation(40000);
-		bp.setStartingValuationDate(new Date(System.currentTimeMillis() - 15 * 60 * 60 * 1000));
+		bp.setSuggestedValuation(40000);
+		bp.setSuggestedPercentage(45);
+		bp.setSuggestedAmount(bp.getSuggestedValuation()*bp.getSuggestedPercentage()/100);
 		bp.setListedOn(new Date(System.currentTimeMillis() - 15 * 60 * 60 * 1000));
 		bp.setState(ListingDTO.State.ACTIVE);
 		bp.setClosingOn(new Date(System.currentTimeMillis() + 24 * 24 * 60 * 60 * 1000));
@@ -432,14 +480,15 @@ public class MockDatastoreDAO implements DatastoreDAO {
 				"Cuil flopped. Wolfram Alpha is irrelevant. Powerset, which was a semantic" + 
 				" search engine was bailed out by Microsoft, which acquired it.");
 		lCache.put(bp.getIdAsString(), bp);
-		ratingCache.put(bp.getIdAsString(), 8);
+		createMockVotes(bp);
 
 		bp = new ListingDTO();
 		bp.createKey("socialrecommendations");
 		bp.setName("Social recommendations");
 		bp.setOwner(userIds.get(bpNum++ % userIds.size()));
-		bp.setStartingValuation(15000);
-		bp.setStartingValuationDate(new Date(System.currentTimeMillis() - 20 * 60 * 60 * 1000));
+		bp.setSuggestedValuation(15000);
+		bp.setSuggestedPercentage(10);
+		bp.setSuggestedAmount(bp.getSuggestedValuation()*bp.getSuggestedPercentage()/100);
 		bp.setListedOn(new Date(System.currentTimeMillis() - 20 * 60 * 60 * 1000));
 		bp.setState(ListingDTO.State.ACTIVE);
 		bp.setClosingOn(new Date(System.currentTimeMillis() + 30 * 24 * 60 * 60 * 1000));
@@ -450,14 +499,15 @@ public class MockDatastoreDAO implements DatastoreDAO {
 				"Hunch is pivoting towards non-consumer-facing white label business. " +
 				"Get Glue has had some success of late, but it's hardly a breakout business.");
 		lCache.put(bp.getIdAsString(), bp);
-		ratingCache.put(bp.getIdAsString(), 45);
+		createMockVotes(bp);
 
 		bp = new ListingDTO();
 		bp.createKey("localnewssites");
 		bp.setName("Local news sites");
 		bp.setOwner(userIds.get(bpNum++ % userIds.size()));
-		bp.setStartingValuation(49000);
-		bp.setStartingValuationDate(new Date(System.currentTimeMillis() - 3 * 60 * 60 * 1000));
+		bp.setSuggestedValuation(49000);
+		bp.setSuggestedPercentage(20);
+		bp.setSuggestedAmount(bp.getSuggestedValuation()*bp.getSuggestedPercentage()/100);
 		bp.setListedOn(new Date(System.currentTimeMillis() - 3 * 60 * 60 * 1000));
 		bp.setState(ListingDTO.State.ACTIVE);
 		bp.setClosingOn(new Date(System.currentTimeMillis() + 27 * 24 * 60 * 60 * 1000));
@@ -468,14 +518,15 @@ public class MockDatastoreDAO implements DatastoreDAO {
 				"businesses, and classifieds. But, it appears to be too niche to scale into a big" +
 				" business.");
 		lCache.put(bp.getIdAsString(), bp);
-		ratingCache.put(bp.getIdAsString(), -6);
+		createMockVotes(bp);
 
 		bp = new ListingDTO();
 		bp.createKey("micropayments");
 		bp.setName("Micropayments");
 		bp.setOwner(userIds.get(bpNum++ % userIds.size()));
-		bp.setStartingValuation(5000);
-		bp.setStartingValuationDate(new Date(System.currentTimeMillis() - 23 * 60 * 60 * 1000));
+		bp.setSuggestedValuation(5000);
+		bp.setSuggestedPercentage(49);
+		bp.setSuggestedAmount(bp.getSuggestedValuation()*bp.getSuggestedPercentage()/100);
 		bp.setListedOn(new Date(System.currentTimeMillis() - 23 * 60 * 60 * 1000));
 		bp.setState(ListingDTO.State.ACTIVE);
 		bp.setClosingOn(new Date(System.currentTimeMillis() + 15 * 24 * 60 * 60 * 1000));
@@ -485,14 +536,15 @@ public class MockDatastoreDAO implements DatastoreDAO {
 				" or pay for a small design you could with ease. So far, these micropayment" +
 				" plans have not worked.");
 		lCache.put(bp.getIdAsString(), bp);
-		ratingCache.put(bp.getIdAsString(), 0);
+		createMockVotes(bp);
 
 		bp = new ListingDTO();
 		bp.createKey("kill email");
 		bp.setName("Kill email");
 		bp.setOwner(userIds.get(bpNum++ % userIds.size()));
-		bp.setStartingValuation(40000);
-		bp.setStartingValuationDate(new Date(System.currentTimeMillis() - 6 * 60 * 60 * 1000));
+		bp.setSuggestedValuation(40000);
+		bp.setSuggestedPercentage(50);
+		bp.setSuggestedAmount(bp.getSuggestedValuation()*bp.getSuggestedPercentage()/100);
 		bp.setListedOn(new Date(System.currentTimeMillis() - 6 * 60 * 60 * 1000));
 		bp.setState(ListingDTO.State.ACTIVE);
 		bp.setClosingOn(new Date(System.currentTimeMillis() + 78 * 24 * 60 * 60 * 1000));
@@ -502,14 +554,15 @@ public class MockDatastoreDAO implements DatastoreDAO {
 				"Google Wave. It was supposed to change email forever. It was going to " +
 				"displace email. Didn't happen.");
 		lCache.put(bp.getIdAsString(), bp);
-		ratingCache.put(bp.getIdAsString(), -38);
+		createMockVotes(bp);
 
 		bp = new ListingDTO();
 		bp.createKey("better company car");
 		bp.setName("Better company car");
 		bp.setOwner(userIds.get(bpNum++ % userIds.size()));
-		bp.setStartingValuation(100000);
-		bp.setStartingValuationDate(new Date(System.currentTimeMillis() - 8 * 60 * 60 * 1000));
+		bp.setSuggestedValuation(100000);
+		bp.setSuggestedPercentage(15);
+		bp.setSuggestedAmount(bp.getSuggestedValuation()*bp.getSuggestedPercentage()/100);
 		bp.setListedOn(new Date(System.currentTimeMillis() - 8 * 60 * 60 * 1000));
 		bp.setState(ListingDTO.State.ACTIVE);
 		bp.setClosingOn(new Date(System.currentTimeMillis() + 30 * 24 * 60 * 60 * 1000));
@@ -520,6 +573,6 @@ public class MockDatastoreDAO implements DatastoreDAO {
 				"It's far from certain it will succeed. Even when its next car comes out, Nissan " +
 				"could be making a luxury electric car that competes with Tesla.");
 		lCache.put(bp.getIdAsString(), bp);
-		ratingCache.put(bp.getIdAsString(), 9);
+		createMockVotes(bp);
 	}
 }

@@ -71,15 +71,15 @@ public class ServiceFacade {
 	 */
 	public ListingListVO getUserBusinessPlans(String userId, ListPropertiesVO listingProperties) {
 		
-		List<ListingVO> bpList = DtoToVoConverter.convertListings(getDAO().getUserListings(userId, listingProperties));
-		for (ListingVO bp : bpList) {
-			bp.setNumberOfComments(getDAO().getActivity(bp.getId()));
-			bp.setRating(getDAO().getRating(bp.getId()));
-			bp.setNumberOfBids(getDAO().getBidsForListing(bp.getId()).size());
+		List<ListingVO> listings = DtoToVoConverter.convertListings(getDAO().getUserListings(userId, listingProperties));
+		for (ListingVO listing : listings) {
+			listing.setNumberOfComments(getDAO().getActivity(listing.getId()));
+			listing.setNumberOfBids(getDAO().getBidsForListing(listing.getId()).size());
+			listing.setNumberOfVotes(getDAO().getNumberOfVotes(listing.getId()));
 		}
 		
 		ListingListVO list = new ListingListVO();
-		list.setListings(bpList);
+		list.setListings(listings);
 		list.setListingsProperties(listingProperties);
 
 		return list;
@@ -92,14 +92,14 @@ public class ServiceFacade {
 	 * @return List of business plans
 	 */
 	public ListingListVO getTopBusinessPlans(ListPropertiesVO listingProperties) {
-		List<ListingVO> bpList = DtoToVoConverter.convertListings(getDAO().getTopListings(listingProperties));
-		for (ListingVO bp : bpList) {
-			bp.setNumberOfComments(getDAO().getActivity(bp.getId()));
-			bp.setRating(getDAO().getRating(bp.getId()));
-			bp.setNumberOfBids(getDAO().getBidsForListing(bp.getId()).size());
+		List<ListingVO> listings = DtoToVoConverter.convertListings(getDAO().getTopListings(listingProperties));
+		for (ListingVO listing : listings) {
+			listing.setNumberOfComments(getDAO().getActivity(listing.getId()));
+			listing.setNumberOfVotes(getDAO().getNumberOfVotes(listing.getId()));
+			listing.setNumberOfBids(getDAO().getBidsForListing(listing.getId()).size());
 		}
 		ListingListVO list = new ListingListVO();
-		list.setListings(bpList);
+		list.setListings(listings);
 		list.setListingsProperties(listingProperties);
 
 		return list;
@@ -113,14 +113,14 @@ public class ServiceFacade {
 	 * @return List of business plans
 	 */
 	public ListingListVO getActiveBusinessPlans(ListPropertiesVO listingProperties) {
-		List<ListingVO> bpList = DtoToVoConverter.convertListings(getDAO().getActiveListings(listingProperties));
-		for (ListingVO bp : bpList) {
-			bp.setNumberOfComments(getDAO().getActivity(bp.getId()));
-			bp.setRating(getDAO().getRating(bp.getId()));
-			bp.setNumberOfBids(getDAO().getBidsForListing(bp.getId()).size());
+		List<ListingVO> listings = DtoToVoConverter.convertListings(getDAO().getActiveListings(listingProperties));
+		for (ListingVO listing : listings) {
+			listing.setNumberOfComments(getDAO().getActivity(listing.getId()));
+			listing.setNumberOfVotes(getDAO().getNumberOfVotes(listing.getId()));
+			listing.setNumberOfBids(getDAO().getBidsForListing(listing.getId()).size());
 		}
 		ListingListVO list = new ListingListVO();
-		list.setListings(bpList);
+		list.setListings(listings);
 		list.setListingsProperties(listingProperties);
 
 		return list;
@@ -258,7 +258,7 @@ public class ServiceFacade {
 	 * @return Current rating
 	 */
 	public int getRating(String businessPlanId) {
-		return getDAO().getRating(businessPlanId);
+		return getDAO().getNumberOfVotes(businessPlanId);
 	}
 	
 	/**

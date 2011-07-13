@@ -1,5 +1,7 @@
 package com.startupbidder.vo;
 
+import org.codehaus.jackson.annotate.JsonProperty;
+
 /**
  * Contains properties which describes various list results.
  * It's also used to pass parameters to the data layer.
@@ -7,11 +9,17 @@ package com.startupbidder.vo;
  * @author greg
  */
 public class ListPropertiesVO {
+	@JsonProperty("start_index")
 	private int startIndex;
+	@JsonProperty("max_results")
 	private int maxResults;
+	@JsonProperty("total_results")
 	private int totalResults;
+	@JsonProperty("num_results")
 	private int numberOfResults;
+	@JsonProperty("prev_cursor")
 	private String prevCursor;
+	@JsonProperty("next_cursor")
 	private String nextCursor;
 	
 	public int getStartIndex() {

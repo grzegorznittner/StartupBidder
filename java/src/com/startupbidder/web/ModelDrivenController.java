@@ -30,18 +30,17 @@ public abstract class ModelDrivenController {
 	 */
 	abstract protected HttpHeaders executeAction(HttpServletRequest request);
 	
+	/**
+	 * Returns object which should be trasformed into one of the result types (JSON, HTML)
+	 */
+	abstract public Object getModel();
+	
 	public HttpHeaders execute(HttpServletRequest request) {
 		command = decomposeRequest(request.getPathInfo());
 		
 		return executeAction(request);
 	}
 
-	/**
-	 * Returns object which should be trasformed into one of the result types (JSON, HTML)
-	 */
-	abstract public Object getModel();
-	
-	@SuppressWarnings("rawtypes")
 	public void generateJson(HttpServletResponse response) {
 		ObjectMapper mapper = new ObjectMapper();
 		try {
@@ -70,6 +69,10 @@ public abstract class ModelDrivenController {
 	private String[] decomposeRequest(String path) {
 		int dotPos = path.indexOf('.');
 		int questionPos = path.indexOf('.');
+		// handling -1
+		dotPos = dotPos < 0 ? path.length() : dotPos;
+		questionPos = questionPos < 0 ? path.length() : questionPos;
+		
 		path = path.substring(0, dotPos > questionPos ? questionPos : dotPos);
 		StringTokenizer tokenizer = new StringTokenizer(path, "/");
 		

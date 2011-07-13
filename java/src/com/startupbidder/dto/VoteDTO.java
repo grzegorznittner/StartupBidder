@@ -1,16 +1,16 @@
 package com.startupbidder.dto;
 
 
-public class RatingDTO extends AbstractDTO {
+public class VoteDTO extends AbstractDTO {
 	private String listing;
 	private String user;
 	private int value;
 	
-	public RatingDTO() {
+	public VoteDTO() {
 	}
 
 	public String getKind() {
-		return "Rating";
+		return "Vote";
 	}
 
 	public String getListing() {
@@ -39,7 +39,7 @@ public class RatingDTO extends AbstractDTO {
 
 	@Override
 	public String toString() {
-		return "RatingDTO [id=" + id + ", listing=" + listing
+		return "VoteDTO [id=" + id + ", listing=" + listing
 				+ ", user=" + user + ", value=" + value + "]";
 	}
 	

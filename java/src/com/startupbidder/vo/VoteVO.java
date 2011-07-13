@@ -1,13 +1,13 @@
 package com.startupbidder.vo;
 
 
-public class RatingVO {
+public class VoteVO {
 	private String id;
 	private String listing;
 	private String user;
 	private int value;
 	
-	public RatingVO() {
+	public VoteVO() {
 	}
 
 	public String getId() {
@@ -43,7 +43,7 @@ public class RatingVO {
 
 	@Override
 	public String toString() {
-		return "RatingDTO [id=" + id + ", listing=" + listing
+		return "VoteDTO [id=" + id + ", listing=" + listing
 				+ ", user=" + user + ", value=" + value + "]";
 	}
 	
