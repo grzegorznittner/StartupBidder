@@ -39,13 +39,12 @@ public class HelloServlet extends HttpServlet {
 		PrintWriter out = resp.getWriter();
 		try {
 			out.println("<html><body>");
-			out.println("<p>Hello, " + user.getNickname() + "</p>");
+			out.println("<p>Hello, " + user.getNickname() + " ..................................");
+			out.println("<a href=\"" + userService.createLogoutURL("/hello") + "\">logout</a></p>");
 			
 			if (!(user.getNickname().contains("grzegorz.nittner") || user.getNickname().contains("johnarleyburns"))) {
 				out.println("<p>Sorry, you're not authorized to view contents!!!</p>");
 				return;
-			} else {
-				out.println("<p>Place content here!</p>");
 			}
 			
 			UserDTO currentUser = datastore.getUser(user.getNickname());
