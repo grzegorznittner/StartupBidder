@@ -1,5 +1,7 @@
 package com.startupbidder.web;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -10,6 +12,7 @@ import org.joda.time.Duration;
 
 import com.startupbidder.dao.DatastoreDAO;
 import com.startupbidder.dao.MockDatastoreDAO;
+import com.startupbidder.dto.BidDTO;
 import com.startupbidder.dto.ListingDTO;
 import com.startupbidder.dto.UserDTO;
 import com.startupbidder.dto.UserStatistics;
@@ -68,13 +71,35 @@ public class ServiceFacade {
 	}
 	
 	private void computeListingData(ListingVO listing) {
+		// set user data
 		UserDTO user = getDAO().getUser(listing.getOwner());
 		listing.setOwnerName(user != null ? user.getNickname() : "<<unknown>>");
-			
+		// set number of comments and number of votes
 		listing.setNumberOfComments(getDAO().getActivity(listing.getId()));
 		listing.setNumberOfVotes(getDAO().getNumberOfVotes(listing.getId()));
-		listing.setNumberOfBids(getDAO().getBidsForListing(listing.getId()).size());
 		
+		// calculate median for bids and set total number of bids
+		List<Integer> values = new ArrayList<Integer>();
+		List<BidDTO> bids = getDAO().getBidsForListing(listing.getId());
+		for (BidDTO bid : bids) {
+			values.add(bid.getValue());
+		}
+		Collections.sort(values);
+		int median = 0;
+		if (values.size() == 0) {
+			median = 0;
+		} else if (values.size() == 1) {
+			median = values.get(0);
+		} else if (values.size() % 2 == 1) {
+			median = values.get(values.size() / 2 + 1);
+		} else {
+			median = (values.get(values.size() / 2 - 1) + values.get(values.size() / 2)) / 2;
+		}
+		log.log(Level.INFO, "Values for '" + listing.getId() + "': " + values + ", median: " + median);
+		listing.setMedianValuation(median);
+		listing.setNumberOfBids(bids.size());
+		
+		// calculate daysAgo and daysLeft
 		Days daysAgo = Days.daysBetween(new DateTime(listing.getListedOn()), new DateTime());
 		listing.setDaysAgo(daysAgo.getDays());
 
@@ -83,13 +108,13 @@ public class ServiceFacade {
 	}
 	
 	/**
-	 * Returns business plans created by specified user
+	 * Returns listings created by specified user
 	 * 
 	 * @param userId User identifier
 	 * @param listingProperties Standard query parameters (maxResults and cursors)
-	 * @return List of business plans as JsonNode's tree
+	 * @return List of user's listings
 	 */
-	public ListingListVO getUserBusinessPlans(String userId, ListPropertiesVO listingProperties) {
+	public ListingListVO getUserListings(String userId, ListPropertiesVO listingProperties) {
 		
 		List<ListingVO> listings = DtoToVoConverter.convertListings(getDAO().getUserListings(userId, listingProperties));
 		int index = listingProperties.getStartIndex();
@@ -106,12 +131,12 @@ public class ServiceFacade {
 	}
 	
 	/**
-	 * Returns top rated business plans
+	 * Returns top rated listings
 	 * 
 	 * @param listingProperties Standard query parameters (maxResults and cursors)
-	 * @return List of business plans
+	 * @return List of listings
 	 */
-	public ListingListVO getTopBusinessPlans(ListPropertiesVO listingProperties) {
+	public ListingListVO getTopListings(ListPropertiesVO listingProperties) {
 		List<ListingVO> listings = DtoToVoConverter.convertListings(getDAO().getTopListings(listingProperties));
 		int index = listingProperties.getStartIndex();
 		for (ListingVO listing : listings) {
@@ -132,7 +157,7 @@ public class ServiceFacade {
 	 * @param listingProperties Standard query parameters (maxResults and cursors)
 	 * @return List of business plans
 	 */
-	public ListingListVO getActiveBusinessPlans(ListPropertiesVO listingProperties) {
+	public ListingListVO getActiveListings(ListPropertiesVO listingProperties) {
 		List<ListingVO> listings = DtoToVoConverter.convertListings(getDAO().getActiveListings(listingProperties));
 		int index = listingProperties.getStartIndex();
 		for (ListingVO listing : listings) {
@@ -147,24 +172,24 @@ public class ServiceFacade {
 	}
 	
 	/**
-	 * Value up business plan
+	 * Value up listing
 	 *
-	 * @param businessPlanId Business plan identifier
+	 * @param listingId Listing id
 	 * @param userId User identifier
-	 * @return Business plan rating
+	 * @return Number of votes per listing
 	 */
-	public int valueUpBusinessPlan(String businessPlanId, String userId) {
-		return getDAO().valueUpListing(businessPlanId, userId);
+	public int valueUpListing(String listingId, String userId) {
+		return getDAO().valueUpListing(listingId, userId);
 	}
 	
 	/**
-	 * Value down business plan
+	 * Value down listing
 	 *
-	 * @param listingId Business plan identifier
+	 * @param listingId Listing id
 	 * @param userId User identifier
-	 * @return Business plan rating
+	 * @return Number of votes per listing
 	 */
-	public int valueDownBusinessPlan(String listingId, String userId) {
+	public int valueDownListing(String listingId, String userId) {
 		return getDAO().valueDownListing(listingId, userId);
 	}
 	
@@ -296,6 +321,12 @@ public class ServiceFacade {
 
 	public CommentVO getComment(String commentId) {
 		return DtoToVoConverter.convert(getDAO().getComment(commentId));
+	}
+
+	public ListingVO getListing(String listingId) {
+		ListingVO listing = DtoToVoConverter.convert(getDAO().getListing(listingId));
+		computeListingData(listing);
+		return listing;
 	}
 
 }

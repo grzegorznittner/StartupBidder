@@ -34,7 +34,7 @@ public class VoTest {
 	public void arrayNodeTest() {
 		ListPropertiesVO listingProperties = new ListPropertiesVO();
 		listingProperties.setMaxResults(10);
-		ListingListVO listings = service.getTopBusinessPlans(listingProperties);
+		ListingListVO listings = service.getTopListings(listingProperties);
 		
 		CommentListVO comments = service.getCommentsForListing(listings.getListings().get(0).getId(), listingProperties);
 		

@@ -35,9 +35,11 @@ public class ListingController extends ModelDrivenController {
 				return closing(request);
 			} else if("user".equalsIgnoreCase(getCommand(1))) {
 				return user(request);
+			} else if("get".equalsIgnoreCase(getCommand(1))) {
+				return get(request);
 			} else {
 				// default action
-				return top(request);
+				return index(request);
 			}
 		} else if ("PUT".equalsIgnoreCase(request.getMethod()) ||
 				"POST".equalsIgnoreCase(request.getMethod())) {
@@ -67,49 +69,49 @@ public class ListingController extends ModelDrivenController {
 	// GET /listings/closing
 	private HttpHeaders closing(HttpServletRequest request) {
 		ListPropertiesVO listingProperties = getListProperties(request);
-    	listings = ServiceFacade.instance().getTopBusinessPlans(listingProperties);
+    	listings = ServiceFacade.instance().getTopListings(listingProperties);
         return new DefaultHttpHeaders("valued").disableCaching();
 	}
 
 	// GET /listings/latest
 	private HttpHeaders latest(HttpServletRequest request) {
 		ListPropertiesVO listingProperties = getListProperties(request);
-    	listings = ServiceFacade.instance().getTopBusinessPlans(listingProperties);
+    	listings = ServiceFacade.instance().getTopListings(listingProperties);
         return new DefaultHttpHeaders("valued").disableCaching();
 	}
 
 	// GET /listings/discussed
 	private HttpHeaders discussed(HttpServletRequest request) {
 		ListPropertiesVO listingProperties = getListProperties(request);
-    	listings = ServiceFacade.instance().getTopBusinessPlans(listingProperties);
+    	listings = ServiceFacade.instance().getTopListings(listingProperties);
         return new DefaultHttpHeaders("valued").disableCaching();
 	}
 
 	// GET /listings/popular
 	private HttpHeaders popular(HttpServletRequest request) {
 		ListPropertiesVO listingProperties = getListProperties(request);
-    	listings = ServiceFacade.instance().getTopBusinessPlans(listingProperties);
+    	listings = ServiceFacade.instance().getTopListings(listingProperties);
         return new DefaultHttpHeaders("valued").disableCaching();
 	}
 
 	// GET /listings/valued
 	private HttpHeaders valued(HttpServletRequest request) {
 		ListPropertiesVO listingProperties = getListProperties(request);
-    	listings = ServiceFacade.instance().getTopBusinessPlans(listingProperties);
+    	listings = ServiceFacade.instance().getTopListings(listingProperties);
         return new DefaultHttpHeaders("valued").disableCaching();
 	}
 
 	// GET /listings/top
     private HttpHeaders top(HttpServletRequest request) {
     	ListPropertiesVO listingProperties = getListProperties(request);
-    	listings = ServiceFacade.instance().getTopBusinessPlans(listingProperties);
+    	listings = ServiceFacade.instance().getTopListings(listingProperties);
         return new DefaultHttpHeaders("top").disableCaching();
     }
 
     // GET /listings/active
     private HttpHeaders active(HttpServletRequest request) {
 		ListPropertiesVO listingProperties = getListProperties(request);
-    	listings = ServiceFacade.instance().getActiveBusinessPlans(listingProperties);
+    	listings = ServiceFacade.instance().getActiveListings(listingProperties);
         return new DefaultHttpHeaders("active").disableCaching();
     }
 
@@ -118,8 +120,22 @@ public class ListingController extends ModelDrivenController {
     	String userId = request.getParameter("user");
 		ListPropertiesVO listingProperties = getListProperties(request);
 
-    	listings = ServiceFacade.instance().getUserBusinessPlans(userId, listingProperties);
-        return new DefaultHttpHeaders("active").disableCaching();
+    	listings = ServiceFacade.instance().getUserListings(userId, listingProperties);
+        return new DefaultHttpHeaders("user").disableCaching();
+    }
+
+    // GET /listings/get
+    private HttpHeaders get(HttpServletRequest request) {
+    	String listingId = getCommandOrParameter(request, 2, "id");
+    	listing = ServiceFacade.instance().getListing(listingId);
+        return new DefaultHttpHeaders("get").disableCaching();
+    }
+
+    // GET /listings/
+    private HttpHeaders index(HttpServletRequest request) {
+    	String listingId = getCommandOrParameter(request, 1, "id");
+    	listing = ServiceFacade.instance().getListing(listingId);
+        return new DefaultHttpHeaders("index").disableCaching();
     }
 
 	public Object getModel() {
