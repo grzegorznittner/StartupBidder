@@ -4,9 +4,14 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.joda.time.DateTime;
+import org.joda.time.Days;
+import org.joda.time.Duration;
+
 import com.startupbidder.dao.DatastoreDAO;
 import com.startupbidder.dao.MockDatastoreDAO;
 import com.startupbidder.dto.ListingDTO;
+import com.startupbidder.dto.UserDTO;
 import com.startupbidder.dto.UserStatistics;
 import com.startupbidder.dto.VoToDtoConverter;
 import com.startupbidder.vo.BidListVO;
@@ -62,6 +67,21 @@ public class ServiceFacade {
 		return DtoToVoConverter.convert(getDAO().getUser(userData.getId()));
 	}
 	
+	private void computeListingData(ListingVO listing) {
+		UserDTO user = getDAO().getUser(listing.getOwner());
+		listing.setOwnerName(user != null ? user.getNickname() : "<<unknown>>");
+			
+		listing.setNumberOfComments(getDAO().getActivity(listing.getId()));
+		listing.setNumberOfVotes(getDAO().getNumberOfVotes(listing.getId()));
+		listing.setNumberOfBids(getDAO().getBidsForListing(listing.getId()).size());
+		
+		Days daysAgo = Days.daysBetween(new DateTime(listing.getListedOn()), new DateTime());
+		listing.setDaysAgo(daysAgo.getDays());
+
+		Days daysLeft = Days.daysBetween(new DateTime(), new DateTime(listing.getClosingOn()));
+		listing.setDaysLeft(daysLeft.getDays());
+	}
+	
 	/**
 	 * Returns business plans created by specified user
 	 * 
@@ -72,10 +92,10 @@ public class ServiceFacade {
 	public ListingListVO getUserBusinessPlans(String userId, ListPropertiesVO listingProperties) {
 		
 		List<ListingVO> listings = DtoToVoConverter.convertListings(getDAO().getUserListings(userId, listingProperties));
+		int index = listingProperties.getStartIndex();
 		for (ListingVO listing : listings) {
-			listing.setNumberOfComments(getDAO().getActivity(listing.getId()));
-			listing.setNumberOfBids(getDAO().getBidsForListing(listing.getId()).size());
-			listing.setNumberOfVotes(getDAO().getNumberOfVotes(listing.getId()));
+			computeListingData(listing);
+			listing.setOrderNumber(index++);
 		}
 		
 		ListingListVO list = new ListingListVO();
@@ -93,10 +113,10 @@ public class ServiceFacade {
 	 */
 	public ListingListVO getTopBusinessPlans(ListPropertiesVO listingProperties) {
 		List<ListingVO> listings = DtoToVoConverter.convertListings(getDAO().getTopListings(listingProperties));
+		int index = listingProperties.getStartIndex();
 		for (ListingVO listing : listings) {
-			listing.setNumberOfComments(getDAO().getActivity(listing.getId()));
-			listing.setNumberOfVotes(getDAO().getNumberOfVotes(listing.getId()));
-			listing.setNumberOfBids(getDAO().getBidsForListing(listing.getId()).size());
+			computeListingData(listing);
+			listing.setOrderNumber(index++);
 		}
 		ListingListVO list = new ListingListVO();
 		list.setListings(listings);
@@ -104,7 +124,7 @@ public class ServiceFacade {
 
 		return list;
 	}
-	
+
 	/**
 	 * Returns most active business plans
 	 * 
@@ -114,10 +134,10 @@ public class ServiceFacade {
 	 */
 	public ListingListVO getActiveBusinessPlans(ListPropertiesVO listingProperties) {
 		List<ListingVO> listings = DtoToVoConverter.convertListings(getDAO().getActiveListings(listingProperties));
+		int index = listingProperties.getStartIndex();
 		for (ListingVO listing : listings) {
-			listing.setNumberOfComments(getDAO().getActivity(listing.getId()));
-			listing.setNumberOfVotes(getDAO().getNumberOfVotes(listing.getId()));
-			listing.setNumberOfBids(getDAO().getBidsForListing(listing.getId()).size());
+			computeListingData(listing);
+			listing.setOrderNumber(index++);
 		}
 		ListingListVO list = new ListingListVO();
 		list.setListings(listings);
