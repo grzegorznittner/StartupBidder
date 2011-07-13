@@ -23,8 +23,8 @@ public class ListingController extends ModelDrivenController {
 				return top(request);
 			} else if("active".equalsIgnoreCase(getCommand(1))) {
 				return active(request);
-			} else if("valued".equalsIgnoreCase(getCommand(1))) {
-				return valued(request);
+			} else if("valuation".equalsIgnoreCase(getCommand(1))) {
+				return valuation(request);
 			} else if("popular".equalsIgnoreCase(getCommand(1))) {
 				return popular(request);
 			} else if("discussed".equalsIgnoreCase(getCommand(1))) {
@@ -95,7 +95,7 @@ public class ListingController extends ModelDrivenController {
 	}
 
 	// GET /listings/valued
-	private HttpHeaders valued(HttpServletRequest request) {
+	private HttpHeaders valuation(HttpServletRequest request) {
 		ListPropertiesVO listingProperties = getListProperties(request);
     	listings = ServiceFacade.instance().getTopListings(listingProperties);
         return new DefaultHttpHeaders("valued").disableCaching();

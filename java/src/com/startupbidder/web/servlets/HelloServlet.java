@@ -63,7 +63,7 @@ public class HelloServlet extends HttpServlet {
 			
 			out.println("<a href=\"/listings/top/.html\">Top listings</a><br/>");
 			out.println("<a href=\"/listings/active/.html\">Active listings</a><br/>");
-			out.println("<a href=\"/listings/valued/.html\">Top valued listings</a><br/>");
+			out.println("<a href=\"/listings/valuation/.html\">Top valued listings</a><br/>");
 			out.println("<a href=\"/listings/popular/.html\">Most popular listings</a><br/>");
 			out.println("<a href=\"/listings/latest/.html\">Latest listings</a><br/>");
 			out.println("<a href=\"/listings/closing/.html\">Closing listings</a><br/>");
