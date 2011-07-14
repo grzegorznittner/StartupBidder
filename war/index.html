@@ -2098,20 +2098,31 @@ s = (p + b + c + v) / (t + 2)^1.5
         self.commentsForProfile = function(profile_id){
             return self.controller.backend.commentsForProfile(profile_id);
         };
+        self.displayNoResultsHtml = function(resultsHtml) {
+            $('#comments-listing-snippet').html('Comments:');
+            $('#comment-loggedin-add').hide();
+            $('#comment-not-loggedin-msg').hide();
+            $('#comments-content-results-list').html(resultsHtml);
+        };
         self.displayResults = function(results){
-            var listing = results.listing;
-            var comments = results.comments;
+            var listing = results ? results.listing : null;
+            var comments = results ? results.comments : null;
             var profile = self.controller.user.profile;
             var resultsHtml = '';
             var comment;
-            for (var i = 0; i < comments.length; i++) { // create results
-                comment = comments[i];
-                resultsHtml += self.generateResultHtml(i, comment, listing, profile);
+            if (comments && comments.length > 0) {
+                for (var i = 0; i < comments.length; i++) { // create results
+                    comment = comments[i];
+                    resultsHtml += self.generateResultHtml(i, comment, listing, profile);
+                }
             }
-            if (resultsHtml == '') {
-                resultsHtml = '<em>no comments found</em>';
+            else if (comments && comments.length == 0) {
+                resultsHtml = '<i>no comments found</i>';
             }
-            // add html
+            else {
+                resultsHtml = '<i>loading...</i>';
+            }
+            // display html
             $('#comments-content-results-list').html(resultsHtml);
             // enable editable if logged in
             if (listing) {
@@ -2136,28 +2147,31 @@ s = (p + b + c + v) / (t + 2)^1.5
                 $('#comment-not-loggedin-msg').hide();
             }
             // bind results
-            for (var i = 0; i < comments.length; i++) {
-                comment = comments[i];
-                $('#comments-item-profile-'+i).data('profile_id',comment.profile_id).unbind().bind('click', function(){
-                    self.controller.execute({page:'profile', profile_id:$(this).data('profile_id')});
-                });           
-                $('#comments-item-listing-'+i).data('listing_id',comment.listing_id).unbind().bind('click', function(){
-                    self.controller.execute({page:'listing', listing_id:$(this).data('listing_id')});
-                });           
-                if (profile && profile.profile_id == comment.profile_id)
-                    $('#comments-item-delete-'+i)
-                        .data('comment_id', comment.comment_id)
-                        .data('profile_id', profile ? comment.profile_id : '')
-                        .data('listing_id', listing ? comment.listing_id : '')
-                        .unbind().bind('click', function(){
-                        self.controller.execute({
-                            page:'comments',
-                            action:'delete',
-                            comment_id:$(this).data('comment_id'),
-                            profile_id:$(this).data('profile_id'),
-                            listing_id:$(this).data('listing_id')
-                        });
+            if (comments && comments.length > 0) {
+                for (var i = 0; i < comments.length; i++) {
+                    comment = comments[i];
+                    $('#comments-item-profile-'+i).data('profile_id',comment.profile_id).unbind().bind('click', function(){
+                        self.controller.execute({page:'profile', profile_id:$(this).data('profile_id')});
                     });           
+                    $('#comments-item-listing-'+i).data('listing_id',comment.listing_id).unbind().bind('click', function(){
+                        self.controller.execute({page:'listing', listing_id:$(this).data('listing_id')});
+                    });           
+                    if (profile && profile.profile_id == comment.profile_id) {
+                        $('#comments-item-delete-'+i)
+                            .data('comment_id', comment.comment_id)
+                            .data('profile_id', profile ? comment.profile_id : '')
+                            .data('listing_id', listing ? comment.listing_id : '')
+                            .unbind().bind('click', function(){
+                            self.controller.execute({
+                                page:'comments',
+                                action:'delete',
+                                comment_id:$(this).data('comment_id'),
+                                profile_id:$(this).data('profile_id'),
+                                listing_id:$(this).data('listing_id')
+                            });
+                        });           
+                    }
+                }
             }
         };
         self.generateResultHtml = function(i, comment, listing, profile) {
@@ -2539,8 +2553,31 @@ s = (p + b + c + v) / (t + 2)^1.5
         };
         // comment methods
         self.commentsForListing = function(listing_id) {
-        };
+            var url = '/comments/listing/' + listing_id + '/';
+            $.getJSON(url, function(results_json) {
+                console.log(url + ' -> ' + JSON.stringify(results_json, null, '\t'));
+                if (results_json && results_json.listing) {
+                    self.controller.comments.displayResults(results_json);
+                }
+                else {
+                    self.controller.comments.displayNoResultsHtml('<i>no comments found</i>');
+                }
+            });
+            return null;
+         };
         self.commentsForProfile = function(profile_id) {
+            var url = '/comments/user/' + profile_id + '/';
+            $.getJSON(url, function(results_json) {
+                console.log(url + ' -> ' + JSON.stringify(results_json, null, '\t'));
+                // if (results_json && results_json.profile) {
+                if (results_json) {
+                    self.controller.comments.displayResults(results_json);
+                }
+                else {
+                    self.controller.comments.displayNoResultsHtml('<i>no comments found</i>');
+                }
+            });
+            return null;
         };
         self.addComment = function(listing_id, profile_id, commentText) {
         };
