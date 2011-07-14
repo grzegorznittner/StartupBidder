@@ -1410,6 +1410,16 @@ s = (p + b + c + v) / (t + 2)^1.5
             self.db.listings[listing_id].num_votes++;
             return 1;
         };
+        self.activateProfile = function(profile_id){
+            var profile = self.doQuery(profile_id);
+            profile.status = 'active';
+            return profile;
+        };
+        self.deactivateProfile = function(profile_id){
+            var profile = self.doQuery(profile_id);
+            profile.status = 'deactivated';
+            return profile;
+        };
         return self;
     };
 
@@ -1647,18 +1657,14 @@ s = (p + b + c + v) / (t + 2)^1.5
                 profile = self.doQuery(profile_id);
             console.log('incoming json:' + JSON.stringify(args, null, '\t'));
             console.log('returned json:' + JSON.stringify(profile, null, '\t'));
-            self.displayprofile(profile);
+            self.displayProfile(profile);
             return 'profile';
         };
         self.activateProfile = function(profile_id){
-            var profile = self.doQuery(profile_id);
-            profile.status = 'active';
-            return profile;
+            return self.controller.backend.activateProfile(profile_id);
         };
         self.deactivateProfile = function(profile_id){
-            var profile = self.doQuery(profile_id);
-            profile.status = 'deactivated';
-            return profile;
+            return self.controller.backend.deactivateProfile(profile_id);
         };
         self.saveProfile = function(profile_id){
             var profile = self.doQuery(profile_id);
@@ -1678,9 +1684,9 @@ s = (p + b + c + v) / (t + 2)^1.5
         self.doQuery = function(profile_id){
             return self.controller.backend.getProfile(profile_id);
         };
-        self.displayprofile = function(profile){
+        self.displayProfile = function(profile){
             // enable editable if logged in
-            var deactivatedText = profile.status == 'active' ? '' : ' <span class="message">DEACTIVATED</span>';
+            var deactivatedText = (profile && profile.status == 'active') ? '' : ' <span class="message">DEACTIVATED</span>';
             if (profile && self.controller.user.profile && self.controller.user.profile.profile_id == profile.profile_id) {
                 $('#profile-form-editable').show();
                 $('#profile-form-readonly').hide();
@@ -1721,10 +1727,13 @@ s = (p + b + c + v) / (t + 2)^1.5
                 self.setProfileLinks(profile, false);
             }
             else {
-                $('#profile-form-editable').hide();
-                $('#profile-form-readonly').show();
-                $('#profile-username').html('<em>no profile found</em>');
+                self.displayProfileNotFound();
             }
+        };
+        self.displayProfileNotFound = function() {
+            $('#profile-form-editable').hide();
+            $('#profile-form-readonly').show();
+            $('#profile-username').html('<em>unable to retrive user profile</em>');
         };
         self.setProfileLinks = function(profile, editable) {
             var listingsSel = '#profile-' + (editable?'edit-':'') + 'num-listings';
@@ -2446,10 +2455,36 @@ s = (p + b + c + v) / (t + 2)^1.5
         }
         // profile methods
         self.getProfile = function(profile_id) {
+            var url = '/user?id=' + profile_id;
+            $.getJSON(url, function(results_json) {
+                console.log(url + ' -> ' + JSON.stringify(results_json, null, '\t'));
+                if (results_json) {
+                    self.controller.profile.displayProfile(results_json);
+                }
+                else {
+                    self.controller.profile.displayProfileNotFound();
+                }
+            });
+            return null;
         };
         self.profileForUsername = function(username) {
+            var url = '/user/' + username;
+            $.getJSON(url, function(results_json) {
+                console.log(url + ' -> ' + JSON.stringify(results_json, null, '\t'));
+                if (results_json) {
+                    self.controller.profile.displayProfile(results_json);
+                }
+                else {
+                    self.controller.profile.displayProfileNotFound();
+                }
+            });
+            return null;
         };
         self.saveProfile = function(profile) {
+        };
+        self.activateProfile = function(profile_id) {
+        };
+        self.deactivateProfile = function(profile_id) {
         };
         // listing methods
         self.getListing = function(listing_id) {
@@ -2464,7 +2499,7 @@ s = (p + b + c + v) / (t + 2)^1.5
                 }
             });
             return null;
-         };
+        };
         self.searchListings = function(searchType, keywords, profile_id, start_index, max_results) {
             var url = '/listings/' + searchType + '/';
             $.getJSON(url, function(results_json) {
@@ -2529,6 +2564,12 @@ s = (p + b + c + v) / (t + 2)^1.5
         };
         self.profileForUsername = function(username) {
             return self.backend.profileForUsername(username);
+        };
+        self.activateProfile = function(profile_id) {
+            return self.backend.activateProfile(profile_id);
+        };
+        self.deactivateProfile = function(profile_id) {
+            return self.backend.deactivateProfile(profile_id);
         };
         // listing methods
         self.searchListings = function(searchType, keywords, profile_id, start_index, max_results) {
