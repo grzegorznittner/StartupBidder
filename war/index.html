@@ -1847,6 +1847,9 @@ s = (p + b + c + v) / (t + 2)^1.5
             listing.presentation_url = '';
             return listing;
         };
+        self.displayListingSnippetHtml = function(html) {
+            $('#listing-snippet').html(html);
+        };
         self.displayListing = function(listing, isNew){
             var resultsHtml = '';
             var profile = self.controller.user.profile;
@@ -2450,7 +2453,18 @@ s = (p + b + c + v) / (t + 2)^1.5
         };
         // listing methods
         self.getListing = function(listing_id) {
-        };
+            var url = '/listings/get/' + listing_id;
+            $.getJSON(url, function(results_json) {
+                console.log(url + ' -> ' + JSON.stringify(results_json, null, '\t'));
+                if (results_json) {
+                    self.controller.listing.displayListing(results_json, false);
+                }
+                else {
+                    self.controller.search.displayListingSnippetHtml('<i>unable to retrieve listing</i>');
+                }
+            });
+            return null;
+         };
         self.searchListings = function(searchType, keywords, profile_id, start_index, max_results) {
             var url = '/listings/' + searchType + '/';
             $.getJSON(url, function(results_json) {
@@ -2974,6 +2988,9 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAAAkCAYA
     height: 48px;
     background-position: -144px 0px;
 }
+.search-cursor {
+    display: none;
+}
 .content-form-login {
 /*
 width: 192px;
@@ -3050,8 +3067,8 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
         <div class="content-results">
             <div id="search-content-results-list" class="content-results-list"></div>
             <div class="content-results-footer">
-                <span class="link" id="search-prev-results">prev</span>
-                <span class="link" id="search-next-results">next</span>
+                <span class="link search-cursor" id="search-prev-results">prev</span>
+                <span class="link search-cursor" id="search-next-results">next</span>
             </div>
             <div class="content-results-list-item-clear"></div>
         </div>
@@ -3254,7 +3271,38 @@ Reference:
                     </div>
                 </div>
                 <div class="content-results-list-item-clear"></div>
-            </div>
+                <div class="content-results-list-item content-results-list-item-odd">
+                    <div class="content-results-list-item-num">4.</div>
+                    <div class="content-results-list-item-upvote-filler"></div>
+                    <div class="content-results-list-item-title">
+                        What happens on the listing closing date?
+                    </div>
+                    <div class="content-results-list-item-clear"></div>
+                    <div class="content-results-list-item-detail">
+                        The listing still accepts bids up until midnight UTC on the closing date.  At that time,
+                        the listing status is moved to closed and no further bids are accepted.  The lister
+                        and all users who made bids are then notified via email of the bid closing.  It is then
+                        the responsibility of the lister to follow up with one or more of the bidding parties
+                        for a formal legal funding agreement.
+                    </div>
+                </div>
+                <div class="content-results-list-item-clear"></div>
+                 <div class="content-results-list-item-clear"></div>
+                <div class="content-results-list-item content-results-list-item-odd">
+                    <div class="content-results-list-item-num">5.</div>
+                    <div class="content-results-list-item-upvote-filler"></div>
+                    <div class="content-results-list-item-title">
+                        Are you offering shares in these companies for sale?
+                    </div>
+                    <div class="content-results-list-item-clear"></div>
+                    <div class="content-results-list-item-detail">
+                        No.  Startupbidder is an informational site linking startup entpreneurs with investors.
+                        We are not offering shares for sale or promoting any shares via this site.
+                        All investments must be concluded between the parties themselves with proper legal representation.
+                    </div>
+                </div>
+                <div class="content-results-list-item-clear"></div>
+             </div>
         </div>
     </div>
     
