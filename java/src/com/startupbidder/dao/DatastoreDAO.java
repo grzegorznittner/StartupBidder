@@ -65,10 +65,17 @@ public interface DatastoreDAO {
 	 * 
 	 * @param userId User identifier
 	 * @param listingProperties Standard query parameters (maxResults and cursors)
-	 * @return List of business plans
+	 * @return List of listings
 	 */
 	List<ListingDTO> getActiveListings(ListPropertiesVO listingProperties);
 	
+	/**
+	 * Returns most valued listings
+	 * @param listingProperties Standard query parameters (maxResults and cursors)
+	 * @return List of listings
+	 */
+	List<ListingDTO> getMostValuedListings(ListPropertiesVO listingProperties);
+
 	/**
 	 * Value up listing
 	 *

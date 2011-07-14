@@ -2,6 +2,7 @@ package com.startupbidder.web;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -184,7 +185,43 @@ public class ServiceFacade {
 
 		return list;
 	}
-	
+
+	/**
+	 * Returns most valued listings
+	 * @param listingProperties
+	 * @return
+	 */
+	public ListingListVO getMostValuedListings(ListPropertiesVO listingProperties) {
+		ListPropertiesVO tmpProperties = new ListPropertiesVO();
+		tmpProperties.setMaxResults(Integer.MAX_VALUE);
+		List<ListingVO> listings = DtoToVoConverter.convertListings(getDAO().getTopListings(tmpProperties));
+		
+		for (ListingVO listing : listings) {
+			computeListingData(listing);
+		}
+		Collections.sort(listings, new Comparator<ListingVO> () {
+			public int compare(ListingVO left, ListingVO right) {
+				if (left.getMedianValuation() == right.getMedianValuation()) {
+					return 0;
+				} else if (left.getMedianValuation() > right.getMedianValuation()) {
+					return -1;
+				} else {
+					return 1;
+				}
+			}
+		});
+		
+		listingProperties.setTotalResults(listings.size());
+		listings = listings.subList(0, listingProperties.getMaxResults() > listings.size() ? listings.size() : listingProperties.getMaxResults());
+		listingProperties.setNumberOfResults(listings.size());
+		
+		ListingListVO list = new ListingListVO();
+		list.setListings(listings);
+		list.setListingsProperties(listingProperties);
+
+		return list;
+	}
+
 	/**
 	 * Value up listing
 	 *

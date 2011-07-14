@@ -10,6 +10,7 @@ public class BidDTO extends AbstractDTO {
 	private Date   placed;
 	private int    value;
 	private int    percentOfCompany;
+	private int    valuation;
 	private FundType fundType;
 	
 	public BidDTO() {
@@ -67,11 +68,19 @@ public class BidDTO extends AbstractDTO {
 		this.fundType = fundType;
 	}
 
+	public void setValuation(int valuation) {
+		this.valuation = valuation;
+	}
+
+	public int getValuation() {
+		return valuation;
+	}
+
 	@Override
 	public String toString() {
-		return "BidDTO [id=" + id + ", idAsString" + getIdAsString() + ", user=" + user + ", listing="
-				+ listing + ", placed=" + placed + ", value=" + value
-				+ ", percentOfCompany=" + percentOfCompany + ", fundType="
+		return "BidDTO [user=" + user + ", listing=" + listing + ", placed="
+				+ placed + ", value=" + value + ", percentOfCompany="
+				+ percentOfCompany + ", valuation=" + valuation + ", fundType="
 				+ fundType + "]";
 	}
 

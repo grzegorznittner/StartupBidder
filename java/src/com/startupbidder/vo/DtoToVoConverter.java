@@ -22,6 +22,7 @@ public class DtoToVoConverter {
 		bid.setPlaced(bidDTO.getPlaced());
 		bid.setUser(bidDTO.getUser());
 		bid.setValue(bidDTO.getValue());
+		bid.setValuation(bidDTO.getValuation());
 		return bid;
 	}
 	

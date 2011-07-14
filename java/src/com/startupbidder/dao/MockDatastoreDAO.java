@@ -233,6 +233,45 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		return list;
 	}
 	
+	
+	/**
+	 * Do not use it!!!
+	 * It calculates most valued listing based on max bids, not median
+	 */
+	public List<ListingDTO> getMostValuedListings(ListPropertiesVO listingProperties) {
+		List<BidDTO> bids = new ArrayList<BidDTO>(bidCache.values());
+		// sort activity list
+		Collections.sort(bids, new Comparator<BidDTO> () {
+			public int compare(BidDTO left, BidDTO right) {
+				if (left.getValuation() == right.getValuation()) {
+					return 0;
+				} else if (left.getValuation() > right.getValuation()) {
+					return -1;
+				} else {
+					return 1;
+				}
+			}
+		});
+		List<String> listingIds = new ArrayList<String>();
+		for (BidDTO bid : bids) {
+			if (!listingIds.contains(bid.getListing())) {
+				listingIds.add(bid.getListing());
+			}
+			if (listingIds.size() > listingProperties.getMaxResults()) {
+				break;
+			}
+		}
+		
+		List<ListingDTO> list = new ArrayList<ListingDTO>();
+		for (String listingId : listingIds) {
+			list.add(lCache.get(listingId));
+		}
+
+		listingProperties.setTotalResults(lCache.size());
+		listingProperties.setNumberOfResults(list.size());
+		return list;
+	}
+	
 	public int valueUpListing(String listingId, String userId) {
 		int numberOfVotes = 0;
 		boolean alreadyVoted = false;
@@ -386,6 +425,8 @@ public class MockDatastoreDAO implements DatastoreDAO {
 				bid.setPercentOfCompany(new Random().nextInt(50) + 10);
 				bid.setPlaced(new Date(System.currentTimeMillis() - bidNum * 53 * 60 * 1000));
 				bid.setValue(new Random().nextInt(50) * 1000 + listing.getSuggestedValuation());
+				// calculate valuation
+				bid.setValuation(bid.getValue() * 100 / bid.getPercentOfCompany());
 				
 				log.log(Level.INFO, bid.toString());
 				bidCache.put(bid.getIdAsString(), bid);

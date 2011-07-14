@@ -97,7 +97,7 @@ public class ListingController extends ModelDrivenController {
 	// GET /listings/valued
 	private HttpHeaders valuation(HttpServletRequest request) {
 		ListPropertiesVO listingProperties = getListProperties(request);
-    	listings = ServiceFacade.instance().getTopListings(listingProperties);
+    	listings = ServiceFacade.instance().getMostValuedListings(listingProperties);
         return new DefaultHttpHeaders("valued").disableCaching();
 	}
 
