@@ -2296,20 +2296,31 @@ s = (p + b + c + v) / (t + 2)^1.5
         self.bidsForProfile = function(profile_id){
             return self.controller.backend.bidsForProfile(profile_id);
         };
+        self.displayNoResultsHtml = function(resultsHtml) {
+            $('#bids-form-loggedin').hide();
+            $('#bids-form-not-loggedin').hide();
+            $('#bids-listing-snippet').html('');
+            $('#bids-content-results-list').html(resultsHtml);
+        };
         self.displayResults = function(results){
-            var listing = results.listing;
-            var bids = results.bids;
+            var listing = results ? results.listing : null;
+            var bids = results ? results.bids : null;
             var profile = self.controller.user.profile;
             var resultsHtml = '';
             var bid;
-            for (var i = 0; i < bids.length; i++) { // create results
-                bid = bids[i];
-                resultsHtml += self.generateResultHtml(i, bid, listing, profile);
+            if (bids && bids.length > 0) {
+                for (var i = 0; i < bids.length; i++) { // create results
+                    bid = bids[i];
+                    resultsHtml += self.generateResultHtml(i, bid, listing, profile);
+                }
             }
-            if (resultsHtml == '') {
-                resultsHtml = '<em>no bids found</em>';
+            else if (bids && bids.length == 0) {
+                resultsHtml = '<i>no bids found</i>';
             }
-            // add html
+            else {
+                resultsHtml = '<i>loading...</i>';
+            }
+            // display html
             $('#bids-content-results-list').html(resultsHtml);
             // set login visibility
             if (listing) {
@@ -2354,28 +2365,30 @@ s = (p + b + c + v) / (t + 2)^1.5
                 $('#bids-form-not-loggedin').hide();
                 $('#bids-listing-snippet').html('');
             }
-            for (var i = 0; i < bids.length; i++) {
-                bid = bids[i];
-                $('#bids-item-profile-'+i).data('profile_id',bid.profile_id).unbind().bind('click', function(){
-                    self.controller.execute({page:'profile', profile_id:$(this).data('profile_id')});
-                });           
-                $('#bids-item-listing-'+i).data('listing_id',bid.listing_id).unbind().bind('click', function(){
-                    self.controller.execute({page:'listing', listing_id:$(this).data('listing_id')});
-                });           
-                if (profile && profile.profile_id == bid.profile_id) {
-                    $('#bids-item-delete-'+i)
-                        .data('bid_id', bid.bid_id)
-                        .data('profile_id', profile ? bid.profile_id : '')
-                        .data('listing_id', listing ? bid.listing_id : '')
-                        .unbind().bind('click', function(){
-                        self.controller.execute({
-                            page:'bids',
-                            action:'delete',
-                            bid_id:$(this).data('bid_id'),
-                            profile_id:$(this).data('profile_id'),
-                            listing_id:$(this).data('listing_id')
-                        });
+            if (bids && bids.length > 0) {
+                for (var i = 0; i < bids.length; i++) {
+                    bid = bids[i];
+                    $('#bids-item-profile-'+i).data('profile_id',bid.profile_id).unbind().bind('click', function(){
+                        self.controller.execute({page:'profile', profile_id:$(this).data('profile_id')});
                     });           
+                    $('#bids-item-listing-'+i).data('listing_id',bid.listing_id).unbind().bind('click', function(){
+                        self.controller.execute({page:'listing', listing_id:$(this).data('listing_id')});
+                    });           
+                    if (profile && profile.profile_id == bid.profile_id) {
+                        $('#bids-item-delete-'+i)
+                            .data('bid_id', bid.bid_id)
+                            .data('profile_id', profile ? bid.profile_id : '')
+                            .data('listing_id', listing ? bid.listing_id : '')
+                            .unbind().bind('click', function(){
+                            self.controller.execute({
+                                page:'bids',
+                                action:'delete',
+                                bid_id:$(this).data('bid_id'),
+                                profile_id:$(this).data('profile_id'),
+                                listing_id:$(this).data('listing_id')
+                            });
+                        });           
+                    }
                 }
             }
         };
@@ -2535,9 +2548,32 @@ s = (p + b + c + v) / (t + 2)^1.5
         };
         // bid methods
         self.bidsForListing = function(listing_id) {
+            var url = '/bids/listing/' + listing_id + '/';
+            $.getJSON(url, function(results_json) {
+                console.log(url + ' -> ' + JSON.stringify(results_json, null, '\t'));
+                if (results_json && results_json.listing) {
+                    self.controller.bids.displayResults(results_json);
+                }
+                else {
+                    self.controller.bids.displayNoResultsHtml('<i>no bids found</i>');
+                }
+            });
+            return null;
         };
         self.bidsForProfile = function(profile_id) {
-        };
+            var url = '/bids/user/' + profile_id + '/';
+            $.getJSON(url, function(results_json) {
+                console.log(url + ' -> ' + JSON.stringify(results_json, null, '\t'));
+                // if (results_json && results_json.profile) {
+                if (results_json) {
+                    self.controller.bids.displayResults(results_json);
+                }
+                else {
+                    self.controller.bids.displayNoResultsHtml('<i>no bids found</i>');
+                }
+            });
+            return null;
+         };
         self.addBid = function(listing_id, profile_id, bid_amt, bid_pct, bid_type, bid_rate) {
         };
         self.deleteBid = function(bid_id) {
