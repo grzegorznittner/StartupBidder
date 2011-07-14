@@ -2,6 +2,7 @@ package com.startupbidder.web.servlets;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -52,6 +53,8 @@ public class HelloServlet extends HttpServlet {
 			ListPropertiesVO listProperties = new ListPropertiesVO();
 			listProperties.setMaxResults(1);
 			ListingDTO topListing = datastore.getTopListings(listProperties).get(0);
+			List<BidDTO> bids = datastore.getBidsForListing(topListing.getIdAsString());
+			List<CommentDTO> comments = datastore.getCommentsForListing(topListing.getIdAsString());
 			
 			//testMockDatastore(user, datastore, out);
 			out.println("<p>Test links:</p>");
@@ -72,10 +75,12 @@ public class HelloServlet extends HttpServlet {
 
 			out.println("<a href=\"/bids/listing/" + topListing.getIdAsString() + "/.html\">Bids for top listing</a><br/>");
 			out.println("<a href=\"/bids/user/" + topInvestor.getIdAsString() + "/.html\">Bids for top investor</a><br/>");
+			out.println("<a href=\"/bids/get/" + bids.get(0).getIdAsString() + "/.html\">Get bid id '" + bids.get(0).getIdAsString() + "'</a><br/>");
 			out.println("<br/>");
 			
 			out.println("<a href=\"/comments/listing/" + topListing.getIdAsString() + "/.html\">Comments for top listing</a><br/>");
 			out.println("<a href=\"/comments/user/" + topInvestor.getIdAsString() + "/.html\">Comments for top investor</a><br/>");
+			out.println("<a href=\"/comments/get/" + comments.get(0).getIdAsString() + "/.html\">Get comment id '" + comments.get(0).getIdAsString() + "'</a><br/>");
 			out.println("<br/>");
 
 		} catch (Exception e) {
