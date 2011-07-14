@@ -78,16 +78,27 @@ public interface DatastoreDAO {
 
 	/**
 	 * Returns most commented listings
-	 * @param listingProperties
+	 * @param listingProperties Standard query parameters (maxResults and cursors)
 	 */
 	List<ListingDTO> getMostDiscussedListings(ListPropertiesVO listingProperties);
 
 	/**
 	 * Returns most voted listings
-	 * @param listingProperties
-	 * @return
+	 * @param listingProperties Standard query parameters (maxResults and cursors)
 	 */
 	List<ListingDTO> getMostPopularListings(ListPropertiesVO listingProperties);
+
+	/**
+	 * Returns recently added listings
+	 * @param listingProperties Standard query parameters (maxResults and cursors)
+	 */
+	List<ListingDTO> getLatestListings(ListPropertiesVO listingProperties);
+
+	/**
+	 * Returns listings which will close soon
+	 * @param listingProperties Standard query parameters (maxResults and cursors)
+	 */
+	List<ListingDTO> getClosingListings(ListPropertiesVO listingProperties);
 
 	/**
 	 * Value up listing

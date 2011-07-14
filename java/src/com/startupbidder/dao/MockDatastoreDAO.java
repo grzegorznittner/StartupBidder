@@ -349,6 +349,49 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		listingProperties.setTotalResults(lCache.size());
 		return list;
 	}
+	
+	public List<ListingDTO> getLatestListings(ListPropertiesVO listingProperties) {
+		// sort by listed on date
+		List<ListingDTO> listings = new ArrayList<ListingDTO>(lCache.values());
+		Collections.sort(listings, new Comparator<ListingDTO> () {
+			public int compare(ListingDTO left, ListingDTO right) {
+				if (left.getListedOn().getTime() == right.getListedOn().getTime()) {
+					return 0;
+				} else if (left.getListedOn().getTime() > right.getListedOn().getTime()) {
+					return -1;
+				} else {
+					return 1;
+				}
+			}
+		});
+
+		listings = listings.subList(0, listingProperties.getMaxResults() > listings.size() ? listings.size() : listingProperties.getMaxResults());
+		listingProperties.setNumberOfResults(listings.size());
+		listingProperties.setTotalResults(lCache.size());
+		return listings;
+	}
+
+	public List<ListingDTO> getClosingListings(ListPropertiesVO listingProperties) {
+		// sort by listed on date
+		List<ListingDTO> listings = new ArrayList<ListingDTO>(lCache.values());
+		Collections.sort(listings, new Comparator<ListingDTO> () {
+			public int compare(ListingDTO left, ListingDTO right) {
+				if (left.getClosingOn().getTime() == right.getClosingOn().getTime()) {
+					return 0;
+				} else if (left.getClosingOn().getTime() < right.getClosingOn().getTime()) {
+					return -1;
+				} else {
+					return 1;
+				}
+			}
+		});
+
+		listings = listings.subList(0, listingProperties.getMaxResults() > listings.size() ? listings.size() : listingProperties.getMaxResults());
+		listingProperties.setNumberOfResults(listings.size());
+		listingProperties.setTotalResults(lCache.size());
+		return listings;
+	}
+
 
 	public int valueUpListing(String listingId, String userId) {
 		int numberOfVotes = 0;

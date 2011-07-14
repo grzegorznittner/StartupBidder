@@ -259,6 +259,34 @@ public class ServiceFacade {
 		return list;
 	}
 
+	public ListingListVO getLatestListings(ListPropertiesVO listingProperties) {
+		List<ListingVO> listings = DtoToVoConverter.convertListings(getDAO().getLatestListings(listingProperties));
+		int index = listingProperties.getStartIndex();
+		for (ListingVO listing : listings) {
+			computeListingData(listing);
+			listing.setOrderNumber(index++);
+		}
+		ListingListVO list = new ListingListVO();
+		list.setListings(listings);		
+		list.setListingsProperties(listingProperties);
+
+		return list;
+	}
+
+	public ListingListVO getClosingListings(ListPropertiesVO listingProperties) {
+		List<ListingVO> listings = DtoToVoConverter.convertListings(getDAO().getClosingListings(listingProperties));
+		int index = listingProperties.getStartIndex();
+		for (ListingVO listing : listings) {
+			computeListingData(listing);
+			listing.setOrderNumber(index++);
+		}
+		ListingListVO list = new ListingListVO();
+		list.setListings(listings);		
+		list.setListingsProperties(listingProperties);
+
+		return list;
+	}
+
 	/**
 	 * Value up listing
 	 *
