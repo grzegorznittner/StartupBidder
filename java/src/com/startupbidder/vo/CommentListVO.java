@@ -15,6 +15,8 @@ public class CommentListVO {
 	private ListPropertiesVO commentsProperties;
 	@JsonProperty("listing")
 	private ListingVO listing;
+	@JsonProperty("profile")
+	private UserVO user;
 	
 	public List<CommentVO> getComments() {
 		return comments;
@@ -34,10 +36,16 @@ public class CommentListVO {
 	public void setListing(ListingVO listing) {
 		this.listing = listing;
 	}
-	
+	public void setUser(UserVO user) {
+		this.user = user;
+	}
+	public UserVO getUser() {
+		return user;
+	}
 	@Override
 	public String toString() {
 		return "CommentListVO [comments=" + comments + ", commentsProperties="
-				+ commentsProperties + ", listing=" + listing + "]";
+				+ commentsProperties + ", listing=" + listing + ", user="
+				+ user + "]";
 	}
 }

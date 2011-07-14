@@ -13,6 +13,8 @@ public class ListingListVO {
 	private List<ListingVO> listings;
 	@JsonProperty("listings_props")
 	private ListPropertiesVO listingsProperties;
+	@JsonProperty("profile")
+	private UserVO user;
 	
 	public List<ListingVO> getListings() {
 		return listings;
@@ -26,10 +28,15 @@ public class ListingListVO {
 	public void setListingsProperties(ListPropertiesVO listingsProperties) {
 		this.listingsProperties = listingsProperties;
 	}
-	
+	public void setUser(UserVO user) {
+		this.user = user;
+	}
+	public UserVO getUser() {
+		return user;
+	}
 	@Override
 	public String toString() {
 		return "ListingListVO [listings=" + listings + ", listingsProperties="
-				+ listingsProperties + "]";
+				+ listingsProperties + ", user=" + user + "]";
 	}
 }

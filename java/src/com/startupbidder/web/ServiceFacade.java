@@ -141,6 +141,7 @@ public class ServiceFacade {
 		ListingListVO list = new ListingListVO();
 		list.setListings(listings);
 		list.setListingsProperties(listingProperties);
+		list.setUser(DtoToVoConverter.convert(getDAO().getUser(userId)));
 
 		return list;
 	}
@@ -378,6 +379,7 @@ public class ServiceFacade {
 			commentProperties.setTotalResults(comments.size());
 		}
 		list.setCommentsProperties(commentProperties);
+		list.setUser(user);
 		return list;
 	}
 	
@@ -443,6 +445,7 @@ public class ServiceFacade {
 			bidProperties.setTotalResults(bids.size());
 		}
 		list.setBidsProperties(bidProperties);
+		list.setUser(user);
 		return list;
 	}
 	
