@@ -177,7 +177,7 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		return list;
 	}
 
-	public List<ListingDTO> getActiveListings(ListPropertiesVO listingProperties) {
+	public List<ListingDTO> getMostDiscussedListings(ListPropertiesVO listingProperties) {
 		List<ListingDTO> list = new ArrayList<ListingDTO>();
 		
 		// create activity list
@@ -206,6 +206,45 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		int maxItems = listingProperties.getMaxResults();
 		for (Map.Entry<String, Integer> bpEntry : active) {
 			log.log(Level.INFO, "BP " + bpEntry.getKey() + " - activity " + bpEntry.getValue());
+			if (maxItems-- > 0) {
+				list.add(lCache.get(bpEntry.getKey()));
+			}
+		}
+		
+		listingProperties.setNumberOfResults(list.size());
+		listingProperties.setTotalResults(lCache.size());
+		return list;
+	}
+	
+	public List<ListingDTO> getMostPopularListings(ListPropertiesVO listingProperties) {
+		List<ListingDTO> list = new ArrayList<ListingDTO>();
+		
+		// create activity list
+		Map<String, Integer> listingIds = new HashMap<String, Integer>();
+		for (VoteDTO vote : voteCache.values()) {
+			if (!listingIds.containsKey(vote.getListing())) {
+				listingIds.put(vote.getListing(), 1);
+			} else {
+				listingIds.put(vote.getListing(), listingIds.get(vote.getListing()) + 1);
+			}
+		}
+		
+		// sort activity list
+		List<Map.Entry<String, Integer>> active = new ArrayList<Map.Entry<String, Integer>>(listingIds.entrySet());
+		Collections.sort(active, new Comparator<Map.Entry<String, Integer>> () {
+			public int compare(Map.Entry<String, Integer> left, Map.Entry<String, Integer> right) {
+				if (left.getValue() == right.getValue()) {
+					return 0;
+				} else if (left.getValue() > right.getValue()) {
+					return -1;
+				} else {
+					return 1;
+				}
+			}
+		});
+		int maxItems = listingProperties.getMaxResults();
+		for (Map.Entry<String, Integer> bpEntry : active) {
+			log.log(Level.INFO, "BP " + bpEntry.getKey() + " - votes " + bpEntry.getValue());
 			if (maxItems-- > 0) {
 				list.add(lCache.get(bpEntry.getKey()));
 			}
@@ -272,6 +311,45 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		return list;
 	}
 	
+	public List<ListingDTO> getActiveListings(ListPropertiesVO listingProperties) {
+		List<ListingDTO> list = new ArrayList<ListingDTO>();
+		
+		// create activity list
+		Map<String, Integer> listingIds = new HashMap<String, Integer>();
+		for (BidDTO bid : bidCache.values()) {
+			if (!listingIds.containsKey(bid.getListing())) {
+				listingIds.put(bid.getListing(), 1);
+			} else {
+				listingIds.put(bid.getListing(), listingIds.get(bid.getListing()) + 1);
+			}
+		}
+		
+		// sort activity list
+		List<Map.Entry<String, Integer>> active = new ArrayList<Map.Entry<String, Integer>>(listingIds.entrySet());
+		Collections.sort(active, new Comparator<Map.Entry<String, Integer>> () {
+			public int compare(Map.Entry<String, Integer> left, Map.Entry<String, Integer> right) {
+				if (left.getValue() == right.getValue()) {
+					return 0;
+				} else if (left.getValue() > right.getValue()) {
+					return -1;
+				} else {
+					return 1;
+				}
+			}
+		});
+		int maxItems = listingProperties.getMaxResults();
+		for (Map.Entry<String, Integer> bpEntry : active) {
+			log.log(Level.INFO, "BP " + bpEntry.getKey() + " - bids " + bpEntry.getValue());
+			if (maxItems-- > 0) {
+				list.add(lCache.get(bpEntry.getKey()));
+			}
+		}
+		
+		listingProperties.setNumberOfResults(list.size());
+		listingProperties.setTotalResults(lCache.size());
+		return list;
+	}
+
 	public int valueUpListing(String listingId, String userId) {
 		int numberOfVotes = 0;
 		boolean alreadyVoted = false;
@@ -294,7 +372,7 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		}
 		return numberOfVotes;
 	}
-
+	
 	public int valueDownListing(String listingId, String userId) {
 		log.log(Level.SEVERE, "valueDownListing is not supported now, we only care about number of votes");
 		int numberOfVotes = 0;

@@ -83,18 +83,18 @@ public class ListingController extends ModelDrivenController {
 	// GET /listings/discussed
 	private HttpHeaders discussed(HttpServletRequest request) {
 		ListPropertiesVO listingProperties = getListProperties(request);
-    	listings = ServiceFacade.instance().getTopListings(listingProperties);
+    	listings = ServiceFacade.instance().getMostDiscussedListings(listingProperties);
         return new DefaultHttpHeaders("valued").disableCaching();
 	}
 
 	// GET /listings/popular
 	private HttpHeaders popular(HttpServletRequest request) {
 		ListPropertiesVO listingProperties = getListProperties(request);
-    	listings = ServiceFacade.instance().getTopListings(listingProperties);
+    	listings = ServiceFacade.instance().getMostPopularListings(listingProperties);
         return new DefaultHttpHeaders("valued").disableCaching();
 	}
 
-	// GET /listings/valued
+	// GET /listings/valuation
 	private HttpHeaders valuation(HttpServletRequest request) {
 		ListPropertiesVO listingProperties = getListProperties(request);
     	listings = ServiceFacade.instance().getMostValuedListings(listingProperties);

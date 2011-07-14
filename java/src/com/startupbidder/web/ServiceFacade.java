@@ -166,11 +166,10 @@ public class ServiceFacade {
 	}
 
 	/**
-	 * Returns most active business plans
+	 * Returns listings sorted by number of bids
 	 * 
-	 * @param userId User identifier
 	 * @param listingProperties Standard query parameters (maxResults and cursors)
-	 * @return List of business plans
+	 * @return List of listings
 	 */
 	public ListingListVO getActiveListings(ListPropertiesVO listingProperties) {
 		List<ListingVO> listings = DtoToVoConverter.convertListings(getDAO().getActiveListings(listingProperties));
@@ -187,7 +186,7 @@ public class ServiceFacade {
 	}
 
 	/**
-	 * Returns most valued listings
+	 * Returns listings sorted by median valuation
 	 * @param listingProperties
 	 * @return
 	 */
@@ -217,6 +216,44 @@ public class ServiceFacade {
 		
 		ListingListVO list = new ListingListVO();
 		list.setListings(listings);
+		list.setListingsProperties(listingProperties);
+
+		return list;
+	}
+
+	/**
+	 * Returns the most commented listings
+	 * @param listingProperties
+	 * @return List of listings
+	 */
+	public ListingListVO getMostDiscussedListings(ListPropertiesVO listingProperties) {
+		List<ListingVO> listings = DtoToVoConverter.convertListings(getDAO().getMostDiscussedListings(listingProperties));
+		int index = listingProperties.getStartIndex();
+		for (ListingVO listing : listings) {
+			computeListingData(listing);
+			listing.setOrderNumber(index++);
+		}
+		ListingListVO list = new ListingListVO();
+		list.setListings(listings);		
+		list.setListingsProperties(listingProperties);
+
+		return list;
+	}
+
+	/**
+	 * Returns the most voted listings
+	 * @param listingProperties
+	 * @return List of listings
+	 */
+	public ListingListVO getMostPopularListings(ListPropertiesVO listingProperties) {
+		List<ListingVO> listings = DtoToVoConverter.convertListings(getDAO().getMostPopularListings(listingProperties));
+		int index = listingProperties.getStartIndex();
+		for (ListingVO listing : listings) {
+			computeListingData(listing);
+			listing.setOrderNumber(index++);
+		}
+		ListingListVO list = new ListingListVO();
+		list.setListings(listings);		
 		list.setListingsProperties(listingProperties);
 
 		return list;

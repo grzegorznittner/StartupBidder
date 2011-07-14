@@ -77,6 +77,19 @@ public interface DatastoreDAO {
 	List<ListingDTO> getMostValuedListings(ListPropertiesVO listingProperties);
 
 	/**
+	 * Returns most commented listings
+	 * @param listingProperties
+	 */
+	List<ListingDTO> getMostDiscussedListings(ListPropertiesVO listingProperties);
+
+	/**
+	 * Returns most voted listings
+	 * @param listingProperties
+	 * @return
+	 */
+	List<ListingDTO> getMostPopularListings(ListPropertiesVO listingProperties);
+
+	/**
 	 * Value up listing
 	 *
 	 * @param listingId Listing identifier
