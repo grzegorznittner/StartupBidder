@@ -2528,7 +2528,14 @@ s = (p + b + c + v) / (t + 2)^1.5
             return null;
         };
         self.searchListings = function(searchType, keywords, profile_id, start_index, max_results) {
-            var url = '/listings/' + searchType + '/';
+            var pathSuffix = '';
+            if (profile_id !== undefined) {
+                pathSuffix = '/user/?id=' + profile_id;
+            }
+            else {
+                pathSuffix = searchType + '/';
+            }
+            var url = '/listings/' + pathSuffix;
             $.getJSON(url, function(results_json) {
                 console.log(url + ' -> ' + JSON.stringify(results_json, null, '\t'));
                 if (results_json && results_json.listings_props) {
@@ -3154,6 +3161,7 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
             <div class="header-menu-bar">
                 <span class="link" id="header-menu-bar-top">top</span>
                 <span> | </span>
+                <!--
                 <span class="link" id="header-menu-bar-valuation">valuation</span>
                 <span> | </span>
                 <span class="link" id="header-menu-bar-active">active</span>
@@ -3162,9 +3170,10 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
                 <span> | </span>
                 <span class="link" id="header-menu-bar-discussed">discussed</span>
                 <span> | </span>
-                <span class="link" id="header-menu-bar-latest">latest</span>
+                -->
+                <span class="link" id="header-menu-bar-latest">new</span>
                 <span> | </span>
-                <span class="link" id="header-menu-bar-closing-soon">closing</span>
+                <span class="link" id="header-menu-bar-closing-soon">closing soon</span>
                 <span> | </span>
                 <span class="link" id="header-menu-bar-faq">faq</span>
                 <span class="header-menu-bar-submit-spacer" id="header-menu-bar-submit-spacer"> | </span>
