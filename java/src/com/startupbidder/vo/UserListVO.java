@@ -1,21 +1,24 @@
 package com.startupbidder.vo;
 
+import java.util.List;
+
 import org.codehaus.jackson.annotate.JsonAutoDetect;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 
 @JsonAutoDetect(getterVisibility=Visibility.NONE, setterVisibility=Visibility.NONE,
 		fieldVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE)
-public class BidAndUserVO {
-	@JsonProperty("bid")
-	private BidVO bid;
+public class UserListVO {
+	@JsonProperty("users")
+	private List<UserVO> users;
 	@JsonProperty("profile")
 	private UserVO user;
-	public BidVO getBid() {
-		return bid;
+	
+	public List<UserVO> getUsers() {
+		return users;
 	}
-	public void setBid(BidVO bid) {
-		this.bid = bid;
+	public void setUsers(List<UserVO> users) {
+		this.users = users;
 	}
 	public UserVO getUser() {
 		return user;
@@ -25,6 +28,6 @@ public class BidAndUserVO {
 	}
 	@Override
 	public String toString() {
-		return "BidAndUserVO [bid=" + bid + ", user=" + user + "]";
+		return "UserListVO [users=" + users + ", user=" + user + "]";
 	}
 }

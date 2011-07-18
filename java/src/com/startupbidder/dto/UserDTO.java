@@ -8,8 +8,7 @@ public class UserDTO extends AbstractDTO {
 	public enum Status {CREATED, ACTIVE, DEACTIVATED};
 
 	private String nickname;
-	private String firstName;
-	private String lastName;
+	private String name;
 	private String email;
 	private String title;
 	private String organization;
@@ -36,16 +35,10 @@ public class UserDTO extends AbstractDTO {
 		this.nickname = nickname;
 	}
 	public String getFirstName() {
-		return firstName;
+		return name;
 	}
 	public void setFirstName(String firstName) {
-		this.firstName = firstName;
-	}
-	public String getLastName() {
-		return lastName;
-	}
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
+		this.name = firstName;
 	}
 	public String getEmail() {
 		return email;
@@ -136,8 +129,8 @@ public class UserDTO extends AbstractDTO {
 
 	@Override
 	public String toString() {
-		return "UserDTO [nickname=" + nickname + ", firstName=" + firstName
-				+ ", lastName=" + lastName + ", email=" + email + ", title="
+		return "UserDTO [nickname=" + nickname + ", firstName=" + name
+				+ ", email=" + email + ", title="
 				+ title + ", organization=" + organization + ", facebook="
 				+ facebook + ", twitter=" + twitter + ", linkedin=" + linkedin
 				+ ", investor=" + investor + ", joined=" + joined
@@ -150,11 +143,10 @@ public class UserDTO extends AbstractDTO {
 		Entity user = new Entity(id);
 		user.setProperty("email", this.email);
 		user.setProperty("facebook", this.facebook);
-		user.setProperty("firstName", this.firstName);
+		user.setProperty("name", this.name);
 		user.setProperty("investor", this.investor);
 		user.setProperty("joined", this.joined);
 		user.setProperty("lastLoggedIn", this.lastLoggedIn);
-		user.setProperty("lastName", this.lastName);
 		user.setProperty("linkedin", this.linkedin);
 		user.setProperty("modified", this.modified);
 		user.setProperty("nickname", this.nickname);
@@ -170,11 +162,10 @@ public class UserDTO extends AbstractDTO {
 		user.setKey(entity.getKey());
 		user.setEmail((String)entity.getProperty("email"));
 		user.setFacebook((String)entity.getProperty("facebook"));
-		user.setFirstName((String)entity.getProperty("firstName"));
+		user.setFirstName((String)entity.getProperty("name"));
 		user.setInvestor((Boolean)entity.getProperty("investor"));
 		user.setJoined((Date)entity.getProperty("joined"));
 		user.setLastLoggedIn((Date)entity.getProperty("lastLoggedIn"));
-		user.setLastName((String)entity.getProperty("lastName"));
 		user.setModified((Date)entity.getProperty("linkedin"));
 		user.setNickname((String)entity.getProperty("modified"));
 		user.setOrganization((String)entity.getProperty("nickname"));

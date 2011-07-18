@@ -26,6 +26,7 @@ import com.startupbidder.vo.DtoToVoConverter;
 import com.startupbidder.vo.ListPropertiesVO;
 import com.startupbidder.vo.ListingListVO;
 import com.startupbidder.vo.ListingVO;
+import com.startupbidder.vo.UserListVO;
 import com.startupbidder.vo.UserVO;
 
 public class ServiceFacade {
@@ -69,6 +70,26 @@ public class ServiceFacade {
 	public UserVO updateUser(UserVO userData) {
 		getDAO().updateUser(VoToDtoConverter.convert(userData));
 		return DtoToVoConverter.convert(getDAO().getUser(userData.getId()));
+	}
+
+	/**
+	 * Returns list of all registered users
+	 * @return List of users
+	 */
+	public UserListVO getAllUsers() {
+		List<UserVO> users = DtoToVoConverter.convertUsers(getDAO().getAllUsers());
+		int index = 1;
+		for (UserVO user : users) {
+			UserStatistics userStats = getDAO().getUserStatistics(user.getId());
+			user.setNumberOfBids(userStats.getNumberOfBids());
+			user.setNumberOfComments(userStats.getNumberOfComments());
+			user.setNumberOfListings(userStats.getNumberOfListings());
+			user.setOrderNumber(index++);
+		}
+
+		UserListVO userList = new UserListVO();
+		userList.setUsers(users);
+		return userList;
 	}
 	
 	/**

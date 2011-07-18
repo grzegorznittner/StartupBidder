@@ -79,10 +79,9 @@ public class DtoToVoConverter {
 		user.setAccreditedInvestor(userDTO.isInvestor());
 		user.setEmail(userDTO.getEmail());
 		user.setFacebook(userDTO.getFacebook());
-		user.setFirstName(userDTO.getFirstName());
+		user.setName(userDTO.getFirstName());
 		user.setJoined(userDTO.getJoined());
 		user.setLastLoggedIn(userDTO.getLastLoggedIn());
-		user.setLastName(userDTO.getLastName());
 		user.setLinkedin(userDTO.getLinkedin());
 		user.setModified(userDTO.getModified());
 		user.setNickname(userDTO.getNickname());
@@ -127,5 +126,17 @@ public class DtoToVoConverter {
 			bidVoList.add(bidVO);
 		}
 		return bidVoList;
+	}
+
+	public static List<UserVO> convertUsers(List<UserDTO> userDtoList) {
+		if (userDtoList == null) {
+			return null;
+		}
+		List<UserVO> userVoList = new ArrayList<UserVO>();
+		for (UserDTO userDTO : userDtoList) {
+			UserVO bidVO = convert(userDTO);
+			userVoList.add(bidVO);
+		}
+		return userVoList;
 	}
 }

@@ -3,8 +3,8 @@ package com.startupbidder.vo;
 import org.codehaus.jackson.annotate.JsonAutoDetect;
 import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 
-@JsonAutoDetect(getterVisibility=Visibility.NONE,
-		setterVisibility=Visibility.NONE, fieldVisibility=Visibility.NONE)
+@JsonAutoDetect(getterVisibility=Visibility.NONE, setterVisibility=Visibility.NONE,
+		fieldVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE)
 public class VoteVO {
 	private String id;
 	private String listing;

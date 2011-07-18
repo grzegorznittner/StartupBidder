@@ -10,8 +10,8 @@ import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
  * 
  * @author greg
  */
-@JsonAutoDetect(getterVisibility=Visibility.NONE,
-		setterVisibility=Visibility.NONE, fieldVisibility=Visibility.NONE)
+@JsonAutoDetect(getterVisibility=Visibility.NONE, setterVisibility=Visibility.NONE,
+		fieldVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE)
 public class ListPropertiesVO {
 	@JsonProperty("start_index")
 	private int startIndex;
