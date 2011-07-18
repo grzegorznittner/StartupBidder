@@ -60,7 +60,7 @@ public class VoToDtoConverter {
 	public static UserDTO convert(UserVO userVO) {
 		UserDTO user = new UserDTO();
 		user.setIdFromString(userVO.getId());
-		user.setAccreditedInvestor(userVO.isAccreditedInvestor());
+		user.setInvestor(userVO.isAccreditedInvestor());
 		user.setEmail(userVO.getEmail());
 		user.setFacebook(userVO.getFacebook());
 		user.setFirstName(userVO.getFirstName());

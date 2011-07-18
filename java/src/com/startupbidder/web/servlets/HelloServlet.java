@@ -53,7 +53,7 @@ public class HelloServlet extends HttpServlet {
 			ListPropertiesVO listProperties = new ListPropertiesVO();
 			listProperties.setMaxResults(1);
 			ListingDTO topListing = datastore.getTopListings(listProperties).get(0);
-			List<BidDTO> bids = datastore.getBidsForListing(topListing.getIdAsString());
+			List<BidDTO> bids = datastore.getBidsForUser(topInvestor.getIdAsString());
 			List<CommentDTO> comments = datastore.getCommentsForListing(topListing.getIdAsString());
 			
 			//testMockDatastore(user, datastore, out);
@@ -105,7 +105,7 @@ public class HelloServlet extends HttpServlet {
 		UserDTO currentUser = datastore.getUser(user.getNickname());
 		out.println("<p>" + currentUser + "</p>");
 		
-		currentUser.setAccreditedInvestor(true);
+		currentUser.setInvestor(true);
 		currentUser.setOrganization("Mock organization");
 		datastore.updateUser(currentUser);
 		out.println("<p><b>Updated current user data:</b></p>");

@@ -2,6 +2,8 @@ package com.startupbidder.dto;
 
 import java.util.Date;
 
+import com.google.appengine.api.datastore.Entity;
+
 public class ListingDTO extends AbstractDTO {
 
 	public enum State {CREATED, ACTIVE, CLOSED, WITHDRAWN};
@@ -114,4 +116,35 @@ public class ListingDTO extends AbstractDTO {
 				+ ", summary=" + summary + ", owner=" + owner + "]";
 	}
 
+	@Override
+	public Entity toEntity() {
+		Entity listing = new Entity(id);
+		listing.setProperty("closingOn", this.closingOn);
+		listing.setProperty("listedOn", this.listedOn);
+		listing.setProperty("medianValuation", this.medianValuation);
+		listing.setProperty("name", this.name);
+		listing.setProperty("owner", this.owner);
+		listing.setProperty("state", this.state);
+		listing.setProperty("suggestedAmount", this.suggestedAmount);
+		listing.setProperty("suggestedPercentage", this.suggestedPercentage);
+		listing.setProperty("suggestedValuation", this.suggestedValuation);
+		listing.setProperty("summary", this.summary);
+		return listing;
+	}
+
+	public static ListingDTO fromEntity(Entity entity) {
+		ListingDTO listing = new ListingDTO();
+		listing.setKey(entity.getKey());
+		listing.closingOn = (Date)entity.getProperty("closingOn");
+		listing.listedOn = (Date)entity.getProperty("listedOn");
+		listing.medianValuation = (Integer)entity.getProperty("medianValuation");
+		listing.name = (String)entity.getProperty("name");
+		listing.owner = (String)entity.getProperty("owner");
+		listing.state = ListingDTO.State.valueOf((String)entity.getProperty("state"));
+		listing.suggestedAmount = (Integer)entity.getProperty("suggestedAmount");
+		listing.suggestedPercentage = (Integer)entity.getProperty("suggestedPercentage");
+		listing.suggestedValuation = (Integer)entity.getProperty("suggestedValuation");
+		listing.summary = (String)entity.getProperty("summary");
+		return listing;
+	}
 }

@@ -11,7 +11,7 @@ import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 public class BidListVO {
 	@JsonProperty("bids")
 	private List<BidVO> bids;
-	@JsonProperty("bids_props")
+	// Not returned in JSON
 	private ListPropertiesVO bidsProperties;
 	@JsonProperty("listing")
 	private ListingVO listing;

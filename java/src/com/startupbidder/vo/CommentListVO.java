@@ -11,7 +11,7 @@ import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 public class CommentListVO {
 	@JsonProperty("comments")
 	private List<CommentVO> comments;
-	@JsonProperty("comments_props")
+	// not returned in JSON
 	private ListPropertiesVO commentsProperties;
 	@JsonProperty("listing")
 	private ListingVO listing;

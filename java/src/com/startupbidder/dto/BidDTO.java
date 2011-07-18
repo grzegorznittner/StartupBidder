@@ -2,6 +2,8 @@ package com.startupbidder.dto;
 
 import java.util.Date;
 
+import com.google.appengine.api.datastore.Entity;
+
 public class BidDTO extends AbstractDTO {
 	public enum FundType {SYNDICATE, SOLE_INVESTOR};
 	
@@ -84,4 +86,28 @@ public class BidDTO extends AbstractDTO {
 				+ fundType + "]";
 	}
 
+	public Entity toEntity() {
+		Entity bid = new Entity(this.id);
+		bid.setProperty("fundType", fundType);
+		bid.setProperty("listing", listing);
+		bid.setProperty("percentOfCompany", percentOfCompany);
+		bid.setProperty("placed", placed);
+		bid.setProperty("user", user);
+		bid.setProperty("valuation", valuation);
+		bid.setProperty("value", value);
+		return bid;
+	}
+	
+	public static BidDTO fromEntity(Entity entity) {
+		BidDTO bid = new BidDTO();
+		bid.setKey(entity.getKey());
+		bid.setFundType(FundType.valueOf((String)entity.getProperty("fundType")));
+		bid.setListing((String)entity.getProperty("listing"));
+		bid.setPercentOfCompany((Integer)entity.getProperty("percentOfCompany"));
+		bid.setPlaced((Date)entity.getProperty("placed"));
+		bid.setUser((String)entity.getProperty("user"));
+		bid.setValuation((Integer)entity.getProperty("valuation"));
+		bid.setValue((Integer)entity.getProperty("value"));
+		return bid;
+	}
 }

@@ -2,6 +2,8 @@ package com.startupbidder.dto;
 
 import java.util.Date;
 
+import com.google.appengine.api.datastore.Entity;
+
 public class UserDTO extends AbstractDTO {
 	private String nickname;
 	private String firstName;
@@ -12,7 +14,7 @@ public class UserDTO extends AbstractDTO {
 	private String facebook;
 	private String twitter;
 	private String linkedin;
-	private boolean accreditedInvestor;
+	private boolean investor;
 	private Date   joined;
 	private Date   lastLoggedIn;
 	private Date   modified;
@@ -89,12 +91,12 @@ public class UserDTO extends AbstractDTO {
 		this.linkedin = linkedin;
 	}
 
-	public boolean isAccreditedInvestor() {
-		return accreditedInvestor;
+	public boolean isInvestor() {
+		return investor;
 	}
 
-	public void setAccreditedInvestor(boolean accreditedInvestor) {
-		this.accreditedInvestor = accreditedInvestor;
+	public void setInvestor(boolean investor) {
+		this.investor = investor;
 	}
 
 	public Date getJoined() {
@@ -127,8 +129,46 @@ public class UserDTO extends AbstractDTO {
 				+ firstName + ", lastName=" + lastName + ", email=" + email
 				+ ", title=" + title + ", organization=" + organization
 				+ ", facebook=" + facebook + ", twitter=" + twitter
-				+ ", linkedin=" + linkedin + ", accreditedInvestor=" + accreditedInvestor
+				+ ", linkedin=" + linkedin + ", investor=" + investor
 				+ ", joined=" + joined + ", lastLoggedIn=" + lastLoggedIn
 				+ ", modified=" + modified + "]";
 	}
+
+	@Override
+	public Entity toEntity() {
+		Entity user = new Entity(id);
+		user.setProperty("email", this.email);
+		user.setProperty("facebook", this.facebook);
+		user.setProperty("firstName", this.firstName);
+		user.setProperty("investor", this.investor);
+		user.setProperty("joined", this.joined);
+		user.setProperty("lastLoggedIn", this.lastLoggedIn);
+		user.setProperty("lastName", this.lastName);
+		user.setProperty("linkedin", this.linkedin);
+		user.setProperty("modified", this.modified);
+		user.setProperty("nickname", this.nickname);
+		user.setProperty("organization", this.organization);
+		user.setProperty("title", this.title);
+		user.setProperty("twitter", this.twitter);
+		return user;
+	}
+	
+	public static UserDTO fromEntity(Entity entity) {
+		UserDTO user = new UserDTO();
+		user.setKey(entity.getKey());
+		user.setEmail((String)entity.getProperty("email"));
+		user.setFacebook((String)entity.getProperty("facebook"));
+		user.setFirstName((String)entity.getProperty("firstName"));
+		user.setInvestor((Boolean)entity.getProperty("investor"));
+		user.setJoined((Date)entity.getProperty("joined"));
+		user.setLastLoggedIn((Date)entity.getProperty("lastLoggedIn"));
+		user.setLastName((String)entity.getProperty("lastName"));
+		user.setModified((Date)entity.getProperty("linkedin"));
+		user.setNickname((String)entity.getProperty("modified"));
+		user.setOrganization((String)entity.getProperty("nickname"));
+		user.setTitle((String)entity.getProperty("organization"));
+		user.setTwitter((String)entity.getProperty("twitter"));
+		return user;
+	}
+	
 }

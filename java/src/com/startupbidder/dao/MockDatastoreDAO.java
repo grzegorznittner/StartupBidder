@@ -530,7 +530,7 @@ public class MockDatastoreDAO implements DatastoreDAO {
 	private void generateBids() {
 		List<UserDTO> users = new ArrayList<UserDTO>();
 		for (UserDTO user : userCache.values()) {
-			if (user.isAccreditedInvestor()) {
+			if (user.isInvestor()) {
 				users.add(user);
 			}
 		}
@@ -596,7 +596,7 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		user.setLastName("Den");
 		user.setEmail("dragon@startupbidder.com");
 		user.setJoined(new Date(System.currentTimeMillis() - 6 * 24 * 60 * 60 * 1000));
-		user.setAccreditedInvestor(true);
+		user.setInvestor(true);
 		userCache.put(user.getIdAsString(), user);
 		log.log(Level.INFO, user.toString());
 
@@ -607,7 +607,7 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		user.setLastName("Max");
 		user.setEmail("madmax@startupbidder.com");
 		user.setJoined(new Date(System.currentTimeMillis() - 5 * 24 * 60 * 60 * 1000));
-		user.setAccreditedInvestor(true);
+		user.setInvestor(true);
 		userCache.put(user.getIdAsString(), user);
 		log.log(Level.INFO, user.toString());
 
@@ -618,7 +618,7 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		user.setLastName("Leen");
 		user.setEmail("madmax@startupbidder.com");
 		user.setJoined(new Date(System.currentTimeMillis() - 1 * 24 * 60 * 60 * 1000));
-		user.setAccreditedInvestor(true);
+		user.setInvestor(true);
 		userCache.put(user.getIdAsString(), user);
 		log.log(Level.INFO, user.toString());
 	}

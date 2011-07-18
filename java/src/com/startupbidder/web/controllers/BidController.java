@@ -5,8 +5,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.struts2.rest.DefaultHttpHeaders;
 import org.apache.struts2.rest.HttpHeaders;
 
+import com.startupbidder.vo.BidAndUserVO;
 import com.startupbidder.vo.BidListVO;
-import com.startupbidder.vo.BidVO;
 import com.startupbidder.vo.ListPropertiesVO;
 import com.startupbidder.web.ModelDrivenController;
 import com.startupbidder.web.ServiceFacade;
@@ -14,7 +14,7 @@ import com.startupbidder.web.ServiceFacade;
 public class BidController extends ModelDrivenController {
 
 	private BidListVO bids = null;
-	private BidVO bid = null;
+	private BidAndUserVO bid = null;
 	
 	@Override
 	protected HttpHeaders executeAction(HttpServletRequest request) {

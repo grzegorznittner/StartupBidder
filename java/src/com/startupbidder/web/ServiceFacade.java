@@ -9,7 +9,6 @@ import java.util.logging.Logger;
 
 import org.joda.time.DateTime;
 import org.joda.time.Days;
-import org.joda.time.Duration;
 
 import com.startupbidder.dao.DatastoreDAO;
 import com.startupbidder.dao.MockDatastoreDAO;
@@ -18,6 +17,7 @@ import com.startupbidder.dto.ListingDTO;
 import com.startupbidder.dto.UserDTO;
 import com.startupbidder.dto.UserStatistics;
 import com.startupbidder.dto.VoToDtoConverter;
+import com.startupbidder.vo.BidAndUserVO;
 import com.startupbidder.vo.BidListVO;
 import com.startupbidder.vo.BidVO;
 import com.startupbidder.vo.CommentListVO;
@@ -141,7 +141,7 @@ public class ServiceFacade {
 		ListingListVO list = new ListingListVO();
 		list.setListings(listings);
 		list.setListingsProperties(listingProperties);
-		list.setUser(DtoToVoConverter.convert(getDAO().getUser(userId)));
+		list.setUser(getUser(userId));
 
 		return list;
 	}
@@ -354,7 +354,7 @@ public class ServiceFacade {
 	public CommentListVO getCommentsForUser(String userId, ListPropertiesVO commentProperties) {
 		CommentListVO list = new CommentListVO();
 
-		UserVO user = DtoToVoConverter.convert(getDAO().getUser(userId));
+		UserVO user = getUser(userId);
 		if (user == null) {
 			log.log(Level.WARNING, "User '" + userId + "' not found");
 			commentProperties.setNumberOfResults(0);
@@ -425,7 +425,7 @@ public class ServiceFacade {
 	public BidListVO getBidsForUser(String userId, ListPropertiesVO bidProperties) {
 		BidListVO list = new BidListVO();
 
-		UserVO user = DtoToVoConverter.convert(getDAO().getUser(userId));
+		UserVO user = getUser(userId);
 		if (user == null) {
 			log.log(Level.WARNING, "User '" + userId + "' not found");
 			bidProperties.setNumberOfResults(0);
@@ -450,25 +450,39 @@ public class ServiceFacade {
 	}
 	
 	/**
-	 * Returns business plan's rating
-	 * @param businessPlanId Business plan id
+	 * Returns listing's rating
+	 * @param listingId Listing id
 	 * @return Current rating
 	 */
-	public int getRating(String businessPlanId) {
-		return getDAO().getNumberOfVotes(businessPlanId);
+	public int getRating(String listingId) {
+		return getDAO().getNumberOfVotes(listingId);
 	}
 	
 	/**
-	 * Returns business plan's activity (number of comments)
-	 * @param businessPlanId Business plan id
+	 * Returns listings's activity (number of comments)
+	 * @param listingId Business plan id
 	 * @return Activity
 	 */
-	public int getActivity(String businessPlanId) {
-		return getDAO().getActivity(businessPlanId);
+	public int getActivity(String listingId) {
+		return getDAO().getActivity(listingId);
 	}
-
-	public BidVO getBid(String bidId) {
-		return DtoToVoConverter.convert(getDAO().getBid(bidId));
+ 
+	/**
+	 * Returns bid for a given id and corresponding user profile
+	 * @param bidId Bid id
+	 */
+	public BidAndUserVO getBid(String bidId) {
+		BidVO bid = DtoToVoConverter.convert(getDAO().getBid(bidId));
+		UserVO user = getUser(bid.getUser());
+		ListingVO listing = DtoToVoConverter.convert(getDAO().getListing(bid.getListing()));
+		bid.setUserName(user.getNickname());
+		bid.setListingName(listing.getName());
+		
+		BidAndUserVO bidAndUser = new BidAndUserVO();
+		bidAndUser.setBid(bid);
+		bidAndUser.setUser(user);
+		
+		return bidAndUser;
 	}
 
 	public CommentVO getComment(String commentId) {
