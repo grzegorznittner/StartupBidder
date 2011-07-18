@@ -43,6 +43,152 @@ $.extend({
 });
 
 /**
+ * Cookie plugin
+ *
+ * Copyright (c) 2006 Klaus Hartl (stilbuero.de)
+ * Dual licensed under the MIT and GPL licenses:
+ * http://www.opensource.org/licenses/mit-license.php
+ * http://www.gnu.org/licenses/gpl.html
+ *
+ */
+
+/**
+ * Create a cookie with the given name and value and other optional parameters.
+ *
+ * @example $.cookie('the_cookie', 'the_value');
+ * @desc Set the value of a cookie.
+ * @example $.cookie('the_cookie', 'the_value', { expires: 7, path: '/', domain: 'jquery.com', secure: true });
+ * @desc Create a cookie with all available options.
+ * @example $.cookie('the_cookie', 'the_value');
+ * @desc Create a session cookie.
+ * @example $.cookie('the_cookie', null);
+ * @desc Delete a cookie by passing null as value. Keep in mind that you have to use the same path and domain
+ *       used when the cookie was set.
+ *
+ * @param String name The name of the cookie.
+ * @param String value The value of the cookie.
+ * @param Object options An object literal containing key/value pairs to provide optional cookie attributes.
+ * @option Number|Date expires Either an integer specifying the expiration date from now on in days or a Date object.
+ *                             If a negative value is specified (e.g. a date in the past), the cookie will be deleted.
+ *                             If set to null or omitted, the cookie will be a session cookie and will not be retained
+ *                             when the the browser exits.
+ * @option String path The value of the path atribute of the cookie (default: path of page that created the cookie).
+ * @option String domain The value of the domain attribute of the cookie (default: domain of page that created the cookie).
+ * @option Boolean secure If true, the secure attribute of the cookie will be set and the cookie transmission will
+ *                        require a secure protocol (like HTTPS).
+ * @type undefined
+ *
+ * @name $.cookie
+ * @cat Plugins/Cookie
+ * @author Klaus Hartl/klaus.hartl@stilbuero.de
+ */
+
+/**
+ * Create multiple cookies at once stored in an object, with optional parameters affecting them all.
+ *
+ * @example $.cookie({ 'the_cookie' : 'the_value' });
+ * @desc Set/delete multiple cookies at once.
+ * @example $.cookie({ 'the_cookie' : 'the_value' }, { expires: 7, path: '/', domain: 'jquery.com', secure: true });
+ * @desc Set/delete multiple cookies with options.
+ *
+ * @param Object name An object with multiple cookie name-value pairs.
+ * @param Object options An object literal containing key/value pairs to provide optional cookie attributes.
+ * @option Number|Date expires Either an integer specifying the expiration date from now on in days or a Date object.
+ *                             If a negative value is specified (e.g. a date in the past), the cookie will be deleted.
+ *                             If set to null or omitted, the cookie will be a session cookie and will not be retained
+ *                             when the the browser exits.
+ * @option String path The value of the path atribute of the cookie (default: path of page that created the cookie).
+ * @option String domain The value of the domain attribute of the cookie (default: domain of page that created the cookie).
+ * @option Boolean secure If true, the secure attribute of the cookie will be set and the cookie transmission will
+ *                        require a secure protocol (like HTTPS).
+ * @type undefined
+ *
+ * @name $.cookie
+ * @cat Plugins/Cookie
+ * @author Klaus Hartl/klaus.hartl@stilbuero.de
+ */
+
+/**
+ * Get the value of a cookie with the given name.
+ *
+ * @example $.cookie('the_cookie');
+ * @desc Get the value of a cookie.
+ *
+ * @param String name The name of the cookie.
+ * @return The value of the cookie.
+ * @type String
+ *
+ * @name $.cookie
+ * @cat Plugins/Cookie
+ * @author Klaus Hartl/klaus.hartl@stilbuero.de
+ */
+
+/**
+ * Get the names and values of all cookies for the page.
+ *
+ * @example $.cookie();
+ * @desc Get all the cookies for the page
+ *
+ * @return an object with the name-value pairs of all available cookies.
+ * @type Object
+ *
+ * @name $.cookie
+ * @cat Plugins/Cookie
+ * @author Klaus Hartl/klaus.hartl@stilbuero.de
+ */
+
+
+jQuery.cookie = function(name, value, options) {
+    if (typeof value != 'undefined'  ||  (name  &&  typeof name != 'string')) { // name and value given, set cookie
+        if (typeof name == 'string') {
+            options = options || {};
+            if (value === null) {
+                value = '';
+                options.expires = -1;
+            }
+            var expires = '';
+            if (options.expires && (typeof options.expires == 'number' || options.expires.toUTCString)) {
+                var date;
+                if (typeof options.expires == 'number') {
+                    date = new Date();
+                    date.setTime(date.getTime() + (options.expires * 24 * 60 * 60 * 1000));
+                } else {
+                    date = options.expires;
+                }
+                expires = '; expires=' + date.toUTCString(); // use expires attribute, max-age is not supported by IE
+            }
+            // CAUTION: Needed to parenthesize options.path and options.domain
+            // in the following expressions, otherwise they evaluate to undefined
+            // in the packed version for some reason...
+            var path = options.path ? '; path=' + (options.path) : '';
+            var domain = options.domain ? '; domain=' + (options.domain) : '';
+            var secure = options.secure ? '; secure' : '';
+            document.cookie = name + '=' + encodeURIComponent(value) + expires + path + domain + secure;
+        } else { // `name` is really an object of multiple cookies to be set.
+          for (var n in name) { jQuery.cookie(n, name[n], value||options); }
+        }
+    } else { // get cookie (or all cookies if name is not provided)
+        var returnValue = {};
+        if (document.cookie) {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                // Does this cookie string begin with the name we want?
+                if (!name) {
+                    var nameLength = cookie.indexOf('=');
+                    returnValue[ cookie.substr(0, nameLength)] = decodeURIComponent(cookie.substr(nameLength+1));
+                } else if (cookie.substr(0, name.length + 1) == (name + '=')) {
+                    returnValue = decodeURIComponent(cookie.substr(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return returnValue;
+    }
+};
+
+
+/**
 * jQuery.UI.iPad plugin
 * Copyright (c) 2010 Stephen von Takach
 * licensed under MIT.
@@ -1420,15 +1566,31 @@ s = (p + b + c + v) / (t + 2)^1.5
             profile.status = 'deactivated';
             return profile;
         };
+        self.login = function() {
+            self.profile = self.profileForUsername('johnarleyburns'); // auto login
+        }
         return self;
     };
 
     var User = function() {
         var self = {};
+        self.cookieDomain = 'com.startupbidder';
+        self.cookieName = self.cookieDomain + '.user';
+        self.cookie = null;
         self.controller = null;
         self.profile = null;
         self.setup = function(controller) {
             self.controller = controller;
+        };
+        self.initialize = function() {
+            self.cookie = $.cookie(self.cookieName);
+            self.profile = self.controller.backend.login();
+            if (self.cookie && self.cookie.profile) {
+                self.profile = self.cookie.profile;
+            }
+            else {
+                self.profile = null;
+            }
             controller.header.displayUser(self);
         };
         self.hasVoted = function(listing_id) {
@@ -1436,7 +1598,6 @@ s = (p + b + c + v) / (t + 2)^1.5
             return false;
         };
         self.login = function() {
-            self.profile = self.controller.backend.profileForUsername('johnarleyburns'); // auto login
             self.controller.header.displayUser(self);
             return 'search';
         };
@@ -2480,6 +2641,10 @@ s = (p + b + c + v) / (t + 2)^1.5
         self.setup = function(controller) {
             self.controller = controller;
         }
+        // user methods
+        self.login = function() {
+            'http://localhost:7777/_ah/login?continue=%2f';
+        };
         // profile methods
         self.getProfile = function(profile_id) {
             var url = '/user?id=' + profile_id;
@@ -2635,6 +2800,10 @@ s = (p + b + c + v) / (t + 2)^1.5
             self.backend = new RestBackend();
             self.backend.setup(controller);
         };
+        // user methods
+        self.login = function() {
+            return self.backend.login();
+        }
         // profile methods
         self.saveProfile = function(profile) {
             return self.backend.saveProfile(profile);
@@ -2759,6 +2928,7 @@ s = (p + b + c + v) / (t + 2)^1.5
     controller.addManaged('comments', new Comments());
     controller.addManaged('bids', new Bids());
     controller.setupManaged();
+    controller.user.initialize(); // cookie stuff
     controller.execute();
 
 });
