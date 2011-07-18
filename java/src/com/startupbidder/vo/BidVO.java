@@ -9,8 +9,8 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 import com.startupbidder.util.DateSerializer;
 
-@JsonAutoDetect(getterVisibility=Visibility.NONE,
-		setterVisibility=Visibility.NONE, fieldVisibility=Visibility.NONE)
+@JsonAutoDetect(getterVisibility=Visibility.NONE, setterVisibility=Visibility.NONE,
+		fieldVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE)
 public class BidVO {
 	@JsonProperty("num")
 	private int orderNumber;

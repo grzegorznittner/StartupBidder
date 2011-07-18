@@ -10,8 +10,8 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
 import com.startupbidder.util.DateSerializer;
 import com.startupbidder.util.LowecaseSerializer;
 
-@JsonAutoDetect(getterVisibility=Visibility.NONE,
-		setterVisibility=Visibility.NONE, fieldVisibility=Visibility.NONE)
+@JsonAutoDetect(getterVisibility=Visibility.NONE, setterVisibility=Visibility.NONE,
+		fieldVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE)
 public class UserVO {
 	@JsonProperty("num")
 	private int orderNumber;
@@ -20,9 +20,7 @@ public class UserVO {
 	@JsonProperty("username")
 	private String nickname;
 	@JsonProperty("name")
-	private String firstName;
-	@JsonProperty("surename")
-	private String lastName;
+	private String name;
 	@JsonProperty("email")
 	private String email;
 	@JsonProperty("open_id")
@@ -72,17 +70,11 @@ public class UserVO {
 	public void setNickname(String nickname) {
 		this.nickname = nickname;
 	}
-	public String getFirstName() {
-		return firstName;
+	public String getName() {
+		return name;
 	}
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
-	}
-	public String getLastName() {
-		return lastName;
-	}
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
+	public void setName(String name) {
+		this.name = name;
 	}
 	public String getEmail() {
 		return email;
@@ -201,8 +193,8 @@ public class UserVO {
 	@Override
 	public String toString() {
 		return "UserVO [orderNumber=" + orderNumber + ", id=" + id
-				+ ", nickname=" + nickname + ", firstName=" + firstName
-				+ ", lastName=" + lastName + ", email=" + email + ", openId="
+				+ ", nickname=" + nickname + ", firstName=" + name
+				+ ", email=" + email + ", openId="
 				+ openId + ", title=" + title + ", organization="
 				+ organization + ", facebook=" + facebook + ", twitter="
 				+ twitter + ", linkedin=" + linkedin + ", accreditedInvestor="

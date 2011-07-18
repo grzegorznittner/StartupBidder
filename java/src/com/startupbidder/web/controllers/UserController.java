@@ -52,7 +52,7 @@ public class UserController extends ModelDrivenController {
 
 	private HttpHeaders all(HttpServletRequest request) {
 		HttpHeaders headers = new DefaultHttpHeaders("all");
-		headers.setStatus(501);
+		
 		return headers;
 	}
 

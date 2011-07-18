@@ -60,8 +60,14 @@ public class MockDatastoreDAO implements DatastoreDAO {
 			user.createKey(key);
 			user.setNickname("The " + key);
 			user.setFirstName(key);
-			user.setLastName("van Damm");
 			user.setEmail(key + "vandamm@startupbidder.com");
+			user.setFacebook("fb_" + key);
+			user.setJoined(new Date());
+			user.setLastLoggedIn(new Date());
+			user.setModified(new Date());
+			user.setOrganization("org_" + key);
+			user.setTitle("Dr");
+			user.setTwitter("twit_" + key);
 			user.setStatus(UserDTO.Status.ACTIVE);
 			
 			userCache.put(user.getIdAsString(), user);
@@ -598,7 +604,6 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		user.createKey("deadahmed");
 		user.setNickname("Dead");
 		user.setFirstName("Ahmed");
-		user.setLastName("The Terrorist");
 		user.setEmail("deadahmed@startupbidder.com");
 		user.setJoined(new Date(System.currentTimeMillis() - 2 * 24 * 60 * 60 * 1000));
 		user.setStatus(UserDTO.Status.ACTIVE);
@@ -609,7 +614,6 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		user.createKey("jpfowler");
 		user.setNickname("fowler");
 		user.setFirstName("Jackob");
-		user.setLastName("Fowler");
 		user.setEmail("jpfowler@startupbidder.com");
 		user.setJoined(new Date(System.currentTimeMillis() - 3 * 24 * 60 * 60 * 1000));
 		user.setStatus(UserDTO.Status.ACTIVE);
@@ -620,7 +624,6 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		user.createKey("businessinsider");
 		user.setNickname("Insider");
 		user.setFirstName("The");
-		user.setLastName("Business");
 		user.setEmail("insider@startupbidder.com");
 		user.setJoined(new Date(System.currentTimeMillis() - 3 * 24 * 60 * 60 * 1000));
 		user.setStatus(UserDTO.Status.ACTIVE);
@@ -631,7 +634,6 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		user.createKey("dragonsden");
 		user.setNickname("The Dragon");
 		user.setFirstName("Mark");
-		user.setLastName("Den");
 		user.setEmail("dragon@startupbidder.com");
 		user.setJoined(new Date(System.currentTimeMillis() - 6 * 24 * 60 * 60 * 1000));
 		user.setStatus(UserDTO.Status.ACTIVE);
@@ -643,7 +645,6 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		user.createKey("crazyinvestor");
 		user.setNickname("MadMax");
 		user.setFirstName("Mad");
-		user.setLastName("Max");
 		user.setEmail("madmax@startupbidder.com");
 		user.setJoined(new Date(System.currentTimeMillis() - 5 * 24 * 60 * 60 * 1000));
 		user.setStatus(UserDTO.Status.ACTIVE);
@@ -655,7 +656,6 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		user.createKey("chinese");
 		user.setNickname("The One");
 		user.setFirstName("Bruce");
-		user.setLastName("Leen");
 		user.setEmail("madmax@startupbidder.com");
 		user.setJoined(new Date(System.currentTimeMillis() - 1 * 24 * 60 * 60 * 1000));
 		user.setStatus(UserDTO.Status.DEACTIVATED);
