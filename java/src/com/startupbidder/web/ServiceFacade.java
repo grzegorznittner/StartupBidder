@@ -300,8 +300,10 @@ public class ServiceFacade {
 	 * @param userId User identifier
 	 * @return Number of votes per listing
 	 */
-	public int valueUpListing(String listingId, String userId) {
-		return getDAO().valueUpListing(listingId, userId);
+	public ListingVO valueUpListing(String listingId, String userId) {
+		ListingVO listing =  DtoToVoConverter.convert(getDAO().valueUpListing(listingId, userId));
+		computeListingData(listing);
+		return listing;
 	}
 	
 	/**
@@ -311,8 +313,10 @@ public class ServiceFacade {
 	 * @param userId User identifier
 	 * @return Number of votes per listing
 	 */
-	public int valueDownListing(String listingId, String userId) {
-		return getDAO().valueDownListing(listingId, userId);
+	public ListingVO valueDownListing(String listingId, String userId) {
+		ListingVO listing =  DtoToVoConverter.convert(getDAO().valueDownListing(listingId, userId));
+		computeListingData(listing);
+		return listing;
 	}
 	
 	/**
@@ -508,6 +512,18 @@ public class ServiceFacade {
 
 	public ListingVO updateListing(ListingVO listing) {
 		ListingVO updatedListing = DtoToVoConverter.convert(getDAO().updateListing(VoToDtoConverter.convert(listing)));
+		computeListingData(updatedListing);
+		return updatedListing;
+	}
+
+	public ListingVO activateListing(String listingId) {
+		ListingVO updatedListing = DtoToVoConverter.convert(getDAO().activateListing(listingId));
+		computeListingData(updatedListing);
+		return updatedListing;
+	}
+
+	public ListingVO withdrawListing(String listingId) {
+		ListingVO updatedListing = DtoToVoConverter.convert(getDAO().withdrawListing(listingId));
 		computeListingData(updatedListing);
 		return updatedListing;
 	}

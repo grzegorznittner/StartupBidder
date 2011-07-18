@@ -57,13 +57,16 @@ public class HelloServlet extends HttpServlet {
 			List<CommentDTO> comments = datastore.getCommentsForListing(topListing.getIdAsString());
 			
 			//testMockDatastore(user, datastore, out);
-			out.println("<p>Test links:</p>");
-
-			out.println("<a href=\"/listings/get/" + topListing.getIdAsString() + "/.html\">Top listing data</a><br/>");
+			out.println("<p>User API:</p>");
 			out.println("<a href=\"/user/topinvestor/.html\">Top investor data</a><br/>");
 			out.println("<a href=\"/user/get/" + currentUser.getIdAsString() + "/.html\">Current user data</a><br/>");
-			out.println("<br/>");
 			
+			out.println("<p>Listings API:</p>");
+			out.println("<a href=\"/listings/get/" + topListing.getIdAsString() + "/.html\">Top listing data</a><br/>");
+			out.println("<a href=\"/listings/up/" + topListing.getIdAsString() + "/" + topInvestor.getIdAsString() + "/.html\">Top investor votes for top listing (works only once)</a><br/>");
+			out.println("<a href=\"/listings/up/.html?id=" + topListing.getIdAsString() + "&user_id=" + topInvestor.getIdAsString() + "/.html\">Top investor votes for top listing (works only once), 2nd form</a><br/>");
+			out.println("<a href=\"/listings/activate/" + topListing.getIdAsString() + "/.html\">Activate top listing</a><br/>");
+			out.println("<a href=\"/listings/withdraw/" + topListing.getIdAsString() + "/.html\">Withdraw top listing</a><br/>");
 			out.println("<a href=\"/listings/top/.html?max_results=6\">Top listings</a><br/>");
 			out.println("<a href=\"/listings/active/.html?max_results=6\">Active listings</a><br/>");
 			out.println("<a href=\"/listings/valuation/.html?max_results=6\">Top valued listings</a><br/>");
@@ -71,13 +74,13 @@ public class HelloServlet extends HttpServlet {
 			out.println("<a href=\"/listings/latest/.html?max_results=6\">Latest listings</a><br/>");
 			out.println("<a href=\"/listings/closing/.html?max_results=6\">Closing listings</a><br/>");
 			out.println("<a href=\"/listings/user/" + topInvestor.getIdAsString() + "/.html?max_results=6\">Top investor's listings</a><br/>");
-			out.println("<br/>");
 
+			out.println("<p>Bids API:</p>");
 			out.println("<a href=\"/bids/listing/" + topListing.getIdAsString() + "/.html?max_results=6\">Bids for top listing</a><br/>");
 			out.println("<a href=\"/bids/user/" + topInvestor.getIdAsString() + "/.html?max_results=6\">Bids for top investor</a><br/>");
 			out.println("<a href=\"/bids/get/" + bids.get(0).getIdAsString() + "/.html\">Get bid id '" + bids.get(0).getIdAsString() + "'</a><br/>");
-			out.println("<br/>");
 			
+			out.println("<p>Comments API:</p>");
 			out.println("<a href=\"/comments/listing/" + topListing.getIdAsString() + "/.html?max_results=6\">Comments for top listing</a><br/>");
 			out.println("<a href=\"/comments/user/" + topInvestor.getIdAsString() + "/.html?max_results=6\">Comments for top investor</a><br/>");
 			out.println("<a href=\"/comments/get/" + comments.get(0).getIdAsString() + "/.html\">Get comment id '" + comments.get(0).getIdAsString() + "'</a><br/>");

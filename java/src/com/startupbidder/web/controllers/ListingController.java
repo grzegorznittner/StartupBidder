@@ -35,6 +35,12 @@ public class ListingController extends ModelDrivenController {
 				return closing(request);
 			} else if("user".equalsIgnoreCase(getCommand(1))) {
 				return user(request);
+			} else if("up".equalsIgnoreCase(getCommand(1))) {
+				return up(request);
+			}  else if("activate".equalsIgnoreCase(getCommand(1))) {
+				return activate(request);
+			} else if("withdraw".equalsIgnoreCase(getCommand(1))) {
+				return withdraw(request);
 			} else if("get".equalsIgnoreCase(getCommand(1))) {
 				return get(request);
 			} else {
@@ -122,6 +128,28 @@ public class ListingController extends ModelDrivenController {
 
     	listings = ServiceFacade.instance().getUserListings(userId, listingProperties);
         return new DefaultHttpHeaders("user").disableCaching();
+    }
+
+    // GET /listings/up
+    private HttpHeaders up(HttpServletRequest request) {
+    	String listingId = getCommandOrParameter(request, 2, "id");
+    	String userId = getCommandOrParameter(request, 3, "user_id");
+    	listing = ServiceFacade.instance().valueUpListing(listingId, userId);
+        return new DefaultHttpHeaders("up").disableCaching();
+    }
+
+    // GET /listings/activate
+    private HttpHeaders activate(HttpServletRequest request) {
+    	String listingId = getCommandOrParameter(request, 2, "id");
+    	listing = ServiceFacade.instance().activateListing(listingId);
+        return new DefaultHttpHeaders("activate").disableCaching();
+    }
+
+    // GET /listings/withdrawn
+    private HttpHeaders withdraw(HttpServletRequest request) {
+    	String listingId = getCommandOrParameter(request, 2, "id");
+    	listing = ServiceFacade.instance().withdrawListing(listingId);
+        return new DefaultHttpHeaders("withdrawn").disableCaching();
     }
 
     // GET /listings/get

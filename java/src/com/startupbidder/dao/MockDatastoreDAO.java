@@ -154,6 +154,22 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		return listing;
 	}
 
+	public ListingDTO activateListing(String listingId) {
+		ListingDTO listing = getListing(listingId);
+		if (listing != null) {
+			listing.setState(ListingDTO.State.ACTIVE);
+		}
+		return listing;
+	}
+
+	public ListingDTO withdrawListing(String listingId) {
+		ListingDTO listing = getListing(listingId);
+		if (listing != null) {
+			listing.setState(ListingDTO.State.WITHDRAWN);
+		}
+		return listing;
+	}
+
 	
 	public List<ListingDTO> getTopListings(ListPropertiesVO listingProperties) {
 		List<ListingDTO> list = new ArrayList<ListingDTO>();
@@ -410,7 +426,8 @@ public class MockDatastoreDAO implements DatastoreDAO {
 	}
 
 
-	public int valueUpListing(String listingId, String userId) {
+	public ListingDTO valueUpListing(String listingId, String userId) {
+		ListingDTO listing = getListing(listingId);
 		int numberOfVotes = 0;
 		boolean alreadyVoted = false;
 		for (VoteDTO vote : voteCache.values()) {
@@ -430,18 +447,19 @@ public class MockDatastoreDAO implements DatastoreDAO {
 			vote.createKey(String.valueOf(vote.hashCode()));
 			numberOfVotes++;
 		}
-		return numberOfVotes;
+		return listing;
 	}
 	
-	public int valueDownListing(String listingId, String userId) {
+	public ListingDTO valueDownListing(String listingId, String userId) {
 		log.log(Level.SEVERE, "valueDownListing is not supported now, we only care about number of votes");
+		ListingDTO listing = getListing(listingId);
 		int numberOfVotes = 0;
 		for (VoteDTO vote : voteCache.values()) {
 			if (vote.getListing().equals(listingId)) {
 				numberOfVotes++;
 			}
 		}
-		return numberOfVotes;
+		return listing;
 	}
 
 	@Override

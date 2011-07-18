@@ -115,22 +115,36 @@ public interface DatastoreDAO {
 	List<ListingDTO> getClosingListings(ListPropertiesVO listingProperties);
 
 	/**
+	 * Set listing's status to ACTIVE
+	 * @param listingId Listing id
+	 * @return Update listing or null
+	 */
+	ListingDTO activateListing(String listingId);
+
+	/**
+	 * Set listing's status to WITHDRAWN
+	 * @param listingId Listing id
+	 * @return Update listing or null
+	 */
+	ListingDTO withdrawListing(String listingId);
+
+	/**
 	 * Value up listing
 	 *
 	 * @param listingId Listing identifier
 	 * @param userId User identifier
-	 * @return Listing rating
+	 * @return Listing with new vote number
 	 */
-	int valueUpListing(String listingId, String userId);
+	ListingDTO valueUpListing(String listingId, String userId);
 	
 	/**
 	 * Value down listing
 	 *
 	 * @param listingId Listing identifier
 	 * @param userId User identifier
-	 * @return Listing's rating
+	 * @return Listing with new vote number
 	 */
-	int valueDownListing(String listingId, String userId);
+	ListingDTO valueDownListing(String listingId, String userId);
 	
 	/**
 	 * Returns list of listing's comments
