@@ -68,6 +68,7 @@ public class MockDatastoreDAO implements DatastoreDAO {
 			user.setOrganization("org_" + key);
 			user.setTitle("Dr");
 			user.setTwitter("twit_" + key);
+			user.setLinkedin("ln_" + key);
 			user.setStatus(UserDTO.Status.ACTIVE);
 			
 			userCache.put(user.getIdAsString(), user);
@@ -79,7 +80,7 @@ public class MockDatastoreDAO implements DatastoreDAO {
 	public UserStatistics getUserStatistics(String userId) {
 		UserStatistics stat = new UserStatistics();
 		
-		int numberOfListings = 0;		
+		int numberOfListings = 0;
 		for (ListingDTO bp : lCache.values()) {
 			if (userId.equals(bp.getOwner())) {
 				numberOfListings++;
@@ -110,6 +111,10 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		user.setModified(new Date(System.currentTimeMillis()));
 		log.log(Level.INFO, "Updating user " + user.getKey());
 		userCache.put(user.getIdAsString(), user);
+	}
+	
+	public List<UserDTO> getAllUsers() {
+		return new ArrayList<UserDTO>(userCache.values());
 	}
 	
 	public UserDTO getTopInvestor() {
@@ -600,66 +605,116 @@ public class MockDatastoreDAO implements DatastoreDAO {
 	 * Generates mock users
 	 */
 	private void createMockUsers() {
+		String key = "";
+		
 		UserDTO user = new UserDTO();
-		user.createKey("deadahmed");
+		key = "deadahmed";
+		user.createKey(key);
 		user.setNickname("Dead");
 		user.setFirstName("Ahmed");
 		user.setEmail("deadahmed@startupbidder.com");
 		user.setJoined(new Date(System.currentTimeMillis() - 2 * 24 * 60 * 60 * 1000));
 		user.setStatus(UserDTO.Status.ACTIVE);
+		user.setFacebook("fb_" + key);
+		user.setJoined(new Date());
+		user.setLastLoggedIn(new Date());
+		user.setModified(new Date());
+		user.setTitle("Dr");
+		user.setTwitter("twit_" + key);
+		user.setLinkedin("ln_" + key);
 		userCache.put(user.getIdAsString(), user);
 		log.log(Level.INFO, user.toString());
 
 		user = new UserDTO();
-		user.createKey("jpfowler");
+		key = "jpfowler";
+		user.createKey(key);
 		user.setNickname("fowler");
 		user.setFirstName("Jackob");
 		user.setEmail("jpfowler@startupbidder.com");
 		user.setJoined(new Date(System.currentTimeMillis() - 3 * 24 * 60 * 60 * 1000));
 		user.setStatus(UserDTO.Status.ACTIVE);
+		user.setFacebook("fb_" + key);
+		user.setJoined(new Date());
+		user.setLastLoggedIn(new Date());
+		user.setModified(new Date());
+		user.setOrganization("org_" + key);
+		user.setTitle("Dr");
+		user.setTwitter("twit_" + key);
+		user.setLinkedin("ln_" + key);
 		userCache.put(user.getIdAsString(), user);
 		log.log(Level.INFO, user.toString());
 
 		user = new UserDTO();
-		user.createKey("businessinsider");
+		key = "businessinsider";
+		user.createKey(key);
 		user.setNickname("Insider");
 		user.setFirstName("The");
 		user.setEmail("insider@startupbidder.com");
 		user.setJoined(new Date(System.currentTimeMillis() - 3 * 24 * 60 * 60 * 1000));
 		user.setStatus(UserDTO.Status.ACTIVE);
+		user.setFacebook("fb_" + key);
+		user.setJoined(new Date());
+		user.setLastLoggedIn(new Date());
+		user.setModified(new Date());
+		user.setTwitter("twit_" + key);
 		userCache.put(user.getIdAsString(), user);
 		log.log(Level.INFO, user.toString());
 
 		user = new UserDTO();
-		user.createKey("dragonsden");
+		key = "dragonsden";
+		user.createKey(key);
 		user.setNickname("The Dragon");
 		user.setFirstName("Mark");
 		user.setEmail("dragon@startupbidder.com");
 		user.setJoined(new Date(System.currentTimeMillis() - 6 * 24 * 60 * 60 * 1000));
 		user.setStatus(UserDTO.Status.ACTIVE);
+		user.setFacebook("fb_" + key);
+		user.setJoined(new Date());
+		user.setLastLoggedIn(new Date());
+		user.setModified(new Date());
+		user.setOrganization("org_" + key);
+		user.setTitle("Dr");
+		user.setLinkedin("ln_" + key);
 		user.setInvestor(true);
 		userCache.put(user.getIdAsString(), user);
 		log.log(Level.INFO, user.toString());
 
 		user = new UserDTO();
-		user.createKey("crazyinvestor");
+		key = "crazyinvestor";
+		user.createKey(key);
 		user.setNickname("MadMax");
 		user.setFirstName("Mad");
 		user.setEmail("madmax@startupbidder.com");
 		user.setJoined(new Date(System.currentTimeMillis() - 5 * 24 * 60 * 60 * 1000));
 		user.setStatus(UserDTO.Status.ACTIVE);
 		user.setInvestor(true);
+		user.setFacebook("fb_" + key);
+		user.setJoined(new Date());
+		user.setLastLoggedIn(new Date());
+		user.setModified(new Date());
+		user.setOrganization("org_" + key);
+		user.setTitle("Dr");
+		user.setTwitter("twit_" + key);
+		user.setLinkedin("ln_" + key);
 		userCache.put(user.getIdAsString(), user);
 		log.log(Level.INFO, user.toString());
 
 		user = new UserDTO();
-		user.createKey("chinese");
+		key = "chinese";
+		user.createKey(key);
 		user.setNickname("The One");
 		user.setFirstName("Bruce");
 		user.setEmail("madmax@startupbidder.com");
 		user.setJoined(new Date(System.currentTimeMillis() - 1 * 24 * 60 * 60 * 1000));
 		user.setStatus(UserDTO.Status.DEACTIVATED);
 		user.setInvestor(true);
+		user.setJoined(new Date());
+		user.setLastLoggedIn(new Date());
+		user.setModified(new Date());
+		user.setOrganization("org_" + key);
+		user.setTitle("Dr");
+		user.setTwitter("twit_" + key);
+		user.setLinkedin("ln_" + key);
 		userCache.put(user.getIdAsString(), user);
 		log.log(Level.INFO, user.toString());
 	}
@@ -688,7 +743,7 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		ListingDTO bp = new ListingDTO();
 		bp.createKey("mislead");
 		bp.setName("MisLead");
-		bp.setOwner(userIds.get(bpNum++ % userIds.size()));
+		bp.setOwner(userIds.get(bpNum % userIds.size()));
 		bp.setSuggestedValuation(20000);
 		bp.setSuggestedPercentage(25);
 		bp.setSuggestedAmount(bp.getSuggestedValuation()*bp.getSuggestedPercentage()/100);
@@ -700,6 +755,57 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		log.log(Level.INFO, bp.toString());
 		createMockVotes(bp);
 	
+		bp = new ListingDTO();
+		bp.createKey("comp_training_camp");
+		bp.setName("Computer Training Camp");
+		bp.setOwner(userIds.get(bpNum % userIds.size()));
+		bp.setSuggestedValuation(15000);
+		bp.setSuggestedPercentage(45);
+		bp.setSuggestedAmount(bp.getSuggestedValuation()*bp.getSuggestedPercentage()/100);
+		bp.setListedOn(new Date(System.currentTimeMillis() - 5 * 60 * 60 * 1000));
+		bp.setState(ListingDTO.State.CREATED);
+		bp.setClosingOn(new Date(System.currentTimeMillis() + 35 * 24 * 60 * 60 * 1000));
+		bp.setSummary("Starting a computer training camp for children is a terrific new business " +
+				"venture to set in motion. In spite of the fact that many children now receive " +
+				"computer training in school, attending computer camps ensures parents and" +
+				" children a better and more complete understanding of the course material. " +
+				"The computer camps can be operated on a year-round basis or in the summer only. " +
+				"Typically, these camps are one or two days in length and available for various " +
+				"training needs, from beginner to advanced. Once again, this is the kind of children's" +
+				" business that can be operated as an independent business venture or operated in" +
+				" conjunction with a community program or community center.");
+		lCache.put(bp.getIdAsString(), bp);
+		log.log(Level.INFO, bp.toString());
+		createMockVotes(bp);
+
+		bp = new ListingDTO();
+		bp.createKey("comp_upgrading_service");
+		bp.setName("Computer Upgrading Service");
+		bp.setOwner(userIds.get(bpNum++ % userIds.size()));
+		bp.setSuggestedValuation(35000);
+		bp.setSuggestedPercentage(33);
+		bp.setSuggestedAmount(bp.getSuggestedValuation()*bp.getSuggestedPercentage()/100);
+		bp.setListedOn(new Date(System.currentTimeMillis() - 15 * 60 * 60 * 1000));
+		bp.setState(ListingDTO.State.ACTIVE);
+		bp.setClosingOn(new Date(System.currentTimeMillis() + 25 * 24 * 60 * 60 * 1000));
+		bp.setSummary("Starting a business that specializes in upgrading existing computer systems" +
+				" with new internal and external equipment is a terrific homebased business to " +
+				"initiate that has great potential to earn an outstanding income for the operator" +
+				" of the business. A computer upgrading service is a very easy business to get" +
+				" rolling, providing you have the skills and equipment necessary to complete upgrading" +
+				" tasks, such as installing more memory into the hard drive, replacing a hard drive," +
+				" or adding a new disk drive to the computer system. Ideally, to secure the most " +
+				"profitable segment of the potential market, the service should specialize in " +
+				"upgrading business computers as there are many reasons why a business would upgrade" +
+				" a computer system as opposed to replacing the computer system. Additionally, managing" +
+				" the business from a homebased location while providing clients with a mobile service" +
+				" is the best way to keep operating overheads minimized and potentially increases the" +
+				" size of the target market by expanding the service area, due to the fact the business" +
+				" operates on a mobile format.");
+		lCache.put(bp.getIdAsString(), bp);
+		log.log(Level.INFO, bp.toString());
+		createMockVotes(bp);
+
 		bp = new ListingDTO();
 		bp.createKey("semanticsearch");
 		bp.setName("Semantic Search");

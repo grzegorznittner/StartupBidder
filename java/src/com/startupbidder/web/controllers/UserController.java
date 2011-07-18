@@ -1,18 +1,17 @@
 package com.startupbidder.web.controllers;
 
-import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.struts2.rest.DefaultHttpHeaders;
 import org.apache.struts2.rest.HttpHeaders;
 
+import com.startupbidder.vo.UserListVO;
 import com.startupbidder.vo.UserVO;
 import com.startupbidder.web.ModelDrivenController;
 import com.startupbidder.web.ServiceFacade;
 
 public class UserController extends ModelDrivenController {
-	private List<UserVO> users = null;
+	private UserListVO users = null;
 	private UserVO user = null;
 
 	@Override
@@ -52,7 +51,7 @@ public class UserController extends ModelDrivenController {
 
 	private HttpHeaders all(HttpServletRequest request) {
 		HttpHeaders headers = new DefaultHttpHeaders("all");
-		
+		users = ServiceFacade.instance().getAllUsers();
 		return headers;
 	}
 

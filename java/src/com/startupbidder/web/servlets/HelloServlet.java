@@ -60,6 +60,7 @@ public class HelloServlet extends HttpServlet {
 			out.println("<p>User API:</p>");
 			out.println("<a href=\"/user/topinvestor/.html\">Top investor data</a><br/>");
 			out.println("<a href=\"/user/get/" + currentUser.getIdAsString() + "/.html\">Current user data</a><br/>");
+			out.println("<a href=\"/user/all/.html\">All users</a><br/>");
 			
 			out.println("<p>Listings API:</p>");
 			out.println("<a href=\"/listings/get/" + topListing.getIdAsString() + "/.html\">Top listing data</a><br/>");

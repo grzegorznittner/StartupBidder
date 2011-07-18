@@ -33,6 +33,12 @@ public interface DatastoreDAO {
 	void updateUser(UserDTO user);
 
 	/**
+	 * Returns list of all registered users
+	 * @return List of users
+	 */
+	List<UserDTO> getAllUsers();
+
+	/**
 	 * Returns user which posted most of bids
 	 */
 	UserDTO getTopInvestor();

@@ -127,4 +127,16 @@ public class DtoToVoConverter {
 		}
 		return bidVoList;
 	}
+
+	public static List<UserVO> convertUsers(List<UserDTO> userDtoList) {
+		if (userDtoList == null) {
+			return null;
+		}
+		List<UserVO> userVoList = new ArrayList<UserVO>();
+		for (UserDTO userDTO : userDtoList) {
+			UserVO bidVO = convert(userDTO);
+			userVoList.add(bidVO);
+		}
+		return userVoList;
+	}
 }
