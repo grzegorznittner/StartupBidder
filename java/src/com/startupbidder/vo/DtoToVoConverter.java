@@ -89,6 +89,7 @@ public class DtoToVoConverter {
 		user.setOrganization(userDTO.getOrganization());
 		user.setTitle(userDTO.getTitle());
 		user.setTwitter(userDTO.getTwitter());
+		user.setStatus(userDTO.getStatus().toString());
 		return user;
 	}
 	

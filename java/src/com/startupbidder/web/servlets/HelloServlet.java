@@ -64,22 +64,22 @@ public class HelloServlet extends HttpServlet {
 			out.println("<a href=\"/user/get/" + currentUser.getIdAsString() + "/.html\">Current user data</a><br/>");
 			out.println("<br/>");
 			
-			out.println("<a href=\"/listings/top/.html\">Top listings</a><br/>");
-			out.println("<a href=\"/listings/active/.html\">Active listings</a><br/>");
-			out.println("<a href=\"/listings/valuation/.html\">Top valued listings</a><br/>");
-			out.println("<a href=\"/listings/popular/.html\">Most popular listings</a><br/>");
-			out.println("<a href=\"/listings/latest/.html\">Latest listings</a><br/>");
-			out.println("<a href=\"/listings/closing/.html\">Closing listings</a><br/>");
-			out.println("<a href=\"/listings/user/" + topInvestor.getIdAsString() + "/.html\">Top investor's listings</a><br/>");
+			out.println("<a href=\"/listings/top/.html?max_results=6\">Top listings</a><br/>");
+			out.println("<a href=\"/listings/active/.html?max_results=6\">Active listings</a><br/>");
+			out.println("<a href=\"/listings/valuation/.html?max_results=6\">Top valued listings</a><br/>");
+			out.println("<a href=\"/listings/popular/.html?max_results=6\">Most popular listings</a><br/>");
+			out.println("<a href=\"/listings/latest/.html?max_results=6\">Latest listings</a><br/>");
+			out.println("<a href=\"/listings/closing/.html?max_results=6\">Closing listings</a><br/>");
+			out.println("<a href=\"/listings/user/" + topInvestor.getIdAsString() + "/.html?max_results=6\">Top investor's listings</a><br/>");
 			out.println("<br/>");
 
-			out.println("<a href=\"/bids/listing/" + topListing.getIdAsString() + "/.html\">Bids for top listing</a><br/>");
-			out.println("<a href=\"/bids/user/" + topInvestor.getIdAsString() + "/.html\">Bids for top investor</a><br/>");
+			out.println("<a href=\"/bids/listing/" + topListing.getIdAsString() + "/.html?max_results=6\">Bids for top listing</a><br/>");
+			out.println("<a href=\"/bids/user/" + topInvestor.getIdAsString() + "/.html?max_results=6\">Bids for top investor</a><br/>");
 			out.println("<a href=\"/bids/get/" + bids.get(0).getIdAsString() + "/.html\">Get bid id '" + bids.get(0).getIdAsString() + "'</a><br/>");
 			out.println("<br/>");
 			
-			out.println("<a href=\"/comments/listing/" + topListing.getIdAsString() + "/.html\">Comments for top listing</a><br/>");
-			out.println("<a href=\"/comments/user/" + topInvestor.getIdAsString() + "/.html\">Comments for top investor</a><br/>");
+			out.println("<a href=\"/comments/listing/" + topListing.getIdAsString() + "/.html?max_results=6\">Comments for top listing</a><br/>");
+			out.println("<a href=\"/comments/user/" + topInvestor.getIdAsString() + "/.html?max_results=6\">Comments for top investor</a><br/>");
 			out.println("<a href=\"/comments/get/" + comments.get(0).getIdAsString() + "/.html\">Get comment id '" + comments.get(0).getIdAsString() + "'</a><br/>");
 			out.println("<br/>");
 

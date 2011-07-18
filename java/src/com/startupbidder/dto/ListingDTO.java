@@ -124,7 +124,7 @@ public class ListingDTO extends AbstractDTO {
 		listing.setProperty("medianValuation", this.medianValuation);
 		listing.setProperty("name", this.name);
 		listing.setProperty("owner", this.owner);
-		listing.setProperty("state", this.state);
+		listing.setProperty("state", this.state.toString());
 		listing.setProperty("suggestedAmount", this.suggestedAmount);
 		listing.setProperty("suggestedPercentage", this.suggestedPercentage);
 		listing.setProperty("suggestedValuation", this.suggestedValuation);

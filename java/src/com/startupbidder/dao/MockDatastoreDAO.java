@@ -62,6 +62,7 @@ public class MockDatastoreDAO implements DatastoreDAO {
 			user.setFirstName(key);
 			user.setLastName("van Damm");
 			user.setEmail(key + "vandamm@startupbidder.com");
+			user.setStatus(UserDTO.Status.ACTIVE);
 			
 			userCache.put(user.getIdAsString(), user);
 		}
@@ -137,6 +138,22 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		}
 		return lCache.get(listingId);
 	}
+	
+	public ListingDTO createListing(ListingDTO listing) {
+		listing.createKey(listing.getName());
+		listing.setState(ListingDTO.State.CREATED);
+		listing.setListedOn(new Date());
+		
+		lCache.put(listing.getIdAsString(), listing);
+		
+		return listing;
+	}
+	
+	public ListingDTO updateListing(ListingDTO listing) {
+		lCache.put(listing.getIdAsString(), listing);
+		return listing;
+	}
+
 	
 	public List<ListingDTO> getTopListings(ListPropertiesVO listingProperties) {
 		List<ListingDTO> list = new ArrayList<ListingDTO>();
@@ -566,6 +583,7 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		user.setLastName("The Terrorist");
 		user.setEmail("deadahmed@startupbidder.com");
 		user.setJoined(new Date(System.currentTimeMillis() - 2 * 24 * 60 * 60 * 1000));
+		user.setStatus(UserDTO.Status.ACTIVE);
 		userCache.put(user.getIdAsString(), user);
 		log.log(Level.INFO, user.toString());
 
@@ -576,6 +594,7 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		user.setLastName("Fowler");
 		user.setEmail("jpfowler@startupbidder.com");
 		user.setJoined(new Date(System.currentTimeMillis() - 3 * 24 * 60 * 60 * 1000));
+		user.setStatus(UserDTO.Status.ACTIVE);
 		userCache.put(user.getIdAsString(), user);
 		log.log(Level.INFO, user.toString());
 
@@ -586,6 +605,7 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		user.setLastName("Business");
 		user.setEmail("insider@startupbidder.com");
 		user.setJoined(new Date(System.currentTimeMillis() - 3 * 24 * 60 * 60 * 1000));
+		user.setStatus(UserDTO.Status.ACTIVE);
 		userCache.put(user.getIdAsString(), user);
 		log.log(Level.INFO, user.toString());
 
@@ -596,6 +616,7 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		user.setLastName("Den");
 		user.setEmail("dragon@startupbidder.com");
 		user.setJoined(new Date(System.currentTimeMillis() - 6 * 24 * 60 * 60 * 1000));
+		user.setStatus(UserDTO.Status.ACTIVE);
 		user.setInvestor(true);
 		userCache.put(user.getIdAsString(), user);
 		log.log(Level.INFO, user.toString());
@@ -607,6 +628,7 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		user.setLastName("Max");
 		user.setEmail("madmax@startupbidder.com");
 		user.setJoined(new Date(System.currentTimeMillis() - 5 * 24 * 60 * 60 * 1000));
+		user.setStatus(UserDTO.Status.ACTIVE);
 		user.setInvestor(true);
 		userCache.put(user.getIdAsString(), user);
 		log.log(Level.INFO, user.toString());
@@ -618,6 +640,7 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		user.setLastName("Leen");
 		user.setEmail("madmax@startupbidder.com");
 		user.setJoined(new Date(System.currentTimeMillis() - 1 * 24 * 60 * 60 * 1000));
+		user.setStatus(UserDTO.Status.DEACTIVATED);
 		user.setInvestor(true);
 		userCache.put(user.getIdAsString(), user);
 		log.log(Level.INFO, user.toString());
@@ -652,7 +675,7 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		bp.setSuggestedPercentage(25);
 		bp.setSuggestedAmount(bp.getSuggestedValuation()*bp.getSuggestedPercentage()/100);
 		bp.setListedOn(new Date(System.currentTimeMillis() - 45 * 60 * 60 * 1000));
-		bp.setState(ListingDTO.State.ACTIVE);
+		bp.setState(ListingDTO.State.CREATED);
 		bp.setClosingOn(new Date(System.currentTimeMillis() + 12 * 24 * 60 * 60 * 1000));
 		bp.setSummary("Executive summary for <b>MisLead</b>");
 		lCache.put(bp.getIdAsString(), bp);
@@ -726,7 +749,7 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		bp.setSuggestedPercentage(49);
 		bp.setSuggestedAmount(bp.getSuggestedValuation()*bp.getSuggestedPercentage()/100);
 		bp.setListedOn(new Date(System.currentTimeMillis() - 23 * 60 * 60 * 1000));
-		bp.setState(ListingDTO.State.ACTIVE);
+		bp.setState(ListingDTO.State.CREATED);
 		bp.setClosingOn(new Date(System.currentTimeMillis() + 15 * 24 * 60 * 60 * 1000));
 		bp.setSummary("Micropayments are one idea that's tossed around to solve the problem" +
 				" of paying for content on the Web. If you want to read a New York Times " +
@@ -764,8 +787,8 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		bp.setSuggestedPercentage(15);
 		bp.setSuggestedAmount(bp.getSuggestedValuation()*bp.getSuggestedPercentage()/100);
 		bp.setListedOn(new Date(System.currentTimeMillis() - 8 * 60 * 60 * 1000));
-		bp.setState(ListingDTO.State.ACTIVE);
-		bp.setClosingOn(new Date(System.currentTimeMillis() + 30 * 24 * 60 * 60 * 1000));
+		bp.setState(ListingDTO.State.CLOSED);
+		bp.setClosingOn(new Date(System.currentTimeMillis() - 1 * 24 * 60 * 60 * 1000));
 		bp.setSummary("Considering how frustrated people are with car companies, you'd think " +
 				"launching a new one would be perfect for a startup. So far, that's not the case. " +
 				"You can point to Tesla as a success, and considering it IPO'd it's hard to argue " +

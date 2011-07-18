@@ -5,6 +5,8 @@ import java.util.Date;
 import com.google.appengine.api.datastore.Entity;
 
 public class UserDTO extends AbstractDTO {
+	public enum Status {CREATED, ACTIVE, DEACTIVATED};
+
 	private String nickname;
 	private String firstName;
 	private String lastName;
@@ -18,6 +20,7 @@ public class UserDTO extends AbstractDTO {
 	private Date   joined;
 	private Date   lastLoggedIn;
 	private Date   modified;
+	private Status status;
 	
 	public UserDTO() {
 	}
@@ -123,15 +126,23 @@ public class UserDTO extends AbstractDTO {
 		this.modified = modified;
 	}
 
+	public Status getStatus() {
+		return status;
+	}
+
+	public void setStatus(Status status) {
+		this.status = status;
+	}
+
 	@Override
 	public String toString() {
-		return "UserDTO [idAsString" + getIdAsString() + ", nickname=" + nickname + ", firstName="
-				+ firstName + ", lastName=" + lastName + ", email=" + email
-				+ ", title=" + title + ", organization=" + organization
-				+ ", facebook=" + facebook + ", twitter=" + twitter
-				+ ", linkedin=" + linkedin + ", investor=" + investor
-				+ ", joined=" + joined + ", lastLoggedIn=" + lastLoggedIn
-				+ ", modified=" + modified + "]";
+		return "UserDTO [nickname=" + nickname + ", firstName=" + firstName
+				+ ", lastName=" + lastName + ", email=" + email + ", title="
+				+ title + ", organization=" + organization + ", facebook="
+				+ facebook + ", twitter=" + twitter + ", linkedin=" + linkedin
+				+ ", investor=" + investor + ", joined=" + joined
+				+ ", lastLoggedIn=" + lastLoggedIn + ", modified=" + modified
+				+ ", status=" + status + "]";
 	}
 
 	@Override
@@ -150,6 +161,7 @@ public class UserDTO extends AbstractDTO {
 		user.setProperty("organization", this.organization);
 		user.setProperty("title", this.title);
 		user.setProperty("twitter", this.twitter);
+		user.setProperty("status", this.status.toString());
 		return user;
 	}
 	
@@ -168,6 +180,7 @@ public class UserDTO extends AbstractDTO {
 		user.setOrganization((String)entity.getProperty("nickname"));
 		user.setTitle((String)entity.getProperty("organization"));
 		user.setTwitter((String)entity.getProperty("twitter"));
+		user.setStatus(UserDTO.Status.valueOf((String)entity.getProperty("status")));
 		return user;
 	}
 	

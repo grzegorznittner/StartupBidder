@@ -73,6 +73,7 @@ public class VoToDtoConverter {
 		user.setOrganization(userVO.getOrganization());
 		user.setTitle(userVO.getTitle());
 		user.setTwitter(userVO.getTwitter());
+		user.setStatus(UserDTO.Status.valueOf(userVO.getStatus()));
 		return user;
 	}
 

@@ -132,7 +132,7 @@ public class ServiceFacade {
 	public ListingListVO getUserListings(String userId, ListPropertiesVO listingProperties) {
 		
 		List<ListingVO> listings = DtoToVoConverter.convertListings(getDAO().getUserListings(userId, listingProperties));
-		int index = listingProperties.getStartIndex();
+		int index = listingProperties.getStartIndex() > 0 ? listingProperties.getStartIndex() : 1;
 		for (ListingVO listing : listings) {
 			computeListingData(listing);
 			listing.setOrderNumber(index++);
@@ -154,7 +154,7 @@ public class ServiceFacade {
 	 */
 	public ListingListVO getTopListings(ListPropertiesVO listingProperties) {
 		List<ListingVO> listings = DtoToVoConverter.convertListings(getDAO().getTopListings(listingProperties));
-		int index = listingProperties.getStartIndex();
+		int index = listingProperties.getStartIndex() > 0 ? listingProperties.getStartIndex() : 1;
 		for (ListingVO listing : listings) {
 			computeListingData(listing);
 			listing.setOrderNumber(index++);
@@ -174,7 +174,7 @@ public class ServiceFacade {
 	 */
 	public ListingListVO getActiveListings(ListPropertiesVO listingProperties) {
 		List<ListingVO> listings = DtoToVoConverter.convertListings(getDAO().getActiveListings(listingProperties));
-		int index = listingProperties.getStartIndex();
+		int index = listingProperties.getStartIndex() > 0 ? listingProperties.getStartIndex() : 1;
 		for (ListingVO listing : listings) {
 			computeListingData(listing);
 			listing.setOrderNumber(index++);
@@ -215,6 +215,11 @@ public class ServiceFacade {
 		listings = listings.subList(0, listingProperties.getMaxResults() > listings.size() ? listings.size() : listingProperties.getMaxResults());
 		listingProperties.setNumberOfResults(listings.size());
 		
+		int index = listingProperties.getStartIndex() > 0 ? listingProperties.getStartIndex() : 1;
+		for (ListingVO listing : listings) {
+			listing.setOrderNumber(index++);
+		}
+		
 		ListingListVO list = new ListingListVO();
 		list.setListings(listings);
 		list.setListingsProperties(listingProperties);
@@ -229,7 +234,7 @@ public class ServiceFacade {
 	 */
 	public ListingListVO getMostDiscussedListings(ListPropertiesVO listingProperties) {
 		List<ListingVO> listings = DtoToVoConverter.convertListings(getDAO().getMostDiscussedListings(listingProperties));
-		int index = listingProperties.getStartIndex();
+		int index = listingProperties.getStartIndex() > 0 ? listingProperties.getStartIndex() : 1;
 		for (ListingVO listing : listings) {
 			computeListingData(listing);
 			listing.setOrderNumber(index++);
@@ -248,7 +253,7 @@ public class ServiceFacade {
 	 */
 	public ListingListVO getMostPopularListings(ListPropertiesVO listingProperties) {
 		List<ListingVO> listings = DtoToVoConverter.convertListings(getDAO().getMostPopularListings(listingProperties));
-		int index = listingProperties.getStartIndex();
+		int index = listingProperties.getStartIndex() > 0 ? listingProperties.getStartIndex() : 1;
 		for (ListingVO listing : listings) {
 			computeListingData(listing);
 			listing.setOrderNumber(index++);
@@ -262,7 +267,7 @@ public class ServiceFacade {
 
 	public ListingListVO getLatestListings(ListPropertiesVO listingProperties) {
 		List<ListingVO> listings = DtoToVoConverter.convertListings(getDAO().getLatestListings(listingProperties));
-		int index = listingProperties.getStartIndex();
+		int index = listingProperties.getStartIndex() > 0 ? listingProperties.getStartIndex() : 1;
 		for (ListingVO listing : listings) {
 			computeListingData(listing);
 			listing.setOrderNumber(index++);
@@ -276,7 +281,7 @@ public class ServiceFacade {
 
 	public ListingListVO getClosingListings(ListPropertiesVO listingProperties) {
 		List<ListingVO> listings = DtoToVoConverter.convertListings(getDAO().getClosingListings(listingProperties));
-		int index = listingProperties.getStartIndex();
+		int index = listingProperties.getStartIndex() > 0 ? listingProperties.getStartIndex() : 1;
 		for (ListingVO listing : listings) {
 			computeListingData(listing);
 			listing.setOrderNumber(index++);
@@ -328,7 +333,7 @@ public class ServiceFacade {
 			commentProperties.setTotalResults(0);
 		} else {
 			List<CommentVO> comments = DtoToVoConverter.convertComments(getDAO().getCommentsForListing(listingId));
-			int index = commentProperties.getStartIndex();
+			int index = commentProperties.getStartIndex() > 0 ? commentProperties.getStartIndex() : 1;
 			for (CommentVO comment : comments) {
 				comment.setUserName(getDAO().getUser(comment.getUser()).getNickname());
 				comment.setOrderNumber(index++);
@@ -362,7 +367,7 @@ public class ServiceFacade {
 			commentProperties.setTotalResults(0);
 		} else {
 			List<CommentVO> comments = DtoToVoConverter.convertComments(getDAO().getCommentsForUser(userId));
-			int index = commentProperties.getStartIndex();
+			int index = commentProperties.getStartIndex() > 0 ? commentProperties.getStartIndex() : 1;
 			for (CommentVO comment : comments) {
 				comment.setUserName(user.getNickname());
 				ListingDTO listing = getDAO().getListing(comment.getListing());
@@ -399,7 +404,7 @@ public class ServiceFacade {
 			bidProperties.setTotalResults(0);
 		} else {
 			List<BidVO> bids = DtoToVoConverter.convertBids(getDAO().getBidsForListing(listingId));
-			int index = bidProperties.getStartIndex();
+			int index = bidProperties.getStartIndex() > 0 ? bidProperties.getStartIndex() : 1;
 			for (BidVO bid : bids) {
 				bid.setUserName(getDAO().getUser(bid.getUser()).getNickname());
 				bid.setOrderNumber(index++);
@@ -433,7 +438,7 @@ public class ServiceFacade {
 			bidProperties.setTotalResults(0);
 		} else {
 			List<BidVO> bids = DtoToVoConverter.convertBids(getDAO().getBidsForUser(userId));
-			int index = bidProperties.getStartIndex();
+			int index = bidProperties.getStartIndex() > 0 ? bidProperties.getStartIndex() : 1;
 			for (BidVO bid : bids) {
 				bid.setUserName(user.getNickname());
 				bid.setListingName(getDAO().getListing(bid.getListing()).getName());
@@ -495,4 +500,15 @@ public class ServiceFacade {
 		return listing;
 	}
 
+	public ListingVO createListing(ListingVO listing) {
+		ListingVO newListing = DtoToVoConverter.convert(getDAO().createListing(VoToDtoConverter.convert(listing)));
+		computeListingData(newListing);
+		return newListing;
+	}
+
+	public ListingVO updateListing(ListingVO listing) {
+		ListingVO updatedListing = DtoToVoConverter.convert(getDAO().updateListing(VoToDtoConverter.convert(listing)));
+		computeListingData(updatedListing);
+		return updatedListing;
+	}
 }

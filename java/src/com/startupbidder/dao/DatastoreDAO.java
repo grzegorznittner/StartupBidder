@@ -38,6 +38,20 @@ public interface DatastoreDAO {
 	UserDTO getTopInvestor();
 
 	/**
+	 * Creates new listing
+	 * @param listing Listing object to create
+	 * @return Created listing with updated fields
+	 */
+	ListingDTO createListing(ListingDTO listing);
+	
+	/**
+	 * Updates listing
+	 * @param listing Listing object to update
+	 * @return Updated listing object
+	 */
+	ListingDTO updateListing(ListingDTO listing);
+
+	/**
 	 * Returns listing by id
 	 * @param listingId
 	 */

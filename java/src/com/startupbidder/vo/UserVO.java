@@ -8,6 +8,7 @@ import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 import com.startupbidder.util.DateSerializer;
+import com.startupbidder.util.LowecaseSerializer;
 
 @JsonAutoDetect(getterVisibility=Visibility.NONE,
 		setterVisibility=Visibility.NONE, fieldVisibility=Visibility.NONE)
@@ -54,6 +55,7 @@ public class UserVO {
 	@JsonProperty("num_comments")
 	private int numberOfComments;
 	@JsonProperty("status")
+	@JsonSerialize(using=LowecaseSerializer.class)
 	private String status;
 	
 	public UserVO() {
