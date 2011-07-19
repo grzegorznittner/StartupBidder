@@ -17,6 +17,8 @@ public class BidListVO {
 	private ListingVO listing;
 	@JsonProperty("profile")
 	private UserVO user;
+	@JsonProperty("loggedin_profile")
+	private UserVO loggedUser;
 	
 	public List<BidVO> getBids() {
 		return bids;
@@ -42,9 +44,16 @@ public class BidListVO {
 	public UserVO getUser() {
 		return user;
 	}
+	public UserVO getLoggedUser() {
+		return loggedUser;
+	}
+	public void setLoggedUser(UserVO loggedUser) {
+		this.loggedUser = loggedUser;
+	}
 	@Override
 	public String toString() {
 		return "BidListVO [bids=" + bids + ", bidsProperties=" + bidsProperties
-				+ ", listing=" + listing + ", user=" + user + "]";
+				+ ", listing=" + listing + ", user=" + user + ", loggedUser="
+				+ loggedUser + "]";
 	}
 }

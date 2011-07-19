@@ -54,7 +54,7 @@ public class BidController extends ModelDrivenController {
 	private HttpHeaders get(HttpServletRequest request) {
 		HttpHeaders headers = new DefaultHttpHeaders("get");
 		String bidId = getCommandOrParameter(request, 2, "id");
-		bid = ServiceFacade.instance().getBid(bidId);
+		bid = ServiceFacade.instance().getBid(getLoggedInUser(), bidId);
 		return headers;
 	}
 
@@ -66,7 +66,7 @@ public class BidController extends ModelDrivenController {
 		
 		ListPropertiesVO bidProperties = getListProperties(request);
 		String listingId = getCommandOrParameter(request, 2, "id");
-		bids = ServiceFacade.instance().getBidsForListing(listingId, bidProperties);
+		bids = ServiceFacade.instance().getBidsForListing(getLoggedInUser(), listingId, bidProperties);
 		
 		return headers;
 	}
@@ -80,7 +80,7 @@ public class BidController extends ModelDrivenController {
 		
 		ListPropertiesVO bidProperties = getListProperties(request);
 		String userId = getCommandOrParameter(request, 2, "id");
-		bids = ServiceFacade.instance().getBidsForUser(userId, bidProperties);
+		bids = ServiceFacade.instance().getBidsForUser(getLoggedInUser(), userId, bidProperties);
 		
 		return headers;
 	}

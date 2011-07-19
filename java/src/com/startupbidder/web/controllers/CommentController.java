@@ -62,7 +62,7 @@ public class CommentController extends ModelDrivenController {
 		
 		ListPropertiesVO commentProperties = getListProperties(request);
 		String listingId = getCommandOrParameter(request, 2, "id");
-		comments = ServiceFacade.instance().getCommentsForListing(listingId, commentProperties);
+		comments = ServiceFacade.instance().getCommentsForListing(getLoggedInUser(), listingId, commentProperties);
 		
 		return headers;
 	}
@@ -76,7 +76,7 @@ public class CommentController extends ModelDrivenController {
 		
 		ListPropertiesVO commentProperties = getListProperties(request);
 		String userId = getCommandOrParameter(request, 2, "id");
-		comments = ServiceFacade.instance().getCommentsForUser(userId, commentProperties);
+		comments = ServiceFacade.instance().getCommentsForUser(getLoggedInUser(), userId, commentProperties);
 		
 		return headers;
 	}
@@ -84,14 +84,14 @@ public class CommentController extends ModelDrivenController {
 	private HttpHeaders index(HttpServletRequest request) {
 		HttpHeaders headers = new DefaultHttpHeaders("index");
 		String commentId = getCommandOrParameter(request, 1, "id");
-		comment = ServiceFacade.instance().getComment(commentId);
+		comment = ServiceFacade.instance().getComment(getLoggedInUser(), commentId);
 		return headers;
 	}
 
 	private HttpHeaders get(HttpServletRequest request) {
 		HttpHeaders headers = new DefaultHttpHeaders("get");
 		String commentId = getCommandOrParameter(request, 2, "id");
-		comment = ServiceFacade.instance().getComment(commentId);
+		comment = ServiceFacade.instance().getComment(getLoggedInUser(), commentId);
 		return headers;
 	}
 

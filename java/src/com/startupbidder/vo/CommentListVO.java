@@ -17,7 +17,9 @@ public class CommentListVO {
 	private ListingVO listing;
 	@JsonProperty("profile")
 	private UserVO user;
-	
+	@JsonProperty("loggedin_profile")
+	private UserVO loggedUser;
+
 	public List<CommentVO> getComments() {
 		return comments;
 	}
@@ -42,10 +44,16 @@ public class CommentListVO {
 	public UserVO getUser() {
 		return user;
 	}
+	public UserVO getLoggedUser() {
+		return loggedUser;
+	}
+	public void setLoggedUser(UserVO loggedUser) {
+		this.loggedUser = loggedUser;
+	}
 	@Override
 	public String toString() {
 		return "CommentListVO [comments=" + comments + ", commentsProperties="
 				+ commentsProperties + ", listing=" + listing + ", user="
-				+ user + "]";
+				+ user + ", loggedUser=" + loggedUser + "]";
 	}
 }

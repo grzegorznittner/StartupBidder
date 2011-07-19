@@ -15,6 +15,9 @@ import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 
+import com.google.appengine.api.users.User;
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
 import com.startupbidder.vo.ListPropertiesVO;
 
 public abstract class ModelDrivenController {
@@ -22,6 +25,7 @@ public abstract class ModelDrivenController {
 	
 	private static int DEFAULT_MAX_RESULTS = 5;
 	private String command[];
+	private User loggedInUser;
 	
 	/**
 	 * Executes action handler for particular controller
@@ -35,7 +39,10 @@ public abstract class ModelDrivenController {
 	 */
 	abstract public Object getModel();
 	
-	public HttpHeaders execute(HttpServletRequest request) {
+	public final HttpHeaders execute(HttpServletRequest request) {
+		UserService userService = UserServiceFactory.getUserService();
+		loggedInUser = userService.getCurrentUser();
+		
 		command = decomposeRequest(request.getPathInfo());
 		
 		return executeAction(request);
@@ -104,5 +111,9 @@ public abstract class ModelDrivenController {
 		} else {
 			return getCommand(commandNum);
 		}
+	}
+	
+	protected User getLoggedInUser() {
+		return loggedInUser;
 	}
 }

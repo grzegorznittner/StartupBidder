@@ -25,6 +25,10 @@ public class UserController extends ModelDrivenController {
 				return get(request);
 			} else if("topinvestor".equalsIgnoreCase(getCommand(1))) {
 				return topInvestor(request);
+			} else if("topinvestor".equalsIgnoreCase(getCommand(1))) {
+				return topInvestor(request);
+			} else if("loggedin".equalsIgnoreCase(getCommand(1))) {
+				return loggedin(request);
 			} else {
 				return index(request);
 			}
@@ -51,24 +55,29 @@ public class UserController extends ModelDrivenController {
 
 	private HttpHeaders all(HttpServletRequest request) {
 		HttpHeaders headers = new DefaultHttpHeaders("all");
-		users = ServiceFacade.instance().getAllUsers();
+		users = ServiceFacade.instance().getAllUsers(getLoggedInUser());
 		return headers;
 	}
 
 	private HttpHeaders topInvestor(HttpServletRequest request) {
-    	user = ServiceFacade.instance().getTopInvestor();
+    	user = ServiceFacade.instance().getTopInvestor(getLoggedInUser());
         return new DefaultHttpHeaders("index").disableCaching();
+	}
+
+	private HttpHeaders loggedin(HttpServletRequest request) {
+    	user = ServiceFacade.instance().getLoggedInUserData(getLoggedInUser());
+        return new DefaultHttpHeaders("loggedin").disableCaching();
 	}
 
 	private HttpHeaders get(HttpServletRequest request) {
     	String userId = getCommandOrParameter(request, 2, "id");
-    	user = ServiceFacade.instance().getUser(userId);
+    	user = ServiceFacade.instance().getUser(getLoggedInUser(), userId);
         return new DefaultHttpHeaders("index").disableCaching();
 	}
 
 	private HttpHeaders index(HttpServletRequest request) {
     	String userId = getCommandOrParameter(request, 1, "id");
-    	user = ServiceFacade.instance().getUser(userId);
+    	user = ServiceFacade.instance().getUser(getLoggedInUser(), userId);
         return new DefaultHttpHeaders("index").disableCaching();
 	}
 

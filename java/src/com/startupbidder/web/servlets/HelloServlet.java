@@ -59,13 +59,14 @@ public class HelloServlet extends HttpServlet {
 			//testMockDatastore(user, datastore, out);
 			out.println("<p>User API:</p>");
 			out.println("<a href=\"/user/topinvestor/.html\">Top investor data</a><br/>");
-			out.println("<a href=\"/user/get/" + currentUser.getIdAsString() + "/.html\">Current user data</a><br/>");
+			out.println("<a href=\"/user/loggedin/.html\">Direct link to logged in user data</a><br/>");
+			out.println("<a href=\"/user/get/" + currentUser.getIdAsString() + "/.html\">Logged in user data via /users/get/ </a><br/>");
 			out.println("<a href=\"/user/all/.html\">All users</a><br/>");
 			
 			out.println("<p>Listings API:</p>");
 			out.println("<a href=\"/listings/get/" + topListing.getIdAsString() + "/.html\">Top listing data</a><br/>");
-			out.println("<a href=\"/listings/up/" + topListing.getIdAsString() + "/" + topInvestor.getIdAsString() + "/.html\">Top investor votes for top listing (works only once)</a><br/>");
-			out.println("<a href=\"/listings/up/.html?id=" + topListing.getIdAsString() + "&user_id=" + topInvestor.getIdAsString() + "/.html\">Top investor votes for top listing (works only once), 2nd form</a><br/>");
+			out.println("<a href=\"/listings/up/" + topListing.getIdAsString() + "/" + "/.html\">Logged in user votes for top listing (works only once per user)</a><br/>");
+			out.println("<a href=\"/listings/up/.html?id=" + topListing.getIdAsString() + "/.html\">Logged in user votes for top listing (works only once per user), 2nd form</a><br/>");
 			out.println("<a href=\"/listings/activate/" + topListing.getIdAsString() + "/.html\">Activate top listing</a><br/>");
 			out.println("<a href=\"/listings/withdraw/" + topListing.getIdAsString() + "/.html\">Withdraw top listing</a><br/>");
 			out.println("<a href=\"/listings/top/.html?max_results=6\">Top listings</a><br/>");
