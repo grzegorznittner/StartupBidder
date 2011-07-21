@@ -8,7 +8,7 @@ import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 
 @JsonAutoDetect(getterVisibility=Visibility.NONE, setterVisibility=Visibility.NONE,
 		fieldVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE)
-public class CommentListVO {
+public class CommentListVO extends BaseResultVO {
 	@JsonProperty("comments")
 	private List<CommentVO> comments;
 	// not returned in JSON
@@ -17,8 +17,6 @@ public class CommentListVO {
 	private ListingVO listing;
 	@JsonProperty("profile")
 	private UserVO user;
-	@JsonProperty("loggedin_profile")
-	private UserVO loggedUser;
 
 	public List<CommentVO> getComments() {
 		return comments;
@@ -44,16 +42,10 @@ public class CommentListVO {
 	public UserVO getUser() {
 		return user;
 	}
-	public UserVO getLoggedUser() {
-		return loggedUser;
-	}
-	public void setLoggedUser(UserVO loggedUser) {
-		this.loggedUser = loggedUser;
-	}
 	@Override
 	public String toString() {
 		return "CommentListVO [comments=" + comments + ", commentsProperties="
 				+ commentsProperties + ", listing=" + listing + ", user="
-				+ user + ", loggedUser=" + loggedUser + "]";
+				+ user + super.toString() + "]";
 	}
 }

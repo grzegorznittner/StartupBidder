@@ -2,12 +2,11 @@ package com.startupbidder.web.controllers;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.struts2.rest.DefaultHttpHeaders;
-import org.apache.struts2.rest.HttpHeaders;
-
 import com.startupbidder.vo.BidAndUserVO;
 import com.startupbidder.vo.BidListVO;
 import com.startupbidder.vo.ListPropertiesVO;
+import com.startupbidder.web.HttpHeaders;
+import com.startupbidder.web.HttpHeadersImpl;
 import com.startupbidder.web.ModelDrivenController;
 import com.startupbidder.web.ServiceFacade;
 
@@ -40,19 +39,19 @@ public class BidController extends ModelDrivenController {
 	}
 
 	private HttpHeaders delete(HttpServletRequest request) {
-		HttpHeaders headers = new DefaultHttpHeaders("create");
+		HttpHeaders headers = new HttpHeadersImpl("create");
 		headers.setStatus(501);
 		return headers;
 	}
 
 	private HttpHeaders create(HttpServletRequest request) {
-		HttpHeaders headers = new DefaultHttpHeaders("create");
+		HttpHeaders headers = new HttpHeadersImpl("create");
 		headers.setStatus(501);
 		return headers;
 	}
 
 	private HttpHeaders get(HttpServletRequest request) {
-		HttpHeaders headers = new DefaultHttpHeaders("get");
+		HttpHeaders headers = new HttpHeadersImpl("get");
 		String bidId = getCommandOrParameter(request, 2, "id");
 		bid = ServiceFacade.instance().getBid(getLoggedInUser(), bidId);
 		return headers;
@@ -62,7 +61,7 @@ public class BidController extends ModelDrivenController {
 	 *  /bids/listing/?id=ag1zdGFydHVwYmlkZGVychQLEgdMaXN0aW5nIgdtaXNsZWFkDA
 	 */
 	private HttpHeaders listing(HttpServletRequest request) {
-		HttpHeaders headers = new DefaultHttpHeaders("listing");
+		HttpHeaders headers = new HttpHeadersImpl("listing");
 		
 		ListPropertiesVO bidProperties = getListProperties(request);
 		String listingId = getCommandOrParameter(request, 2, "id");
@@ -76,7 +75,7 @@ public class BidController extends ModelDrivenController {
 	 *  /bids/user/?id=ag1zdGFydHVwYmlkZGVychILEgRVc2VyIghqcGZvd2xlcgw
 	 */
 	private HttpHeaders user(HttpServletRequest request) {
-		HttpHeaders headers = new DefaultHttpHeaders("user");
+		HttpHeaders headers = new HttpHeadersImpl("user");
 		
 		ListPropertiesVO bidProperties = getListProperties(request);
 		String userId = getCommandOrParameter(request, 2, "id");
@@ -86,7 +85,7 @@ public class BidController extends ModelDrivenController {
 	}
 
 	private HttpHeaders all(HttpServletRequest request) {
-		HttpHeaders headers = new DefaultHttpHeaders("all");
+		HttpHeaders headers = new HttpHeadersImpl("all");
 		headers.setStatus(501);
 		return headers;
 	}

@@ -2,12 +2,11 @@ package com.startupbidder.web.controllers;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.struts2.rest.DefaultHttpHeaders;
-import org.apache.struts2.rest.HttpHeaders;
-
 import com.startupbidder.vo.ListPropertiesVO;
 import com.startupbidder.vo.ListingListVO;
 import com.startupbidder.vo.ListingVO;
+import com.startupbidder.web.HttpHeaders;
+import com.startupbidder.web.HttpHeadersImpl;
 import com.startupbidder.web.ModelDrivenController;
 import com.startupbidder.web.ServiceFacade;
 
@@ -59,7 +58,7 @@ public class ListingController extends ModelDrivenController {
 	
 	// DELETE /listing/
     private HttpHeaders delete(HttpServletRequest request) {
-    	HttpHeaders headers = new DefaultHttpHeaders("create");
+    	HttpHeaders headers = new HttpHeadersImpl("create");
 		headers.setStatus(501);
 		return headers;
 	}
@@ -67,7 +66,7 @@ public class ListingController extends ModelDrivenController {
     // PUT /listing/
     // POST /listing/
 	private HttpHeaders create(HttpServletRequest request) {
-		HttpHeaders headers = new DefaultHttpHeaders("create");
+		HttpHeaders headers = new HttpHeadersImpl("create");
 		headers.setStatus(501);
 		return headers;
 	}
@@ -76,49 +75,49 @@ public class ListingController extends ModelDrivenController {
 	private HttpHeaders closing(HttpServletRequest request) {
 		ListPropertiesVO listingProperties = getListProperties(request);
     	listings = ServiceFacade.instance().getClosingListings(getLoggedInUser(), listingProperties);
-        return new DefaultHttpHeaders("valued").disableCaching();
+        return new HttpHeadersImpl("valued").disableCaching();
 	}
 
 	// GET /listings/latest
 	private HttpHeaders latest(HttpServletRequest request) {
 		ListPropertiesVO listingProperties = getListProperties(request);
     	listings = ServiceFacade.instance().getLatestListings(getLoggedInUser(), listingProperties);
-        return new DefaultHttpHeaders("valued").disableCaching();
+        return new HttpHeadersImpl("valued").disableCaching();
 	}
 
 	// GET /listings/discussed
 	private HttpHeaders discussed(HttpServletRequest request) {
 		ListPropertiesVO listingProperties = getListProperties(request);
     	listings = ServiceFacade.instance().getMostDiscussedListings(getLoggedInUser(), listingProperties);
-        return new DefaultHttpHeaders("valued").disableCaching();
+        return new HttpHeadersImpl("valued").disableCaching();
 	}
 
 	// GET /listings/popular
 	private HttpHeaders popular(HttpServletRequest request) {
 		ListPropertiesVO listingProperties = getListProperties(request);
     	listings = ServiceFacade.instance().getMostPopularListings(getLoggedInUser(), listingProperties);
-        return new DefaultHttpHeaders("valued").disableCaching();
+        return new HttpHeadersImpl("valued").disableCaching();
 	}
 
 	// GET /listings/valuation
 	private HttpHeaders valuation(HttpServletRequest request) {
 		ListPropertiesVO listingProperties = getListProperties(request);
     	listings = ServiceFacade.instance().getMostValuedListings(getLoggedInUser(), listingProperties);
-        return new DefaultHttpHeaders("valued").disableCaching();
+        return new HttpHeadersImpl("valued").disableCaching();
 	}
 
 	// GET /listings/top
     private HttpHeaders top(HttpServletRequest request) {
     	ListPropertiesVO listingProperties = getListProperties(request);
     	listings = ServiceFacade.instance().getTopListings(getLoggedInUser(), listingProperties);
-        return new DefaultHttpHeaders("top").disableCaching();
+        return new HttpHeadersImpl("top").disableCaching();
     }
 
     // GET /listings/active
     private HttpHeaders active(HttpServletRequest request) {
 		ListPropertiesVO listingProperties = getListProperties(request);
     	listings = ServiceFacade.instance().getActiveListings(getLoggedInUser(), listingProperties);
-        return new DefaultHttpHeaders("active").disableCaching();
+        return new HttpHeadersImpl("active").disableCaching();
     }
 
     // GET /listings/user
@@ -127,42 +126,42 @@ public class ListingController extends ModelDrivenController {
 		ListPropertiesVO listingProperties = getListProperties(request);
 
     	listings = ServiceFacade.instance().getUserListings(getLoggedInUser(), userId, listingProperties);
-        return new DefaultHttpHeaders("user").disableCaching();
+        return new HttpHeadersImpl("user").disableCaching();
     }
 
     // GET /listings/up
     private HttpHeaders up(HttpServletRequest request) {
     	String listingId = getCommandOrParameter(request, 2, "id");
     	listing = ServiceFacade.instance().valueUpListing(getLoggedInUser(), listingId);
-        return new DefaultHttpHeaders("up").disableCaching();
+        return new HttpHeadersImpl("up").disableCaching();
     }
 
     // GET /listings/activate
     private HttpHeaders activate(HttpServletRequest request) {
     	String listingId = getCommandOrParameter(request, 2, "id");
     	listing = ServiceFacade.instance().activateListing(getLoggedInUser(), listingId);
-        return new DefaultHttpHeaders("activate").disableCaching();
+        return new HttpHeadersImpl("activate").disableCaching();
     }
 
     // GET /listings/withdrawn
     private HttpHeaders withdraw(HttpServletRequest request) {
     	String listingId = getCommandOrParameter(request, 2, "id");
     	listing = ServiceFacade.instance().withdrawListing(getLoggedInUser(), listingId);
-        return new DefaultHttpHeaders("withdrawn").disableCaching();
+        return new HttpHeadersImpl("withdrawn").disableCaching();
     }
 
     // GET /listings/get
     private HttpHeaders get(HttpServletRequest request) {
     	String listingId = getCommandOrParameter(request, 2, "id");
     	listing = ServiceFacade.instance().getListing(getLoggedInUser(), listingId);
-        return new DefaultHttpHeaders("get").disableCaching();
+        return new HttpHeadersImpl("get").disableCaching();
     }
 
     // GET /listings/
     private HttpHeaders index(HttpServletRequest request) {
     	String listingId = getCommandOrParameter(request, 1, "id");
     	listing = ServiceFacade.instance().getListing(getLoggedInUser(), listingId);
-        return new DefaultHttpHeaders("index").disableCaching();
+        return new HttpHeadersImpl("index").disableCaching();
     }
 
 	public Object getModel() {

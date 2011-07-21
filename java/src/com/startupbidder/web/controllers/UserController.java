@@ -2,11 +2,10 @@ package com.startupbidder.web.controllers;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.struts2.rest.DefaultHttpHeaders;
-import org.apache.struts2.rest.HttpHeaders;
-
 import com.startupbidder.vo.UserListVO;
 import com.startupbidder.vo.UserVO;
+import com.startupbidder.web.HttpHeaders;
+import com.startupbidder.web.HttpHeadersImpl;
 import com.startupbidder.web.ModelDrivenController;
 import com.startupbidder.web.ServiceFacade;
 
@@ -25,8 +24,6 @@ public class UserController extends ModelDrivenController {
 				return get(request);
 			} else if("topinvestor".equalsIgnoreCase(getCommand(1))) {
 				return topInvestor(request);
-			} else if("topinvestor".equalsIgnoreCase(getCommand(1))) {
-				return topInvestor(request);
 			} else if("loggedin".equalsIgnoreCase(getCommand(1))) {
 				return loggedin(request);
 			} else {
@@ -42,43 +39,43 @@ public class UserController extends ModelDrivenController {
 	}
 	
 	private HttpHeaders delete(HttpServletRequest request) {
-		HttpHeaders headers = new DefaultHttpHeaders("create");
+		HttpHeaders headers = new HttpHeadersImpl("create");
 		headers.setStatus(501);
 		return headers;
 	}
 
 	private HttpHeaders create(HttpServletRequest request) {
-		HttpHeaders headers = new DefaultHttpHeaders("create");
+		HttpHeaders headers = new HttpHeadersImpl("create");
 		headers.setStatus(501);
 		return headers;
 	}
 
 	private HttpHeaders all(HttpServletRequest request) {
-		HttpHeaders headers = new DefaultHttpHeaders("all");
+		HttpHeaders headers = new HttpHeadersImpl("all");
 		users = ServiceFacade.instance().getAllUsers(getLoggedInUser());
 		return headers;
 	}
 
 	private HttpHeaders topInvestor(HttpServletRequest request) {
     	user = ServiceFacade.instance().getTopInvestor(getLoggedInUser());
-        return new DefaultHttpHeaders("index").disableCaching();
+        return new HttpHeadersImpl("index").disableCaching();
 	}
 
 	private HttpHeaders loggedin(HttpServletRequest request) {
     	user = ServiceFacade.instance().getLoggedInUserData(getLoggedInUser());
-        return new DefaultHttpHeaders("loggedin").disableCaching();
+        return new HttpHeadersImpl("loggedin").disableCaching();
 	}
 
 	private HttpHeaders get(HttpServletRequest request) {
     	String userId = getCommandOrParameter(request, 2, "id");
     	user = ServiceFacade.instance().getUser(getLoggedInUser(), userId);
-        return new DefaultHttpHeaders("index").disableCaching();
+        return new HttpHeadersImpl("index").disableCaching();
 	}
 
 	private HttpHeaders index(HttpServletRequest request) {
     	String userId = getCommandOrParameter(request, 1, "id");
     	user = ServiceFacade.instance().getUser(getLoggedInUser(), userId);
-        return new DefaultHttpHeaders("index").disableCaching();
+        return new HttpHeadersImpl("index").disableCaching();
 	}
 
 	@Override

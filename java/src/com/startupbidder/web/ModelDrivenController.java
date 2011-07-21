@@ -10,7 +10,6 @@ import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.struts2.rest.HttpHeaders;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -18,6 +17,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
+import com.startupbidder.vo.BaseResultVO;
 import com.startupbidder.vo.ListPropertiesVO;
 
 public abstract class ModelDrivenController {
@@ -45,7 +45,13 @@ public abstract class ModelDrivenController {
 		
 		command = decomposeRequest(request.getPathInfo());
 		
-		return executeAction(request);
+		HttpHeaders headers = executeAction(request);
+		Object model = getModel();
+		if (model instanceof BaseResultVO && loggedInUser != null) {
+			((BaseResultVO) model).setLogoutUrl(userService.createLogoutURL("http://www.startupbidder.com"));
+		}
+		
+		return headers;
 	}
 
 	public void generateJson(HttpServletResponse response) {

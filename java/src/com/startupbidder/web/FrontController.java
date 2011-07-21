@@ -10,8 +10,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.struts2.rest.HttpHeaders;
-
 import com.startupbidder.web.controllers.BidController;
 import com.startupbidder.web.controllers.CommentController;
 import com.startupbidder.web.controllers.ListingController;
@@ -41,6 +39,8 @@ public class FrontController extends HttpServlet {
 			controller = new BidController();
 		} else if (pathInfo.startsWith("/comment")) {
 			controller = new CommentController();
+		} else {
+			log.log(Level.WARNING, "Unknown action '" + pathInfo + "'");
 		}
 		
 		if (controller != null) {
@@ -67,8 +67,6 @@ public class FrontController extends HttpServlet {
 			// default is JSON
 			response.setContentType("application/json");
 			controller.generateJson(response);
-		}
-		
+		}		
 	}
-	
 }

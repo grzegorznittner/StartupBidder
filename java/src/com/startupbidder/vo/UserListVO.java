@@ -8,13 +8,11 @@ import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 
 @JsonAutoDetect(getterVisibility=Visibility.NONE, setterVisibility=Visibility.NONE,
 		fieldVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE)
-public class UserListVO {
+public class UserListVO extends BaseResultVO {
 	@JsonProperty("users")
 	private List<UserVO> users;
 	@JsonProperty("profile")
 	private UserVO user;
-	@JsonProperty("loggedin_profile")
-	private UserVO loggedUser;
 	
 	public List<UserVO> getUsers() {
 		return users;
@@ -28,15 +26,9 @@ public class UserListVO {
 	public void setUser(UserVO user) {
 		this.user = user;
 	}
-	public UserVO getLoggedUser() {
-		return loggedUser;
-	}
-	public void setLoggedUser(UserVO loggedUser) {
-		this.loggedUser = loggedUser;
-	}
 	@Override
 	public String toString() {
 		return "UserListVO [users=" + users + ", user=" + user
-				+ ", loggedUser=" + loggedUser + "]";
+			+ super.toString() + "]";
 	}
 }

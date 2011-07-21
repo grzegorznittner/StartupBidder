@@ -8,7 +8,7 @@ import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 
 @JsonAutoDetect(getterVisibility=Visibility.NONE, setterVisibility=Visibility.NONE,
 		fieldVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE)
-public class BidListVO {
+public class BidListVO extends BaseResultVO {
 	@JsonProperty("bids")
 	private List<BidVO> bids;
 	// Not returned in JSON
@@ -17,8 +17,6 @@ public class BidListVO {
 	private ListingVO listing;
 	@JsonProperty("profile")
 	private UserVO user;
-	@JsonProperty("loggedin_profile")
-	private UserVO loggedUser;
 	
 	public List<BidVO> getBids() {
 		return bids;
@@ -44,16 +42,9 @@ public class BidListVO {
 	public UserVO getUser() {
 		return user;
 	}
-	public UserVO getLoggedUser() {
-		return loggedUser;
-	}
-	public void setLoggedUser(UserVO loggedUser) {
-		this.loggedUser = loggedUser;
-	}
 	@Override
 	public String toString() {
 		return "BidListVO [bids=" + bids + ", bidsProperties=" + bidsProperties
-				+ ", listing=" + listing + ", user=" + user + ", loggedUser="
-				+ loggedUser + "]";
+				+ ", listing=" + listing + ", user=" + user + super.toString() + "]";
 	}
 }

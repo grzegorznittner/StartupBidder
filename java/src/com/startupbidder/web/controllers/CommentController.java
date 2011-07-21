@@ -2,12 +2,11 @@ package com.startupbidder.web.controllers;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.struts2.rest.DefaultHttpHeaders;
-import org.apache.struts2.rest.HttpHeaders;
-
 import com.startupbidder.vo.CommentListVO;
 import com.startupbidder.vo.CommentVO;
 import com.startupbidder.vo.ListPropertiesVO;
+import com.startupbidder.web.HttpHeaders;
+import com.startupbidder.web.HttpHeadersImpl;
 import com.startupbidder.web.ModelDrivenController;
 import com.startupbidder.web.ServiceFacade;
 
@@ -42,13 +41,13 @@ public class CommentController extends ModelDrivenController {
 	}
 
 	private HttpHeaders delete(HttpServletRequest request) {
-		HttpHeaders headers = new DefaultHttpHeaders("delete");
+		HttpHeaders headers = new HttpHeadersImpl("delete");
 		headers.setStatus(501);
 		return headers;
 	}
 
 	private HttpHeaders create(HttpServletRequest request) {
-		HttpHeaders headers = new DefaultHttpHeaders("create");
+		HttpHeaders headers = new HttpHeadersImpl("create");
 		headers.setStatus(501);
 		return headers;
 	}
@@ -58,7 +57,7 @@ public class CommentController extends ModelDrivenController {
 	 *  /comments/listing/?id=ag1zdGFydHVwYmlkZGVychQLEgdMaXN0aW5nIgdtaXNsZWFkDA.html
 	 */
 	private HttpHeaders listing(HttpServletRequest request) {
-		HttpHeaders headers = new DefaultHttpHeaders("listing");
+		HttpHeaders headers = new HttpHeadersImpl("listing");
 		
 		ListPropertiesVO commentProperties = getListProperties(request);
 		String listingId = getCommandOrParameter(request, 2, "id");
@@ -72,7 +71,7 @@ public class CommentController extends ModelDrivenController {
 	 *  /comments/user/?id=ag1zdGFydHVwYmlkZGVychILEgRVc2VyIghqcGZvd2xlcgw.html
 	 */
 	private HttpHeaders user(HttpServletRequest request) {
-		HttpHeaders headers = new DefaultHttpHeaders("user");
+		HttpHeaders headers = new HttpHeadersImpl("user");
 		
 		ListPropertiesVO commentProperties = getListProperties(request);
 		String userId = getCommandOrParameter(request, 2, "id");
@@ -82,21 +81,21 @@ public class CommentController extends ModelDrivenController {
 	}
 
 	private HttpHeaders index(HttpServletRequest request) {
-		HttpHeaders headers = new DefaultHttpHeaders("index");
+		HttpHeaders headers = new HttpHeadersImpl("index");
 		String commentId = getCommandOrParameter(request, 1, "id");
 		comment = ServiceFacade.instance().getComment(getLoggedInUser(), commentId);
 		return headers;
 	}
 
 	private HttpHeaders get(HttpServletRequest request) {
-		HttpHeaders headers = new DefaultHttpHeaders("get");
+		HttpHeaders headers = new HttpHeadersImpl("get");
 		String commentId = getCommandOrParameter(request, 2, "id");
 		comment = ServiceFacade.instance().getComment(getLoggedInUser(), commentId);
 		return headers;
 	}
 
 	private HttpHeaders all(HttpServletRequest request) {
-		HttpHeaders headers = new DefaultHttpHeaders("all");
+		HttpHeaders headers = new HttpHeadersImpl("all");
 		headers.setStatus(501);
 		return headers;
 	}
