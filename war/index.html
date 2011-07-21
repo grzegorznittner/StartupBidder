@@ -1568,44 +1568,31 @@ s = (p + b + c + v) / (t + 2)^1.5
         };
         self.login = function() {
             self.profile = self.profileForUsername('johnarleyburns'); // auto login
-        }
+        };
         return self;
     };
 
     var User = function() {
         var self = {};
-        self.cookieDomain = 'com.startupbidder';
-        self.cookieName = self.cookieDomain + '.user';
-        self.cookie = null;
         self.controller = null;
         self.profile = null;
+        self.login_url = '/_ah/login?continue=%2F';
+        self.logout_url = '/_ah/logout?continue=%2F';
         self.setup = function(controller) {
             self.controller = controller;
         };
-        self.initialize = function() {
-            self.cookie = $.cookie(self.cookieName);
-            self.profile = self.controller.backend.login();
-            if (self.cookie && self.cookie.profile) {
-                self.profile = self.cookie.profile;
-            }
-            else {
-                self.profile = null;
-            }
+        self.setProfile = function(profile) {
+            self.profile = profile;
             controller.header.displayUser(self);
         };
         self.hasVoted = function(listing_id) {
-            // look in cookie to see if user has voted on this listing
             return false;
         };
         self.login = function() {
-            self.controller.header.displayUser(self);
-            return 'search';
+            document.location = self.login_url;
         };
         self.logout = function() {
-            // remove cookie
-            self.profile = null; // auto logout
-            self.controller.header.displayUser(self);
-            return 'search';
+            document.location = self.logout_url;
         };
         return self;
     };
@@ -1676,13 +1663,16 @@ s = (p + b + c + v) / (t + 2)^1.5
             });
         };
         self.displayUser = function(user) {
-            if (user.profile) {
+            if (user.profile && user.logout_url) {
                 $('#header-menu-name-login').hide();
-                $('#header-menu-name-username').html(user.profile.username).show().unbind().bind('click', function(){
-                    self.controller.execute({page:'profile', profile_id:user.profile.profile_id});
+                $('#header-menu-name-username').html(user.profile.username).data('profile_id',user.profile.profile_id).show().unbind().bind('click', function(){
+                    self.controller.execute({page:'profile', profile_id:$(this).data('profile_id')});
                 });
                 $('#header-menu-command-login').hide();
                 $('#header-menu-command-logout').show();
+                $('#header-menu-command-logout').data('logout_url',user.logout_url).show().unbind().bind('click', function(){
+                    self.controller.execute({page:'logout', url:$(this).data('logout_url')});
+                });
                 $('#header-menu-bar-submit-spacer').show();
                 $('#header-menu-bar-submit').show();
             }
@@ -1727,16 +1717,18 @@ s = (p + b + c + v) / (t + 2)^1.5
             }
             $('#content-search-keywords').val(keywords);
             var results_json = self.doSearch(search_type, keywords, profile_id, start_index, max_results);
-            if (results_json) {
-                var results = results_json.listings;
-                var num_results = results_json.listings_props.num_results;
-                var total_results = results_json.listings_props.total_results;
-                self.displayResults(results, search_type, keywords, profile_id, start_index, num_results, total_results);
-            }
-            else {
+            if (!results_json) {
                 self.displayResultsHtml('<i>loading...</i>');
             }
+            else {
+                self.displayResultsJson(results_json, search_type, keywords, profile_id, start_index);
+            }
             return 'search';
+        };
+        self.displayResultsJson = function(results_json, search_type, keywords, profile_id, start_index) {
+            var props = results_json.listings_props;
+            self.controller.user.setProfile(results_json.loggedin_profile);
+            self.displayResults(results_json.listings, search_type, keywords, profile_id, start_index, props.num_results, props.total_results);
         };
         self.displayResultsHtml = function(resultsHtml) {
             $('#search-content-results-list').html(resultsHtml);
@@ -2711,6 +2703,7 @@ s = (p + b + c + v) / (t + 2)^1.5
                     var start_index = results_json.start_index;
                     var num_results = results_json.num_results;
                     var total_results = results_json.total_results;
+                    self.controller.user.setProfile(results_json.loggedin_profile, results_json.logout_url);
                     self.controller.search.displayResults(results, search_type, keywords, profile_id, start_index, num_results, total_results);
                 }
                 else {
@@ -2803,7 +2796,7 @@ s = (p + b + c + v) / (t + 2)^1.5
         // user methods
         self.login = function() {
             return self.backend.login();
-        }
+        };
         // profile methods
         self.saveProfile = function(profile) {
             return self.backend.saveProfile(profile);
@@ -2928,7 +2921,6 @@ s = (p + b + c + v) / (t + 2)^1.5
     controller.addManaged('comments', new Comments());
     controller.addManaged('bids', new Bids());
     controller.setupManaged();
-    controller.user.initialize(); // cookie stuff
     controller.execute();
 
 });
