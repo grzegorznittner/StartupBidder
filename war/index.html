@@ -1566,6 +1566,11 @@ s = (p + b + c + v) / (t + 2)^1.5
             profile.status = 'deactivated';
             return profile;
         };
+        self.withdrawListing = function(listing_id, callback) {
+            var listing = self.db.listings[listing_id];
+            listing.status = 'withdrawn';
+            callback(listing);
+        };
         return self;
     };
 
@@ -1713,7 +1718,7 @@ s = (p + b + c + v) / (t + 2)^1.5
                 keywords = keywords.replace(/\btype:\w*/g, '').replace(/\s+/g, ' ').trim();
             }
             $('#content-search-keywords').val(keywords);
-            var results_json = self.doSearch(search_type, keywords, profile_id, start_index, max_results);
+            var results_json = self.controller.backend.searchListings(search_type, keywords, profile_id, start_index, max_results);
             if (!results_json) {
                 self.displayResultsHtml('<i>loading...</i>');
             }
@@ -1729,9 +1734,6 @@ s = (p + b + c + v) / (t + 2)^1.5
         };
         self.displayResultsHtml = function(resultsHtml) {
             $('#search-content-results-list').html(resultsHtml);
-        };
-        self.doSearch = function(searchType, keywords, profile_id, start_index, max_results){
-            return self.controller.backend.searchListings(searchType, keywords, profile_id, start_index, max_results);
         };
         self.displayResults = function(results, search_type, keywords, profile_id, start_index, num_results, total_results){
             var resultsHtml = '';
@@ -1932,30 +1934,22 @@ s = (p + b + c + v) / (t + 2)^1.5
         self.execute = function(args) {
             var profile = self.controller.user.profile;
             var listing_id = args['listing_id'];
-            var listing;
+            var isNew = args.action == 'new';
             $('#listing-save-message').attr('class', 'attention').html('');
+            var callback = function(listing) {
+                self.displayListing(listing, isNew);
+            }
             if (args.action == 'withdraw')
-                listing = self.withdrawListing(listing_id);
+                self.controller.backend.withdrawListing(listing_id, callback);
             else if (args.action == 'save')
-                listing = self.saveListing(listing_id);
+                self.saveListing(listing_id, callback);
             else if (args.action == 'new' && profile)
-                listing = self.newListing(profile);
+                self.newListing(profile, callback);
             else if (args.action == 'new' && !profile)
-                listing = {};
+                callback({});
             else
-                listing = self.doQuery(listing_id);
-            console.log('incoming json:' + JSON.stringify(args, null, '\t'));
-            console.log('returned json:' + JSON.stringify(listing, null, '\t'));
-            self.displayListing(listing, args.action == 'new');
+                callback(self.controller.backend.getListing(listing_id));
             return 'listing';
-        };
-        self.doQuery = function(listing_id){
-            return self.controller.backend.getListing(listing_id);
-        };
-        self.withdrawListing = function(listing_id){
-            var listing = self.doQuery(listing_id);
-            listing.status = 'withdrawn';
-            return listing;
         };
         self.saveListing = function(listing_id){
             var listing = {};
@@ -2691,7 +2685,7 @@ s = (p + b + c + v) / (t + 2)^1.5
                 pathSuffix = '/user/?id=' + profile_id;
             }
             else {
-                pathSuffix = searchType + '/';
+                pathSuffix = searchType + '/?max_results=20';
             }
             var url = '/listings/' + pathSuffix;
             $.getJSON(url, function(results_json) {
@@ -2717,6 +2711,10 @@ s = (p + b + c + v) / (t + 2)^1.5
         };
         self.upvoteListing = function(listing_id, callback) {
             var url = '/listings/up/' + listing_id;
+            $.getJSON(url, callback);
+        };
+        self.withdrawListing = function(listing_id, callback) {
+            var url = '/listings/withdraw/' + listing_id;
             $.getJSON(url, callback);
         };
         // comment methods
@@ -2824,6 +2822,9 @@ s = (p + b + c + v) / (t + 2)^1.5
         };
         self.upvoteListing = function(listing_id, callback) {
             return self.backend.upvoteListing(listing_id, callback);
+        };
+        self.withdrawListing = function(listing_id, callback) {
+            return self.backend.withdrawListing(listing_id, callback);
         };
         // comment methods
         self.commentsForListing = function(listing_id) {
@@ -3010,9 +3011,11 @@ text-decoration: none;
 }
 .attention {
     color: red;
+    margin-left: 5px;
 }
 .confirmed {
     color: green;
+    margin-left: 5px;
 }
 .header {
     font-size: 12px;
