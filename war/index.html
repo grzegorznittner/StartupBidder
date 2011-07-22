@@ -1552,9 +1552,9 @@ s = (p + b + c + v) / (t + 2)^1.5
             }
             return savedListing;
         };
-        self.upvoteListing = function(listing_id) {
+        self.upvoteListing = function(listing_id, callback) {
             self.db.listings[listing_id].num_votes++;
-            return 1;
+            return callback();
         };
         self.activateProfile = function(profile_id){
             var profile = self.doQuery(profile_id);
@@ -1565,9 +1565,6 @@ s = (p + b + c + v) / (t + 2)^1.5
             var profile = self.doQuery(profile_id);
             profile.status = 'deactivated';
             return profile;
-        };
-        self.login = function() {
-            self.profile = self.profileForUsername('johnarleyburns'); // auto login
         };
         return self;
     };
@@ -2127,6 +2124,7 @@ s = (p + b + c + v) / (t + 2)^1.5
                 self.controller.execute({page:'bids', listing_id:$(this).data('listing_id')});
             });
             if (isFinite(i)) {
+                console.log('binding:'+i);
                 $('#content-results-list-item-upvote-'+i)
                 .data('index', i)
                 .data('listing_id', listing.listing_id)
@@ -2136,17 +2134,24 @@ s = (p + b + c + v) / (t + 2)^1.5
                     var index = $(this).data('index');
                     var listing_id = $(this).data('listing_id');
                     var num_votes = $(this).data('num_votes');
-                    if (self.upvoteListing(listing_id)) {
-                        num_votes++;
-                        $(this).data('num_votes', num_votes);
-                        $('#content-results-list-item-votes-'+index).html(num_votes);
-                    }
+                    var list_item = this;
+                    var votes_item = document.getElementById('content-results-list-item-votes-'+index);
+                    console.log('clicked');
+                    var callback = function(json) {
+                        console.log('callback');
+                        if (json) {
+                            var new_votes = num_votes + 1;
+                            $(votes_item).html(new_votes);
+                            $(list_item)
+                                .data('num_votes', new_votes)
+                                .css('visibility', 'hidden')
+                                .unbind(); // don't let them click twice
+                        }
+                    };
+                    self.controller.backend.upvoteListing(listing_id, callback);
                 });
             }
         };
-        self.upvoteListing = function(listing_id) {
-            return self.controller.backend.upvoteListing(listing_id);
-        }
         self.generateListingSnippetHtml = function(i, listing) {
             var days_ago = listing.days_ago != null ? listing.days_ago : self.controller.util.today() - listing.listing_date; /* paint with time proximity */
             var days_left = listing.days_left != null ? listing.days_left : listing.closing_date - self.controller.util.today(); /* paint with time proximity */
@@ -2633,10 +2638,6 @@ s = (p + b + c + v) / (t + 2)^1.5
         self.setup = function(controller) {
             self.controller = controller;
         }
-        // user methods
-        self.login = function() {
-            'http://localhost:7777/_ah/login?continue=%2f';
-        };
         // profile methods
         self.getProfile = function(profile_id) {
             var url = '/user?id=' + profile_id;
@@ -2714,7 +2715,9 @@ s = (p + b + c + v) / (t + 2)^1.5
         };
         self.saveListing = function(listing) {
         };
-        self.upvoteListing = function(listing_id) {
+        self.upvoteListing = function(listing_id, callback) {
+            var url = '/listings/up/' + listing_id;
+            $.getJSON(url, callback);
         };
         // comment methods
         self.commentsForListing = function(listing_id) {
@@ -2793,10 +2796,6 @@ s = (p + b + c + v) / (t + 2)^1.5
             self.backend = new RestBackend();
             self.backend.setup(controller);
         };
-        // user methods
-        self.login = function() {
-            return self.backend.login();
-        };
         // profile methods
         self.saveProfile = function(profile) {
             return self.backend.saveProfile(profile);
@@ -2823,8 +2822,8 @@ s = (p + b + c + v) / (t + 2)^1.5
         self.saveListing = function(listing) {
             return self.backend.saveListing(listing);
         };
-        self.upvoteListing = function(listing_id) {
-            return self.backend.upvoteListing(listing_id);
+        self.upvoteListing = function(listing_id, callback) {
+            return self.backend.upvoteListing(listing_id, callback);
         };
         // comment methods
         self.commentsForListing = function(listing_id) {
