@@ -2105,6 +2105,7 @@ s = (p + b + c + v) / (t + 2)^1.5
             $('#listing-edit-suggested-val').html(displayVal);
         };
         self.bindListingSnippet = function(i, listing) {
+            var upvote_item = document.getElementById('content-results-list-item-upvote-'+i);
             $('#content-results-list-item-title-'+i).data('listing_id',listing.listing_id).unbind().bind('click', function(){
                 self.controller.execute({page:'listing', listing_id:$(this).data('listing_id')});
             });           
@@ -2119,31 +2120,37 @@ s = (p + b + c + v) / (t + 2)^1.5
             });
             if (isFinite(i)) {
                 console.log('binding:'+i);
-                $('#content-results-list-item-upvote-'+i)
-                .data('index', i)
-                .data('listing_id', listing.listing_id)
-                .data('num_votes', listing.num_votes)
-                .unbind()
-                .bind('click', function(){
-                    var index = $(this).data('index');
-                    var listing_id = $(this).data('listing_id');
-                    var num_votes = $(this).data('num_votes');
-                    var list_item = this;
-                    var votes_item = document.getElementById('content-results-list-item-votes-'+index);
-                    console.log('clicked');
-                    var callback = function(json) {
-                        console.log('callback');
-                        if (json) {
-                            var new_votes = num_votes + 1;
-                            $(votes_item).html(new_votes);
-                            $(list_item)
-                                .data('num_votes', new_votes)
-                                .css('visibility', 'hidden')
-                                .unbind(); // don't let them click twice
-                        }
-                    };
-                    self.controller.backend.upvoteListing(listing_id, callback);
-                });
+                $(upvote_item)
+                    .data('index', i)
+                    .data('listing_id', listing.listing_id)
+                    .data('num_votes', listing.num_votes);
+                if (!listing.votable) {
+                    $(upvote_item).css('visibility', 'hidden').unbind();
+                }
+                else {
+                    $(upvote_item)
+                        .unbind()
+                        .bind('click', function(){
+                            var index = $(this).data('index');
+                            var listing_id = $(this).data('listing_id');
+                            var num_votes = $(this).data('num_votes');
+                            var list_item = this;
+                            var votes_item = document.getElementById('content-results-list-item-votes-'+index);
+                            console.log('clicked');
+                            var callback = function(json) {
+                                console.log('callback');
+                                if (json) {
+                                    var new_votes = num_votes + 1;
+                                    $(votes_item).html(new_votes);
+                                    $(list_item)
+                                        .data('num_votes', new_votes)
+                                        .css('visibility', 'hidden')
+                                        .unbind(); // don't let them click twice
+                                }
+                            };
+                            self.controller.backend.upvoteListing(listing_id, callback);
+                        });
+                }
             }
         };
         self.generateListingSnippetHtml = function(i, listing) {
