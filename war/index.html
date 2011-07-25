@@ -1946,10 +1946,10 @@ s = (p + b + c + v) / (t + 2)^1.5
             $('#stats').fadeIn();
         };
         self.statsPngDataURI = function(width, height, values) { // assumes non-negative values
-            var i, j, k;
+            var i, j, k, l;
             var png = new PNGlib(width, height, 256); // construcor takes height, weight and color-depth
             var background = png.color(0, 0, 0, 0); // set the background transparent
-            //values = [1, 2, 0]; // testing
+            //values = [1, 2, 0, 3, 5, 2]; // testing
             var num_values = values.length;
             var xsize = width / (num_values-1);
             var str;
@@ -1969,35 +1969,55 @@ s = (p + b + c + v) / (t + 2)^1.5
                 p.x = Math.floor(xsize * i);
                 p.y = Math.floor(height - yscale * values[i]);
                 mapArray[i] = p;
-                console.log('i='+i+' p.x='+p.x+' p.y='+p.y);
             }
             var pointArray = [];
-            var next_p, new_p, xdiff, ydiff, slope;
-            for (i = 0; i < num_values; i++) {
+            var next_p, new_p, filler_p, xdiff, ydiff, slope, old_p, pydir, pydiff;
+            for (i = 0; i < num_values; i++) { // kinda gross code; how to make better?
                 j = i + 1;
                 p = mapArray[i];
+                pointArray.push(p);
                 next_p = mapArray[j];
-                if (!(next_p === undefined)) {
-                    // extrapolate
-                    xdiff = next_p.x - p.x;
-                    ydiff = next_p.y - p.y;
-                    slope = ydiff / xdiff;
-                    console.log('i='+i+' p.x='+p.x+' p.y='+p.y+' next.x='+next_p.x+' next.y='+next_p.y+' slope='+slope);
-                    for (k = 0; k < xdiff; k++) {
-                        new_p = {};
-                        new_p.x = Math.floor(p.x + k);
-                        new_p.y = Math.floor(p.y + slope * k);
-                        pointArray.push(new_p);
-                    }
+                if (next_p === undefined) {
+                    continue;
                 }
-                else {
-                    pointArray.push(p);
+                xdiff = next_p.x - p.x;
+                ydiff = next_p.y - p.y;
+                slope = ydiff / xdiff;
+                old_p = p;
+                for (k = 1; k < xdiff; k++) {
+                    new_p = {};
+                    new_p.x = Math.floor(p.x + k);
+                    new_p.y = Math.floor(p.y + slope * k);
+                    pydir = (new_p.y > old_p.y) ? 1 : -1;
+                    pydiff = Math.abs(new_p.y - old_p.y);
+                    if (pydiff < 2) {
+                        old_p = {};
+                        old_p.x = new_p.x;
+                        old_p.y = new_p.y;
+                        pointArray.push(new_p);
+                        continue;
+                    }
+                    if (old_p.x == new_p.x)
+                        continue;
+                    for (l = 1; l < pydiff; l++) {
+                        //continue;
+                        filler_p = {};
+                        filler_p.x = old_p.x;
+                        filler_p.y = Math.floor(old_p.y + l*pydir);
+                        pointArray.push(filler_p);
+                    }
+                    old_p = {};
+                    old_p.x = new_p.x;
+                    old_p.y = new_p.y;
+                    pointArray.push(new_p);
                 }
             }
             var numPoints = pointArray.length;
             for (i = 0; i < numPoints; i++) {
                 p = pointArray[i];
-                png.buffer[png.index(p.x, p.y)] = png.color(0x00, 0x44, 0xcc);
+                x = p.x;
+                y = p.y;
+                png.buffer[png.index(x, y)] = png.color(0x00, 0x44, 0xcc);
             }
             str = 'data:image/png;base64,' + png.getBase64();
             return str;
@@ -2040,7 +2060,6 @@ s = (p + b + c + v) / (t + 2)^1.5
                 $('#search-prev-results').show().unbind()
                     .data('args', prevargs)
                     .bind('click',function(){
-                        console.log('prevargs:',$(this).data('args'));
                         self.controller.execute($(this).data('args'));
                     });
             }
@@ -2053,7 +2072,6 @@ s = (p + b + c + v) / (t + 2)^1.5
                 $('#search-next-results').show().unbind()
                     .data('args', nextargs)
                     .bind('click',function(){
-                        console.log('nextargs:',$(this).data('args'));
                         self.controller.execute($(this).data('args'));
                     });
             }
@@ -2082,8 +2100,6 @@ s = (p + b + c + v) / (t + 2)^1.5
                 profile = self.saveProfile(profile_id);
             else
                 profile = self.doQuery(profile_id);
-            console.log('incoming json:' + JSON.stringify(args, null, '\t'));
-            console.log('returned json:' + JSON.stringify(profile, null, '\t'));
             self.displayProfile(profile);
             return 'profile';
         };
@@ -2394,7 +2410,6 @@ s = (p + b + c + v) / (t + 2)^1.5
                 self.controller.execute({page:'bids', listing_id:$(this).data('listing_id')});
             });
             if (isFinite(i)) {
-                console.log('binding:'+i);
                 $(upvote_item)
                     .data('index', i)
                     .data('listing_id', listing.listing_id)
@@ -2411,9 +2426,7 @@ s = (p + b + c + v) / (t + 2)^1.5
                             var num_votes = $(this).data('num_votes');
                             var list_item = this;
                             var votes_item = document.getElementById('content-results-list-item-votes-'+index);
-                            console.log('clicked');
                             var callback = function(json) {
-                                console.log('callback');
                                 if (json) {
                                     var new_votes = num_votes + 1;
                                     $(votes_item).html(new_votes);
@@ -2508,8 +2521,6 @@ s = (p + b + c + v) / (t + 2)^1.5
                 $('#comment-textarea').val('');
                 results = self.commentsForProfile(profile_id);
             }
-            console.log('incoming json:' + JSON.stringify(args, null, '\t'));
-            console.log('returned json:' + JSON.stringify(results, null, '\t'));
             self.displayResults(results);
             return 'comments';
         };
@@ -2663,8 +2674,6 @@ s = (p + b + c + v) / (t + 2)^1.5
             else if (profile_id) {
                 results = self.bidsForProfile(profile_id);
             }
-            console.log('incoming json:' + JSON.stringify(args, null, '\t'));
-            console.log('returned json:' + JSON.stringify(results, null, '\t'));
             self.displayResults(results);
             return 'bids';
         };
@@ -2918,7 +2927,6 @@ s = (p + b + c + v) / (t + 2)^1.5
         self.getProfile = function(profile_id) {
             var url = '/user?id=' + profile_id;
             $.getJSON(url, function(results_json) {
-                console.log(url + ' -> ' + JSON.stringify(results_json, null, '\t'));
                 if (results_json) {
                     self.controller.profile.displayProfile(results_json);
                 }
@@ -2931,7 +2939,6 @@ s = (p + b + c + v) / (t + 2)^1.5
         self.profileForUsername = function(username) {
             var url = '/user/' + username;
             $.getJSON(url, function(results_json) {
-                console.log(url + ' -> ' + JSON.stringify(results_json, null, '\t'));
                 if (results_json) {
                     self.controller.profile.displayProfile(results_json);
                 }
@@ -2951,7 +2958,6 @@ s = (p + b + c + v) / (t + 2)^1.5
         self.getListing = function(listing_id) {
             var url = '/listings/get/' + listing_id;
             $.getJSON(url, function(results_json) {
-                console.log(url + ' -> ' + JSON.stringify(results_json, null, '\t'));
                 if (results_json) {
                     self.controller.listing.displayListing(results_json, false);
                 }
@@ -2971,7 +2977,6 @@ s = (p + b + c + v) / (t + 2)^1.5
             }
             var url = '/listings/' + pathSuffix;
             $.getJSON(url, function(results_json) {
-                console.log(url + ' -> ' + JSON.stringify(results_json, null, '\t'));
                 if (results_json && results_json.listings_props) {
                     var results = results_json.listings;
                     var search_type = results_json.search_type;
@@ -3003,7 +3008,6 @@ s = (p + b + c + v) / (t + 2)^1.5
         self.commentsForListing = function(listing_id) {
             var url = '/comments/listing/' + listing_id + '/';
             $.getJSON(url, function(results_json) {
-                console.log(url + ' -> ' + JSON.stringify(results_json, null, '\t'));
                 if (results_json && results_json.listing) {
                     self.controller.comments.displayResults(results_json);
                 }
@@ -3016,7 +3020,6 @@ s = (p + b + c + v) / (t + 2)^1.5
         self.commentsForProfile = function(profile_id) {
             var url = '/comments/user/' + profile_id + '/';
             $.getJSON(url, function(results_json) {
-                console.log(url + ' -> ' + JSON.stringify(results_json, null, '\t'));
                 // if (results_json && results_json.profile) {
                 if (results_json) {
                     self.controller.comments.displayResults(results_json);
@@ -3035,7 +3038,6 @@ s = (p + b + c + v) / (t + 2)^1.5
         self.bidsForListing = function(listing_id) {
             var url = '/bids/listing/' + listing_id + '/';
             $.getJSON(url, function(results_json) {
-                console.log(url + ' -> ' + JSON.stringify(results_json, null, '\t'));
                 if (results_json && results_json.listing) {
                     self.controller.bids.displayResults(results_json);
                 }
@@ -3048,7 +3050,6 @@ s = (p + b + c + v) / (t + 2)^1.5
         self.bidsForProfile = function(profile_id) {
             var url = '/bids/user/' + profile_id + '/';
             $.getJSON(url, function(results_json) {
-                console.log(url + ' -> ' + JSON.stringify(results_json, null, '\t'));
                 // if (results_json && results_json.profile) {
                 if (results_json) {
                     self.controller.bids.displayResults(results_json);
