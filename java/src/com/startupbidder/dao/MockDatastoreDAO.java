@@ -68,7 +68,12 @@ public class MockDatastoreDAO implements DatastoreDAO {
 	
 	public UserDTO createUser(String userId, String email, String nickname) {
 		UserDTO user = new UserDTO();
-		user.createKey(userId);
+		if (email != null && (email.contains("grzegorz.nittner") || email.contains("johnarleyburns"))) {
+			user = getTopInvestor();
+		} else {		
+			user.createKey(userId);
+		}
+		
 		user.setOpenId(userId);
 		user.setNickname(nickname != null ? nickname : "The " + userId);
 		//user.setFirstName("");
