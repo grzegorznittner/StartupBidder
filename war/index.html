@@ -2356,10 +2356,10 @@ s = (p + b + c + v) / (t + 2)^1.5
                     e.preventDefault();
                     self.controller.execute({page:'listing',action:'save',listing_id:$(this).data('listing_id')});
                 });
-                $('#listing-edit-business-plan-link').unbind().data('business_plan_url',listing.business_plan_url).bind('click',function(){
+                $('#listing-edit-business-plan-link').unbind().data('business_plan_url',listing.business_plan_url||'').bind('click',function(){
                     document.location = $(this).data('business_plan_url');
                 });
-                $('#listing-edit-presentation-link').unbind().data('presentation_url',listing.presentation_url).bind('click',function(){
+                $('#listing-edit-presentation-link').unbind().data('presentation_url',listing.presentation_url||'').bind('click',function(){
                     document.location = $(this).data('presentation_url');
                 });
                 if (isNew)
@@ -2376,10 +2376,10 @@ s = (p + b + c + v) / (t + 2)^1.5
                 $('#listing-readonly-suggested-pct').html(listing.suggested_pct);
                 $('#listing-readonly-suggested-val').html(self.controller.util.addCommas(listing.suggested_val));
                 $('#listing-readonly-summary').html(listing.summary);
-                $('#listing-readonly-business-plan-link').unbind().data('business_plan_url',listing.business_plan_url).bind('click',function(){
+                $('#listing-readonly-business-plan-link').unbind().data('business_plan_url',listing.business_plan_url||'').bind('click',function(){
                     document.location = $(this).data('business_plan_url');
                 });
-                $('#listing-readonly-presentation-link').unbind().data('presentation_url',listing.presentation_url).bind('click',function(){
+                $('#listing-readonly-presentation-link').unbind().data('presentation_url',listing.presentation_url||'').bind('click',function(){
                     document.location = $(this).data('presentation_url');
                 });
              }
