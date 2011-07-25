@@ -34,7 +34,6 @@ public class DtoToVoConverter {
 		bp.setId(bpDTO.getIdAsString());
 		bp.setClosingOn(bpDTO.getClosingOn());
 		bp.setListedOn(bpDTO.getListedOn());
-		bp.setMedianValuation(bpDTO.getMedianValuation());
 		bp.setName(bpDTO.getName());
 		bp.setOwner(bpDTO.getOwner());
 		bp.setSuggestedValuation(bpDTO.getSuggestedValuation());

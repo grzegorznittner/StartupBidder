@@ -204,4 +204,10 @@ public interface DatastoreDAO {
 	 */
 	CommentDTO getComment(String commentId);
 
+	/**
+	 * Checks whether user can for for listing.
+	 * User can vote only once for a particular listing.
+	 */
+	boolean canVote(String userId, String listingId);
+
 }

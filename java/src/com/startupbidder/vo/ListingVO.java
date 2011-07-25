@@ -48,6 +48,8 @@ public class ListingVO {
 	private int numberOfBids;
 	@JsonProperty("num_votes")
 	private int numberOfVotes;
+	@JsonProperty("votable")
+	private boolean votable;
 	
 	@JsonProperty("days_ago")
 	private int daysAgo;
@@ -55,85 +57,6 @@ public class ListingVO {
 	private int daysLeft;
 	
 	public ListingVO() {
-	}
-
-	public String getId() {
-		return id;
-	}
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-	
-	public int getMedianValuation() {
-		return medianValuation;
-	}
-
-	public void setMedianValuation(int medianValuation) {
-		this.medianValuation = medianValuation;
-	}
-
-	public Date getClosingOn() {
-		return closingOn;
-	}
-
-	public void setClosingOn(Date closingOn) {
-		this.closingOn = closingOn;
-	}
-
-	public String getState() {
-		return state;
-	}
-
-	public void setState(String state) {
-		this.state = state;
-	}
-
-	public Date getListedOn() {
-		return listedOn;
-	}
-
-	public void setListedOn(Date listedOn) {
-		this.listedOn = listedOn;
-	}
-
-	public String getSummary() {
-		return summary;
-	}
-
-	public void setSummary(String summary) {
-		this.summary = summary;
-	}
-
-	public String getOwner() {
-		return owner;
-	}
-
-	public void setOwner(String owner) {
-		this.owner = owner;
-	}
-
-	public int getNumberOfComments() {
-		return numberOfComments;
-	}
-
-	public void setNumberOfComments(int numberOfComments) {
-		this.numberOfComments = numberOfComments;
-	}
-
-	public int getNumberOfBids() {
-		return numberOfBids;
-	}
-
-	public void setNumberOfBids(int numberOfBids) {
-		this.numberOfBids = numberOfBids;
 	}
 
 	public int getOrderNumber() {
@@ -144,20 +67,20 @@ public class ListingVO {
 		this.orderNumber = orderNumber;
 	}
 
-	public String getOwnerName() {
-		return ownerName;
+	public String getId() {
+		return id;
 	}
 
-	public void setOwnerName(String ownerName) {
-		this.ownerName = ownerName;
+	public void setId(String id) {
+		this.id = id;
 	}
 
-	public int getNumberOfVotes() {
-		return numberOfVotes;
+	public String getName() {
+		return name;
 	}
 
-	public void setNumberOfVotes(int numberOfVotes) {
-		this.numberOfVotes = numberOfVotes;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public int getSuggestedAmount() {
@@ -184,6 +107,94 @@ public class ListingVO {
 		this.suggestedValuation = suggestedValuation;
 	}
 
+	public int getMedianValuation() {
+		return medianValuation;
+	}
+
+	public void setMedianValuation(int medianValuation) {
+		this.medianValuation = medianValuation;
+	}
+
+	public Date getListedOn() {
+		return listedOn;
+	}
+
+	public void setListedOn(Date listedOn) {
+		this.listedOn = listedOn;
+	}
+
+	public Date getClosingOn() {
+		return closingOn;
+	}
+
+	public void setClosingOn(Date closingOn) {
+		this.closingOn = closingOn;
+	}
+
+	public String getState() {
+		return state;
+	}
+
+	public void setState(String state) {
+		this.state = state;
+	}
+
+	public String getSummary() {
+		return summary;
+	}
+
+	public void setSummary(String summary) {
+		this.summary = summary;
+	}
+
+	public String getOwner() {
+		return owner;
+	}
+
+	public void setOwner(String owner) {
+		this.owner = owner;
+	}
+
+	public String getOwnerName() {
+		return ownerName;
+	}
+
+	public void setOwnerName(String ownerName) {
+		this.ownerName = ownerName;
+	}
+
+	public int getNumberOfComments() {
+		return numberOfComments;
+	}
+
+	public void setNumberOfComments(int numberOfComments) {
+		this.numberOfComments = numberOfComments;
+	}
+
+	public int getNumberOfBids() {
+		return numberOfBids;
+	}
+
+	public void setNumberOfBids(int numberOfBids) {
+		this.numberOfBids = numberOfBids;
+	}
+
+	public int getNumberOfVotes() {
+		return numberOfVotes;
+	}
+
+	public void setNumberOfVotes(int numberOfVotes) {
+		this.numberOfVotes = numberOfVotes;
+	}
+
+	public boolean isVotable() {
+		return votable;
+	}
+
+	public void setVotable(boolean votable) {
+		this.votable = votable;
+	}
+
 	public int getDaysAgo() {
 		return daysAgo;
 	}
@@ -203,16 +214,15 @@ public class ListingVO {
 	@Override
 	public String toString() {
 		return "ListingVO [orderNumber=" + orderNumber + ", id=" + id
-				+ ", name=" + name
+				+ ", name=" + name + ", suggestedAmount=" + suggestedAmount
+				+ ", suggestedPercentage=" + suggestedPercentage
+				+ ", suggestedValuation=" + suggestedValuation
 				+ ", medianValuation=" + medianValuation + ", listedOn="
 				+ listedOn + ", closingOn=" + closingOn + ", state=" + state
 				+ ", summary=" + summary + ", owner=" + owner + ", ownerName="
 				+ ownerName + ", numberOfComments=" + numberOfComments
-				+ ", numberOfBids=" + numberOfBids
-				+ ", numberOfVotes=" + numberOfVotes + ", suggestedAmount="
-				+ suggestedAmount + ", suggestedPercentage="
-				+ suggestedPercentage + ", suggestedValuation="
-				+ suggestedValuation + ", daysAgo=" + daysAgo + ", daysLeft="
-				+ daysLeft + "]";
+				+ ", numberOfBids=" + numberOfBids + ", numberOfVotes="
+				+ numberOfVotes + ", votable=" + votable + ", daysAgo="
+				+ daysAgo + ", daysLeft=" + daysLeft + "]";
 	}
 }

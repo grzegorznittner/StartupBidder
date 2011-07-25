@@ -143,6 +143,18 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		return userCache.get(bidsPerUser.get(0).getKey());
 	}
 	
+	public boolean canVote(String userId, String listingId) {
+		for (VoteDTO vote : voteCache.values()) {
+			if (vote.getListing().equals(listingId)) {
+				if (vote.getUser().equals(userId)) {
+					// user has already voted for that listing
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
 	public ListingDTO getListing(String listingId) {
 		if (!lCache.containsKey(listingId)) {
 			log.log(Level.WARNING, "Listing '" + listingId + "' not found");
@@ -457,6 +469,7 @@ public class MockDatastoreDAO implements DatastoreDAO {
 			vote.setValue(1);
 			vote.createKey(String.valueOf(vote.hashCode()));
 			numberOfVotes++;
+			voteCache.put(vote.getIdAsString(), vote);
 		}
 		return listing;
 	}

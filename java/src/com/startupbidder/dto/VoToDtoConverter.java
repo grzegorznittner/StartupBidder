@@ -28,7 +28,6 @@ public class VoToDtoConverter {
 		bp.setIdFromString(bpVO.getId());
 		bp.setClosingOn(bpVO.getClosingOn());
 		bp.setListedOn(bpVO.getListedOn());
-		bp.setMedianValuation(bpVO.getMedianValuation());
 		bp.setName(bpVO.getName());
 		bp.setOwner(bpVO.getOwner());
 		bp.setSuggestedValuation(bpVO.getSuggestedValuation());
