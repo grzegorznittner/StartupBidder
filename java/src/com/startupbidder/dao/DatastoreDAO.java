@@ -224,4 +224,18 @@ public interface DatastoreDAO {
 	 * User can vote only once for a particular listing.
 	 */
 	boolean canVote(String userId, String listingId);
+
+	/**
+	 * Activates user.
+	 * @param userId User id (internal one not open id)
+	 * @return User with updated data
+	 */
+	UserDTO activateUser(String userId);
+
+	/**
+	 * Deactivates user.
+	 * @param userId User id (internal one not open id)
+	 * @return User with updated data
+	 */
+	UserDTO deactivateUser(String userId);
 }

@@ -53,10 +53,7 @@ public class ServiceFacade {
 		if (user == null) {
 			return null;
 		}
-		UserStatistics userStats = getDAO().getUserStatistics(user.getId());
-		user.setNumberOfBids(userStats.getNumberOfBids());
-		user.setNumberOfComments(userStats.getNumberOfComments());
-		user.setNumberOfListings(userStats.getNumberOfListings());
+		computeUserStatistics(user);
 		return user;
 	}
 	
@@ -71,21 +68,13 @@ public class ServiceFacade {
 		if (user == null) {
 			return null;
 		}
-		UserStatistics stat = getDAO().getUserStatistics(user.getId());
-		user.setNumberOfListings(stat.getNumberOfListings());
-		user.setNumberOfBids(stat.getNumberOfBids());
-		user.setNumberOfComments(stat.getNumberOfComments());
-		
+		computeUserStatistics(user);
 		return user;
 	}
 	
 	public UserVO createUser(User loggedInUser) {
 		UserVO user = DtoToVoConverter.convert(getDAO().createUser(loggedInUser.getUserId(), loggedInUser.getEmail(), loggedInUser.getNickname()));
-		UserStatistics stat = getDAO().getUserStatistics(user.getId());
-		user.setNumberOfListings(stat.getNumberOfListings());
-		user.setNumberOfBids(stat.getNumberOfBids());
-		user.setNumberOfComments(stat.getNumberOfComments());
-		
+		computeUserStatistics(user);
 		return user;
 	}
 	
@@ -108,10 +97,7 @@ public class ServiceFacade {
 		List<UserVO> users = DtoToVoConverter.convertUsers(getDAO().getAllUsers());
 		int index = 1;
 		for (UserVO user : users) {
-			UserStatistics userStats = getDAO().getUserStatistics(user.getId());
-			user.setNumberOfBids(userStats.getNumberOfBids());
-			user.setNumberOfComments(userStats.getNumberOfComments());
-			user.setNumberOfListings(userStats.getNumberOfListings());
+			computeUserStatistics(user);
 			user.setOrderNumber(index++);
 		}
 
@@ -120,21 +106,37 @@ public class ServiceFacade {
 		userList.setLoggedUser(loggedInUser);
 		return userList;
 	}
-	
+
 	/**
 	 * Returns investor which put the highest number of bids
 	 */
 	public UserVO getTopInvestor(UserVO loggedInUser) {
 		UserVO user = DtoToVoConverter.convert(getDAO().getTopInvestor());
-		
-		UserStatistics stat = getDAO().getUserStatistics(user.getId());
-		user.setNumberOfListings(stat.getNumberOfListings());
-		user.setNumberOfBids(stat.getNumberOfBids());
-		user.setNumberOfComments(stat.getNumberOfComments());
-		
+		computeUserStatistics(user);
 		return user;
 	}
 
+	public UserVO activateUser(UserVO loggedInUser, String userId) {
+		UserVO user = DtoToVoConverter.convert(getDAO().activateUser(userId));
+		computeUserStatistics(user);
+		return user;
+	}
+
+	public UserVO deactivateUser(UserVO loggedInUser, String userId) {
+		UserVO user = DtoToVoConverter.convert(getDAO().deactivateUser(userId));
+		computeUserStatistics(user);
+		return user;
+	}
+
+	private void computeUserStatistics(UserVO user) {
+		if (user != null && user.getId() != null) {
+			UserStatistics userStats = getDAO().getUserStatistics(user.getId());
+			user.setNumberOfBids(userStats.getNumberOfBids());
+			user.setNumberOfComments(userStats.getNumberOfComments());
+			user.setNumberOfListings(userStats.getNumberOfListings());
+		}
+	}
+	
 	private void computeListingData(UserVO loggedInUser, ListingVO listing) {
 		// set user data
 		UserDTO user = getDAO().getUser(listing.getOwner());
@@ -609,4 +611,5 @@ public class ServiceFacade {
 		computeListingData(loggedInUser, updatedListing);
 		return updatedListing;
 	}
+
 }

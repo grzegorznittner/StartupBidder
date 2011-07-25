@@ -68,6 +68,8 @@ public class HelloServlet extends HttpServlet {
 			out.println("<a href=\"/user/loggedin/.html\">Direct link to logged in user data</a><br/>");
 			out.println("<a href=\"/user/get/" + currentUser.getId() + "/.html\">Logged in user data via /users/get/ </a><br/>");
 			out.println("<a href=\"/user/all/.html\">All users</a><br/>");
+			out.println("<a href=\"/user/activate/" + currentUser.getId() + "/.html\">Activates logged in user</a><br/>");
+			out.println("<a href=\"/user/deactivate/" + currentUser.getId() + "/.html\">Deactivates logged in user</a><br/>");
 			
 			out.println("<p>Listings API:</p>");
 			out.println("<a href=\"/listings/get/" + topListing.getIdAsString() + "/.html\">Top listing data</a><br/>");

@@ -167,6 +167,26 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		return true;
 	}
 	
+	public UserDTO activateUser(String userId) {
+		UserDTO user = userCache.get(userId);
+		if (user == null) {
+			log.log(Level.WARNING, "User with id '" + userId + "' not found!");
+			return null;
+		}
+		user.setStatus(UserDTO.Status.ACTIVE);
+		return user;
+	}
+
+	public UserDTO deactivateUser(String userId) {
+		UserDTO user = userCache.get(userId);
+		if (user == null) {
+			log.log(Level.WARNING, "User with id '" + userId + "' not found!");
+			return null;
+		}
+		user.setStatus(UserDTO.Status.DEACTIVATED);
+		return user;
+	}
+	
 	public ListingDTO getListing(String listingId) {
 		if (!lCache.containsKey(listingId)) {
 			log.log(Level.WARNING, "Listing '" + listingId + "' not found");

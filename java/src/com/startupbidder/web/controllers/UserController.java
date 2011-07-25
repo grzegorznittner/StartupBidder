@@ -26,6 +26,10 @@ public class UserController extends ModelDrivenController {
 				return topInvestor(request);
 			} else if("loggedin".equalsIgnoreCase(getCommand(1))) {
 				return loggedin(request);
+			} else if("activate".equalsIgnoreCase(getCommand(1))) {
+				return activate(request);
+			} else if("deactivate".equalsIgnoreCase(getCommand(1))) {
+				return deactivate(request);
 			} else {
 				return index(request);
 			}
@@ -69,13 +73,29 @@ public class UserController extends ModelDrivenController {
 	private HttpHeaders get(HttpServletRequest request) {
     	String userId = getCommandOrParameter(request, 2, "id");
     	user = ServiceFacade.instance().getUser(getLoggedInUser(), userId);
-        return new HttpHeadersImpl("index").disableCaching();
+        return new HttpHeadersImpl("get").disableCaching();
 	}
 
 	private HttpHeaders index(HttpServletRequest request) {
     	String userId = getCommandOrParameter(request, 1, "id");
     	user = ServiceFacade.instance().getUser(getLoggedInUser(), userId);
         return new HttpHeadersImpl("index").disableCaching();
+	}
+
+	private HttpHeaders activate(HttpServletRequest request) {
+    	String userId = getCommandOrParameter(request, 2, "id");
+    	user = ServiceFacade.instance().activateUser(getLoggedInUser(), userId);
+
+    	HttpHeaders headers = new HttpHeadersImpl("activate");
+		return headers;
+	}
+
+	private HttpHeaders deactivate(HttpServletRequest request) {
+    	String userId = getCommandOrParameter(request, 2, "id");
+    	user = ServiceFacade.instance().deactivateUser(getLoggedInUser(), userId);
+
+		HttpHeaders headers = new HttpHeadersImpl("deactivate");
+		return headers;
 	}
 
 	@Override

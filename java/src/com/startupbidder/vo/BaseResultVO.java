@@ -7,6 +7,7 @@ import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 @JsonAutoDetect(getterVisibility=Visibility.NONE, setterVisibility=Visibility.NONE,
 		fieldVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE)
 public class BaseResultVO {
+	/** Logout url is not converted to JSON, see #36 */
 	private String logoutUrl;
 	@JsonProperty("loggedin_profile")
 	private UserVO loggedUser;
