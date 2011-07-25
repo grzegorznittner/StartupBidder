@@ -62,7 +62,7 @@ public class VoToDtoConverter {
 		user.setInvestor(userVO.isAccreditedInvestor());
 		user.setEmail(userVO.getEmail());
 		user.setFacebook(userVO.getFacebook());
-		user.setFirstName(userVO.getName());
+		user.setName(userVO.getName());
 		user.setJoined(userVO.getJoined());
 		user.setLastLoggedIn(userVO.getLastLoggedIn());
 		user.setLinkedin(userVO.getLinkedin());

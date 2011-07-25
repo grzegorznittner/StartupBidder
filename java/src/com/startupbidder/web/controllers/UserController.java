@@ -62,7 +62,7 @@ public class UserController extends ModelDrivenController {
 	}
 
 	private HttpHeaders loggedin(HttpServletRequest request) {
-    	user = ServiceFacade.instance().getLoggedInUserData(getLoggedInUser());
+    	user = getLoggedInUser();
         return new HttpHeadersImpl("loggedin").disableCaching();
 	}
 

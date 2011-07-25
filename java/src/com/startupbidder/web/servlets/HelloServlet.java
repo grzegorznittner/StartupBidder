@@ -20,6 +20,8 @@ import com.startupbidder.dto.CommentDTO;
 import com.startupbidder.dto.ListingDTO;
 import com.startupbidder.dto.UserDTO;
 import com.startupbidder.vo.ListPropertiesVO;
+import com.startupbidder.vo.UserVO;
+import com.startupbidder.web.ServiceFacade;
 
 @SuppressWarnings("serial")
 public class HelloServlet extends HttpServlet {
@@ -36,6 +38,7 @@ public class HelloServlet extends HttpServlet {
 		}
 		
 		DatastoreDAO datastore = MockDatastoreDAO.getInstance();
+		ServiceFacade service = ServiceFacade.instance();
 		
 		PrintWriter out = resp.getWriter();
 		try {
@@ -49,7 +52,10 @@ public class HelloServlet extends HttpServlet {
 			}
 			
 			UserDTO topInvestor = datastore.getTopInvestor();
-			UserDTO currentUser = datastore.getUser(user.getNickname());
+			UserVO currentUser = service.getLoggedInUserData(user);
+			if (currentUser == null) {
+				currentUser = service.createUser(user);
+			}
 			ListPropertiesVO listProperties = new ListPropertiesVO();
 			listProperties.setMaxResults(1);
 			ListingDTO topListing = datastore.getTopListings(listProperties).get(0);
@@ -60,7 +66,7 @@ public class HelloServlet extends HttpServlet {
 			out.println("<p>User API:</p>");
 			out.println("<a href=\"/user/topinvestor/.html\">Top investor data</a><br/>");
 			out.println("<a href=\"/user/loggedin/.html\">Direct link to logged in user data</a><br/>");
-			out.println("<a href=\"/user/get/" + currentUser.getIdAsString() + "/.html\">Logged in user data via /users/get/ </a><br/>");
+			out.println("<a href=\"/user/get/" + currentUser.getId() + "/.html\">Logged in user data via /users/get/ </a><br/>");
 			out.println("<a href=\"/user/all/.html\">All users</a><br/>");
 			
 			out.println("<p>Listings API:</p>");

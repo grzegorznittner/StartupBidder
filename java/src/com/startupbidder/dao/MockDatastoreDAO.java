@@ -53,27 +53,37 @@ public class MockDatastoreDAO implements DatastoreDAO {
 	}
 	
 	public UserDTO getUser(String key) {
-		UserDTO user = (UserDTO)userCache.get(key);
-		
-		if (user == null) {
-			user = new UserDTO();
-			user.createKey(key);
-			user.setNickname("The " + key);
-			user.setFirstName(key);
-			user.setEmail(key + "vandamm@startupbidder.com");
-			user.setFacebook("fb_" + key);
-			user.setJoined(new Date());
-			user.setLastLoggedIn(new Date());
-			user.setModified(new Date());
-			user.setOrganization("org_" + key);
-			user.setTitle("Dr");
-			user.setTwitter("twit_" + key);
-			user.setLinkedin("ln_" + key);
-			user.setStatus(UserDTO.Status.ACTIVE);
-			
-			userCache.put(user.getIdAsString(), user);
+		UserDTO user = (UserDTO)userCache.get(key);		
+		return user;
+	}
+	
+	public UserDTO getUserByOpenId(String openId) {
+		for(UserDTO user : userCache.values()) {
+			if (user.getOpenId().equals(openId)) {
+				return user;
+			}
 		}
+		return null;
+	}
+	
+	public UserDTO createUser(String userId, String email, String nickname) {
+		UserDTO user = new UserDTO();
+		user.createKey(userId);
+		user.setOpenId(userId);
+		user.setNickname(nickname != null ? nickname : "The " + userId);
+		//user.setFirstName("");
+		user.setEmail(email);
+		//user.setFacebook("");
+		user.setJoined(new Date());
+		user.setLastLoggedIn(new Date());
+		user.setModified(new Date());
+		//user.setOrganization("org_" + key);
+		//user.setTitle("Dr");
+		//user.setTwitter("twit_" + key);
+		//user.setLinkedin("ln_" + key);
+		user.setStatus(UserDTO.Status.ACTIVE);
 		
+		userCache.put(user.getIdAsString(), user);
 		return user;
 	}
 	
@@ -144,15 +154,17 @@ public class MockDatastoreDAO implements DatastoreDAO {
 	}
 	
 	public boolean canVote(String userId, String listingId) {
+		log.log(Level.INFO, "Check votes for user '" + userId + "' and listing '" + listingId + "'");
 		for (VoteDTO vote : voteCache.values()) {
+			log.log(Level.INFO, "  --> " + vote.toString());
 			if (vote.getListing().equals(listingId)) {
 				if (vote.getUser().equals(userId)) {
 					// user has already voted for that listing
-					return true;
+					return false;
 				}
 			}
 		}
-		return false;
+		return true;
 	}
 	
 	public ListingDTO getListing(String listingId) {
@@ -624,8 +636,9 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		key = "deadahmed";
 		user.createKey(key);
 		user.setNickname("Dead");
-		user.setFirstName("Ahmed");
+		user.setName("Ahmed");
 		user.setEmail("deadahmed@startupbidder.com");
+		user.setOpenId(user.getEmail());
 		user.setJoined(new Date(System.currentTimeMillis() - 2 * 24 * 60 * 60 * 1000));
 		user.setStatus(UserDTO.Status.ACTIVE);
 		user.setFacebook("fb_" + key);
@@ -642,8 +655,9 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		key = "jpfowler";
 		user.createKey(key);
 		user.setNickname("fowler");
-		user.setFirstName("Jackob");
+		user.setName("Jackob");
 		user.setEmail("jpfowler@startupbidder.com");
+		user.setOpenId(user.getEmail());
 		user.setJoined(new Date(System.currentTimeMillis() - 3 * 24 * 60 * 60 * 1000));
 		user.setStatus(UserDTO.Status.ACTIVE);
 		user.setFacebook("fb_" + key);
@@ -661,8 +675,9 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		key = "businessinsider";
 		user.createKey(key);
 		user.setNickname("Insider");
-		user.setFirstName("The");
+		user.setName("The");
 		user.setEmail("insider@startupbidder.com");
+		user.setOpenId(user.getEmail());
 		user.setJoined(new Date(System.currentTimeMillis() - 3 * 24 * 60 * 60 * 1000));
 		user.setStatus(UserDTO.Status.ACTIVE);
 		user.setFacebook("fb_" + key);
@@ -677,8 +692,9 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		key = "dragonsden";
 		user.createKey(key);
 		user.setNickname("The Dragon");
-		user.setFirstName("Mark");
+		user.setName("Mark");
 		user.setEmail("dragon@startupbidder.com");
+		user.setOpenId(user.getEmail());
 		user.setJoined(new Date(System.currentTimeMillis() - 6 * 24 * 60 * 60 * 1000));
 		user.setStatus(UserDTO.Status.ACTIVE);
 		user.setFacebook("fb_" + key);
@@ -696,8 +712,9 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		key = "crazyinvestor";
 		user.createKey(key);
 		user.setNickname("MadMax");
-		user.setFirstName("Mad");
+		user.setName("Mad");
 		user.setEmail("madmax@startupbidder.com");
+		user.setOpenId(user.getEmail());
 		user.setJoined(new Date(System.currentTimeMillis() - 5 * 24 * 60 * 60 * 1000));
 		user.setStatus(UserDTO.Status.ACTIVE);
 		user.setInvestor(true);
@@ -716,8 +733,9 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		key = "chinese";
 		user.createKey(key);
 		user.setNickname("The One");
-		user.setFirstName("Bruce");
+		user.setName("Bruce");
 		user.setEmail("madmax@startupbidder.com");
+		user.setOpenId(user.getEmail());
 		user.setJoined(new Date(System.currentTimeMillis() - 1 * 24 * 60 * 60 * 1000));
 		user.setStatus(UserDTO.Status.DEACTIVATED);
 		user.setInvestor(true);

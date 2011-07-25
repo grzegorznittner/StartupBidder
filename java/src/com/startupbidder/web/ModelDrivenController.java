@@ -19,13 +19,14 @@ import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.startupbidder.vo.BaseResultVO;
 import com.startupbidder.vo.ListPropertiesVO;
+import com.startupbidder.vo.UserVO;
 
 public abstract class ModelDrivenController {
 	private static final Logger log = Logger.getLogger(ModelDrivenController.class.getName());
 	
 	private static int DEFAULT_MAX_RESULTS = 5;
 	private String command[];
-	private User loggedInUser;
+	private UserVO loggedInUser;
 	
 	/**
 	 * Executes action handler for particular controller
@@ -41,7 +42,17 @@ public abstract class ModelDrivenController {
 	
 	public final HttpHeaders execute(HttpServletRequest request) {
 		UserService userService = UserServiceFactory.getUserService();
-		loggedInUser = userService.getCurrentUser();
+		User user = userService.getCurrentUser();
+		if (user != null) {
+			loggedInUser = ServiceFacade.instance().getLoggedInUserData(user);
+			if (loggedInUser == null) {
+				// first time logged in
+				loggedInUser = ServiceFacade.instance().createUser(user);
+			}
+		} else {
+			// not logged in
+			loggedInUser = null;
+		}
 		
 		command = decomposeRequest(request.getPathInfo());
 		
@@ -119,7 +130,7 @@ public abstract class ModelDrivenController {
 		}
 	}
 	
-	protected User getLoggedInUser() {
+	protected UserVO getLoggedInUser() {
 		return loggedInUser;
 	}
 }

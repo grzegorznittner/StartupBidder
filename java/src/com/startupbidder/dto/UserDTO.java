@@ -7,6 +7,7 @@ import com.google.appengine.api.datastore.Entity;
 public class UserDTO extends AbstractDTO {
 	public enum Status {CREATED, ACTIVE, DEACTIVATED};
 
+	private String openId;
 	private String nickname;
 	private String name;
 	private String email;
@@ -28,17 +29,25 @@ public class UserDTO extends AbstractDTO {
 		return "User";
 	}
 
+	public String getOpenId() {
+		return openId;
+	}
+
+	public void setOpenId(String openId) {
+		this.openId = openId;
+	}
+
 	public String getNickname() {
 		return nickname;
 	}
 	public void setNickname(String nickname) {
 		this.nickname = nickname;
 	}
-	public String getFirstName() {
+	public String getName() {
 		return name;
 	}
-	public void setFirstName(String firstName) {
-		this.name = firstName;
+	public void setName(String name) {
+		this.name = name;
 	}
 	public String getEmail() {
 		return email;
@@ -129,7 +138,7 @@ public class UserDTO extends AbstractDTO {
 
 	@Override
 	public String toString() {
-		return "UserDTO [nickname=" + nickname + ", firstName=" + name
+		return "UserDTO [nickname=" + nickname + ", name=" + name
 				+ ", email=" + email + ", title="
 				+ title + ", organization=" + organization + ", facebook="
 				+ facebook + ", twitter=" + twitter + ", linkedin=" + linkedin
@@ -141,6 +150,7 @@ public class UserDTO extends AbstractDTO {
 	@Override
 	public Entity toEntity() {
 		Entity user = new Entity(id);
+		user.setProperty("openId", this.openId);
 		user.setProperty("email", this.email);
 		user.setProperty("facebook", this.facebook);
 		user.setProperty("name", this.name);
@@ -160,9 +170,10 @@ public class UserDTO extends AbstractDTO {
 	public static UserDTO fromEntity(Entity entity) {
 		UserDTO user = new UserDTO();
 		user.setKey(entity.getKey());
+		user.setOpenId((String)entity.getProperty("openId"));
 		user.setEmail((String)entity.getProperty("email"));
 		user.setFacebook((String)entity.getProperty("facebook"));
-		user.setFirstName((String)entity.getProperty("name"));
+		user.setName((String)entity.getProperty("name"));
 		user.setInvestor((Boolean)entity.getProperty("investor"));
 		user.setJoined((Date)entity.getProperty("joined"));
 		user.setLastLoggedIn((Date)entity.getProperty("lastLoggedIn"));
