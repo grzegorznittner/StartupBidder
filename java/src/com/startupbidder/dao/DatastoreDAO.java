@@ -3,8 +3,8 @@ package com.startupbidder.dao;
 import java.util.List;
 
 import com.startupbidder.dto.BidDTO;
-import com.startupbidder.dto.ListingDTO;
 import com.startupbidder.dto.CommentDTO;
+import com.startupbidder.dto.ListingDTO;
 import com.startupbidder.dto.UserDTO;
 import com.startupbidder.dto.UserStatistics;
 import com.startupbidder.vo.ListPropertiesVO;
@@ -17,6 +17,21 @@ public interface DatastoreDAO {
 	 * @return User data
 	 */
 	UserDTO getUser(String userId);
+
+	/**
+	 * Returns user with specified open id identifier
+	 * @param userId
+	 * @return
+	 */
+	UserDTO getUserByOpenId(String openId);
+	
+	/**
+	 * Creates new user
+	 * @param userId
+	 * @param email
+	 * @param nickname
+	 */
+	UserDTO createUser(String userId, String email, String nickname);
 
 	/**
 	 * Return user statistics like number of comments, bids, etc
@@ -204,4 +219,23 @@ public interface DatastoreDAO {
 	 */
 	CommentDTO getComment(String commentId);
 
+	/**
+	 * Checks whether user can for for listing.
+	 * User can vote only once for a particular listing.
+	 */
+	boolean canVote(String userId, String listingId);
+
+	/**
+	 * Activates user.
+	 * @param userId User id (internal one not open id)
+	 * @return User with updated data
+	 */
+	UserDTO activateUser(String userId);
+
+	/**
+	 * Deactivates user.
+	 * @param userId User id (internal one not open id)
+	 * @return User with updated data
+	 */
+	UserDTO deactivateUser(String userId);
 }

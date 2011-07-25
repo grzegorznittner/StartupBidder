@@ -12,7 +12,6 @@ public class ListingDTO extends AbstractDTO {
 	private int   suggestedValuation;
 	private int   suggestedPercentage;
 	private int   suggestedAmount;
-	private int   medianValuation;
 	private Date  listedOn;
 	private Date  closingOn;
 	private State state;
@@ -56,14 +55,6 @@ public class ListingDTO extends AbstractDTO {
 
 	public void setSuggestedValuation(int suggestedValuation) {
 		this.suggestedValuation = suggestedValuation;
-	}
-
-	public int getMedianValuation() {
-		return medianValuation;
-	}
-
-	public void setMedianValuation(int medianValuation) {
-		this.medianValuation = medianValuation;
 	}
 
 	public Date getClosingOn() {
@@ -111,8 +102,7 @@ public class ListingDTO extends AbstractDTO {
 		return "ListingDTO [idAsString" + getIdAsString() + ", name=" + name + ", suggestedValuation="
 				+ suggestedValuation + ", suggestedPercentage="
 				+ suggestedPercentage + ", suggestedAmount=" + suggestedAmount
-				+ ", medianValuation=" + medianValuation + ", listedOn="
-				+ listedOn + ", closingOn=" + closingOn + ", state=" + state
+				+ ", listedOn="	+ listedOn + ", closingOn=" + closingOn + ", state=" + state
 				+ ", summary=" + summary + ", owner=" + owner + "]";
 	}
 
@@ -121,7 +111,6 @@ public class ListingDTO extends AbstractDTO {
 		Entity listing = new Entity(id);
 		listing.setProperty("closingOn", this.closingOn);
 		listing.setProperty("listedOn", this.listedOn);
-		listing.setProperty("medianValuation", this.medianValuation);
 		listing.setProperty("name", this.name);
 		listing.setProperty("owner", this.owner);
 		listing.setProperty("state", this.state.toString());
@@ -137,7 +126,6 @@ public class ListingDTO extends AbstractDTO {
 		listing.setKey(entity.getKey());
 		listing.closingOn = (Date)entity.getProperty("closingOn");
 		listing.listedOn = (Date)entity.getProperty("listedOn");
-		listing.medianValuation = (Integer)entity.getProperty("medianValuation");
 		listing.name = (String)entity.getProperty("name");
 		listing.owner = (String)entity.getProperty("owner");
 		listing.state = ListingDTO.State.valueOf((String)entity.getProperty("state"));

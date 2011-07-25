@@ -34,7 +34,6 @@ public class DtoToVoConverter {
 		bp.setId(bpDTO.getIdAsString());
 		bp.setClosingOn(bpDTO.getClosingOn());
 		bp.setListedOn(bpDTO.getListedOn());
-		bp.setMedianValuation(bpDTO.getMedianValuation());
 		bp.setName(bpDTO.getName());
 		bp.setOwner(bpDTO.getOwner());
 		bp.setSuggestedValuation(bpDTO.getSuggestedValuation());
@@ -79,7 +78,7 @@ public class DtoToVoConverter {
 		user.setAccreditedInvestor(userDTO.isInvestor());
 		user.setEmail(userDTO.getEmail());
 		user.setFacebook(userDTO.getFacebook());
-		user.setName(userDTO.getFirstName());
+		user.setName(userDTO.getName());
 		user.setJoined(userDTO.getJoined());
 		user.setLastLoggedIn(userDTO.getLastLoggedIn());
 		user.setLinkedin(userDTO.getLinkedin());

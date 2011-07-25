@@ -17,19 +17,25 @@ import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.startupbidder.vo.CommentListVO;
 import com.startupbidder.vo.ListPropertiesVO;
 import com.startupbidder.vo.ListingListVO;
+import com.startupbidder.vo.UserVO;
 import com.startupbidder.web.ServiceFacade;
 
 public class VoTest {
 	private final LocalServiceTestHelper helper = new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
 	private ServiceFacade service = ServiceFacade.instance();
 	private UserService userService = null;
-	private User user;
+	private UserVO user;
 	
 	@Before
 	public void setUp() {
 		helper.setUp();
 		userService = UserServiceFactory.getUserService();
-		user = userService.getCurrentUser();
+		if(userService.getCurrentUser() != null) {
+			user = service.getLoggedInUserData(userService.getCurrentUser());
+			if (user == null) {
+				user = service.createUser(userService.getCurrentUser());
+			}
+		}
 	}
 	
 	@After
