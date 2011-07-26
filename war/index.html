@@ -1140,24 +1140,22 @@ $(function(){
         self.execute = function(args) {
             var profile = self.controller.user.profile;
             var listing_id = args['listing_id'];
-            var isNew = args.action == 'new';
             $('#listing-save-message').attr('class', 'attention').html('');
-            var callback = function(listing) {
-                self.displayListing(listing, isNew);
-            }
             if (args.action == 'withdraw')
-                self.controller.backend.withdrawListing(listing_id, callback);
+                self.controller.backend.withdrawListing(listing_id, self.displayListing);
+            else if (args.action == 'activate')
+                self.controller.backend.activateListing(listing_id, self.displayListing);
             else if (args.action == 'save')
-                self.saveListing(listing_id, callback);
-            else if (args.action == 'new' && profile)
-                self.newListing(profile, callback);
+                self.saveListing(listing_id, self.displayListing);
+            else if (args.action == 'new' && profile) 
+                self.newListing(profile, function(listing){self.displayListing(listing);});
             else if (args.action == 'new' && !profile)
-                callback({});
+                self.displayListing();
             else
-                callback(self.controller.backend.getListing(listing_id));
+                self.controller.backend.getListing(listing_id, self.displayListing);
             return 'listing';
         };
-        self.saveListing = function(listing_id){
+        self.saveListing = function(listing_id, callback){
             var listing = {};
             listing.listing_id = listing_id;
             listing.title = $('#listing-edit-title').val();
@@ -1183,9 +1181,9 @@ $(function(){
                 $('#listing-save-message').attr('class', 'confirmed').html('listing saved');
             else
                 $('#listing-save-message').attr('class', 'confirmed').html('unable to save listing');
-            return savedListing;
+            callback(savedListing);
         };
-        self.newListing = function(profile) {
+        self.newListing = function(profile, callback) {
             var listing = {};
             listing.listing_id = self.controller.util.generateGuid();
             listing.title = 'Enter listing title here';
@@ -1197,22 +1195,22 @@ $(function(){
             listing.profile_username = profile.username;
             listing.listing_date =  self.controller.util.today();
             listing.closing_date = self.controller.util.today();
-            listing.status = 'active';
+            listing.status = 'new';
             listing.suggested_amt = 10000;
             listing.suggested_pct = 10;
             listing.suggested_val = self.controller.bids.calculateValuation(listing.suggested_amt, listing.suggested_pct);
             listing.summary = 'Enter listing summary here.';
             listing.business_plan_url = '';
             listing.presentation_url = '';
-            return listing;
+            callback(listing);
         };
         self.displayListingSnippetHtml = function(html) {
             $('#listing-snippet').html(html);
         };
-        self.displayListing = function(listing, isNew){
+        self.displayListing = function(listing){
             var resultsHtml = '';
             var profile = self.controller.user.profile;
-            if (isNew && !profile) {
+            if (listing.status in {new:1,created:1} && !profile) {
                 $('#listing-snippet').html('<em>You must be logged to submit a new listing</em>');
                 return;
             }
@@ -1234,6 +1232,16 @@ $(function(){
             else if (profile && profile.profile_id == listing.profile_id && listing.status == 'closed') {
                 msg = 'You may not change your listing now that it is closed.';
             }
+            else if (listing.status == 'new') {
+                msg = 'This listing has not yet been saved.';
+            }
+            else if (listing.status == 'created') {
+                msg = 'This listing has not yet been activated, until then no bids are accepted.';
+            }
+            else if (listing.status == 'active') {
+                msg = 'This listing is active and accepting bids.';
+                class = 'confirmed';
+            }
             else if (listing.status == 'withdrawn') {
                 msg = 'This listing is withdrawn and thus bidding is suspended.';
             }
@@ -1241,13 +1249,12 @@ $(function(){
                 msg = 'This listing is withdrawn and accepts no more bids.';
             }
             else {
-                msg = 'This listing is active and accepting bids.';
-                class = 'confirmed';
+                msg = 'The listing status is unknown.';
             }
             $('#listing-form-message').attr('class', class).html(msg);
 
             // enable editable if logged in
-            if (profile && profile.profile_id == listing.profile_id && listing.status == 'active') {
+            if (profile && profile.profile_id == listing.profile_id && listing.status in {new:1,created:1,active:1}) {
                 $('#listing-form-editable').show();
                 $('#listing-form-readonly').hide();
                 $('#listing-edit-title').val(listing.title);
@@ -1277,12 +1284,22 @@ $(function(){
                 $('#listing-edit-presentation-link').unbind().data('presentation_url',listing.presentation_url||'').bind('click',function(){
                     document.location = $(this).data('presentation_url');
                 });
-                if (isNew)
+                if (listing.status == 'new') {
                     $('#listing-withdraw-link').hide();
-                else
+                    $('#listing-activate-link').hide();
+                }
+                else if (listing.status == 'created') {
+                    $('#listing-withdraw-link').hide();
+                    $('#listing-activate-link').show().unbind().data('listing_id',listing.listing_id).bind('click',function(){
+                        self.controller.execute({page:'listing',action:'activate',listing_id:$(this).data('listing_id')});
+                    });
+                }
+                else {
                     $('#listing-withdraw-link').show().unbind().data('listing_id',listing.listing_id).bind('click',function(){
                         self.controller.execute({page:'listing',action:'withdraw',listing_id:$(this).data('listing_id')});
                     });
+                    $('#listing-activate-link').hide();
+                }
             }
             else {
                 $('#listing-form-editable').hide();
@@ -1858,17 +1875,9 @@ $(function(){
             $.post(url, callback);
         };
         // listing methods
-        self.getListing = function(listing_id) {
+        self.getListing = function(listing_id, callback) {
             var url = '/listings/get/' + listing_id;
-            $.getJSON(url, function(results_json) {
-                if (results_json) {
-                    self.controller.listing.displayListing(results_json, false);
-                }
-                else {
-                    self.controller.search.displayListingSnippetHtml('<i>unable to retrieve listing</i>');
-                }
-            });
-            return null;
+            $.getJSON(url, callback);
         };
         self.searchListings = function(searchType, keywords, profile_id, start_index, max_results) {
             var pathSuffix = '';
@@ -1901,6 +1910,10 @@ $(function(){
         };
         self.upvoteListing = function(listing_id, callback) {
             var url = '/listings/up/' + listing_id;
+            $.post(url, callback);
+        };
+        self.activateListing = function(listing_id, callback) {
+            var url = '/listings/activate/' + listing_id;
             $.post(url, callback);
         };
         self.withdrawListing = function(listing_id, callback) {
@@ -2841,6 +2854,9 @@ MisLead is a revolution in social networking.  Previously, social networking has
                 <div class="content-form-clear"></div>
                 
                 <div class="content-form-inputline"><button id="listing-save-link">Save</button><span class="attention" id="listing-save-message"></span></div>
+                <div class="content-form-clear"></div>
+
+                <div class="content-form-linkline"><span class="link" id="listing-activate-link">(activate listing)</span></div>
                 <div class="content-form-clear"></div>
 
                 <div class="content-form-linkline"><span class="link" id="listing-withdraw-link">(withdraw listing)</span></div>
