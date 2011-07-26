@@ -2095,21 +2095,14 @@ s = (p + b + c + v) / (t + 2)^1.5
             var profile;
             $('#profile-save-message').attr('class', 'attention').html('');
             if (args.action == 'deactivate')
-                profile = self.deactivateProfile(profile_id);
+                profile = self.controller.backend.deactivateProfile(profile_id, self.displayProfile);
             else if (args.action == 'activate')
-                profile = self.activateProfile(profile_id);
+                profile = self.controller.backend.activateProfile(profile_id, self.displayProfile);
             else if (args.action == 'save')
-                profile = self.saveProfile(profile_id);
+                profile = self.saveProfile(profile_id, self.displayProfile);
             else
-                profile = self.doQuery(profile_id);
-            self.displayProfile(profile);
+                profile = self.controller.backend.getProfile(profile_id, self.displayProfile);
             return 'profile';
-        };
-        self.activateProfile = function(profile_id){
-            return self.controller.backend.activateProfile(profile_id);
-        };
-        self.deactivateProfile = function(profile_id){
-            return self.controller.backend.deactivateProfile(profile_id);
         };
         self.saveProfile = function(profile_id){
             var profile = self.doQuery(profile_id);
@@ -2121,13 +2114,13 @@ s = (p + b + c + v) / (t + 2)^1.5
             profile.twitter = $('#profile-edit-twitter').val();
             profile.linkedin = $('#profile-edit-linkedin').val();
             profile.investor = $('#profile-edit-investor').attr('checked') ? 1 : 0;
-            self.controller.backend.saveProfile(profile);
-            if (profile)
-                $('#profile-save-message').attr('class', 'confirmed').html('profile saved');
-            return profile;
-        };
-        self.doQuery = function(profile_id){
-            return self.controller.backend.getProfile(profile_id);
+            var callback = function(profile) {
+                if (profile) {
+                    $('#profile-save-message').attr('class', 'confirmed').html('profile saved');
+                }
+                self.displayProfile(profile)
+            };
+            self.controller.backend.saveProfile(profile, callback);
         };
         self.displayProfile = function(profile){
             // enable editable if logged in
@@ -2926,35 +2919,23 @@ s = (p + b + c + v) / (t + 2)^1.5
             self.controller = controller;
         }
         // profile methods
-        self.getProfile = function(profile_id) {
+        self.getProfile = function(profile_id, callback) {
             var url = '/user?id=' + profile_id;
-            $.getJSON(url, function(results_json) {
-                if (results_json) {
-                    self.controller.profile.displayProfile(results_json);
-                }
-                else {
-                    self.controller.profile.displayProfileNotFound();
-                }
-            });
-            return null;
+            $.getJSON(url, callback);
         };
-        self.profileForUsername = function(username) {
+        self.profileForUsername = function(username, callback) {
             var url = '/user/' + username;
-            $.getJSON(url, function(results_json) {
-                if (results_json) {
-                    self.controller.profile.displayProfile(results_json);
-                }
-                else {
-                    self.controller.profile.displayProfileNotFound();
-                }
-            });
-            return null;
+            $.getJSON(url, callback);
         };
-        self.saveProfile = function(profile) {
+        self.saveProfile = function(profile, callback) {
         };
-        self.activateProfile = function(profile_id) {
+        self.activateProfile = function(profile_id, callback) {
+            var url = '/user/activate/' + profile_id;
+            $.getJSON(url, callback);
         };
-        self.deactivateProfile = function(profile_id) {
+        self.deactivateProfile = function(profile_id, callback) {
+            var url = '/user/deactivate/' + profile_id;
+            $.getJSON(url, callback);
         };
         // listing methods
         self.getListing = function(listing_id) {
@@ -3080,20 +3061,20 @@ s = (p + b + c + v) / (t + 2)^1.5
             self.backend.setup(controller);
         };
         // profile methods
-        self.saveProfile = function(profile) {
-            return self.backend.saveProfile(profile);
+        self.saveProfile = function(profile, callback) {
+            return self.backend.saveProfile(profile, callback);
         };
-        self.getProfile = function(profile_id) {
-            return self.backend.getProfile(profile_id);
+        self.getProfile = function(profile_id, callback) {
+            return self.backend.getProfile(profile_id, callback);
         };
-        self.profileForUsername = function(username) {
-            return self.backend.profileForUsername(username);
+        self.profileForUsername = function(username, callback) {
+            return self.backend.profileForUsername(username, callback);
         };
-        self.activateProfile = function(profile_id) {
-            return self.backend.activateProfile(profile_id);
+        self.activateProfile = function(profile_id, callback) {
+            return self.backend.activateProfile(profile_id, callback);
         };
-        self.deactivateProfile = function(profile_id) {
-            return self.backend.deactivateProfile(profile_id);
+        self.deactivateProfile = function(profile_id, callback) {
+            return self.backend.deactivateProfile(profile_id, callback);
         };
         // listing methods
         self.searchListings = function(searchType, keywords, profile_id, start_index, max_results) {
