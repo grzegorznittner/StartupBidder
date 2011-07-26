@@ -46,10 +46,10 @@ public class HelloServlet extends HttpServlet {
 			out.println("<p>Hello, " + user.getNickname() + " ..................................");
 			out.println("<a href=\"" + userService.createLogoutURL("/hello") + "\">logout</a></p>");
 			
-			if (!(user.getNickname().contains("grzegorz.nittner") || user.getNickname().contains("johnarleyburns"))) {
-				out.println("<p>Sorry, you're not authorized to view contents!!!</p>");
-				return;
-			}
+//			if (!(user.getNickname().contains("grzegorz.nittner") || user.getNickname().contains("johnarleyburns"))) {
+//				out.println("<p>Sorry, you're not authorized to view contents!!!</p>");
+//				return;
+//			}
 			
 			UserDTO topInvestor = datastore.getTopInvestor();
 			UserVO currentUser = service.getLoggedInUserData(user);
@@ -70,6 +70,7 @@ public class HelloServlet extends HttpServlet {
 			out.println("<a href=\"/user/all/.html\">All users</a><br/>");
 			out.println("<a href=\"/user/activate/" + currentUser.getId() + "/.html\">Activates logged in user</a><br/>");
 			out.println("<a href=\"/user/deactivate/" + currentUser.getId() + "/.html\">Deactivates logged in user</a><br/>");
+			out.println("<a href=\"/user/votes/" + currentUser.getId() + "/.html\">Logged in user votes</a><br/>");
 			
 			out.println("<p>Listings API:</p>");
 			out.println("<a href=\"/listings/get/" + topListing.getIdAsString() + "/.html\">Top listing data</a><br/>");

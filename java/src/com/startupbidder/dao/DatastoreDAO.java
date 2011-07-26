@@ -7,6 +7,7 @@ import com.startupbidder.dto.CommentDTO;
 import com.startupbidder.dto.ListingDTO;
 import com.startupbidder.dto.UserDTO;
 import com.startupbidder.dto.UserStatistics;
+import com.startupbidder.dto.VoteDTO;
 import com.startupbidder.vo.ListPropertiesVO;
 
 public interface DatastoreDAO {
@@ -58,6 +59,12 @@ public interface DatastoreDAO {
 	 */
 	UserDTO getTopInvestor();
 
+	/**
+	 * Returns list of user's votes
+	 * @param userId User id
+	 */
+	List<VoteDTO> getUserVotes(String userId);
+	
 	/**
 	 * Creates new listing
 	 * @param listing Listing object to create
@@ -238,4 +245,5 @@ public interface DatastoreDAO {
 	 * @return User with updated data
 	 */
 	UserDTO deactivateUser(String userId);
+
 }

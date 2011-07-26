@@ -29,6 +29,8 @@ import com.startupbidder.vo.ListingListVO;
 import com.startupbidder.vo.ListingVO;
 import com.startupbidder.vo.UserListVO;
 import com.startupbidder.vo.UserVO;
+import com.startupbidder.vo.UserVotesVO;
+import com.startupbidder.vo.VoteVO;
 
 public class ServiceFacade {
 	private static final Logger log = Logger.getLogger(ServiceFacade.class.getName());
@@ -126,6 +128,23 @@ public class ServiceFacade {
 		UserVO user = DtoToVoConverter.convert(getDAO().deactivateUser(userId));
 		computeUserStatistics(user);
 		return user;
+	}
+
+	public UserVotesVO userVotes(UserVO loggedInUser, String userId) {
+		UserVotesVO userVotes = new UserVotesVO();
+		UserVO user = DtoToVoConverter.convert(getDAO().getUser(userId));
+		computeUserStatistics(user);
+		userVotes.setLoggedUser(user);
+		
+		List<VoteVO> votes = DtoToVoConverter.convertVotes(getDAO().getUserVotes(userId));
+		for (VoteVO vote : votes) {
+			vote.setUserName(user.getName());
+			ListingDTO listing = getDAO().getListing(vote.getListing());
+			vote.setListingName(listing.getName());
+		}
+		userVotes.setVotes(votes);
+		
+		return userVotes;
 	}
 
 	private void computeUserStatistics(UserVO user) {
