@@ -1945,6 +1945,48 @@ s = (p + b + c + v) / (t + 2)^1.5
             $('#stats-img').attr('src', pngStr);
             $('#stats').fadeIn();
         };
+        self.drawLine = function(png, x0, y0, x1, y1) { // http://en.wikipedia.org/wiki/Bresenham's_line_algorithm
+            var dx = Math.abs(x1 - x0)
+            var dy = Math.abs(y1 - y0) 
+            var negdy = -1 * dy;
+            var sx = (x0 < x1) ? 1 : -1;
+            var sy = (y0 < y1) ? 1 : -1;
+            var err = dx - dy;
+            var e2;
+            while (true) {
+                self.setPixel(png, x0, y0);
+                if (x0 === x1 && y0 === y1) {
+                    break;
+                }
+                e2 = 2 * err;
+                if (e2 > negdy) {
+                  err = err - dy;
+                  x0 = x0 + sx;
+                }
+                if (e2 < dx) {
+                  err = err + dx;
+                  y0 = y0 + sy;
+                }
+            }
+        };
+        self.setPixel = function(png, x, y) {
+            png.buffer[png.index(x, y)] = png.color(0x00, 0x44, 0xcc);
+        };
+        self.scatterPlotToLineGraph = function(pointArray) {
+            var lineArray = new Array();
+            var p0, p1, l;
+            for (i = 0; i < pointArray.length - 1; i++) { // construct lines
+                p0 = pointArray[i];
+                p1 = pointArray[(i+1)];
+                l = new Object();
+                l.x0 = p0.x;
+                l.y0 = p0.y;
+                l.x1 = p1.x;
+                l.y1 = p1.y;
+                lineArray[i] = l;
+            }
+            return lineArray;
+        };
         self.statsPngDataURI = function(width, height, values) { // assumes non-negative values
             var i, j, k, l;
             var png = new PNGlib(width, height, 256); // construcor takes height, weight and color-depth
@@ -1962,64 +2004,24 @@ s = (p + b + c + v) / (t + 2)^1.5
                 }
             }
             var yscale = height / max_value;
-            var mapArray = [];
+            var pointArray = [];
             var p;
-            for (i = 0; i < num_values; i++) {
+            for (i = 0; i < values.length; i++) { // construct points
                 p = new Object();
                 p.x = Math.floor(xsize * i);
                 p.y = Math.floor(height - yscale * values[i]);
-                mapArray[i] = p;
+                pointArray[i] = p;
             }
-            var pointArray = [];
-            var next_p, new_p, filler_p, xdiff, ydiff, slope, old_p, pydir, pydiff;
-            for (i = 0; i < num_values; i++) { // kinda gross code; how to make better?
-                j = i + 1;
-                p = mapArray[i];
-                pointArray.push(p);
-                next_p = mapArray[j];
-                if (next_p === undefined) {
-                    continue;
-                }
-                xdiff = next_p.x - p.x;
-                ydiff = next_p.y - p.y;
-                slope = ydiff / xdiff;
-                old_p = p;
-                for (k = 1; k < xdiff; k++) {
-                    new_p = {};
-                    new_p.x = Math.floor(p.x + k);
-                    new_p.y = Math.floor(p.y + slope * k);
-                    pydir = (new_p.y > old_p.y) ? 1 : -1;
-                    pydiff = Math.abs(new_p.y - old_p.y);
-                    if (pydiff < 2) {
-                        old_p = {};
-                        old_p.x = new_p.x;
-                        old_p.y = new_p.y;
-                        pointArray.push(new_p);
-                        continue;
-                    }
-                    if (old_p.x == new_p.x)
-                        continue;
-                    for (l = 1; l < pydiff; l++) {
-                        //continue;
-                        filler_p = {};
-                        filler_p.x = old_p.x;
-                        filler_p.y = Math.floor(old_p.y + l*pydir);
-                        pointArray.push(filler_p);
-                    }
-                    old_p = {};
-                    old_p.x = new_p.x;
-                    old_p.y = new_p.y;
-                    pointArray.push(new_p);
-                }
+            var lineArray = self.scatterPlotToLineGraph(pointArray);
+            for (i = 0; i < lineArray.length; i++) {
+                l = lineArray[i];
+                self.drawLine(png, l.x0, l.y0, l.x1, l.y1);
             }
-            var numPoints = pointArray.length;
-            for (i = 0; i < numPoints; i++) {
-                p = pointArray[i];
-                x = p.x;
-                y = p.y;
-                png.buffer[png.index(x, y)] = png.color(0x00, 0x44, 0xcc);
-            }
-            str = 'data:image/png;base64,' + png.getBase64();
+            str = self.pngDataToStr(png);
+            return str;
+        };
+        self.pngDataToStr = function(png) {
+            var str = 'data:image/png;base64,' + png.getBase64();
             return str;
         };
         self.displayResultsJson = function(results_json, search_type, keywords, profile_id, start_index) {
