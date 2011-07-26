@@ -23,10 +23,6 @@ public class UserController extends ModelDrivenController {
 				return topInvestor(request);
 			} else if("loggedin".equalsIgnoreCase(getCommand(1))) {
 				return loggedin(request);
-			} else if("activate".equalsIgnoreCase(getCommand(1))) {
-				return activate(request);
-			} else if("deactivate".equalsIgnoreCase(getCommand(1))) {
-				return deactivate(request);
 			} else if("votes".equalsIgnoreCase(getCommand(1))) {
 				return votes(request);
 			} else {
@@ -34,7 +30,13 @@ public class UserController extends ModelDrivenController {
 			}
 		} else if ("PUT".equalsIgnoreCase(request.getMethod()) ||
 				"POST".equalsIgnoreCase(request.getMethod())) {
-			return create(request);
+			if ("create".equalsIgnoreCase(getCommand(1))) {
+				return create(request);
+			} else if("activate".equalsIgnoreCase(getCommand(1))) {
+				return activate(request);
+			} else if("deactivate".equalsIgnoreCase(getCommand(1))) {
+				return deactivate(request);
+			}
 		} else if ("DELETE".equalsIgnoreCase(request.getMethod())) {
 			return delete(request);
 		}

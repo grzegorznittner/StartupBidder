@@ -34,12 +34,6 @@ public class ListingController extends ModelDrivenController {
 				return closing(request);
 			} else if("user".equalsIgnoreCase(getCommand(1))) {
 				return user(request);
-			} else if("up".equalsIgnoreCase(getCommand(1))) {
-				return up(request);
-			}  else if("activate".equalsIgnoreCase(getCommand(1))) {
-				return activate(request);
-			} else if("withdraw".equalsIgnoreCase(getCommand(1))) {
-				return withdraw(request);
 			} else if("get".equalsIgnoreCase(getCommand(1))) {
 				return get(request);
 			} else {
@@ -48,7 +42,15 @@ public class ListingController extends ModelDrivenController {
 			}
 		} else if ("PUT".equalsIgnoreCase(request.getMethod()) ||
 				"POST".equalsIgnoreCase(request.getMethod())) {
-			return create(request);
+			if ("create".equalsIgnoreCase(getCommand(1))) {
+				return create(request);
+			} else if("up".equalsIgnoreCase(getCommand(1))) {
+				return up(request);
+			}  else if("activate".equalsIgnoreCase(getCommand(1))) {
+				return activate(request);
+			} else if("withdraw".equalsIgnoreCase(getCommand(1))) {
+				return withdraw(request);
+			} 
 		} else if ("DELETE".equalsIgnoreCase(request.getMethod())) {
 			return delete(request);
 		}
