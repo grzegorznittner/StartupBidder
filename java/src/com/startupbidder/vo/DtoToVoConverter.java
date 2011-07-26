@@ -138,4 +138,16 @@ public class DtoToVoConverter {
 		}
 		return userVoList;
 	}
+	
+	public static List<VoteVO> convertVotes(List<VoteDTO> votesDtoList) {
+		if (votesDtoList == null) {
+			return null;
+		}
+		List<VoteVO> votesVoList = new ArrayList<VoteVO>();
+		for (VoteDTO voteDTO : votesDtoList) {
+			VoteVO voteVO = convert(voteDTO);
+			votesVoList.add(voteVO);
+		}
+		return votesVoList;
+	}
 }

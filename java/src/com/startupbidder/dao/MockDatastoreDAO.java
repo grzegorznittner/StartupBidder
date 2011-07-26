@@ -192,6 +192,17 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		return user;
 	}
 	
+	public List<VoteDTO> getUserVotes(String userId) {
+		List<VoteDTO> votes = new ArrayList<VoteDTO>();
+		for (VoteDTO vote : voteCache.values()) {
+			if (vote.getUser().equals(userId)) {
+				votes.add(vote);
+			}
+		}
+		
+		return votes;
+	}
+	
 	public ListingDTO getListing(String listingId) {
 		if (!lCache.containsKey(listingId)) {
 			log.log(Level.WARNING, "Listing '" + listingId + "' not found");
@@ -805,7 +816,7 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		bp.setSuggestedAmount(bp.getSuggestedValuation()*bp.getSuggestedPercentage()/100);
 		bp.setListedOn(new Date(System.currentTimeMillis() - 45 * 60 * 60 * 1000));
 		bp.setState(ListingDTO.State.CREATED);
-		bp.setClosingOn(new Date(System.currentTimeMillis() + 12 * 24 * 60 * 60 * 1000));
+		bp.setClosingOn(new Date(System.currentTimeMillis() + 12 * 24 * 60 * 60 * 1000L));
 		bp.setSummary("Executive summary for <b>MisLead</b>");
 		lCache.put(bp.getIdAsString(), bp);
 		log.log(Level.INFO, bp.toString());
@@ -820,7 +831,7 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		bp.setSuggestedAmount(bp.getSuggestedValuation()*bp.getSuggestedPercentage()/100);
 		bp.setListedOn(new Date(System.currentTimeMillis() - 5 * 60 * 60 * 1000));
 		bp.setState(ListingDTO.State.CREATED);
-		bp.setClosingOn(new Date(System.currentTimeMillis() + 35 * 24 * 60 * 60 * 1000));
+		bp.setClosingOn(new Date(System.currentTimeMillis() + 35 * 24 * 60 * 60 * 1000L));
 		bp.setSummary("Starting a computer training camp for children is a terrific new business " +
 				"venture to set in motion. In spite of the fact that many children now receive " +
 				"computer training in school, attending computer camps ensures parents and" +
@@ -843,7 +854,7 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		bp.setSuggestedAmount(bp.getSuggestedValuation()*bp.getSuggestedPercentage()/100);
 		bp.setListedOn(new Date(System.currentTimeMillis() - 15 * 60 * 60 * 1000));
 		bp.setState(ListingDTO.State.ACTIVE);
-		bp.setClosingOn(new Date(System.currentTimeMillis() + 25 * 24 * 60 * 60 * 1000));
+		bp.setClosingOn(new Date(System.currentTimeMillis() + 25 * 24 * 60 * 60 * 1000L));
 		bp.setSummary("Starting a business that specializes in upgrading existing computer systems" +
 				" with new internal and external equipment is a terrific homebased business to " +
 				"initiate that has great potential to earn an outstanding income for the operator" +
@@ -871,7 +882,7 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		bp.setSuggestedAmount(bp.getSuggestedValuation()*bp.getSuggestedPercentage()/100);
 		bp.setListedOn(new Date(System.currentTimeMillis() - 15 * 60 * 60 * 1000));
 		bp.setState(ListingDTO.State.ACTIVE);
-		bp.setClosingOn(new Date(System.currentTimeMillis() + 24 * 24 * 60 * 60 * 1000));
+		bp.setClosingOn(new Date(System.currentTimeMillis() + 24 * 24 * 60 * 60 * 1000L));
 		bp.setSummary("The fact of the matter is Google, and to a much lesser extent Bing, " + 
 				"own the search market. Ask Barry Diller, if you don't believe us." +
 				"Yet, startups still spring up hoping to disrupt the incumbents. " +
@@ -890,7 +901,7 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		bp.setSuggestedAmount(bp.getSuggestedValuation()*bp.getSuggestedPercentage()/100);
 		bp.setListedOn(new Date(System.currentTimeMillis() - 20 * 60 * 60 * 1000));
 		bp.setState(ListingDTO.State.ACTIVE);
-		bp.setClosingOn(new Date(System.currentTimeMillis() + 30 * 24 * 60 * 60 * 1000));
+		bp.setClosingOn(new Date(System.currentTimeMillis() + 30 * 24 * 60 * 60 * 1000L));
 		bp.setSummary("It's a very tempting idea. Collect data from people about their tastes" +
 				" and preferences. Then use that data to create recommendations for others. " +
 				"Or, use that data to create recommendations for the people that filled in " +
@@ -910,7 +921,7 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		bp.setSuggestedAmount(bp.getSuggestedValuation()*bp.getSuggestedPercentage()/100);
 		bp.setListedOn(new Date(System.currentTimeMillis() - 3 * 60 * 60 * 1000));
 		bp.setState(ListingDTO.State.ACTIVE);
-		bp.setClosingOn(new Date(System.currentTimeMillis() + 27 * 24 * 60 * 60 * 1000));
+		bp.setClosingOn(new Date(System.currentTimeMillis() + 27 * 24 * 60 * 60 * 1000L));
 		bp.setSummary("Maybe Tim Armstrong, AOL, and Patch will prove it wrong, but to this point" +
 				" nobody has been able to crack the local news market and make a sustainable business." +
 				"In theory creating a network of local news sites that people care about is a good" +
@@ -930,7 +941,7 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		bp.setSuggestedAmount(bp.getSuggestedValuation()*bp.getSuggestedPercentage()/100);
 		bp.setListedOn(new Date(System.currentTimeMillis() - 23 * 60 * 60 * 1000));
 		bp.setState(ListingDTO.State.CREATED);
-		bp.setClosingOn(new Date(System.currentTimeMillis() + 15 * 24 * 60 * 60 * 1000));
+		bp.setClosingOn(new Date(System.currentTimeMillis() + 15 * 24 * 60 * 60 * 1000L));
 		bp.setSummary("Micropayments are one idea that's tossed around to solve the problem" +
 				" of paying for content on the Web. If you want to read a New York Times " +
 				"story it would only cost a nickel! Or on Tumblr, if you want to tip a blogger" +
@@ -947,9 +958,9 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		bp.setSuggestedValuation(40000);
 		bp.setSuggestedPercentage(50);
 		bp.setSuggestedAmount(bp.getSuggestedValuation()*bp.getSuggestedPercentage()/100);
-		bp.setListedOn(new Date(System.currentTimeMillis() - 6 * 60 * 60 * 1000));
+		bp.setListedOn(new Date(System.currentTimeMillis() - 6 * 24 * 60 * 60 * 1000));
 		bp.setState(ListingDTO.State.ACTIVE);
-		bp.setClosingOn(new Date(System.currentTimeMillis() + 78 * 24 * 60 * 60 * 1000));
+		bp.setClosingOn(new Date(System.currentTimeMillis() + 78 * 24 * 60 * 60 * 1000L));
 		bp.setSummary("If any startup says it's going to eliminate email, it's destined for failure. " +
 				"You can iterate on the inbox, and try to improve it, but even that's " +
 				"not much of a business. The latest high profile flop in this arena is " +
@@ -968,7 +979,7 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		bp.setSuggestedAmount(bp.getSuggestedValuation()*bp.getSuggestedPercentage()/100);
 		bp.setListedOn(new Date(System.currentTimeMillis() - 8 * 60 * 60 * 1000));
 		bp.setState(ListingDTO.State.CLOSED);
-		bp.setClosingOn(new Date(System.currentTimeMillis() - 1 * 24 * 60 * 60 * 1000));
+		bp.setClosingOn(new Date(System.currentTimeMillis() - 1 * 24 * 60 * 60 * 1000L));
 		bp.setSummary("Considering how frustrated people are with car companies, you'd think " +
 				"launching a new one would be perfect for a startup. So far, that's not the case. " +
 				"You can point to Tesla as a success, and considering it IPO'd it's hard to argue " +

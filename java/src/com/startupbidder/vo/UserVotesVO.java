@@ -8,17 +8,17 @@ import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 
 @JsonAutoDetect(getterVisibility=Visibility.NONE, setterVisibility=Visibility.NONE,
 		fieldVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE)
-public class UserListVO extends BaseResultVO {
-	@JsonProperty("users")
-	private List<UserVO> users;
+public class UserVotesVO extends BaseResultVO {
+	@JsonProperty("votes")
+	private List<VoteVO> votes;
 	@JsonProperty("profile")
 	private UserVO user;
 
-	public List<UserVO> getUsers() {
-		return users;
+	public List<VoteVO> getVotes() {
+		return votes;
 	}
-	public void setUsers(List<UserVO> users) {
-		this.users = users;
+	public void setVotes(List<VoteVO> votes) {
+		this.votes = votes;
 	}
 	public UserVO getUser() {
 		return user;
@@ -28,6 +28,6 @@ public class UserListVO extends BaseResultVO {
 	}
 	@Override
 	public String toString() {
-		return "UserListVO [users=" + users + ", user=" + user + "]";
+		return "UserVotesVO [votes=" + votes + ", user=" + user + "]";
 	}
 }
