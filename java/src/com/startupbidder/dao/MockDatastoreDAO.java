@@ -477,7 +477,12 @@ public class MockDatastoreDAO implements DatastoreDAO {
 
 	public List<ListingDTO> getClosingListings(ListPropertiesVO listingProperties) {
 		// sort by listed on date
-		List<ListingDTO> listings = new ArrayList<ListingDTO>(lCache.values());
+		List<ListingDTO> listings = new ArrayList<ListingDTO>();
+		for (ListingDTO listing : lCache.values()) {
+			if (listing.getState().equals(ListingDTO.State.ACTIVE)) {
+				listings.add(listing);
+			}
+		}
 		Collections.sort(listings, new Comparator<ListingDTO> () {
 			public int compare(ListingDTO left, ListingDTO right) {
 				if (left.getClosingOn().getTime() == right.getClosingOn().getTime()) {
