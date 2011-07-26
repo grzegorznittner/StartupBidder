@@ -835,26 +835,21 @@ $(function(){
             });
         };
         self.execute = function(args) {
-            var search_type = args.search_type;
-            var profile_id = args.profile_id;
-            var start_index = args.start_index || 0;
-            var max_results = 20;
+            args.search_type = args.search_type || self.defaultSearchType;
+            args.start_index = args.start_index || 0;
+            args.max_results = args.max_results || 20;
             var keywords = $('#content-search-keywords').val();
-            if (!search_type) {
-                search_type = self.defaultSearchType;
-            }
             if (keywords) {
                 keywords = keywords.replace(/\btype:\w*/g, '').replace(/\s+/g, ' ').trim();
             }
             $('#content-search-keywords').val(keywords);
-            var results_json = self.controller.backend.searchListings(search_type, keywords, profile_id, start_index, max_results);
-            if (!results_json) {
-                self.displayResultsHtml('<i>loading...</i>');
+            if (!args.profile_id) {
+                self.controller.backend.bidStats(self.displayStats);
             }
             else {
-                self.displayResultsJson(results_json, search_type, keywords, profile_id, start_index);
+                $('#stats').hide();
             }
-            self.controller.backend.bidStats(self.displayStats);
+            self.controller.backend.searchListings(args.search_type, keywords, args.profile_id, args.start_index, args.max_results, self.displayResultsJson);
             return 'search';
         };
         self.displayStats = function(stats) {
@@ -863,7 +858,7 @@ $(function(){
             $('#stats-xaxis').html(stats.xaxis);
             $('#stats-yaxis').html(stats.yaxis);
             $('#stats-img').attr('src', pngStr);
-            $('#stats').fadeIn();
+            $('#stats').show();
         };
         self.drawLine = function(png, x0, y0, x1, y1) { // http://en.wikipedia.org/wiki/Bresenham's_line_algorithm
             var dx = Math.abs(x1 - x0)
@@ -944,13 +939,17 @@ $(function(){
             var str = 'data:image/png;base64,' + png.getBase64();
             return str;
         };
-        self.displayResultsJson = function(results_json, search_type, keywords, profile_id, start_index) {
-            var props = results_json.listings_props;
+        self.displayResultsJson = function(results_json) {
+            if (!results_json || !results_json.listings_props) {
+                self.displayResultsHtml('<i>loading...</i>');
+                return;
+            }
             self.controller.user.setProfile(results_json.loggedin_profile);
-            self.displayResults(results_json.listings, search_type, keywords, profile_id, start_index, props.num_results, props.total_results);
+            self.displayResults(results_json.listings, results_json.search_type, results_json.keywords, results_json.profile_id, results_json.start_index,
+                results_json.listings_props.num_results, results_json.listings_props.total_results);
         };
         self.displayResultsHtml = function(resultsHtml) {
-            $('#search-content-results-list').html(resultsHtml);
+            $('#search-content-results-list').hide().html(resultsHtml).slideDown();
         };
         self.displayResults = function(results, search_type, keywords, profile_id, start_index, num_results, total_results){
             var resultsHtml = '';
@@ -1219,7 +1218,7 @@ $(function(){
                 return;
             }
             else {
-                $('#listing-snippet').html(self.controller.listing.generateListingSnippetHtml('listing', listing));
+                $('#listing-snippet').hide().html(self.controller.listing.generateListingSnippetHtml('listing', listing)).slideDown();
                 self.controller.listing.bindListingSnippet('listing', listing);
             }
 
@@ -1255,8 +1254,8 @@ $(function(){
 
             // enable editable if logged in
             if (profile && profile.profile_id == listing.profile_id && listing.status in {new:1,created:1,active:1}) {
-                $('#listing-form-editable').show();
                 $('#listing-form-readonly').hide();
+                $('#listing-form-editable').hide().slideDown();
                 $('#listing-edit-title').val(listing.title);
                 $('#listing-edit-median-valuation').val(listing.median_valuation);
                 $('#listing-edit-num-votes').val(listing.num_votes);
@@ -1303,7 +1302,7 @@ $(function(){
             }
             else {
                 $('#listing-form-editable').hide();
-                $('#listing-form-readonly').show();
+                $('#listing-form-readonly').hide().slideDown();
                 $('#listing-readonly-suggested-amt').html(self.controller.util.addCommas(listing.suggested_amt));
                 $('#listing-readonly-suggested-pct').html(listing.suggested_pct);
                 $('#listing-readonly-suggested-val').html(self.controller.util.addCommas(listing.suggested_val));
@@ -1500,7 +1499,7 @@ $(function(){
                 resultsHtml = '<i>loading...</i>';
             }
             // display html
-            $('#comments-content-results-list').html(resultsHtml);
+            $('#comments-content-results-list').hide().html(resultsHtml).slideDown();
             // enable editable if logged in
             if (listing) {
                 $('#comments-listing-snippet').html(self.controller.listing.generateListingSnippetHtml('comments', listing));
@@ -1710,7 +1709,7 @@ $(function(){
                 resultsHtml = '<i>loading...</i>';
             }
             // display html
-            $('#bids-content-results-list').html(resultsHtml);
+            $('#bids-content-results-list').hide().html(resultsHtml).slideDown();
             // set login visibility
             if (listing) {
                 $('#bids-listing-snippet').html(self.controller.listing.generateListingSnippetHtml('bids', listing));
@@ -1879,34 +1878,18 @@ $(function(){
             var url = '/listings/get/' + listing_id;
             $.getJSON(url, callback);
         };
-        self.searchListings = function(searchType, keywords, profile_id, start_index, max_results) {
+        self.searchListings = function(searchType, keywords, profile_id, start_index, max_results, callback) {
             var pathSuffix = '';
             if (profile_id !== undefined) {
-                pathSuffix = '/user/?id=' + profile_id;
+                pathSuffix = 'user/?id=' + profile_id;
             }
             else {
                 pathSuffix = searchType + '/?max_results=20';
             }
             var url = '/listings/' + pathSuffix;
-            $.getJSON(url, function(results_json) {
-                if (results_json && results_json.listings_props) {
-                    var results = results_json.listings;
-                    var search_type = results_json.search_type;
-                    var keywords = results_json.keywords;
-                    var profile_id = results_json.profile_id;
-                    var start_index = results_json.start_index;
-                    var num_results = results_json.num_results;
-                    var total_results = results_json.total_results;
-                    self.controller.user.setProfile(results_json.loggedin_profile, results_json.logout_url);
-                    self.controller.search.displayResults(results, search_type, keywords, profile_id, start_index, num_results, total_results);
-                }
-                else {
-                    self.controller.search.displayResultsHtml('<i>unable to retrieve listings</i>');
-                }
-            });
-            return null;
+            $.getJSON(url, callback);
         };
-        self.saveListing = function(listing) {
+        self.saveListing = function(listing, callback) {
         };
         self.upvoteListing = function(listing_id, callback) {
             var url = '/listings/up/' + listing_id;
@@ -1932,7 +1915,7 @@ $(function(){
                 }
             });
             return null;
-         };
+        };
         self.commentsForProfile = function(profile_id) {
             var url = '/comments/user/' + profile_id + '/';
             $.getJSON(url, function(results_json) {
