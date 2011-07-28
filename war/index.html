@@ -1324,19 +1324,23 @@ $(function(){
                 self.controller.backend.withdrawListing(listing_id, self.displayListing);
             else if (args.action == 'activate')
                 self.controller.backend.activateListing(listing_id, self.displayListing);
-            else if (args.action == 'save')
-                self.saveListing(listing_id, self.displayListing);
+            else if (args.action == 'save_new')
+                self.saveListing();
+            else if (args.action == 'save_existing')
+                self.saveListing(listing_id);
             else if (args.action == 'new' && profile) 
-                self.newListing(profile, function(listing){self.displayListing(listing);});
+                self.newListing(profile);
             else if (args.action == 'new' && !profile)
                 self.displayListing();
             else
                 self.controller.backend.getListing(listing_id, self.displayListing);
             return 'listing';
         };
-        self.saveListing = function(listing_id, callback){
+        self.saveListing = function(listing_id){
             var listing = {};
-            listing.listing_id = listing_id;
+            if (listing_id) {
+                listing.listing_id = listing_id;
+            }
             listing.title = $('#listing-edit-title').val();
             listing.median_valuation = $('#listing-edit-median-valuation').val();
             listing.num_votes =  $('#listing-edit-num-votes').val();
@@ -1355,16 +1359,15 @@ $(function(){
             listing.summary = $('#listing-edit-summary').val();
             listing.business_plan_url = $('#listing-upload-business-plan').val();
             listing.presentation_url = $('#listing-upload-presentation').val();
-            var savedListing = self.controller.backend.saveListing(listing);
-            if (savedListing)
-                $('#listing-save-message').attr('class', 'confirmed').html('listing saved');
-            else
-                $('#listing-save-message').attr('class', 'confirmed').html('unable to save listing');
-            callback(savedListing);
+            var callback = function(savedListing) {
+                var msg = savedListing ? 'listing saved' : 'unable to save listing';
+                var msg_class = savedListing ? 'confirmed' : 'attention';
+                $('#listing-save-message').attr('class', msg_class).html(msg);
+            };
+            self.controller.backend.saveListing(listing, callback);
         };
-        self.newListing = function(profile, callback) {
+        self.newListing = function(profile) {
             var listing = {};
-            listing.listing_id = self.controller.util.generateGuid();
             listing.title = 'Enter listing title here';
             listing.median_valuation = 0;
             listing.num_votes = 0;
@@ -1372,7 +1375,7 @@ $(function(){
             listing.num_comments = 0;
             listing.profile_id = profile.profile_id;
             listing.profile_username = profile.username;
-            listing.listing_date =  self.controller.util.today();
+            listing.listing_date = self.controller.util.today();
             listing.closing_date = self.controller.util.today();
             listing.status = 'new';
             listing.suggested_amt = 10000;
@@ -1381,7 +1384,7 @@ $(function(){
             listing.summary = 'Enter listing summary here.';
             listing.business_plan_url = '';
             listing.presentation_url = '';
-            callback(listing);
+            self.displayListing(listing);
         };
         self.displayListingSnippetHtml = function(html) {
             $('#listing-snippet').html(html);
@@ -1397,7 +1400,7 @@ $(function(){
                 $('#listing-snippet').html('<em>no listings found</em>');
                 return;
             }
-            else {
+            else if (listing.listing_id) {
                 $('#listing-snippet').hide().html(self.controller.listing.generateListingSnippetHtml('listing', listing)).slideDown();
                 self.controller.listing.bindListingSnippet('listing', listing);
             }
@@ -1453,21 +1456,43 @@ $(function(){
                 $('#listing-edit-suggested-amt, #listing-edit-suggested-pct').unbind().bind('change',function(e){
                     self.recalculateSuggestedValuation();
                 });
-                $('#listing-save-link').unbind().data('listing_id',listing.listing_id).bind('click',function(e){
-                    e.preventDefault();
-                    self.controller.execute({page:'listing',action:'save',listing_id:$(this).data('listing_id')});
-                });
-                $('#listing-edit-business-plan-link').unbind().data('business_plan_url',listing.business_plan_url||'').bind('click',function(){
-                    document.location = $(this).data('business_plan_url');
-                });
-                $('#listing-edit-presentation-link').unbind().data('presentation_url',listing.presentation_url||'').bind('click',function(){
-                    document.location = $(this).data('presentation_url');
-                });
-                if (listing.status == 'new') {
+
+                if (listing.status === 'new') {
+                    $('#listing-save-link').unbind().bind('click',function(e){
+                        e.preventDefault();
+                        self.controller.execute({page:'listing', action: 'save_new'});
+                    });
+                }
+                else {
+                    $('#listing-save-link').unbind().data('listing_id',listing.listing_id).bind('click',function(e){
+                        e.preventDefault();
+                        self.controller.execute({page:'listing', action: 'save_existing', listing_id:$(this).data('listing_id')});
+                    });
+                }
+
+                if (listing.business_plan_url) {
+                    $('#listing-edit-business-plan-link').unbind().show().data('business_plan_url',listing.business_plan_url).bind('click',function(){
+                        document.location = $(this).data('business_plan_url');
+                    });
+                }
+                else {
+                    $('#listing-edit-business-plan-link').hide();
+                }
+
+                if (listing.presentation_url) {
+                    $('#listing-edit-presentation-link').unbind().show().data('presentation_url',listing.presentation_url).bind('click',function(){
+                        document.location = $(this).data('presentation_url');
+                    });
+                }
+                else {
+                    $('#listing-edit-presentation-link').hide();
+                }
+
+                if (listing.status === 'new') {
                     $('#listing-withdraw-link').hide();
                     $('#listing-activate-link').hide();
                 }
-                else if (listing.status == 'created') {
+                else if (listing.status === 'created') {
                     $('#listing-withdraw-link').hide();
                     $('#listing-activate-link').show().unbind().data('listing_id',listing.listing_id).bind('click',function(){
                         self.controller.execute({page:'listing',action:'activate',listing_id:$(this).data('listing_id')});
@@ -1508,18 +1533,20 @@ $(function(){
         };
         self.bindListingSnippet = function(i, listing) {
             var upvote_item = document.getElementById('content-results-list-item-upvote-'+i);
-            $('#content-results-list-item-title-'+i).data('listing_id',listing.listing_id).unbind().bind('click', function(){
-                self.controller.execute({page:'listing', listing_id:$(this).data('listing_id')});
-            });           
             $('#content-results-list-item-profile-'+i).data('profile_id',listing.profile_id).unbind().bind('click', function(){
                 self.controller.execute({page:'profile', profile_id:$(this).data('profile_id')});
             });           
-            $('#content-results-list-item-comments-'+i).data('listing_id',listing.listing_id).unbind().bind('click', function(){
-                self.controller.execute({page:'comments', listing_id:$(this).data('listing_id')});
-            }); 
-            $('#content-results-list-item-bids-'+i).data('listing_id',listing.listing_id).unbind().bind('click', function(){
-                self.controller.execute({page:'bids', listing_id:$(this).data('listing_id')});
-            });
+            if (listing.listing_id) {
+                $('#content-results-list-item-title-'+i).data('listing_id',listing.listing_id).unbind().bind('click', function(){
+                    self.controller.execute({page:'listing', listing_id:$(this).data('listing_id')});
+                });           
+                $('#content-results-list-item-comments-'+i).data('listing_id',listing.listing_id).unbind().bind('click', function(){
+                    self.controller.execute({page:'comments', listing_id:$(this).data('listing_id')});
+                }); 
+                $('#content-results-list-item-bids-'+i).data('listing_id',listing.listing_id).unbind().bind('click', function(){
+                    self.controller.execute({page:'bids', listing_id:$(this).data('listing_id')});
+                });
+            }
             if (isFinite(i)) {
                 $(upvote_item)
                     .data('index', i)
@@ -1678,8 +1705,10 @@ $(function(){
             $('#comments-content-results-list').hide().html(resultsHtml).slideDown();
             // enable editable if logged in
             if (listing) {
-                $('#comments-listing-snippet').html(self.controller.listing.generateListingSnippetHtml('comments', listing));
-                self.controller.listing.bindListingSnippet('comments', listing);
+                if (listing.listing_id) {
+                    $('#comments-listing-snippet').html(self.controller.listing.generateListingSnippetHtml('comments', listing));
+                    self.controller.listing.bindListingSnippet('comments', listing);
+                }
                 if (profile) {
                     $('#comment-loggedin-add').show();
                     $('#comment-not-loggedin-msg').hide();
@@ -1885,8 +1914,10 @@ $(function(){
             $('#bids-content-results-list').hide().html(resultsHtml).slideDown();
             // set login visibility
             if (listing) {
-                $('#bids-listing-snippet').html(self.controller.listing.generateListingSnippetHtml('bids', listing));
-                self.controller.listing.bindListingSnippet('bids', listing);
+                if (listing.listing_id) {
+                    $('#bids-listing-snippet').html(self.controller.listing.generateListingSnippetHtml('bids', listing));
+                    self.controller.listing.bindListingSnippet('bids', listing);
+                }
                 if (listing.status != 'active') {
                     $('#bids-form-loggedin').hide();
                     $('#bids-form-not-loggedin').show().html('This bid is no longer active');
@@ -2997,7 +3028,7 @@ MisLead is a revolution in social networking.  Previously, social networking has
 
                 <div class="content-form-line"><span class="link" id="listing-edit-business-plan-link">view business plan</span></div>
                 <div class="content-form-clear"></div>
-                <div class="content-form-line"><span class="link" id="listing-edit-presentationn-link">view presentation</span></div>
+                <div class="content-form-line"><span class="link" id="listing-edit-presentation-link">view presentation</span></div>
                 <div class="content-form-clear"></div>
 
                 <div class="content-form-label">Business plan</div>
