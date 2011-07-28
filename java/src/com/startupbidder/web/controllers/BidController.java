@@ -1,9 +1,17 @@
 package com.startupbidder.web.controllers;
 
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javax.servlet.http.HttpServletRequest;
 
-import com.startupbidder.vo.BidAndUserVO;
-import com.startupbidder.vo.BidListVO;
+import org.apache.commons.lang.StringUtils;
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
+
+import com.startupbidder.vo.BidVO;
 import com.startupbidder.vo.ListPropertiesVO;
 import com.startupbidder.web.HttpHeaders;
 import com.startupbidder.web.HttpHeadersImpl;
@@ -11,12 +19,12 @@ import com.startupbidder.web.ModelDrivenController;
 import com.startupbidder.web.ServiceFacade;
 
 public class BidController extends ModelDrivenController {
+	private static final Logger log = Logger.getLogger(BidController.class.getName());
 
-	private BidListVO bids = null;
-	private BidAndUserVO bid = null;
+	private Object model = null;
 	
 	@Override
-	protected HttpHeaders executeAction(HttpServletRequest request) {
+	protected HttpHeaders executeAction(HttpServletRequest request) throws JsonParseException, JsonMappingException, IOException {
 		if ("GET".equalsIgnoreCase(request.getMethod())) {
 			// GET method handler
 			
@@ -29,31 +37,101 @@ public class BidController extends ModelDrivenController {
 			} else {
 				return get(request);
 			}
-		} else if ("PUT".equalsIgnoreCase(request.getMethod()) ||
-				"POST".equalsIgnoreCase(request.getMethod())) {
+		} else if ("POST".equalsIgnoreCase(request.getMethod())) {
+			if("create".equalsIgnoreCase(getCommand(1))) {
+				return create(request);
+			}
 			return create(request);
+		} else if ("PUT".equalsIgnoreCase(request.getMethod())) {
+			if("update".equalsIgnoreCase(getCommand(1))) {
+				return update(request);
+			}
 		} else if ("DELETE".equalsIgnoreCase(request.getMethod())) {
 			return delete(request);
 		}
 		return null;
 	}
 
+	/*
+	 * DELETE /bid?id=<id>
+	 */
 	private HttpHeaders delete(HttpServletRequest request) {
-		HttpHeaders headers = new HttpHeadersImpl("create");
-		headers.setStatus(501);
+		HttpHeaders headers = new HttpHeadersImpl("delete");
+		
+		String bidId = getCommandOrParameter(request, 2, "id");
+		if (StringUtils.isEmpty(bidId)) {
+			model = ServiceFacade.instance().deleteBid(getLoggedInUser(), bidId);
+			if (model == null) {
+				log.log(Level.WARNING, "Bid not found!");
+				headers.setStatus(500);
+			}
+		} else {
+			log.log(Level.WARNING, "Parameter 'id' is not provided!");
+			headers.setStatus(500);
+		}
+		
 		return headers;
 	}
 
-	private HttpHeaders create(HttpServletRequest request) {
+	/*
+	 * POST /bid/create?bid=<bid json>
+	 */
+	private HttpHeaders create(HttpServletRequest request) throws JsonParseException, JsonMappingException, IOException {
 		HttpHeaders headers = new HttpHeadersImpl("create");
-		headers.setStatus(501);
+		
+		ObjectMapper mapper = new ObjectMapper();
+		log.log(Level.INFO, "Parameters: " + request.getParameterMap());
+		String bidString = request.getParameter("bid");
+		if (!StringUtils.isEmpty(bidString)) {
+			BidVO bid = mapper.readValue(bidString, BidVO.class);
+			log.log(Level.INFO, "Creating bid: " + model);
+			model = ServiceFacade.instance().createBid(getLoggedInUser(), bid);
+			if (model == null) {
+				log.log(Level.WARNING, "Bid not created!");
+				headers.setStatus(500);
+			}
+		} else {
+			log.log(Level.WARNING, "Parameter 'bid' is empty!");
+			headers.setStatus(500);
+		}
+
+		return headers;
+	}
+
+	/*
+	 * PUT /bid/update?bid=<bid json>
+	 */
+	private HttpHeaders update(HttpServletRequest request) throws JsonParseException, JsonMappingException, IOException {
+		HttpHeaders headers = new HttpHeadersImpl("update");
+		
+		ObjectMapper mapper = new ObjectMapper();
+		log.log(Level.INFO, "Parameters: " + request.getParameterMap());
+		String bidString = request.getParameter("bid");
+		if (!StringUtils.isEmpty(bidString)) {
+			BidVO bid = mapper.readValue(bidString, BidVO.class);
+			log.log(Level.INFO, "Updating bid: " + bid);
+			if (bid.getId() == null) {
+				log.log(Level.WARNING, "Bid id not provided!");
+				headers.setStatus(500);
+			} else {
+				model = ServiceFacade.instance().updateBid(getLoggedInUser(), bid);
+				if (model == null) {
+					log.log(Level.WARNING, "Bid not found!");
+					headers.setStatus(500);
+				}
+			}
+		} else {
+			log.log(Level.WARNING, "Parameter 'bid' is empty!");
+			headers.setStatus(500);
+		}
+
 		return headers;
 	}
 
 	private HttpHeaders get(HttpServletRequest request) {
 		HttpHeaders headers = new HttpHeadersImpl("get");
 		String bidId = getCommandOrParameter(request, 2, "id");
-		bid = ServiceFacade.instance().getBid(getLoggedInUser(), bidId);
+		model = ServiceFacade.instance().getBid(getLoggedInUser(), bidId);
 		return headers;
 	}
 
@@ -65,7 +143,7 @@ public class BidController extends ModelDrivenController {
 		
 		ListPropertiesVO bidProperties = getListProperties(request);
 		String listingId = getCommandOrParameter(request, 2, "id");
-		bids = ServiceFacade.instance().getBidsForListing(getLoggedInUser(), listingId, bidProperties);
+		model = ServiceFacade.instance().getBidsForListing(getLoggedInUser(), listingId, bidProperties);
 		
 		return headers;
 	}
@@ -79,7 +157,7 @@ public class BidController extends ModelDrivenController {
 		
 		ListPropertiesVO bidProperties = getListProperties(request);
 		String userId = getCommandOrParameter(request, 2, "id");
-		bids = ServiceFacade.instance().getBidsForUser(getLoggedInUser(), userId, bidProperties);
+		model = ServiceFacade.instance().getBidsForUser(getLoggedInUser(), userId, bidProperties);
 		
 		return headers;
 	}
@@ -92,7 +170,7 @@ public class BidController extends ModelDrivenController {
 
 	@Override
 	public Object getModel() {
-		return bids != null ? bids : bid;
+		return model;
 	}
 
 }

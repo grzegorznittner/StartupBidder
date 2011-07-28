@@ -6,9 +6,7 @@ import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -53,10 +51,13 @@ public class ListingController extends ModelDrivenController {
 				// default action
 				return index(request);
 			}
-		} else if ("PUT".equalsIgnoreCase(request.getMethod()) ||
-				"POST".equalsIgnoreCase(request.getMethod())) {
-			if ("save".equalsIgnoreCase(getCommand(1))) {
-				return save(request);
+		} else if ("POST".equalsIgnoreCase(request.getMethod())) {
+			if ("create".equalsIgnoreCase(getCommand(1))) {
+				return create(request);
+			}
+		} else if ("PUT".equalsIgnoreCase(request.getMethod())) {
+			if ("update".equalsIgnoreCase(getCommand(1))) {
+				return update(request);
 			} else if("up".equalsIgnoreCase(getCommand(1))) {
 				return up(request);
 			}  else if("activate".equalsIgnoreCase(getCommand(1))) {
@@ -78,9 +79,9 @@ public class ListingController extends ModelDrivenController {
 		return headers;
 	}
 
-    // PUT /listing/create
-    // POST /listing/create
-	private HttpHeaders save(HttpServletRequest request) throws JsonParseException, JsonMappingException, IOException {
+    // PUT /listing/save
+    // POST /listing/save
+	private HttpHeaders create(HttpServletRequest request) throws JsonParseException, JsonMappingException, IOException {
 		HttpHeaders headers = new HttpHeadersImpl("save");
 		
 		ObjectMapper mapper = new ObjectMapper();
@@ -88,10 +89,11 @@ public class ListingController extends ModelDrivenController {
 		String listingString = request.getParameter("listing");
 		if (!StringUtils.isEmpty(listingString)) {
 			listing = mapper.readValue(listingString, ListingVO.class);
-			if (listing.getId() == null) {
-				listing = ServiceFacade.instance().createListing(getLoggedInUser(), listing);
-			} else {
-				listing = ServiceFacade.instance().updateListing(getLoggedInUser(), listing);
+			log.log(Level.INFO, "Creating listing: " + listing);
+			listing = ServiceFacade.instance().createListing(getLoggedInUser(), listing);
+			if (listing == null) {
+				log.log(Level.WARNING, "Listing not created!");
+				headers.setStatus(500);
 			}
 		} else {
 			log.log(Level.WARNING, "Parameter 'listing' is empty!");
@@ -101,6 +103,34 @@ public class ListingController extends ModelDrivenController {
 		return headers;
 	}
 
+    // PUT /listing/save
+    // POST /listing/save
+	private HttpHeaders update(HttpServletRequest request) throws JsonParseException, JsonMappingException, IOException {
+		HttpHeaders headers = new HttpHeadersImpl("save");
+		
+		ObjectMapper mapper = new ObjectMapper();
+		log.log(Level.INFO, "Parameters: " + request.getParameterMap());
+		String listingString = request.getParameter("listing");
+		if (!StringUtils.isEmpty(listingString)) {
+			listing = mapper.readValue(listingString, ListingVO.class);
+			log.log(Level.INFO, "Updating listing: " + listing);
+			if (listing.getId() == null) {
+				log.log(Level.WARNING, "Listing id is not provided!");
+			} else {
+				listing = ServiceFacade.instance().updateListing(getLoggedInUser(), listing);
+				if (listing == null) {
+					log.log(Level.WARNING, "Listing not found!");
+					headers.setStatus(500);
+				}
+			}
+		} else {
+			log.log(Level.WARNING, "Parameter 'listing' is empty!");
+			headers.setStatus(500);
+		}
+
+		return headers;
+	}
+	
 	// GET /listings/closing
 	private HttpHeaders closing(HttpServletRequest request) {
 		ListPropertiesVO listingProperties = getListProperties(request);

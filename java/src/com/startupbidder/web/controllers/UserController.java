@@ -40,14 +40,17 @@ public class UserController extends ModelDrivenController {
 			} else {
 				return index(request);
 			}
-		} else if ("PUT".equalsIgnoreCase(request.getMethod()) ||
-				"POST".equalsIgnoreCase(request.getMethod())) {
-			if ("save".equalsIgnoreCase(getCommand(1))) {
-				return save(request);
+		} else if ("PUT".equalsIgnoreCase(request.getMethod())) {
+			if ("update".equalsIgnoreCase(getCommand(1))) {
+				return update(request);
 			} else if("activate".equalsIgnoreCase(getCommand(1))) {
 				return activate(request);
 			} else if("deactivate".equalsIgnoreCase(getCommand(1))) {
 				return deactivate(request);
+			}
+		} else if ("POST".equalsIgnoreCase(request.getMethod())) {
+			if ("create".equalsIgnoreCase(getCommand(1))) {
+				return create(request);
 			}
 		} else if ("DELETE".equalsIgnoreCase(request.getMethod())) {
 			return delete(request);
@@ -56,13 +59,34 @@ public class UserController extends ModelDrivenController {
 	}
 	
 	private HttpHeaders delete(HttpServletRequest request) {
-		HttpHeaders headers = new HttpHeadersImpl("create");
+		HttpHeaders headers = new HttpHeadersImpl("delete");
+		log.log(Level.WARNING, "Deleting user is not supported! User can be only deactivated.");
 		headers.setStatus(501);
 		return headers;
 	}
 
-	private HttpHeaders save(HttpServletRequest request) throws JsonParseException, JsonMappingException, IOException {
-		HttpHeaders headers = new HttpHeadersImpl("save");
+	private HttpHeaders create(HttpServletRequest request) throws JsonParseException, JsonMappingException, IOException {
+		HttpHeaders headers = new HttpHeadersImpl("create");
+		
+		log.log(Level.INFO, "Parameters: " + request.getParameterMap());
+		String listingString = request.getParameter("profile");
+		if (!StringUtils.isEmpty(listingString)) {
+			ObjectMapper mapper = new ObjectMapper();
+			UserVO user = mapper.readValue(request.getInputStream(), UserVO.class);
+			user.setId(null);
+			//model = ServiceFacade.instance().createUser(getLoggedInUser(), user);
+			log.log(Level.WARNING, "User creation is not supported! You need to login using external account.");
+			headers.setStatus(501);
+		} else {
+			log.log(Level.WARNING, "Parameter 'profile' is empty!");
+			headers.setStatus(500);
+		}
+
+		return headers;
+	}
+
+	private HttpHeaders update(HttpServletRequest request) throws JsonParseException, JsonMappingException, IOException {
+		HttpHeaders headers = new HttpHeadersImpl("update");
 		
 		log.log(Level.INFO, "Parameters: " + request.getParameterMap());
 		String listingString = request.getParameter("profile");
@@ -70,10 +94,15 @@ public class UserController extends ModelDrivenController {
 			ObjectMapper mapper = new ObjectMapper();
 			UserVO user = mapper.readValue(request.getInputStream(), UserVO.class);
 			if (user.getId() == null) {
-				//model = ServiceFacade.instance().createUser(getLoggedInUser(), user);
+				log.log(Level.WARNING, "User update called but user id not provided.");
 				headers.setStatus(501);
 			} else {
+				log.log(Level.INFO, "Updating user: " + user);
 				model = ServiceFacade.instance().updateUser(getLoggedInUser(), user);
+				if (model == null) {
+					log.log(Level.WARNING, "User not found!");
+					headers.setStatus(500);
+				}
 			}
 		} else {
 			log.log(Level.WARNING, "Parameter 'profile' is empty!");

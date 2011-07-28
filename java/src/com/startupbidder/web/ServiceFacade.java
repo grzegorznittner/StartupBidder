@@ -87,8 +87,9 @@ public class ServiceFacade {
 	 * @param userData User data object
 	 */
 	public UserVO updateUser(UserVO loggedInUser, UserVO userData) {
-		getDAO().updateUser(VoToDtoConverter.convert(userData));
-		return DtoToVoConverter.convert(getDAO().getUser(userData.getId()));
+		UserVO user = DtoToVoConverter.convert(getDAO().updateUser(VoToDtoConverter.convert(userData)));
+		computeUserStatistics(user);
+		return user;
 	}
 
 	/**
@@ -632,4 +633,33 @@ public class ServiceFacade {
 		return updatedListing;
 	}
 
+	public CommentVO deleteComment(UserVO loggedInUser, String commentId) {
+		CommentVO comment = DtoToVoConverter.convert(getDAO().deleteComment(commentId));
+		return comment;
+	}
+
+	public CommentVO createComment(UserVO loggedInUser, CommentVO comment) {
+		comment = DtoToVoConverter.convert(getDAO().createComment(VoToDtoConverter.convert(comment)));
+		return comment;
+	}
+
+	public CommentVO updateComment(UserVO loggedInUser, CommentVO comment) {
+		comment = DtoToVoConverter.convert(getDAO().updateComment(VoToDtoConverter.convert(comment)));
+		return comment;
+	}
+
+	public BidVO deleteBid(UserVO loggedInUser, String bidId) {
+		BidVO bid = DtoToVoConverter.convert(getDAO().deleteBid(bidId));
+		return bid;
+	}
+
+	public BidVO createBid(UserVO loggedInUser, BidVO bid) {
+		bid = DtoToVoConverter.convert(getDAO().createBid(VoToDtoConverter.convert(bid)));
+		return bid;
+	}
+
+	public BidVO updateBid(UserVO loggedInUser, BidVO bid) {
+		bid = DtoToVoConverter.convert(getDAO().updateBid(VoToDtoConverter.convert(bid)));
+		return bid;
+	}
 }

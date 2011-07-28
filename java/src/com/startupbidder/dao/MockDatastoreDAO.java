@@ -17,6 +17,7 @@ import com.startupbidder.dto.CommentDTO;
 import com.startupbidder.dto.UserDTO;
 import com.startupbidder.dto.UserStatistics;
 import com.startupbidder.dto.VoteDTO;
+import com.startupbidder.vo.CommentVO;
 import com.startupbidder.vo.ListPropertiesVO;
 
 /**
@@ -122,10 +123,24 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		return stat;
 	}
 	
-	public void updateUser(UserDTO user) {
+	public UserDTO updateUser(UserDTO newUser) {
+		if (!userCache.containsKey(newUser.getIdAsString())) {
+			log.log(Level.WARNING, "User '" + newUser.getIdAsString() + "' doesn't exist in the repository");
+			return null;
+		}
+		UserDTO user = userCache.get(newUser.getIdAsString());
+		user.setEmail(newUser.getEmail());
+		user.setFacebook(newUser.getFacebook());
+		user.setInvestor(newUser.isInvestor());
+		user.setLinkedin(newUser.getLinkedin());
+		user.setName(newUser.getName());
+		user.setNickname(newUser.getNickname());
+		user.setOrganization(newUser.getOrganization());
+		user.setTitle(newUser.getTitle());
+		user.setTwitter(newUser.getTwitter());
 		user.setModified(new Date(System.currentTimeMillis()));
-		log.log(Level.INFO, "Updating user " + user.getKey());
-		userCache.put(user.getIdAsString(), user);
+		log.log(Level.INFO, "Updated user: " + user);
+		return user;
 	}
 	
 	public List<UserDTO> getAllUsers() {
@@ -220,8 +235,17 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		return listing;
 	}
 	
-	public ListingDTO updateListing(ListingDTO listing) {
-		lCache.put(listing.getIdAsString(), listing);
+	public ListingDTO updateListing(ListingDTO newListing) {
+		if (!lCache.containsKey(newListing.getIdAsString())) {
+			log.log(Level.WARNING, "Listning '' doesn't exist in the repository");
+			return null;
+		}
+		ListingDTO listing = lCache.get(newListing.getIdAsString());
+		listing.setName(newListing.getName());
+		listing.setSuggestedAmount(newListing.getSuggestedAmount());
+		listing.setSuggestedPercentage(newListing.getSuggestedPercentage());
+		listing.setSuggestedValuation(newListing.getSuggestedValuation());
+		listing.setSummary(newListing.getSummary());
 		return listing;
 	}
 
@@ -615,6 +639,52 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		return commentCache.get(commentId);
 	}
 	
+	public CommentDTO deleteComment(String commentId) {
+		return commentCache.remove(commentId);
+	}
+
+	public CommentDTO createComment(CommentDTO comment) {
+		comment.createKey("" + comment.hashCode());
+		comment.setCommentedOn(new Date());
+		commentCache.put(comment.getIdAsString(), comment);
+		return comment;
+	}
+
+	public CommentDTO updateComment(CommentDTO newComment) {
+		if (!commentCache.containsKey(newComment.getIdAsString())) {
+			log.log(Level.WARNING, "Comment '" + newComment.getIdAsString() + "' doesn't exist!");
+			return null;
+		} else {
+			CommentDTO comment = commentCache.get(newComment.getIdAsString());
+			comment.setComment(newComment.getComment());
+			return comment;
+		}
+	}
+
+	public BidDTO deleteBid(String bidId) {
+		return bidCache.remove(bidId);
+	}
+
+	public BidDTO createBid(BidDTO bid) {
+		bid.createKey("" + bid.hashCode());
+		bid.setPlaced(new Date());
+		bidCache.put(bid.getIdAsString(), bid);
+		return bid;
+	}
+
+	public BidDTO updateBid(BidDTO newBid) {
+		if (!bidCache.containsKey(newBid.getIdAsString())) {
+			log.log(Level.WARNING, "Bid '" + newBid.getIdAsString() + "' doesn't exist!");
+			return null;
+		} else {
+			BidDTO bid = bidCache.get(newBid.getIdAsString());
+			bid.setFundType(newBid.getFundType());
+			bid.setValue(newBid.getValue());
+			bid.setValuation(newBid.getValuation());
+			return bid;
+		}
+	}
+
 	/**
 	 * Generates random comments for business plans
 	 */

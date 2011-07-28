@@ -8,6 +8,7 @@ import com.startupbidder.dto.ListingDTO;
 import com.startupbidder.dto.UserDTO;
 import com.startupbidder.dto.UserStatistics;
 import com.startupbidder.dto.VoteDTO;
+import com.startupbidder.vo.CommentVO;
 import com.startupbidder.vo.ListPropertiesVO;
 
 public interface DatastoreDAO {
@@ -46,7 +47,7 @@ public interface DatastoreDAO {
 	 * 
 	 * @param user User data object
 	 */
-	void updateUser(UserDTO user);
+	UserDTO updateUser(UserDTO user);
 
 	/**
 	 * Returns list of all registered users
@@ -245,5 +246,41 @@ public interface DatastoreDAO {
 	 * @return User with updated data
 	 */
 	UserDTO deactivateUser(String userId);
+
+	/**
+	 * Removes comment
+	 * @param commentId
+	 */
+	CommentDTO deleteComment(String commentId);
+
+	/**
+	 * Creates new comment
+	 * @param comment
+	 */
+	CommentDTO createComment(CommentDTO comment);
+
+	/**
+	 * Updates comment
+	 * @param comment
+	 */
+	CommentDTO updateComment(CommentDTO comment);
+
+	/**
+	 * Deletes bid
+	 * @param bidId
+	 */
+	BidDTO deleteBid(String bidId);
+
+	/**
+	 * Creates bid
+	 * @param bid
+	 */
+	BidDTO createBid(BidDTO bid);
+
+	/**
+	 * Updates bid
+	 * @param bid
+	 */
+	BidDTO updateBid(BidDTO bid);
 
 }

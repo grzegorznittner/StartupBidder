@@ -1,6 +1,15 @@
 package com.startupbidder.web.controllers;
 
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang.StringUtils;
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
 
 import com.startupbidder.vo.CommentListVO;
 import com.startupbidder.vo.CommentVO;
@@ -11,12 +20,13 @@ import com.startupbidder.web.ModelDrivenController;
 import com.startupbidder.web.ServiceFacade;
 
 public class CommentController extends ModelDrivenController {
+	private static final Logger log = Logger.getLogger(CommentController.class.getName());
 
 	private CommentListVO comments = null;
 	private CommentVO comment = null;
 	
 	@Override
-	protected HttpHeaders executeAction(HttpServletRequest request) {
+	protected HttpHeaders executeAction(HttpServletRequest request) throws JsonParseException, JsonMappingException, IOException {
 		if ("GET".equalsIgnoreCase(request.getMethod())) {
 			// GET method handler
 			
@@ -31,24 +41,89 @@ public class CommentController extends ModelDrivenController {
 			} else {
 				return index(request);
 			}
-		} else if ("PUT".equalsIgnoreCase(request.getMethod()) ||
-				"POST".equalsIgnoreCase(request.getMethod())) {
+		} else if ("POST".equalsIgnoreCase(request.getMethod())) {
 			return create(request);
+		} else if ("PUT".equalsIgnoreCase(request.getMethod())) {
+			return update(request);
 		} else if ("DELETE".equalsIgnoreCase(request.getMethod())) {
 			return delete(request);
 		}
 		return null;
 	}
 
+	/*
+	 * DELETE /comment?id=<id> 
+	 */
 	private HttpHeaders delete(HttpServletRequest request) {
 		HttpHeaders headers = new HttpHeadersImpl("delete");
-		headers.setStatus(501);
+		
+		String commentId = getCommandOrParameter(request, 2, "id");
+		if (StringUtils.isEmpty(commentId)) {
+			comment = ServiceFacade.instance().deleteComment(getLoggedInUser(), commentId);
+			if (comment == null) {
+				log.log(Level.WARNING, "Comment not found!");
+				headers.setStatus(500);
+			}
+		} else {
+			log.log(Level.WARNING, "Parameter 'id' is not provided!");
+			headers.setStatus(500);
+		}
+		
 		return headers;
 	}
 
-	private HttpHeaders create(HttpServletRequest request) {
-		HttpHeaders headers = new HttpHeadersImpl("create");
-		headers.setStatus(501);
+	/*
+	 * POST /comment/create?comment=<bid json>
+	 */
+	private HttpHeaders create(HttpServletRequest request) throws JsonParseException, JsonMappingException, IOException {
+		HttpHeaders headers = new HttpHeadersImpl("save");
+		
+		ObjectMapper mapper = new ObjectMapper();
+		log.log(Level.INFO, "Parameters: " + request.getParameterMap());
+		String commentString = request.getParameter("comment");
+		if (!StringUtils.isEmpty(commentString)) {
+			comment = mapper.readValue(commentString, CommentVO.class);
+			log.log(Level.INFO, "Creating comment: " + comment);
+			comment = ServiceFacade.instance().createComment(getLoggedInUser(), comment);
+			if (comment == null) {
+				log.log(Level.WARNING, "Comment not created!");
+				headers.setStatus(500);
+			}
+		} else {
+			log.log(Level.WARNING, "Parameter 'comment' is empty!");
+			headers.setStatus(500);
+		}
+
+		return headers;
+	}
+
+	/*
+	 * PUT /comment/update?comment=<bid json>
+	 */
+	private HttpHeaders update(HttpServletRequest request) throws JsonParseException, JsonMappingException, IOException {
+		HttpHeaders headers = new HttpHeadersImpl("update");
+		
+		ObjectMapper mapper = new ObjectMapper();
+		log.log(Level.INFO, "Parameters: " + request.getParameterMap());
+		String commentString = request.getParameter("comment");
+		if (!StringUtils.isEmpty(commentString)) {
+			comment = mapper.readValue(commentString, CommentVO.class);
+			log.log(Level.INFO, "Updating comment: " + comment);
+			if (comment.getId() == null) {
+				log.log(Level.WARNING, "Commend id not provided!");
+				headers.setStatus(500);
+			} else {
+				comment = ServiceFacade.instance().updateComment(getLoggedInUser(), comment);
+				if (comment == null) {
+					log.log(Level.WARNING, "Comment not found!");
+					headers.setStatus(500);
+				}
+			}
+		} else {
+			log.log(Level.WARNING, "Parameter 'comment' is empty!");
+			headers.setStatus(500);
+		}
+
 		return headers;
 	}
 
