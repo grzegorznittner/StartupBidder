@@ -1,6 +1,17 @@
 package com.startupbidder.web.controllers;
 
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
 
 import com.startupbidder.vo.ListPropertiesVO;
 import com.startupbidder.vo.ListingListVO;
@@ -11,10 +22,12 @@ import com.startupbidder.web.ModelDrivenController;
 import com.startupbidder.web.ServiceFacade;
 
 public class ListingController extends ModelDrivenController {
+	private static final Logger log = Logger.getLogger(ListingController.class.getName());
+	
 	private ListingListVO listings = null;
 	private ListingVO listing = null;
 	
-	public HttpHeaders executeAction(HttpServletRequest request) {
+	public HttpHeaders executeAction(HttpServletRequest request) throws JsonParseException, JsonMappingException, IOException {
 		if ("GET".equalsIgnoreCase(request.getMethod())) {
 			// GET method handler
 			
@@ -42,8 +55,8 @@ public class ListingController extends ModelDrivenController {
 			}
 		} else if ("PUT".equalsIgnoreCase(request.getMethod()) ||
 				"POST".equalsIgnoreCase(request.getMethod())) {
-			if ("create".equalsIgnoreCase(getCommand(1))) {
-				return create(request);
+			if ("save".equalsIgnoreCase(getCommand(1))) {
+				return save(request);
 			} else if("up".equalsIgnoreCase(getCommand(1))) {
 				return up(request);
 			}  else if("activate".equalsIgnoreCase(getCommand(1))) {
@@ -65,11 +78,26 @@ public class ListingController extends ModelDrivenController {
 		return headers;
 	}
 
-    // PUT /listing/
-    // POST /listing/
-	private HttpHeaders create(HttpServletRequest request) {
-		HttpHeaders headers = new HttpHeadersImpl("create");
-		headers.setStatus(501);
+    // PUT /listing/create
+    // POST /listing/create
+	private HttpHeaders save(HttpServletRequest request) throws JsonParseException, JsonMappingException, IOException {
+		HttpHeaders headers = new HttpHeadersImpl("save");
+		
+		ObjectMapper mapper = new ObjectMapper();
+		log.log(Level.INFO, "Parameters: " + request.getParameterMap());
+		String listingString = request.getParameter("listing");
+		if (!StringUtils.isEmpty(listingString)) {
+			listing = mapper.readValue(listingString, ListingVO.class);
+			if (listing.getId() == null) {
+				listing = ServiceFacade.instance().createListing(getLoggedInUser(), listing);
+			} else {
+				listing = ServiceFacade.instance().updateListing(getLoggedInUser(), listing);
+			}
+		} else {
+			log.log(Level.WARNING, "Parameter 'listing' is empty!");
+			headers.setStatus(500);
+		}
+
 		return headers;
 	}
 

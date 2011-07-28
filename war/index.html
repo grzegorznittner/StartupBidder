@@ -1864,6 +1864,8 @@ $(function(){
             $.getJSON(url, callback);
         };
         self.saveProfile = function(profile, callback) {
+        	var url = '/user/save';
+        	$.post(url, {profile: JSON.stringify(profile)}, callback);
         };
         self.activateProfile = function(profile_id, callback) {
             var url = '/user/activate/' + profile_id;
@@ -1890,6 +1892,8 @@ $(function(){
             $.getJSON(url, callback);
         };
         self.saveListing = function(listing, callback) {
+            var url = '/listings/save/';
+            $.post(url, {listing: JSON.stringify(listing)}, callback);
         };
         self.upvoteListing = function(listing_id, callback) {
             var url = '/listings/up/' + listing_id;

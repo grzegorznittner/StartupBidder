@@ -3,6 +3,7 @@ package com.startupbidder.vo;
 import java.util.Date;
 
 import org.codehaus.jackson.annotate.JsonAutoDetect;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
@@ -12,6 +13,7 @@ import com.startupbidder.util.LowecaseSerializer;
 
 @JsonAutoDetect(getterVisibility=Visibility.NONE, setterVisibility=Visibility.NONE,
 		fieldVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE)
+@JsonIgnoreProperties(ignoreUnknown=true)
 public class ListingVO {
 	@JsonProperty("num")
 	private int orderNumber;

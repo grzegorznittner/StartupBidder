@@ -1,17 +1,29 @@
 package com.startupbidder.web.controllers;
 
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
+
+import com.startupbidder.vo.UserVO;
 import com.startupbidder.web.HttpHeaders;
 import com.startupbidder.web.HttpHeadersImpl;
 import com.startupbidder.web.ModelDrivenController;
 import com.startupbidder.web.ServiceFacade;
 
 public class UserController extends ModelDrivenController {
+	private static final Logger log = Logger.getLogger(UserController.class.getName());
+
 	private Object model = null;
 
 	@Override
-	protected HttpHeaders executeAction(HttpServletRequest request) {
+	protected HttpHeaders executeAction(HttpServletRequest request) throws JsonParseException, JsonMappingException, IOException {
 		if ("GET".equalsIgnoreCase(request.getMethod())) {
 			// GET method handler
 			
@@ -30,8 +42,8 @@ public class UserController extends ModelDrivenController {
 			}
 		} else if ("PUT".equalsIgnoreCase(request.getMethod()) ||
 				"POST".equalsIgnoreCase(request.getMethod())) {
-			if ("create".equalsIgnoreCase(getCommand(1))) {
-				return create(request);
+			if ("save".equalsIgnoreCase(getCommand(1))) {
+				return save(request);
 			} else if("activate".equalsIgnoreCase(getCommand(1))) {
 				return activate(request);
 			} else if("deactivate".equalsIgnoreCase(getCommand(1))) {
@@ -49,9 +61,25 @@ public class UserController extends ModelDrivenController {
 		return headers;
 	}
 
-	private HttpHeaders create(HttpServletRequest request) {
-		HttpHeaders headers = new HttpHeadersImpl("create");
-		headers.setStatus(501);
+	private HttpHeaders save(HttpServletRequest request) throws JsonParseException, JsonMappingException, IOException {
+		HttpHeaders headers = new HttpHeadersImpl("save");
+		
+		log.log(Level.INFO, "Parameters: " + request.getParameterMap());
+		String listingString = request.getParameter("profile");
+		if (!StringUtils.isEmpty(listingString)) {
+			ObjectMapper mapper = new ObjectMapper();
+			UserVO user = mapper.readValue(request.getInputStream(), UserVO.class);
+			if (user.getId() == null) {
+				//model = ServiceFacade.instance().createUser(getLoggedInUser(), user);
+				headers.setStatus(501);
+			} else {
+				model = ServiceFacade.instance().updateUser(getLoggedInUser(), user);
+			}
+		} else {
+			log.log(Level.WARNING, "Parameter 'profile' is empty!");
+			headers.setStatus(500);
+		}
+
 		return headers;
 	}
 

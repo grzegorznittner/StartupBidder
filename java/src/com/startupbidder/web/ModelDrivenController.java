@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 
@@ -33,7 +34,8 @@ public abstract class ModelDrivenController {
 	 * @param request 
 	 * @return Http headers and return code
 	 */
-	abstract protected HttpHeaders executeAction(HttpServletRequest request);
+	abstract protected HttpHeaders executeAction(HttpServletRequest request)
+		throws JsonParseException, JsonMappingException, IOException;
 	
 	/**
 	 * Returns object which should be trasformed into one of the result types (JSON, HTML)
@@ -56,7 +58,15 @@ public abstract class ModelDrivenController {
 		
 		command = decomposeRequest(request.getPathInfo());
 		
-		HttpHeaders headers = executeAction(request);
+		HttpHeaders headers;
+		try {
+			headers = executeAction(request);
+		} catch (Exception e) {
+			headers = new HttpHeadersImpl();
+			headers.setStatus(501);
+			log.log(Level.SEVERE, "Error handling request", e);
+		}
+		
 		Object model = getModel();
 		if (model instanceof BaseResultVO && loggedInUser != null) {
 			((BaseResultVO) model).setLogoutUrl(userService.createLogoutURL("http://www.startupbidder.com"));

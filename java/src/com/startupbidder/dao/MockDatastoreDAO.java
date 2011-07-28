@@ -211,7 +211,7 @@ public class MockDatastoreDAO implements DatastoreDAO {
 	}
 	
 	public ListingDTO createListing(ListingDTO listing) {
-		listing.createKey(listing.getName());
+		listing.createKey(listing.getName() + listing.getOwner());
 		listing.setState(ListingDTO.State.CREATED);
 		listing.setListedOn(new Date());
 		
