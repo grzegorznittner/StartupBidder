@@ -1617,42 +1617,38 @@ $(function(){
             var results;
             $('#comment-save-message').attr('class', 'attention').html('');
             if (comment_id && args['action'] == 'delete') {
-                self.deleteComment(comment_id);
-                delete args['action'];
-                return self.execute(args);
+                self.deleteComment(comment_id, args);
             }
             else if (listing_id && profile_id && args['action'] == 'save') {
-                results = self.saveComment(listing_id, profile_id);
+                self.saveComment(listing_id, profile_id);
             }
             else if (listing_id) {
                 $('#comment-textarea').val('');
-                results = self.commentsForListing(listing_id);
+                self.controller.backend.commentsForListing(listing_id, self.displayResults);
             }
             else if (profile_id) {
                 $('#comment-textarea').val('');
-                results = self.commentsForProfile(profile_id);
+                self.controller.backend.commentsForProfile(profile_id, self.displayResults);
             }
-            self.displayResults(results);
             return 'comments';
         };
-        self.deleteComment = function(comment_id){
-            self.controller.backend.deleteComment(comment_id);
+        self.deleteComment = function(comment_id, args) {
+            delete args['action'];
+            var callback = function() {
+                self.execute(args);
+            };
+            self.controller.backend.deleteComment(comment_id, callback);
         };
         self.saveComment = function(listing_id, profile_id){
             var commentText = $('#comment-textarea').val();
-            var comment = self.controller.backend.addComment(listing_id, profile_id, commentText);
-            if (comment) {
-                $('#comment-save-message').attr('class', 'confirmed').html('comment saved');
-                $('#comment-textarea').val('');
+            var callback = function (comment) {
+                if (comment) {
+                    $('#comment-save-message').attr('class', 'confirmed').html('comment saved');
+                    $('#comment-textarea').val('');
+                }
+                self.controller.backend.commentsForListing(listing_id, self.displayResults);
             }
-            var results = self.commentsForListing(listing_id);
-            return results;
-        };
-        self.commentsForListing = function(listing_id){
-            return self.controller.backend.commentsForListing(listing_id);
-        };
-        self.commentsForProfile = function(profile_id){
-            return self.controller.backend.commentsForProfile(profile_id);
+            self.controller.backend.addComment(listing_id, profile_id, commentText, callback);
         };
         self.displayNoResultsHtml = function(resultsHtml) {
             $('#comments-listing-snippet').html('Comments:');
@@ -1768,28 +1764,30 @@ $(function(){
             var profile_id= args['profile_id'];
             var bid_id = args['bid_id'];
             var results;
-            if (args['action'] != 'save')
+            if (args['action'] != 'save') {
                 self.clearBidFields();
+            }
             $('#bid-save-message').attr('class', 'attention').html('');
             if (bid_id && args['action'] == 'delete') {
-                self.deleteBid(bid_id);
-                delete args['action'];
-                return self.execute(args);
+                self.deleteBid(bid_id, args);
             }
             else if (listing_id && profile_id && args['action'] == 'save') {
-                results = self.saveBid(listing_id, profile_id);
+                self.saveBid(listing_id, profile_id);
             }
             else if (listing_id) {
-                results = self.bidsForListing(listing_id);
+                self.controller.backend.bidsForListing(listing_id, self.displayResults);
             }
             else if (profile_id) {
-                results = self.bidsForProfile(profile_id);
+                self.controller.backend.bidsForProfile(profile_id, self.displayResults);
             }
-            self.displayResults(results);
             return 'bids';
         };
-        self.deleteBid = function(bid_id) {
-            self.controller.backend.deleteBid(bid_id);
+        self.deleteBid = function(bid_id, args) {
+            delete args['action'];
+            var callback = function() {
+                self.execute(args);
+            };
+            self.controller.backend.deleteBid(bid_id, callback);
         };
         self.saveBid = function(listing_id, profile_id){
             var raw_amt  = $('#bid-amt').val() || '';
@@ -1809,18 +1807,19 @@ $(function(){
             var valuation = self.calculateValuation(bid_amt, bid_pct, true);
 
             var validationMsg = self.validateBid(bid_amt, bid_type, bid_rate, bid_pct, valuation);
-            if (validationMsg == '') {
-                var bid = self.controller.backend.addBid(listing_id, profile_id, bid_amt, bid_pct, bid_type, bid_rate);
+            if (validationMsg !== '') {
+                $('#bid-save-message').attr('class', 'attention').html(validationMsg);
+                return;
+            }
+
+            var callback = function(bid) {
                 if (bid) {
                     $('#bid-save-message').attr('class', 'confirmed').html('bid saved');
                     self.clearBidFields();
+                    self.controller.backend.bidsForListing(bid.listing_id, self.displayResults);
                 }
-            }
-            else {
-                $('#bid-save-message').attr('class', 'attention').html(validationMsg);
-            }
-            var results = self.bidsForListing(listing_id);
-            return results;
+            };
+            self.controller.backend.addBid(listing_id, profile_id, bid_amt, bid_pct, bid_type, bid_rate, callback);
         };
         self.validateBid = function(bid_amt, bid_type, bid_rate, bid_pct, valuation) {
             var msg;
@@ -1857,12 +1856,6 @@ $(function(){
             $('#bid-rate').val('');
             $('#bid-rate').attr('disabled', true);
             $('#bid-calculated-valuation').html('');
-        };
-        self.bidsForListing = function(listing_id){
-            return self.controller.backend.bidsForListing(listing_id);
-        };
-        self.bidsForProfile = function(profile_id){
-            return self.controller.backend.bidsForProfile(profile_id);
         };
         self.displayNoResultsHtml = function(resultsHtml) {
             $('#bids-form-loggedin').hide();
@@ -2088,64 +2081,59 @@ $(function(){
             $.post(url, callback);
         };
         // comment methods
-        self.commentsForListing = function(listing_id) {
+        self.commentsForListing = function(listing_id, callback) {
             var url = '/comments/listing/' + listing_id + '/';
-            $.getJSON(url, function(results_json) {
-                if (results_json && results_json.listing) {
-                    self.controller.comments.displayResults(results_json);
-                }
-                else {
-                    self.controller.comments.displayNoResultsHtml('<i>no comments found</i>');
-                }
-            });
-            return null;
+            $.getJSON(url, callback);
         };
-        self.commentsForProfile = function(profile_id) {
+        self.commentsForProfile = function(profile_id, callback) {
             var url = '/comments/user/' + profile_id + '/';
-            $.getJSON(url, function(results_json) {
-                // if (results_json && results_json.profile) {
-                if (results_json) {
-                    self.controller.comments.displayResults(results_json);
-                }
-                else {
-                    self.controller.comments.displayNoResultsHtml('<i>no comments found</i>');
-                }
+            $.getJSON(url, callback);
+        };
+        self.addComment = function(listing_id, profile_id, commentText, callback) {
+            var url = '/comment/create';
+            var comment = {
+                listing_id: listing_id,
+                profile_id: profile_id,
+                text: commentText
+            };
+            $.post(url, { comment: $.JSON.encode(comment) }, callback);
+        };
+        self.deleteComment = function(comment_id, callback) {
+            var url = '/comment/' + comment_id;
+            $.ajax({
+                url: url,
+                type: 'DELETE',
+                success: callback
             });
-            return null;
-        };
-        self.addComment = function(listing_id, profile_id, commentText) {
-        };
-        self.deleteComment = function(comment_id) {
         };
         // bid methods
-        self.bidsForListing = function(listing_id) {
+        self.bidsForListing = function(listing_id, callback) {
             var url = '/bids/listing/' + listing_id + '/';
-            $.getJSON(url, function(results_json) {
-                if (results_json && results_json.listing) {
-                    self.controller.bids.displayResults(results_json);
-                }
-                else {
-                    self.controller.bids.displayNoResultsHtml('<i>no bids found</i>');
-                }
-            });
-            return null;
+            $.getJSON(url, callback);
         };
-        self.bidsForProfile = function(profile_id) {
+        self.bidsForProfile = function(profile_id, callback) {
             var url = '/bids/user/' + profile_id + '/';
-            $.getJSON(url, function(results_json) {
-                // if (results_json && results_json.profile) {
-                if (results_json) {
-                    self.controller.bids.displayResults(results_json);
-                }
-                else {
-                    self.controller.bids.displayNoResultsHtml('<i>no bids found</i>');
-                }
-            });
-            return null;
-         };
-        self.addBid = function(listing_id, profile_id, bid_amt, bid_pct, bid_type, bid_rate) {
+            $.getJSON(url, callback);
         };
-        self.deleteBid = function(bid_id) {
+        self.addBid = function(listing_id, profile_id, bid_amt, bid_pct, bid_type, bid_rate, callback) {
+            var url = '/bid/create/';
+            var bid = {
+                listing_id: listing_id,
+                profile_id: profile_id,
+                amount: bid_amt,
+                equity_pct: bid_pct,
+                bid_type: bid_type,
+                interest_rate: bid_rate
+            };
+            $.post(url, { bid: $.JSON.encode(bid) }, callback);
+        };
+        self.deleteBid = function(bid_id, callback) {
+            var url = '/bid/' + bid_id;
+            $.ajax({
+                url: url,
+                type: 'DELETE',
+                success: callback
+            });
         };
         self.bidStats = function(callback) {
             var stats = {
