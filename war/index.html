@@ -813,10 +813,11 @@ $(function(){
 
     var Util = function() {
         var self = {};
-        self.controller = null;
         self.keyCache = {};
-        self.setup = function(controller) {
-            self.controller = controller;
+        self.displayPage = function(page) {
+            $('.page').filter(':visible').hide(); // hide all
+            var pageSel = '#' + page + 'page';
+            $(pageSel).show();
         };
         self.constructNumericDate = function(year, month, day) {
             var date = '' + year + (month < 10 ? '0' : '') + month + (day < 10 ? '0' : '') + day;
@@ -830,7 +831,7 @@ $(function(){
             var date;
             if (epoch) {
                 date = new Date(epoch);
-                return self.controller.util.numericFromDateObj(date);
+                return util.numericFromDateObj(date);
             }
         };
         self.today = function() {
@@ -884,16 +885,12 @@ $(function(){
 
     var User = function() {
         var self = {};
-        self.controller = null;
         self.profile = null;
         self.login_url = '/_ah/login?continue=%2F';
         self.logout_url = '/_ah/logout?continue=%2F';
-        self.setup = function(controller) {
-            self.controller = controller;
-        };
         self.setProfile = function(profile) {
             self.profile = profile;
-            controller.header.displayUser(self);
+            header.displayUser(self);
         };
         self.hasVoted = function(listing_id) {
             return false;
@@ -909,9 +906,7 @@ $(function(){
 
     var Uploader = function() {
         var self = {};
-        self.controller = null;
-        self.setup = function(controller) {
-            self.controller = controller;
+        self.setup = function() {
             $('#listing-upload-business-plan').change(function() {
                 var filename = $(this).val();
                 if (!/\.doc|\.docx|\.pdf$/.test(filename)) {
@@ -927,61 +922,60 @@ $(function(){
                 }
             });
         };
+        self.setup();
         return self;
     };
 
     var Header = function() {
         var self = {};
-        self.controller = null;
-        self.setup = function(controller) {
-            self.controller = controller;
+        self.setup = function() {
             $('#header-logo,#header-title-link').unbind().bind('click', function(){
-                self.controller.execute({page:'search'});
+                search.doSearch();
             });
             $('#header-menu-command-login').unbind().bind('click', function(){
-                self.controller.execute({page:'login'});
+                user.login();
             });
             $('#header-menu-command-logout').unbind().bind('click', function(){
-                self.controller.execute({page:'logout'});
+                user.logout();
             });
             $('#header-menu-bar-submit').unbind().bind('click', function(){
-                self.controller.execute({page:'listing',action:'new'});
+                listings.newListing();
             });
             $('#header-menu-bar-top').unbind().bind('click', function(){
-                self.controller.execute({page:'search',search_type:'top'});
+                search.doSearch({search_type:'top'});
             });
             $('#header-menu-bar-valuation').unbind().bind('click', function(){
-                self.controller.execute({page:'search',search_type:'valuation'});
+                search.doSearch({search_type:'valuation'});
             });
             $('#header-menu-bar-active').unbind().bind('click', function(){
-                self.controller.execute({page:'search',search_type:'active'});
+                search.doSearch({search_type:'active'});
             });
             $('#header-menu-bar-popular').unbind().bind('click', function(){
-                self.controller.execute({page:'search',search_type:'popular'});
+                search.doSearch({search_type:'popular'});
             });
             $('#header-menu-bar-discussed').unbind().bind('click', function(){
-                self.controller.execute({page:'search',search_type:'discussed'});
+                search.doSearch({search_type:'discussed'});
             });
             $('#header-menu-bar-latest').unbind().bind('click', function(){
-                self.controller.execute({page:'search',search_type:'latest'});
+                search.doSearch({search_type:'latest'});
             });
             $('#header-menu-bar-closing-soon').unbind().bind('click', function(){
-                self.controller.execute({page:'search',search_type:'closing'});
+                search.doSearch({search_type:'closing'});
             });
             $('#header-menu-bar-faq').unbind().bind('click', function(){
-                self.controller.execute({page:'faq'});
+                util.displayPage('faq');
             });
         };
         self.displayUser = function(user) {
             if (user.profile && user.logout_url) {
                 $('#header-menu-name-login').hide();
                 $('#header-menu-name-username').html(user.profile.username).data('profile_id',user.profile.profile_id).show().unbind().bind('click', function(){
-                    self.controller.execute({page:'profile', profile_id:$(this).data('profile_id')});
+                    backend.getProfile($(this).data('profile_id'), profiles.displayProfile);
                 });
                 $('#header-menu-command-login').hide();
                 $('#header-menu-command-logout').show();
                 $('#header-menu-command-logout').data('logout_url',user.logout_url).show().unbind().bind('click', function(){
-                    self.controller.execute({page:'logout', url:$(this).data('logout_url')});
+                    user.logout($(this).data('logout_url'));
                 });
                 $('#header-menu-bar-submit-spacer').show();
                 $('#header-menu-bar-submit').show();
@@ -995,25 +989,26 @@ $(function(){
                 $('#header-menu-bar-submit').hide();
             }
         };
+        self.setup();
         return self;
     };
 
     var Search = function() {
         var self = {};
-        self.controller = null;
         self.defaultSearchType = 'top';
-        self.setup = function(controller) {
-            self.controller = controller;
+        self.setup = function() {
             $('#content-search-submit').unbind().bind('click', function(){
-                self.controller.execute({page:'search', search_type:'keyword'});
+                search.doSearch({search_type:'keyword'});
             });
             $('#content-search-keywords').unbind().bind('keyup', function(e){
                 if (e.keyCode == 13) { // return key
-                    self.controller.execute({page:'search', search_type:'keyword'});
+                    search.doSearch({search_type:'keyword'});
                 }
             });
         };
-        self.execute = function(args) {
+        self.setup();
+        self.doSearch = function(args) {
+            args = args || {};
             args.search_type = args.search_type || self.defaultSearchType;
             args.start_index = args.start_index || 0;
             args.max_results = args.max_results || 20;
@@ -1023,13 +1018,13 @@ $(function(){
             }
             $('#content-search-keywords').val(keywords);
             if (!args.profile_id) {
-                self.controller.backend.bidStats(self.displayStats);
+                backend.bidStats(self.displayStats);
             }
             else {
                 $('#stats').hide();
             }
-            self.controller.backend.searchListings(args.search_type, keywords, args.profile_id, args.start_index, args.max_results, self.displayResultsJson);
-            return 'search';
+            backend.searchListings(args.search_type, keywords, args.profile_id, args.start_index, args.max_results, search.displayResultsJson);
+            util.displayPage('search');
         };
         self.displayStats = function(stats) {
             var pngStr = self.statsPngDataURI(200, 100, stats.values);
@@ -1123,8 +1118,8 @@ $(function(){
                 self.displayResultsHtml('<i>loading...</i>');
                 return;
             }
-            self.controller.user.setProfile(results_json.loggedin_profile);
-            self.displayResults(results_json.listings, results_json.search_type, results_json.keywords, results_json.profile_id, results_json.start_index,
+            user.setProfile(results_json.loggedin_profile);
+            self.displayResults(results_json.listings, results_json.search_type, results_json.keywords, results_json.profile ? results_json.profile.profile_id : null, results_json.start_index,
                 results_json.listings_props.num_results, results_json.listings_props.total_results);
         };
         self.displayResultsHtml = function(resultsHtml) {
@@ -1133,9 +1128,16 @@ $(function(){
         self.displayResults = function(results, search_type, keywords, profile_id, start_index, num_results, total_results){
             var resultsHtml = '';
             var listing;
+            // display search box
+            if (profile_id) {
+                $('#content-search-box').hide();
+            }
+            else {
+                $('#content-search-box').show();
+            } 
             for (var i = 0; i < results.length; i++) { // create results
                 listing = results[i];
-                resultsHtml += self.controller.listing.generateListingSnippetHtml(i, listing);
+                resultsHtml += listings.generateListingSnippetHtml(i, listing);
             }
             if (resultsHtml == '') {
                 resultsHtml = '<i>no listings found</i>';
@@ -1143,7 +1145,7 @@ $(function(){
             self.displayResultsHtml(resultsHtml);
             for (var j = 0; j < results.length; j++) { // bind results
                 listing = results[j];
-                self.controller.listing.bindListingSnippet(j, listing);
+                listings.bindListingSnippet(j, listing);
             }
             // set pagination
             var args = {
@@ -1160,7 +1162,7 @@ $(function(){
                 $('#search-prev-results').show().unbind()
                     .data('args', prevargs)
                     .bind('click',function(){
-                        self.controller.execute($(this).data('args'));
+                        search.doSearch($(this).data('args'));
                     });
             }
             else {
@@ -1172,7 +1174,7 @@ $(function(){
                 $('#search-next-results').show().unbind()
                     .data('args', nextargs)
                     .bind('click',function(){
-                        self.controller.execute($(this).data('args'));
+                        search.doSearch($(this).data('args'));
                     });
             }
             else {
@@ -1182,27 +1184,9 @@ $(function(){
         return self;
     };
 
-    var Profile = function() {
+    var Profiles = function() {
         var self = {};
-        self.controller = null;
-        self.setup = function(controller) {
-            self.controller = controller;
-        }
-        self.execute = function(args) {
-            var profile_id = args['profile_id'];
-            var profile;
-            $('#profile-save-message').attr('class', 'attention').html('');
-            if (args.action == 'deactivate')
-                profile = self.controller.backend.deactivateProfile(profile_id, self.displayProfile);
-            else if (args.action == 'activate')
-                profile = self.controller.backend.activateProfile(profile_id, self.displayProfile);
-            else if (args.action == 'save')
-                profile = self.saveProfile(profile_id, self.displayProfile);
-            else
-                profile = self.controller.backend.getProfile(profile_id, self.displayProfile);
-            return 'profile';
-        };
-        self.saveProfile = function(profile_id, callback){
+        self.saveProfile = function(profile_id){
             var profile = {};
             profile.profile_id = profile_id;
             profile.name = $('#profile-edit-name').val();
@@ -1213,18 +1197,20 @@ $(function(){
             profile.twitter = $('#profile-edit-twitter').val();
             profile.linkedin = $('#profile-edit-linkedin').val();
             profile.investor = $('#profile-edit-investor').attr('checked') ? 1 : 0;
-            var callback_wrapper = function(profile) {
+            var callback = function(profile) {
                 if (profile) {
                     $('#profile-save-message').attr('class', 'confirmed').html('profile saved');
                 }
-                callback(profile);
+                self.displayProfile(profile);
             };
-            self.controller.backend.saveProfile(profile, callback_wrapper);
+            backend.saveProfile(profile, callback);
         };
         self.displayProfile = function(profile){
+            $('#profile-save-message').attr('class', 'attention').html('');
+            util.displayPage('profile');
             // enable editable if logged in
             var deactivatedText = (profile && profile.status == 'active') ? '' : ' <span class="message">DEACTIVATED</span>';
-            if (profile && self.controller.user.profile && self.controller.user.profile.profile_id == profile.profile_id) {
+            if (profile && user.profile && user.profile.profile_id == profile.profile_id) {
                 $('#profile-form-editable').show();
                 $('#profile-form-readonly').hide();
 
@@ -1280,28 +1266,28 @@ $(function(){
             $(bidsSel).html(profile.num_bids);
             $(commentsSel).html(profile.num_comments);
             $(listingsSel+'-link').unbind().data('profile_id',profile.profile_id).bind('click',function(){
-                self.controller.execute({page:'search',search_type:'profile',profile_id:$(this).data('profile_id')});
+                search.doSearch({search_type:'profile',profile_id:$(this).data('profile_id')});
             });
             $(bidsSel+'-link').unbind().data('profile_id',profile.profile_id).bind('click',function(){
-                self.controller.execute({page:'bids',profile_id:$(this).data('profile_id')});
+                backend.bidsForProfile($(this).data('profile_id'), bids.displayResults);
             });
             $(commentsSel+'-link').unbind().data('profile_id',profile.profile_id).bind('click',function(){
-                self.controller.execute({page:'comments',profile_id:$(this).data('profile_id')});
+                backend.commentsForProfile($(this).data('profile_id'), comments.displayResults);
             });
             if (editable) {
                 $('#profile-save-link').show().unbind().data('profile_id',profile.profile_id).bind('click',function(e){
                     e.preventDefault();
-                    self.controller.execute({page:'profile',action:'save',profile_id:$(this).data('profile_id')});
+                    profiles.saveProfile($(this).data('profile_id'));
                 });
                 if (profile.status == 'active') {
                     $('#profile-activate-link').hide();
                     $('#profile-deactivate-link').show().unbind().data('profile_id',profile.profile_id).bind('click',function(){
-                        self.controller.execute({page:'profile',action:'deactivate',profile_id:$(this).data('profile_id')});
+                        backend.deactivateProfile($(this).data('profile_id'), profiles.displayProfile);
                     });
                 }
                 else {
                     $('#profile-activate-link').show().unbind().data('profile_id',profile.profile_id).bind('click',function(){
-                        self.controller.execute({page:'profile',action:'activate',profile_id:$(this).data('profile_id')});
+                        backend.activateProfile($(this).data('profile_id'), profiles.displayProfile);
                     });
                     $('#profile-deactivate-link').hide();
                 }
@@ -1310,32 +1296,8 @@ $(function(){
         return self;
     };
 
-    var Listing = function() {
+    var Listings = function() {
         var self = {};
-        self.controller = null;
-        self.setup = function(controller) {
-            self.controller = controller;
-        }
-        self.execute = function(args) {
-            var profile = self.controller.user.profile;
-            var listing_id = args['listing_id'];
-            $('#listing-save-message').attr('class', 'attention').html('');
-            if (args.action == 'withdraw')
-                self.controller.backend.withdrawListing(listing_id, self.displayListing);
-            else if (args.action == 'activate')
-                self.controller.backend.activateListing(listing_id, self.displayListing);
-            else if (args.action == 'save_new')
-                self.saveListing();
-            else if (args.action == 'save_existing')
-                self.saveListing(listing_id);
-            else if (args.action == 'new' && profile) 
-                self.newListing(profile);
-            else if (args.action == 'new' && !profile)
-                self.displayListing();
-            else
-                self.controller.backend.getListing(listing_id, self.displayListing);
-            return 'listing';
-        };
         self.saveListing = function(listing_id){
             var listing = {};
             if (listing_id) {
@@ -1355,7 +1317,7 @@ $(function(){
             var raw_pct = $('#listing-edit-suggested-pct').val().replace(/[^\d]/g,'');
             listing.suggested_amt = raw_amt;
             listing.suggested_pct = raw_pct;
-            listing.suggested_val = self.controller.bids.calculateValuation(listing.suggested_amt, listing.suggested_pct);
+            listing.suggested_val = bids.calculateValuation(listing.suggested_amt, listing.suggested_pct);
             listing.summary = $('#listing-edit-summary').val();
             listing.business_plan_url = $('#listing-upload-business-plan').val();
             listing.presentation_url = $('#listing-upload-presentation').val();
@@ -1364,9 +1326,13 @@ $(function(){
                 var msg_class = savedListing ? 'confirmed' : 'attention';
                 $('#listing-save-message').attr('class', msg_class).html(msg);
             };
-            self.controller.backend.saveListing(listing, callback);
+            backend.saveListing(listing, callback);
         };
         self.newListing = function(profile) {
+            var profile = user.profile;
+            if (!profile) {
+                self.displayListing();
+            }
             var listing = {};
             listing.title = 'Enter listing title here';
             listing.median_valuation = 0;
@@ -1375,12 +1341,12 @@ $(function(){
             listing.num_comments = 0;
             listing.profile_id = profile.profile_id;
             listing.profile_username = profile.username;
-            listing.listing_date = self.controller.util.today();
-            listing.closing_date = self.controller.util.today();
+            listing.listing_date = util.today();
+            listing.closing_date = util.today();
             listing.status = 'new';
             listing.suggested_amt = 10000;
             listing.suggested_pct = 10;
-            listing.suggested_val = self.controller.bids.calculateValuation(listing.suggested_amt, listing.suggested_pct);
+            listing.suggested_val = bids.calculateValuation(listing.suggested_amt, listing.suggested_pct);
             listing.summary = 'Enter listing summary here.';
             listing.business_plan_url = '';
             listing.presentation_url = '';
@@ -1390,19 +1356,24 @@ $(function(){
             $('#listing-snippet').html(html);
         };
         self.displayListing = function(listing){
+            $('#listing-save-message').attr('class', 'attention').html('');
+            $('#listing-snippet').hide();
+            $('#listing-form-readonly').hide();
+            $('#listing-form-editable').hide();
+            util.displayPage('listing');
             var resultsHtml = '';
-            var profile = self.controller.user.profile;
-            if (listing && listing.status in {new:1,created:1} && !profile) {
-                $('#listing-snippet').html('<em>You must be logged to submit a new listing</em>');
+            var profile = user.profile;
+            if (listing && listing.status in {new:1,created:1} && (!profile || profile.profile_id !== listing.profile_id)) {
+                $('#listing-snippet').html('<em>You must be logged to submit a new listing</em>').show();
                 return;
             }
             else if (!listing) {
-                $('#listing-snippet').html('<em>no listings found</em>');
+                $('#listing-snippet').html('<em>no listings found</em>').show();
                 return;
             }
             else if (listing.listing_id) {
-                $('#listing-snippet').hide().html(self.controller.listing.generateListingSnippetHtml('listing', listing)).slideDown();
-                self.controller.listing.bindListingSnippet('listing', listing);
+                $('#listing-snippet').hide().html(listings.generateListingSnippetHtml('listing', listing)).show();
+                listings.bindListingSnippet('listing', listing);
             }
 
             // set listing message
@@ -1449,9 +1420,9 @@ $(function(){
                 $('#listing-edit-listing-date').val(listing.listing_date);
                 $('#listing-edit-closing-date').val(listing.closing_date);
                 $('#listing-edit-status').val(listing.status);
-                $('#listing-edit-suggested-amt').val(self.controller.util.addCommas(listing.suggested_amt));
+                $('#listing-edit-suggested-amt').val(util.addCommas(listing.suggested_amt));
                 $('#listing-edit-suggested-pct').val(listing.suggested_pct);
-                $('#listing-edit-suggested-val').html(self.controller.util.addCommas(listing.suggested_val));
+                $('#listing-edit-suggested-val').html(util.addCommas(listing.suggested_val));
                 $('#listing-edit-summary').val(listing.summary);
                 $('#listing-edit-suggested-amt, #listing-edit-suggested-pct').unbind().bind('change',function(e){
                     self.recalculateSuggestedValuation();
@@ -1460,13 +1431,13 @@ $(function(){
                 if (listing.status === 'new') {
                     $('#listing-save-link').unbind().bind('click',function(e){
                         e.preventDefault();
-                        self.controller.execute({page:'listing', action: 'save_new'});
+                        listings.saveListing();
                     });
                 }
                 else {
                     $('#listing-save-link').unbind().data('listing_id',listing.listing_id).bind('click',function(e){
                         e.preventDefault();
-                        self.controller.execute({page:'listing', action: 'save_existing', listing_id:$(this).data('listing_id')});
+                        listings.saveListing($(this).data('listing_id'));
                     });
                 }
 
@@ -1495,12 +1466,12 @@ $(function(){
                 else if (listing.status === 'created') {
                     $('#listing-withdraw-link').hide();
                     $('#listing-activate-link').show().unbind().data('listing_id',listing.listing_id).bind('click',function(){
-                        self.controller.execute({page:'listing',action:'activate',listing_id:$(this).data('listing_id')});
+                        backend.activateListing($(this).data('listing_id'), self.displayListing);
                     });
                 }
                 else {
                     $('#listing-withdraw-link').show().unbind().data('listing_id',listing.listing_id).bind('click',function(){
-                        self.controller.execute({page:'listing',action:'withdraw',listing_id:$(this).data('listing_id')});
+                        backend.withdrawListing($(this).data('listing_id'), self.displayListing);
                     });
                     $('#listing-activate-link').hide();
                 }
@@ -1508,9 +1479,9 @@ $(function(){
             else {
                 $('#listing-form-editable').hide();
                 $('#listing-form-readonly').hide().slideDown();
-                $('#listing-readonly-suggested-amt').html(self.controller.util.addCommas(listing.suggested_amt));
+                $('#listing-readonly-suggested-amt').html(util.addCommas(listing.suggested_amt));
                 $('#listing-readonly-suggested-pct').html(listing.suggested_pct);
-                $('#listing-readonly-suggested-val').html(self.controller.util.addCommas(listing.suggested_val));
+                $('#listing-readonly-suggested-val').html(util.addCommas(listing.suggested_val));
                 $('#listing-readonly-summary').html(listing.summary);
                 $('#listing-readonly-business-plan-link').unbind().data('business_plan_url',listing.business_plan_url||'').bind('click',function(){
                     document.location = $(this).data('business_plan_url');
@@ -1525,26 +1496,26 @@ $(function(){
             var suggested_pct  = $('#listing-edit-suggested-pct').val() || '';
             suggested_amt  = suggested_amt.replace(/[^\d]/g,'');
             suggested_pct  = suggested_pct.replace(/[^\d]/g,'');
-            var valuation = self.controller.bids.calculateValuation(suggested_amt, suggested_pct, true);
-            var validationMsg = self.controller.bids.validateBid(suggested_amt, 'common', 0, suggested_pct, valuation);
+            var valuation = bids.calculateValuation(suggested_amt, suggested_pct, true);
+            var validationMsg = bids.validateBid(suggested_amt, 'common', 0, suggested_pct, valuation);
             $('#listing-save-message').attr('class', 'attention').html(validationMsg);
-            var displayVal = valuation ? self.controller.util.addCommas(valuation) : '';
+            var displayVal = valuation ? util.addCommas(valuation) : '';
             $('#listing-edit-suggested-val').html(displayVal);
         };
         self.bindListingSnippet = function(i, listing) {
             var upvote_item = document.getElementById('content-results-list-item-upvote-'+i);
             $('#content-results-list-item-profile-'+i).data('profile_id',listing.profile_id).unbind().bind('click', function(){
-                self.controller.execute({page:'profile', profile_id:$(this).data('profile_id')});
+                backend.getProfile($(this).data('profile_id'), proflies.displayProfile);
             });           
             if (listing.listing_id) {
                 $('#content-results-list-item-title-'+i).data('listing_id',listing.listing_id).unbind().bind('click', function(){
-                    self.controller.execute({page:'listing', listing_id:$(this).data('listing_id')});
+                    backend.getListing($(this).data('listing_id'), self.displayListing);
                 });           
                 $('#content-results-list-item-comments-'+i).data('listing_id',listing.listing_id).unbind().bind('click', function(){
-                    self.controller.execute({page:'comments', listing_id:$(this).data('listing_id')});
+                    backend.commentsForListing($(this).data('listing_id'), comments.displayResults);
                 }); 
                 $('#content-results-list-item-bids-'+i).data('listing_id',listing.listing_id).unbind().bind('click', function(){
-                    self.controller.execute({page:'bids', listing_id:$(this).data('listing_id')});
+                    backend.bidsForListing($(this).data('listing_id'), bids.displayResults);
                 });
             }
             if (isFinite(i)) {
@@ -1574,14 +1545,14 @@ $(function(){
                                         .unbind(); // don't let them click twice
                                 }
                             };
-                            self.controller.backend.upvoteListing(listing_id, callback);
+                            backend.upvoteListing(listing_id, callback);
                         });
                 }
             }
         };
         self.generateListingSnippetHtml = function(i, listing) {
-            var days_ago = listing.days_ago != null ? listing.days_ago : self.controller.util.today() - listing.listing_date; /* paint with time proximity */
-            var days_left = listing.days_left != null ? listing.days_left : listing.closing_date - self.controller.util.today(); /* paint with time proximity */
+            var days_ago = listing.days_ago != null ? listing.days_ago : util.today() - listing.listing_date; /* paint with time proximity */
+            var days_left = listing.days_left != null ? listing.days_left : listing.closing_date - util.today(); /* paint with time proximity */
             var resultHtml = '';
             var evenOdd;
             if (isFinite(i)) {
@@ -1615,78 +1586,53 @@ $(function(){
             resultHtml += '<span class="link" id="content-results-list-item-comments-' + i + '">';
             resultHtml += listing.num_comments + ' comment' + (listing.num_comments==1?'':'s');
             resultHtml += '</span> | ';
-            resultHtml += '$' + self.controller.util.addCommas(listing.median_valuation) + ' after ';
+            resultHtml += '$' + util.addCommas(listing.median_valuation) + ' after ';
             resultHtml += '<span class="link" id="content-results-list-item-bids-' + i + '">';
             resultHtml += listing.num_bids + ' bid' + (listing.num_bids==1?'':'s');
             resultHtml += '</span> | ';
-            resultHtml += 'listed ' + self.controller.util.formatDate(listing.listing_date) + ' | ';
-            resultHtml += (listing.status == 'active') ? 'closing ' + self.controller.util.formatDate(listing.closing_date) : '';
-            resultHtml += (listing.status == 'closed') ? 'closed ' + self.controller.util.formatDate(listing.closing_date) : '';
-            resultHtml += (listing.status == 'withdrawn') ? 'withdrawn ' + self.controller.util.formatDate(listing.closing_date) : '';
+            resultHtml += 'listed ' + util.formatDate(listing.listing_date) + ' | ';
+            resultHtml += (listing.status == 'active') ? 'closing ' + util.formatDate(listing.closing_date) : '';
+            resultHtml += (listing.status == 'closed') ? 'closed ' + util.formatDate(listing.closing_date) : '';
+            resultHtml += (listing.status == 'withdrawn') ? 'withdrawn ' + util.formatDate(listing.closing_date) : '';
             resultHtml += '</div>';
             resultHtml += '</div>';
             resultHtml += '<div class="content-results-list-item-clear"></div>';
             return resultHtml;
-       }
+       };
        return self;
     }
 
     var Comments = function() {
         var self = {};
-        self.controller = null;
-        self.setup = function(controller) {
-            self.controller = controller;
-        }
-        self.execute = function(args) {
-            var listing_id = args['listing_id'];
-            var profile_id = args['profile_id'];
-            var comment_id = args['comment_id'];
-            var results;
-            $('#comment-save-message').attr('class', 'attention').html('');
-            if (comment_id && args['action'] == 'delete') {
-                self.deleteComment(comment_id, args);
-            }
-            else if (listing_id && profile_id && args['action'] == 'save') {
-                self.saveComment(listing_id, profile_id);
-            }
-            else if (listing_id) {
-                $('#comment-textarea').val('');
-                self.controller.backend.commentsForListing(listing_id, self.displayResults);
-            }
-            else if (profile_id) {
-                $('#comment-textarea').val('');
-                self.controller.backend.commentsForProfile(profile_id, self.displayResults);
-            }
-            return 'comments';
-        };
-        self.deleteComment = function(comment_id, args) {
-            delete args['action'];
-            var callback = function() {
-                self.execute(args);
-            };
-            self.controller.backend.deleteComment(comment_id, callback);
-        };
         self.saveComment = function(listing_id, profile_id){
             var commentText = $('#comment-textarea').val();
             var callback = function (comment) {
+                var keepComment = true;
                 if (comment) {
                     $('#comment-save-message').attr('class', 'confirmed').html('comment saved');
-                    $('#comment-textarea').val('');
+                    keepComment = false;
                 }
-                self.controller.backend.commentsForListing(listing_id, self.displayResults);
+                backend.commentsForListing(listing_id, comments.displayResults, keepComment);
             }
-            self.controller.backend.addComment(listing_id, profile_id, commentText, callback);
+            backend.addComment(listing_id, profile_id, commentText, callback);
         };
         self.displayNoResultsHtml = function(resultsHtml) {
+            $('#comment-save-message').attr('class', 'attention').html('');
+            $('#comment-textarea').val('');
             $('#comments-listing-snippet').html('Comments:');
             $('#comment-loggedin-add').hide();
             $('#comment-not-loggedin-msg').hide();
             $('#comments-content-results-list').html(resultsHtml);
         };
-        self.displayResults = function(results){
+        self.displayResults = function(results, keepComment){
+            if (!keepComment) {
+                $('#comment-textarea').val('');
+            }
+            $('#comment-save-message').attr('class', 'attention').html('');
+            util.displayPage('comments');
             var listing = results ? results.listing : null;
             var comments = results ? results.comments : null;
-            var profile = self.controller.user.profile;
+            var profile = user.profile;
             var resultsHtml = '';
             var comment;
             if (comments && comments.length > 0) {
@@ -1706,15 +1652,15 @@ $(function(){
             // enable editable if logged in
             if (listing) {
                 if (listing.listing_id) {
-                    $('#comments-listing-snippet').html(self.controller.listing.generateListingSnippetHtml('comments', listing));
-                    self.controller.listing.bindListingSnippet('comments', listing);
+                    $('#comments-listing-snippet').html(listings.generateListingSnippetHtml('comments', listing));
+                    listings.bindListingSnippet('comments', listing);
                 }
                 if (profile) {
                     $('#comment-loggedin-add').show();
                     $('#comment-not-loggedin-msg').hide();
                     $('#comment-save-button').show().unbind().data('listing_id',listing.listing_id).data('profile_id',profile.profile_id).bind('click',function(e){
                         e.preventDefault();
-                        self.controller.execute({page:'comments',action:'save',listing_id:$(this).data('listing_id'),profile_id:$(this).data('profile_id')});
+                        self.saveComment($(this).data('listing_id'), $(this).data('profile_id'));
                     });
                 }
                 else {
@@ -1728,31 +1674,31 @@ $(function(){
                 $('#comment-not-loggedin-msg').hide();
             }
             // bind results
-            if (comments && comments.length > 0) {
-                for (var i = 0; i < comments.length; i++) {
-                    comment = comments[i];
-                    $('#comments-item-profile-'+i).data('profile_id',comment.profile_id).unbind().bind('click', function(){
-                        self.controller.execute({page:'profile', profile_id:$(this).data('profile_id')});
-                    });           
-                    $('#comments-item-listing-'+i).data('listing_id',comment.listing_id).unbind().bind('click', function(){
-                        self.controller.execute({page:'listing', listing_id:$(this).data('listing_id')});
-                    });           
-                    if (profile && profile.profile_id == comment.profile_id) {
-                        $('#comments-item-delete-'+i)
-                            .data('comment_id', comment.comment_id)
-                            .data('profile_id', profile ? comment.profile_id : '')
-                            .data('listing_id', listing ? comment.listing_id : '')
-                            .unbind().bind('click', function(){
-                            self.controller.execute({
-                                page:'comments',
-                                action:'delete',
-                                comment_id:$(this).data('comment_id'),
-                                profile_id:$(this).data('profile_id'),
-                                listing_id:$(this).data('listing_id')
-                            });
-                        });           
-                    }
+            if (!comments || comments.length == 0) {
+                return;
+            }
+            var profile_callback = function() { backend.commentsForProfile($(this).data('profile_id'), comments.displayResults); };
+            var listings_callback = function() { backend.commentsForListing($(this).data('listing_id'), comments.displayResults); };
+            var callback = listing ? listings_callback : profile_callback;
+            var deleteComment = function() {
+                backend.deleteComment($(this).data('comment_id'), callback);
+            };
+            for (var i = 0; i < comments.length; i++) {
+                comment = comments[i];
+                $('#comments-item-profile-'+i).data('profile_id',comment.profile_id).unbind().bind('click', function(){
+                    backend.getProfile($(this).data('profile_id'), profiles.displayProfile);
+                });           
+                $('#comments-item-listing-'+i).data('listing_id',comment.listing_id).unbind().bind('click', function(){
+                    backend.getListing($(this).data('listing_id'), self.displayListing);
+                });           
+                if (!profile || profile.profile_id != comment.profile_id) { // not my profile so I can't delete
+                    continue;
                 }
+                $('#comments-item-delete-'+i)
+                    .data('comment_id', comment.comment_id)
+                    .data('profile_id', profile ? comment.profile_id : '')
+                    .data('listing_id', listing ? comment.listing_id : '')
+                    .unbind().bind('click', deleteComment);
             }
         };
         self.generateResultHtml = function(i, comment, listing, profile) {
@@ -1772,7 +1718,7 @@ $(function(){
             resultHtml += comment.profile_username;
             resultHtml += '</span>'
             resultHtml += ' on ';
-            resultHtml += self.controller.util.formatDate(comment.comment_date);
+            resultHtml += util.formatDate(comment.comment_date);
             resultHtml += listing ? '' : ' for <span class="link" id="comments-item-listing-' + i + '">' + comment.listing_title + '</span>';
             resultHtml += '</div>';
             resultHtml += '</div>'
@@ -1784,40 +1730,6 @@ $(function(){
 
     var Bids = function() {
         var self = {};
-        self.controller = null;
-        self.setup = function(controller) {
-            self.controller = controller;
-        }
-        self.execute = function(args) {
-            var listing_id = args['listing_id'];
-            var profile_id= args['profile_id'];
-            var bid_id = args['bid_id'];
-            var results;
-            if (args['action'] != 'save') {
-                self.clearBidFields();
-            }
-            $('#bid-save-message').attr('class', 'attention').html('');
-            if (bid_id && args['action'] == 'delete') {
-                self.deleteBid(bid_id, args);
-            }
-            else if (listing_id && profile_id && args['action'] == 'save') {
-                self.saveBid(listing_id, profile_id);
-            }
-            else if (listing_id) {
-                self.controller.backend.bidsForListing(listing_id, self.displayResults);
-            }
-            else if (profile_id) {
-                self.controller.backend.bidsForProfile(profile_id, self.displayResults);
-            }
-            return 'bids';
-        };
-        self.deleteBid = function(bid_id, args) {
-            delete args['action'];
-            var callback = function() {
-                self.execute(args);
-            };
-            self.controller.backend.deleteBid(bid_id, callback);
-        };
         self.saveBid = function(listing_id, profile_id){
             var raw_amt  = $('#bid-amt').val() || '';
             var raw_pct  = $('#bid-pct').val() || '';
@@ -1845,10 +1757,13 @@ $(function(){
                 if (bid) {
                     $('#bid-save-message').attr('class', 'confirmed').html('bid saved');
                     self.clearBidFields();
-                    self.controller.backend.bidsForListing(bid.listing_id, self.displayResults);
+                    backend.bidsForListing(bid.listing_id, bids.displayResults);
+                }
+                else {
+                    $('#bid-save-message').attr('class', 'attention').html('unable to save bid');
                 }
             };
-            self.controller.backend.addBid(listing_id, profile_id, bid_amt, bid_pct, bid_type, bid_rate, callback);
+            backend.addBid(listing_id, profile_id, bid_amt, bid_pct, bid_type, bid_rate, callback);
         };
         self.validateBid = function(bid_amt, bid_type, bid_rate, bid_pct, valuation) {
             var msg;
@@ -1887,15 +1802,20 @@ $(function(){
             $('#bid-calculated-valuation').html('');
         };
         self.displayNoResultsHtml = function(resultsHtml) {
+            util.displayPage('bids');
             $('#bids-form-loggedin').hide();
             $('#bids-form-not-loggedin').hide();
             $('#bids-listing-snippet').html('');
             $('#bids-content-results-list').html(resultsHtml);
         };
-        self.displayResults = function(results){
+        self.displayResults = function(results, keepBid){
+            if (!keepBid) {
+                self.clearBidFields();
+            }
+            util.displayPage('bids');
             var listing = results ? results.listing : null;
             var bids = results ? results.bids : null;
-            var profile = self.controller.user.profile;
+            var profile = user.profile;
             var resultsHtml = '';
             var bid;
             if (bids && bids.length > 0) {
@@ -1915,8 +1835,8 @@ $(function(){
             // set login visibility
             if (listing) {
                 if (listing.listing_id) {
-                    $('#bids-listing-snippet').html(self.controller.listing.generateListingSnippetHtml('bids', listing));
-                    self.controller.listing.bindListingSnippet('bids', listing);
+                    $('#bids-listing-snippet').html(listings.generateListingSnippetHtml('bids', listing));
+                    listings.bindListingSnippet('bids', listing);
                 }
                 if (listing.status != 'active') {
                     $('#bids-form-loggedin').hide();
@@ -1931,7 +1851,7 @@ $(function(){
                     $('#bids-form-not-loggedin').hide();
                     $('#bid-save-button').show().unbind().data('listing_id',listing.listing_id).data('profile_id',profile.profile_id).bind('click',function(e){
                         e.preventDefault();
-                        self.controller.execute({page:'bids',action:'save',listing_id:$(this).data('listing_id'),profile_id:$(this).data('profile_id')});
+                        self.saveBid($(this).data('listing_id'), $(this).data('profile_id'));
                     });
                     $('#bid-amt,#bid-pct,#bid-type,#bid-rate').unbind().bind('change',function(e){
                         self.recalculateValuation();
@@ -1957,31 +1877,31 @@ $(function(){
                 $('#bids-form-not-loggedin').hide();
                 $('#bids-listing-snippet').html('');
             }
-            if (bids && bids.length > 0) {
-                for (var i = 0; i < bids.length; i++) {
-                    bid = bids[i];
-                    $('#bids-item-profile-'+i).data('profile_id',bid.profile_id).unbind().bind('click', function(){
-                        self.controller.execute({page:'profile', profile_id:$(this).data('profile_id')});
-                    });           
-                    $('#bids-item-listing-'+i).data('listing_id',bid.listing_id).unbind().bind('click', function(){
-                        self.controller.execute({page:'listing', listing_id:$(this).data('listing_id')});
-                    });           
-                    if (profile && profile.profile_id == bid.profile_id) {
-                        $('#bids-item-delete-'+i)
-                            .data('bid_id', bid.bid_id)
-                            .data('profile_id', profile ? bid.profile_id : '')
-                            .data('listing_id', listing ? bid.listing_id : '')
-                            .unbind().bind('click', function(){
-                            self.controller.execute({
-                                page:'bids',
-                                action:'delete',
-                                bid_id:$(this).data('bid_id'),
-                                profile_id:$(this).data('profile_id'),
-                                listing_id:$(this).data('listing_id')
-                            });
-                        });           
-                    }
+            if (!bids || bids.length == 0) {
+                return;
+            }
+            var profile_callback = function() { backend.bidsForProfile($(this).data('profile_id'), bids.displayResults); };
+            var listings_callback = function() { backend.bidsForListing($(this).data('listing_id'), bids.displayResults); };
+            var callback = listing ? listings_callback : profile_callback;
+            var deleteBid = function() {
+                backend.deleteBid($(this).data('bid_id'), callback);
+            };
+            for (var i = 0; i < bids.length; i++) {
+                bid = bids[i];
+                $('#bids-item-profile-'+i).data('profile_id',bid.profile_id).unbind().bind('click', function(){
+                    backend.getProfile($(this).data('profile_id'), profiles.displayProfile);
+                });           
+                $('#bids-item-listing-'+i).data('listing_id',bid.listing_id).unbind().bind('click', function(){
+                    backend.getListing($(this).data('listing_id'), self.displayListing);
+                });           
+                if (!profile || profile.profile_id != bid.profile_id) {
+                    continue;
                 }
+                $('#bids-item-delete-'+i)
+                    .data('bid_id', bid.bid_id)
+                    .data('profile_id', profile ? bid.profile_id : '')
+                    .data('listing_id', listing ? bid.listing_id : '')
+                    .unbind().bind('click', deleteBid);
             }
         };
         self.formatBidType = function(bid_type) {
@@ -1998,9 +1918,9 @@ $(function(){
             resultHtml += '<div class="content-results-list-item-num">' + bid.num + '</div>';
             resultHtml += '<div class="content-results-list-item-title">';
             resultHtml += 'Valued at ';
-            resultHtml += '$' + self.controller.util.addCommas(bid.valuation);
+            resultHtml += '$' + util.addCommas(bid.valuation);
             resultHtml += ' with a bid of ';
-            resultHtml += '$' + self.controller.util.addCommas(bid.amount);
+            resultHtml += '$' + util.addCommas(bid.amount);
             resultHtml += ' for ' + bid.equity_pct + '%';
             resultHtml += ' with ' + self.formatBidType(bid.bid_type);
             resultHtml += bid.interest_rate ? ' @ ' + bid.interest_rate + '%' : '';
@@ -2015,7 +1935,7 @@ $(function(){
             resultHtml += bid.profile_username;
             resultHtml += '</span>'
             resultHtml += ' on ';
-            resultHtml += self.controller.util.formatDate(bid.bid_date);
+            resultHtml += util.formatDate(bid.bid_date);
             resultHtml += listing ? '' : ' for <span class="link" id="bids-item-listing-' + i + '">' + bid.listing_title + '</span>';
             resultHtml += '</div>';
             resultHtml += '</div>'
@@ -2033,7 +1953,7 @@ $(function(){
             var valuation = self.calculateValuation(bid_amt, bid_pct, true);
             var validationMsg = self.validateBid(bid_amt, bid_type, bid_rate, bid_pct, valuation);
             $('#bid-save-message').attr('class', 'attention').html(validationMsg);
-            var displayVal = valuation ? self.controller.util.addCommas(valuation) : '';
+            var displayVal = valuation ? util.addCommas(valuation) : '';
             $('#bid-calculated-valuation').html(displayVal);
         };
         self.calculateValuation = function(amount, equity_pct, thousands) {
@@ -2052,12 +1972,8 @@ $(function(){
         return self;
     };
 
-    var RestBackend = function() {
+    var Backend = function() {
         var self = {};
-        self.controller = null;
-        self.setup = function(controller) {
-            self.controller = controller;
-        }
         // profile methods
         self.getProfile = function(profile_id, callback) {
             var url = '/user?id=' + profile_id;
@@ -2180,73 +2096,17 @@ $(function(){
          return self;
     };
 
-    var Controller = function() {
-        var self = {};
-        self.managed = {};
-        self.actionPages = {};
-        self.defaultPage = 'search';
-        self.setup = function() {
-        };
-        self.addManaged = function(name, obj) {
-            self.managed[name] = obj;
-            self[name] = obj; /* shortcut */
-        };
-        self.getManaged = function(name) {
-            return self.managed[name];
-        };
-        self.setupManaged = function() {
-            for (var i in self.managed) {
-                self.managed[i].setup(self);
-            }
-            controller.loadActionPages();
-        };
-        self.execute = function(args) {
-            if (!args) {
-                args = { page: 'search' };
-            }
-            var page = args['page'];
-            if (!page) {
-                page = self.defaultPage;
-            }
-            if (page in self.actionPages) {
-                page = self.actionPages[page](args);
-            }
-            self.displayPage(page);
-        };
-        self.displayPage = function(page) {
-            $('.page').filter(':visible').hide(); // hide all
-            var pageSel = '#' + page + 'page';
-            $(pageSel).show();
-        };
-        self.loadActionPages = function() {
-            self.actionPages = {
-                login: self.user.login,
-                logout: self.user.logout,
-                search: self.search.execute,
-                listing: self.listing.execute,
-                comments: self.comments.execute,
-                bids: self.bids.execute,
-                profile: self.profile.execute
-            };
-        };
-        return self;
-    };
-
-    var controller = new Controller();
-    window.controller = controller;
-    controller.setup();
-    controller.addManaged('util', new Util());
-    controller.addManaged('backend', new RestBackend());
-    controller.addManaged('user', new User());
-    controller.addManaged('uploader', new Uploader());
-    controller.addManaged('header', new Header());
-    controller.addManaged('search', new Search());
-    controller.addManaged('profile', new Profile());
-    controller.addManaged('listing', new Listing());
-    controller.addManaged('comments', new Comments());
-    controller.addManaged('bids', new Bids());
-    controller.setupManaged();
-    controller.execute();
+    window.util = new Util();
+    window.backend = new Backend();
+    window.user = new User();
+    window.uploader = new Uploader();
+    window.header = new Header();
+    window.search = new Search();
+    window.profiles = new Profiles();
+    window.listings = new Listings();
+    window.comments = new Comments();
+    window.bids = new Bids();
+    window.search.doSearch();
 
 });
 </script>
@@ -2721,7 +2581,7 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
     </div>
 
     <div id="searchpage" class="content page">
-        <div class="content-search">
+        <div class="content-search" id="content-search-box">
             <input id="content-search-keywords" name="keywords" type="text" size="30"/>
             <button id="content-search-submit">search</button>
         </div>
