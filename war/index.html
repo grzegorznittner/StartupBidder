@@ -842,6 +842,12 @@ $(function(){
             }
             return self.todayCache;
         };
+        self.todayPlusDays = function(days) {
+            var today = new Date();
+            today.setDate(today.getDate() + days);
+            var numericDate = self.numericFromDateObj(today);
+            return numericDate;
+        }
         self.randomElement = function(array) {
             return array[Math.floor(Math.random()*array.length)];
         };
@@ -890,7 +896,7 @@ $(function(){
         self.logout_url = '/_ah/logout?continue=%2F';
         self.setProfile = function(profile) {
             self.profile = profile;
-            header.displayUser(self);
+            header.displayUser();
         };
         self.hasVoted = function(listing_id) {
             return false;
@@ -901,7 +907,87 @@ $(function(){
         self.logout = function() {
             document.location = self.logout_url;
         };
-        return self;
+        self.generateUserSnippetHtml = function(i, userjson) {
+            var days_ago = userjson.days_ago !== undefined ? userjson.days_ago : 0;
+            var resultHtml = '';
+            var evenOdd;
+            if (isFinite(i)) {
+                evenOdd = (i % 2 == 0) ? 'even' : 'odd';
+                resultHtml += '<div class="content-results-list-item content-results-list-item-' + evenOdd + '">';
+                resultHtml += '<div class="content-results-list-item-num">' + userjson.num + '</div>';
+                resultHtml += '<div class="content-results-list-item-upvote" id="user-search-results-list-item-upvote-' + i + '"></div>';
+            }
+            else {
+                resultHtml += '<div class="content-results-list-item>';
+                resultHtml += '<div class="content-results-list-item-num"></div>';
+                resultHtml += '<div class="content-results-list-item-upvote-filler"></div>';
+            }
+            resultHtml += '<div class="content-results-list-item-title" id="user-search-results-list-item-name-' + i + '">';
+            resultHtml += userjson.name + (userjson.organization ? ' of '+userjson.organization : '');
+            resultHtml += '</div>';
+            resultHtml += '<div class="content-results-list-item-profile link" id="user-search-results-list-item-profile-' + i + '">';
+            resultHtml += '(' + userjson.username + ')';
+            resultHtml += '</div>';
+            resultHtml += '<div class="content-results-list-item-clear"></div>';
+            resultHtml += '<div class="content-results-list-item-detail">';
+            resultHtml += '<span id="user-search-results-list-item-votes-' + i + '">' + (userjson.num_votes !== undefined ? userjson.num_votes : 0)  + '</span>' + ' votes | ';
+            resultHtml += '<span id="user-search-results-list-item-listings-' + i + '">' + userjson.num_listings + '</span>' + ' listing' + (userjson.num_listings>0?'s':'') + ' | ';
+            resultHtml += '<span id="user-search-results-list-item-bids-' + i + '">' + userjson.num_bids + '</span>' + ' bid' + (userjson.num_bids>0?'s':'') + ' | ';
+            resultHtml += '<span id="user-search-results-list-item-comments-' + i + '">' + userjson.num_comments + '</span>' + ' comment' + (userjson.num_comments>0?'s':'') + ' | ';
+            resultHtml += (days_ago == 0) ? 'active today' : 'active ' + days_ago + ' day' + (days_ago>1?'s':'')  + ' ago';
+            resultHtml += ' | ';
+            resultHtml += 'joined ' + util.formatDate(userjson.joined_date) + ' | ';
+            resultHtml += 'status ' + userjson.status;
+            resultHtml += userjson.investor ? ' | <b>investor</b>' : '';
+            resultHtml += '</div>';
+            resultHtml += '</div>';
+            resultHtml += '<div class="content-results-list-item-clear"></div>';
+            return resultHtml;
+       };
+       self.bindUserSnippet = function(i, userjson) {
+            var upvote_item = document.getElementById('user-search-results-list-item-upvote-'+i);
+            $('#user-search-results-list-item-profile-'+i).data('profile_id',userjson.profile_id).unbind().bind('click', function(){
+                backend.getProfile($(this).data('profile_id'), profiles.displayProfile);
+            });           
+            $('#user-search-results-list-item-comments-'+i).data('profile_id',userjson.profile_id).unbind().bind('click', function(){
+                backend.listingsForProfile($(this).data('profile_id'), listings.displayResults);
+            }); 
+            $('#user-search-results-list-item-comments-'+i).data('profile_id',userjson.profile_id).unbind().bind('click', function(){
+                backend.commentsForProfile($(this).data('profile_id'), comments.displayResults);
+            }); 
+            $('#user-search-results-list-item-bids-'+i).data('profile_id',userjson.profile_id).unbind().bind('click', function(){
+                backend.bidsForProfile($(this).data('profile_id'), bids.displayResults);
+            });
+            $(upvote_item)
+                .data('index', i)
+                .data('profile_id', userjson.profile_id)
+                .data('num_votes', (userjson.num_votes !== undefined ? userjson.num_votes : 0));
+            if (!userjson.votable) {
+                $(upvote_item).css('visibility', 'hidden').unbind();
+                return;
+            }
+            $(upvote_item)
+                .unbind()
+                .bind('click', function(){
+                    var index = $(this).data('index');
+                    var profile_id = $(this).data('profile_id');
+                    var num_votes = $(this).data('num_votes');
+                    var list_item = this;
+                    var votes_item = document.getElementById('user-search-results-list-item-votes-'+index);
+                    var callback = function(json) {
+                        if (json) {
+                            var new_votes = num_votes + 1;
+                            $(votes_item).html(new_votes);
+                            $(list_item)
+                                .data('num_votes', new_votes)
+                                .css('visibility', 'hidden')
+                                .unbind(); // don't let them click twice
+                        }
+                    };
+                    backend.upvoteUser(profile_id, callback);
+                });
+        };
+       return self;
     };
 
     var Uploader = function() {
@@ -930,7 +1016,7 @@ $(function(){
         var self = {};
         self.setup = function() {
             $('#header-logo,#header-title-link').unbind().bind('click', function(){
-                search.doSearch();
+                searchListings.doSearch();
             });
             $('#header-menu-command-login').unbind().bind('click', function(){
                 user.login();
@@ -942,31 +1028,34 @@ $(function(){
                 listings.newListing();
             });
             $('#header-menu-bar-top').unbind().bind('click', function(){
-                search.doSearch({search_type:'top'});
+                searchListings.doSearch({search_type:'top'});
             });
             $('#header-menu-bar-valuation').unbind().bind('click', function(){
-                search.doSearch({search_type:'valuation'});
+                searchListings.doSearch({search_type:'valuation'});
             });
             $('#header-menu-bar-active').unbind().bind('click', function(){
-                search.doSearch({search_type:'active'});
+                searchListings.doSearch({search_type:'active'});
             });
             $('#header-menu-bar-popular').unbind().bind('click', function(){
-                search.doSearch({search_type:'popular'});
+                searchListings.doSearch({search_type:'popular'});
             });
             $('#header-menu-bar-discussed').unbind().bind('click', function(){
-                search.doSearch({search_type:'discussed'});
+                searchListings.doSearch({search_type:'discussed'});
             });
             $('#header-menu-bar-latest').unbind().bind('click', function(){
-                search.doSearch({search_type:'latest'});
+                searchListings.doSearch({search_type:'latest'});
             });
             $('#header-menu-bar-closing-soon').unbind().bind('click', function(){
-                search.doSearch({search_type:'closing'});
+                searchListings.doSearch({search_type:'closing'});
+            });
+            $('#header-menu-bar-top-users').unbind().bind('click', function(){
+                searchUsers.doSearch({search_type:'top'});
             });
             $('#header-menu-bar-faq').unbind().bind('click', function(){
                 util.displayPage('faq');
             });
         };
-        self.displayUser = function(user) {
+        self.displayUser = function() {
             if (user.profile && user.logout_url) {
                 $('#header-menu-name-login').hide();
                 $('#header-menu-name-username').html(user.profile.username).data('profile_id',user.profile.profile_id).show().unbind().bind('click', function(){
@@ -993,16 +1082,16 @@ $(function(){
         return self;
     };
 
-    var Search = function() {
+    var SearchListings = function() {
         var self = {};
         self.defaultSearchType = 'top';
         self.setup = function() {
             $('#content-search-submit').unbind().bind('click', function(){
-                search.doSearch({search_type:'keyword'});
+                searchListings.doSearch({search_type:'keyword'});
             });
             $('#content-search-keywords').unbind().bind('keyup', function(e){
                 if (e.keyCode == 13) { // return key
-                    search.doSearch({search_type:'keyword'});
+                    searchListings.doSearch({search_type:'keyword'});
                 }
             });
         };
@@ -1023,8 +1112,8 @@ $(function(){
             else {
                 $('#stats').hide();
             }
-            backend.searchListings(args.search_type, keywords, args.profile_id, args.start_index, args.max_results, search.displayResultsJson);
-            util.displayPage('search');
+            backend.searchListings(args.search_type, keywords, args.profile_id, args.start_index, args.max_results, searchListings.displayResultsJson);
+            util.displayPage('searchlistings');
         };
         self.displayStats = function(stats) {
             var pngStr = self.statsPngDataURI(200, 100, stats.values);
@@ -1149,7 +1238,7 @@ $(function(){
             }
             // set pagination
             var args = {
-                page: 'search',
+                page: 'searchlistings',
                 search_type: search_type,
                 keywords: keywords,
                 profile_id: profile_id,
@@ -1162,7 +1251,7 @@ $(function(){
                 $('#search-prev-results').show().unbind()
                     .data('args', prevargs)
                     .bind('click',function(){
-                        search.doSearch($(this).data('args'));
+                        searchListings.doSearch($(this).data('args'));
                     });
             }
             else {
@@ -1174,11 +1263,109 @@ $(function(){
                 $('#search-next-results').show().unbind()
                     .data('args', nextargs)
                     .bind('click',function(){
-                        search.doSearch($(this).data('args'));
+                        searchListings.doSearch($(this).data('args'));
                     });
             }
             else {
                 $('#search-next-results').hide();
+            }
+        };
+        return self;
+    };
+
+    var SearchUsers = function() {
+        var self = {};
+        self.defaultSearchType = 'top';
+        self.setup = function() {
+            $('#user-search-submit').unbind().bind('click', function(){
+                searchUsers.doSearch({search_type:'keyword'});
+            });
+            $('#user-search-keywords').unbind().bind('keyup', function(e){
+                if (e.keyCode == 13) { // return key
+                    searchUsers.doSearch({search_type:'keyword'});
+                }
+            });
+        };
+        self.setup();
+        self.doSearch = function(args) {
+            args = args || {};
+            args.search_type = args.search_type || self.defaultSearchType;
+            args.start_index = args.start_index || 0;
+            args.max_results = args.max_results || 20;
+            var keywords = $('#user-search-keywords').val();
+            if (keywords) {
+                keywords = keywords.replace(/\btype:\w*/g, '').replace(/\s+/g, ' ').trim();
+            }
+            $('#user-search-keywords').val(keywords);
+            backend.searchUsers(args.search_type, keywords, args.start_index, args.max_results, searchUsers.displayResultsJson);
+            util.displayPage('searchusers');
+        };
+        self.displayResultsJson = function(results_json) {
+            if (!results_json) {
+                self.displayResultsHtml('<i>loading...</i>');
+                return;
+            }
+            if (!results_json.users_props) { // FIXME
+                results_json.users_props = {
+                    start_index: 0,
+                    num_results: !results_json.users || results_json.users.length,
+                    total_results: !results_json.users || results_json.users.length
+                };
+            }
+            user.setProfile(results_json.loggedin_profile);
+            self.displayResults(results_json.users, results_json.search_type, results_json.keywords, results_json.users_props.start_index,
+                results_json.users_props.num_results, results_json.users_props.total_results);
+        };
+        self.displayResultsHtml = function(resultsHtml) {
+            $('#user-search-results-list').hide().html(resultsHtml).slideDown();
+        };
+        self.displayResults = function(results, search_type, keywords, start_index, num_results, total_results){
+            var resultsHtml = '';
+            var userjson;
+            for (var i = 0; i < results.length; i++) { // create results
+                userjson = results[i];
+                resultsHtml += user.generateUserSnippetHtml(i, userjson);
+            }
+            if (resultsHtml == '') {
+                resultsHtml = '<i>no users found</i>';
+            }
+            console.log('foo');
+            self.displayResultsHtml(resultsHtml);
+            for (var j = 0; j < results.length; j++) { // bind results
+                userjson = results[j];
+                user.bindUserSnippet(j, userjson);
+            }
+            // set pagination
+            var args = {
+                page: 'searchusers',
+                search_type: search_type,
+                keywords: keywords,
+                start_index: start_index
+            }
+            var prevargs, nextargs;
+            if (start_index > 0) {
+                prevargs = $.extend(true, {}, args);
+                prevargs.start_index = start_index - 20;
+                $('#user-search-prev-results').show().unbind()
+                    .data('args', prevargs)
+                    .bind('click',function(){
+                        searchUsers.doSearch($(this).data('args'));
+                    });
+            }
+            else {
+                $('#user-search-prev-results').hide();
+            }
+            if (start_index + num_results < total_results) {
+                nextargs = $.extend(true, {}, args);
+                nextargs.start_index = start_index + 20;
+                $('#user-search-next-results').show().unbind()
+                    .data('args', nextargs)
+                    .bind('click',function(){
+                        searchUsers.doSearch($(this).data('args'));
+                    });
+            }
+            else {
+                $('#user-search-next-results').hide();
             }
         };
         return self;
@@ -1310,8 +1497,8 @@ $(function(){
             listing.num_comments =  $('#listing-edit-num-comments').val();
             listing.profile_id =  $('#listing-edit-profile-id').val();
             listing.profile_username =  $('#listing-edit-profile-username').val();
-            listing.listing_date =  $('#listing-edit-listing-date').val();
-            listing.closing_date = $('#listing-edit-closing-date').val();
+            listing.listing_date = $('#listing-edit-listing-date').val();
+            listing.closing_date = $('#listing-edit-closing-date').html();
             listing.status = $('#listing-edit-status').val();
             var raw_amt = $('#listing-edit-suggested-amt').val().replace(/[^\d]/g,'');
             var raw_pct = $('#listing-edit-suggested-pct').val().replace(/[^\d]/g,'');
@@ -1342,7 +1529,7 @@ $(function(){
             listing.profile_id = profile.profile_id;
             listing.profile_username = profile.username;
             listing.listing_date = util.today();
-            listing.closing_date = util.today();
+            listing.closing_date = util.todayPlusDays(30);
             listing.status = 'new';
             listing.suggested_amt = 10000;
             listing.suggested_pct = 10;
@@ -1418,7 +1605,7 @@ $(function(){
                 $('#listing-edit-profile-id').val(listing.profile_id);
                 $('#listing-edit-profile-username').val(listing.profile_username);
                 $('#listing-edit-listing-date').val(listing.listing_date);
-                $('#listing-edit-closing-date').val(listing.closing_date);
+                $('#listing-edit-closing-date').html(listing.closing_date);
                 $('#listing-edit-status').val(listing.status);
                 $('#listing-edit-suggested-amt').val(util.addCommas(listing.suggested_amt));
                 $('#listing-edit-suggested-pct').val(listing.suggested_pct);
@@ -1551,8 +1738,8 @@ $(function(){
             }
         };
         self.generateListingSnippetHtml = function(i, listing) {
-            var days_ago = listing.days_ago != null ? listing.days_ago : util.today() - listing.listing_date; /* paint with time proximity */
-            var days_left = listing.days_left != null ? listing.days_left : listing.closing_date - util.today(); /* paint with time proximity */
+            var days_ago = listing.days_ago;
+            var days_left = listing.days_left;
             var resultHtml = '';
             var evenOdd;
             if (isFinite(i)) {
@@ -1925,10 +2112,10 @@ $(function(){
             resultHtml += ' with ' + self.formatBidType(bid.bid_type);
             resultHtml += bid.interest_rate ? ' @ ' + bid.interest_rate + '%' : '';
             resultHtml += '</div>';
-            resultHtml += (profile && profile.profile_id == bid.profile_id)
-                              ? '<div class="content-results-list-item-profile link" id="bids-item-delete-' + i + '">(withdraw bid)</div>'
-                              : '';
-            resultHtml += '<div class="content-results-list-item-clear"></div>';
+//            resultHtml += (profile && profile.profile_id == bid.profile_id)
+//                              ? '<div class="content-results-list-item-profile link" id="bids-item-delete-' + i + '">(withdraw bid)</div>'
+//                              : '';
+//            resultHtml += '<div class="content-results-list-item-clear"></div>';
             resultHtml += '<div class="content-results-list-item-detail">';
             resultHtml += 'by ';
             resultHtml += '<span class="link" id="bids-item-profile-' + i + '">'
@@ -1994,6 +2181,12 @@ $(function(){
         self.deactivateProfile = function(profile_id, callback) {
             var url = '/user/deactivate/' + profile_id;
             $.post(url, callback);
+        };
+        self.searchUsers = function(searchType, keywords, start_index, max_results, callback) {
+            searchType = 'all'; // FIXME
+            var pathSuffix = searchType + '/?max_results=20';
+            var url = '/users/' + pathSuffix;
+            $.getJSON(url, callback);
         };
         // listing methods
         self.getListing = function(listing_id, callback) {
@@ -2101,12 +2294,13 @@ $(function(){
     window.user = new User();
     window.uploader = new Uploader();
     window.header = new Header();
-    window.search = new Search();
+    window.searchListings = new SearchListings();
+    window.searchUsers = new SearchUsers();
     window.profiles = new Profiles();
     window.listings = new Listings();
     window.comments = new Comments();
     window.bids = new Bids();
-    window.search.doSearch();
+    window.searchListings.doSearch();
 
 });
 </script>
@@ -2571,7 +2765,9 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
                 -->
                 <span class="link" id="header-menu-bar-latest">new</span>
                 <span> | </span>
-                <span class="link" id="header-menu-bar-closing-soon">closing soon</span>
+                <span class="link" id="header-menu-bar-closing-soon">closing</span>
+                <span> | </span>
+                <span class="link" id="header-menu-bar-top-users">top users</span>
                 <span> | </span>
                 <span class="link" id="header-menu-bar-faq">faq</span>
                 <span class="header-menu-bar-submit-spacer" id="header-menu-bar-submit-spacer"> | </span>
@@ -2580,7 +2776,7 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
         </div>
     </div>
 
-    <div id="searchpage" class="content page">
+    <div id="searchlistingspage" class="content page">
         <div class="content-search" id="content-search-box">
             <input id="content-search-keywords" name="keywords" type="text" size="30"/>
             <button id="content-search-submit">search</button>
@@ -2604,6 +2800,21 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
                 <span class="link search-cursor" id="search-next-results">next</span>
             </div>
             <div class="content-results-list-item-clear"></div>
+        </div>
+    </div>
+
+    <div id="searchuserspage" class="content page">
+        <div class="content-search" id="user-search-box">
+            <input id="user-search-keywords" name="keywords" type="text" size="30"/>
+            <button id="user-search-submit">search</button>
+        </div>
+        <div class="content-results">
+            <div id="user-search-results-list" class="content-results-list"></div>
+            <div class="content-results-footer">
+                <span class="link search-cursor" id="user-search-prev-results">prev</span>
+                <span class="link search-cursor" id="user-search-next-results">next</span>
+            </div>
+            <div class="user-search-results-list-item-clear"></div>
         </div>
     </div>
 
@@ -2785,9 +2996,9 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
                     <div class="content-results-list-item-clear"></div>
                     <div class="content-results-list-item-detail">
 <pre>
-Used by search for the 'top' query:
+Used by search for the 'top listings' query:
 
-p = votes (points) from users.
+p = votes from users
 b = number of bids
 c = number of comments
 v = median valuation (normalized / $100,000)
@@ -2835,6 +3046,31 @@ Reference:
                     </div>
                 </div>
                 <div class="content-results-list-item-clear"></div>
+                <div class="content-results-list-item content-results-list-item-even">
+                    <div class="content-results-list-item-num">6.</div>
+                    <div class="content-results-list-item-upvote-filler"></div>
+                    <div class="content-results-list-item-title">
+                        What is the algorithm you use to rank users?
+                    </div>
+                    <div class="content-results-list-item-clear"></div>
+                    <div class="content-results-list-item-detail">
+<pre>
+Ranking is similar as to that done for the 'top listings' query, except from a user standpoint:
+
+p = votes from other users
+b = number of bids placed
+c = number of comments in total
+v = median valuation of bids (normalized / $100,000)
+t = time since last activity in days
+s = score
+
+putting it together:
+
+s = (p + b + c + v) / (t + 2)^1.5
+</pre>
+                    </div>
+                </div>
+                <div class="content-results-list-item-clear"></div>
              </div>
         </div>
     </div>
@@ -2864,7 +3100,7 @@ Reference:
                 <div class="content-form-clear"></div>
 
                 <div class="content-form-line">Closing date </div>
-                <div class="content-form-inputline"><input id="listing-edit-closing-date" name="closing_date" type="text" size="10" maxlength="10" value="YYYY-MM-DD"/></div>
+                <div class="content-form-inputline"><span id="listing-edit-closing-date"></span></div>
                 <div class="content-form-clear"></div>
 
                 <div class="content-form-line">Suggested bid of </div>
