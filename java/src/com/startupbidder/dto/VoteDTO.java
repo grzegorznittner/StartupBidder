@@ -75,4 +75,45 @@ public class VoteDTO extends AbstractDTO {
 		vote.setValue((Integer)entity.getProperty("value"));
 		return vote;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result
+				+ ((commentedOn == null) ? 0 : commentedOn.hashCode());
+		result = prime * result + ((listing == null) ? 0 : listing.hashCode());
+		result = prime * result + ((user == null) ? 0 : user.hashCode());
+		result = prime * result + value;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		VoteDTO other = (VoteDTO) obj;
+		if (commentedOn == null) {
+			if (other.commentedOn != null)
+				return false;
+		} else if (!commentedOn.equals(other.commentedOn))
+			return false;
+		if (listing == null) {
+			if (other.listing != null)
+				return false;
+		} else if (!listing.equals(other.listing))
+			return false;
+		if (user == null) {
+			if (other.user != null)
+				return false;
+		} else if (!user.equals(other.user))
+			return false;
+		if (value != other.value)
+			return false;
+		return true;
+	}
 }

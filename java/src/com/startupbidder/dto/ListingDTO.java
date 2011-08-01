@@ -2,6 +2,8 @@ package com.startupbidder.dto;
 
 import java.util.Date;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.google.appengine.api.datastore.Entity;
 
 public class ListingDTO extends AbstractDTO {
@@ -113,7 +115,7 @@ public class ListingDTO extends AbstractDTO {
 		listing.setProperty("listedOn", this.listedOn);
 		listing.setProperty("name", this.name);
 		listing.setProperty("owner", this.owner);
-		listing.setProperty("state", this.state.toString());
+		listing.setProperty("state", this.state != null ? this.state.toString() : null);
 		listing.setProperty("suggestedAmount", this.suggestedAmount);
 		listing.setProperty("suggestedPercentage", this.suggestedPercentage);
 		listing.setProperty("suggestedValuation", this.suggestedValuation);
@@ -128,11 +130,76 @@ public class ListingDTO extends AbstractDTO {
 		listing.listedOn = (Date)entity.getProperty("listedOn");
 		listing.name = (String)entity.getProperty("name");
 		listing.owner = (String)entity.getProperty("owner");
-		listing.state = ListingDTO.State.valueOf((String)entity.getProperty("state"));
+		if (!StringUtils.isEmpty((String)entity.getProperty("state"))) {
+			listing.state = ListingDTO.State.valueOf((String)entity.getProperty("state"));
+		}
 		listing.suggestedAmount = (Integer)entity.getProperty("suggestedAmount");
 		listing.suggestedPercentage = (Integer)entity.getProperty("suggestedPercentage");
 		listing.suggestedValuation = (Integer)entity.getProperty("suggestedValuation");
 		listing.summary = (String)entity.getProperty("summary");
 		return listing;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result
+				+ ((closingOn == null) ? 0 : closingOn.hashCode());
+		result = prime * result
+				+ ((listedOn == null) ? 0 : listedOn.hashCode());
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((owner == null) ? 0 : owner.hashCode());
+		result = prime * result + ((state == null) ? 0 : state.hashCode());
+		result = prime * result + suggestedAmount;
+		result = prime * result + suggestedPercentage;
+		result = prime * result + suggestedValuation;
+		result = prime * result + ((summary == null) ? 0 : summary.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ListingDTO other = (ListingDTO) obj;
+		if (closingOn == null) {
+			if (other.closingOn != null)
+				return false;
+		} else if (!closingOn.equals(other.closingOn))
+			return false;
+		if (listedOn == null) {
+			if (other.listedOn != null)
+				return false;
+		} else if (!listedOn.equals(other.listedOn))
+			return false;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		if (owner == null) {
+			if (other.owner != null)
+				return false;
+		} else if (!owner.equals(other.owner))
+			return false;
+		if (state != other.state)
+			return false;
+		if (suggestedAmount != other.suggestedAmount)
+			return false;
+		if (suggestedPercentage != other.suggestedPercentage)
+			return false;
+		if (suggestedValuation != other.suggestedValuation)
+			return false;
+		if (summary == null) {
+			if (other.summary != null)
+				return false;
+		} else if (!summary.equals(other.summary))
+			return false;
+		return true;
 	}
 }

@@ -2,6 +2,8 @@ package com.startupbidder.dto;
 
 import java.util.Date;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.google.appengine.api.datastore.Entity;
 
 public class UserDTO extends AbstractDTO {
@@ -163,7 +165,7 @@ public class UserDTO extends AbstractDTO {
 		user.setProperty("organization", this.organization);
 		user.setProperty("title", this.title);
 		user.setProperty("twitter", this.twitter);
-		user.setProperty("status", this.status.toString());
+		user.setProperty("status", this.status != null ? this.status.toString() : null);
 		return user;
 	}
 	
@@ -177,13 +179,119 @@ public class UserDTO extends AbstractDTO {
 		user.setInvestor((Boolean)entity.getProperty("investor"));
 		user.setJoined((Date)entity.getProperty("joined"));
 		user.setLastLoggedIn((Date)entity.getProperty("lastLoggedIn"));
-		user.setModified((Date)entity.getProperty("linkedin"));
-		user.setNickname((String)entity.getProperty("modified"));
-		user.setOrganization((String)entity.getProperty("nickname"));
-		user.setTitle((String)entity.getProperty("organization"));
+		user.setLinkedin((String)entity.getProperty("linkedin"));
+		user.setModified((Date)entity.getProperty("modified"));
+		user.setNickname((String)entity.getProperty("nickname"));
+		user.setOrganization((String)entity.getProperty("organization"));
+		user.setTitle((String)entity.getProperty("title"));
 		user.setTwitter((String)entity.getProperty("twitter"));
-		user.setStatus(UserDTO.Status.valueOf((String)entity.getProperty("status")));
+		if (!StringUtils.isEmpty((String)entity.getProperty("status"))) {
+			user.setStatus(UserDTO.Status.valueOf((String)entity.getProperty("status")));
+		}
 		return user;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((email == null) ? 0 : email.hashCode());
+		result = prime * result
+				+ ((facebook == null) ? 0 : facebook.hashCode());
+		result = prime * result + (investor ? 1231 : 1237);
+		result = prime * result + ((joined == null) ? 0 : joined.hashCode());
+		result = prime * result
+				+ ((lastLoggedIn == null) ? 0 : lastLoggedIn.hashCode());
+		result = prime * result
+				+ ((linkedin == null) ? 0 : linkedin.hashCode());
+		result = prime * result
+				+ ((modified == null) ? 0 : modified.hashCode());
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result
+				+ ((nickname == null) ? 0 : nickname.hashCode());
+		result = prime * result + ((openId == null) ? 0 : openId.hashCode());
+		result = prime * result
+				+ ((organization == null) ? 0 : organization.hashCode());
+		result = prime * result + ((status == null) ? 0 : status.hashCode());
+		result = prime * result + ((title == null) ? 0 : title.hashCode());
+		result = prime * result + ((twitter == null) ? 0 : twitter.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		UserDTO other = (UserDTO) obj;
+		if (email == null) {
+			if (other.email != null)
+				return false;
+		} else if (!email.equals(other.email))
+			return false;
+		if (facebook == null) {
+			if (other.facebook != null)
+				return false;
+		} else if (!facebook.equals(other.facebook))
+			return false;
+		if (investor != other.investor)
+			return false;
+		if (joined == null) {
+			if (other.joined != null)
+				return false;
+		} else if (!joined.equals(other.joined))
+			return false;
+		if (lastLoggedIn == null) {
+			if (other.lastLoggedIn != null)
+				return false;
+		} else if (!lastLoggedIn.equals(other.lastLoggedIn))
+			return false;
+		if (linkedin == null) {
+			if (other.linkedin != null)
+				return false;
+		} else if (!linkedin.equals(other.linkedin))
+			return false;
+		if (modified == null) {
+			if (other.modified != null)
+				return false;
+		} else if (!modified.equals(other.modified))
+			return false;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		if (nickname == null) {
+			if (other.nickname != null)
+				return false;
+		} else if (!nickname.equals(other.nickname))
+			return false;
+		if (openId == null) {
+			if (other.openId != null)
+				return false;
+		} else if (!openId.equals(other.openId))
+			return false;
+		if (organization == null) {
+			if (other.organization != null)
+				return false;
+		} else if (!organization.equals(other.organization))
+			return false;
+		if (status != other.status)
+			return false;
+		if (title == null) {
+			if (other.title != null)
+				return false;
+		} else if (!title.equals(other.title))
+			return false;
+		if (twitter == null) {
+			if (other.twitter != null)
+				return false;
+		} else if (!twitter.equals(other.twitter))
+			return false;
+		return true;
 	}
 	
 }
