@@ -606,6 +606,7 @@ public class ServiceFacade {
 		if (loggedInUser == null) {
 			return null;
 		}
+		listing.setState(ListingDTO.State.ACTIVE.toString());
 		listing.setOwner(loggedInUser.getId());
 		ListingVO newListing = DtoToVoConverter.convert(getDAO().createListing(VoToDtoConverter.convert(listing)));
 		computeListingData(loggedInUser, newListing);

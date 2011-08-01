@@ -6,7 +6,7 @@ import com.google.appengine.api.datastore.Entity;
 
 public class ListingDTO extends AbstractDTO {
 
-	public enum State {CREATED, ACTIVE, CLOSED, WITHDRAWN};
+	public enum State {NEW, CREATED, ACTIVE, CLOSED, WITHDRAWN};
 	
 	private String name;
 	private int   suggestedValuation;
