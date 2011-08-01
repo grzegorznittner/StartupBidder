@@ -40,20 +40,18 @@ public class UserController extends ModelDrivenController {
 			} else {
 				return index(request);
 			}
-		} else if ("PUT".equalsIgnoreCase(request.getMethod())) {
+		} else if ("POST".equalsIgnoreCase(request.getMethod())) {
 			if ("update".equalsIgnoreCase(getCommand(1))) {
 				return update(request);
 			} else if("activate".equalsIgnoreCase(getCommand(1))) {
 				return activate(request);
 			} else if("deactivate".equalsIgnoreCase(getCommand(1))) {
 				return deactivate(request);
-			}
-		} else if ("POST".equalsIgnoreCase(request.getMethod())) {
-			if ("create".equalsIgnoreCase(getCommand(1))) {
+			} else if ("create".equalsIgnoreCase(getCommand(1))) {
 				return create(request);
+			} else if ("delete".equalsIgnoreCase(getCommand(1))) {
+				return delete(request);
 			}
-		} else if ("DELETE".equalsIgnoreCase(request.getMethod())) {
-			return delete(request);
 		}
 		return null;
 	}

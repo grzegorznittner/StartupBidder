@@ -5,7 +5,8 @@ import java.util.Date;
 import com.google.appengine.api.datastore.Entity;
 
 public class BidDTO extends AbstractDTO {
-	public enum FundType {SYNDICATE, SOLE_INVESTOR};
+	public enum FundType {SYNDICATE, SOLE_INVESTOR, COMMON, PREFERRED, NOTE};
+	public enum Status { ACTIVE, WITHDRAWN };
 	
 	private String user;
 	private String listing;
@@ -14,6 +15,7 @@ public class BidDTO extends AbstractDTO {
 	private int    percentOfCompany;
 	private int    valuation;
 	private FundType fundType;
+	private Status status = Status.ACTIVE;
 	
 	public BidDTO() {
 	}
@@ -78,17 +80,26 @@ public class BidDTO extends AbstractDTO {
 		return valuation;
 	}
 
+	public Status getStatus() {
+		return status;
+	}
+
+	public void setStatus(Status status) {
+		this.status = status;
+	}
+
 	@Override
 	public String toString() {
 		return "BidDTO [user=" + user + ", listing=" + listing + ", placed="
 				+ placed + ", value=" + value + ", percentOfCompany="
 				+ percentOfCompany + ", valuation=" + valuation + ", fundType="
-				+ fundType + "]";
+				+ fundType + ", status=" + status + "]";
 	}
 
 	public Entity toEntity() {
 		Entity bid = new Entity(this.id);
 		bid.setProperty("fundType", fundType);
+		bid.setProperty("status", status);
 		bid.setProperty("listing", listing);
 		bid.setProperty("percentOfCompany", percentOfCompany);
 		bid.setProperty("placed", placed);
@@ -102,6 +113,7 @@ public class BidDTO extends AbstractDTO {
 		BidDTO bid = new BidDTO();
 		bid.setKey(entity.getKey());
 		bid.setFundType(FundType.valueOf((String)entity.getProperty("fundType")));
+		bid.setStatus(Status.valueOf((String)entity.getProperty("status")));
 		bid.setListing((String)entity.getProperty("listing"));
 		bid.setPercentOfCompany((Integer)entity.getProperty("percentOfCompany"));
 		bid.setPlaced((Date)entity.getProperty("placed"));

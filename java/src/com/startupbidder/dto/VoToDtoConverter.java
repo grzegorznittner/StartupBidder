@@ -3,6 +3,8 @@ package com.startupbidder.dto;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.startupbidder.vo.BidVO;
 import com.startupbidder.vo.ListingVO;
 import com.startupbidder.vo.CommentVO;
@@ -12,9 +14,16 @@ import com.startupbidder.vo.UserVO;
 public class VoToDtoConverter {
 	public static BidDTO convert(BidVO bidVO) {
 		BidDTO bid = new BidDTO();
-		bid.setIdFromString(bidVO.getId());
+		if (!StringUtils.isEmpty(bidVO.getId())) {
+			bid.setIdFromString(bidVO.getId());
+		}
 		bid.setListing(bidVO.getListing());
-		bid.setFundType(BidDTO.FundType.valueOf(bidVO.getFundType()));
+		if (!StringUtils.isEmpty(bidVO.getFundType())) {
+			bid.setFundType(BidDTO.FundType.valueOf(StringUtils.upperCase(bidVO.getFundType())));
+		}
+		if (!StringUtils.isEmpty(bidVO.getStatus())) {
+			bid.setStatus(BidDTO.Status.valueOf(StringUtils.upperCase(bidVO.getStatus())));
+		}
 		bid.setPercentOfCompany(bidVO.getPercentOfCompany());
 		bid.setPlaced(bidVO.getPlaced());
 		bid.setUser(bidVO.getUser());
@@ -25,7 +34,9 @@ public class VoToDtoConverter {
 	
 	public static ListingDTO convert(ListingVO bpVO) {
 		ListingDTO bp = new ListingDTO();
-		bp.setIdFromString(bpVO.getId());
+		if (!StringUtils.isEmpty(bpVO.getId())) {
+			bp.setIdFromString(bpVO.getId());
+		}
 		bp.setClosingOn(bpVO.getClosingOn());
 		bp.setListedOn(bpVO.getListedOn());
 		bp.setName(bpVO.getName());
@@ -33,15 +44,20 @@ public class VoToDtoConverter {
 		bp.setSuggestedValuation(bpVO.getSuggestedValuation());
 		bp.setSuggestedPercentage(bpVO.getSuggestedPercentage());
 		bp.setSuggestedAmount(bpVO.getSuggestedAmount());
-		bp.setState(ListingDTO.State.valueOf(bpVO.getState()));
+		if (!StringUtils.isEmpty(bpVO.getState())) {
+			bp.setState(ListingDTO.State.valueOf(StringUtils.upperCase(bpVO.getState())));
+		}
 		bp.setSummary(bpVO.getSummary());
 		return bp;
 	}
 
 	public static CommentDTO convert(CommentVO commentVO) {
 		CommentDTO comment = new CommentDTO();
-		comment.setIdFromString(commentVO.getId());
+		if (!StringUtils.isEmpty(commentVO.getId())) {
+			comment.setIdFromString(commentVO.getId());
+		}
 		comment.setComment(commentVO.getComment());
+		comment.setListing(commentVO.getListing());
 		comment.setCommentedOn(commentVO.getCommentedOn());
 		comment.setUser(commentVO.getUser());
 		return comment;
@@ -49,7 +65,9 @@ public class VoToDtoConverter {
 	
 	public static VoteDTO convert(VoteVO ratingVO) {
 		VoteDTO rating = new VoteDTO();
-		rating.setIdFromString(ratingVO.getId());
+		if (!StringUtils.isEmpty(ratingVO.getId())) {
+			rating.setIdFromString(ratingVO.getId());
+		}
 		rating.setListing(ratingVO.getListing());
 		rating.setUser(ratingVO.getUser());
 		rating.setValue(ratingVO.getValue());
@@ -58,7 +76,9 @@ public class VoToDtoConverter {
 	
 	public static UserDTO convert(UserVO userVO) {
 		UserDTO user = new UserDTO();
-		user.setIdFromString(userVO.getId());
+		if (!StringUtils.isEmpty(userVO.getId())) {
+			user.setIdFromString(userVO.getId());
+		}
 		user.setInvestor(userVO.isAccreditedInvestor());
 		user.setEmail(userVO.getEmail());
 		user.setFacebook(userVO.getFacebook());
@@ -71,7 +91,9 @@ public class VoToDtoConverter {
 		user.setOrganization(userVO.getOrganization());
 		user.setTitle(userVO.getTitle());
 		user.setTwitter(userVO.getTwitter());
-		user.setStatus(UserDTO.Status.valueOf(userVO.getStatus()));
+		if (!StringUtils.isEmpty(userVO.getStatus())) {
+			user.setStatus(UserDTO.Status.valueOf(StringUtils.upperCase(userVO.getStatus())));
+		}
 		return user;
 	}
 

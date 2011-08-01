@@ -8,6 +8,7 @@ import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 import com.startupbidder.util.DateSerializer;
+import com.startupbidder.util.LowecaseSerializer;
 
 @JsonAutoDetect(getterVisibility=Visibility.NONE, setterVisibility=Visibility.NONE,
 		fieldVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE)
@@ -32,12 +33,14 @@ public class BidVO {
 	@JsonProperty("equity_pct")
 	private int    percentOfCompany;
 	@JsonProperty("bid_type")
+	@JsonSerialize(using=LowecaseSerializer.class)
 	private String fundType;
 	@JsonProperty("valuation")
 	private int valuation;
 	@JsonProperty("interest_rate")
 	private int interestRate;
 	@JsonProperty("status")
+	@JsonSerialize(using=LowecaseSerializer.class)
 	private String status;
 
 	

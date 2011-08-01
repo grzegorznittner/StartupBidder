@@ -664,6 +664,26 @@ public class MockDatastoreDAO implements DatastoreDAO {
 	public BidDTO deleteBid(String bidId) {
 		return bidCache.remove(bidId);
 	}
+	
+	public BidDTO activateBid(String bidId) {
+		if (bidCache.containsKey(bidId)) {
+			BidDTO bid = bidCache.get(bidId);
+			bid.setStatus(BidDTO.Status.ACTIVE);
+			return bid;
+		} else {
+			return null;
+		}
+	}
+
+	public BidDTO withdrawBid(String bidId) {
+		if (bidCache.containsKey(bidId)) {
+			BidDTO bid = bidCache.get(bidId);
+			bid.setStatus(BidDTO.Status.WITHDRAWN);
+			return bid;
+		} else {
+			return null;
+		}
+	}
 
 	public BidDTO createBid(BidDTO bid) {
 		bid.createKey("" + bid.hashCode());

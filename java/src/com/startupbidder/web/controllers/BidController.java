@@ -40,16 +40,59 @@ public class BidController extends ModelDrivenController {
 		} else if ("POST".equalsIgnoreCase(request.getMethod())) {
 			if("create".equalsIgnoreCase(getCommand(1))) {
 				return create(request);
-			}
-			return create(request);
-		} else if ("PUT".equalsIgnoreCase(request.getMethod())) {
-			if("update".equalsIgnoreCase(getCommand(1))) {
+			} else if("update".equalsIgnoreCase(getCommand(1))) {
 				return update(request);
+			} else if("activate".equalsIgnoreCase(getCommand(1))) {
+				return activate(request);
+			} else if("withdraw".equalsIgnoreCase(getCommand(1))) {
+				return withdraw(request);
 			}
 		} else if ("DELETE".equalsIgnoreCase(request.getMethod())) {
 			return delete(request);
 		}
 		return null;
+	}
+
+	/*
+	 * PUT /bid/activate?id=<id>
+	 */
+	private HttpHeaders activate(HttpServletRequest request) {
+		HttpHeaders headers = new HttpHeadersImpl("activate");
+		
+		String bidId = getCommandOrParameter(request, 3, "id");
+		if (!StringUtils.isEmpty(bidId)) {
+			model = ServiceFacade.instance().activateBid(getLoggedInUser(), bidId);
+			if (model == null) {
+				log.log(Level.WARNING, "Bid not found!");
+				headers.setStatus(500);
+			}
+		} else {
+			log.log(Level.WARNING, "Parameter 'id' is not provided!");
+			headers.setStatus(500);
+		}
+		
+		return headers;
+	}
+
+	/*
+	 * PUT /bid/withdraw?id=<id>
+	 */
+	private HttpHeaders withdraw(HttpServletRequest request) {
+		HttpHeaders headers = new HttpHeadersImpl("withdraw");
+		
+		String bidId = getCommandOrParameter(request, 3, "id");
+		if (!StringUtils.isEmpty(bidId)) {
+			model = ServiceFacade.instance().withdrawBid(getLoggedInUser(), bidId);
+			if (model == null) {
+				log.log(Level.WARNING, "Bid not found!");
+				headers.setStatus(500);
+			}
+		} else {
+			log.log(Level.WARNING, "Parameter 'id' is not provided!");
+			headers.setStatus(500);
+		}
+		
+		return headers;
 	}
 
 	/*
@@ -59,7 +102,7 @@ public class BidController extends ModelDrivenController {
 		HttpHeaders headers = new HttpHeadersImpl("delete");
 		
 		String bidId = getCommandOrParameter(request, 2, "id");
-		if (StringUtils.isEmpty(bidId)) {
+		if (!StringUtils.isEmpty(bidId)) {
 			model = ServiceFacade.instance().deleteBid(getLoggedInUser(), bidId);
 			if (model == null) {
 				log.log(Level.WARNING, "Bid not found!");
