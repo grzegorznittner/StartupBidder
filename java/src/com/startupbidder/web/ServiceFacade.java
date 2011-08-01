@@ -654,12 +654,23 @@ public class ServiceFacade {
 	}
 
 	public BidVO createBid(UserVO loggedInUser, BidVO bid) {
+		bid.setStatus(BidDTO.Status.ACTIVE.toString());
 		bid = DtoToVoConverter.convert(getDAO().createBid(VoToDtoConverter.convert(bid)));
 		return bid;
 	}
 
 	public BidVO updateBid(UserVO loggedInUser, BidVO bid) {
 		bid = DtoToVoConverter.convert(getDAO().updateBid(VoToDtoConverter.convert(bid)));
+		return bid;
+	}
+
+	public BidVO activateBid(UserVO loggedInUser, String bidId) {
+		BidVO bid = DtoToVoConverter.convert(getDAO().activateBid(bidId));
+		return bid;
+	}
+
+	public BidVO withdrawBid(UserVO loggedInUser, String bidId) {
+		BidVO bid = DtoToVoConverter.convert(getDAO().withdrawBid(bidId));
 		return bid;
 	}
 }

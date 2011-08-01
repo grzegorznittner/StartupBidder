@@ -60,7 +60,7 @@ public class HelloServlet extends HttpServlet {
 			listProperties.setMaxResults(1);
 			ListingDTO topListing = datastore.getTopListings(listProperties).get(0);
 			List<BidDTO> bids = datastore.getBidsForUser(topInvestor.getIdAsString());
-			List<CommentDTO> comments = datastore.getCommentsForListing(topListing.getIdAsString());
+			List<CommentDTO> comments = datastore.getCommentsForListing(datastore.getMostDiscussedListings(listProperties).get(0).getIdAsString());
 			
 			//testMockDatastore(user, datastore, out);
 			out.println("<p>User API:</p>");
@@ -90,11 +90,20 @@ public class HelloServlet extends HttpServlet {
 			out.println("<a href=\"/bids/listing/" + topListing.getIdAsString() + "/.html?max_results=6\">Bids for top listing</a><br/>");
 			out.println("<a href=\"/bids/user/" + topInvestor.getIdAsString() + "/.html?max_results=6\">Bids for top investor</a><br/>");
 			out.println("<a href=\"/bids/get/" + bids.get(0).getIdAsString() + "/.html\">Get bid id '" + bids.get(0).getIdAsString() + "'</a><br/>");
+			out.println("<form method=\"POST\" action=\"/bid/create/.html\"><textarea name=\"bid\" rows=\"5\" cols=\"100\">"
+					+ "{ \"listing_id\":\"" + topListing.getIdAsString() + "\", \"profile_id\":\"" + topInvestor.getIdAsString() + "\", \"amount\":\"14000\", \"equity_pct\":\"10\", \"bid_type\":\"common\", \"interest_rate\":0 }"
+					+ "</textarea><input type=\"submit\" value=\"Create a bid\"/></form>");
+			out.println("<form method=\"POST\" action=\"/bid/activate/.html\"> <input type=\"hidden\" name=\"id\" value=\"" + bids.get(0).getIdAsString() + "\"/><input type=\"submit\" value=\"Activate bid id '" + bids.get(0).getIdAsString() + "'\"/></form>");
+			out.println("<form method=\"POST\" action=\"/bid/withdraw/.html\"> <input type=\"hidden\" name=\"id\" value=\"" + bids.get(0).getIdAsString() + "\"/><input type=\"submit\" value=\"Withdraw bid id '" + bids.get(0).getIdAsString() + "'\"/></form>");
 			
 			out.println("<p>Comments API:</p>");
 			out.println("<a href=\"/comments/listing/" + topListing.getIdAsString() + "/.html?max_results=6\">Comments for top listing</a><br/>");
 			out.println("<a href=\"/comments/user/" + topInvestor.getIdAsString() + "/.html?max_results=6\">Comments for top investor</a><br/>");
 			out.println("<a href=\"/comments/get/" + comments.get(0).getIdAsString() + "/.html\">Get comment id '" + comments.get(0).getIdAsString() + "'</a><br/>");
+			out.println("<form method=\"POST\" action=\"/comment/create/.html\"><textarea name=\"comment\" rows=\"5\" cols=\"100\">"
+						+ "{ \"listing_id\":\"" + topListing.getIdAsString() + "\", \"profile_id\":\"" + topInvestor.getIdAsString() + "\", \"text\":\"comment test\" }"
+						+ "</textarea><input type=\"submit\" value=\"Create a comment\"/></form>");
+			out.println("<form method=\"POST\" action=\"/comment/delete/.html?id=" + comments.get(0).getIdAsString() + "\"><input type=\"submit\" value=\"Deletes comment id '" + comments.get(0).getIdAsString() + "'\"/></form>");
 			out.println("<br/>");
 
 		} catch (Exception e) {

@@ -54,9 +54,7 @@ public class ListingController extends ModelDrivenController {
 		} else if ("POST".equalsIgnoreCase(request.getMethod())) {
 			if ("create".equalsIgnoreCase(getCommand(1))) {
 				return create(request);
-			}
-		} else if ("PUT".equalsIgnoreCase(request.getMethod())) {
-			if ("update".equalsIgnoreCase(getCommand(1))) {
+			}else if ("update".equalsIgnoreCase(getCommand(1))) {
 				return update(request);
 			} else if("up".equalsIgnoreCase(getCommand(1))) {
 				return up(request);
@@ -64,9 +62,9 @@ public class ListingController extends ModelDrivenController {
 				return activate(request);
 			} else if("withdraw".equalsIgnoreCase(getCommand(1))) {
 				return withdraw(request);
-			} 
-		} else if ("DELETE".equalsIgnoreCase(request.getMethod())) {
-			return delete(request);
+			}  else if("delete".equalsIgnoreCase(getCommand(1))) {
+				return delete(request);
+			}
 		}
 
 		return null;
@@ -74,15 +72,15 @@ public class ListingController extends ModelDrivenController {
 	
 	// DELETE /listing/
     private HttpHeaders delete(HttpServletRequest request) {
-    	HttpHeaders headers = new HttpHeadersImpl("create");
+    	HttpHeaders headers = new HttpHeadersImpl("delete");
 		headers.setStatus(501);
 		return headers;
 	}
 
-    // PUT /listing/save
-    // POST /listing/save
+    // PUT /listing/create
+    // POST /listing/create
 	private HttpHeaders create(HttpServletRequest request) throws JsonParseException, JsonMappingException, IOException {
-		HttpHeaders headers = new HttpHeadersImpl("save");
+		HttpHeaders headers = new HttpHeadersImpl("create");
 		
 		ObjectMapper mapper = new ObjectMapper();
 		log.log(Level.INFO, "Parameters: " + request.getParameterMap());
@@ -103,10 +101,10 @@ public class ListingController extends ModelDrivenController {
 		return headers;
 	}
 
-    // PUT /listing/save
-    // POST /listing/save
+    // PUT /listing/update
+    // POST /listing/update
 	private HttpHeaders update(HttpServletRequest request) throws JsonParseException, JsonMappingException, IOException {
-		HttpHeaders headers = new HttpHeadersImpl("save");
+		HttpHeaders headers = new HttpHeadersImpl("update");
 		
 		ObjectMapper mapper = new ObjectMapper();
 		log.log(Level.INFO, "Parameters: " + request.getParameterMap());

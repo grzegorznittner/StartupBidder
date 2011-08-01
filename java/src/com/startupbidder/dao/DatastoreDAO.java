@@ -283,4 +283,16 @@ public interface DatastoreDAO {
 	 */
 	BidDTO updateBid(BidDTO bid);
 
+	/**
+	 * Sets bid status to ACTIVE
+	 * @param bidId
+	 */
+	BidDTO activateBid(String bidId);
+
+	/**
+	 * Sets bid status to WITHDRAWN
+	 * @param bidId
+	 */
+	BidDTO withdrawBid(String bidId);
+
 }

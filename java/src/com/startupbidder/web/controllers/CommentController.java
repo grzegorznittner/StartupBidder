@@ -42,9 +42,13 @@ public class CommentController extends ModelDrivenController {
 				return index(request);
 			}
 		} else if ("POST".equalsIgnoreCase(request.getMethod())) {
-			return create(request);
-		} else if ("PUT".equalsIgnoreCase(request.getMethod())) {
-			return update(request);
+			if("create".equalsIgnoreCase(getCommand(1))) {
+				return create(request);
+			} else if("update".equalsIgnoreCase(getCommand(1))) {
+				return update(request);
+			} else if("delete".equalsIgnoreCase(getCommand(1))) {
+				delete(request);
+			}
 		} else if ("DELETE".equalsIgnoreCase(request.getMethod())) {
 			return delete(request);
 		}
@@ -53,12 +57,14 @@ public class CommentController extends ModelDrivenController {
 
 	/*
 	 * DELETE /comment?id=<id> 
+	 * POST /comment/delete?id=<id>
 	 */
 	private HttpHeaders delete(HttpServletRequest request) {
 		HttpHeaders headers = new HttpHeadersImpl("delete");
 		
-		String commentId = getCommandOrParameter(request, 2, "id");
-		if (StringUtils.isEmpty(commentId)) {
+		String commentId = "DELETE".equalsIgnoreCase(request.getMethod())
+				? getCommandOrParameter(request, 1, "id") : getCommandOrParameter(request, 2, "id");
+		if (!StringUtils.isEmpty(commentId)) {
 			comment = ServiceFacade.instance().deleteComment(getLoggedInUser(), commentId);
 			if (comment == null) {
 				log.log(Level.WARNING, "Comment not found!");
@@ -76,7 +82,7 @@ public class CommentController extends ModelDrivenController {
 	 * POST /comment/create?comment=<bid json>
 	 */
 	private HttpHeaders create(HttpServletRequest request) throws JsonParseException, JsonMappingException, IOException {
-		HttpHeaders headers = new HttpHeadersImpl("save");
+		HttpHeaders headers = new HttpHeadersImpl("create");
 		
 		ObjectMapper mapper = new ObjectMapper();
 		log.log(Level.INFO, "Parameters: " + request.getParameterMap());
