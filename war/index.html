@@ -1057,7 +1057,6 @@ $(function(){
         };
         self.displayUser = function(userobj) {
             if (userobj.profile && userobj.logout_url) {
-            console.log(userobj);
                 $('#header-menu-name-login').hide();
                 $('#header-menu-name-username').html(userobj.profile.username).data('profile_id',userobj.profile.profile_id).show().unbind().bind('click', function(){
                     backend.getProfile($(this).data('profile_id'), profiles.displayProfile);
@@ -1935,7 +1934,7 @@ $(function(){
 
     var Bids = function() {
         var self = {};
-        self.saveBid = function(listing_id, profile_id){
+        self.saveBid = function(listing_id, profile_id, profile_username){
             var raw_amt  = $('#bid-amt').val() || '';
             var raw_pct  = $('#bid-pct').val() || '';
             var raw_type = $('#bid-type').val() || '';
@@ -1959,16 +1958,18 @@ $(function(){
             }
 
             var callback = function(bid) {
+                var callback2 = function(results) {
+                    self.displayResults(results, false, 'confirmed', 'bid saved');
+                };
                 if (bid) {
-                    $('#bid-save-message').attr('class', 'confirmed').html('bid saved');
-                    self.clearBidFields();
-                    backend.bidsForListing(bid.listing_id, bids.displayResults);
+                    backend.bidsForListing(bid.listing_id, callback2);
                 }
                 else {
                     $('#bid-save-message').attr('class', 'attention').html('unable to save bid');
                 }
             };
-            backend.addBid(listing_id, profile_id, bid_amt, bid_pct, bid_type, bid_rate, callback);
+            
+            backend.addBid(listing_id, profile_id, profile_username, bid_amt, bid_pct, bid_type, bid_rate, valuation, callback);
         };
         self.validateBid = function(bid_amt, bid_type, bid_rate, bid_pct, valuation) {
             var msg;
@@ -2013,7 +2014,9 @@ $(function(){
             $('#bids-listing-snippet').html('');
             $('#bids-content-results-list').html(resultsHtml);
         };
-        self.displayResults = function(results, keepBid){
+        self.displayResults = function(results, keepBid, msgClass, msgText){
+            self.recalculateValuation();
+            $('#bid-save-message').attr('class', (msgClass || 'attention')).html(msgText || '');
             if (!keepBid) {
                 self.clearBidFields();
             }
@@ -2054,10 +2057,16 @@ $(function(){
                 else if (profile && profile.investor) {
                     $('#bids-form-loggedin').show();
                     $('#bids-form-not-loggedin').hide();
-                    $('#bid-save-button').show().unbind().data('listing_id',listing.listing_id).data('profile_id',profile.profile_id).bind('click',function(e){
-                        e.preventDefault();
-                        self.saveBid($(this).data('listing_id'), $(this).data('profile_id'));
-                    });
+                    $('#bid-save-button')
+                        .show()
+                        .unbind()
+                        .data('listing_id',listing.listing_id)
+                        .data('profile_id',profile.profile_id)
+                        .data('profile_username',profile.username)
+                        .bind('click',function(e) {
+                            e.preventDefault();
+                            self.saveBid($(this).data('listing_id'), $(this).data('profile_id'), $(this).data('profile_username'));
+                        });
                     $('#bid-amt,#bid-pct,#bid-type,#bid-rate').unbind().bind('change',function(e){
                         self.recalculateValuation();
                     });
@@ -2085,10 +2094,13 @@ $(function(){
             if (!bids || bids.length == 0) {
                 return;
             }
-            var profile_callback = function() { backend.bidsForProfile($(this).data('profile_id'), bids.displayResults); };
-            var listings_callback = function() { backend.bidsForListing($(this).data('listing_id'), bids.displayResults); };
-            var callback = listing ? listings_callback : profile_callback;
             var withdrawBid = function() {
+                var bid_id = $(this).data('bid_id');
+                var profile_id = $(this).data('profile_id');
+                var listing_id = $(this).data('listing_id');
+                var profile_callback = function() { backend.bidsForProfile(profile_id, self.displayResults); };
+                var listings_callback = function() { backend.bidsForListing(listing_id, self.displayResults); };
+                var callback = listing_id ? listings_callback : profile_callback;
                 backend.withdrawBid($(this).data('bid_id'), callback);
             };
             for (var i = 0; i < bids.length; i++) {
@@ -2102,11 +2114,14 @@ $(function(){
                 if (!profile || profile.profile_id != bid.profile_id) {
                     continue;
                 }
-                $('#bids-item-delete-'+i)
-                    .data('bid_id', bid.bid_id)
-                    .data('profile_id', profile ? bid.profile_id : '')
-                    .data('listing_id', listing ? bid.listing_id : '')
-                    .unbind().bind('click', withdrawBid);
+                if (bid.status === 'active') {
+                    $('#bids-item-delete-'+i)
+                        .data('bid_id', bid.bid_id)
+                        .data('profile_id', results.listing ? '' : bid.profile_id)
+                        .data('listing_id', results.listing ? results.listing.listing_id : '')
+                        .unbind()
+                        .bind('click', withdrawBid);
+                }
             }
         };
         self.formatBidType = function(bid_type) {
@@ -2130,9 +2145,9 @@ $(function(){
             resultHtml += ' with ' + self.formatBidType(bid.bid_type);
             resultHtml += bid.interest_rate ? ' @ ' + bid.interest_rate + '%' : '';
             resultHtml += '</div>';
-//            resultHtml += (profile && profile.profile_id == bid.profile_id)
-//                              ? '<div class="content-results-list-item-profile link" id="bids-item-delete-' + i + '">(withdraw bid)</div>'
-//                              : '';
+            resultHtml += (profile && profile.profile_id === bid.profile_id && bid.status === 'active')
+                              ? '<div class="content-results-list-item-profile link" id="bids-item-delete-' + i + '">(withdraw bid)</div>'
+                              : '';
             resultHtml += '<div class="content-results-list-item-clear"></div>';
             resultHtml += '<div class="content-results-list-item-detail">';
             resultHtml += 'by ';
@@ -2142,6 +2157,7 @@ $(function(){
             resultHtml += ' on ';
             resultHtml += util.formatDate(bid.bid_date);
             resultHtml += listing ? '' : ' for <span class="link" id="bids-item-listing-' + i + '">' + bid.listing_title + '</span>';
+            resultHtml += bid.status !== 'active' ? ' <b>bid '+(bid.status?bid.status:'not active')+'</b>' : '';
             resultHtml += '</div>';
             resultHtml += '</div>'
             resultHtml += '<div class="content-results-list-item-clear"></div>';
@@ -2273,20 +2289,22 @@ $(function(){
             var url = '/bids/user/' + profile_id + '/';
             $.getJSON(url, callback);
         };
-        self.addBid = function(listing_id, profile_id, bid_amt, bid_pct, bid_type, bid_rate, callback) {
+        self.addBid = function(listing_id, profile_id, profile_username, bid_amt, bid_pct, bid_type, bid_rate, valuation, callback) {
             var url = '/bid/create/';
             var bid = {
                 listing_id: listing_id,
                 profile_id: profile_id,
+                profile_username: profile_username,
                 amount: bid_amt,
                 equity_pct: bid_pct,
                 bid_type: bid_type,
-                interest_rate: bid_rate
+                interest_rate: bid_rate,
+                valuation: valuation
             };
             $.post(url, { bid: $.JSON.encode(bid) }, callback);
         };
         self.withdrawBid = function(bid_id, callback) {
-            var url = '/bid/withdraw/' + bid_id;
+            var url = '/bid/withdraw/?id=' + bid_id;
             $.post(url, callback);
         };
         self.bidStats = function(callback) {
