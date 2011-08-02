@@ -1329,7 +1329,6 @@ $(function(){
             if (resultsHtml == '') {
                 resultsHtml = '<i>no users found</i>';
             }
-            console.log('foo');
             self.displayResultsHtml(resultsHtml);
             for (var j = 0; j < results.length; j++) { // bind results
                 userjson = results[j];
@@ -1807,7 +1806,10 @@ $(function(){
                     $('#comment-save-message').attr('class', 'confirmed').html('comment saved');
                     keepComment = false;
                 }
-                backend.commentsForListing(listing_id, comments.displayResults, keepComment);
+                var callback2 = function(results) {
+                    self.displayResults(results, keepComment);
+                }
+                backend.commentsForListing(listing_id, callback2, keepComment);
             }
             backend.addComment(listing_id, profile_id, commentText, callback);
         };
@@ -1872,10 +1874,13 @@ $(function(){
             if (!comments || comments.length == 0) {
                 return;
             }
-            var profile_callback = function() { backend.commentsForProfile($(this).data('profile_id'), comments.displayResults); };
-            var listings_callback = function() { backend.commentsForListing($(this).data('listing_id'), comments.displayResults); };
-            var callback = listing ? listings_callback : profile_callback;
             var deleteComment = function() {
+                var comment_id = $(this).data('comment_id');
+                var profile_id = $(this).data('profile_id');
+                var listing_id = $(this).data('listing_id');
+                var profile_callback = function() { backend.commentsForProfile(profile_id, self.displayResults); };
+                var listings_callback = function() { backend.commentsForListing(listing_id, self.displayResults); };
+                var callback = listing_id ? listings_callback : profile_callback;
                 backend.deleteComment($(this).data('comment_id'), callback);
             };
             for (var i = 0; i < comments.length; i++) {
@@ -1891,8 +1896,8 @@ $(function(){
                 }
                 $('#comments-item-delete-'+i)
                     .data('comment_id', comment.comment_id)
-                    .data('profile_id', profile ? comment.profile_id : '')
-                    .data('listing_id', listing ? comment.listing_id : '')
+                    .data('profile_id', results.listing ? '' : comment.profile_id)
+                    .data('listing_id', results.listing ? results.listing.listing_id : '')
                     .unbind().bind('click', deleteComment);
             }
         };
@@ -2179,7 +2184,7 @@ $(function(){
             $.getJSON(url, callback);
         };
         self.saveProfile = function(profile, callback) {
-        	var url = '/user/save';
+        	var url = '/user/update';
         	$.post(url, {profile: $.JSON.encode(profile)}, callback);
         };
         self.activateProfile = function(profile_id, callback) {
@@ -2217,7 +2222,7 @@ $(function(){
         	$.post(url, {listing: $.JSON.encode(listing)}, callback);
         };
         self.saveListing = function(listing, callback) {
-            var url = '/listings/save/';
+            var url = '/listings/update/';
         	$.post(url, {listing: $.JSON.encode(listing)}, callback);
         };
         self.upvoteListing = function(listing_id, callback) {
@@ -2251,12 +2256,8 @@ $(function(){
             $.post(url, { comment: $.JSON.encode(comment) }, callback);
         };
         self.deleteComment = function(comment_id, callback) {
-            var url = '/comment/' + comment_id;
-            $.ajax({
-                url: url,
-                type: 'DELETE',
-                success: callback
-            });
+            var url = '/comment/delete/' + comment_id;
+            $.post(url, callback);
         };
         // bid methods
         self.bidsForListing = function(listing_id, callback) {
