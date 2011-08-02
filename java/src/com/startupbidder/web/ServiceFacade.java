@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.datanucleus.util.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 
@@ -614,7 +615,7 @@ public class ServiceFacade {
 	}
 
 	public ListingVO updateListing(UserVO loggedInUser, ListingVO listing) {
-		if (loggedInUser != null && loggedInUser.getId() != listing.getOwner()) {
+		if (loggedInUser != null && !StringUtils.areStringsEqual(loggedInUser.getId(), listing.getOwner())) {
 			return null;
 		}
 		ListingVO updatedListing = DtoToVoConverter.convert(getDAO().updateListing(VoToDtoConverter.convert(listing)));

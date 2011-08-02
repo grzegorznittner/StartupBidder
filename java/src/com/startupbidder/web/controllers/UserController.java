@@ -70,7 +70,7 @@ public class UserController extends ModelDrivenController {
 		String listingString = request.getParameter("profile");
 		if (!StringUtils.isEmpty(listingString)) {
 			ObjectMapper mapper = new ObjectMapper();
-			UserVO user = mapper.readValue(request.getInputStream(), UserVO.class);
+			UserVO user = mapper.readValue(listingString, UserVO.class);
 			user.setId(null);
 			//model = ServiceFacade.instance().createUser(getLoggedInUser(), user);
 			log.log(Level.WARNING, "User creation is not supported! You need to login using external account.");
@@ -90,7 +90,7 @@ public class UserController extends ModelDrivenController {
 		String listingString = request.getParameter("profile");
 		if (!StringUtils.isEmpty(listingString)) {
 			ObjectMapper mapper = new ObjectMapper();
-			UserVO user = mapper.readValue(request.getInputStream(), UserVO.class);
+			UserVO user = mapper.readValue(listingString, UserVO.class);
 			if (user.getId() == null) {
 				log.log(Level.WARNING, "User update called but user id not provided.");
 				headers.setStatus(501);
