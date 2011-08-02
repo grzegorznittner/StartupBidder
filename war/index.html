@@ -896,7 +896,7 @@ $(function(){
         self.logout_url = '/_ah/logout?continue=%2F';
         self.setProfile = function(profile) {
             self.profile = profile;
-            header.displayUser();
+            header.displayUser(self);
         };
         self.hasVoted = function(listing_id) {
             return false;
@@ -1055,16 +1055,17 @@ $(function(){
                 util.displayPage('faq');
             });
         };
-        self.displayUser = function() {
-            if (user.profile && user.logout_url) {
+        self.displayUser = function(userobj) {
+            if (userobj.profile && userobj.logout_url) {
+            console.log(userobj);
                 $('#header-menu-name-login').hide();
-                $('#header-menu-name-username').html(user.profile.username).data('profile_id',user.profile.profile_id).show().unbind().bind('click', function(){
+                $('#header-menu-name-username').html(userobj.profile.username).data('profile_id',userobj.profile.profile_id).show().unbind().bind('click', function(){
                     backend.getProfile($(this).data('profile_id'), profiles.displayProfile);
                 });
                 $('#header-menu-command-login').hide();
                 $('#header-menu-command-logout').show();
-                $('#header-menu-command-logout').data('logout_url',user.logout_url).show().unbind().bind('click', function(){
-                    user.logout($(this).data('logout_url'));
+                $('#header-menu-command-logout').data('logout_url',userobj.logout_url).show().unbind().bind('click', function(){
+                    userobj.logout($(this).data('logout_url'));
                 });
                 $('#header-menu-bar-submit-spacer').show();
                 $('#header-menu-bar-submit').show();
@@ -1375,6 +1376,7 @@ $(function(){
         self.saveProfile = function(profile_id){
             var profile = {};
             profile.profile_id = profile_id;
+            profile.username = $('#profile-edit-profile-username').val();
             profile.name = $('#profile-edit-name').val();
             profile.title = $('#profile-edit-title').val();
             profile.organization = $('#profile-edit-organization').val();
@@ -1385,14 +1387,16 @@ $(function(){
             profile.investor = $('#profile-edit-investor').attr('checked') ? 1 : 0;
             var callback = function(profile) {
                 if (profile) {
-                    $('#profile-save-message').attr('class', 'confirmed').html('profile saved');
+                    self.displayProfile(profile, 'confirmed', 'profile saved');
                 }
-                self.displayProfile(profile);
+                else {
+                    self.displayProfile(profile, 'attention', 'could not save profile');
+                }
             };
             backend.saveProfile(profile, callback);
         };
-        self.displayProfile = function(profile){
-            $('#profile-save-message').attr('class', 'attention').html('');
+        self.displayProfile = function(profile, msgClass, msgText){
+            $('#profile-save-message').attr('class', (msgClass || 'attention')).html(msgText || '');
             util.displayPage('profile');
             // enable editable if logged in
             var deactivatedText = (profile && profile.status == 'active') ? '' : ' <span class="message">DEACTIVATED</span>';
@@ -1401,6 +1405,7 @@ $(function(){
                 $('#profile-form-readonly').hide();
 
                 $('#profile-edit-profile-id').val(profile.profile_id);
+                $('#profile-edit-profile-username').val(profile.username);
                 $('#profile-edit-username').html(profile.username + deactivatedText);
                 $('#profile-edit-name').val(profile.name);
                 $('#profile-edit-title').val(profile.title);
@@ -2853,6 +2858,7 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
             <form action="#" method="post">
             <input name="page" type="hidden" value="profile"/>
             <input id="profile-edit-profile-id" name="profile-id" type="hidden" value=""/>
+            <input id="profile-edit-profile-username" name="profile-username" type="hidden" value=""/>
 
             <div class="content-form-line-emphasized"><span id="profile-edit-username">johnarleyburns32</span></div>
             <div class="content-form-clear"></div>
