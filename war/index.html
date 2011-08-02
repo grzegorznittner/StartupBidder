@@ -1453,7 +1453,7 @@ $(function(){
             $(bidsSel).html(profile.num_bids);
             $(commentsSel).html(profile.num_comments);
             $(listingsSel+'-link').unbind().data('profile_id',profile.profile_id).bind('click',function(){
-                search.doSearch({search_type:'profile',profile_id:$(this).data('profile_id')});
+                searchListings.doSearch({search_type:'profile',profile_id:$(this).data('profile_id')});
             });
             $(bidsSel+'-link').unbind().data('profile_id',profile.profile_id).bind('click',function(){
                 backend.bidsForProfile($(this).data('profile_id'), bids.displayResults);
@@ -1512,8 +1512,16 @@ $(function(){
                 var msg = savedListing ? 'listing saved' : 'unable to save listing';
                 var msg_class = savedListing ? 'confirmed' : 'attention';
                 $('#listing-save-message').attr('class', msg_class).html(msg);
+                if (savedListing) {
+                    listings.displayListing(savedListing);
+                }
             };
-            backend.saveListing(listing, callback);
+            if (listing.status === 'new') {
+                backend.createListing(listing, callback);
+            }
+            else {
+                backend.saveListing(listing, callback);
+            }
         };
         self.newListing = function(profile) {
             var profile = user.profile;
@@ -1605,7 +1613,7 @@ $(function(){
                 $('#listing-edit-profile-id').val(listing.profile_id);
                 $('#listing-edit-profile-username').val(listing.profile_username);
                 $('#listing-edit-listing-date').val(listing.listing_date);
-                $('#listing-edit-closing-date').html(listing.closing_date);
+                $('#listing-edit-closing-date').html(util.formatDate(listing.closing_date));
                 $('#listing-edit-status').val(listing.status);
                 $('#listing-edit-suggested-amt').val(util.addCommas(listing.suggested_amt));
                 $('#listing-edit-suggested-pct').val(listing.suggested_pct);
@@ -1692,7 +1700,7 @@ $(function(){
         self.bindListingSnippet = function(i, listing) {
             var upvote_item = document.getElementById('content-results-list-item-upvote-'+i);
             $('#content-results-list-item-profile-'+i).data('profile_id',listing.profile_id).unbind().bind('click', function(){
-                backend.getProfile($(this).data('profile_id'), proflies.displayProfile);
+                backend.getProfile($(this).data('profile_id'), profiles.displayProfile);
             });           
             if (listing.listing_id) {
                 $('#content-results-list-item-title-'+i).data('listing_id',listing.listing_id).unbind().bind('click', function(){
@@ -2070,8 +2078,8 @@ $(function(){
             var profile_callback = function() { backend.bidsForProfile($(this).data('profile_id'), bids.displayResults); };
             var listings_callback = function() { backend.bidsForListing($(this).data('listing_id'), bids.displayResults); };
             var callback = listing ? listings_callback : profile_callback;
-            var deleteBid = function() {
-                backend.deleteBid($(this).data('bid_id'), callback);
+            var withdrawBid = function() {
+                backend.withdrawBid($(this).data('bid_id'), callback);
             };
             for (var i = 0; i < bids.length; i++) {
                 bid = bids[i];
@@ -2088,7 +2096,7 @@ $(function(){
                     .data('bid_id', bid.bid_id)
                     .data('profile_id', profile ? bid.profile_id : '')
                     .data('listing_id', listing ? bid.listing_id : '')
-                    .unbind().bind('click', deleteBid);
+                    .unbind().bind('click', withdrawBid);
             }
         };
         self.formatBidType = function(bid_type) {
@@ -2115,7 +2123,7 @@ $(function(){
 //            resultHtml += (profile && profile.profile_id == bid.profile_id)
 //                              ? '<div class="content-results-list-item-profile link" id="bids-item-delete-' + i + '">(withdraw bid)</div>'
 //                              : '';
-//            resultHtml += '<div class="content-results-list-item-clear"></div>';
+            resultHtml += '<div class="content-results-list-item-clear"></div>';
             resultHtml += '<div class="content-results-list-item-detail">';
             resultHtml += 'by ';
             resultHtml += '<span class="link" id="bids-item-profile-' + i + '">'
@@ -2204,6 +2212,10 @@ $(function(){
             var url = '/listings/' + pathSuffix;
             $.getJSON(url, callback);
         };
+        self.createListing = function(listing, callback) {
+            var url = '/listings/create/';
+        	$.post(url, {listing: $.JSON.encode(listing)}, callback);
+        };
         self.saveListing = function(listing, callback) {
             var url = '/listings/save/';
         	$.post(url, {listing: $.JSON.encode(listing)}, callback);
@@ -2267,13 +2279,9 @@ $(function(){
             };
             $.post(url, { bid: $.JSON.encode(bid) }, callback);
         };
-        self.deleteBid = function(bid_id, callback) {
-            var url = '/bid/' + bid_id;
-            $.ajax({
-                url: url,
-                type: 'DELETE',
-                success: callback
-            });
+        self.withdrawBid = function(bid_id, callback) {
+            var url = '/bid/withdraw/' + bid_id;
+            $.post(url, callback);
         };
         self.bidStats = function(callback) {
             var stats = {
@@ -3099,8 +3107,7 @@ s = (p + b + c + v) / (t + 2)^1.5
                 <div class="content-form-maininputline"><input id="listing-edit-title" name="title" type="text" size="40" value="type listing title here"/></div>
                 <div class="content-form-clear"></div>
 
-                <div class="content-form-line">Closing date </div>
-                <div class="content-form-inputline"><span id="listing-edit-closing-date"></span></div>
+                <div class="content-form-line">Closes on midnight on <span id="listing-edit-closing-date"></span></div>
                 <div class="content-form-clear"></div>
 
                 <div class="content-form-line">Suggested bid of </div>
