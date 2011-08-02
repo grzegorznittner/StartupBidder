@@ -34,7 +34,6 @@
     </fileset>
     <fileset dir="${env.APPENGINE_HOME}/lib">
       <include name="shared/**/*.jar" />
-      <include name="*.jar" />
     </fileset>
     <fileset dir="lib">
       <include name="**/*.jar" />
