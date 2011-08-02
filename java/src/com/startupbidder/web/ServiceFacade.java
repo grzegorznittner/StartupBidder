@@ -8,8 +8,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.datanucleus.util.StringUtils;
+import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
+import org.joda.time.LocalDate;
 
 import com.google.appengine.api.users.User;
 import com.startupbidder.dao.DatastoreDAO;
@@ -25,6 +27,7 @@ import com.startupbidder.vo.BidVO;
 import com.startupbidder.vo.CommentListVO;
 import com.startupbidder.vo.CommentVO;
 import com.startupbidder.vo.DtoToVoConverter;
+import com.startupbidder.vo.GraphDataVO;
 import com.startupbidder.vo.ListPropertiesVO;
 import com.startupbidder.vo.ListingListVO;
 import com.startupbidder.vo.ListingVO;
@@ -683,5 +686,34 @@ public class ServiceFacade {
 	public BidVO withdrawBid(UserVO loggedInUser, String bidId) {
 		BidVO bid = DtoToVoConverter.convert(getDAO().withdrawBid(bidId));
 		return bid;
+	}
+
+	public GraphDataVO getBidsStatistics(UserVO loggedInUser) {		
+		ListPropertiesVO bidsProperties = new ListPropertiesVO();
+		bidsProperties.setMaxResults(100);
+		List<BidDTO> bids = getDAO().getBidsByDate(bidsProperties);
+
+		int[] values = new int[2];
+		if (bids.size() > 1) {
+			int bidTimeSpan = Math.abs(Days.daysBetween(new DateTime(bids.get(0).getPlaced()),
+					new DateTime(bids.get(bids.size() - 1).getPlaced())).getDays());
+			
+			values = new int[bidTimeSpan];
+			DateMidnight midnight = new DateMidnight();
+			for (BidDTO bid : bids) {
+				int days = Math.abs(Days.daysBetween(new DateTime(bid.getPlaced().getTime()), midnight).getDays());
+				if (days < values.length) {
+					values[days]++;
+				}
+			}
+		}
+		
+		GraphDataVO data = new GraphDataVO();
+		data.setLabel(values.length + " Day Bid Valume");
+		data.setxAxis("days ago");
+		data.setyAxis("num bids");
+		data.setValues(values);
+
+		return data;
 	}
 }

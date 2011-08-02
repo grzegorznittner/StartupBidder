@@ -100,6 +100,7 @@ public class HelloServlet extends HttpServlet {
 					+ "</textarea><input type=\"submit\" value=\"Create a bid\"/></form>");
 			out.println("<form method=\"POST\" action=\"/bid/activate/.html\"> <input type=\"hidden\" name=\"id\" value=\"" + bids.get(0).getIdAsString() + "\"/><input type=\"submit\" value=\"Activate bid id '" + bids.get(0).getIdAsString() + "'\"/></form>");
 			out.println("<form method=\"POST\" action=\"/bid/withdraw/.html\"> <input type=\"hidden\" name=\"id\" value=\"" + bids.get(0).getIdAsString() + "\"/><input type=\"submit\" value=\"Withdraw bid id '" + bids.get(0).getIdAsString() + "'\"/></form>");
+			out.println("<a href=\"/bids/statistics/.html\">Get bid statistics</a><br/>");
 			
 			out.println("<p>Comments API:</p>");
 			out.println("<a href=\"/comments/listing/" + topListing.getIdAsString() + "/.html?max_results=6\">Comments for top listing</a><br/>");

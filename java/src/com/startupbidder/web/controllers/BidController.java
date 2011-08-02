@@ -34,6 +34,8 @@ public class BidController extends ModelDrivenController {
 				return listing(request);
 			} else if("user".equalsIgnoreCase(getCommand(1))) {
 				return user(request);
+			} else if("statistics".equalsIgnoreCase(getCommand(1))) {
+				return statistics(request);
 			} else {
 				return get(request);
 			}
@@ -187,6 +189,17 @@ public class BidController extends ModelDrivenController {
 		ListPropertiesVO bidProperties = getListProperties(request);
 		String listingId = getCommandOrParameter(request, 2, "id");
 		model = ServiceFacade.instance().getBidsForListing(getLoggedInUser(), listingId, bidProperties);
+		
+		return headers;
+	}
+
+	/*
+	 *  /bids/listing/?id=ag1zdGFydHVwYmlkZGVychQLEgdMaXN0aW5nIgdtaXNsZWFkDA
+	 */
+	private HttpHeaders statistics(HttpServletRequest request) {
+		HttpHeaders headers = new HttpHeadersImpl("statistics");
+		
+		model = ServiceFacade.instance().getBidsStatistics(getLoggedInUser());
 		
 		return headers;
 	}

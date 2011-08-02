@@ -14,12 +14,11 @@ import java.util.logging.Logger;
 import org.datanucleus.util.StringUtils;
 
 import com.startupbidder.dto.BidDTO;
-import com.startupbidder.dto.ListingDTO;
 import com.startupbidder.dto.CommentDTO;
+import com.startupbidder.dto.ListingDTO;
 import com.startupbidder.dto.UserDTO;
 import com.startupbidder.dto.UserStatistics;
 import com.startupbidder.dto.VoteDTO;
-import com.startupbidder.vo.CommentVO;
 import com.startupbidder.vo.ListPropertiesVO;
 
 /**
@@ -715,6 +714,23 @@ public class MockDatastoreDAO implements DatastoreDAO {
 			return bid;
 		}
 	}
+	
+	public List<BidDTO> getBidsByDate(ListPropertiesVO bidsProperties) {
+		List<BidDTO> bids = new ArrayList<BidDTO>(bidCache.values());
+		
+		Collections.sort(bids, new Comparator<BidDTO> () {
+			public int compare(BidDTO left, BidDTO right) {
+				if (left.getPlaced().getTime() == right.getPlaced().getTime()) {
+					return 0;
+				} else if (left.getPlaced().getTime() < right.getPlaced().getTime()) {
+					return -1;
+				} else {
+					return 1;
+				}
+			}
+		});
+		return bids.subList(0, bidsProperties.getMaxResults() < bids.size() ? bidsProperties.getMaxResults() : bids.size());
+	}
 
 	/**
 	 * Generates random comments for business plans
@@ -750,6 +766,7 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		
 		for (ListingDTO listing : lCache.values()) {
 			int bidNum = new Random().nextInt(15);
+			long bidTimeSpan = (System.currentTimeMillis() - listing.getListedOn().getTime()) / (bidNum + 1);
 			while (--bidNum > 0) {
 				BidDTO bid = new BidDTO();
 				bid.createKey(bidNum + "_" + listing.hashCode());
@@ -757,7 +774,7 @@ public class MockDatastoreDAO implements DatastoreDAO {
 				bid.setListing(listing.getIdAsString());
 				bid.setFundType(new Random().nextInt(2) > 0 ? BidDTO.FundType.SYNDICATE : BidDTO.FundType.SOLE_INVESTOR);
 				bid.setPercentOfCompany(new Random().nextInt(50) + 10);
-				bid.setPlaced(new Date(System.currentTimeMillis() - bidNum * 53 * 60 * 1000));
+				bid.setPlaced(new Date(listing.getListedOn().getTime() + bidNum * bidTimeSpan));
 				bid.setValue(new Random().nextInt(50) * 1000 + listing.getSuggestedValuation());
 				// calculate valuation
 				bid.setValuation(bid.getValue() * 100 / bid.getPercentOfCompany());

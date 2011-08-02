@@ -301,4 +301,10 @@ public interface DatastoreDAO {
 	 * @param bidId
 	 */
 	BidDTO withdrawBid(String bidId);
+
+	/**
+	 * Returns list of bids sorted by post date.
+	 * @param bidsProperties
+	 */
+	List<BidDTO> getBidsByDate(ListPropertiesVO bidsProperties);
 }
