@@ -71,6 +71,8 @@ public class HelloServlet extends HttpServlet {
 			out.println("<form method=\"POST\" action=\"/user/activate/" + currentUser.getId() + "/.html\"><input type=\"submit\" value=\"Activates logged in user\"/></form>");
 			out.println("<form method=\"POST\" action=\"/user/deactivate/" + currentUser.getId() + "/.html\"><input type=\"submit\" value=\"Deactivates logged in user\"/></form>");
 			out.println("<a href=\"/user/votes/" + currentUser.getId() + "/.html\">Logged in user votes</a><br/>");
+			out.println("<form method=\"GET\" action=\"/user/check-user-name/.html\"><input name=\"name\" type=\"text\" value=\"greg\"/>"
+					+ "<input type=\"submit\" value=\"Check user name\"/></form>");
 			
 			out.println("<p>Listings API:</p>");
 			out.println("<a href=\"/listings/get/" + topListing.getIdAsString() + "/.html\">Top listing data</a><br/>");
@@ -85,6 +87,9 @@ public class HelloServlet extends HttpServlet {
 			out.println("<a href=\"/listings/latest/.html?max_results=6\">Latest listings</a><br/>");
 			out.println("<a href=\"/listings/closing/.html?max_results=6\">Closing listings</a><br/>");
 			out.println("<a href=\"/listings/user/" + topInvestor.getIdAsString() + "/.html?max_results=6\">Top investor's listings</a><br/>");
+			out.println("<form method=\"POST\" action=\"/listing/create/.html\"><textarea name=\"listing\" rows=\"5\" cols=\"100\">"
+					+ "{\"title\":\"Listing title\",\"median_valuation\":\"0\",\"num_votes\":\"0\",\"num_bids\":\"0\",\"num_comments\":\"0\",\"profile_id\":\"ag1zdGFydHVwYmlkZGVych4LEgRVc2VyIhQxODU4MDQ3NjQyMjAxMzkxMjQxMQw\",\"profile_username\":\"test@example.com\",\"listing_date\":\"20110802\",\"closing_date\":\"2011-08-01\",\"status\":\"new\",\"suggested_amt\":\"10000\",\"suggested_pct\":\"10\",\"suggested_val\":100000,\"summary\":\"Enter listing summary here.\",\"business_plan_url\":\"\",\"presentation_url\":\"\"}"
+					+ "</textarea><input type=\"submit\" value=\"Create a listing\"/></form>");
 
 			out.println("<p>Bids API:</p>");
 			out.println("<a href=\"/bids/listing/" + topListing.getIdAsString() + "/.html?max_results=6\">Bids for top listing</a><br/>");

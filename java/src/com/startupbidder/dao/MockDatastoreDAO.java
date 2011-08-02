@@ -11,6 +11,8 @@ import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.datanucleus.util.StringUtils;
+
 import com.startupbidder.dto.BidDTO;
 import com.startupbidder.dto.ListingDTO;
 import com.startupbidder.dto.CommentDTO;
@@ -145,6 +147,15 @@ public class MockDatastoreDAO implements DatastoreDAO {
 	
 	public List<UserDTO> getAllUsers() {
 		return new ArrayList<UserDTO>(userCache.values());
+	}
+	
+	public Boolean checkUserName(String userName) {
+		for (UserDTO user : userCache.values()) {
+			if (StringUtils.areStringsEqual(userName, user.getNickname())) {
+				return false;
+			}
+		}
+		return true;
 	}
 	
 	public UserDTO getTopInvestor() {

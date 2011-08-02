@@ -88,6 +88,9 @@ public class ServiceFacade {
 	 * @param userData User data object
 	 */
 	public UserVO updateUser(UserVO loggedInUser, UserVO userData) {
+		if (!checkUserName(loggedInUser, userData.getNickname())) {
+			return null;
+		}
 		UserVO user = DtoToVoConverter.convert(getDAO().updateUser(VoToDtoConverter.convert(userData)));
 		computeUserStatistics(user);
 		return user;
@@ -149,6 +152,10 @@ public class ServiceFacade {
 		return userVotes;
 	}
 
+	public Boolean checkUserName(UserVO loggedInUser, String userName) {
+		return getDAO().checkUserName(userName);
+	}
+	
 	private void computeUserStatistics(UserVO user) {
 		if (user != null && user.getId() != null) {
 			UserStatistics userStats = getDAO().getUserStatistics(user.getId());
@@ -429,6 +436,7 @@ public class ServiceFacade {
 			commentProperties.setStartIndex(0);
 			commentProperties.setTotalResults(0);
 		} else {
+			computeListingData(loggedInUser, listing);
 			List<CommentVO> comments = DtoToVoConverter.convertComments(getDAO().getCommentsForListing(listingId));
 			int index = commentProperties.getStartIndex() > 0 ? commentProperties.getStartIndex() : 1;
 			for (CommentVO comment : comments) {
@@ -502,6 +510,7 @@ public class ServiceFacade {
 			bidProperties.setStartIndex(0);
 			bidProperties.setTotalResults(0);
 		} else {
+			computeListingData(loggedInUser, listing);
 			List<BidVO> bids = DtoToVoConverter.convertBids(getDAO().getBidsForListing(listingId));
 			int index = bidProperties.getStartIndex() > 0 ? bidProperties.getStartIndex() : 1;
 			for (BidVO bid : bids) {

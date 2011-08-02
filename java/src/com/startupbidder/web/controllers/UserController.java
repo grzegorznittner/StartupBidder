@@ -37,6 +37,8 @@ public class UserController extends ModelDrivenController {
 				return loggedin(request);
 			} else if("votes".equalsIgnoreCase(getCommand(1))) {
 				return votes(request);
+			} else if("check-user-name".equalsIgnoreCase(getCommand(1))) {
+				return checkUserName(request);
 			} else {
 				return index(request);
 			}
@@ -168,6 +170,14 @@ public class UserController extends ModelDrivenController {
     	model = ServiceFacade.instance().userVotes(getLoggedInUser(), userId);
 
 		HttpHeaders headers = new HttpHeadersImpl("deactivate");
+		return headers;
+	}
+
+	private HttpHeaders checkUserName(HttpServletRequest request) {
+    	String userName = getCommandOrParameter(request, 2, "name");
+    	model = ServiceFacade.instance().checkUserName(getLoggedInUser(), userName);
+
+    	HttpHeaders headers = new HttpHeadersImpl("check-user-name");
 		return headers;
 	}
 

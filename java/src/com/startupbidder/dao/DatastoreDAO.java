@@ -248,6 +248,13 @@ public interface DatastoreDAO {
 	UserDTO deactivateUser(String userId);
 
 	/**
+	 * Checks availability of the particular user name
+	 * @param userName
+	 * @return true if user name is available
+	 */
+	Boolean checkUserName(String userName);
+
+	/**
 	 * Removes comment
 	 * @param commentId
 	 */
@@ -294,5 +301,4 @@ public interface DatastoreDAO {
 	 * @param bidId
 	 */
 	BidDTO withdrawBid(String bidId);
-
 }
