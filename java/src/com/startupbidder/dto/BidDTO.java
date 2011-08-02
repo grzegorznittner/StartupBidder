@@ -175,11 +175,11 @@ public class BidDTO extends AbstractDTO {
 			bid.setStatus(Status.valueOf((String)entity.getProperty("status")));
 		}
 		bid.setListing((String)entity.getProperty("listing"));
-		bid.setPercentOfCompany((Integer)entity.getProperty("percentOfCompany"));
+		bid.setPercentOfCompany(((Long)entity.getProperty("percentOfCompany")).intValue());
 		bid.setPlaced((Date)entity.getProperty("placed"));
 		bid.setUser((String)entity.getProperty("user"));
-		bid.setValuation((Integer)entity.getProperty("valuation"));
-		bid.setValue((Integer)entity.getProperty("value"));
+		bid.setValuation(((Long)entity.getProperty("valuation")).intValue());
+		bid.setValue(((Long)entity.getProperty("value")).intValue());
 		return bid;
 	}
 }

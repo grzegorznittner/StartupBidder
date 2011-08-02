@@ -3,6 +3,7 @@ package com.startupbidder.dto;
 import java.util.Date;
 
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.Text;
 
 public class CommentDTO extends AbstractDTO {
 	private String listing;
@@ -59,7 +60,7 @@ public class CommentDTO extends AbstractDTO {
 	@Override
 	public Entity toEntity() {
 		Entity comment = new Entity(this.id);
-		comment.setProperty("comment", this.comment);
+		comment.setUnindexedProperty("comment", this.comment != null ? new Text(this.comment) : null);
 		comment.setProperty("commentedOn", this.commentedOn);
 		comment.setProperty("listing", this.listing);
 		comment.setProperty("user", this.user);
@@ -69,7 +70,8 @@ public class CommentDTO extends AbstractDTO {
 	public static CommentDTO fromEntity(Entity entity) {
 		CommentDTO comment = new CommentDTO();
 		comment.setKey(entity.getKey());
-		comment.comment = (String)entity.getProperty("comment");
+		Text commentText = (Text)entity.getProperty("comment");
+		comment.comment = commentText != null ? commentText.getValue() : null;
 		comment.commentedOn = (Date)entity.getProperty("commentedOn");
 		comment.listing = (String)entity.getProperty("listing");
 		comment.user = (String)entity.getProperty("user");

@@ -44,7 +44,7 @@ public class ListingRankDTO extends AbstractDTO {
 		dto.setKey(entity.getKey());
 		dto.date = (Date)entity.getProperty("date");
 		dto.listing = (String)entity.getProperty("listing");
-		dto.rank = (Float)entity.getProperty("rank");
+		dto.rank = ((Double)entity.getProperty("rank")).floatValue();
 		return dto;
 	}
 	@Override

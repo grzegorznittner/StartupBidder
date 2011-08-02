@@ -5,6 +5,7 @@ import java.util.Date;
 import org.apache.commons.lang.StringUtils;
 
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.Text;
 
 public class ListingDTO extends AbstractDTO {
 
@@ -119,7 +120,7 @@ public class ListingDTO extends AbstractDTO {
 		listing.setProperty("suggestedAmount", this.suggestedAmount);
 		listing.setProperty("suggestedPercentage", this.suggestedPercentage);
 		listing.setProperty("suggestedValuation", this.suggestedValuation);
-		listing.setProperty("summary", this.summary);
+		listing.setUnindexedProperty("summary", this.summary != null ? new Text(this.summary) : null);
 		return listing;
 	}
 
@@ -133,10 +134,11 @@ public class ListingDTO extends AbstractDTO {
 		if (!StringUtils.isEmpty((String)entity.getProperty("state"))) {
 			listing.state = ListingDTO.State.valueOf((String)entity.getProperty("state"));
 		}
-		listing.suggestedAmount = (Integer)entity.getProperty("suggestedAmount");
-		listing.suggestedPercentage = (Integer)entity.getProperty("suggestedPercentage");
-		listing.suggestedValuation = (Integer)entity.getProperty("suggestedValuation");
-		listing.summary = (String)entity.getProperty("summary");
+		listing.suggestedAmount = ((Long)entity.getProperty("suggestedAmount")).intValue();
+		listing.suggestedPercentage = ((Long)entity.getProperty("suggestedPercentage")).intValue();
+		listing.suggestedValuation = ((Long)entity.getProperty("suggestedValuation")).intValue();
+		Text summaryText = (Text)entity.getProperty("summary");
+		listing.summary = summaryText != null ? summaryText.getValue() : null;
 		return listing;
 	}
 

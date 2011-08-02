@@ -7,7 +7,10 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.startupbidder.dto.BidDTO;
@@ -19,20 +22,23 @@ import com.startupbidder.dto.UserDTO;
 import com.startupbidder.dto.VoteDTO;
 
 public class EntityConverterTest {
-	private final LocalServiceTestHelper helper = new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
+	private final LocalServiceTestHelper helper = new LocalServiceTestHelper(
+			new LocalDatastoreServiceTestConfig().setDefaultHighRepJobPolicyUnappliedJobPercentage(100));
+	private DatastoreService datastore = null;
 	
 	@Before
 	public void setUp() {
 		helper.setUp();
+		datastore = DatastoreServiceFactory.getDatastoreService();
 	}
 	
 	@After
 	public void tearDown() {
-		//helper.tearDown();
+		helper.tearDown();
 	}
 
 	@Test
-	public void testBid() {
+	public void testBid() throws EntityNotFoundException {
 		BidDTO bid = new BidDTO();
 		bid.createKey("" + bid.hashCode());
 		bid.setFundType(BidDTO.FundType.NOTE);
@@ -47,6 +53,8 @@ public class EntityConverterTest {
 		System.out.println("Original: " + bid);
 		
 		Entity bidEntity = bid.toEntity();
+		datastore.put(bidEntity);
+		bidEntity = datastore.get(bidEntity.getKey());
 		BidDTO newBid = BidDTO.fromEntity(bidEntity);
 
 		System.out.println("Recreated: " + newBid);
@@ -55,7 +63,7 @@ public class EntityConverterTest {
 	}
 	
 	@Test
-	public void testComment() {
+	public void testComment() throws EntityNotFoundException {
 		CommentDTO comment = new CommentDTO();
 		comment.createKey("" + comment.hashCode());
 		comment.setComment("comment");
@@ -65,8 +73,10 @@ public class EntityConverterTest {
 		
 		System.out.println("Original: " + comment);
 		
-		Entity bidEntity = comment.toEntity();
-		CommentDTO newComment = CommentDTO.fromEntity(bidEntity);
+		Entity commentEntity = comment.toEntity();
+		datastore.put(commentEntity);
+		commentEntity = datastore.get(commentEntity.getKey());
+		CommentDTO newComment = CommentDTO.fromEntity(commentEntity);
 
 		System.out.println("Recreated: " + newComment);
 		
@@ -74,7 +84,7 @@ public class EntityConverterTest {
 	}
 	
 	@Test
-	public void testListing() {
+	public void testListing() throws EntityNotFoundException {
 		ListingDTO listing = new ListingDTO();
 		listing.createKey("" + listing.hashCode());
 		listing.setClosingOn(new Date(9999999));
@@ -90,6 +100,8 @@ public class EntityConverterTest {
 		System.out.println("Original: " + listing);
 		
 		Entity listingEntity = listing.toEntity();
+		datastore.put(listingEntity);
+		listingEntity = datastore.get(listingEntity.getKey());
 		ListingDTO newListing = ListingDTO.fromEntity(listingEntity);
 
 		System.out.println("Recreated: " + newListing);
@@ -98,7 +110,7 @@ public class EntityConverterTest {
 	}
 	
 	@Test
-	public void testUser() {
+	public void testUser() throws EntityNotFoundException {
 		UserDTO user = new UserDTO();
 		user.createKey("" + user.hashCode());
 		user.setEmail("email");
@@ -119,6 +131,8 @@ public class EntityConverterTest {
 		System.out.println("Original: " + user);
 		
 		Entity userEntity = user.toEntity();
+		datastore.put(userEntity);
+		userEntity = datastore.get(userEntity.getKey());
 		UserDTO newUser = UserDTO.fromEntity(userEntity);
 
 		System.out.println("Recreated: " + newUser);
@@ -127,7 +141,7 @@ public class EntityConverterTest {
 	}
 	
 	@Test
-	public void testVote() {
+	public void testVote() throws EntityNotFoundException {
 		VoteDTO vote = new VoteDTO();
 		vote.createKey("" + vote.hashCode());
 		vote.setCommentedOn(new Date());
@@ -138,6 +152,8 @@ public class EntityConverterTest {
 		System.out.println("Original: " + vote);
 		
 		Entity voteEntity = vote.toEntity();
+		datastore.put(voteEntity);
+		voteEntity = datastore.get(voteEntity.getKey());
 		VoteDTO newVote = VoteDTO.fromEntity(voteEntity);
 
 		System.out.println("Recreated: " + newVote);
@@ -147,7 +163,7 @@ public class EntityConverterTest {
 	}
 
 	@Test
-	public void testListingRank() {
+	public void testListingRank() throws EntityNotFoundException {
 		ListingRankDTO rank = new ListingRankDTO();
 		rank.createKey("" + rank.hashCode());
 		rank.setDate(new Date());
@@ -157,6 +173,8 @@ public class EntityConverterTest {
 		System.out.println("Original: " + rank);
 		
 		Entity rankEntity = rank.toEntity();
+		datastore.put(rankEntity);
+		rankEntity = datastore.get(rankEntity.getKey());
 		ListingRankDTO newRank = ListingRankDTO.fromEntity(rankEntity);
 
 		System.out.println("Recreated: " + newRank);
@@ -165,7 +183,7 @@ public class EntityConverterTest {
 	}
 	
 	@Test
-	public void testListingDocument() {
+	public void testListingDocument() throws EntityNotFoundException {
 		ListingDocumentDTO doc = new ListingDocumentDTO();
 		doc.createKey("" + doc.hashCode());
 		doc.setBlob("blob");
@@ -177,6 +195,8 @@ public class EntityConverterTest {
 		System.out.println("Original: " + doc);
 		
 		Entity docEntity = doc.toEntity();
+		datastore.put(docEntity);
+		docEntity = datastore.get(docEntity.getKey());
 		ListingDocumentDTO newDoc = ListingDocumentDTO.fromEntity(docEntity);
 
 		System.out.println("Recreated: " + newDoc);

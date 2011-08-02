@@ -72,7 +72,7 @@ public class VoteDTO extends AbstractDTO {
 		vote.setCommentedOn((Date)entity.getProperty("commentedOn"));
 		vote.setListing((String)entity.getProperty("listing"));
 		vote.setUser((String)entity.getProperty("user"));
-		vote.setValue((Integer)entity.getProperty("value"));
+		vote.setValue(((Long)entity.getProperty("value")).intValue());
 		return vote;
 	}
 
