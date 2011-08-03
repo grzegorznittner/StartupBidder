@@ -6,6 +6,7 @@ import java.util.List;
 import com.startupbidder.dto.BidDTO;
 import com.startupbidder.dto.ListingDTO;
 import com.startupbidder.dto.CommentDTO;
+import com.startupbidder.dto.SystemPropertyDTO;
 import com.startupbidder.dto.VoteDTO;
 import com.startupbidder.dto.UserDTO;
 
@@ -92,6 +93,13 @@ public class DtoToVoConverter {
 		return user;
 	}
 	
+	public static SystemPropertyVO convert(SystemPropertyDTO propertyDTO) {
+		if (propertyDTO == null) {
+			return null;
+		}
+		return new SystemPropertyVO(propertyDTO);
+	}
+	
 	public static List<ListingVO> convertListings(List<ListingDTO> bpDtoList) {
 		if (bpDtoList == null) {
 			return null;
@@ -150,5 +158,17 @@ public class DtoToVoConverter {
 			votesVoList.add(voteVO);
 		}
 		return votesVoList;
+	}
+
+	public static List<SystemPropertyVO> convertSystemProperties(List<SystemPropertyDTO> propertiesDtoList) {
+		if (propertiesDtoList == null) {
+			return null;
+		}
+		List<SystemPropertyVO> propertyVoList = new ArrayList<SystemPropertyVO>();
+		for (SystemPropertyDTO propertyDTO : propertiesDtoList) {
+			SystemPropertyVO propertyVO = convert(propertyDTO);
+			propertyVoList.add(propertyVO);
+		}
+		return propertyVoList;
 	}
 }

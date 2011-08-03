@@ -10,5 +10,7 @@ handlers:
 #      struts.devMode: true
   - url: /hello/*
     servlet: com.startupbidder.web.servlets.HelloServlet
+  - url: /setup/*
+    servlet: com.startupbidder.web.servlets.SetupServlet
   - url: /*
     servlet: com.startupbidder.web.FrontController

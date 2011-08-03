@@ -5,6 +5,7 @@ import java.util.List;
 import com.startupbidder.dto.BidDTO;
 import com.startupbidder.dto.CommentDTO;
 import com.startupbidder.dto.ListingDTO;
+import com.startupbidder.dto.SystemPropertyDTO;
 import com.startupbidder.dto.UserDTO;
 import com.startupbidder.dto.UserStatistics;
 import com.startupbidder.dto.VoteDTO;
@@ -307,4 +308,22 @@ public interface DatastoreDAO {
 	 * @param bidsProperties
 	 */
 	List<BidDTO> getBidsByDate(ListPropertiesVO bidsProperties);
+
+	/**
+	 * Gets system property.
+	 * @param name Name of the property
+	 */
+	SystemPropertyDTO getSystemProperty(String name);
+
+	/**
+	 * Sets system property.
+	 * @param property Property to set, replaces previous one if exists
+	 */
+	SystemPropertyDTO setSystemProperty(SystemPropertyDTO property);
+
+	/**
+	 * Returns all system properties.
+	 * Password properties will be set to "***"
+	 */
+	List<SystemPropertyDTO> getSystemProperties();
 }

@@ -8,6 +8,7 @@ import org.apache.commons.lang.StringUtils;
 import com.startupbidder.vo.BidVO;
 import com.startupbidder.vo.ListingVO;
 import com.startupbidder.vo.CommentVO;
+import com.startupbidder.vo.SystemPropertyVO;
 import com.startupbidder.vo.VoteVO;
 import com.startupbidder.vo.UserVO;
 
@@ -95,6 +96,10 @@ public class VoToDtoConverter {
 			user.setStatus(UserDTO.Status.valueOf(StringUtils.upperCase(userVO.getStatus())));
 		}
 		return user;
+	}
+	
+	public static SystemPropertyDTO convert(SystemPropertyVO propertyVO) {
+		return propertyVO;
 	}
 
 	public static List<ListingDTO> convertListings(List<ListingVO> bpVOList) {

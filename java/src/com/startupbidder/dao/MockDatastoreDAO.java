@@ -16,6 +16,7 @@ import org.datanucleus.util.StringUtils;
 import com.startupbidder.dto.BidDTO;
 import com.startupbidder.dto.CommentDTO;
 import com.startupbidder.dto.ListingDTO;
+import com.startupbidder.dto.SystemPropertyDTO;
 import com.startupbidder.dto.UserDTO;
 import com.startupbidder.dto.UserStatistics;
 import com.startupbidder.dto.VoteDTO;
@@ -46,6 +47,7 @@ public class MockDatastoreDAO implements DatastoreDAO {
 	Map<String, CommentDTO> commentCache = new HashMap<String, CommentDTO>();
 	Map<String, BidDTO> bidCache = new HashMap<String, BidDTO>();
 	Map<String, UserDTO> userCache = new HashMap<String, UserDTO>();
+	Map<String, SystemPropertyDTO> propCache = new HashMap<String, SystemPropertyDTO>();
 
 	public MockDatastoreDAO() {
 		createMockUsers();
@@ -732,6 +734,34 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		return bids.subList(0, bidsProperties.getMaxResults() < bids.size() ? bidsProperties.getMaxResults() : bids.size());
 	}
 
+	public SystemPropertyDTO getSystemProperty(String name) {
+		return propCache.get(name);
+	}
+
+	public SystemPropertyDTO setSystemProperty(SystemPropertyDTO property) {
+		property.createKey(property.getName());
+		property.setCreated(new Date());
+		propCache.put(property.getName(), property);
+		return property;
+	}
+	
+	public List<SystemPropertyDTO> getSystemProperties() {
+		List<SystemPropertyDTO> props = new ArrayList<SystemPropertyDTO>();
+		for (SystemPropertyDTO prop : propCache.values()) {
+			if (prop.getName().contains("pass")) {
+				SystemPropertyDTO newProp = new SystemPropertyDTO();
+				newProp.setName(prop.getName());
+				newProp.setValue("******");
+				newProp.setAuthor(prop.getAuthor());
+				newProp.setCreated(prop.getCreated());
+				props.add(newProp);
+			} else {
+				props.add(prop);
+			}
+		}
+		return props;
+	}
+	
 	/**
 	 * Generates random comments for business plans
 	 */

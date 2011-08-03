@@ -31,6 +31,7 @@ import com.startupbidder.vo.GraphDataVO;
 import com.startupbidder.vo.ListPropertiesVO;
 import com.startupbidder.vo.ListingListVO;
 import com.startupbidder.vo.ListingVO;
+import com.startupbidder.vo.SystemPropertyVO;
 import com.startupbidder.vo.UserListVO;
 import com.startupbidder.vo.UserVO;
 import com.startupbidder.vo.UserVotesVO;
@@ -715,5 +716,21 @@ public class ServiceFacade {
 		data.setValues(values);
 
 		return data;
+	}
+	
+	public SystemPropertyVO getSystemProperty(UserVO loggedInUser, String name) {
+		return DtoToVoConverter.convert(getDAO().getSystemProperty(name));
+	}
+
+	public List<SystemPropertyVO> getSystemProperties(UserVO loggedInUser) {
+		return DtoToVoConverter.convertSystemProperties(getDAO().getSystemProperties());
+	}
+
+	public SystemPropertyVO setSystemProperty(UserVO loggedInUser, SystemPropertyVO property) {
+		if (loggedInUser == null) {
+			return null;
+		}
+		property.setAuthor(loggedInUser.getEmail());
+		return DtoToVoConverter.convert(getDAO().setSystemProperty(VoToDtoConverter.convert(property)));
 	}
 }

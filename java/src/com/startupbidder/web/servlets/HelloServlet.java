@@ -42,7 +42,7 @@ public class HelloServlet extends HttpServlet {
 		
 		PrintWriter out = resp.getWriter();
 		try {
-			out.println("<html><body>");
+			out.println("<html><head><title>StartupBidder test page</title></head><body>");
 			out.println("<p>Hello, " + user.getNickname() + " ..................................");
 			out.println("<a href=\"" + userService.createLogoutURL("/hello") + "\">logout</a></p>");
 			
@@ -50,6 +50,7 @@ public class HelloServlet extends HttpServlet {
 //				out.println("<p>Sorry, you're not authorized to view contents!!!</p>");
 //				return;
 //			}
+			out.println("<a href=\"/setup/\">Setup page</a></p>");
 			
 			UserDTO topInvestor = datastore.getTopInvestor();
 			UserVO currentUser = service.getLoggedInUserData(user);

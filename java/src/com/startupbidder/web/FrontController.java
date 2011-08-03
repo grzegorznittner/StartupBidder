@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.startupbidder.web.controllers.BidController;
 import com.startupbidder.web.controllers.CommentController;
 import com.startupbidder.web.controllers.ListingController;
+import com.startupbidder.web.controllers.SystemController;
 import com.startupbidder.web.controllers.UserController;
 
 @SuppressWarnings("serial")
@@ -39,6 +40,8 @@ public class FrontController extends HttpServlet {
 			controller = new BidController();
 		} else if (pathInfo.startsWith("/comment")) {
 			controller = new CommentController();
+		} else if (pathInfo.startsWith("/system")) {
+			controller = new SystemController();
 		} else {
 			log.log(Level.WARNING, "Unknown action '" + pathInfo + "'");
 		}
