@@ -1117,7 +1117,7 @@ $(function(){
         };
         self.displayStats = function(stats) {
             var pngStr = self.statsPngDataURI(200, 100, stats.values);
-            $('#stats-label').html(stats.label);
+            $('#stats-label').html(stats.label.replace('Valume','Volume'));
             $('#stats-xaxis').html(stats.xaxis);
             $('#stats-yaxis').html(stats.yaxis);
             $('#stats-img').attr('src', pngStr);
@@ -2308,15 +2308,17 @@ $(function(){
             $.post(url, callback);
         };
         self.bidStats = function(callback) {
-            var stats = {
-                    label: "10 Day Bid Volume",
-                    xaxis: "days ago",
-                    yaxis: "num bids",
-                    values: [ 7, 1, 9, 7, 5, 6, 2, 6, 7, 2 ]
+            var url = '/bids/statistics/';
+            $.get(url, callback);
+//            var stats = {
+//                    label: "10 Day Bid Volume",
+//                    xaxis: "days ago",
+//                    yaxis: "num bids",
+//                    values: [ 7, 1, 9, 7, 5, 6, 2, 6, 7, 2 ]
 //                              2, 1, 8, 6, 8, 0, 6, 5, 4, 8,
 //                              3, 0, 1, 0, 8, 8, 9, 9, 7, 5 ]
-            };
-            callback(stats);
+//            };
+//            callback(stats);
          };
          return self;
     };
