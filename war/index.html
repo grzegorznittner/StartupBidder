@@ -911,6 +911,7 @@ $(function(){
             var days_ago = userjson.days_ago !== undefined ? userjson.days_ago : 0;
             var resultHtml = '';
             var evenOdd;
+            console.log('i='+i);
             if (isFinite(i)) {
                 evenOdd = (i % 2 == 0) ? 'even' : 'odd';
                 resultHtml += '<div class="content-results-list-item content-results-list-item-' + evenOdd + '">';
@@ -931,10 +932,10 @@ $(function(){
             resultHtml += '<div class="content-results-list-item-clear"></div>';
             resultHtml += '<div class="content-results-list-item-detail">';
             resultHtml += '<span id="user-search-results-list-item-votes-' + i + '">' + (userjson.num_votes !== undefined ? userjson.num_votes : 0)  + '</span>' + ' votes | ';
-            resultHtml += '<span id="user-search-results-list-item-listings-' + i + '">' + userjson.num_listings + '</span>' + ' listing' + (userjson.num_listings>0?'s':'') + ' | ';
-            resultHtml += '<span id="user-search-results-list-item-bids-' + i + '">' + userjson.num_bids + '</span>' + ' bid' + (userjson.num_bids>0?'s':'') + ' | ';
-            resultHtml += '<span id="user-search-results-list-item-comments-' + i + '">' + userjson.num_comments + '</span>' + ' comment' + (userjson.num_comments>0?'s':'') + ' | ';
-            resultHtml += (days_ago == 0) ? 'active today' : 'active ' + days_ago + ' day' + (days_ago>1?'s':'')  + ' ago';
+            resultHtml += '<span class="link" id="user-search-results-list-item-listings-' + i + '">' + userjson.num_listings + ' listing' + (userjson.num_listings!==1?'s':'') + '</span> | ';
+            resultHtml += '<span class="link" id="user-search-results-list-item-bids-' + i + '">' + userjson.num_bids + ' bid' + (userjson.num_bids!==1?'s':'') + '</span> | ';
+            resultHtml += '<span class="link" id="user-search-results-list-item-comments-' + i + '">' + userjson.num_comments + ' comment' + (userjson.num_comments!==1?'s':'') + '</span> | ';
+            resultHtml += (days_ago == 0) ? 'active today' : 'active ' + days_ago + ' day' + (days_ago!==1?'s':'')  + ' ago';
             resultHtml += ' | ';
             resultHtml += 'joined ' + util.formatDate(userjson.joined_date) + ' | ';
             resultHtml += 'status ' + userjson.status;
@@ -946,17 +947,26 @@ $(function(){
        };
        self.bindUserSnippet = function(i, userjson) {
             var upvote_item = document.getElementById('user-search-results-list-item-upvote-'+i);
-            $('#user-search-results-list-item-profile-'+i).data('profile_id',userjson.profile_id).unbind().bind('click', function(){
-                backend.getProfile($(this).data('profile_id'), profiles.displayProfile);
+            var item_num = i;
+            $('#user-search-results-list-item-profile-'+i).data({index: i, profile_id: userjson.profile_id}).unbind().bind('click', function(){
+                $('#user-search-results-list-item-profile-'+i).html('loading...');
+                var errorCallback = function () { $('#user-search-results-list-item-profile-'+i).html('unable to retrieve profile'); };
+                backend.getProfile($(this).data('profile_id'), profiles.displayProfile, errorCallback);
             });           
-            $('#user-search-results-list-item-comments-'+i).data('profile_id',userjson.profile_id).unbind().bind('click', function(){
-                backend.listingsForProfile($(this).data('profile_id'), listings.displayResults);
+            $('#user-search-results-list-item-listings-'+i).data({index: i, profile_id: userjson.profile_id}).unbind().bind('click', function(){
+                $('#user-search-results-list-item-listings-'+i).html('loading...');
+                var errorCallback = function () { $('#user-search-results-list-item-listings-'+i).html('unable to retrieve listings'); };
+                backend.listingsForProfile($(this).data('profile_id'), searchListings.displayResultsJson, errorCallback);
             }); 
-            $('#user-search-results-list-item-comments-'+i).data('profile_id',userjson.profile_id).unbind().bind('click', function(){
-                backend.commentsForProfile($(this).data('profile_id'), comments.displayResults);
+            $('#user-search-results-list-item-comments-'+i).data({index: i, profile_id: userjson.profile_id}).unbind().bind('click', function(){
+                $('#user-search-results-list-item-comments-'+i).html('loading...');
+                var errorCallback = function () { $('#user-search-results-list-item-comments-'+i).html('unable to retrieve comments'); };
+                backend.commentsForProfile($(this).data('profile_id'), comments.displayResults, errorCallback);
             }); 
-            $('#user-search-results-list-item-bids-'+i).data('profile_id',userjson.profile_id).unbind().bind('click', function(){
-                backend.bidsForProfile($(this).data('profile_id'), bids.displayResults);
+            $('#user-search-results-list-item-bids-'+i).data({index: i, profile_id: userjson.profile_id}).unbind().bind('click', function(){
+                $('#user-search-results-list-item-bids-'+i).html('loading...');
+                var errorCallback = function () { $('#user-search-results-list-item-bids-'+i).html('unable to retrieve bids'); };
+                backend.bidsForProfile($(this).data('profile_id'), bids.displayResults, errorCallback);
             });
             $(upvote_item)
                 .data('index', i)
@@ -1113,7 +1123,6 @@ $(function(){
                 $('#stats').hide();
             }
             backend.searchListings(args.search_type, keywords, args.profile_id, args.start_index, args.max_results, searchListings.displayResultsJson);
-            util.displayPage('searchlistings');
         };
         self.displayStats = function(stats) {
             var pngStr = self.statsPngDataURI(200, 100, stats.values);
@@ -1207,22 +1216,35 @@ $(function(){
                 self.displayResultsHtml('<i>loading...</i>');
                 return;
             }
-            user.setProfile(results_json.loggedin_profile);
+            if (results_json.loggedin_profile) {
+                user.setProfile(results_json.loggedin_profile);
+            }
             self.displayResults(results_json.listings, results_json.search_type, results_json.keywords, results_json.profile ? results_json.profile.profile_id : null, results_json.start_index,
-                results_json.listings_props.num_results, results_json.listings_props.total_results);
+                results_json.listings_props.num_results, results_json.listings_props.total_results, results_json.profile);
         };
         self.displayResultsHtml = function(resultsHtml) {
+            util.displayPage('searchlistings');
             $('#search-content-results-list').hide().html(resultsHtml).slideDown();
         };
-        self.displayResults = function(results, search_type, keywords, profile_id, start_index, num_results, total_results){
+        self.displayResults = function(results, search_type, keywords, profile_id, start_index, num_results, total_results, profile){
+            console.log('foo');
+            console.log('profile_id:'+profile_id);
+            console.log('profile:'+results.profile);
             var resultsHtml = '';
             var listing;
             // display search box
-            if (profile_id) {
+            if (profile) {
                 $('#content-search-box').hide();
+                $('#content-stats').hide();
+                $('#searchlistings-profile-snippet').html(user.generateUserSnippetHtml('search', profile));
+                user.bindUserSnippet('search', profile);
+                $('#searchlistings-profile-header').show();
             }
             else {
                 $('#content-search-box').show();
+                $('#content-stats').show();
+                $('#searchlistings-profile-header').hide();
+                $('#searchlistings-profile-snippet').html('');
             } 
             for (var i = 0; i < results.length; i++) { // create results
                 listing = results[i];
@@ -1773,11 +1795,11 @@ $(function(){
             resultHtml += '<div class="content-results-list-item-clear"></div>';
             resultHtml += '<div class="content-results-list-item-detail">';
             resultHtml += '<span id="content-results-list-item-votes-' + i + '">' + listing.num_votes + '</span>' + ' votes | ';
-            resultHtml += (days_ago == 0) ? 'listed today' : days_ago + ' day' + (days_ago>1?'s':'')  + ' ago';
+            resultHtml += (days_ago == 0) ? 'listed today' : days_ago + ' day' + (days_ago!==1?'s':'')  + ' ago';
             resultHtml += ' | ';
             resultHtml += (listing.status == 'active' && days_left == 0) ? 'closing today!' : '';
             resultHtml += (listing.status == 'active' && days_left < 0) ? 'listing closed' : '';
-            resultHtml += (listing.status == 'active' && days_left > 0) ? 'closing in ' + days_left + ' day' + (days_left>1?'s':'') : '';
+            resultHtml += (listing.status == 'active' && days_left > 0) ? 'closing in ' + days_left + ' day' + (days_left!==1?'s':'') : '';
             resultHtml += (listing.status == 'closed') ? 'listing closed' : '';
             resultHtml += (listing.status == 'withdrawn') ? 'listing withdrawn' : '';
             resultHtml += ' | ';
@@ -1831,6 +1853,16 @@ $(function(){
             }
             $('#comment-save-message').attr('class', 'attention').html('');
             util.displayPage('comments');
+            var comments_profile = results ? results.profile : null;
+            if (comments_profile) {
+                $('#comments-profile-snippet').html(user.generateUserSnippetHtml('comments', comments_profile));
+                user.bindUserSnippet('comments', comments_profile);
+                $('#comments-profile-header').show();
+            }
+            else {
+                $('#comments-profile-header').hide();
+                $('#comments-profile-snippet').html('');
+            }
             var listing = results ? results.listing : null;
             var comments = results ? results.comments : null;
             var profile = user.profile;
@@ -1855,6 +1887,7 @@ $(function(){
                 if (listing.listing_id) {
                     $('#comments-listing-snippet').html(listings.generateListingSnippetHtml('comments', listing));
                     listings.bindListingSnippet('comments', listing);
+                    $('#comments-listing-header').show();
                 }
                 if (profile) {
                     $('#comment-loggedin-add').show();
@@ -1870,6 +1903,7 @@ $(function(){
                 }
             }
             else {
+                $('#comments-listing-header').hide();
                 $('#comments-listing-snippet').html('Comments:');
                 $('#comment-loggedin-add').hide();
                 $('#comment-not-loggedin-msg').hide();
@@ -2021,6 +2055,16 @@ $(function(){
                 self.clearBidFields();
             }
             util.displayPage('bids');
+            var bids_profile = results ? results.profile : null;
+            if (bids_profile) {
+                $('#bids-profile-snippet').html(user.generateUserSnippetHtml('bids', bids_profile));
+                user.bindUserSnippet('bids', bids_profile);
+                $('#bids-profile-header').show();
+            }
+            else {
+                $('#bids-profile-header').hide();
+                $('#bids-profile-snippet').html('');
+            }
             var listing = results ? results.listing : null;
             var bids = results ? results.bids : null;
             var profile = user.profile;
@@ -2045,6 +2089,7 @@ $(function(){
                 if (listing.listing_id) {
                     $('#bids-listing-snippet').html(listings.generateListingSnippetHtml('bids', listing));
                     listings.bindListingSnippet('bids', listing);
+                    $('#bids-listing-header').show();
                 }
                 if (listing.status != 'active') {
                     $('#bids-form-loggedin').hide();
@@ -2087,6 +2132,7 @@ $(function(){
                 }
             }
             else {
+                $('#bids-listing-header').hide();
                 $('#bids-form-loggedin').hide();
                 $('#bids-form-not-loggedin').hide();
                 $('#bids-listing-snippet').html('');
@@ -2227,7 +2273,11 @@ $(function(){
             var url = '/listings/get/' + listing_id;
             $.getJSON(url, callback);
         };
-        self.searchListings = function(searchType, keywords, profile_id, start_index, max_results, callback) {
+        self.listingsForProfile = function(profile_id, callback, errorCallback) {
+            var url = '/listings/user/?id=' + profile_id;
+            $.getJSON(url).success(callback).error(errorCallback);
+        };
+        self.searchListings = function(searchType, keywords, profile_id, start_index, max_results, callback, errorCallback) {
             var pathSuffix = '';
             if (profile_id !== undefined) {
                 pathSuffix = 'user/?id=' + profile_id;
@@ -2236,7 +2286,7 @@ $(function(){
                 pathSuffix = searchType + '/?max_results=20';
             }
             var url = '/listings/' + pathSuffix;
-            $.getJSON(url, callback);
+            $.getJSON(url).success(callback).error(errorCallback);
         };
         self.createListing = function(listing, callback) {
             var url = '/listings/create/';
@@ -2811,11 +2861,14 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
     </div>
 
     <div id="searchlistingspage" class="content page">
+        <div class="content-header" id="searchlistings-profile-header">
+            <div class="content-results-list" id="searchlistings-profile-snippet"></div>
+        </div>
         <div class="content-search" id="content-search-box">
             <input id="content-search-keywords" name="keywords" type="text" size="30"/>
             <button id="content-search-submit">search</button>
         </div>
-        <div class="content-stats">
+        <div class="content-stats" id="content-stats">
             <div id="stats-list">
                 <div id="stats" class="stats">
                     <div id="stats-label" class="stats-label"></div>
@@ -2853,7 +2906,10 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
     </div>
 
     <div id="commentspage" class="content page">
-        <div class="content-header">
+        <div class="content-header" id="comments-profile-header">
+            <div class="content-results-list" id="comments-profile-snippet"></div>
+        </div>
+        <div class="content-header" id="comments-listing-header">
             <div class="content-results-list" id="comments-listing-snippet"></div>
         </div>
         <form action="#" method="post">
@@ -2975,6 +3031,168 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
         </div>
     </div>
     
+    <div id="listingpage" class="content page">
+        <div class="content-header">
+            <div class="content-results-list" id="listing-snippet"></div>
+        </div>
+        <div class="content-form-line" id="listing-form-message"></div>
+        <div class="content-form-clear"></div>
+        <div class="content-form" id="listing-form-editable">
+                
+                <form action="#" method="post" enctype="multipart/form-data">
+                <input name="page" type="hidden" value="listing"/>
+                <input id="listing-edit-listing-id" name="listing-id" type="hidden" value=""/>
+                <input id="listing-edit-median-valuation" name="median-valuation" type="hidden" value=""/>
+                <input id="listing-edit-num-votes" name="num-votes" type="hidden" value=""/>
+                <input id="listing-edit-num-bids" name="num-bids" type="hidden" value=""/>
+                <input id="listing-edit-num-comments" name="num-comments" type="hidden" value=""/>
+                <input id="listing-edit-profile-id" name="profile-id" type="hidden" value=""/>
+                <input id="listing-edit-profile-username" name="profile-username" type="hidden" value=""/>
+                <input id="listing-edit-listing-date" name="listing-date" type="hidden" value=""/>
+                <input id="listing-edit-status" name="listing-id" type="hidden" value=""/>
+
+                <div class="content-form-line">Title is </div>
+                <div class="content-form-maininputline"><input id="listing-edit-title" name="title" type="text" size="40" value="type listing title here"/></div>
+                <div class="content-form-clear"></div>
+
+                <div class="content-form-line">Closes on midnight on <span id="listing-edit-closing-date"></span></div>
+                <div class="content-form-clear"></div>
+
+                <div class="content-form-line">Suggested bid of </div>
+                <div class="content-form-inputline">$<input id="listing-edit-suggested-amt" name="suggested_bid_amt" type="text" size="9" maxlength="9" value="30,000"/></div>
+                <div class="content-form-line">for</div>
+                <div class="content-form-inputline"><input id="listing-edit-suggested-pct" name="suggested_bid_pct" type="text" size="2" maxlength="2" value="10"/>%</div>
+                <div class="content-form-line"> equity</div>
+                <div class="content-form-clear"></div>
+
+                <div class="content-form-line">Suggested valuation is $<span id="listing-edit-suggested-val"></span></div>
+                <div class="content-form-clear"></div>
+
+                <div class="content-form-line">Executive Summary</div>
+                <div class="content-form-clear"></div>
+                <div class="content-form-inputline">
+                    <textarea class="content-form-inputline-textarea" id="listing-edit-summary" name="executive_summary" rows="10" cols="50" wrap="soft">
+MisLead is a revolution in social networking.  Previously, social networking has been for people with friends, those outgoing on the internet, those who don't have trouble communicating online.  There is an untapped market in those who not only have difficulty making social connections, but frequently dislike social situations and social crowds.  With MisLead, you are only allowed a maximum of five friends at any one time.  However, you are more intimately connected with them, including real-time location updates, frequent SMS on activities, and heavy linking into any goings-on for connected individuals in a plethora of other networks.
+                    </textarea>
+                </div>
+                <div class="content-form-clear"></div>
+
+                <div class="content-form-line"><span class="link" id="listing-edit-business-plan-link">view business plan</span></div>
+                <div class="content-form-clear"></div>
+                <div class="content-form-line"><span class="link" id="listing-edit-presentation-link">view presentation</span></div>
+                <div class="content-form-clear"></div>
+
+                <div class="content-form-label">Business plan</div>
+                <div class="content-form-input"><input id="listing-upload-business-plan" name="business-plan" type="file"/></div> <!-- size="40" -->
+                <div class="content-form-clear"></div>
+
+                <div class="content-form-label">Presentation</div>
+                <div class="content-form-input"><input id="listing-upload-presentation" name="presentation" type="file"/></div> <!-- size="40" -->
+                <div class="content-form-clear"></div>
+                
+                <div class="content-form-inputline"><button id="listing-save-link">Save</button><span class="attention" id="listing-save-message"></span></div>
+                <div class="content-form-clear"></div>
+
+                <div class="content-form-linkline"><span class="link" id="listing-activate-link">(activate listing)</span></div>
+                <div class="content-form-clear"></div>
+
+                <div class="content-form-linkline"><span class="link" id="listing-withdraw-link">(withdraw listing)</span></div>
+                <div class="content-form-clear"></div>
+
+                </form>
+        </div>
+        <div class="content-form" id="listing-form-readonly">
+                <div class="content-form-line">
+                    Suggested bid of $<span id="listing-readonly-suggested-amt"></span>
+                    for <span id="listing-readonly-suggested-pct"></span>% equity
+                </div>
+                <div class="content-form-clear"></div>
+                <div class="content-form-line">Suggested valuation is $<span id="listing-readonly-suggested-val"></span></div>
+                <div class="content-form-clear"></div>
+
+                <div class="content-form-line-emphasized">Executive Summary</div>
+                <div class="content-form-clear"></div>
+                <div class="content-form-multiline" id="listing-readonly-summary">
+MisLead is a revolution in social networking.  Previously, social networking has been for people with friends, those outgoing on the internet, those who don't have trouble communicating online.  There is an untapped market in those who not only have difficulty making social connections, but frequently dislike social situations and social crowds.  With MisLead, you are only allowed a maximum of five friends at any one time.  However, you are more intimately connected with them, including real-time location updates, frequent SMS on activities, and heavy linking into any goings-on for connected individuals in a plethora of other networks.
+                </div>
+                <div class="content-form-clear"></div>
+
+                <div class="content-form-line"><span class="link" id="listing-readonly-business-plan-link">view business plan</span></div>
+                <div class="content-form-clear"></div>
+
+                <div class="content-form-line"><span class="link" id="listing-readonly-presentation-link">view presentation</span></div>
+                <div class="content-form-clear"></div>
+         </div>
+    </div>
+    
+    <div id="bidspage" class="content page">
+        <div class="content-header" id="bids-profile-header">
+            <div class="content-results-list" id="bids-profile-snippet"></div>
+        </div>
+        <div class="content-header" id="bids-listing-header">
+            <div class="content-results-list" id="bids-listing-snippet"></div>
+        </div>
+        <div class="content-form" id="bids-form-loggedin">
+            <form action="#" method="post" enctype="multipart/form-data">
+                <input name="page" type="hidden" value="listing"/>
+                <div class="content-form-line">Place bid of $</div>
+                <div class="content-form-inputline"><input id="bid-amt" name="bid_amt" type="text" size="9" maxlength="9" value="30,000"/></div>
+                <div class="content-form-line">for</div>
+                <div class="content-form-inputline"><input id="bid-pct" name="bid_pct" type="text" size="2" maxlength="2" value="10"/></div>
+                <div class="content-form-line">% equity (fully diluted)</div>
+                <div class="content-form-clear"></div>
+
+                <div class="content-form-line">As</div>
+                <div class="content-form-line">
+                    <select id="bid-type" name="bid_type">
+                        <option value="common">Common Stock</option>
+                        <option value="preferred">Preferred Stock</option>
+                        <option value="note">Convertible Note</option>
+                    </select>
+                </div>
+                <div class="content-form-line">@</div>
+                <div class="content-form-inputline"><input id="bid-rate" name="bid_rate" type="text" size="2" maxlength="2" value="10" disabled/></div>
+                <div class="content-form-line">% interest</div>
+                <div class="content-form-clear"></div>
+
+                <div class="content-form-line">Your calculated valuation is $<span id="bid-calculated-valuation">1.35m</span></div>
+                <div class="content-form-clear"></div>
+
+                <div class="content-form-line">
+                    <button id="bid-save-button">Place Bid</button> <em><span class="attention" id="bid-save-message"></span></em>
+                </div>
+                <div class="content-form-clear"></div>
+            </form>
+        </div>
+        <div class="content-form" id="bids-form-not-loggedin">
+            <em>You must be logged in to bid.</em>
+        </div>
+        <div class="content-form">
+            <div class="content-form-line-emphasized">Bid history:</div>
+            <div class="content-form-clear"></div>
+        </div>
+        <div class="content-results">
+            <div class="content-results-list" id="bids-content-results-list"></div>
+        </div>
+    </div>
+  
+    <div id="loginpage" class="content page">
+        <div class="content-header">
+            <div class="content-header-title">
+                Sign in via:
+            </div>
+        </div>
+        <div class="content-form">
+            <div class="content-form-line">
+                <a href="#"><div class="content-form-login content-form-login-google"></div>Google</a>
+            </div>
+            <div class="content-form-clear"></div>
+            <div class="content-form-line">
+                <a href="#"><div class="content-form-login content-form-login-yahoo"></div>Yahoo</a>
+            </div>
+        </div>
+    </div>
+
     <div id="faqpage" class="content page">
         <div class="content-header">
             <div class="content-header-title">
@@ -3110,165 +3328,7 @@ s = (p + b + c + v) / (t + 2)^1.5
         </div>
     </div>
     
-    <div id="listingpage" class="content page">
-        <div class="content-header">
-            <div class="content-results-list" id="listing-snippet"></div>
-        </div>
-        <div class="content-form-line" id="listing-form-message"></div>
-        <div class="content-form-clear"></div>
-        <div class="content-form" id="listing-form-editable">
-                
-                <form action="#" method="post" enctype="multipart/form-data">
-                <input name="page" type="hidden" value="listing"/>
-                <input id="listing-edit-listing-id" name="listing-id" type="hidden" value=""/>
-                <input id="listing-edit-median-valuation" name="median-valuation" type="hidden" value=""/>
-                <input id="listing-edit-num-votes" name="num-votes" type="hidden" value=""/>
-                <input id="listing-edit-num-bids" name="num-bids" type="hidden" value=""/>
-                <input id="listing-edit-num-comments" name="num-comments" type="hidden" value=""/>
-                <input id="listing-edit-profile-id" name="profile-id" type="hidden" value=""/>
-                <input id="listing-edit-profile-username" name="profile-username" type="hidden" value=""/>
-                <input id="listing-edit-listing-date" name="listing-date" type="hidden" value=""/>
-                <input id="listing-edit-status" name="listing-id" type="hidden" value=""/>
 
-                <div class="content-form-line">Title is </div>
-                <div class="content-form-maininputline"><input id="listing-edit-title" name="title" type="text" size="40" value="type listing title here"/></div>
-                <div class="content-form-clear"></div>
-
-                <div class="content-form-line">Closes on midnight on <span id="listing-edit-closing-date"></span></div>
-                <div class="content-form-clear"></div>
-
-                <div class="content-form-line">Suggested bid of </div>
-                <div class="content-form-inputline">$<input id="listing-edit-suggested-amt" name="suggested_bid_amt" type="text" size="9" maxlength="9" value="30,000"/></div>
-                <div class="content-form-line">for</div>
-                <div class="content-form-inputline"><input id="listing-edit-suggested-pct" name="suggested_bid_pct" type="text" size="2" maxlength="2" value="10"/>%</div>
-                <div class="content-form-line"> equity</div>
-                <div class="content-form-clear"></div>
-
-                <div class="content-form-line">Suggested valuation is $<span id="listing-edit-suggested-val"></span></div>
-                <div class="content-form-clear"></div>
-
-                <div class="content-form-line">Executive Summary</div>
-                <div class="content-form-clear"></div>
-                <div class="content-form-inputline">
-                    <textarea class="content-form-inputline-textarea" id="listing-edit-summary" name="executive_summary" rows="10" cols="50" wrap="soft">
-MisLead is a revolution in social networking.  Previously, social networking has been for people with friends, those outgoing on the internet, those who don't have trouble communicating online.  There is an untapped market in those who not only have difficulty making social connections, but frequently dislike social situations and social crowds.  With MisLead, you are only allowed a maximum of five friends at any one time.  However, you are more intimately connected with them, including real-time location updates, frequent SMS on activities, and heavy linking into any goings-on for connected individuals in a plethora of other networks.
-                    </textarea>
-                </div>
-                <div class="content-form-clear"></div>
-
-                <div class="content-form-line"><span class="link" id="listing-edit-business-plan-link">view business plan</span></div>
-                <div class="content-form-clear"></div>
-                <div class="content-form-line"><span class="link" id="listing-edit-presentation-link">view presentation</span></div>
-                <div class="content-form-clear"></div>
-
-                <div class="content-form-label">Business plan</div>
-                <div class="content-form-input"><input id="listing-upload-business-plan" name="business-plan" type="file"/></div> <!-- size="40" -->
-                <div class="content-form-clear"></div>
-
-                <div class="content-form-label">Presentation</div>
-                <div class="content-form-input"><input id="listing-upload-presentation" name="presentation" type="file"/></div> <!-- size="40" -->
-                <div class="content-form-clear"></div>
-                
-                <div class="content-form-inputline"><button id="listing-save-link">Save</button><span class="attention" id="listing-save-message"></span></div>
-                <div class="content-form-clear"></div>
-
-                <div class="content-form-linkline"><span class="link" id="listing-activate-link">(activate listing)</span></div>
-                <div class="content-form-clear"></div>
-
-                <div class="content-form-linkline"><span class="link" id="listing-withdraw-link">(withdraw listing)</span></div>
-                <div class="content-form-clear"></div>
-
-                </form>
-        </div>
-        <div class="content-form" id="listing-form-readonly">
-                <div class="content-form-line">
-                    Suggested bid of $<span id="listing-readonly-suggested-amt"></span>
-                    for <span id="listing-readonly-suggested-pct"></span>% equity
-                </div>
-                <div class="content-form-clear"></div>
-                <div class="content-form-line">Suggested valuation is $<span id="listing-readonly-suggested-val"></span></div>
-                <div class="content-form-clear"></div>
-
-                <div class="content-form-line-emphasized">Executive Summary</div>
-                <div class="content-form-clear"></div>
-                <div class="content-form-multiline" id="listing-readonly-summary">
-MisLead is a revolution in social networking.  Previously, social networking has been for people with friends, those outgoing on the internet, those who don't have trouble communicating online.  There is an untapped market in those who not only have difficulty making social connections, but frequently dislike social situations and social crowds.  With MisLead, you are only allowed a maximum of five friends at any one time.  However, you are more intimately connected with them, including real-time location updates, frequent SMS on activities, and heavy linking into any goings-on for connected individuals in a plethora of other networks.
-                </div>
-                <div class="content-form-clear"></div>
-
-                <div class="content-form-line"><span class="link" id="listing-readonly-business-plan-link">view business plan</span></div>
-                <div class="content-form-clear"></div>
-
-                <div class="content-form-line"><span class="link" id="listing-readonly-presentation-link">view presentation</span></div>
-                <div class="content-form-clear"></div>
-         </div>
-    </div>
-    
-    <div id="bidspage" class="content page">
-        <div class="content-header">
-            <div class="content-results-list" id="bids-listing-snippet"></div>
-        </div>
-        <div class="content-form" id="bids-form-loggedin">
-            <form action="#" method="post" enctype="multipart/form-data">
-                <input name="page" type="hidden" value="listing"/>
-                <div class="content-form-line">Place bid of $</div>
-                <div class="content-form-inputline"><input id="bid-amt" name="bid_amt" type="text" size="9" maxlength="9" value="30,000"/></div>
-                <div class="content-form-line">for</div>
-                <div class="content-form-inputline"><input id="bid-pct" name="bid_pct" type="text" size="2" maxlength="2" value="10"/></div>
-                <div class="content-form-line">% equity (fully diluted)</div>
-                <div class="content-form-clear"></div>
-
-                <div class="content-form-line">As</div>
-                <div class="content-form-line">
-                    <select id="bid-type" name="bid_type">
-                        <option value="common">Common Stock</option>
-                        <option value="preferred">Preferred Stock</option>
-                        <option value="note">Convertible Note</option>
-                    </select>
-                </div>
-                <div class="content-form-line">@</div>
-                <div class="content-form-inputline"><input id="bid-rate" name="bid_rate" type="text" size="2" maxlength="2" value="10" disabled/></div>
-                <div class="content-form-line">% interest</div>
-                <div class="content-form-clear"></div>
-
-                <div class="content-form-line">Your calculated valuation is $<span id="bid-calculated-valuation">1.35m</span></div>
-                <div class="content-form-clear"></div>
-
-                <div class="content-form-line">
-                    <button id="bid-save-button">Place Bid</button> <em><span class="attention" id="bid-save-message"></span></em>
-                </div>
-                <div class="content-form-clear"></div>
-            </form>
-        </div>
-        <div class="content-form" id="bids-form-not-loggedin">
-            <em>You must be logged in to bid.</em>
-        </div>
-        <div class="content-form">
-            <div class="content-form-line-emphasized">Bid history:</div>
-            <div class="content-form-clear"></div>
-        </div>
-        <div class="content-results">
-            <div class="content-results-list" id="bids-content-results-list"></div>
-        </div>
-    </div>
-  
-    <div id="loginpage" class="content page">
-        <div class="content-header">
-            <div class="content-header-title">
-                Sign in via:
-            </div>
-        </div>
-        <div class="content-form">
-            <div class="content-form-line">
-                <a href="#"><div class="content-form-login content-form-login-google"></div>Google</a>
-            </div>
-            <div class="content-form-clear"></div>
-            <div class="content-form-line">
-                <a href="#"><div class="content-form-login content-form-login-yahoo"></div>Yahoo</a>
-            </div>
-        </div>
-    </div>
-    
 </div>
 
 
