@@ -7,6 +7,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.google.appengine.api.blobstore.BlobKey;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -186,7 +187,7 @@ public class EntityConverterTest {
 	public void testListingDocument() throws EntityNotFoundException {
 		ListingDocumentDTO doc = new ListingDocumentDTO();
 		doc.createKey("" + doc.hashCode());
-		doc.setBlob("blob");
+		doc.setBlob(new BlobKey("xxxxx"));
 		doc.setCreated(new Date());
 		doc.setListing("listing_id");
 		doc.setState(ListingDocumentDTO.State.UPLOADED);

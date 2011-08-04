@@ -4,6 +4,7 @@ import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.google.appengine.api.blobstore.BlobKey;
 import com.google.appengine.api.datastore.Entity;
 
 public class ListingDocumentDTO extends AbstractDTO {
@@ -11,7 +12,7 @@ public class ListingDocumentDTO extends AbstractDTO {
 	public enum State {UPLOADED, ACTIVE, DELETED};
 
 	private String listing;
-	private String blob;
+	private BlobKey blob;
 	private Date created;
 	private Type type;
 	private State state;
@@ -44,10 +45,10 @@ public class ListingDocumentDTO extends AbstractDTO {
 	public void setListing(String listing) {
 		this.listing = listing;
 	}
-	public String getBlob() {
+	public BlobKey getBlob() {
 		return blob;
 	}
-	public void setBlob(String blob) {
+	public void setBlob(BlobKey blob) {
 		this.blob = blob;
 	}
 	@Override
@@ -63,7 +64,7 @@ public class ListingDocumentDTO extends AbstractDTO {
 	public static ListingDocumentDTO fromEntity(Entity entity) {
 		ListingDocumentDTO dto = new ListingDocumentDTO();
 		dto.setKey(entity.getKey());
-		dto.blob = (String)entity.getProperty("blob");
+		dto.blob = (BlobKey)entity.getProperty("blob");
 		dto.listing = (String)entity.getProperty("listing");
 		dto.created = (Date)entity.getProperty("created");
 		if (!StringUtils.isEmpty((String)entity.getProperty("state"))) {

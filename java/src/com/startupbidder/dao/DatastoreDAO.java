@@ -5,6 +5,7 @@ import java.util.List;
 import com.startupbidder.dto.BidDTO;
 import com.startupbidder.dto.CommentDTO;
 import com.startupbidder.dto.ListingDTO;
+import com.startupbidder.dto.ListingDocumentDTO;
 import com.startupbidder.dto.SystemPropertyDTO;
 import com.startupbidder.dto.UserDTO;
 import com.startupbidder.dto.UserStatistics;
@@ -326,4 +327,19 @@ public interface DatastoreDAO {
 	 * Password properties will be set to "***"
 	 */
 	List<SystemPropertyDTO> getSystemProperties();
+
+	/**
+	 * Stores listing document
+	 */
+	ListingDocumentDTO createListingDocument(ListingDocumentDTO docDTO);
+
+	/**
+	 * Returns listing document by id (doc id, not blob key)
+	 */
+	ListingDocumentDTO getListingDocument(String docId);
+
+	/**
+	 * Return all stored documents
+	 */
+	List<ListingDocumentDTO> getAllListingDocuments();
 }
