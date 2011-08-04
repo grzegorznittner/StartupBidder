@@ -40,6 +40,7 @@ import com.startupbidder.vo.UserListVO;
 import com.startupbidder.vo.UserVO;
 import com.startupbidder.vo.UserVotesVO;
 import com.startupbidder.vo.VoteVO;
+import com.sun.org.apache.xerces.internal.impl.dv.xs.DayDV;
 
 public class ServiceFacade {
 	private static final Logger log = Logger.getLogger(ServiceFacade.class.getName());
@@ -626,6 +627,9 @@ public class ServiceFacade {
 		}
 		listing.setState(ListingDTO.State.ACTIVE.toString());
 		listing.setOwner(loggedInUser.getId());
+		
+		DateMidnight midnight = new DateMidnight();
+		listing.setClosingOn(midnight.plus(Days.days(30)).toDate());
 		ListingVO newListing = DtoToVoConverter.convert(getDAO().createListing(VoToDtoConverter.convert(listing)));
 		computeListingData(loggedInUser, newListing);
 		return newListing;
