@@ -33,6 +33,8 @@ public class FileController extends ModelDrivenController {
 				return getUploadUrl(request);
 			} else if("return-document".equalsIgnoreCase(getCommand(1))) {
 				return returnDoc(request);
+			} else if("download".equalsIgnoreCase(getCommand(1))) {
+				return download(request);
 			}
 		} else if ("POST".equalsIgnoreCase(request.getMethod())) {
 			if("upload".equalsIgnoreCase(getCommand(1))) {
@@ -53,6 +55,23 @@ public class FileController extends ModelDrivenController {
 
 		model = ServiceFacade.instance().createUploadUrls(getLoggedInUser(), "/file/upload", numOfUrls);
 		log.log(Level.INFO, "Returning " + numOfUrls + " upload urls: " + model);
+		
+		return headers;
+	}
+	
+	private HttpHeaders download(HttpServletRequest request) {
+		HttpHeaders headers = new HttpHeadersImpl("download");
+		
+		String docId = getCommandOrParameter(request, 2, "doc");
+
+		ListingDocumentVO doc = ServiceFacade.instance().getListingDocument(getLoggedInUser(), docId);
+		log.log(Level.INFO, "Sending back document: " + model);
+		if (doc != null && doc.getBlob() != null) {
+			headers.setBlobKey(doc.getBlob());
+		} else {
+			log.log(Level.INFO, "Document not found or blob not available!");
+			headers.setStatus(500);
+		}
 		
 		return headers;
 	}

@@ -8,6 +8,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.users.User;
@@ -21,6 +24,7 @@ import com.startupbidder.dto.ListingDTO;
 import com.startupbidder.dto.ListingDocumentDTO;
 import com.startupbidder.dto.UserDTO;
 import com.startupbidder.vo.ListPropertiesVO;
+import com.startupbidder.vo.ListingDocumentVO;
 import com.startupbidder.vo.UserVO;
 import com.startupbidder.web.ServiceFacade;
 
@@ -115,11 +119,22 @@ public class HelloServlet extends HttpServlet {
 			out.println("<br/>");
 			
 			out.println("<p>File API:</p>");
-			out.println("<a href=\"/file/get-upload-url/2/.html/.html\">Get upload URL(s)</a><br/>");
+			out.println("<a href=\"/file/get-upload-url/2/.html\">Get upload URL(s)</a><br/>");
 			String[] urls = service.createUploadUrls(currentUser, "/file/upload", 1);
 			out.println("<form action=\"" + urls[0] + "\" method=\"post\" enctype=\"multipart/form-data\">"
 					+ "<input type=\"file\" name=\"" + ListingDocumentDTO.Type.BUSINESS_PLAN.toString() + "\"/>"
 					+ "<input type=\"submit\" value=\"Upload\"/></form>");
+			List<ListingDocumentVO> docs = service.getAllListingDocuments(currentUser);
+			DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy/MM/dd HH:mm");
+			if (docs != null && !docs.isEmpty()) {
+				out.println("Uploaded documents:</br>");
+				for (ListingDocumentVO doc : docs) {
+					out.println("<a href=\"/file/download/" + doc.getId() + ".html\">Download "
+							+ doc.getType() + " uploaded " + fmt.print(doc.getCreated().getTime()) + ", status: " + doc.getState() + "</a><br/>");
+				}
+			} else {
+				out.println("No documents uploaded</br>");
+			}
 
 		} catch (Exception e) {
 			e.printStackTrace();

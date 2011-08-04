@@ -5,6 +5,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.google.appengine.api.blobstore.BlobKey;
+
 import static javax.servlet.http.HttpServletResponse.*;
 
 import java.io.IOException;
@@ -22,6 +24,7 @@ public class HttpHeadersImpl implements HttpHeaders {
     boolean disableCaching;
     boolean noETag = false;
     Date lastModified;
+    BlobKey blob;
     String redirect = null;
 
     public HttpHeadersImpl() {}
@@ -80,6 +83,18 @@ public class HttpHeadersImpl implements HttpHeaders {
     
     public boolean isRedirect() {
     	return StringUtils.isNotEmpty(redirect);
+    }
+    
+    public void setBlobKey(BlobKey blob) {
+    	this.blob = blob;
+    }
+    
+    public BlobKey getBlobKey() {
+    	return blob;
+    }
+
+    public boolean isBlobResponse() {
+    	return blob != null;
     }
 
     /* (non-Javadoc)

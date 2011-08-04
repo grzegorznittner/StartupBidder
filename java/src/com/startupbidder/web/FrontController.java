@@ -10,6 +10,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.appengine.api.blobstore.BlobstoreService;
+import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
 import com.startupbidder.web.controllers.BidController;
 import com.startupbidder.web.controllers.CommentController;
 import com.startupbidder.web.controllers.FileController;
@@ -64,6 +66,11 @@ public class FrontController extends HttpServlet {
 		
 		if (headers.isRedirect()) {
 			response.sendRedirect(headers.getRedirectUrl());
+			return;
+		}
+		if (headers.isBlobResponse()) {
+			BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
+			blobstoreService.serve(headers.getBlobKey(), response);
 			return;
 		}
 		if (headers != null) {

@@ -337,4 +337,9 @@ public interface DatastoreDAO {
 	 * Returns listing document by id (doc id, not blob key)
 	 */
 	ListingDocumentDTO getListingDocument(String docId);
+
+	/**
+	 * Return all stored documents
+	 */
+	List<ListingDocumentDTO> getAllListingDocuments();
 }

@@ -753,6 +753,13 @@ public class ServiceFacade {
 		return DtoToVoConverter.convert(getDAO().getListingDocument(docId));
 	}
 	
+	public List<ListingDocumentVO> getAllListingDocuments(UserVO loggedInUser) {
+		if (loggedInUser == null) {
+			return null;
+		}
+		return DtoToVoConverter.convertListingDocuments(getDAO().getAllListingDocuments());
+	}
+	
 	public String[] createUploadUrls(UserVO loggedInUser, String uploadUrl, int numberOfUrls) {
 		BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
 		String[] urls = new String[numberOfUrls];

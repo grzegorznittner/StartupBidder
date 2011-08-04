@@ -774,6 +774,10 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		return docCache.get(docId);
 	}
 	
+	public List<ListingDocumentDTO> getAllListingDocuments() {
+		return new ArrayList<ListingDocumentDTO>(docCache.values());
+	}
+	
 	/**
 	 * Generates random comments for business plans
 	 */
