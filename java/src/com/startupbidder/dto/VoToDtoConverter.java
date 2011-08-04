@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 
 import com.startupbidder.vo.BidVO;
+import com.startupbidder.vo.ListingDocumentVO;
 import com.startupbidder.vo.ListingVO;
 import com.startupbidder.vo.CommentVO;
 import com.startupbidder.vo.SystemPropertyVO;
@@ -73,6 +74,23 @@ public class VoToDtoConverter {
 		rating.setUser(ratingVO.getUser());
 		rating.setValue(ratingVO.getValue());
 		return rating;
+	}
+	
+	public static ListingDocumentDTO convert(ListingDocumentVO docVO) {
+		ListingDocumentDTO doc = new ListingDocumentDTO();
+		if (!StringUtils.isEmpty(docVO.getId())) {
+			doc.setIdFromString(docVO.getId());
+		}
+		doc.setListing(docVO.getListing());
+		doc.setBlob(docVO.getBlob());
+		doc.setCreated(docVO.getCreated());
+		if (!StringUtils.isEmpty(docVO.getState())) {
+			doc.setState(ListingDocumentDTO.State.valueOf(docVO.getState()));
+		}
+		if (!StringUtils.isEmpty(docVO.getType())) {
+			doc.setType(ListingDocumentDTO.Type.valueOf(docVO.getType()));
+		}
+		return doc;
 	}
 	
 	public static UserDTO convert(UserVO userVO) {

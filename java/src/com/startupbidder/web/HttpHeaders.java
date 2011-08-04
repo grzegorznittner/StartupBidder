@@ -27,5 +27,11 @@ public interface HttpHeaders {
      * The result code to process
      */
     String getResultCode();
+    
+    void setRedirectUrl(String redirectUrl);
+    
+    String getRedirectUrl();
+    
+    boolean isRedirect();
 
 }

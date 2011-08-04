@@ -3,6 +3,7 @@ package com.startupbidder.web;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -11,13 +12,15 @@ import org.datanucleus.util.StringUtils;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
-import org.joda.time.LocalDate;
 
+import com.google.appengine.api.blobstore.BlobstoreService;
+import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
 import com.google.appengine.api.users.User;
 import com.startupbidder.dao.DatastoreDAO;
 import com.startupbidder.dao.MockDatastoreDAO;
 import com.startupbidder.dto.BidDTO;
 import com.startupbidder.dto.ListingDTO;
+import com.startupbidder.dto.ListingDocumentDTO;
 import com.startupbidder.dto.UserDTO;
 import com.startupbidder.dto.UserStatistics;
 import com.startupbidder.dto.VoToDtoConverter;
@@ -29,6 +32,7 @@ import com.startupbidder.vo.CommentVO;
 import com.startupbidder.vo.DtoToVoConverter;
 import com.startupbidder.vo.GraphDataVO;
 import com.startupbidder.vo.ListPropertiesVO;
+import com.startupbidder.vo.ListingDocumentVO;
 import com.startupbidder.vo.ListingListVO;
 import com.startupbidder.vo.ListingVO;
 import com.startupbidder.vo.SystemPropertyVO;
@@ -732,5 +736,29 @@ public class ServiceFacade {
 		}
 		property.setAuthor(loggedInUser.getEmail());
 		return DtoToVoConverter.convert(getDAO().setSystemProperty(VoToDtoConverter.convert(property)));
+	}
+
+	public ListingDocumentVO createListingDocument(UserVO loggedInUser, ListingDocumentVO doc) {
+		if (loggedInUser == null) {
+			BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
+			blobstoreService.delete(doc.getBlob());
+			return null;
+		}
+		ListingDocumentDTO docDTO = VoToDtoConverter.convert(doc);
+		docDTO.setCreated(new Date());
+		return DtoToVoConverter.convert(getDAO().createListingDocument(docDTO));
+	}
+	
+	public ListingDocumentVO getListingDocument(UserVO loggedInUser, String docId) {
+		return DtoToVoConverter.convert(getDAO().getListingDocument(docId));
+	}
+	
+	public String[] createUploadUrls(UserVO loggedInUser, String uploadUrl, int numberOfUrls) {
+		BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
+		String[] urls = new String[numberOfUrls];
+		while (numberOfUrls > 0) {
+			urls[--numberOfUrls] = blobstoreService.createUploadUrl(uploadUrl);
+		}
+		return urls;
 	}
 }

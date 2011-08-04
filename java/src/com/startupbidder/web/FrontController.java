@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.startupbidder.web.controllers.BidController;
 import com.startupbidder.web.controllers.CommentController;
+import com.startupbidder.web.controllers.FileController;
 import com.startupbidder.web.controllers.ListingController;
 import com.startupbidder.web.controllers.SystemController;
 import com.startupbidder.web.controllers.UserController;
@@ -42,6 +43,8 @@ public class FrontController extends HttpServlet {
 			controller = new CommentController();
 		} else if (pathInfo.startsWith("/system")) {
 			controller = new SystemController();
+		} else if (pathInfo.startsWith("/file")) {
+			controller = new FileController();
 		} else {
 			log.log(Level.WARNING, "Unknown action '" + pathInfo + "'");
 		}
@@ -59,6 +62,10 @@ public class FrontController extends HttpServlet {
 			return;
 		}
 		
+		if (headers.isRedirect()) {
+			response.sendRedirect(headers.getRedirectUrl());
+			return;
+		}
 		if (headers != null) {
 			headers.apply(request, response, controller.getModel());
 		}

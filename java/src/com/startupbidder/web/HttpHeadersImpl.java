@@ -2,7 +2,12 @@ package com.startupbidder.web;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.lang.StringUtils;
+
 import static javax.servlet.http.HttpServletResponse.*;
+
+import java.io.IOException;
 import java.util.Date;
 
 /**
@@ -17,6 +22,7 @@ public class HttpHeadersImpl implements HttpHeaders {
     boolean disableCaching;
     boolean noETag = false;
     Date lastModified;
+    String redirect = null;
 
     public HttpHeadersImpl() {}
 
@@ -63,12 +69,23 @@ public class HttpHeadersImpl implements HttpHeaders {
         this.disableCaching = true;
         return this;
     }
+    
+    public void setRedirectUrl(String redirectUrl) {
+    	redirect = redirectUrl;
+    }
+    
+    public String getRedirectUrl() {
+    	return redirect;
+    }
+    
+    public boolean isRedirect() {
+    	return StringUtils.isNotEmpty(redirect);
+    }
 
     /* (non-Javadoc)
      * @see org.apache.struts2.rest.HttpHeaders#apply(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.lang.Object)
      */
     public String apply(HttpServletRequest request, HttpServletResponse response, Object target) {
-
         if (disableCaching) {
             response.setHeader("Cache-Control", "no-cache");
         }

@@ -6,6 +6,7 @@ import java.util.List;
 import com.startupbidder.dto.BidDTO;
 import com.startupbidder.dto.ListingDTO;
 import com.startupbidder.dto.CommentDTO;
+import com.startupbidder.dto.ListingDocumentDTO;
 import com.startupbidder.dto.SystemPropertyDTO;
 import com.startupbidder.dto.VoteDTO;
 import com.startupbidder.dto.UserDTO;
@@ -69,6 +70,20 @@ public class DtoToVoConverter {
 		rating.setUser(ratingDTO.getUser());
 		rating.setValue(ratingDTO.getValue());
 		return rating;
+	}
+	
+	public static ListingDocumentVO convert(ListingDocumentDTO docDTO) {
+		if (docDTO == null) {
+			return null;
+		}
+		ListingDocumentVO doc = new ListingDocumentVO();
+		doc.setId(docDTO.getIdAsString());
+		doc.setListing(docDTO.getListing());
+		doc.setBlob(docDTO.getBlob());
+		doc.setCreated(docDTO.getCreated());
+		doc.setState(docDTO.getState().toString());
+		doc.setType(docDTO.getType().toString());
+		return doc;
 	}
 	
 	public static UserVO convert(UserDTO userDTO) {
@@ -170,5 +185,17 @@ public class DtoToVoConverter {
 			propertyVoList.add(propertyVO);
 		}
 		return propertyVoList;
+	}
+
+	public static List<ListingDocumentVO> convertListingDocuments(List<ListingDocumentDTO> docDtoList) {
+		if (docDtoList == null) {
+			return null;
+		}
+		List<ListingDocumentVO> docVoList = new ArrayList<ListingDocumentVO>();
+		for (ListingDocumentDTO docDTO : docDtoList) {
+			ListingDocumentVO docVO = convert(docDTO);
+			docVoList.add(docVO);
+		}
+		return docVoList;
 	}
 }

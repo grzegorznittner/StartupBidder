@@ -16,6 +16,7 @@ import org.datanucleus.util.StringUtils;
 import com.startupbidder.dto.BidDTO;
 import com.startupbidder.dto.CommentDTO;
 import com.startupbidder.dto.ListingDTO;
+import com.startupbidder.dto.ListingDocumentDTO;
 import com.startupbidder.dto.SystemPropertyDTO;
 import com.startupbidder.dto.UserDTO;
 import com.startupbidder.dto.UserStatistics;
@@ -48,6 +49,7 @@ public class MockDatastoreDAO implements DatastoreDAO {
 	Map<String, BidDTO> bidCache = new HashMap<String, BidDTO>();
 	Map<String, UserDTO> userCache = new HashMap<String, UserDTO>();
 	Map<String, SystemPropertyDTO> propCache = new HashMap<String, SystemPropertyDTO>();
+	Map<String, ListingDocumentDTO> docCache = new HashMap<String, ListingDocumentDTO>();
 
 	public MockDatastoreDAO() {
 		createMockUsers();
@@ -760,6 +762,16 @@ public class MockDatastoreDAO implements DatastoreDAO {
 			}
 		}
 		return props;
+	}
+	
+	public ListingDocumentDTO createListingDocument(ListingDocumentDTO doc) {
+		doc.createKey(doc.getBlob().getKeyString());
+		docCache.put(doc.getIdAsString(), doc);
+		return doc;
+	}
+	
+	public ListingDocumentDTO getListingDocument(String docId) {
+		return docCache.get(docId);
 	}
 	
 	/**

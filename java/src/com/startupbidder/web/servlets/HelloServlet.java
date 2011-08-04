@@ -18,6 +18,7 @@ import com.startupbidder.dao.MockDatastoreDAO;
 import com.startupbidder.dto.BidDTO;
 import com.startupbidder.dto.CommentDTO;
 import com.startupbidder.dto.ListingDTO;
+import com.startupbidder.dto.ListingDocumentDTO;
 import com.startupbidder.dto.UserDTO;
 import com.startupbidder.vo.ListPropertiesVO;
 import com.startupbidder.vo.UserVO;
@@ -112,6 +113,13 @@ public class HelloServlet extends HttpServlet {
 						+ "</textarea><input type=\"submit\" value=\"Create a comment\"/></form>");
 			out.println("<form method=\"POST\" action=\"/comment/delete/.html?id=" + comments.get(0).getIdAsString() + "\"><input type=\"submit\" value=\"Deletes comment id '" + comments.get(0).getIdAsString() + "'\"/></form>");
 			out.println("<br/>");
+			
+			out.println("<p>File API:</p>");
+			out.println("<a href=\"/file/get-upload-url/2/.html/.html\">Get upload URL(s)</a><br/>");
+			String[] urls = service.createUploadUrls(currentUser, "/file/upload", 1);
+			out.println("<form action=\"" + urls[0] + "\" method=\"post\" enctype=\"multipart/form-data\">"
+					+ "<input type=\"file\" name=\"" + ListingDocumentDTO.Type.BUSINESS_PLAN.toString() + "\"/>"
+					+ "<input type=\"submit\" value=\"Upload\"/></form>");
 
 		} catch (Exception e) {
 			e.printStackTrace();
