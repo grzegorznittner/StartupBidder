@@ -916,18 +916,23 @@ $(function(){
                 evenOdd = (i % 2 == 0) ? 'even' : 'odd';
                 resultHtml += '<div class="content-results-list-item content-results-list-item-' + evenOdd + '">';
                 resultHtml += '<div class="content-results-list-item-num">' + userjson.num + '</div>';
-                resultHtml += '<div class="content-results-list-item-upvote" id="user-search-results-list-item-upvote-' + i + '"></div>';
             }
             else {
                 resultHtml += '<div class="content-results-list-item>';
                 resultHtml += '<div class="content-results-list-item-num"></div>';
+            }
+            if (user.profile && !(user.profile.profile_id === userjson.profile_id)) {
+                resultHtml += '<div class="content-results-list-item-upvote" id="user-search-results-list-item-upvote-' + i + '"></div>';
+            }
+            else {
                 resultHtml += '<div class="content-results-list-item-upvote-filler"></div>';
             }
-            resultHtml += '<div class="content-results-list-item-title" id="user-search-results-list-item-name-' + i + '">';
+            resultHtml += '<div class="content-results-list-item-title link" id="user-search-results-list-item-name-' + i + '">';
             resultHtml += userjson.name + (userjson.organization ? ' of '+userjson.organization : '');
             resultHtml += '</div>';
-            resultHtml += '<div class="content-results-list-item-profile link" id="user-search-results-list-item-profile-' + i + '">';
+            resultHtml += '<div class="content-results-list-item-profile" id="user-search-results-list-item-profile-' + i + '">';
             resultHtml += '(' + userjson.username + ')';
+            resultHtml += userjson.status === 'active' ? '' : '<span class="attention">' + userjson.status + '</span>';
             resultHtml += '</div>';
             resultHtml += '<div class="content-results-list-item-clear"></div>';
             resultHtml += '<div class="content-results-list-item-detail">';
@@ -937,8 +942,7 @@ $(function(){
             resultHtml += '<span class="link" id="user-search-results-list-item-comments-' + i + '">' + userjson.num_comments + ' comment' + (userjson.num_comments!==1?'s':'') + '</span> | ';
             resultHtml += (days_ago == 0) ? 'active today' : 'active ' + days_ago + ' day' + (days_ago!==1?'s':'')  + ' ago';
             resultHtml += ' | ';
-            resultHtml += 'joined ' + util.formatDate(userjson.joined_date) + ' | ';
-            resultHtml += 'status ' + userjson.status;
+            resultHtml += 'joined ' + util.formatDate(userjson.joined_date);
             resultHtml += userjson.investor ? ' | <b>investor</b>' : '';
             resultHtml += '</div>';
             resultHtml += '</div>';
@@ -948,7 +952,7 @@ $(function(){
        self.bindUserSnippet = function(i, userjson) {
             var upvote_item = document.getElementById('user-search-results-list-item-upvote-'+i);
             var item_num = i;
-            $('#user-search-results-list-item-profile-'+i).data({index: i, profile_id: userjson.profile_id}).unbind().bind('click', function(){
+            $('#user-search-results-list-item-name-'+i).data({index: i, profile_id: userjson.profile_id}).unbind().bind('click', function(){
                 $('#user-search-results-list-item-profile-'+i).html('loading...');
                 var errorCallback = function () { $('#user-search-results-list-item-profile-'+i).html('unable to retrieve profile'); };
                 backend.getProfile($(this).data('profile_id'), profiles.displayProfile, errorCallback);
@@ -968,15 +972,13 @@ $(function(){
                 var errorCallback = function () { $('#user-search-results-list-item-bids-'+i).html('unable to retrieve bids'); };
                 backend.bidsForProfile($(this).data('profile_id'), bids.displayResults, errorCallback);
             });
-            $(upvote_item)
-                .data('index', i)
-                .data('profile_id', userjson.profile_id)
-                .data('num_votes', (userjson.num_votes !== undefined ? userjson.num_votes : 0));
+            $(upvote_item).data({index: i, profile_id: userjson.profile_id, num_votes: (userjson.num_votes !== undefined ? userjson.num_votes : 0)});
             if (!userjson.votable) {
                 $(upvote_item).css('visibility', 'hidden').unbind();
                 return;
             }
             $(upvote_item)
+                .css('visibility', 'visible')
                 .unbind()
                 .bind('click', function(){
                     var index = $(this).data('index');
@@ -1232,7 +1234,6 @@ $(function(){
             console.log('profile:'+results.profile);
             var resultsHtml = '';
             var listing;
-            // display search box
             if (profile) {
                 $('#content-search-box').hide();
                 $('#content-stats').hide();
@@ -1419,15 +1420,22 @@ $(function(){
         self.displayProfile = function(profile, msgClass, msgText){
             $('#profile-save-message').attr('class', (msgClass || 'attention')).html(msgText || '');
             util.displayPage('profile');
+            if (profile) {
+                $('#profile-snippet').html(user.generateUserSnippetHtml('profile', profile));
+                user.bindUserSnippet('profile', profile);
+                $('#profile-header').show();
+            }
+            else {
+                $('#profile-header').hide();
+                $('#profile-snippet').html('');
+            }
             // enable editable if logged in
-            var deactivatedText = (profile && profile.status == 'active') ? '' : ' <span class="message">DEACTIVATED</span>';
             if (profile && user.profile && user.profile.profile_id == profile.profile_id) {
                 $('#profile-form-editable').show();
                 $('#profile-form-readonly').hide();
 
                 $('#profile-edit-profile-id').val(profile.profile_id);
                 $('#profile-edit-profile-username').val(profile.username);
-                $('#profile-edit-username').html(profile.username + deactivatedText);
                 $('#profile-edit-name').val(profile.name);
                 $('#profile-edit-title').val(profile.title);
                 $('#profile-edit-organization').val(profile.organization);
@@ -1436,7 +1444,7 @@ $(function(){
                 $('#profile-edit-twitter').val(profile.twitter);
                 $('#profile-edit-linkedin').val(profile.linkedin);
                 $('#profile-edit-investor').attr('checked', profile.investor);
-                $('#profile-edit-joined-date').html(profile.joined_date);
+                $('#profile-edit-joined-date').html(util.formatDate(profile.joined_date));
                 $('#profile-edit-open-id').html(profile.open_id);
                 self.setProfileLinks(profile, true);
             }
@@ -1444,8 +1452,6 @@ $(function(){
                 $('#profile-form-editable').hide();
                 $('#profile-form-readonly').show();
 
-                $('#profile-username').html(profile.username + deactivatedText);
-                $('#profile-name').html(profile.name);
                 $('#profile-title').html(profile.title);
                 $('#profile-organization').html(profile.organization);
                 $('#profile-email').html(profile.email);
@@ -1457,7 +1463,7 @@ $(function(){
                 $('#profile-linkedin').html(profile.linkedin);
                 $('#profile-linkedin-href').attr('href', 'http://www.linkedin.com/'+profile.linkedin);
                 $('#profile-investor').attr('checked', profile.investor);
-                $('#profile-joined-date').html(profile.joined_date);
+                $('#profile-joined-date').html(util.formatDate(profile.joined_date));
                 $('#profile-open-id').html(profile.open_id);
                 self.setProfileLinks(profile, false);
             }
@@ -1471,21 +1477,6 @@ $(function(){
             $('#profile-username').html('<em>unable to retrive user profile</em>');
         };
         self.setProfileLinks = function(profile, editable) {
-            var listingsSel = '#profile-' + (editable?'edit-':'') + 'num-listings';
-            var bidsSel     = '#profile-' + (editable?'edit-':'') + 'num-bids';
-            var commentsSel = '#profile-' + (editable?'edit-':'') + 'num-comments';
-            $(listingsSel).html(profile.num_listings);
-            $(bidsSel).html(profile.num_bids);
-            $(commentsSel).html(profile.num_comments);
-            $(listingsSel+'-link').unbind().data('profile_id',profile.profile_id).bind('click',function(){
-                searchListings.doSearch({search_type:'profile',profile_id:$(this).data('profile_id')});
-            });
-            $(bidsSel+'-link').unbind().data('profile_id',profile.profile_id).bind('click',function(){
-                backend.bidsForProfile($(this).data('profile_id'), bids.displayResults);
-            });
-            $(commentsSel+'-link').unbind().data('profile_id',profile.profile_id).bind('click',function(){
-                backend.commentsForProfile($(this).data('profile_id'), comments.displayResults);
-            });
             if (editable) {
                 $('#profile-save-link').show().unbind().data('profile_id',profile.profile_id).bind('click',function(e){
                     e.preventDefault();
@@ -1738,36 +1729,32 @@ $(function(){
                     backend.bidsForListing($(this).data('listing_id'), bids.displayResults);
                 });
             }
-            if (isFinite(i)) {
+            $(upvote_item).data({index: i, listing_id: listing.listing_id, num_votes: listing.num_votes});
+            if (!listing.votable) {
+                $(upvote_item).css('visibility', 'hidden').unbind();
+            }
+            else {
                 $(upvote_item)
-                    .data('index', i)
-                    .data('listing_id', listing.listing_id)
-                    .data('num_votes', listing.num_votes);
-                if (!listing.votable) {
-                    $(upvote_item).css('visibility', 'hidden').unbind();
-                }
-                else {
-                    $(upvote_item)
-                        .unbind()
-                        .bind('click', function(){
-                            var index = $(this).data('index');
-                            var listing_id = $(this).data('listing_id');
-                            var num_votes = $(this).data('num_votes');
-                            var list_item = this;
-                            var votes_item = document.getElementById('content-results-list-item-votes-'+index);
-                            var callback = function(json) {
-                                if (json) {
-                                    var new_votes = num_votes + 1;
-                                    $(votes_item).html(new_votes);
-                                    $(list_item)
-                                        .data('num_votes', new_votes)
-                                        .css('visibility', 'hidden')
-                                        .unbind(); // don't let them click twice
-                                }
-                            };
-                            backend.upvoteListing(listing_id, callback);
-                        });
-                }
+                    .css('visibility', 'visible')
+                    .unbind()
+                    .bind('click', function(){
+                        var index = $(this).data('index');
+                        var listing_id = $(this).data('listing_id');
+                        var num_votes = $(this).data('num_votes');
+                        var list_item = this;
+                        var votes_item = document.getElementById('content-results-list-item-votes-'+index);
+                        var callback = function(json) {
+                            if (json) {
+                                var new_votes = num_votes + 1;
+                                $(votes_item).html(new_votes);
+                                $(list_item)
+                                    .data('num_votes', new_votes)
+                                    .css('visibility', 'hidden')
+                                    .unbind(); // don't let them click twice
+                            }
+                        };
+                        backend.upvoteListing(listing_id, callback);
+                    });
             }
         };
         self.generateListingSnippetHtml = function(i, listing) {
@@ -1779,11 +1766,15 @@ $(function(){
                 evenOdd = (i % 2 == 0) ? 'even' : 'odd';
                 resultHtml += '<div class="content-results-list-item content-results-list-item-' + evenOdd + '">';
                 resultHtml += '<div class="content-results-list-item-num">' + listing.num + '</div>';
-                resultHtml += '<div class="content-results-list-item-upvote" id="content-results-list-item-upvote-' + i + '"></div>';
             }
             else {
                 resultHtml += '<div class="content-results-list-item>';
                 resultHtml += '<div class="content-results-list-item-num"></div>';
+            }
+            if (user.profile && !(user.profile.profile_id === listing.profile_id)) {
+                resultHtml += '<div class="content-results-list-item-upvote" id="content-results-list-item-upvote-' + i + '"></div>';
+            }
+            else {
                 resultHtml += '<div class="content-results-list-item-upvote-filler"></div>';
             }
             resultHtml += '<div class="content-results-list-item-title link" id="content-results-list-item-title-' + i + '">';
@@ -1941,7 +1932,14 @@ $(function(){
         };
         self.generateResultHtml = function(i, comment, listing, profile) {
             var resultHtml = '';
-            resultHtml += '<div class="content-results-list-item">';
+            var evenOdd;
+            if (isFinite(i)) {
+                evenOdd = (i % 2 == 0) ? 'even' : 'odd';
+                resultHtml += '<div class="content-results-list-item content-results-list-item-' + evenOdd + '">';
+            }
+            else {
+                resultHtml += '<div class="content-results-list-item">';
+            }
             resultHtml += '<div class="content-results-list-item-num">' + comment.num + '</div>';
             resultHtml += '<div class="content-results-list-item-title">';
             resultHtml += comment.text;
@@ -2180,7 +2178,14 @@ $(function(){
         };
         self.generateResultHtml = function(i, bid, listing, profile) {
             var resultHtml = '';
-            resultHtml += '<div class="content-results-list-item">';
+            var evenOdd;
+            if (isFinite(i)) {
+                evenOdd = (i % 2 == 0) ? 'even' : 'odd';
+                resultHtml += '<div class="content-results-list-item content-results-list-item-' + evenOdd + '">';
+            }
+            else {
+                resultHtml += '<div class="content-results-list-item">';
+            }
             resultHtml += '<div class="content-results-list-item-num">' + bid.num + '</div>';
             resultHtml += '<div class="content-results-list-item-title">';
             resultHtml += 'Valued at ';
@@ -2251,7 +2256,7 @@ $(function(){
             $.getJSON(url, callback);
         };
         self.saveProfile = function(profile, callback) {
-        	var url = '/user/update';
+        	var url = '/user/update/?id=' + profile.profile_id;
         	$.post(url, {profile: $.JSON.encode(profile)}, callback);
         };
         self.activateProfile = function(profile_id, callback) {
@@ -2267,6 +2272,10 @@ $(function(){
             var pathSuffix = searchType + '/?max_results=20';
             var url = '/users/' + pathSuffix;
             $.getJSON(url, callback);
+        };
+        self.upvoteUser = function(profile_id, callback) {
+            var url = '/user/up/' + profile_id;
+            $.post(url, callback);
         };
         // listing methods
         self.getListing = function(listing_id, callback) {
@@ -2930,59 +2939,53 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
     </div>
     
     <div id="profilepage" class="content page">
+        <div class="content-header" id="profile-header">
+            <div class="content-results-list" id="profile-snippet"></div>
+        </div>
         <div class="content-form" id="profile-form-editable">
             <form action="#" method="post">
             <input name="page" type="hidden" value="profile"/>
             <input id="profile-edit-profile-id" name="profile-id" type="hidden" value=""/>
             <input id="profile-edit-profile-username" name="profile-username" type="hidden" value=""/>
 
-            <div class="content-form-line-emphasized"><span id="profile-edit-username">johnarleyburns32</span></div>
-            <div class="content-form-clear"></div>
             <div class="content-form-inputline"><input id="profile-edit-name" name="name" type="text" size="40" value="John Arley Burns"/></div>
             <div class="content-form-clear"></div>
-            <div class="content-form-line">is the </div>
+            <div class="content-form-line">Title </div>
             <div class="content-form-inputline"><input id="profile-edit-title" name="title" type="text" size="20" value="CEO"/></div>
             <div class="content-form-clear"></div>
-            <div class="content-form-line">at</div>
+            <div class="content-form-line">Organization </div>
             <div class="content-form-inputline"><input id="profile-edit-organization" name="organization" type="text" size="35" value="Steinwasser, Inc."/></div>
             <div class="content-form-clear"></div>
 
-            <div class="content-form-line">Reachable on email at</div>
+            <div class="content-form-line">Email </div>
             <div class="content-form-clear"></div>
             <div class="content-form-inputline"><input id="profile-edit-email" name="email" type="text" size="40" value="johnarleyburns@gmail.com"/></div>
             <div class="content-form-clear"></div>
 
-            <div class="content-form-label">on facebook at</div>
+            <div class="content-form-label">Facebook </div>
             <div class="content-form-input"><input id="profile-edit-facebook" name="facebook" type="text" size="20" value="johnarleyburns"/></div>
             <div class="content-form-clear"></div>
 
-            <div class="content-form-label">on twitter at</div>
+            <div class="content-form-label">Twitter </div>
             <div class="content-form-input"><input id="profile-edit-twitter" name="twitter" type="text" size="20" value="jarleyburns"/></div>
             <div class="content-form-clear"></div>
 
-            <div class="content-form-label">on linkedin at</div>
+            <div class="content-form-label">Linkedin </div>
             <div class="content-form-input"><input id="profile-edit-linkedin" name="linkedin" type="text" size="20" value=""/></div>
             <div class="content-form-clear"></div>
 
-            <div class="content-form-line">Investor</div>
+            <div class="content-form-line">Accredited Investor</div>
             <div class="content-form-inputline content-form-checkbox"><input id="profile-edit-investor" name="investor" type="checkbox" checked="checked"/></div>
             <div class="content-form-clear"></div>
             
             <div class="content-form-clear"></div>
             <div class="content-form-line">Member since <span id="profile-edit-joined-date">15 June 2011</span></div>
             <div class="content-form-clear"></div>
-
+<!--
             <div class="content-form-line">Linked via OpenID <span id="profile-edit-open-id">johnarleyburns32.google.com</span></div>
             <div class="content-form-clear"></div>
-
+-->
             <div class="content-form-inputline"><button id="profile-save-link">Save</button><em><span class="attention" id="profile-save-message"></span></em></div>
-            <div class="content-form-clear"></div>
-
-            <div class="content-form-linkline">
-                <span id="profile-edit-num-listings-link" class="link"><span id="profile-edit-num-listings" class="link">3</span> listings</span>  |
-                <span id="profile-edit-num-bids-link" class="link"><span id="profile-edit-num-bids" class="link">7</span> bids</span>  |
-                <span id="profile-edit-num-comments-link" class="link"><span id="profile-edit-num-comments" class="link">12</span> comments</span>
-            </div>
             <div class="content-form-clear"></div>
 
             <div class="content-form-linkline">
@@ -2993,25 +2996,21 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
             </form>
         </div>
         <div class="content-form" id="profile-form-readonly">
-            <div class="content-form-line-emphasized"><span id="profile-username">johnarleyburns32</span></div>
-            <div class="content-form-clear"></div>
-            <div class="content-form-line"><span id="profile-name">John Arley Burns</span></div>
-            <div class="content-form-clear"></div>
-            <div class="content-form-line">is a <span id="profile-title">CEO</span></div>
+            <div class="content-form-line"><span id="profile-title">CEO</span></div>
             <div class="content-form-line">at <span id="profile-organization">Steinwasser, Inc.</span></div>
             <div class="content-form-clear"></div>
 
-            <div class="content-form-line">Reachable on email at <a id="profile-email-href" href=""><span id="profile-email">johnarleyburns@gmail.com</span></a></div>
+            <div class="content-form-line">Email <a id="profile-email-href" href=""><span id="profile-email">johnarleyburns@gmail.com</span></a></div>
             <div class="content-form-clear"></div>
 
-            <div class="content-form-line">on facebook at <a id="profile-facebook-href" href=""><span id="profile-facebook">johnarleyburns59</span></a></div>
+            <div class="content-form-line">Facebook <a id="profile-facebook-href" href=""><span id="profile-facebook">johnarleyburns59</span></a></div>
             <div class="content-form-clear"></div>
-            <div class="content-form-line">on twitter at <a id="profile-twitter-href" href=""><span id="profile-twitter">johnarleyburns21</span></a></div>
+            <div class="content-form-line">Twitter <a id="profile-twitter-href" href=""><span id="profile-twitter">johnarleyburns21</span></a></div>
             <div class="content-form-clear"></div>
-            <div class="content-form-line">on linkedin at <a id="profile-linkedin-href" href=""><span id="profile-linkedin">johnarleyburns63</span></a></div>
+            <div class="content-form-line">Linkedin <a id="profile-linkedin-href" href=""><span id="profile-linkedin">johnarleyburns63</span></a></div>
             <div class="content-form-clear"></div>
 
-            <div class="content-form-line">Investor</div>
+            <div class="content-form-line">Accredited Investor</div>
             <div class="content-form-inputline content-form-checkbox"><input id="profile-investor" name="investor" type="checkbox" disabled="disabled"/></div>
             <div class="content-form-clear"></div>
             
@@ -3022,12 +3021,6 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
             <div class="content-form-line">Linked via OpenID <span id="profile-open-id">johnarleyburns32.google.com</span></div>
             <div class="content-form-clear"></div>
             -->
-            <div class="content-form-linkline">
-                <span id="profile-num-listings-link" class="link"><span id="profile-num-listings" class="link">3</span> listings</span>  |
-                <span id="profile-num-bids-link" class="link"><span id="profile-num-bids" class="link">7</span> bids</span>  |
-                <span id="profile-num-comments-link" class="link"><span id="profile-num-comments" class="link">12</span> comments</span>
-            </div>
-            <div class="content-form-clear"></div>
         </div>
     </div>
     
