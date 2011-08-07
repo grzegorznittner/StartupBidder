@@ -932,7 +932,8 @@ $(function(){
             resultHtml += '</div>';
             resultHtml += '<div class="content-results-list-item-profile" id="user-search-results-list-item-profile-' + i + '">';
             resultHtml += '(' + userjson.username + ')';
-            resultHtml += userjson.status === 'active' ? '' : '<span class="attention">' + userjson.status + '</span>';
+            resultHtml += userjson.status === 'active' ? '' : ' <span class="attention">' + userjson.status + '</span>';
+            resultHtml += ' <span class="attention" id="user-search-results-list-item-message-' + i + '"></span>';
             resultHtml += '</div>';
             resultHtml += '<div class="content-results-list-item-clear"></div>';
             resultHtml += '<div class="content-results-list-item-detail">';
@@ -953,23 +954,19 @@ $(function(){
             var upvote_item = document.getElementById('user-search-results-list-item-upvote-'+i);
             var item_num = i;
             $('#user-search-results-list-item-name-'+i).data({index: i, profile_id: userjson.profile_id}).unbind().bind('click', function(){
-                $('#user-search-results-list-item-profile-'+i).html('loading...');
-                var errorCallback = function () { $('#user-search-results-list-item-profile-'+i).html('unable to retrieve profile'); };
+                var errorCallback = function () { $('#user-search-results-list-item-message-'+i).html('unable to retrieve profile'); };
                 backend.getProfile($(this).data('profile_id'), profiles.displayProfile, errorCallback);
             });           
             $('#user-search-results-list-item-listings-'+i).data({index: i, profile_id: userjson.profile_id}).unbind().bind('click', function(){
-                $('#user-search-results-list-item-listings-'+i).html('loading...');
-                var errorCallback = function () { $('#user-search-results-list-item-listings-'+i).html('unable to retrieve listings'); };
+                var errorCallback = function () { $('#user-search-results-list-item-message-'+i).html('unable to retrieve listings'); };
                 backend.listingsForProfile($(this).data('profile_id'), searchListings.displayResultsJson, errorCallback);
             }); 
             $('#user-search-results-list-item-comments-'+i).data({index: i, profile_id: userjson.profile_id}).unbind().bind('click', function(){
-                $('#user-search-results-list-item-comments-'+i).html('loading...');
-                var errorCallback = function () { $('#user-search-results-list-item-comments-'+i).html('unable to retrieve comments'); };
+                var errorCallback = function () { $('#user-search-results-list-item-message-'+i).html('unable to retrieve comments'); };
                 backend.commentsForProfile($(this).data('profile_id'), comments.displayResults, errorCallback);
             }); 
             $('#user-search-results-list-item-bids-'+i).data({index: i, profile_id: userjson.profile_id}).unbind().bind('click', function(){
-                $('#user-search-results-list-item-bids-'+i).html('loading...');
-                var errorCallback = function () { $('#user-search-results-list-item-bids-'+i).html('unable to retrieve bids'); };
+                var errorCallback = function () { $('#user-search-results-list-item-message-'+i).html('unable to retrieve bids'); };
                 backend.bidsForProfile($(this).data('profile_id'), bids.displayResults, errorCallback);
             });
             $(upvote_item).data({index: i, profile_id: userjson.profile_id, num_votes: (userjson.num_votes !== undefined ? userjson.num_votes : 0)});
@@ -996,6 +993,7 @@ $(function(){
                                 .unbind(); // don't let them click twice
                         }
                     };
+                    var errorCallback = function () { $('#user-search-results-list-item-message-'+i).html('unable to retrieve bids'); };
                     backend.upvoteUser(profile_id, callback);
                 });
         };
@@ -1071,12 +1069,14 @@ $(function(){
             if (userobj.profile && userobj.logout_url) {
                 $('#header-menu-name-login').hide();
                 $('#header-menu-name-username').html(userobj.profile.username).data('profile_id',userobj.profile.profile_id).show().unbind().bind('click', function(){
-                    backend.getProfile($(this).data('profile_id'), profiles.displayProfile);
+                    var errorCallback = function () { $('#header-menu-message').html('unable to retrieve user'); };
+                    backend.getProfile($(this).data('profile_id'), profiles.displayProfile, errorCallback);
                 });
                 $('#header-menu-command-login').hide();
                 $('#header-menu-command-logout').show();
                 $('#header-menu-command-logout').data('logout_url',userobj.logout_url).show().unbind().bind('click', function(){
-                    userobj.logout($(this).data('logout_url'));
+                    var errorCallback = function () { $('#header-menu-message').html('unable to retrieve user'); };
+                    userobj.logout($(this).data('logout_url'), errorCallback);
                 });
                 $('#header-menu-bar-submit-spacer').show();
                 $('#header-menu-bar-submit').show();
@@ -1118,16 +1118,19 @@ $(function(){
                 keywords = keywords.replace(/\btype:\w*/g, '').replace(/\s+/g, ' ').trim();
             }
             $('#content-search-keywords').val(keywords);
+            var statsErrorCallback = function () { $('#stats-message').html('unable to retrieve statistics chart');util.displayPage('searchlistings'); };
+            var searchErrorCallback = function () { $('#search-message').html('unable to retrieve search results'); };
             if (!args.profile_id) {
-                backend.bidStats(self.displayStats);
+                backend.bidStats(self.displayStats, statsErrorCallback);
             }
             else {
                 $('#stats').hide();
             }
-            backend.searchListings(args.search_type, keywords, args.profile_id, args.start_index, args.max_results, searchListings.displayResultsJson);
+            backend.searchListings(args.search_type, keywords, args.profile_id, args.start_index, args.max_results, searchListings.displayResultsJson, searchErrorCallback);
         };
         self.displayStats = function(stats) {
             var pngStr = self.statsPngDataURI(200, 100, stats.values);
+            $('#stats-message').html('');
             $('#stats-label').html(stats.label.replace('Valume','Volume'));
             $('#stats-xaxis').html(stats.xaxis);
             $('#stats-yaxis').html(stats.yaxis);
@@ -1215,7 +1218,6 @@ $(function(){
         };
         self.displayResultsJson = function(results_json) {
             if (!results_json || !results_json.listings_props) {
-                self.displayResultsHtml('<i>loading...</i>');
                 return;
             }
             if (results_json.loggedin_profile) {
@@ -1229,11 +1231,9 @@ $(function(){
             $('#search-content-results-list').hide().html(resultsHtml).slideDown();
         };
         self.displayResults = function(results, search_type, keywords, profile_id, start_index, num_results, total_results, profile){
-            console.log('foo');
-            console.log('profile_id:'+profile_id);
-            console.log('profile:'+results.profile);
             var resultsHtml = '';
             var listing;
+            $('#search-message').html('');
             if (profile) {
                 $('#content-search-box').hide();
                 $('#content-stats').hide();
@@ -1320,14 +1320,10 @@ $(function(){
                 keywords = keywords.replace(/\btype:\w*/g, '').replace(/\s+/g, ' ').trim();
             }
             $('#user-search-keywords').val(keywords);
-            backend.searchUsers(args.search_type, keywords, args.start_index, args.max_results, searchUsers.displayResultsJson);
-            util.displayPage('searchusers');
+            var errorCallback = function () { $('#user-search-message').html('unable to retrieve profiles');util.displayPage('searchusers'); };
+            backend.searchUsers(args.search_type, keywords, args.start_index, args.max_results, searchUsers.displayResultsJson, errorCallback);
         };
         self.displayResultsJson = function(results_json) {
-            if (!results_json) {
-                self.displayResultsHtml('<i>loading...</i>');
-                return;
-            }
             if (!results_json.users_props) { // FIXME
                 results_json.users_props = {
                     start_index: 0,
@@ -1345,6 +1341,7 @@ $(function(){
         self.displayResults = function(results, search_type, keywords, start_index, num_results, total_results){
             var resultsHtml = '';
             var userjson;
+            $('#user-search-message').html('');
             for (var i = 0; i < results.length; i++) { // create results
                 userjson = results[i];
                 resultsHtml += user.generateUserSnippetHtml(i, userjson);
@@ -1352,6 +1349,7 @@ $(function(){
             if (resultsHtml == '') {
                 resultsHtml = '<i>no users found</i>';
             }
+            util.displayPage('searchusers');
             self.displayResultsHtml(resultsHtml);
             for (var j = 0; j < results.length; j++) { // bind results
                 userjson = results[j];
@@ -1415,7 +1413,8 @@ $(function(){
                     self.displayProfile(profile, 'attention', 'could not save profile');
                 }
             };
-            backend.saveProfile(profile, callback);
+            var errorCallback = function() { $('#profile-save-message').attr('class', 'attention').html('unable to save profile'); };
+            backend.saveProfile(profile, callback, errorCallback);
         };
         self.displayProfile = function(profile, msgClass, msgText){
             $('#profile-save-message').attr('class', (msgClass || 'attention')).html(msgText || '');
@@ -1485,12 +1484,14 @@ $(function(){
                 if (profile.status == 'active') {
                     $('#profile-activate-link').hide();
                     $('#profile-deactivate-link').show().unbind().data('profile_id',profile.profile_id).bind('click',function(){
-                        backend.deactivateProfile($(this).data('profile_id'), profiles.displayProfile);
+                        var errorCallback = function() { $('#profile-save-message').attr('class', 'attention').html('unable to deactivate profile'); };
+                        backend.deactivateProfile($(this).data('profile_id'), profiles.displayProfile, errorCallback);
                     });
                 }
                 else {
                     $('#profile-activate-link').show().unbind().data('profile_id',profile.profile_id).bind('click',function(){
-                        backend.activateProfile($(this).data('profile_id'), profiles.displayProfile);
+                        var errorCallback = function() { $('#profile-save-message').attr('class', 'attention').html('unable to activate profile'); };
+                        backend.activateProfile($(this).data('profile_id'), profiles.displayProfile, errorCallback);
                     });
                     $('#profile-deactivate-link').hide();
                 }
@@ -1533,10 +1534,12 @@ $(function(){
                 }
             };
             if (listing.status === 'new') {
-                backend.createListing(listing, callback);
+                var errorCallback = function() { $('#listing-save-message').attr('class', 'attention').html('unable to create listing'); };
+                backend.createListing(listing, callback, errorCallback);
             }
             else {
-                backend.saveListing(listing, callback);
+                var errorCallback = function() { $('#listing-save-message').attr('class', 'attention').html('unable to save listing'); };
+                backend.saveListing(listing, callback, errorCallback);
             }
         };
         self.newListing = function(profile) {
@@ -1677,12 +1680,14 @@ $(function(){
                 else if (listing.status === 'created') {
                     $('#listing-withdraw-link').hide();
                     $('#listing-activate-link').show().unbind().data('listing_id',listing.listing_id).bind('click',function(){
-                        backend.activateListing($(this).data('listing_id'), self.displayListing);
+                        var errorCallback = function() { $('#listing-save-message').attr('class', 'attention').html('unable to activate listing'); };
+                        backend.activateListing($(this).data('listing_id'), self.displayListing, errorCallback);
                     });
                 }
                 else {
                     $('#listing-withdraw-link').show().unbind().data('listing_id',listing.listing_id).bind('click',function(){
-                        backend.withdrawListing($(this).data('listing_id'), self.displayListing);
+                        var errorCallback = function() { $('#listing-save-message').attr('class', 'attention').html('unable to withdraw listing'); };
+                        backend.withdrawListing($(this).data('listing_id'), self.displayListing, errorCallback);
                     });
                     $('#listing-activate-link').hide();
                 }
@@ -1715,18 +1720,22 @@ $(function(){
         };
         self.bindListingSnippet = function(i, listing) {
             var upvote_item = document.getElementById('content-results-list-item-upvote-'+i);
-            $('#content-results-list-item-profile-'+i).data('profile_id',listing.profile_id).unbind().bind('click', function(){
-                backend.getProfile($(this).data('profile_id'), profiles.displayProfile);
+            $('#content-results-list-item-profile-'+i).data({index: i, profile_id: listing.profile_id}).unbind().bind('click', function(){
+                var errorCallback = function() { $('#content-results-list-item-message-'+$(this).data('index')).attr('class', 'attention').html('unable to get profile'); };
+                backend.getProfile($(this).data('profile_id'), profiles.displayProfile, errorCallback);
             });           
             if (listing.listing_id) {
-                $('#content-results-list-item-title-'+i).data('listing_id',listing.listing_id).unbind().bind('click', function(){
-                    backend.getListing($(this).data('listing_id'), self.displayListing);
+                $('#content-results-list-item-title-'+i).data({index: i, listing_id: listing.listing_id}).unbind().bind('click', function(){
+                    var errorCallback = function() { $('#content-results-list-item-message-'+$(this).data('index')).attr('class', 'attention').html('unable to get listing'); };
+                    backend.getListing($(this).data('listing_id'), self.displayListing, errorCallback);
                 });           
-                $('#content-results-list-item-comments-'+i).data('listing_id',listing.listing_id).unbind().bind('click', function(){
-                    backend.commentsForListing($(this).data('listing_id'), comments.displayResults);
+                $('#content-results-list-item-comments-'+i).data({index: i, listing_id: listing.listing_id}).unbind().bind('click', function(){
+                    var errorCallback = function() { $('#content-results-list-item-message-'+$(this).data('index')).attr('class', 'attention').html('unable to get comments'); };
+                    backend.commentsForListing($(this).data('listing_id'), comments.displayResults, errorCallback);
                 }); 
-                $('#content-results-list-item-bids-'+i).data('listing_id',listing.listing_id).unbind().bind('click', function(){
-                    backend.bidsForListing($(this).data('listing_id'), bids.displayResults);
+                $('#content-results-list-item-bids-'+i).data({index: i, listing_id: listing.listing_id}).unbind().bind('click', function(){
+                    var errorCallback = function() { $('#content-results-list-item-message-'+$(this).data('index')).attr('class', 'attention').html('unable to get bids'); };
+                    backend.bidsForListing($(this).data('listing_id'), bids.displayResults, errorCallback);
                 });
             }
             $(upvote_item).data({index: i, listing_id: listing.listing_id, num_votes: listing.num_votes});
@@ -1753,7 +1762,8 @@ $(function(){
                                     .unbind(); // don't let them click twice
                             }
                         };
-                        backend.upvoteListing(listing_id, callback);
+                        var errorCallback = function() { $('#content-results-list-item-message-'+$(this).data('index')).attr('class', 'attention').html('unable to upvote listing'); };
+                        backend.upvoteListing(listing_id, callback, errorCallback);
                     });
             }
         };
@@ -1782,6 +1792,7 @@ $(function(){
             resultHtml += '</div>';
             resultHtml += '<div class="content-results-list-item-profile link" id="content-results-list-item-profile-' + i + '">';
             resultHtml += '(' + listing.profile_username + ')';
+            resultHtml += ' <span class="attention" id="content-results-list-item-message-' + i + '"></span>';
             resultHtml += '</div>';
             resultHtml += '<div class="content-results-list-item-clear"></div>';
             resultHtml += '<div class="content-results-list-item-detail">';
@@ -1826,9 +1837,11 @@ $(function(){
                 var callback2 = function(results) {
                     self.displayResults(results, keepComment);
                 }
-                backend.commentsForListing(listing_id, callback2, keepComment);
+                var errorCallback2 = function() { $('#comments-message').attr('class', 'attention').html('unable to get comments'); util.displayPage('comments'); };
+                backend.commentsForListing(listing_id, callback2, keepComment, errorCallback2);
             }
-            backend.addComment(listing_id, profile_id, commentText, callback);
+            var errorCallback = function() { $('#comment-save-message').attr('class', 'attention').html('unable to add comment'); };
+            backend.addComment(listing_id, profile_id, commentText, callback, errorCallback);
         };
         self.displayNoResultsHtml = function(resultsHtml) {
             $('#comment-save-message').attr('class', 'attention').html('');
@@ -1839,6 +1852,7 @@ $(function(){
             $('#comments-content-results-list').html(resultsHtml);
         };
         self.displayResults = function(results, keepComment){
+            $('#comments-message').html('');
             if (!keepComment) {
                 $('#comment-textarea').val('');
             }
@@ -1867,9 +1881,6 @@ $(function(){
             }
             else if (comments && comments.length == 0) {
                 resultsHtml = '<i>no comments found</i>';
-            }
-            else {
-                resultsHtml = '<i>loading...</i>';
             }
             // display html
             $('#comments-content-results-list').hide().html(resultsHtml).slideDown();
@@ -1904,29 +1915,36 @@ $(function(){
                 return;
             }
             var deleteComment = function() {
+                var index = $(this).data('index');
                 var comment_id = $(this).data('comment_id');
                 var profile_id = $(this).data('profile_id');
                 var listing_id = $(this).data('listing_id');
-                var profile_callback = function() { backend.commentsForProfile(profile_id, self.displayResults); };
-                var listings_callback = function() { backend.commentsForListing(listing_id, self.displayResults); };
+                var errorCallback = function() { $('#comments-item-message-'+index).attr('class', 'attention').html('unable to delete comment'); };
+                var errorCallback2 = function() { $('#comments-message').attr('class', 'attention').html('unable to get comments'); util.displayPage('comments'); };
+                var profile_callback = function() { backend.commentsForProfile(profile_id, self.displayResults, errorCallback2); };
+                var listings_callback = function() { backend.commentsForListing(listing_id, self.displayResults, errorCallback2); };
                 var callback = listing_id ? listings_callback : profile_callback;
-                backend.deleteComment($(this).data('comment_id'), callback);
+                backend.deleteComment($(this).data('comment_id'), callback, errorCallback);
             };
             for (var i = 0; i < comments.length; i++) {
                 comment = comments[i];
-                $('#comments-item-profile-'+i).data('profile_id',comment.profile_id).unbind().bind('click', function(){
-                    backend.getProfile($(this).data('profile_id'), profiles.displayProfile);
+                $('#comments-item-profile-'+i).data({index:i,profile_id:comment.profile_id}).unbind().bind('click', function(){
+                    var errorCallback = function() { $('#comments-item-message-'+$(this).data('index')).attr('class', 'attention').html('unable to get profile'); };
+                    backend.getProfile($(this).data('profile_id'), profiles.displayProfile, errorCallback);
                 });           
-                $('#comments-item-listing-'+i).data('listing_id',comment.listing_id).unbind().bind('click', function(){
-                    backend.getListing($(this).data('listing_id'), self.displayListing);
+                $('#comments-item-listing-'+i).data({index:i,listing_id:comment.listing_id}).unbind().bind('click', function(){
+                    var errorCallback = function() { $('#comments-item-message-'+$(this).data('index')).attr('class', 'attention').html('unable to get listing'); };
+                    backend.getListing($(this).data('listing_id'), listings.displayListing, errorCallback);
                 });           
                 if (!profile || profile.profile_id != comment.profile_id) { // not my profile so I can't delete
                     continue;
                 }
                 $('#comments-item-delete-'+i)
-                    .data('comment_id', comment.comment_id)
-                    .data('profile_id', results.listing ? '' : comment.profile_id)
-                    .data('listing_id', results.listing ? results.listing.listing_id : '')
+                    .data({
+                        index: i,
+                        comment_id: comment.comment_id,
+                        profile_id: (results.listing ? '' : comment.profile_id),
+                        listing_id: (results.listing ? results.listing.listing_id : '')})
                     .unbind().bind('click', deleteComment);
             }
         };
@@ -1944,9 +1962,11 @@ $(function(){
             resultHtml += '<div class="content-results-list-item-title">';
             resultHtml += comment.text;
             resultHtml += '</div>';
-            resultHtml += (profile && profile.profile_id == comment.profile_id)
-                              ? '<div class="content-results-list-item-profile link" id="comments-item-delete-' + i + '">(delete comment)</div>'
-                              : '';
+            if (profile && profile.profile_id == comment.profile_id) {
+                resultHtml += '<div class="content-results-list-item-profile link" id="comments-item-delete-' + i + '">(delete comment)';
+                resultHtml += ' <span id="comments-item-message-'+i+'" class="attention"></span>';
+                resultHtml += '</div>';
+            }
             resultHtml += '<div class="content-results-list-item-clear"></div>';
             resultHtml += '<div class="content-results-list-item-detail">';
             resultHtml += 'by ';
@@ -1993,15 +2013,16 @@ $(function(){
                 var callback2 = function(results) {
                     self.displayResults(results, false, 'confirmed', 'bid saved');
                 };
+                var errorCallback2 = function() { $('#bids-message').attr('class', 'attention').html('unable to get bids'); util.displayPage('bids'); };
                 if (bid) {
-                    backend.bidsForListing(bid.listing_id, callback2);
+                    backend.bidsForListing(bid.listing_id, callback2, errorCallback2);
                 }
                 else {
                     $('#bid-save-message').attr('class', 'attention').html('unable to save bid');
                 }
             };
-            
-            backend.addBid(listing_id, profile_id, profile_username, bid_amt, bid_pct, bid_type, bid_rate, valuation, callback);
+            var errorCallback = function() { $('#bid-save-message').attr('class', 'attention').html('unable to add bid'); };
+            backend.addBid(listing_id, profile_id, profile_username, bid_amt, bid_pct, bid_type, bid_rate, valuation, callback, errorCallback);
         };
         self.validateBid = function(bid_amt, bid_type, bid_rate, bid_pct, valuation) {
             var msg;
@@ -2047,6 +2068,7 @@ $(function(){
             $('#bids-content-results-list').html(resultsHtml);
         };
         self.displayResults = function(results, keepBid, msgClass, msgText){
+            $('#bids-message').html('');
             self.recalculateValuation();
             $('#bid-save-message').attr('class', (msgClass || 'attention')).html(msgText || '');
             if (!keepBid) {
@@ -2076,9 +2098,6 @@ $(function(){
             }
             else if (bids && bids.length == 0) {
                 resultsHtml = '<i>no bids found</i>';
-            }
-            else {
-                resultsHtml = '<i>loading...</i>';
             }
             // display html
             $('#bids-content-results-list').hide().html(resultsHtml).slideDown();
@@ -2139,21 +2158,26 @@ $(function(){
                 return;
             }
             var withdrawBid = function() {
+                var index = $(this).data('index');
                 var bid_id = $(this).data('bid_id');
                 var profile_id = $(this).data('profile_id');
                 var listing_id = $(this).data('listing_id');
-                var profile_callback = function() { backend.bidsForProfile(profile_id, self.displayResults); };
-                var listings_callback = function() { backend.bidsForListing(listing_id, self.displayResults); };
+                var errorCallback = function() { $('#bids-item-message-'+index).attr('class', 'attention').html('unable to delete bid'); };
+                var errorCallback2 = function() { $('#bids-message').attr('class', 'attention').html('unable to get bids'); util.displayPage('bids'); };
+                var profile_callback = function() { backend.bidsForProfile(profile_id, self.displayResults, errorCallback2); };
+                var listings_callback = function() { backend.bidsForListing(listing_id, self.displayResults, errorCallback2); };
                 var callback = listing_id ? listings_callback : profile_callback;
-                backend.withdrawBid($(this).data('bid_id'), callback);
+                backend.withdrawBid($(this).data('bid_id'), callback, errorCallback);
             };
             for (var i = 0; i < bids.length; i++) {
                 bid = bids[i];
-                $('#bids-item-profile-'+i).data('profile_id',bid.profile_id).unbind().bind('click', function(){
-                    backend.getProfile($(this).data('profile_id'), profiles.displayProfile);
+                $('#bids-item-profile-'+i).data({index:i,profile_id:bid.profile_id}).unbind().bind('click', function(){
+                    var errorCallback = function() { $('#bids-item-message-'+$(this).data('index')).attr('class', 'attention').html('unable to get profile'); };
+                    backend.getProfile($(this).data('profile_id'), profiles.displayProfile, errorCallback);
                 });           
-                $('#bids-item-listing-'+i).data('listing_id',bid.listing_id).unbind().bind('click', function(){
-                    backend.getListing($(this).data('listing_id'), self.displayListing);
+                $('#bids-item-listing-'+i).data({index:i,listing_id:bid.listing_id}).unbind().bind('click', function(){
+                    var errorCallback = function() { $('#bids-item-message-'+$(this).data('index')).attr('class', 'attention').html('unable to get listing'); };
+                    backend.getListing($(this).data('listing_id'), listings.displayListing, errorCallback);
                 });           
                 if (!profile || profile.profile_id != bid.profile_id) {
                     continue;
@@ -2196,9 +2220,11 @@ $(function(){
             resultHtml += ' with ' + self.formatBidType(bid.bid_type);
             resultHtml += bid.interest_rate ? ' @ ' + bid.interest_rate + '%' : '';
             resultHtml += '</div>';
-            resultHtml += (profile && profile.profile_id === bid.profile_id && bid.status === 'active')
-                              ? '<div class="content-results-list-item-profile link" id="bids-item-delete-' + i + '">(withdraw bid)</div>'
-                              : '';
+            if (profile && profile.profile_id === bid.profile_id && bid.status === 'active') {
+                resultHtml += '<div class="content-results-list-item-profile link" id="bids-item-delete-' + i + '">(withdraw bid)';
+                resultHtml += ' <span id="bids-item-message-'+i+'" class="attention"></span>';
+                resultHtml += '</div>';
+            }
             resultHtml += '<div class="content-results-list-item-clear"></div>';
             resultHtml += '<div class="content-results-list-item-detail">';
             resultHtml += 'by ';
@@ -2247,40 +2273,40 @@ $(function(){
     var Backend = function() {
         var self = {};
         // profile methods
-        self.getProfile = function(profile_id, callback) {
+        self.getProfile = function(profile_id, callback, errorCallback) {
             var url = '/user?id=' + profile_id;
-            $.getJSON(url, callback);
+            $.getJSON(url).success(callback).error(errorCallback);
         };
-        self.profileForUsername = function(username, callback) {
+        self.profileForUsername = function(username, callback, errorCallback) {
             var url = '/user/' + username;
-            $.getJSON(url, callback);
+            $.getJSON(url).success(callback).error(errorCallback);
         };
-        self.saveProfile = function(profile, callback) {
+        self.saveProfile = function(profile, callback, errorCallback) {
         	var url = '/user/update/?id=' + profile.profile_id;
-        	$.post(url, {profile: $.JSON.encode(profile)}, callback);
+        	$.post(url, {profile: $.JSON.encode(profile)}).success(callback).error(errorCallback);
         };
-        self.activateProfile = function(profile_id, callback) {
+        self.activateProfile = function(profile_id, callback, errorCallback) {
             var url = '/user/activate/' + profile_id;
-            $.post(url, callback);
+            $.post(url).success(callback).error(errorCallback);
         };
-        self.deactivateProfile = function(profile_id, callback) {
+        self.deactivateProfile = function(profile_id, callback, errorCallback) {
             var url = '/user/deactivate/' + profile_id;
-            $.post(url, callback);
+            $.post(url).success(callback).error(errorCallback);
         };
-        self.searchUsers = function(searchType, keywords, start_index, max_results, callback) {
+        self.searchUsers = function(searchType, keywords, start_index, max_results, callback, errorCallback) {
             searchType = 'all'; // FIXME
             var pathSuffix = searchType + '/?max_results=20';
             var url = '/users/' + pathSuffix;
-            $.getJSON(url, callback);
+            $.getJSON(url).success(callback).error(errorCallback);
         };
-        self.upvoteUser = function(profile_id, callback) {
+        self.upvoteUser = function(profile_id, callback, errorCallback) {
             var url = '/user/up/' + profile_id;
-            $.post(url, callback);
+            $.post(url).success(callback).error(errorCallback);
         };
         // listing methods
-        self.getListing = function(listing_id, callback) {
+        self.getListing = function(listing_id, callback, errorCallback) {
             var url = '/listings/get/' + listing_id;
-            $.getJSON(url, callback);
+            $.getJSON(url).success(callback).error(errorCallback);
         };
         self.listingsForProfile = function(profile_id, callback, errorCallback) {
             var url = '/listings/user/?id=' + profile_id;
@@ -2297,58 +2323,58 @@ $(function(){
             var url = '/listings/' + pathSuffix;
             $.getJSON(url).success(callback).error(errorCallback);
         };
-        self.createListing = function(listing, callback) {
+        self.createListing = function(listing, callback, errorCallback) {
             var url = '/listings/create/';
-        	$.post(url, {listing: $.JSON.encode(listing)}, callback);
+        	$.post(url, {listing: $.JSON.encode(listing)}).success(callback).error(errorCallback);
         };
-        self.saveListing = function(listing, callback) {
+        self.saveListing = function(listing, callback, errorCallback) {
             var url = '/listings/update/';
-        	$.post(url, {listing: $.JSON.encode(listing)}, callback);
+        	$.post(url, {listing: $.JSON.encode(listing)}).success(callback).error(errorCallback);
         };
-        self.upvoteListing = function(listing_id, callback) {
+        self.upvoteListing = function(listing_id, callback, errorCallback) {
             var url = '/listings/up/' + listing_id;
-            $.post(url, callback);
+            $.post(url).success(callback).error(errorCallback);
         };
-        self.activateListing = function(listing_id, callback) {
+        self.activateListing = function(listing_id, callback, errorCallback) {
             var url = '/listings/activate/' + listing_id;
-            $.post(url, callback);
+            $.post(url).success(callback).error(errorCallback);
         };
-        self.withdrawListing = function(listing_id, callback) {
+        self.withdrawListing = function(listing_id, callback, errorCallback) {
             var url = '/listings/withdraw/' + listing_id;
-            $.post(url, callback);
+            $.post(url).success(callback).error(errorCallback);
         };
         // comment methods
-        self.commentsForListing = function(listing_id, callback) {
+        self.commentsForListing = function(listing_id, callback, errorCallback) {
             var url = '/comments/listing/' + listing_id + '/';
-            $.getJSON(url, callback);
+            $.getJSON(url).success(callback).error(errorCallback);
         };
-        self.commentsForProfile = function(profile_id, callback) {
+        self.commentsForProfile = function(profile_id, callback, errorCallback) {
             var url = '/comments/user/' + profile_id + '/';
-            $.getJSON(url, callback);
+            $.getJSON(url).success(callback).error(errorCallback);
         };
-        self.addComment = function(listing_id, profile_id, commentText, callback) {
+        self.addComment = function(listing_id, profile_id, commentText, callback, errorCallback) {
             var url = '/comment/create';
             var comment = {
                 listing_id: listing_id,
                 profile_id: profile_id,
                 text: commentText
             };
-            $.post(url, { comment: $.JSON.encode(comment) }, callback);
+            $.post(url, { comment: $.JSON.encode(comment) }).success(callback).error(errorCallback);
         };
-        self.deleteComment = function(comment_id, callback) {
+        self.deleteComment = function(comment_id, callback, errorCallback) {
             var url = '/comment/delete/' + comment_id;
-            $.post(url, callback);
+            $.post(url).success(callback).error(errorCallback);
         };
         // bid methods
-        self.bidsForListing = function(listing_id, callback) {
+        self.bidsForListing = function(listing_id, callback, errorCallback) {
             var url = '/bids/listing/' + listing_id + '/';
-            $.getJSON(url, callback);
+            $.getJSON(url).success(callback).error(errorCallback);
         };
-        self.bidsForProfile = function(profile_id, callback) {
+        self.bidsForProfile = function(profile_id, callback, errorCallback) {
             var url = '/bids/user/' + profile_id + '/';
-            $.getJSON(url, callback);
+            $.getJSON(url).success(callback).error(errorCallback);
         };
-        self.addBid = function(listing_id, profile_id, profile_username, bid_amt, bid_pct, bid_type, bid_rate, valuation, callback) {
+        self.addBid = function(listing_id, profile_id, profile_username, bid_amt, bid_pct, bid_type, bid_rate, valuation, callback, errorCallback) {
             var url = '/bid/create/';
             var bid = {
                 listing_id: listing_id,
@@ -2360,15 +2386,15 @@ $(function(){
                 interest_rate: bid_rate,
                 valuation: valuation
             };
-            $.post(url, { bid: $.JSON.encode(bid) }, callback);
+            $.post(url, { bid: $.JSON.encode(bid) }).success(callback).error(errorCallback);
         };
-        self.withdrawBid = function(bid_id, callback) {
+        self.withdrawBid = function(bid_id, callback, errorCallback) {
             var url = '/bid/withdraw/?id=' + bid_id;
-            $.post(url, callback);
+            $.post(url).success(callback).error(errorCallback);
         };
-        self.bidStats = function(callback) {
+        self.bidStats = function(callback, errorCallback) {
             var url = '/bids/statistics/';
-            $.get(url, callback);
+            $.get(url).success(callback).error(errorCallback);
 //            var stats = {
 //                    label: "10 Day Bid Volume",
 //                    xaxis: "days ago",
@@ -2483,11 +2509,9 @@ text-decoration: none;
 }
 .attention {
     color: red;
-    margin-left: 5px;
 }
 .confirmed {
     color: green;
-    margin-left: 5px;
 }
 .header {
     font-size: 12px;
@@ -2613,7 +2637,8 @@ text-decoration: none;
 }
 .content-results-list-item-upvote-filler {
     float: left;
-    width: 20px;
+    width: 10px;
+    height: 10px;
 }
 .content-results-list-item-clear {
     clear: both;
@@ -2837,6 +2862,7 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
         </div>
         <div class="header-menu">
             <div class="header-menu-name">
+                <span class="attention" id="header-menu-message"></span>
                 <span class="header-menu-name-username link" id="header-menu-name-username"></span>
             </div>
             <div class="header-menu-command">
@@ -2878,6 +2904,7 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
             <button id="content-search-submit">search</button>
         </div>
         <div class="content-stats" id="content-stats">
+            <div id="stats-message" class="attention"></div>
             <div id="stats-list">
                 <div id="stats" class="stats">
                     <div id="stats-label" class="stats-label"></div>
@@ -2890,6 +2917,7 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
             </div>
         </div>
         <div class="content-results">
+            <div id="search-message" class="attention"></div>
             <div id="search-content-results-list" class="content-results-list"></div>
             <div class="content-results-footer">
                 <span class="link search-cursor" id="search-prev-results">prev</span>
@@ -2904,6 +2932,7 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
             <input id="user-search-keywords" name="keywords" type="text" size="30"/>
             <button id="user-search-submit">search</button>
         </div>
+        <div class="attention" id="user-search-message"></div>
         <div class="content-results">
             <div id="user-search-results-list" class="content-results-list"></div>
             <div class="content-results-footer">
@@ -2915,6 +2944,7 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
     </div>
 
     <div id="commentspage" class="content page">
+        <div class="content-header" id="comments-message"></div>
         <div class="content-header" id="comments-profile-header">
             <div class="content-results-list" id="comments-profile-snippet"></div>
         </div>
@@ -2927,7 +2957,7 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
                 <input name="page" type="hidden" value="comments"/>
                 <textarea class="content-comment-textarea" id="comment-textarea" name="comment" cols="55" rows="6" wrap="soft"></textarea>
                 <br/>
-                <button id="comment-save-button">Save</button><em><span class="attention" id="comment-save-message"></span></em>
+                <button id="comment-save-button">Save</button> <span class="attention" id="comment-save-message"></span>
         </div>
         </form>
         <div class="content-comment" id="comment-not-loggedin-msg">
@@ -2985,7 +3015,7 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
             <div class="content-form-line">Linked via OpenID <span id="profile-edit-open-id">johnarleyburns32.google.com</span></div>
             <div class="content-form-clear"></div>
 -->
-            <div class="content-form-inputline"><button id="profile-save-link">Save</button><em><span class="attention" id="profile-save-message"></span></em></div>
+            <div class="content-form-inputline"><button id="profile-save-link">Save</button> <span class="attention" id="profile-save-message"></span> </div>
             <div class="content-form-clear"></div>
 
             <div class="content-form-linkline">
@@ -3083,7 +3113,7 @@ MisLead is a revolution in social networking.  Previously, social networking has
                 <div class="content-form-input"><input id="listing-upload-presentation" name="presentation" type="file"/></div> <!-- size="40" -->
                 <div class="content-form-clear"></div>
                 
-                <div class="content-form-inputline"><button id="listing-save-link">Save</button><span class="attention" id="listing-save-message"></span></div>
+                <div class="content-form-inputline"><button id="listing-save-link">Save</button> <span class="attention" id="listing-save-message"></span> </div>
                 <div class="content-form-clear"></div>
 
                 <div class="content-form-linkline"><span class="link" id="listing-activate-link">(activate listing)</span></div>
@@ -3119,6 +3149,7 @@ MisLead is a revolution in social networking.  Previously, social networking has
     </div>
     
     <div id="bidspage" class="content page">
+        <div class="content-header" id="bids-message"></div>
         <div class="content-header" id="bids-profile-header">
             <div class="content-results-list" id="bids-profile-snippet"></div>
         </div>
@@ -3152,7 +3183,7 @@ MisLead is a revolution in social networking.  Previously, social networking has
                 <div class="content-form-clear"></div>
 
                 <div class="content-form-line">
-                    <button id="bid-save-button">Place Bid</button> <em><span class="attention" id="bid-save-message"></span></em>
+                    <button id="bid-save-button">Place Bid</button> <span class="attention" id="bid-save-message"></span>
                 </div>
                 <div class="content-form-clear"></div>
             </form>
@@ -3160,10 +3191,12 @@ MisLead is a revolution in social networking.  Previously, social networking has
         <div class="content-form" id="bids-form-not-loggedin">
             <em>You must be logged in to bid.</em>
         </div>
+        <!--
         <div class="content-form">
             <div class="content-form-line-emphasized">Bid history:</div>
             <div class="content-form-clear"></div>
         </div>
+        -->
         <div class="content-results">
             <div class="content-results-list" id="bids-content-results-list"></div>
         </div>
