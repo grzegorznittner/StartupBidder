@@ -189,7 +189,12 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		return userCache.get(bidsPerUser.get(0).getKey());
 	}
 	
-	public boolean canVote(String userId, String listingId) {
+	public boolean userCanVoteForListing(String userId, String listingId) {
+		ListingDTO listing = getListing(listingId);
+		if (listing != null && StringUtils.areStringsEqual(listing.getOwner(), userId)) {
+			// user cannot vote for his own listings
+			return false;
+		}
 		log.log(Level.INFO, "Check votes for user '" + userId + "' and listing '" + listingId + "'");
 		for (VoteDTO vote : voteCache.values()) {
 			log.log(Level.INFO, "  --> " + vote.toString());
@@ -544,6 +549,10 @@ public class MockDatastoreDAO implements DatastoreDAO {
 
 	public ListingDTO valueUpListing(String listingId, String userId) {
 		ListingDTO listing = getListing(listingId);
+		if (StringUtils.areStringsEqual(listing.getOwner(), userId)) {
+			// user cannot vote for his own listings
+			return listing;
+		}
 		int numberOfVotes = 0;
 		boolean alreadyVoted = false;
 		for (VoteDTO vote : voteCache.values()) {

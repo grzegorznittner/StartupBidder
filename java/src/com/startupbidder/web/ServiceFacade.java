@@ -214,7 +214,7 @@ public class ServiceFacade {
 		listing.setDaysLeft(daysLeft.getDays());
 		
 		if (loggedInUser != null) {
-			listing.setVotable(getDAO().canVote(loggedInUser.getId(), listing.getId()));
+			listing.setVotable(getDAO().userCanVoteForListing(loggedInUser.getId(), listing.getId()));
 		} else {
 			listing.setVotable(false);
 		}

@@ -233,7 +233,7 @@ public interface DatastoreDAO {
 	 * Checks whether user can for for listing.
 	 * User can vote only once for a particular listing.
 	 */
-	boolean canVote(String userId, String listingId);
+	boolean userCanVoteForListing(String userId, String listingId);
 
 	/**
 	 * Activates user.
