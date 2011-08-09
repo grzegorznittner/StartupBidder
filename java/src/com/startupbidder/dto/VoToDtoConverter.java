@@ -49,6 +49,8 @@ public class VoToDtoConverter {
 		if (!StringUtils.isEmpty(bpVO.getState())) {
 			bp.setState(ListingDTO.State.valueOf(StringUtils.upperCase(bpVO.getState())));
 		}
+		bp.setPresentationId(bpVO.getPresentationId());
+		bp.setBusinessPlanId(bpVO.getBuinessPlanId());
 		bp.setSummary(bpVO.getSummary());
 		return bp;
 	}
@@ -81,12 +83,8 @@ public class VoToDtoConverter {
 		if (!StringUtils.isEmpty(docVO.getId())) {
 			doc.setIdFromString(docVO.getId());
 		}
-		doc.setListing(docVO.getListing());
 		doc.setBlob(docVO.getBlob());
 		doc.setCreated(docVO.getCreated());
-		if (!StringUtils.isEmpty(docVO.getState())) {
-			doc.setState(ListingDocumentDTO.State.valueOf(docVO.getState()));
-		}
 		if (!StringUtils.isEmpty(docVO.getType())) {
 			doc.setType(ListingDocumentDTO.Type.valueOf(docVO.getType()));
 		}

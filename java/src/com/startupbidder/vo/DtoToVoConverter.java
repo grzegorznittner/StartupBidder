@@ -43,6 +43,8 @@ public class DtoToVoConverter {
 		bp.setSuggestedAmount(bpDTO.getSuggestedAmount());
 		bp.setSuggestedPercentage(bpDTO.getSuggestedPercentage());
 		bp.setState(bpDTO.getState().toString());
+		bp.setPresentationId(bpDTO.getPresentationId());
+		bp.setBuinessPlanId(bpDTO.getBusinessPlanId());
 		bp.setSummary(bpDTO.getSummary());
 		return bp;
 	}
@@ -78,10 +80,8 @@ public class DtoToVoConverter {
 		}
 		ListingDocumentVO doc = new ListingDocumentVO();
 		doc.setId(docDTO.getIdAsString());
-		doc.setListing(docDTO.getListing());
 		doc.setBlob(docDTO.getBlob());
 		doc.setCreated(docDTO.getCreated());
-		doc.setState(docDTO.getState().toString());
 		doc.setType(docDTO.getType().toString());
 		return doc;
 	}

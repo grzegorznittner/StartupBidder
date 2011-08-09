@@ -99,7 +99,6 @@ public class FileController extends ModelDrivenController {
 			BlobKey blobKey = blobs.get(ListingDocumentDTO.Type.BUSINESS_PLAN.toString());
 			doc = new ListingDocumentVO();
 			doc.setBlob(blobKey);
-			doc.setState(ListingDocumentDTO.State.UPLOADED.toString());
 			doc.setType(ListingDocumentDTO.Type.BUSINESS_PLAN.toString());
 			
 			blobs.remove(ListingDocumentDTO.Type.BUSINESS_PLAN.toString());
@@ -107,7 +106,6 @@ public class FileController extends ModelDrivenController {
 			BlobKey blobKey = blobs.get(ListingDocumentDTO.Type.PRESENTATION.toString());
 			doc = new ListingDocumentVO();
 			doc.setBlob(blobKey);
-			doc.setState(ListingDocumentDTO.State.UPLOADED.toString());
 			doc.setType(ListingDocumentDTO.Type.PRESENTATION.toString());
 			
 			blobs.remove(ListingDocumentDTO.Type.PRESENTATION.toString());

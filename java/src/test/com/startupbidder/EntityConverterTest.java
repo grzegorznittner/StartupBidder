@@ -189,8 +189,6 @@ public class EntityConverterTest {
 		doc.createKey("" + doc.hashCode());
 		doc.setBlob(new BlobKey("xxxxx"));
 		doc.setCreated(new Date());
-		doc.setListing("listing_id");
-		doc.setState(ListingDocumentDTO.State.UPLOADED);
 		doc.setType(ListingDocumentDTO.Type.PRESENTATION);
 		
 		System.out.println("Original: " + doc);

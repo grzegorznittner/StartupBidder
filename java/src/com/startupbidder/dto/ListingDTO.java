@@ -20,6 +20,8 @@ public class ListingDTO extends AbstractDTO {
 	private State state;
 	private String summary;
 	private String owner;
+	private String businessPlanId;
+	private String presentationId;
 	
 	public ListingDTO() {
 	}
@@ -100,13 +102,31 @@ public class ListingDTO extends AbstractDTO {
 		this.owner = owner;
 	}
 
+	public String getBusinessPlanId() {
+		return businessPlanId;
+	}
+
+	public void setBusinessPlanId(String businessPlanId) {
+		this.businessPlanId = businessPlanId;
+	}
+
+	public String getPresentationId() {
+		return presentationId;
+	}
+
+	public void setPresentationId(String presentationId) {
+		this.presentationId = presentationId;
+	}
+
 	@Override
 	public String toString() {
-		return "ListingDTO [idAsString" + getIdAsString() + ", name=" + name + ", suggestedValuation="
+		return "ListingDTO [name=" + name + ", suggestedValuation="
 				+ suggestedValuation + ", suggestedPercentage="
 				+ suggestedPercentage + ", suggestedAmount=" + suggestedAmount
-				+ ", listedOn="	+ listedOn + ", closingOn=" + closingOn + ", state=" + state
-				+ ", summary=" + summary + ", owner=" + owner + "]";
+				+ ", listedOn=" + listedOn + ", closingOn=" + closingOn
+				+ ", state=" + state + ", summary=" + summary + ", owner="
+				+ owner + ", businessPlanId=" + businessPlanId
+				+ ", presentationId=" + presentationId + "]";
 	}
 
 	@Override
@@ -120,6 +140,8 @@ public class ListingDTO extends AbstractDTO {
 		listing.setProperty("suggestedAmount", this.suggestedAmount);
 		listing.setProperty("suggestedPercentage", this.suggestedPercentage);
 		listing.setProperty("suggestedValuation", this.suggestedValuation);
+		listing.setProperty("presentationId", this.presentationId);
+		listing.setProperty("businessPlanId", this.businessPlanId);
 		listing.setUnindexedProperty("summary", this.summary != null ? new Text(this.summary) : null);
 		return listing;
 	}
@@ -139,6 +161,8 @@ public class ListingDTO extends AbstractDTO {
 		listing.suggestedValuation = ((Long)entity.getProperty("suggestedValuation")).intValue();
 		Text summaryText = (Text)entity.getProperty("summary");
 		listing.summary = summaryText != null ? summaryText.getValue() : null;
+		listing.presentationId = (String)entity.getProperty("presentationId");
+		listing.businessPlanId = (String)entity.getProperty("businessPlanId");
 		return listing;
 	}
 
@@ -147,11 +171,15 @@ public class ListingDTO extends AbstractDTO {
 		final int prime = 31;
 		int result = super.hashCode();
 		result = prime * result
+				+ ((businessPlanId == null) ? 0 : businessPlanId.hashCode());
+		result = prime * result
 				+ ((closingOn == null) ? 0 : closingOn.hashCode());
 		result = prime * result
 				+ ((listedOn == null) ? 0 : listedOn.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result + ((owner == null) ? 0 : owner.hashCode());
+		result = prime * result
+				+ ((presentationId == null) ? 0 : presentationId.hashCode());
 		result = prime * result + ((state == null) ? 0 : state.hashCode());
 		result = prime * result + suggestedAmount;
 		result = prime * result + suggestedPercentage;
@@ -169,6 +197,11 @@ public class ListingDTO extends AbstractDTO {
 		if (getClass() != obj.getClass())
 			return false;
 		ListingDTO other = (ListingDTO) obj;
+		if (businessPlanId == null) {
+			if (other.businessPlanId != null)
+				return false;
+		} else if (!businessPlanId.equals(other.businessPlanId))
+			return false;
 		if (closingOn == null) {
 			if (other.closingOn != null)
 				return false;
@@ -189,6 +222,11 @@ public class ListingDTO extends AbstractDTO {
 				return false;
 		} else if (!owner.equals(other.owner))
 			return false;
+		if (presentationId == null) {
+			if (other.presentationId != null)
+				return false;
+		} else if (!presentationId.equals(other.presentationId))
+			return false;
 		if (state != other.state)
 			return false;
 		if (suggestedAmount != other.suggestedAmount)
@@ -204,4 +242,5 @@ public class ListingDTO extends AbstractDTO {
 			return false;
 		return true;
 	}
+
 }

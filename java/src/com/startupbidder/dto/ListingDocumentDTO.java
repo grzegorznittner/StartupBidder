@@ -9,13 +9,10 @@ import com.google.appengine.api.datastore.Entity;
 
 public class ListingDocumentDTO extends AbstractDTO {
 	public enum Type {BUSINESS_PLAN, PRESENTATION};
-	public enum State {UPLOADED, ACTIVE, DELETED};
 
-	private String listing;
 	private BlobKey blob;
 	private Date created;
 	private Type type;
-	private State state;
 
 	@Override
 	String getKind() {
@@ -33,18 +30,6 @@ public class ListingDocumentDTO extends AbstractDTO {
 	public void setType(Type type) {
 		this.type = type;
 	}
-	public State getState() {
-		return state;
-	}
-	public void setState(State state) {
-		this.state = state;
-	}
-	public String getListing() {
-		return listing;
-	}
-	public void setListing(String listing) {
-		this.listing = listing;
-	}
 	public BlobKey getBlob() {
 		return blob;
 	}
@@ -55,8 +40,6 @@ public class ListingDocumentDTO extends AbstractDTO {
 	public Entity toEntity() {
 		Entity entity = new Entity(id);
 		entity.setProperty("blob", this.blob);
-		entity.setProperty("listing", this.listing);
-		entity.setProperty("state", this.state != null ? this.state.toString() : null);
 		entity.setProperty("type", this.type != null ? this.type.toString() : null);
 		entity.setProperty("created", this.created);		
 		return entity;
@@ -65,11 +48,7 @@ public class ListingDocumentDTO extends AbstractDTO {
 		ListingDocumentDTO dto = new ListingDocumentDTO();
 		dto.setKey(entity.getKey());
 		dto.blob = (BlobKey)entity.getProperty("blob");
-		dto.listing = (String)entity.getProperty("listing");
 		dto.created = (Date)entity.getProperty("created");
-		if (!StringUtils.isEmpty((String)entity.getProperty("state"))) {
-			dto.state = State.valueOf((String)entity.getProperty("state"));
-		}
 		if (!StringUtils.isEmpty((String)entity.getProperty("type"))) {
 			dto.type = Type.valueOf((String)entity.getProperty("type"));
 		}
@@ -77,9 +56,8 @@ public class ListingDocumentDTO extends AbstractDTO {
 	}
 	@Override
 	public String toString() {
-		return "ListingDocumentDTO [listing=" + listing + ", blob=" + blob
-				+ ", created=" + created + ", type=" + type + ", state="
-				+ state + "]";
+		return "ListingDocumentDTO [blob=" + blob
+				+ ", created=" + created + ", type=" + type + "]";
 	}
 	@Override
 	public int hashCode() {
@@ -87,8 +65,6 @@ public class ListingDocumentDTO extends AbstractDTO {
 		int result = super.hashCode();
 		result = prime * result + ((blob == null) ? 0 : blob.hashCode());
 		result = prime * result + ((created == null) ? 0 : created.hashCode());
-		result = prime * result + ((listing == null) ? 0 : listing.hashCode());
-		result = prime * result + ((state == null) ? 0 : state.hashCode());
 		result = prime * result + ((type == null) ? 0 : type.hashCode());
 		return result;
 	}
@@ -110,13 +86,6 @@ public class ListingDocumentDTO extends AbstractDTO {
 			if (other.created != null)
 				return false;
 		} else if (!created.equals(other.created))
-			return false;
-		if (listing == null) {
-			if (other.listing != null)
-				return false;
-		} else if (!listing.equals(other.listing))
-			return false;
-		if (state != other.state)
 			return false;
 		if (type != other.type)
 			return false;

@@ -52,11 +52,14 @@ public class ListingVO {
 	private int numberOfVotes;
 	@JsonProperty("votable")
 	private boolean votable;
-	
 	@JsonProperty("days_ago")
 	private int daysAgo;
 	@JsonProperty("days_left")
 	private int daysLeft;
+	@JsonProperty("business_plan_id")
+	private String buinessPlanId;
+	@JsonProperty("presentation_id")
+	private String presentationId;
 	
 	public ListingVO() {
 	}
@@ -213,6 +216,22 @@ public class ListingVO {
 		this.daysLeft = daysLeft;
 	}
 
+	public String getBuinessPlanId() {
+		return buinessPlanId;
+	}
+
+	public void setBuinessPlanId(String buinessPlanId) {
+		this.buinessPlanId = buinessPlanId;
+	}
+
+	public String getPresentationId() {
+		return presentationId;
+	}
+
+	public void setPresentationId(String presentationId) {
+		this.presentationId = presentationId;
+	}
+
 	@Override
 	public String toString() {
 		return "ListingVO [orderNumber=" + orderNumber + ", id=" + id
@@ -225,6 +244,8 @@ public class ListingVO {
 				+ ownerName + ", numberOfComments=" + numberOfComments
 				+ ", numberOfBids=" + numberOfBids + ", numberOfVotes="
 				+ numberOfVotes + ", votable=" + votable + ", daysAgo="
-				+ daysAgo + ", daysLeft=" + daysLeft + "]";
+				+ daysAgo + ", daysLeft=" + daysLeft + ", buinessPlanId="
+				+ buinessPlanId + ", presentationId=" + presentationId + "]";
 	}
+
 }
