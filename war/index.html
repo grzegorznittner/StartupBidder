@@ -1008,15 +1008,49 @@ $(function(){
                 if (!/\.doc|\.docx|\.pdf$/.test(filename)) {
                     alert('Only doc or docx or pdf files are allowed for the business plan');
                     $(this).val('');
+                    $('#upload-business-plan-submit').hide();
+                }
+                else {
+                    $('#upload-business-plan-submit').fadeIn();
                 }
             });
-            $('#listing-upload-presentation').change(function() {
-                var filename = $(this).val();
-                if (!/\.ppt|\.pdf$/.test(filename)) {
-                    alert('Only ppt or pdf files are allowed for the business plan');
-                    $(this).val('');
-                }
-            });
+//            $('#listing-upload-presentation').change(function() {
+//                var filename = $(this).val();
+//                if (!/\.ppt|\.pdf$/.test(filename)) {
+//                    alert('Only ppt or pdf files are allowed for the business plan');
+//                    $(this).val('');
+//                }
+//            });
+        };
+        self.prepareBusinessPlanUploader = function() {
+            var callback = function(uploadjson) {
+                console.log('got upload json');
+                var actionUrl = uploadjson[0];
+                var submitCallback = function() {
+                    var loadCallback = function() {
+                        var responsejson;
+                        var response = $('#upload-business-plan-iframe').contents().find('pre');
+                        if (!response.length > 0) {
+                            response = $('#upload-business-plan-iframe').contents().find('body');
+                        }
+                        if (response.length > 0) {
+                            responsejson = $.parseJSON(response.html());
+                            console.log('parsed json:'+responsejson);
+                        }
+                        console.log('iframe loaded');
+                        $('#listing-save-message').attr('class','confirmed').html('business plan uploaded');
+                    };
+                    console.log('submitted');
+                    $('#upload-business-plan-iframe').unbind().load(loadCallback);
+                };
+                $('#listing-upload-bp-form').attr('action',actionUrl).unbind().submit(submitCallback);
+            };
+            var errorCallback = function() {
+                console.log('error on upload');
+                $('#listing-save-message').attr('class', 'attention').html('unable to obtain business plan upload data');
+            };
+            $('#upload-business-plan-submit').hide();
+            backend.getUploadUrls(2, callback, errorCallback);
         };
         self.setup();
         return self;
@@ -1565,6 +1599,7 @@ $(function(){
             listing.business_plan_url = '';
             listing.presentation_url = '';
             self.displayListing(listing);
+            uploader.prepareBusinessPlanUploader();
         };
         self.displayListingSnippetHtml = function(html) {
             $('#listing-snippet').html(html);
@@ -2343,6 +2378,11 @@ $(function(){
             var url = '/listings/withdraw/' + listing_id;
             $.post(url).success(callback).error(errorCallback);
         };
+        // upload methods
+        self.getUploadUrls = function(urlCount, callback, errorCallback) {
+            var url = '/file/get-upload-url/' + urlCount + '/';
+            $.get(url).success(callback).error(errorCallback);
+        };
         // comment methods
         self.commentsForListing = function(listing_id, callback, errorCallback) {
             var url = '/comments/listing/' + listing_id + '/';
@@ -2731,6 +2771,10 @@ text-decoration: none;
     clear: both;
     height: 0px;
 }
+.listing-iframe {
+    display: none;
+<!-- style="width:0;height:0;border:0px solid #fff;" -->
+}
 .listing-download-button {
     margin-top: 10px;
     width: 150px;
@@ -3104,15 +3148,23 @@ MisLead is a revolution in social networking.  Previously, social networking has
                 <div class="content-form-clear"></div>
                 <div class="content-form-line"><span class="link" id="listing-edit-presentation-link">view presentation</span></div>
                 <div class="content-form-clear"></div>
+                </form>
 
-                <div class="content-form-label">Business plan</div>
-                <div class="content-form-input"><input id="listing-upload-business-plan" name="business-plan" type="file"/></div> <!-- size="40" -->
+                <form id="listing-upload-bp-form" method="post" enctype="multipart/form-data" action="#" target="upload-business-plan-iframe">
+                <div class="content-form-label">Business plan&nbsp;</div>
+                <div class="content-form-input">
+                        <input name="BUSINESS_PLAN" id="listing-upload-business-plan" type="file"/>
+                        <input type="submit" id="upload-business-plan-submit" value="Upload"/>
+                        <iframe id="upload-business-plan-iframe" name="upload-business-plan-iframe" class="listing-iframe" src=""></iframe>
+                </div> <!-- size="40" -->
                 <div class="content-form-clear"></div>
-
+                </form>
+<!--
                 <div class="content-form-label">Presentation</div>
-                <div class="content-form-input"><input id="listing-upload-presentation" name="presentation" type="file"/></div> <!-- size="40" -->
+                <div class="content-form-input"><input id="listing-upload-presentation" name="presentation" type="file"/></div>
                 <div class="content-form-clear"></div>
-                
+   -->             
+                <form action="#" method="post" enctype="multipart/form-data">
                 <div class="content-form-inputline"><button id="listing-save-link">Save</button> <span class="attention" id="listing-save-message"></span> </div>
                 <div class="content-form-clear"></div>
 
