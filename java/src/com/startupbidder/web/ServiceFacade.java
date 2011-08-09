@@ -97,8 +97,11 @@ public class ServiceFacade {
 	 * @param userData User data object
 	 */
 	public UserVO updateUser(UserVO loggedInUser, UserVO userData) {
-		if (!checkUserName(loggedInUser, userData.getNickname())) {
-			return null;
+		UserDTO oldUser = getDAO().getUser(userData.getId());
+		if (!(oldUser != null && StringUtils.areStringsEqual(oldUser.getNickname(), userData.getNickname()))) {
+			if (!checkUserName(loggedInUser, userData.getNickname())) {
+				return null;
+			}
 		}
 		UserVO user = DtoToVoConverter.convert(getDAO().updateUser(VoToDtoConverter.convert(userData)));
 		computeUserStatistics(user);
