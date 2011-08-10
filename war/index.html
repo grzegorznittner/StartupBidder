@@ -1612,7 +1612,7 @@ $(function(){
             util.displayPage('listing');
             var resultsHtml = '';
             var profile = user.profile;
-            if (listing && listing.status in {new:1,created:1} && (!profile || profile.profile_id !== listing.profile_id)) {
+            if ((listing && (listing.status === 'new' || listing.status === 'created')) && (!profile || (profile.profile_id !== listing.profile_id))) {
                 $('#listing-snippet').html('<em>You must be logged to submit a new listing</em>').show();
                 return;
             }
@@ -1656,7 +1656,7 @@ $(function(){
             $('#listing-form-message').attr('class', msgClass).html(msg);
 
             // enable editable if logged in
-            if (profile && profile.profile_id == listing.profile_id && listing.status in {new:1,created:1,active:1}) {
+            if ((profile && profile.profile_id == listing.profile_id) && ((listing.status === 'new' || listing.status === 'created') || listing.status === 'active')) {
                 $('#listing-form-readonly').hide();
                 $('#listing-form-editable').hide().slideDown();
                 $('#listing-edit-title').val(listing.title);
@@ -2032,7 +2032,7 @@ $(function(){
             raw_rate = raw_rate.replace(/[^\d]+/g,'');
 
             var bid_amt  = raw_amt != '' ? raw_amt : 0;
-            var bid_type = raw_type in {common:1,preferred:1,note:1} ? raw_type : 'common';
+            var bid_type = ((raw_type === 'common' || raw_type === 'preferred') || raw_type === 'note') ? raw_type : 'common';
             var bid_rate = raw_rate != '' ? raw_rate : 0;
             var bid_pct  = raw_pct != '' ? raw_pct : 0;
 
