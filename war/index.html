@@ -1627,7 +1627,7 @@ $(function(){
 
             // set listing message
             var msg = '';
-            var class = 'attention';
+            var msgClass = 'attention';
             if (profile && profile.profile_id == listing.profile_id && listing.status == 'withdrawn') {
                 msg = 'You may not change your listing now that it is withdrawn.';
             }
@@ -1642,7 +1642,7 @@ $(function(){
             }
             else if (listing.status == 'active') {
                 msg = 'This listing is active and accepting bids.';
-                class = 'confirmed';
+                msgClass = 'confirmed';
             }
             else if (listing.status == 'withdrawn') {
                 msg = 'This listing is withdrawn and thus bidding is suspended.';
@@ -1653,7 +1653,7 @@ $(function(){
             else {
                 msg = 'The listing status is unknown.';
             }
-            $('#listing-form-message').attr('class', class).html(msg);
+            $('#listing-form-message').attr('class', msgClass).html(msg);
 
             // enable editable if logged in
             if (profile && profile.profile_id == listing.profile_id && listing.status in {new:1,created:1,active:1}) {
