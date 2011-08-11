@@ -1002,57 +1002,66 @@ $(function(){
 
     var Uploader = function() {
         var self = {};
-        self.setup = function() {
-            $('#listing-upload-business-plan').change(function() {
-                var filename = $(this).val();
-                if (!/\.doc|\.docx|\.pdf$/.test(filename)) {
-                    alert('Only doc or docx or pdf files are allowed for the business plan');
-                    $(this).val('');
-                    $('#upload-business-plan-submit').hide();
-                }
-                else {
-                    $('#upload-business-plan-submit').fadeIn();
-                }
-            });
-//            $('#listing-upload-presentation').change(function() {
-//                var filename = $(this).val();
-//                if (!/\.ppt|\.pdf$/.test(filename)) {
-//                    alert('Only ppt or pdf files are allowed for the business plan');
-//                    $(this).val('');
-//                }
-//            });
-        };
-        self.prepareBusinessPlanUploader = function() {
+        self.prepareUploader = function(fieldRoot, fieldName) {
+            var uploader = function() {
             var callback = function(uploadjson) {
                 console.log('got upload json');
                 var actionUrl = uploadjson[0];
                 var submitCallback = function() {
                     var loadCallback = function() {
-                        var responsejson;
-                        var response = $('#upload-business-plan-iframe').contents().find('pre');
-                        if (!response.length > 0) {
-                            response = $('#upload-business-plan-iframe').contents().find('body');
+                        var responseEl = $('#'+fieldRoot+'-iframe').contents().find('body');
+                        var responseHtml;
+                        var responseId;
+                        var downloadUrl;
+                        if (responseEl) {
+                            responseHtml = responseEl.html().replace(/<[^>]*>/g,'');
+                            console.log('responseHtml:'+responseHtml);
+                            if (responseHtml) {
+                                responseId = responseHtml.replace(/^{ *"?id"? *: *"/,'').replace(/".*$/,'');
+                                console.log('responseId:'+responseId);
+                            }
                         }
-                        if (response.length > 0) {
-                            responsejson = $.parseJSON(response.html());
-                            console.log('parsed json:'+responsejson);
+                        if (responseId === undefined || responseId.length === 0) {
+                            $('#listing-save-message').attr('class','confirmed').html('error uploading');
                         }
-                        console.log('iframe loaded');
-                        $('#listing-save-message').attr('class','confirmed').html('business plan uploaded');
+                        else {
+                            downloadUrl = '/file/download/' + responseId;
+                            $('#listing-save-message').attr('class','confirmed').html('upload successful');
+                            $('#'+fieldRoot+'-link').data(fieldName, responseId).children('a').attr('href', downloadUrl);
+                            $('#'+fieldRoot+'-link').show();
+                        }
+                        $('#'+fieldRoot+'-file').hide().val('');
+                        $('#'+fieldRoot+'-submit').hide();
                     };
                     console.log('submitted');
-                    $('#upload-business-plan-iframe').unbind().load(loadCallback);
+                    $('#listing-save-message').attr('class','confirmed').html('uploading...');
+                    $('#'+fieldRoot+'-form').get(0).target = fieldRoot+'-iframe';
+                    $('#'+fieldRoot+'-iframe').unbind().load(loadCallback);
                 };
-                $('#listing-upload-bp-form').attr('action',actionUrl).unbind().submit(submitCallback);
+                $('#'+fieldRoot+'-form').attr('action',actionUrl).unbind().submit(submitCallback).show();
+                $('#'+fieldRoot+'-file').show();
             };
             var errorCallback = function() {
                 console.log('error on upload');
                 $('#listing-save-message').attr('class', 'attention').html('unable to obtain business plan upload data');
             };
-            $('#upload-business-plan-submit').hide();
+            var fileChangeCallback = function() {
+                var filename = $(this).val();
+                if (!/\.doc|\.docx|\.pdf|\.ppt$/.test(filename)) {
+                    alert('Only doc, docx, ppt or pdf files are allowed for upload');
+                    $(this).val('');
+                    $('#'+fieldRoot+'-submit').hide();
+                }
+                else {
+                    $('#'+fieldRoot+'-submit').fadeIn();
+                }
+            };
+            $('#'+fieldRoot+'-file').hide().val('').change(fileChangeCallback);
+            $('#'+fieldRoot+'-submit').hide();
             backend.getUploadUrls(2, callback, errorCallback);
+            };
+            return uploader;
         };
-        self.setup();
         return self;
     };
 
@@ -1557,8 +1566,8 @@ $(function(){
             listing.suggested_pct = raw_pct;
             listing.suggested_val = bids.calculateValuation(listing.suggested_amt, listing.suggested_pct);
             listing.summary = $('#listing-edit-summary').val();
-            listing.business_plan_url = $('#listing-upload-business-plan').val();
-            listing.presentation_url = $('#listing-upload-presentation').val();
+            listing.business_plan_id = $('#listing-edit-business-plan-link').data('business_plan_id');
+            listing.presentation_id = $('#listing-edit-presentation-link').data('presentation_id');
             var callback = function(savedListing) {
                 var msg = savedListing ? 'listing saved' : 'unable to save listing';
                 var msg_class = savedListing ? 'confirmed' : 'attention';
@@ -1596,10 +1605,9 @@ $(function(){
             listing.suggested_pct = 10;
             listing.suggested_val = bids.calculateValuation(listing.suggested_amt, listing.suggested_pct);
             listing.summary = 'Enter listing summary here.';
-            listing.business_plan_url = '';
-            listing.presentation_url = '';
+            listing.business_plan_id = '';
+            listing.presentation_id = '';
             self.displayListing(listing);
-            uploader.prepareBusinessPlanUploader();
         };
         self.displayListingSnippetHtml = function(html) {
             $('#listing-snippet').html(html);
@@ -1690,23 +1698,8 @@ $(function(){
                     });
                 }
 
-                if (listing.business_plan_url) {
-                    $('#listing-edit-business-plan-link').unbind().show().data('business_plan_url',listing.business_plan_url).bind('click',function(){
-                        document.location = $(this).data('business_plan_url');
-                    });
-                }
-                else {
-                    $('#listing-edit-business-plan-link').hide();
-                }
-
-                if (listing.presentation_url) {
-                    $('#listing-edit-presentation-link').unbind().show().data('presentation_url',listing.presentation_url).bind('click',function(){
-                        document.location = $(this).data('presentation_url');
-                    });
-                }
-                else {
-                    $('#listing-edit-presentation-link').hide();
-                }
+                self.displayUploadField('listing-edit-business-plan', 'business_plan_id', listing.business_plan_id);
+                self.displayUploadField('listing-edit-presentation', 'presentation_id', listing.presentation_id);
 
                 if (listing.status === 'new') {
                     $('#listing-withdraw-link').hide();
@@ -1734,13 +1727,34 @@ $(function(){
                 $('#listing-readonly-suggested-pct').html(listing.suggested_pct);
                 $('#listing-readonly-suggested-val').html(util.addCommas(listing.suggested_val));
                 $('#listing-readonly-summary').html(listing.summary);
-                $('#listing-readonly-business-plan-link').unbind().data('business_plan_url',listing.business_plan_url||'').bind('click',function(){
-                    document.location = $(this).data('business_plan_url');
-                });
-                $('#listing-readonly-presentation-link').unbind().data('presentation_url',listing.presentation_url||'').bind('click',function(){
-                    document.location = $(this).data('presentation_url');
-                });
+                if (listing.business_plan_id) {
+                    $('#listing-readonly-business-plan-link').show().children('a').attr('href', '/file/download/' + listing.business_plan_id);
+                }
+                else {
+                    $('#listing-readonly-business-plan-link').hide();
+                }
+                if (listing.presentation_id) {
+                    $('#listing-readonly-presentation-link').show().children('a').attr('href', '/file/download/' + listing.presentation_id);
+                }
+                else {
+                    $('#listing-readonly-presentation-link').hide();
+                }
              }
+        };
+        self.displayUploadField = function(fieldRoot, fieldName, fieldValue) {
+            var fieldSelRoot = '#' + fieldRoot;
+            var url;
+            $(fieldSelRoot+'-add').unbind().bind('click', uploader.prepareUploader(fieldRoot, fieldName));
+            $(fieldSelRoot+'-form').hide();
+            if (fieldValue) {
+                url = '/file/download/' + fieldValue;
+                $(fieldSelRoot+'-link').data(fieldName, fieldValue).attr('href', url).show();
+                $(fieldSelRoot+'-remove').unbind().bind('click',function(){alert('not implemented yet');}).show();
+            }
+            else {
+                $(fieldSelRoot+'-link').hide();
+                $(fieldSelRoot+'-remove').hide();
+            }
         };
         self.recalculateSuggestedValuation = function() {
             var suggested_amt  = $('#listing-edit-suggested-amt').val() || '';
@@ -3073,14 +3087,14 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
             <div class="content-form-line">at <span id="profile-organization">Steinwasser, Inc.</span></div>
             <div class="content-form-clear"></div>
 
-            <div class="content-form-line">Email <a id="profile-email-href" href=""><span id="profile-email">johnarleyburns@gmail.com</span></a></div>
+            <div class="content-form-line">Email <a id="profile-email-href" href="" target="_blank"><span id="profile-email">johnarleyburns@gmail.com</span></a></div>
             <div class="content-form-clear"></div>
 
-            <div class="content-form-line">Facebook <a id="profile-facebook-href" href=""><span id="profile-facebook">johnarleyburns59</span></a></div>
+            <div class="content-form-line">Facebook <a id="profile-facebook-href" href="" target="_blank"><span id="profile-facebook">johnarleyburns59</span></a></div>
             <div class="content-form-clear"></div>
-            <div class="content-form-line">Twitter <a id="profile-twitter-href" href=""><span id="profile-twitter">johnarleyburns21</span></a></div>
+            <div class="content-form-line">Twitter <a id="profile-twitter-href" href="" target="_blank"><span id="profile-twitter">johnarleyburns21</span></a></div>
             <div class="content-form-clear"></div>
-            <div class="content-form-line">Linkedin <a id="profile-linkedin-href" href=""><span id="profile-linkedin">johnarleyburns63</span></a></div>
+            <div class="content-form-line">Linkedin <a id="profile-linkedin-href" href="" target="_blank"><span id="profile-linkedin">johnarleyburns63</span></a></div>
             <div class="content-form-clear"></div>
 
             <div class="content-form-line">Accredited Investor</div>
@@ -3143,26 +3157,42 @@ MisLead is a revolution in social networking.  Previously, social networking has
                 </div>
                 <div class="content-form-clear"></div>
 
-                <div class="content-form-line"><span class="link" id="listing-edit-business-plan-link">view business plan</span></div>
-                <div class="content-form-clear"></div>
-                <div class="content-form-line"><span class="link" id="listing-edit-presentation-link">view presentation</span></div>
+                <div class="content-form-line">
+                    <span>Business Plan</span>
+                    <span class="link" id="listing-edit-business-plan-link"><a href="#">view</a></span>
+                    <span class="link" id="listing-edit-business-plan-add">upload</span>
+                    <span class="link" id="listing-edit-business-plan-remove">remove</span>
+                </div>
                 <div class="content-form-clear"></div>
                 </form>
 
-                <form id="listing-upload-bp-form" method="post" enctype="multipart/form-data" action="#" target="upload-business-plan-iframe">
-                <div class="content-form-label">Business plan&nbsp;</div>
-                <div class="content-form-input">
-                        <input name="BUSINESS_PLAN" id="listing-upload-business-plan" type="file"/>
-                        <input type="submit" id="upload-business-plan-submit" value="Upload"/>
-                        <iframe id="upload-business-plan-iframe" name="upload-business-plan-iframe" class="listing-iframe" src="#"></iframe>
-                </div> <!-- size="40" -->
+                <form id="listing-edit-business-plan-form" method="post" enctype="multipart/form-data" action="#">
+                <div class="content-form-line">
+                        <input name="BUSINESS_PLAN" id="listing-edit-business-plan-file" type="file"/>
+                        <input type="submit" id="listing-edit-business-plan-submit" value="Upload"/>
+                        <iframe id="listing-edit-business-plan-iframe" name="listing-edit-business-plan-iframe" class="listing-iframe" src="#"></iframe>
+                </div>
                 <div class="content-form-clear"></div>
                 </form>
-<!--
-                <div class="content-form-label">Presentation</div>
-                <div class="content-form-input"><input id="listing-upload-presentation" name="presentation" type="file"/></div>
+
+                <div class="content-form-line">
+                    <span>Presentation</span>
+                    <span class="link" id="listing-edit-presentation-link"><a href="#">view</a></span>
+                    <span class="link" id="listing-edit-presentation-add">upload</span>
+                    <span class="link" id="listing-edit-presentation-remove">remove</span>
+                </div>
                 <div class="content-form-clear"></div>
-   -->             
+                </form>
+
+                <form id="listing-edit-presentation-form" method="post" enctype="multipart/form-data" action="#">
+                <div class="content-form-line">
+                        <input name="PRESENTATION" id="listing-edit-presentation-file" type="file"/>
+                        <input type="submit" id="listing-edit-presentation-submit" value="Upload"/>
+                        <iframe id="listing-edit-presentation-iframe" name="listing-edit-presentation-iframe" class="listing-iframe" src="#"></iframe>
+                </div>
+                <div class="content-form-clear"></div>
+                </form>
+
                 <form action="#" method="post" enctype="multipart/form-data">
                 <div class="content-form-inputline"><button id="listing-save-link">Save</button> <span class="attention" id="listing-save-message"></span> </div>
                 <div class="content-form-clear"></div>
@@ -3191,10 +3221,14 @@ MisLead is a revolution in social networking.  Previously, social networking has
                 </div>
                 <div class="content-form-clear"></div>
 
-                <div class="content-form-line"><span class="link" id="listing-readonly-business-plan-link">view business plan</span></div>
+                <div class="content-form-line">
+                    <span class="link" id="listing-readonly-business-plan-link"><a href="#">view business plan</a></span>
+                </div>
                 <div class="content-form-clear"></div>
 
-                <div class="content-form-line"><span class="link" id="listing-readonly-presentation-link">view presentation</span></div>
+                <div class="content-form-line">
+                    <span class="link" id="listing-readonly-presentation-link"><a href="#">view presentation</a></span>
+                </div>
                 <div class="content-form-clear"></div>
          </div>
     </div>
