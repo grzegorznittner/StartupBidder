@@ -911,7 +911,6 @@ $(function(){
             var days_ago = userjson.days_ago !== undefined ? userjson.days_ago : 0;
             var resultHtml = '';
             var evenOdd;
-            console.log('i='+i);
             if (isFinite(i)) {
                 evenOdd = (i % 2 == 0) ? 'even' : 'odd';
                 resultHtml += '<div class="content-results-list-item content-results-list-item-' + evenOdd + '">';
@@ -1005,7 +1004,6 @@ $(function(){
         self.prepareUploader = function(fieldRoot, fieldName) {
             var uploader = function() {
             var callback = function(uploadjson) {
-                console.log('got upload json');
                 var actionUrl = uploadjson[0];
                 var submitCallback = function() {
                     var loadCallback = function() {
@@ -1015,10 +1013,8 @@ $(function(){
                         var downloadUrl;
                         if (responseEl) {
                             responseHtml = responseEl.html().replace(/<[^>]*>/g,'');
-                            console.log('responseHtml:'+responseHtml);
                             if (responseHtml) {
                                 responseId = responseHtml.replace(/^{ *"?id"? *: *"/,'').replace(/".*$/,'');
-                                console.log('responseId:'+responseId);
                             }
                         }
                         if (responseId === undefined || responseId.length === 0) {
@@ -1033,7 +1029,6 @@ $(function(){
                         $('#'+fieldRoot+'-file').hide().val('');
                         $('#'+fieldRoot+'-submit').hide();
                     };
-                    console.log('submitted');
                     $('#listing-save-message').attr('class','confirmed').html('uploading...');
                     $('#'+fieldRoot+'-form').get(0).target = fieldRoot+'-iframe';
                     $('#'+fieldRoot+'-iframe').unbind().load(loadCallback);
@@ -1042,7 +1037,6 @@ $(function(){
                 $('#'+fieldRoot+'-file').show();
             };
             var errorCallback = function() {
-                console.log('error on upload');
                 $('#listing-save-message').attr('class', 'attention').html('unable to obtain business plan upload data');
             };
             var fileChangeCallback = function() {
@@ -1058,7 +1052,7 @@ $(function(){
             };
             $('#'+fieldRoot+'-file').hide().val('').change(fileChangeCallback);
             $('#'+fieldRoot+'-submit').hide();
-            backend.getUploadUrls(2, callback, errorCallback);
+            backend.getUploadUrls(1, callback, errorCallback);
             };
             return uploader;
         };
@@ -1698,8 +1692,9 @@ $(function(){
                     });
                 }
 
-                self.displayUploadField('listing-edit-business-plan', 'business_plan_id', listing.business_plan_id);
-                self.displayUploadField('listing-edit-presentation', 'presentation_id', listing.presentation_id);
+                self.displayUploadField('listing-edit-business-plan', 'business_plan_id', listing.business_plan_id, true);
+                self.displayUploadField('listing-edit-presentation', 'presentation_id', listing.presentation_id, true);
+                self.displayUploadField('listing-edit-financials', 'financials_id', listing.financials_id, true);
 
                 if (listing.status === 'new') {
                     $('#listing-withdraw-link').hide();
@@ -1727,32 +1722,48 @@ $(function(){
                 $('#listing-readonly-suggested-pct').html(listing.suggested_pct);
                 $('#listing-readonly-suggested-val').html(util.addCommas(listing.suggested_val));
                 $('#listing-readonly-summary').html(listing.summary);
-                if (listing.business_plan_id) {
-                    $('#listing-readonly-business-plan-link').show().children('a').attr('href', '/file/download/' + listing.business_plan_id);
-                }
-                else {
-                    $('#listing-readonly-business-plan-link').hide();
-                }
-                if (listing.presentation_id) {
-                    $('#listing-readonly-presentation-link').show().children('a').attr('href', '/file/download/' + listing.presentation_id);
-                }
-                else {
-                    $('#listing-readonly-presentation-link').hide();
-                }
+                self.displayUploadField('listing-readonly-business-plan', 'business_plan_id', listing.business_plan_id);
+                self.displayUploadField('listing-readonly-presentation', 'presentation_id', listing.presentation_id);
+                self.displayUploadField('listing-readonly-financials', 'financials_id', listing.financials_id);
+//                if (listing.business_plan_id) {
+//                    $('#listing-readonly-business-plan-link').children('a').attr('href', '/file/download/' + listing.business_plan_id);
+//                    $('#listing-readonly-business-plan-link').show();
+//                }
+//                else {
+//                    $('#listing-readonly-business-plan-link').hide();
+//                }
+//                if (listing.presentation_id) {
+//                    $('#listing-readonly-presentation-link').children('a').attr('href', '/file/download/' + listing.presentation_id);
+//                    $('#listing-readonly-presentation-link').show();
+//                }
+//                else {
+//                    $('#listing-readonly-presentation-link').hide();
+//                }
              }
         };
-        self.displayUploadField = function(fieldRoot, fieldName, fieldValue) {
+        self.displayUploadField = function(fieldRoot, fieldName, fieldValue, editable) {
             var fieldSelRoot = '#' + fieldRoot;
             var url;
-            $(fieldSelRoot+'-add').unbind().bind('click', uploader.prepareUploader(fieldRoot, fieldName));
             $(fieldSelRoot+'-form').hide();
+            if (editable) {
+                $(fieldSelRoot+'-add').unbind().bind('click', uploader.prepareUploader(fieldRoot, fieldName));
+            }
             if (fieldValue) {
                 url = '/file/download/' + fieldValue;
-                $(fieldSelRoot+'-link').data(fieldName, fieldValue).attr('href', url).show();
-                $(fieldSelRoot+'-remove').unbind().bind('click',function(){alert('not implemented yet');}).show();
+                console.log('downloadurl:'+url);
+                console.log('fieldselroot: '+fieldSelRoot);
+                $(fieldSelRoot+'-link a').attr('href', url);
+                $(fieldSelRoot+'-link').show();
             }
             else {
                 $(fieldSelRoot+'-link').hide();
+                $(fieldSelRoot+'-remove').hide();
+            }
+            if (fieldValue && editable) {
+                $(fieldSelRoot+'-link').data(fieldName, fieldValue);
+                $(fieldSelRoot+'-remove').unbind().bind('click',function(){alert('not implemented yet');}).show();
+            }
+            else {
                 $(fieldSelRoot+'-remove').hide();
             }
         };
@@ -1821,6 +1832,7 @@ $(function(){
             var days_left = listing.days_left;
             var resultHtml = '';
             var evenOdd;
+            var fileUrl;
             if (isFinite(i)) {
                 evenOdd = (i % 2 == 0) ? 'even' : 'odd';
                 resultHtml += '<div class="content-results-list-item content-results-list-item-' + evenOdd + '">';
@@ -1843,6 +1855,24 @@ $(function(){
             resultHtml += '(' + listing.profile_username + ')';
             resultHtml += ' <span class="attention" id="content-results-list-item-message-' + i + '"></span>';
             resultHtml += '</div>';
+            if (listing.business_plan_id) {
+                fileUrl = "/file/download/" + listing.business_plan_id;
+                resultHtml += '<a target="_blank" title="business plan" href="'
+                        + fileUrl
+                        + '" class="listing-icon business-plan-icon" id="content-results-list-item-business-plan-' + i + '"></a>';
+            }
+            if (listing.presentation_id) {
+                fileUrl = "/file/download/" + listing.presentation_id;
+                resultHtml += '<a target="_blank" title="presentation" href="'
+                        + fileUrl
+                        + '" class="listing-icon presentation-icon" id="content-results-list-item-presentation-' + i + '"></a>';
+            }
+            if (listing.financials_id) {
+                fileUrl = "/file/download/" + listing.financials_id;
+                resultHtml += '<a target="_blank" title="financials" href="'
+                        + fileUrl
+                        + '" class="listing-icon financials-icon" id="content-results-list-item-financials-' + i + '"></a>';
+            }
             resultHtml += '<div class="content-results-list-item-clear"></div>';
             resultHtml += '<div class="content-results-list-item-detail">';
             resultHtml += '<span id="content-results-list-item-votes-' + i + '">' + listing.num_votes + '</span>' + ' votes | ';
@@ -2840,6 +2870,30 @@ background-repeat: no-repeat;
 background-image: url(data:image/png;base64,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);
 }
 
+
+/* listing icons */
+
+.listing-icon {
+    margin-left: 5px;
+    float: left;
+    width: 16px;
+    height: 16px;
+    background-repeat: no-repeat;
+}
+
+.business-plan-icon {
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABa0lEQVQ4jaWSwUoCURSGf8dZNKtJokXQUqRN4crlPEIPIIK2aZu7HkBahKt2ji7DtgM9hriRKBImo4UgFIWiMtO9d/4Wos6YY0I/3MXhnPOdn3NPwrZtAEC1WkWlUukiRkopJJPJp1qtVur3+8NFguQeyQOSB47jvHCNXNdlp9MhSTabza5lWSZJpNNp6OZV+2M55xB4bMeZwPAEyOfzmSAIWpZl5QAMdQA4PtrHlxfENqZ2NDw8v0MIAQAoFAoZpVSr0WjkdNP3kfK+kfBkLGAXOkzfh5QSJCGEQLFYzEyn09uEcXbP2M4V3Z0qTCaTRdzr9T5BMk0ySzLrOM7buiXOpZSKPNu2uzoAd04cDAbeJgeapkXiIAig1+t1ALM7KJfLi+T1TT0WdHlxDmB2G3o4Md9yuGiThBBRgFLqfw7CgG0cbASEHcTBfgGkXB7TNg6klIj8y2g0+rNptT7iYDweo1QqvW4LMAwDP8a7/O4kgHB3AAAAAElFTkSuQmCC);
+}
+
+.presentation-icon {
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABgElEQVQ4jaWSPUvDUBSGn9ooOpRW/KB0dnBx82/4H1onBwWpg0IdKzip4KBDsBkLddKtHYubkyI0IoiDn1WsmEp7E3McSmOqCRR9t8M59zkv77kREeE/0oAxYKiPWQW8A6pQKHwD4hunz/1ue8vNjgMvPx0wMz3Ba8sNfTg6PMB5rU6QUy3ebjPaUkRaTigggUa83aZcLp80m007kUh4vchI5qjvFD8O5nrqUql0iYhMVSqVG/mDisWiqQFX9Xq9Fbb17uGJ9Y0tr87nsqSSkwC4rgsigmEYpojI9l5BMour3obb+8eeWkQks7gqt/ePIiJiGIaJiKDruhlk0T8cBNV13dQAHKdzgZ19g7OLGge7m57lrt3D4wrVahXX/fR6juN0/oFt2wAsL6QDM+hCAMT9Pppt2wz4ATv7BvNLaz2BdQPUBqNo0Sgf6pN8LusBNAClVKCDVHKSfC7bC11f8RwppToAy7J+WfdD/Jn4ZVlWB9BoNEin09ehlBDFYjG+ACfEKjjUhYBmAAAAAElFTkSuQmCC);
+}
+
+.financials-icon {
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABe0lEQVQ4jZWSP0vDUBTFT/6IDYqNVSsFBxELXfw2Lk5mcnVwKLgGwRIKikJIFAtK536CfgM3EcygLgWxrRpjjE00uU7G94qR9sIbfgfuefdcrmBZFgDAMAzouu6AqbvOo7qytOhmMQCAiOaIqEREpVardUtMHZ9csEjG0SnHzWbTkfN7l/1fuyXg+pKxr2B375f1+Qnu8yRJIAPAWmUBL4MEWTWbE3F104Mkiagd2qkeffiqnA9DzA4iCIOvTAMVMvJhCEkSUd3eSvVGo+HK/c4z2p3nzGaulgUO4ziGQESrAKYBwDo7b0/mpgp/9UafX3gPAkTRZ6oFb24XRJQ+0zQddsv7Bxb9x6ZpOqJt27BtG+VyGXEcjxaFjcAe0vrG5qM6VyyOauA+dbsyK8znFXdneys1qB3a3NaHuV6vu+LwSONG4CbovQYqeyg/v2Zx/zVQOYOZnORWx4ig6zofwfO8sSJ4nsdH8H0fmqbd/7CgFEqapj1ksaIo+AbVAAJMcvsQqwAAAABJRU5ErkJggg==);
+}
+
+
 /* stats properties */
 .stats {
     width: 250px;
@@ -3159,7 +3213,7 @@ MisLead is a revolution in social networking.  Previously, social networking has
 
                 <div class="content-form-line">
                     <span>Business Plan</span>
-                    <span class="link" id="listing-edit-business-plan-link"><a href="#">view</a></span>
+                    <span class="link" id="listing-edit-business-plan-link"><a target="_blank" href="#">view</a></span>
                     <span class="link" id="listing-edit-business-plan-add">upload</span>
                     <span class="link" id="listing-edit-business-plan-remove">remove</span>
                 </div>
@@ -3177,7 +3231,7 @@ MisLead is a revolution in social networking.  Previously, social networking has
 
                 <div class="content-form-line">
                     <span>Presentation</span>
-                    <span class="link" id="listing-edit-presentation-link"><a href="#">view</a></span>
+                    <span class="link" id="listing-edit-presentation-link"><a target="_blank" href="#">view</a></span>
                     <span class="link" id="listing-edit-presentation-add">upload</span>
                     <span class="link" id="listing-edit-presentation-remove">remove</span>
                 </div>
@@ -3189,6 +3243,24 @@ MisLead is a revolution in social networking.  Previously, social networking has
                         <input name="PRESENTATION" id="listing-edit-presentation-file" type="file"/>
                         <input type="submit" id="listing-edit-presentation-submit" value="Upload"/>
                         <iframe id="listing-edit-presentation-iframe" name="listing-edit-presentation-iframe" class="listing-iframe" src="#"></iframe>
+                </div>
+                <div class="content-form-clear"></div>
+                </form>
+
+                <div class="content-form-line">
+                    <span>Financials</span>
+                    <span class="link" id="listing-edit-financials-link"><a target="_blank" href="#">view</a></span>
+                    <span class="link" id="listing-edit-financials-add">upload</span>
+                    <span class="link" id="listing-edit-financials-remove">remove</span>
+                </div>
+                <div class="content-form-clear"></div>
+                </form>
+
+                <form id="listing-edit-financials-form" method="post" enctype="multipart/form-data" action="#">
+                <div class="content-form-line">
+                        <input name="FINANCIALS" id="listing-edit-financials-file" type="file"/>
+                        <input type="submit" id="listing-edit-financials-submit" value="Upload"/>
+                        <iframe id="listing-edit-financials-iframe" name="listing-edit-financials-iframe" class="listing-iframe" src="#"></iframe>
                 </div>
                 <div class="content-form-clear"></div>
                 </form>
@@ -3222,12 +3294,12 @@ MisLead is a revolution in social networking.  Previously, social networking has
                 <div class="content-form-clear"></div>
 
                 <div class="content-form-line">
-                    <span class="link" id="listing-readonly-business-plan-link"><a href="#">view business plan</a></span>
+                    <span class="link" id="listing-readonly-business-plan-link"><a target="_blank" href="#">view business plan</a></span>
                 </div>
                 <div class="content-form-clear"></div>
 
                 <div class="content-form-line">
-                    <span class="link" id="listing-readonly-presentation-link"><a href="#">view presentation</a></span>
+                    <span class="link" id="listing-readonly-presentation-link"><a target="_blank" href="#">view presentation</a></span>
                 </div>
                 <div class="content-form-clear"></div>
          </div>
@@ -3375,7 +3447,7 @@ s = (p + b + c + v) / (t + 2)^1.5
 
 Reference:
 </pre>
-<a href="http://www.seomoz.org/blog/reddit-stumbleupon-delicious-and-hacker-news-algorithms-exposed">seomoz.org</a>
+<a target="_blank" href="http://www.seomoz.org/blog/reddit-stumbleupon-delicious-and-hacker-news-algorithms-exposed">seomoz.org</a>
                     </div>
                 </div>
                 <div class="content-results-list-item-clear"></div>
