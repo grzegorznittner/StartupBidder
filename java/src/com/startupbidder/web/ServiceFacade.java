@@ -16,6 +16,7 @@ import org.joda.time.Days;
 import com.google.appengine.api.blobstore.BlobstoreService;
 import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
 import com.google.appengine.api.users.User;
+import com.startupbidder.dao.AppEngineDatastoreDAO;
 import com.startupbidder.dao.DatastoreDAO;
 import com.startupbidder.dao.MockDatastoreDAO;
 import com.startupbidder.dto.BidDTO;
@@ -40,11 +41,14 @@ import com.startupbidder.vo.UserListVO;
 import com.startupbidder.vo.UserVO;
 import com.startupbidder.vo.UserVotesVO;
 import com.startupbidder.vo.VoteVO;
-import com.sun.org.apache.xerces.internal.impl.dv.xs.DayDV;
 
 public class ServiceFacade {
 	private static final Logger log = Logger.getLogger(ServiceFacade.class.getName());
 	private static ServiceFacade instance;
+	
+	public enum Datastore {MOCK, APPENGINE};
+	public static Datastore currentDAO = Datastore.MOCK;
+	
 	
 	public static ServiceFacade instance() {
 		if (instance == null) {
@@ -54,7 +58,11 @@ public class ServiceFacade {
 	}
 	
 	private DatastoreDAO getDAO () {
-		return MockDatastoreDAO.getInstance();
+		if (currentDAO.equals(Datastore.MOCK)) {
+			return MockDatastoreDAO.getInstance();
+		} else {
+			return AppEngineDatastoreDAO.getInstance();
+		}
 	}
 	
 	public UserVO getLoggedInUserData(User loggedInUser) {

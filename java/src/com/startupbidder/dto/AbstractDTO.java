@@ -3,6 +3,7 @@ package com.startupbidder.dto;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
+import com.google.appengine.api.datastore.Query;
 
 /**
  * Abstract class for entities.
@@ -55,6 +56,13 @@ public abstract class AbstractDTO {
 	 */
 	public void createKey(String id) {
 		setKey(KeyFactory.createKey(getKind(), id));
+	}
+	
+	/**
+	 * Return query object for this class
+	 */
+	public Query getQuery() {
+		return new Query(getKind());
 	}
 	
 	/**
