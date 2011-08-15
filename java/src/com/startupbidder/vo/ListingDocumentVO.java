@@ -2,13 +2,23 @@ package com.startupbidder.vo;
 
 import java.util.Date;
 
+import org.codehaus.jackson.annotate.JsonAutoDetect;
+import org.codehaus.jackson.annotate.JsonProperty;
+import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
+
 import com.google.appengine.api.blobstore.BlobKey;
 
+@JsonAutoDetect(getterVisibility=Visibility.NONE, setterVisibility=Visibility.NONE,
+		fieldVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE)
 public class ListingDocumentVO {
+	@JsonProperty("id")
 	private String id;
 	private String listing;
+	@JsonProperty("blob_id")
 	private BlobKey blob;
+	@JsonProperty("created")
 	private Date created;
+	@JsonProperty("type")
 	private String type;
 	private String state;
 	public String getId() {

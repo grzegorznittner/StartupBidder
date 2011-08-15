@@ -61,6 +61,9 @@ public abstract class ModelDrivenController {
 		HttpHeaders headers;
 		try {
 			headers = executeAction(request);
+			if (headers == null) {
+				log.log(Level.INFO, request.getMethod() + " " + getCommand(1) + " is not supported!");
+			}
 		} catch (Exception e) {
 			headers = new HttpHeadersImpl();
 			headers.setStatus(501);

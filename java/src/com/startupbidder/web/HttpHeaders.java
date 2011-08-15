@@ -1,5 +1,7 @@
 package com.startupbidder.web;
 
+import java.io.IOException;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -13,7 +15,7 @@ public interface HttpHeaders {
     /**
      * Applies headers on HttpServletResponse object
      */
-    String apply(HttpServletRequest request, HttpServletResponse response, Object target);
+    String apply(HttpServletRequest request, HttpServletResponse response, Object target) throws IOException;
 
     /**
      * The HTTP status code
@@ -59,4 +61,9 @@ public interface HttpHeaders {
      * Checks whether response is returning blob content
      */
     boolean isBlobResponse();
+    
+    /**
+     * Set custom header
+     */
+    void addHeader(String name, String value);
 }

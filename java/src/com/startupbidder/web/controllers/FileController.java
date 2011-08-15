@@ -39,6 +39,8 @@ public class FileController extends ModelDrivenController {
 		} else if ("POST".equalsIgnoreCase(request.getMethod())) {
 			if("upload".equalsIgnoreCase(getCommand(1))) {
 				return upload(request);
+			} else if("delete".equalsIgnoreCase(getCommand(1))) {
+				return delete(request);
 			}
 		}
 		return null;
@@ -65,11 +67,30 @@ public class FileController extends ModelDrivenController {
 		String docId = getCommandOrParameter(request, 2, "doc");
 
 		ListingDocumentVO doc = ServiceFacade.instance().getListingDocument(getLoggedInUser(), docId);
-		log.log(Level.INFO, "Sending back document: " + model);
+		log.log(Level.INFO, "Sending back document: " + doc);
 		if (doc != null && doc.getBlob() != null) {
+			headers.addHeader("Content-Disposition", "attachment; filename=" + doc.getType().toLowerCase());
 			headers.setBlobKey(doc.getBlob());
 		} else {
 			log.log(Level.INFO, "Document not found or blob not available!");
+			headers.setStatus(500);
+		}
+		
+		return headers;
+	}
+	
+	private HttpHeaders delete(HttpServletRequest request) {
+		HttpHeaders headers = new HttpHeadersImpl("delete");
+		
+		String docId = getCommandOrParameter(request, 2, "doc");
+
+		log.log(Level.INFO, "Deleting document id: " + docId);
+		ListingDocumentVO doc = ServiceFacade.instance().deleteDocument(getLoggedInUser(), docId);
+		if (doc != null) {
+			model = doc;
+			log.log(Level.INFO, "Document deleted: " + doc);
+		} else {
+			log.log(Level.INFO, "Document not found!");
 			headers.setStatus(500);
 		}
 		
@@ -109,6 +130,13 @@ public class FileController extends ModelDrivenController {
 			doc.setType(ListingDocumentDTO.Type.PRESENTATION.toString());
 			
 			blobs.remove(ListingDocumentDTO.Type.PRESENTATION.toString());
+		} else if (blobs.containsKey(ListingDocumentDTO.Type.FINANCIALS.toString())) {
+			BlobKey blobKey = blobs.get(ListingDocumentDTO.Type.FINANCIALS.toString());
+			doc = new ListingDocumentVO();
+			doc.setBlob(blobKey);
+			doc.setType(ListingDocumentDTO.Type.FINANCIALS.toString());
+			
+			blobs.remove(ListingDocumentDTO.Type.FINANCIALS.toString());
 		}
 
 		// delete unwanted attachements

@@ -60,30 +60,22 @@ public class FrontController extends HttpServlet {
 				log.log(Level.SEVERE, "Returned object is NULL");
 			}
 		} else {
+			log.log(Level.INFO, request.getMethod() + " " + request.getPathInfo() + " is not supported!");
 			response.setStatus(501);
 			return;
 		}
 		
-		if (headers.isRedirect()) {
-			response.sendRedirect(headers.getRedirectUrl());
-			return;
-		}
-		if (headers.isBlobResponse()) {
-			BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
-			blobstoreService.serve(headers.getBlobKey(), response);
-			return;
-		}
 		if (headers != null) {
-			headers.apply(request, response, controller.getModel());
-		}
-		
-		if (request.getRequestURI().endsWith(".html")) {
-			// default is plain/text
-			controller.generateJson(response);
-		} else {
-			// default is JSON
-			response.setContentType("application/json");
-			controller.generateJson(response);
+			if (headers.apply(request, response, controller.getModel()) != null) {
+				if (request.getRequestURI().endsWith(".html")) {
+					// default is plain/text
+					controller.generateJson(response);
+				} else {
+					// default is JSON
+					response.setContentType("application/json");
+					controller.generateJson(response);
+				}		
+			}
 		}		
 	}
 }

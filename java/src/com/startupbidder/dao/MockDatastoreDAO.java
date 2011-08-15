@@ -15,6 +15,8 @@ import org.datanucleus.util.StringUtils;
 import org.joda.time.DateMidnight;
 import org.joda.time.Days;
 
+import com.google.appengine.api.blobstore.BlobstoreService;
+import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
 import com.startupbidder.dto.BidDTO;
 import com.startupbidder.dto.CommentDTO;
 import com.startupbidder.dto.ListingDTO;
@@ -787,6 +789,17 @@ public class MockDatastoreDAO implements DatastoreDAO {
 	
 	public List<ListingDocumentDTO> getAllListingDocuments() {
 		return new ArrayList<ListingDocumentDTO>(docCache.values());
+	}
+	
+	public ListingDocumentDTO deleteDocument(String docId) {
+		if (docCache.containsKey(docId)) {
+			ListingDocumentDTO doc = docCache.remove(docId);
+			BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
+			blobstoreService.delete(doc.getBlob());
+			return doc;
+		} else {
+			return null;
+		}
 	}
 	
 	/**

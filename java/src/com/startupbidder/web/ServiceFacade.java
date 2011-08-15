@@ -760,6 +760,10 @@ public class ServiceFacade {
 		return DtoToVoConverter.convert(getDAO().getListingDocument(docId));
 	}
 	
+	public ListingDocumentVO deleteDocument(UserVO loggedInUser, String docId) {
+		return DtoToVoConverter.convert(getDAO().deleteDocument(docId));
+	}
+	
 	public List<ListingDocumentVO> getAllListingDocuments(UserVO loggedInUser) {
 		if (loggedInUser == null) {
 			return null;
@@ -771,7 +775,9 @@ public class ServiceFacade {
 		BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
 		String[] urls = new String[numberOfUrls];
 		while (numberOfUrls > 0) {
-			urls[--numberOfUrls] = blobstoreService.createUploadUrl(uploadUrl);
+			String discreteUploadUrl = uploadUrl + (uploadUrl.endsWith("/") ? "" : "/") ;
+			discreteUploadUrl += "" + new Date().getTime() + numberOfUrls + loggedInUser.hashCode();
+			urls[--numberOfUrls] = blobstoreService.createUploadUrl(discreteUploadUrl);
 		}
 		return urls;
 	}

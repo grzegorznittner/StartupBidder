@@ -120,18 +120,28 @@ public class HelloServlet extends HttpServlet {
 			
 			out.println("<p>File API:</p>");
 			out.println("<a href=\"/file/get-upload-url/2/.html\">Get upload URL(s)</a><br/>");
-			String[] urls = service.createUploadUrls(currentUser, "/file/upload", 1);
+			String[] urls = service.createUploadUrls(currentUser, "/file/upload", 3);
 			out.println("<form action=\"" + urls[0] + "\" method=\"post\" enctype=\"multipart/form-data\">"
 					+ "<input type=\"file\" name=\"" + ListingDocumentDTO.Type.BUSINESS_PLAN.toString() + "\"/>"
-					+ "<input type=\"submit\" value=\"Upload\"/></form>");
+					+ "<input type=\"submit\" value=\"Upload business plan\"/></form>");
+			out.println("<form action=\"" + urls[1] + "\" method=\"post\" enctype=\"multipart/form-data\">"
+					+ "<input type=\"file\" name=\"" + ListingDocumentDTO.Type.PRESENTATION.toString() + "\"/>"
+					+ "<input type=\"submit\" value=\"Upload presentation\"/></form>");
+			out.println("<form action=\"" + urls[2] + "\" method=\"post\" enctype=\"multipart/form-data\">"
+					+ "<input type=\"file\" name=\"" + ListingDocumentDTO.Type.FINANCIALS.toString() + "\"/>"
+					+ "<input type=\"submit\" value=\"Upload financials\"/></form>");
 			List<ListingDocumentVO> docs = service.getAllListingDocuments(currentUser);
 			DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy/MM/dd HH:mm");
 			if (docs != null && !docs.isEmpty()) {
-				out.println("Uploaded documents:</br>");
+				out.println("<table border=\"1\"><tr><td colspan=\"2\">Uploaded documents</td></tr>");
 				for (ListingDocumentVO doc : docs) {
-					out.println("<a href=\"/file/download/" + doc.getId() + ".html\">Download "
-							+ doc.getType() + " uploaded " + fmt.print(doc.getCreated().getTime()) + ", status: " + doc.getState() + "</a><br/>");
+					out.println("<tr>");
+					out.println("<td><a href=\"/file/download/" + doc.getId() + ".html\">Download "
+							+ doc.getType() + " uploaded " + fmt.print(doc.getCreated().getTime()) + ", type: " + doc.getType() + "</a></td>");
+					out.println("<td><form method=\"POST\" action=\"/file/delete/.html?doc=" + doc.getId() + "\"><input type=\"submit\" value=\"Delete file\"/></form></td>");
+					out.println("</tr>");
 				}
+				out.println("</table>");
 			} else {
 				out.println("No documents uploaded</br>");
 			}

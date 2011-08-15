@@ -1,16 +1,22 @@
 package com.startupbidder.web;
 
+import static javax.servlet.http.HttpServletResponse.SC_CREATED;
+import static javax.servlet.http.HttpServletResponse.SC_NOT_MODIFIED;
+import static javax.servlet.http.HttpServletResponse.SC_OK;
+
+import java.io.IOException;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
 
 import com.google.appengine.api.blobstore.BlobKey;
-
-import static javax.servlet.http.HttpServletResponse.*;
-
-import java.io.IOException;
-import java.util.Date;
+import com.google.appengine.api.blobstore.BlobstoreService;
+import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
 
 /**
  * Default implementation of rest info that uses fluent-style construction
@@ -24,8 +30,9 @@ public class HttpHeadersImpl implements HttpHeaders {
     boolean disableCaching;
     boolean noETag = false;
     Date lastModified;
-    BlobKey blob;
+    BlobKey blob = null;
     String redirect = null;
+    Map<String, String> headers = new HashMap<String, String>();
 
     public HttpHeadersImpl() {}
 
@@ -96,11 +103,29 @@ public class HttpHeadersImpl implements HttpHeaders {
     public boolean isBlobResponse() {
     	return blob != null;
     }
+    
+    public void addHeader(String name, String value) {
+    	headers.put(name, value);
+    }
 
     /* (non-Javadoc)
      * @see org.apache.struts2.rest.HttpHeaders#apply(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.lang.Object)
      */
-    public String apply(HttpServletRequest request, HttpServletResponse response, Object target) {
+    public String apply(HttpServletRequest request, HttpServletResponse response, Object target) throws IOException {
+		if (isRedirect()) {
+			response.sendRedirect(getRedirectUrl());
+			return null;
+		}
+		// applying headers
+		for (Map.Entry<String, String> header : headers.entrySet()) {
+			response.setHeader(header.getKey(), header.getValue());
+		}
+		if (isBlobResponse()) {
+			BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
+			blobstoreService.serve(getBlobKey(), response);
+			return null;
+		}
+
         if (disableCaching) {
             response.setHeader("Cache-Control", "no-cache");
         }

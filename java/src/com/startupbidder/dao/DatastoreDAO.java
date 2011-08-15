@@ -342,4 +342,9 @@ public interface DatastoreDAO {
 	 * Return all stored documents
 	 */
 	List<ListingDocumentDTO> getAllListingDocuments();
+
+	/**
+	 * Deletes document
+	 */
+	ListingDocumentDTO deleteDocument(String docId);
 }

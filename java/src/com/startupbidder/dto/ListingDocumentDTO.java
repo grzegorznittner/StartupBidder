@@ -8,7 +8,7 @@ import com.google.appengine.api.blobstore.BlobKey;
 import com.google.appengine.api.datastore.Entity;
 
 public class ListingDocumentDTO extends AbstractDTO {
-	public enum Type {BUSINESS_PLAN, PRESENTATION};
+	public enum Type {BUSINESS_PLAN, PRESENTATION, FINANCIALS};
 
 	private BlobKey blob;
 	private Date created;
