@@ -886,6 +886,12 @@ $(function(){
                 return v.toString(16);
             });
         };
+        self.applyResizer = function(resizerCallback) {
+            resizerCallback($(window).width());
+            $(window).resize(function(){
+                resizerCallback($(this).width());
+            });
+        }
         return self;
     };
 
@@ -1127,7 +1133,32 @@ $(function(){
                 $('#header-menu-bar-submit').hide();
             }
         };
-        self.setup();
+        self.narrowClasses = {
+            'body': 'body-narrow',
+            '#header': 'header-narrow',
+            '#header-logo': 'header-logo-narrow',
+            '#header-title': 'header-title-narrow',
+            '#header-menu-bar': 'header-menu-bar-narrow',
+            '#header-menu-name': 'header-menu-name-narrow',
+            '#header-menu-command': 'header-menu-command-narrow',
+            '.content': 'content-narrow'
+        };
+        self.resizeStyles = function(windowWidth) {
+            var sel;
+            var width = parseInt(windowWidth);
+            if (width < 701) {
+                $('body').width(width);
+                for (sel in self.narrowClasses) {
+                    $(sel).addClass(self.narrowClasses[sel]);
+                }
+            } 
+            else {
+                $('body').removeAttr('width');
+                for (sel in self.narrowClasses) {
+                    $(sel).removeClass(self.narrowClasses[sel]);
+                }
+            }
+        };
         return self;
     };
 
@@ -1562,6 +1593,7 @@ $(function(){
             listing.summary = $('#listing-edit-summary').val();
             listing.business_plan_id = $('#listing-edit-business-plan-link').data('business_plan_id');
             listing.presentation_id = $('#listing-edit-presentation-link').data('presentation_id');
+            listing.financials_id = $('#listing-edit-financials-link').data('financials_id');
             var callback = function(savedListing) {
                 var msg = savedListing ? 'listing saved' : 'unable to save listing';
                 var msg_class = savedListing ? 'confirmed' : 'attention';
@@ -1601,6 +1633,7 @@ $(function(){
             listing.summary = 'Enter listing summary here.';
             listing.business_plan_id = '';
             listing.presentation_id = '';
+            listing.financials_id = '';
             self.displayListing(listing);
         };
         self.displayListingSnippetHtml = function(html) {
@@ -1725,20 +1758,6 @@ $(function(){
                 self.displayUploadField('listing-readonly-business-plan', 'business_plan_id', listing.business_plan_id);
                 self.displayUploadField('listing-readonly-presentation', 'presentation_id', listing.presentation_id);
                 self.displayUploadField('listing-readonly-financials', 'financials_id', listing.financials_id);
-//                if (listing.business_plan_id) {
-//                    $('#listing-readonly-business-plan-link').children('a').attr('href', '/file/download/' + listing.business_plan_id);
-//                    $('#listing-readonly-business-plan-link').show();
-//                }
-//                else {
-//                    $('#listing-readonly-business-plan-link').hide();
-//                }
-//                if (listing.presentation_id) {
-//                    $('#listing-readonly-presentation-link').children('a').attr('href', '/file/download/' + listing.presentation_id);
-//                    $('#listing-readonly-presentation-link').show();
-//                }
-//                else {
-//                    $('#listing-readonly-presentation-link').hide();
-//                }
              }
         };
         self.displayUploadField = function(fieldRoot, fieldName, fieldValue, editable) {
@@ -1750,8 +1769,6 @@ $(function(){
             }
             if (fieldValue) {
                 url = '/file/download/' + fieldValue;
-                console.log('downloadurl:'+url);
-                console.log('fieldselroot: '+fieldSelRoot);
                 $(fieldSelRoot+'-link a').attr('href', url);
                 $(fieldSelRoot+'-link').show();
             }
@@ -2503,6 +2520,8 @@ $(function(){
     window.listings = new Listings();
     window.comments = new Comments();
     window.bids = new Bids();
+    window.header.setup();
+    window.util.applyResizer(window.header.resizeStyles);
     window.searchListings.doSearch();
 
 });
@@ -2572,6 +2591,11 @@ text-decoration: none;
 }
 
 /* startupbidder styles */
+.body-narrow { }
+.body-medium { }
+.body-wide { }
+
+
 .gradient-bg {
     background: #eeeeee;
     background: -moz-linear-gradient(top,#ffffff,#dddddd);
@@ -2604,10 +2628,28 @@ text-decoration: none;
     height: 40px;
     border-bottom: 2px solid black;
 }
+.header-narrow {
+    height: 100px;
+}
 .content {
     position: absolute;
     width: 100%;
     top: 40px;
+}
+.content-narrow {
+    top: 100px;
+    margin-right: 15px;
+}
+.header-logo {
+    position: absolute;
+    top: 3px;
+    height: 37px;
+    left: 2px;
+    width: 98px;
+}
+.header-logo-narrow {
+    left: 50%;
+    margin-left: -50px;
 }
 .header-title {
     position: absolute;
@@ -2617,31 +2659,52 @@ text-decoration: none;
     font-weight: bold;
     font-size: 16px;
 }
-.header-menu {
-    position: absolute;
-    left: 100px;
-    right: 0px;
+.header-title-narrow {
+    top: 43px;
+    width: 124px;
+    left: 50%;
+    margin-left: -62px;
 }
 .header-menu-name {
     position: absolute;
     height: 15px;
-    right: 55px;
+    right: 20px;
     top: 5px;
     text-align: right;
+}
+.header-menu-name-narrow {
+    top: 67px;
+    width: 100%;
+    left: 0px;
+    text-align: center;
 }
 .header-menu-command {
     font-size: 12px;
     position: absolute;
     height: 15px;
-    right: 5px;
+    right: 20px;
     top: 5px;
     text-align: right;
 }
+.header-menu-command-narrow {
+    width: 50px;
+    left: 50%;
+    margin-left: -25px;
+    right: none;
+    top: 67px;
+    text-align: center;
+}
 .header-menu-bar {
     position: absolute;
-    top: 26px;
-    left: 0px;
+    top: 25px;
+    left: 100px;
     text-align: left;
+}
+.header-menu-bar-narrow {
+    top: 85px;
+    width: 100%;
+    left: 0px;
+    text-align: center;
 }
 .content-search {
     margin-top: 2px;
@@ -2823,13 +2886,6 @@ text-decoration: none;
     width: 150px;
 }
 .header-logo {
-    position: absolute;
-    top: 3px;
-    height: 37px;
-    left: 2px;
-    width: 98px;
-}
-.header-logo {
 /*
 width: 90px;
 height: 36px;
@@ -2966,43 +3022,41 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
 <body class="gradient-bg">
 
 <div class="site">
-    <div class="header">
+    <div id="header" class="header">
         <div id="header-logo" class="header-logo"></div>
-        <div class="header-title">
+        <div id="header-title" class="header-title">
             <span class="link" id="header-title-link">startupbidder</span>
         </div>
-        <div class="header-menu">
-            <div class="header-menu-name">
-                <span class="attention" id="header-menu-message"></span>
-                <span class="header-menu-name-username link" id="header-menu-name-username"></span>
-            </div>
-            <div class="header-menu-command">
-                <span class="header-menu-command-login link" id="header-menu-command-login">(login)</span>
-                <span class="header-menu-command-logout link" id="header-menu-command-logout">(logout)</span>
-            </div>
-            <div class="header-menu-bar">
-                <span class="link" id="header-menu-bar-top">top</span>
-                <span> | </span>
-                <!--
-                <span class="link" id="header-menu-bar-valuation">valuation</span>
-                <span> | </span>
-                <span class="link" id="header-menu-bar-active">active</span>
-                <span> | </span>
-                <span class="link" id="header-menu-bar-popular">popular</span>
-                <span> | </span>
-                <span class="link" id="header-menu-bar-discussed">discussed</span>
-                <span> | </span>
-                -->
-                <span class="link" id="header-menu-bar-latest">new</span>
-                <span> | </span>
-                <span class="link" id="header-menu-bar-closing-soon">closing</span>
-                <span> | </span>
-                <span class="link" id="header-menu-bar-top-users">top users</span>
-                <span> | </span>
-                <span class="link" id="header-menu-bar-faq">faq</span>
-                <span class="header-menu-bar-submit-spacer" id="header-menu-bar-submit-spacer"> | </span>
-                <span class="header-menu-bar-submit link" id="header-menu-bar-submit">submit</span>
-            </div>
+        <div id="header-menu-name" class="header-menu-name">
+            <span class="attention" id="header-menu-message"></span>
+            <span class="header-menu-name-username link" id="header-menu-name-username"></span>
+            <span class="header-menu-command-logout link" id="header-menu-command-logout">(logout)</span>
+        </div>
+        <div id="header-menu-command" class="header-menu-command">
+            <span class="header-menu-command-login link" id="header-menu-command-login">(login)</span>
+        </div>
+        <div id="header-menu-bar" class="header-menu-bar">
+            <span class="link" id="header-menu-bar-top">top</span>
+            <span> | </span>
+            <!--
+            <span class="link" id="header-menu-bar-valuation">valuation</span>
+            <span> | </span>
+            <span class="link" id="header-menu-bar-active">active</span>
+            <span> | </span>
+            <span class="link" id="header-menu-bar-popular">popular</span>
+            <span> | </span>
+            <span class="link" id="header-menu-bar-discussed">discussed</span>
+            <span> | </span>
+            -->
+            <span class="link" id="header-menu-bar-latest">new</span>
+            <span> | </span>
+            <span class="link" id="header-menu-bar-closing-soon">closing</span>
+            <span> | </span>
+            <span class="link" id="header-menu-bar-top-users">members</span>
+            <span> | </span>
+            <span class="link" id="header-menu-bar-faq">faq</span>
+            <span class="header-menu-bar-submit-spacer" id="header-menu-bar-submit-spacer"> | </span>
+            <span class="header-menu-bar-submit link" id="header-menu-bar-submit">submit</span>
         </div>
     </div>
 
