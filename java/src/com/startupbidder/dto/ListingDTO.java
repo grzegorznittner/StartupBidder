@@ -22,6 +22,7 @@ public class ListingDTO extends AbstractDTO {
 	private String owner;
 	private String businessPlanId;
 	private String presentationId;
+	private String financialsId;
 	
 	public ListingDTO() {
 	}
@@ -118,15 +119,12 @@ public class ListingDTO extends AbstractDTO {
 		this.presentationId = presentationId;
 	}
 
-	@Override
-	public String toString() {
-		return "ListingDTO [name=" + name + ", suggestedValuation="
-				+ suggestedValuation + ", suggestedPercentage="
-				+ suggestedPercentage + ", suggestedAmount=" + suggestedAmount
-				+ ", listedOn=" + listedOn + ", closingOn=" + closingOn
-				+ ", state=" + state + ", summary=" + summary + ", owner="
-				+ owner + ", businessPlanId=" + businessPlanId
-				+ ", presentationId=" + presentationId + "]";
+	public String getFinancialsId() {
+		return financialsId;
+	}
+
+	public void setFinancialsId(String financialsId) {
+		this.financialsId = financialsId;
 	}
 
 	@Override
@@ -142,6 +140,7 @@ public class ListingDTO extends AbstractDTO {
 		listing.setProperty("suggestedValuation", this.suggestedValuation);
 		listing.setProperty("presentationId", this.presentationId);
 		listing.setProperty("businessPlanId", this.businessPlanId);
+		listing.setProperty("financialsId", this.financialsId);
 		listing.setUnindexedProperty("summary", this.summary != null ? new Text(this.summary) : null);
 		return listing;
 	}
@@ -163,6 +162,7 @@ public class ListingDTO extends AbstractDTO {
 		listing.summary = summaryText != null ? summaryText.getValue() : null;
 		listing.presentationId = (String)entity.getProperty("presentationId");
 		listing.businessPlanId = (String)entity.getProperty("businessPlanId");
+		listing.financialsId = (String)entity.getProperty("financialsId");
 		return listing;
 	}
 
@@ -174,6 +174,8 @@ public class ListingDTO extends AbstractDTO {
 				+ ((businessPlanId == null) ? 0 : businessPlanId.hashCode());
 		result = prime * result
 				+ ((closingOn == null) ? 0 : closingOn.hashCode());
+		result = prime * result
+				+ ((financialsId == null) ? 0 : financialsId.hashCode());
 		result = prime * result
 				+ ((listedOn == null) ? 0 : listedOn.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
@@ -206,6 +208,11 @@ public class ListingDTO extends AbstractDTO {
 			if (other.closingOn != null)
 				return false;
 		} else if (!closingOn.equals(other.closingOn))
+			return false;
+		if (financialsId == null) {
+			if (other.financialsId != null)
+				return false;
+		} else if (!financialsId.equals(other.financialsId))
 			return false;
 		if (listedOn == null) {
 			if (other.listedOn != null)

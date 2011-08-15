@@ -60,6 +60,8 @@ public class ListingVO {
 	private String buinessPlanId;
 	@JsonProperty("presentation_id")
 	private String presentationId;
+	@JsonProperty("financials_id")
+	private String financialsId;
 	
 	public ListingVO() {
 	}
@@ -232,6 +234,14 @@ public class ListingVO {
 		this.presentationId = presentationId;
 	}
 
+	public String getFinancialsId() {
+		return financialsId;
+	}
+
+	public void setFinancialsId(String financialsId) {
+		this.financialsId = financialsId;
+	}
+
 	@Override
 	public String toString() {
 		return "ListingVO [orderNumber=" + orderNumber + ", id=" + id
@@ -245,7 +255,8 @@ public class ListingVO {
 				+ ", numberOfBids=" + numberOfBids + ", numberOfVotes="
 				+ numberOfVotes + ", votable=" + votable + ", daysAgo="
 				+ daysAgo + ", daysLeft=" + daysLeft + ", buinessPlanId="
-				+ buinessPlanId + ", presentationId=" + presentationId + "]";
+				+ buinessPlanId + ", presentationId=" + presentationId
+				+ ", financialsId=" + financialsId + "]";
 	}
 
 }

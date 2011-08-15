@@ -34,25 +34,26 @@ public class VoToDtoConverter {
 		return bid;
 	}
 	
-	public static ListingDTO convert(ListingVO bpVO) {
-		ListingDTO bp = new ListingDTO();
-		if (!StringUtils.isEmpty(bpVO.getId())) {
-			bp.setIdFromString(bpVO.getId());
+	public static ListingDTO convert(ListingVO listingVO) {
+		ListingDTO listing = new ListingDTO();
+		if (!StringUtils.isEmpty(listingVO.getId())) {
+			listing.setIdFromString(listingVO.getId());
 		}
-		bp.setClosingOn(bpVO.getClosingOn());
-		bp.setListedOn(bpVO.getListedOn());
-		bp.setName(bpVO.getName());
-		bp.setOwner(bpVO.getOwner());
-		bp.setSuggestedValuation(bpVO.getSuggestedValuation());
-		bp.setSuggestedPercentage(bpVO.getSuggestedPercentage());
-		bp.setSuggestedAmount(bpVO.getSuggestedAmount());
-		if (!StringUtils.isEmpty(bpVO.getState())) {
-			bp.setState(ListingDTO.State.valueOf(StringUtils.upperCase(bpVO.getState())));
+		listing.setClosingOn(listingVO.getClosingOn());
+		listing.setListedOn(listingVO.getListedOn());
+		listing.setName(listingVO.getName());
+		listing.setOwner(listingVO.getOwner());
+		listing.setSuggestedValuation(listingVO.getSuggestedValuation());
+		listing.setSuggestedPercentage(listingVO.getSuggestedPercentage());
+		listing.setSuggestedAmount(listingVO.getSuggestedAmount());
+		if (!StringUtils.isEmpty(listingVO.getState())) {
+			listing.setState(ListingDTO.State.valueOf(StringUtils.upperCase(listingVO.getState())));
 		}
-		bp.setPresentationId(bpVO.getPresentationId());
-		bp.setBusinessPlanId(bpVO.getBuinessPlanId());
-		bp.setSummary(bpVO.getSummary());
-		return bp;
+		listing.setPresentationId(listingVO.getPresentationId());
+		listing.setBusinessPlanId(listingVO.getBuinessPlanId());
+		listing.setFinancialsId(listingVO.getFinancialsId());
+		listing.setSummary(listingVO.getSummary());
+		return listing;
 	}
 
 	public static CommentDTO convert(CommentVO commentVO) {
