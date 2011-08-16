@@ -7,7 +7,9 @@ import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 @JsonAutoDetect(getterVisibility=Visibility.NONE, setterVisibility=Visibility.NONE,
 		fieldVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE)
 public class BaseResultVO {
-	/** Logout url is not converted to JSON, see #36 */
+	@JsonProperty("login_url")
+	private String loginUrl;
+	@JsonProperty("logout_url")
 	private String logoutUrl;
 	@JsonProperty("loggedin_profile")
 	private UserVO loggedUser;
@@ -24,10 +26,15 @@ public class BaseResultVO {
 	public void setLoggedUser(UserVO loggedUser) {
 		this.loggedUser = loggedUser;
 	}
+	public String getLoginUrl() {
+		return loginUrl;
+	}
+	public void setLoginUrl(String loginUrl) {
+		this.loginUrl = loginUrl;
+	}
 	@Override
 	public String toString() {
-		return "BaseResultVO [logoutUrl=" + logoutUrl + ", loggedUser="
-				+ loggedUser + "]";
+		return "BaseResultVO [loginUrl=" + loginUrl + ", logoutUrl="
+				+ logoutUrl + ", loggedUser=" + loggedUser + "]";
 	}
-
 }

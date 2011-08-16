@@ -71,8 +71,12 @@ public abstract class ModelDrivenController {
 		}
 		
 		Object model = getModel();
-		if (model instanceof BaseResultVO && loggedInUser != null) {
-			((BaseResultVO) model).setLogoutUrl(userService.createLogoutURL("http://www.startupbidder.com"));
+		if (model instanceof BaseResultVO) {
+			if (loggedInUser != null) {
+				((BaseResultVO) model).setLogoutUrl(userService.createLogoutURL("http://www.startupbidder.com"));
+			} else {
+				((BaseResultVO) model).setLoginUrl(userService.createLoginURL("http://www.startupbidder.com", "startupbidder.com"));
+			}
 		}
 		
 		return headers;
