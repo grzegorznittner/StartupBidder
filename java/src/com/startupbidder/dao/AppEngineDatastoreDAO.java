@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.datanucleus.util.StringUtils;
+
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -20,7 +22,7 @@ import com.startupbidder.dto.ListingDTO;
 import com.startupbidder.dto.ListingDocumentDTO;
 import com.startupbidder.dto.SystemPropertyDTO;
 import com.startupbidder.dto.UserDTO;
-import com.startupbidder.dto.UserStatistics;
+import com.startupbidder.dto.UserStatisticsDTO;
 import com.startupbidder.dto.VoteDTO;
 import com.startupbidder.vo.ListPropertiesVO;
 
@@ -98,9 +100,48 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 	}
 
 	@Override
-	public UserStatistics getUserStatistics(String userId) {
-		UserStatistics stat = new UserStatistics();
-		return stat;
+	public UserStatisticsDTO updateUserStatistics(String userId) {
+		UserStatisticsDTO userStats = new UserStatisticsDTO();
+		userStats.setIdFromString(userId);
+		
+		Query query = new BidDTO().getQuery().setKeysOnly();
+		query.addFilter(BidDTO.USER, Query.FilterOperator.EQUAL, userId);
+		PreparedQuery pq = getDatastoreService().prepare(query);
+		userStats.setNumberOfBids(pq.countEntities(FetchOptions.Builder.withDefaults()));
+		
+		query = new CommentDTO().getQuery().setKeysOnly();
+		query.addFilter(CommentDTO.USER, Query.FilterOperator.EQUAL, userId);
+		pq = getDatastoreService().prepare(query);
+		userStats.setNumberOfComments(pq.countEntities(FetchOptions.Builder.withDefaults()));
+		
+		query = new ListingDTO().getQuery().setKeysOnly();
+		query.addFilter(ListingDTO.OWNER, Query.FilterOperator.EQUAL, userId);
+		pq = getDatastoreService().prepare(query);
+		userStats.setNumberOfListings(pq.countEntities(FetchOptions.Builder.withDefaults()));
+		
+		query = new VoteDTO().getQuery().setKeysOnly();
+		query.addFilter(VoteDTO.USER, Query.FilterOperator.EQUAL, userId);
+		pq = getDatastoreService().prepare(query);
+		userStats.setNumberOfVotes(pq.countEntities(FetchOptions.Builder.withDefaults()));
+
+		getDatastoreService().put(userStats.toEntity());
+		
+		return userStats;
+	}
+	
+	@Override
+	public UserStatisticsDTO getUserStatistics(String userId) {
+		UserStatisticsDTO userStats = new UserStatisticsDTO();
+		userStats.setIdFromString(userId);
+		
+		try {
+			Entity userStatsEntity = getDatastoreService().get(userStats.getKey());
+			userStats = UserStatisticsDTO.fromEntity(userStatsEntity);
+			return userStats;
+		} catch (EntityNotFoundException e) {
+			log.log(Level.WARNING, "User statistics entity '" + userStats.getKey() + "'not found", e);
+			return null;
+		}
 	}
 
 	@Override
@@ -321,35 +362,61 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 	}
 
 	@Override
-	public ListingDTO valueUpListing(String listingId, String userId) {
+	public ListingDTO valueUpListing(String listingId, String voterId) {
 		try {
 			ListingDTO listing = new ListingDTO();
 			listing.setIdFromString(listingId);
 			Entity listingEntity = getDatastoreService().get(listing.getKey());
 			listing = ListingDTO.fromEntity(listingEntity);
 			
-			VoteDTO vote = new VoteDTO();
-			vote.setListing(listingId);
-			vote.setUser(userId);
-			vote.setValue(1);
-			vote.setCommentedOn(new Date());
-			vote.createKey(listingId + userId + vote.getCommentedOn().getTime());
-			
-			getDatastoreService().put(vote.toEntity());
-			
-			return listing;
+			if (!StringUtils.areStringsEqual(listing.getOwner(), voterId)) {
+				VoteDTO vote = new VoteDTO();
+				vote.setListing(listingId);
+				vote.setVoter(voterId);
+				vote.setValue(1);
+				vote.setCommentedOn(new Date());
+				vote.createKey(listingId + voterId + vote.getCommentedOn().getTime());
+				
+				getDatastoreService().put(vote.toEntity());
+				
+				return listing;
+			} else {
+				log.log(Level.WARNING, "User '" + voterId + "' owns listing '" + listingId + "', cannot vote");
+			}
 		} catch (EntityNotFoundException e) {
 			log.log(Level.WARNING, "Listing entity '" + listingId + "'not found", e);
-			return null;
 		}
-	}
-
-	@Override
-	public ListingDTO valueDownListing(String listingId, String userId) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
+	@Override
+	public UserDTO valueUpUser(String userId, String voterId) {
+		try {
+			UserDTO user = new UserDTO();
+			user.setIdFromString(userId);
+			Entity userEntity = getDatastoreService().get(user.getKey());
+			user = UserDTO.fromEntity(userEntity);
+			
+			if (!StringUtils.areStringsEqual(user.getIdAsString(), voterId)) {
+				VoteDTO vote = new VoteDTO();
+				vote.setUser(voterId);
+				vote.setVoter(voterId);
+				vote.setValue(1);
+				vote.setCommentedOn(new Date());
+				vote.createKey(userId + voterId + vote.getCommentedOn().getTime());
+				
+				getDatastoreService().put(vote.toEntity());
+				
+				return user;
+			} else {
+				log.log(Level.WARNING, "User '" + userId + "' cannot vote for himself/herself");
+			}
+		} catch (EntityNotFoundException e) {
+			log.log(Level.WARNING, "User entity '" + userId + "'not found", e);
+		}
+		return null;
+	}
+	
 	@Override
 	public List<CommentDTO> getCommentsForListing(String listingId) {
 		List<CommentDTO> comments = new ArrayList<CommentDTO>();
@@ -413,11 +480,17 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 	}
 
 	@Override
-	public int getNumberOfVotes(String listingId) {
+	public int getNumberOfVotesForListing(String listingId) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
+	@Override
+	public int getNumberOfVotesForUser(String userId) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	
 	@Override
 	public int getActivity(String listingId) {
 		// TODO Auto-generated method stub
@@ -456,6 +529,12 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 
 	@Override
 	public boolean userCanVoteForListing(String userId, String listingId) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	
+	@Override
+	public boolean userCanVoteForUser(String voterId, String userId) {
 		// TODO Auto-generated method stub
 		return false;
 	}

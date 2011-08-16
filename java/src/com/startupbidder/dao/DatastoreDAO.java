@@ -8,7 +8,7 @@ import com.startupbidder.dto.ListingDTO;
 import com.startupbidder.dto.ListingDocumentDTO;
 import com.startupbidder.dto.SystemPropertyDTO;
 import com.startupbidder.dto.UserDTO;
-import com.startupbidder.dto.UserStatistics;
+import com.startupbidder.dto.UserStatisticsDTO;
 import com.startupbidder.dto.VoteDTO;
 import com.startupbidder.vo.ListPropertiesVO;
 
@@ -37,10 +37,15 @@ public interface DatastoreDAO {
 	UserDTO createUser(String userId, String email, String nickname);
 
 	/**
-	 * Return user statistics like number of comments, bids, etc
+	 * Updates user statistics like number of comments, bids, etc
 	 * @param userId User identifier
 	 */
-	UserStatistics getUserStatistics(String userId);
+	UserStatisticsDTO updateUserStatistics(String userId);
+	
+	/**
+	 * Return user statistics data
+	 */
+	UserStatisticsDTO getUserStatistics(String userId);
 	
 	/**
 	 * Updates/creates user data
@@ -162,19 +167,17 @@ public interface DatastoreDAO {
 	 * Value up listing
 	 *
 	 * @param listingId Listing identifier
-	 * @param userId User identifier
-	 * @return Listing with new vote number
+	 * @param voterId Voter identifier
 	 */
-	ListingDTO valueUpListing(String listingId, String userId);
+	ListingDTO valueUpListing(String listingId, String voterId);
 	
 	/**
-	 * Value down listing
+	 * Value up user
 	 *
-	 * @param listingId Listing identifier
 	 * @param userId User identifier
-	 * @return Listing with new vote number
+	 * @param voterId Voter identifier
 	 */
-	ListingDTO valueDownListing(String listingId, String userId);
+	UserDTO valueUpUser(String userId, String voterId);
 	
 	/**
 	 * Returns list of listing's comments
@@ -207,9 +210,14 @@ public interface DatastoreDAO {
 	/**
 	 * Returns number of votes for listing
 	 * @param listingId Listing id
-	 * @return Number of votes
 	 */
-	int getNumberOfVotes(String listingId);
+	int getNumberOfVotesForListing(String listingId);
+	
+	/**
+	 * Returns number of votes for user
+	 * @param userId User id
+	 */
+	int getNumberOfVotesForUser(String userId);
 	
 	/**
 	 * Returns listing's activity (number of comments)
@@ -229,10 +237,16 @@ public interface DatastoreDAO {
 	CommentDTO getComment(String commentId);
 
 	/**
-	 * Checks whether user can for for listing.
+	 * Checks whether user can for listing.
 	 * User can vote only once for a particular listing.
 	 */
-	boolean userCanVoteForListing(String userId, String listingId);
+	boolean userCanVoteForListing(String voterId, String listingId);
+	
+	/**
+	 * Checks whether voter can for user.
+	 * Voter can vote only once for a particular user.
+	 */
+	boolean userCanVoteForUser(String voterId, String userId);
 
 	/**
 	 * Activates user.

@@ -10,6 +10,8 @@ public class VoteDTO extends AbstractDTO {
 	private String listing;
 	public static final String USER = "user";
 	private String user;
+	public static final String VOTER = "voter";
+	private String voter;
 	public static final String VALUE = "value";
 	private int value;
 	public static final String COMMENTED_ON = "commentedOn";
@@ -46,6 +48,14 @@ public class VoteDTO extends AbstractDTO {
 		this.value = value;
 	}
 
+	public String getVoter() {
+		return voter;
+	}
+
+	public void setVoter(String voter) {
+		this.voter = voter;
+	}
+
 	public Date getCommentedOn() {
 		return commentedOn;
 	}
@@ -56,8 +66,9 @@ public class VoteDTO extends AbstractDTO {
 
 	@Override
 	public String toString() {
-		return "VoteDTO [idAsString" + getIdAsString() + ", listing=" + listing + ", user=" + user + ", value="
-				+ value + ", commentedOn=" + commentedOn + "]";
+		return "VoteDTO [listing=" + listing + ", user=" + user + ", voter="
+				+ voter + ", value=" + value + ", commentedOn=" + commentedOn
+				+ "]";
 	}
 
 	@Override
@@ -66,6 +77,7 @@ public class VoteDTO extends AbstractDTO {
 		vote.setProperty(COMMENTED_ON, this.commentedOn);
 		vote.setProperty(LISTING, this.listing);
 		vote.setProperty(USER, this.user);
+		vote.setProperty(VOTER, this.voter);
 		vote.setProperty(VALUE, this.value);
 		return vote;
 	}
@@ -76,6 +88,7 @@ public class VoteDTO extends AbstractDTO {
 		vote.setCommentedOn((Date)entity.getProperty(COMMENTED_ON));
 		vote.setListing((String)entity.getProperty(LISTING));
 		vote.setUser((String)entity.getProperty(USER));
+		vote.setVoter((String)entity.getProperty(VOTER));
 		vote.setValue(((Long)entity.getProperty(VALUE)).intValue());
 		return vote;
 	}
@@ -89,6 +102,7 @@ public class VoteDTO extends AbstractDTO {
 		result = prime * result + ((listing == null) ? 0 : listing.hashCode());
 		result = prime * result + ((user == null) ? 0 : user.hashCode());
 		result = prime * result + value;
+		result = prime * result + ((voter == null) ? 0 : voter.hashCode());
 		return result;
 	}
 
@@ -117,6 +131,11 @@ public class VoteDTO extends AbstractDTO {
 		} else if (!user.equals(other.user))
 			return false;
 		if (value != other.value)
+			return false;
+		if (voter == null) {
+			if (other.voter != null)
+				return false;
+		} else if (!voter.equals(other.voter))
 			return false;
 		return true;
 	}

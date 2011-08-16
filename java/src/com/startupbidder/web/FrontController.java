@@ -17,6 +17,7 @@ import com.startupbidder.web.controllers.CommentController;
 import com.startupbidder.web.controllers.FileController;
 import com.startupbidder.web.controllers.ListingController;
 import com.startupbidder.web.controllers.SystemController;
+import com.startupbidder.web.controllers.TaskController;
 import com.startupbidder.web.controllers.UserController;
 
 @SuppressWarnings("serial")
@@ -47,6 +48,8 @@ public class FrontController extends HttpServlet {
 			controller = new SystemController();
 		} else if (pathInfo.startsWith("/file")) {
 			controller = new FileController();
+		} else if (pathInfo.startsWith("/task")) {
+			controller = new TaskController();
 		} else {
 			log.log(Level.WARNING, "Unknown action '" + pathInfo + "'");
 		}

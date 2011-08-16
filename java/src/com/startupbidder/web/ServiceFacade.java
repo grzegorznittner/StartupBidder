@@ -8,6 +8,11 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import net.sf.jsr107cache.Cache;
+import net.sf.jsr107cache.CacheException;
+import net.sf.jsr107cache.CacheFactory;
+import net.sf.jsr107cache.CacheManager;
+
 import org.datanucleus.util.StringUtils;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
@@ -15,6 +20,9 @@ import org.joda.time.Days;
 
 import com.google.appengine.api.blobstore.BlobstoreService;
 import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
+import com.google.appengine.api.taskqueue.Queue;
+import com.google.appengine.api.taskqueue.QueueFactory;
+import com.google.appengine.api.taskqueue.TaskOptions;
 import com.google.appengine.api.users.User;
 import com.startupbidder.dao.AppEngineDatastoreDAO;
 import com.startupbidder.dao.DatastoreDAO;
@@ -23,7 +31,7 @@ import com.startupbidder.dto.BidDTO;
 import com.startupbidder.dto.ListingDTO;
 import com.startupbidder.dto.ListingDocumentDTO;
 import com.startupbidder.dto.UserDTO;
-import com.startupbidder.dto.UserStatistics;
+import com.startupbidder.dto.UserStatisticsDTO;
 import com.startupbidder.dto.VoToDtoConverter;
 import com.startupbidder.vo.BidAndUserVO;
 import com.startupbidder.vo.BidListVO;
@@ -48,13 +56,25 @@ public class ServiceFacade {
 	
 	public enum Datastore {MOCK, APPENGINE};
 	public static Datastore currentDAO = Datastore.MOCK;
+
+	private enum UserStatsUpdateReason {NEW_BID, NEW_COMMENT, NEW_LISTING, NEW_VOTE};
 	
+	private Cache cache;
 	
 	public static ServiceFacade instance() {
 		if (instance == null) {
 			instance = new ServiceFacade();
 		}
 		return instance;
+	}
+	
+	private ServiceFacade() {
+		try {
+            CacheFactory cacheFactory = CacheManager.getInstance().getCacheFactory();
+            cache = cacheFactory.createCache(Collections.emptyMap());
+        } catch (CacheException e) {
+            log.log(Level.SEVERE, "Cache couldn't be created!!!");
+        }
 	}
 	
 	private DatastoreDAO getDAO () {
@@ -73,7 +93,7 @@ public class ServiceFacade {
 		if (user == null) {
 			return null;
 		}
-		computeUserStatistics(user);
+		applyUserStatistics(user);
 		return user;
 	}
 	
@@ -88,13 +108,19 @@ public class ServiceFacade {
 		if (user == null) {
 			return null;
 		}
-		computeUserStatistics(user);
+		applyUserStatistics(user);
+		if (loggedInUser != null) {
+			user.setVotable(getDAO().userCanVoteForUser(loggedInUser.getId(), user.getId()));
+		} else {
+			user.setVotable(false);
+		}
 		return user;
 	}
 	
 	public UserVO createUser(User loggedInUser) {
-		UserVO user = DtoToVoConverter.convert(getDAO().createUser(loggedInUser.getUserId(), loggedInUser.getEmail(), loggedInUser.getNickname()));
-		computeUserStatistics(user);
+		UserVO user = DtoToVoConverter.convert(getDAO().createUser(
+				loggedInUser.getUserId(), loggedInUser.getEmail(), loggedInUser.getNickname()));
+		applyUserStatistics(user);
 		return user;
 	}
 	
@@ -112,7 +138,7 @@ public class ServiceFacade {
 			}
 		}
 		UserVO user = DtoToVoConverter.convert(getDAO().updateUser(VoToDtoConverter.convert(userData)));
-		computeUserStatistics(user);
+		applyUserStatistics(user);
 		return user;
 	}
 
@@ -124,7 +150,7 @@ public class ServiceFacade {
 		List<UserVO> users = DtoToVoConverter.convertUsers(getDAO().getAllUsers());
 		int index = 1;
 		for (UserVO user : users) {
-			computeUserStatistics(user);
+			applyUserStatistics(user);
 			user.setOrderNumber(index++);
 		}
 
@@ -139,26 +165,26 @@ public class ServiceFacade {
 	 */
 	public UserVO getTopInvestor(UserVO loggedInUser) {
 		UserVO user = DtoToVoConverter.convert(getDAO().getTopInvestor());
-		computeUserStatistics(user);
+		applyUserStatistics(user);
 		return user;
 	}
 
 	public UserVO activateUser(UserVO loggedInUser, String userId) {
 		UserVO user = DtoToVoConverter.convert(getDAO().activateUser(userId));
-		computeUserStatistics(user);
+		applyUserStatistics(user);
 		return user;
 	}
 
 	public UserVO deactivateUser(UserVO loggedInUser, String userId) {
 		UserVO user = DtoToVoConverter.convert(getDAO().deactivateUser(userId));
-		computeUserStatistics(user);
+		applyUserStatistics(user);
 		return user;
 	}
 
 	public UserVotesVO userVotes(UserVO loggedInUser, String userId) {
 		UserVotesVO userVotes = new UserVotesVO();
 		UserVO user = DtoToVoConverter.convert(getDAO().getUser(userId));
-		computeUserStatistics(user);
+		applyUserStatistics(user);
 		userVotes.setLoggedUser(user);
 		
 		List<VoteVO> votes = DtoToVoConverter.convertVotes(getDAO().getUserVotes(userId));
@@ -176,9 +202,50 @@ public class ServiceFacade {
 		return getDAO().checkUserName(userName);
 	}
 	
-	private void computeUserStatistics(UserVO user) {
+	private void scheduleUpdateOfUserStatistics(String userId, UserStatsUpdateReason reason) {
+		UserStatisticsDTO userStats = (UserStatisticsDTO)cache.get("userStats" + userId);
+		if (userStats != null) {
+			switch(reason) {
+			case NEW_BID:
+				userStats.setNumberOfBids(userStats.getNumberOfBids() + 1);
+				break;
+			case NEW_COMMENT:
+				userStats.setNumberOfComments(userStats.getNumberOfComments() + 1);
+				break;
+			case NEW_LISTING:
+				userStats.setNumberOfListings(userStats.getNumberOfListings() + 1);
+				break;
+			case NEW_VOTE:
+				userStats.setNumberOfVotes(userStats.getNumberOfVotes() + 1);
+				break;
+			}
+			cache.put("userStats" + userId, userStats);
+		}
+		Queue queue = QueueFactory.getDefaultQueue();
+		queue.add(TaskOptions.Builder.withUrl("/task/calculate-user-stats").param("id", userId));
+	}
+	
+	public UserStatisticsDTO calculateUserStatistics(String userId) {
+		UserStatisticsDTO userStats = getDAO().updateUserStatistics(userId);
+		cache.put("userStats" + userId, userStats);
+		return userStats;
+	}
+	
+	private UserStatisticsDTO getUserStatistics(String userId) {
+		UserStatisticsDTO userStats = (UserStatisticsDTO)cache.get("userStats" + userId);
+		if (userStats == null) {
+			userStats = getDAO().getUserStatistics(userId);
+			if (userStats == null) {
+				// calculating user stats here may be disabled here
+				userStats = calculateUserStatistics(userId);
+			}
+		}
+		return userStats;
+	}
+	
+	private void applyUserStatistics(UserVO user) {
 		if (user != null && user.getId() != null) {
-			UserStatistics userStats = getDAO().getUserStatistics(user.getId());
+			UserStatisticsDTO userStats = getUserStatistics(user.getId());
 			user.setNumberOfBids(userStats.getNumberOfBids());
 			user.setNumberOfComments(userStats.getNumberOfComments());
 			user.setNumberOfListings(userStats.getNumberOfListings());
@@ -191,7 +258,7 @@ public class ServiceFacade {
 		listing.setOwnerName(user != null ? user.getNickname() : "<<unknown>>");
 		// set number of comments and number of votes
 		listing.setNumberOfComments(getDAO().getActivity(listing.getId()));
-		listing.setNumberOfVotes(getDAO().getNumberOfVotes(listing.getId()));
+		listing.setNumberOfVotes(getDAO().getNumberOfVotesForListing(listing.getId()));
 		
 		// calculate median for bids and set total number of bids
 		List<Integer> values = new ArrayList<Integer>();
@@ -409,10 +476,6 @@ public class ServiceFacade {
 
 	/**
 	 * Value up listing
-	 *
-	 * @param listingId Listing id
-	 * @param userId User identifier
-	 * @return Number of votes per listing
 	 */
 	public ListingVO valueUpListing(UserVO loggedInUser, String listingId) {
 		if (loggedInUser == null) {
@@ -424,6 +487,19 @@ public class ServiceFacade {
 	}
 	
 	/**
+	 * Value up user
+	 */
+	public UserVO valueUpUser(UserVO voter, String userId) {
+		if (voter == null) {
+			return null;
+		}
+		UserVO user =  DtoToVoConverter.convert(getDAO().valueUpUser(userId, voter.getId()));
+		scheduleUpdateOfUserStatistics(userId, UserStatsUpdateReason.NEW_VOTE);
+		applyUserStatistics(user);
+		return user;
+	}
+	
+	/**
 	 * Value down listing
 	 *
 	 * @param listingId Listing id
@@ -431,12 +507,13 @@ public class ServiceFacade {
 	 * @return Number of votes per listing
 	 */
 	public ListingVO valueDownListing(UserVO loggedInUser, String listingId) {
-		if (loggedInUser == null) {
-			return null;
-		}
-		ListingVO listing =  DtoToVoConverter.convert(getDAO().valueDownListing(listingId, loggedInUser.getId()));
-		computeListingData(loggedInUser, listing);
-		return listing;
+//		if (loggedInUser == null) {
+//			return null;
+//		}
+//		ListingVO listing =  DtoToVoConverter.convert(getDAO().valueDownListing(listingId, loggedInUser.getId()));
+//		computeListingData(loggedInUser, listing);
+//		return listing;
+		return null;
 	}
 	
 	/**
@@ -591,7 +668,7 @@ public class ServiceFacade {
 	 * @return Current rating
 	 */
 	public int getRating(User loggedInUser, String listingId) {
-		return getDAO().getNumberOfVotes(listingId);
+		return getDAO().getNumberOfVotesForListing(listingId);
 	}
 	
 	/**
@@ -642,6 +719,7 @@ public class ServiceFacade {
 		DateMidnight midnight = new DateMidnight();
 		listing.setClosingOn(midnight.plus(Days.days(30)).toDate());
 		ListingVO newListing = DtoToVoConverter.convert(getDAO().createListing(VoToDtoConverter.convert(listing)));
+		scheduleUpdateOfUserStatistics(loggedInUser.getId(), UserStatsUpdateReason.NEW_LISTING);
 		computeListingData(loggedInUser, newListing);
 		return newListing;
 	}
@@ -674,6 +752,7 @@ public class ServiceFacade {
 
 	public CommentVO createComment(UserVO loggedInUser, CommentVO comment) {
 		comment = DtoToVoConverter.convert(getDAO().createComment(VoToDtoConverter.convert(comment)));
+		scheduleUpdateOfUserStatistics(loggedInUser.getId(), UserStatsUpdateReason.NEW_COMMENT);
 		return comment;
 	}
 
@@ -690,6 +769,7 @@ public class ServiceFacade {
 	public BidVO createBid(UserVO loggedInUser, BidVO bid) {
 		bid.setStatus(BidDTO.Status.ACTIVE.toString());
 		bid = DtoToVoConverter.convert(getDAO().createBid(VoToDtoConverter.convert(bid)));
+		scheduleUpdateOfUserStatistics(loggedInUser.getId(), UserStatsUpdateReason.NEW_BID);
 		return bid;
 	}
 

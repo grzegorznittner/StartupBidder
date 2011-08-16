@@ -57,6 +57,8 @@ public class UserVO {
 	@JsonProperty("status")
 	@JsonSerialize(using=LowecaseSerializer.class)
 	private String status;
+	@JsonProperty("votable")
+	private boolean votable;
 	
 	public UserVO() {
 	}
@@ -192,18 +194,24 @@ public class UserVO {
 	public void setOrderNumber(int orderNumber) {
 		this.orderNumber = orderNumber;
 	}
+	public boolean isVotable() {
+		return votable;
+	}
+	public void setVotable(boolean votable) {
+		this.votable = votable;
+	}
 	@Override
 	public String toString() {
 		return "UserVO [orderNumber=" + orderNumber + ", id=" + id
-				+ ", nickname=" + nickname + ", firstName=" + name
-				+ ", email=" + email + ", openId="
-				+ openId + ", title=" + title + ", organization="
-				+ organization + ", facebook=" + facebook + ", twitter="
-				+ twitter + ", linkedin=" + linkedin + ", accreditedInvestor="
-				+ accreditedInvestor + ", joined=" + joined + ", lastLoggedIn="
-				+ lastLoggedIn + ", modified=" + modified
-				+ ", numberOfListings=" + numberOfListings + ", numberOfBids="
-				+ numberOfBids + ", numberOfComments=" + numberOfComments
-				+ ", status=" + status + "]";
+				+ ", nickname=" + nickname + ", name=" + name + ", email="
+				+ email + ", openId=" + openId + ", title=" + title
+				+ ", organization=" + organization + ", facebook=" + facebook
+				+ ", twitter=" + twitter + ", linkedin=" + linkedin
+				+ ", accreditedInvestor=" + accreditedInvestor + ", joined="
+				+ joined + ", lastLoggedIn=" + lastLoggedIn + ", modified="
+				+ modified + ", numberOfListings=" + numberOfListings
+				+ ", numberOfBids=" + numberOfBids + ", numberOfComments="
+				+ numberOfComments + ", status=" + status + ", votable="
+				+ votable + "]";
 	}
 }

@@ -53,6 +53,8 @@ public class UserController extends ModelDrivenController {
 				return create(request);
 			} else if ("delete".equalsIgnoreCase(getCommand(1))) {
 				return delete(request);
+			} else if ("up".equalsIgnoreCase(getCommand(1))) {
+				return up(request);
 			}
 		}
 		return null;
@@ -178,6 +180,17 @@ public class UserController extends ModelDrivenController {
     	model = ServiceFacade.instance().checkUserName(getLoggedInUser(), userName);
 
     	HttpHeaders headers = new HttpHeadersImpl("check-user-name");
+		return headers;
+	}
+
+	private HttpHeaders up(HttpServletRequest request) {
+    	String userId = getCommandOrParameter(request, 2, "id");
+    	if (userId == null) {
+    		userId = getLoggedInUser().getId();
+    	}
+    	model = ServiceFacade.instance().valueUpUser(getLoggedInUser(), userId);
+
+    	HttpHeaders headers = new HttpHeadersImpl("up");
 		return headers;
 	}
 

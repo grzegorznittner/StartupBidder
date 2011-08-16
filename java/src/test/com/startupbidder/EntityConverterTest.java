@@ -18,7 +18,7 @@ import com.startupbidder.dto.BidDTO;
 import com.startupbidder.dto.CommentDTO;
 import com.startupbidder.dto.ListingDTO;
 import com.startupbidder.dto.ListingDocumentDTO;
-import com.startupbidder.dto.ListingRankDTO;
+import com.startupbidder.dto.RankDTO;
 import com.startupbidder.dto.UserDTO;
 import com.startupbidder.dto.VoteDTO;
 
@@ -165,7 +165,7 @@ public class EntityConverterTest {
 
 	@Test
 	public void testListingRank() throws EntityNotFoundException {
-		ListingRankDTO rank = new ListingRankDTO();
+		RankDTO rank = new RankDTO();
 		rank.createKey("" + rank.hashCode());
 		rank.setDate(new Date());
 		rank.setListing("listing_id");
@@ -176,7 +176,7 @@ public class EntityConverterTest {
 		Entity rankEntity = rank.toEntity();
 		datastore.put(rankEntity);
 		rankEntity = datastore.get(rankEntity.getKey());
-		ListingRankDTO newRank = ListingRankDTO.fromEntity(rankEntity);
+		RankDTO newRank = RankDTO.fromEntity(rankEntity);
 
 		System.out.println("Recreated: " + newRank);
 		

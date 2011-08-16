@@ -76,6 +76,7 @@ public class HelloServlet extends HttpServlet {
 			out.println("<a href=\"/user/all/.html\">All users</a><br/>");
 			out.println("<form method=\"POST\" action=\"/user/activate/" + currentUser.getId() + "/.html\"><input type=\"submit\" value=\"Activates logged in user\"/></form>");
 			out.println("<form method=\"POST\" action=\"/user/deactivate/" + currentUser.getId() + "/.html\"><input type=\"submit\" value=\"Deactivates logged in user\"/></form>");
+			out.println("<form method=\"POST\" action=\"/user/up/" + topInvestor.getIdAsString() + "/.html\"><input type=\"submit\" value=\"Logged in user votes for top investor\"/></form>");
 			out.println("<a href=\"/user/votes/" + currentUser.getId() + "/.html\">Logged in user votes</a><br/>");
 			out.println("<form method=\"GET\" action=\"/user/check-user-name/.html\"><input name=\"name\" type=\"text\" value=\"greg\"/>"
 					+ "<input type=\"submit\" value=\"Check user name\"/></form>");
@@ -179,7 +180,7 @@ public class HelloServlet extends HttpServlet {
 		
 		out.println("<p><b>Current user business plans:</b></p>");
 		for (ListingDTO bp : datastore.getUserListings(currentUser.getIdAsString(), listProperties)) {
-			int rating = datastore.getNumberOfVotes(bp.getIdAsString());
+			int rating = datastore.getNumberOfVotesForListing(bp.getIdAsString());
 			int activity = datastore.getActivity(bp.getIdAsString());
 			out.println("<p>" + "<b>R=" + rating + "</b>" + "<b>A=" + activity + "</b>" + bp + "</p>");
 			datastore.valueUpListing(bp.getIdAsString(), currentUser.getIdAsString());
@@ -187,32 +188,30 @@ public class HelloServlet extends HttpServlet {
 		
 		out.println("<p><b>Top business plans:</b></p>");
 		for (ListingDTO bp : datastore.getTopListings(listProperties)) {
-			int rating = datastore.getNumberOfVotes(bp.getIdAsString());
+			int rating = datastore.getNumberOfVotesForListing(bp.getIdAsString());
 			int activity = datastore.getActivity(bp.getIdAsString());
 			out.println("<p>" + "<b>R=" + rating + "</b>" + "<b>A=" + activity + "</b>" + bp + "</p>");
 			datastore.valueUpListing(bp.getIdAsString(), currentUser.getIdAsString());
 		}
 		out.println("<p><b>Active business plans:</b></p>");
 		for (ListingDTO bp : datastore.getActiveListings(listProperties)) {
-			int rating = datastore.getNumberOfVotes(bp.getIdAsString());
+			int rating = datastore.getNumberOfVotesForListing(bp.getIdAsString());
 			int activity = datastore.getActivity(bp.getIdAsString());
 			out.println("<p>" + "<b>R=" + rating + "</b>" + "<b>A=" + activity + "</b>" + bp + "</p>");
-			datastore.valueDownListing(bp.getIdAsString(), currentUser.getIdAsString());
 		}
 		
 		out.println("<p><b>Top business plans (2):</b></p>");
 		for (ListingDTO bp : datastore.getTopListings(listProperties)) {
-			int rating = datastore.getNumberOfVotes(bp.getIdAsString());
+			int rating = datastore.getNumberOfVotesForListing(bp.getIdAsString());
 			int activity = datastore.getActivity(bp.getIdAsString());
 			out.println("<p>" + "<b>R=" + rating + "</b>" + "<b>A=" + activity + "</b>" + bp + "</p>");
 			datastore.valueUpListing(bp.getIdAsString(), currentUser.getIdAsString());
 		}
 		out.println("<p><b>Active business plans (2):</b></p>");
 		for (ListingDTO bp : datastore.getActiveListings(listProperties)) {
-			int rating = datastore.getNumberOfVotes(bp.getIdAsString());
+			int rating = datastore.getNumberOfVotesForListing(bp.getIdAsString());
 			int activity = datastore.getActivity(bp.getIdAsString());
 			out.println("<p>" + "<b>R=" + rating + "</b>" + "<b>A=" + activity + "</b>" + bp + "</p>");
-			datastore.valueDownListing(bp.getIdAsString(), currentUser.getIdAsString());
 		}
 
 		ListingDTO topBP = datastore.getTopListings(listProperties).get(0);

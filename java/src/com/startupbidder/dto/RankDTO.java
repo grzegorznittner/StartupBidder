@@ -4,11 +4,13 @@ import java.util.Date;
 
 import com.google.appengine.api.datastore.Entity;
 
-public class ListingRankDTO extends AbstractDTO {
+public class RankDTO extends AbstractDTO {
 	public static final String RANK = "rank";
 	private float rank;
 	public static final String LISTING = "listing";
 	private String listing;
+	public static final String USER = "user";
+	private String user;
 	public static final String DATE = "date";
 	private Date date;
 
@@ -28,6 +30,12 @@ public class ListingRankDTO extends AbstractDTO {
 	public void setListing(String listing) {
 		this.listing = listing;
 	}
+	public String getUser() {
+		return user;
+	}
+	public void setUser(String user) {
+		this.user = user;
+	}
 	public Date getDate() {
 		return date;
 	}
@@ -39,21 +47,23 @@ public class ListingRankDTO extends AbstractDTO {
 		Entity entity = new Entity(id);
 		entity.setProperty(DATE, this.date);
 		entity.setProperty(LISTING, this.listing);
+		entity.setProperty(USER, this.user);
 		entity.setProperty(RANK, this.rank);		
 		return entity;
 	}
-	public static ListingRankDTO fromEntity(Entity entity) {
-		ListingRankDTO dto = new ListingRankDTO();
+	public static RankDTO fromEntity(Entity entity) {
+		RankDTO dto = new RankDTO();
 		dto.setKey(entity.getKey());
 		dto.date = (Date)entity.getProperty(DATE);
 		dto.listing = (String)entity.getProperty(LISTING);
+		dto.user = (String)entity.getProperty(USER);
 		dto.rank = ((Double)entity.getProperty(RANK)).floatValue();
 		return dto;
 	}
 	@Override
 	public String toString() {
-		return "ListingRankDTO [rank=" + rank + ", listing=" + listing
-				+ ", date=" + date + "]";
+		return "RankDTO [rank=" + rank + ", listing=" + listing + ", user="
+				+ user + ", date=" + date + "]";
 	}
 	@Override
 	public int hashCode() {
@@ -62,6 +72,7 @@ public class ListingRankDTO extends AbstractDTO {
 		result = prime * result + ((date == null) ? 0 : date.hashCode());
 		result = prime * result + ((listing == null) ? 0 : listing.hashCode());
 		result = prime * result + Float.floatToIntBits(rank);
+		result = prime * result + ((user == null) ? 0 : user.hashCode());
 		return result;
 	}
 	@Override
@@ -72,7 +83,7 @@ public class ListingRankDTO extends AbstractDTO {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		ListingRankDTO other = (ListingRankDTO) obj;
+		RankDTO other = (RankDTO) obj;
 		if (date == null) {
 			if (other.date != null)
 				return false;
@@ -85,7 +96,11 @@ public class ListingRankDTO extends AbstractDTO {
 			return false;
 		if (Float.floatToIntBits(rank) != Float.floatToIntBits(other.rank))
 			return false;
+		if (user == null) {
+			if (other.user != null)
+				return false;
+		} else if (!user.equals(other.user))
+			return false;
 		return true;
 	}
-	
 }
