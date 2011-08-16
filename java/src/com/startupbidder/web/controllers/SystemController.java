@@ -8,7 +8,11 @@ import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 
+import com.google.appengine.api.users.User;
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
 import com.startupbidder.vo.SystemPropertyVO;
+import com.startupbidder.vo.UserVO;
 import com.startupbidder.web.HttpHeaders;
 import com.startupbidder.web.HttpHeadersImpl;
 import com.startupbidder.web.ModelDrivenController;
@@ -22,6 +26,8 @@ public class SystemController extends ModelDrivenController {
 		if ("POST".equalsIgnoreCase(request.getMethod())) {
 			if("set-property".equalsIgnoreCase(getCommand(1))) {
 				return setProperty(request);
+			} else if("set-datastore".equalsIgnoreCase(getCommand(1))) {
+				return setDatastore(request);
 			}
 		}
 		return null;
@@ -47,6 +53,29 @@ public class SystemController extends ModelDrivenController {
 			ServiceFacade.instance().setSystemProperty(getLoggedInUser(), property);
 		}
 
+		return headers;
+	}
+
+	private HttpHeaders setDatastore(HttpServletRequest request) {
+		HttpHeaders headers = new HttpHeadersImpl("set-datastore");
+		
+		UserService userService = UserServiceFactory.getUserService();
+		User user = userService.getCurrentUser();
+		if (user != null) {
+			String type = request.getParameter("type");
+			ServiceFacade.currentDAO = ServiceFacade.Datastore.valueOf(type);
+			
+			// after changing datastore we need to make sure that user is created in datastore
+			UserVO loggedInUser = ServiceFacade.instance().getLoggedInUserData(user);
+			if (loggedInUser == null) {
+				// first time logged in
+				loggedInUser = ServiceFacade.instance().createUser(user);
+			}
+			
+			headers.setRedirectUrl("/setup");
+		} else {
+			headers.setStatus(500);
+		}
 		return headers;
 	}
 

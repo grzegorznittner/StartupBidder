@@ -10,7 +10,6 @@ import com.startupbidder.dto.SystemPropertyDTO;
 import com.startupbidder.dto.UserDTO;
 import com.startupbidder.dto.UserStatistics;
 import com.startupbidder.dto.VoteDTO;
-import com.startupbidder.vo.CommentVO;
 import com.startupbidder.vo.ListPropertiesVO;
 
 public interface DatastoreDAO {

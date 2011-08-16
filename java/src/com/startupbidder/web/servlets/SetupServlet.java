@@ -48,6 +48,14 @@ public class SetupServlet extends HttpServlet {
 				return;
 			}
 			
+			out.println("<p>Current datastore: " + ServiceFacade.currentDAO + "</p>");
+			out.println("<form method=\"POST\" action=\"/system/set-datastore/.html\">"
+					+ "<input name=\"type\" type=\"hidden\" value=\"" + ServiceFacade.Datastore.MOCK + "\"/></br>"
+					+ "<input type=\"submit\" value=\"Activate " + ServiceFacade.Datastore.MOCK + " datastore\"/></form>");
+			out.println("<form method=\"POST\" action=\"/system/set-datastore/.html\">"
+					+ "<input name=\"type\" type=\"hidden\" value=\"" + ServiceFacade.Datastore.APPENGINE + "\"/></br>"
+					+ "<input type=\"submit\" value=\"Activate " + ServiceFacade.Datastore.APPENGINE + " datastore\"/></form>");
+			
 			out.println("<p>Google Doc credentials:</p>");
 			out.println("<form method=\"POST\" action=\"/system/set-property/.html\">"
 					+ "User: <input name=\"name\" type=\"hidden\" value=\"googledoc.user\"/><input name=\"value\" type=\"text\" value=\"" + currentUser.getEmail() + "\"/></br>"

@@ -80,7 +80,7 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		UserDTO user = new UserDTO();
 		if (email != null && (email.contains("grzegorz.nittner") || email.contains("johnarleyburns"))) {
 			user = getTopInvestor();
-		} else {		
+		} else {
 			user.createKey(userId);
 		}
 		
@@ -268,6 +268,9 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		listing.setSuggestedAmount(newListing.getSuggestedAmount());
 		listing.setSuggestedPercentage(newListing.getSuggestedPercentage());
 		listing.setSuggestedValuation(newListing.getSuggestedValuation());
+		listing.setBusinessPlanId(newListing.getBusinessPlanId());
+		listing.setPresentationId(newListing.getPresentationId());
+		listing.setFinancialsId(newListing.getFinancialsId());
 		listing.setSummary(newListing.getSummary());
 		return listing;
 	}
