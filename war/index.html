@@ -660,11 +660,14 @@ function iPadTouchHandler(event) {
 }
 
 /* startupbidder javascript code */
-(function($) {
+$(function(){
+
+    var $ = jQuery;
+
     var Util = function() {
         var self = {};
         self.keyCache = {};
-        self.pages = ['searchlistings', 'searchusers', 'comments', 'profile', 'listing', 'bids', 'login', 'faq'];
+        self.pages = ['loading', 'searchlistings', 'searchusers', 'comments', 'profile', 'listing', 'bids', 'login', 'faq'];
         self.displayPage = function(page) {
             var i;
             var sel;
@@ -940,7 +943,6 @@ function iPadTouchHandler(event) {
         var self = {};
         self.setup = function() {
             $('#header-logo,#header-title-link').unbind().bind('click', function(){
-                console.log('title logo, title link search:');
                 searchListings.doSearch();
             });
             $('#header-menu-command-login').unbind().bind('click', function(){
@@ -953,7 +955,6 @@ function iPadTouchHandler(event) {
                 listings.newListing();
             });
             $('#header-menu-bar-top').unbind().bind('click', function(){
-                console.log('menu bar top search:');
                 searchListings.doSearch({search_type:'top'});
             });
 //            $('#header-menu-bar-valuation').unbind().bind('click', function(){
@@ -969,11 +970,9 @@ function iPadTouchHandler(event) {
 //                searchListings.doSearch({search_type:'discussed'});
 //            });
             $('#header-menu-bar-latest').unbind().bind('click', function(){
-                console.log('menu bar latest search:');
                 searchListings.doSearch({search_type:'latest'});
             });
             $('#header-menu-bar-closing-soon').unbind().bind('click', function(){
-                console.log('menu bar closing search:');
                 searchListings.doSearch({search_type:'closing'});
             });
             $('#header-menu-bar-top-users').unbind().bind('click', function(){
@@ -1066,7 +1065,6 @@ function iPadTouchHandler(event) {
             });
         };
         self.doSearch = function(args) {
-            console.log('doing search:',args);
             args = args || {};
             args.search_type = args.search_type || self.defaultSearchType;
             args.start_index = args.start_index || 0;
@@ -2423,10 +2421,9 @@ function iPadTouchHandler(event) {
         searchUsers.setup();
         util.applyResizer(header.resizeStyles);
         $('#mainbody').addTouch(); // enable for touch devices
-        $('#header-menu-bar-top').trigger('click');
+        searchListings.doSearch();
     });
-})(jQuery);
-console.log('running script...');
+});
 </script>
 
 <style type="text/css">
@@ -2921,6 +2918,9 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
 .header-menu-bar-submit {
     display: none;
 }
+#loadingpage {
+    display: block;
+}
 </style>
 
 </head>
@@ -2964,6 +2964,10 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
             <span class="header-menu-bar-submit-spacer" id="header-menu-bar-submit-spacer"> | </span>
             <span class="header-menu-bar-submit link" id="header-menu-bar-submit">submit</span>
         </div>
+    </div>
+
+    <div id="loadingpage" class="content page">
+        <span>loading...</span>
     </div>
 
     <div id="searchlistingspage" class="content page">
