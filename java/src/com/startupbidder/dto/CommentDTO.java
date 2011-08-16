@@ -6,9 +6,13 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.Text;
 
 public class CommentDTO extends AbstractDTO {
+	public static final String LISTING = "listing";
 	private String listing;
+	public static final String USER = "user";
 	private String user;
+	public static final String COMMENT = "comment";
 	private String comment;
+	public static final String COMMENTED_ON = "commentedOn";
 	private Date   commentedOn;
 	
 	public CommentDTO() {
@@ -60,21 +64,21 @@ public class CommentDTO extends AbstractDTO {
 	@Override
 	public Entity toEntity() {
 		Entity comment = new Entity(this.id);
-		comment.setUnindexedProperty("comment", this.comment != null ? new Text(this.comment) : null);
-		comment.setProperty("commentedOn", this.commentedOn);
-		comment.setProperty("listing", this.listing);
-		comment.setProperty("user", this.user);
+		comment.setUnindexedProperty(COMMENT, this.comment != null ? new Text(this.comment) : null);
+		comment.setProperty(COMMENTED_ON, this.commentedOn);
+		comment.setProperty(LISTING, this.listing);
+		comment.setProperty(USER, this.user);
 		return comment;
 	}
 	
 	public static CommentDTO fromEntity(Entity entity) {
 		CommentDTO comment = new CommentDTO();
 		comment.setKey(entity.getKey());
-		Text commentText = (Text)entity.getProperty("comment");
+		Text commentText = (Text)entity.getProperty(COMMENT);
 		comment.comment = commentText != null ? commentText.getValue() : null;
-		comment.commentedOn = (Date)entity.getProperty("commentedOn");
-		comment.listing = (String)entity.getProperty("listing");
-		comment.user = (String)entity.getProperty("user");
+		comment.commentedOn = (Date)entity.getProperty(COMMENTED_ON);
+		comment.listing = (String)entity.getProperty(LISTING);
+		comment.user = (String)entity.getProperty(USER);
 		return comment;
 	}
 

@@ -6,9 +6,13 @@ import com.google.appengine.api.datastore.Entity;
 
 
 public class VoteDTO extends AbstractDTO {
+	public static final String LISTING = "listing";
 	private String listing;
+	public static final String USER = "user";
 	private String user;
+	public static final String VALUE = "value";
 	private int value;
+	public static final String COMMENTED_ON = "commentedOn";
 	private Date commentedOn;
 	
 	public VoteDTO() {
@@ -59,20 +63,20 @@ public class VoteDTO extends AbstractDTO {
 	@Override
 	public Entity toEntity() {
 		Entity vote = new Entity(id);
-		vote.setProperty("commentedOn", this.commentedOn);
-		vote.setProperty("listing", this.listing);
-		vote.setProperty("user", this.user);
-		vote.setProperty("value", this.value);
+		vote.setProperty(COMMENTED_ON, this.commentedOn);
+		vote.setProperty(LISTING, this.listing);
+		vote.setProperty(USER, this.user);
+		vote.setProperty(VALUE, this.value);
 		return vote;
 	}
 
 	public static VoteDTO fromEntity(Entity entity) {
 		VoteDTO vote = new VoteDTO();
 		vote.setKey(entity.getKey());
-		vote.setCommentedOn((Date)entity.getProperty("commentedOn"));
-		vote.setListing((String)entity.getProperty("listing"));
-		vote.setUser((String)entity.getProperty("user"));
-		vote.setValue(((Long)entity.getProperty("value")).intValue());
+		vote.setCommentedOn((Date)entity.getProperty(COMMENTED_ON));
+		vote.setListing((String)entity.getProperty(LISTING));
+		vote.setUser((String)entity.getProperty(USER));
+		vote.setValue(((Long)entity.getProperty(VALUE)).intValue());
 		return vote;
 	}
 

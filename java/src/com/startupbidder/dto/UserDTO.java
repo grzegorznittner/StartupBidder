@@ -9,19 +9,33 @@ import com.google.appengine.api.datastore.Entity;
 public class UserDTO extends AbstractDTO {
 	public enum Status {CREATED, ACTIVE, DEACTIVATED};
 
+	public static final String OPEN_ID = "openId";
 	private String openId;
+	public static final String NICKNAME = "nickname";
 	private String nickname;
+	public static final String NAME = "name";
 	private String name;
+	public static final String EMAIL = "email";
 	private String email;
+	public static final String TITLE = "title";
 	private String title;
+	public static final String ORGANIZATION = "organization";
 	private String organization;
+	public static final String FACEBOOK = "facebook";
 	private String facebook;
+	public static final String TWITTER = "twitter";
 	private String twitter;
+	public static final String LINKEDIN = "linkedin";
 	private String linkedin;
+	public static final String INVESTOR = "investor";
 	private boolean investor;
+	public static final String JOINED = "joined";
 	private Date   joined;
+	public static final String LAST_LOGGED_IN = "lastLoggedIn";
 	private Date   lastLoggedIn;
+	public static final String MODIFIED = "modified";
 	private Date   modified;
+	public static final String STATUS = "status";
 	private Status status;
 	
 	public UserDTO() {
@@ -152,41 +166,41 @@ public class UserDTO extends AbstractDTO {
 	@Override
 	public Entity toEntity() {
 		Entity user = new Entity(id);
-		user.setProperty("openId", this.openId);
-		user.setProperty("email", this.email);
-		user.setProperty("facebook", this.facebook);
-		user.setProperty("name", this.name);
-		user.setProperty("investor", this.investor);
-		user.setProperty("joined", this.joined);
-		user.setProperty("lastLoggedIn", this.lastLoggedIn);
-		user.setProperty("linkedin", this.linkedin);
-		user.setProperty("modified", this.modified);
-		user.setProperty("nickname", this.nickname);
-		user.setProperty("organization", this.organization);
-		user.setProperty("title", this.title);
-		user.setProperty("twitter", this.twitter);
-		user.setProperty("status", this.status != null ? this.status.toString() : null);
+		user.setProperty(OPEN_ID, this.openId);
+		user.setProperty(EMAIL, this.email);
+		user.setProperty(FACEBOOK, this.facebook);
+		user.setProperty(NAME, this.name);
+		user.setProperty(INVESTOR, this.investor);
+		user.setProperty(JOINED, this.joined);
+		user.setProperty(LAST_LOGGED_IN, this.lastLoggedIn);
+		user.setProperty(LINKEDIN, this.linkedin);
+		user.setProperty(MODIFIED, this.modified);
+		user.setProperty(NAME, this.nickname);
+		user.setProperty(ORGANIZATION, this.organization);
+		user.setProperty(TITLE, this.title);
+		user.setProperty(TWITTER, this.twitter);
+		user.setProperty(STATUS, this.status != null ? this.status.toString() : null);
 		return user;
 	}
 	
 	public static UserDTO fromEntity(Entity entity) {
 		UserDTO user = new UserDTO();
 		user.setKey(entity.getKey());
-		user.setOpenId((String)entity.getProperty("openId"));
-		user.setEmail((String)entity.getProperty("email"));
-		user.setFacebook((String)entity.getProperty("facebook"));
-		user.setName((String)entity.getProperty("name"));
-		user.setInvestor((Boolean)entity.getProperty("investor"));
-		user.setJoined((Date)entity.getProperty("joined"));
-		user.setLastLoggedIn((Date)entity.getProperty("lastLoggedIn"));
-		user.setLinkedin((String)entity.getProperty("linkedin"));
-		user.setModified((Date)entity.getProperty("modified"));
-		user.setNickname((String)entity.getProperty("nickname"));
-		user.setOrganization((String)entity.getProperty("organization"));
-		user.setTitle((String)entity.getProperty("title"));
-		user.setTwitter((String)entity.getProperty("twitter"));
-		if (!StringUtils.isEmpty((String)entity.getProperty("status"))) {
-			user.setStatus(UserDTO.Status.valueOf((String)entity.getProperty("status")));
+		user.setOpenId((String)entity.getProperty(OPEN_ID));
+		user.setEmail((String)entity.getProperty(EMAIL));
+		user.setFacebook((String)entity.getProperty(FACEBOOK));
+		user.setName((String)entity.getProperty(NAME));
+		user.setInvestor((Boolean)entity.getProperty(INVESTOR));
+		user.setJoined((Date)entity.getProperty(JOINED));
+		user.setLastLoggedIn((Date)entity.getProperty(LAST_LOGGED_IN));
+		user.setLinkedin((String)entity.getProperty(LINKEDIN));
+		user.setModified((Date)entity.getProperty(MODIFIED));
+		user.setNickname((String)entity.getProperty(NICKNAME));
+		user.setOrganization((String)entity.getProperty(ORGANIZATION));
+		user.setTitle((String)entity.getProperty(TITLE));
+		user.setTwitter((String)entity.getProperty(TWITTER));
+		if (!StringUtils.isEmpty((String)entity.getProperty(STATUS))) {
+			user.setStatus(UserDTO.Status.valueOf((String)entity.getProperty(STATUS)));
 		}
 		return user;
 	}

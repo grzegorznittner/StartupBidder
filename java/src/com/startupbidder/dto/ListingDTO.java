@@ -11,17 +11,29 @@ public class ListingDTO extends AbstractDTO {
 
 	public enum State {NEW, CREATED, ACTIVE, CLOSED, WITHDRAWN};
 	
+	public static final String NAME = "name";
 	private String name;
+	public static final String SUGGESTED_VALUATION = "suggestedValuation";
 	private int   suggestedValuation;
+	public static final String SUGGESTED_PERCENTAGE = "suggestedPercentage";
 	private int   suggestedPercentage;
+	public static final String SUGGESTED_AMOUNT = "suggestedAmount";
 	private int   suggestedAmount;
+	public static final String LISTED_ON = "listedOn";
 	private Date  listedOn;
+	public static final String CLOSING_ON = "closingOn";
 	private Date  closingOn;
+	public static final String STATE = "state";
 	private State state;
+	public static final String SUMMARY = "summary";
 	private String summary;
+	public static final String OWNER = "owner";
 	private String owner;
+	public static final String BUSINESS_PLAN_ID = "businessPlanId";
 	private String businessPlanId;
+	public static final String PRESENTATION_ID = "presentationId";
 	private String presentationId;
+	public static final String FINANCIALS_ID = "financialsId";
 	private String financialsId;
 	
 	public ListingDTO() {
@@ -130,39 +142,39 @@ public class ListingDTO extends AbstractDTO {
 	@Override
 	public Entity toEntity() {
 		Entity listing = new Entity(id);
-		listing.setProperty("closingOn", this.closingOn);
-		listing.setProperty("listedOn", this.listedOn);
-		listing.setProperty("name", this.name);
-		listing.setProperty("owner", this.owner);
-		listing.setProperty("state", this.state != null ? this.state.toString() : null);
-		listing.setProperty("suggestedAmount", this.suggestedAmount);
-		listing.setProperty("suggestedPercentage", this.suggestedPercentage);
-		listing.setProperty("suggestedValuation", this.suggestedValuation);
-		listing.setProperty("presentationId", this.presentationId);
-		listing.setProperty("businessPlanId", this.businessPlanId);
-		listing.setProperty("financialsId", this.financialsId);
-		listing.setUnindexedProperty("summary", this.summary != null ? new Text(this.summary) : null);
+		listing.setProperty(CLOSING_ON, this.closingOn);
+		listing.setProperty(LISTED_ON, this.listedOn);
+		listing.setProperty(NAME, this.name);
+		listing.setProperty(OWNER, this.owner);
+		listing.setProperty(STATE, this.state != null ? this.state.toString() : null);
+		listing.setProperty(SUGGESTED_AMOUNT, this.suggestedAmount);
+		listing.setProperty(SUGGESTED_PERCENTAGE, this.suggestedPercentage);
+		listing.setProperty(SUGGESTED_VALUATION, this.suggestedValuation);
+		listing.setProperty(PRESENTATION_ID, this.presentationId);
+		listing.setProperty(BUSINESS_PLAN_ID, this.businessPlanId);
+		listing.setProperty(FINANCIALS_ID, this.financialsId);
+		listing.setUnindexedProperty(SUMMARY, this.summary != null ? new Text(this.summary) : null);
 		return listing;
 	}
 
 	public static ListingDTO fromEntity(Entity entity) {
 		ListingDTO listing = new ListingDTO();
 		listing.setKey(entity.getKey());
-		listing.closingOn = (Date)entity.getProperty("closingOn");
-		listing.listedOn = (Date)entity.getProperty("listedOn");
-		listing.name = (String)entity.getProperty("name");
-		listing.owner = (String)entity.getProperty("owner");
-		if (!StringUtils.isEmpty((String)entity.getProperty("state"))) {
-			listing.state = ListingDTO.State.valueOf((String)entity.getProperty("state"));
+		listing.closingOn = (Date)entity.getProperty(CLOSING_ON);
+		listing.listedOn = (Date)entity.getProperty(LISTED_ON);
+		listing.name = (String)entity.getProperty(NAME);
+		listing.owner = (String)entity.getProperty(OWNER);
+		if (!StringUtils.isEmpty((String)entity.getProperty(STATE))) {
+			listing.state = ListingDTO.State.valueOf((String)entity.getProperty(STATE));
 		}
-		listing.suggestedAmount = ((Long)entity.getProperty("suggestedAmount")).intValue();
-		listing.suggestedPercentage = ((Long)entity.getProperty("suggestedPercentage")).intValue();
-		listing.suggestedValuation = ((Long)entity.getProperty("suggestedValuation")).intValue();
-		Text summaryText = (Text)entity.getProperty("summary");
+		listing.suggestedAmount = ((Long)entity.getProperty(SUGGESTED_AMOUNT)).intValue();
+		listing.suggestedPercentage = ((Long)entity.getProperty(SUGGESTED_PERCENTAGE)).intValue();
+		listing.suggestedValuation = ((Long)entity.getProperty(SUGGESTED_VALUATION)).intValue();
+		Text summaryText = (Text)entity.getProperty(SUMMARY);
 		listing.summary = summaryText != null ? summaryText.getValue() : null;
-		listing.presentationId = (String)entity.getProperty("presentationId");
-		listing.businessPlanId = (String)entity.getProperty("businessPlanId");
-		listing.financialsId = (String)entity.getProperty("financialsId");
+		listing.presentationId = (String)entity.getProperty(PRESENTATION_ID);
+		listing.businessPlanId = (String)entity.getProperty(BUSINESS_PLAN_ID);
+		listing.financialsId = (String)entity.getProperty(FINANCIALS_ID);
 		return listing;
 	}
 

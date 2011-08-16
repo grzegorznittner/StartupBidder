@@ -10,13 +10,21 @@ public class BidDTO extends AbstractDTO {
 	public enum FundType {SYNDICATE, SOLE_INVESTOR, COMMON, PREFERRED, NOTE};
 	public enum Status { ACTIVE, WITHDRAWN };
 	
+	public static final String USER = "user";
 	private String user;
+	public static final String LISTING = "listing";
 	private String listing;
+	public static final String PLACED = "placed";
 	private Date   placed;
+	public static final String VALUE = "value";
 	private int    value;
+	public static final String PERCENT_OF_COMPANY = "percentOfCompany";
 	private int    percentOfCompany;
+	public static final String VALUATION = "valuation";
 	private int    valuation;
+	public static final String FUND_TYPE = "fundType";
 	private FundType fundType;
+	public static final String STATUS = "status";
 	private Status status = Status.ACTIVE;
 	
 	public BidDTO() {
@@ -154,32 +162,32 @@ public class BidDTO extends AbstractDTO {
 
 	public Entity toEntity() {
 		Entity bid = new Entity(this.id);
-		bid.setProperty("fundType", fundType != null ? fundType.toString() : null);
-		bid.setProperty("status", status != null ? status.toString() : null);
-		bid.setProperty("listing", listing);
-		bid.setProperty("percentOfCompany", percentOfCompany);
-		bid.setProperty("placed", placed);
-		bid.setProperty("user", user);
-		bid.setProperty("valuation", valuation);
-		bid.setProperty("value", value);
+		bid.setProperty(FUND_TYPE, fundType != null ? fundType.toString() : null);
+		bid.setProperty(STATUS, status != null ? status.toString() : null);
+		bid.setProperty(LISTING, listing);
+		bid.setProperty(PERCENT_OF_COMPANY, percentOfCompany);
+		bid.setProperty(PLACED, placed);
+		bid.setProperty(USER, user);
+		bid.setProperty(VALUATION, valuation);
+		bid.setProperty(VALUE, value);
 		return bid;
 	}
 	
 	public static BidDTO fromEntity(Entity entity) {
 		BidDTO bid = new BidDTO();
 		bid.setKey(entity.getKey());
-		if (!StringUtils.isEmpty((String)entity.getProperty("fundType"))) {
-			bid.setFundType(FundType.valueOf((String)entity.getProperty("fundType")));
+		if (!StringUtils.isEmpty((String)entity.getProperty(FUND_TYPE))) {
+			bid.setFundType(FundType.valueOf((String)entity.getProperty(FUND_TYPE)));
 		}
-		if (!StringUtils.isEmpty((String)entity.getProperty("status"))) {
-			bid.setStatus(Status.valueOf((String)entity.getProperty("status")));
+		if (!StringUtils.isEmpty((String)entity.getProperty(STATUS))) {
+			bid.setStatus(Status.valueOf((String)entity.getProperty(STATUS)));
 		}
-		bid.setListing((String)entity.getProperty("listing"));
-		bid.setPercentOfCompany(((Long)entity.getProperty("percentOfCompany")).intValue());
-		bid.setPlaced((Date)entity.getProperty("placed"));
-		bid.setUser((String)entity.getProperty("user"));
-		bid.setValuation(((Long)entity.getProperty("valuation")).intValue());
-		bid.setValue(((Long)entity.getProperty("value")).intValue());
+		bid.setListing((String)entity.getProperty(LISTING));
+		bid.setPercentOfCompany(((Long)entity.getProperty(PERCENT_OF_COMPANY)).intValue());
+		bid.setPlaced((Date)entity.getProperty(PLACED));
+		bid.setUser((String)entity.getProperty(USER));
+		bid.setValuation(((Long)entity.getProperty(VALUATION)).intValue());
+		bid.setValue(((Long)entity.getProperty(VALUE)).intValue());
 		return bid;
 	}
 }

@@ -10,8 +10,11 @@ import com.google.appengine.api.datastore.Entity;
 public class ListingDocumentDTO extends AbstractDTO {
 	public enum Type {BUSINESS_PLAN, PRESENTATION, FINANCIALS};
 
+	public static final String BLOB = "blob";
 	private BlobKey blob;
+	public static final String CREATED = "created";
 	private Date created;
+	public static final String TYPE = "type";
 	private Type type;
 
 	@Override
@@ -39,18 +42,18 @@ public class ListingDocumentDTO extends AbstractDTO {
 	@Override
 	public Entity toEntity() {
 		Entity entity = new Entity(id);
-		entity.setProperty("blob", this.blob);
-		entity.setProperty("type", this.type != null ? this.type.toString() : null);
-		entity.setProperty("created", this.created);		
+		entity.setProperty(BLOB, this.blob);
+		entity.setProperty(TYPE, this.type != null ? this.type.toString() : null);
+		entity.setProperty(CREATED, this.created);		
 		return entity;
 	}
 	public static ListingDocumentDTO fromEntity(Entity entity) {
 		ListingDocumentDTO dto = new ListingDocumentDTO();
 		dto.setKey(entity.getKey());
-		dto.blob = (BlobKey)entity.getProperty("blob");
-		dto.created = (Date)entity.getProperty("created");
-		if (!StringUtils.isEmpty((String)entity.getProperty("type"))) {
-			dto.type = Type.valueOf((String)entity.getProperty("type"));
+		dto.blob = (BlobKey)entity.getProperty(BLOB);
+		dto.created = (Date)entity.getProperty(CREATED);
+		if (!StringUtils.isEmpty((String)entity.getProperty(TYPE))) {
+			dto.type = Type.valueOf((String)entity.getProperty(TYPE));
 		}
 		return dto;
 	}

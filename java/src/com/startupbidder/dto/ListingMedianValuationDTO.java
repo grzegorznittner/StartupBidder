@@ -5,8 +5,11 @@ import java.util.Date;
 import com.google.appengine.api.datastore.Entity;
 
 public class ListingMedianValuationDTO extends AbstractDTO {
+	public static final String MEDIAN_VALUATION = "medianValuation";
 	private float medianValuation;
+	public static final String LISTING = "listing";
 	private String listing;
+	public static final String DATE = "date";
 	private Date date;
 
 	@Override
@@ -34,17 +37,17 @@ public class ListingMedianValuationDTO extends AbstractDTO {
 	@Override
 	public Entity toEntity() {
 		Entity entity = new Entity(id);
-		entity.setProperty("date", this.date);
-		entity.setProperty("listing", this.listing);
-		entity.setProperty("medianValuation", this.medianValuation);		
+		entity.setProperty(DATE, this.date);
+		entity.setProperty(LISTING, this.listing);
+		entity.setProperty(MEDIAN_VALUATION, this.medianValuation);
 		return entity;
 	}
 	public static ListingMedianValuationDTO fromEntity(Entity entity) {
 		ListingMedianValuationDTO dto = new ListingMedianValuationDTO();
 		dto.setKey(entity.getKey());
-		dto.date = (Date)entity.getProperty("date");
-		dto.listing = (String)entity.getProperty("listing");
-		dto.medianValuation = (Float)entity.getProperty("medianValuation");
+		dto.date = (Date)entity.getProperty(DATE);
+		dto.listing = (String)entity.getProperty(LISTING);
+		dto.medianValuation = (Float)entity.getProperty(MEDIAN_VALUATION);
 		return dto;
 	}
 }

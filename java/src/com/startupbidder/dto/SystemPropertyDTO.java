@@ -5,9 +5,13 @@ import java.util.Date;
 import com.google.appengine.api.datastore.Entity;
 
 public class SystemPropertyDTO extends AbstractDTO {
+	public static final String NAME = "name";
 	private String name;
+	public static final String VALUE = "value";
 	private String value;
+	public static final String CREATED = "created";
 	private Date created;
+	public static final String AUTHOR = "author";
 	private String author;
 
 	@Override
@@ -50,20 +54,20 @@ public class SystemPropertyDTO extends AbstractDTO {
 	@Override
 	public Entity toEntity() {
 		Entity entity = new Entity(id);
-		entity.setProperty("name", this.name);
-		entity.setProperty("created", this.created);
-		entity.setProperty("author", this.author);
-		entity.setUnindexedProperty("value", this.value);
+		entity.setProperty(NAME, this.name);
+		entity.setProperty(CREATED, this.created);
+		entity.setProperty(AUTHOR, this.author);
+		entity.setUnindexedProperty(VALUE, this.value);
 		return entity;
 	}
 
 	public static SystemPropertyDTO fromEntity(Entity entity) {
 		SystemPropertyDTO dto = new SystemPropertyDTO();
 		dto.setKey(entity.getKey());
-		dto.name = (String)entity.getProperty("name");
-		dto.created = (Date)entity.getProperty("created");
-		dto.author = (String)entity.getProperty("author");
-		dto.value = (String)entity.getProperty("value");
+		dto.name = (String)entity.getProperty(NAME);
+		dto.created = (Date)entity.getProperty(CREATED);
+		dto.author = (String)entity.getProperty(AUTHOR);
+		dto.value = (String)entity.getProperty(VALUE);
 		return dto;
 	}
 

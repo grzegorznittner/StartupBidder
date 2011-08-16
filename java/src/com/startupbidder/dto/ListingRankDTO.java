@@ -5,8 +5,11 @@ import java.util.Date;
 import com.google.appengine.api.datastore.Entity;
 
 public class ListingRankDTO extends AbstractDTO {
+	public static final String RANK = "rank";
 	private float rank;
+	public static final String LISTING = "listing";
 	private String listing;
+	public static final String DATE = "date";
 	private Date date;
 
 	@Override
@@ -34,17 +37,17 @@ public class ListingRankDTO extends AbstractDTO {
 	@Override
 	public Entity toEntity() {
 		Entity entity = new Entity(id);
-		entity.setProperty("date", this.date);
-		entity.setProperty("listing", this.listing);
-		entity.setProperty("rank", this.rank);		
+		entity.setProperty(DATE, this.date);
+		entity.setProperty(LISTING, this.listing);
+		entity.setProperty(RANK, this.rank);		
 		return entity;
 	}
 	public static ListingRankDTO fromEntity(Entity entity) {
 		ListingRankDTO dto = new ListingRankDTO();
 		dto.setKey(entity.getKey());
-		dto.date = (Date)entity.getProperty("date");
-		dto.listing = (String)entity.getProperty("listing");
-		dto.rank = ((Double)entity.getProperty("rank")).floatValue();
+		dto.date = (Date)entity.getProperty(DATE);
+		dto.listing = (String)entity.getProperty(LISTING);
+		dto.rank = ((Double)entity.getProperty(RANK)).floatValue();
 		return dto;
 	}
 	@Override
