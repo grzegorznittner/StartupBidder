@@ -5,6 +5,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta name="description" content="Startupbidder - list, bid, comment and vote on startup businesses worldwide"/>
     <meta name="keywords" content="startupbidder startup company auction bid business plan"/>
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0" />
     <title>Startupbidder - list, bid, comment, vote on startups</title>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.0/jquery.min.js"></script>
 <!--	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.8/jquery-ui.min.js"></script> -->
@@ -809,15 +810,23 @@ function iPadTouchHandler(event) {
 $(function(){
 	var $ = jQuery;
 
-    $('body').addTouch(); // enable for touch devices
+    $('#mainbody').addTouch(); // enable for touch devices
 
     var Util = function() {
         var self = {};
         self.keyCache = {};
+        self.pages = ['searchlistings', 'searchusers', 'comments', 'profile', 'listing', 'bids', 'login', 'faq'];
         self.displayPage = function(page) {
-            $('.page').filter(':visible').hide(); // hide all
-            var pageSel = '#' + page + 'page';
-            $(pageSel).show();
+            var i;
+            var sel;
+            for (i = 0; i < self.pages.length; i++) { // hide all
+                sel = '#' + self.pages[i] + 'page';
+                if (self.pages[i] !== page) {
+                    $(sel).hide();
+                }
+            }
+            sel = '#' + page + 'page';
+            $(sel).show();
         };
         self.constructNumericDate = function(year, month, day) {
             var date = '' + year + (month < 10 ? '0' : '') + month + (day < 10 ? '0' : '') + day;
@@ -886,10 +895,13 @@ $(function(){
                 return v.toString(16);
             });
         };
+        self.guessWidth = function() {
+            return Math.min($(window).width(), screen.availWidth);
+        };
         self.applyResizer = function(resizerCallback) {
-            resizerCallback($(window).width());
+            resizerCallback(self.guessWidth());
             $(window).resize(function(){
-                resizerCallback($(this).width());
+                resizerCallback(self.guessWidth());
             });
         }
         return self;
@@ -926,7 +938,7 @@ $(function(){
                 resultHtml += '<div class="content-results-list-item>';
                 resultHtml += '<div class="content-results-list-item-num"></div>';
             }
-            if (user.profile && !(user.profile.profile_id === userjson.profile_id)) {
+            if (user.profile && (user.profile.profile_id !== userjson.profile_id)) {
                 resultHtml += '<div class="content-results-list-item-upvote" id="user-search-results-list-item-upvote-' + i + '"></div>';
             }
             else {
@@ -1053,7 +1065,7 @@ $(function(){
                     $('#'+fieldRoot+'-submit').hide();
                 }
                 else {
-                    $('#'+fieldRoot+'-submit').fadeIn();
+                    $('#'+fieldRoot+'-submit').show();
                 }
             };
             $('#'+fieldRoot+'-file').hide().val('').change(fileChangeCallback);
@@ -1134,26 +1146,41 @@ $(function(){
             }
         };
         self.narrowClasses = {
-            'body': 'body-narrow',
+            '#mainbody': 'body-narrow',
             '#header': 'header-narrow',
             '#header-logo': 'header-logo-narrow',
             '#header-title': 'header-title-narrow',
             '#header-menu-bar': 'header-menu-bar-narrow',
             '#header-menu-name': 'header-menu-name-narrow',
             '#header-menu-command': 'header-menu-command-narrow',
-            '.content': 'content-narrow'
+            '#searchlistingspage': 'content-narrow',
+            '#searchuserspage': 'content-narrow',
+            '#commentspage': 'content-narrow',
+            '#profilepage': 'content-narrow',
+            '#listingpage': 'content-narrow',
+            '#bidspage': 'content-narrow',
+            '#loginpage': 'content-narrow',
+            '#faqpage': 'content-narrow'
         };
+        self.currentStyle = undefined;
         self.resizeStyles = function(windowWidth) {
             var sel;
             var width = parseInt(windowWidth);
-            if (width < 701) {
-                $('body').width(width);
+            var newStyle = (width < 701) ? 'narrow' : 'normal';
+            if (self.currentStyle === undefined) { // first time
+                if (newStyle === 'narrow') {
+                    for (sel in self.narrowClasses) {
+                        $(sel).addClass(self.narrowClasses[sel]);
+                    }
+                }
+                self.currentStyle = newStyle;
+            }
+            else if (self.currentStyle !== newStyle && newStyle === 'narrow') { // style change to narrow
                 for (sel in self.narrowClasses) {
                     $(sel).addClass(self.narrowClasses[sel]);
                 }
-            } 
-            else {
-                $('body').removeAttr('width');
+            }
+            else if (self.currentStyle !== newStyle && newStyle === 'normal') { // style change to normal
                 for (sel in self.narrowClasses) {
                     $(sel).removeClass(self.narrowClasses[sel]);
                 }
@@ -1189,7 +1216,7 @@ $(function(){
             var statsErrorCallback = function () { $('#stats-message').html('unable to retrieve statistics chart');util.displayPage('searchlistings'); };
             var searchErrorCallback = function () { $('#search-message').html('unable to retrieve search results'); };
             if (!args.profile_id) {
-                backend.bidStats(self.displayStats, statsErrorCallback);
+                //backend.bidStats(self.displayStats, statsErrorCallback);
             }
             else {
                 $('#stats').hide();
@@ -1296,7 +1323,7 @@ $(function(){
         };
         self.displayResultsHtml = function(resultsHtml) {
             util.displayPage('searchlistings');
-            $('#search-content-results-list').hide().html(resultsHtml).slideDown();
+            $('#search-content-results-list').hide().html(resultsHtml).show();
         };
         self.displayResults = function(results, search_type, keywords, profile_id, start_index, num_results, total_results, profile){
             var resultsHtml = '';
@@ -1404,7 +1431,7 @@ $(function(){
                 results_json.users_props.num_results, results_json.users_props.total_results);
         };
         self.displayResultsHtml = function(resultsHtml) {
-            $('#user-search-results-list').hide().html(resultsHtml).slideDown();
+            $('#user-search-results-list').hide().html(resultsHtml).show();
         };
         self.displayResults = function(results, search_type, keywords, start_index, num_results, total_results){
             var resultsHtml = '';
@@ -1693,7 +1720,7 @@ $(function(){
             // enable editable if logged in
             if ((profile && profile.profile_id == listing.profile_id) && ((listing.status === 'new' || listing.status === 'created') || listing.status === 'active')) {
                 $('#listing-form-readonly').hide();
-                $('#listing-form-editable').hide().slideDown();
+                $('#listing-form-editable').show();
                 $('#listing-edit-title').val(listing.title);
                 $('#listing-edit-median-valuation').val(listing.median_valuation);
                 $('#listing-edit-num-votes').val(listing.num_votes);
@@ -1750,7 +1777,7 @@ $(function(){
             }
             else {
                 $('#listing-form-editable').hide();
-                $('#listing-form-readonly').hide().slideDown();
+                $('#listing-form-readonly').show();
                 $('#listing-readonly-suggested-amt').html(util.addCommas(listing.suggested_amt));
                 $('#listing-readonly-suggested-pct').html(listing.suggested_pct);
                 $('#listing-readonly-suggested-val').html(util.addCommas(listing.suggested_val));
@@ -1979,7 +2006,7 @@ $(function(){
                 resultsHtml = '<i>no comments found</i>';
             }
             // display html
-            $('#comments-content-results-list').hide().html(resultsHtml).slideDown();
+            $('#comments-content-results-list').hide().html(resultsHtml).show();
             // enable editable if logged in
             if (listing) {
                 if (listing.listing_id) {
@@ -2196,7 +2223,7 @@ $(function(){
                 resultsHtml = '<i>no bids found</i>';
             }
             // display html
-            $('#bids-content-results-list').hide().html(resultsHtml).slideDown();
+            $('#bids-content-results-list').hide().html(resultsHtml).show();
             // set login visibility
             if (listing) {
                 if (listing.listing_id) {
@@ -2571,8 +2598,8 @@ a img {
   border: none;
 }
 html, body {
-  width: 100%;
-  height: 100%;
+  width: 100%; 
+/*  height: 100%; */
 /*  overflow: hidden; */
 /*  min-height: 100%; */
 }
@@ -2580,7 +2607,7 @@ body {
   line-height: 1;
   color: black;
   background: white;
-  font-family: sans-serif;
+  font-family:Helvetica, Arial, Verdana, sans-serif;
 }
 a,
 a:hover,
@@ -2591,10 +2618,6 @@ text-decoration: none;
 }
 
 /* startupbidder styles */
-.body-narrow { }
-.body-medium { }
-.body-wide { }
-
 
 .gradient-bg {
     background: #eeeeee;
@@ -2658,12 +2681,18 @@ text-decoration: none;
     left: 100px;
     font-weight: bold;
     font-size: 16px;
+    text-align: left;
 }
 .header-title-narrow {
     top: 43px;
+    left: 0px;
+    width: 100%;
+/*
     width: 124px;
     left: 50%;
     margin-left: -62px;
+*/
+    text-align: center;
 }
 .header-menu-name {
     position: absolute;
@@ -2687,22 +2716,21 @@ text-decoration: none;
     text-align: right;
 }
 .header-menu-command-narrow {
-    width: 50px;
-    left: 50%;
-    margin-left: -25px;
-    right: none;
     top: 67px;
+    left: 0px;
+    width: 100%;
     text-align: center;
 }
 .header-menu-bar {
     position: absolute;
-    top: 25px;
+    font-size: 12px;
+    top: 26px;
     left: 100px;
     text-align: left;
 }
 .header-menu-bar-narrow {
-    top: 85px;
     width: 100%;
+    top: 86px;
     left: 0px;
     text-align: center;
 }
@@ -2815,12 +2843,15 @@ text-decoration: none;
     margin-left: 5px;
     margin-top: 5px;
 }
-.content-form-line, .content-form-line-emphasized, .content-form-mainline, .content-form-linkline {
+.content-form-line, .content-form-line-emphasized, .content-form-mainline, .content-form-linkline, .content-form-line-indented {
     float: left;
     margin-left: 5px;
     text-align: left;
     font-size: 14px;
     line-height: 26px;
+}
+.content-form-line-indented {
+    margin-left: 15px;
 }
 .content-form-multiline {
     float: left;
@@ -3019,7 +3050,7 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
 
 </head>
 
-<body class="gradient-bg">
+<body id="mainbody" class="gradient-bg">
 
 <div class="site">
     <div id="header" class="header">
@@ -3223,7 +3254,7 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
         <div class="content-header">
             <div class="content-results-list" id="listing-snippet"></div>
         </div>
-        <div class="content-form-line" id="listing-form-message"></div>
+        <div class="content-form-line-indented" id="listing-form-message"></div>
         <div class="content-form-clear"></div>
         <div class="content-form" id="listing-form-editable">
                 
