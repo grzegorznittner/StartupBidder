@@ -12,7 +12,6 @@
     <link rel="canonical" href="http://startupbidder.appspot.com"/>
 
 <!-- google analytics -->
-<!--
 <script type="text/javascript">
   var _gaq = _gaq || [];
   _gaq.push(['_setAccount', 'UA-23942052-1']);
@@ -23,7 +22,7 @@
     var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
   })();
 </script>
--->
+
 <!-- javascript code -->
 <script type="text/javascript">
 // http://jquery-howto.blogspot.com/2009/09/get-url-parameters-values-with-jquery.html
@@ -797,7 +796,7 @@ $(function(){
                 resultHtml += '<div class="content-results-list-item-num">' + userjson.num + '</div>';
             }
             else {
-                resultHtml += '<div class="content-results-list-item>';
+                resultHtml += '<div class="content-results-list-item">';
                 resultHtml += '<div class="content-results-list-item-num"></div>';
             }
             if (user.profile && (user.profile.profile_id !== userjson.profile_id)) {
@@ -1035,7 +1034,6 @@ $(function(){
                         $(sel).addClass(self.narrowClasses[sel]);
                     }
                 }
-                self.currentStyle = newStyle;
             }
             else if (self.currentStyle !== newStyle && newStyle === 'narrow') { // style change to narrow
                 for (sel in self.narrowClasses) {
@@ -1047,6 +1045,7 @@ $(function(){
                     $(sel).removeClass(self.narrowClasses[sel]);
                 }
             }
+            self.currentStyle = newStyle; // save the new style
         };
         return self;
     };
@@ -1186,7 +1185,8 @@ $(function(){
                 user.setProfile(results_json.loggedin_profile);
             }
             if (results_json.listings_props) {
-                self.displayResults(results_json.listings, results_json.search_type, results_json.keywords, results_json.profile ? results_json.profile.profile_id : null, results_json.start_index,
+                self.displayResults(results_json.listings, results_json.search_type, results_json.keywords,
+                    results_json.profile ? results_json.profile.profile_id : null, results_json.start_index,
                     results_json.listings_props.num_results, results_json.listings_props.total_results, results_json.profile);
             }
         };
@@ -1751,7 +1751,7 @@ $(function(){
                 resultHtml += '<div class="content-results-list-item-num">' + listing.num + '</div>';
             }
             else {
-                resultHtml += '<div class="content-results-list-item>';
+                resultHtml += '<div class="content-results-list-item">';
                 resultHtml += '<div class="content-results-list-item-num"></div>';
             }
             if (user.profile && !(user.profile.profile_id === listing.profile_id)) {
@@ -2187,9 +2187,12 @@ $(function(){
             var visualMapping = {
                 common: 'common stock',
                 preferred: 'preferred stock',
-                note: 'a convertible note'
+                note: 'a convertible note',
+                syndicate: 'common stock as a syndicate',
+                sole_investor: 'common stock as a sole investor'
             };
-            return visualMapping[bid_type];
+            var bidType = bid_type in visualMapping ? visualMapping[bid_type] : bid_type;
+            return bidType;
         };
         self.generateResultHtml = function(i, bid, listing, profile) {
             var resultHtml = '';
@@ -2692,6 +2695,7 @@ text-decoration: none;
     height: 0px;
 }
 .content-results-list-item-title {
+    font-size: 16px;
     float: left;
 }
 .content-results-list-item-profile {
@@ -2712,7 +2716,7 @@ text-decoration: none;
     font-size: 12px;
 }
 .content-form {
-    margin-left: 5px;
+    margin-left: 15px;
     margin-top: 5px;
 }
 .content-form-line, .content-form-line-emphasized, .content-form-mainline, .content-form-linkline, .content-form-line-indented {
@@ -2967,7 +2971,11 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
     </div>
 
     <div id="loadingpage" class="content page">
-        <span>loading...</span>
+        <div class="content-header">
+            <div class="content-results-list">
+                <span>loading...</span>
+            </div>
+        </div>
     </div>
 
     <div id="searchlistingspage" class="content page">
@@ -3035,9 +3043,11 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
                 <button id="comment-save-button">Save</button> <span class="attention" id="comment-save-message"></span>
         </div>
         </form>
-        <div class="content-comment" id="comment-not-loggedin-msg">
-            <em>You must be logged in to comment</em>
+        <div class="content-form">
+            <div class="content-form-line"><span class="attention" id="comment-not-logged-in-msg">You must be logged in to comment</span></div>
+            <div class="content-form-clear"></div>
         </div>
+        <div class="content-results-list-item-clear"></div>
         <div class="content-results">
             <div class="content-results-list" id="comments-content-results-list"></div>
         </div>
@@ -3133,8 +3143,9 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
         <div class="content-header">
             <div class="content-results-list" id="listing-snippet"></div>
         </div>
-        <div class="content-form-line-indented" id="listing-form-message"></div>
-        <div class="content-form-clear"></div>
+        <div class="content-form">
+            <div class="content-form-line"><span id="listing-form-message"></span></div>
+        </div>
         <div class="content-form" id="listing-form-editable">
                 
                 <form action="#" method="post" enctype="multipart/form-data">
@@ -3277,6 +3288,10 @@ MisLead is a revolution in social networking.  Previously, social networking has
         <div class="content-header" id="bids-listing-header">
             <div class="content-results-list" id="bids-listing-snippet"></div>
         </div>
+        <div class="content-form">
+            <div class="content-form-line"><span class="attention" id="bids-form-not-loggedin">You must be logged in to place a bid</span></div>
+            <div class="content-form-clear"></div>
+        </div>
         <div class="content-form" id="bids-form-loggedin">
             <form action="#" method="post" enctype="multipart/form-data">
                 <input name="page" type="hidden" value="listing"/>
@@ -3308,9 +3323,6 @@ MisLead is a revolution in social networking.  Previously, social networking has
                 </div>
                 <div class="content-form-clear"></div>
             </form>
-        </div>
-        <div class="content-form" id="bids-form-not-loggedin">
-            <em>You must be logged in to bid.</em>
         </div>
         <!--
         <div class="content-form">
@@ -3431,7 +3443,6 @@ Reference:
                     </div>
                 </div>
                 <div class="content-results-list-item-clear"></div>
-                 <div class="content-results-list-item-clear"></div>
                 <div class="content-results-list-item content-results-list-item-odd">
                     <div class="content-results-list-item-num">5.</div>
                     <div class="content-results-list-item-upvote-filler"></div>
