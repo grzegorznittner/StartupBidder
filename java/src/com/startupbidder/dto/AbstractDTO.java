@@ -1,5 +1,7 @@
 package com.startupbidder.dto;
 
+import java.io.Serializable;
+
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
@@ -9,7 +11,7 @@ import com.google.appengine.api.datastore.Query;
  * Abstract class for entities.
  * @author greg
  */
-public abstract class AbstractDTO {
+public abstract class AbstractDTO implements Serializable {
 	protected Key id;
 	
 	/**

@@ -1,12 +1,13 @@
 package com.startupbidder.dto;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
 
 import com.google.appengine.api.datastore.Entity;
 
-public class UserDTO extends AbstractDTO {
+public class UserDTO extends AbstractDTO implements Serializable {
 	public enum Status {CREATED, ACTIVE, DEACTIVATED};
 
 	public static final String OPEN_ID = "openId";

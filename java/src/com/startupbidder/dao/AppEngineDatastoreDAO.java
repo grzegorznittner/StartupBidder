@@ -372,6 +372,7 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 			if (!StringUtils.areStringsEqual(listing.getOwner(), voterId)) {
 				VoteDTO vote = new VoteDTO();
 				vote.setListing(listingId);
+				vote.setUser(null);
 				vote.setVoter(voterId);
 				vote.setValue(1);
 				vote.setCommentedOn(new Date());
@@ -400,6 +401,7 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 			if (!StringUtils.areStringsEqual(user.getIdAsString(), voterId)) {
 				VoteDTO vote = new VoteDTO();
 				vote.setUser(voterId);
+				vote.setListing(null);
 				vote.setVoter(voterId);
 				vote.setValue(1);
 				vote.setCommentedOn(new Date());

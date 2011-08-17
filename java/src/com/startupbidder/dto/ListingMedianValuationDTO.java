@@ -1,10 +1,11 @@
 package com.startupbidder.dto;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import com.google.appengine.api.datastore.Entity;
 
-public class ListingMedianValuationDTO extends AbstractDTO {
+public class ListingMedianValuationDTO extends AbstractDTO implements Serializable {
 	public static final String MEDIAN_VALUATION = "medianValuation";
 	private float medianValuation;
 	public static final String LISTING = "listing";

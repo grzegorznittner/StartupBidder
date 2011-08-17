@@ -1,5 +1,7 @@
 package com.startupbidder.dto;
 
+import java.io.Serializable;
+
 import com.google.appengine.api.datastore.Entity;
 
 /**
@@ -7,7 +9,7 @@ import com.google.appengine.api.datastore.Entity;
  * 
  * @author greg
  */
-public class UserStatisticsDTO extends AbstractDTO {
+public class UserStatisticsDTO extends AbstractDTO implements Serializable {
 	public static final String NUM_OF_COMMENTS = "numberOfComments";
 	private int numberOfComments;
 	public static final String NUM_OF_BIDS = "numberOfBids";

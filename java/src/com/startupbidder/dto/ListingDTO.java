@@ -1,5 +1,6 @@
 package com.startupbidder.dto;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
@@ -7,7 +8,7 @@ import org.apache.commons.lang.StringUtils;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.Text;
 
-public class ListingDTO extends AbstractDTO {
+public class ListingDTO extends AbstractDTO implements Serializable {
 
 	public enum State {NEW, CREATED, ACTIVE, CLOSED, WITHDRAWN};
 	

@@ -1,10 +1,11 @@
 package com.startupbidder.dto;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import com.google.appengine.api.datastore.Entity;
 
-public class SystemPropertyDTO extends AbstractDTO {
+public class SystemPropertyDTO extends AbstractDTO implements Serializable {
 	public static final String NAME = "name";
 	private String name;
 	public static final String VALUE = "value";

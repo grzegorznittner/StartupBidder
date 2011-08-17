@@ -1,5 +1,6 @@
 package com.startupbidder.dto;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
@@ -7,7 +8,7 @@ import org.apache.commons.lang.StringUtils;
 import com.google.appengine.api.blobstore.BlobKey;
 import com.google.appengine.api.datastore.Entity;
 
-public class ListingDocumentDTO extends AbstractDTO {
+public class ListingDocumentDTO extends AbstractDTO implements Serializable {
 	public enum Type {BUSINESS_PLAN, PRESENTATION, FINANCIALS};
 
 	public static final String BLOB = "blob";

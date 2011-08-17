@@ -1,10 +1,11 @@
 package com.startupbidder.dto;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import com.google.appengine.api.datastore.Entity;
 
-public class RankDTO extends AbstractDTO {
+public class RankDTO extends AbstractDTO implements Serializable {
 	public static final String RANK = "rank";
 	private float rank;
 	public static final String LISTING = "listing";

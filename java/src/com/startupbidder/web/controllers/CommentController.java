@@ -22,8 +22,7 @@ import com.startupbidder.web.ServiceFacade;
 public class CommentController extends ModelDrivenController {
 	private static final Logger log = Logger.getLogger(CommentController.class.getName());
 
-	private CommentListVO comments = null;
-	private CommentVO comment = null;
+	private Object model;
 	
 	@Override
 	protected HttpHeaders executeAction(HttpServletRequest request) throws JsonParseException, JsonMappingException, IOException {
@@ -47,7 +46,7 @@ public class CommentController extends ModelDrivenController {
 			} else if("update".equalsIgnoreCase(getCommand(1))) {
 				return update(request);
 			} else if("delete".equalsIgnoreCase(getCommand(1))) {
-				delete(request);
+				return delete(request);
 			}
 		} else if ("DELETE".equalsIgnoreCase(request.getMethod())) {
 			return delete(request);
@@ -65,8 +64,8 @@ public class CommentController extends ModelDrivenController {
 		String commentId = "DELETE".equalsIgnoreCase(request.getMethod())
 				? getCommandOrParameter(request, 1, "id") : getCommandOrParameter(request, 2, "id");
 		if (!StringUtils.isEmpty(commentId)) {
-			comment = ServiceFacade.instance().deleteComment(getLoggedInUser(), commentId);
-			if (comment == null) {
+			model = ServiceFacade.instance().deleteComment(getLoggedInUser(), commentId);
+			if (model == null) {
 				log.log(Level.WARNING, "Comment not found!");
 				headers.setStatus(500);
 			}
@@ -88,9 +87,10 @@ public class CommentController extends ModelDrivenController {
 		log.log(Level.INFO, "Parameters: " + request.getParameterMap());
 		String commentString = request.getParameter("comment");
 		if (!StringUtils.isEmpty(commentString)) {
-			comment = mapper.readValue(commentString, CommentVO.class);
+			CommentVO comment = mapper.readValue(commentString, CommentVO.class);
 			log.log(Level.INFO, "Creating comment: " + comment);
 			comment = ServiceFacade.instance().createComment(getLoggedInUser(), comment);
+			model = comment;
 			if (comment == null) {
 				log.log(Level.WARNING, "Comment not created!");
 				headers.setStatus(500);
@@ -113,13 +113,14 @@ public class CommentController extends ModelDrivenController {
 		log.log(Level.INFO, "Parameters: " + request.getParameterMap());
 		String commentString = request.getParameter("comment");
 		if (!StringUtils.isEmpty(commentString)) {
-			comment = mapper.readValue(commentString, CommentVO.class);
+			CommentVO comment = mapper.readValue(commentString, CommentVO.class);
 			log.log(Level.INFO, "Updating comment: " + comment);
-			if (comment.getId() == null) {
+			if (comment == null || comment.getId() == null) {
 				log.log(Level.WARNING, "Commend id not provided!");
 				headers.setStatus(500);
 			} else {
 				comment = ServiceFacade.instance().updateComment(getLoggedInUser(), comment);
+				model = comment;
 				if (comment == null) {
 					log.log(Level.WARNING, "Comment not found!");
 					headers.setStatus(500);
@@ -142,7 +143,7 @@ public class CommentController extends ModelDrivenController {
 		
 		ListPropertiesVO commentProperties = getListProperties(request);
 		String listingId = getCommandOrParameter(request, 2, "id");
-		comments = ServiceFacade.instance().getCommentsForListing(getLoggedInUser(), listingId, commentProperties);
+		model = ServiceFacade.instance().getCommentsForListing(getLoggedInUser(), listingId, commentProperties);
 		
 		return headers;
 	}
@@ -156,7 +157,7 @@ public class CommentController extends ModelDrivenController {
 		
 		ListPropertiesVO commentProperties = getListProperties(request);
 		String userId = getCommandOrParameter(request, 2, "id");
-		comments = ServiceFacade.instance().getCommentsForUser(getLoggedInUser(), userId, commentProperties);
+		model = ServiceFacade.instance().getCommentsForUser(getLoggedInUser(), userId, commentProperties);
 		
 		return headers;
 	}
@@ -164,14 +165,14 @@ public class CommentController extends ModelDrivenController {
 	private HttpHeaders index(HttpServletRequest request) {
 		HttpHeaders headers = new HttpHeadersImpl("index");
 		String commentId = getCommandOrParameter(request, 1, "id");
-		comment = ServiceFacade.instance().getComment(getLoggedInUser(), commentId);
+		model = ServiceFacade.instance().getComment(getLoggedInUser(), commentId);
 		return headers;
 	}
 
 	private HttpHeaders get(HttpServletRequest request) {
 		HttpHeaders headers = new HttpHeadersImpl("get");
 		String commentId = getCommandOrParameter(request, 2, "id");
-		comment = ServiceFacade.instance().getComment(getLoggedInUser(), commentId);
+		model = ServiceFacade.instance().getComment(getLoggedInUser(), commentId);
 		return headers;
 	}
 
@@ -183,7 +184,7 @@ public class CommentController extends ModelDrivenController {
 
 	@Override
 	public Object getModel() {
-		return comments != null ? comments : comment;
+		return model;
 	}
 
 }

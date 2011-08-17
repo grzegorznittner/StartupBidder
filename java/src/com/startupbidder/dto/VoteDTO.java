@@ -1,11 +1,12 @@
 package com.startupbidder.dto;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import com.google.appengine.api.datastore.Entity;
 
 
-public class VoteDTO extends AbstractDTO {
+public class VoteDTO extends AbstractDTO implements Serializable {
 	public static final String LISTING = "listing";
 	private String listing;
 	public static final String USER = "user";
