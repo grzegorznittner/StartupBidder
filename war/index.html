@@ -971,9 +971,6 @@ $(function(){
             $('#header-menu-bar-latest').unbind().bind('click', function(){
                 searchListings.doSearch({search_type:'latest'});
             });
-            $('#header-menu-bar-closing-soon').unbind().bind('click', function(){
-                searchListings.doSearch({search_type:'closing'});
-            });
             $('#header-menu-bar-top-users').unbind().bind('click', function(){
                 searchUsers.doSearch({search_type:'top'});
             });
@@ -1478,7 +1475,6 @@ $(function(){
             listing.profile_id =  $('#listing-edit-profile-id').val();
             listing.profile_username =  $('#listing-edit-profile-username').val();
             listing.listing_date = $('#listing-edit-listing-date').val();
-            listing.closing_date = $('#listing-edit-closing-date').html();
             listing.status = $('#listing-edit-status').val();
             var raw_amt = $('#listing-edit-suggested-amt').val().replace(/[^\d]/g,'');
             var raw_pct = $('#listing-edit-suggested-pct').val().replace(/[^\d]/g,'');
@@ -1520,7 +1516,6 @@ $(function(){
             listing.profile_id = profile.profile_id;
             listing.profile_username = profile.username;
             listing.listing_date = util.today();
-            listing.closing_date = util.todayPlusDays(30);
             listing.status = 'new';
             listing.suggested_amt = 10000;
             listing.suggested_pct = 10;
@@ -1561,9 +1556,6 @@ $(function(){
             if (profile && profile.profile_id == listing.profile_id && listing.status == 'withdrawn') {
                 msg = 'You may not change your listing now that it is withdrawn.';
             }
-            else if (profile && profile.profile_id == listing.profile_id && listing.status == 'closed') {
-                msg = 'You may not change your listing now that it is closed.';
-            }
             else if (listing.status == 'new') {
                 msg = 'This listing has not yet been saved.';
             }
@@ -1576,9 +1568,6 @@ $(function(){
             }
             else if (listing.status == 'withdrawn') {
                 msg = 'This listing is withdrawn and thus bidding is suspended.';
-            }
-            else if (listing.status == 'closed') {
-                msg = 'This listing is withdrawn and accepts no more bids.';
             }
             else {
                 msg = 'The listing status is unknown.';
@@ -1597,7 +1586,6 @@ $(function(){
                 $('#listing-edit-profile-id').val(listing.profile_id);
                 $('#listing-edit-profile-username').val(listing.profile_username);
                 $('#listing-edit-listing-date').val(listing.listing_date);
-                $('#listing-edit-closing-date').html(util.formatDate(listing.closing_date));
                 $('#listing-edit-status').val(listing.status);
                 $('#listing-edit-suggested-amt').val(util.addCommas(listing.suggested_amt));
                 $('#listing-edit-suggested-pct').val(listing.suggested_pct);
@@ -1788,14 +1776,8 @@ $(function(){
             resultHtml += '<div class="content-results-list-item-clear"></div>';
             resultHtml += '<div class="content-results-list-item-detail">';
             resultHtml += '<span id="content-results-list-item-votes-' + i + '">' + listing.num_votes + '</span>' + ' votes | ';
-            resultHtml += (days_ago == 0) ? 'listed today' : days_ago + ' day' + (days_ago!==1?'s':'')  + ' ago';
-            resultHtml += ' | ';
-            resultHtml += (listing.status == 'active' && days_left == 0) ? 'closing today!' : '';
-            resultHtml += (listing.status == 'active' && days_left < 0) ? 'listing closed' : '';
-            resultHtml += (listing.status == 'active' && days_left > 0) ? 'closing in ' + days_left + ' day' + (days_left!==1?'s':'') : '';
-            resultHtml += (listing.status == 'closed') ? 'listing closed' : '';
-            resultHtml += (listing.status == 'withdrawn') ? 'listing withdrawn' : '';
-            resultHtml += ' | ';
+            resultHtml += (days_ago == 0) ? 'today' : days_ago + ' day' + (days_ago!==1?'s':'')  + ' ago';
+            resultHtml += ' | ' + listing.status + ' | ';
             resultHtml += '<span class="link" id="content-results-list-item-comments-' + i + '">';
             resultHtml += listing.num_comments + ' comment' + (listing.num_comments==1?'':'s');
             resultHtml += '</span> | ';
@@ -1803,10 +1785,7 @@ $(function(){
             resultHtml += '<span class="link" id="content-results-list-item-bids-' + i + '">';
             resultHtml += listing.num_bids + ' bid' + (listing.num_bids==1?'':'s');
             resultHtml += '</span> | ';
-            resultHtml += 'listed ' + util.formatDate(listing.listing_date) + ' | ';
-            resultHtml += (listing.status == 'active') ? 'closing ' + util.formatDate(listing.closing_date) : '';
-            resultHtml += (listing.status == 'closed') ? 'closed ' + util.formatDate(listing.closing_date) : '';
-            resultHtml += (listing.status == 'withdrawn') ? 'withdrawn ' + util.formatDate(listing.closing_date) : '';
+            resultHtml += 'listed ' + util.formatDate(listing.listing_date);
             resultHtml += '</div>';
             resultHtml += '</div>';
             resultHtml += '<div class="content-results-list-item-clear"></div>';
@@ -2960,8 +2939,6 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
             -->
             <span class="link" id="header-menu-bar-latest">new</span>
             <span> | </span>
-            <span class="link" id="header-menu-bar-closing-soon">closing</span>
-            <span> | </span>
             <span class="link" id="header-menu-bar-top-users">members</span>
             <span> | </span>
             <span class="link" id="header-menu-bar-faq">faq</span>
@@ -3162,9 +3139,6 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
 
                 <div class="content-form-line">Title is </div>
                 <div class="content-form-maininputline"><input id="listing-edit-title" name="title" type="text" size="40" value="type listing title here"/></div>
-                <div class="content-form-clear"></div>
-
-                <div class="content-form-line">Closes on midnight on <span id="listing-edit-closing-date"></span></div>
                 <div class="content-form-clear"></div>
 
                 <div class="content-form-line">Suggested bid of </div>
@@ -3431,15 +3405,15 @@ Reference:
                     <div class="content-results-list-item-num">4.</div>
                     <div class="content-results-list-item-upvote-filler"></div>
                     <div class="content-results-list-item-title">
-                        What happens on the listing closing date?
+                        What happens when a user accepts a bid?
                     </div>
                     <div class="content-results-list-item-clear"></div>
                     <div class="content-results-list-item-detail">
-                        The listing still accepts bids up until midnight UTC on the closing date.  At that time,
-                        the listing status is moved to closed and no further bids are accepted.  The lister
-                        and all users who made bids are then notified via email of the bid closing.  It is then
-                        the responsibility of the lister to follow up with one or more of the bidding parties
-                        for a formal legal funding agreement.
+                        When the owner of the listing accepts a bid, the lister
+                        and the users who made the bid are then notified via email of the bid acceptance.
+                        The lister will then be billed a an acceptance charge of 0.5% of the funding amount.  For instance,
+                        funding of $10,000 would have an acceptance charge of $50.
+                        It is then the responsibility of the lister to follow up with the member for a formal legal funding agreement.  
                     </div>
                 </div>
                 <div class="content-results-list-item-clear"></div>
