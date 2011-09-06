@@ -3,6 +3,7 @@ package com.startupbidder.web.servlets;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
+import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -43,10 +44,10 @@ public class SetupServlet extends HttpServlet {
 			if (currentUser == null) {
 				currentUser = service.createUser(user);
 			}
-			if (!(currentUser.getEmail().startsWith("grzegorz.nittner") || currentUser.getEmail().startsWith("johnarleyburns"))) {
-				out.println("<p>You're not authorized to use setup page!");
-				return;
-			}
+			//if (!(currentUser.getEmail().startsWith("grzegorz.nittner") || currentUser.getEmail().startsWith("johnarleyburns"))) {
+			//	out.println("<p>You're not authorized to use setup page!");
+			//	return;
+			//}
 			
 			out.println("<p>Current datastore: " + ServiceFacade.currentDAO + "</p>");
 			out.println("<form method=\"POST\" action=\"/system/set-datastore/.html\">"
@@ -55,7 +56,16 @@ public class SetupServlet extends HttpServlet {
 			out.println("<form method=\"POST\" action=\"/system/set-datastore/.html\">"
 					+ "<input name=\"type\" type=\"hidden\" value=\"" + ServiceFacade.Datastore.APPENGINE + "\"/></br>"
 					+ "<input type=\"submit\" value=\"Activate " + ServiceFacade.Datastore.APPENGINE + " datastore\"/></form>");
-			
+
+			out.println("<form method=\"POST\" action=\"/system/print-datastore/.html\">"
+					+ "<input type=\"submit\" value=\"Print datastore\"/></form>");
+
+			out.println("<form method=\"POST\" action=\"/system/clear-datastore/.html\">"
+					+ "<input type=\"submit\" value=\"Clear datastore\"/></form>");
+
+			out.println("<form method=\"POST\" action=\"/system/create-mock-datastore/.html\">"
+					+ "<input type=\"submit\" value=\"Create mock datastore\"/></form>");
+
 			out.println("<p>Google Doc credentials:</p>");
 			out.println("<form method=\"POST\" action=\"/system/set-property/.html\">"
 					+ "User: <input name=\"name\" type=\"hidden\" value=\"googledoc.user\"/><input name=\"value\" type=\"text\" value=\"" + currentUser.getEmail() + "\"/></br>"
@@ -75,6 +85,8 @@ public class SetupServlet extends HttpServlet {
 				out.println(prop.getName() + " : " + prop.getValue()
 						+ " <sup>(" + prop.getAuthor() + ", " + fmt.print(prop.getCreated().getTime()) + ")</sup></br>");
 			}
+			
+			out.println("<p>Environment type: " + System.getProperty("com.google.appengine.runtime.environment") + "</p>");
 			out.println("<p>-------------------------------</p>");
 		} catch (Exception e) {
 			e.printStackTrace();

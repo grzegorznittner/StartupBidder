@@ -8,6 +8,7 @@ import org.apache.commons.lang.StringUtils;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.Text;
 
+@SuppressWarnings("serial")
 public class ListingDTO extends AbstractDTO implements Serializable {
 
 	public enum State {NEW, CREATED, ACTIVE, CLOSED, WITHDRAWN};

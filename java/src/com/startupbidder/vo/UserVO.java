@@ -54,6 +54,8 @@ public class UserVO {
 	private int numberOfBids;
 	@JsonProperty("num_comments")
 	private int numberOfComments;
+	@JsonProperty("num_votes")
+	private int numberOfVotes;
 	@JsonProperty("status")
 	@JsonSerialize(using=LowecaseSerializer.class)
 	private String status;
@@ -176,6 +178,12 @@ public class UserVO {
 	public void setNumberOfComments(int numberOfComments) {
 		this.numberOfComments = numberOfComments;
 	}
+	public int getNumberOfVotes() {
+		return numberOfVotes;
+	}
+	public void setNumberOfVotes(int numberOfVotes) {
+		this.numberOfVotes = numberOfVotes;
+	}
 	public String getOpenId() {
 		return openId;
 	}
@@ -211,7 +219,7 @@ public class UserVO {
 				+ joined + ", lastLoggedIn=" + lastLoggedIn + ", modified="
 				+ modified + ", numberOfListings=" + numberOfListings
 				+ ", numberOfBids=" + numberOfBids + ", numberOfComments="
-				+ numberOfComments + ", status=" + status + ", votable="
-				+ votable + "]";
+				+ numberOfComments + ", numberOfVotes=" + numberOfVotes
+				+ ", status=" + status + ", votable=" + votable + "]";
 	}
 }

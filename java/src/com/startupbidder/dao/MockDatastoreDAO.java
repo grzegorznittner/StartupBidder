@@ -47,13 +47,13 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		return instance;
 	}
 	
-	Map<String, ListingDTO> lCache = new HashMap<String, ListingDTO>();
-	Map<String, VoteDTO> voteCache = new HashMap<String, VoteDTO>();
-	Map<String, CommentDTO> commentCache = new HashMap<String, CommentDTO>();
-	Map<String, BidDTO> bidCache = new HashMap<String, BidDTO>();
-	Map<String, UserDTO> userCache = new HashMap<String, UserDTO>();
-	Map<String, SystemPropertyDTO> propCache = new HashMap<String, SystemPropertyDTO>();
-	Map<String, ListingDocumentDTO> docCache = new HashMap<String, ListingDocumentDTO>();
+	public Map<String, ListingDTO> lCache = new HashMap<String, ListingDTO>();
+	public Map<String, VoteDTO> voteCache = new HashMap<String, VoteDTO>();
+	public Map<String, CommentDTO> commentCache = new HashMap<String, CommentDTO>();
+	public Map<String, BidDTO> bidCache = new HashMap<String, BidDTO>();
+	public Map<String, UserDTO> userCache = new HashMap<String, UserDTO>();
+	public Map<String, SystemPropertyDTO> propCache = new HashMap<String, SystemPropertyDTO>();
+	public Map<String, ListingDocumentDTO> docCache = new HashMap<String, ListingDocumentDTO>();
 
 	public MockDatastoreDAO() {
 		createMockUsers();
@@ -62,6 +62,18 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		generateBids();
 	}
 	
+	public String clearDatastore() {
+		return "Operation not supported for MockDatastore";
+	}
+	
+	public String printDatastoreContents() {
+		return "Operation not supported for MockDatastore";
+	}
+	
+	public String createMockDatastore() {
+		return "Operation not supported for MockDatastore";
+	}
+
 	public UserDTO getUser(String key) {
 		UserDTO user = (UserDTO)userCache.get(key);		
 		return user;

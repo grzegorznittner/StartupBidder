@@ -72,10 +72,12 @@ public abstract class ModelDrivenController {
 		
 		Object model = getModel();
 		if (model instanceof BaseResultVO) {
+			String appHost = System.getProperty("com.google.appengine.runtime.environment").startsWith("Development") ?
+					"http://localhost:" + request.getLocalPort() : "http://www.startupbidder.com";
 			if (loggedInUser != null) {
-				((BaseResultVO) model).setLogoutUrl(userService.createLogoutURL("http://www.startupbidder.com"));
+				((BaseResultVO) model).setLogoutUrl(userService.createLogoutURL(appHost));
 			} else {
-				((BaseResultVO) model).setLoginUrl(userService.createLoginURL("http://www.startupbidder.com", "startupbidder.com"));
+				((BaseResultVO) model).setLoginUrl(userService.createLoginURL(appHost, "startupbidder.com"));
 			}
 		}
 		

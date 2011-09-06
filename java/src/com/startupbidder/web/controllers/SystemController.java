@@ -28,6 +28,12 @@ public class SystemController extends ModelDrivenController {
 				return setProperty(request);
 			} else if("set-datastore".equalsIgnoreCase(getCommand(1))) {
 				return setDatastore(request);
+			} else if("clear-datastore".equalsIgnoreCase(getCommand(1))) {
+				return clearDatastore(request);
+			} else if("print-datastore".equalsIgnoreCase(getCommand(1))) {
+				return printDatastoreContents(request);
+			} else if("create-mock-datastore".equalsIgnoreCase(getCommand(1))) {
+				return createMockDatastore(request);
 			}
 		}
 		return null;
@@ -73,6 +79,48 @@ public class SystemController extends ModelDrivenController {
 			}
 			
 			headers.setRedirectUrl("/setup");
+		} else {
+			headers.setStatus(500);
+		}
+		return headers;
+	}
+
+	private HttpHeaders clearDatastore(HttpServletRequest request) {
+		HttpHeaders headers = new HttpHeadersImpl("clear-datastore");
+		
+		UserService userService = UserServiceFactory.getUserService();
+		User user = userService.getCurrentUser();
+		if (user != null) {
+			String deletedObjects = ServiceFacade.instance().clearDatastore(user);
+			model = deletedObjects;
+		} else {
+			headers.setStatus(500);
+		}
+		return headers;
+	}
+
+	private HttpHeaders printDatastoreContents(HttpServletRequest request) {
+		HttpHeaders headers = new HttpHeadersImpl("print-datastore");
+		
+		UserService userService = UserServiceFactory.getUserService();
+		User user = userService.getCurrentUser();
+		if (user != null) {
+			String printedObjects = ServiceFacade.instance().printDatastoreContents(user);
+			model = printedObjects;
+		} else {
+			headers.setStatus(500);
+		}
+		return headers;
+	}
+
+	private HttpHeaders createMockDatastore(HttpServletRequest request) {
+		HttpHeaders headers = new HttpHeadersImpl("create-mock-datastore");
+		
+		UserService userService = UserServiceFactory.getUserService();
+		User user = userService.getCurrentUser();
+		if (user != null) {
+			String printedObjects = ServiceFacade.instance().createMockDatastore(user);
+			model = printedObjects;
 		} else {
 			headers.setStatus(500);
 		}

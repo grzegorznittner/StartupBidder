@@ -1,7 +1,5 @@
 package com.startupbidder.dto;
 
-import java.io.Serializable;
-
 import com.google.appengine.api.datastore.Entity;
 
 /**
@@ -9,7 +7,8 @@ import com.google.appengine.api.datastore.Entity;
  * 
  * @author greg
  */
-public class UserStatisticsDTO extends AbstractDTO implements Serializable {
+@SuppressWarnings("serial")
+public class UserStatisticsDTO extends AbstractDTO {
 	public static final String NUM_OF_COMMENTS = "numberOfComments";
 	private int numberOfComments;
 	public static final String NUM_OF_BIDS = "numberOfBids";
@@ -41,10 +40,10 @@ public class UserStatisticsDTO extends AbstractDTO implements Serializable {
 	public static UserStatisticsDTO fromEntity(Entity entity) {
 		UserStatisticsDTO dto = new UserStatisticsDTO();
 		dto.setKey(entity.getKey());
-		dto.numberOfComments = (Integer)entity.getProperty(NUM_OF_COMMENTS);
-		dto.numberOfBids = (Integer)entity.getProperty(NUM_OF_BIDS);
-		dto.numberOfListings = (Integer)entity.getProperty(NUM_OF_LISTINGS);
-		dto.numberOfVotes = (Integer)entity.getProperty(NUM_OF_VOTES);
+		dto.numberOfComments = ((Long)entity.getProperty(NUM_OF_COMMENTS)).intValue();
+		dto.numberOfBids = ((Long)entity.getProperty(NUM_OF_BIDS)).intValue();
+		dto.numberOfListings = ((Long)entity.getProperty(NUM_OF_LISTINGS)).intValue();
+		dto.numberOfVotes = ((Long)entity.getProperty(NUM_OF_VOTES)).intValue();
 
 		return dto;
 	}

@@ -85,6 +85,18 @@ public class ServiceFacade {
 		}
 	}
 	
+	public String clearDatastore(User user) {
+		return getDAO().clearDatastore();
+	}
+
+	public String printDatastoreContents(User user) {
+		return getDAO().printDatastoreContents();
+	}
+	
+	public String createMockDatastore(User user) {
+		return getDAO().createMockDatastore();
+	}
+	
 	public UserVO getLoggedInUserData(User loggedInUser) {
 		if (loggedInUser == null) {
 			return null;
@@ -203,6 +215,7 @@ public class ServiceFacade {
 	}
 	
 	private void scheduleUpdateOfUserStatistics(String userId, UserStatsUpdateReason reason) {
+		log.log(Level.INFO, "Scheduling user stats update for '" + userId + "', reason: " + reason);
 		UserStatisticsDTO userStats = (UserStatisticsDTO)cache.get("userStats" + userId);
 		if (userStats != null) {
 			switch(reason) {
@@ -222,11 +235,14 @@ public class ServiceFacade {
 			cache.put("userStats" + userId, userStats);
 		}
 		Queue queue = QueueFactory.getDefaultQueue();
-		queue.add(TaskOptions.Builder.withUrl("/task/calculate-user-stats").param("id", userId));
+		queue.add(TaskOptions.Builder.withUrl("/task/calculate-user-stats").param("id", userId)
+				.taskName("user_stats_update_reason_" + reason ));
 	}
 	
 	public UserStatisticsDTO calculateUserStatistics(String userId) {
+		log.log(Level.INFO, "Calculating user stats for '" + userId + "'");
 		UserStatisticsDTO userStats = getDAO().updateUserStatistics(userId);
+		log.log(Level.INFO, "Calculated user stats for '" + userId + "' : " + userStats);
 		cache.put("userStats" + userId, userStats);
 		return userStats;
 	}
@@ -240,6 +256,7 @@ public class ServiceFacade {
 				userStats = calculateUserStatistics(userId);
 			}
 		}
+		log.log(Level.INFO, "User stats for '" + userId + "' : " + userStats);
 		return userStats;
 	}
 	
@@ -249,6 +266,7 @@ public class ServiceFacade {
 			user.setNumberOfBids(userStats.getNumberOfBids());
 			user.setNumberOfComments(userStats.getNumberOfComments());
 			user.setNumberOfListings(userStats.getNumberOfListings());
+			user.setNumberOfVotes(userStats.getNumberOfVotes());
 		}
 	}
 	
@@ -869,4 +887,5 @@ public class ServiceFacade {
 		}
 		return urls;
 	}
+
 }

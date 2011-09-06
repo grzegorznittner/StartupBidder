@@ -7,6 +7,7 @@ import org.apache.commons.lang.StringUtils;
 
 import com.google.appengine.api.datastore.Entity;
 
+@SuppressWarnings("serial")
 public class UserDTO extends AbstractDTO implements Serializable {
 	public enum Status {CREATED, ACTIVE, DEACTIVATED};
 

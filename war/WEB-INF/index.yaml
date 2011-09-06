@@ -1,0 +1,83 @@
+indexes:
+- kind: User
+  ancestor: no
+  properties:
+    - name: openId
+
+- kind: User
+  ancestor: no
+  properties:
+    - name: nickname
+
+- kind: Bid
+  ancestor: no
+  properties:
+    - name: user
+
+- kind: Bid
+  ancestor: no
+  properties:
+    - name: listing
+    - name: status
+    - name: placed
+      direction: desc
+
+- kind: Bid
+  ancestor: no
+  properties:
+    - name: user
+    - name: status
+    - name: placed
+      direction: desc
+
+- kind: Comment
+  ancestor: no
+  properties:
+    - name: user
+
+- kind: Comment
+  ancestor: no
+  properties:
+    - name: listing
+    - name: commentedOn
+      direction: desc
+
+- kind: Comment
+  ancestor: no
+  properties:
+    - name: user
+    - name: commentedOn
+      direction: desc
+
+- kind: Listing
+  ancestor: no
+  properties:
+    - name: user
+
+- kind: Listing
+  ancestor: no
+  properties:
+    - name: owner
+    - name: state
+    - name: listedOn
+      direction: desc
+
+- kind: Listing
+  ancestor: no
+  properties:
+    - name: state
+    - name: listedOn
+      direction: desc
+
+- kind: Listing
+  ancestor: no
+  properties:
+    - name: state
+    - name: closingOn
+      direction: desc
+
+- kind: Vote
+  ancestor: no
+  properties:
+    - name: user
+

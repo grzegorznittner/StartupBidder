@@ -5,6 +5,7 @@ import java.util.Date;
 
 import com.google.appengine.api.datastore.Entity;
 
+@SuppressWarnings("serial")
 public class RankDTO extends AbstractDTO implements Serializable {
 	public static final String RANK = "rank";
 	private float rank;

@@ -14,6 +14,21 @@ import com.startupbidder.vo.ListPropertiesVO;
 
 public interface DatastoreDAO {
 	/**
+	 * Removes all entities from datastore
+	 */
+	String clearDatastore();
+	
+	/**
+	 * Prints datastore contents
+	 */
+	String printDatastoreContents();
+
+	/**
+	 * Fills datastore with mock data
+	 */
+	String createMockDatastore();
+	
+	/**
 	 * Returns user data object by userId
 	 * 
 	 * @param userId User identifier
@@ -360,4 +375,5 @@ public interface DatastoreDAO {
 	 * Deletes document
 	 */
 	ListingDocumentDTO deleteDocument(String docId);
+
 }
