@@ -6,6 +6,7 @@ import java.util.Date;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.Text;
 
+@SuppressWarnings("serial")
 public class CommentDTO extends AbstractDTO implements Serializable {
 	public static final String LISTING = "listing";
 	private String listing;

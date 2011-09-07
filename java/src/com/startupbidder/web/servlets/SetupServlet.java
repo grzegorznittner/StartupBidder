@@ -3,6 +3,7 @@ package com.startupbidder.web.servlets;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServlet;
@@ -12,6 +13,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.Index;
+import com.google.appengine.api.datastore.Index.IndexState;
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
@@ -87,6 +91,14 @@ public class SetupServlet extends HttpServlet {
 			}
 			
 			out.println("<p>Environment type: " + System.getProperty("com.google.appengine.runtime.environment") + "</p>");
+			
+			out.println("<p>Datastore indexes:</p>");
+			Map<Index, IndexState> indexes = DatastoreServiceFactory.getDatastoreService().getIndexes();
+			for (Entry<Index, IndexState> index : indexes.entrySet()) {
+				out.println(index.getKey().getKind() + "<br/>");
+				out.println("&nbsp;&nbsp;&nbsp;&nbsp;|-- " + index.getKey().getProperties() + "<br/>");
+				out.println("&nbsp;&nbsp;&nbsp;&nbsp;|-- " + index.getValue() + "<br/>");
+			}
 			out.println("<p>-------------------------------</p>");
 		} catch (Exception e) {
 			e.printStackTrace();

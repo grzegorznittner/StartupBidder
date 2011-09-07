@@ -3,16 +3,19 @@ indexes:
   ancestor: no
   properties:
     - name: openId
+      direction: asc
 
 - kind: User
   ancestor: no
   properties:
     - name: nickname
+      direction: asc
 
 - kind: Bid
   ancestor: no
   properties:
     - name: user
+      direction: asc
 
 - kind: Bid
   ancestor: no

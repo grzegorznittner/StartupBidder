@@ -8,6 +8,7 @@ import org.apache.commons.lang.StringUtils;
 import com.google.appengine.api.blobstore.BlobKey;
 import com.google.appengine.api.datastore.Entity;
 
+@SuppressWarnings("serial")
 public class ListingDocumentDTO extends AbstractDTO implements Serializable {
 	public enum Type {BUSINESS_PLAN, PRESENTATION, FINANCIALS};
 
@@ -44,7 +45,7 @@ public class ListingDocumentDTO extends AbstractDTO implements Serializable {
 	public Entity toEntity() {
 		Entity entity = new Entity(id);
 		entity.setProperty(BLOB, this.blob);
-		entity.setProperty(TYPE, this.type != null ? this.type.toString() : null);
+		entity.setProperty(TYPE, this.type != null ? this.type.toString() : Type.BUSINESS_PLAN.toString());
 		entity.setProperty(CREATED, this.created);		
 		return entity;
 	}

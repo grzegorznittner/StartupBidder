@@ -1,5 +1,6 @@
 <project name="StartupBidder.com">
   <property environment="env"/>
+  <echo message="\'APPENGINE_HOME\'=${env.APPENGINE_HOME}"/>
   <import file="${env.APPENGINE_HOME}/config/user/ant-macros.xml" />
 	
   <target name="check-appengine-home" unless="env.APPENGINE_HOME">
@@ -134,6 +135,10 @@
   <target name="clean" depends="check-appengine-home" description="Cleans project">
     <delete includeEmptyDirs="true" failonerror="false">
       <fileset dir="war/WEB-INF/classes"/>
+      <fileset dir="war/WEB-INF/lib">
+    	<include name="appengine*" />
+      	<include name="jsr107*" />
+      </fileset>
     </delete>
   </target>
 

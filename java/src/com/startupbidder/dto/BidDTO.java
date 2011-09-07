@@ -7,6 +7,7 @@ import org.apache.commons.lang.StringUtils;
 
 import com.google.appengine.api.datastore.Entity;
 
+@SuppressWarnings("serial")
 public class BidDTO extends AbstractDTO implements Serializable {
 	public enum FundType {SYNDICATE, SOLE_INVESTOR, COMMON, PREFERRED, NOTE};
 	public enum Status { ACTIVE, WITHDRAWN };
@@ -163,8 +164,8 @@ public class BidDTO extends AbstractDTO implements Serializable {
 
 	public Entity toEntity() {
 		Entity bid = new Entity(this.id);
-		bid.setProperty(FUND_TYPE, fundType != null ? fundType.toString() : null);
-		bid.setProperty(STATUS, status != null ? status.toString() : null);
+		bid.setProperty(FUND_TYPE, fundType != null ? fundType.toString() : FundType.COMMON.toString());
+		bid.setProperty(STATUS, status != null ? status.toString() : Status.ACTIVE.toString());
 		bid.setProperty(LISTING, listing);
 		bid.setProperty(PERCENT_OF_COMPANY, percentOfCompany);
 		bid.setProperty(PLACED, placed);

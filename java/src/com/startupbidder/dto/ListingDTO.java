@@ -148,7 +148,7 @@ public class ListingDTO extends AbstractDTO implements Serializable {
 		listing.setProperty(LISTED_ON, this.listedOn);
 		listing.setProperty(NAME, this.name);
 		listing.setProperty(OWNER, this.owner);
-		listing.setProperty(STATE, this.state != null ? this.state.toString() : null);
+		listing.setProperty(STATE, this.state != null ? this.state.toString() : State.NEW.toString());
 		listing.setProperty(SUGGESTED_AMOUNT, this.suggestedAmount);
 		listing.setProperty(SUGGESTED_PERCENTAGE, this.suggestedPercentage);
 		listing.setProperty(SUGGESTED_VALUATION, this.suggestedValuation);

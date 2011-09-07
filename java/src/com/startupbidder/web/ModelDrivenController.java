@@ -1,6 +1,7 @@
 package com.startupbidder.web;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -18,6 +19,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
+import com.google.appengine.api.utils.SystemProperty;
 import com.startupbidder.vo.BaseResultVO;
 import com.startupbidder.vo.ListPropertiesVO;
 import com.startupbidder.vo.UserVO;
@@ -58,7 +60,7 @@ public abstract class ModelDrivenController {
 		
 		command = decomposeRequest(request.getPathInfo());
 		
-		HttpHeaders headers;
+		HttpHeaders headers = null;
 		try {
 			headers = executeAction(request);
 			if (headers == null) {
@@ -72,7 +74,7 @@ public abstract class ModelDrivenController {
 		
 		Object model = getModel();
 		if (model instanceof BaseResultVO) {
-			String appHost = System.getProperty("com.google.appengine.runtime.environment").startsWith("Development") ?
+			String appHost = SystemProperty.environment.value() == SystemProperty.Environment.Value.Development ?
 					"http://localhost:" + request.getLocalPort() : "http://www.startupbidder.com";
 			if (loggedInUser != null) {
 				((BaseResultVO) model).setLogoutUrl(userService.createLogoutURL(appHost));
@@ -97,6 +99,18 @@ public abstract class ModelDrivenController {
 		}
 	}
 
+	public void generateHtml(HttpServletResponse response) {
+		PrintWriter writer;
+		try {
+			writer = response.getWriter();
+			writer.println("<html><head><title>Startupbidder.com</title></head><body>");
+			writer.println(getModel());
+			writer.println("</body></html>");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	/**
 	 * Returns command encoded in the path info.
 	 * eg. for request uri: /listings/top.json?maxItems=5&cursor=qerqsdfgsdfgh43t6dsfhg

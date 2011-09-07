@@ -168,20 +168,20 @@ public class UserDTO extends AbstractDTO implements Serializable {
 	@Override
 	public Entity toEntity() {
 		Entity user = new Entity(id);
-		user.setProperty(OPEN_ID, this.openId);
-		user.setProperty(EMAIL, this.email);
+		user.setProperty(OPEN_ID, StringUtils.defaultIfEmpty(this.openId, ""));
+		user.setProperty(EMAIL, StringUtils.defaultIfEmpty(this.email, ""));
 		user.setProperty(FACEBOOK, this.facebook);
-		user.setProperty(NAME, this.name);
+		user.setProperty(NAME, StringUtils.defaultIfEmpty(this.name, ""));
 		user.setProperty(INVESTOR, this.investor);
 		user.setProperty(JOINED, this.joined);
 		user.setProperty(LAST_LOGGED_IN, this.lastLoggedIn);
 		user.setProperty(LINKEDIN, this.linkedin);
 		user.setProperty(MODIFIED, this.modified);
-		user.setProperty(NAME, this.nickname);
+		user.setProperty(NICKNAME, StringUtils.defaultIfEmpty(this.nickname, ""));
 		user.setProperty(ORGANIZATION, this.organization);
 		user.setProperty(TITLE, this.title);
 		user.setProperty(TWITTER, this.twitter);
-		user.setProperty(STATUS, this.status != null ? this.status.toString() : null);
+		user.setProperty(STATUS, this.status != null ? this.status.toString() : Status.CREATED.toString());
 		return user;
 	}
 	

@@ -70,7 +70,7 @@ public class FrontController extends HttpServlet {
 			if (headers.apply(request, response, controller.getModel()) != null) {
 				if (request.getRequestURI().endsWith(".html")) {
 					// default is plain/text
-					controller.generateJson(response);
+					controller.generateHtml(response);
 				} else {
 					// default is JSON
 					response.setContentType("application/json");

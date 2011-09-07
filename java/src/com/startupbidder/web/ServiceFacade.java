@@ -55,7 +55,7 @@ public class ServiceFacade {
 	private static ServiceFacade instance;
 	
 	public enum Datastore {MOCK, APPENGINE};
-	public static Datastore currentDAO = Datastore.MOCK;
+	public static Datastore currentDAO = Datastore.APPENGINE;
 
 	private enum UserStatsUpdateReason {NEW_BID, NEW_COMMENT, NEW_LISTING, NEW_VOTE};
 	
