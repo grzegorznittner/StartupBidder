@@ -44,6 +44,16 @@ $.extend({
 });
 
 /*
+ * jQuery hashchange event - v1.3 - 7/21/2010
+ * http://benalman.com/projects/jquery-hashchange-plugin/
+ * 
+ * Copyright (c) 2010 "Cowboy" Ben Alman
+ * Dual licensed under the MIT and GPL licenses.
+ * http://benalman.com/about/license/
+ */
+(function($,e,b){var c="hashchange",h=document,f,g=$.event.special,i=h.documentMode,d="on"+c in e&&(i===b||i>7);function a(j){j=j||location.href;return"#"+j.replace(/^[^#]*#?(.*)$/,"$1")}$.fn[c]=function(j){return j?this.bind(c,j):this.trigger(c)};$.fn[c].delay=50;g[c]=$.extend(g[c],{setup:function(){if(d){return false}$(f.start)},teardown:function(){if(d){return false}$(f.stop)}});f=(function(){var j={},p,m=a(),k=function(q){return q},l=k,o=k;j.start=function(){p||n()};j.stop=function(){p&&clearTimeout(p);p=b};function n(){var r=a(),q=o(m);if(r!==m){l(m=r,q);$(e).trigger(c)}else{if(q!==m){location.href=location.href.replace(/#.*/,"")+q}}p=setTimeout(n,$.fn[c].delay)}$.browser.msie&&!d&&(function(){var q,r;j.start=function(){if(!q){r=$.fn[c].src;r=r&&r+a();q=$('<iframe tabindex="-1" title="empty"/>').hide().one("load",function(){r||l(a());n()}).attr("src",r||"javascript:0").insertAfter("body")[0].contentWindow;h.onpropertychange=function(){try{if(event.propertyName==="title"){q.document.title=h.title}}catch(s){}}}};j.stop=k;o=function(){return a(q.location.href)};l=function(v,s){var u=q.document,t=$.fn[c].domain;if(v!==s){u.title=h.title;u.open();t&&u.write('<script>document.domain="'+t+'"<\/script>');u.close();q.location.hash=v}}})();return j})()})(jQuery,this);
+
+/*
  * This document is licensed as free software under the terms of the
  * MIT License: <a href="http://www.opensource.org/licenses/mit-license.php" title="http://www.opensource.org/licenses/mit-license.php">http://www.opensource.org/licenses/mit-license.php</a>
  *
@@ -686,6 +696,9 @@ $(function(){
                 }
             }
         };
+        self.displayFaq = function() {
+            self.displayPage('faq');
+        };
         self.constructNumericDate = function(year, month, day) {
             var date = '' + year + (month < 10 ? '0' : '') + month + (day < 10 ? '0' : '') + day;
             return date;
@@ -765,6 +778,20 @@ $(function(){
                 resizerCallback(self.guessWidth());
             });
         }
+        self.objectMapper = { 'util': self, 'backend': backend, 'uploader': uploader, 'header': header,
+            'searchListings': searchListings, 'searchUsers': searchUsers,
+            'profiles': profiles, 'listings': listings, 'comments': comments, 'bids': bids };
+        self.hashchange = function() { // use java eval-type statement to respond to history events
+            var hash = location.hash;
+            var methodCall = hash.replace(/^#/,'') || 'searchListings.doTopSearch';
+            var objectStr = methodCall.replace(/\..*$/,'');
+            var methodStr = methodCall.replace(/^.*\./,'');
+            console.log(methodCall);
+            var object = self.objectMapper[objectStr] || searchListings;
+            console.log(objectStr);
+            console.log(methodStr);
+            object[methodStr]();
+        };
         return self;
     };
 
@@ -942,6 +969,7 @@ $(function(){
         var self = {};
         self.setup = function() {
             $('#header-logo,#header-title-link').unbind().bind('click', function(){
+                location.hash = '#searchListings.doSearch';
                 searchListings.doSearch();
             });
             $('#header-menu-command-login').unbind().bind('click', function(){
@@ -951,10 +979,12 @@ $(function(){
                 user.logout();
             });
             $('#header-menu-bar-submit').unbind().bind('click', function(){
+                location.hash = '#listings.newListing';
                 listings.newListing();
             });
             $('#header-menu-bar-top').unbind().bind('click', function(){
-                searchListings.doSearch({search_type:'top'});
+                location.hash = '#searchListings.doTopSearch';
+                searchListings.doTopSearch();
             });
 //            $('#header-menu-bar-valuation').unbind().bind('click', function(){
 //                searchListings.doSearch({search_type:'valuation'});
@@ -969,13 +999,16 @@ $(function(){
 //                searchListings.doSearch({search_type:'discussed'});
 //            });
             $('#header-menu-bar-latest').unbind().bind('click', function(){
-                searchListings.doSearch({search_type:'latest'});
+                location.hash = '#searchListings.doLatestSearch';
+                searchListings.doLatestSearch();
             });
             $('#header-menu-bar-top-users').unbind().bind('click', function(){
-                searchUsers.doSearch({search_type:'top'});
+                location.hash = '#searchUsers.doTopSearch';
+                searchUsers.doTopSearch();
             });
             $('#header-menu-bar-faq').unbind().bind('click', function(){
-                util.displayPage('faq');
+                location.hash = '#util.displayFaq';
+                util.displayFaq();
             });
         };
         self.displayUser = function(userobj) {
@@ -1059,6 +1092,12 @@ $(function(){
                     searchListings.doSearch({search_type:'keyword'});
                 }
             });
+        };
+        self.doTopSearch = function() {
+            searchListings.doSearch({search_type:'top'});
+        };
+        self.doLatestSearch = function() {
+            searchListings.doSearch({search_type:'latest'});
         };
         self.doSearch = function(args) {
             args = args || {};
@@ -1269,6 +1308,9 @@ $(function(){
                     searchUsers.doSearch({search_type:'keyword'});
                 }
             });
+        };
+        self.doTopSearch = function() {
+            searchListings.doSearch({search_type:'top'});
         };
         self.doSearch = function(args) {
             args = args || {};
@@ -2404,6 +2446,8 @@ $(function(){
         util.applyResizer(header.resizeStyles);
         $('#mainbody').addTouch(); // enable for touch devices
         searchListings.doSearch();
+        $(window).hashchange(util.hashchange);
+        $(window).hashchange();
     });
 });
 </script>
