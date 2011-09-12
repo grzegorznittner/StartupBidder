@@ -677,6 +677,10 @@ $(function(){
         var self = {};
         self.keyCache = {};
         self.pages = ['loading', 'searchlistings', 'searchusers', 'comments', 'profile', 'listing', 'bids', 'login', 'faq'];
+        self.objectMapper = {};
+        self.setup = function() {
+            self.createObjectMapper();
+        };
         self.displayPage = function(page) {
             var i;
             var sel;
@@ -778,19 +782,28 @@ $(function(){
                 resizerCallback(self.guessWidth());
             });
         }
-        self.objectMapper = { 'util': self, 'backend': backend, 'uploader': uploader, 'header': header,
-            'searchListings': searchListings, 'searchUsers': searchUsers,
-            'profiles': profiles, 'listings': listings, 'comments': comments, 'bids': bids };
+        self.createObjectMapper = function() {
+            self.objectMapper = { 'util': self, 'backend': backend, 'uploader': uploader, 'header': header,
+                'searchListings': searchListings, 'searchUsers': searchUsers,
+                'profiles': profiles, 'listings': listings, 'comments': comments, 'bids': bids };
+        };
+        self.setHash = function(objectName, methodName, argArray) {
+            var methodCall = objectName + '.' + methodName;
+            var argStr = argArray ? $.JSON.encode(argArray) : '';
+            var hashStr = '#' + methodCall + '|' + argStr;
+            location.hash = hashStr;
+        };
         self.hashchange = function() { // use java eval-type statement to respond to history events
             var hash = location.hash;
-            var methodCall = hash.replace(/^#/,'') || 'searchListings.doTopSearch';
+            var methodCall = hash.replace(/^#/,'') || 'searchListings.doTopSearch|';
             var objectStr = methodCall.replace(/\..*$/,'');
-            var methodStr = methodCall.replace(/^.*\./,'');
-            console.log(methodCall);
+            var methodStr = methodCall.replace(/^.*\./,'').replace(/\|.*$/,'');
+            var methodArgsStr = methodCall.replace(/^.*\|/,'');
+            var methodArgs = methodArgsStr != '' ? $.JSON.decode(methodArgsStr) : [];
+            console.log('call:', methodCall, 'obj:', objectStr, 'method:', methodStr, 'argstr:', methodArgsStr, 'args:', methodArgs);
+            // grab method args and pass
             var object = self.objectMapper[objectStr] || searchListings;
-            console.log(objectStr);
-            console.log(methodStr);
-            object[methodStr]();
+            object[methodStr](methodArgs);
         };
         return self;
     };
@@ -814,6 +827,7 @@ $(function(){
             document.location = self.logout_url;
         };
         self.generateUserSnippetHtml = function(i, userjson) {
+            console.log('genuser', i, userjson);
             var days_ago = userjson.days_ago !== undefined ? userjson.days_ago : 0;
             var resultHtml = '';
             var evenOdd;
@@ -855,12 +869,15 @@ $(function(){
             resultHtml += '<div class="content-results-list-item-clear"></div>';
             return resultHtml;
        };
+       self.showUserProfile = function(profile_id, index) {
+            var errorCallback = function () { $('#user-search-results-list-item-message-'+index).html('unable to retrieve profile'); };
+            profiles.showProfile(profile_id, errorCallback);
+       };
        self.bindUserSnippet = function(i, userjson) {
             var upvote_item = document.getElementById('user-search-results-list-item-upvote-'+i);
             var item_num = i;
             $('#user-search-results-list-item-name-'+i).data({index: i, profile_id: userjson.profile_id}).unbind().bind('click', function(){
-                var errorCallback = function () { $('#user-search-results-list-item-message-'+i).html('unable to retrieve profile'); };
-                backend.getProfile($(this).data('profile_id'), profiles.displayProfile, errorCallback);
+                self.showUserProfile($(this).data('profile_id'), $(this).data('index'));
             });           
             $('#user-search-results-list-item-listings-'+i).data({index: i, profile_id: userjson.profile_id}).unbind().bind('click', function(){
                 var errorCallback = function () { $('#user-search-results-list-item-message-'+i).html('unable to retrieve listings'); };
@@ -969,7 +986,7 @@ $(function(){
         var self = {};
         self.setup = function() {
             $('#header-logo,#header-title-link').unbind().bind('click', function(){
-                location.hash = '#searchListings.doSearch';
+                util.setHash('searchListings', 'doSearch');
                 searchListings.doSearch();
             });
             $('#header-menu-command-login').unbind().bind('click', function(){
@@ -979,11 +996,11 @@ $(function(){
                 user.logout();
             });
             $('#header-menu-bar-submit').unbind().bind('click', function(){
-                location.hash = '#listings.newListing';
+                util.setHash('listings', 'newListing');
                 listings.newListing();
             });
             $('#header-menu-bar-top').unbind().bind('click', function(){
-                location.hash = '#searchListings.doTopSearch';
+                util.setHash('searchListings', 'doTopSearch');
                 searchListings.doTopSearch();
             });
 //            $('#header-menu-bar-valuation').unbind().bind('click', function(){
@@ -999,24 +1016,29 @@ $(function(){
 //                searchListings.doSearch({search_type:'discussed'});
 //            });
             $('#header-menu-bar-latest').unbind().bind('click', function(){
-                location.hash = '#searchListings.doLatestSearch';
+                util.setHash('searchListings', 'doLatestSearch');
                 searchListings.doLatestSearch();
             });
             $('#header-menu-bar-top-users').unbind().bind('click', function(){
-                location.hash = '#searchUsers.doTopSearch';
+                util.setHash('searchUsers', 'doTopSearch');
                 searchUsers.doTopSearch();
             });
             $('#header-menu-bar-faq').unbind().bind('click', function(){
-                location.hash = '#util.displayFaq';
+                util.setHash('util', 'displayFaq');
                 util.displayFaq();
             });
+        };
+        self.showHeaderProfile = function(profile_id) {
+            console.log('showHeaderProfile profile_id=', profile_id);
+            var errorCallback = function () { $('#header-menu-message').html('unable to retrieve user'); };
+            profiles.showProfile(profile_id, errorCallback);
         };
         self.displayUser = function(userobj) {
             if (userobj.profile && userobj.logout_url) {
                 $('#header-menu-name-login').hide();
                 $('#header-menu-name-username').html(userobj.profile.username).data('profile_id',userobj.profile.profile_id).show().unbind().bind('click', function(){
-                    var errorCallback = function () { $('#header-menu-message').html('unable to retrieve user'); };
-                    backend.getProfile($(this).data('profile_id'), profiles.displayProfile, errorCallback);
+                    util.setHash('header', 'showHeaderProfile', [$(this).data('profile_id')]);
+                    self.showHeaderProfile($(this).data('profile_id'));
                 });
                 $('#header-menu-command-login').hide();
                 $('#header-menu-command-logout').show();
@@ -1094,10 +1116,10 @@ $(function(){
             });
         };
         self.doTopSearch = function() {
-            searchListings.doSearch({search_type:'top'});
+            self.doSearch({search_type:'top'});
         };
         self.doLatestSearch = function() {
-            searchListings.doSearch({search_type:'latest'});
+            self.doSearch({search_type:'latest'});
         };
         self.doSearch = function(args) {
             args = args || {};
@@ -1310,7 +1332,7 @@ $(function(){
             });
         };
         self.doTopSearch = function() {
-            searchListings.doSearch({search_type:'top'});
+            self.doSearch({search_type:'top'});
         };
         self.doSearch = function(args) {
             args = args || {};
@@ -1418,7 +1440,11 @@ $(function(){
             var errorCallback = function() { $('#profile-save-message').attr('class', 'attention').html('unable to save profile'); };
             backend.saveProfile(profile, callback, errorCallback);
         };
+        self.showProfile = function(profile_id, errorCallback) {
+            backend.getProfile(profile_id, self.displayProfile, errorCallback);
+        };
         self.displayProfile = function(profile, msgClass, msgText){
+            console.log('profile: ', profile);
             $('#profile-save-message').attr('class', (msgClass || 'attention')).html(msgText || '');
             util.displayPage('profile');
             if (profile) {
@@ -1720,11 +1746,14 @@ $(function(){
             var displayVal = valuation ? util.addCommas(valuation) : '';
             $('#listing-edit-suggested-val').html(displayVal);
         };
+        self.showListingProfile = function(profile_id, index) {
+            var errorCallback = function() { $('#content-results-list-item-message-'+index).attr('class', 'attention').html('unable to get profile'); };
+            profiles.showProfile(profile_id, errorCallback);
+        };
         self.bindListingSnippet = function(i, listing) {
             var upvote_item = document.getElementById('content-results-list-item-upvote-'+i);
             $('#content-results-list-item-profile-'+i).data({index: i, profile_id: listing.profile_id}).unbind().bind('click', function(){
-                var errorCallback = function() { $('#content-results-list-item-message-'+$(this).data('index')).attr('class', 'attention').html('unable to get profile'); };
-                backend.getProfile($(this).data('profile_id'), profiles.displayProfile, errorCallback);
+                self.showListingProfile($(this).data('profile_id'), $(this).data('index'));
             });           
             if (listing.listing_id) {
                 $('#content-results-list-item-title-'+i).data({index: i, listing_id: listing.listing_id}).unbind().bind('click', function(){
@@ -1941,8 +1970,7 @@ $(function(){
             for (var i = 0; i < comments.length; i++) {
                 comment = comments[i];
                 $('#comments-item-profile-'+i).data({index:i,profile_id:comment.profile_id}).unbind().bind('click', function(){
-                    var errorCallback = function() { $('#comments-item-message-'+$(this).data('index')).attr('class', 'attention').html('unable to get profile'); };
-                    backend.getProfile($(this).data('profile_id'), profiles.displayProfile, errorCallback);
+                    self.showCommentProfile($(this).data('profile_id'), $(this).data('index'));
                 });           
                 $('#comments-item-listing-'+i).data({index:i,listing_id:comment.listing_id}).unbind().bind('click', function(){
                     var errorCallback = function() { $('#comments-item-message-'+$(this).data('index')).attr('class', 'attention').html('unable to get listing'); };
@@ -1959,6 +1987,10 @@ $(function(){
                         listing_id: (results.listing ? results.listing.listing_id : '')})
                     .unbind().bind('click', deleteComment);
             }
+        };
+        self.showCommentProfile = function(profile_id, index) {
+            var errorCallback = function() { $('#comments-item-message-'+index).attr('class', 'attention').html('unable to get profile'); };
+            profiles.showProfile(profile_id, errorCallback);
         };
         self.generateResultHtml = function(i, comment, listing, profile) {
             var resultHtml = '';
@@ -2184,8 +2216,7 @@ $(function(){
             for (var i = 0; i < bids.length; i++) {
                 bid = bids[i];
                 $('#bids-item-profile-'+i).data({index:i,profile_id:bid.profile_id}).unbind().bind('click', function(){
-                    var errorCallback = function() { $('#bids-item-message-'+$(this).data('index')).attr('class', 'attention').html('unable to get profile'); };
-                    backend.getProfile($(this).data('profile_id'), profiles.displayProfile, errorCallback);
+                    self.showBidProfile($(this).data('profile_id'), $(this).data('index'));
                 });           
                 $('#bids-item-listing-'+i).data({index:i,listing_id:bid.listing_id}).unbind().bind('click', function(){
                     var errorCallback = function() { $('#bids-item-message-'+$(this).data('index')).attr('class', 'attention').html('unable to get listing'); };
@@ -2203,6 +2234,10 @@ $(function(){
                         .bind('click', withdrawBid);
                 }
             }
+        };
+        self.showBidProfile = function(profile_id, index) {
+            var errorCallback = function() { $('#bids-item-message-'+index).attr('class', 'attention').html('unable to get profile'); };
+            profiles.showProfile(profile_id, errorCallback);
         };
         self.formatBidType = function(bid_type) {
             var visualMapping = {
@@ -2440,14 +2475,15 @@ $(function(){
     var comments = new Comments();
     var bids = new Bids();
     $(document).ready(function(){
+        util.setup();
         header.setup();
         searchListings.setup();
         searchUsers.setup();
         util.applyResizer(header.resizeStyles);
         $('#mainbody').addTouch(); // enable for touch devices
-        searchListings.doSearch();
         $(window).hashchange(util.hashchange);
         $(window).hashchange();
+        searchListings.doSearch();
     });
 });
 </script>
