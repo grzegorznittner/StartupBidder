@@ -813,7 +813,6 @@ $(function(){
             var methodStr = methodCall.replace(/^.*\./,'').replace(/\|.*$/,'');
             var methodArgsStr = methodCall.replace(/^.*\|/,'');
             var methodArgs = methodArgsStr != '' ? $.JSON.decode(methodArgsStr) : [];
-            console.log('call:', methodCall, 'obj:', objectStr, 'method:', methodStr, 'argstr:', methodArgsStr, 'args:', methodArgs);
             self.manualCall(objectStr, methodStr, methodArgs);
         };
         return self;
@@ -838,7 +837,6 @@ $(function(){
             document.location = self.logout_url;
         };
         self.generateUserSnippetHtml = function(i, userjson) {
-            console.log('genuser', i, userjson);
             var days_ago = userjson.days_ago !== undefined ? userjson.days_ago : 0;
             var resultHtml = '';
             var evenOdd;
@@ -1043,7 +1041,6 @@ $(function(){
             });
         };
         self.showHeaderProfile = function(profile_id) {
-            console.log('showHeaderProfile profile_id=', profile_id);
             var errorCallback = function () { $('#header-menu-message').html('unable to retrieve user'); };
             profiles.showProfile(profile_id, errorCallback);
         };
@@ -1463,7 +1460,6 @@ $(function(){
             backend.getProfile(profile_id, self.displayProfile, errorCallback);
         };
         self.displayProfile = function(profile, msgClass, msgText){
-            console.log('profile: ', profile);
             $('#profile-save-message').attr('class', (msgClass || 'attention')).html(msgText || '');
             util.displayPage('profile');
             if (profile) {
@@ -1898,13 +1894,9 @@ $(function(){
         self.saveComment = function(listing_id, profile_id){
             var commentText = $('#comment-textarea').val();
             var callback = function (comment) {
-                var keepComment = true;
-                if (comment) {
-                    $('#comment-save-message').attr('class', 'confirmed').html('comment saved');
-                    keepComment = false;
-                }
+                var keepComment = comment ? false : true;
                 var callback2 = function(results) {
-                    self.displayResults(results, keepComment);
+                    self.displayResults(results, keepComment, 'confirmed', 'comment saved');
                 }
                 var errorCallback2 = function() { $('#comments-message').attr('class', 'attention').html('unable to get comments'); util.displayPage('comments'); };
                 backend.commentsForListing(listing_id, callback2, keepComment, errorCallback2);
@@ -1917,15 +1909,15 @@ $(function(){
             $('#comment-textarea').val('');
             $('#comments-listing-snippet').html('Comments:');
             $('#comment-loggedin-add').hide();
-            $('#comment-not-loggedin-msg').hide();
+            $('#comment-not-loggedin').hide();
             $('#comments-content-results-list').html(resultsHtml);
         };
-        self.displayResults = function(results, keepComment){
+        self.displayResults = function(results, keepComment, msgClass, msgText){
             $('#comments-message').html('');
+            $('#comment-save-message').attr('class', (msgClass || 'attention')).html(msgText || '');
             if (!keepComment) {
                 $('#comment-textarea').val('');
             }
-            $('#comment-save-message').attr('class', 'attention').html('');
             util.displayPage('comments');
             var comments_profile = results ? results.profile : null;
             if (comments_profile) {
@@ -1962,7 +1954,7 @@ $(function(){
                 }
                 if (profile) {
                     $('#comment-loggedin-add').show();
-                    $('#comment-not-loggedin-msg').hide();
+                    $('#comment-not-loggedin').hide();
                     $('#comment-save-button').show().unbind().data('listing_id',listing.listing_id).data('profile_id',profile.profile_id).bind('click',function(e){
                         e.preventDefault();
                         self.saveComment($(this).data('listing_id'), $(this).data('profile_id'));
@@ -1970,14 +1962,14 @@ $(function(){
                 }
                 else {
                     $('#comment-loggedin-add').hide();
-                    $('#comment-not-loggedin-msg').show();
+                    $('#comment-not-loggedin').show();
                 }
             }
             else {
                 $('#comments-listing-header').hide();
                 $('#comments-listing-snippet').html('Comments:');
                 $('#comment-loggedin-add').hide();
-                $('#comment-not-loggedin-msg').hide();
+                $('#comment-not-loggedin').hide();
             }
             // bind results
             if (!comments || comments.length == 0) {
@@ -3135,7 +3127,7 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
         </div>
         </form>
         <div class="content-form">
-            <div class="content-form-line"><span class="attention" id="comment-not-logged-in-msg">You must be logged in to comment</span></div>
+            <div class="content-form-line"><span class="attention" id="comment-not-loggedin">You must be logged in to comment</span></div>
             <div class="content-form-clear"></div>
         </div>
         <div class="content-results-list-item-clear"></div>
