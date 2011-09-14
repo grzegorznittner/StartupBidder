@@ -56,7 +56,8 @@ public class FrontController extends HttpServlet {
 			log.log(Level.INFO, "Created controller: " + controller.getClass().getCanonicalName());
 			headers = ((ModelDrivenController)controller).execute(request);
 			if (controller.getModel() != null) {
-				log.log(Level.INFO, "Returned object: " + controller.getModel().getClass().getCanonicalName());
+				log.log(Level.INFO, "Returned object class: " + controller.getModel().getClass().getCanonicalName());
+				log.log(Level.INFO, "Returned object: " + controller.getModel().toString());
 			} else {
 				log.log(Level.SEVERE, "Returned object is NULL");
 			}
@@ -75,7 +76,7 @@ public class FrontController extends HttpServlet {
 					// default is JSON
 					response.setContentType("application/json");
 					controller.generateJson(response);
-				}		
+				}
 			}
 		}		
 	}

@@ -1,6 +1,5 @@
 package com.startupbidder.web;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -24,12 +23,14 @@ import com.google.appengine.api.taskqueue.Queue;
 import com.google.appengine.api.taskqueue.QueueFactory;
 import com.google.appengine.api.taskqueue.TaskOptions;
 import com.google.appengine.api.users.User;
+import com.google.appengine.api.utils.SystemProperty;
 import com.startupbidder.dao.AppEngineDatastoreDAO;
 import com.startupbidder.dao.DatastoreDAO;
 import com.startupbidder.dao.MockDatastoreDAO;
 import com.startupbidder.dto.BidDTO;
 import com.startupbidder.dto.ListingDTO;
 import com.startupbidder.dto.ListingDocumentDTO;
+import com.startupbidder.dto.ListingStatisticsDTO;
 import com.startupbidder.dto.UserDTO;
 import com.startupbidder.dto.UserStatisticsDTO;
 import com.startupbidder.dto.VoToDtoConverter;
@@ -57,9 +58,12 @@ public class ServiceFacade {
 	public enum Datastore {MOCK, APPENGINE};
 	public static Datastore currentDAO = Datastore.APPENGINE;
 
-	private enum UserStatsUpdateReason {NEW_BID, NEW_COMMENT, NEW_LISTING, NEW_VOTE};
+	private enum UserStatsUpdateReason {NEW_BID, NEW_COMMENT, NEW_LISTING, NEW_VOTE, NONE};
+	private enum ListingStatsUpdateReason {NEW_BID, NEW_COMMENT, NEW_VOTE, NONE};
 	
 	private Cache cache;
+	private static final String USER_STATISTICS_KEY = "userStats";
+	private static final String LISTING_STATISTICS_KEY = "listingStats";
 	
 	public static ServiceFacade instance() {
 		if (instance == null) {
@@ -216,7 +220,7 @@ public class ServiceFacade {
 	
 	private void scheduleUpdateOfUserStatistics(String userId, UserStatsUpdateReason reason) {
 		log.log(Level.INFO, "Scheduling user stats update for '" + userId + "', reason: " + reason);
-		UserStatisticsDTO userStats = (UserStatisticsDTO)cache.get("userStats" + userId);
+		UserStatisticsDTO userStats = (UserStatisticsDTO)cache.get(USER_STATISTICS_KEY + userId);
 		if (userStats != null) {
 			switch(reason) {
 			case NEW_BID:
@@ -231,8 +235,11 @@ public class ServiceFacade {
 			case NEW_VOTE:
 				userStats.setNumberOfVotes(userStats.getNumberOfVotes() + 1);
 				break;
+			default:
+				// reason can be also null
+				break;
 			}
-			cache.put("userStats" + userId, userStats);
+			cache.put(USER_STATISTICS_KEY + userId, userStats);
 		}
 		Queue queue = QueueFactory.getDefaultQueue();
 		queue.add(TaskOptions.Builder.withUrl("/task/calculate-user-stats").param("id", userId)
@@ -243,12 +250,12 @@ public class ServiceFacade {
 		log.log(Level.INFO, "Calculating user stats for '" + userId + "'");
 		UserStatisticsDTO userStats = getDAO().updateUserStatistics(userId);
 		log.log(Level.INFO, "Calculated user stats for '" + userId + "' : " + userStats);
-		cache.put("userStats" + userId, userStats);
+		cache.put(USER_STATISTICS_KEY + userId, userStats);
 		return userStats;
 	}
 	
 	private UserStatisticsDTO getUserStatistics(String userId) {
-		UserStatisticsDTO userStats = (UserStatisticsDTO)cache.get("userStats" + userId);
+		UserStatisticsDTO userStats = (UserStatisticsDTO)cache.get(USER_STATISTICS_KEY + userId);
 		if (userStats == null) {
 			userStats = getDAO().getUserStatistics(userId);
 			if (userStats == null) {
@@ -274,30 +281,12 @@ public class ServiceFacade {
 		// set user data
 		UserDTO user = getDAO().getUser(listing.getOwner());
 		listing.setOwnerName(user != null ? user.getNickname() : "<<unknown>>");
-		// set number of comments and number of votes
-		listing.setNumberOfComments(getDAO().getActivity(listing.getId()));
-		listing.setNumberOfVotes(getDAO().getNumberOfVotesForListing(listing.getId()));
 		
-		// calculate median for bids and set total number of bids
-		List<Integer> values = new ArrayList<Integer>();
-		List<BidDTO> bids = getDAO().getBidsForListing(listing.getId());
-		for (BidDTO bid : bids) {
-			values.add(bid.getValue());
-		}
-		Collections.sort(values);
-		int median = 0;
-		if (values.size() == 0) {
-			median = 0;
-		} else if (values.size() == 1) {
-			median = values.get(0);
-		} else if (values.size() % 2 == 1) {
-			median = values.get(values.size() / 2 + 1);
-		} else {
-			median = (values.get(values.size() / 2 - 1) + values.get(values.size() / 2)) / 2;
-		}
-		log.log(Level.INFO, "Values for '" + listing.getId() + "': " + values + ", median: " + median);
-		listing.setMedianValuation(median);
-		listing.setNumberOfBids(bids.size());
+		ListingStatisticsDTO listingStats = getListingStatistics(listing.getId());
+		listing.setNumberOfBids(listingStats.getNumberOfBids());
+		listing.setNumberOfComments(listingStats.getNumberOfComments());
+		listing.setNumberOfVotes(listingStats.getNumberOfVotes());
+		listing.setMedianValuation((int)listingStats.getValuation());
 		
 		// calculate daysAgo and daysLeft
 		Days daysAgo = Days.daysBetween(new DateTime(listing.getListedOn()), new DateTime());
@@ -311,6 +300,52 @@ public class ServiceFacade {
 		} else {
 			listing.setVotable(false);
 		}
+	}
+	
+	private void scheduleUpdateOfListingStatistics(String listingId, ListingStatsUpdateReason reason) {
+		log.log(Level.INFO, "Scheduling listing stats update for '" + listingId + "', reason: " + reason);
+		ListingStatisticsDTO listingStats = (ListingStatisticsDTO)cache.get(LISTING_STATISTICS_KEY + listingId);
+		if (listingStats != null) {
+			switch(reason) {
+			case NEW_BID:
+				listingStats.setNumberOfBids(listingStats.getNumberOfBids() + 1);
+				break;
+			case NEW_COMMENT:
+				listingStats.setNumberOfComments(listingStats.getNumberOfComments() + 1);
+				break;
+			case NEW_VOTE:
+				listingStats.setNumberOfVotes(listingStats.getNumberOfVotes() + 1);
+				break;
+			default:
+				// reason can be also null
+				break;
+			}
+			cache.put(LISTING_STATISTICS_KEY + listingId, listingStats);
+		}
+		Queue queue = QueueFactory.getDefaultQueue();
+		queue.add(TaskOptions.Builder.withUrl("/task/calculate-listing-stats").param("id", listingId)
+				.taskName("listing_stats_update_reason_" + reason ));
+	}
+	
+	public ListingStatisticsDTO calculateListingStatistics(String listingId) {
+		log.log(Level.INFO, "Calculating listing stats for '" + listingId + "'");
+		ListingStatisticsDTO listingStats = getDAO().updateListingStatistics(listingId);
+		log.log(Level.INFO, "Calculated listing stats for '" + listingId + "' : " + listingStats);
+		cache.put(LISTING_STATISTICS_KEY + listingId, listingStats);
+		return listingStats;
+	}
+	
+	private ListingStatisticsDTO getListingStatistics(String listingId) {
+		ListingStatisticsDTO listingStats = (ListingStatisticsDTO)cache.get(LISTING_STATISTICS_KEY + listingId);
+		if (listingStats == null) {
+			listingStats = getDAO().getListingStatistics(listingId);
+			if (listingStats == null) {
+				// calculating user stats here may be disabled here
+				listingStats = calculateListingStatistics(listingId);
+			}
+		}
+		log.log(Level.INFO, "Listing stats for '" + listingId + "' : " + listingStats);
+		return listingStats;
 	}
 	
 	/**
@@ -500,7 +535,10 @@ public class ServiceFacade {
 			return null;
 		}
 		ListingVO listing =  DtoToVoConverter.convert(getDAO().valueUpListing(listingId, loggedInUser.getId()));
-		computeListingData(loggedInUser, listing);
+		if (listing != null) {
+			scheduleUpdateOfListingStatistics(listing.getId(), ListingStatsUpdateReason.NEW_VOTE);
+			computeListingData(loggedInUser, listing);
+		}
 		return listing;
 	}
 	
@@ -512,8 +550,10 @@ public class ServiceFacade {
 			return null;
 		}
 		UserVO user =  DtoToVoConverter.convert(getDAO().valueUpUser(userId, voter.getId()));
-		scheduleUpdateOfUserStatistics(userId, UserStatsUpdateReason.NEW_VOTE);
-		applyUserStatistics(user);
+		if (user != null) {
+			scheduleUpdateOfUserStatistics(userId, UserStatsUpdateReason.NEW_VOTE);
+			applyUserStatistics(user);
+		}
 		return user;
 	}
 	
@@ -771,6 +811,7 @@ public class ServiceFacade {
 	public CommentVO createComment(UserVO loggedInUser, CommentVO comment) {
 		comment = DtoToVoConverter.convert(getDAO().createComment(VoToDtoConverter.convert(comment)));
 		scheduleUpdateOfUserStatistics(loggedInUser.getId(), UserStatsUpdateReason.NEW_COMMENT);
+		scheduleUpdateOfListingStatistics(comment.getListing(), ListingStatsUpdateReason.NEW_COMMENT);
 		return comment;
 	}
 
@@ -781,6 +822,7 @@ public class ServiceFacade {
 
 	public BidVO deleteBid(UserVO loggedInUser, String bidId) {
 		BidVO bid = DtoToVoConverter.convert(getDAO().deleteBid(bidId));
+		scheduleUpdateOfListingStatistics(bid.getListing(), ListingStatsUpdateReason.NONE);
 		return bid;
 	}
 
@@ -793,16 +835,19 @@ public class ServiceFacade {
 
 	public BidVO updateBid(UserVO loggedInUser, BidVO bid) {
 		bid = DtoToVoConverter.convert(getDAO().updateBid(VoToDtoConverter.convert(bid)));
+		scheduleUpdateOfListingStatistics(bid.getListing(), ListingStatsUpdateReason.NONE);
 		return bid;
 	}
 
 	public BidVO activateBid(UserVO loggedInUser, String bidId) {
 		BidVO bid = DtoToVoConverter.convert(getDAO().activateBid(bidId));
+		scheduleUpdateOfListingStatistics(bid.getListing(), ListingStatsUpdateReason.NEW_BID);
 		return bid;
 	}
 
 	public BidVO withdrawBid(UserVO loggedInUser, String bidId) {
 		BidVO bid = DtoToVoConverter.convert(getDAO().withdrawBid(bidId));
+		scheduleUpdateOfListingStatistics(bid.getListing(), ListingStatsUpdateReason.NONE);
 		return bid;
 	}
 
@@ -852,7 +897,8 @@ public class ServiceFacade {
 	}
 
 	public ListingDocumentVO createListingDocument(UserVO loggedInUser, ListingDocumentVO doc) {
-		if (loggedInUser == null) {
+		if (SystemProperty.environment.value() == SystemProperty.Environment.Value.Production
+				&& loggedInUser == null) {
 			BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
 			blobstoreService.delete(doc.getBlob());
 			return null;

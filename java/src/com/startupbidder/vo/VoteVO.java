@@ -17,7 +17,7 @@ public class VoteVO {
 	private String user;
 	@JsonProperty("user_name")
 	private String userName;
-	private int value;
+	private long value;
 	
 	public VoteVO() {
 	}
@@ -45,11 +45,11 @@ public class VoteVO {
 		this.user = user;
 	}
 
-	public int getValue() {
+	public long getValue() {
 		return value;
 	}
 
-	public void setValue(int value) {
+	public void setValue(long value) {
 		this.value = value;
 	}
 

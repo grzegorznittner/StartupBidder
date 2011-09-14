@@ -1,8 +1,10 @@
 package com.startupbidder.dao;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -21,7 +23,6 @@ import com.startupbidder.dto.BidDTO;
 import com.startupbidder.dto.CommentDTO;
 import com.startupbidder.dto.ListingDTO;
 import com.startupbidder.dto.ListingDocumentDTO;
-import com.startupbidder.dto.ListingMedianValuationDTO;
 import com.startupbidder.dto.ListingStatisticsDTO;
 import com.startupbidder.dto.RankDTO;
 import com.startupbidder.dto.SystemPropertyDTO;
@@ -131,19 +132,6 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 			keys.clear();
 		}
 
-		outputBuffer.append("<p>Median valuation:</p>");
-		keys = new ArrayList<Key>();
-		query = new ListingMedianValuationDTO().getQuery();
-		pq = getDatastoreService().prepare(query);
-		for (Entity entity : pq.asIterable()) {
-			keys.add(entity.getKey());
-			outputBuffer.append(ListingMedianValuationDTO.fromEntity(entity).toString()).append("<br/>");
-		}
-		if (delete) {
-			getDatastoreService().delete(keys);
-			keys.clear();
-		}
-		
 		outputBuffer.append("<p>Listing statistics:</p>");
 		keys = new ArrayList<Key>();
 		query = new ListingStatisticsDTO().getQuery();
@@ -214,6 +202,9 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 	}
 	
 	private void initMocks() {
+		for (UserDTO user : ((MockDatastoreDAO)MockDatastoreDAO.getInstance()).userCache.values()) {
+			getDatastoreService().put(user.toEntity());
+		}
 		for (ListingDTO listing : ((MockDatastoreDAO)MockDatastoreDAO.getInstance()).lCache.values()) {
 			getDatastoreService().put(listing.toEntity());
 		}
@@ -226,14 +217,20 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 		for (BidDTO bid : ((MockDatastoreDAO)MockDatastoreDAO.getInstance()).bidCache.values()) {
 			getDatastoreService().put(bid.toEntity());
 		}
-		for (UserDTO user : ((MockDatastoreDAO)MockDatastoreDAO.getInstance()).userCache.values()) {
-			getDatastoreService().put(user.toEntity());
-		}
 		for (SystemPropertyDTO sp : ((MockDatastoreDAO)MockDatastoreDAO.getInstance()).propCache.values()) {
 			getDatastoreService().put(sp.toEntity());
 		}
 		for (ListingDocumentDTO ld : ((MockDatastoreDAO)MockDatastoreDAO.getInstance()).docCache.values()) {
 			getDatastoreService().put(ld.toEntity());
+		}
+
+		// updating user stats
+		for (UserDTO user : ((MockDatastoreDAO)MockDatastoreDAO.getInstance()).userCache.values()) {
+			updateUserStatistics(user.getIdAsString());
+		}
+		// update listing stats
+		for (ListingDTO listing : ((MockDatastoreDAO)MockDatastoreDAO.getInstance()).lCache.values()) {
+			updateListingStatistics(listing.getIdAsString());
 		}
 	}
 	
@@ -300,26 +297,58 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 	public UserStatisticsDTO updateUserStatistics(String userId) {
 		UserStatisticsDTO userStats = new UserStatisticsDTO();
 		userStats.createKey(userId);
+		userStats.setUser(userId);
 		
-		Query query = new BidDTO().getQuery().setKeysOnly();
+		log.info("Updating user statistics, user: " + userId);
+
+		Query query = new BidDTO().getQuery();
 		query.addFilter(BidDTO.USER, Query.FilterOperator.EQUAL, userId);
+		query.addFilter(BidDTO.STATUS, Query.FilterOperator.EQUAL, BidDTO.Status.ACTIVE.toString());
 		PreparedQuery pq = getDatastoreService().prepare(query);
 		userStats.setNumberOfBids(pq.countEntities(FetchOptions.Builder.withDefaults()));
+		
+		query = new BidDTO().getQuery();
+		query.addFilter(BidDTO.USER, Query.FilterOperator.EQUAL, userId);
+		query.addFilter(BidDTO.STATUS, Query.FilterOperator.EQUAL, BidDTO.Status.ACTIVE.toString());
+		query.addSort(BidDTO.VALUATION, Query.SortDirection.DESCENDING);
+		pq = getDatastoreService().prepare(query);
+		BidDTO bidDTO = null;
+		long sumOfBids = 0L;
+		List<String> listingIds = new ArrayList<String>();
+		for (Entity bid : pq.asIterable(FetchOptions.Builder.withDefaults())) {
+			bidDTO = BidDTO.fromEntity(bid);
+			if (!listingIds.contains(bidDTO.getListing())) {
+				sumOfBids += bidDTO.getValuation();
+				listingIds.add(bidDTO.getListing());
+			}
+		}
+		userStats.setSumOfBids(sumOfBids);
+		log.info("user: " + userId + ", number of bids: " + userStats.getNumberOfBids()
+				+ ", sum of bids: " + sumOfBids);
 		
 		query = new CommentDTO().getQuery().setKeysOnly();
 		query.addFilter(CommentDTO.USER, Query.FilterOperator.EQUAL, userId);
 		pq = getDatastoreService().prepare(query);
 		userStats.setNumberOfComments(pq.countEntities(FetchOptions.Builder.withDefaults()));
+		log.info("user: " + userId + ", number of comments: " + userStats.getNumberOfComments());
 		
 		query = new ListingDTO().getQuery().setKeysOnly();
 		query.addFilter(ListingDTO.OWNER, Query.FilterOperator.EQUAL, userId);
 		pq = getDatastoreService().prepare(query);
 		userStats.setNumberOfListings(pq.countEntities(FetchOptions.Builder.withDefaults()));
+		log.info("user: " + userId + ", number of listings: " + userStats.getNumberOfListings());
 		
+		query = new VoteDTO().getQuery().setKeysOnly();
+		query.addFilter(VoteDTO.VOTER, Query.FilterOperator.EQUAL, userId);
+		pq = getDatastoreService().prepare(query);
+		userStats.setNumberOfVotes(pq.countEntities(FetchOptions.Builder.withDefaults()));
+		log.info("user: " + userId + ", number of votes made: " + userStats.getNumberOfVotes());
+
 		query = new VoteDTO().getQuery().setKeysOnly();
 		query.addFilter(VoteDTO.USER, Query.FilterOperator.EQUAL, userId);
 		pq = getDatastoreService().prepare(query);
-		userStats.setNumberOfVotes(pq.countEntities(FetchOptions.Builder.withDefaults()));
+		userStats.setNumberOfVotesReceived(pq.countEntities(FetchOptions.Builder.withDefaults()));
+		log.info("user: " + userId + ", number of votes received: " + userStats.getNumberOfVotes());
 
 		getDatastoreService().put(userStats.toEntity());
 		
@@ -342,6 +371,72 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 	}
 
 	@Override
+	public ListingStatisticsDTO updateListingStatistics(String listingId) {
+		ListingStatisticsDTO listingStats = new ListingStatisticsDTO();
+		listingStats.createKey(listingId);
+		listingStats.setListing(listingId);
+		
+		log.info("Updating listing statistics, listing: " + listingId);
+		Query query = new BidDTO().getQuery().setKeysOnly();
+		query.addFilter(BidDTO.LISTING, Query.FilterOperator.EQUAL, listingId);
+		query.addFilter(BidDTO.STATUS, Query.FilterOperator.EQUAL, BidDTO.Status.ACTIVE.toString());
+		PreparedQuery pq = getDatastoreService().prepare(query);
+		listingStats.setNumberOfBids(pq.countEntities(FetchOptions.Builder.withDefaults()));
+		log.info("listing: " + listingId + ", number of bids: " + listingStats.getNumberOfBids());
+		
+		query = new CommentDTO().getQuery().setKeysOnly();
+		query.addFilter(CommentDTO.LISTING, Query.FilterOperator.EQUAL, listingId);
+		pq = getDatastoreService().prepare(query);
+		listingStats.setNumberOfComments(pq.countEntities(FetchOptions.Builder.withDefaults()));
+		log.info("listing: " + listingId + ", number of comments: " + listingStats.getNumberOfComments());
+		
+		query = new VoteDTO().getQuery().setKeysOnly();
+		query.addFilter(VoteDTO.LISTING, Query.FilterOperator.EQUAL, listingId);
+		pq = getDatastoreService().prepare(query);
+		listingStats.setNumberOfVotes(pq.countEntities(FetchOptions.Builder.withDefaults()));
+		log.info("listing: " + listingId + ", number of votes: " + listingStats.getNumberOfVotes());
+
+		// calculate median for bids and set total number of bids
+		List<Integer> values = new ArrayList<Integer>();
+		List<BidDTO> bids = getBidsForListing(listingId);
+		for (BidDTO bid : bids) {
+			values.add(bid.getValue());
+		}
+		Collections.sort(values);
+		int median = 0;
+		if (values.size() == 0) {
+			median = 0;
+		} else if (values.size() == 1) {
+			median = values.get(0);
+		} else if (values.size() % 2 == 1) {
+			median = values.get(values.size() / 2 + 1);
+		} else {
+			median = (values.get(values.size() / 2 - 1) + values.get(values.size() / 2)) / 2;
+		}
+		log.log(Level.INFO, "Values for '" + listingId + "': " + values + ", median: " + median);
+
+		listingStats.setValuation(median);
+		log.info("listing: " + listingId + ", median valuation: " + listingStats.getValuation());		
+
+		getDatastoreService().put(listingStats.toEntity());
+		
+		return listingStats;
+	}
+	
+	public ListingStatisticsDTO getListingStatistics(String listingId) {
+		ListingStatisticsDTO listingStats = new ListingStatisticsDTO();
+		listingStats.createKey(listingId);
+		try {
+			Entity listingStatsEntity = getDatastoreService().get(listingStats.getKey());
+			listingStats = ListingStatisticsDTO.fromEntity(listingStatsEntity);
+			return listingStats;
+		} catch (EntityNotFoundException e) {
+			log.log(Level.WARNING, "User statistics entity '" + listingStats.getKey() + "'not found", e);
+			return null;
+		}
+	}
+
+	@Override
 	public UserDTO updateUser(UserDTO newUser) {
 		try {
 			Entity userEntity = getDatastoreService().get(newUser.getKey());
@@ -357,6 +452,8 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 			user.setTitle(newUser.getTitle());
 			user.setTwitter(newUser.getTwitter());
 			user.setModified(new Date(System.currentTimeMillis()));
+			
+			getDatastoreService().put(user.toEntity());
 			log.log(Level.INFO, "Updated user: " + user);
 			return user;
 		} catch (EntityNotFoundException e) {
@@ -380,13 +477,33 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 
 	@Override
 	public UserDTO getTopInvestor() {
-		// TODO Auto-generated method stub
-		return null;
+		Query query = new UserStatisticsDTO().getQuery();
+		query.addSort(UserStatisticsDTO.SUM_OF_BIDS, Query.SortDirection.DESCENDING);
+		
+		PreparedQuery pq = getDatastoreService().prepare(query);
+		UserStatisticsDTO userStats = UserStatisticsDTO.fromEntity(
+				pq.asIterator(FetchOptions.Builder.withLimit(1)).next());
+		UserDTO user = new UserDTO();
+		user.setIdFromString(userStats.getUser());
+		try {
+			user = UserDTO.fromEntity(getDatastoreService().get(user.getKey()));
+		} catch (EntityNotFoundException e) {
+			log.warning("User with id '" + userStats.getUser() + "' not found!");
+			user = null;
+		}
+		return user;
 	}
 
 	@Override
 	public List<VoteDTO> getUserVotes(String userId) {
-		// TODO Auto-generated method stub
+		List<VoteDTO> votes = new ArrayList<VoteDTO>();
+		Query query = new VoteDTO().getQuery();
+		query.addFilter(VoteDTO.USER, Query.FilterOperator.EQUAL, userId);
+		
+		PreparedQuery pq = getDatastoreService().prepare(query);
+		for (Entity vote : pq.asIterable(FetchOptions.Builder.withLimit(1000))) {
+			votes.add(VoteDTO.fromEntity(vote));
+		}
 		return new ArrayList<VoteDTO>();
 	}
 
@@ -419,7 +536,8 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 			getDatastoreService().put(listing.toEntity());
 			return listing;
 		} catch (EntityNotFoundException e) {
-			log.log(Level.WARNING, "Listing entity '" + newListing.getKey() + "'not found", e);
+			log.log(Level.WARNING, "Listing entity name '" + newListing.getName()
+					+ "', id '" + newListing.getKey() + "' not found", e);
 			return null;
 		}
 	}
@@ -455,8 +573,29 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 
 	@Override
 	public List<ListingDTO> getTopListings(ListPropertiesVO listingProperties) {
-		// TODO Auto-generated method stub
-		return new ArrayList<ListingDTO>();
+		Query query = new ListingStatisticsDTO().getQuery();
+		query.addSort(ListingStatisticsDTO.NUM_OF_VOTES, Query.SortDirection.DESCENDING);
+		
+		PreparedQuery pq = getDatastoreService().prepare(query);
+		List<Key> listingKeys = new ArrayList<Key>();
+		ListingDTO listingDTO = new ListingDTO();
+		for (Entity listing : pq.asIterable(FetchOptions.Builder.withLimit(listingProperties.getMaxResults()))) {
+			String listingId = ListingStatisticsDTO.fromEntity(listing).getListing();
+			listingDTO.setIdFromString(listingId);
+			listingKeys.add(listingDTO.getKey());
+		}
+		log.info("Top listing ids: " + listingKeys);
+		
+		Map<Key, Entity> listingMap = getDatastoreService().get(listingKeys);
+		log.info("Top listings map: " + listingMap);
+		List<ListingDTO> listings = new ArrayList<ListingDTO>();
+		for (Key listingKey : listingKeys) {
+			Entity listingEntity = listingMap.get(listingKey);
+			if (listingEntity != null) {
+				listings.add(ListingDTO.fromEntity(listingEntity));
+			}
+		}
+		return listings;
 	}
 
 	@Override
@@ -476,20 +615,83 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 
 	@Override
 	public List<ListingDTO> getMostValuedListings(ListPropertiesVO listingProperties) {
-		// TODO Auto-generated method stub
-		return new ArrayList<ListingDTO>();
+		Query query = new ListingStatisticsDTO().getQuery();
+		query.addSort(ListingStatisticsDTO.VALUATION, Query.SortDirection.DESCENDING);
+		
+		PreparedQuery pq = getDatastoreService().prepare(query);
+		List<Key> listingKeys = new ArrayList<Key>();
+		ListingDTO listingDTO = new ListingDTO();
+		for (Entity listing : pq.asIterable(FetchOptions.Builder.withLimit(listingProperties.getMaxResults()))) {
+			String listingId = ListingStatisticsDTO.fromEntity(listing).getListing();
+			listingDTO.setIdFromString(listingId);
+			listingKeys.add(listingDTO.getKey());
+		}
+		log.info("Most valued listing ids: " + listingKeys);
+		
+		Map<Key, Entity> listingMap = getDatastoreService().get(listingKeys);
+		log.info("Most valued listings map: " + listingMap);
+		List<ListingDTO> listings = new ArrayList<ListingDTO>();
+		for (Key listingKey : listingKeys) {
+			Entity listingEntity = listingMap.get(listingKey);
+			if (listingEntity != null) {
+				listings.add(ListingDTO.fromEntity(listingEntity));
+			}
+		}
+		return listings;
 	}
 
 	@Override
 	public List<ListingDTO> getMostDiscussedListings(ListPropertiesVO listingProperties) {
-		// TODO Auto-generated method stub
-		return new ArrayList<ListingDTO>();
+		Query query = new ListingStatisticsDTO().getQuery();
+		query.addSort(ListingStatisticsDTO.NUM_OF_COMMENTS, Query.SortDirection.DESCENDING);
+		
+		PreparedQuery pq = getDatastoreService().prepare(query);
+		List<Key> listingKeys = new ArrayList<Key>();
+		ListingDTO listingDTO = new ListingDTO();
+		for (Entity listing : pq.asIterable(FetchOptions.Builder.withLimit(listingProperties.getMaxResults()))) {
+			String listingId = ListingStatisticsDTO.fromEntity(listing).getListing();
+			listingDTO.setIdFromString(listingId);
+			listingKeys.add(listingDTO.getKey());
+		}
+		log.info("Most discussed listing ids: " + listingKeys);
+		
+		Map<Key, Entity> listingMap = getDatastoreService().get(listingKeys);
+		log.info("Most discussed listings map: " + listingMap);
+		List<ListingDTO> listings = new ArrayList<ListingDTO>();
+		for (Key listingKey : listingKeys) {
+			Entity listingEntity = listingMap.get(listingKey);
+			if (listingEntity != null) {
+				listings.add(ListingDTO.fromEntity(listingEntity));
+			}
+		}
+		return listings;
 	}
 
 	@Override
 	public List<ListingDTO> getMostPopularListings(ListPropertiesVO listingProperties) {
-		// TODO Auto-generated method stub
-		return new ArrayList<ListingDTO>();
+		Query query = new ListingStatisticsDTO().getQuery();
+		query.addSort(ListingStatisticsDTO.NUM_OF_VOTES, Query.SortDirection.DESCENDING);
+		
+		PreparedQuery pq = getDatastoreService().prepare(query);
+		List<Key> listingKeys = new ArrayList<Key>();
+		ListingDTO listingDTO = new ListingDTO();
+		for (Entity listing : pq.asIterable(FetchOptions.Builder.withLimit(listingProperties.getMaxResults()))) {
+			String listingId = ListingStatisticsDTO.fromEntity(listing).getListing();
+			listingDTO.setIdFromString(listingId);
+			listingKeys.add(listingDTO.getKey());
+		}
+		log.info("Most popular listing ids: " + listingKeys);
+		
+		Map<Key, Entity> listingMap = getDatastoreService().get(listingKeys);
+		log.info("Most popular listings map: " + listingMap);
+		List<ListingDTO> listings = new ArrayList<ListingDTO>();
+		for (Key listingKey : listingKeys) {
+			Entity listingEntity = listingMap.get(listingKey);
+			if (listingEntity != null) {
+				listings.add(ListingDTO.fromEntity(listingEntity));
+			}
+		}
+		return listings;
 	}
 
 	@Override
@@ -576,6 +778,7 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 				vote.createKey(listingId + voterId + vote.getCommentedOn().getTime());
 				
 				getDatastoreService().put(vote.toEntity());
+				log.info("User '" + voterId + "' voted for listing '" + listingId + "'");
 				
 				return listing;
 			} else {
@@ -605,6 +808,7 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 				vote.createKey(userId + voterId + vote.getCommentedOn().getTime());
 				
 				getDatastoreService().put(vote.toEntity());
+				log.info("User '" + voterId + "' voted for user '" + userId + "'");
 				
 				return user;
 			} else {
@@ -680,20 +884,26 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 
 	@Override
 	public int getNumberOfVotesForListing(String listingId) {
-		// TODO Auto-generated method stub
-		return 0;
+		Query query = new VoteDTO().getQuery().setKeysOnly();
+		query.addFilter(VoteDTO.LISTING, Query.FilterOperator.EQUAL, listingId);
+		PreparedQuery pq = getDatastoreService().prepare(query);
+		return pq.countEntities(FetchOptions.Builder.withDefaults());
 	}
 
 	@Override
 	public int getNumberOfVotesForUser(String userId) {
-		// TODO Auto-generated method stub
-		return 0;
+		Query query = new VoteDTO().getQuery().setKeysOnly();
+		query.addFilter(VoteDTO.USER, Query.FilterOperator.EQUAL, userId);
+		PreparedQuery pq = getDatastoreService().prepare(query);
+		return pq.countEntities(FetchOptions.Builder.withDefaults());
 	}
 	
 	@Override
 	public int getActivity(String listingId) {
-		// TODO Auto-generated method stub
-		return 0;
+		Query query = new CommentDTO().getQuery().setKeysOnly();
+		query.addFilter(CommentDTO.LISTING, Query.FilterOperator.EQUAL, listingId);
+		PreparedQuery pq = getDatastoreService().prepare(query);
+		return pq.countEntities(FetchOptions.Builder.withDefaults());
 	}
 
 	@Override
@@ -727,15 +937,21 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 	}
 
 	@Override
-	public boolean userCanVoteForListing(String userId, String listingId) {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean userCanVoteForListing(String voterId, String listingId) {
+		Query query = new VoteDTO().getQuery().setKeysOnly();
+		query.addFilter(VoteDTO.VOTER, Query.FilterOperator.EQUAL, voterId);
+		query.addFilter(VoteDTO.LISTING, Query.FilterOperator.EQUAL, listingId);
+		PreparedQuery pq = getDatastoreService().prepare(query);
+		return pq.countEntities(FetchOptions.Builder.withDefaults()) == 0;
 	}
 	
 	@Override
 	public boolean userCanVoteForUser(String voterId, String userId) {
-		// TODO Auto-generated method stub
-		return false;
+		Query query = new VoteDTO().getQuery().setKeysOnly();
+		query.addFilter(VoteDTO.VOTER, Query.FilterOperator.EQUAL, voterId);
+		query.addFilter(VoteDTO.USER, Query.FilterOperator.EQUAL, userId);
+		PreparedQuery pq = getDatastoreService().prepare(query);
+		return pq.countEntities(FetchOptions.Builder.withDefaults()) == 0;
 	}
 
 	@Override
@@ -779,7 +995,7 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 		Query query = new UserDTO().getQuery();
 		query.addFilter(UserDTO.NICKNAME, FilterOperator.EQUAL, userName);
 		PreparedQuery pq = getDatastoreService().prepare(query);
-		return pq.asSingleEntity() == null;
+		return pq.countEntities(FetchOptions.Builder.withDefaults()) == 0;
 	}
 
 	@Override
@@ -900,50 +1116,98 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 
 	@Override
 	public List<BidDTO> getBidsByDate(ListPropertiesVO bidsProperties) {
-		// TODO Auto-generated method stub
-		return new ArrayList<BidDTO>();
+		List<BidDTO> bids = new ArrayList<BidDTO>();
+		
+		Query query = new BidDTO().getQuery();
+		query.addFilter(BidDTO.STATUS, Query.FilterOperator.EQUAL, BidDTO.Status.ACTIVE.toString());
+		query.addSort(BidDTO.PLACED, Query.SortDirection.DESCENDING);
+		
+		PreparedQuery pq = getDatastoreService().prepare(query);
+		for (Entity bid : pq.asIterable(FetchOptions.Builder.withLimit(100))) {
+			bids.add(BidDTO.fromEntity(bid));
+		}
+		return bids;
 	}
 
 	@Override
 	public SystemPropertyDTO getSystemProperty(String name) {
-		// TODO Auto-generated method stub
-		return null;
+		Query query = new SystemPropertyDTO().getQuery();
+		query.addFilter(SystemPropertyDTO.NAME, Query.FilterOperator.EQUAL, name);
+		PreparedQuery pq = getDatastoreService().prepare(query);
+		SystemPropertyDTO systemProp = SystemPropertyDTO.fromEntity(
+				pq.asIterator(FetchOptions.Builder.withLimit(1)).next());
+		return systemProp;
 	}
 
 	@Override
 	public SystemPropertyDTO setSystemProperty(SystemPropertyDTO property) {
-		// TODO Auto-generated method stub
-		return null;
+		property.setCreated(new Date());
+		property.createKey(property.getName());
+		
+		getDatastoreService().put(property.toEntity());
+		return property;
 	}
 
 	@Override
 	public List<SystemPropertyDTO> getSystemProperties() {
 		List<SystemPropertyDTO> props = new ArrayList<SystemPropertyDTO>();
+		Query query = new SystemPropertyDTO().getQuery();
+		query.addSort(SystemPropertyDTO.NAME, Query.SortDirection.ASCENDING);
+		PreparedQuery pq = getDatastoreService().prepare(query);
+		for (Entity systemPropEntity : pq.asIterable(FetchOptions.Builder.withLimit(1000))) {
+			SystemPropertyDTO systemProp = SystemPropertyDTO.fromEntity(systemPropEntity);
+			props.add(systemProp);
+		}
 		return props;
 	}
 
 	@Override
 	public ListingDocumentDTO createListingDocument(ListingDocumentDTO docDTO) {
-		// TODO Auto-generated method stub
-		return null;
+		docDTO.setCreated(new Date());
+		docDTO.createKey("Doc" + docDTO.hashCode());
+		
+		getDatastoreService().put(docDTO.toEntity());
+		return docDTO;
 	}
 
 	@Override
 	public ListingDocumentDTO getListingDocument(String docId) {
-		// TODO Auto-generated method stub
-		return null;
+		ListingDocumentDTO docDTO = new ListingDocumentDTO();
+		docDTO.createKey(docId);
+		
+		try {
+			docDTO = ListingDocumentDTO.fromEntity(getDatastoreService().get(docDTO.getKey()));
+		} catch (EntityNotFoundException e) {
+			log.log(Level.WARNING, "Listing Document with id '" + docId + "' not found!");
+		}
+		return docDTO;
 	}
 
 	@Override
 	public List<ListingDocumentDTO> getAllListingDocuments() {
-		// TODO Auto-generated method stub
-		return new ArrayList<ListingDocumentDTO>();
+		List<ListingDocumentDTO> docs = new ArrayList<ListingDocumentDTO>();
+		Query query = new ListingDocumentDTO().getQuery();
+		query.addSort(ListingDocumentDTO.CREATED, Query.SortDirection.DESCENDING);
+		PreparedQuery pq = getDatastoreService().prepare(query);
+		for (Entity docEntity : pq.asIterable(FetchOptions.Builder.withLimit(1000))) {
+			ListingDocumentDTO systemProp = ListingDocumentDTO.fromEntity(docEntity);
+			docs.add(systemProp);
+		}
+		return docs;
 	}
 
 	@Override
 	public ListingDocumentDTO deleteDocument(String docId) {
-		// TODO Auto-generated method stub
-		return null;
+		ListingDocumentDTO comment = new ListingDocumentDTO();
+		comment.setIdFromString(docId);
+		try {
+			Entity commentEntity = getDatastoreService().get(comment.getKey());
+			getDatastoreService().delete(comment.getKey());
+			return ListingDocumentDTO.fromEntity(commentEntity);
+		} catch (EntityNotFoundException e) {
+			log.log(Level.WARNING, "Listing Document with id '" + docId + "' not found!");
+			return null;
+		}
 	}
 
 }

@@ -104,7 +104,9 @@ public abstract class ModelDrivenController {
 		try {
 			writer = response.getWriter();
 			writer.println("<html><head><title>Startupbidder.com</title></head><body>");
-			writer.println(getModel());
+			String modelHtml = getModel().toString();
+			modelHtml.replaceAll("]", "]<br/>");
+			writer.println(modelHtml);
 			writer.println("</body></html>");
 		} catch (IOException e) {
 			e.printStackTrace();

@@ -45,11 +45,11 @@ public class ListingVO {
 	@JsonProperty("profile_username")
 	private String ownerName;
 	@JsonProperty("num_comments")
-	private int numberOfComments;
+	private long numberOfComments;
 	@JsonProperty("num_bids")
-	private int numberOfBids;
+	private long numberOfBids;
 	@JsonProperty("num_votes")
-	private int numberOfVotes;
+	private long numberOfVotes;
 	@JsonProperty("votable")
 	private boolean votable;
 	@JsonProperty("days_ago")
@@ -170,27 +170,27 @@ public class ListingVO {
 		this.ownerName = ownerName;
 	}
 
-	public int getNumberOfComments() {
+	public long getNumberOfComments() {
 		return numberOfComments;
 	}
 
-	public void setNumberOfComments(int numberOfComments) {
+	public void setNumberOfComments(long numberOfComments) {
 		this.numberOfComments = numberOfComments;
 	}
 
-	public int getNumberOfBids() {
+	public long getNumberOfBids() {
 		return numberOfBids;
 	}
 
-	public void setNumberOfBids(int numberOfBids) {
+	public void setNumberOfBids(long numberOfBids) {
 		this.numberOfBids = numberOfBids;
 	}
 
-	public int getNumberOfVotes() {
+	public long getNumberOfVotes() {
 		return numberOfVotes;
 	}
 
-	public void setNumberOfVotes(int numberOfVotes) {
+	public void setNumberOfVotes(long numberOfVotes) {
 		this.numberOfVotes = numberOfVotes;
 	}
 

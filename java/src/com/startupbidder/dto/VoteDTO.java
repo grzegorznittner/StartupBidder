@@ -14,7 +14,7 @@ public class VoteDTO extends AbstractDTO implements Serializable {
 	public static final String VOTER = "voter";
 	private String voter;
 	public static final String VALUE = "value";
-	private int value;
+	private long value;
 	public static final String COMMENTED_ON = "commentedOn";
 	private Date commentedOn;
 	
@@ -41,11 +41,11 @@ public class VoteDTO extends AbstractDTO implements Serializable {
 		this.user = user;
 	}
 
-	public int getValue() {
+	public long getValue() {
 		return value;
 	}
 
-	public void setValue(int value) {
+	public void setValue(long value) {
 		this.value = value;
 	}
 
@@ -90,7 +90,7 @@ public class VoteDTO extends AbstractDTO implements Serializable {
 		vote.setListing((String)entity.getProperty(LISTING));
 		vote.setUser((String)entity.getProperty(USER));
 		vote.setVoter((String)entity.getProperty(VOTER));
-		vote.setValue(((Long)entity.getProperty(VALUE)).intValue());
+		vote.setValue((Long)entity.getProperty(VALUE));
 		return vote;
 	}
 
@@ -102,7 +102,7 @@ public class VoteDTO extends AbstractDTO implements Serializable {
 				+ ((commentedOn == null) ? 0 : commentedOn.hashCode());
 		result = prime * result + ((listing == null) ? 0 : listing.hashCode());
 		result = prime * result + ((user == null) ? 0 : user.hashCode());
-		result = prime * result + value;
+		result = prime * result + (int) (value ^ (value >>> 32));
 		result = prime * result + ((voter == null) ? 0 : voter.hashCode());
 		return result;
 	}
@@ -140,4 +140,5 @@ public class VoteDTO extends AbstractDTO implements Serializable {
 			return false;
 		return true;
 	}
+
 }

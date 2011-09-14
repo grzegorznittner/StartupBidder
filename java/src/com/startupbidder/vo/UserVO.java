@@ -49,13 +49,13 @@ public class UserVO {
 	@JsonSerialize(using=DateSerializer.class)
 	private Date   modified;
 	@JsonProperty("num_listings")
-	private int numberOfListings;
+	private long numberOfListings;
 	@JsonProperty("num_bids")
-	private int numberOfBids;
+	private long numberOfBids;
 	@JsonProperty("num_comments")
-	private int numberOfComments;
+	private long numberOfComments;
 	@JsonProperty("num_votes")
-	private int numberOfVotes;
+	private long numberOfVotes;
 	@JsonProperty("status")
 	@JsonSerialize(using=LowecaseSerializer.class)
 	private String status;
@@ -160,28 +160,28 @@ public class UserVO {
 	public void setModified(Date modified) {
 		this.modified = modified;
 	}
-	public int getNumberOfListings() {
+	public long getNumberOfListings() {
 		return numberOfListings;
 	}
-	public void setNumberOfListings(int numberOfListings) {
+	public void setNumberOfListings(long numberOfListings) {
 		this.numberOfListings = numberOfListings;
 	}
-	public int getNumberOfBids() {
+	public long getNumberOfBids() {
 		return numberOfBids;
 	}
-	public void setNumberOfBids(int numberOfBids) {
+	public void setNumberOfBids(long numberOfBids) {
 		this.numberOfBids = numberOfBids;
 	}
-	public int getNumberOfComments() {
+	public long getNumberOfComments() {
 		return numberOfComments;
 	}
-	public void setNumberOfComments(int numberOfComments) {
+	public void setNumberOfComments(long numberOfComments) {
 		this.numberOfComments = numberOfComments;
 	}
-	public int getNumberOfVotes() {
+	public long getNumberOfVotes() {
 		return numberOfVotes;
 	}
-	public void setNumberOfVotes(int numberOfVotes) {
+	public void setNumberOfVotes(long numberOfVotes) {
 		this.numberOfVotes = numberOfVotes;
 	}
 	public String getOpenId() {

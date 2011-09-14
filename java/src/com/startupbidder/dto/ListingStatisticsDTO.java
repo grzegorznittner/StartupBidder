@@ -14,16 +14,14 @@ import com.google.appengine.api.datastore.Entity;
 public class ListingStatisticsDTO extends AbstractDTO implements Serializable {
 	public static final String LISTING = "listing";
 	private String listing;
-	public static final String MEDIAN_VALUATION = "medianValuation";
-	private float medianValuation;
+	public static final String VALUATION = "valuation";
+	private double valuation;
 	public static final String NUM_OF_COMMENTS = "numberOfComments";
-	private int numberOfComments;
+	private long numberOfComments;
 	public static final String NUM_OF_BIDS = "numberOfBids";
-	private int numberOfBids;
-	public static final String NUM_OF_LISTINGS = "numberOfListings";
-	private int numberOfListings;
+	private long numberOfBids;
 	public static final String NUM_OF_VOTES = "numberOfVotes";
-	private int numberOfVotes;
+	private long numberOfVotes;
 	public static final String DATE = "date";
 	private Date date;
 	
@@ -40,11 +38,10 @@ public class ListingStatisticsDTO extends AbstractDTO implements Serializable {
 		Entity entity = new Entity(id);
 		entity.setProperty(NUM_OF_COMMENTS, this.numberOfComments);
 		entity.setProperty(NUM_OF_BIDS, this.numberOfBids);
-		entity.setProperty(NUM_OF_LISTINGS, this.numberOfListings);
 		entity.setProperty(NUM_OF_VOTES, this.numberOfVotes);
 		entity.setProperty(DATE, this.date);
 		entity.setProperty(LISTING, this.listing);
-		entity.setProperty(MEDIAN_VALUATION, this.medianValuation);
+		entity.setProperty(VALUATION, this.valuation);
 		
 		return entity;
 	}
@@ -52,46 +49,37 @@ public class ListingStatisticsDTO extends AbstractDTO implements Serializable {
 	public static ListingStatisticsDTO fromEntity(Entity entity) {
 		ListingStatisticsDTO dto = new ListingStatisticsDTO();
 		dto.setKey(entity.getKey());
-		dto.numberOfComments = (Integer)entity.getProperty(NUM_OF_COMMENTS);
-		dto.numberOfBids = (Integer)entity.getProperty(NUM_OF_BIDS);
-		dto.numberOfListings = (Integer)entity.getProperty(NUM_OF_LISTINGS);
-		dto.numberOfVotes = (Integer)entity.getProperty(NUM_OF_VOTES);
+		dto.numberOfComments = (Long)entity.getProperty(NUM_OF_COMMENTS);
+		dto.numberOfBids = (Long)entity.getProperty(NUM_OF_BIDS);
+		dto.numberOfVotes = (Long)entity.getProperty(NUM_OF_VOTES);
 		dto.date = (Date)entity.getProperty(DATE);
 		dto.listing = (String)entity.getProperty(LISTING);
-		dto.medianValuation = (Float)entity.getProperty(MEDIAN_VALUATION);
+		dto.valuation = (Double)entity.getProperty(VALUATION);
 
 		return dto;
 	}
 
-	public int getNumberOfComments() {
+	public long getNumberOfComments() {
 		return numberOfComments;
 	}
 
-	public void setNumberOfComments(int numberOfComments) {
+	public void setNumberOfComments(long numberOfComments) {
 		this.numberOfComments = numberOfComments;
 	}
 
-	public int getNumberOfBids() {
+	public long getNumberOfBids() {
 		return numberOfBids;
 	}
 
-	public void setNumberOfBids(int numberOfBids) {
+	public void setNumberOfBids(long numberOfBids) {
 		this.numberOfBids = numberOfBids;
 	}
 
-	public int getNumberOfListings() {
-		return numberOfListings;
-	}
-
-	public void setNumberOfListings(int numberOfListings) {
-		this.numberOfListings = numberOfListings;
-	}
-
-	public int getNumberOfVotes() {
+	public long getNumberOfVotes() {
 		return numberOfVotes;
 	}
 
-	public void setNumberOfVotes(int numberOfVotes) {
+	public void setNumberOfVotes(long numberOfVotes) {
 		this.numberOfVotes = numberOfVotes;
 	}
 
@@ -103,12 +91,12 @@ public class ListingStatisticsDTO extends AbstractDTO implements Serializable {
 		this.listing = listing;
 	}
 
-	public float getMedianValuation() {
-		return medianValuation;
+	public double getValuation() {
+		return valuation;
 	}
 
-	public void setMedianValuation(float medianValuation) {
-		this.medianValuation = medianValuation;
+	public void setValuation(double valuation) {
+		this.valuation = valuation;
 	}
 
 	public Date getDate() {
@@ -122,10 +110,9 @@ public class ListingStatisticsDTO extends AbstractDTO implements Serializable {
 	@Override
 	public String toString() {
 		return "ListingStatisticsDTO [listing=" + listing
-				+ ", medianValuation=" + medianValuation
+				+ ", valuation=" + valuation
 				+ ", numberOfComments=" + numberOfComments + ", numberOfBids="
-				+ numberOfBids + ", numberOfListings=" + numberOfListings
-				+ ", numberOfVotes=" + numberOfVotes + ", date=" + date + "]";
+				+ numberOfBids + ", numberOfVotes=" + numberOfVotes + ", date=" + date + "]";
 	}
 
 	@Override
@@ -134,11 +121,14 @@ public class ListingStatisticsDTO extends AbstractDTO implements Serializable {
 		int result = super.hashCode();
 		result = prime * result + ((date == null) ? 0 : date.hashCode());
 		result = prime * result + ((listing == null) ? 0 : listing.hashCode());
-		result = prime * result + Float.floatToIntBits(medianValuation);
-		result = prime * result + numberOfBids;
-		result = prime * result + numberOfComments;
-		result = prime * result + numberOfListings;
-		result = prime * result + numberOfVotes;
+		result = prime * result + (int) (numberOfBids ^ (numberOfBids >>> 32));
+		result = prime * result
+				+ (int) (numberOfComments ^ (numberOfComments >>> 32));
+		result = prime * result
+				+ (int) (numberOfVotes ^ (numberOfVotes >>> 32));
+		long temp;
+		temp = Double.doubleToLongBits(valuation);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
 		return result;
 	}
 
@@ -161,16 +151,14 @@ public class ListingStatisticsDTO extends AbstractDTO implements Serializable {
 				return false;
 		} else if (!listing.equals(other.listing))
 			return false;
-		if (Float.floatToIntBits(medianValuation) != Float
-				.floatToIntBits(other.medianValuation))
-			return false;
 		if (numberOfBids != other.numberOfBids)
 			return false;
 		if (numberOfComments != other.numberOfComments)
 			return false;
-		if (numberOfListings != other.numberOfListings)
-			return false;
 		if (numberOfVotes != other.numberOfVotes)
+			return false;
+		if (Double.doubleToLongBits(valuation) != Double
+				.doubleToLongBits(other.valuation))
 			return false;
 		return true;
 	}

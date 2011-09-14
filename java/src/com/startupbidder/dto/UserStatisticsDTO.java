@@ -9,14 +9,20 @@ import com.google.appengine.api.datastore.Entity;
  */
 @SuppressWarnings("serial")
 public class UserStatisticsDTO extends AbstractDTO {
+	public static final String USER = "user";
+	private String user;
 	public static final String NUM_OF_COMMENTS = "numberOfComments";
-	private int numberOfComments;
+	private long numberOfComments;
 	public static final String NUM_OF_BIDS = "numberOfBids";
-	private int numberOfBids;
+	private long numberOfBids;
 	public static final String NUM_OF_LISTINGS = "numberOfListings";
-	private int numberOfListings;
+	private long numberOfListings;
 	public static final String NUM_OF_VOTES = "numberOfVotes";
-	private int numberOfVotes;
+	private long numberOfVotes;
+	public static final String NUM_OF_VOTES_RECEIVED = "numberOfVotesReceived";
+	private long numberOfVotesReceived;
+	public static final String SUM_OF_BIDS = "sumOfBids";
+	private long sumOfBids;
 	
 	public UserStatisticsDTO() {
 	}
@@ -29,10 +35,13 @@ public class UserStatisticsDTO extends AbstractDTO {
 	@Override
 	public Entity toEntity() {
 		Entity entity = new Entity(id);
+		entity.setProperty(USER, this.user);
 		entity.setProperty(NUM_OF_COMMENTS, this.numberOfComments);
 		entity.setProperty(NUM_OF_BIDS, this.numberOfBids);
 		entity.setProperty(NUM_OF_LISTINGS, this.numberOfListings);
 		entity.setProperty(NUM_OF_VOTES, this.numberOfVotes);
+		entity.setProperty(NUM_OF_VOTES_RECEIVED, this.numberOfVotesReceived);
+		entity.setProperty(SUM_OF_BIDS, this.sumOfBids);
 		
 		return entity;
 	}
@@ -40,61 +49,98 @@ public class UserStatisticsDTO extends AbstractDTO {
 	public static UserStatisticsDTO fromEntity(Entity entity) {
 		UserStatisticsDTO dto = new UserStatisticsDTO();
 		dto.setKey(entity.getKey());
-		dto.numberOfComments = ((Long)entity.getProperty(NUM_OF_COMMENTS)).intValue();
-		dto.numberOfBids = ((Long)entity.getProperty(NUM_OF_BIDS)).intValue();
-		dto.numberOfListings = ((Long)entity.getProperty(NUM_OF_LISTINGS)).intValue();
-		dto.numberOfVotes = ((Long)entity.getProperty(NUM_OF_VOTES)).intValue();
+		dto.user = (String)entity.getProperty(USER);
+		dto.numberOfComments = toLong(entity.getProperty(NUM_OF_COMMENTS));
+		dto.numberOfBids = toLong(entity.getProperty(NUM_OF_BIDS));
+		dto.numberOfListings = toLong(entity.getProperty(NUM_OF_LISTINGS));
+		dto.numberOfVotes = toLong(entity.getProperty(NUM_OF_VOTES));
+		dto.numberOfVotesReceived = toLong(entity.getProperty(NUM_OF_VOTES_RECEIVED));
+		dto.sumOfBids = toLong(entity.getProperty(SUM_OF_BIDS));
 
 		return dto;
 	}
 
-	public int getNumberOfComments() {
+	public String getUser() {
+		return user;
+	}
+
+	public void setUser(String user) {
+		this.user = user;
+	}
+
+	public long getNumberOfComments() {
 		return numberOfComments;
 	}
 
-	public void setNumberOfComments(int numberOfComments) {
+	public void setNumberOfComments(long numberOfComments) {
 		this.numberOfComments = numberOfComments;
 	}
 
-	public int getNumberOfBids() {
+	public long getNumberOfBids() {
 		return numberOfBids;
 	}
 
-	public void setNumberOfBids(int numberOfBids) {
+	public void setNumberOfBids(long numberOfBids) {
 		this.numberOfBids = numberOfBids;
 	}
 
-	public int getNumberOfListings() {
+	public long getNumberOfListings() {
 		return numberOfListings;
 	}
 
-	public void setNumberOfListings(int numberOfListings) {
+	public void setNumberOfListings(long numberOfListings) {
 		this.numberOfListings = numberOfListings;
 	}
 
-	public int getNumberOfVotes() {
+	public long getNumberOfVotes() {
 		return numberOfVotes;
 	}
 
-	public void setNumberOfVotes(int numberOfVotes) {
+	public void setNumberOfVotes(long numberOfVotes) {
 		this.numberOfVotes = numberOfVotes;
+	}
+
+	public long getSumOfBids() {
+		return sumOfBids;
+	}
+
+	public void setSumOfBids(long sumOfBids) {
+		this.sumOfBids = sumOfBids;
+	}
+
+	public long getNumberOfVotesReceived() {
+		return numberOfVotesReceived;
+	}
+
+	public void setNumberOfVotesReceived(long numberOfVotesReceived) {
+		this.numberOfVotesReceived = numberOfVotesReceived;
 	}
 
 	@Override
 	public String toString() {
-		return "UserStatistics [numberOfComments=" + numberOfComments
-				+ ", numberOfBids=" + numberOfBids + ", numberOfListings="
-				+ numberOfListings + ", numberOfVotes=" + numberOfVotes + "]";
+		return "UserStatisticsDTO [user=" + user + ", numberOfComments="
+				+ numberOfComments + ", numberOfBids=" + numberOfBids
+				+ ", numberOfListings=" + numberOfListings + ", numberOfVotes="
+				+ numberOfVotes + ", numberOfVotesReceived="
+				+ numberOfVotesReceived + ", sumOfBids=" + sumOfBids + "]";
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
-		int result = 1;
-		result = prime * result + numberOfBids;
-		result = prime * result + numberOfComments;
-		result = prime * result + numberOfListings;
-		result = prime * result + numberOfVotes;
+		int result = super.hashCode();
+		result = prime * result + (int) (numberOfBids ^ (numberOfBids >>> 32));
+		result = prime * result
+				+ (int) (numberOfComments ^ (numberOfComments >>> 32));
+		result = prime * result
+				+ (int) (numberOfListings ^ (numberOfListings >>> 32));
+		result = prime * result
+				+ (int) (numberOfVotes ^ (numberOfVotes >>> 32));
+		result = prime
+				* result
+				+ (int) (numberOfVotesReceived ^ (numberOfVotesReceived >>> 32));
+		result = prime * result + (int) (sumOfBids ^ (sumOfBids >>> 32));
+		result = prime * result + ((user == null) ? 0 : user.hashCode());
 		return result;
 	}
 
@@ -102,7 +148,7 @@ public class UserStatisticsDTO extends AbstractDTO {
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (obj == null)
+		if (!super.equals(obj))
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
@@ -114,6 +160,15 @@ public class UserStatisticsDTO extends AbstractDTO {
 		if (numberOfListings != other.numberOfListings)
 			return false;
 		if (numberOfVotes != other.numberOfVotes)
+			return false;
+		if (numberOfVotesReceived != other.numberOfVotesReceived)
+			return false;
+		if (sumOfBids != other.sumOfBids)
+			return false;
+		if (user == null) {
+			if (other.user != null)
+				return false;
+		} else if (!user.equals(other.user))
 			return false;
 		return true;
 	}

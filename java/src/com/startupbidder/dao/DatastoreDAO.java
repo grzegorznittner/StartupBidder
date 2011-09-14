@@ -6,6 +6,7 @@ import com.startupbidder.dto.BidDTO;
 import com.startupbidder.dto.CommentDTO;
 import com.startupbidder.dto.ListingDTO;
 import com.startupbidder.dto.ListingDocumentDTO;
+import com.startupbidder.dto.ListingStatisticsDTO;
 import com.startupbidder.dto.SystemPropertyDTO;
 import com.startupbidder.dto.UserDTO;
 import com.startupbidder.dto.UserStatisticsDTO;
@@ -101,6 +102,16 @@ public interface DatastoreDAO {
 	 */
 	ListingDTO updateListing(ListingDTO listing);
 
+	/**
+	 * Returns listing's statistics
+	 */
+	ListingStatisticsDTO getListingStatistics(String listingId);
+
+	/**
+	 * Updates listing's statistics
+	 */
+	ListingStatisticsDTO updateListingStatistics(String listingId);
+	
 	/**
 	 * Returns listing by id
 	 * @param listingId

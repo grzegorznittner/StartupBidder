@@ -11,6 +11,7 @@ import com.google.appengine.api.datastore.Query;
  * Abstract class for entities.
  * @author greg
  */
+@SuppressWarnings("serial")
 public abstract class AbstractDTO implements Serializable {
 	protected Key id;
 	
@@ -73,6 +74,14 @@ public abstract class AbstractDTO implements Serializable {
 	 */
 	public abstract Entity toEntity();
 
+	public static Long toLong(Object entityField) {
+		return entityField == null ? 0L : (Long)entityField;
+	}
+	
+	public static Double toDouble(Object entityField) {
+		return entityField == null ? 0.0 : (Double)entityField;
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;

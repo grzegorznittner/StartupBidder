@@ -1,21 +1,4 @@
 indexes:
-- kind: User
-  ancestor: no
-  properties:
-    - name: openId
-      direction: asc
-
-- kind: User
-  ancestor: no
-  properties:
-    - name: nickname
-      direction: asc
-
-- kind: Bid
-  ancestor: no
-  properties:
-    - name: user
-      direction: asc
 
 - kind: Bid
   ancestor: no
@@ -28,15 +11,37 @@ indexes:
 - kind: Bid
   ancestor: no
   properties:
+    - name: listing
+    - name: status
+
+- kind: Bid
+  ancestor: no
+  properties:
     - name: user
     - name: status
     - name: placed
       direction: desc
 
-- kind: Comment
+- kind: Bid
+  ancestor: no
+  properties:
+    - name: status
+    - name: placed
+      direction: desc
+
+- kind: Bid
   ancestor: no
   properties:
     - name: user
+    - name: status
+
+- kind: Bid
+  ancestor: no
+  properties:
+    - name: user
+    - name: status
+    - name: valuation
+      direction: desc
 
 - kind: Comment
   ancestor: no
@@ -51,11 +56,6 @@ indexes:
     - name: user
     - name: commentedOn
       direction: desc
-
-- kind: Listing
-  ancestor: no
-  properties:
-    - name: user
 
 - kind: Listing
   ancestor: no
@@ -79,8 +79,39 @@ indexes:
     - name: closingOn
       direction: desc
 
+- kind: ListingStat
+  ancestor: no
+  properties:
+    - name: numberOfVotes
+      direction: desc
+
+- kind: ListingStat
+  ancestor: no
+  properties:
+    - name: numberOfBids
+      direction: desc
+
+- kind: ListingStat
+  ancestor: no
+  properties:
+    - name: numberOfComments
+      direction: desc
+
+- kind: ListingStat
+  ancestor: no
+  properties:
+    - name: valuation
+      direction: desc
+
 - kind: Vote
   ancestor: no
   properties:
+    - name: voter
     - name: user
+
+- kind: Vote
+  ancestor: no
+  properties:
+    - name: voter
+    - name: listing
 

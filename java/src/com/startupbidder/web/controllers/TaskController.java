@@ -40,6 +40,8 @@ public class TaskController extends ModelDrivenController {
 		
 		if("calculate-user-stats".equalsIgnoreCase(getCommand(1))) {
 			return calculateUserStats(request);
+		} else if("calculate-listing-stats".equalsIgnoreCase(getCommand(1))) {
+			return calculateListingStats(request);
 		} else if("set-datastore".equalsIgnoreCase(getCommand(1))) {
 			return setDatastore(request);
 		}
@@ -51,6 +53,15 @@ public class TaskController extends ModelDrivenController {
 		
 		String userId = getCommandOrParameter(request, 2, "id");
 		ServiceFacade.instance().calculateUserStatistics(userId);
+		
+		return headers;
+	}
+
+	private HttpHeaders calculateListingStats(HttpServletRequest request) {
+		HttpHeaders headers = new HttpHeadersImpl("calculate-listing-stats");
+		
+		String listingId = getCommandOrParameter(request, 2, "id");
+		ServiceFacade.instance().calculateListingStatistics(listingId);
 		
 		return headers;
 	}
