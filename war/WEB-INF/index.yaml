@@ -82,25 +82,36 @@ indexes:
 - kind: ListingStat
   ancestor: no
   properties:
+    - name: status
     - name: numberOfVotes
       direction: desc
 
 - kind: ListingStat
   ancestor: no
   properties:
+    - name: status
     - name: numberOfBids
       direction: desc
 
 - kind: ListingStat
   ancestor: no
   properties:
+    - name: status
     - name: numberOfComments
       direction: desc
 
 - kind: ListingStat
   ancestor: no
   properties:
+    - name: status
     - name: valuation
+      direction: desc
+
+- kind: UserStat
+  ancestor: no
+  properties:
+    - name: status
+    - name: sumOfBids
       direction: desc
 
 - kind: Vote

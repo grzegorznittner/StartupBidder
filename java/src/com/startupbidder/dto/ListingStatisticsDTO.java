@@ -14,6 +14,8 @@ import com.google.appengine.api.datastore.Entity;
 public class ListingStatisticsDTO extends AbstractDTO implements Serializable {
 	public static final String LISTING = "listing";
 	private String listing;
+	public static final String STATUS = "status";
+	private String status;
 	public static final String VALUATION = "valuation";
 	private double valuation;
 	public static final String NUM_OF_COMMENTS = "numberOfComments";
@@ -41,6 +43,7 @@ public class ListingStatisticsDTO extends AbstractDTO implements Serializable {
 		entity.setProperty(NUM_OF_VOTES, this.numberOfVotes);
 		entity.setProperty(DATE, this.date);
 		entity.setProperty(LISTING, this.listing);
+		entity.setProperty(STATUS, this.status);
 		entity.setProperty(VALUATION, this.valuation);
 		
 		return entity;
@@ -54,6 +57,7 @@ public class ListingStatisticsDTO extends AbstractDTO implements Serializable {
 		dto.numberOfVotes = (Long)entity.getProperty(NUM_OF_VOTES);
 		dto.date = (Date)entity.getProperty(DATE);
 		dto.listing = (String)entity.getProperty(LISTING);
+		dto.status = (String)entity.getProperty(STATUS);
 		dto.valuation = (Double)entity.getProperty(VALUATION);
 
 		return dto;
@@ -107,12 +111,20 @@ public class ListingStatisticsDTO extends AbstractDTO implements Serializable {
 		this.date = date;
 	}
 
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
 	@Override
 	public String toString() {
-		return "ListingStatisticsDTO [listing=" + listing
-				+ ", valuation=" + valuation
-				+ ", numberOfComments=" + numberOfComments + ", numberOfBids="
-				+ numberOfBids + ", numberOfVotes=" + numberOfVotes + ", date=" + date + "]";
+		return "ListingStatisticsDTO [listing=" + listing + ", status="
+				+ status + ", valuation=" + valuation + ", numberOfComments="
+				+ numberOfComments + ", numberOfBids=" + numberOfBids
+				+ ", numberOfVotes=" + numberOfVotes + ", date=" + date + "]";
 	}
 
 	@Override
@@ -126,6 +138,7 @@ public class ListingStatisticsDTO extends AbstractDTO implements Serializable {
 				+ (int) (numberOfComments ^ (numberOfComments >>> 32));
 		result = prime * result
 				+ (int) (numberOfVotes ^ (numberOfVotes >>> 32));
+		result = prime * result + ((status == null) ? 0 : status.hashCode());
 		long temp;
 		temp = Double.doubleToLongBits(valuation);
 		result = prime * result + (int) (temp ^ (temp >>> 32));
@@ -157,10 +170,14 @@ public class ListingStatisticsDTO extends AbstractDTO implements Serializable {
 			return false;
 		if (numberOfVotes != other.numberOfVotes)
 			return false;
+		if (status == null) {
+			if (other.status != null)
+				return false;
+		} else if (!status.equals(other.status))
+			return false;
 		if (Double.doubleToLongBits(valuation) != Double
 				.doubleToLongBits(other.valuation))
 			return false;
 		return true;
 	}
-
 }

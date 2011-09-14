@@ -295,9 +295,18 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 
 	@Override
 	public UserStatisticsDTO updateUserStatistics(String userId) {
+		UserDTO user = new UserDTO();
+		user.setIdFromString(userId);
+		try {
+			user = UserDTO.fromEntity(getDatastoreService().get(user.getKey()));
+		} catch (EntityNotFoundException e) {
+			log.severe("User with id '" + userId + "' doesn't exist!");
+		}
+		
 		UserStatisticsDTO userStats = new UserStatisticsDTO();
 		userStats.createKey(userId);
 		userStats.setUser(userId);
+		userStats.setStatus(user.getStatus().toString());
 		
 		log.info("Updating user statistics, user: " + userId);
 
@@ -372,9 +381,18 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 
 	@Override
 	public ListingStatisticsDTO updateListingStatistics(String listingId) {
-		ListingStatisticsDTO listingStats = new ListingStatisticsDTO();
+		ListingDTO listing = new ListingDTO();
+		listing.setIdFromString(listingId);
+		try {
+			listing = ListingDTO.fromEntity(getDatastoreService().get(listing.getKey()));
+		} catch (EntityNotFoundException e) {
+			log.severe("Listing with id '" + listingId + "' doesn't exist!");
+		}
+
+		ListingStatisticsDTO listingStats = new ListingStatisticsDTO();		
 		listingStats.createKey(listingId);
 		listingStats.setListing(listingId);
+		listingStats.setStatus(listing.getState().toString());
 		
 		log.info("Updating listing statistics, listing: " + listingId);
 		Query query = new BidDTO().getQuery().setKeysOnly();
@@ -478,6 +496,7 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 	@Override
 	public UserDTO getTopInvestor() {
 		Query query = new UserStatisticsDTO().getQuery();
+		query.addFilter(UserStatisticsDTO.STATUS, Query.FilterOperator.EQUAL, UserDTO.Status.ACTIVE.toString());
 		query.addSort(UserStatisticsDTO.SUM_OF_BIDS, Query.SortDirection.DESCENDING);
 		
 		PreparedQuery pq = getDatastoreService().prepare(query);
@@ -574,6 +593,7 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 	@Override
 	public List<ListingDTO> getTopListings(ListPropertiesVO listingProperties) {
 		Query query = new ListingStatisticsDTO().getQuery();
+		query.addFilter(ListingStatisticsDTO.STATUS, Query.FilterOperator.EQUAL, ListingDTO.State.ACTIVE.toString());
 		query.addSort(ListingStatisticsDTO.NUM_OF_VOTES, Query.SortDirection.DESCENDING);
 		
 		PreparedQuery pq = getDatastoreService().prepare(query);
@@ -616,6 +636,7 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 	@Override
 	public List<ListingDTO> getMostValuedListings(ListPropertiesVO listingProperties) {
 		Query query = new ListingStatisticsDTO().getQuery();
+		query.addFilter(ListingStatisticsDTO.STATUS, Query.FilterOperator.EQUAL, ListingDTO.State.ACTIVE.toString());
 		query.addSort(ListingStatisticsDTO.VALUATION, Query.SortDirection.DESCENDING);
 		
 		PreparedQuery pq = getDatastoreService().prepare(query);
@@ -643,6 +664,7 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 	@Override
 	public List<ListingDTO> getMostDiscussedListings(ListPropertiesVO listingProperties) {
 		Query query = new ListingStatisticsDTO().getQuery();
+		query.addFilter(ListingStatisticsDTO.STATUS, Query.FilterOperator.EQUAL, ListingDTO.State.ACTIVE.toString());
 		query.addSort(ListingStatisticsDTO.NUM_OF_COMMENTS, Query.SortDirection.DESCENDING);
 		
 		PreparedQuery pq = getDatastoreService().prepare(query);
@@ -670,6 +692,7 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 	@Override
 	public List<ListingDTO> getMostPopularListings(ListPropertiesVO listingProperties) {
 		Query query = new ListingStatisticsDTO().getQuery();
+		query.addFilter(ListingStatisticsDTO.STATUS, Query.FilterOperator.EQUAL, ListingDTO.State.ACTIVE.toString());
 		query.addSort(ListingStatisticsDTO.NUM_OF_VOTES, Query.SortDirection.DESCENDING);
 		
 		PreparedQuery pq = getDatastoreService().prepare(query);

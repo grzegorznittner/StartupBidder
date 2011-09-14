@@ -11,6 +11,8 @@ import com.google.appengine.api.datastore.Entity;
 public class UserStatisticsDTO extends AbstractDTO {
 	public static final String USER = "user";
 	private String user;
+	public static final String STATUS = "status";
+	private String status;
 	public static final String NUM_OF_COMMENTS = "numberOfComments";
 	private long numberOfComments;
 	public static final String NUM_OF_BIDS = "numberOfBids";
@@ -36,6 +38,7 @@ public class UserStatisticsDTO extends AbstractDTO {
 	public Entity toEntity() {
 		Entity entity = new Entity(id);
 		entity.setProperty(USER, this.user);
+		entity.setProperty(STATUS, this.status);
 		entity.setProperty(NUM_OF_COMMENTS, this.numberOfComments);
 		entity.setProperty(NUM_OF_BIDS, this.numberOfBids);
 		entity.setProperty(NUM_OF_LISTINGS, this.numberOfListings);
@@ -50,6 +53,7 @@ public class UserStatisticsDTO extends AbstractDTO {
 		UserStatisticsDTO dto = new UserStatisticsDTO();
 		dto.setKey(entity.getKey());
 		dto.user = (String)entity.getProperty(USER);
+		dto.status = (String)entity.getProperty(STATUS);
 		dto.numberOfComments = toLong(entity.getProperty(NUM_OF_COMMENTS));
 		dto.numberOfBids = toLong(entity.getProperty(NUM_OF_BIDS));
 		dto.numberOfListings = toLong(entity.getProperty(NUM_OF_LISTINGS));
@@ -66,6 +70,14 @@ public class UserStatisticsDTO extends AbstractDTO {
 
 	public void setUser(String user) {
 		this.user = user;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 
 	public long getNumberOfComments() {
@@ -118,11 +130,12 @@ public class UserStatisticsDTO extends AbstractDTO {
 
 	@Override
 	public String toString() {
-		return "UserStatisticsDTO [user=" + user + ", numberOfComments="
-				+ numberOfComments + ", numberOfBids=" + numberOfBids
-				+ ", numberOfListings=" + numberOfListings + ", numberOfVotes="
-				+ numberOfVotes + ", numberOfVotesReceived="
-				+ numberOfVotesReceived + ", sumOfBids=" + sumOfBids + "]";
+		return "UserStatisticsDTO [user=" + user + ", status=" + status
+				+ ", numberOfComments=" + numberOfComments + ", numberOfBids="
+				+ numberOfBids + ", numberOfListings=" + numberOfListings
+				+ ", numberOfVotes=" + numberOfVotes
+				+ ", numberOfVotesReceived=" + numberOfVotesReceived
+				+ ", sumOfBids=" + sumOfBids + "]";
 	}
 
 	@Override
@@ -139,6 +152,7 @@ public class UserStatisticsDTO extends AbstractDTO {
 		result = prime
 				* result
 				+ (int) (numberOfVotesReceived ^ (numberOfVotesReceived >>> 32));
+		result = prime * result + ((status == null) ? 0 : status.hashCode());
 		result = prime * result + (int) (sumOfBids ^ (sumOfBids >>> 32));
 		result = prime * result + ((user == null) ? 0 : user.hashCode());
 		return result;
@@ -162,6 +176,11 @@ public class UserStatisticsDTO extends AbstractDTO {
 		if (numberOfVotes != other.numberOfVotes)
 			return false;
 		if (numberOfVotesReceived != other.numberOfVotesReceived)
+			return false;
+		if (status == null) {
+			if (other.status != null)
+				return false;
+		} else if (!status.equals(other.status))
 			return false;
 		if (sumOfBids != other.sumOfBids)
 			return false;
