@@ -1018,18 +1018,18 @@ $(function(){
             $('#header-menu-bar-top').unbind().bind('click', function(){
                 util.hashedCall('searchListings', 'doTopSearch');
             });
-//            $('#header-menu-bar-valuation').unbind().bind('click', function(){
-//                searchListings.doSearch({search_type:'valuation'});
-//            });
-//            $('#header-menu-bar-active').unbind().bind('click', function(){
-//                searchListings.doSearch({search_type:'active'});
-//            });
-//            $('#header-menu-bar-popular').unbind().bind('click', function(){
-//                searchListings.doSearch({search_type:'popular'});
-//            });
-//            $('#header-menu-bar-discussed').unbind().bind('click', function(){
-//                searchListings.doSearch({search_type:'discussed'});
-//            });
+            $('#header-menu-bar-valuation').unbind().bind('click', function(){
+                util.hashedCall('searchListings', 'doValuationSearch');
+            });
+            $('#header-menu-bar-active').unbind().bind('click', function(){
+                util.hashedCall('searchListings', 'doActiveSearch');
+            });
+            $('#header-menu-bar-popular').unbind().bind('click', function(){
+                util.hashedCall('searchListings', 'doPopularSearch');
+            });
+            $('#header-menu-bar-discussed').unbind().bind('click', function(){
+                util.hashedCall('searchListings', 'doDiscussedSearch');
+            });
             $('#header-menu-bar-latest').unbind().bind('click', function(){
                 util.hashedCall('searchListings', 'doLatestSearch');
             });
@@ -1130,6 +1130,18 @@ $(function(){
         };
         self.doLatestSearch = function() {
             self.doSearch({search_type:'latest'});
+        };
+        self.doValuationSearch = function() {
+            self.doSearch({search_type:'valuation'});
+        };
+        self.doActiveSearch = function() {
+            self.doSearch({search_type:'active'});
+        };
+        self.doPopularSearch = function() {
+            self.doSearch({search_type:'popular'});
+        };
+        self.doDiscussedSearch = function() {
+            self.doSearch({search_type:'discussed'});
         };
         self.doKeywordSearch = function() {
             self.doSearch({search_type:'keyword'});
@@ -2236,6 +2248,18 @@ $(function(){
                 var callback = listing_id ? listings_callback : profile_callback;
                 backend.withdrawBid($(this).data('bid_id'), callback, errorCallback);
             };
+            var acceptBid = function() {
+                var index = $(this).data('index');
+                var bid_id = $(this).data('bid_id');
+                var profile_id = $(this).data('profile_id');
+                var listing_id = $(this).data('listing_id');
+                var errorCallback = function() { $('#bids-item-message-'+index).attr('class', 'attention').html('unable to accept bid'); };
+                var errorCallback2 = function() { $('#bids-message').attr('class', 'attention').html('unable to get bids'); util.displayPage('bids'); };
+                var profile_callback = function() { backend.bidsForProfile(profile_id, self.displayResults, errorCallback2); };
+                var listings_callback = function() { backend.bidsForListing(listing_id, self.displayResults, errorCallback2); };
+                var callback = listing_id ? listings_callback : profile_callback;
+                backend.acceptBid($(this).data('bid_id'), callback, errorCallback);
+            };
             for (var i = 0; i < bids.length; i++) {
                 bid = bids[i];
                 $('#bids-item-profile-'+i).data({index:i,profile_id:bid.profile_id}).unbind().bind('click', function(){
@@ -2244,16 +2268,24 @@ $(function(){
                 $('#bids-item-listing-'+i).data({index:i,listing_id:bid.listing_id}).unbind().bind('click', function(){
                     util.hashedCall('bids', 'showBidListing', [$(this).data('listing_id'), $(this).data('index')]);
                 });           
-                if (!profile || profile.profile_id != bid.profile_id) {
-                    continue;
-                }
-                if (bid.status === 'active') {
+                if (profile && profile.profile_id === bid.profile_id && bid.status === 'active') { // user can withdraw their bid
                     $('#bids-item-delete-'+i)
                         .data('bid_id', bid.bid_id)
-                        .data('profile_id', results.listing ? '' : bid.profile_id)
-                        .data('listing_id', results.listing ? results.listing.listing_id : '')
+                        .data('profile_id', listing ? '' : bid.profile_id)
+                        .data('listing_id', listing ? results.listing.listing_id : '')
                         .unbind()
                         .bind('click', withdrawBid);
+                }
+                if (listing
+                    && profile
+                    && (profile.profile_id === listing.profile_id || profile.profile_id === bid.listing_profile_id)
+                    && bid.status === 'active') { // user can accept a bid for their own listing
+                    $('#bids-item-accept-'+i)
+                        .data('bid_id', bid.bid_id)
+                        .data('profile_id', listing ? '' : bid.profile_id)
+                        .data('listing_id', listing ? results.listing.listing_id : '')
+                        .unbind()
+                        .bind('click', acceptBid);
                 }
             }
         };
@@ -2296,11 +2328,19 @@ $(function(){
             resultHtml += ' with ' + self.formatBidType(bid.bid_type);
             resultHtml += bid.interest_rate ? ' @ ' + bid.interest_rate + '%' : '';
             resultHtml += '</div>';
-            if (profile && profile.profile_id === bid.profile_id && bid.status === 'active') {
-                resultHtml += '<div class="content-results-list-item-profile link" id="bids-item-delete-' + i + '">(withdraw bid)';
-                resultHtml += ' <span id="bids-item-message-'+i+'" class="attention"></span>';
-                resultHtml += '</div>';
+            if (profile && profile.profile_id === bid.profile_id && bid.status === 'active') { // user can withdraw their own bid
+                resultHtml += '<div class="content-results-list-item-profile link" id="bids-item-delete-' + i + '">(withdraw bid)</div>';
             }
+            //console.log(i, 'profile.profile_id:', profile.profile_id, ' listing.proifle_id', listing.profile_id);
+            if (listing
+                && profile
+                && (profile.profile_id === listing.profile_id || profile.profile_id === bid.listing_profile_id)
+                && bid.status === 'active') { // user can accept a bid for their own listing
+                resultHtml += '<div class="content-results-list-item-profile link" id="bids-item-accept-' + i + '">(accept bid)</div>';
+            }
+            resultHtml += '<div class="content-results-list-item-profile">';
+            resultHtml += ' <span id="bids-item-message-'+i+'" class="attention"></span>';
+            resultHtml += '</div>';
             resultHtml += '<div class="content-results-list-item-clear"></div>';
             resultHtml += '<div class="content-results-list-item-detail">';
             resultHtml += 'by ';
@@ -2348,45 +2388,54 @@ $(function(){
 
     var Backend = function() {
         var self = {};
+        self.userAssignCallback = function(resultsCallback) { // always check if user is still logged in
+            var callback = function(results) {
+                if (results && results.loggedin_profile) {
+                    user.profile = results.loggedin_profile;
+                }
+                resultsCallback(results);
+            };
+            return callback;
+        };
         // profile methods
         self.getProfile = function(profile_id, callback, errorCallback) {
             var url = '/user?id=' + profile_id;
-            $.getJSON(url).success(callback).error(errorCallback);
+            $.getJSON(url).success(self.userAssignCallback(callback)).error(errorCallback);
         };
         self.profileForUsername = function(username, callback, errorCallback) {
             var url = '/user/' + username;
-            $.getJSON(url).success(callback).error(errorCallback);
+            $.getJSON(url).success(self.userAssignCallback(callback)).error(errorCallback);
         };
         self.saveProfile = function(profile, callback, errorCallback) {
         	var url = '/user/update/?id=' + profile.profile_id;
-        	$.post(url, {profile: $.JSON.encode(profile)}).success(callback).error(errorCallback);
+        	$.post(url, {profile: $.JSON.encode(profile)}).success(self.userAssignCallback(callback)).error(errorCallback);
         };
         self.activateProfile = function(profile_id, callback, errorCallback) {
             var url = '/user/activate/' + profile_id;
-            $.post(url).success(callback).error(errorCallback);
+            $.post(url).success(self.userAssignCallback(callback)).error(errorCallback);
         };
         self.deactivateProfile = function(profile_id, callback, errorCallback) {
             var url = '/user/deactivate/' + profile_id;
-            $.post(url).success(callback).error(errorCallback);
+            $.post(url).success(self.userAssignCallback(callback)).error(errorCallback);
         };
         self.searchUsers = function(searchType, keywords, start_index, max_results, callback, errorCallback) {
             searchType = 'all'; // FIXME
             var pathSuffix = searchType + '/?max_results=20';
             var url = '/users/' + pathSuffix;
-            $.getJSON(url).success(callback).error(errorCallback);
+            $.getJSON(url).success(self.userAssignCallback(callback)).error(errorCallback);
         };
         self.upvoteUser = function(profile_id, callback, errorCallback) {
             var url = '/user/up/' + profile_id;
-            $.post(url).success(callback).error(errorCallback);
+            $.post(url).success(self.userAssignCallback(callback)).error(errorCallback);
         };
         // listing methods
         self.getListing = function(listing_id, callback, errorCallback) {
             var url = '/listings/get/' + listing_id;
-            $.getJSON(url).success(callback).error(errorCallback);
+            $.getJSON(url).success(self.userAssignCallback(callback)).error(errorCallback);
         };
         self.listingsForProfile = function(profile_id, callback, errorCallback) {
             var url = '/listings/user/?id=' + profile_id;
-            $.getJSON(url).success(callback).error(errorCallback);
+            $.getJSON(url).success(self.userAssignCallback(callback)).error(errorCallback);
         };
         self.searchListings = function(searchType, keywords, profile_id, start_index, max_results, callback, errorCallback) {
             var pathSuffix = '';
@@ -2397,41 +2446,41 @@ $(function(){
                 pathSuffix = searchType + '/?max_results=20';
             }
             var url = '/listings/' + pathSuffix;
-            $.getJSON(url).success(callback).error(errorCallback);
+            $.getJSON(url).success(self.userAssignCallback(callback)).error(errorCallback);
         };
         self.createListing = function(listing, callback, errorCallback) {
             var url = '/listings/create/';
-        	$.post(url, {listing: $.JSON.encode(listing)}).success(callback).error(errorCallback);
+        	$.post(url, {listing: $.JSON.encode(listing)}).success(self.userAssignCallback(callback)).error(errorCallback);
         };
         self.saveListing = function(listing, callback, errorCallback) {
             var url = '/listings/update/';
-        	$.post(url, {listing: $.JSON.encode(listing)}).success(callback).error(errorCallback);
+        	$.post(url, {listing: $.JSON.encode(listing)}).success(self.userAssignCallback(callback)).error(errorCallback);
         };
         self.upvoteListing = function(listing_id, callback, errorCallback) {
             var url = '/listings/up/' + listing_id;
-            $.post(url).success(callback).error(errorCallback);
+            $.post(url).success(self.userAssignCallback(callback)).error(errorCallback);
         };
         self.activateListing = function(listing_id, callback, errorCallback) {
             var url = '/listings/activate/' + listing_id;
-            $.post(url).success(callback).error(errorCallback);
+            $.post(url).success(self.userAssignCallback(callback)).error(errorCallback);
         };
         self.withdrawListing = function(listing_id, callback, errorCallback) {
             var url = '/listings/withdraw/' + listing_id;
-            $.post(url).success(callback).error(errorCallback);
+            $.post(url).success(self.userAssignCallback(callback)).error(errorCallback);
         };
         // upload methods
         self.getUploadUrls = function(urlCount, callback, errorCallback) {
             var url = '/file/get-upload-url/' + urlCount + '/';
-            $.get(url).success(callback).error(errorCallback);
+            $.get(url).success(callback).error(errorCallback); // note: no user assign callback or json
         };
         // comment methods
         self.commentsForListing = function(listing_id, callback, errorCallback) {
             var url = '/comments/listing/' + listing_id + '/';
-            $.getJSON(url).success(callback).error(errorCallback);
+            $.getJSON(url).success(self.userAssignCallback(callback)).error(errorCallback);
         };
         self.commentsForProfile = function(profile_id, callback, errorCallback) {
             var url = '/comments/user/' + profile_id + '/';
-            $.getJSON(url).success(callback).error(errorCallback);
+            $.getJSON(url).success(self.userAssignCallback(callback)).error(errorCallback);
         };
         self.addComment = function(listing_id, profile_id, commentText, callback, errorCallback) {
             var url = '/comment/create';
@@ -2440,20 +2489,20 @@ $(function(){
                 profile_id: profile_id,
                 text: commentText
             };
-            $.post(url, { comment: $.JSON.encode(comment) }).success(callback).error(errorCallback);
+            $.post(url, { comment: $.JSON.encode(comment) }).success(self.userAssignCallback(callback)).error(errorCallback);
         };
         self.deleteComment = function(comment_id, callback, errorCallback) {
             var url = '/comment/delete/' + comment_id;
-            $.post(url).success(callback).error(errorCallback);
+            $.post(url).success(self.userAssignCallback(callback)).error(errorCallback);
         };
         // bid methods
         self.bidsForListing = function(listing_id, callback, errorCallback) {
             var url = '/bids/listing/' + listing_id + '/';
-            $.getJSON(url).success(callback).error(errorCallback);
+            $.getJSON(url).success(self.userAssignCallback(callback)).error(errorCallback);
         };
         self.bidsForProfile = function(profile_id, callback, errorCallback) {
             var url = '/bids/user/' + profile_id + '/';
-            $.getJSON(url).success(callback).error(errorCallback);
+            $.getJSON(url).success(self.userAssignCallback(callback)).error(errorCallback);
         };
         self.addBid = function(listing_id, profile_id, profile_username, bid_amt, bid_pct, bid_type, bid_rate, valuation, callback, errorCallback) {
             var url = '/bid/create/';
@@ -2467,15 +2516,19 @@ $(function(){
                 interest_rate: bid_rate,
                 valuation: valuation
             };
-            $.post(url, { bid: $.JSON.encode(bid) }).success(callback).error(errorCallback);
+            $.post(url, { bid: $.JSON.encode(bid) }).success(self.userAssignCallback(callback)).error(errorCallback);
         };
         self.withdrawBid = function(bid_id, callback, errorCallback) {
             var url = '/bid/withdraw/?id=' + bid_id;
-            $.post(url).success(callback).error(errorCallback);
+            $.post(url).success(self.userAssignCallback(callback)).error(errorCallback);
+        };
+        self.acceptBid = function(bid_id, callback, errorCallback) {
+            var url = '/bid/accept/?id=' + bid_id;
+            $.post(url).success(self.userAssignCallback(callback)).error(errorCallback);
         };
         self.bidStats = function(callback, errorCallback) {
             var url = '/bids/statistics/';
-            $.get(url).success(callback).error(errorCallback);
+            $.get(url).success(self.userAssignCallback(callback)).error(errorCallback);
 //            var stats = {
 //                    label: "10 Day Bid Volume",
 //                    xaxis: "days ago",
@@ -2509,7 +2562,6 @@ $(function(){
         $('#mainbody').addTouch(); // enable for touch devices
         $(window).hashchange(util.hashchange);
         $(window).hashchange();
-        searchListings.doSearch();
     });
 });
 </script>
@@ -3033,7 +3085,8 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
         <div id="header-menu-bar" class="header-menu-bar">
             <span class="link" id="header-menu-bar-top">top</span>
             <span> | </span>
-            <!--
+            <span class="link" id="header-menu-bar-latest">latest</span>
+            <span> | </span>
             <span class="link" id="header-menu-bar-valuation">valuation</span>
             <span> | </span>
             <span class="link" id="header-menu-bar-active">active</span>
@@ -3041,9 +3094,6 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
             <span class="link" id="header-menu-bar-popular">popular</span>
             <span> | </span>
             <span class="link" id="header-menu-bar-discussed">discussed</span>
-            <span> | </span>
-            -->
-            <span class="link" id="header-menu-bar-latest">new</span>
             <span> | </span>
             <span class="link" id="header-menu-bar-top-users">members</span>
             <span> | </span>
