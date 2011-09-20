@@ -472,7 +472,7 @@ $(function(){
     var Util = function() {
         var self = {};
         self.keyCache = {};
-        self.pages = ['loading', 'searchlistings', 'searchusers', 'comments', 'profile', 'listing', 'bids', 'login', 'faq'];
+        self.pages = ['loading', 'searchlistings', 'searchusers', 'comments', 'profile', 'listing', 'bids', 'login', 'faq', 'contact', 'disclaimer'];
         self.objectMapper = {};
         self.setup = function() {
             self.createObjectMapper();
@@ -482,7 +482,7 @@ $(function(){
             var sel;
             for (i = 0; i < self.pages.length; i++) { // hide all
                 sel = '#' + self.pages[i] + 'page';
-                if (self.pages[i] !== page) {
+                if (self.pages[i] !== page && $(sel).is(':visible')) {
                     $(sel).hide();
                 }
             }
@@ -492,12 +492,19 @@ $(function(){
                     $(sel).show();
                 }
                 else {
-                    $(sel).slideDown();
+                    //$(sel).slideDown();
+                    $(sel).show();
                 }
             }
         };
         self.displayFaq = function() {
             self.displayPage('faq');
+        };
+        self.displayDisclaimer = function() {
+            self.displayPage('disclaimer');
+        };
+        self.displayContact = function() {
+            self.displayPage('contact');
         };
         self.constructNumericDate = function(year, month, day) {
             var date = '' + year + (month < 10 ? '0' : '') + month + (day < 10 ? '0' : '') + day;
@@ -829,8 +836,17 @@ $(function(){
             $('#header-menu-bar-top-users').unbind().bind('click', function(){
                 util.hashedCall('searchUsers', 'doTopSearch');
             });
-            $('#header-menu-bar-faq').unbind().bind('click', function(){
+            $('#footer-menu-bar-faq').unbind().bind('click', function(){
                 util.hashedCall('util', 'displayFaq');
+            });
+            $('#footer-menu-bar-disclaimer').unbind().bind('click', function(){
+                util.hashedCall('util', 'displayDisclaimer');
+            });
+            $('#footer-menu-bar-contact').unbind().bind('click', function(){
+                util.hashedCall('util', 'displayContact');
+            });
+            $('#faq-contact').unbind().bind('click', function(){
+                util.hashedCall('util', 'displayContact');
             });
         };
         self.showHeaderProfile = function(profile_id) {
@@ -877,7 +893,9 @@ $(function(){
             '#bidspage': 'content-narrow',
             '#loginpage': 'content-narrow',
             '#faqpage': 'content-narrow',
-            '#content-stats' : 'content-stats-narrow'
+            '#content-stats' : 'content-stats-narrow',
+            '#footer' : 'footer-narrow',
+            '#footer-copyright' : 'footer-copyright-narrow'
         };
         self.currentStyle = undefined;
         self.resizeStyles = function(windowWidth) {
@@ -949,6 +967,7 @@ $(function(){
                 }
             }
             var yscale = self.height / max_value;
+            yscale *= 0.9; // leave some space at the top
             var p;
             for (i = 0; i < self.values.length; i++) { // construct points
                 p = new Object();
@@ -2404,7 +2423,7 @@ a img {
 }
 html, body {
   width: 100%; 
-/*  height: 100%; */
+  height: 100%; 
 /*  overflow: hidden; */
 /*  min-height: 100%; */
 }
@@ -2412,7 +2431,15 @@ body {
   line-height: 1;
   color: black;
   background: white;
-  font-family: sans-serif;
+  font-family: Arial,Helvetica,sans-serif;
+  overflow-x: hidden;
+}
+body:before { /*Opera Fix*/
+    content:"";
+    height:100%;
+    float:left;
+    width:0;
+    margin-top:-32767px;/
 }
 a,
 a:hover,
@@ -2424,23 +2451,51 @@ text-decoration: none;
 
 /* startupbidder styles */
 
-.gradient-bg {
+.blue-gradient-bg {
+background: #7db9e8; /* Old browsers */
+background: -moz-linear-gradient(top, #7db9e8 0%, #1e5799 100%); /* FF3.6+ */
+background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#7db9e8), color-stop(100%,#1e5799)); /* Chrome,Safari4+ */
+background: -webkit-linear-gradient(top, #7db9e8 0%,#1e5799 100%); /* Chrome10+,Safari5.1+ */
+background: -o-linear-gradient(top, #7db9e8 0%,#1e5799 100%); /* Opera11.10+ */
+background: -ms-linear-gradient(top, #7db9e8 0%,#1e5799 100%); /* IE10+ */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#7db9e8', endColorstr='#1e5799',GradientType=0 ); /* IE6-9 */
+background: linear-gradient(top, #7db9e8 0%,#1e5799 100%); /* W3C */
+}
+.vertical-gradient-bg {
     background: #eeeeee;
-    background: -moz-linear-gradient(top,#ffffff,#dddddd);
-    background: -o-linear-gradient(#ffffff,#dddddd);
-    background: -webkit-linear-gradient(#fffff,#dddddd);
-    background: -webkit-gradient(linear,left top,right bottom,from(#ffffff),to(#dddddd));
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff',endColorstr='#dddddd');
+    background: -moz-linear-gradient(top,#ffffff,#bbbbbb);
+    background: -o-linear-gradient(#ffffff,#bbbbbb);
+    background: -webkit-linear-gradient(#fffff,#bbbbbb);
+    background: -webkit-gradient(linear,left top,left bottom,from(#ffffff),to(#bbbbbb));
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff',endColorstr='#bbbbbb');
 }
 .site {
-    position: absolute;
     width: 100%;
+    min-height: 100%;
 }
 .link {
     color: blue;
 }
 .link:hover {
     text-decoration: underline;
+    cursor: pointer;
+}
+.title-link {
+    color: white;
+    line-height: 10px;
+    font-size: 18px;
+}
+.title-link:hover {
+    font-size: 20px;
+    cursor: pointer;
+}
+.header-link {
+    color: white;
+    line-height: 10px;
+    font-size: 12px;
+}
+.header-link:hover {
+    font-size: 14px;
     cursor: pointer;
 }
 .attention {
@@ -2451,16 +2506,46 @@ text-decoration: none;
 }
 .header {
     font-size: 12px;
-    position: absolute;
     width: 100%;
     height: 40px;
-    border-bottom: 2px solid black;
+    font-weight: bold;
+/*    margin-bottom: 10px; */
+}
+.footer {
+    position: relative;
+    margin-top: -40px;
+    height: 30px;
+    clear: both;
+    width: 100%;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 5px;
+    text-align: left;
+}
+.footer-narrow {
+    text-align: center;
+}
+.transparent {
+    zoom: 1;
+    filter: alpha(opacity=80);
+    opacity: 0.8;
+}
+.footer-menu-bar {
+}
+.footer-copyright {
+    padding-top: 5px;
+    font-size: 10px;
+    font-weight: normal;
+    text-align: left;
+}
+.footer-copyright-narrow {
+    position: static;
+    text-align: center;
 }
 .header-narrow {
     height: 100px;
 }
 .content {
-    position: absolute;
     width: 100%;
     top: 40px;
 }
@@ -2602,7 +2687,7 @@ text-decoration: none;
 .content-results-list-item-num {
     float: left;
     width: 20px;
-    color: red;
+    color: green;
     font-weight: bold;
 }
 .content-results-list-item-upvote {
@@ -2794,7 +2879,7 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
 .content-stats {
     position: absolute;
     right: 10px;
-    top: 10px;
+    top: 40px;
 }
 .content-stats-narrow {
     position: static; 
@@ -2805,6 +2890,10 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
     margin-top: 10px;
     margin-bottom: 10px;
     border: 2px solid #000;
+    border-radius: 10px;
+    -o-border-radius: 10px;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
 }
 .stats-label {
     width: 320px;
@@ -2858,6 +2947,11 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
 }
 .page {
     display: none;
+/*
+    overflow: auto;
+    min-height: 100%;
+*/
+    padding-bottom: 30px;
 }
 .header-menu-name-username {
     display: none;
@@ -2876,42 +2970,46 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
 }
 </style>
 
+<!--[if !IE 7]>
+    <style type="text/css">
+        #wrap {display:table;height:100%}
+    </style>
+<![endif]-->
+
 </head>
 
-<body id="mainbody" class="gradient-bg">
+<body id="mainbody">
 
 <div class="site">
-    <div id="header" class="header">
+    <div id="header" class="header blue-gradient-bg">
         <div id="header-logo" class="header-logo"></div>
         <div id="header-title" class="header-title">
-            <span class="link" id="header-title-link">startupbidder</span>
+            <span class="title-link" id="header-title-link">startupbidder</span>
         </div>
         <div id="header-menu-name" class="header-menu-name">
             <span class="attention" id="header-menu-message"></span>
-            <span class="header-menu-name-username link" id="header-menu-name-username"></span>
-            <span class="header-menu-command-logout link" id="header-menu-command-logout">(logout)</span>
+            <span class="header-menu-name-username header-link" id="header-menu-name-username"></span>
+            <span class="header-menu-command-logout header-link" id="header-menu-command-logout">(logout)</span>
         </div>
         <div id="header-menu-command" class="header-menu-command">
-            <span class="header-menu-command-login link" id="header-menu-command-login">(login)</span>
+            <span class="header-menu-command-login header-link" id="header-menu-command-login">(login)</span>
         </div>
         <div id="header-menu-bar" class="header-menu-bar">
-            <span class="link" id="header-menu-bar-top">top</span>
+            <span class="header-link" id="header-menu-bar-top">top</span>
             <span> | </span>
-            <span class="link" id="header-menu-bar-latest">latest</span>
+            <span class="header-link" id="header-menu-bar-latest">latest</span>
             <span> | </span>
-            <span class="link" id="header-menu-bar-valuation">valuation</span>
+            <span class="header-link" id="header-menu-bar-valuation">valuation</span>
             <span> | </span>
-            <span class="link" id="header-menu-bar-active">active</span>
+            <span class="header-link" id="header-menu-bar-active">active</span>
             <span> | </span>
-            <span class="link" id="header-menu-bar-popular">popular</span>
+            <span class="header-link" id="header-menu-bar-popular">popular</span>
             <span> | </span>
-            <span class="link" id="header-menu-bar-discussed">discussed</span>
+            <span class="header-link" id="header-menu-bar-discussed">discussed</span>
             <span> | </span>
-            <span class="link" id="header-menu-bar-top-users">members</span>
-            <span> | </span>
-            <span class="link" id="header-menu-bar-faq">faq</span>
+            <span class="header-link" id="header-menu-bar-top-users">members</span>
             <span class="header-menu-bar-submit-spacer" id="header-menu-bar-submit-spacer"> | </span>
-            <span class="header-menu-bar-submit link" id="header-menu-bar-submit">submit</span>
+            <span class="header-menu-bar-submit header-link" id="header-menu-bar-submit">submit</span>
         </div>
     </div>
 
@@ -2934,7 +3032,7 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
         <div class="content-stats" id="content-stats">
             <div id="stats-message" class="attention"></div>
             <div id="stats-list">
-                <div id="stats" class="stats gradient-bg">
+                <div id="stats" class="stats diagonal-gradient-bg">
                     <div id="stats-label" class="stats-label"></div>
                     <div id="stats-graph-container" class="stats-graph-container">
                         <div id="stats-graph" class="stats-graph"></div>
@@ -3297,6 +3395,170 @@ MisLead is a revolution in social networking.  Previously, social networking has
         </div>
     </div>
 
+    <div id="contactpage" class="content page">
+        <div class="content-header">
+            <div class="content-header-title">
+                Contact Us
+            </div>
+        </div>
+        <div class="content-results">
+            <div class="content-results-list">
+                <div class="content-results-list-item content-results-list-item-odd">
+                    <div class="content-results-list-item-num"></div>
+                    <div class="content-results-list-item-upvote-filler"></div>
+                    <div class="content-results-list-item-title">
+                        Email: <a href="mailto:admin@startupbidder.com">admin@startupbidder.com</a>
+                    </div>
+                </div>
+                <div class="content-results-list-item-clear"></div>
+                <div class="content-results-list-item content-results-list-item-even">
+                    <div class="content-results-list-item-num"></div>
+                    <div class="content-results-list-item-upvote-filler"></div>
+                    <div class="content-results-list-item-title">
+                        Phone: +49 162.179.2450
+                    </div>
+                </div>
+                <div class="content-results-list-item-clear"></div>
+                <div class="content-results-list-item content-results-list-item-odd">
+                    <div class="content-results-list-item-num"></div>
+                    <div class="content-results-list-item-upvote-filler"></div>
+                    <div class="content-results-list-item-title">
+                        Postal Address:
+                    </div>
+                    <div class="content-results-list-item-clear"></div>
+                    <div class="content-results-list-item-detail">
+                        <pre>
+                        Startupbidder.com
+                        c/o John Burns
+                        Kaiserswertherstr 197
+                        40474 Dusseldorf
+                        Germany
+                        </pre>
+                    </div>
+                </div>
+                <div class="content-results-list-item-clear"></div>
+            </div>
+        </div>
+    </div> <!-- end contactpage -->
+
+    <div id="disclaimerpage" class="content page">
+        <div class="content-header">
+            <div class="content-header-title">
+                Disclaimer
+            </div>
+        </div>
+        <div class="content-results">
+            <div class="content-results-list">
+                <div class="content-results-list-item content-results-list-item-odd">
+                    <div class="content-results-list-item-num">1.</div>
+                    <div class="content-results-list-item-upvote-filler"></div>
+                    <div class="content-results-list-item-title">
+                        General Disclaimer
+                    </div>
+                    <div class="content-results-list-item-clear"></div>
+                    <div class="content-results-list-item-detail">
+This web site provides general information only. It is not intended as professional and/or financial advice nor does any information on this site constitute a comprehensive or complete statement of the matters discussed or the law relating thereto. The information contained on this web site is subject to change without notice. It may therefore not be accurate or current. The information on this web site (in particular the information contained in any business plan) are not intended as an offer or recommendation to buy, sell or call on any security, product, service or investment.
+                    </div>
+                </div>
+                <div class="content-results-list-item-clear"></div>
+
+                <div class="content-results-list-item content-results-list-item-even">
+                    <div class="content-results-list-item-num">2.</div>
+                    <div class="content-results-list-item-upvote-filler"></div>
+                    <div class="content-results-list-item-title">
+                        Further Important Notice
+                    </div>
+                    <div class="content-results-list-item-clear"></div>
+                    <div class="content-results-list-item-detail">
+The information contained on the web site does not constitute an offer to sell securities or a solicitation of an offer to buy securities within the United States of America. Securities may not be sold in the United States of America absent registration or an exemption from registration under the Securities Act. Moreover, none of the information contained on this web site is a recommendation for investment in any securities.
+                    </div>
+                </div>
+                <div class="content-results-list-item-clear"></div>
+
+                <div class="content-results-list-item content-results-list-item-odd">
+                    <div class="content-results-list-item-num">3.</div>
+                    <div class="content-results-list-item-upvote-filler"></div>
+                    <div class="content-results-list-item-title">
+                        Local Restrictions
+                    </div>
+                    <div class="content-results-list-item-clear"></div>
+                    <div class="content-results-list-item-detail">
+There are legal requirements in various countries which may restrict the information which we can lawfully provide to residents of certain countries only. Persons into whose possession the information in this website comes should inform themselves about and observe any restrictions imposed in the jurisdiction in which the website is accessed.
+                    </div>
+                </div>
+                <div class="content-results-list-item-clear"></div>
+
+                <div class="content-results-list-item content-results-list-item-even">
+                    <div class="content-results-list-item-num">4.</div>
+                    <div class="content-results-list-item-upvote-filler"></div>
+                    <div class="content-results-list-item-title">
+                        Business Plans
+                    </div>
+                    <div class="content-results-list-item-clear"></div>
+                    <div class="content-results-list-item-detail">
+The information contained in any business plan does not constitute an offer to sell securities or the solicitation of an offer to buy, or recommendation for investment in, any securities within the United States or any other jurisdiction. The information in any business plan is not intended as financial advice. Moreover, none of the business plans is intended as a prospectus within the meaning of the applicable laws of any jurisdiction and none of the business plans is directed to any person in any country in which the distribution of such business plan is unlawful. Any business plan provides general information only. The information and opinions in each business plan constitute a judgement as at the date indicated and are subject to change without notice. The information may therefore not be accurate or current. The information and opinions contained in business plans have been compiled or arrived at from sources believed to be reliable in good faith, but no representation or warranty, express or implied, is made by Startupbidder as to their accuracy, completeness or correctness and Startupbidder does also not warrant that the information is up to date. Moreover, you should be aware of the fact that investments in undertakings, securities or other financial instruments involve risks. Past results do not guarantee future performance. In the United States securities may not be sold absent registration or an exemption from registration under the Securities Act.
+                    </div>
+                </div>
+                <div class="content-results-list-item-clear"></div>
+
+                <div class="content-results-list-item content-results-list-item-odd">
+                    <div class="content-results-list-item-num">5.</div>
+                    <div class="content-results-list-item-upvote-filler"></div>
+                    <div class="content-results-list-item-title">
+                        Linked Sites
+                    </div>
+                    <div class="content-results-list-item-clear"></div>
+                    <div class="content-results-list-item-detail">
+The hyperlinks within the web site will take you to publicly available sites which are not within the control of Startupbidder. Startupbidder is not responsible for the content or accuracy of those web sites. The user should read any terms and conditions applying to the use of any such site carefully. The inclusion of a link in Startupbidder's web site does not imply that Startupbidder endorses, recommends or approves any material on the linked page or accessible from it.
+                    </div>
+                </div>
+                <div class="content-results-list-item-clear"></div>
+
+                <div class="content-results-list-item content-results-list-item-even">
+                    <div class="content-results-list-item-num">6.</div>
+                    <div class="content-results-list-item-upvote-filler"></div>
+                    <div class="content-results-list-item-title">
+                        Copyright Notice
+                    </div>
+                    <div class="content-results-list-item-clear"></div>
+                    <div class="content-results-list-item-detail">
+Unless otherwise stated the copyright for all material on this site rests with Startupbidder. All rights reserved. All copying is forbidden other than in accordance with the following limited permissions. You are permitted to view the contents of this site on screen. You are also permitted to print the site for your personal use or private study and to save it to your local hard ware for your personal use or private study. All other copying or use of any of the contents on this web site is strictly forbidden. If you are viewing this web site in the course of your employer's business you must observe the restrictions set out above. Other than as necessary for the purpose of viewing the site, it is strictly forbidden to copy any material on this site for commercial use in the course of a business or to store any or all of the contents of this site on a proxy server, cache or other similar form of storage.
+                    </div>
+                </div>
+                <div class="content-results-list-item-clear"></div>
+
+                <div class="content-results-list-item content-results-list-item-odd">
+                    <div class="content-results-list-item-num">7.</div>
+                    <div class="content-results-list-item-upvote-filler"></div>
+                    <div class="content-results-list-item-title">
+                        Important Notice on Exclusion of Liability
+                    </div>
+                    <div class="content-results-list-item-clear"></div>
+                    <div class="content-results-list-item-detail">
+A. General
+<br/>
+<br/>
+Startupbidder examines and updates the information on its web site regularly. In spite of all our care and work, data still can have changed since our last update. Data contained in this web site may not be accurate or up to date due to such changes or due to other reasons. Therefore, Startupbidder does not accept any liability or guarantee for the accuracy or completeness of the information presented here and does not warrant that the information is complete. Any use of information contained on this web site takes place at your own risk.
+<br/>
+<br/>
+B. Rules applying to the use of this website by persons located in Germany
+<br/>
+<br/>
+The posting of information on this web site is neither an offer for a contract on information (Auskunftsvertrag) nor an offer for the entering into any other contractual relationship. Any use of information contained on this web site is at your own risk. However, in any case the following limitations of liability for damages or futile expenditures are applicable irrespective of the legal basis for such liability: In case of willful acts, gross negligence, malice (Arglist) as well as in case of any injury of life, personal injury or injury to health, we will be liable in accordance with the statutory provisions. In cases of slight negligence, we will not be liable unless a breach of a material contractual obligation occurs. In such cases, our liability will be limited to typical, foreseeable damage. In any other case of slight negligence including tort, our liability is excluded.
+<br/>
+<br/>
+C. Rules applying to the use of this website by persons located outside of Germany
+<br/>
+<br/>
+Except to the extent that liability under any applicable law or regulation cannot be excluded, neither Startupbidder nor any affiliate accepts any liability whatsoever for any direct or consequential loss or damage arising as a result of any opinion or information expressly or impliedly published in this web site notwithstanding negligence, default or lack of care by it or that such loss or damage was foreseeable. Neither Startupbidder nor any affiliate accepts responsibility arising in any way (including by reason of negligence) for errors in, or omissions from, the information in this web site. Any use of information contained on this web site is at your own risk.
+                </div> 
+            </div>
+            <div class="content-results-list-item-clear"></div>
+        </div>
+</div>
+    </div> <!-- end disclaimerpage -->
+  
+   
     <div id="faqpage" class="content page">
         <div class="content-header">
             <div class="content-header-title">
@@ -3327,8 +3589,8 @@ MisLead is a revolution in social networking.  Previously, social networking has
                     </div>
                     <div class="content-results-list-item-clear"></div>
                     <div class="content-results-list-item-detail">
-                        Two guys who wanted to bring more visibility to the otherwise opaque world of
-                        startup business plan valuation.  That, and they were bored.
+                        Greg Nittner and John Arley Burns, two guys who wanted to bring more visibility to the otherwise opaque world of
+                        startup business plan valuation.
                     </div>
                 </div>
                 <div class="content-results-list-item-clear"></div>
@@ -3336,11 +3598,13 @@ MisLead is a revolution in social networking.  Previously, social networking has
                     <div class="content-results-list-item-num">3.</div>
                     <div class="content-results-list-item-upvote-filler"></div>
                     <div class="content-results-list-item-title">
-                        How can we reach you?
+                        How can I contact you?
                     </div>
                     <div class="content-results-list-item-clear"></div>
                     <div class="content-results-list-item-detail">
-                        Try admin@startupbidder.com, or +49 162.179.2450 by phone.
+                        See the
+                            <span class="link" id="faq-contact">contact page</span>
+                        for more detail.
                     </div>
                 </div>
                 <div class="content-results-list-item-clear"></div>
@@ -3348,7 +3612,7 @@ MisLead is a revolution in social networking.  Previously, social networking has
                     <div class="content-results-list-item-num">4.</div>
                     <div class="content-results-list-item-upvote-filler"></div>
                     <div class="content-results-list-item-title">
-                        What is the algorithm you use to rank stories?
+                        What is the algorithm you use to rank business plans?
                     </div>
                     <div class="content-results-list-item-clear"></div>
                     <div class="content-results-list-item-detail">
@@ -3429,11 +3693,22 @@ s = (p + b + c + v) / (t + 2)^1.5
                 <div class="content-results-list-item-clear"></div>
              </div>
         </div>
+    </div> <!-- end faq -->
+   
+</div> <!-- end site -->
+
+    <div id="footer" class="footer vertical-gradient-bg">
+        <div id="footer-menu-bar" class="footer-menu-bar">
+            <span class="link" id="footer-menu-bar-contact">contact</span>
+            <span> | </span>
+            <span class="link" id="footer-menu-bar-faq">faq</span>
+            <span> | </span>
+            <span class="link" id="footer-menu-bar-disclaimer">disclaimer</span>
+        </div>
+        <div id="footer-copyright" class="footer-copyright">
+           Copyright © 2011 Startupbidder.com
+        </div>
     </div>
-    
-
-</div>
-
 
 </body>
 
