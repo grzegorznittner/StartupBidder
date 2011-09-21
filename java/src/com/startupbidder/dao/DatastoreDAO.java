@@ -329,19 +329,24 @@ public interface DatastoreDAO {
 	 * Updates bid
 	 * @param bid
 	 */
-	BidDTO updateBid(BidDTO bid);
+	BidDTO updateBid(String loggedInUser, BidDTO bid);
 
 	/**
 	 * Sets bid status to ACTIVE
 	 * @param bidId
 	 */
-	BidDTO activateBid(String bidId);
+	BidDTO activateBid(String loggedInUser, String bidId);
 
 	/**
 	 * Sets bid status to WITHDRAWN
 	 * @param bidId
 	 */
-	BidDTO withdrawBid(String bidId);
+	BidDTO withdrawBid(String loggedInUser, String bidId);
+
+	/**
+	 * Set bid status to ACCEPTED
+	 */
+	BidDTO acceptBid(String loggedInUser, String bidId);
 
 	/**
 	 * Returns list of bids sorted by post date.

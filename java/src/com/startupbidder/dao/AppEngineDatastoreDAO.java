@@ -1077,17 +1077,22 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 	@Override
 	public BidDTO createBid(BidDTO bid) {
 		bid.setPlaced(new Date());
-		bid.createKey(bid.getListing() + bid.getUser() + bid.getPlaced().getTime());
+		bid.createKey(bid.getListing().substring(0, 3) + bid.getUser().substring(0, 3) + bid.getPlaced().getTime());
 		
 		getDatastoreService().put(bid.toEntity());
 		return bid;
 	}
 
 	@Override
-	public BidDTO updateBid(BidDTO newBid) {
+	public BidDTO updateBid(String loggedInUser, BidDTO newBid) {
 		try {
 			Entity bidEntity = getDatastoreService().get(newBid.getKey());
 			BidDTO bid = BidDTO.fromEntity(bidEntity);
+			
+			if (!StringUtils.areStringsEqual(loggedInUser, bid.getUser())) {
+				log.log(Level.SEVERE, "User '" + loggedInUser + "' is not the owner of the bid " + bid);
+				return null;
+			}
 			
 			bid.setFundType(newBid.getFundType());
 			bid.setValue(newBid.getValue());
@@ -1102,12 +1107,17 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 	}
 
 	@Override
-	public BidDTO activateBid(String bidId) {
+	public BidDTO activateBid(String loggedInUser, String bidId) {
 		try {
 			BidDTO bid = new BidDTO();
 			bid.setIdFromString(bidId);
 			Entity bidEntity = getDatastoreService().get(bid.getKey());
 			bid = BidDTO.fromEntity(bidEntity);
+			
+			if (!StringUtils.areStringsEqual(loggedInUser, bid.getUser())) {
+				log.log(Level.SEVERE, "User '" + loggedInUser + "' is not the owner of the bid " + bid);
+				return null;
+			}
 			
 			bid.setStatus(BidDTO.Status.ACTIVE);
 
@@ -1120,14 +1130,56 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 	}
 
 	@Override
-	public BidDTO withdrawBid(String bidId) {
+	public BidDTO withdrawBid(String loggedInUser, String bidId) {
 		try {
 			BidDTO bid = new BidDTO();
 			bid.setIdFromString(bidId);
 			Entity bidEntity = getDatastoreService().get(bid.getKey());
 			bid = BidDTO.fromEntity(bidEntity);
 			
+			if (!StringUtils.areStringsEqual(loggedInUser, bid.getUser())) {
+				log.log(Level.SEVERE, "User '" + loggedInUser + "' is not the owner of the bid " + bid);
+				return null;
+			}
+			
 			bid.setStatus(BidDTO.Status.WITHDRAWN);
+
+			getDatastoreService().put(bid.toEntity());
+			return bid;
+		} catch (EntityNotFoundException e) {
+			log.log(Level.WARNING, "Bid with id '" + bidId + "' not found!");
+			return null;
+		}
+	}
+
+	@Override
+	public BidDTO acceptBid(String loggedInUser, String bidId) {
+		try {
+			BidDTO bid = new BidDTO();
+			bid.setIdFromString(bidId);
+			Entity bidEntity = getDatastoreService().get(bid.getKey());
+			bid = BidDTO.fromEntity(bidEntity);
+			
+			if (!BidDTO.Status.ACTIVE.equals(bid.getStatus())) {
+				log.log(Level.WARNING, "Bid is not active. " + bid);
+				return null;
+			}
+			ListingDTO listing = getListing(bid.getListing());
+			if (!StringUtils.areStringsEqual(loggedInUser, listing.getOwner())) {
+				log.log(Level.SEVERE, "User '" + loggedInUser + "' is not the owner of the listing. " + listing + ", " + bid);
+				return null;
+			}
+			if (!ListingDTO.State.ACTIVE.equals(listing.getState())) {
+				log.log(Level.WARNING, "Listing '" + bid.getListing() + "' is not active. " + listing + ", " + bid);
+				return null;
+			}
+			UserDTO bidder = getUser(bid.getUser());
+			if (!UserDTO.Status.ACTIVE.equals(bidder.getStatus())) {
+				log.log(Level.WARNING, "Bidder is not active. " + bidder + ", " + bid);
+				return null;
+			}
+			
+			bid.setStatus(BidDTO.Status.ACCEPTED);
 
 			getDatastoreService().put(bid.toEntity());
 			return bid;

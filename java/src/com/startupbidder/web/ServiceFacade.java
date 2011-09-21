@@ -834,20 +834,34 @@ public class ServiceFacade {
 	}
 
 	public BidVO updateBid(UserVO loggedInUser, BidVO bid) {
-		bid = DtoToVoConverter.convert(getDAO().updateBid(VoToDtoConverter.convert(bid)));
-		scheduleUpdateOfListingStatistics(bid.getListing(), ListingStatsUpdateReason.NONE);
+		bid = DtoToVoConverter.convert(getDAO().updateBid(loggedInUser.getId(), VoToDtoConverter.convert(bid)));
+		if (bid != null) {
+			scheduleUpdateOfListingStatistics(bid.getListing(), ListingStatsUpdateReason.NONE);
+		}
 		return bid;
 	}
 
 	public BidVO activateBid(UserVO loggedInUser, String bidId) {
-		BidVO bid = DtoToVoConverter.convert(getDAO().activateBid(bidId));
-		scheduleUpdateOfListingStatistics(bid.getListing(), ListingStatsUpdateReason.NEW_BID);
+		BidVO bid = DtoToVoConverter.convert(getDAO().activateBid(loggedInUser.getId(), bidId));
+		if (bid != null) {
+			scheduleUpdateOfListingStatistics(bid.getListing(), ListingStatsUpdateReason.NEW_BID);
+		}
 		return bid;
 	}
 
 	public BidVO withdrawBid(UserVO loggedInUser, String bidId) {
-		BidVO bid = DtoToVoConverter.convert(getDAO().withdrawBid(bidId));
-		scheduleUpdateOfListingStatistics(bid.getListing(), ListingStatsUpdateReason.NONE);
+		BidVO bid = DtoToVoConverter.convert(getDAO().withdrawBid(loggedInUser.getId(), bidId));
+		if (bid != null) {
+			scheduleUpdateOfListingStatistics(bid.getListing(), ListingStatsUpdateReason.NONE);
+		}
+		return bid;
+	}
+	
+	public BidVO acceptBid(UserVO loggedInUser, String bidId) {
+		BidVO bid = DtoToVoConverter.convert(getDAO().acceptBid(loggedInUser.getId(), bidId));
+		if (bid != null) {
+			scheduleUpdateOfListingStatistics(bid.getListing(), ListingStatsUpdateReason.NONE);
+		}
 		return bid;
 	}
 

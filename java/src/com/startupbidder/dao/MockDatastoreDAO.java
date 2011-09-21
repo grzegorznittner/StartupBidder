@@ -801,7 +801,7 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		return bidCache.remove(bidId);
 	}
 	
-	public BidDTO activateBid(String bidId) {
+	public BidDTO activateBid(String loggedInUser, String bidId) {
 		if (bidCache.containsKey(bidId)) {
 			BidDTO bid = bidCache.get(bidId);
 			bid.setStatus(BidDTO.Status.ACTIVE);
@@ -811,7 +811,7 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		}
 	}
 
-	public BidDTO withdrawBid(String bidId) {
+	public BidDTO withdrawBid(String loggedInUser, String bidId) {
 		if (bidCache.containsKey(bidId)) {
 			BidDTO bid = bidCache.get(bidId);
 			bid.setStatus(BidDTO.Status.WITHDRAWN);
@@ -821,6 +821,17 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		}
 	}
 
+	@Override
+	public BidDTO acceptBid(String loggedInUser, String bidId) {
+		if (bidCache.containsKey(bidId)) {
+			BidDTO bid = bidCache.get(bidId);
+			bid.setStatus(BidDTO.Status.ACCEPTED);
+			return bid;
+		} else {
+			return null;
+		}
+	}
+	
 	public BidDTO createBid(BidDTO bid) {
 		bid.createKey("" + bid.hashCode());
 		bid.setPlaced(new Date());
@@ -828,7 +839,7 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		return bid;
 	}
 
-	public BidDTO updateBid(BidDTO newBid) {
+	public BidDTO updateBid(String loggedInUser, BidDTO newBid) {
 		if (!bidCache.containsKey(newBid.getIdAsString())) {
 			log.log(Level.WARNING, "Bid '" + newBid.getIdAsString() + "' doesn't exist!");
 			return null;

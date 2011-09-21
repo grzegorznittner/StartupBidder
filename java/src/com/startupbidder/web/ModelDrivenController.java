@@ -104,7 +104,7 @@ public abstract class ModelDrivenController {
 		try {
 			writer = response.getWriter();
 			writer.println("<html><head><title>Startupbidder.com</title></head><body>");
-			String modelHtml = getModel().toString();
+			String modelHtml = getModel() != null ? getModel().toString() : "Result is empty.";
 			modelHtml.replaceAll("]", "]<br/>");
 			writer.println(modelHtml);
 			writer.println("</body></html>");

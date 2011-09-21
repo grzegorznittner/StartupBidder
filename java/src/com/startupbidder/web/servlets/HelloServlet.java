@@ -66,6 +66,7 @@ public class HelloServlet extends HttpServlet {
 			listProperties.setMaxResults(1);
 			ListingDTO topListing = datastore.getTopListings(listProperties).get(0);
 			List<BidDTO> bids = datastore.getBidsForUser(topInvestor.getIdAsString());
+			List<ListingDTO> usersListings = datastore.getUserListings(currentUser.getId(), listProperties);
 			List<CommentDTO> comments = datastore.getCommentsForListing(datastore.getMostDiscussedListings(listProperties).get(0).getIdAsString());
 			
 			//testMockDatastore(user, datastore, out);
@@ -107,6 +108,18 @@ public class HelloServlet extends HttpServlet {
 					+ "</textarea><input type=\"submit\" value=\"Create a bid\"/></form>");
 			out.println("<form method=\"POST\" action=\"/bid/activate/.html\"> <input type=\"hidden\" name=\"id\" value=\"" + bids.get(0).getIdAsString() + "\"/><input type=\"submit\" value=\"Activate bid id '" + bids.get(0).getIdAsString() + "'\"/></form>");
 			out.println("<form method=\"POST\" action=\"/bid/withdraw/.html\"> <input type=\"hidden\" name=\"id\" value=\"" + bids.get(0).getIdAsString() + "\"/><input type=\"submit\" value=\"Withdraw bid id '" + bids.get(0).getIdAsString() + "'\"/></form>");
+			out.println("<form method=\"POST\" action=\"/bid/accept/.html\"> <input type=\"hidden\" name=\"id\" value=\"" + bids.get(0).getIdAsString() + "\"/><input type=\"submit\" value=\"Accept bid id '" + bids.get(0).getIdAsString() + "' (most likely fails)\"/></form>");
+			if (usersListings.size() == 0) {
+				out.println("Can't test bid accept as user doesn't have any listing.</br>");
+			} else {
+				List<BidDTO> bidsForUserListings = datastore.getBidsForListing(usersListings.get(0).getIdAsString());
+				if (bidsForUserListings.size() == 0) {
+					out.println("Can't test bid accept as user's listings doesn't have any bids.</br>");
+				} else {
+					out.println("<form method=\"POST\" action=\"/bid/accept/.html\"> <input type=\"hidden\" name=\"id\" value=\"" + bidsForUserListings.get(0).getIdAsString() + "\"/><input type=\"submit\" value=\"Accept bid id '" + bids.get(0).getIdAsString() + "' (should work)\"/></form>");
+				}
+			}
+			
 			out.println("<a href=\"/bids/statistics/.html\">Get bid statistics</a><br/>");
 			
 			out.println("<p>Comments API:</p>");
