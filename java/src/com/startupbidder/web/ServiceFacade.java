@@ -865,6 +865,14 @@ public class ServiceFacade {
 		return bid;
 	}
 
+	public BidVO markBidAsPayed(UserVO loggedInUser, String bidId) {
+		BidVO bid = DtoToVoConverter.convert(getDAO().markBidAsPayed(loggedInUser.getId(), bidId));
+		if (bid != null) {
+			scheduleUpdateOfListingStatistics(bid.getListing(), ListingStatsUpdateReason.NONE);
+		}
+		return bid;
+	}
+
 	public GraphDataVO getBidsStatistics(UserVO loggedInUser) {		
 		ListPropertiesVO bidsProperties = new ListPropertiesVO();
 		bidsProperties.setMaxResults(100);

@@ -344,10 +344,15 @@ public interface DatastoreDAO {
 	BidDTO withdrawBid(String loggedInUser, String bidId);
 
 	/**
-	 * Set bid status to ACCEPTED
+	 * Sets bid status to ACCEPTED
 	 */
 	BidDTO acceptBid(String loggedInUser, String bidId);
 
+	/**
+	 * Sets bid status to PAYED 
+	 */
+	BidDTO markBidAsPayed(String loggedInUser, String bidId);
+	
 	/**
 	 * Returns list of bids sorted by post date.
 	 * @param bidsProperties

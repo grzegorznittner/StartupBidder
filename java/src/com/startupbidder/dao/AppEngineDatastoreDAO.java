@@ -1189,6 +1189,32 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 		}
 	}
 
+	public BidDTO markBidAsPayed(String loggedInUser, String bidId) {
+		try {
+			BidDTO bid = new BidDTO();
+			bid.setIdFromString(bidId);
+			Entity bidEntity = getDatastoreService().get(bid.getKey());
+			bid = BidDTO.fromEntity(bidEntity);
+			
+			if (!BidDTO.Status.ACCEPTED.equals(bid.getStatus())) {
+				log.log(Level.WARNING, "Bid is not accepted. " + bid);
+				return null;
+			}
+			ListingDTO listing = getListing(bid.getListing());
+			if (!StringUtils.areStringsEqual(loggedInUser, listing.getOwner())) {
+				log.log(Level.SEVERE, "User '" + loggedInUser + "' is not the owner of the listing. " + listing + ", " + bid);
+				return null;
+			}
+			
+			bid.setStatus(BidDTO.Status.PAYED);
+
+			getDatastoreService().put(bid.toEntity());
+			return bid;
+		} catch (EntityNotFoundException e) {
+			log.log(Level.WARNING, "Bid with id '" + bidId + "' not found!");
+			return null;
+		}
+	}
 	@Override
 	public List<BidDTO> getBidsByDate(ListPropertiesVO bidsProperties) {
 		List<BidDTO> bids = new ArrayList<BidDTO>();

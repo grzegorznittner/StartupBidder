@@ -109,16 +109,9 @@ public class HelloServlet extends HttpServlet {
 			out.println("<form method=\"POST\" action=\"/bid/activate/.html\"> <input type=\"hidden\" name=\"id\" value=\"" + bids.get(0).getIdAsString() + "\"/><input type=\"submit\" value=\"Activate bid id '" + bids.get(0).getIdAsString() + "'\"/></form>");
 			out.println("<form method=\"POST\" action=\"/bid/withdraw/.html\"> <input type=\"hidden\" name=\"id\" value=\"" + bids.get(0).getIdAsString() + "\"/><input type=\"submit\" value=\"Withdraw bid id '" + bids.get(0).getIdAsString() + "'\"/></form>");
 			out.println("<form method=\"POST\" action=\"/bid/accept/.html\"> <input type=\"hidden\" name=\"id\" value=\"" + bids.get(0).getIdAsString() + "\"/><input type=\"submit\" value=\"Accept bid id '" + bids.get(0).getIdAsString() + "' (most likely fails)\"/></form>");
-			if (usersListings.size() == 0) {
-				out.println("Can't test bid accept as user doesn't have any listing.</br>");
-			} else {
-				List<BidDTO> bidsForUserListings = datastore.getBidsForListing(usersListings.get(0).getIdAsString());
-				if (bidsForUserListings.size() == 0) {
-					out.println("Can't test bid accept as user's listings doesn't have any bids.</br>");
-				} else {
-					out.println("<form method=\"POST\" action=\"/bid/accept/.html\"> <input type=\"hidden\" name=\"id\" value=\"" + bidsForUserListings.get(0).getIdAsString() + "\"/><input type=\"submit\" value=\"Accept bid id '" + bids.get(0).getIdAsString() + "' (should work)\"/></form>");
-				}
-			}
+			printAcceptBid(datastore, out, usersListings);
+			out.println("<form method=\"POST\" action=\"/bid/payed/.html\"> <input type=\"hidden\" name=\"id\" value=\"" + bids.get(0).getIdAsString() + "\"/><input type=\"submit\" value=\"Mark bid as pyed, id '" + bids.get(0).getIdAsString() + "' (most likely fails)\"/></form>");
+			printPayBid(datastore, out, usersListings);
 			
 			out.println("<a href=\"/bids/statistics/.html\">Get bid statistics</a><br/>");
 			
@@ -164,6 +157,56 @@ public class HelloServlet extends HttpServlet {
 			e.printStackTrace();
 		} finally {
 			out.println("</body></html>");
+		}
+	}
+
+	private void printAcceptBid(DatastoreDAO datastore, PrintWriter out,
+			List<ListingDTO> usersListings) {
+		if (usersListings.size() == 0) {
+			out.println("Can't test bid accept as user doesn't have any listing.</br>");
+		} else {
+			boolean validBid = false;
+			for (ListingDTO listing : usersListings) {
+				List<BidDTO> bidsForUserListings = datastore.getBidsForListing(listing.getIdAsString());
+				for (BidDTO bid : bidsForUserListings) {
+					if (BidDTO.Status.ACTIVE.equals(bid.getStatus())) {
+						out.println("<form method=\"POST\" action=\"/bid/accept/.html\"> <input type=\"hidden\" name=\"id\" value=\"" + bid.getIdAsString() + "\"/><input type=\"submit\" value=\"Accept bid id '" + bid.getIdAsString() + "' (should work)\"/></form>");
+						validBid = true;
+						break;
+					}
+				}
+				if (validBid) {
+					break;
+				}
+			}
+			if (!validBid) {
+				out.println("Can't test bid accept as user's listings don't have any active bids.</br>");
+			}
+		}
+	}
+
+	private void printPayBid(DatastoreDAO datastore, PrintWriter out,
+			List<ListingDTO> usersListings) {
+		if (usersListings.size() == 0) {
+			out.println("Can't test bid pey as user doesn't have any listing.</br>");
+		} else {
+			boolean validBid = false;
+			for (ListingDTO listing : usersListings) {
+				List<BidDTO> bidsForUserListings = datastore.getBidsForListing(listing.getIdAsString());
+				for (BidDTO bid : bidsForUserListings) {
+					if (BidDTO.Status.ACCEPTED.equals(bid.getStatus())) {
+						out.println("<form method=\"POST\" action=\"/bid/payed/.html\"> <input type=\"hidden\" name=\"id\" value=\"" + bid.getIdAsString() + "\"/><input type=\"submit\" value=\"Accept bid id '" + bid.getIdAsString() + "' (should work)\"/></form>");
+						validBid = true;
+						break;
+					}
+				}
+				if (validBid) {
+					break;
+				}
+			}
+			if (!validBid) {
+				out.println("Can't test bid accept as user's listings don't have any accepted bids.</br>");
+			}
 		}
 	}
 

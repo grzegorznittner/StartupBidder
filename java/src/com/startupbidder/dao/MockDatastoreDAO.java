@@ -832,6 +832,16 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		}
 	}
 	
+	public BidDTO markBidAsPayed(String loggedInUser, String bidId) {
+		if (bidCache.containsKey(bidId)) {
+			BidDTO bid = bidCache.get(bidId);
+			bid.setStatus(BidDTO.Status.PAYED);
+			return bid;
+		} else {
+			return null;
+		}
+	}
+	
 	public BidDTO createBid(BidDTO bid) {
 		bid.createKey("" + bid.hashCode());
 		bid.setPlaced(new Date());
