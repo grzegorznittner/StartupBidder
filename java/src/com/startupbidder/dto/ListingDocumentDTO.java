@@ -61,7 +61,7 @@ public class ListingDocumentDTO extends AbstractDTO implements Serializable {
 	}
 	@Override
 	public String toString() {
-		return "ListingDocumentDTO [blob=" + blob
+		return "ListingDocumentDTO [id=" + getIdAsString() + ", blob=" + blob
 				+ ", created=" + created + ", type=" + type + "]";
 	}
 	@Override

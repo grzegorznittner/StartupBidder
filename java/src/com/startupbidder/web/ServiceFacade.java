@@ -81,7 +81,7 @@ public class ServiceFacade {
         }
 	}
 	
-	private DatastoreDAO getDAO () {
+	public DatastoreDAO getDAO () {
 		if (currentDAO.equals(Datastore.MOCK)) {
 			return MockDatastoreDAO.getInstance();
 		} else {
@@ -794,6 +794,14 @@ public class ServiceFacade {
 		if (loggedInUser != null && !StringUtils.areStringsEqual(loggedInUser.getId(), listing.getOwner())) {
 			return null;
 		}
+		if (StringUtils.isEmpty(listing.getName())) {
+			log.warning("Listing '" + listing.getId() + "' cannot be updated with empty name");
+			return null;
+		}
+		if (StringUtils.isEmpty(listing.getSummary())) {
+			log.warning("Listing '" + listing.getId() + "' cannot be updated with empty summary");
+			return null;
+		}
 		ListingVO updatedListing = DtoToVoConverter.convert(getDAO().updateListing(VoToDtoConverter.convert(listing)));
 		computeListingData(loggedInUser, updatedListing);
 		return updatedListing;
@@ -824,6 +832,10 @@ public class ServiceFacade {
 	}
 
 	public CommentVO updateComment(UserVO loggedInUser, CommentVO comment) {
+		if (StringUtils.isEmpty(comment.getComment())) {
+			log.warning("Comment '" + comment.getId() + "' cannot be updated with empty text");
+			return null;
+		}
 		comment = DtoToVoConverter.convert(getDAO().updateComment(VoToDtoConverter.convert(comment)));
 		return comment;
 	}
@@ -835,6 +847,11 @@ public class ServiceFacade {
 	}
 
 	public BidVO createBid(UserVO loggedInUser, BidVO bid) {
+		if (bid.getValue() <= 0) {
+			log.warning("Bid cannot be created with non positive value");
+			return null;
+		}
+
 		bid.setStatus(BidDTO.Status.ACTIVE.toString());
 		bid = DtoToVoConverter.convert(getDAO().createBid(VoToDtoConverter.convert(bid)));
 		scheduleUpdateOfUserStatistics(loggedInUser.getId(), UserStatsUpdateReason.NEW_BID);
@@ -842,6 +859,11 @@ public class ServiceFacade {
 	}
 
 	public BidVO updateBid(UserVO loggedInUser, BidVO bid) {
+		if (bid.getValue() <= 0) {
+			log.warning("Bid '" + bid.getId() + "' cannot be updated with non positive value");
+			return null;
+		}
+
 		bid = DtoToVoConverter.convert(getDAO().updateBid(loggedInUser.getId(), VoToDtoConverter.convert(bid)));
 		if (bid != null) {
 			scheduleUpdateOfListingStatistics(bid.getListing(), ListingStatsUpdateReason.NONE);

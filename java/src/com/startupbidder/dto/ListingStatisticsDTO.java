@@ -121,7 +121,7 @@ public class ListingStatisticsDTO extends AbstractDTO implements Serializable {
 
 	@Override
 	public String toString() {
-		return "ListingStatisticsDTO [listing=" + listing + ", status="
+		return "ListingStatisticsDTO [id=" + getIdAsString() + ", listing=" + listing + ", status="
 				+ status + ", valuation=" + valuation + ", numberOfComments="
 				+ numberOfComments + ", numberOfBids=" + numberOfBids
 				+ ", numberOfVotes=" + numberOfVotes + ", date=" + date + "]";

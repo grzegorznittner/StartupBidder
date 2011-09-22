@@ -102,7 +102,8 @@ public class BidDTO extends AbstractDTO implements Serializable {
 
 	@Override
 	public String toString() {
-		return "BidDTO [user=" + user + ", listing=" + listing + ", placed="
+		return "BidDTO [key=" + getKey() + ", id=" + getIdAsString() + ", user=" + user
+				+ ", listing=" + listing + ", placed="
 				+ placed + ", value=" + value + ", percentOfCompany="
 				+ percentOfCompany + ", valuation=" + valuation + ", fundType="
 				+ fundType + ", status=" + status + "]";

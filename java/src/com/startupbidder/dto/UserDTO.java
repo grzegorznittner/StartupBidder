@@ -156,7 +156,7 @@ public class UserDTO extends AbstractDTO implements Serializable {
 
 	@Override
 	public String toString() {
-		return "UserDTO [nickname=" + nickname + ", name=" + name
+		return "UserDTO [id=" + getIdAsString() + ", nickname=" + nickname + ", name=" + name
 				+ ", email=" + email + ", title="
 				+ title + ", organization=" + organization + ", facebook="
 				+ facebook + ", twitter=" + twitter + ", linkedin=" + linkedin

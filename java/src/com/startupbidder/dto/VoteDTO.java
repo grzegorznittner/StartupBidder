@@ -67,7 +67,7 @@ public class VoteDTO extends AbstractDTO implements Serializable {
 
 	@Override
 	public String toString() {
-		return "VoteDTO [listing=" + listing + ", user=" + user + ", voter="
+		return "VoteDTO [id=" + getIdAsString() + ", listing=" + listing + ", user=" + user + ", voter="
 				+ voter + ", value=" + value + ", commentedOn=" + commentedOn
 				+ "]";
 	}

@@ -933,7 +933,7 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 	public BidDTO getBid(String bidId) {
 		BidDTO bid = new BidDTO();
 		bid.setIdFromString(bidId);
-		
+		log.info("Bid's id created from string '" + bidId + "' is: " + bid.getKey());
 		try {
 			Entity bidEntity = getDatastoreService().get(bid.getKey());
 			bid = BidDTO.fromEntity(bidEntity);

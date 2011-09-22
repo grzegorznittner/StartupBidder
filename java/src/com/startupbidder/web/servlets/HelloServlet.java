@@ -3,6 +3,7 @@ package com.startupbidder.web.servlets;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
+import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -30,6 +31,7 @@ import com.startupbidder.web.ServiceFacade;
 
 @SuppressWarnings("serial")
 public class HelloServlet extends HttpServlet {
+	private static final Logger log = Logger.getLogger(HelloServlet.class.getName());
 	
 	public void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws IOException {
@@ -42,8 +44,8 @@ public class HelloServlet extends HttpServlet {
 			resp.sendRedirect(userService.createLoginURL(req.getRequestURI()));
 		}
 		
-		DatastoreDAO datastore = MockDatastoreDAO.getInstance();
 		ServiceFacade service = ServiceFacade.instance();
+		DatastoreDAO datastore = ServiceFacade.instance().getDAO();
 		
 		PrintWriter out = resp.getWriter();
 		try {
@@ -100,6 +102,7 @@ public class HelloServlet extends HttpServlet {
 					+ "</textarea><input type=\"submit\" value=\"Create a listing\"/></form>");
 
 			out.println("<p>Bids API:</p>");
+			log.info("Selected bid: " + bids.get(0).toString());
 			out.println("<a href=\"/bids/listing/" + topListing.getIdAsString() + "/.html?max_results=6\">Bids for top listing</a><br/>");
 			out.println("<a href=\"/bids/user/" + topInvestor.getIdAsString() + "/.html?max_results=6\">Bids for top investor</a><br/>");
 			out.println("<a href=\"/bids/get/" + bids.get(0).getIdAsString() + "/.html\">Get bid id '" + bids.get(0).getIdAsString() + "'</a><br/>");

@@ -75,7 +75,7 @@ public class SystemPropertyDTO extends AbstractDTO implements Serializable {
 
 	@Override
 	public String toString() {
-		return "SystemPropertyDTO [name=" + name + ", value=" + value
+		return "SystemPropertyDTO [id=" + getIdAsString() + ", name=" + name + ", value=" + value
 				+ ", created=" + created + ", author=" + author + "]";
 	}
 

@@ -181,6 +181,18 @@ public class ListingDTO extends AbstractDTO implements Serializable {
 	}
 
 	@Override
+	public String toString() {
+		return "ListingDTO [id=" + getIdAsString() + ", name=" + name + ", suggestedValuation="
+				+ suggestedValuation + ", suggestedPercentage="
+				+ suggestedPercentage + ", suggestedAmount=" + suggestedAmount
+				+ ", listedOn=" + listedOn + ", closingOn=" + closingOn
+				+ ", state=" + state + ", summary=" + summary + ", owner="
+				+ owner + ", businessPlanId=" + businessPlanId
+				+ ", presentationId=" + presentationId + ", financialsId="
+				+ financialsId + "]";
+	}
+
+	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();

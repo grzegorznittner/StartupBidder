@@ -58,7 +58,7 @@ public class CommentDTO extends AbstractDTO implements Serializable {
 
 	@Override
 	public String toString() {
-		return "CommentDTO [idAsString" + getIdAsString() + ", listing=" + listing
+		return "CommentDTO [id=" + getIdAsString() + ", listing=" + listing
 				+ ", user=" + user + ", comment=" + comment + ", commentedOn="
 				+ commentedOn + "]";
 	}

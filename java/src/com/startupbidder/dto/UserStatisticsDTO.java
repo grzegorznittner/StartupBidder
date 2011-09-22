@@ -130,7 +130,7 @@ public class UserStatisticsDTO extends AbstractDTO {
 
 	@Override
 	public String toString() {
-		return "UserStatisticsDTO [user=" + user + ", status=" + status
+		return "UserStatisticsDTO [id=" + getIdAsString() + ", user=" + user + ", status=" + status
 				+ ", numberOfComments=" + numberOfComments + ", numberOfBids="
 				+ numberOfBids + ", numberOfListings=" + numberOfListings
 				+ ", numberOfVotes=" + numberOfVotes
