@@ -150,8 +150,13 @@ public class ServiceFacade {
 		UserDTO oldUser = getDAO().getUser(userData.getId());
 		if (!(oldUser != null && StringUtils.areStringsEqual(oldUser.getNickname(), userData.getNickname()))) {
 			if (!checkUserName(loggedInUser, userData.getNickname())) {
+				log.warning("Nickname for user '" + userData.getId() + "' is not unique!");
 				return null;
 			}
+		}
+		if (StringUtils.isEmpty(userData.getName())) {
+			log.warning("User's name for user '" + userData.getId() + "' is empty!");
+			return null;
 		}
 		UserVO user = DtoToVoConverter.convert(getDAO().updateUser(VoToDtoConverter.convert(userData)));
 		applyUserStatistics(user);
