@@ -670,6 +670,7 @@ public class ServiceFacade {
 			int index = bidProperties.getStartIndex() > 0 ? bidProperties.getStartIndex() : 1;
 			for (BidVO bid : bids) {
 				bid.setUserName(getDAO().getUser(bid.getUser()).getNickname());
+				bid.setListingOwner(listing.getOwner());
 				bid.setOrderNumber(index++);
 			}			
 			list.setBids(bids);
@@ -704,8 +705,10 @@ public class ServiceFacade {
 			List<BidVO> bids = DtoToVoConverter.convertBids(getDAO().getBidsForUser(userId));
 			int index = bidProperties.getStartIndex() > 0 ? bidProperties.getStartIndex() : 1;
 			for (BidVO bid : bids) {
+				ListingDTO listing = getDAO().getListing(bid.getListing());
 				bid.setUserName(user.getNickname());
-				bid.setListingName(getDAO().getListing(bid.getListing()).getName());
+				bid.setListingName(listing.getName());
+				bid.setListingOwner(listing.getOwner());
 				bid.setOrderNumber(index++);
 			}
 			list.setBids(bids);

@@ -19,6 +19,8 @@ public class BidVO {
 	private String id;
 	@JsonProperty("profile_id")
 	private String user;
+	@JsonProperty("listing_profile_id")
+	private String listingOwner;
 	@JsonProperty("profile_username")
 	private String userName;
 	@JsonProperty("listing_id")
@@ -60,6 +62,14 @@ public class BidVO {
 
 	public void setUser(String user) {
 		this.user = user;
+	}
+
+	public String getListingOwner() {
+		return listingOwner;
+	}
+
+	public void setListingOwner(String listingOwner) {
+		this.listingOwner = listingOwner;
 	}
 
 	public String getListing() {
@@ -152,13 +162,13 @@ public class BidVO {
 
 	@Override
 	public String toString() {
-		return "BidVO [id=" + id + ", user=" + user + ", userName=" + userName
-				+ ", listing=" + listing + ", listingName=" + listingName
-				+ ", placed=" + placed + ", value=" + value
+		return "BidVO [orderNumber=" + orderNumber + ", id=" + id + ", user="
+				+ user + ", listingOwner=" + listingOwner + ", userName="
+				+ userName + ", listing=" + listing + ", listingName="
+				+ listingName + ", placed=" + placed + ", value=" + value
 				+ ", percentOfCompany=" + percentOfCompany + ", fundType="
 				+ fundType + ", valuation=" + valuation + ", interestRate="
-				+ interestRate + ", status=" + status + ", orderNumber="
-				+ orderNumber + "]";
+				+ interestRate + ", status=" + status + "]";
 	}
 
 }
