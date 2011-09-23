@@ -46,6 +46,7 @@ import com.startupbidder.vo.ListingDocumentVO;
 import com.startupbidder.vo.ListingListVO;
 import com.startupbidder.vo.ListingVO;
 import com.startupbidder.vo.SystemPropertyVO;
+import com.startupbidder.vo.UserAndUserVO;
 import com.startupbidder.vo.UserListVO;
 import com.startupbidder.vo.UserVO;
 import com.startupbidder.vo.UserVotesVO;
@@ -112,14 +113,14 @@ public class ServiceFacade {
 		applyUserStatistics(user);
 		return user;
 	}
-	
+
 	/**
 	 * Returns user data object by userId
 	 * 
 	 * @param userId User identifier
 	 * @return User data as JsonNode
 	 */
-	public UserVO getUser(UserVO loggedInUser, String userId) {
+	public UserAndUserVO getUser(UserVO loggedInUser, String userId) {
 		UserVO user = DtoToVoConverter.convert(getDAO().getUser(userId));
 		if (user == null) {
 			return null;
@@ -130,7 +131,9 @@ public class ServiceFacade {
 		} else {
 			user.setVotable(false);
 		}
-		return user;
+		UserAndUserVO userAndUser = new UserAndUserVO();
+		userAndUser.setUser(user);
+		return userAndUser;
 	}
 	
 	public UserVO createUser(User loggedInUser) {
@@ -372,7 +375,7 @@ public class ServiceFacade {
 		ListingListVO list = new ListingListVO();
 		list.setListings(listings);
 		list.setListingsProperties(listingProperties);
-		list.setUser(getUser(loggedInUser, userId));
+		list.setUser(getUser(loggedInUser, userId).getUser());
 		list.setLoggedUser(loggedInUser);
 
 		return list;
@@ -625,7 +628,7 @@ public class ServiceFacade {
 	public CommentListVO getCommentsForUser(UserVO loggedInUser, String userId, ListPropertiesVO commentProperties) {
 		CommentListVO list = new CommentListVO();
 
-		UserVO user = getUser(loggedInUser, userId);
+		UserVO user = getUser(loggedInUser, userId).getUser();
 		if (user == null) {
 			log.log(Level.WARNING, "User '" + userId + "' not found");
 			commentProperties.setNumberOfResults(0);
@@ -700,7 +703,7 @@ public class ServiceFacade {
 	public BidListVO getBidsForUser(UserVO loggedInUser, String userId, ListPropertiesVO bidProperties) {
 		BidListVO list = new BidListVO();
 
-		UserVO user = getUser(loggedInUser, userId);
+		UserVO user = getUser(loggedInUser, userId).getUser();
 		if (user == null) {
 			log.log(Level.WARNING, "User '" + userId + "' not found");
 			bidProperties.setNumberOfResults(0);
@@ -752,7 +755,7 @@ public class ServiceFacade {
 	 */
 	public BidAndUserVO getBid(UserVO loggedInUser, String bidId) {
 		BidVO bid = DtoToVoConverter.convert(getDAO().getBid(bidId));
-		UserVO user = getUser(loggedInUser, bid.getUser());
+		UserVO user = getUser(loggedInUser, bid.getUser()).getUser();
 		ListingVO listing = DtoToVoConverter.convert(getDAO().getListing(bid.getListing()));
 		bid.setUserName(user.getNickname());
 		bid.setListingName(listing.getName());
