@@ -924,6 +924,60 @@ $(function(){
         return self;
     };
 
+    var Userbox = function() { // module showing a summary box for the logged in user
+        var self = {};
+        $('#userbox-details').bind('click', function(e) {
+            util.hashedCall('user', 'showUserProfile', [$('#userbox-profile-id').val(), 'zz']); // FIXME - handle error messages
+        });
+        $('#userbox-listings').bind('click', function(e) {
+            util.hashedCall('user', 'showListingsForProfile', [$('#userbox-profile-id').val(), 'zz']); // FIXME - handle error messages
+        });
+        $('#userbox-bids').bind('click', function(e) {
+            util.hashedCall('user', 'showBidsForProfile', [$('#userbox-profile-id').val(), 'zz']); // FIXME - handle error messages
+        });
+        $('#userbox-comments').bind('click', function(e) {
+            util.hashedCall('user', 'showCommentsForProfile', [$('#userbox-profile-id').val(), 'zz']); // FIXME - handle error messages
+        });
+        $('#userbox').bind('display', function(e,data) { // public interface
+            var profile = user ? user.profile : undefined;
+            if (!profile) {
+                $('#userbox').hide();
+                return;
+            }
+            $('#userbox-profile-id').val(profile.profile_id);
+            $('#userbox-num-votes').html(profile.num_votes);
+            $('#userbox-num-listings').html(profile.num_listings);
+            $('#userbox-num-bids').html(profile.num_bids);
+            $('#userbox-num-comments').html(profile.num_comments);
+            $('#userbox-listings-plural').html(profile.num_listings !== 1 ? 's' : '');
+            $('#userbox-bids-plural').html(profile.num_bids !== 1 ? 's' : '');
+            $('#userbox-comments-plural').html(profile.num_comments !== 1 ? 's' : '');
+            $('#userbox-member-type').html(self.getMemberType());
+            $('#userbox').show();
+        });
+        self.getMemberType = function() {
+            var votes = user ? user.num_votes : undefined;
+            var memberType;
+            if (votes === undefined) {
+                memberType = 'Bronze';
+            }
+            else if (votes >= 100) {
+                memberType = 'Platinum';
+            }
+            else if (votes >= 50) {
+                memberType = 'Gold';
+            }
+            else if (votes >= 10) {
+                memberType = 'Silver';
+            }
+            else {
+                memberType = 'Bronze';
+            }
+            return memberType;
+        };
+        return self;
+    };
+
     var Statistics = function() {
         var self = {};
         self.paperId = 'stats-graph';
@@ -1069,9 +1123,6 @@ $(function(){
             if (results_json.logout_url) {
                 user.logout_url = results_json.logout_url;
             }
-            if (results_json.loggedin_profile) {
-                user.setProfile(results_json.loggedin_profile);
-            }
             if (results_json.listings_props) {
                 self.displayResults(results_json.listings, results_json.search_type, results_json.keywords,
                     results_json.profile ? results_json.profile.profile_id : null, results_json.start_index,
@@ -1191,7 +1242,6 @@ $(function(){
                     total_results: !results_json.users || results_json.users.length
                 };
             }
-            user.setProfile(results_json.loggedin_profile);
             self.displayResults(results_json.users, results_json.search_type, results_json.keywords, results_json.users_props.start_index,
                 results_json.users_props.num_results, results_json.users_props.total_results);
         };
@@ -2202,7 +2252,8 @@ $(function(){
         self.userAssignCallback = function(resultsCallback) { // always check if user is still logged in
             var callback = function(results) {
                 if (results && results.loggedin_profile) {
-                    user.profile = results.loggedin_profile;
+                    user.setProfile(results.loggedin_profile);
+                    $('#userbox').trigger('display');
                 }
                 resultsCallback(results);
             };
@@ -2361,20 +2412,20 @@ $(function(){
     var header = new Header();
     var searchListings = new SearchListings();
     var searchUsers = new SearchUsers();
+    var userbox = new Userbox();
     var profiles = new Profiles();
     var listings = new Listings();
     var comments = new Comments();
     var bids = new Bids();
-    $(document).ready(function(){
-        util.setup();
-        header.setup();
-        searchListings.setup();
-        searchUsers.setup();
-        util.applyResizer(header.resizeStyles);
-        $('#mainbody').addTouch(); // enable for touch devices
-        $(window).hashchange(util.hashchange);
-        $(window).hashchange();
-    });
+
+    util.setup();
+    header.setup();
+    searchListings.setup();
+    searchUsers.setup();
+    util.applyResizer(header.resizeStyles);
+    $('#mainbody').addTouch(); // enable for touch devices
+    $(window).hashchange(util.hashchange);
+    $(window).hashchange();
 });
 </script>
 
@@ -2879,7 +2930,7 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
 .content-stats {
     position: absolute;
     right: 10px;
-    top: 40px;
+    top: 130px;
 }
 .content-stats-narrow {
     position: static; 
@@ -2951,7 +3002,7 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
     overflow: auto;
     min-height: 100%;
 */
-    padding-bottom: 30px;
+    padding-bottom: 40px;
 }
 .header-menu-name-username {
     display: none;
@@ -3032,7 +3083,7 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
         <div class="content-stats" id="content-stats">
             <div id="stats-message" class="attention"></div>
             <div id="stats-list">
-                <div id="stats" class="stats diagonal-gradient-bg">
+                <div id="stats" class="stats vertical-gradient-bg">
                     <div id="stats-label" class="stats-label"></div>
                     <div id="stats-graph-container" class="stats-graph-container">
                         <div id="stats-graph" class="stats-graph"></div>
@@ -3694,7 +3745,67 @@ s = (p + b + c + v) / (t + 2)^1.5
              </div>
         </div>
     </div> <!-- end faq -->
-   
+ 
+<!-- begin userbox --> 
+<style>
+.userbox {
+    position: absolute;
+    right: 10px;
+    top: 40px;
+    height: 65px;
+    width: 250px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding: 5px 10px 5px 10px;
+    border: 2px solid #000;
+    border-radius: 10px;
+    -o-border-radius: 10px;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    display: none;
+    line-height: 16px;
+}
+.userbox-title {
+    line-height: 18px;
+    font-size: 16px;
+}
+.userbox-medal {
+    margin-right: 5px;
+    width: 50px;
+    float: left;
+}
+.userbox-textbox {
+    float: left;
+}
+.userbox-votes {
+    width: 50px:
+    height: 50px;
+    margin-top: 13px;
+    font-size: 24px;
+    text-align: center;
+}
+</style> 
+    <div id="userbox" class="userbox blue-gradient-bg">
+        <div><span class="userbox-title">My Startupbidder</span></div>
+        <div class="userbox-medal">
+            <div class="userbox-votes" id="userbox-num-votes">0</div>
+        </div>
+        <div class="userbox-textbox">
+            <div><span id="userbox-member-type">Bronze</span> Member</div>
+            <div>
+                <span class="header-link" id="userbox-listings"><span id="userbox-num-listings">0</span> listing<span id="userbox-listings-plural"></span></span>
+                <span class="header-link" id="userbox-bids"><span id="userbox-num-bids">0</span> bid<span id="userbox-bids-plural"></span></span>
+                <span class="header-link" id="userbox-comments"><span id="userbox-num-comments">0</span> comment<span id="userbox-comments-plural"></span></span>
+            </div>
+            <div><span class="header-link" id="userbox-details">details</span></div>
+        </div>
+        <input id="userbox-profile-id" type="hidden" value=""/>
+    </div>
+<!-- end userbox -->
+
 </div> <!-- end site -->
 
     <div id="footer" class="footer vertical-gradient-bg">
