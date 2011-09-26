@@ -1243,7 +1243,7 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 	@Override
 	public SystemPropertyDTO setSystemProperty(SystemPropertyDTO property) {
 		property.setCreated(new Date());
-		property.createKey(property.getName());
+		property.setIdFromString(property.getName());
 		
 		getDatastoreService().put(property.toEntity());
 		return property;
@@ -1274,7 +1274,7 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 	@Override
 	public ListingDocumentDTO getListingDocument(String docId) {
 		ListingDocumentDTO docDTO = new ListingDocumentDTO();
-		docDTO.createKey(docId);
+		docDTO.setIdFromString(docId);
 		
 		try {
 			docDTO = ListingDocumentDTO.fromEntity(getDatastoreService().get(docDTO.getKey()));
