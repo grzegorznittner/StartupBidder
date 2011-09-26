@@ -180,7 +180,6 @@ public class ServiceFacade {
 
 		UserListVO userList = new UserListVO();
 		userList.setUsers(users);
-		userList.setLoggedUser(loggedInUser);
 		return userList;
 	}
 
@@ -209,7 +208,6 @@ public class ServiceFacade {
 		UserVotesVO userVotes = new UserVotesVO();
 		UserVO user = DtoToVoConverter.convert(getDAO().getUser(userId));
 		applyUserStatistics(user);
-		userVotes.setLoggedUser(user);
 		
 		List<VoteVO> votes = DtoToVoConverter.convertVotes(getDAO().getUserVotes(userId));
 		for (VoteVO vote : votes) {
@@ -376,7 +374,6 @@ public class ServiceFacade {
 		list.setListings(listings);
 		list.setListingsProperties(listingProperties);
 		list.setUser(getUser(loggedInUser, userId).getUser());
-		list.setLoggedUser(loggedInUser);
 
 		return list;
 	}
@@ -397,7 +394,6 @@ public class ServiceFacade {
 		ListingListVO list = new ListingListVO();
 		list.setListings(listings);
 		list.setListingsProperties(listingProperties);
-		list.setLoggedUser(loggedInUser);
 
 		return list;
 	}
@@ -418,7 +414,6 @@ public class ServiceFacade {
 		ListingListVO list = new ListingListVO();
 		list.setListings(listings);		
 		list.setListingsProperties(listingProperties);
-		list.setLoggedUser(loggedInUser);
 
 		return list;
 	}
@@ -460,7 +455,6 @@ public class ServiceFacade {
 		ListingListVO list = new ListingListVO();
 		list.setListings(listings);
 		list.setListingsProperties(listingProperties);
-		list.setLoggedUser(loggedInUser);
 
 		return list;
 	}
@@ -480,7 +474,6 @@ public class ServiceFacade {
 		ListingListVO list = new ListingListVO();
 		list.setListings(listings);		
 		list.setListingsProperties(listingProperties);
-		list.setLoggedUser(loggedInUser);
 		
 		return list;
 	}
@@ -500,7 +493,6 @@ public class ServiceFacade {
 		ListingListVO list = new ListingListVO();
 		list.setListings(listings);		
 		list.setListingsProperties(listingProperties);
-		list.setLoggedUser(loggedInUser);
 
 		return list;
 	}
@@ -515,7 +507,6 @@ public class ServiceFacade {
 		ListingListVO list = new ListingListVO();
 		list.setListings(listings);		
 		list.setListingsProperties(listingProperties);
-		list.setLoggedUser(loggedInUser);
 
 		return list;
 	}
@@ -530,7 +521,6 @@ public class ServiceFacade {
 		ListingListVO list = new ListingListVO();
 		list.setListings(listings);		
 		list.setListingsProperties(listingProperties);
-		list.setLoggedUser(loggedInUser);
 
 		return list;
 	}
@@ -614,7 +604,6 @@ public class ServiceFacade {
 			commentProperties.setTotalResults(comments.size());
 		}
 		list.setCommentsProperties(commentProperties);
-		list.setLoggedUser(loggedInUser);
 
 		return list;
 	}
@@ -654,7 +643,6 @@ public class ServiceFacade {
 		}
 		list.setCommentsProperties(commentProperties);
 		list.setUser(user);
-		list.setLoggedUser(loggedInUser);
 		return list;
 	}
 	
@@ -689,7 +677,6 @@ public class ServiceFacade {
 			bidProperties.setTotalResults(bids.size());
 		}
 		list.setBidsProperties(bidProperties);
-		list.setLoggedUser(loggedInUser);
 		
 		return list;
 	}
@@ -726,7 +713,6 @@ public class ServiceFacade {
 		}
 		list.setBidsProperties(bidProperties);
 		list.setUser(user);
-		list.setLoggedUser(loggedInUser);
 		
 		return list;
 	}
@@ -763,7 +749,6 @@ public class ServiceFacade {
 		BidAndUserVO bidAndUser = new BidAndUserVO();
 		bidAndUser.setBid(bid);
 		bidAndUser.setUser(user);
-		bidAndUser.setLoggedUser(loggedInUser);
 		
 		return bidAndUser;
 	}

@@ -77,6 +77,7 @@ public abstract class ModelDrivenController {
 			String appHost = SystemProperty.environment.value() == SystemProperty.Environment.Value.Development ?
 					"http://localhost:" + request.getLocalPort() : "http://www.startupbidder.com";
 			if (loggedInUser != null) {
+				((BaseResultVO) model).setLoggedUser(loggedInUser);
 				((BaseResultVO) model).setLogoutUrl(userService.createLogoutURL(appHost));
 			} else {
 				((BaseResultVO) model).setLoginUrl(userService.createLoginURL(appHost, "startupbidder.com"));
