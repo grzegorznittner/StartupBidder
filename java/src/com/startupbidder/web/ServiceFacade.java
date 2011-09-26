@@ -363,7 +363,14 @@ public class ServiceFacade {
 	 */
 	public ListingListVO getUserListings(UserVO loggedInUser, String userId, ListPropertiesVO listingProperties) {
 		
-		List<ListingVO> listings = DtoToVoConverter.convertListings(getDAO().getUserListings(userId, listingProperties));
+		List<ListingVO> listings = null;
+		if (loggedInUser != null && StringUtils.areStringsEqual(userId, loggedInUser.getId())) {
+			listings = DtoToVoConverter.convertListings(
+				getDAO().getUserListings(userId, listingProperties));
+		} else {
+			listings = DtoToVoConverter.convertListings(
+					getDAO().getUserActiveListings(userId, listingProperties));
+		}
 		int index = listingProperties.getStartIndex() > 0 ? listingProperties.getStartIndex() : 1;
 		for (ListingVO listing : listings) {
 			computeListingData(loggedInUser, listing);

@@ -119,14 +119,15 @@ public interface DatastoreDAO {
 	ListingDTO getListing(String listingId);
 	
 	/**
-	 * Returns business plans created by specified user
-	 * 
-	 * @param userId User identifier
-	 * @param listingProperties Standard query parameters (maxResults and cursors)
-	 * @return List of business plans
+	 * Returns user's active listings
+	 */
+	List<ListingDTO> getUserActiveListings(String userId, ListPropertiesVO listingProperties);
+	
+	/**
+	 * Returns user's all listings
 	 */
 	List<ListingDTO> getUserListings(String userId, ListPropertiesVO listingProperties);
-	
+
 	/**
 	 * Returns top rated business plans
 	 * 

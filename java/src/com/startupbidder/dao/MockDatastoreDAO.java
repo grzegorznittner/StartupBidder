@@ -484,8 +484,26 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		return list;
 	}
 	
+	public List<ListingDTO> getUserActiveListings(String userId, ListPropertiesVO listingProperties) {
+		log.log(Level.INFO, "Active listings created by " + userId);
+		List<ListingDTO> list = new ArrayList<ListingDTO>();
+		for (ListingDTO bp : lCache.values()) {
+			if (StringUtils.areStringsEqual(bp.getOwner(), userId)
+					&& ListingDTO.State.ACTIVE == bp.getState()) {
+				log.log(Level.INFO, "BP " + bp.getKey());
+				list.add(bp);
+			}
+		}
+		int maxItems = listingProperties.getMaxResults();
+		listingProperties.setTotalResults(list.size());
+		
+		list.subList(0, (list.size() < maxItems ? list.size() : maxItems));
+		listingProperties.setNumberOfResults(list.size());
+		return list;
+	}
+	
 	public List<ListingDTO> getUserListings(String userId, ListPropertiesVO listingProperties) {
-		log.log(Level.INFO, "Business plans owned by " + userId);
+		log.log(Level.INFO, "All listings created by " + userId);
 		List<ListingDTO> list = new ArrayList<ListingDTO>();
 		for (ListingDTO bp : lCache.values()) {
 			if (StringUtils.areStringsEqual(bp.getOwner(), userId)) {
@@ -500,7 +518,6 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		listingProperties.setNumberOfResults(list.size());
 		return list;
 	}
-	
 	
 	/**
 	 * Do not use it!!!

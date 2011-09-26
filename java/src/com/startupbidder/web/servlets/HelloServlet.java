@@ -68,7 +68,7 @@ public class HelloServlet extends HttpServlet {
 			listProperties.setMaxResults(1);
 			ListingDTO topListing = datastore.getTopListings(listProperties).get(0);
 			List<BidDTO> bids = datastore.getBidsForUser(topInvestor.getIdAsString());
-			List<ListingDTO> usersListings = datastore.getUserListings(currentUser.getId(), listProperties);
+			List<ListingDTO> usersListings = datastore.getUserActiveListings(currentUser.getId(), listProperties);
 			List<CommentDTO> comments = datastore.getCommentsForListing(datastore.getMostDiscussedListings(listProperties).get(0).getIdAsString());
 			
 			//testMockDatastore(user, datastore, out);
@@ -238,7 +238,7 @@ public class HelloServlet extends HttpServlet {
 		listProperties.setMaxResults(10);
 		
 		out.println("<p><b>Current user business plans:</b></p>");
-		for (ListingDTO bp : datastore.getUserListings(currentUser.getIdAsString(), listProperties)) {
+		for (ListingDTO bp : datastore.getUserActiveListings(currentUser.getIdAsString(), listProperties)) {
 			int rating = datastore.getNumberOfVotesForListing(bp.getIdAsString());
 			int activity = datastore.getActivity(bp.getIdAsString());
 			out.println("<p>" + "<b>R=" + rating + "</b>" + "<b>A=" + activity + "</b>" + bp + "</p>");

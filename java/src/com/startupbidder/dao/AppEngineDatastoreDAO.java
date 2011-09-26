@@ -343,6 +343,7 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 		
 		query = new ListingDTO().getQuery().setKeysOnly();
 		query.addFilter(ListingDTO.OWNER, Query.FilterOperator.EQUAL, userId);
+		query.addFilter(ListingDTO.OWNER, Query.FilterOperator.NOT_EQUAL, ListingDTO.State.CREATED.toString());
 		pq = getDatastoreService().prepare(query);
 		userStats.setNumberOfListings(pq.countEntities(FetchOptions.Builder.withDefaults()));
 		log.info("user: " + userId + ", number of listings: " + userStats.getNumberOfListings());
@@ -397,7 +398,6 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 		log.info("Updating listing statistics, listing: " + listingId);
 		Query query = new BidDTO().getQuery().setKeysOnly();
 		query.addFilter(BidDTO.LISTING, Query.FilterOperator.EQUAL, listingId);
-		query.addFilter(BidDTO.STATUS, Query.FilterOperator.EQUAL, BidDTO.Status.ACTIVE.toString());
 		PreparedQuery pq = getDatastoreService().prepare(query);
 		listingStats.setNumberOfBids(pq.countEntities(FetchOptions.Builder.withDefaults()));
 		log.info("listing: " + listingId + ", number of bids: " + listingStats.getNumberOfBids());
@@ -575,12 +575,27 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 	}
 
 	@Override
-	public List<ListingDTO> getUserListings(String userId, ListPropertiesVO listingProperties) {
+	public List<ListingDTO> getUserActiveListings(String userId, ListPropertiesVO listingProperties) {
 		List<ListingDTO> listings = new ArrayList<ListingDTO>();
 		
 		Query query = new ListingDTO().getQuery();
 		query.addFilter(ListingDTO.OWNER, Query.FilterOperator.EQUAL, userId);
 		query.addFilter(ListingDTO.STATE, Query.FilterOperator.EQUAL, ListingDTO.State.ACTIVE.toString());
+		query.addSort(ListingDTO.LISTED_ON, Query.SortDirection.DESCENDING);
+		
+		PreparedQuery pq = getDatastoreService().prepare(query);
+		for (Entity listing : pq.asIterable(FetchOptions.Builder.withLimit(listingProperties.getMaxResults()))) {
+			listings.add(ListingDTO.fromEntity(listing));
+		}
+		return listings;
+	}
+
+	@Override
+	public List<ListingDTO> getUserListings(String userId, ListPropertiesVO listingProperties) {
+		List<ListingDTO> listings = new ArrayList<ListingDTO>();
+		
+		Query query = new ListingDTO().getQuery();
+		query.addFilter(ListingDTO.OWNER, Query.FilterOperator.EQUAL, userId);
 		query.addSort(ListingDTO.LISTED_ON, Query.SortDirection.DESCENDING);
 		
 		PreparedQuery pq = getDatastoreService().prepare(query);
@@ -636,7 +651,7 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 	@Override
 	public List<ListingDTO> getMostValuedListings(ListPropertiesVO listingProperties) {
 		Query query = new ListingStatisticsDTO().getQuery();
-		query.addFilter(ListingStatisticsDTO.STATUS, Query.FilterOperator.EQUAL, ListingDTO.State.ACTIVE.toString());
+		query.addFilter(ListingStatisticsDTO.STATUS, Query.FilterOperator.NOT_EQUAL, ListingDTO.State.CREATED.toString());
 		query.addSort(ListingStatisticsDTO.VALUATION, Query.SortDirection.DESCENDING);
 		
 		PreparedQuery pq = getDatastoreService().prepare(query);
@@ -664,7 +679,7 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 	@Override
 	public List<ListingDTO> getMostDiscussedListings(ListPropertiesVO listingProperties) {
 		Query query = new ListingStatisticsDTO().getQuery();
-		query.addFilter(ListingStatisticsDTO.STATUS, Query.FilterOperator.EQUAL, ListingDTO.State.ACTIVE.toString());
+		query.addFilter(ListingStatisticsDTO.STATUS, Query.FilterOperator.NOT_EQUAL, ListingDTO.State.CREATED.toString());
 		query.addSort(ListingStatisticsDTO.NUM_OF_COMMENTS, Query.SortDirection.DESCENDING);
 		
 		PreparedQuery pq = getDatastoreService().prepare(query);
@@ -692,7 +707,7 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 	@Override
 	public List<ListingDTO> getMostPopularListings(ListPropertiesVO listingProperties) {
 		Query query = new ListingStatisticsDTO().getQuery();
-		query.addFilter(ListingStatisticsDTO.STATUS, Query.FilterOperator.EQUAL, ListingDTO.State.ACTIVE.toString());
+		query.addFilter(ListingStatisticsDTO.STATUS, Query.FilterOperator.NOT_EQUAL, ListingDTO.State.CREATED.toString());
 		query.addSort(ListingStatisticsDTO.NUM_OF_VOTES, Query.SortDirection.DESCENDING);
 		
 		PreparedQuery pq = getDatastoreService().prepare(query);
@@ -722,7 +737,7 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 		List<ListingDTO> listings = new ArrayList<ListingDTO>();
 		
 		Query query = new ListingDTO().getQuery();
-		query.addFilter(ListingDTO.STATE, Query.FilterOperator.EQUAL, ListingDTO.State.ACTIVE.toString());
+		query.addFilter(ListingDTO.STATE, Query.FilterOperator.NOT_EQUAL, ListingDTO.State.CREATED.toString());
 		query.addSort(ListingDTO.LISTED_ON, Query.SortDirection.DESCENDING);
 		
 		PreparedQuery pq = getDatastoreService().prepare(query);
@@ -879,7 +894,6 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 		
 		Query query = new BidDTO().getQuery();
 		query.addFilter(BidDTO.LISTING, Query.FilterOperator.EQUAL, listingId);
-		query.addFilter(BidDTO.STATUS, Query.FilterOperator.EQUAL, BidDTO.Status.ACTIVE.toString());
 		query.addSort(BidDTO.PLACED, Query.SortDirection.DESCENDING);
 		
 		PreparedQuery pq = getDatastoreService().prepare(query);
@@ -895,7 +909,6 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 		
 		Query query = new BidDTO().getQuery();
 		query.addFilter(BidDTO.USER, Query.FilterOperator.EQUAL, userId);
-		query.addFilter(BidDTO.STATUS, Query.FilterOperator.EQUAL, BidDTO.Status.ACTIVE.toString());
 		query.addSort(BidDTO.PLACED, Query.SortDirection.DESCENDING);
 		
 		PreparedQuery pq = getDatastoreService().prepare(query);
