@@ -43,6 +43,13 @@ indexes:
     - name: valuation
       direction: desc
 
+- kind: Bid
+  ancestor: no
+  properties:
+    - name: listing
+    - name: placed
+      direction: desc
+
 - kind: Comment
   ancestor: no
   properties:
