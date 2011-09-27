@@ -2161,7 +2161,6 @@ $(function(){
             if (profile && profile.profile_id === bid.profile_id && bid.status === 'active') { // user can withdraw their own bid
                 resultHtml += '<div class="content-results-list-item-profile link" id="bids-item-delete-' + i + '">(withdraw bid)</div>';
             }
-            //console.log(i, 'profile.profile_id:', profile.profile_id, ' listing.proifle_id', listing.profile_id);
             if (listing
                 && profile
                 && (profile.profile_id === listing.profile_id || profile.profile_id === bid.listing_profile_id)

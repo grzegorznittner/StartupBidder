@@ -62,6 +62,12 @@ indexes:
   properties:
     - name: owner
     - name: state
+
+- kind: Listing
+  ancestor: no
+  properties:
+    - name: owner
+    - name: state
     - name: listedOn
       direction: desc
 
