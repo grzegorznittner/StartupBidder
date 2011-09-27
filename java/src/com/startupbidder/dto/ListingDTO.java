@@ -8,6 +8,10 @@ import org.apache.commons.lang.StringUtils;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.Text;
 
+/**
+ * 
+ * @author "Grzegorz Nittner" <grzegorz.nittner@gmail.com>
+ */
 @SuppressWarnings("serial")
 public class ListingDTO extends AbstractDTO implements Serializable {
 

@@ -10,6 +10,11 @@ import org.codehaus.jackson.map.SerializerProvider;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+/**
+ * Jackson's JSON date serializer.
+ * 
+ * @author "Grzegorz Nittner" <grzegorz.nittner@gmail.com>
+ */
 public class DateSerializer extends JsonSerializer<Date> {
 
 	@Override

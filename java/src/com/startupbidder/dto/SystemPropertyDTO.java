@@ -5,6 +5,10 @@ import java.util.Date;
 
 import com.google.appengine.api.datastore.Entity;
 
+/**
+ * 
+ * @author "Grzegorz Nittner" <grzegorz.nittner@gmail.com>
+ */
 @SuppressWarnings("serial")
 public class SystemPropertyDTO extends AbstractDTO implements Serializable {
 	public static final String NAME = "name";

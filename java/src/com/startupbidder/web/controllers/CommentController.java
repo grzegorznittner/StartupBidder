@@ -11,7 +11,6 @@ import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 
-import com.startupbidder.vo.CommentListVO;
 import com.startupbidder.vo.CommentVO;
 import com.startupbidder.vo.ListPropertiesVO;
 import com.startupbidder.web.HttpHeaders;
@@ -19,6 +18,10 @@ import com.startupbidder.web.HttpHeadersImpl;
 import com.startupbidder.web.ModelDrivenController;
 import com.startupbidder.web.ServiceFacade;
 
+/**
+ * 
+ * @author "Grzegorz Nittner" <grzegorz.nittner@gmail.com>
+ */
 public class CommentController extends ModelDrivenController {
 	private static final Logger log = Logger.getLogger(CommentController.class.getName());
 

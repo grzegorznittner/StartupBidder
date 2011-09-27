@@ -27,10 +27,9 @@ import com.startupbidder.vo.ListPropertiesVO;
 
 /**
  * Data access object which handles all interaction with underlying persistence layer.
- * By default it responds with mock data, implementation which uses AppEngine Datastore
- * is implemented in derived class.
+ * This implementation uses internal hash maps for storing data.
  *  
- * @author greg
+ * @author "Grzegorz Nittner" <grzegorz.nittner@gmail.com>
  *
  */
 public class MockDatastoreDAO implements DatastoreDAO {

@@ -11,6 +11,10 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
 import com.startupbidder.util.DateSerializer;
 import com.startupbidder.util.LowecaseSerializer;
 
+/**
+ * 
+ * @author "Grzegorz Nittner" <grzegorz.nittner@gmail.com>
+ */
 @JsonAutoDetect(getterVisibility=Visibility.NONE, setterVisibility=Visibility.NONE,
 		fieldVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE)
 @JsonIgnoreProperties(ignoreUnknown=true)

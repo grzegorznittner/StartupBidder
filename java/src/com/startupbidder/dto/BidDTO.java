@@ -7,6 +7,10 @@ import org.apache.commons.lang.StringUtils;
 
 import com.google.appengine.api.datastore.Entity;
 
+/**
+ * 
+ * @author "Grzegorz Nittner" <grzegorz.nittner@gmail.com>
+ */
 @SuppressWarnings("serial")
 public class BidDTO extends AbstractDTO implements Serializable {
 	public enum FundType {SYNDICATE, SOLE_INVESTOR, COMMON, PREFERRED, NOTE};

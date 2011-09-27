@@ -13,6 +13,11 @@ import com.startupbidder.vo.SystemPropertyVO;
 import com.startupbidder.vo.VoteVO;
 import com.startupbidder.vo.UserVO;
 
+/**
+ * Helper classes which converts VO objects to DTO objects.
+ * 
+ * @author "Grzegorz Nittner" <grzegorz.nittner@gmail.com>
+ */
 public class VoToDtoConverter {
 	public static BidDTO convert(BidVO bidVO) {
 		BidDTO bid = new BidDTO();

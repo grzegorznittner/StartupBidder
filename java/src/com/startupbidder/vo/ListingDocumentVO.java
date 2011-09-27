@@ -8,6 +8,10 @@ import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 
 import com.google.appengine.api.blobstore.BlobKey;
 
+/**
+ * 
+ * @author "Grzegorz Nittner" <grzegorz.nittner@gmail.com>
+ */
 @JsonAutoDetect(getterVisibility=Visibility.NONE, setterVisibility=Visibility.NONE,
 		fieldVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE)
 public class ListingDocumentVO {

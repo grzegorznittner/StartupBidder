@@ -16,6 +16,10 @@ import com.startupbidder.web.HttpHeadersImpl;
 import com.startupbidder.web.ModelDrivenController;
 import com.startupbidder.web.ServiceFacade;
 
+/**
+ * 
+ * @author "Grzegorz Nittner" <grzegorz.nittner@gmail.com>
+ */
 public class TaskController extends ModelDrivenController {
 	private static final Logger log = Logger.getLogger(TaskController.class.getName());
 	private Object model;

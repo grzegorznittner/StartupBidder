@@ -24,6 +24,10 @@ import com.startupbidder.vo.BaseResultVO;
 import com.startupbidder.vo.ListPropertiesVO;
 import com.startupbidder.vo.UserVO;
 
+/**
+ * 
+ * @author "Grzegorz Nittner" <grzegorz.nittner@gmail.com>
+ */
 public abstract class ModelDrivenController {
 	private static final Logger log = Logger.getLogger(ModelDrivenController.class.getName());
 	

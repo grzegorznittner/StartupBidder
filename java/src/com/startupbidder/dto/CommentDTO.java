@@ -6,6 +6,10 @@ import java.util.Date;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.Text;
 
+/**
+ * 
+ * @author "Grzegorz Nittner" <grzegorz.nittner@gmail.com>
+ */
 @SuppressWarnings("serial")
 public class CommentDTO extends AbstractDTO implements Serializable {
 	public static final String LISTING = "listing";

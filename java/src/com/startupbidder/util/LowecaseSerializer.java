@@ -7,6 +7,11 @@ import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.map.JsonSerializer;
 import org.codehaus.jackson.map.SerializerProvider;
 
+/**
+ * Jackson's JSON lowercase serializer.
+ * 
+ * @author "Grzegorz Nittner" <grzegorz.nittner@gmail.com>
+ */
 public class LowecaseSerializer extends JsonSerializer<String>{
 
 	@Override

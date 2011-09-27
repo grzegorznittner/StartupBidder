@@ -20,6 +20,8 @@ import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
 
 /**
  * Default implementation of rest info that uses fluent-style construction
+ * 
+ * @author "Grzegorz Nittner" <grzegorz.nittner@gmail.com>
  */
 public class HttpHeadersImpl implements HttpHeaders {
     String resultCode;

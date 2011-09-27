@@ -18,7 +18,6 @@ import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.startupbidder.dao.DatastoreDAO;
-import com.startupbidder.dao.MockDatastoreDAO;
 import com.startupbidder.dto.BidDTO;
 import com.startupbidder.dto.CommentDTO;
 import com.startupbidder.dto.ListingDTO;
@@ -29,6 +28,10 @@ import com.startupbidder.vo.ListingDocumentVO;
 import com.startupbidder.vo.UserVO;
 import com.startupbidder.web.ServiceFacade;
 
+/**
+ * 
+ * @author "Grzegorz Nittner" <grzegorz.nittner@gmail.com>
+ */
 @SuppressWarnings("serial")
 public class HelloServlet extends HttpServlet {
 	private static final Logger log = Logger.getLogger(HelloServlet.class.getName());

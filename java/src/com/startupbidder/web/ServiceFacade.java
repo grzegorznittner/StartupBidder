@@ -52,6 +52,10 @@ import com.startupbidder.vo.UserVO;
 import com.startupbidder.vo.UserVotesVO;
 import com.startupbidder.vo.VoteVO;
 
+/**
+ * 
+ * @author "Grzegorz Nittner" <grzegorz.nittner@gmail.com>
+ */
 public class ServiceFacade {
 	private static final Logger log = Logger.getLogger(ServiceFacade.class.getName());
 	private static ServiceFacade instance;

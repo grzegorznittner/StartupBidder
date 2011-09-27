@@ -2,6 +2,11 @@ package com.startupbidder.vo;
 
 import com.startupbidder.dto.SystemPropertyDTO;
 
+/**
+ * 
+ * @author "Grzegorz Nittner" <grzegorz.nittner@gmail.com>
+ */
+@SuppressWarnings("serial")
 public class SystemPropertyVO extends SystemPropertyDTO {
 	public SystemPropertyVO() {	
 	}

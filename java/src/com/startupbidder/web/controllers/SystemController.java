@@ -18,6 +18,10 @@ import com.startupbidder.web.HttpHeadersImpl;
 import com.startupbidder.web.ModelDrivenController;
 import com.startupbidder.web.ServiceFacade;
 
+/**
+ * 
+ * @author "Grzegorz Nittner" <grzegorz.nittner@gmail.com>
+ */
 public class SystemController extends ModelDrivenController {
 	private Object model;
 

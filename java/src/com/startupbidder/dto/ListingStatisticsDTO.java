@@ -8,7 +8,7 @@ import com.google.appengine.api.datastore.Entity;
 /**
  * Object as it is used to store aggregated data about user.
  * 
- * @author greg
+ * @author "Grzegorz Nittner" <grzegorz.nittner@gmail.com>
  */
 @SuppressWarnings("serial")
 public class ListingStatisticsDTO extends AbstractDTO implements Serializable {

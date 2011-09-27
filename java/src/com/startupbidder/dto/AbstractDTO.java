@@ -9,7 +9,9 @@ import com.google.appengine.api.datastore.Query;
 
 /**
  * Abstract class for entities.
- * @author greg
+ * Implements some common methods used by DTO classes.
+ * 
+ * @author "Grzegorz Nittner" <grzegorz.nittner@gmail.com>
  */
 @SuppressWarnings("serial")
 public abstract class AbstractDTO implements Serializable {

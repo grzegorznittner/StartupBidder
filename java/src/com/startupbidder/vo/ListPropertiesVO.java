@@ -8,7 +8,7 @@ import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
  * Contains properties which describes various list results.
  * It's also used to pass parameters to the data layer.
  * 
- * @author greg
+ * @author "Grzegorz Nittner" <grzegorz.nittner@gmail.com>
  */
 @JsonAutoDetect(getterVisibility=Visibility.NONE, setterVisibility=Visibility.NONE,
 		fieldVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE)

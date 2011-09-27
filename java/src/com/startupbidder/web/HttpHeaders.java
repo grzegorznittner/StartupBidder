@@ -9,6 +9,8 @@ import com.google.appengine.api.blobstore.BlobKey;
 
 /**
  * Defines headers returned from controllers.
+ * 
+ * @author "Grzegorz Nittner" <grzegorz.nittner@gmail.com>
  */
 public interface HttpHeaders {
 

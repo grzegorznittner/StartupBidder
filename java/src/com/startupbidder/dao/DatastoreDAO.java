@@ -13,6 +13,11 @@ import com.startupbidder.dto.UserStatisticsDTO;
 import com.startupbidder.dto.VoteDTO;
 import com.startupbidder.vo.ListPropertiesVO;
 
+/**
+ * Interface defining all persistance methods of datastore.
+ * 
+ * @author "Grzegorz Nittner" <grzegorz.nittner@gmail.com>
+ */
 public interface DatastoreDAO {
 	/**
 	 * Removes all entities from datastore

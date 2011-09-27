@@ -17,6 +17,11 @@ import com.startupbidder.dto.ListingDTO;
 import com.startupbidder.dto.UserDTO;
 import com.startupbidder.dto.VoteDTO;
 
+/**
+ * 
+ * @author "Grzegorz Nittner" <grzegorz.nittner@gmail.com>
+ *
+ */
 public class MockDataBuilder {
 	/**
 	 * Generates random comments for business plans

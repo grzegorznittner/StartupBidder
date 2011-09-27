@@ -18,6 +18,10 @@ import com.startupbidder.web.controllers.SystemController;
 import com.startupbidder.web.controllers.TaskController;
 import com.startupbidder.web.controllers.UserController;
 
+/**
+ * 
+ * @author "Grzegorz Nittner" <grzegorz.nittner@gmail.com>
+ */
 @SuppressWarnings("serial")
 public class FrontController extends HttpServlet {
 	private static final Logger log = Logger.getLogger(FrontController.class.getName());

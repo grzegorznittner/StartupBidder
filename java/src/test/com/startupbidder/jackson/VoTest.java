@@ -21,6 +21,10 @@ import com.startupbidder.vo.ListingVO;
 import com.startupbidder.vo.UserVO;
 import com.startupbidder.web.ServiceFacade;
 
+/**
+ * 
+ * @author "Grzegorz Nittner" <grzegorz.nittner@gmail.com>
+ */
 public class VoTest {
 	private final LocalServiceTestHelper helper = new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
 	private ServiceFacade service = ServiceFacade.instance();

@@ -5,7 +5,7 @@ import com.google.appengine.api.datastore.Entity;
 /**
  * Object as it is used to store aggregated data about user.
  * 
- * @author greg
+ * @author "Grzegorz Nittner" <grzegorz.nittner@gmail.com>
  */
 @SuppressWarnings("serial")
 public class UserStatisticsDTO extends AbstractDTO {
@@ -25,6 +25,10 @@ public class UserStatisticsDTO extends AbstractDTO {
 	private long numberOfVotesReceived;
 	public static final String SUM_OF_BIDS = "sumOfBids";
 	private long sumOfBids;
+	public static final String SUM_OF_ACCEPTED_BIDS = "sumOfAcceptedBids";
+	private long sumOfAcceptedBids;
+	public static final String SUM_OF_PAYED_BIDS = "sumOfPayedBids";
+	private long sumOfPayedBids;
 	
 	public UserStatisticsDTO() {
 	}
@@ -45,6 +49,8 @@ public class UserStatisticsDTO extends AbstractDTO {
 		entity.setProperty(NUM_OF_VOTES, this.numberOfVotes);
 		entity.setProperty(NUM_OF_VOTES_RECEIVED, this.numberOfVotesReceived);
 		entity.setProperty(SUM_OF_BIDS, this.sumOfBids);
+		entity.setProperty(SUM_OF_ACCEPTED_BIDS, this.sumOfAcceptedBids);
+		entity.setProperty(SUM_OF_PAYED_BIDS, this.sumOfPayedBids);
 		
 		return entity;
 	}
@@ -60,6 +66,8 @@ public class UserStatisticsDTO extends AbstractDTO {
 		dto.numberOfVotes = toLong(entity.getProperty(NUM_OF_VOTES));
 		dto.numberOfVotesReceived = toLong(entity.getProperty(NUM_OF_VOTES_RECEIVED));
 		dto.sumOfBids = toLong(entity.getProperty(SUM_OF_BIDS));
+		dto.sumOfAcceptedBids = toLong(entity.getProperty(SUM_OF_ACCEPTED_BIDS));
+		dto.sumOfPayedBids = toLong(entity.getProperty(SUM_OF_PAYED_BIDS));
 
 		return dto;
 	}
@@ -104,6 +112,22 @@ public class UserStatisticsDTO extends AbstractDTO {
 		this.numberOfListings = numberOfListings;
 	}
 
+	public long getSumOfAcceptedBids() {
+		return sumOfAcceptedBids;
+	}
+
+	public void setSumOfAcceptedBids(long sumOfAcceptedBids) {
+		this.sumOfAcceptedBids = sumOfAcceptedBids;
+	}
+
+	public long getSumOfPayedBids() {
+		return sumOfPayedBids;
+	}
+
+	public void setSumOfPayedBids(long sumOfPayedBids) {
+		this.sumOfPayedBids = sumOfPayedBids;
+	}
+
 	public long getNumberOfVotes() {
 		return numberOfVotes;
 	}
@@ -130,12 +154,14 @@ public class UserStatisticsDTO extends AbstractDTO {
 
 	@Override
 	public String toString() {
-		return "UserStatisticsDTO [id=" + getIdAsString() + ", user=" + user + ", status=" + status
+		return "UserStatisticsDTO [user=" + user + ", status=" + status
 				+ ", numberOfComments=" + numberOfComments + ", numberOfBids="
 				+ numberOfBids + ", numberOfListings=" + numberOfListings
 				+ ", numberOfVotes=" + numberOfVotes
 				+ ", numberOfVotesReceived=" + numberOfVotesReceived
-				+ ", sumOfBids=" + sumOfBids + "]";
+				+ ", sumOfBids=" + sumOfBids + ", sumOfAcceptedBids="
+				+ sumOfAcceptedBids + ", sumOfPayedBids=" + sumOfPayedBids
+				+ "]";
 	}
 
 	@Override
@@ -153,7 +179,11 @@ public class UserStatisticsDTO extends AbstractDTO {
 				* result
 				+ (int) (numberOfVotesReceived ^ (numberOfVotesReceived >>> 32));
 		result = prime * result + ((status == null) ? 0 : status.hashCode());
+		result = prime * result
+				+ (int) (sumOfAcceptedBids ^ (sumOfAcceptedBids >>> 32));
 		result = prime * result + (int) (sumOfBids ^ (sumOfBids >>> 32));
+		result = prime * result
+				+ (int) (sumOfPayedBids ^ (sumOfPayedBids >>> 32));
 		result = prime * result + ((user == null) ? 0 : user.hashCode());
 		return result;
 	}
@@ -182,7 +212,11 @@ public class UserStatisticsDTO extends AbstractDTO {
 				return false;
 		} else if (!status.equals(other.status))
 			return false;
+		if (sumOfAcceptedBids != other.sumOfAcceptedBids)
+			return false;
 		if (sumOfBids != other.sumOfBids)
+			return false;
+		if (sumOfPayedBids != other.sumOfPayedBids)
 			return false;
 		if (user == null) {
 			if (other.user != null)

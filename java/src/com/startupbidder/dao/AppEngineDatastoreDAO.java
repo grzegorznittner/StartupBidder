@@ -31,6 +31,11 @@ import com.startupbidder.dto.UserStatisticsDTO;
 import com.startupbidder.dto.VoteDTO;
 import com.startupbidder.vo.ListPropertiesVO;
 
+/**
+ * Datastore implementation which uses Google's AppEngine Datastore.
+ * 
+ * @author "Grzegorz Nittner" <grzegorz.nittner@gmail.com>
+ */
 public class AppEngineDatastoreDAO implements DatastoreDAO {
 	private static final Logger log = Logger.getLogger(AppEngineDatastoreDAO.class.getName());
 	static AppEngineDatastoreDAO instance;

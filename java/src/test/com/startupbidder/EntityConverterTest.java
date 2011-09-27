@@ -22,6 +22,10 @@ import com.startupbidder.dto.RankDTO;
 import com.startupbidder.dto.UserDTO;
 import com.startupbidder.dto.VoteDTO;
 
+/**
+ * 
+ * @author "Grzegorz Nittner" <grzegorz.nittner@gmail.com>
+ */
 public class EntityConverterTest {
 	private final LocalServiceTestHelper helper = new LocalServiceTestHelper(
 			new LocalDatastoreServiceTestConfig().setDefaultHighRepJobPolicyUnappliedJobPercentage(100));

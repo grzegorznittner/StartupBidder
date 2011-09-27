@@ -23,6 +23,10 @@ import com.startupbidder.vo.SystemPropertyVO;
 import com.startupbidder.vo.UserVO;
 import com.startupbidder.web.ServiceFacade;
 
+/**
+ * 
+ * @author "Grzegorz Nittner" <grzegorz.nittner@gmail.com>
+ */
 @SuppressWarnings("serial")
 public class SetupServlet extends HttpServlet {
 	
