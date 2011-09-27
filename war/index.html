@@ -10,8 +10,8 @@
     <meta http-equiv="cache-control" content="no-cache">
     <meta http-equiv="Pragma" CONTENT="no-cache">
     <title>Startupbidder - list, bid, comment, vote on startups</title>
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
-	<script src="https://raw.github.com/DmitryBaranovskiy/raphael/master/raphael-min.js"></script>
+    <script src="//www.google.com/jsapi"></script> 
+<!--	<script src="https://raw.github.com/DmitryBaranovskiy/raphael/master/raphael-min.js"></script> -->
 <!--	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.8/jquery-ui.min.js"></script> -->
     <link rel="canonical" href="http://startupbidder.appspot.com"/>
 
@@ -29,24 +29,11 @@
 
 <!-- javascript code -->
 <script type="text/javascript">
-// http://jquery-howto.blogspot.com/2009/09/get-url-parameters-values-with-jquery.html
-$.extend({
-  getUrlVars: function(){
-    var vars = [], hash;
-    var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
-    for(var i = 0; i < hashes.length; i++)
-    {
-      hash = hashes[i].split('=');
-      vars.push(hash[0]);
-      vars[hash[0]] = hash[1];
-    }
-    return vars;
-  },
-  getUrlVar: function(name){
-    return $.getUrlVars()[name];
-  }
-});
+  google.load("jquery", "1.6.4");
+  google.load("visualization", "1", {packages:["corechart"]});
+  google.setOnLoadCallback(loadAll);
 
+function loadAll() {
 /*
  * jQuery hashchange event - v1.3 - 7/21/2010
  * http://benalman.com/projects/jquery-hashchange-plugin/
@@ -492,7 +479,6 @@ $(function(){
                     $(sel).show();
                 }
                 else {
-                    //$(sel).slideDown();
                     $(sel).show();
                 }
             }
@@ -895,7 +881,8 @@ $(function(){
             '#faqpage': 'content-narrow',
             '#content-stats' : 'content-stats-narrow',
             '#footer' : 'footer-narrow',
-            '#footer-copyright' : 'footer-copyright-narrow'
+            '#footer-copyright' : 'footer-copyright-narrow',
+            '.content-results': 'content-results-narrow'
         };
         self.currentStyle = undefined;
         self.resizeStyles = function(windowWidth) {
@@ -926,25 +913,31 @@ $(function(){
 
     var Userbox = function() { // module showing a summary box for the logged in user
         var self = {};
-        $('#userbox-details').bind('click', function(e) {
-            util.hashedCall('user', 'showUserProfile', [$('#userbox-profile-id').val(), 'zz']); // FIXME - handle error messages
-        });
-        $('#userbox-listings').bind('click', function(e) {
-            util.hashedCall('user', 'showListingsForProfile', [$('#userbox-profile-id').val(), 'zz']); // FIXME - handle error messages
-        });
-        $('#userbox-bids').bind('click', function(e) {
-            util.hashedCall('user', 'showBidsForProfile', [$('#userbox-profile-id').val(), 'zz']); // FIXME - handle error messages
-        });
-        $('#userbox-comments').bind('click', function(e) {
-            util.hashedCall('user', 'showCommentsForProfile', [$('#userbox-profile-id').val(), 'zz']); // FIXME - handle error messages
-        });
-        $('#userbox').bind('display', function(e,data) { // public interface
+        self.setup = function() {
+            $('#userbox-details').bind('click', function(e) {
+                util.hashedCall('user', 'showUserProfile', [$('#userbox-profile-id').val(), 'zz']); // FIXME - handle error messages
+            });
+            $('#userbox-listings').bind('click', function(e) {
+                util.hashedCall('user', 'showListingsForProfile', [$('#userbox-profile-id').val(), 'zz']); // FIXME - handle error messages
+            });
+            $('#userbox-bids').bind('click', function(e) {
+                util.hashedCall('user', 'showBidsForProfile', [$('#userbox-profile-id').val(), 'zz']); // FIXME - handle error messages
+            });
+            $('#userbox-comments').bind('click', function(e) {
+                util.hashedCall('user', 'showCommentsForProfile', [$('#userbox-profile-id').val(), 'zz']); // FIXME - handle error messages
+            });
+            $('#userbox').bind('display', self.drawUserbox);
+        };
+        self.drawUserbox = function(e, data) {
             var profile = user ? user.profile : undefined;
             if (!profile) {
                 $('#userbox').hide();
                 return;
             }
+            var memberType = self.getMemberType();
+            var memberClass = 'userbox-' + memberType;
             $('#userbox-profile-id').val(profile.profile_id);
+            $('#userbox-score').html(self.getScore());
             $('#userbox-num-votes').html(profile.num_votes);
             $('#userbox-num-listings').html(profile.num_listings);
             $('#userbox-num-bids').html(profile.num_bids);
@@ -952,109 +945,85 @@ $(function(){
             $('#userbox-listings-plural').html(profile.num_listings !== 1 ? 's' : '');
             $('#userbox-bids-plural').html(profile.num_bids !== 1 ? 's' : '');
             $('#userbox-comments-plural').html(profile.num_comments !== 1 ? 's' : '');
-            $('#userbox-member-type').html(self.getMemberType());
+            $('#userbox-member-type').html(util.ucFirst(memberType));
+            $('#userbox-chart').removeClass().addClass('userbox-chart').addClass(memberClass);
             $('#userbox').show();
-        });
+        };
+        self.getScore = function() {
+            if (!user || !user.profile) {
+                return 0;
+            }
+            var profile = user.profile;
+            var score = profile.num_votes + profile.num_listings + profile.num_bids + profile.num_comments;
+            return score;
+        };
         self.getMemberType = function() {
-            var votes = user ? user.num_votes : undefined;
+            var score = self.getScore();
             var memberType;
-            if (votes === undefined) {
-                memberType = 'Bronze';
+            if (score >= 100) {
+                memberType = 'platinum';
             }
-            else if (votes >= 100) {
-                memberType = 'Platinum';
+            else if (score >= 50) {
+                memberType = 'gold';
             }
-            else if (votes >= 50) {
-                memberType = 'Gold';
-            }
-            else if (votes >= 10) {
-                memberType = 'Silver';
+            else if (score >= 10) {
+                memberType = 'silver';
             }
             else {
-                memberType = 'Bronze';
+                memberType = 'bronze';
             }
             return memberType;
         };
+        self.setup();
         return self;
     };
 
     var Statistics = function() {
         var self = {};
-        self.paperId = 'stats-graph';
+        self.chartId = 'stats-graph';
         self.width = 270;
         self.height = 180;
-        self.paper;
-        self.values;
-        self.pointArray;
+        self.chart = undefined;
         self.displayStats = function(stats) {
             if (!stats || !stats.values || !stats.values.length) {
                 return;
             }
-            self.resetPaper();
-            self.values = stats.values;
-            self.makePointArray();
-            self.drawSvgPath();
-            self.drawPoints();
-            self.drawBoundingBox();
+            var values = stats.values;
+            if (!self.chart) {
+                self.chart = new google.visualization.LineChart(document.getElementById(self.chartId));
+            }
+            var data = new google.visualization.DataTable();
+            data.addColumn('string', stats.xaxis);
+            data.addColumn('number', stats.yaxis);
+            data.addRows(values.length);
+            var daysAgo;
+            for (var i = 0; i < values.length; i++) {
+                daysAgo = values.length - i;
+                data.setValue(i, 0, daysAgo +' day' + (daysAgo===1?'':'s') + ' ago');
+                data.setValue(i, 1, values[i]);
+            }
             $('#stats-message').html('');
-            $('#stats-label').html(stats.label.replace('Valume','Volume'));
-            $('#stats-xaxis').html(stats.xaxis);
-            $('#stats-yaxis').html(stats.yaxis);
-            $('#stats').show();
-        };
-        self.resetPaper = function() {
-            $('#'+self.paperId).empty();
-            self.paper = Raphael(self.paperId, self.width, self.height);
-        };
-        self.makePointArray = function() {
-            self.pointArray = [];
-            //self.values = [1, 2, 0, 3, 5, 2]; // testing
-            if (!self.values || self.values.length === 0) {
-                return;
-            }
-            var str, max_value, i, v;
-            var xsize = self.width / (self.values.length-1);
-            for (i = 0; i < self.values.length; i++) {
-                v = self.values[i];
-                if (max_value === undefined || v > max_value) {
-                    max_value = v;
+            google.visualization.events.addListener(self.chart, 'ready', self.showChart);
+            self.chart.draw(data, {
+                legend: 'none',
+                width: self.width,
+                height: self.height,
+                hAxis: {
+                    textPosition: 'none',
+                    title: 'Days Ago'
+                },
+                vAxis: {
+                    title: 'Num Bids'
+                },
+                title: stats.label.replace('Valume','Volume').trim(),
+                titleTextStyle: {
+                    color: 'green',
+                    fontSize: '16'
                 }
-            }
-            var yscale = self.height / max_value;
-            yscale *= 0.9; // leave some space at the top
-            var p;
-            for (i = 0; i < self.values.length; i++) { // construct points
-                p = new Object();
-                p.x = Math.floor(xsize * i);
-                p.y = Math.floor(self.height - yscale * self.values[i]);
-                self.pointArray[i] = p;
-            }
+            });
         };
-        self.drawBoundingBox = function() {
-            self.paper.rect(0, 0, self.width, self.height);
-        };
-        self.drawSvgPath = function() {
-            var path, i, p;
-            if (!self.pointArray || self.pointArray.length === 0) {
-                return;
-            }
-            path = 'M0,' + self.height;
-            for (i = 0; i < self.pointArray.length; i++) {
-                p = self.pointArray[i];
-                path += 'L' + p.x + ',' + p.y + ' ';
-            }
-            path += 'L' + self.width + ',' + self.height + ' Z';
-            self.paper.path(path).attr('fill', '90-#090-#0f0');
-        };
-        self.drawPoints = function() {
-            var i, p;
-            if (!self.pointArray || self.pointArray.length === 0) {
-                return;
-            }
-            for (i = 0; i < self.pointArray.length; i++) {
-                p = self.pointArray[i];
-                self.paper.circle(p.x, p.y, 3).attr('fill', '#f00');
-            }
+        self.showChart = function() {
+            $('#stats').show();
         };
         return self;
     };
@@ -2427,6 +2396,7 @@ $(function(){
     $(window).hashchange(util.hashchange);
     $(window).hashchange();
 });
+}
 </script>
 
 <style type="text/css">
@@ -2703,6 +2673,10 @@ background: linear-gradient(top, #7db9e8 0%,#1e5799 100%); /* W3C */
 .content-results {
     margin-top: 5px;
     margin-left: 5px;
+    margin-right: 300px;
+}
+.content-results-narrow {
+    margin-right: 15px;
 }
 .content-results-list {
 }
@@ -2968,29 +2942,6 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
     margin-top: 5px;
     margin-bottom: 5px;
 }
-.stats-xaxis {
-    position: relative;
-    width: 320px;
-    height: 10px;
-    font-size: 10px;
-    text-align: center;
-    font-weight: bold;
-    top: -2px;
-}
-.stats-yaxis {
-    font-weight: bold;
-    position: relative;
-    top: -110px;
-    left: -150px;
-    font-size: 10px;
-    text-align: center;
-    writing-mode: bt-rl;
-    -webkit-transform: rotate(-90deg);	
-    -moz-transform: rotate(-90deg);
-    -ms-transform: rotate(-90deg);
-    -o-transform: rotate(-90deg);
-    transform: rotate(-90deg);
-}
 
 /* null display to start with */
 .stats {
@@ -3087,8 +3038,6 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
                     <div id="stats-label" class="stats-label"></div>
                     <div id="stats-graph-container" class="stats-graph-container">
                         <div id="stats-graph" class="stats-graph"></div>
-                        <div id="stats-xaxis" class="stats-xaxis"></div>
-                        <div id="stats-yaxis" class="stats-yaxis"></div>
                     </div>
                 </div>
             </div>
@@ -3778,23 +3727,50 @@ s = (p + b + c + v) / (t + 2)^1.5
     float: left;
 }
 .userbox-textbox {
+    margin-left: 55px;
     float: left;
 }
-.userbox-votes {
+.userbox-score {
     width: 50px:
     height: 50px;
     margin-top: 13px;
     font-size: 24px;
     text-align: center;
 }
+.userbox-chart {
+    top: 25px;
+    position: absolute;
+    margin-left: 0px;
+    width: 44px;
+    height: 44px;
+    display: block;
+    border: 2px solid grey;
+    -moz-border-radius: 22px;
+    -webkit-border-radius: 22px;
+    border-radius: 22px;
+}
+.userbox-bronze {
+    background: #C69633;
+}
+.userbox-silver {
+    background: #C9CFC9;
+}
+.userbox-gold {
+    background: #FFCC00;
+}
+.userbox-platinum {
+    background: #909090;
+}
 </style> 
     <div id="userbox" class="userbox blue-gradient-bg">
         <div><span class="userbox-title">My Startupbidder</span></div>
         <div class="userbox-medal">
-            <div class="userbox-votes" id="userbox-num-votes">0</div>
+            <div class="userbox-chart userbox-bronze" id="userbox-chart">
+                <div class="userbox-score" id="userbox-score"></div>
+            </div>
         </div>
         <div class="userbox-textbox">
-            <div><span id="userbox-member-type">Bronze</span> Member</div>
+            <div><span id="userbox-member-type">Bronze</span> Member <span id="userbox-num-votes">0</span> votes</div>
             <div>
                 <span class="header-link" id="userbox-listings"><span id="userbox-num-listings">0</span> listing<span id="userbox-listings-plural"></span></span>
                 <span class="header-link" id="userbox-bids"><span id="userbox-num-bids">0</span> bid<span id="userbox-bids-plural"></span></span>
