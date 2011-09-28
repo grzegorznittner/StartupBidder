@@ -221,7 +221,7 @@ public class ServiceFacade {
 	}
 
 	public Boolean checkUserName(UserVO loggedInUser, String userName) {
-		return getDAO().checkUserName(userName);
+		return StringUtils.notEmpty(userName) && getDAO().checkUserName(userName);
 	}
 	
 	private void scheduleUpdateOfUserStatistics(String userId, UserStatsUpdateReason reason) {
