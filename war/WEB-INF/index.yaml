@@ -25,6 +25,36 @@ indexes:
 - kind: Bid
   ancestor: no
   properties:
+    - name: listingOwner
+    - name: status
+    - name: placed
+      direction: desc
+
+- kind: Bid
+  ancestor: no
+  properties:
+    - name: user
+    - name: placed
+      direction: desc
+
+- kind: Bid
+  ancestor: no
+  properties:
+    - name: listingOwner
+    - name: placed
+      direction: desc
+
+- kind: Bid
+  ancestor: no
+  properties:
+    - name: listingOwner
+    - name: status
+    - name: placed
+      direction: desc
+
+- kind: Bid
+  ancestor: no
+  properties:
     - name: status
     - name: placed
       direction: desc
@@ -38,7 +68,21 @@ indexes:
 - kind: Bid
   ancestor: no
   properties:
+    - name: listingOwner
+    - name: status
+
+- kind: Bid
+  ancestor: no
+  properties:
     - name: user
+    - name: status
+    - name: valuation
+      direction: desc
+
+- kind: Bid
+  ancestor: no
+  properties:
+    - name: listingOwner
     - name: status
     - name: valuation
       direction: desc
@@ -64,6 +108,12 @@ indexes:
     - name: state
     - name: listedOn
       direction: desc
+
+- kind: Listing
+  ancestor: no
+  properties:
+    - name: owner
+    - name: state
 
 - kind: Listing
   ancestor: no
