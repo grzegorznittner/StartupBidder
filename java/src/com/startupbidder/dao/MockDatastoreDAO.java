@@ -740,7 +740,30 @@ public class MockDatastoreDAO implements DatastoreDAO {
 	public List<BidDTO> getBidsForUser(String userId) {
 		List<BidDTO> bids = new ArrayList<BidDTO>();
 		for (BidDTO bid : bidCache.values()) {
-			if (StringUtils.areStringsEqual(bid.getUser(), userId)) {
+			if (StringUtils.areStringsEqual(bid.getUser(), userId)
+					&& bid.getStatus() != BidDTO.Status.WITHDRAWN) {
+				bids.add(bid);
+			}
+		}
+		return bids;
+	}
+	
+	public List<BidDTO> getBidsAcceptedByUser(String userId) {
+		List<BidDTO> bids = new ArrayList<BidDTO>();
+		for (BidDTO bid : bidCache.values()) {
+			if (StringUtils.areStringsEqual(bid.getListingOwner(), userId)
+					&& (bid.getStatus() == BidDTO.Status.ACCEPTED || bid.getStatus() == BidDTO.Status.PAYED)) {
+				bids.add(bid);
+			}
+		}
+		return bids;
+	}
+
+	public List<BidDTO> getBidsFundedByUser(String userId) {
+		List<BidDTO> bids = new ArrayList<BidDTO>();
+		for (BidDTO bid : bidCache.values()) {
+			if (StringUtils.areStringsEqual(bid.getUser(), userId)
+					&& (bid.getStatus() == BidDTO.Status.ACCEPTED || bid.getStatus() == BidDTO.Status.PAYED)) {
 				bids.add(bid);
 			}
 		}

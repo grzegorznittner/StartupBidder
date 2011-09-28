@@ -20,6 +20,8 @@ public class BidDTO extends AbstractDTO implements Serializable {
 	private String user;
 	public static final String LISTING = "listing";
 	private String listing;
+	public static final String LISTING_OWNER = "listingOwner";
+	private String listingOwner;
 	public static final String PLACED = "placed";
 	private Date   placed;
 	public static final String VALUE = "value";
@@ -104,23 +106,65 @@ public class BidDTO extends AbstractDTO implements Serializable {
 		this.status = status;
 	}
 
-	@Override
-	public String toString() {
-		return "BidDTO [key=" + getKey() + ", id=" + getIdAsString() + ", user=" + user
-				+ ", listing=" + listing + ", placed="
-				+ placed + ", value=" + value + ", percentOfCompany="
-				+ percentOfCompany + ", valuation=" + valuation + ", fundType="
-				+ fundType + ", status=" + status + "]";
+	public String getListingOwner() {
+		return listingOwner;
 	}
 
+	public void setListingOwner(String listingOwner) {
+		this.listingOwner = listingOwner;
+	}
+
+	public Entity toEntity() {
+		Entity bid = new Entity(this.id);
+		bid.setProperty(FUND_TYPE, fundType != null ? fundType.toString() : FundType.COMMON.toString());
+		bid.setProperty(STATUS, status != null ? status.toString() : Status.ACTIVE.toString());
+		bid.setProperty(LISTING, listing);
+		bid.setProperty(LISTING_OWNER, listingOwner);
+		bid.setProperty(PERCENT_OF_COMPANY, percentOfCompany);
+		bid.setProperty(PLACED, placed);
+		bid.setProperty(USER, user);
+		bid.setProperty(VALUATION, valuation);
+		bid.setProperty(VALUE, value);
+		return bid;
+	}
 	
+	public static BidDTO fromEntity(Entity entity) {
+		BidDTO bid = new BidDTO();
+		bid.setKey(entity.getKey());
+		if (!StringUtils.isEmpty((String)entity.getProperty(FUND_TYPE))) {
+			bid.setFundType(FundType.valueOf((String)entity.getProperty(FUND_TYPE)));
+		}
+		if (!StringUtils.isEmpty((String)entity.getProperty(STATUS))) {
+			bid.setStatus(Status.valueOf((String)entity.getProperty(STATUS)));
+		}
+		bid.setListing((String)entity.getProperty(LISTING));
+		bid.setListingOwner((String)entity.getProperty(LISTING_OWNER));
+		bid.setPercentOfCompany(((Long)entity.getProperty(PERCENT_OF_COMPANY)).intValue());
+		bid.setPlaced((Date)entity.getProperty(PLACED));
+		bid.setUser((String)entity.getProperty(USER));
+		bid.setValuation(((Long)entity.getProperty(VALUATION)).intValue());
+		bid.setValue(((Long)entity.getProperty(VALUE)).intValue());
+		return bid;
+	}
+
+	@Override
+	public String toString() {
+		return "BidDTO [user=" + user + ", listing=" + listing
+				+ ", listingOwner=" + listingOwner + ", placed=" + placed
+				+ ", value=" + value + ", percentOfCompany=" + percentOfCompany
+				+ ", valuation=" + valuation + ", fundType=" + fundType
+				+ ", status=" + status + "]";
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
-		int result = 1;
+		int result = super.hashCode();
 		result = prime * result
 				+ ((fundType == null) ? 0 : fundType.hashCode());
 		result = prime * result + ((listing == null) ? 0 : listing.hashCode());
+		result = prime * result
+				+ ((listingOwner == null) ? 0 : listingOwner.hashCode());
 		result = prime * result + percentOfCompany;
 		result = prime * result + ((placed == null) ? 0 : placed.hashCode());
 		result = prime * result + ((status == null) ? 0 : status.hashCode());
@@ -134,7 +178,7 @@ public class BidDTO extends AbstractDTO implements Serializable {
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (obj == null)
+		if (!super.equals(obj))
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
@@ -145,6 +189,11 @@ public class BidDTO extends AbstractDTO implements Serializable {
 			if (other.listing != null)
 				return false;
 		} else if (!listing.equals(other.listing))
+			return false;
+		if (listingOwner == null) {
+			if (other.listingOwner != null)
+				return false;
+		} else if (!listingOwner.equals(other.listingOwner))
 			return false;
 		if (percentOfCompany != other.percentOfCompany)
 			return false;
@@ -165,36 +214,5 @@ public class BidDTO extends AbstractDTO implements Serializable {
 		if (value != other.value)
 			return false;
 		return true;
-	}
-
-	public Entity toEntity() {
-		Entity bid = new Entity(this.id);
-		bid.setProperty(FUND_TYPE, fundType != null ? fundType.toString() : FundType.COMMON.toString());
-		bid.setProperty(STATUS, status != null ? status.toString() : Status.ACTIVE.toString());
-		bid.setProperty(LISTING, listing);
-		bid.setProperty(PERCENT_OF_COMPANY, percentOfCompany);
-		bid.setProperty(PLACED, placed);
-		bid.setProperty(USER, user);
-		bid.setProperty(VALUATION, valuation);
-		bid.setProperty(VALUE, value);
-		return bid;
-	}
-	
-	public static BidDTO fromEntity(Entity entity) {
-		BidDTO bid = new BidDTO();
-		bid.setKey(entity.getKey());
-		if (!StringUtils.isEmpty((String)entity.getProperty(FUND_TYPE))) {
-			bid.setFundType(FundType.valueOf((String)entity.getProperty(FUND_TYPE)));
-		}
-		if (!StringUtils.isEmpty((String)entity.getProperty(STATUS))) {
-			bid.setStatus(Status.valueOf((String)entity.getProperty(STATUS)));
-		}
-		bid.setListing((String)entity.getProperty(LISTING));
-		bid.setPercentOfCompany(((Long)entity.getProperty(PERCENT_OF_COMPANY)).intValue());
-		bid.setPlaced((Date)entity.getProperty(PLACED));
-		bid.setUser((String)entity.getProperty(USER));
-		bid.setValuation(((Long)entity.getProperty(VALUATION)).intValue());
-		bid.setValue(((Long)entity.getProperty(VALUE)).intValue());
-		return bid;
 	}
 }

@@ -36,6 +36,7 @@ public class VoToDtoConverter {
 		bid.setUser(bidVO.getUser());
 		bid.setValue(bidVO.getValue());
 		bid.setValuation(bidVO.getValuation());
+		bid.setListingOwner(bidVO.getListingOwner());
 		return bid;
 	}
 	

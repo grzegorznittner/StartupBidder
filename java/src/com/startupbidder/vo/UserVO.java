@@ -56,6 +56,10 @@ public class UserVO {
 	private long numberOfListings;
 	@JsonProperty("num_bids")
 	private long numberOfBids;
+	@JsonProperty("num_accepted_bids")
+	private long numberOfAcceptedBids;
+	@JsonProperty("num_payed_bids")
+	private long numberOfFundedBids;
 	@JsonProperty("num_comments")
 	private long numberOfComments;
 	@JsonProperty("num_votes")
@@ -212,6 +216,18 @@ public class UserVO {
 	public void setVotable(boolean votable) {
 		this.votable = votable;
 	}
+	public long getNumberOfAcceptedBids() {
+		return numberOfAcceptedBids;
+	}
+	public void setNumberOfAcceptedBids(long numberOfAcceptedBids) {
+		this.numberOfAcceptedBids = numberOfAcceptedBids;
+	}
+	public long getNumberOfFundedBids() {
+		return numberOfFundedBids;
+	}
+	public void setNumberOfFundedBids(long numberOfFundedBids) {
+		this.numberOfFundedBids = numberOfFundedBids;
+	}
 	@Override
 	public String toString() {
 		return "UserVO [orderNumber=" + orderNumber + ", id=" + id
@@ -222,8 +238,10 @@ public class UserVO {
 				+ ", accreditedInvestor=" + accreditedInvestor + ", joined="
 				+ joined + ", lastLoggedIn=" + lastLoggedIn + ", modified="
 				+ modified + ", numberOfListings=" + numberOfListings
-				+ ", numberOfBids=" + numberOfBids + ", numberOfComments="
-				+ numberOfComments + ", numberOfVotes=" + numberOfVotes
-				+ ", status=" + status + ", votable=" + votable + "]";
+				+ ", numberOfBids=" + numberOfBids + ", numberOfAcceptedBids="
+				+ numberOfAcceptedBids + ", numberOfFundedBids="
+				+ numberOfFundedBids + ", numberOfComments=" + numberOfComments
+				+ ", numberOfVotes=" + numberOfVotes + ", status=" + status
+				+ ", votable=" + votable + "]";
 	}
 }

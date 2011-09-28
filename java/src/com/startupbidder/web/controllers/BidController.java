@@ -38,6 +38,10 @@ public class BidController extends ModelDrivenController {
 				return listing(request);
 			} else if("user".equalsIgnoreCase(getCommand(1))) {
 				return user(request);
+			} else if("accepted-by-user".equalsIgnoreCase(getCommand(1))) {
+				return acceptedByUser(request);
+			} else if("funded-by-user".equalsIgnoreCase(getCommand(1))) {
+				return fundedByUser(request);
 			} else if("statistics".equalsIgnoreCase(getCommand(1))) {
 				return statistics(request);
 			} else {
@@ -260,6 +264,34 @@ public class BidController extends ModelDrivenController {
 		ListPropertiesVO bidProperties = getListProperties(request);
 		String userId = getCommandOrParameter(request, 2, "id");
 		model = ServiceFacade.instance().getBidsForUser(getLoggedInUser(), userId, bidProperties);
+		
+		return headers;
+	}
+
+	/*
+	 *  /bids/accepted-by-user/ag1zdGFydHVwYmlkZGVychILEgRVc2VyIghqcGZvd2xlcgw/
+	 *  /bids/accepted-by-user/?id=ag1zdGFydHVwYmlkZGVychILEgRVc2VyIghqcGZvd2xlcgw
+	 */
+	private HttpHeaders acceptedByUser(HttpServletRequest request) {
+		HttpHeaders headers = new HttpHeadersImpl("accepted-by-user");
+		
+		ListPropertiesVO bidProperties = getListProperties(request);
+		String userId = getCommandOrParameter(request, 2, "id");
+		model = ServiceFacade.instance().getBidsAcceptedByUser(getLoggedInUser(), userId, bidProperties);
+		
+		return headers;
+	}
+
+	/*
+	 *  /bids/funded-by-user/ag1zdGFydHVwYmlkZGVychILEgRVc2VyIghqcGZvd2xlcgw/
+	 *  /bids/funded-by-user/?id=ag1zdGFydHVwYmlkZGVychILEgRVc2VyIghqcGZvd2xlcgw
+	 */
+	private HttpHeaders fundedByUser(HttpServletRequest request) {
+		HttpHeaders headers = new HttpHeadersImpl("funded-by-user");
+		
+		ListPropertiesVO bidProperties = getListProperties(request);
+		String userId = getCommandOrParameter(request, 2, "id");
+		model = ServiceFacade.instance().getBidsFundedByUser(getLoggedInUser(), userId, bidProperties);
 		
 		return headers;
 	}

@@ -76,63 +76,65 @@ public class HelloServlet extends HttpServlet {
 			
 			//testMockDatastore(user, datastore, out);
 			out.println("<p>User API:</p>");
-			out.println("<a href=\"/user/topinvestor/.html\">Top investor data</a><br/>");
-			out.println("<a href=\"/user/loggedin/.html\">Direct link to logged in user data</a><br/>");
-			out.println("<a href=\"/user/get/" + currentUser.getId() + "/.html\">Logged in user data via /users/get/ </a><br/>");
-			out.println("<a href=\"/user/all/.html\">All users</a><br/>");
-			out.println("<form method=\"POST\" action=\"/user/activate/" + currentUser.getId() + "/.html\"><input type=\"submit\" value=\"Activates logged in user\"/></form>");
-			out.println("<form method=\"POST\" action=\"/user/deactivate/" + currentUser.getId() + "/.html\"><input type=\"submit\" value=\"Deactivates logged in user\"/></form>");
-			out.println("<form method=\"POST\" action=\"/user/up/" + topInvestor.getIdAsString() + "/.html\"><input type=\"submit\" value=\"Logged in user votes for top investor\"/></form>");
-			out.println("<a href=\"/user/votes/" + currentUser.getId() + "/.html\">Logged in user votes</a><br/>");
-			out.println("<form method=\"GET\" action=\"/user/check-user-name/.html\"><input name=\"name\" type=\"text\" value=\"greg\"/>"
+			out.println("<a href=\"/user/topinvestor/.json\">Top investor data</a><br/>");
+			out.println("<a href=\"/user/loggedin/.json\">Direct link to logged in user data</a><br/>");
+			out.println("<a href=\"/user/get/" + currentUser.getId() + "/.json\">Logged in user data via /users/get/ </a><br/>");
+			out.println("<a href=\"/user/all/.json\">All users</a><br/>");
+			out.println("<form method=\"POST\" action=\"/user/activate/" + currentUser.getId() + "/.json\"><input type=\"submit\" value=\"Activates logged in user\"/></form>");
+			out.println("<form method=\"POST\" action=\"/user/deactivate/" + currentUser.getId() + "/.json\"><input type=\"submit\" value=\"Deactivates logged in user\"/></form>");
+			out.println("<form method=\"POST\" action=\"/user/up/" + topInvestor.getIdAsString() + "/.json\"><input type=\"submit\" value=\"Logged in user votes for top investor\"/></form>");
+			out.println("<a href=\"/user/votes/" + currentUser.getId() + "/.json\">Logged in user votes</a><br/>");
+			out.println("<form method=\"GET\" action=\"/user/check-user-name/.json\"><input name=\"name\" type=\"text\" value=\"greg\"/>"
 					+ "<input type=\"submit\" value=\"Check user name\"/></form>");
 			
 			out.println("<p>Listings API:</p>");
-			out.println("<a href=\"/listings/get/" + topListing.getIdAsString() + "/.html\">Top listing data</a><br/>");
-			out.println("<form method=\"POST\" action=\"/listing/up/" + topListing.getIdAsString() + "/.html\"><input type=\"submit\" value=\"Logged in user votes for top listing (works only once per user)\"/></form>");
-			out.println("<form method=\"POST\" action=\"/listing/up/.html\"><input type=\"hidden\" name=\"id\" value=\"" + topListing.getIdAsString() + "\"/><input type=\"submit\" value=\"Logged in user votes for top listing (works only once per user), 2nd form\"/></form>");
-			out.println("<form method=\"POST\" action=\"/listing/activate/" + topListing.getIdAsString() + "/.html\"><input type=\"submit\" value=\"Activate top listing\"/></form>");
-			out.println("<form method=\"POST\" action=\"/listing/withdraw/" + topListing.getIdAsString() + "/.html\"><input type=\"submit\" value=\"Withdraw top listing\"/></form>");
-			out.println("<a href=\"/listings/top/.html?max_results=6\">Top listings</a><br/>");
-			out.println("<a href=\"/listings/active/.html?max_results=6\">Active listings</a><br/>");
-			out.println("<a href=\"/listings/valuation/.html?max_results=6\">Top valued listings</a><br/>");
-			out.println("<a href=\"/listings/popular/.html?max_results=6\">Most popular listings</a><br/>");
-			out.println("<a href=\"/listings/latest/.html?max_results=6\">Latest listings</a><br/>");
-			out.println("<a href=\"/listings/closing/.html?max_results=6\">Closing listings</a><br/>");
-			out.println("<a href=\"/listings/user/" + topInvestor.getIdAsString() + "/.html?max_results=6\">Top investor's listings</a><br/>");
-			out.println("<form method=\"POST\" action=\"/listing/create/.html\"><textarea name=\"listing\" rows=\"5\" cols=\"100\">"
+			out.println("<a href=\"/listings/get/" + topListing.getIdAsString() + "/.json\">Top listing data</a><br/>");
+			out.println("<form method=\"POST\" action=\"/listing/up/" + topListing.getIdAsString() + "/.json\"><input type=\"submit\" value=\"Logged in user votes for top listing (works only once per user)\"/></form>");
+			out.println("<form method=\"POST\" action=\"/listing/up/.json\"><input type=\"hidden\" name=\"id\" value=\"" + topListing.getIdAsString() + "\"/><input type=\"submit\" value=\"Logged in user votes for top listing (works only once per user), 2nd form\"/></form>");
+			out.println("<form method=\"POST\" action=\"/listing/activate/" + topListing.getIdAsString() + "/.json\"><input type=\"submit\" value=\"Activate top listing\"/></form>");
+			out.println("<form method=\"POST\" action=\"/listing/withdraw/" + topListing.getIdAsString() + "/.json\"><input type=\"submit\" value=\"Withdraw top listing\"/></form>");
+			out.println("<a href=\"/listings/top/.json?max_results=6\">Top listings</a><br/>");
+			out.println("<a href=\"/listings/active/.json?max_results=6\">Active listings</a><br/>");
+			out.println("<a href=\"/listings/valuation/.json?max_results=6\">Top valued listings</a><br/>");
+			out.println("<a href=\"/listings/popular/.json?max_results=6\">Most popular listings</a><br/>");
+			out.println("<a href=\"/listings/latest/.json?max_results=6\">Latest listings</a><br/>");
+			out.println("<a href=\"/listings/closing/.json?max_results=6\">Closing listings</a><br/>");
+			out.println("<a href=\"/listings/user/" + topInvestor.getIdAsString() + "/.json?max_results=6\">Top investor's listings</a><br/>");
+			out.println("<form method=\"POST\" action=\"/listing/create/.json\"><textarea name=\"listing\" rows=\"5\" cols=\"100\">"
 					+ "{\"title\":\"Listing title\",\"median_valuation\":\"0\",\"num_votes\":\"0\",\"num_bids\":\"0\",\"num_comments\":\"0\",\"profile_id\":\"ag1zdGFydHVwYmlkZGVych4LEgRVc2VyIhQxODU4MDQ3NjQyMjAxMzkxMjQxMQw\",\"profile_username\":\"test@example.com\",\"listing_date\":\"20110802\",\"closing_date\":\"2011-08-01\",\"status\":\"new\",\"suggested_amt\":\"10000\",\"suggested_pct\":\"10\",\"suggested_val\":100000,\"summary\":\"Enter listing summary here.\",\"business_plan_url\":\"\",\"presentation_url\":\"\"}"
 					+ "</textarea><input type=\"submit\" value=\"Create a listing\"/></form>");
 
 			out.println("<p>Bids API:</p>");
 			log.info("Selected bid: " + bids.get(0).toString());
-			out.println("<a href=\"/bids/listing/" + topListing.getIdAsString() + "/.html?max_results=6\">Bids for top listing</a><br/>");
-			out.println("<a href=\"/bids/user/" + topInvestor.getIdAsString() + "/.html?max_results=6\">Bids for top investor</a><br/>");
-			out.println("<a href=\"/bids/get/" + bids.get(0).getIdAsString() + "/.html\">Get bid id '" + bids.get(0).getIdAsString() + "'</a><br/>");
-			out.println("<form method=\"POST\" action=\"/bid/create/.html\"><textarea name=\"bid\" rows=\"5\" cols=\"100\">"
+			out.println("<a href=\"/bids/listing/" + topListing.getIdAsString() + "/.json?max_results=6\">Bids for top listing</a><br/>");
+			out.println("<a href=\"/bids/user/" + topInvestor.getIdAsString() + "/.json?max_results=6\">Bids for top investor</a><br/>");
+			out.println("<a href=\"/bids/accepted-by-user/" + topInvestor.getIdAsString() + "/.json?max_results=6\">Bids accepted by top investor</a><br/>");
+			out.println("<a href=\"/bids/funded-by-user/" + topInvestor.getIdAsString() + "/.json?max_results=6\">Bids funded by top investor</a><br/>");
+			out.println("<a href=\"/bids/get/" + bids.get(0).getIdAsString() + "/.json\">Get bid id '" + bids.get(0).getIdAsString() + "'</a><br/>");
+			out.println("<form method=\"POST\" action=\"/bid/create/.json\"><textarea name=\"bid\" rows=\"5\" cols=\"100\">"
 					+ "{ \"listing_id\":\"" + topListing.getIdAsString() + "\", \"profile_id\":\"" + topInvestor.getIdAsString() + "\", \"amount\":\"14000\", \"equity_pct\":\"10\", \"bid_type\":\"common\", \"interest_rate\":0 }"
 					+ "</textarea><input type=\"submit\" value=\"Create a bid\"/></form>");
-			out.println("<form method=\"POST\" action=\"/bid/activate/.html\"> <input type=\"hidden\" name=\"id\" value=\"" + bids.get(0).getIdAsString() + "\"/><input type=\"submit\" value=\"Activate bid id '" + bids.get(0).getIdAsString() + "'\"/></form>");
-			out.println("<form method=\"POST\" action=\"/bid/withdraw/.html\"> <input type=\"hidden\" name=\"id\" value=\"" + bids.get(0).getIdAsString() + "\"/><input type=\"submit\" value=\"Withdraw bid id '" + bids.get(0).getIdAsString() + "'\"/></form>");
-			out.println("<form method=\"POST\" action=\"/bid/accept/.html\"> <input type=\"hidden\" name=\"id\" value=\"" + bids.get(0).getIdAsString() + "\"/><input type=\"submit\" value=\"Accept bid id '" + bids.get(0).getIdAsString() + "' (most likely fails)\"/></form>");
+			out.println("<form method=\"POST\" action=\"/bid/activate/.json\"> <input type=\"hidden\" name=\"id\" value=\"" + bids.get(0).getIdAsString() + "\"/><input type=\"submit\" value=\"Activate bid id '" + bids.get(0).getIdAsString() + "'\"/></form>");
+			out.println("<form method=\"POST\" action=\"/bid/withdraw/.json\"> <input type=\"hidden\" name=\"id\" value=\"" + bids.get(0).getIdAsString() + "\"/><input type=\"submit\" value=\"Withdraw bid id '" + bids.get(0).getIdAsString() + "'\"/></form>");
+			out.println("<form method=\"POST\" action=\"/bid/accept/.json\"> <input type=\"hidden\" name=\"id\" value=\"" + bids.get(0).getIdAsString() + "\"/><input type=\"submit\" value=\"Accept bid id '" + bids.get(0).getIdAsString() + "' (most likely fails)\"/></form>");
 			printAcceptBid(datastore, out, usersListings);
-			out.println("<form method=\"POST\" action=\"/bid/payed/.html\"> <input type=\"hidden\" name=\"id\" value=\"" + bids.get(0).getIdAsString() + "\"/><input type=\"submit\" value=\"Mark bid as pyed, id '" + bids.get(0).getIdAsString() + "' (most likely fails)\"/></form>");
+			out.println("<form method=\"POST\" action=\"/bid/payed/.json\"> <input type=\"hidden\" name=\"id\" value=\"" + bids.get(0).getIdAsString() + "\"/><input type=\"submit\" value=\"Mark bid as pyed, id '" + bids.get(0).getIdAsString() + "' (most likely fails)\"/></form>");
 			printPayBid(datastore, out, usersListings);
 			
-			out.println("<a href=\"/bids/statistics/.html\">Get bid statistics</a><br/>");
+			out.println("<a href=\"/bids/statistics/.json\">Get bid statistics</a><br/>");
 			
 			out.println("<p>Comments API:</p>");
-			out.println("<a href=\"/comments/listing/" + topListing.getIdAsString() + "/.html?max_results=6\">Comments for top listing</a><br/>");
-			out.println("<a href=\"/comments/user/" + topInvestor.getIdAsString() + "/.html?max_results=6\">Comments for top investor</a><br/>");
-			out.println("<a href=\"/comments/get/" + comments.get(0).getIdAsString() + "/.html\">Get comment id '" + comments.get(0).getIdAsString() + "'</a><br/>");
-			out.println("<form method=\"POST\" action=\"/comment/create/.html\"><textarea name=\"comment\" rows=\"5\" cols=\"100\">"
+			out.println("<a href=\"/comments/listing/" + topListing.getIdAsString() + "/.json?max_results=6\">Comments for top listing</a><br/>");
+			out.println("<a href=\"/comments/user/" + topInvestor.getIdAsString() + "/.json?max_results=6\">Comments for top investor</a><br/>");
+			out.println("<a href=\"/comments/get/" + comments.get(0).getIdAsString() + "/.json\">Get comment id '" + comments.get(0).getIdAsString() + "'</a><br/>");
+			out.println("<form method=\"POST\" action=\"/comment/create/.json\"><textarea name=\"comment\" rows=\"5\" cols=\"100\">"
 						+ "{ \"listing_id\":\"" + topListing.getIdAsString() + "\", \"profile_id\":\"" + topInvestor.getIdAsString() + "\", \"text\":\"comment test\" }"
 						+ "</textarea><input type=\"submit\" value=\"Create a comment\"/></form>");
-			out.println("<form method=\"POST\" action=\"/comment/delete/.html?id=" + comments.get(0).getIdAsString() + "\"><input type=\"submit\" value=\"Deletes comment id '" + comments.get(0).getIdAsString() + "'\"/></form>");
+			out.println("<form method=\"POST\" action=\"/comment/delete/.json?id=" + comments.get(0).getIdAsString() + "\"><input type=\"submit\" value=\"Deletes comment id '" + comments.get(0).getIdAsString() + "'\"/></form>");
 			out.println("<br/>");
 			
 			out.println("<p>File API:</p>");
-			out.println("<a href=\"/file/get-upload-url/2/.html\">Get upload URL(s)</a><br/>");
+			out.println("<a href=\"/file/get-upload-url/2/.json\">Get upload URL(s)</a><br/>");
 			String[] urls = service.createUploadUrls(currentUser, "/file/upload", 3);
 			out.println("<form action=\"" + urls[0] + "\" method=\"post\" enctype=\"multipart/form-data\">"
 					+ "<input type=\"file\" name=\"" + ListingDocumentDTO.Type.BUSINESS_PLAN.toString() + "\"/>"
@@ -149,9 +151,9 @@ public class HelloServlet extends HttpServlet {
 				out.println("<table border=\"1\"><tr><td colspan=\"2\">Uploaded documents</td></tr>");
 				for (ListingDocumentVO doc : docs) {
 					out.println("<tr>");
-					out.println("<td><a href=\"/file/download/" + doc.getId() + ".html\">Download "
+					out.println("<td><a href=\"/file/download/" + doc.getId() + ".json\">Download "
 							+ doc.getType() + " uploaded " + fmt.print(doc.getCreated().getTime()) + ", type: " + doc.getType() + "</a></td>");
-					out.println("<td><form method=\"POST\" action=\"/file/delete/.html?doc=" + doc.getId() + "\"><input type=\"submit\" value=\"Delete file\"/></form></td>");
+					out.println("<td><form method=\"POST\" action=\"/file/delete/.json?doc=" + doc.getId() + "\"><input type=\"submit\" value=\"Delete file\"/></form></td>");
 					out.println("</tr>");
 				}
 				out.println("</table>");
@@ -176,7 +178,7 @@ public class HelloServlet extends HttpServlet {
 				List<BidDTO> bidsForUserListings = datastore.getBidsForListing(listing.getIdAsString());
 				for (BidDTO bid : bidsForUserListings) {
 					if (BidDTO.Status.ACTIVE.equals(bid.getStatus())) {
-						out.println("<form method=\"POST\" action=\"/bid/accept/.html\"> <input type=\"hidden\" name=\"id\" value=\"" + bid.getIdAsString() + "\"/><input type=\"submit\" value=\"Accept bid id '" + bid.getIdAsString() + "' (should work)\"/></form>");
+						out.println("<form method=\"POST\" action=\"/bid/accept/.json\"> <input type=\"hidden\" name=\"id\" value=\"" + bid.getIdAsString() + "\"/><input type=\"submit\" value=\"Accept bid id '" + bid.getIdAsString() + "' (should work)\"/></form>");
 						validBid = true;
 						break;
 					}
@@ -201,7 +203,7 @@ public class HelloServlet extends HttpServlet {
 				List<BidDTO> bidsForUserListings = datastore.getBidsForListing(listing.getIdAsString());
 				for (BidDTO bid : bidsForUserListings) {
 					if (BidDTO.Status.ACCEPTED.equals(bid.getStatus())) {
-						out.println("<form method=\"POST\" action=\"/bid/payed/.html\"> <input type=\"hidden\" name=\"id\" value=\"" + bid.getIdAsString() + "\"/><input type=\"submit\" value=\"Accept bid id '" + bid.getIdAsString() + "' (should work)\"/></form>");
+						out.println("<form method=\"POST\" action=\"/bid/payed/.json\"> <input type=\"hidden\" name=\"id\" value=\"" + bid.getIdAsString() + "\"/><input type=\"submit\" value=\"Accept bid id '" + bid.getIdAsString() + "' (should work)\"/></form>");
 						validBid = true;
 						break;
 					}

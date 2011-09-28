@@ -28,6 +28,7 @@ public class DtoToVoConverter {
 		bid.setPercentOfCompany(bidDTO.getPercentOfCompany());
 		bid.setPlaced(bidDTO.getPlaced());
 		bid.setUser(bidDTO.getUser());
+		bid.setListingOwner(bidDTO.getListingOwner());
 		bid.setValue(bidDTO.getValue());
 		bid.setValuation(bidDTO.getValuation());
 		bid.setStatus(bidDTO.getStatus().toString());

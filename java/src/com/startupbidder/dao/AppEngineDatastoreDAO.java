@@ -16,6 +16,7 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.FilterOperator;
@@ -315,36 +316,80 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 		
 		log.info("Updating user statistics, user: " + userId);
 
-		Query query = new BidDTO().getQuery();
+		Query query = new BidDTO().getQuery().setKeysOnly();
 		query.addFilter(BidDTO.USER, Query.FilterOperator.EQUAL, userId);
 		query.addFilter(BidDTO.STATUS, Query.FilterOperator.EQUAL, BidDTO.Status.ACTIVE.toString());
 		PreparedQuery pq = getDatastoreService().prepare(query);
 		userStats.setNumberOfBids(pq.countEntities(FetchOptions.Builder.withDefaults()));
 		
+		// calculating accepted bids for user's listings
+		query = new BidDTO().getQuery().setKeysOnly();
+		query.addFilter(BidDTO.LISTING_OWNER, Query.FilterOperator.EQUAL, userId);
+		query.addFilter(BidDTO.STATUS, Query.FilterOperator.EQUAL, BidDTO.Status.ACCEPTED.toString());
+		pq = getDatastoreService().prepare(query);
+		userStats.setNumberOfAcceptedBids(pq.countEntities(FetchOptions.Builder.withDefaults()));
+		// adding payed bids for user's listings
+		query = new BidDTO().getQuery().setKeysOnly();
+		query.addFilter(BidDTO.LISTING_OWNER, Query.FilterOperator.EQUAL, userId);
+		query.addFilter(BidDTO.STATUS, Query.FilterOperator.EQUAL, BidDTO.Status.PAYED.toString());
+		pq = getDatastoreService().prepare(query);
+		userStats.setNumberOfAcceptedBids(userStats.getNumberOfAcceptedBids() +
+				pq.countEntities(FetchOptions.Builder.withDefaults()));
+		
 		query = new BidDTO().getQuery();
-		query.addFilter(BidDTO.USER, Query.FilterOperator.EQUAL, userId);
-		query.addFilter(BidDTO.STATUS, Query.FilterOperator.EQUAL, BidDTO.Status.ACTIVE.toString());
+		query.addFilter(BidDTO.LISTING_OWNER, Query.FilterOperator.EQUAL, userId);
+		query.addFilter(BidDTO.STATUS, Query.FilterOperator.NOT_EQUAL, BidDTO.Status.WITHDRAWN.toString());
+		query.addSort(BidDTO.STATUS);
 		query.addSort(BidDTO.VALUATION, Query.SortDirection.DESCENDING);
 		pq = getDatastoreService().prepare(query);
 		BidDTO bidDTO = null;
-		long sumOfBids = 0L;
-		List<String> listingIds = new ArrayList<String>();
+		long sumOfAcceptedBids = 0L;
 		for (Entity bid : pq.asIterable(FetchOptions.Builder.withDefaults())) {
 			bidDTO = BidDTO.fromEntity(bid);
-			if (!listingIds.contains(bidDTO.getListing())) {
-				sumOfBids += bidDTO.getValuation();
-				listingIds.add(bidDTO.getListing());
+			if (BidDTO.Status.PAYED == bidDTO.getStatus() || 
+					BidDTO.Status.ACCEPTED == bidDTO.getStatus()) {
+				sumOfAcceptedBids += bidDTO.getValuation();
+			}
+		}
+		userStats.setSumOfAcceptedBids(sumOfAcceptedBids);
+
+		// calculating bids funded by user
+		query = new BidDTO().getQuery().setKeysOnly();
+		query.addFilter(BidDTO.USER, Query.FilterOperator.EQUAL, userId);
+		query.addFilter(BidDTO.STATUS, Query.FilterOperator.EQUAL, BidDTO.Status.ACCEPTED.toString());
+		pq = getDatastoreService().prepare(query);
+		userStats.setNumberOfFundedBids(pq.countEntities(FetchOptions.Builder.withDefaults()));
+		// adding payed bids placed by user
+		query = new BidDTO().getQuery().setKeysOnly();
+		query.addFilter(BidDTO.USER, Query.FilterOperator.EQUAL, userId);
+		query.addFilter(BidDTO.STATUS, Query.FilterOperator.EQUAL, BidDTO.Status.PAYED.toString());
+		pq = getDatastoreService().prepare(query);
+		userStats.setNumberOfFundedBids(userStats.getNumberOfFundedBids() +
+				pq.countEntities(FetchOptions.Builder.withDefaults()));
+
+		query = new BidDTO().getQuery();
+		query.addFilter(BidDTO.USER, Query.FilterOperator.EQUAL, userId);
+		query.addFilter(BidDTO.STATUS, Query.FilterOperator.NOT_EQUAL, BidDTO.Status.WITHDRAWN.toString());
+		query.addSort(BidDTO.STATUS);
+		query.addSort(BidDTO.VALUATION, Query.SortDirection.DESCENDING);
+		pq = getDatastoreService().prepare(query);
+		long sumOfBids = 0L;
+		long sumOfFoundedBids = 0L;
+		for (Entity bid : pq.asIterable(FetchOptions.Builder.withDefaults())) {
+			bidDTO = BidDTO.fromEntity(bid);
+			sumOfBids += bidDTO.getValuation();
+			if (BidDTO.Status.PAYED == bidDTO.getStatus() || 
+					BidDTO.Status.ACCEPTED == bidDTO.getStatus()) {
+				sumOfFoundedBids += bidDTO.getValuation();
 			}
 		}
 		userStats.setSumOfBids(sumOfBids);
-		log.info("user: " + userId + ", number of bids: " + userStats.getNumberOfBids()
-				+ ", sum of bids: " + sumOfBids);
+		userStats.setSumOfFundedBids(sumOfFoundedBids);
 		
 		query = new CommentDTO().getQuery().setKeysOnly();
 		query.addFilter(CommentDTO.USER, Query.FilterOperator.EQUAL, userId);
 		pq = getDatastoreService().prepare(query);
 		userStats.setNumberOfComments(pq.countEntities(FetchOptions.Builder.withDefaults()));
-		log.info("user: " + userId + ", number of comments: " + userStats.getNumberOfComments());
 		
 		query = new ListingDTO().getQuery().setKeysOnly();
 		query.addFilter(ListingDTO.OWNER, Query.FilterOperator.EQUAL, userId);
@@ -353,19 +398,18 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 		query.addSort(ListingDTO.OWNER);
 		pq = getDatastoreService().prepare(query);
 		userStats.setNumberOfListings(pq.countEntities(FetchOptions.Builder.withDefaults()));
-		log.info("user: " + userId + ", number of listings: " + userStats.getNumberOfListings());
 		
 		query = new VoteDTO().getQuery().setKeysOnly();
 		query.addFilter(VoteDTO.VOTER, Query.FilterOperator.EQUAL, userId);
 		pq = getDatastoreService().prepare(query);
-		userStats.setNumberOfVotes(pq.countEntities(FetchOptions.Builder.withDefaults()));
-		log.info("user: " + userId + ", number of votes made: " + userStats.getNumberOfVotes());
+		userStats.setNumberOfVotesAdded(pq.countEntities(FetchOptions.Builder.withDefaults()));
 
 		query = new VoteDTO().getQuery().setKeysOnly();
 		query.addFilter(VoteDTO.USER, Query.FilterOperator.EQUAL, userId);
 		pq = getDatastoreService().prepare(query);
-		userStats.setNumberOfVotesReceived(pq.countEntities(FetchOptions.Builder.withDefaults()));
-		log.info("user: " + userId + ", number of votes received: " + userStats.getNumberOfVotes());
+		userStats.setNumberOfVotes(pq.countEntities(FetchOptions.Builder.withDefaults()));
+
+		log.info("user: " + userId + ", statistics: " + userStats);
 
 		getDatastoreService().put(userStats.toEntity());
 		
@@ -402,24 +446,20 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 		listingStats.setListing(listingId);
 		listingStats.setStatus(listing.getState().toString());
 		
-		log.info("Updating listing statistics, listing: " + listingId);
 		Query query = new BidDTO().getQuery().setKeysOnly();
 		query.addFilter(BidDTO.LISTING, Query.FilterOperator.EQUAL, listingId);
 		PreparedQuery pq = getDatastoreService().prepare(query);
 		listingStats.setNumberOfBids(pq.countEntities(FetchOptions.Builder.withDefaults()));
-		log.info("listing: " + listingId + ", number of bids: " + listingStats.getNumberOfBids());
 		
 		query = new CommentDTO().getQuery().setKeysOnly();
 		query.addFilter(CommentDTO.LISTING, Query.FilterOperator.EQUAL, listingId);
 		pq = getDatastoreService().prepare(query);
 		listingStats.setNumberOfComments(pq.countEntities(FetchOptions.Builder.withDefaults()));
-		log.info("listing: " + listingId + ", number of comments: " + listingStats.getNumberOfComments());
 		
 		query = new VoteDTO().getQuery().setKeysOnly();
 		query.addFilter(VoteDTO.LISTING, Query.FilterOperator.EQUAL, listingId);
 		pq = getDatastoreService().prepare(query);
 		listingStats.setNumberOfVotes(pq.countEntities(FetchOptions.Builder.withDefaults()));
-		log.info("listing: " + listingId + ", number of votes: " + listingStats.getNumberOfVotes());
 
 		// calculate median for bids and set total number of bids
 		List<Integer> values = new ArrayList<Integer>();
@@ -438,11 +478,9 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 		} else {
 			median = (values.get(values.size() / 2 - 1) + values.get(values.size() / 2)) / 2;
 		}
-		log.log(Level.INFO, "Values for '" + listingId + "': " + values + ", median: " + median);
-
 		listingStats.setValuation(median);
-		log.info("listing: " + listingId + ", median valuation: " + listingStats.getValuation());		
-
+		
+		log.info("listing: " + listingId + ", statistics: " + listingStats);
 		getDatastoreService().put(listingStats.toEntity());
 		
 		return listingStats;
@@ -819,17 +857,25 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 			
 			if (!StringUtils.areStringsEqual(listing.getOwner(), voterId)) {
 				VoteDTO vote = new VoteDTO();
-				vote.setListing(listingId);
-				vote.setUser(null);
-				vote.setVoter(voterId);
-				vote.setValue(1);
-				vote.setCommentedOn(new Date());
-				vote.createKey(listingId + voterId + vote.getCommentedOn().getTime());
-				
-				getDatastoreService().put(vote.toEntity());
-				log.info("User '" + voterId + "' voted for listing '" + listingId + "'");
-				
-				return listing;
+				Query query = vote.getQuery().setKeysOnly();
+				query.addFilter(VoteDTO.LISTING, Query.FilterOperator.EQUAL, listingId);
+				query.addFilter(VoteDTO.VOTER, Query.FilterOperator.EQUAL, voterId);
+				PreparedQuery pq = getDatastoreService().prepare(query);
+				if (pq.countEntities(FetchOptions.Builder.withDefaults()) == 0) {
+					vote.setListing(listingId);
+					vote.setUser(null);
+					vote.setVoter(voterId);
+					vote.setValue(1);
+					vote.setCommentedOn(new Date());
+					vote.createKey(listingId + voterId + vote.getCommentedOn().getTime());
+					
+					getDatastoreService().put(vote.toEntity());
+					log.info("User '" + voterId + "' voted for listing '" + listingId + "'");
+					
+					return listing;					
+				} else {
+					log.log(Level.WARNING, "User '" + voterId + "' has already voted for listing '" + listingId + "'");
+				}
 			} else {
 				log.log(Level.WARNING, "User '" + voterId + "' owns listing '" + listingId + "', cannot vote");
 			}
@@ -849,17 +895,25 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 			
 			if (!StringUtils.areStringsEqual(user.getIdAsString(), voterId)) {
 				VoteDTO vote = new VoteDTO();
-				vote.setUser(voterId);
-				vote.setListing(null);
-				vote.setVoter(voterId);
-				vote.setValue(1);
-				vote.setCommentedOn(new Date());
-				vote.createKey(userId + voterId + vote.getCommentedOn().getTime());
-				
-				getDatastoreService().put(vote.toEntity());
-				log.info("User '" + voterId + "' voted for user '" + userId + "'");
-				
-				return user;
+				Query query = vote.getQuery().setKeysOnly();
+				query.addFilter(VoteDTO.USER, Query.FilterOperator.EQUAL, userId);
+				query.addFilter(VoteDTO.VOTER, Query.FilterOperator.EQUAL, voterId);
+				PreparedQuery pq = getDatastoreService().prepare(query);
+				if (pq.countEntities(FetchOptions.Builder.withDefaults()) == 0) {
+					vote.setUser(userId);
+					vote.setListing(null);
+					vote.setVoter(voterId);
+					vote.setValue(1);
+					vote.setCommentedOn(new Date());
+					vote.createKey(userId + voterId + vote.getCommentedOn().getTime());
+					
+					getDatastoreService().put(vote.toEntity());
+					log.info("User '" + voterId + "' voted for user '" + userId + "'");
+					
+					return user;
+				} else {
+					log.log(Level.WARNING, "User '" + voterId + "' has already voted for user '" + userId + "'");
+				}
 			} else {
 				log.log(Level.WARNING, "User '" + userId + "' cannot vote for himself/herself");
 			}
@@ -928,6 +982,58 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 		}
 		return bids;
 	}
+	
+	public List<BidDTO> getBidsAcceptedByUser(String userId) {
+		List<BidDTO> bids = new ArrayList<BidDTO>();
+		
+		Query query = new BidDTO().getQuery();
+		query.addFilter(BidDTO.LISTING_OWNER, Query.FilterOperator.EQUAL, userId);
+		query.addFilter(BidDTO.STATUS, Query.FilterOperator.EQUAL, BidDTO.Status.ACCEPTED.toString());
+		query.addSort(BidDTO.PLACED, Query.SortDirection.DESCENDING);
+		
+		PreparedQuery pq = getDatastoreService().prepare(query);
+		for (Entity bid : pq.asIterable()) {
+			bids.add(BidDTO.fromEntity(bid));
+		}
+
+		query = new BidDTO().getQuery();
+		query.addFilter(BidDTO.LISTING_OWNER, Query.FilterOperator.EQUAL, userId);
+		query.addFilter(BidDTO.STATUS, Query.FilterOperator.EQUAL, BidDTO.Status.PAYED.toString());
+		query.addSort(BidDTO.PLACED, Query.SortDirection.DESCENDING);
+		
+		pq = getDatastoreService().prepare(query);
+		for (Entity bid : pq.asIterable()) {
+			bids.add(BidDTO.fromEntity(bid));
+		}
+		
+		return bids;
+	}
+
+	public List<BidDTO> getBidsFundedByUser(String userId) {
+		List<BidDTO> bids = new ArrayList<BidDTO>();
+		
+		Query query = new BidDTO().getQuery();
+		query.addFilter(BidDTO.USER, Query.FilterOperator.EQUAL, userId);
+		query.addFilter(BidDTO.STATUS, Query.FilterOperator.EQUAL, BidDTO.Status.ACCEPTED.toString());
+		query.addSort(BidDTO.PLACED, Query.SortDirection.DESCENDING);
+		
+		PreparedQuery pq = getDatastoreService().prepare(query);
+		for (Entity bid : pq.asIterable()) {
+			bids.add(BidDTO.fromEntity(bid));
+		}
+		
+		query = new BidDTO().getQuery();
+		query.addFilter(BidDTO.USER, Query.FilterOperator.EQUAL, userId);
+		query.addFilter(BidDTO.STATUS, Query.FilterOperator.EQUAL, BidDTO.Status.PAYED.toString());
+		query.addSort(BidDTO.PLACED, Query.SortDirection.DESCENDING);
+		
+		pq = getDatastoreService().prepare(query);
+		for (Entity bid : pq.asIterable()) {
+			bids.add(BidDTO.fromEntity(bid));
+		}
+		return bids;
+	}
+
 
 	@Override
 	public int getNumberOfVotesForListing(String listingId) {
@@ -985,15 +1091,30 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 
 	@Override
 	public boolean userCanVoteForListing(String voterId, String listingId) {
+		ListingDTO listing = new ListingDTO();
+		listing.setIdFromString(listingId);
+		try {
+			listing = ListingDTO.fromEntity(getDatastoreService().get(listing.getKey()));
+		} catch (EntityNotFoundException e) {
+			log.log(Level.WARNING, "Listing entity '" + listingId + "'not found", e);
+			return false;
+		}
+		boolean notOwnerOfListing = !StringUtils.areStringsEqual(voterId, listing.getOwner());
+		
 		Query query = new VoteDTO().getQuery().setKeysOnly();
 		query.addFilter(VoteDTO.VOTER, Query.FilterOperator.EQUAL, voterId);
 		query.addFilter(VoteDTO.LISTING, Query.FilterOperator.EQUAL, listingId);
 		PreparedQuery pq = getDatastoreService().prepare(query);
-		return pq.countEntities(FetchOptions.Builder.withDefaults()) == 0;
+		boolean notVotedForListing = pq.countEntities(FetchOptions.Builder.withDefaults()) == 0;
+
+		return notOwnerOfListing && notVotedForListing;
 	}
 	
 	@Override
 	public boolean userCanVoteForUser(String voterId, String userId) {
+		if (StringUtils.areStringsEqual(voterId, userId)) {
+			return false;
+		}
 		Query query = new VoteDTO().getQuery().setKeysOnly();
 		query.addFilter(VoteDTO.VOTER, Query.FilterOperator.EQUAL, voterId);
 		query.addFilter(VoteDTO.USER, Query.FilterOperator.EQUAL, userId);
@@ -1100,6 +1221,15 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 
 	@Override
 	public BidDTO createBid(BidDTO bid) {
+		ListingDTO listing = new ListingDTO();
+		listing.setIdFromString(bid.getListing());
+		try {
+			listing = ListingDTO.fromEntity(getDatastoreService().get(listing.getKey()));
+		} catch (EntityNotFoundException e) {
+			log.log(Level.WARNING, "Bidding for non existing listing with id '" + bid.getListing() + "'!");
+			return null;
+		}
+		bid.setListingOwner(listing.getOwner());
 		bid.setPlaced(new Date());
 		bid.createKey(bid.getListing().substring(0, 3) + bid.getUser().substring(0, 3) + bid.getPlaced().getTime());
 		

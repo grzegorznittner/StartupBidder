@@ -114,7 +114,7 @@ public class ServiceFacade {
 		if (user == null) {
 			return null;
 		}
-		applyUserStatistics(user);
+		applyUserStatistics(user, user);
 		return user;
 	}
 
@@ -129,12 +129,8 @@ public class ServiceFacade {
 		if (user == null) {
 			return null;
 		}
-		applyUserStatistics(user);
-		if (loggedInUser != null) {
-			user.setVotable(getDAO().userCanVoteForUser(loggedInUser.getId(), user.getId()));
-		} else {
-			user.setVotable(false);
-		}
+		applyUserStatistics(loggedInUser, user);
+
 		UserAndUserVO userAndUser = new UserAndUserVO();
 		userAndUser.setUser(user);
 		return userAndUser;
@@ -143,7 +139,7 @@ public class ServiceFacade {
 	public UserVO createUser(User loggedInUser) {
 		UserVO user = DtoToVoConverter.convert(getDAO().createUser(
 				loggedInUser.getUserId(), loggedInUser.getEmail(), loggedInUser.getNickname()));
-		applyUserStatistics(user);
+		applyUserStatistics(user, user);
 		return user;
 	}
 	
@@ -166,7 +162,7 @@ public class ServiceFacade {
 			return null;
 		}
 		UserVO user = DtoToVoConverter.convert(getDAO().updateUser(VoToDtoConverter.convert(userData)));
-		applyUserStatistics(user);
+		applyUserStatistics(loggedInUser, user);
 		return user;
 	}
 
@@ -178,7 +174,7 @@ public class ServiceFacade {
 		List<UserVO> users = DtoToVoConverter.convertUsers(getDAO().getAllUsers());
 		int index = 1;
 		for (UserVO user : users) {
-			applyUserStatistics(user);
+			applyUserStatistics(loggedInUser, user);
 			user.setOrderNumber(index++);
 		}
 
@@ -192,26 +188,26 @@ public class ServiceFacade {
 	 */
 	public UserVO getTopInvestor(UserVO loggedInUser) {
 		UserVO user = DtoToVoConverter.convert(getDAO().getTopInvestor());
-		applyUserStatistics(user);
+		applyUserStatistics(loggedInUser, user);
 		return user;
 	}
 
 	public UserVO activateUser(UserVO loggedInUser, String userId) {
 		UserVO user = DtoToVoConverter.convert(getDAO().activateUser(userId));
-		applyUserStatistics(user);
+		applyUserStatistics(loggedInUser, user);
 		return user;
 	}
 
 	public UserVO deactivateUser(UserVO loggedInUser, String userId) {
 		UserVO user = DtoToVoConverter.convert(getDAO().deactivateUser(userId));
-		applyUserStatistics(user);
+		applyUserStatistics(loggedInUser, user);
 		return user;
 	}
 
 	public UserVotesVO userVotes(UserVO loggedInUser, String userId) {
 		UserVotesVO userVotes = new UserVotesVO();
 		UserVO user = DtoToVoConverter.convert(getDAO().getUser(userId));
-		applyUserStatistics(user);
+		applyUserStatistics(loggedInUser, user);
 		
 		List<VoteVO> votes = DtoToVoConverter.convertVotes(getDAO().getUserVotes(userId));
 		for (VoteVO vote : votes) {
@@ -277,13 +273,21 @@ public class ServiceFacade {
 		return userStats;
 	}
 	
-	private void applyUserStatistics(UserVO user) {
+	private void applyUserStatistics(UserVO loggedInUser, UserVO user) {
 		if (user != null && user.getId() != null) {
+			if (loggedInUser != null) {
+				user.setVotable(getDAO().userCanVoteForUser(loggedInUser.getId(), user.getId()));
+			} else {
+				user.setVotable(false);
+			}
+			
 			UserStatisticsDTO userStats = getUserStatistics(user.getId());
 			user.setNumberOfBids(userStats.getNumberOfBids());
 			user.setNumberOfComments(userStats.getNumberOfComments());
 			user.setNumberOfListings(userStats.getNumberOfListings());
 			user.setNumberOfVotes(userStats.getNumberOfVotes());
+			user.setNumberOfAcceptedBids(userStats.getNumberOfAcceptedBids());
+			user.setNumberOfFundedBids(userStats.getNumberOfFundedBids());
 		}
 	}
 	
@@ -546,6 +550,7 @@ public class ServiceFacade {
 		ListingVO listing =  DtoToVoConverter.convert(getDAO().valueUpListing(listingId, loggedInUser.getId()));
 		if (listing != null) {
 			scheduleUpdateOfListingStatistics(listing.getId(), ListingStatsUpdateReason.NEW_VOTE);
+			scheduleUpdateOfUserStatistics(loggedInUser.getId(), UserStatsUpdateReason.NEW_VOTE);
 			computeListingData(loggedInUser, listing);
 		}
 		return listing;
@@ -561,7 +566,7 @@ public class ServiceFacade {
 		UserVO user =  DtoToVoConverter.convert(getDAO().valueUpUser(userId, voter.getId()));
 		if (user != null) {
 			scheduleUpdateOfUserStatistics(userId, UserStatsUpdateReason.NEW_VOTE);
-			applyUserStatistics(user);
+			applyUserStatistics(voter, user);
 		}
 		return user;
 	}
@@ -692,42 +697,81 @@ public class ServiceFacade {
 		return list;
 	}
 	
+	private void prepareBidList(ListPropertiesVO bidProperties, List<BidVO> bids, UserVO user) {
+		int index = bidProperties.getStartIndex() > 0 ? bidProperties.getStartIndex() : 1;
+		for (BidVO bid : bids) {
+			ListingDTO listing = getDAO().getListing(bid.getListing());
+			bid.setUserName(user.getNickname());
+			bid.setListingName(listing.getName());
+			bid.setListingOwner(listing.getOwner());
+			bid.setOrderNumber(index++);
+		}
+		bidProperties.setNumberOfResults(bids.size());
+		bidProperties.setStartIndex(0);
+		bidProperties.setTotalResults(bids.size());
+	}
+
 	/**
 	 * Returns list of user's bids
-	 * @param listingId Listing id
-	 * @param cursor Cursor string
-	 * @return List of bids
 	 */
 	public BidListVO getBidsForUser(UserVO loggedInUser, String userId, ListPropertiesVO bidProperties) {
 		BidListVO list = new BidListVO();
+		List<BidVO> bids = null;
 
 		UserVO user = getUser(loggedInUser, userId).getUser();
 		if (user == null) {
 			log.log(Level.WARNING, "User '" + userId + "' not found");
-			bidProperties.setNumberOfResults(0);
-			bidProperties.setStartIndex(0);
-			bidProperties.setTotalResults(0);
-		} else {
-			List<BidVO> bids = DtoToVoConverter.convertBids(getDAO().getBidsForUser(userId));
-			int index = bidProperties.getStartIndex() > 0 ? bidProperties.getStartIndex() : 1;
-			for (BidVO bid : bids) {
-				ListingDTO listing = getDAO().getListing(bid.getListing());
-				bid.setUserName(user.getNickname());
-				bid.setListingName(listing.getName());
-				bid.setListingOwner(listing.getOwner());
-				bid.setOrderNumber(index++);
-			}
-			list.setBids(bids);
-			bidProperties.setNumberOfResults(bids.size());
-			bidProperties.setStartIndex(0);
-			bidProperties.setTotalResults(bids.size());
+			return null;
 		}
+
+		bids = DtoToVoConverter.convertBids(getDAO().getBidsForUser(userId));
+		prepareBidList(bidProperties, bids, user);
+		list.setBids(bids);
 		list.setBidsProperties(bidProperties);
 		list.setUser(user);
 		
 		return list;
 	}
 	
+	public BidListVO getBidsAcceptedByUser(UserVO loggedInUser, String userId, ListPropertiesVO bidProperties) {
+		BidListVO list = new BidListVO();
+		List<BidVO> bids = null;
+
+		UserVO user = getUser(loggedInUser, userId).getUser();
+		if (user == null) {
+			log.log(Level.WARNING, "User '" + userId + "' not found");
+			return null;
+		}
+		
+		bids = DtoToVoConverter.convertBids(getDAO().getBidsAcceptedByUser(userId));
+		prepareBidList(bidProperties, bids, user);
+		list.setBids(bids);
+		list.setBidsProperties(bidProperties);
+		list.setUser(user);
+		
+		return list;
+	}
+
+	public BidListVO getBidsFundedByUser(UserVO loggedInUser, String userId, ListPropertiesVO bidProperties) {
+		BidListVO list = new BidListVO();
+		List<BidVO> bids = null;
+
+		UserVO user = getUser(loggedInUser, userId).getUser();
+		if (user == null) {
+			log.log(Level.WARNING, "User '" + userId + "' not found");
+			return null;
+		}
+		
+		bids = DtoToVoConverter.convertBids(getDAO().getBidsFundedByUser(userId));
+		prepareBidList(bidProperties, bids, user);
+		list.setBids(bids);
+		list.setBidsProperties(bidProperties);
+		list.setUser(user);
+		
+		return list;
+	}
+
+
 	/**
 	 * Returns listing's rating
 	 * @param listingId Listing id

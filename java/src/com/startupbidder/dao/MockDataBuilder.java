@@ -71,6 +71,7 @@ public class MockDataBuilder {
 				bid.setPercentOfCompany(new Random().nextInt(50) + 10);
 				bid.setPlaced(new Date(listing.getListedOn().getTime() + bidNum * bidTimeSpan));
 				bid.setValue(new Random().nextInt(50) * 1000 + listing.getSuggestedValuation());
+				bid.setListingOwner(listing.getOwner());
 				// calculate valuation
 				bid.setValuation(bid.getValue() * 100 / bid.getPercentOfCompany());
 				

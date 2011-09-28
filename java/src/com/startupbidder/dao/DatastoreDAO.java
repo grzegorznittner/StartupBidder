@@ -234,11 +234,19 @@ public interface DatastoreDAO {
 	
 	/**
 	 * Returns list of user's bids
-	 * @param userId Listing id
-	 * @return List of bids
 	 */
 	List<BidDTO> getBidsForUser(String userId);
-	
+
+	/**
+	 * Returns list of bids accepted by user (for owned listings)
+	 */
+	List<BidDTO> getBidsAcceptedByUser(String userId);
+
+	/**
+	 * Returns list of bids funded by user (accepted or payed)
+	 */
+	List<BidDTO> getBidsFundedByUser(String userId);
+
 	/**
 	 * Returns number of votes for listing
 	 * @param listingId Listing id
