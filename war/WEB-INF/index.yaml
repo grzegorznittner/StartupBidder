@@ -87,6 +87,13 @@ indexes:
     - name: valuation
       direction: desc
 
+- kind: Bid
+  ancestor: no
+  properties:
+    - name: listing
+    - name: placed
+      direction: desc
+
 - kind: Comment
   ancestor: no
   properties:
@@ -100,6 +107,12 @@ indexes:
     - name: user
     - name: commentedOn
       direction: desc
+
+- kind: Listing
+  ancestor: no
+  properties:
+    - name: owner
+    - name: state
 
 - kind: Listing
   ancestor: no
