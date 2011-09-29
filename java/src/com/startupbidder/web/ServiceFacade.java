@@ -946,35 +946,6 @@ public class ServiceFacade {
 		return bid;
 	}
 
-	public GraphDataVO getBidsStatistics(UserVO loggedInUser) {		
-		ListPropertiesVO bidsProperties = new ListPropertiesVO();
-		bidsProperties.setMaxResults(100);
-		List<BidDTO> bids = getDAO().getBidsByDate(bidsProperties);
-
-		int[] values = new int[2];
-		if (bids.size() > 1) {
-			int bidTimeSpan = Math.abs(Days.daysBetween(new DateTime(bids.get(0).getPlaced()),
-					new DateTime(bids.get(bids.size() - 1).getPlaced())).getDays());
-			
-			values = new int[bidTimeSpan];
-			DateMidnight midnight = new DateMidnight();
-			for (BidDTO bid : bids) {
-				int days = Math.abs(Days.daysBetween(new DateTime(bid.getPlaced().getTime()), midnight).getDays());
-				if (days < values.length) {
-					values[days]++;
-				}
-			}
-		}
-		
-		GraphDataVO data = new GraphDataVO();
-		data.setLabel(values.length + " Day Bid Valume");
-		data.setxAxis("days ago");
-		data.setyAxis("num bids");
-		data.setValues(values);
-
-		return data;
-	}
-	
 	public SystemPropertyVO getSystemProperty(UserVO loggedInUser, String name) {
 		return DtoToVoConverter.convert(getDAO().getSystemProperty(name));
 	}

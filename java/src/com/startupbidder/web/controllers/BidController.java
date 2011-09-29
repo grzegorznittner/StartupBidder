@@ -17,6 +17,8 @@ import com.startupbidder.web.HttpHeaders;
 import com.startupbidder.web.HttpHeadersImpl;
 import com.startupbidder.web.ModelDrivenController;
 import com.startupbidder.web.ServiceFacade;
+import com.startupbidder.web.StatisticsFacade;
+import com.startupbidder.web.StatisticsFacade.GraphType;
 
 /**
  * 
@@ -43,7 +45,11 @@ public class BidController extends ModelDrivenController {
 			} else if("funded-by-user".equalsIgnoreCase(getCommand(1))) {
 				return fundedByUser(request);
 			} else if("statistics".equalsIgnoreCase(getCommand(1))) {
-				return statistics(request);
+				return bidDayVolume(request);
+			} else if("bid-day-volume".equalsIgnoreCase(getCommand(1))) {
+				return bidDayVolume(request);
+			} else if("bid-day-valuation".equalsIgnoreCase(getCommand(1))) {
+				return bidDayValuation(request);
 			} else {
 				return get(request);
 			}
@@ -244,13 +250,21 @@ public class BidController extends ModelDrivenController {
 	}
 
 	/*
-	 *  /bids/listing/?id=ag1zdGFydHVwYmlkZGVychQLEgdMaXN0aW5nIgdtaXNsZWFkDA
+	 *  /bids/statistics/
+	 *  /bids/bid-day-volume/
 	 */
-	private HttpHeaders statistics(HttpServletRequest request) {
-		HttpHeaders headers = new HttpHeadersImpl("statistics");
-		
-		model = ServiceFacade.instance().getBidsStatistics(getLoggedInUser());
-		
+	private HttpHeaders bidDayVolume(HttpServletRequest request) {
+		HttpHeaders headers = new HttpHeadersImpl("bid-day-volume");		
+		model = StatisticsFacade.getGraphData(GraphType.BID_DAY_VOLUME);
+		return headers;
+	}
+
+	/*
+	 *  /bids/bid-day-valuation/
+	 */
+	private HttpHeaders bidDayValuation(HttpServletRequest request) {
+		HttpHeaders headers = new HttpHeadersImpl("bid-day-valuation");		
+		model = StatisticsFacade.getGraphData(GraphType.BID_DAY_VALUATION);
 		return headers;
 	}
 

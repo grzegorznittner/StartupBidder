@@ -118,10 +118,12 @@ public class HelloServlet extends HttpServlet {
 			out.println("<form method=\"POST\" action=\"/bid/withdraw/.json\"> <input type=\"hidden\" name=\"id\" value=\"" + bids.get(0).getIdAsString() + "\"/><input type=\"submit\" value=\"Withdraw bid id '" + bids.get(0).getIdAsString() + "'\"/></form>");
 			out.println("<form method=\"POST\" action=\"/bid/accept/.json\"> <input type=\"hidden\" name=\"id\" value=\"" + bids.get(0).getIdAsString() + "\"/><input type=\"submit\" value=\"Accept bid id '" + bids.get(0).getIdAsString() + "' (most likely fails)\"/></form>");
 			printAcceptBid(datastore, out, usersListings);
-			out.println("<form method=\"POST\" action=\"/bid/payed/.json\"> <input type=\"hidden\" name=\"id\" value=\"" + bids.get(0).getIdAsString() + "\"/><input type=\"submit\" value=\"Mark bid as pyed, id '" + bids.get(0).getIdAsString() + "' (most likely fails)\"/></form>");
+			out.println("<form method=\"POST\" action=\"/bid/payed/.json\"> <input type=\"hidden\" name=\"id\" value=\"" + bids.get(0).getIdAsString() + "\"/><input type=\"submit\" value=\"Mark bid as payed, id '" + bids.get(0).getIdAsString() + "' (most likely fails)\"/></form>");
 			printPayBid(datastore, out, usersListings);
 			
-			out.println("<a href=\"/bids/statistics/.json\">Get bid statistics</a><br/>");
+			out.println("<a href=\"/bids/statistics/.json\">Get bid statistics (deprecated)</a><br/>");
+			out.println("<a href=\"/bids/bid-day-volume/.json\">Get bid day volume</a><br/>");
+			out.println("<a href=\"/bids/bid-day-valuation/.json\">Get bid day valuation</a><br/>");
 			
 			out.println("<p>Comments API:</p>");
 			out.println("<a href=\"/comments/listing/" + topListing.getIdAsString() + "/.json?max_results=6\">Comments for top listing</a><br/>");

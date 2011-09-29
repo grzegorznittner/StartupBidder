@@ -1,6 +1,7 @@
 package com.startupbidder.vo;
 
 import java.util.Arrays;
+import java.util.Date;
 
 import org.codehaus.jackson.annotate.JsonAutoDetect;
 import org.codehaus.jackson.annotate.JsonProperty;
@@ -13,6 +14,9 @@ import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 @JsonAutoDetect(getterVisibility=Visibility.NONE, setterVisibility=Visibility.NONE,
 		fieldVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE)
 public class GraphDataVO {
+	
+	@JsonProperty("type")
+	private String type;
 	@JsonProperty("label")
 	private String label;
 	@JsonProperty("xaxis")
@@ -21,6 +25,12 @@ public class GraphDataVO {
 	private String yAxis;
 	@JsonProperty("values")
 	private int[] values;
+	@JsonProperty("created")
+	private Date created;
+	
+	public GraphDataVO(String graphType) {
+		this.type = graphType;
+	}
 	public String getLabel() {
 		return label;
 	}
@@ -47,7 +57,8 @@ public class GraphDataVO {
 	}
 	@Override
 	public String toString() {
-		return "GraphDataVO [label=" + label + ", xAxis=" + xAxis + ", yAxis="
-				+ yAxis + ", values=" + Arrays.toString(values) + "]";
+		return "GraphDataVO [type=" + type + ", label=" + label + ", xAxis="
+				+ xAxis + ", yAxis=" + yAxis + ", values="
+				+ Arrays.toString(values) + ", created=" + created + "]";
 	}
 }
