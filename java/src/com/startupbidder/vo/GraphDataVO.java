@@ -55,6 +55,18 @@ public class GraphDataVO {
 	public void setValues(int[] values) {
 		this.values = values;
 	}
+	public String getType() {
+		return type;
+	}
+	public void setType(String type) {
+		this.type = type;
+	}
+	public Date getCreated() {
+		return created;
+	}
+	public void setCreated(Date created) {
+		this.created = created;
+	}
 	@Override
 	public String toString() {
 		return "GraphDataVO [type=" + type + ", label=" + label + ", xAxis="
