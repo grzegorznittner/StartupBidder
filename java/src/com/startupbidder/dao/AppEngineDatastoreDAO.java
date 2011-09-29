@@ -282,7 +282,12 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 		user.createKey(userId);
 		user.setOpenId(userId);
 		user.setNickname(nickname != null ? nickname : "" + userId);
-		//user.setFirstName("");
+		if (email.contains("@")) {
+			String name = email.substring(0, email.indexOf("@"));
+			user.setName(name);
+		} else {
+			user.setName("<not set>");
+		}
 		user.setEmail(email);
 		//user.setFacebook("");
 		user.setJoined(new Date());
