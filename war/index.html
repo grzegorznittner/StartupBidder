@@ -1990,6 +1990,11 @@ $(function(){
             $('#bids-content-results-list').html(resultsHtml);
         };
         self.displayResults = function(results, keepBid, msgClass, msgText){
+            var bids_profile = results ? results.profile : null;
+            var listing = results ? results.listing : null;
+            var bids = results ? results.bids : null;
+            var profile = user.profile;
+
             $('#bids-message').html('');
             self.recalculateValuation();
             $('#bid-save-message').attr('class', (msgClass || 'attention')).html(msgText || '');
@@ -1997,88 +2002,11 @@ $(function(){
                 self.clearBidFields();
             }
             util.displayPage('bids');
-            var bids_profile = results ? results.profile : null;
-            if (bids_profile) {
-                $('#bids-profile-snippet').html(user.generateUserSnippetHtml('bids', bids_profile));
-                user.bindUserSnippet('bids', bids_profile);
-                $('#bids-profile-header').show();
-            }
-            else {
-                $('#bids-profile-header').hide();
-                $('#bids-profile-snippet').html('');
-            }
-            var listing = results ? results.listing : null;
-            var bids = results ? results.bids : null;
-            var profile = user.profile;
-            var resultsHtml = '';
-            var bid;
-            if (bids && bids.length > 0) {
-                for (var i = 0; i < bids.length; i++) { // create results
-                    bid = bids[i];
-                    resultsHtml += self.generateResultHtml(i, bid, listing, profile);
-                }
-            }
-            else if (bids && bids.length == 0) {
-                resultsHtml = '<i>no bids found</i>';
-            }
-            // display html
-            $('#bids-content-results-list').hide().html(resultsHtml).show();
-            // set login visibility
-            if (listing) {
-                if (listing.listing_id) {
-                    $('#bids-listing-snippet').html(listings.generateListingSnippetHtml('bids', listing));
-                    listings.bindListingSnippet('bids', listing);
-                    $('#bids-listing-header').show();
-                }
-                if (listing.status != 'active') {
-                    $('#bids-form-loggedin').hide();
-                    $('#bids-form-not-loggedin').show().html('This bid is no longer active');
-                }
-                else if (profile && profile.profile_id == listing.profile_id) {
-                    $('#bids-form-loggedin').hide();
-                    $('#bids-form-not-loggedin').show().html('You may not bid on your own listing');
-                }
-                else if (profile && profile.investor) {
-                    $('#bids-form-loggedin').show();
-                    $('#bids-form-not-loggedin').hide();
-                    $('#bid-save-button')
-                        .show()
-                        .unbind()
-                        .data('listing_id',listing.listing_id)
-                        .data('profile_id',profile.profile_id)
-                        .data('profile_username',profile.username)
-                        .bind('click',function(e) {
-                            e.preventDefault();
-                            self.saveBid($(this).data('listing_id'), $(this).data('profile_id'), $(this).data('profile_username'));
-                        });
-                    $('#bid-amt,#bid-pct,#bid-type,#bid-rate').unbind().bind('change',function(e){
-                        self.recalculateValuation();
-                    });
-                    $('#bid-type').unbind().bind('change',function(e){
-                        if ($('#bid-type').val() == 'common')
-                            $('#bid-rate').attr('disabled', true);
-                        else 
-                            $('#bid-rate').removeAttr('disabled');
-                    });
-                }
-                else if (profile && !profile.investor) {
-                    $('#bids-form-loggedin').hide();
-                    $('#bids-form-not-loggedin').show().html('You must be an investor to place a bid');
-                }
-                else {
-                    $('#bids-form-loggedin').hide();
-                    $('#bids-form-not-loggedin').show().html('You must be a logged in investor to place a bid');
-                }
-            }
-            else {
-                $('#bids-listing-header').hide();
-                $('#bids-form-loggedin').hide();
-                $('#bids-form-not-loggedin').hide();
-                $('#bids-listing-snippet').html('');
-            }
-            if (!bids || bids.length == 0) {
-                return;
-            }
+
+            self.displayBidSnippet(bids_profile);
+            self.displayBidForm(listing, profile);
+            self.displayBids(bids, listing, profile);
+
             var withdrawBid = function() {
                 var index = $(this).data('index');
                 var bid_id = $(this).data('bid_id');
@@ -2103,6 +2031,93 @@ $(function(){
                 var callback = listing_id ? listings_callback : profile_callback;
                 backend.acceptBid($(this).data('bid_id'), callback, errorCallback);
             };
+            self.bindBidLinks(bids, profile, listing);
+        };
+        self.displayBidSnippet = function(bids_profile) {
+            if (bids_profile) {
+                $('#bids-profile-snippet').html(user.generateUserSnippetHtml('bids', bids_profile));
+                user.bindUserSnippet('bids', bids_profile);
+                $('#bids-profile-header').show();
+            }
+            else {
+                $('#bids-profile-header').hide();
+                $('#bids-profile-snippet').html('');
+            }
+        };
+        self.displayBidForm = function(listing, profile) {
+            if (!listing) {
+                $('#bids-listing-header').hide();
+                $('#bids-form-loggedin').hide();
+                $('#bids-form-not-loggedin').hide();
+                $('#bids-listing-snippet').html('');
+                return;
+            }
+            if (listing.listing_id) {
+                $('#bids-listing-snippet').html(listings.generateListingSnippetHtml('bids', listing));
+                listings.bindListingSnippet('bids', listing);
+                $('#bids-listing-header').show();
+            }
+            if (listing.status != 'active') {
+                $('#bids-form-loggedin').hide();
+                $('#bids-form-not-loggedin').show().html('This bid is no longer active');
+            }
+            else if (profile && profile.profile_id == listing.profile_id) {
+                $('#bids-form-loggedin').hide();
+                $('#bids-form-not-loggedin').show().html('You may not bid on your own listing');
+            }
+            else if (profile && profile.investor) {
+                $('#bids-form-loggedin').show();
+                $('#bids-form-not-loggedin').hide();
+                $('#bid-save-button')
+                    .show()
+                    .unbind()
+                    .data('listing_id',listing.listing_id)
+                    .data('profile_id',profile.profile_id)
+                    .data('profile_username',profile.username)
+                    .bind('click',function(e) {
+                        e.preventDefault();
+                        self.saveBid($(this).data('listing_id'), $(this).data('profile_id'), $(this).data('profile_username'));
+                    });
+                $('#bid-amt,#bid-pct,#bid-type,#bid-rate').unbind().bind('change',function(e){
+                    self.recalculateValuation();
+                });
+                $('#bid-type').unbind().bind('change',function(e){
+                    if ($('#bid-type').val() == 'common')
+                        $('#bid-rate').attr('disabled', true);
+                    else 
+                        $('#bid-rate').removeAttr('disabled');
+                });
+            }
+            else if (profile && !profile.investor) {
+                $('#bids-form-loggedin').hide();
+                $('#bids-form-not-loggedin').show().html('You must be an investor to place a bid');
+            }
+            else {
+                $('#bids-form-loggedin').hide();
+                $('#bids-form-not-loggedin').show().html('You must be a logged in investor to place a bid');
+            }
+        };
+        self.displayBids = function(bids, listing, profile) {
+            if (!bids || bids.length == 0) {
+                return;
+            }
+            var resultsHtml = '';
+            var bid;
+            if (bids && bids.length > 0) {
+                for (var i = 0; i < bids.length; i++) { // create results
+                    bid = bids[i];
+                    resultsHtml += self.generateResultHtml(i, bid, listing, profile);
+                }
+            }
+            else if (bids && bids.length == 0) {
+                resultsHtml = '<i>no bids found</i>';
+            }
+            $('#bids-content-results-list').hide().html(resultsHtml).show();
+        };
+        self.bindBidLinks = function(bids, profile, listing) {
+            if (!bids || bids.length == 0) {
+                return;
+            }
             for (var i = 0; i < bids.length; i++) {
                 bid = bids[i];
                 $('#bids-item-profile-'+i).data({index:i,profile_id:bid.profile_id}).unbind().bind('click', function(){
