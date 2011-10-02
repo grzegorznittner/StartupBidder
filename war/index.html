@@ -680,6 +680,14 @@ $(function(){
             var errorCallback = function () { $('#user-search-results-list-item-message-'+index).html('unable to retrieve bids'); };
             backend.bidsForProfile(profile_id, bids.displayResults, errorCallback);
        };
+       self.showAcceptedBidsForProfile = function(profile_id, index) {
+            var errorCallback = function () { $('#user-search-results-list-item-message-'+index).html('unable to retrieve bids'); };
+            backend.bidsForProfile(profile_id, bids.displayAcceptedResults, errorCallback);
+       };
+       self.showPaidBidsForProfile = function(profile_id, index) {
+            var errorCallback = function () { $('#user-search-results-list-item-message-'+index).html('unable to retrieve bids'); };
+            backend.bidsForProfile(profile_id, bids.displayPaidResults, errorCallback);
+       };
        self.bindUserSnippet = function(i, userjson) {
             var upvote_item = document.getElementById('user-search-results-list-item-upvote-'+i);
             var item_num = i;
@@ -923,6 +931,12 @@ $(function(){
             $('#userbox-bids').bind('click', function(e) {
                 util.hashedCall('user', 'showBidsForProfile', [$('#userbox-profile-id').val(), 'zz']); // FIXME - handle error messages
             });
+            $('#userbox-bids-accepted').bind('click', function(e) {
+                util.hashedCall('user', 'showAcceptedBidsForProfile', [$('#userbox-profile-id').val(), 'zz']); // FIXME - handle error messages
+            });
+            $('#userbox-bids-paid').bind('click', function(e) {
+                util.hashedCall('user', 'showPaidBidsForProfile', [$('#userbox-profile-id').val(), 'zz']); // FIXME - handle error messages
+            });
             $('#userbox-comments').bind('click', function(e) {
                 util.hashedCall('user', 'showCommentsForProfile', [$('#userbox-profile-id').val(), 'zz']); // FIXME - handle error messages
             });
@@ -942,6 +956,8 @@ $(function(){
             $('#userbox-num-votes').html(profile.num_votes);
             $('#userbox-num-listings').html(profile.num_listings);
             $('#userbox-num-bids').html(profile.num_bids);
+            $('#userbox-num-bids-accepted').html(profile.num_accepted_bids);
+            $('#userbox-num-bids-paid').html(profile.num_payed_bids !== undefined ? profile.num_payed_bids : profile.num_paid_bids);
             $('#userbox-num-comments').html(profile.num_comments);
             $('#userbox-listings-plural').html(profile.num_listings !== 1 ? 's' : '');
             $('#userbox-bids-plural').html(profile.num_bids !== 1 ? 's' : '');
@@ -1989,10 +2005,17 @@ $(function(){
             $('#bids-listing-snippet').html('');
             $('#bids-content-results-list').html(resultsHtml);
         };
-        self.displayResults = function(results, keepBid, msgClass, msgText){
+        self.displayAcceptedResults = function(results, keepBid, msgClass, msgText){
+            self.displayResults(results, keepBid, msgClass, msgText, 'accepted');
+        };
+        self.displayPaidResults = function(results, keepBid, msgClass, msgText){
+            self.displayResults(results, keepBid, msgClass, msgText, 'paid');
+        };
+        self.displayResults = function(results, keepBid, msgClass, msgText, bidStatus){
             var bids_profile = results ? results.profile : null;
             var listing = results ? results.listing : null;
             var bids = results ? results.bids : null;
+            var filteredBids = self.filterBidsByStatus(bids, bidStatus);
             var profile = user.profile;
 
             $('#bids-message').html('');
@@ -2005,7 +2028,7 @@ $(function(){
 
             self.displayBidSnippet(bids_profile);
             self.displayBidForm(listing, profile);
-            self.displayBids(bids, listing, profile);
+            self.displayBids(filteredBids, listing, profile);
 
             var withdrawBid = function() {
                 var index = $(this).data('index');
@@ -2031,7 +2054,7 @@ $(function(){
                 var callback = listing_id ? listings_callback : profile_callback;
                 backend.acceptBid($(this).data('bid_id'), callback, errorCallback);
             };
-            self.bindBidLinks(bids, profile, listing);
+            self.bindBidLinks(filteredBids, profile, listing, bidStatus);
         };
         self.displayBidSnippet = function(bids_profile) {
             if (bids_profile) {
@@ -2097,20 +2120,39 @@ $(function(){
                 $('#bids-form-not-loggedin').show().html('You must be a logged in investor to place a bid');
             }
         };
-        self.displayBids = function(bids, listing, profile) {
-            if (!bids || bids.length == 0) {
-                return;
-            }
-            var resultsHtml = '';
+        self.filterBidsByStatus = function(bids, bidStatus) {
             var bid;
-            if (bids && bids.length > 0) {
+            var filteredBids = [];
+            if (bids && bids.length > 0 && bidStatus) {
                 for (var i = 0; i < bids.length; i++) { // create results
                     bid = bids[i];
-                    resultsHtml += self.generateResultHtml(i, bid, listing, profile);
+                    if (!bid) {
+                        continue;
+                    }
+                    if (bidStatus && bid.status !== bidStatus) {
+                        continue;
+                    }
+                    filteredBids.push(bids);
                 }
             }
-            else if (bids && bids.length == 0) {
+            else {
+                filteredBids = bids;
+            }
+            return filteredBids;
+        };
+        self.displayBids = function(bids, listing, profile) {
+            var bid;
+            var resultsHtml = '';
+            if (!bids || bids.length === 0) {
                 resultsHtml = '<i>no bids found</i>';
+            }
+            else {
+                for (var i = 0; i < bids.length; i++) { // create results
+                    bid = bids[i];
+                    if (bid) {
+                        resultsHtml += self.generateResultHtml(i, bid, listing, profile);
+                    }
+                }
             }
             $('#bids-content-results-list').hide().html(resultsHtml).show();
         };
@@ -3875,13 +3917,17 @@ s = (p + b + c + v) / (t + 2)^1.5
             </div>
         </div>
         <div class="userbox-textbox">
-            <div><span id="userbox-member-type">Bronze</span> Member <span id="userbox-num-votes">0</span> votes</div>
+            <div><span id="userbox-member-type">Bronze</span> Member <span class="header-link" id="userbox-details">details</span></div>
             <div>
+                <span id="userbox-num-votes">0</span> votes
                 <span class="header-link" id="userbox-listings"><span id="userbox-num-listings">0</span> listing<span id="userbox-listings-plural"></span></span>
-                <span class="header-link" id="userbox-bids"><span id="userbox-num-bids">0</span> bid<span id="userbox-bids-plural"></span></span>
                 <span class="header-link" id="userbox-comments"><span id="userbox-num-comments">0</span> comment<span id="userbox-comments-plural"></span></span>
             </div>
-            <div><span class="header-link" id="userbox-details">details</span></div>
+            <div>
+                <span class="header-link" id="userbox-bids"><span id="userbox-num-bids">0</span> bid<span id="userbox-bids-plural"></span></span>
+                <span class="header-link" id="userbox-bids-accepted"><span id="userbox-num-bids-accepted">0</span> accepted</span>
+                <span class="header-link" id="userbox-bids-paid"><span id="userbox-num-bids-paid">0</span> paid</span>
+            </div>
         </div>
         <input id="userbox-profile-id" type="hidden" value=""/>
     </div>
