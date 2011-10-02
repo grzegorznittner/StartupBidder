@@ -54,7 +54,7 @@ public class StatisticsFacade {
 		return null;
 	}
 
-	public static List<TickerDataVO> getGraphData(TickerType type) {
+	public static TickerDataVO getGraphData(TickerType type) {
 		switch (type) {
 		case LISTING_VALUATION_CHANGE:
 			return instance().getListingValuationChange();
@@ -62,7 +62,7 @@ public class StatisticsFacade {
 		return null;
 	}
 
-	private List<TickerDataVO> getListingValuationChange() {
+	private TickerDataVO getListingValuationChange() {
 		// TODO Auto-generated method stub
 		return null;
 	}

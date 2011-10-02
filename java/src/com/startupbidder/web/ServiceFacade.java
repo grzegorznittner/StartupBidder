@@ -16,6 +16,8 @@ import org.datanucleus.util.StringUtils;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 import com.google.appengine.api.blobstore.BlobstoreService;
 import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
@@ -40,7 +42,6 @@ import com.startupbidder.vo.BidVO;
 import com.startupbidder.vo.CommentListVO;
 import com.startupbidder.vo.CommentVO;
 import com.startupbidder.vo.DtoToVoConverter;
-import com.startupbidder.vo.GraphDataVO;
 import com.startupbidder.vo.ListPropertiesVO;
 import com.startupbidder.vo.ListingDocumentVO;
 import com.startupbidder.vo.ListingListVO;
@@ -70,6 +71,8 @@ public class ServiceFacade {
 	private static final String USER_STATISTICS_KEY = "userStats";
 	private static final String LISTING_STATISTICS_KEY = "listingStats";
 	
+	private DateTimeFormatter timeStampFormatter = DateTimeFormat.forPattern("yyyyMMdd_HHmmss_SSS");
+
 	public static ServiceFacade instance() {
 		if (instance == null) {
 			instance = new ServiceFacade();
@@ -247,9 +250,10 @@ public class ServiceFacade {
 			}
 			cache.put(USER_STATISTICS_KEY + userId, userStats);
 		}
+		String taskName = timeStampFormatter.print(new Date().getTime()) + "user_stats_update_" + reason + "_" + userId;
 		Queue queue = QueueFactory.getDefaultQueue();
 		queue.add(TaskOptions.Builder.withUrl("/task/calculate-user-stats").param("id", userId)
-				.taskName("user_stats_update_reason_" + reason ));
+				.taskName(taskName));
 	}
 	
 	public UserStatisticsDTO calculateUserStatistics(String userId) {
@@ -336,9 +340,10 @@ public class ServiceFacade {
 			}
 			cache.put(LISTING_STATISTICS_KEY + listingId, listingStats);
 		}
+		String taskName = timeStampFormatter.print(new Date().getTime()) + "listing_stats_update_" + reason + "_" + listingId;
 		Queue queue = QueueFactory.getDefaultQueue();
 		queue.add(TaskOptions.Builder.withUrl("/task/calculate-listing-stats").param("id", listingId)
-				.taskName("listing_stats_update_reason_" + reason ));
+				.taskName(taskName));
 	}
 	
 	public ListingStatisticsDTO calculateListingStatistics(String listingId) {

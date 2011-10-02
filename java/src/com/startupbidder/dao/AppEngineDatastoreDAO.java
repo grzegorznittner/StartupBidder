@@ -16,7 +16,6 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.Key;
-import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.FilterOperator;
@@ -40,7 +39,7 @@ import com.startupbidder.vo.ListPropertiesVO;
 public class AppEngineDatastoreDAO implements DatastoreDAO {
 	private static final Logger log = Logger.getLogger(AppEngineDatastoreDAO.class.getName());
 	static AppEngineDatastoreDAO instance;
-	
+		
 	public static DatastoreDAO getInstance() {
 		if (instance == null) {
 			instance = new AppEngineDatastoreDAO();
