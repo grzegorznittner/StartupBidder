@@ -332,10 +332,10 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 		query.addFilter(BidDTO.STATUS, Query.FilterOperator.EQUAL, BidDTO.Status.ACCEPTED.toString());
 		pq = getDatastoreService().prepare(query);
 		userStats.setNumberOfAcceptedBids(pq.countEntities(FetchOptions.Builder.withDefaults()));
-		// adding payed bids for user's listings
+		// adding paid bids for user's listings
 		query = new BidDTO().getQuery().setKeysOnly();
 		query.addFilter(BidDTO.LISTING_OWNER, Query.FilterOperator.EQUAL, userId);
-		query.addFilter(BidDTO.STATUS, Query.FilterOperator.EQUAL, BidDTO.Status.PAYED.toString());
+		query.addFilter(BidDTO.STATUS, Query.FilterOperator.EQUAL, BidDTO.Status.PAID.toString());
 		pq = getDatastoreService().prepare(query);
 		userStats.setNumberOfAcceptedBids(userStats.getNumberOfAcceptedBids() +
 				pq.countEntities(FetchOptions.Builder.withDefaults()));
@@ -350,7 +350,7 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 		long sumOfAcceptedBids = 0L;
 		for (Entity bid : pq.asIterable(FetchOptions.Builder.withDefaults())) {
 			bidDTO = BidDTO.fromEntity(bid);
-			if (BidDTO.Status.PAYED == bidDTO.getStatus() || 
+			if (BidDTO.Status.PAID == bidDTO.getStatus() || 
 					BidDTO.Status.ACCEPTED == bidDTO.getStatus()) {
 				sumOfAcceptedBids += bidDTO.getValuation();
 			}
@@ -363,10 +363,10 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 		query.addFilter(BidDTO.STATUS, Query.FilterOperator.EQUAL, BidDTO.Status.ACCEPTED.toString());
 		pq = getDatastoreService().prepare(query);
 		userStats.setNumberOfFundedBids(pq.countEntities(FetchOptions.Builder.withDefaults()));
-		// adding payed bids placed by user
+		// adding paid bids placed by user
 		query = new BidDTO().getQuery().setKeysOnly();
 		query.addFilter(BidDTO.USER, Query.FilterOperator.EQUAL, userId);
-		query.addFilter(BidDTO.STATUS, Query.FilterOperator.EQUAL, BidDTO.Status.PAYED.toString());
+		query.addFilter(BidDTO.STATUS, Query.FilterOperator.EQUAL, BidDTO.Status.PAID.toString());
 		pq = getDatastoreService().prepare(query);
 		userStats.setNumberOfFundedBids(userStats.getNumberOfFundedBids() +
 				pq.countEntities(FetchOptions.Builder.withDefaults()));
@@ -382,7 +382,7 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 		for (Entity bid : pq.asIterable(FetchOptions.Builder.withDefaults())) {
 			bidDTO = BidDTO.fromEntity(bid);
 			sumOfBids += bidDTO.getValuation();
-			if (BidDTO.Status.PAYED == bidDTO.getStatus() || 
+			if (BidDTO.Status.PAID == bidDTO.getStatus() || 
 					BidDTO.Status.ACCEPTED == bidDTO.getStatus()) {
 				sumOfFoundedBids += bidDTO.getValuation();
 			}
@@ -1002,7 +1002,7 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 
 		query = new BidDTO().getQuery();
 		query.addFilter(BidDTO.LISTING_OWNER, Query.FilterOperator.EQUAL, userId);
-		query.addFilter(BidDTO.STATUS, Query.FilterOperator.EQUAL, BidDTO.Status.PAYED.toString());
+		query.addFilter(BidDTO.STATUS, Query.FilterOperator.EQUAL, BidDTO.Status.PAID.toString());
 		query.addSort(BidDTO.PLACED, Query.SortDirection.DESCENDING);
 		
 		pq = getDatastoreService().prepare(query);
@@ -1028,7 +1028,7 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 		
 		query = new BidDTO().getQuery();
 		query.addFilter(BidDTO.USER, Query.FilterOperator.EQUAL, userId);
-		query.addFilter(BidDTO.STATUS, Query.FilterOperator.EQUAL, BidDTO.Status.PAYED.toString());
+		query.addFilter(BidDTO.STATUS, Query.FilterOperator.EQUAL, BidDTO.Status.PAID.toString());
 		query.addSort(BidDTO.PLACED, Query.SortDirection.DESCENDING);
 		
 		pq = getDatastoreService().prepare(query);
@@ -1347,7 +1347,7 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 		}
 	}
 
-	public BidDTO markBidAsPayed(String loggedInUser, String bidId) {
+	public BidDTO markBidAsPaid(String loggedInUser, String bidId) {
 		try {
 			BidDTO bid = new BidDTO();
 			bid.setIdFromString(bidId);
@@ -1364,7 +1364,7 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 				return null;
 			}
 			
-			bid.setStatus(BidDTO.Status.PAYED);
+			bid.setStatus(BidDTO.Status.PAID);
 
 			getDatastoreService().put(bid.toEntity());
 			return bid;

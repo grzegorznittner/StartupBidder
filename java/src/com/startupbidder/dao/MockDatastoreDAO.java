@@ -752,7 +752,7 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		List<BidDTO> bids = new ArrayList<BidDTO>();
 		for (BidDTO bid : bidCache.values()) {
 			if (StringUtils.areStringsEqual(bid.getListingOwner(), userId)
-					&& (bid.getStatus() == BidDTO.Status.ACCEPTED || bid.getStatus() == BidDTO.Status.PAYED)) {
+					&& (bid.getStatus() == BidDTO.Status.ACCEPTED || bid.getStatus() == BidDTO.Status.PAID)) {
 				bids.add(bid);
 			}
 		}
@@ -763,7 +763,7 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		List<BidDTO> bids = new ArrayList<BidDTO>();
 		for (BidDTO bid : bidCache.values()) {
 			if (StringUtils.areStringsEqual(bid.getUser(), userId)
-					&& (bid.getStatus() == BidDTO.Status.ACCEPTED || bid.getStatus() == BidDTO.Status.PAYED)) {
+					&& (bid.getStatus() == BidDTO.Status.ACCEPTED || bid.getStatus() == BidDTO.Status.PAID)) {
 				bids.add(bid);
 			}
 		}
@@ -871,10 +871,10 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		}
 	}
 	
-	public BidDTO markBidAsPayed(String loggedInUser, String bidId) {
+	public BidDTO markBidAsPaid(String loggedInUser, String bidId) {
 		if (bidCache.containsKey(bidId)) {
 			BidDTO bid = bidCache.get(bidId);
-			bid.setStatus(BidDTO.Status.PAYED);
+			bid.setStatus(BidDTO.Status.PAID);
 			return bid;
 		} else {
 			return null;

@@ -365,7 +365,7 @@ public interface DatastoreDAO {
 	/**
 	 * Sets bid status to PAYED 
 	 */
-	BidDTO markBidAsPayed(String loggedInUser, String bidId);
+	BidDTO markBidAsPaid(String loggedInUser, String bidId);
 	
 	/**
 	 * Returns list of bids sorted by post date.

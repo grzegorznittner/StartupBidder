@@ -64,8 +64,8 @@ public class BidController extends ModelDrivenController {
 				return withdraw(request);
 			} else if("accept".equalsIgnoreCase(getCommand(1))) {
 				return accept(request);
-			} else if("payed".equalsIgnoreCase(getCommand(1))) {
-				return payed(request);
+			} else if("paid".equalsIgnoreCase(getCommand(1))) {
+				return paid(request);
 			}
 		} else if ("DELETE".equalsIgnoreCase(request.getMethod())) {
 			return delete(request);
@@ -136,12 +136,12 @@ public class BidController extends ModelDrivenController {
 	/*
 	 * PUT /bid/accept?id=<id>
 	 */
-	private HttpHeaders payed(HttpServletRequest request) {
-		HttpHeaders headers = new HttpHeadersImpl("payed");
+	private HttpHeaders paid(HttpServletRequest request) {
+		HttpHeaders headers = new HttpHeadersImpl("paid");
 		
 		String bidId = getCommandOrParameter(request, 3, "id");
 		if (!StringUtils.isEmpty(bidId)) {
-			model = ServiceFacade.instance().markBidAsPayed(getLoggedInUser(), bidId);
+			model = ServiceFacade.instance().markBidAsPaid(getLoggedInUser(), bidId);
 			if (model == null) {
 				headers.setStatus(500);
 			}

@@ -118,7 +118,7 @@ public class HelloServlet extends HttpServlet {
 			out.println("<form method=\"POST\" action=\"/bid/withdraw/.json\"> <input type=\"hidden\" name=\"id\" value=\"" + bids.get(0).getIdAsString() + "\"/><input type=\"submit\" value=\"Withdraw bid id '" + bids.get(0).getIdAsString() + "'\"/></form>");
 			out.println("<form method=\"POST\" action=\"/bid/accept/.json\"> <input type=\"hidden\" name=\"id\" value=\"" + bids.get(0).getIdAsString() + "\"/><input type=\"submit\" value=\"Accept bid id '" + bids.get(0).getIdAsString() + "' (most likely fails)\"/></form>");
 			printAcceptBid(datastore, out, usersListings);
-			out.println("<form method=\"POST\" action=\"/bid/payed/.json\"> <input type=\"hidden\" name=\"id\" value=\"" + bids.get(0).getIdAsString() + "\"/><input type=\"submit\" value=\"Mark bid as payed, id '" + bids.get(0).getIdAsString() + "' (most likely fails)\"/></form>");
+			out.println("<form method=\"POST\" action=\"/bid/paid/.json\"> <input type=\"hidden\" name=\"id\" value=\"" + bids.get(0).getIdAsString() + "\"/><input type=\"submit\" value=\"Mark bid as paid, id '" + bids.get(0).getIdAsString() + "' (most likely fails)\"/></form>");
 			printPayBid(datastore, out, usersListings);
 			
 			out.println("<a href=\"/bids/statistics/.json\">Get bid statistics (deprecated)</a><br/>");
@@ -198,14 +198,14 @@ public class HelloServlet extends HttpServlet {
 	private void printPayBid(DatastoreDAO datastore, PrintWriter out,
 			List<ListingDTO> usersListings) {
 		if (usersListings.size() == 0) {
-			out.println("Can't test bid pey as user doesn't have any listing.</br>");
+			out.println("Can't test marking bid as paid as user doesn't have any listing.</br>");
 		} else {
 			boolean validBid = false;
 			for (ListingDTO listing : usersListings) {
 				List<BidDTO> bidsForUserListings = datastore.getBidsForListing(listing.getIdAsString());
 				for (BidDTO bid : bidsForUserListings) {
 					if (BidDTO.Status.ACCEPTED.equals(bid.getStatus())) {
-						out.println("<form method=\"POST\" action=\"/bid/payed/.json\"> <input type=\"hidden\" name=\"id\" value=\"" + bid.getIdAsString() + "\"/><input type=\"submit\" value=\"Accept bid id '" + bid.getIdAsString() + "' (should work)\"/></form>");
+						out.println("<form method=\"POST\" action=\"/bid/paid/.json\"> <input type=\"hidden\" name=\"id\" value=\"" + bid.getIdAsString() + "\"/><input type=\"submit\" value=\"Mark bid id '" + bid.getIdAsString() + "' as paid (should work)\"/></form>");
 						validBid = true;
 						break;
 					}
@@ -215,7 +215,7 @@ public class HelloServlet extends HttpServlet {
 				}
 			}
 			if (!validBid) {
-				out.println("Can't test bid accept as user's listings don't have any accepted bids.</br>");
+				out.println("Can't test marking bid as paid as user's listings don't have any accepted bids.</br>");
 			}
 		}
 	}

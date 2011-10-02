@@ -943,8 +943,8 @@ public class ServiceFacade {
 		return bid;
 	}
 
-	public BidVO markBidAsPayed(UserVO loggedInUser, String bidId) {
-		BidVO bid = DtoToVoConverter.convert(getDAO().markBidAsPayed(loggedInUser.getId(), bidId));
+	public BidVO markBidAsPaid(UserVO loggedInUser, String bidId) {
+		BidVO bid = DtoToVoConverter.convert(getDAO().markBidAsPaid(loggedInUser.getId(), bidId));
 		if (bid != null) {
 			scheduleUpdateOfListingStatistics(bid.getListing(), ListingStatsUpdateReason.NONE);
 		}
