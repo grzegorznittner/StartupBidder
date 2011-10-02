@@ -680,6 +680,14 @@ $(function(){
             var errorCallback = function () { $('#user-search-results-list-item-message-'+index).html('unable to retrieve bids'); };
             backend.bidsForProfile(profile_id, bids.displayResults, errorCallback);
        };
+       self.showAcceptedBidsForProfile = function(profile_id, index) {
+            var errorCallback = function () { $('#user-search-results-list-item-message-'+index).html('unable to retrieve bids'); };
+            backend.bidsForProfile(profile_id, bids.displayAcceptedResults, errorCallback);
+       };
+       self.showPaidBidsForProfile = function(profile_id, index) {
+            var errorCallback = function () { $('#user-search-results-list-item-message-'+index).html('unable to retrieve bids'); };
+            backend.bidsForProfile(profile_id, bids.displayPaidResults, errorCallback);
+       };
        self.bindUserSnippet = function(i, userjson) {
             var upvote_item = document.getElementById('user-search-results-list-item-upvote-'+i);
             var item_num = i;
@@ -923,6 +931,12 @@ $(function(){
             $('#userbox-bids').bind('click', function(e) {
                 util.hashedCall('user', 'showBidsForProfile', [$('#userbox-profile-id').val(), 'zz']); // FIXME - handle error messages
             });
+            $('#userbox-bids-accepted').bind('click', function(e) {
+                util.hashedCall('user', 'showAcceptedBidsForProfile', [$('#userbox-profile-id').val(), 'zz']); // FIXME - handle error messages
+            });
+            $('#userbox-bids-paid').bind('click', function(e) {
+                util.hashedCall('user', 'showPaidBidsForProfile', [$('#userbox-profile-id').val(), 'zz']); // FIXME - handle error messages
+            });
             $('#userbox-comments').bind('click', function(e) {
                 util.hashedCall('user', 'showCommentsForProfile', [$('#userbox-profile-id').val(), 'zz']); // FIXME - handle error messages
             });
@@ -937,10 +951,13 @@ $(function(){
             var memberType = self.getMemberType();
             var memberClass = 'userbox-' + memberType;
             $('#userbox-profile-id').val(profile.profile_id);
+            $('#userbox-title').html(profile.name);
             $('#userbox-score').html(self.getScore());
             $('#userbox-num-votes').html(profile.num_votes);
             $('#userbox-num-listings').html(profile.num_listings);
             $('#userbox-num-bids').html(profile.num_bids);
+            $('#userbox-num-bids-accepted').html(profile.num_accepted_bids);
+            $('#userbox-num-bids-paid').html(profile.num_payed_bids !== undefined ? profile.num_payed_bids : profile.num_paid_bids);
             $('#userbox-num-comments').html(profile.num_comments);
             $('#userbox-listings-plural').html(profile.num_listings !== 1 ? 's' : '');
             $('#userbox-bids-plural').html(profile.num_bids !== 1 ? 's' : '');
@@ -1301,23 +1318,25 @@ $(function(){
         self.showProfile = function(profile_id, errorCallback) {
             backend.getProfile(profile_id, self.displayProfile, errorCallback);
         };
-        self.displayProfile = function(profile, msgClass, msgText){
-            $('#profile-save-message').attr('class', (msgClass || 'attention')).html(msgText || '');
-            util.displayPage('profile');
-            if (profile) {
-                $('#profile-snippet').html(user.generateUserSnippetHtml('profile', profile));
-                user.bindUserSnippet('profile', profile);
-                $('#profile-header').show();
-            }
-            else {
+        self.displayProfile = function(data, msgClass, msgText){
+            var profile = data && data.profile ? data.profile : data;
+            if (!profile) {
                 $('#profile-header').hide();
                 $('#profile-snippet').html('');
-            }
-            // enable editable if logged in
-            if (profile && user.profile && user.profile.profile_id == profile.profile_id) {
-                $('#profile-form-editable').show();
+                $('#profile-form-editable').hide();
                 $('#profile-form-readonly').hide();
+                $('#profile-username').html('<em>unable to retrive user profile</em>');
+                return;
+            }
+            $('#profile-save-message').attr('class', (msgClass || 'attention')).html(msgText || '');
+            util.displayPage('profile');
+            $('#profile-snippet').html(user.generateUserSnippetHtml('profile', profile));
+            user.bindUserSnippet('profile', profile);
+            $('#profile-header').show();
 
+            // enable editable if logged in
+            if (user.profile && user.profile.profile_id == profile.profile_id) {
+                $('#profile-form-readonly').hide();
                 $('#profile-edit-profile-id').val(profile.profile_id);
                 $('#profile-edit-profile-username').val(profile.username);
                 $('#profile-edit-name').val(profile.name);
@@ -1330,12 +1349,11 @@ $(function(){
                 $('#profile-edit-investor').attr('checked', profile.investor);
                 $('#profile-edit-joined-date').html(util.formatDate(profile.joined_date));
                 $('#profile-edit-open-id').html(profile.open_id);
-                self.setProfileLinks(profile, true);
+                self.setProfileLinks(profile, 'editable');
+                $('#profile-form-editable').show();
             }
-            else if (profile) {
+            else {
                 $('#profile-form-editable').hide();
-                $('#profile-form-readonly').show();
-
                 $('#profile-title').html(profile.title);
                 $('#profile-organization').html(profile.organization);
                 $('#profile-email').html(profile.email);
@@ -1349,37 +1367,31 @@ $(function(){
                 $('#profile-investor').attr('checked', profile.investor);
                 $('#profile-joined-date').html(util.formatDate(profile.joined_date));
                 $('#profile-open-id').html(profile.open_id);
-                self.setProfileLinks(profile, false);
+                self.setProfileLinks(profile, 'readonly');
+                $('#profile-form-readonly').show();
+            }
+        };
+        self.setProfileLinks = function(profile, auth) {
+            if (auth !== 'editable') {
+                return;
+            }
+            $('#profile-save-link').show().unbind().data('profile_id',profile.profile_id).bind('click',function(e){
+                e.preventDefault();
+                profiles.saveProfile($(this).data('profile_id'));
+            });
+            if (profile.status == 'active') {
+                $('#profile-activate-link').hide();
+                $('#profile-deactivate-link').show().unbind().data('profile_id',profile.profile_id).bind('click',function(){
+                    var errorCallback = function() { $('#profile-save-message').attr('class', 'attention').html('unable to deactivate profile'); };
+                    backend.deactivateProfile($(this).data('profile_id'), profiles.displayProfile, errorCallback);
+                });
             }
             else {
-                self.displayProfileNotFound();
-            }
-        };
-        self.displayProfileNotFound = function() {
-            $('#profile-form-editable').hide();
-            $('#profile-form-readonly').show();
-            $('#profile-username').html('<em>unable to retrive user profile</em>');
-        };
-        self.setProfileLinks = function(profile, editable) {
-            if (editable) {
-                $('#profile-save-link').show().unbind().data('profile_id',profile.profile_id).bind('click',function(e){
-                    e.preventDefault();
-                    profiles.saveProfile($(this).data('profile_id'));
+                $('#profile-activate-link').show().unbind().data('profile_id',profile.profile_id).bind('click',function(){
+                    var errorCallback = function() { $('#profile-save-message').attr('class', 'attention').html('unable to activate profile'); };
+                    backend.activateProfile($(this).data('profile_id'), profiles.displayProfile, errorCallback);
                 });
-                if (profile.status == 'active') {
-                    $('#profile-activate-link').hide();
-                    $('#profile-deactivate-link').show().unbind().data('profile_id',profile.profile_id).bind('click',function(){
-                        var errorCallback = function() { $('#profile-save-message').attr('class', 'attention').html('unable to deactivate profile'); };
-                        backend.deactivateProfile($(this).data('profile_id'), profiles.displayProfile, errorCallback);
-                    });
-                }
-                else {
-                    $('#profile-activate-link').show().unbind().data('profile_id',profile.profile_id).bind('click',function(){
-                        var errorCallback = function() { $('#profile-save-message').attr('class', 'attention').html('unable to activate profile'); };
-                        backend.activateProfile($(this).data('profile_id'), profiles.displayProfile, errorCallback);
-                    });
-                    $('#profile-deactivate-link').hide();
-                }
+                $('#profile-deactivate-link').hide();
             }
         };
         return self;
@@ -1431,6 +1443,7 @@ $(function(){
             var profile = user.profile;
             if (!profile) {
                 self.displayListing();
+                return;
             }
             var listing = {};
             listing.title = 'Enter listing title here';
@@ -1456,117 +1469,133 @@ $(function(){
         };
         self.displayListing = function(listing){
             $('#listing-save-message').attr('class', 'attention').html('');
-            $('#listing-snippet').hide();
-            $('#listing-form-readonly').hide();
-            $('#listing-form-editable').hide();
-            util.displayPage('listing');
             var resultsHtml = '';
             var profile = user.profile;
-            if ((listing && (listing.status === 'new' || listing.status === 'created')) && (!profile || (profile.profile_id !== listing.profile_id))) {
-                $('#listing-snippet').html('<em>You must be logged to submit a new listing</em>').show();
+            var isOwnListing = profile && profile.profile_id == listing.profile_id;
+            var isListingEditable = isOwnListing && ((listing.status === 'new' || listing.status === 'created') || listing.status === 'active');
+
+            // display listing snippet, exit if not found
+            util.displayPage('listing');
+            var errorMsg;
+            if (!listing) {
+                errorMsg = '<em>no listings found</em>';
+            }
+            else if (!isOwnListing && (listing.status === 'new' || listing.status === 'created')) {
+                errorMsg = '<em>You must be logged to submit a new listing</em>';
+            }
+            if (errorMsg) {
+                self.displayNullListing(errorMsg);
                 return;
             }
-            else if (!listing) {
-                $('#listing-snippet').html('<em>no listings found</em>').show();
-                return;
-            }
-            else if (listing.listing_id) {
+            if (listing.listing_id) {
                 $('#listing-snippet').hide().html(listings.generateListingSnippetHtml('listing', listing)).show();
                 listings.bindListingSnippet('listing', listing);
             }
 
-            // set listing message
+            // display listing message
+            var msg = self.listingMessage(listing.status, isOwnListing);
+            var msgClass = listing.status === 'active' ? 'confirmed' : 'attention';
+            $('#listing-form-message').attr('class', msgClass).html(msg);
+
+            if (isListingEditable) { // enable editable if logged in
+                self.displayEditableListing(listing);
+            }
+            else {
+                self.displayReadonlyListing(listing);
+            }
+        };
+        self.listingMessage = function(listingStatus, isOwnListing) {
             var msg = '';
-            var msgClass = 'attention';
-            if (profile && profile.profile_id == listing.profile_id && listing.status == 'withdrawn') {
+            if (isOwnListing && listingStatus === 'withdrawn') {
                 msg = 'You may not change your listing now that it is withdrawn.';
             }
-            else if (listing.status == 'new') {
+            else if (listingStatus === 'new') {
                 msg = 'This listing has not yet been saved.';
             }
-            else if (listing.status == 'created') {
+            else if (listingStatus === 'created') {
                 msg = 'This listing has not yet been activated, until then no bids are accepted.';
             }
-            else if (listing.status == 'active') {
+            else if (listingStatus === 'active') {
                 msg = 'This listing is active and accepting bids.';
-                msgClass = 'confirmed';
             }
-            else if (listing.status == 'withdrawn') {
+            else if (listingStatus === 'withdrawn') {
                 msg = 'This listing is withdrawn and thus bidding is suspended.';
             }
             else {
                 msg = 'The listing status is unknown.';
             }
-            $('#listing-form-message').attr('class', msgClass).html(msg);
+            return msg;
+        };
+        self.displayNullListing = function(message) {
+            $('#listing-form-editable,#listing-execsum-editable,#listing-form-readonly,#listing-execsum-readonly').hide();
+            $('#listing-snippet').html(message).show();
+        };
+        self.displayReadonlyListing = function(listing) {
+            $('#listing-form-editable,#listing-execsum-editable').hide();
+            $('#listing-form-readonly,#listing-execsum-readonly').show();
+            $('#listing-readonly-suggested-amt').html(util.addCommas(listing.suggested_amt));
+            $('#listing-readonly-suggested-pct').html(listing.suggested_pct);
+            $('#listing-readonly-suggested-val').html(util.addCommas(listing.suggested_val));
+            $('#listing-readonly-summary').html(listing.summary);
+            self.displayUploadField('listing-readonly-business-plan', 'business_plan_id', listing.business_plan_id);
+            self.displayUploadField('listing-readonly-presentation', 'presentation_id', listing.presentation_id);
+            self.displayUploadField('listing-readonly-financials', 'financials_id', listing.financials_id);
+        };
+        self.displayEditableListing = function(listing) {
+            $('#listing-form-readonly,#listing-execsum-readonly').hide();
+            $('#listing-form-editable,#listing-execsum-editable').show();
+            $('#listing-edit-title').val(listing.title);
+            $('#listing-edit-median-valuation').val(listing.median_valuation);
+            $('#listing-edit-num-votes').val(listing.num_votes);
+            $('#listing-edit-num-bids').val(listing.num_bids);
+            $('#listing-edit-num-comments').val(listing.num_comments);
+            $('#listing-edit-profile-id').val(listing.profile_id);
+            $('#listing-edit-profile-username').val(listing.profile_username);
+            $('#listing-edit-listing-date').val(listing.listing_date);
+            $('#listing-edit-status').val(listing.status);
+            $('#listing-edit-suggested-amt').val(util.addCommas(listing.suggested_amt));
+            $('#listing-edit-suggested-pct').val(listing.suggested_pct);
+            $('#listing-edit-suggested-val').html(util.addCommas(listing.suggested_val));
+            $('#listing-edit-summary').val(listing.summary);
+            $('#listing-edit-suggested-amt, #listing-edit-suggested-pct').unbind().bind('change',function(e){
+                self.recalculateSuggestedValuation();
+            });
 
-            // enable editable if logged in
-            if ((profile && profile.profile_id == listing.profile_id) && ((listing.status === 'new' || listing.status === 'created') || listing.status === 'active')) {
-                $('#listing-form-readonly').hide();
-                $('#listing-form-editable').show();
-                $('#listing-edit-title').val(listing.title);
-                $('#listing-edit-median-valuation').val(listing.median_valuation);
-                $('#listing-edit-num-votes').val(listing.num_votes);
-                $('#listing-edit-num-bids').val(listing.num_bids);
-                $('#listing-edit-num-comments').val(listing.num_comments);
-                $('#listing-edit-profile-id').val(listing.profile_id);
-                $('#listing-edit-profile-username').val(listing.profile_username);
-                $('#listing-edit-listing-date').val(listing.listing_date);
-                $('#listing-edit-status').val(listing.status);
-                $('#listing-edit-suggested-amt').val(util.addCommas(listing.suggested_amt));
-                $('#listing-edit-suggested-pct').val(listing.suggested_pct);
-                $('#listing-edit-suggested-val').html(util.addCommas(listing.suggested_val));
-                $('#listing-edit-summary').val(listing.summary);
-                $('#listing-edit-suggested-amt, #listing-edit-suggested-pct').unbind().bind('change',function(e){
-                    self.recalculateSuggestedValuation();
+            if (listing.status === 'new') {
+                $('#listing-save-link').unbind().bind('click',function(e){
+                    e.preventDefault();
+                    listings.saveListing();
                 });
-
-                if (listing.status === 'new') {
-                    $('#listing-save-link').unbind().bind('click',function(e){
-                        e.preventDefault();
-                        listings.saveListing();
-                    });
-                }
-                else {
-                    $('#listing-save-link').unbind().data('listing_id',listing.listing_id).bind('click',function(e){
-                        e.preventDefault();
-                        listings.saveListing($(this).data('listing_id'));
-                    });
-                }
-
-                self.displayUploadField('listing-edit-business-plan', 'business_plan_id', listing.business_plan_id, true);
-                self.displayUploadField('listing-edit-presentation', 'presentation_id', listing.presentation_id, true);
-                self.displayUploadField('listing-edit-financials', 'financials_id', listing.financials_id, true);
-
-                if (listing.status === 'new') {
-                    $('#listing-withdraw-link').hide();
-                    $('#listing-activate-link').hide();
-                }
-                else if (listing.status === 'created') {
-                    $('#listing-withdraw-link').hide();
-                    $('#listing-activate-link').show().unbind().data('listing_id',listing.listing_id).bind('click',function(){
-                        var errorCallback = function() { $('#listing-save-message').attr('class', 'attention').html('unable to activate listing'); };
-                        backend.activateListing($(this).data('listing_id'), self.displayListing, errorCallback);
-                    });
-                }
-                else {
-                    $('#listing-withdraw-link').show().unbind().data('listing_id',listing.listing_id).bind('click',function(){
-                        var errorCallback = function() { $('#listing-save-message').attr('class', 'attention').html('unable to withdraw listing'); };
-                        backend.withdrawListing($(this).data('listing_id'), self.displayListing, errorCallback);
-                    });
-                    $('#listing-activate-link').hide();
-                }
             }
             else {
-                $('#listing-form-editable').hide();
-                $('#listing-form-readonly').show();
-                $('#listing-readonly-suggested-amt').html(util.addCommas(listing.suggested_amt));
-                $('#listing-readonly-suggested-pct').html(listing.suggested_pct);
-                $('#listing-readonly-suggested-val').html(util.addCommas(listing.suggested_val));
-                $('#listing-readonly-summary').html(listing.summary);
-                self.displayUploadField('listing-readonly-business-plan', 'business_plan_id', listing.business_plan_id);
-                self.displayUploadField('listing-readonly-presentation', 'presentation_id', listing.presentation_id);
-                self.displayUploadField('listing-readonly-financials', 'financials_id', listing.financials_id);
-             }
+                $('#listing-save-link').unbind().data('listing_id',listing.listing_id).bind('click',function(e){
+                    e.preventDefault();
+                    listings.saveListing($(this).data('listing_id'));
+                });
+            }
+
+            self.displayUploadField('listing-edit-business-plan', 'business_plan_id', listing.business_plan_id, true);
+            self.displayUploadField('listing-edit-presentation', 'presentation_id', listing.presentation_id, true);
+            self.displayUploadField('listing-edit-financials', 'financials_id', listing.financials_id, true);
+
+            if (listing.status === 'new') {
+                $('#listing-withdraw-link').hide();
+                $('#listing-activate-link').hide();
+            }
+            else if (listing.status === 'created') {
+                $('#listing-withdraw-link').hide();
+                $('#listing-activate-link').show().unbind().data('listing_id',listing.listing_id).bind('click',function(){
+                    var errorCallback = function() { $('#listing-save-message').attr('class', 'attention').html('unable to activate listing'); };
+                    backend.activateListing($(this).data('listing_id'), self.displayListing, errorCallback);
+                });
+            }
+            else {
+                $('#listing-withdraw-link').show().unbind().data('listing_id',listing.listing_id).bind('click',function(){
+                    var errorCallback = function() { $('#listing-save-message').attr('class', 'attention').html('unable to withdraw listing'); };
+                    backend.withdrawListing($(this).data('listing_id'), self.displayListing, errorCallback);
+                });
+                $('#listing-activate-link').hide();
+            }
         };
         self.displayUploadField = function(fieldRoot, fieldName, fieldValue, editable) {
             var fieldSelRoot = '#' + fieldRoot;
@@ -1976,7 +2005,19 @@ $(function(){
             $('#bids-listing-snippet').html('');
             $('#bids-content-results-list').html(resultsHtml);
         };
-        self.displayResults = function(results, keepBid, msgClass, msgText){
+        self.displayAcceptedResults = function(results, keepBid, msgClass, msgText){
+            self.displayResults(results, keepBid, msgClass, msgText, 'accepted');
+        };
+        self.displayPaidResults = function(results, keepBid, msgClass, msgText){
+            self.displayResults(results, keepBid, msgClass, msgText, 'paid');
+        };
+        self.displayResults = function(results, keepBid, msgClass, msgText, bidStatus){
+            var bids_profile = results ? results.profile : null;
+            var listing = results ? results.listing : null;
+            var bids = results ? results.bids : null;
+            var filteredBids = self.filterBidsByStatus(bids, bidStatus);
+            var profile = user.profile;
+
             $('#bids-message').html('');
             self.recalculateValuation();
             $('#bid-save-message').attr('class', (msgClass || 'attention')).html(msgText || '');
@@ -1984,88 +2025,11 @@ $(function(){
                 self.clearBidFields();
             }
             util.displayPage('bids');
-            var bids_profile = results ? results.profile : null;
-            if (bids_profile) {
-                $('#bids-profile-snippet').html(user.generateUserSnippetHtml('bids', bids_profile));
-                user.bindUserSnippet('bids', bids_profile);
-                $('#bids-profile-header').show();
-            }
-            else {
-                $('#bids-profile-header').hide();
-                $('#bids-profile-snippet').html('');
-            }
-            var listing = results ? results.listing : null;
-            var bids = results ? results.bids : null;
-            var profile = user.profile;
-            var resultsHtml = '';
-            var bid;
-            if (bids && bids.length > 0) {
-                for (var i = 0; i < bids.length; i++) { // create results
-                    bid = bids[i];
-                    resultsHtml += self.generateResultHtml(i, bid, listing, profile);
-                }
-            }
-            else if (bids && bids.length == 0) {
-                resultsHtml = '<i>no bids found</i>';
-            }
-            // display html
-            $('#bids-content-results-list').hide().html(resultsHtml).show();
-            // set login visibility
-            if (listing) {
-                if (listing.listing_id) {
-                    $('#bids-listing-snippet').html(listings.generateListingSnippetHtml('bids', listing));
-                    listings.bindListingSnippet('bids', listing);
-                    $('#bids-listing-header').show();
-                }
-                if (listing.status != 'active') {
-                    $('#bids-form-loggedin').hide();
-                    $('#bids-form-not-loggedin').show().html('This bid is no longer active');
-                }
-                else if (profile && profile.profile_id == listing.profile_id) {
-                    $('#bids-form-loggedin').hide();
-                    $('#bids-form-not-loggedin').show().html('You may not bid on your own listing');
-                }
-                else if (profile && profile.investor) {
-                    $('#bids-form-loggedin').show();
-                    $('#bids-form-not-loggedin').hide();
-                    $('#bid-save-button')
-                        .show()
-                        .unbind()
-                        .data('listing_id',listing.listing_id)
-                        .data('profile_id',profile.profile_id)
-                        .data('profile_username',profile.username)
-                        .bind('click',function(e) {
-                            e.preventDefault();
-                            self.saveBid($(this).data('listing_id'), $(this).data('profile_id'), $(this).data('profile_username'));
-                        });
-                    $('#bid-amt,#bid-pct,#bid-type,#bid-rate').unbind().bind('change',function(e){
-                        self.recalculateValuation();
-                    });
-                    $('#bid-type').unbind().bind('change',function(e){
-                        if ($('#bid-type').val() == 'common')
-                            $('#bid-rate').attr('disabled', true);
-                        else 
-                            $('#bid-rate').removeAttr('disabled');
-                    });
-                }
-                else if (profile && !profile.investor) {
-                    $('#bids-form-loggedin').hide();
-                    $('#bids-form-not-loggedin').show().html('You must be an investor to place a bid');
-                }
-                else {
-                    $('#bids-form-loggedin').hide();
-                    $('#bids-form-not-loggedin').show().html('You must be a logged in investor to place a bid');
-                }
-            }
-            else {
-                $('#bids-listing-header').hide();
-                $('#bids-form-loggedin').hide();
-                $('#bids-form-not-loggedin').hide();
-                $('#bids-listing-snippet').html('');
-            }
-            if (!bids || bids.length == 0) {
-                return;
-            }
+
+            self.displayBidSnippet(bids_profile);
+            self.displayBidForm(listing, profile);
+            self.displayBids(filteredBids, listing, profile);
+
             var withdrawBid = function() {
                 var index = $(this).data('index');
                 var bid_id = $(this).data('bid_id');
@@ -2090,6 +2054,112 @@ $(function(){
                 var callback = listing_id ? listings_callback : profile_callback;
                 backend.acceptBid($(this).data('bid_id'), callback, errorCallback);
             };
+            self.bindBidLinks(filteredBids, profile, listing, bidStatus);
+        };
+        self.displayBidSnippet = function(bids_profile) {
+            if (bids_profile) {
+                $('#bids-profile-snippet').html(user.generateUserSnippetHtml('bids', bids_profile));
+                user.bindUserSnippet('bids', bids_profile);
+                $('#bids-profile-header').show();
+            }
+            else {
+                $('#bids-profile-header').hide();
+                $('#bids-profile-snippet').html('');
+            }
+        };
+        self.displayBidForm = function(listing, profile) {
+            if (!listing) {
+                $('#bids-listing-header').hide();
+                $('#bids-form-loggedin').hide();
+                $('#bids-form-not-loggedin').hide();
+                $('#bids-listing-snippet').html('');
+                return;
+            }
+            if (listing.listing_id) {
+                $('#bids-listing-snippet').html(listings.generateListingSnippetHtml('bids', listing));
+                listings.bindListingSnippet('bids', listing);
+                $('#bids-listing-header').show();
+            }
+            if (listing.status != 'active') {
+                $('#bids-form-loggedin').hide();
+                $('#bids-form-not-loggedin').show().html('This bid is no longer active');
+            }
+            else if (profile && profile.profile_id == listing.profile_id) {
+                $('#bids-form-loggedin').hide();
+                $('#bids-form-not-loggedin').show().html('You may not bid on your own listing');
+            }
+            else if (profile && profile.investor) {
+                $('#bids-form-loggedin').show();
+                $('#bids-form-not-loggedin').hide();
+                $('#bid-save-button')
+                    .show()
+                    .unbind()
+                    .data('listing_id',listing.listing_id)
+                    .data('profile_id',profile.profile_id)
+                    .data('profile_username',profile.username)
+                    .bind('click',function(e) {
+                        e.preventDefault();
+                        self.saveBid($(this).data('listing_id'), $(this).data('profile_id'), $(this).data('profile_username'));
+                    });
+                $('#bid-amt,#bid-pct,#bid-type,#bid-rate').unbind().bind('change',function(e){
+                    self.recalculateValuation();
+                });
+                $('#bid-type').unbind().bind('change',function(e){
+                    if ($('#bid-type').val() == 'common')
+                        $('#bid-rate').attr('disabled', true);
+                    else 
+                        $('#bid-rate').removeAttr('disabled');
+                });
+            }
+            else if (profile && !profile.investor) {
+                $('#bids-form-loggedin').hide();
+                $('#bids-form-not-loggedin').show().html('You must be an investor to place a bid');
+            }
+            else {
+                $('#bids-form-loggedin').hide();
+                $('#bids-form-not-loggedin').show().html('You must be a logged in investor to place a bid');
+            }
+        };
+        self.filterBidsByStatus = function(bids, bidStatus) {
+            var bid;
+            var filteredBids = [];
+            if (bids && bids.length > 0 && bidStatus) {
+                for (var i = 0; i < bids.length; i++) { // create results
+                    bid = bids[i];
+                    if (!bid) {
+                        continue;
+                    }
+                    if (bidStatus && bid.status !== bidStatus) {
+                        continue;
+                    }
+                    filteredBids.push(bids);
+                }
+            }
+            else {
+                filteredBids = bids;
+            }
+            return filteredBids;
+        };
+        self.displayBids = function(bids, listing, profile) {
+            var bid;
+            var resultsHtml = '';
+            if (!bids || bids.length === 0) {
+                resultsHtml = '<i>no bids found</i>';
+            }
+            else {
+                for (var i = 0; i < bids.length; i++) { // create results
+                    bid = bids[i];
+                    if (bid) {
+                        resultsHtml += self.generateResultHtml(i, bid, listing, profile);
+                    }
+                }
+            }
+            $('#bids-content-results-list').hide().html(resultsHtml).show();
+        };
+        self.bindBidLinks = function(bids, profile, listing) {
+            if (!bids || bids.length == 0) {
+                return;
+            }
             for (var i = 0; i < bids.length; i++) {
                 bid = bids[i];
                 $('#bids-item-profile-'+i).data({index:i,profile_id:bid.profile_id}).unbind().bind('click', function(){
@@ -2718,6 +2788,7 @@ background: linear-gradient(top, #7db9e8 0%,#1e5799 100%); /* W3C */
     float: left;
     width: 10px;
     height: 10px;
+    margin-top: 2px;
     background-repeat: no-repeat;
     background-image: url(data:image/gif;base64,R0lGODlhCgAKALMJANPT06enp/b29r+/v52dnfn5+bq6usLCwpqamv///wAAAAAAAAAAAAAAAAAAAAAAACH5BAEAAAkALAAAAAAKAAoAAAQcMMlJq712GIzQDV1QFV0nUETZTYDaAdIhz3ISAQA7);
     margin-right: 5px;
@@ -2729,6 +2800,11 @@ background: linear-gradient(top, #7db9e8 0%,#1e5799 100%); /* W3C */
 .content-results-list-item-upvote-filler {
     float: left;
     width: 10px;
+    height: 10px;
+    margin-right: 5px;
+}
+.content-results-list-item-upvote-none {
+    float: left;
     width: 0px;
     height: 10px;
 }
@@ -2756,6 +2832,65 @@ background: linear-gradient(top, #7db9e8 0%,#1e5799 100%); /* W3C */
 .content-results-footer {
     float: left;
     font-size: 12px;
+}
+.listing-content-form {
+    float: left;
+    width: 398px;
+    height: 248px;
+    border: 1px solid magenta; 
+}
+.listing-social-graph {
+    float: left;
+    width: 248px;
+    height: 248px;
+    border: 1px solid blue;
+}
+.listing-executive-summary {
+    float: right;
+    width: 100%;
+    margin-left: -650px;
+    height: 300px;
+}
+.listing-execsum-content {
+    border: 1px solid red;
+    margin-left: 648px;
+    padding: 5px;
+}
+.listing-execsum-multiline {
+    margin-top: 10px;
+    margin-right: 10px;
+    text-align: left;
+    font-size: 14px;
+    overflow-y: auto;
+    height: 260px;
+}
+.listing-execsum-textarea {
+    height: 240px;
+    font-size: 12px;
+    resize: none;
+}
+.listing-clear {
+    clear: both;
+}
+.listing-financials-chart {
+    margin-top: -50px;
+    float: left;
+    width: 348px;
+    height: 248px;
+    border: 1px solid green;
+}
+.listing-marketing-chart {
+    margin-top: -50px;
+    float: left;
+    width: 348px;
+    height: 248px;
+    border: 1px solid yellow;
+}
+.listing-financials-table {
+    float: left;
+    min-width: 448px;
+    border: 1px solid black;
+    height: 198px;
 }
 .content-form {
     margin-left: 15px;
@@ -3191,136 +3326,149 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
             <div class="content-form-line"><span id="listing-form-message"></span></div>
             <div class="content-form-clear"></div>
         </div>
-        <div class="content-form" id="listing-form-editable">
-                
+
+        <div class="listing-executive-summary">
+            <div class="listing-execsum-content" id="listing-execsum-editable">
+                <p><b>Executive Summary</b></p>
                 <form action="#" method="post" enctype="multipart/form-data">
-                <input name="page" type="hidden" value="listing"/>
-                <input id="listing-edit-listing-id" name="listing-id" type="hidden" value=""/>
-                <input id="listing-edit-median-valuation" name="median-valuation" type="hidden" value=""/>
-                <input id="listing-edit-num-votes" name="num-votes" type="hidden" value=""/>
-                <input id="listing-edit-num-bids" name="num-bids" type="hidden" value=""/>
-                <input id="listing-edit-num-comments" name="num-comments" type="hidden" value=""/>
-                <input id="listing-edit-profile-id" name="profile-id" type="hidden" value=""/>
-                <input id="listing-edit-profile-username" name="profile-username" type="hidden" value=""/>
-                <input id="listing-edit-listing-date" name="listing-date" type="hidden" value=""/>
-                <input id="listing-edit-status" name="listing-id" type="hidden" value=""/>
-
-                <div class="content-form-line">Title is </div>
-                <div class="content-form-maininputline"><input id="listing-edit-title" name="title" type="text" size="40" value="type listing title here"/></div>
-                <div class="content-form-clear"></div>
-
-                <div class="content-form-line">Suggested bid of </div>
-                <div class="content-form-inputline">$<input id="listing-edit-suggested-amt" name="suggested_bid_amt" type="text" size="9" maxlength="9" value="30,000"/></div>
-                <div class="content-form-line">for</div>
-                <div class="content-form-inputline"><input id="listing-edit-suggested-pct" name="suggested_bid_pct" type="text" size="2" maxlength="2" value="10"/>%</div>
-                <div class="content-form-line"> equity</div>
-                <div class="content-form-clear"></div>
-
-                <div class="content-form-line">Suggested valuation is $<span id="listing-edit-suggested-val"></span></div>
-                <div class="content-form-clear"></div>
-
-                <div class="content-form-line">Executive Summary</div>
-                <div class="content-form-clear"></div>
-                <div class="content-form-inputline">
-                    <textarea class="content-form-inputline-textarea" id="listing-edit-summary" name="executive_summary" rows="10" cols="50" wrap="soft">
-MisLead is a revolution in social networking.  Previously, social networking has been for people with friends, those outgoing on the internet, those who don't have trouble communicating online.  There is an untapped market in those who not only have difficulty making social connections, but frequently dislike social situations and social crowds.  With MisLead, you are only allowed a maximum of five friends at any one time.  However, you are more intimately connected with them, including real-time location updates, frequent SMS on activities, and heavy linking into any goings-on for connected individuals in a plethora of other networks.
-                    </textarea>
-                </div>
-                <div class="content-form-clear"></div>
-
-                <div class="content-form-line">
-                    <span>Business Plan</span>
-                    <span class="link" id="listing-edit-business-plan-link"><a target="_blank" href="#">view</a></span>
-                    <span class="link" id="listing-edit-business-plan-add">upload</span>
-                    <span class="link" id="listing-edit-business-plan-remove">remove</span>
-                </div>
-                <div class="content-form-clear"></div>
+                    <p class="listing-execsum-multiline">
+                        <textarea class="listing-execsum-textarea" id="listing-edit-summary" name="executive_summary" rows="10" cols="60" wrap="soft"></textarea>
+                    </p>
                 </form>
+            </div> <!-- ending #listing-execsum-editable-->
+            <div class="listing-execsum-content" id="listing-execsum-readonly">
+                <p><b>Executive Summary</b></p>
+                <p class="listing-execsum-multiline" id="listing-readonly-summary"></p>
+            </div> <!-- ending #listing-execsum-readonly -->
+        </div> <!-- end listing-executive-summary -->
 
-                <form id="listing-edit-business-plan-form" method="post" enctype="multipart/form-data" action="#">
-                <div class="content-form-line">
-                        <input name="BUSINESS_PLAN" id="listing-edit-business-plan-file" type="file"/>
-                        <input type="submit" id="listing-edit-business-plan-submit" value="Upload"/>
-                        <iframe id="listing-edit-business-plan-iframe" name="listing-edit-business-plan-iframe" class="listing-iframe" src="#"></iframe>
-                </div>
-                <div class="content-form-clear"></div>
-                </form>
+        <div class="listing-content-form">
+                <div class="content-form" id="listing-form-editable">
+                    <form action="#" method="post" enctype="multipart/form-data">
+                    <input name="page" type="hidden" value="listing"/>
+                    <input id="listing-edit-listing-id" name="listing-id" type="hidden" value=""/>
+                    <input id="listing-edit-median-valuation" name="median-valuation" type="hidden" value=""/>
+                    <input id="listing-edit-num-votes" name="num-votes" type="hidden" value=""/>
+                    <input id="listing-edit-num-bids" name="num-bids" type="hidden" value=""/>
+                    <input id="listing-edit-num-comments" name="num-comments" type="hidden" value=""/>
+                    <input id="listing-edit-profile-id" name="profile-id" type="hidden" value=""/>
+                    <input id="listing-edit-profile-username" name="profile-username" type="hidden" value=""/>
+                    <input id="listing-edit-listing-date" name="listing-date" type="hidden" value=""/>
+                    <input id="listing-edit-status" name="listing-id" type="hidden" value=""/>
+                    <div class="content-form-line"><b>Business Name</b></div>
+                    <div class="content-form-maininputline"><input id="listing-edit-title" name="title" type="text" size="30" value="type listing title here"/></div>
+                    <div class="content-form-clear"></div>
+                    <div class="content-form-line"><b>Asking Funding</b></div>
+                    <div class="content-form-inputline">$<input id="listing-edit-suggested-amt" name="suggested_bid_amt" type="text" size="9" maxlength="9" value="30,000"/></div>
+                    <div class="content-form-line"><b>Asking Equity</b></div>
+                    <div class="content-form-inputline"><input id="listing-edit-suggested-pct" name="suggested_bid_pct" type="text" size="2" maxlength="2" value="10"/>%</div>
+                    <div class="content-form-clear"></div>
+                    <div class="content-form-line">Calculated Valuation <b>$<span id="listing-edit-suggested-val"></span></b></div>
+                    <div class="content-form-clear"></div>
+                    <div class="content-form-line">
+                        <span><b>Business Plan</b></span>
+                        <span class="link" id="listing-edit-business-plan-link"><a target="_blank" href="#">view</a></span>
+                        <span class="link" id="listing-edit-business-plan-add">upload</span>
+                        <span class="link" id="listing-edit-business-plan-remove">remove</span>
+                    </div>
+                    <div class="content-form-clear"></div>
+                    </form>
+                    <form id="listing-edit-business-plan-form" method="post" enctype="multipart/form-data" action="#">
+                    <div class="content-form-line">
+                            <input name="BUSINESS_PLAN" id="listing-edit-business-plan-file" type="file"/>
+                            <input type="submit" id="listing-edit-business-plan-submit" value="Upload"/>
+                            <iframe id="listing-edit-business-plan-iframe" name="listing-edit-business-plan-iframe" class="listing-iframe" src="#"></iframe>
+                    </div>
+                    <div class="content-form-clear"></div>
+                    </form>
+                    <div class="content-form-line">
+                        <span><b>Presentation</b></span>
+                        <span class="link" id="listing-edit-presentation-link"><a target="_blank" href="#">view</a></span>
+                        <span class="link" id="listing-edit-presentation-add">upload</span>
+                        <span class="link" id="listing-edit-presentation-remove">remove</span>
+                    </div>
+                    <div class="content-form-clear"></div>
+                    </form>
+                    <form id="listing-edit-presentation-form" method="post" enctype="multipart/form-data" action="#">
+                    <div class="content-form-line">
+                            <input name="PRESENTATION" id="listing-edit-presentation-file" type="file"/>
+                            <input type="submit" id="listing-edit-presentation-submit" value="Upload"/>
+                            <iframe id="listing-edit-presentation-iframe" name="listing-edit-presentation-iframe" class="listing-iframe" src="#"></iframe>
+                    </div>
+                    <div class="content-form-clear"></div>
+                    </form>
+                    <div class="content-form-line">
+                        <span><b>Financial Statements</b></span>
+                        <span class="link" id="listing-edit-financials-link"><a target="_blank" href="#">view</a></span>
+                        <span class="link" id="listing-edit-financials-add">upload</span>
+                        <span class="link" id="listing-edit-financials-remove">remove</span>
+                    </div>
+                    <div class="content-form-clear"></div>
+                    </form>
+<!--
+                    <form id="listing-edit-financials-form" method="post" enctype="multipart/form-data" action="#">
+                    <div class="content-form-line">
+                            <input name="FINANCIALS" id="listing-edit-financials-file" type="file"/>
+                            <input type="submit" id="listing-edit-financials-submit" value="Upload"/>
+                            <iframe id="listing-edit-financials-iframe" name="listing-edit-financials-iframe" class="listing-iframe" src="#"></iframe>
+                    </div>
+                    <div class="content-form-clear"></div>
+                    </form>
+-->
+                    <form action="#" method="post" enctype="multipart/form-data">
+                    <div class="content-form-inputline"><button id="listing-save-link">Save</button> <span class="attention" id="listing-save-message"></span> </div>
+                    <div class="content-form-clear"></div>
+                    <div class="content-form-linkline"><span class="link" id="listing-activate-link">(activate listing)</span></div>
+                    <div class="content-form-clear"></div>
+                    <div class="content-form-linkline"><span class="link" id="listing-withdraw-link">(withdraw listing)</span></div>
+                    <div class="content-form-clear"></div>
+                    </form>
+                </div> <!-- end #listing-form-editable -->
+    
+                <div class="listing-content-form" id="listing-form-readonly">
+                    <div class="content-form-line">
+                        Asking Funding <b>$<span id="listing-readonly-suggested-amt"></span></b>
+                    </div>
+                    <div class="content-form-clear"></div>
+                    <div class="content-form-line">
+                        Asking Equity <b><span id="listing-readonly-suggested-pct"></span>%</b>
+                    </div>
+                    <div class="content-form-clear"></div>
+                    <div class="content-form-line">Calculated Valuation <b>$<span id="listing-readonly-suggested-val"></span></b></div>
+                    <div class="content-form-clear"></div>
+                    <div class="content-form-line">
+                        <span class="link" id="listing-readonly-business-plan-link"><a target="_blank" href="#">view business plan</a></span>
+                    </div>
+                    <div class="content-form-clear"></div>
+                    <div class="content-form-line">
+                        <span class="link" id="listing-readonly-presentation-link"><a target="_blank" href="#">view presentation</a></span>
+                    </div>
+                    <div class="content-form-clear"></div>
+                </div> <!-- end #listing-form-readonly -->
+    
+        </div> <!-- end #listing-content-form -->
 
-                <div class="content-form-line">
-                    <span>Presentation</span>
-                    <span class="link" id="listing-edit-presentation-link"><a target="_blank" href="#">view</a></span>
-                    <span class="link" id="listing-edit-presentation-add">upload</span>
-                    <span class="link" id="listing-edit-presentation-remove">remove</span>
-                </div>
-                <div class="content-form-clear"></div>
-                </form>
-
-                <form id="listing-edit-presentation-form" method="post" enctype="multipart/form-data" action="#">
-                <div class="content-form-line">
-                        <input name="PRESENTATION" id="listing-edit-presentation-file" type="file"/>
-                        <input type="submit" id="listing-edit-presentation-submit" value="Upload"/>
-                        <iframe id="listing-edit-presentation-iframe" name="listing-edit-presentation-iframe" class="listing-iframe" src="#"></iframe>
-                </div>
-                <div class="content-form-clear"></div>
-                </form>
-
-                <div class="content-form-line">
-                    <span>Financials</span>
-                    <span class="link" id="listing-edit-financials-link"><a target="_blank" href="#">view</a></span>
-                    <span class="link" id="listing-edit-financials-add">upload</span>
-                    <span class="link" id="listing-edit-financials-remove">remove</span>
-                </div>
-                <div class="content-form-clear"></div>
-                </form>
-
-                <form id="listing-edit-financials-form" method="post" enctype="multipart/form-data" action="#">
-                <div class="content-form-line">
-                        <input name="FINANCIALS" id="listing-edit-financials-file" type="file"/>
-                        <input type="submit" id="listing-edit-financials-submit" value="Upload"/>
-                        <iframe id="listing-edit-financials-iframe" name="listing-edit-financials-iframe" class="listing-iframe" src="#"></iframe>
-                </div>
-                <div class="content-form-clear"></div>
-                </form>
-
-                <form action="#" method="post" enctype="multipart/form-data">
-                <div class="content-form-inputline"><button id="listing-save-link">Save</button> <span class="attention" id="listing-save-message"></span> </div>
-                <div class="content-form-clear"></div>
-
-                <div class="content-form-linkline"><span class="link" id="listing-activate-link">(activate listing)</span></div>
-                <div class="content-form-clear"></div>
-
-                <div class="content-form-linkline"><span class="link" id="listing-withdraw-link">(withdraw listing)</span></div>
-                <div class="content-form-clear"></div>
-
-                </form>
+        <div class="listing-social-graph">
+            SOCIAL GRAPH
         </div>
-        <div class="content-form" id="listing-form-readonly">
-                <div class="content-form-line">
-                    Suggested bid of $<span id="listing-readonly-suggested-amt"></span>
-                    for <span id="listing-readonly-suggested-pct"></span>% equity
-                </div>
-                <div class="content-form-clear"></div>
-                <div class="content-form-line">Suggested valuation is $<span id="listing-readonly-suggested-val"></span></div>
-                <div class="content-form-clear"></div>
 
-                <div class="content-form-line-emphasized">Executive Summary</div>
-                <div class="content-form-clear"></div>
-                <div class="content-form-multiline" id="listing-readonly-summary">
-MisLead is a revolution in social networking.  Previously, social networking has been for people with friends, those outgoing on the internet, those who don't have trouble communicating online.  There is an untapped market in those who not only have difficulty making social connections, but frequently dislike social situations and social crowds.  With MisLead, you are only allowed a maximum of five friends at any one time.  However, you are more intimately connected with them, including real-time location updates, frequent SMS on activities, and heavy linking into any goings-on for connected individuals in a plethora of other networks.
-                </div>
-                <div class="content-form-clear"></div>
+       
+        <div class="listing-clear">
+        </div>
 
-                <div class="content-form-line">
-                    <span class="link" id="listing-readonly-business-plan-link"><a target="_blank" href="#">view business plan</a></span>
-                </div>
-                <div class="content-form-clear"></div>
+        <div class="listing-financials-chart">
+            FINANCIALS BAR CHART
+        </div>
 
-                <div class="content-form-line">
-                    <span class="link" id="listing-readonly-presentation-link"><a target="_blank" href="#">view presentation</a></span>
-                </div>
-                <div class="content-form-clear"></div>
-         </div>
-    </div>
+        <div class="listing-marketing-chart">
+            MARKETING PIE CHART
+        </div>
+
+        <div class="listing-financials-table">
+            FINANCIALS TABLE
+        </div>
+
+    </div> <!-- end #listingpage -->
     
     <div id="bidspage" class="content page">
         <div class="content-header" id="bids-message"></div>
@@ -3357,7 +3505,7 @@ MisLead is a revolution in social networking.  Previously, social networking has
                 <div class="content-form-line">% interest</div>
                 <div class="content-form-clear"></div>
 
-                <div class="content-form-line">Your calculated valuation is $<span id="bid-calculated-valuation">1.35m</span></div>
+                <div class="content-form-line">Calculated Valuation <b>$<span id="bid-calculated-valuation">1.35m</span></b></div>
                 <div class="content-form-clear"></div>
 
                 <div class="content-form-line">
@@ -3404,7 +3552,7 @@ MisLead is a revolution in social networking.  Previously, social networking has
             <div class="content-results-list">
                 <div class="content-results-list-item content-results-list-item-odd">
                     <div class="content-results-list-item-num"></div>
-                    <div class="content-results-list-item-upvote-filler"></div>
+                    <div class="content-results-list-item-upvote-none"></div>
                     <div class="content-results-list-item-title">
                         Email: <a href="mailto:admin@startupbidder.com">admin@startupbidder.com</a>
                     </div>
@@ -3412,7 +3560,7 @@ MisLead is a revolution in social networking.  Previously, social networking has
                 <div class="content-results-list-item-clear"></div>
                 <div class="content-results-list-item content-results-list-item-even">
                     <div class="content-results-list-item-num"></div>
-                    <div class="content-results-list-item-upvote-filler"></div>
+                    <div class="content-results-list-item-upvote-none"></div>
                     <div class="content-results-list-item-title">
                         Phone: +49 162.179.2450
                     </div>
@@ -3420,7 +3568,7 @@ MisLead is a revolution in social networking.  Previously, social networking has
                 <div class="content-results-list-item-clear"></div>
                 <div class="content-results-list-item content-results-list-item-odd">
                     <div class="content-results-list-item-num"></div>
-                    <div class="content-results-list-item-upvote-filler"></div>
+                    <div class="content-results-list-item-upvote-none"></div>
                     <div class="content-results-list-item-title">
                         Postal Address:
                     </div>
@@ -3450,7 +3598,7 @@ MisLead is a revolution in social networking.  Previously, social networking has
             <div class="content-results-list">
                 <div class="content-results-list-item content-results-list-item-odd">
                     <div class="content-results-list-item-num">1.</div>
-                    <div class="content-results-list-item-upvote-filler"></div>
+                    <div class="content-results-list-item-upvote-none"></div>
                     <div class="content-results-list-item-title">
                         General Disclaimer
                     </div>
@@ -3463,7 +3611,7 @@ This web site provides general information only. It is not intended as professio
 
                 <div class="content-results-list-item content-results-list-item-even">
                     <div class="content-results-list-item-num">2.</div>
-                    <div class="content-results-list-item-upvote-filler"></div>
+                    <div class="content-results-list-item-upvote-none"></div>
                     <div class="content-results-list-item-title">
                         Further Important Notice
                     </div>
@@ -3476,7 +3624,7 @@ The information contained on the web site does not constitute an offer to sell s
 
                 <div class="content-results-list-item content-results-list-item-odd">
                     <div class="content-results-list-item-num">3.</div>
-                    <div class="content-results-list-item-upvote-filler"></div>
+                    <div class="content-results-list-item-upvote-none"></div>
                     <div class="content-results-list-item-title">
                         Local Restrictions
                     </div>
@@ -3489,7 +3637,7 @@ There are legal requirements in various countries which may restrict the informa
 
                 <div class="content-results-list-item content-results-list-item-even">
                     <div class="content-results-list-item-num">4.</div>
-                    <div class="content-results-list-item-upvote-filler"></div>
+                    <div class="content-results-list-item-upvote-none"></div>
                     <div class="content-results-list-item-title">
                         Business Plans
                     </div>
@@ -3502,7 +3650,7 @@ The information contained in any business plan does not constitute an offer to s
 
                 <div class="content-results-list-item content-results-list-item-odd">
                     <div class="content-results-list-item-num">5.</div>
-                    <div class="content-results-list-item-upvote-filler"></div>
+                    <div class="content-results-list-item-upvote-none"></div>
                     <div class="content-results-list-item-title">
                         Linked Sites
                     </div>
@@ -3515,7 +3663,7 @@ The hyperlinks within the web site will take you to publicly available sites whi
 
                 <div class="content-results-list-item content-results-list-item-even">
                     <div class="content-results-list-item-num">6.</div>
-                    <div class="content-results-list-item-upvote-filler"></div>
+                    <div class="content-results-list-item-upvote-none"></div>
                     <div class="content-results-list-item-title">
                         Copyright Notice
                     </div>
@@ -3528,7 +3676,7 @@ Unless otherwise stated the copyright for all material on this site rests with S
 
                 <div class="content-results-list-item content-results-list-item-odd">
                     <div class="content-results-list-item-num">7.</div>
-                    <div class="content-results-list-item-upvote-filler"></div>
+                    <div class="content-results-list-item-upvote-none"></div>
                     <div class="content-results-list-item-title">
                         Important Notice on Exclusion of Liability
                     </div>
@@ -3568,7 +3716,7 @@ Except to the extent that liability under any applicable law or regulation canno
             <div class="content-results-list">
                 <div class="content-results-list-item content-results-list-item-odd">
                     <div class="content-results-list-item-num">1.</div>
-                    <div class="content-results-list-item-upvote-filler"></div>
+                    <div class="content-results-list-item-upvote-none"></div>
                     <div class="content-results-list-item-title">
                         What is Startupbidder?
                     </div>
@@ -3582,7 +3730,7 @@ Except to the extent that liability under any applicable law or regulation canno
                 <div class="content-results-list-item-clear"></div>
                 <div class="content-results-list-item content-results-list-item-even">
                     <div class="content-results-list-item-num">2.</div>
-                    <div class="content-results-list-item-upvote-filler"></div>
+                    <div class="content-results-list-item-upvote-none"></div>
                     <div class="content-results-list-item-title">
                         Who runs Startupbidder?
                     </div>
@@ -3595,7 +3743,7 @@ Except to the extent that liability under any applicable law or regulation canno
                 <div class="content-results-list-item-clear"></div>
                 <div class="content-results-list-item content-results-list-item-odd">
                     <div class="content-results-list-item-num">3.</div>
-                    <div class="content-results-list-item-upvote-filler"></div>
+                    <div class="content-results-list-item-upvote-none"></div>
                     <div class="content-results-list-item-title">
                         How can I contact you?
                     </div>
@@ -3609,7 +3757,7 @@ Except to the extent that liability under any applicable law or regulation canno
                 <div class="content-results-list-item-clear"></div>
                 <div class="content-results-list-item content-results-list-item-even">
                     <div class="content-results-list-item-num">4.</div>
-                    <div class="content-results-list-item-upvote-filler"></div>
+                    <div class="content-results-list-item-upvote-none"></div>
                     <div class="content-results-list-item-title">
                         What is the algorithm you use to rank business plans?
                     </div>
@@ -3637,7 +3785,7 @@ Reference:
                 <div class="content-results-list-item-clear"></div>
                 <div class="content-results-list-item content-results-list-item-odd">
                     <div class="content-results-list-item-num">4.</div>
-                    <div class="content-results-list-item-upvote-filler"></div>
+                    <div class="content-results-list-item-upvote-none"></div>
                     <div class="content-results-list-item-title">
                         What happens when a user accepts a bid?
                     </div>
@@ -3653,7 +3801,7 @@ Reference:
                 <div class="content-results-list-item-clear"></div>
                 <div class="content-results-list-item content-results-list-item-odd">
                     <div class="content-results-list-item-num">5.</div>
-                    <div class="content-results-list-item-upvote-filler"></div>
+                    <div class="content-results-list-item-upvote-none"></div>
                     <div class="content-results-list-item-title">
                         Are you offering shares in these companies for sale?
                     </div>
@@ -3667,7 +3815,7 @@ Reference:
                 <div class="content-results-list-item-clear"></div>
                 <div class="content-results-list-item content-results-list-item-even">
                     <div class="content-results-list-item-num">6.</div>
-                    <div class="content-results-list-item-upvote-filler"></div>
+                    <div class="content-results-list-item-upvote-none"></div>
                     <div class="content-results-list-item-title">
                         What is the algorithm you use to rank users?
                     </div>
@@ -3737,16 +3885,16 @@ s = (p + b + c + v) / (t + 2)^1.5
     text-align: center;
 }
 .userbox-chart {
-    top: 25px;
+    top: 24px;
     position: absolute;
     margin-left: 0px;
-    width: 44px;
-    height: 44px;
+    width: 42px;
+    height: 42px;
     display: block;
     border: 2px solid grey;
-    -moz-border-radius: 22px;
-    -webkit-border-radius: 22px;
-    border-radius: 22px;
+    -moz-border-radius: 21px;
+    -webkit-border-radius: 21px;
+    border-radius: 21px;
 }
 .userbox-bronze {
     background: #C69633;
@@ -3762,20 +3910,24 @@ s = (p + b + c + v) / (t + 2)^1.5
 }
 </style> 
     <div id="userbox" class="userbox blue-gradient-bg">
-        <div><span class="userbox-title">My Startupbidder</span></div>
+        <div><span class="userbox-title" id="userbox-title"></span></div>
         <div class="userbox-medal">
             <div class="userbox-chart userbox-bronze" id="userbox-chart">
                 <div class="userbox-score" id="userbox-score"></div>
             </div>
         </div>
         <div class="userbox-textbox">
-            <div><span id="userbox-member-type">Bronze</span> Member <span id="userbox-num-votes">0</span> votes</div>
+            <div><span id="userbox-member-type">Bronze</span> Member <span class="header-link" id="userbox-details">details</span></div>
             <div>
+                <span id="userbox-num-votes">0</span> votes
                 <span class="header-link" id="userbox-listings"><span id="userbox-num-listings">0</span> listing<span id="userbox-listings-plural"></span></span>
-                <span class="header-link" id="userbox-bids"><span id="userbox-num-bids">0</span> bid<span id="userbox-bids-plural"></span></span>
                 <span class="header-link" id="userbox-comments"><span id="userbox-num-comments">0</span> comment<span id="userbox-comments-plural"></span></span>
             </div>
-            <div><span class="header-link" id="userbox-details">details</span></div>
+            <div>
+                <span class="header-link" id="userbox-bids"><span id="userbox-num-bids">0</span> bid<span id="userbox-bids-plural"></span></span>
+                <span class="header-link" id="userbox-bids-accepted"><span id="userbox-num-bids-accepted">0</span> accepted</span>
+                <span class="header-link" id="userbox-bids-paid"><span id="userbox-num-bids-paid">0</span> paid</span>
+            </div>
         </div>
         <input id="userbox-profile-id" type="hidden" value=""/>
     </div>
