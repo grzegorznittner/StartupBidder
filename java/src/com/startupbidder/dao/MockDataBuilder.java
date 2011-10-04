@@ -62,12 +62,20 @@ public class MockDataBuilder {
 		for (ListingDTO listing : listings) {
 			int bidNum = new Random().nextInt(15);
 			long bidTimeSpan = (System.currentTimeMillis() - listing.getListedOn().getTime()) / (bidNum + 1);
+			Random fundTypeRandom = new Random();
 			while (--bidNum > 0) {
 				BidDTO bid = new BidDTO();
 				bid.createKey(bidNum + "_" + listing.hashCode());
 				bid.setUser(users.get(new Random().nextInt(users.size())).getIdAsString());
 				bid.setListing(listing.getIdAsString());
-				bid.setFundType(new Random().nextInt(2) > 0 ? BidDTO.FundType.SYNDICATE : BidDTO.FundType.SOLE_INVESTOR);
+				switch (fundTypeRandom.nextInt(3)) {
+					case 0: bid.setFundType(BidDTO.FundType.COMMON);
+					break;
+					case 1: bid.setFundType(BidDTO.FundType.NOTE);
+					break;
+					case 2: bid.setFundType(BidDTO.FundType.PREFERRED);
+					break;
+				}
 				bid.setPercentOfCompany(new Random().nextInt(50) + 10);
 				bid.setPlaced(new Date(listing.getListedOn().getTime() + bidNum * bidTimeSpan));
 				bid.setValue(new Random().nextInt(50) * 1000 + listing.getSuggestedValuation());

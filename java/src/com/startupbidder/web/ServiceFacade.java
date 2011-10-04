@@ -911,6 +911,13 @@ public class ServiceFacade {
 			log.warning("Bid '" + bid.getId() + "' cannot be updated with non positive value");
 			return null;
 		}
+		BidDTO.FundType fundType = BidDTO.FundType.valueOf(bid.getFundType());
+		if (fundType != BidDTO.FundType.COMMON
+				&& fundType != BidDTO.FundType.NOTE
+				&& fundType != BidDTO.FundType.PREFERRED) {
+			log.log(Level.WARNING, "Bid id '" + bid.getId() + "' has not valid fund type '" + fundType + "'!");
+			return null;
+		}
 
 		bid = DtoToVoConverter.convert(getDAO().updateBid(loggedInUser.getId(), VoToDtoConverter.convert(bid)));
 		if (bid != null) {

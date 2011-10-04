@@ -1255,7 +1255,7 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 			bid.setFundType(newBid.getFundType());
 			bid.setValue(newBid.getValue());
 			bid.setValuation(newBid.getValuation());
-
+			
 			getDatastoreService().put(bid.toEntity());
 			return bid;
 		} catch (EntityNotFoundException e) {
