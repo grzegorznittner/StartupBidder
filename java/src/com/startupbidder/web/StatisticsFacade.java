@@ -94,7 +94,7 @@ public class StatisticsFacade {
 		}
 		
 		data = new GraphDataVO(GraphType.BID_DAY_VOLUME.toString());
-		data.setLabel(values.length + " Day Bid Valume");
+		data.setLabel(values.length + " Day Bid Volume");
 		data.setxAxis("days ago");
 		data.setyAxis("num bids");
 		data.setValues(values);
@@ -131,7 +131,7 @@ public class StatisticsFacade {
 		}
 		
 		data = new GraphDataVO(GraphType.BID_DAY_VALUATION.toString());
-		data.setLabel(values.length + " Day Bid Valume");
+		data.setLabel(values.length + " Day Bid Valuation");
 		data.setxAxis("days ago");
 		data.setyAxis("bids valuation");
 		data.setValues(values);
