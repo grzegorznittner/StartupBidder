@@ -1,262 +1,262 @@
 <!DOCTYPE HTML>
 <html>
-        
+
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <meta name="description" content="Startupbidder - list, bid, comment and vote on startup businesses worldwide"/>
-    <meta name="keywords" content="startupbidder startup company auction bid business plan"/>
-    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0" />
-    <meta http-equiv="Expires" CONTENT="0">
-    <meta http-equiv="cache-control" content="no-cache">
-    <meta http-equiv="Pragma" CONTENT="no-cache">
-    <title>Startupbidder - list, bid, comment, vote on startups</title>
-    <script src="//www.google.com/jsapi"></script> 
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta name="description" content="Startupbidder - list, bid, comment and vote on startup businesses worldwide"/>
+<meta name="keywords" content="startupbidder startup company auction bid business plan"/>
+<meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0" />
+<meta http-equiv="Expires" CONTENT="0">
+<meta http-equiv="cache-control" content="no-cache">
+<meta http-equiv="Pragma" CONTENT="no-cache">
+<title>Startupbidder - list, bid, comment, vote on startups</title>
+<script src="//www.google.com/jsapi"></script> 
 <!--	<script src="https://raw.github.com/DmitryBaranovskiy/raphael/master/raphael-min.js"></script> -->
 <!--	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.8/jquery-ui.min.js"></script> -->
-    <link rel="canonical" href="http://startupbidder.appspot.com"/>
+<link rel="canonical" href="http://startupbidder.appspot.com"/>
 
 <!-- google analytics -->
 <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-23942052-1']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-23942052-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+ var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+ var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+ })();
 </script>
 
 <!-- javascript code -->
 <script type="text/javascript">
-  google.load("jquery", "1.6.4");
-  google.load("visualization", "1", {packages:["corechart"]});
-  google.setOnLoadCallback(loadAll);
+google.load("jquery", "1.6.4");
+google.load("visualization", "1", {packages:["corechart"]});
+google.setOnLoadCallback(loadAll);
 
 function loadAll() {
-/*
- * jQuery hashchange event - v1.3 - 7/21/2010
- * http://benalman.com/projects/jquery-hashchange-plugin/
- * 
- * Copyright (c) 2010 "Cowboy" Ben Alman
- * Dual licensed under the MIT and GPL licenses.
- * http://benalman.com/about/license/
- */
-(function($,e,b){var c="hashchange",h=document,f,g=$.event.special,i=h.documentMode,d="on"+c in e&&(i===b||i>7);function a(j){j=j||location.href;return"#"+j.replace(/^[^#]*#?(.*)$/,"$1")}$.fn[c]=function(j){return j?this.bind(c,j):this.trigger(c)};$.fn[c].delay=50;g[c]=$.extend(g[c],{setup:function(){if(d){return false}$(f.start)},teardown:function(){if(d){return false}$(f.stop)}});f=(function(){var j={},p,m=a(),k=function(q){return q},l=k,o=k;j.start=function(){p||n()};j.stop=function(){p&&clearTimeout(p);p=b};function n(){var r=a(),q=o(m);if(r!==m){l(m=r,q);$(e).trigger(c)}else{if(q!==m){location.href=location.href.replace(/#.*/,"")+q}}p=setTimeout(n,$.fn[c].delay)}$.browser.msie&&!d&&(function(){var q,r;j.start=function(){if(!q){r=$.fn[c].src;r=r&&r+a();q=$('<iframe tabindex="-1" title="empty"/>').hide().one("load",function(){r||l(a());n()}).attr("src",r||"javascript:0").insertAfter("body")[0].contentWindow;h.onpropertychange=function(){try{if(event.propertyName==="title"){q.document.title=h.title}}catch(s){}}}};j.stop=k;o=function(){return a(q.location.href)};l=function(v,s){var u=q.document,t=$.fn[c].domain;if(v!==s){u.title=h.title;u.open();t&&u.write('<script>document.domain="'+t+'"<\/script>');u.close();q.location.hash=v}}})();return j})()})(jQuery,this);
+        /*
+         * jQuery hashchange event - v1.3 - 7/21/2010
+         * http://benalman.com/projects/jquery-hashchange-plugin/
+         * 
+         * Copyright (c) 2010 "Cowboy" Ben Alman
+         * Dual licensed under the MIT and GPL licenses.
+         * http://benalman.com/about/license/
+         */
+        (function($,e,b){var c="hashchange",h=document,f,g=$.event.special,i=h.documentMode,d="on"+c in e&&(i===b||i>7);function a(j){j=j||location.href;return"#"+j.replace(/^[^#]*#?(.*)$/,"$1")}$.fn[c]=function(j){return j?this.bind(c,j):this.trigger(c)};$.fn[c].delay=50;g[c]=$.extend(g[c],{setup:function(){if(d){return false}$(f.start)},teardown:function(){if(d){return false}$(f.stop)}});f=(function(){var j={},p,m=a(),k=function(q){return q},l=k,o=k;j.start=function(){p||n()};j.stop=function(){p&&clearTimeout(p);p=b};function n(){var r=a(),q=o(m);if(r!==m){l(m=r,q);$(e).trigger(c)}else{if(q!==m){location.href=location.href.replace(/#.*/,"")+q}}p=setTimeout(n,$.fn[c].delay)}$.browser.msie&&!d&&(function(){var q,r;j.start=function(){if(!q){r=$.fn[c].src;r=r&&r+a();q=$('<iframe tabindex="-1" title="empty"/>').hide().one("load",function(){r||l(a());n()}).attr("src",r||"javascript:0").insertAfter("body")[0].contentWindow;h.onpropertychange=function(){try{if(event.propertyName==="title"){q.document.title=h.title}}catch(s){}}}};j.stop=k;o=function(){return a(q.location.href)};l=function(v,s){var u=q.document,t=$.fn[c].domain;if(v!==s){u.title=h.title;u.open();t&&u.write('<script>document.domain="'+t+'"<\/script>');u.close();q.location.hash=v}}})();return j})()})(jQuery,this);
 
-/*
- * This document is licensed as free software under the terms of the
- * MIT License: <a href="http://www.opensource.org/licenses/mit-license.php" title="http://www.opensource.org/licenses/mit-license.php">http://www.opensource.org/licenses/mit-license.php</a>
- *
- * Adapted by Rahul Singla.
- *
- * Brantley Harris wrote this plugin. It is based somewhat on the JSON.org 
- * website's <a href="http://www.json.org/json2.js" title="http://www.json.org/json2.js">http://www.json.org/json2.js</a>, which proclaims:
- * "NO WARRANTY EXPRESSED OR IMPLIED. USE AT YOUR OWN RISK.", a sentiment that
- * I uphold.
- *
- * It is also influenced heavily by MochiKit's serializeJSON, which is 
- * copyrighted 2005 by Bob Ippolito.
- */
+        /*
+         * This document is licensed as free software under the terms of the
+         * MIT License: <a href="http://www.opensource.org/licenses/mit-license.php" title="http://www.opensource.org/licenses/mit-license.php">http://www.opensource.org/licenses/mit-license.php</a>
+         *
+         * Adapted by Rahul Singla.
+         *
+         * Brantley Harris wrote this plugin. It is based somewhat on the JSON.org 
+         * website's <a href="http://www.json.org/json2.js" title="http://www.json.org/json2.js">http://www.json.org/json2.js</a>, which proclaims:
+         * "NO WARRANTY EXPRESSED OR IMPLIED. USE AT YOUR OWN RISK.", a sentiment that
+         * I uphold.
+         *
+         * It is also influenced heavily by MochiKit's serializeJSON, which is 
+         * copyrighted 2005 by Bob Ippolito.
+         */
 
-/**
- * jQuery.JSON.encode( json-serializble ) Converts the given argument into a
- * JSON respresentation.
- * 
- * If an object has a "toJSON" function, that will be used to get the
- * representation. Non-integer/string keys are skipped in the object, as are
- * keys that point to a function.
- * 
- * json-serializble: The *thing* to be converted.
- */
-jQuery.JSON = {
-    encode: function(o) {
-        if (typeof (JSON) == 'object' && JSON.stringify)
-            return JSON.stringify(o);
+        /**
+         * jQuery.JSON.encode( json-serializble ) Converts the given argument into a
+         * JSON respresentation.
+         * 
+         * If an object has a "toJSON" function, that will be used to get the
+         * representation. Non-integer/string keys are skipped in the object, as are
+         * keys that point to a function.
+         * 
+         * json-serializble: The *thing* to be converted.
+         */
+        jQuery.JSON = {
+encode: function(o) {
+                if (typeof (JSON) == 'object' && JSON.stringify)
+                        return JSON.stringify(o);
 
-        var type = typeof (o);
+                var type = typeof (o);
 
-        if (o === null)
-            return "null";
+                if (o === null)
+                        return "null";
 
-        if (type == "undefined")
-            return undefined;
+                if (type == "undefined")
+                        return undefined;
 
-        if (type == "number" || type == "boolean")
-            return o + "";
+                if (type == "number" || type == "boolean")
+                        return o + "";
 
-        if (type == "string")
-            return this.quoteString(o);
+                if (type == "string")
+                        return this.quoteString(o);
 
-        if (type == 'object') {
-            if (typeof o.toJSON == "function")
-                return this.encode(o.toJSON());
+                if (type == 'object') {
+                        if (typeof o.toJSON == "function")
+                                return this.encode(o.toJSON());
 
-            if (o.constructor === Date) {
-                var month = o.getUTCMonth() + 1;
-                if (month < 10)
-                    month = '0' + month;
+                        if (o.constructor === Date) {
+                                var month = o.getUTCMonth() + 1;
+                                if (month < 10)
+                                        month = '0' + month;
 
-                var day = o.getUTCDate();
-                if (day < 10)
-                    day = '0' + day;
+                                var day = o.getUTCDate();
+                                if (day < 10)
+                                        day = '0' + day;
 
-                var year = o.getUTCFullYear();
+                                var year = o.getUTCFullYear();
 
-                var hours = o.getUTCHours();
-                if (hours < 10)
-                    hours = '0' + hours;
+                                var hours = o.getUTCHours();
+                                if (hours < 10)
+                                        hours = '0' + hours;
 
-                var minutes = o.getUTCMinutes();
-                if (minutes < 10)
-                    minutes = '0' + minutes;
+                                var minutes = o.getUTCMinutes();
+                                if (minutes < 10)
+                                        minutes = '0' + minutes;
 
-                var seconds = o.getUTCSeconds();
-                if (seconds < 10)
-                    seconds = '0' + seconds;
+                                var seconds = o.getUTCSeconds();
+                                if (seconds < 10)
+                                        seconds = '0' + seconds;
 
-                var milli = o.getUTCMilliseconds();
-                if (milli < 100)
-                    milli = '0' + milli;
-                if (milli < 10)
-                    milli = '0' + milli;
+                                var milli = o.getUTCMilliseconds();
+                                if (milli < 100)
+                                        milli = '0' + milli;
+                                if (milli < 10)
+                                        milli = '0' + milli;
 
-                return '"' + year + '-' + month + '-' + day + 'T' + hours + ':'
-                        + minutes + ':' + seconds + '.' + milli + 'Z"';
-            }
+                                return '"' + year + '-' + month + '-' + day + 'T' + hours + ':'
+                                        + minutes + ':' + seconds + '.' + milli + 'Z"';
+                        }
 
-            if (o.constructor === Array) {
-                var ret = [];
-                for ( var i = 0; i < o.length; i++)
-                    ret.push(this.encode(o[i]) || "null");
+                        if (o.constructor === Array) {
+                                var ret = [];
+                                for ( var i = 0; i < o.length; i++)
+                                        ret.push(this.encode(o[i]) || "null");
 
-                return "[" + ret.join(",") + "]";
-            }
+                                return "[" + ret.join(",") + "]";
+                        }
 
-            var pairs = [];
-            for ( var k in o) {
-                var name;
-                var type = typeof k;
+                        var pairs = [];
+                        for ( var k in o) {
+                                var name;
+                                var type = typeof k;
 
-                if (type == "number")
-                    name = '"' + k + '"';
-                else if (type == "string")
-                    name = this.quoteString(k);
-                else
-                    continue; // skip non-string or number keys
+                                if (type == "number")
+                                        name = '"' + k + '"';
+                                else if (type == "string")
+                                        name = this.quoteString(k);
+                                else
+                                        continue; // skip non-string or number keys
 
-                if (typeof o[k] == "function")
-                    continue; // skip pairs where the value is a function.
+                                if (typeof o[k] == "function")
+                                        continue; // skip pairs where the value is a function.
 
-                var val = this.encode(o[k]);
+                                var val = this.encode(o[k]);
 
-                pairs.push(name + ":" + val);
-            }
+                                pairs.push(name + ":" + val);
+                        }
 
-            return "{" + pairs.join(", ") + "}";
-        }
-    },
+                        return "{" + pairs.join(", ") + "}";
+                }
+        },
 
-    /**
-     * jQuery.JSON.decode(src) Evaluates a given piece of json source.
-     */
-    decode: function(src) {
-        if (typeof (JSON) == 'object' && JSON.parse)
-            return JSON.parse(src);
-        return eval("(" + src + ")");
-    },
+        /**
+         * jQuery.JSON.decode(src) Evaluates a given piece of json source.
+         */
+decode: function(src) {
+                if (typeof (JSON) == 'object' && JSON.parse)
+                        return JSON.parse(src);
+                return eval("(" + src + ")");
+        },
 
-    /**
-     * jQuery.JSON.decodeSecure(src) Evals JSON in a way that is *more* secure.
-     */
-    decodeSecure: function(src) {
-        if (typeof (JSON) == 'object' && JSON.parse)
-            return JSON.parse(src);
+        /**
+         * jQuery.JSON.decodeSecure(src) Evals JSON in a way that is *more* secure.
+         */
+decodeSecure: function(src) {
+                      if (typeof (JSON) == 'object' && JSON.parse)
+                              return JSON.parse(src);
 
-        var filtered = src;
-        filtered = filtered.replace(/\\["\\\/bfnrtu]/g, '@');
-        filtered = filtered
-                .replace(
-                        /"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g,
-                        ']');
-        filtered = filtered.replace(/(?:^|:|,)(?:\s*\[)+/g, '');
+                      var filtered = src;
+                      filtered = filtered.replace(/\\["\\\/bfnrtu]/g, '@');
+                      filtered = filtered
+                              .replace(
+                                              /"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g,
+                                              ']');
+                      filtered = filtered.replace(/(?:^|:|,)(?:\s*\[)+/g, '');
 
-        if (/^[\],:{}\s]*$/.test(filtered))
-            return eval("(" + src + ")");
-        else
-            throw new SyntaxError("Error parsing JSON, source is not valid.");
-    },
+                      if (/^[\],:{}\s]*$/.test(filtered))
+                              return eval("(" + src + ")");
+                      else
+                              throw new SyntaxError("Error parsing JSON, source is not valid.");
+              },
 
-    /**
-     * jQuery.JSON.quoteString(string) Returns a string-repr of a string, escaping
-     * quotes intelligently. Mostly a support function for JSON.encode.
-     * 
-     * Examples: >>> jQuery.JSON.quoteString("apple") "apple"
-     * 
-     * >>> jQuery.JSON.quoteString('"Where are we going?", she asked.') "\"Where
-     * are we going?\", she asked."
-     */
-    quoteString: function(string) {
-        if (string.match(this._escapeable)) {
-            return '"' + string.replace(this._escapeable, function(a) {
-                var c = this._meta[a];
-                if (typeof c === 'string')
-                    return c;
-                c = a.charCodeAt();
-                return '\\u00' + Math.floor(c / 16).toString(16)
-                        + (c % 16).toString(16);
-            }) + '"';
-        }
-        return '"' + string + '"';
-    },
+              /**
+               * jQuery.JSON.quoteString(string) Returns a string-repr of a string, escaping
+               * quotes intelligently. Mostly a support function for JSON.encode.
+               * 
+               * Examples: >>> jQuery.JSON.quoteString("apple") "apple"
+               * 
+               * >>> jQuery.JSON.quoteString('"Where are we going?", she asked.') "\"Where
+               * are we going?\", she asked."
+               */
+quoteString: function(string) {
+                     if (string.match(this._escapeable)) {
+                             return '"' + string.replace(this._escapeable, function(a) {
+                                             var c = this._meta[a];
+                                             if (typeof c === 'string')
+                                             return c;
+                                             c = a.charCodeAt();
+                                             return '\\u00' + Math.floor(c / 16).toString(16)
+                                             + (c % 16).toString(16);
+                                             }) + '"';
+                     }
+                     return '"' + string + '"';
+             },
 
-    _escapeable: /["\\\x00-\x1f\x7f-\x9f]/g,
+_escapeable: /["\\\x00-\x1f\x7f-\x9f]/g,
 
-    _meta: {
-        '\b': '\\b',
-        '\t': '\\t',
-        '\n': '\\n',
-        '\f': '\\f',
-        '\r': '\\r',
-        '"': '\\"',
-        '\\': '\\\\'
-    }
-};
+              _meta: {
+                      '\b': '\\b',
+                      '\t': '\\t',
+                      '\n': '\\n',
+                      '\f': '\\f',
+                      '\r': '\\r',
+                      '"': '\\"',
+                      '\\': '\\\\'
+              }
+        };
 
-/**
-* jQuery.UI.iPad plugin
-* Copyright (c) 2010 Stephen von Takach
-* licensed under MIT.
-* Date: 27/8/2010
-*
-* http://code.google.com/p/jquery-ui-for-ipad-and-iphone/
-*/
+        /**
+         * jQuery.UI.iPad plugin
+         * Copyright (c) 2010 Stephen von Takach
+         * licensed under MIT.
+         * Date: 27/8/2010
+         *
+         * http://code.google.com/p/jquery-ui-for-ipad-and-iphone/
+         */
 
 
-$(function() {
-	//
-	// Extend jQuery feature detection
-	//
-	$.extend($.support, {
-		touch: typeof Touch == "object"
-	});
-	
-	//
-	// Hook up touch events
-	//
-	$.fn.addTouch = function()
-	{
-		if ($.support.touch) {
-			this.each(function(i,el){
-				el.addEventListener("touchstart", iPadTouchHandler, false);
-				el.addEventListener("touchmove", iPadTouchHandler, false);
-				el.addEventListener("touchend", iPadTouchHandler, false);
-				el.addEventListener("touchcancel", iPadTouchHandler, false);
-			});
-		}
+        $(function() {
+                        //
+                        // Extend jQuery feature detection
+                        //
+                        $.extend($.support, {
+touch: typeof Touch == "object"
+});
 
-		return this;
-	}
+                        //
+                        // Hook up touch events
+                        //
+                        $.fn.addTouch = function()
+                        {
+                        if ($.support.touch) {
+                        this.each(function(i,el){
+                                el.addEventListener("touchstart", iPadTouchHandler, false);
+                                el.addEventListener("touchmove", iPadTouchHandler, false);
+                                el.addEventListener("touchend", iPadTouchHandler, false);
+                                el.addEventListener("touchcancel", iPadTouchHandler, false);
+                                });
+                        }
+
+                        return this;
+                        }
 });
 
 
@@ -265,7 +265,7 @@ var tapValid = false;			// Are we still in the .6 second window where a double t
 var tapTimeout = null;			// The timeout reference
 
 function cancelTap() {
-	tapValid = false;
+        tapValid = false;
 }
 
 
@@ -276,59 +276,59 @@ var cancelMouseUp = false;		// prevents a click from occuring as we want the con
 
 
 function cancelHold() {
-	if (rightClickPending) {
-		window.clearTimeout(holdTimeout);
-		rightClickPending = false;
-		rightClickEvent = null;
-	}
+        if (rightClickPending) {
+                window.clearTimeout(holdTimeout);
+                rightClickPending = false;
+                rightClickEvent = null;
+        }
 }
 
-function startHold(event) {
-	if (rightClickPending)
-		return;
+        function startHold(event) {
+                if (rightClickPending)
+                        return;
 
-	rightClickPending = true; // We could be performing a right click
-	rightClickEvent = (event.changedTouches)[0];
-	holdTimeout = window.setTimeout("doRightClick();", 800);
-}
+                rightClickPending = true; // We could be performing a right click
+                rightClickEvent = (event.changedTouches)[0];
+                holdTimeout = window.setTimeout("doRightClick();", 800);
+        }
 
 
 function doRightClick() {
-	rightClickPending = false;
+        rightClickPending = false;
 
-	//
-	// We need to mouse up (as we were down)
-	//
-	var first = rightClickEvent,
-		simulatedEvent = document.createEvent("MouseEvent");
-	simulatedEvent.initMouseEvent("mouseup", true, true, window, 1, first.screenX, first.screenY, first.clientX, first.clientY,
-			false, false, false, false, 0, null);
-	first.target.dispatchEvent(simulatedEvent);
+        //
+        // We need to mouse up (as we were down)
+        //
+        var first = rightClickEvent,
+            simulatedEvent = document.createEvent("MouseEvent");
+        simulatedEvent.initMouseEvent("mouseup", true, true, window, 1, first.screenX, first.screenY, first.clientX, first.clientY,
+                        false, false, false, false, 0, null);
+        first.target.dispatchEvent(simulatedEvent);
 
-	//
-	// emulate a right click
-	//
-	simulatedEvent = document.createEvent("MouseEvent");
-	simulatedEvent.initMouseEvent("mousedown", true, true, window, 1, first.screenX, first.screenY, first.clientX, first.clientY,
-			false, false, false, false, 2, null);
-	first.target.dispatchEvent(simulatedEvent);
+        //
+        // emulate a right click
+        //
+        simulatedEvent = document.createEvent("MouseEvent");
+        simulatedEvent.initMouseEvent("mousedown", true, true, window, 1, first.screenX, first.screenY, first.clientX, first.clientY,
+                        false, false, false, false, 2, null);
+        first.target.dispatchEvent(simulatedEvent);
 
-	//
-	// Show a context menu
-	//
-	simulatedEvent = document.createEvent("MouseEvent");
-	simulatedEvent.initMouseEvent("contextmenu", true, true, window, 1, first.screenX + 50, first.screenY + 5, first.clientX + 50, first.clientY + 5,
-                                  false, false, false, false, 2, null);
-	first.target.dispatchEvent(simulatedEvent);
-
-
-	//
-	// Note:: I don't mouse up the right click here however feel free to add if required
-	//
+        //
+        // Show a context menu
+        //
+        simulatedEvent = document.createEvent("MouseEvent");
+        simulatedEvent.initMouseEvent("contextmenu", true, true, window, 1, first.screenX + 50, first.screenY + 5, first.clientX + 50, first.clientY + 5,
+                        false, false, false, false, 2, null);
+        first.target.dispatchEvent(simulatedEvent);
 
 
-	cancelMouseUp = true;
-	rightClickEvent = null; // Release memory
+        //
+        // Note:: I don't mouse up the right click here however feel free to add if required
+        //
+
+
+        cancelMouseUp = true;
+        rightClickEvent = null; // Release memory
 }
 
 
@@ -336,558 +336,557 @@ function doRightClick() {
 // mouse over event then mouse down
 //
 function iPadTouchStart(event) {
-	var touches = event.changedTouches,
-		first = touches[0],
-		type = "mouseover",
-		simulatedEvent = document.createEvent("MouseEvent");
-	//
-	// Mouse over first - I have live events attached on mouse over
-	//
-	simulatedEvent.initMouseEvent(type, true, true, window, 1, first.screenX, first.screenY, first.clientX, first.clientY,
-                            false, false, false, false, 0, null);
-	first.target.dispatchEvent(simulatedEvent);
+        var touches = event.changedTouches,
+            first = touches[0],
+            type = "mouseover",
+            simulatedEvent = document.createEvent("MouseEvent");
+        //
+        // Mouse over first - I have live events attached on mouse over
+        //
+        simulatedEvent.initMouseEvent(type, true, true, window, 1, first.screenX, first.screenY, first.clientX, first.clientY,
+                        false, false, false, false, 0, null);
+        first.target.dispatchEvent(simulatedEvent);
 
-	type = "mousedown";
-	simulatedEvent = document.createEvent("MouseEvent");
+        type = "mousedown";
+        simulatedEvent = document.createEvent("MouseEvent");
 
-	simulatedEvent.initMouseEvent(type, true, true, window, 1, first.screenX, first.screenY, first.clientX, first.clientY,
-                            false, false, false, false, 0, null);
-	first.target.dispatchEvent(simulatedEvent);
+        simulatedEvent.initMouseEvent(type, true, true, window, 1, first.screenX, first.screenY, first.clientX, first.clientY,
+                        false, false, false, false, 0, null);
+        first.target.dispatchEvent(simulatedEvent);
 
 
-	if (!tapValid) {
-		lastTap = first.target;
-		tapValid = true;
-		tapTimeout = window.setTimeout("cancelTap();", 600);
-		startHold(event);
-	}
-	else {
-		window.clearTimeout(tapTimeout);
+        if (!tapValid) {
+                lastTap = first.target;
+                tapValid = true;
+                tapTimeout = window.setTimeout("cancelTap();", 600);
+                startHold(event);
+        }
+        else {
+                window.clearTimeout(tapTimeout);
 
-		//
-		// If a double tap is still a possibility and the elements are the same
-		//	Then perform a double click
-		//
-		if (first.target == lastTap) {
-			lastTap = null;
-			tapValid = false;
+                //
+                // If a double tap is still a possibility and the elements are the same
+                //	Then perform a double click
+                //
+                if (first.target == lastTap) {
+                        lastTap = null;
+                        tapValid = false;
 
-			type = "click";
-			simulatedEvent = document.createEvent("MouseEvent");
+                        type = "click";
+                        simulatedEvent = document.createEvent("MouseEvent");
 
-			simulatedEvent.initMouseEvent(type, true, true, window, 1, first.screenX, first.screenY, first.clientX, first.clientY,
-                         	false, false, false, false, 0/*left*/, null);
-			first.target.dispatchEvent(simulatedEvent);
+                        simulatedEvent.initMouseEvent(type, true, true, window, 1, first.screenX, first.screenY, first.clientX, first.clientY,
+                                        false, false, false, false, 0/*left*/, null);
+                        first.target.dispatchEvent(simulatedEvent);
 
-			type = "dblclick";
-			simulatedEvent = document.createEvent("MouseEvent");
+                        type = "dblclick";
+                        simulatedEvent = document.createEvent("MouseEvent");
 
-			simulatedEvent.initMouseEvent(type, true, true, window, 1, first.screenX, first.screenY, first.clientX, first.clientY,
-                         	false, false, false, false, 0/*left*/, null);
-			first.target.dispatchEvent(simulatedEvent);
-		}
-		else {
-			lastTap = first.target;
-			tapValid = true;
-			tapTimeout = window.setTimeout("cancelTap();", 600);
-			startHold(event);
-		}
-	}
+                        simulatedEvent.initMouseEvent(type, true, true, window, 1, first.screenX, first.screenY, first.clientX, first.clientY,
+                                        false, false, false, false, 0/*left*/, null);
+                        first.target.dispatchEvent(simulatedEvent);
+                }
+                else {
+                        lastTap = first.target;
+                        tapValid = true;
+                        tapTimeout = window.setTimeout("cancelTap();", 600);
+                        startHold(event);
+                }
+        }
 }
 
 function iPadTouchHandler(event) {
-	var type = "",
-		button = 0; /*left*/
+        var type = "",
+            button = 0; /*left*/
 
-    if (event.touches.length > 1)
-		return;
+        if (event.touches.length > 1)
+                return;
 
-	switch (event.type) {
-		case "touchstart":
-			if ($(event.changedTouches[0].target).is("select")) {
-				return;
-			}
-			iPadTouchStart(event); /*We need to trigger two events here to support one touch drag and drop*/
-			event.preventDefault();
-			return false;
-			break;
+        switch (event.type) {
+                case "touchstart":
+                        if ($(event.changedTouches[0].target).is("select")) {
+                                return;
+                        }
+                iPadTouchStart(event); /*We need to trigger two events here to support one touch drag and drop*/
+                event.preventDefault();
+                return false;
+                break;
 
-		case "touchmove":
-			cancelHold();
-			type = "mousemove";
-			event.preventDefault();
-			break;
+                case "touchmove":
+                        cancelHold();
+                type = "mousemove";
+                event.preventDefault();
+                break;
 
-		case "touchend":
-			if (cancelMouseUp) {
-				cancelMouseUp = false;
-				event.preventDefault();
-				return false;
-			}
-			cancelHold();
-			type = "mouseup";
-			break;
+                case "touchend":
+                        if (cancelMouseUp) {
+                                cancelMouseUp = false;
+                                event.preventDefault();
+                                return false;
+                        }
+                cancelHold();
+                type = "mouseup";
+                break;
 
-		default:
-			return;
-	}
+                default:
+                return;
+        }
 
-	var touches = event.changedTouches,
-		first = touches[0],
-		simulatedEvent = document.createEvent("MouseEvent");
+        var touches = event.changedTouches,
+            first = touches[0],
+            simulatedEvent = document.createEvent("MouseEvent");
 
-	simulatedEvent.initMouseEvent(type, true, true, window, 1, first.screenX, first.screenY, first.clientX, first.clientY,
-                            false, false, false, false, button, null);
+        simulatedEvent.initMouseEvent(type, true, true, window, 1, first.screenX, first.screenY, first.clientX, first.clientY,
+                        false, false, false, false, button, null);
 
-	first.target.dispatchEvent(simulatedEvent);
+        first.target.dispatchEvent(simulatedEvent);
 
-	if (type == "mouseup" && tapValid && first.target == lastTap) {	// This actually emulates the ipads default behaviour (which we prevented)
-		simulatedEvent = document.createEvent("MouseEvent");		// This check avoids click being emulated on a double tap
+        if (type == "mouseup" && tapValid && first.target == lastTap) {	// This actually emulates the ipads default behaviour (which we prevented)
+                simulatedEvent = document.createEvent("MouseEvent");		// This check avoids click being emulated on a double tap
 
-		simulatedEvent.initMouseEvent("click", true, true, window, 1, first.screenX, first.screenY, first.clientX, first.clientY,
-                            false, false, false, false, button, null);
+                simulatedEvent.initMouseEvent("click", true, true, window, 1, first.screenX, first.screenY, first.clientX, first.clientY,
+                                false, false, false, false, button, null);
 
-		first.target.dispatchEvent(simulatedEvent);
-	}
+                first.target.dispatchEvent(simulatedEvent);
+        }
 }
 
 /* startupbidder javascript code */
 $(function(){
 
-    var $ = jQuery;
+                var $ = jQuery;
 
-    var Util = function() {
-        var self = {};
-        self.keyCache = {};
-        self.pages = ['loading', 'searchlistings', 'searchusers', 'comments', 'profile', 'listing', 'bids', 'login', 'faq', 'contact', 'disclaimer'];
-        self.objectMapper = {};
-        self.setup = function() {
-            self.createObjectMapper();
-        };
-        self.displayPage = function(page) {
-            var i;
-            var sel;
-            for (i = 0; i < self.pages.length; i++) { // hide all
+                var Util = function() {
+                var self = {};
+                self.keyCache = {};
+                self.pages = ['loading', 'searchlistings', 'searchusers', 'comments', 'profile', 'listing', 'bids', 'login', 'faq', 'contact', 'disclaimer'];
+                self.objectMapper = {};
+                self.setup = function() {
+                self.createObjectMapper();
+                };
+                self.displayPage = function(page) {
+                var i;
+                var sel;
+                for (i = 0; i < self.pages.length; i++) { // hide all
                 sel = '#' + self.pages[i] + 'page';
                 if (self.pages[i] !== page && $(sel).is(':visible')) {
-                    $(sel).hide();
+                $(sel).hide();
                 }
-            }
-            sel = '#' + page + 'page';
-            if (!$(sel).is(':visible')) {
-                if ($('#mainbody').hasClass('body-narrow')) {
-                    $(sel).show();
                 }
-                else {
-                    $(sel).show();
-                }
-            }
-        };
-        self.displayFaq = function() {
-            self.displayPage('faq');
-        };
-        self.displayDisclaimer = function() {
-            self.displayPage('disclaimer');
-        };
-        self.displayContact = function() {
-            self.displayPage('contact');
-        };
-        self.constructNumericDate = function(year, month, day) {
-            var date = '' + year + (month < 10 ? '0' : '') + month + (day < 10 ? '0' : '') + day;
-            return date;
-        };
-        self.numericFromDateObj = function(date) {
-            if (date)
-                return self.constructNumericDate(date.getFullYear(), date.getUTCMonth(), date.getUTCDate());
-        };
-        self.epochToNumericDate = function(epoch) {
-            var date;
-            if (epoch) {
-                date = new Date(epoch);
-                return util.numericFromDateObj(date);
-            }
-        };
-        self.today = function() {
-            if (!self.todayCache) {
-                var today = new Date();
-                var numericDate = self.constructNumericDate(today.getFullYear(), today.getMonth()+1, today.getDate());
-                self.todayCache = numericDate;
-            }
-            return self.todayCache;
-        };
-        self.todayPlusDays = function(days) {
-            var today = new Date();
-            today.setDate(today.getDate() + days);
-            var numericDate = self.numericFromDateObj(today);
-            return numericDate;
-        }
-        self.randomElement = function(array) {
-            return array[Math.floor(Math.random()*array.length)];
-        };
-        self.randomKey = function(name, assocArray) {
-            if (!self.keyCache[name]) { // caching
-                self.keyCache[name] = [];
-                for (var key in assocArray) {
-                    self.keyCache[name].push(key);
-                }
-            }
-            return self.randomElement(self.keyCache[name]);
-        }
-        self.ucFirst = function(string) {
-            return string.charAt(0).toUpperCase() + string.slice(1);
-        };
-        self.formatDate = function(yyyymmdd) {
-            var year  = yyyymmdd.substr(0,4);
-            var month = yyyymmdd.substr(4,2);
-            var day   = yyyymmdd.substr(6,2);
-            return year + '-' + month + '-' + day;
-        };
-        self.addCommas = function(num) {
-            var nStr = num + '';
-            var x = nStr.split('.');
-            var x1 = x[0];
-            var x2 = x.length > 1 ? '.' + x[1] : '';
-            var rgx = /(\d+)(\d{3})/;
-            while (rgx.test(x1)) {
-              x1 = x1.replace(rgx, '$1' + ',' + '$2');
-            }
-            return x1 + x2;
-        };
-        self.generateGuid = function() { // rfc4122 compliant
-            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-                var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
-                return v.toString(16);
-            });
-        };
-        self.guessWidth = function() {
-            var width1 = document.documentElement.clientWidth || 1280;
-            var width2 = window.innerWidth || 1280;
-            var width3 = screen.availWidth || 1280;
-            return Math.min(width1, width2, width3);
-        };
-        self.applyResizer = function(resizerCallback) {
-            resizerCallback(self.guessWidth());
-            $(window).resize(function(){
-                resizerCallback(self.guessWidth());
-            });
-        }
-        self.createObjectMapper = function() {
-            self.objectMapper = { 'util': self, 'user': user, 'backend': backend, 'uploader': uploader, 'header': header,
-                'searchListings': searchListings, 'searchUsers': searchUsers,
-                'profiles': profiles, 'listings': listings, 'comments': comments, 'bids': bids };
-        };
-        self.setHash = function(objectName, methodName, argArray) {
-            var methodCall = objectName + '.' + methodName;
-            var argStr = argArray ? $.JSON.encode(argArray) : '';
-            var hashStr = '#' + methodCall + '|' + argStr;
-            location.hash = hashStr;
-        };
-        self.manualCall = function(objectName, methodName, argArray) {
-            var object = self.objectMapper[objectName] || searchListings;
-            var method = methodName || 'doTopSearch';
-            var args = argArray || [];
-            (object[method]).apply(object, args);
-        };
-        self.hashedCall = function(objectName, methodName, argArray) {
-            self.setHash(objectName, methodName, argArray);
-            self.manualCall(objectName, methodName, argArray);
-        };
-        self.hashchange = function() { // use java eval-type statement to respond to history events
-            var hash = location.hash;
-            var methodCall = hash.replace(/^#/,'');
-            var objectStr = methodCall.replace(/\..*$/,'');
-            var methodStr = methodCall.replace(/^.*\./,'').replace(/\|.*$/,'');
-            var methodArgsStr = methodCall.replace(/^.*\|/,'');
-            var methodArgs = methodArgsStr != '' ? $.JSON.decode(methodArgsStr) : [];
-            self.manualCall(objectStr, methodStr, methodArgs);
-        };
-        return self;
-    };
-
-    var User = function() {
-        var self = {};
-        self.profile = null;
-        self.login_url = '/_ah/login?continue=%2F';
-        self.logout_url = '/_ah/logout?continue=%2F';
-        self.setProfile = function(profile) {
-            self.profile = profile;
-            header.displayUser(self);
-        };
-        self.hasVoted = function(listing_id) {
-            return false;
-        };
-        self.login = function() {
-            document.location = self.login_url;
-        };
-        self.logout = function() {
-            document.location = self.logout_url;
-        };
-        self.generateUserSnippetHtml = function(i, userjson) {
-            var days_ago = userjson.days_ago !== undefined ? userjson.days_ago : 0;
-            var resultHtml = '';
-            var evenOdd;
-            if (isFinite(i)) {
-                evenOdd = (i % 2 == 0) ? 'even' : 'odd';
-                resultHtml += '<div class="content-results-list-item content-results-list-item-' + evenOdd + '">';
-                resultHtml += '<div class="content-results-list-item-num">' + userjson.num + '</div>';
-            }
-            else {
-                resultHtml += '<div class="content-results-list-item">';
-                resultHtml += '<div class="content-results-list-item-num"></div>';
-            }
-            if (user.profile && (user.profile.profile_id !== userjson.profile_id)) {
-                resultHtml += '<div class="content-results-list-item-upvote" id="user-search-results-list-item-upvote-' + i + '"></div>';
-            }
-            else {
-                resultHtml += '<div class="content-results-list-item-upvote-filler"></div>';
-            }
-            resultHtml += '<div class="content-results-list-item-title link" id="user-search-results-list-item-name-' + i + '">';
-            resultHtml += userjson.name + (userjson.organization ? ' of '+userjson.organization : '');
-            resultHtml += '</div>';
-            resultHtml += '<div class="content-results-list-item-profile link" id="user-search-results-list-item-profile-' + i + '">';
-            resultHtml += '(' + userjson.username + ')';
-            resultHtml += userjson.status === 'active' ? '' : ' <span class="attention">' + userjson.status + '</span>';
-            resultHtml += ' <span class="attention" id="user-search-results-list-item-message-' + i + '"></span>';
-            resultHtml += '</div>';
-            resultHtml += '<div class="content-results-list-item-clear"></div>';
-            resultHtml += '<div class="content-results-list-item-detail">';
-            resultHtml += '<span id="user-search-results-list-item-votes-' + i + '">' + (userjson.num_votes !== undefined ? userjson.num_votes : 0)  + '</span>' + ' votes | ';
-            resultHtml += '<span class="link" id="user-search-results-list-item-listings-' + i + '">' + userjson.num_listings + ' listing' + (userjson.num_listings!==1?'s':'') + '</span> | ';
-            resultHtml += '<span class="link" id="user-search-results-list-item-bids-' + i + '">' + userjson.num_bids + ' bid' + (userjson.num_bids!==1?'s':'') + '</span> | ';
-            resultHtml += '<span class="link" id="user-search-results-list-item-comments-' + i + '">' + userjson.num_comments + ' comment' + (userjson.num_comments!==1?'s':'') + '</span> | ';
-            resultHtml += (days_ago == 0) ? 'active today' : 'active ' + days_ago + ' day' + (days_ago!==1?'s':'')  + ' ago';
-            resultHtml += ' | ';
-            resultHtml += 'joined ' + util.formatDate(userjson.joined_date);
-            resultHtml += userjson.investor ? ' | <b>investor</b>' : '';
-            resultHtml += '</div>';
-            resultHtml += '</div>';
-            resultHtml += '<div class="content-results-list-item-clear"></div>';
-            return resultHtml;
-       };
-       self.showUserProfile = function(profile_id, index) {
-            var errorCallback = function () { $('#user-search-results-list-item-message-'+index).html('unable to retrieve profile'); };
-            profiles.showProfile(profile_id, errorCallback);
-       };
-       self.showListingsForProfile = function(profile_id, index) {
-            var errorCallback = function () { $('#user-search-results-list-item-message-'+index).html('unable to retrieve listings'); };
-            backend.listingsForProfile(profile_id, searchListings.displayResultsJson, errorCallback);
-       };
-       self.showCommentsForProfile = function(profile_id, index) {
-            var errorCallback = function () { $('#user-search-results-list-item-message-'+index).html('unable to retrieve comments'); };
-            backend.commentsForProfile(profile_id, comments.displayResults, errorCallback);
-       };
-       self.showBidsForProfile = function(profile_id, index) {
-            var errorCallback = function () { $('#user-search-results-list-item-message-'+index).html('unable to retrieve bids'); };
-            backend.bidsForProfile(profile_id, bids.displayResults, errorCallback);
-       };
-       self.showAcceptedBidsForProfile = function(profile_id, index) {
-            var errorCallback = function () { $('#user-search-results-list-item-message-'+index).html('unable to retrieve bids'); };
-            backend.bidsForProfile(profile_id, bids.displayAcceptedResults, errorCallback);
-       };
-       self.showPaidBidsForProfile = function(profile_id, index) {
-            var errorCallback = function () { $('#user-search-results-list-item-message-'+index).html('unable to retrieve bids'); };
-            backend.bidsForProfile(profile_id, bids.displayPaidResults, errorCallback);
-       };
-       self.bindUserSnippet = function(i, userjson) {
-            var upvote_item = document.getElementById('user-search-results-list-item-upvote-'+i);
-            var item_num = i;
-            $('#user-search-results-list-item-name-'+i+',#user-search-results-list-item-profile-'+i).data({index: i, profile_id: userjson.profile_id}).unbind().bind('click', function(){
-                util.hashedCall('user', 'showUserProfile', [$(this).data('profile_id'), $(this).data('index')]);
-            });           
-            $('#user-search-results-list-item-listings-'+i).data({index: i, profile_id: userjson.profile_id}).unbind().bind('click', function(){
-                util.hashedCall('user', 'showListingsForProfile', [ $(this).data('profile_id'), $(this).data('index') ]);
-            }); 
-            $('#user-search-results-list-item-comments-'+i).data({index: i, profile_id: userjson.profile_id}).unbind().bind('click', function(){
-                util.hashedCall('user', 'showCommentsForProfile', [ $(this).data('profile_id'), $(this).data('index') ]);
-            }); 
-            $('#user-search-results-list-item-bids-'+i).data({index: i, profile_id: userjson.profile_id}).unbind().bind('click', function(){
-                util.hashedCall('user', 'showBidsForProfile', [ $(this).data('profile_id'), $(this).data('index') ]);
-            });
-            $(upvote_item).data({index: i, profile_id: userjson.profile_id, num_votes: (userjson.num_votes !== undefined ? userjson.num_votes : 0)});
-            if (!userjson.votable) {
-                $(upvote_item).css('visibility', 'hidden').unbind();
-                return;
-            }
-            $(upvote_item)
-                .css('visibility', 'visible')
-                .unbind()
-                .bind('click', function(){
-                    var index = $(this).data('index');
-                    var profile_id = $(this).data('profile_id');
-                    var num_votes = $(this).data('num_votes');
-                    var list_item = this;
-                    var votes_item = document.getElementById('user-search-results-list-item-votes-'+index);
-                    var callback = function(json) {
-                        if (json) {
-                            var new_votes = num_votes + 1;
-                            $(votes_item).html(new_votes);
-                            $(list_item)
-                                .data('num_votes', new_votes)
-                                .css('visibility', 'hidden')
-                                .unbind(); // don't let them click twice
-                        }
-                    };
-                    var errorCallback = function () { $('#user-search-results-list-item-message-'+i).html('unable to retrieve bids'); };
-                    backend.upvoteUser(profile_id, callback);
-                });
-        };
-       return self;
-    };
-
-    var Uploader = function() {
-        var self = {};
-        self.prepareUploader = function(fieldRoot, fieldName) {
-            var uploader = function() {
-            var callback = function(uploadjson) {
-                var actionUrl = uploadjson[0];
-                var submitCallback = function() {
-                    var loadCallback = function() {
-                        var responseEl = $('#'+fieldRoot+'-iframe').contents().find('body');
-                        var responseHtml;
-                        var responseId;
-                        var downloadUrl;
-                        if (responseEl) {
-                            responseHtml = responseEl.html().replace(/<[^>]*>/g,'');
-                            if (responseHtml) {
-                                responseId = responseHtml.replace(/^{ *"?id"? *: *"/,'').replace(/".*$/,'');
-                            }
-                        }
-                        if (responseId === undefined || responseId.length === 0) {
-                            $('#listing-save-message').attr('class','confirmed').html('error uploading');
+                sel = '#' + page + 'page';
+                if (!$(sel).is(':visible')) {
+                        if ($('#mainbody').hasClass('body-narrow')) {
+                                $(sel).show();
                         }
                         else {
-                            downloadUrl = '/file/download/' + responseId;
-                            $('#listing-save-message').attr('class','confirmed').html('upload successful');
-                            $('#'+fieldRoot+'-link').data(fieldName, responseId).children('a').attr('href', downloadUrl);
-                            $('#'+fieldRoot+'-link').show();
+                                $(sel).show();
                         }
-                        $('#'+fieldRoot+'-file').hide().val('');
-                        $('#'+fieldRoot+'-submit').hide();
-                    };
-                    $('#listing-save-message').attr('class','confirmed').html('uploading...');
-                    $('#'+fieldRoot+'-form').get(0).target = fieldRoot+'-iframe';
-                    $('#'+fieldRoot+'-iframe').unbind().load(loadCallback);
+                }
                 };
-                $('#'+fieldRoot+'-form').attr('action',actionUrl).unbind().submit(submitCallback).show();
-                $('#'+fieldRoot+'-file').show();
-            };
-            var errorCallback = function() {
-                $('#listing-save-message').attr('class', 'attention').html('unable to obtain business plan upload data');
-            };
-            var fileChangeCallback = function() {
-                var filename = $(this).val();
-                if (!/\.doc|\.docx|\.pdf|\.ppt$/.test(filename)) {
-                    alert('Only doc, docx, ppt or pdf files are allowed for upload');
-                    $(this).val('');
-                    $('#'+fieldRoot+'-submit').hide();
+                self.displayFaq = function() {
+                        self.displayPage('faq');
+                };
+                self.displayDisclaimer = function() {
+                        self.displayPage('disclaimer');
+                };
+                self.displayContact = function() {
+                        self.displayPage('contact');
+                };
+                self.constructNumericDate = function(year, month, day) {
+                        var date = '' + year + (month < 10 ? '0' : '') + month + (day < 10 ? '0' : '') + day;
+                        return date;
+                };
+                self.numericFromDateObj = function(date) {
+                        if (date)
+                                return self.constructNumericDate(date.getFullYear(), date.getUTCMonth(), date.getUTCDate());
+                };
+                self.epochToNumericDate = function(epoch) {
+                        var date;
+                        if (epoch) {
+                                date = new Date(epoch);
+                                return util.numericFromDateObj(date);
+                        }
+                };
+                self.today = function() {
+                        if (!self.todayCache) {
+                                var today = new Date();
+                                var numericDate = self.constructNumericDate(today.getFullYear(), today.getMonth()+1, today.getDate());
+                                self.todayCache = numericDate;
+                        }
+                        return self.todayCache;
+                };
+                self.todayPlusDays = function(days) {
+                        var today = new Date();
+                        today.setDate(today.getDate() + days);
+                        var numericDate = self.numericFromDateObj(today);
+                        return numericDate;
                 }
-                else {
-                    $('#'+fieldRoot+'-submit').show();
+                self.randomElement = function(array) {
+                        return array[Math.floor(Math.random()*array.length)];
+                };
+                self.randomKey = function(name, assocArray) {
+                        if (!self.keyCache[name]) { // caching
+                                self.keyCache[name] = [];
+                                for (var key in assocArray) {
+                                        self.keyCache[name].push(key);
+                                }
+                        }
+                        return self.randomElement(self.keyCache[name]);
                 }
-            };
-            $('#'+fieldRoot+'-file').hide().val('').change(fileChangeCallback);
-            $('#'+fieldRoot+'-submit').hide();
-            backend.getUploadUrls(1, callback, errorCallback);
-            };
-            return uploader;
-        };
-        return self;
-    };
+                self.ucFirst = function(string) {
+                        return string.charAt(0).toUpperCase() + string.slice(1);
+                };
+                self.formatDate = function(yyyymmdd) {
+                        var year  = yyyymmdd.substr(0,4);
+                        var month = yyyymmdd.substr(4,2);
+                        var day   = yyyymmdd.substr(6,2);
+                        return year + '-' + month + '-' + day;
+                };
+                self.addCommas = function(num) {
+                        var nStr = num + '';
+                        var x = nStr.split('.');
+                        var x1 = x[0];
+                        var x2 = x.length > 1 ? '.' + x[1] : '';
+                        var rgx = /(\d+)(\d{3})/;
+                        while (rgx.test(x1)) {
+                                x1 = x1.replace(rgx, '$1' + ',' + '$2');
+                        }
+                        return x1 + x2;
+                };
+                self.generateGuid = function() { // rfc4122 compliant
+                        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                                        var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+                                        return v.toString(16);
+                                        });
+                };
+                self.guessWidth = function() {
+                        var width1 = document.documentElement.clientWidth || 1280;
+                        var width2 = window.innerWidth || 1280;
+                        var width3 = screen.availWidth || 1280;
+                        return Math.min(width1, width2, width3);
+                };
+                self.applyResizer = function(resizerCallback) {
+                        resizerCallback(self.guessWidth());
+                        $(window).resize(function(){
+                                        resizerCallback(self.guessWidth());
+                                        });
+                }
+                self.createObjectMapper = function() {
+                        self.objectMapper = { 'util': self, 'user': user, 'backend': backend, 'uploader': uploader, 'header': header,
+                                'searchListings': searchListings, 'searchUsers': searchUsers,
+                                'profiles': profiles, 'listings': listings, 'comments': comments, 'bids': bids };
+                };
+                self.setHash = function(objectName, methodName, argArray) {
+                        var methodCall = objectName + '.' + methodName;
+                        var argStr = argArray ? $.JSON.encode(argArray) : '';
+                        var hashStr = '#' + methodCall + '|' + argStr;
+                        location.hash = hashStr;
+                };
+                self.manualCall = function(objectName, methodName, argArray) {
+                        var object = self.objectMapper[objectName] || searchListings;
+                        var method = methodName || 'doTopSearch';
+                        var args = argArray || [];
+                        (object[method]).apply(object, args);
+                };
+                self.hashedCall = function(objectName, methodName, argArray) {
+                        self.setHash(objectName, methodName, argArray);
+                        self.manualCall(objectName, methodName, argArray);
+                };
+                self.hashchange = function() { // use java eval-type statement to respond to history events
+                        var hash = location.hash;
+                        var methodCall = hash.replace(/^#/,'');
+                        var objectStr = methodCall.replace(/\..*$/,'');
+                        var methodStr = methodCall.replace(/^.*\./,'').replace(/\|.*$/,'');
+                        var methodArgsStr = methodCall.replace(/^.*\|/,'');
+                        var methodArgs = methodArgsStr != '' ? $.JSON.decode(methodArgsStr) : [];
+                        self.manualCall(objectStr, methodStr, methodArgs);
+                };
+                return self;
+                };
 
-    var Header = function() {
-        var self = {};
-        self.setup = function() {
-            $('#header-logo,#header-title-link').unbind().bind('click', function(){
-                util.hashedCall('searchListings', 'doSearch');
-            });
-            $('#header-menu-command-login').unbind().bind('click', function(){
-                user.login();
-            });
-            $('#header-menu-command-logout').unbind().bind('click', function(){
-                user.logout();
-            });
-            $('#header-menu-bar-submit').unbind().bind('click', function(){
-                util.hashedCall('listings', 'newListing');
-            });
-            $('#header-menu-bar-top').unbind().bind('click', function(){
-                util.hashedCall('searchListings', 'doTopSearch');
-            });
-            $('#header-menu-bar-valuation').unbind().bind('click', function(){
-                util.hashedCall('searchListings', 'doValuationSearch');
-            });
-            $('#header-menu-bar-active').unbind().bind('click', function(){
-                util.hashedCall('searchListings', 'doActiveSearch');
-            });
-            $('#header-menu-bar-popular').unbind().bind('click', function(){
-                util.hashedCall('searchListings', 'doPopularSearch');
-            });
-            $('#header-menu-bar-discussed').unbind().bind('click', function(){
-                util.hashedCall('searchListings', 'doDiscussedSearch');
-            });
-            $('#header-menu-bar-latest').unbind().bind('click', function(){
-                util.hashedCall('searchListings', 'doLatestSearch');
-            });
-            $('#header-menu-bar-top-users').unbind().bind('click', function(){
-                util.hashedCall('searchUsers', 'doTopSearch');
-            });
-            $('#footer-menu-bar-faq').unbind().bind('click', function(){
-                util.hashedCall('util', 'displayFaq');
-            });
-            $('#footer-menu-bar-disclaimer').unbind().bind('click', function(){
-                util.hashedCall('util', 'displayDisclaimer');
-            });
-            $('#footer-menu-bar-contact').unbind().bind('click', function(){
-                util.hashedCall('util', 'displayContact');
-            });
-            $('#faq-contact').unbind().bind('click', function(){
-                util.hashedCall('util', 'displayContact');
-            });
-        };
-        self.showHeaderProfile = function(profile_id) {
-            var errorCallback = function () { $('#header-menu-message').html('unable to retrieve user'); };
-            profiles.showProfile(profile_id, errorCallback);
-        };
-        self.displayUser = function(userobj) {
-            if (userobj.profile && userobj.logout_url) {
-                $('#header-menu-name-login').hide();
-                $('#header-menu-name-username').html(userobj.profile.username).data('profile_id',userobj.profile.profile_id).show().unbind().bind('click', function(){
-                    util.hashedCall('header', 'showHeaderProfile', [$(this).data('profile_id')]);
-                });
-                $('#header-menu-command-login').hide();
-                $('#header-menu-command-logout').show();
-                $('#header-menu-command-logout').data('logout_url',userobj.logout_url).show().unbind().bind('click', function(){
-                    var errorCallback = function () { $('#header-menu-message').html('unable to retrieve user'); };
-                    userobj.logout($(this).data('logout_url'), errorCallback);
-                });
-                $('#header-menu-bar-submit-spacer').show();
-                $('#header-menu-bar-submit').show();
-            }
-            else {
-                $('#header-menu-name-login').show();
-                $('#header-menu-name-username').html(null).hide();
-                $('#header-menu-command-login').show();
-                $('#header-menu-command-logout').hide();
-                $('#header-menu-bar-submit-spacer').hide();
-                $('#header-menu-bar-submit').hide();
-            }
-        };
-        self.narrowClasses = {
-            '#mainbody': 'body-narrow',
-            '#header': 'header-narrow',
-            '#header-logo': 'header-logo-narrow',
-            '#header-title': 'header-title-narrow',
-            '#header-menu-bar': 'header-menu-bar-narrow',
-            '#header-menu-name': 'header-menu-name-narrow',
-            '#header-menu-command': 'header-menu-command-narrow',
-            '#searchlistingspage': 'content-narrow',
-            '#searchuserspage': 'content-narrow',
-            '#commentspage': 'content-narrow',
-            '#profilepage': 'content-narrow',
-            '#listingpage': 'content-narrow',
-            '#bidspage': 'content-narrow',
-            '#loginpage': 'content-narrow',
-            '#faqpage': 'content-narrow',
-            '#content-stats' : 'content-stats-narrow',
+                var User = function() {
+                        var self = {};
+                        self.profile = null;
+                        self.login_url = '/_ah/login?continue=%2F';
+                        self.logout_url = '/_ah/logout?continue=%2F';
+                        self.setProfile = function(profile) {
+                                self.profile = profile;
+                                header.displayUser(self);
+                        };
+                        self.hasVoted = function(listing_id) {
+                                return false;
+                        };
+                        self.login = function() {
+                                document.location = self.login_url;
+                        };
+                        self.logout = function() {
+                                document.location = self.logout_url;
+                        };
+                        self.generateUserSnippetHtml = function(i, userjson) {
+                                var days_ago = userjson.days_ago !== undefined ? userjson.days_ago : 0;
+                                var resultHtml = '';
+                                var evenOdd;
+                                if (isFinite(i)) {
+                                        evenOdd = (i % 2 == 0) ? 'even' : 'odd';
+                                        resultHtml += '<div class="content-results-list-item content-results-list-item-' + evenOdd + '">';
+                                        resultHtml += '<div class="content-results-list-item-num">' + userjson.num + '</div>';
+                                }
+                                else {
+                                        resultHtml += '<div class="content-results-list-item">';
+                                        resultHtml += '<div class="content-results-list-item-num"></div>';
+                                }
+                                if (user.profile && (user.profile.profile_id !== userjson.profile_id)) {
+                                        resultHtml += '<div class="content-results-list-item-upvote" id="user-search-results-list-item-upvote-' + i + '"></div>';
+                                }
+                                else {
+                                        resultHtml += '<div class="content-results-list-item-upvote-filler"></div>';
+                                }
+                                resultHtml += '<div class="content-results-list-item-title link" id="user-search-results-list-item-name-' + i + '">';
+                                resultHtml += userjson.name + (userjson.organization ? ' of '+userjson.organization : '');
+                                resultHtml += '</div>';
+                                resultHtml += '<div class="content-results-list-item-profile link" id="user-search-results-list-item-profile-' + i + '">';
+                                resultHtml += '(' + userjson.username + ')';
+                                resultHtml += userjson.status === 'active' ? '' : ' <span class="attention">' + userjson.status + '</span>';
+                                resultHtml += ' <span class="attention" id="user-search-results-list-item-message-' + i + '"></span>';
+                                resultHtml += '</div>';
+                                resultHtml += '<div class="content-results-list-item-clear"></div>';
+                                resultHtml += '<div class="content-results-list-item-detail">';
+                                resultHtml += '<span id="user-search-results-list-item-votes-' + i + '">' + (userjson.num_votes !== undefined ? userjson.num_votes : 0)  + '</span>' + ' votes | ';
+                                resultHtml += '<span class="link" id="user-search-results-list-item-listings-' + i + '">' + userjson.num_listings + ' listing' + (userjson.num_listings!==1?'s':'') + '</span> | ';
+                                resultHtml += '<span class="link" id="user-search-results-list-item-bids-' + i + '">' + userjson.num_bids + ' bid' + (userjson.num_bids!==1?'s':'') + '</span> | ';
+                                resultHtml += '<span class="link" id="user-search-results-list-item-comments-' + i + '">' + userjson.num_comments + ' comment' + (userjson.num_comments!==1?'s':'') + '</span> | ';
+                                resultHtml += (days_ago == 0) ? 'active today' : 'active ' + days_ago + ' day' + (days_ago!==1?'s':'')  + ' ago';
+                                resultHtml += ' | ';
+                                resultHtml += 'joined ' + util.formatDate(userjson.joined_date);
+                                resultHtml += userjson.investor ? ' | <b>investor</b>' : '';
+                                resultHtml += '</div>';
+                                resultHtml += '</div>';
+                                resultHtml += '<div class="content-results-list-item-clear"></div>';
+                                return resultHtml;
+                        };
+                        self.showUserProfile = function(profile_id, index) {
+                                var errorCallback = function () { $('#user-search-results-list-item-message-'+index).html('unable to retrieve profile'); };
+                                profiles.showProfile(profile_id, errorCallback);
+                        };
+                        self.showListingsForProfile = function(profile_id, index) {
+                                var errorCallback = function () { $('#user-search-results-list-item-message-'+index).html('unable to retrieve listings'); };
+                                backend.listingsForProfile(profile_id, searchListings.displayResultsJson, errorCallback);
+                        };
+                        self.showCommentsForProfile = function(profile_id, index) {
+                                var errorCallback = function () { $('#user-search-results-list-item-message-'+index).html('unable to retrieve comments'); };
+                                backend.commentsForProfile(profile_id, comments.displayResults, errorCallback);
+                        };
+                        self.showBidsForProfile = function(profile_id, index) {
+                                var errorCallback = function () { $('#user-search-results-list-item-message-'+index).html('unable to retrieve bids'); };
+                                backend.bidsForProfile(profile_id, bids.displayResults, errorCallback);
+                        };
+                        self.showAcceptedBidsForProfile = function(profile_id, index) {
+                                var errorCallback = function () { $('#user-search-results-list-item-message-'+index).html('unable to retrieve bids'); };
+                                backend.bidsForProfile(profile_id, bids.displayAcceptedResults, errorCallback);
+                        };
+                        self.showPaidBidsForProfile = function(profile_id, index) {
+                                var errorCallback = function () { $('#user-search-results-list-item-message-'+index).html('unable to retrieve bids'); };
+                                backend.bidsForProfile(profile_id, bids.displayPaidResults, errorCallback);
+                        };
+                        self.bindUserSnippet = function(i, userjson) {
+                                var upvote_item = document.getElementById('user-search-results-list-item-upvote-'+i);
+                                var item_num = i;
+                                $('#user-search-results-list-item-name-'+i+',#user-search-results-list-item-profile-'+i).data({index: i, profile_id: userjson.profile_id}).unbind().bind('click', function(){
+                                                util.hashedCall('user', 'showUserProfile', [$(this).data('profile_id'), $(this).data('index')]);
+                                                });           
+                                $('#user-search-results-list-item-listings-'+i).data({index: i, profile_id: userjson.profile_id}).unbind().bind('click', function(){
+                                                util.hashedCall('user', 'showListingsForProfile', [ $(this).data('profile_id'), $(this).data('index') ]);
+                                                }); 
+                                $('#user-search-results-list-item-comments-'+i).data({index: i, profile_id: userjson.profile_id}).unbind().bind('click', function(){
+                                                util.hashedCall('user', 'showCommentsForProfile', [ $(this).data('profile_id'), $(this).data('index') ]);
+                                                }); 
+                                $('#user-search-results-list-item-bids-'+i).data({index: i, profile_id: userjson.profile_id}).unbind().bind('click', function(){
+                                                util.hashedCall('user', 'showBidsForProfile', [ $(this).data('profile_id'), $(this).data('index') ]);
+                                                });
+                                $(upvote_item).data({index: i, profile_id: userjson.profile_id, num_votes: (userjson.num_votes !== undefined ? userjson.num_votes : 0)});
+                                if (!userjson.votable) {
+                                        $(upvote_item).css('visibility', 'hidden').unbind();
+                                        return;
+                                }
+                                $(upvote_item)
+                                        .css('visibility', 'visible')
+                                        .unbind()
+                                        .bind('click', function(){
+                                                        var index = $(this).data('index');
+                                                        var profile_id = $(this).data('profile_id');
+                                                        var num_votes = $(this).data('num_votes');
+                                                        var list_item = this;
+                                                        var votes_item = document.getElementById('user-search-results-list-item-votes-'+index);
+                                                        var callback = function(json) {
+                                                        if (json) {
+                                                        var new_votes = num_votes + 1;
+                                                        $(votes_item).html(new_votes);
+                                                        $(list_item)
+                                                        .data('num_votes', new_votes)
+                                                        .css('visibility', 'hidden')
+                                                        .unbind(); // don't let them click twice
+                                                        }
+                                                        };
+                                                        var errorCallback = function () { $('#user-search-results-list-item-message-'+i).html('unable to retrieve bids'); };
+                                                        backend.upvoteUser(profile_id, callback);
+                                                        });
+                        };
+                        return self;
+                };
+
+                var Uploader = function() {
+                        var self = {};
+                        self.prepareUploader = function(fieldRoot, fieldName) {
+                                var uploader = function() {
+                                        var callback = function(uploadjson) {
+                                                var actionUrl = uploadjson[0];
+                                                var submitCallback = function() {
+                                                        var loadCallback = function() {
+                                                                var responseEl = $('#'+fieldRoot+'-iframe').contents().find('body');
+                                                                var responseHtml;
+                                                                var responseId;
+                                                                var downloadUrl;
+                                                                if (responseEl) {
+                                                                        responseHtml = responseEl.html().replace(/<[^>]*>/g,'');
+                                                                        if (responseHtml) {
+                                                                                responseId = responseHtml.replace(/^{ *"?id"? *: *"/,'').replace(/".*$/,'');
+                                                                                }
+                                                                        }
+                                                                        if (responseId === undefined || responseId.length === 0) {
+                                                                                $('#listing-save-message').attr('class','confirmed').html('error uploading');
+                                                                        }
+                                                                        else {
+                                                                                downloadUrl = '/file/download/' + responseId;
+                                                                                $('#listing-save-message').attr('class','confirmed').html('upload successful');
+                                                                                $('#'+fieldRoot+'-link').data(fieldName, responseId).children('a').attr('href', downloadUrl);
+                                                                                $('#'+fieldRoot+'-link').show();
+                                                                        }
+                                                                        $('#'+fieldRoot+'-file').hide().val('');
+                                                                        $('#'+fieldRoot+'-submit').hide();
+                                                                };
+                                                                $('#listing-save-message').attr('class','confirmed').html('uploading...');
+                                                                $('#'+fieldRoot+'-form').get(0).target = fieldRoot+'-iframe';
+                                                                $('#'+fieldRoot+'-iframe').unbind().load(loadCallback);
+                                                        };
+                                                        $('#'+fieldRoot+'-form').attr('action',actionUrl).unbind().submit(submitCallback).show();
+                                                        $('#'+fieldRoot+'-file').show();
+                                                };
+                                                var errorCallback = function() {
+                                                        $('#listing-save-message').attr('class', 'attention').html('unable to obtain business plan upload data');
+                                                };
+                                                var fileChangeCallback = function() {
+                                                        var filename = $(this).val();
+                                                        if (!/\.doc|\.docx|\.pdf|\.ppt$/.test(filename)) {
+                                                                alert('Only doc, docx, ppt or pdf files are allowed for upload');
+                                                                $(this).val('');
+                                                                $('#'+fieldRoot+'-submit').hide();
+                                                        }
+                                                        else {
+                                                                $('#'+fieldRoot+'-submit').show();
+                                                        }
+                                                };
+                                                $('#'+fieldRoot+'-file').hide().val('').change(fileChangeCallback);
+                                                $('#'+fieldRoot+'-submit').hide();
+                                                backend.getUploadUrls(1, callback, errorCallback);
+                                        };
+                                        return uploader;
+                                };
+                                return self;
+                        };
+
+                        var Header = function() {
+                                var self = {};
+                                self.setup = function() {
+                                        $('#header-logo,#header-title-link').unbind().bind('click', function(){
+                                                        util.hashedCall('searchListings', 'doSearch');
+                                                        });
+                                        $('#header-menu-command-login').unbind().bind('click', function(){
+                                                        user.login();
+                                                        });
+                                        $('#header-menu-command-logout').unbind().bind('click', function(){
+                                                        user.logout();
+                                                        });
+                                        $('#header-menu-bar-submit').unbind().bind('click', function(){
+                                                        util.hashedCall('listings', 'newListing');
+                                                        });
+                                        $('#header-menu-bar-top').unbind().bind('click', function(){
+                                                        util.hashedCall('searchListings', 'doTopSearch');
+                                                        });
+                                        $('#header-menu-bar-valuation').unbind().bind('click', function(){
+                                                        util.hashedCall('searchListings', 'doValuationSearch');
+                                                        });
+                                        $('#header-menu-bar-active').unbind().bind('click', function(){
+                                                        util.hashedCall('searchListings', 'doActiveSearch');
+                                                        });
+                                        $('#header-menu-bar-popular').unbind().bind('click', function(){
+                                                        util.hashedCall('searchListings', 'doPopularSearch');
+                                                        });
+                                        $('#header-menu-bar-discussed').unbind().bind('click', function(){
+                                                        util.hashedCall('searchListings', 'doDiscussedSearch');
+                                                        });
+                                        $('#header-menu-bar-latest').unbind().bind('click', function(){
+                                                        util.hashedCall('searchListings', 'doLatestSearch');
+                                                        });
+                                        $('#header-menu-bar-top-users').unbind().bind('click', function(){
+                                                        util.hashedCall('searchUsers', 'doTopSearch');
+                                                        });
+                                        $('#footer-menu-bar-faq').unbind().bind('click', function(){
+                                                        util.hashedCall('util', 'displayFaq');
+                                                        });
+                                        $('#footer-menu-bar-disclaimer').unbind().bind('click', function(){
+                                                        util.hashedCall('util', 'displayDisclaimer');
+                                                        });
+                                        $('#footer-menu-bar-contact').unbind().bind('click', function(){
+                                                        util.hashedCall('util', 'displayContact');
+                                                        });
+                                        $('#faq-contact').unbind().bind('click', function(){
+                                                        util.hashedCall('util', 'displayContact');
+                                                        });
+                                };
+                                self.showHeaderProfile = function(profile_id) {
+                                        var errorCallback = function () { $('#header-menu-message').html('unable to retrieve user'); };
+                                        profiles.showProfile(profile_id, errorCallback);
+                                };
+                                self.displayUser = function(userobj) {
+                                        if (userobj.profile && userobj.logout_url) {
+                                                $('#header-menu-name-login').hide();
+                                                $('#header-menu-name-username').html(userobj.profile.username).data('profile_id',userobj.profile.profile_id).show().unbind().bind('click', function(){
+                                                                util.hashedCall('header', 'showHeaderProfile', [$(this).data('profile_id')]);
+                                                                });
+                                                $('#header-menu-command-login').hide();
+                                                $('#header-menu-command-logout').show();
+                                                $('#header-menu-command-logout').data('logout_url',userobj.logout_url).show().unbind().bind('click', function(){
+                                                                var errorCallback = function () { $('#header-menu-message').html('unable to retrieve user'); };
+                                                                userobj.logout($(this).data('logout_url'), errorCallback);
+                                                                });
+                                                $('#header-menu-bar-submit-spacer').show();
+                                                $('#header-menu-bar-submit').show();
+                                        }
+                                        else {
+                                                $('#header-menu-name-login').show();
+                                                $('#header-menu-name-username').html(null).hide();
+                                                $('#header-menu-command-login').show();
+                                                $('#header-menu-command-logout').hide();
+                                                $('#header-menu-bar-submit-spacer').hide();
+                                                $('#header-menu-bar-submit').hide();
+                                        }
+                                };
+                                self.narrowClasses = {
+                                        '#mainbody': 'body-narrow',
+                                        '#header': 'header-narrow',
+                                        '#header-logo': 'header-logo-narrow',
+                                        '#header-title': 'header-title-narrow',
+                                        '#header-menu-bar': 'header-menu-bar-narrow',
+                                        '#header-menu-name': 'header-menu-name-narrow',
+                                        '#header-menu-command': 'header-menu-command-narrow',
+                                        '#searchlistingspage': 'content-narrow',
+                                        '#searchuserspage': 'content-narrow',
+                                        '#commentspage': 'content-narrow',
+                                        '#profilepage': 'content-narrow',
+                                        '#listingpage': 'content-narrow',
+                                        '#bidspage': 'content-narrow',
+                                        '#loginpage': 'content-narrow',
+                                        '#faqpage': 'content-narrow',
             '#footer' : 'footer-narrow',
             '#footer-copyright' : 'footer-copyright-narrow',
             '.content-results': 'content-results-narrow'
@@ -1019,7 +1018,6 @@ $(function(){
                 data.setValue(i, 0, daysAgo +' day' + (daysAgo===1?'':'s') + ' ago');
                 data.setValue(i, 1, values[i]);
             }
-            $('#stats-message').html('');
             google.visualization.events.addListener(self.chart, 'ready', self.showChart);
             self.chart.draw(data, {
                 legend: 'none',
@@ -1027,10 +1025,10 @@ $(function(){
                 height: self.height,
                 hAxis: {
                     textPosition: 'none',
-                    title: 'Days Ago'
+                    title: stats.xaxis
                 },
                 vAxis: {
-                    title: 'Num Bids'
+                    title: stats.yaxis
                 },
                 title: stats.label.replace('Valume','Volume').trim(),
                 titleTextStyle: {
@@ -1040,7 +1038,7 @@ $(function(){
             });
         };
         self.showChart = function() {
-            $('#stats').show();
+            $('#statsbox').show();
         };
         return self;
     };
@@ -1089,14 +1087,13 @@ $(function(){
                 keywords = keywords.replace(/\btype:\w*/g, '').replace(/\s+/g, ' ').trim();
             }
             $('#content-search-keywords').val(keywords);
-            var statsErrorCallback = function () { $('#stats-message').html('unable to retrieve statistics chart');util.displayPage('searchlistings'); };
-            var searchErrorCallback = function () { $('#search-message').html('unable to retrieve search results'); };
             if (!args.profile_id) {
-                    backend.bidStats(statistics.displayStats, statsErrorCallback);
+                backend.bidStats(statistics.displayStats);
             }
             else {
-                    $('#stats').hide();
+                $('#statsbox').hide();
             }
+            var searchErrorCallback = function () { $('#search-message').html('unable to retrieve search results'); };
             backend.searchListings(args.search_type, keywords, args.profile_id, args.start_index, args.max_results, searchListings.displayResultsJson, searchErrorCallback);
         };
         self.displayResultsJson = function(results_json) {
@@ -1125,14 +1122,12 @@ $(function(){
             $('#search-message').html('');
             if (profile) {
                 $('#content-search-box').hide();
-                $('#content-stats').hide();
                 $('#searchlistings-profile-snippet').html(user.generateUserSnippetHtml('search', profile));
                 user.bindUserSnippet('search', profile);
                 $('#searchlistings-profile-header').show();
             }
             else {
                 $('#content-search-box').show();
-                $('#content-stats').show();
                 $('#searchlistings-profile-header').hide();
                 $('#searchlistings-profile-snippet').html('');
             } 
@@ -2427,7 +2422,10 @@ $(function(){
             $.post(url).success(self.userAssignCallback(callback)).error(errorCallback);
         };
         self.bidStats = function(callback, errorCallback) {
-            var url = '/bids/statistics/';
+            if (!errorCallback) {
+                errorCallback = function () { $('#statsbox').hide(); };
+            }
+            var url = '/bids/bid-day-valuation/';
             $.get(url).success(self.userAssignCallback(callback)).error(errorCallback);
 //            var stats = {
 //                    label: "10 Day Bid Volume",
@@ -2833,34 +2831,28 @@ background: linear-gradient(top, #7db9e8 0%,#1e5799 100%); /* W3C */
     float: left;
     font-size: 12px;
 }
-.listing-content-form {
-    float: left;
-    width: 398px;
-    height: 248px;
-    border: 1px solid magenta; 
+.listing-content-form, .listing-content-form-readonly {
+    width: 400px;
 }
-.listing-social-graph {
-    float: left;
-    width: 248px;
-    height: 248px;
-    border: 1px solid blue;
+.listing-content-form-readonly {
+    margin-left: 15px;
 }
 .listing-executive-summary {
-    float: right;
-    width: 100%;
-    margin-left: -650px;
-    height: 300px;
+    width: 50%;
+    min-width: 450px;
+    margin-left: 15px;
+    margin-top: 5px;
 }
 .listing-execsum-content {
-    border: 1px solid red;
-    margin-left: 648px;
     padding: 5px;
 }
-.listing-execsum-multiline {
+.listing-execsum-multiline-readonly, .listing-execsum-multiline-editable {
     margin-top: 10px;
     margin-right: 10px;
     text-align: left;
     font-size: 14px;
+}
+.listing-execsum-multiline-editable {
     overflow-y: auto;
     height: 260px;
 }
@@ -2868,29 +2860,6 @@ background: linear-gradient(top, #7db9e8 0%,#1e5799 100%); /* W3C */
     height: 240px;
     font-size: 12px;
     resize: none;
-}
-.listing-clear {
-    clear: both;
-}
-.listing-financials-chart {
-    margin-top: -50px;
-    float: left;
-    width: 348px;
-    height: 248px;
-    border: 1px solid green;
-}
-.listing-marketing-chart {
-    margin-top: -50px;
-    float: left;
-    width: 348px;
-    height: 248px;
-    border: 1px solid yellow;
-}
-.listing-financials-table {
-    float: left;
-    min-width: 448px;
-    border: 1px solid black;
-    height: 198px;
 }
 .content-form {
     margin-left: 15px;
@@ -3034,53 +3003,6 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
 }
 
 
-/* stats properties */
-.content-stats {
-    position: absolute;
-    right: 10px;
-    top: 130px;
-}
-.content-stats-narrow {
-    position: static; 
-}
-.stats {
-    width: 320px;
-    height: 220px;
-    margin-top: 10px;
-    margin-bottom: 10px;
-    border: 2px solid #000;
-    border-radius: 10px;
-    -o-border-radius: 10px;
-    -moz-border-radius: 10px;
-    -webkit-border-radius: 10px;
-}
-.stats-label {
-    width: 320px;
-    height: 14px;
-    margin-top: 4px;
-    top: 0px;
-    left: 0px;
-    text-align: center;
-    font-size: 14px;
-    font-weight: bold;
-}
-.stats-graph-container {
-    width: 320px;
-    height: 200px;
-}
-.stats-graph {
-    width: 280px;
-    height: 180px;
-    margin-left: 25px;
-    margin-right: 25px;
-    margin-top: 5px;
-    margin-bottom: 5px;
-}
-
-/* null display to start with */
-.stats {
-    display: none;
-}
 .page {
     display: none;
 /*
@@ -3164,17 +3086,6 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
         <div class="content-search" id="content-search-box">
             <input id="content-search-keywords" name="keywords" type="text" size="30"/>
             <button id="content-search-submit">search</button>
-        </div>
-        <div class="content-stats" id="content-stats">
-            <div id="stats-message" class="attention"></div>
-            <div id="stats-list">
-                <div id="stats" class="stats vertical-gradient-bg">
-                    <div id="stats-label" class="stats-label"></div>
-                    <div id="stats-graph-container" class="stats-graph-container">
-                        <div id="stats-graph" class="stats-graph"></div>
-                    </div>
-                </div>
-            </div>
         </div>
         <div class="content-results">
             <div id="search-message" class="attention"></div>
@@ -3327,21 +3238,6 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
             <div class="content-form-clear"></div>
         </div>
 
-        <div class="listing-executive-summary">
-            <div class="listing-execsum-content" id="listing-execsum-editable">
-                <p><b>Executive Summary</b></p>
-                <form action="#" method="post" enctype="multipart/form-data">
-                    <p class="listing-execsum-multiline">
-                        <textarea class="listing-execsum-textarea" id="listing-edit-summary" name="executive_summary" rows="10" cols="60" wrap="soft"></textarea>
-                    </p>
-                </form>
-            </div> <!-- ending #listing-execsum-editable-->
-            <div class="listing-execsum-content" id="listing-execsum-readonly">
-                <p><b>Executive Summary</b></p>
-                <p class="listing-execsum-multiline" id="listing-readonly-summary"></p>
-            </div> <!-- ending #listing-execsum-readonly -->
-        </div> <!-- end listing-executive-summary -->
-
         <div class="listing-content-form">
                 <div class="content-form" id="listing-form-editable">
                     <form action="#" method="post" enctype="multipart/form-data">
@@ -3425,7 +3321,7 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
                     </form>
                 </div> <!-- end #listing-form-editable -->
     
-                <div class="listing-content-form" id="listing-form-readonly">
+                <div class="listing-content-form-readonly" id="listing-form-readonly">
                     <div class="content-form-line">
                         Asking Funding <b>$<span id="listing-readonly-suggested-amt"></span></b>
                     </div>
@@ -3448,25 +3344,20 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
     
         </div> <!-- end #listing-content-form -->
 
-        <div class="listing-social-graph">
-            SOCIAL GRAPH
-        </div>
-
-       
-        <div class="listing-clear">
-        </div>
-
-        <div class="listing-financials-chart">
-            FINANCIALS BAR CHART
-        </div>
-
-        <div class="listing-marketing-chart">
-            MARKETING PIE CHART
-        </div>
-
-        <div class="listing-financials-table">
-            FINANCIALS TABLE
-        </div>
+        <div class="listing-executive-summary">
+            <div class="listing-execsum-content" id="listing-execsum-editable">
+                <p><b>Executive Summary</b></p>
+                <form action="#" method="post" enctype="multipart/form-data">
+                    <p class="listing-execsum-multiline-editable">
+                        <textarea class="listing-execsum-textarea" id="listing-edit-summary" name="executive_summary" rows="10" cols="60" wrap="soft"></textarea>
+                    </p>
+                </form>
+            </div> <!-- ending #listing-execsum-editable-->
+            <div class="listing-execsum-content" id="listing-execsum-readonly">
+                <p><b>Executive Summary</b></p>
+                <p class="listing-execsum-multiline-readonly" id="listing-readonly-summary"></p>
+            </div> <!-- ending #listing-execsum-readonly -->
+        </div> <!-- end listing-executive-summary -->
 
     </div> <!-- end #listingpage -->
     
@@ -3841,17 +3732,20 @@ s = (p + b + c + v) / (t + 2)^1.5
              </div>
         </div>
     </div> <!-- end faq -->
- 
-<!-- begin userbox --> 
+
+<!-- begin rightbox --> 
 <style>
-.userbox {
+.rightbox {
     position: absolute;
     right: 10px;
     top: 40px;
+}
+/* begin userbox */
+.userbox {
+    float: right;
     height: 65px;
     width: 250px;
     margin-top: 10px;
-    margin-bottom: 10px;
     padding: 5px 10px 5px 10px;
     border: 2px solid #000;
     border-radius: 10px;
@@ -3861,8 +3755,8 @@ s = (p + b + c + v) / (t + 2)^1.5
     color: white;
     font-size: 12px;
     font-weight: bold;
-    display: none;
     line-height: 16px;
+    display: none;
 }
 .userbox-title {
     line-height: 18px;
@@ -3885,7 +3779,6 @@ s = (p + b + c + v) / (t + 2)^1.5
     text-align: center;
 }
 .userbox-chart {
-    top: 24px;
     position: absolute;
     margin-left: 0px;
     width: 42px;
@@ -3908,7 +3801,44 @@ s = (p + b + c + v) / (t + 2)^1.5
 .userbox-platinum {
     background: #909090;
 }
+/* end userbox styles */
+/* begin stats styles */
+.statsbox {
+    width: 320px;
+    height: 220px;
+    margin-top: 10px;
+    border: 2px solid #000;
+    border-radius: 10px;
+    -o-border-radius: 10px;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+/*    display: none;*/ /* null display to start with */
+}
+.stats-label {
+    width: 320px;
+    height: 16px;
+    margin-top: 4px;
+    top: 0px;
+    left: 0px;
+    text-align: center;
+    font-size: 14px;
+    font-weight: bold;
+}
+.stats-graph {
+    margin: 10px 25px 10px 25px;
+    width: 270px;
+    height: 180px;
+}
+/* end stats styles */
+.clearbox {
+    clear: both;
+}
 </style> 
+<!-- end rightbox style -->
+
+<!-- begin rightbox div -->
+<div class="rightbox">
+    <!-- begin userbox div -->
     <div id="userbox" class="userbox blue-gradient-bg">
         <div><span class="userbox-title" id="userbox-title"></span></div>
         <div class="userbox-medal">
@@ -3931,7 +3861,16 @@ s = (p + b + c + v) / (t + 2)^1.5
         </div>
         <input id="userbox-profile-id" type="hidden" value=""/>
     </div>
-<!-- end userbox -->
+    <!-- end userbox div -->
+    <div class="clearbox"></div>
+    <!-- begin stats-graph div -->
+    <div id="statsbox" class="statsbox vertical-gradient-bg">
+        <div id="stats-label" class="stats-label"></div>
+        <div id="stats-graph" class="stats-graph"></div>
+    </div>
+    <!-- end stats-graph div -->
+</div>
+<!-- end rightbox div -->
 
 </div> <!-- end site -->
 
