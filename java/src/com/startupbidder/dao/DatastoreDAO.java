@@ -332,13 +332,13 @@ public interface DatastoreDAO {
 	 * Deletes bid
 	 * @param bidId
 	 */
-	BidDTO deleteBid(String bidId);
+	BidDTO deleteBid(String loggedInUser, String bidId);
 
 	/**
 	 * Creates bid
 	 * @param bid
 	 */
-	BidDTO createBid(BidDTO bid);
+	BidDTO createBid(String loggedInUser, BidDTO bid);
 
 	/**
 	 * Updates bid

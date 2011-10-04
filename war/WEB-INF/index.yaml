@@ -102,6 +102,13 @@ indexes:
     - name: placed
       direction: desc
 
+- kind: Bid
+  ancestor: no
+  properties:
+    - name: user
+    - name: listing
+    - name: status
+
 - kind: Comment
   ancestor: no
   properties:

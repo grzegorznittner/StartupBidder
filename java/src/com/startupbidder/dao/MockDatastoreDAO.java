@@ -838,7 +838,7 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		}
 	}
 
-	public BidDTO deleteBid(String bidId) {
+	public BidDTO deleteBid(String loggedInUser, String bidId) {
 		return bidCache.remove(bidId);
 	}
 	
@@ -884,7 +884,7 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		}
 	}
 	
-	public BidDTO createBid(BidDTO bid) {
+	public BidDTO createBid(String loggedInUser, BidDTO bid) {
 		bid.createKey("" + bid.hashCode());
 		bid.setPlaced(new Date());
 		bidCache.put(bid.getIdAsString(), bid);

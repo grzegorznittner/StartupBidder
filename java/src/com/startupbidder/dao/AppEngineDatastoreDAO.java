@@ -3,6 +3,7 @@ package com.startupbidder.dao;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -1201,11 +1202,18 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 	}
 
 	@Override
-	public BidDTO deleteBid(String bidId) {
-		BidDTO bid = new BidDTO();
-		bid.setIdFromString(bidId);
+	public BidDTO deleteBid(String loggedInUser, String bidId) {
 		try {
+			BidDTO bid = new BidDTO();
+			bid.setIdFromString(bidId);
 			Entity bidEntity = getDatastoreService().get(bid.getKey());
+			bid = BidDTO.fromEntity(bidEntity);
+			
+			if (!StringUtils.areStringsEqual(loggedInUser, bid.getUser())) {
+				log.log(Level.SEVERE, "User '" + loggedInUser + "' is not the owner of the bid " + bid);
+				return null;
+			}
+
 			getDatastoreService().delete(bid.getKey());
 			return BidDTO.fromEntity(bidEntity);
 		} catch (EntityNotFoundException e) {
@@ -1215,7 +1223,9 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 	}
 
 	@Override
-	public BidDTO createBid(BidDTO bid) {
+	public BidDTO createBid(String loggedInUser, BidDTO bid) {
+		bid.setUser(loggedInUser);
+		
 		ListingDTO listing = new ListingDTO();
 		listing.setIdFromString(bid.getListing());
 		try {
@@ -1224,12 +1234,32 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 			log.log(Level.WARNING, "Bidding for non existing listing with id '" + bid.getListing() + "'!");
 			return null;
 		}
-		bid.setListingOwner(listing.getOwner());
-		bid.setPlaced(new Date());
-		bid.createKey(bid.getListing().substring(0, 3) + bid.getUser().substring(0, 3) + bid.getPlaced().getTime());
 		
-		getDatastoreService().put(bid.toEntity());
-		return bid;
+		Query query = new BidDTO().getQuery();
+		query.addFilter(BidDTO.USER, Query.FilterOperator.EQUAL, loggedInUser);
+		query.addFilter(BidDTO.LISTING, Query.FilterOperator.EQUAL, listing.getIdAsString());
+		query.addFilter(BidDTO.STATUS, Query.FilterOperator.EQUAL, BidDTO.Status.ACTIVE.toString());
+		
+		PreparedQuery pq = getDatastoreService().prepare(query);
+		Iterator<Entity> bidIt = pq.asIterator(FetchOptions.Builder.withLimit(1));
+		if (bidIt.hasNext()) {
+			BidDTO updatedBid = BidDTO.fromEntity(bidIt.next());
+			log.info("Bid already exists: " + updatedBid);
+			updatedBid.setFundType(bid.getFundType());
+			updatedBid.setPercentOfCompany(bid.getPercentOfCompany());
+			updatedBid.setValue(bid.getValue());
+			updatedBid.setValuation(bid.getValuation());
+			log.info("Updating bid: " + updatedBid);
+			getDatastoreService().put(updatedBid.toEntity());
+			return updatedBid;
+		} else {
+			bid.setListingOwner(listing.getOwner());
+			bid.setPlaced(new Date());
+			bid.createKey(bid.getListing().substring(0, 3) + bid.getUser().substring(0, 3) + bid.getPlaced().getTime());
+			log.info("Creating new bid: " + bid);
+			getDatastoreService().put(bid.toEntity());
+			return bid;
+		}
 	}
 
 	@Override
@@ -1246,7 +1276,8 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 			bid.setFundType(newBid.getFundType());
 			bid.setValue(newBid.getValue());
 			bid.setValuation(newBid.getValuation());
-			
+			bid.setPercentOfCompany(newBid.getPercentOfCompany());
+			log.info("Updating bid: " + newBid);
 			getDatastoreService().put(bid.toEntity());
 			return bid;
 		} catch (EntityNotFoundException e) {
@@ -1269,7 +1300,7 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 			}
 			
 			bid.setStatus(BidDTO.Status.ACTIVE);
-
+			log.info("Activating bid: " + bid);
 			getDatastoreService().put(bid.toEntity());
 			return bid;
 		} catch (EntityNotFoundException e) {
@@ -1292,7 +1323,7 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 			}
 			
 			bid.setStatus(BidDTO.Status.WITHDRAWN);
-
+			log.info("Withdrawing bid: " + bid);
 			getDatastoreService().put(bid.toEntity());
 			return bid;
 		} catch (EntityNotFoundException e) {
@@ -1329,7 +1360,7 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 			}
 			
 			bid.setStatus(BidDTO.Status.ACCEPTED);
-
+			log.info("Accepting bid: " + bid);
 			getDatastoreService().put(bid.toEntity());
 			return bid;
 		} catch (EntityNotFoundException e) {
@@ -1364,6 +1395,7 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 			}
 
 			PaidBidDTO paidBid = PaidBidDTO.fromEntity(bidEntity);
+			log.info("Marking bid as active: " + bid);
 			getDatastoreService().put(paidBid.toEntity());
 			return paidBid;
 		} catch (EntityNotFoundException e) {

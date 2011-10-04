@@ -677,9 +677,6 @@ public class ServiceFacade {
 	
 	/**
 	 * Returns list of listing's bids
-	 * @param listingId Listing id
-	 * @param cursor Cursor string
-	 * @return List of bids
 	 */
 	public BidListVO getBidsForListing(UserVO loggedInUser, String listingId, ListPropertiesVO bidProperties) {		
 		BidListVO list = new BidListVO();
@@ -902,7 +899,7 @@ public class ServiceFacade {
 	}
 
 	public BidVO deleteBid(UserVO loggedInUser, String bidId) {
-		BidVO bid = DtoToVoConverter.convert(getDAO().deleteBid(bidId));
+		BidVO bid = DtoToVoConverter.convert(getDAO().deleteBid(loggedInUser.getId(), bidId));
 		scheduleUpdateOfListingStatistics(bid.getListing(), ListingStatsUpdateReason.NONE);
 		return bid;
 	}
@@ -914,8 +911,10 @@ public class ServiceFacade {
 		}
 
 		bid.setStatus(BidDTO.Status.ACTIVE.toString());
-		bid = DtoToVoConverter.convert(getDAO().createBid(VoToDtoConverter.convert(bid)));
-		scheduleUpdateOfUserStatistics(loggedInUser.getId(), UserStatsUpdateReason.NEW_BID);
+		bid = DtoToVoConverter.convert(getDAO().createBid(loggedInUser.getId(), VoToDtoConverter.convert(bid)));
+		if (bid != null) {
+			scheduleUpdateOfUserStatistics(loggedInUser.getId(), UserStatsUpdateReason.NEW_BID);
+		}
 		return bid;
 	}
 
