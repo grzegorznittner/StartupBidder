@@ -7,6 +7,7 @@ import com.startupbidder.dto.BidDTO;
 import com.startupbidder.dto.ListingDTO;
 import com.startupbidder.dto.CommentDTO;
 import com.startupbidder.dto.ListingDocumentDTO;
+import com.startupbidder.dto.PaidBidDTO;
 import com.startupbidder.dto.SystemPropertyDTO;
 import com.startupbidder.dto.VoteDTO;
 import com.startupbidder.dto.UserDTO;

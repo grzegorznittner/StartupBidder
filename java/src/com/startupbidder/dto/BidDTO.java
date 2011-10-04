@@ -14,7 +14,7 @@ import com.google.appengine.api.datastore.Entity;
 @SuppressWarnings("serial")
 public class BidDTO extends AbstractDTO implements Serializable {
 	public enum FundType {SYNDICATE, SOLE_INVESTOR, COMMON, PREFERRED, NOTE};
-	public enum Status { ACTIVE, WITHDRAWN, ACCEPTED, PAID };
+	public enum Status { ACTIVE, WITHDRAWN, ACCEPTED, PAID};
 	
 	public static final String USER = "user";
 	private String user;

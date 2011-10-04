@@ -71,7 +71,7 @@ public class StatisticsFacade {
 		DateMidnight midnight = new DateMidnight();
 		GraphDataVO data = (GraphDataVO)cache.get(GraphType.BID_DAY_VOLUME);
 		// are data created today?
-		if (Days.daysBetween(new DateTime(data.getCreated().getTime()), midnight).isLessThan(Days.ONE)) {
+		if (data != null && Days.daysBetween(new DateTime(data.getCreated().getTime()), midnight).isLessThan(Days.ONE)) {
 			return data;
 		}
 		
@@ -108,7 +108,7 @@ public class StatisticsFacade {
 		DateMidnight midnight = new DateMidnight();
 		GraphDataVO data = (GraphDataVO)cache.get(GraphType.BID_DAY_VALUATION);
 		// are data created today?
-		if (Days.daysBetween(new DateTime(data.getCreated().getTime()), midnight).isLessThan(Days.ONE)) {
+		if (data != null && Days.daysBetween(new DateTime(data.getCreated().getTime()), midnight).isLessThan(Days.ONE)) {
 			return data;
 		}
 		
@@ -135,6 +135,7 @@ public class StatisticsFacade {
 		data.setxAxis("days ago");
 		data.setyAxis("bids valuation");
 		data.setValues(values);
+		data.setCreated(new Date());
 		cache.put(GraphType.BID_DAY_VALUATION, data);
 
 		return data;

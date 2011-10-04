@@ -31,6 +31,8 @@ public class ListingVO {
 	private int suggestedPercentage;
 	@JsonProperty("suggested_val")
 	private int suggestedValuation;
+	@JsonProperty("valuation")
+	private int   valuation;
 	@JsonProperty("median_valuation")
 	private int   medianValuation;
 	@JsonProperty("listing_date")
@@ -116,6 +118,14 @@ public class ListingVO {
 
 	public void setSuggestedValuation(int suggestedValuation) {
 		this.suggestedValuation = suggestedValuation;
+	}
+
+	public int getValuation() {
+		return valuation;
+	}
+
+	public void setValuation(int valuation) {
+		this.valuation = valuation;
 	}
 
 	public int getMedianValuation() {
@@ -251,16 +261,16 @@ public class ListingVO {
 		return "ListingVO [orderNumber=" + orderNumber + ", id=" + id
 				+ ", name=" + name + ", suggestedAmount=" + suggestedAmount
 				+ ", suggestedPercentage=" + suggestedPercentage
-				+ ", suggestedValuation=" + suggestedValuation
-				+ ", medianValuation=" + medianValuation + ", listedOn="
-				+ listedOn + ", closingOn=" + closingOn + ", state=" + state
-				+ ", summary=" + summary + ", owner=" + owner + ", ownerName="
-				+ ownerName + ", numberOfComments=" + numberOfComments
-				+ ", numberOfBids=" + numberOfBids + ", numberOfVotes="
-				+ numberOfVotes + ", votable=" + votable + ", daysAgo="
-				+ daysAgo + ", daysLeft=" + daysLeft + ", buinessPlanId="
-				+ buinessPlanId + ", presentationId=" + presentationId
-				+ ", financialsId=" + financialsId + "]";
+				+ ", suggestedValuation=" + suggestedValuation + ", valuation="
+				+ valuation + ", medianValuation=" + medianValuation
+				+ ", listedOn=" + listedOn + ", closingOn=" + closingOn
+				+ ", state=" + state + ", summary=" + summary + ", owner="
+				+ owner + ", ownerName=" + ownerName + ", numberOfComments="
+				+ numberOfComments + ", numberOfBids=" + numberOfBids
+				+ ", numberOfVotes=" + numberOfVotes + ", votable=" + votable
+				+ ", daysAgo=" + daysAgo + ", daysLeft=" + daysLeft
+				+ ", buinessPlanId=" + buinessPlanId + ", presentationId="
+				+ presentationId + ", financialsId=" + financialsId + "]";
 	}
 
 }

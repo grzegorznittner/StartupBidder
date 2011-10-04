@@ -91,6 +91,14 @@ indexes:
   ancestor: no
   properties:
     - name: listing
+    - name: status
+    - name: valuation
+      direction: desc
+
+- kind: Bid
+  ancestor: no
+  properties:
+    - name: listing
     - name: placed
       direction: desc
 

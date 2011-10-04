@@ -19,6 +19,7 @@ import com.startupbidder.dto.CommentDTO;
 import com.startupbidder.dto.ListingDTO;
 import com.startupbidder.dto.ListingDocumentDTO;
 import com.startupbidder.dto.ListingStatisticsDTO;
+import com.startupbidder.dto.PaidBidDTO;
 import com.startupbidder.dto.SystemPropertyDTO;
 import com.startupbidder.dto.UserDTO;
 import com.startupbidder.dto.UserStatisticsDTO;
@@ -48,6 +49,7 @@ public class MockDatastoreDAO implements DatastoreDAO {
 	public Map<String, VoteDTO> voteCache = new HashMap<String, VoteDTO>();
 	public Map<String, CommentDTO> commentCache = new HashMap<String, CommentDTO>();
 	public Map<String, BidDTO> bidCache = new HashMap<String, BidDTO>();
+	public Map<String, PaidBidDTO> paidBidCache = new HashMap<String, PaidBidDTO>();
 	public Map<String, UserDTO> userCache = new HashMap<String, UserDTO>();
 	public Map<String, SystemPropertyDTO> propCache = new HashMap<String, SystemPropertyDTO>();
 	public Map<String, ListingDocumentDTO> docCache = new HashMap<String, ListingDocumentDTO>();
@@ -752,7 +754,7 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		List<BidDTO> bids = new ArrayList<BidDTO>();
 		for (BidDTO bid : bidCache.values()) {
 			if (StringUtils.areStringsEqual(bid.getListingOwner(), userId)
-					&& (bid.getStatus() == BidDTO.Status.ACCEPTED || bid.getStatus() == BidDTO.Status.PAID)) {
+					&& bid.getStatus() == BidDTO.Status.ACCEPTED) {
 				bids.add(bid);
 			}
 		}
@@ -763,7 +765,7 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		List<BidDTO> bids = new ArrayList<BidDTO>();
 		for (BidDTO bid : bidCache.values()) {
 			if (StringUtils.areStringsEqual(bid.getUser(), userId)
-					&& (bid.getStatus() == BidDTO.Status.ACCEPTED || bid.getStatus() == BidDTO.Status.PAID)) {
+					&& bid.getStatus() == BidDTO.Status.ACCEPTED) {
 				bids.add(bid);
 			}
 		}
@@ -871,11 +873,12 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		}
 	}
 	
-	public BidDTO markBidAsPaid(String loggedInUser, String bidId) {
+	public PaidBidDTO markBidAsPaid(String loggedInUser, String bidId) {
 		if (bidCache.containsKey(bidId)) {
 			BidDTO bid = bidCache.get(bidId);
-			bid.setStatus(BidDTO.Status.PAID);
-			return bid;
+			PaidBidDTO paidBid = PaidBidDTO.fromEntity(bid.toEntity());
+			paidBidCache.put(paidBid.getIdAsString(), paidBid);
+			return paidBid;
 		} else {
 			return null;
 		}
@@ -889,15 +892,20 @@ public class MockDatastoreDAO implements DatastoreDAO {
 	}
 
 	public BidDTO updateBid(String loggedInUser, BidDTO newBid) {
-		if (!bidCache.containsKey(newBid.getIdAsString())) {
-			log.log(Level.WARNING, "Bid '" + newBid.getIdAsString() + "' doesn't exist!");
-			return null;
+		if (newBid.getStatus() != BidDTO.Status.PAID) {
+			if (!bidCache.containsKey(newBid.getIdAsString())) {
+				log.log(Level.WARNING, "Bid '" + newBid.getIdAsString() + "' doesn't exist!");
+				return null;
+			} else {
+				BidDTO bid = bidCache.get(newBid.getIdAsString());
+				bid.setFundType(newBid.getFundType());
+				bid.setValue(newBid.getValue());
+				bid.setValuation(newBid.getValuation());
+				return bid;
+			}
 		} else {
-			BidDTO bid = bidCache.get(newBid.getIdAsString());
-			bid.setFundType(newBid.getFundType());
-			bid.setValue(newBid.getValue());
-			bid.setValuation(newBid.getValuation());
-			return bid;
+			log.info("Bid is marked as paid and cannot be modified");
+			return bidCache.get(newBid.getIdAsString());
 		}
 	}
 	

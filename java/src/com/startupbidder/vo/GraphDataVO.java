@@ -1,19 +1,24 @@
 package com.startupbidder.vo;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Date;
 
 import org.codehaus.jackson.annotate.JsonAutoDetect;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+
+import com.startupbidder.util.DateSerializer;
 
 /**
  * 
  * @author "Grzegorz Nittner" <grzegorz.nittner@gmail.com>
  */
+@SuppressWarnings("serial")
 @JsonAutoDetect(getterVisibility=Visibility.NONE, setterVisibility=Visibility.NONE,
 		fieldVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE)
-public class GraphDataVO {
+public class GraphDataVO implements Serializable {
 	
 	@JsonProperty("type")
 	private String type;
@@ -26,6 +31,7 @@ public class GraphDataVO {
 	@JsonProperty("values")
 	private int[] values;
 	@JsonProperty("created")
+	@JsonSerialize(using=DateSerializer.class)
 	private Date created;
 	
 	public GraphDataVO(String graphType) {

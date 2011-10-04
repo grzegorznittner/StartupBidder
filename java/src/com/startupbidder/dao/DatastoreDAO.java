@@ -7,6 +7,7 @@ import com.startupbidder.dto.CommentDTO;
 import com.startupbidder.dto.ListingDTO;
 import com.startupbidder.dto.ListingDocumentDTO;
 import com.startupbidder.dto.ListingStatisticsDTO;
+import com.startupbidder.dto.PaidBidDTO;
 import com.startupbidder.dto.SystemPropertyDTO;
 import com.startupbidder.dto.UserDTO;
 import com.startupbidder.dto.UserStatisticsDTO;
@@ -365,7 +366,7 @@ public interface DatastoreDAO {
 	/**
 	 * Sets bid status to PAYED 
 	 */
-	BidDTO markBidAsPaid(String loggedInUser, String bidId);
+	PaidBidDTO markBidAsPaid(String loggedInUser, String bidId);
 	
 	/**
 	 * Returns list of bids sorted by post date.

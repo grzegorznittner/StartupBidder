@@ -304,7 +304,8 @@ public class ServiceFacade {
 		listing.setNumberOfBids(listingStats.getNumberOfBids());
 		listing.setNumberOfComments(listingStats.getNumberOfComments());
 		listing.setNumberOfVotes(listingStats.getNumberOfVotes());
-		listing.setMedianValuation((int)listingStats.getValuation());
+		listing.setValuation((int)listingStats.getValuation());
+		listing.setMedianValuation((int)listingStats.getBidValuation());
 		
 		// calculate daysAgo and daysLeft
 		Days daysAgo = Days.daysBetween(new DateTime(listing.getListedOn()), new DateTime());
