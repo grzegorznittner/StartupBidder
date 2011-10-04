@@ -292,6 +292,14 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 	@Override
 	public UserDTO createUser(String userId, String email, String nickname) {
 		UserDTO user = new UserDTO();
+		Query query = user.getQuery();
+		query.addFilter(UserDTO.EMAIL, FilterOperator.EQUAL, email);
+		PreparedQuery pq = getDatastoreService().prepare(query);
+		if (pq.countEntities(FetchOptions.Builder.withDefaults()) > 0) {
+			log.warning("User with email '" + email + "' already exists!");
+			return null;
+		}
+
 		user.createKey(userId);
 		user.setOpenId(userId);
 		user.setNickname(nickname != null ? nickname : "" + userId);

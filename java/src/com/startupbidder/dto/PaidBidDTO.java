@@ -14,7 +14,7 @@ import com.google.appengine.api.datastore.KeyFactory;
  */
 @SuppressWarnings("serial")
 public class PaidBidDTO extends BidDTO implements Serializable {
-	public static final String BID = "bid";
+	public static final String BID = "bid_id";
 	private String bid;
 	
 	public PaidBidDTO() {
@@ -45,7 +45,7 @@ public class PaidBidDTO extends BidDTO implements Serializable {
 		Entity bid = new Entity(this.id);
 		bid.setProperty(FUND_TYPE, getFundType() != null ? getFundType().toString() : FundType.COMMON.toString());
 		bid.setProperty(STATUS, Status.PAID.toString());
-		bid.setProperty(BID, bid);
+		bid.setProperty(BID, this.bid);
 		bid.setProperty(LISTING, getListing());
 		bid.setProperty(LISTING_OWNER, getListingOwner());
 		bid.setProperty(PERCENT_OF_COMPANY, getPercentOfCompany());

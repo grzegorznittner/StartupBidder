@@ -114,7 +114,13 @@ public class ServiceFacade {
 		if (loggedInUser == null) {
 			return null;
 		}
-		UserVO user = DtoToVoConverter.convert(getDAO().getUserByOpenId(loggedInUser.getUserId()));
+		String email = loggedInUser.getEmail();
+		UserVO user = null;
+		if (StringUtils.notEmpty(email)) {
+			user = DtoToVoConverter.convert(getDAO().getUserByOpenId(email));
+		} else {
+			user = DtoToVoConverter.convert(getDAO().getUserByOpenId(loggedInUser.getUserId()));
+		}
 		if (user == null) {
 			return null;
 		}
@@ -142,7 +148,7 @@ public class ServiceFacade {
 	
 	public UserVO createUser(User loggedInUser) {
 		UserVO user = DtoToVoConverter.convert(getDAO().createUser(
-				loggedInUser.getUserId(), loggedInUser.getEmail(), loggedInUser.getNickname()));
+				loggedInUser.getEmail(), loggedInUser.getEmail(), loggedInUser.getNickname()));
 		applyUserStatistics(user, user);
 		return user;
 	}

@@ -193,7 +193,7 @@ public class MockDataBuilder {
 		user.createKey(key);
 		user.setNickname("The One");
 		user.setName("Bruce");
-		user.setEmail("madmax@startupbidder.com");
+		user.setEmail("bruce@startupbidder.com");
 		user.setOpenId(user.getEmail());
 		user.setJoined(new Date(System.currentTimeMillis() - 1 * 24 * 60 * 60 * 1000));
 		user.setStatus(UserDTO.Status.DEACTIVATED);
