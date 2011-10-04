@@ -43,6 +43,7 @@ import com.startupbidder.vo.CommentListVO;
 import com.startupbidder.vo.CommentVO;
 import com.startupbidder.vo.DtoToVoConverter;
 import com.startupbidder.vo.ListPropertiesVO;
+import com.startupbidder.vo.ListingAndUserVO;
 import com.startupbidder.vo.ListingDocumentVO;
 import com.startupbidder.vo.ListingListVO;
 import com.startupbidder.vo.ListingVO;
@@ -818,10 +819,15 @@ public class ServiceFacade {
 		return DtoToVoConverter.convert(getDAO().getComment(commentId));
 	}
 
-	public ListingVO getListing(UserVO loggedInUser, String listingId) {
+	public ListingAndUserVO getListing(UserVO loggedInUser, String listingId) {
 		ListingVO listing = DtoToVoConverter.convert(getDAO().getListing(listingId));
-		computeListingData(loggedInUser, listing);
-		return listing;
+		if (listing != null) {
+			computeListingData(loggedInUser, listing);
+			ListingAndUserVO listingAndUser = new ListingAndUserVO();
+			listingAndUser.setListing(listing);
+			return listingAndUser;
+		}
+		return null;
 	}
 
 	public ListingVO createListing(UserVO loggedInUser, ListingVO listing) {

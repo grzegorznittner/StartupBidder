@@ -12,26 +12,18 @@ import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
  */
 @JsonAutoDetect(getterVisibility=Visibility.NONE, setterVisibility=Visibility.NONE,
 		fieldVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE)
-public class UserListVO extends BaseResultVO {
-	@JsonProperty("users")
-	private List<UserVO> users;
-	@JsonProperty("profile")
-	private UserVO user;
+public class ListingAndUserVO extends BaseResultVO {
+	@JsonProperty("listing")
+	private ListingVO listing;
 
-	public List<UserVO> getUsers() {
-		return users;
+	public ListingVO getListing() {
+		return listing;
 	}
-	public void setUsers(List<UserVO> users) {
-		this.users = users;
-	}
-	public UserVO getUser() {
-		return user;
-	}
-	public void setUser(UserVO user) {
-		this.user = user;
+	public void setListing(ListingVO listing) {
+		this.listing = listing;
 	}
 	@Override
 	public String toString() {
-		return "UserListVO [users=" + users + ", user=" + user + super.toString() + "]";
+		return "ListingAndUserVO [listing=" + listing + super.toString() + "]";
 	}
 }

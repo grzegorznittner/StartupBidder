@@ -39,7 +39,7 @@ public class BaseResultVO {
 	}
 	@Override
 	public String toString() {
-		return "BaseResultVO [loginUrl=" + loginUrl + ", logoutUrl="
-				+ logoutUrl + ", loggedUser=" + loggedUser + "]";
+		return " loginUrl=" + loginUrl + ", logoutUrl="
+				+ logoutUrl + ", loggedUser=" + loggedUser;
 	}
 }

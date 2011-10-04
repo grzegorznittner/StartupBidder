@@ -12,7 +12,6 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import com.startupbidder.vo.ListPropertiesVO;
-import com.startupbidder.vo.ListingListVO;
 import com.startupbidder.vo.ListingVO;
 import com.startupbidder.web.HttpHeaders;
 import com.startupbidder.web.HttpHeadersImpl;
@@ -26,8 +25,7 @@ import com.startupbidder.web.ServiceFacade;
 public class ListingController extends ModelDrivenController {
 	private static final Logger log = Logger.getLogger(ListingController.class.getName());
 	
-	private ListingListVO listings = null;
-	private ListingVO listing = null;
+	private Object model = null;
 	
 	public HttpHeaders executeAction(HttpServletRequest request) throws JsonParseException, JsonMappingException, IOException {
 		if ("GET".equalsIgnoreCase(request.getMethod())) {
@@ -90,13 +88,14 @@ public class ListingController extends ModelDrivenController {
 		log.log(Level.INFO, "Parameters: " + request.getParameterMap());
 		String listingString = request.getParameter("listing");
 		if (!StringUtils.isEmpty(listingString)) {
-			listing = mapper.readValue(listingString, ListingVO.class);
+			ListingVO listing = mapper.readValue(listingString, ListingVO.class);
 			log.log(Level.INFO, "Creating listing: " + listing);
 			listing = ServiceFacade.instance().createListing(getLoggedInUser(), listing);
 			if (listing == null) {
 				log.log(Level.WARNING, "Listing not created!");
 				headers.setStatus(500);
 			}
+			model = listing;
 		} else {
 			log.log(Level.WARNING, "Parameter 'listing' is empty!");
 			headers.setStatus(500);
@@ -114,7 +113,7 @@ public class ListingController extends ModelDrivenController {
 		log.log(Level.INFO, "Parameters: " + request.getParameterMap());
 		String listingString = request.getParameter("listing");
 		if (!StringUtils.isEmpty(listingString)) {
-			listing = mapper.readValue(listingString, ListingVO.class);
+			ListingVO listing = mapper.readValue(listingString, ListingVO.class);
 			log.log(Level.INFO, "Updating listing: " + listing);
 			if (listing.getId() == null) {
 				log.log(Level.WARNING, "Listing id is not provided!");
@@ -125,6 +124,7 @@ public class ListingController extends ModelDrivenController {
 					headers.setStatus(500);
 				}
 			}
+			model = listing;
 		} else {
 			log.log(Level.WARNING, "Parameter 'listing' is empty!");
 			headers.setStatus(500);
@@ -136,49 +136,49 @@ public class ListingController extends ModelDrivenController {
 	// GET /listings/closing
 	private HttpHeaders closing(HttpServletRequest request) {
 		ListPropertiesVO listingProperties = getListProperties(request);
-    	listings = ServiceFacade.instance().getClosingListings(getLoggedInUser(), listingProperties);
+    	model = ServiceFacade.instance().getClosingListings(getLoggedInUser(), listingProperties);
         return new HttpHeadersImpl("valued").disableCaching();
 	}
 
 	// GET /listings/latest
 	private HttpHeaders latest(HttpServletRequest request) {
 		ListPropertiesVO listingProperties = getListProperties(request);
-    	listings = ServiceFacade.instance().getLatestListings(getLoggedInUser(), listingProperties);
+    	model = ServiceFacade.instance().getLatestListings(getLoggedInUser(), listingProperties);
         return new HttpHeadersImpl("valued").disableCaching();
 	}
 
 	// GET /listings/discussed
 	private HttpHeaders discussed(HttpServletRequest request) {
 		ListPropertiesVO listingProperties = getListProperties(request);
-    	listings = ServiceFacade.instance().getMostDiscussedListings(getLoggedInUser(), listingProperties);
+    	model = ServiceFacade.instance().getMostDiscussedListings(getLoggedInUser(), listingProperties);
         return new HttpHeadersImpl("valued").disableCaching();
 	}
 
 	// GET /listings/popular
 	private HttpHeaders popular(HttpServletRequest request) {
 		ListPropertiesVO listingProperties = getListProperties(request);
-    	listings = ServiceFacade.instance().getMostPopularListings(getLoggedInUser(), listingProperties);
+    	model = ServiceFacade.instance().getMostPopularListings(getLoggedInUser(), listingProperties);
         return new HttpHeadersImpl("valued").disableCaching();
 	}
 
 	// GET /listings/valuation
 	private HttpHeaders valuation(HttpServletRequest request) {
 		ListPropertiesVO listingProperties = getListProperties(request);
-    	listings = ServiceFacade.instance().getMostValuedListings(getLoggedInUser(), listingProperties);
+    	model = ServiceFacade.instance().getMostValuedListings(getLoggedInUser(), listingProperties);
         return new HttpHeadersImpl("valued").disableCaching();
 	}
 
 	// GET /listings/top
     private HttpHeaders top(HttpServletRequest request) {
     	ListPropertiesVO listingProperties = getListProperties(request);
-    	listings = ServiceFacade.instance().getTopListings(getLoggedInUser(), listingProperties);
+    	model = ServiceFacade.instance().getTopListings(getLoggedInUser(), listingProperties);
         return new HttpHeadersImpl("top").disableCaching();
     }
 
     // GET /listings/active
     private HttpHeaders active(HttpServletRequest request) {
 		ListPropertiesVO listingProperties = getListProperties(request);
-    	listings = ServiceFacade.instance().getActiveListings(getLoggedInUser(), listingProperties);
+    	model = ServiceFacade.instance().getActiveListings(getLoggedInUser(), listingProperties);
         return new HttpHeadersImpl("active").disableCaching();
     }
 
@@ -187,46 +187,46 @@ public class ListingController extends ModelDrivenController {
     	String userId = getCommandOrParameter(request, 2, "id");
 		ListPropertiesVO listingProperties = getListProperties(request);
 
-    	listings = ServiceFacade.instance().getUserListings(getLoggedInUser(), userId, listingProperties);
+    	model = ServiceFacade.instance().getUserListings(getLoggedInUser(), userId, listingProperties);
         return new HttpHeadersImpl("user").disableCaching();
     }
 
     // GET /listings/up
     private HttpHeaders up(HttpServletRequest request) {
     	String listingId = getCommandOrParameter(request, 2, "id");
-    	listing = ServiceFacade.instance().valueUpListing(getLoggedInUser(), listingId);
+    	model = ServiceFacade.instance().valueUpListing(getLoggedInUser(), listingId);
         return new HttpHeadersImpl("up").disableCaching();
     }
 
     // GET /listings/activate
     private HttpHeaders activate(HttpServletRequest request) {
     	String listingId = getCommandOrParameter(request, 2, "id");
-    	listing = ServiceFacade.instance().activateListing(getLoggedInUser(), listingId);
+    	model = ServiceFacade.instance().activateListing(getLoggedInUser(), listingId);
         return new HttpHeadersImpl("activate").disableCaching();
     }
 
     // GET /listings/withdrawn
     private HttpHeaders withdraw(HttpServletRequest request) {
     	String listingId = getCommandOrParameter(request, 2, "id");
-    	listing = ServiceFacade.instance().withdrawListing(getLoggedInUser(), listingId);
+    	model = ServiceFacade.instance().withdrawListing(getLoggedInUser(), listingId);
         return new HttpHeadersImpl("withdrawn").disableCaching();
     }
 
     // GET /listings/get
     private HttpHeaders get(HttpServletRequest request) {
     	String listingId = getCommandOrParameter(request, 2, "id");
-    	listing = ServiceFacade.instance().getListing(getLoggedInUser(), listingId);
+    	model = ServiceFacade.instance().getListing(getLoggedInUser(), listingId);
         return new HttpHeadersImpl("get").disableCaching();
     }
 
     // GET /listings/
     private HttpHeaders index(HttpServletRequest request) {
     	String listingId = getCommandOrParameter(request, 1, "id");
-    	listing = ServiceFacade.instance().getListing(getLoggedInUser(), listingId);
+    	model = ServiceFacade.instance().getListing(getLoggedInUser(), listingId);
         return new HttpHeadersImpl("index").disableCaching();
     }
 
 	public Object getModel() {
-    	return listings != null ? listings : listing;
+    	return model;
     }
 }
