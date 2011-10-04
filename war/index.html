@@ -1462,8 +1462,9 @@ $(function(){
         self.displayListingSnippetHtml = function(html) {
             $('#listing-snippet').html(html);
         };
-        self.displayListing = function(listing){
+        self.displayListing = function(data){
             $('#listing-save-message').attr('class', 'attention').html('');
+            var listing = data.listing ? data.listing : data;
             var resultsHtml = '';
             var profile = user.profile;
             var isOwnListing = profile && profile.profile_id == listing.profile_id;
@@ -1807,7 +1808,9 @@ $(function(){
                 }
             }
             else if (comments && comments.length == 0) {
-                resultsHtml = '<i>no comments found</i>';
+                resultsHtml += '<div class="content-results-list-item">';
+                resultsHtml += ' <span id="comments-item-message" class="attention item-message">no comments found</span>';
+                resultsHtml += '</div>';
             }
             // display html
             $('#comments-content-results-list').hide().html(resultsHtml).show();
@@ -2010,8 +2013,10 @@ $(function(){
             var bids_profile = results ? results.profile : null;
             var listing = results ? results.listing : null;
             var bids = results ? results.bids : null;
-            var filteredBids = self.filterBidsByStatus(bids, bidStatus);
             var profile = user.profile;
+            var filteredBids = self.filterBidsByStatus(bids, bidStatus);
+            var profileBids = self.filterBidsWithProfile(filteredBids, profile);
+            var profileBid = profileBids && profileBids.length ? profileBids[0] : undefined;
 
             $('#bids-message').html('');
             self.recalculateValuation();
@@ -2022,7 +2027,7 @@ $(function(){
             util.displayPage('bids');
 
             self.displayBidSnippet(bids_profile);
-            self.displayBidForm(listing, profile);
+            self.displayBidForm(listing, profile, profileBid);
             self.displayBids(filteredBids, listing, profile);
 
             var withdrawBid = function() {
@@ -2062,7 +2067,7 @@ $(function(){
                 $('#bids-profile-snippet').html('');
             }
         };
-        self.displayBidForm = function(listing, profile) {
+        self.displayBidForm = function(listing, profile, profileBid) {
             if (!listing) {
                 $('#bids-listing-header').hide();
                 $('#bids-form-loggedin').hide();
@@ -2084,6 +2089,27 @@ $(function(){
                 $('#bids-form-not-loggedin').show().html('You may not bid on your own listing');
             }
             else if (profile && profile.investor) {
+                if (profileBid) { /* prefill form with previous bid */
+                    $('#bid-form-new').hide();
+                    $('#bid-form-update-date').html(util.formatDate(profileBid.bid_date));
+                    $('#bid-form-update').show();
+                    $('#bid-amt').val(util.addCommas(profileBid.amount));
+                    $('#bid-pct').val(profileBid.equity_pct);
+                    $('#bid-type').val(profileBid.bid_type);
+                    if ($('#bid-type').val() == 'common') {
+                        $('#bid-rate').attr('disabled', true);
+                        $('#bid-rate').val('');
+                    }
+                    else {
+                        $('#bid-rate').removeAttr('disabled');
+                        $('#bid-rate').val(profileBid.interest_rate);
+                    }
+                    $('#bid-calculated-valuation').html(util.addCommas(profileBid.valuation));
+                }
+                else {
+                    $('#bid-form-update').hide();
+                    $('#bid-form-new').show();
+                }
                 $('#bids-form-loggedin').show();
                 $('#bids-form-not-loggedin').hide();
                 $('#bid-save-button')
@@ -2115,6 +2141,23 @@ $(function(){
                 $('#bids-form-not-loggedin').show().html('You must be a logged in investor to place a bid');
             }
         };
+        self.filterBidsWithProfile = function(bids, profile) {
+            var bid;
+            var filteredBids = [];
+            if (bids && bids.length > 0 && profile) {
+                for (var i = 0; i < bids.length; i++) { // create results
+                    bid = bids[i];
+                    if (!bid) {
+                        continue;
+                    }
+                    if (bid.profile_id !== profile.profile_id) {
+                        continue;
+                    }
+                    filteredBids.push(bid);
+                }
+            }
+            return filteredBids;
+        };
         self.filterBidsByStatus = function(bids, bidStatus) {
             var bid;
             var filteredBids = [];
@@ -2124,10 +2167,10 @@ $(function(){
                     if (!bid) {
                         continue;
                     }
-                    if (bidStatus && bid.status !== bidStatus) {
+                    if (bid.status !== bidStatus) {
                         continue;
                     }
-                    filteredBids.push(bids);
+                    filteredBids.push(bid);
                 }
             }
             else {
@@ -2139,7 +2182,9 @@ $(function(){
             var bid;
             var resultsHtml = '';
             if (!bids || bids.length === 0) {
-                resultsHtml = '<i>no bids found</i>';
+                resultsHtml += '<div class="content-results-list-item">';
+                resultsHtml += ' <span id="bids-item-message" class="attention item-message">no bids found</span>';
+                resultsHtml += '</div>';
             }
             else {
                 for (var i = 0; i < bids.length; i++) { // create results
@@ -2726,7 +2771,7 @@ background: linear-gradient(top, #7db9e8 0%,#1e5799 100%); /* W3C */
 }
 .content-comment {
     margin-top: 5px;
-    margin-left: 5px;
+    margin-left: 25px;
     font-size: 14px;
 }
 .content-comment-textarea {
@@ -2751,6 +2796,9 @@ background: linear-gradient(top, #7db9e8 0%,#1e5799 100%); /* W3C */
     float:left;
     width: 100%;
     padding: 5px;
+}
+.item-message {
+    margin-left: 15px;
 }
 /*
 .content-results-list-item, content-results-list-item-even, content-results-list-item-odd {
@@ -2832,42 +2880,44 @@ background: linear-gradient(top, #7db9e8 0%,#1e5799 100%); /* W3C */
     font-size: 12px;
 }
 .listing-content-form, .listing-content-form-readonly {
-    width: 400px;
+    width: 50%;
+    min-width: 450px;
 }
 .listing-content-form-readonly {
     margin-left: 15px;
 }
 .listing-executive-summary {
-    width: 50%;
-    min-width: 450px;
     margin-left: 15px;
     margin-top: 5px;
 }
 .listing-execsum-content {
-    padding: 5px;
+    font-size: 14px;
+    font-weight: bold;
 }
 .listing-execsum-multiline-readonly, .listing-execsum-multiline-editable {
     margin-top: 10px;
     margin-right: 10px;
     text-align: left;
     font-size: 14px;
+    font-weight: normal;
 }
 .listing-execsum-multiline-editable {
     overflow-y: auto;
-    height: 260px;
+    height: 250px;
 }
 .listing-execsum-textarea {
     height: 240px;
     font-size: 12px;
     resize: none;
+    font-weight: normal;
 }
 .content-form {
-    margin-left: 15px;
+    margin-left: 10px;
     margin-top: 5px;
 }
 .content-form-line, .content-form-line-emphasized, .content-form-mainline, .content-form-linkline, .content-form-line-indented {
     float: left;
-    margin-left: 5px;
+    margin-left: 15px;
     text-align: left;
     font-size: 14px;
     line-height: 26px;
@@ -2896,6 +2946,7 @@ background: linear-gradient(top, #7db9e8 0%,#1e5799 100%); /* W3C */
     margin-left: 5px;
     text-align: left;
     font-size: 12px;
+    margin-top: 2px;
 }
 .content-form-checkbox {
     line-height: 30px;
@@ -3259,7 +3310,7 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
                     <div class="content-form-line"><b>Asking Equity</b></div>
                     <div class="content-form-inputline"><input id="listing-edit-suggested-pct" name="suggested_bid_pct" type="text" size="2" maxlength="2" value="10"/>%</div>
                     <div class="content-form-clear"></div>
-                    <div class="content-form-line">Calculated Valuation <b>$<span id="listing-edit-suggested-val"></span></b></div>
+                    <div class="content-form-line"><b>Calculated Valuation <span class="confirmed">$</span><span id="listing-edit-suggested-val" class="confirmed"></span></b></div>
                     <div class="content-form-clear"></div>
                     <div class="content-form-line">
                         <span><b>Business Plan</b></span>
@@ -3301,7 +3352,6 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
                     </div>
                     <div class="content-form-clear"></div>
                     </form>
-<!--
                     <form id="listing-edit-financials-form" method="post" enctype="multipart/form-data" action="#">
                     <div class="content-form-line">
                             <input name="FINANCIALS" id="listing-edit-financials-file" type="file"/>
@@ -3310,9 +3360,18 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
                     </div>
                     <div class="content-form-clear"></div>
                     </form>
--->
+                    <div class="listing-executive-summary">
+                        <div class="listing-execsum-content" id="listing-execsum-editable">
+                            <p>Executive Summary</p>
+                            <form action="#" method="post" enctype="multipart/form-data">
+                                <p class="listing-execsum-multiline-editable">
+                                    <textarea class="listing-execsum-textarea" id="listing-edit-summary" name="executive_summary" rows="10" cols="60" wrap="soft"></textarea>
+                                </p>
+                            </form>
+                        </div> <!-- ending #listing-execsum-editable-->
+                    </div> <!-- end listing-executive-summary -->
                     <form action="#" method="post" enctype="multipart/form-data">
-                    <div class="content-form-inputline"><button id="listing-save-link">Save</button> <span class="attention" id="listing-save-message"></span> </div>
+                    <div class="content-form-line"><button id="listing-save-link">Save</button> <span class="attention" id="listing-save-message"></span> </div>
                     <div class="content-form-clear"></div>
                     <div class="content-form-linkline"><span class="link" id="listing-activate-link">(activate listing)</span></div>
                     <div class="content-form-clear"></div>
@@ -3330,7 +3389,7 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
                         Asking Equity <b><span id="listing-readonly-suggested-pct"></span>%</b>
                     </div>
                     <div class="content-form-clear"></div>
-                    <div class="content-form-line">Calculated Valuation <b>$<span id="listing-readonly-suggested-val"></span></b></div>
+                    <div class="content-form-line"><b>Calculated Valuation <span class="confirmed">$</span><span id="listing-readonly-suggested-val" class="confirmed"></span></b></div>
                     <div class="content-form-clear"></div>
                     <div class="content-form-line">
                         <span class="link" id="listing-readonly-business-plan-link"><a target="_blank" href="#">view business plan</a></span>
@@ -3340,24 +3399,17 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
                         <span class="link" id="listing-readonly-presentation-link"><a target="_blank" href="#">view presentation</a></span>
                     </div>
                     <div class="content-form-clear"></div>
+                    <div class="listing-executive-summary">
+                        <div class="listing-execsum-content" id="listing-execsum-readonly">
+                            <p>Executive Summary</p>
+                            <p class="listing-execsum-multiline-readonly" id="listing-readonly-summary"></p>
+                        </div> <!-- ending #listing-execsum-readonly -->
+                    </div> <!-- end listing-executive-summary -->
                 </div> <!-- end #listing-form-readonly -->
-    
-        </div> <!-- end #listing-content-form -->
 
-        <div class="listing-executive-summary">
-            <div class="listing-execsum-content" id="listing-execsum-editable">
-                <p><b>Executive Summary</b></p>
-                <form action="#" method="post" enctype="multipart/form-data">
-                    <p class="listing-execsum-multiline-editable">
-                        <textarea class="listing-execsum-textarea" id="listing-edit-summary" name="executive_summary" rows="10" cols="60" wrap="soft"></textarea>
-                    </p>
-                </form>
-            </div> <!-- ending #listing-execsum-editable-->
-            <div class="listing-execsum-content" id="listing-execsum-readonly">
-                <p><b>Executive Summary</b></p>
-                <p class="listing-execsum-multiline-readonly" id="listing-readonly-summary"></p>
-            </div> <!-- ending #listing-execsum-readonly -->
-        </div> <!-- end listing-executive-summary -->
+
+
+        </div> <!-- end #listing-content-form -->
 
     </div> <!-- end #listingpage -->
     
@@ -3376,14 +3428,16 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
         <div class="content-form" id="bids-form-loggedin">
             <form action="#" method="post" enctype="multipart/form-data">
                 <input name="page" type="hidden" value="listing"/>
-                <div class="content-form-line">Place bid of $</div>
+                <div class="content-form-mainline" id="bid-form-new">New Bid</div>
+                <div class="content-form-mainline" style="display:none;" id="bid-form-update">Revise Bid placed on <span id="bid-form-update-date"></span></div>
+                <div class="content-form-clear"></div>
+                <div class="content-form-line"><b>Bidding</b> $</div>
                 <div class="content-form-inputline"><input id="bid-amt" name="bid_amt" type="text" size="9" maxlength="9" value="30,000"/></div>
                 <div class="content-form-line">for</div>
                 <div class="content-form-inputline"><input id="bid-pct" name="bid_pct" type="text" size="2" maxlength="2" value="10"/></div>
-                <div class="content-form-line">% equity (fully diluted)</div>
+                <div class="content-form-inputline">% equity (fully diluted)</div>
                 <div class="content-form-clear"></div>
-
-                <div class="content-form-line">As</div>
+                <div class="content-form-line"><b>as</b></div>
                 <div class="content-form-line">
                     <select id="bid-type" name="bid_type">
                         <option value="common">Common Stock</option>
@@ -3393,10 +3447,10 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
                 </div>
                 <div class="content-form-line">@</div>
                 <div class="content-form-inputline"><input id="bid-rate" name="bid_rate" type="text" size="2" maxlength="2" value="10" disabled/></div>
-                <div class="content-form-line">% interest</div>
+                <div class="content-form-inputline">% interest</div>
                 <div class="content-form-clear"></div>
 
-                <div class="content-form-line">Calculated Valuation <b>$<span id="bid-calculated-valuation">1.35m</span></b></div>
+                <div class="content-form-line"><b>Calculated Valuation <span class="confirmed">$</span><span id="bid-calculated-valuation" class="confirmed"></span></b></div>
                 <div class="content-form-clear"></div>
 
                 <div class="content-form-line">
