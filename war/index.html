@@ -6,13 +6,13 @@
 <meta name="description" content="Startupbidder - list, bid, comment and vote on startup businesses worldwide"/>
 <meta name="keywords" content="startupbidder startup company auction bid business plan"/>
 <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0" />
-<meta http-equiv="Expires" CONTENT="0">
-<meta http-equiv="cache-control" content="no-cache">
-<meta http-equiv="Pragma" CONTENT="no-cache">
+<meta http-equiv="expires" CONTENT="0"/>
+<meta http-equiv="pragma" CONTENT="no-cache"/>
+<meta http-equiv="cache-control" content="max-age=0"/>
+<meta http-equiv="cache-control" content="no-cache"/>
+<meta http-equiv="cache-control" content="no-store"/>
 <title>Startupbidder - list, bid, comment, vote on startups</title>
-<script src="//www.google.com/jsapi"></script> 
-<!--	<script src="https://raw.github.com/DmitryBaranovskiy/raphael/master/raphael-min.js"></script> -->
-<!--	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.8/jquery-ui.min.js"></script> -->
+<script src="http://www.google.com/jsapi"></script> 
 <link rel="canonical" href="http://startupbidder.appspot.com"/>
 
 <!-- google analytics -->
@@ -950,7 +950,7 @@ $(function(){
             var memberType = self.getMemberType();
             var memberClass = 'userbox-' + memberType;
             $('#userbox-profile-id').val(profile.profile_id);
-            $('#userbox-title').html(profile.name);
+            $('#userbox-title').html(profile.username || profile.name || 'Profile');
             $('#userbox-score').html(self.getScore());
             $('#userbox-num-votes').html(profile.num_votes);
             $('#userbox-num-listings').html(profile.num_listings);
@@ -996,69 +996,86 @@ $(function(){
 
     var Statistics = function() {
         var self = {};
-        self.chartId = 'stats-graph';
+        self.columnChartId = 'stats-graph-column';
+        self.lineChartId = 'stats-graph-line';
         self.width = 270;
         self.height = 180;
-        self.chart = undefined;;
         self.lineChart = undefined;
         self.columnChart = undefined;
         self.displayStats = function(stats) {
+            var googChart;
+            var i;
             if (!stats || !stats.values) {
                 return;
             }
             var chartType = stats.chartType || 'line';
+            var label = stats.label ? $.trim(stats.label) : '';
+            var numPrefix = stats.prefix || '';
+            var numSuffix = stats.suffix || '';
             var labels = stats.labels;
             var values = stats.values;
-            if (chartType === 'line') {
-                if (!self.lineChart) {
-                    self.lineChart = new google.visualization.LineChart(document.getElementById(self.chartId));
-                }
-                chart = self.lineChart;
-            }
-            if (chartType === 'column') {
-                if (!self.columnChart) {
-                    self.columnChart = new google.visualization.ColumnChart(document.getElementById(self.chartId));
-                }
-                chart = self.columnChart;
-            }
-            var data = new google.visualization.DataTable();
-            data.addColumn('string', stats.xaxis);
-            data.addColumn('number', stats.yaxis);
-            data.addRows(values.length);
-            for (var i = 0; i < values.length; i++) {
-                if (labels && labels[i] !== undefined) {
-                    data.setValue(i, 0, labels[i]);
-                }
-                data.setValue(i, 1, values[i]);
-            }
-            var formatter = new google.visualization.NumberFormat({prefix: stats.prefix, fractionDigits: 0, negativeColor: 'red', negativeParens: true});
-            formatter.format(data, 1);
-            google.visualization.events.addListener(chart, 'ready', self.showChart);
-            var options = {
+            var chartOptions = {
                 legend: 'none',
                 width: self.width,
                 height: self.height,
-                title: stats.label.trim(),
+                title: label,
                 titleTextStyle: {
                     color: 'green',
                     fontSize: '16'
                 }
+            };            
+            var formatOptions = {
+                prefix: numPrefix,
+                suffix: numSuffix,
+                fractionDigits: 0,
+                negativeColor: 'red',
+                negativeParens: true
             };
+            var numFormatter = new google.visualization.NumberFormat(formatOptions);
+            var chartData = new google.visualization.DataTable();
+            if (chartType === 'column') {
+                if (!self.columnChart) {
+                    self.columnChart = new google.visualization.ColumnChart(document.getElementById(self.columnChartId));
+                    google.visualization.events.addListener(self.columnChart, 'ready', self.showColumnChart);
+                }
+                googChart = self.columnChart;
+            }
+            else { // assume line
+                if (!self.lineChart) {
+                    self.lineChart = new google.visualization.LineChart(document.getElementById(self.lineChartId));
+                    google.visualization.events.addListener(self.lineChart, 'ready', self.showLineChart);
+                }
+                googChart = self.lineChart;
+            }
+            chartData.addColumn('string', stats.xaxis);
+            chartData.addColumn('number', stats.yaxis);
+            chartData.addRows(values.length);
+            for (i = 0; i < values.length; i++) {
+                if (labels && labels[i] !== undefined) {
+                    chartData.setValue(i, 0, labels[i]);
+                }
+                chartData.setValue(i, 1, values[i]);
+            }
+            numFormatter.format(chartData, 1);
             if (stats.xaxis) {
-                options.hAxis = {
-                    //textPosition: 'none',
+                chartOptions.hAxis = {
                     title: stats.xaxis
                 };
             }
             if (stats.yaxis) {
-                options.vAxis = {
+                chartOptions.vAxis = {
                     title: stats.yaxis
                 };
             }
-            chart.draw(data, options);
+            googChart.draw(chartData, chartOptions);
         };
-        self.showChart = function() {
-            $('#statsbox').show();
+        self.showColumnChart = function() {
+            $('#'+self.lineChartId).hide();
+            $('#statsbox,#'+self.columnChartId).show();
+        };
+        self.showLineChart = function() {
+            $('#'+self.columnChartId).hide();
+            $('#statsbox,#'+self.lineChartId).show();
         };
         return self;
     };
@@ -1117,10 +1134,13 @@ $(function(){
             backend.searchListings(args.search_type, keywords, args.profile_id, args.start_index, args.max_results, searchListings.displayResultsJson, searchErrorCallback);
         };
         self.displayTopStats = function(stats) {
-            if (stats) {
+            var i;
+            if (stats && stats.values) {
                 stats.prefix = '$';
-                if (stats.values) {
-                    stats.values.reverse();
+                stats.suffix = 'k';
+                stats.values.reverse();
+                for (i = 0; i < stats.values.length; i++) {
+                    stats.values[i] = stats.values[i] / 1000;
                 }
             }
             statistics.displayStats(stats);
@@ -1258,12 +1278,12 @@ $(function(){
         self.displayResultsHtml = function(resultsHtml) {
             $('#user-search-results-list').hide().html(resultsHtml).show();
         };
-        self.displayResults = function(users, search_type, keywords, start_index, num_results, total_results){
+        self.displayResults = function(members, search_type, keywords, start_index, num_results, total_results){
             $('#user-search-message').html('');
             util.displayPage('searchusers');
-            self.displayMemberStats(users);
-            self.displayUsers(users);
-            self.bindUsers(users);
+            self.displayMemberStats(members);
+            self.displayMembers(members);
+            self.bindMembers(members);
             //self.displayPagination(search_type, keywords, start_index); // set pagination
         };
         self.displayMemberStats = function(members) {
@@ -1294,23 +1314,27 @@ $(function(){
             stats.values.reverse();
             statistics.displayStats(stats);
         };
-        self.displayUsers = function(users) {
-            var i, userjson;
-            var resultsHtml = '';
-            for (i = 0; i < users.length; i++) {
-                userjson = users[i];
-                resultsHtml += user.generateUserSnippetHtml(i, userjson);
+        self.displayMembers = function(members) {
+            if (!members || !members.length) {
+                self.displayResultsHtml('<i>no members found</i>');
+                return;
             }
-            if (resultsHtml == '') {
-                resultsHtml = '<i>no users found</i>';
+            var i, member;
+            var resultsHtml = '';
+            for (i = 0; i < members.length; i++) {
+                member = members[i];
+                resultsHtml += user.generateUserSnippetHtml(i, member);
             }
             self.displayResultsHtml(resultsHtml);
         };
-        self.bindUsers = function(users) {
-            var i, userjson;
-            for (var i = 0; i < users.length; j++) {
-                userjson = users[i];
-                user.bindUserSnippet(i, userjson);
+        self.bindMembers = function(members) {
+            if (!members || !members.length) {
+                return;
+            }
+            var i, member;
+            for (var i = 0; i < members.length; i++) {
+                member = members[i];
+                user.bindUserSnippet(i, member);
             }
         };
         self.displayPagination = function(search_type, keywords, start_index) {
@@ -1388,7 +1412,7 @@ $(function(){
                 xaxis: '',
                 yaxis: 'activity',
                 labels: [ '#votes', '#listings', '#bids', '#comments' ],
-                values: [ profile.num_votes || 0, profile.num_listings, profile.num_bids, profile.num_comments ]
+                values: [ profile.num_votes || 0, profile.num_listings || 0, profile.num_bids || 0, profile.num_comments || 0]
             };
             statistics.displayStats(stats);
         };
@@ -2426,11 +2450,12 @@ $(function(){
                 xaxis: 'time',
                 yaxis: 'valuation',
                 prefix: '$',
+                suffix: 'k',
                 values: []
             }
             for (i = 0; i < bids.length; i++) {
                 bid = bids[i];
-                stats.values[i] = bid.valuation;
+                stats.values[i] = bid.valuation / 1000;
             }
             stats.values.reverse();
             statistics.displayStats(stats);
@@ -3217,6 +3242,103 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
 #loadingpage {
     display: block;
 }
+
+/* begin rightbox */
+.rightbox {
+    position: absolute;
+    right: 10px;
+    top: 40px;
+}
+/* begin userbox */
+.userbox {
+    float: right;
+    height: 70px;
+    width: 250px;
+    margin-top: 10px;
+    padding: 0px 10px 5px 10px;
+    border: 2px solid grey;
+    border-radius: 10px;
+    -o-border-radius: 10px;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    line-height: 16px;
+    display: none;
+}
+.userbox-title-link {
+    color: white;
+    line-height: 23px;
+    font-size: 16px;
+}
+.userbox-title-link:hover {
+    font-size: 18px;
+    cursor: pointer;
+}
+.userbox-medal {
+    margin-right: 5px;
+    width: 50px;
+    float: left;
+}
+.userbox-textbox {
+    margin-left: 55px;
+    float: left;
+}
+.userbox-score {
+    width: 50px:
+    height: 50px;
+    margin-top: 13px;
+    font-size: 24px;
+    text-align: center;
+}
+.userbox-chart {
+    position: absolute;
+    margin-left: 0px;
+    width: 42px;
+    height: 42px;
+    display: block;
+    border: 2px solid grey;
+    -moz-border-radius: 21px;
+    -webkit-border-radius: 21px;
+    border-radius: 21px;
+}
+.userbox-bronze {
+    background: #C69633;
+}
+.userbox-silver {
+    background: #C9CFC9;
+}
+.userbox-gold {
+    background: #FFCC00;
+}
+.userbox-platinum {
+    background: #909090;
+}
+/* end userbox styles */
+/* begin stats styles */
+.statsbox {
+    width: 300px;
+    height: 200px;
+    margin-top: 10px;
+    border: 2px solid grey;
+    border-radius: 10px;
+    -o-border-radius: 10px;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+/*    display: none;*/ /* null display to start with */
+}
+.stats-graph {
+    margin: 10px 15px 10px 15px;
+    width: 270px;
+    height: 180px;
+}
+/* end stats styles */
+.clearbox {
+    clear: both;
+}
+/* end rightbox style */
+
 </style>
 
 <!--[if !IE 7]>
@@ -3466,8 +3588,8 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
                             <input type="submit" id="listing-edit-business-plan-submit" value="Upload"/>
                             <iframe id="listing-edit-business-plan-iframe" name="listing-edit-business-plan-iframe" class="listing-iframe" src="#"></iframe>
                     </div>
-                    <div class="content-form-clear"></div>
                     </form>
+                    <div class="content-form-clear"></div>
                     <div class="content-form-line">
                         <span><b>Presentation</b></span>
                         <span class="link" id="listing-edit-presentation-link"><a target="_blank" href="#">view</a></span>
@@ -3475,15 +3597,14 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
                         <span class="link" id="listing-edit-presentation-remove">remove</span>
                     </div>
                     <div class="content-form-clear"></div>
-                    </form>
                     <form id="listing-edit-presentation-form" method="post" enctype="multipart/form-data" action="#">
                     <div class="content-form-line">
                             <input name="PRESENTATION" id="listing-edit-presentation-file" type="file"/>
                             <input type="submit" id="listing-edit-presentation-submit" value="Upload"/>
                             <iframe id="listing-edit-presentation-iframe" name="listing-edit-presentation-iframe" class="listing-iframe" src="#"></iframe>
                     </div>
-                    <div class="content-form-clear"></div>
                     </form>
+                    <div class="content-form-clear"></div>
                     <div class="content-form-line">
                         <span><b>Financial Statements</b></span>
                         <span class="link" id="listing-edit-financials-link"><a target="_blank" href="#">view</a></span>
@@ -3491,15 +3612,14 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
                         <span class="link" id="listing-edit-financials-remove">remove</span>
                     </div>
                     <div class="content-form-clear"></div>
-                    </form>
                     <form id="listing-edit-financials-form" method="post" enctype="multipart/form-data" action="#">
                     <div class="content-form-line">
                             <input name="FINANCIALS" id="listing-edit-financials-file" type="file"/>
                             <input type="submit" id="listing-edit-financials-submit" value="Upload"/>
                             <iframe id="listing-edit-financials-iframe" name="listing-edit-financials-iframe" class="listing-iframe" src="#"></iframe>
                     </div>
-                    <div class="content-form-clear"></div>
                     </form>
+                    <div class="content-form-clear"></div>
                     <div class="listing-executive-summary">
                         <div class="listing-execsum-content" id="listing-execsum-editable">
                             <p>Executive Summary</p>
@@ -3927,121 +4047,19 @@ s = (p + b + c + v) / (t + 2)^1.5
         </div>
     </div> <!-- end faq -->
 
-<!-- begin rightbox --> 
-<style>
-.rightbox {
-    position: absolute;
-    right: 10px;
-    top: 40px;
-}
-/* begin userbox */
-.userbox {
-    float: right;
-    height: 65px;
-    width: 250px;
-    margin-top: 10px;
-    padding: 5px 10px 5px 10px;
-    border: 2px solid #000;
-    border-radius: 10px;
-    -o-border-radius: 10px;
-    -moz-border-radius: 10px;
-    -webkit-border-radius: 10px;
-    color: white;
-    font-size: 12px;
-    font-weight: bold;
-    line-height: 16px;
-    display: none;
-}
-.userbox-title {
-    line-height: 18px;
-    font-size: 16px;
-}
-.userbox-medal {
-    margin-right: 5px;
-    width: 50px;
-    float: left;
-}
-.userbox-textbox {
-    margin-left: 55px;
-    float: left;
-}
-.userbox-score {
-    width: 50px:
-    height: 50px;
-    margin-top: 13px;
-    font-size: 24px;
-    text-align: center;
-}
-.userbox-chart {
-    position: absolute;
-    margin-left: 0px;
-    width: 42px;
-    height: 42px;
-    display: block;
-    border: 2px solid grey;
-    -moz-border-radius: 21px;
-    -webkit-border-radius: 21px;
-    border-radius: 21px;
-}
-.userbox-bronze {
-    background: #C69633;
-}
-.userbox-silver {
-    background: #C9CFC9;
-}
-.userbox-gold {
-    background: #FFCC00;
-}
-.userbox-platinum {
-    background: #909090;
-}
-/* end userbox styles */
-/* begin stats styles */
-.statsbox {
-    width: 320px;
-    height: 220px;
-    margin-top: 10px;
-    border: 2px solid #000;
-    border-radius: 10px;
-    -o-border-radius: 10px;
-    -moz-border-radius: 10px;
-    -webkit-border-radius: 10px;
-/*    display: none;*/ /* null display to start with */
-}
-.stats-label {
-    width: 320px;
-    height: 16px;
-    margin-top: 4px;
-    top: 0px;
-    left: 0px;
-    text-align: center;
-    font-size: 14px;
-    font-weight: bold;
-}
-.stats-graph {
-    margin: 10px 25px 10px 25px;
-    width: 270px;
-    height: 180px;
-}
-/* end stats styles */
-.clearbox {
-    clear: both;
-}
-</style> 
-<!-- end rightbox style -->
 
 <!-- begin rightbox div -->
 <div class="rightbox">
     <!-- begin userbox div -->
     <div id="userbox" class="userbox blue-gradient-bg">
-        <div><span class="userbox-title" id="userbox-title"></span></div>
+        <div><span class="userbox-title-link" id="userbox-details"><span id="userbox-title"></span></span></div>
         <div class="userbox-medal">
             <div class="userbox-chart userbox-bronze" id="userbox-chart">
                 <div class="userbox-score" id="userbox-score"></div>
             </div>
         </div>
         <div class="userbox-textbox">
-            <div><span id="userbox-member-type">Bronze</span> Member <span class="header-link" id="userbox-details">details</span></div>
+            <div><span id="userbox-member-type">Bronze</span> Member</div>
             <div>
                 <span id="userbox-num-votes">0</span> votes
                 <span class="header-link" id="userbox-listings"><span id="userbox-num-listings">0</span> listing<span id="userbox-listings-plural"></span></span>
@@ -4058,9 +4076,9 @@ s = (p + b + c + v) / (t + 2)^1.5
     <!-- end userbox div -->
     <div class="clearbox"></div>
     <!-- begin stats-graph div -->
-    <div id="statsbox" class="statsbox vertical-gradient-bg">
-        <div id="stats-label" class="stats-label"></div>
-        <div id="stats-graph" class="stats-graph"></div>
+    <div id="statsbox" class="statsbox blue-gradient-bg">
+        <div id="stats-graph-line" class="stats-graph"></div>
+        <div id="stats-graph-column" class="stats-graph"></div>
     </div>
     <!-- end stats-graph div -->
 </div>
