@@ -2029,7 +2029,9 @@ $(function(){
             self.displayBidSnippet(bids_profile);
             self.displayBidForm(listing, profile, profileBid);
             self.displayBids(filteredBids, listing, profile);
-
+            self.bindBidLinks(filteredBids, profile, listing, bidStatus);
+        };
+        self.widthdrawBidFunc = function(index) {
             var withdrawBid = function() {
                 var index = $(this).data('index');
                 var bid_id = $(this).data('bid_id');
@@ -2042,6 +2044,9 @@ $(function(){
                 var callback = listing_id ? listings_callback : profile_callback;
                 backend.withdrawBid($(this).data('bid_id'), callback, errorCallback);
             };
+            return withdrawBid;
+        };
+        self.acceptBidFunc = function(index) {
             var acceptBid = function() {
                 var index = $(this).data('index');
                 var bid_id = $(this).data('bid_id');
@@ -2054,7 +2059,7 @@ $(function(){
                 var callback = listing_id ? listings_callback : profile_callback;
                 backend.acceptBid($(this).data('bid_id'), callback, errorCallback);
             };
-            self.bindBidLinks(filteredBids, profile, listing, bidStatus);
+            return acceptBid;
         };
         self.displayBidSnippet = function(bids_profile) {
             if (bids_profile) {
@@ -2214,7 +2219,7 @@ $(function(){
                         .data('profile_id', listing ? '' : bid.profile_id)
                         .data('listing_id', listing ? results.listing.listing_id : '')
                         .unbind()
-                        .bind('click', withdrawBid);
+                        .bind('click', self.withdrawBidFunc(i));
                 }
                 if (listing
                     && profile
@@ -2223,9 +2228,9 @@ $(function(){
                     $('#bids-item-accept-'+i)
                         .data('bid_id', bid.bid_id)
                         .data('profile_id', listing ? '' : bid.profile_id)
-                        .data('listing_id', listing ? results.listing.listing_id : '')
+                        .data('listing_id', listing ? listing.listing_id : '')
                         .unbind()
-                        .bind('click', acceptBid);
+                        .bind('click', self.acceptBidFunc(i));
                 }
             }
         };
