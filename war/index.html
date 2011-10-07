@@ -1441,7 +1441,7 @@ $(function(){
                 return;
             }
             var listing = {};
-            listing.title = 'Enter listing title here';
+            listing.title = '';
             listing.median_valuation = 0;
             listing.num_votes = 0;
             listing.num_bids = 0;
@@ -1450,10 +1450,10 @@ $(function(){
             listing.profile_username = profile.username;
             listing.listing_date = util.today();
             listing.status = 'new';
-            listing.suggested_amt = 10000;
-            listing.suggested_pct = 10;
+            listing.suggested_amt = 0;
+            listing.suggested_pct = 0;
             listing.suggested_val = bids.calculateValuation(listing.suggested_amt, listing.suggested_pct);
-            listing.summary = 'Enter listing summary here.';
+            listing.summary = '';
             listing.business_plan_id = '';
             listing.presentation_id = '';
             listing.financials_id = '';
