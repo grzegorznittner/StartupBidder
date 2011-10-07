@@ -999,43 +999,63 @@ $(function(){
         self.chartId = 'stats-graph';
         self.width = 270;
         self.height = 180;
-        self.chart = undefined;
+        self.chart = undefined;;
+        self.lineChart = undefined;
+        self.columnChart = undefined;
         self.displayStats = function(stats) {
-            if (!stats || !stats.values || !stats.values.length) {
+            if (!stats || !stats.values) {
                 return;
             }
+            var chartType = stats.chartType || 'line';
+            var labels = stats.labels;
             var values = stats.values;
-            if (!self.chart) {
-                self.chart = new google.visualization.LineChart(document.getElementById(self.chartId));
+            if (chartType === 'line') {
+                if (!self.lineChart) {
+                    self.lineChart = new google.visualization.LineChart(document.getElementById(self.chartId));
+                }
+                chart = self.lineChart;
+            }
+            if (chartType === 'column') {
+                if (!self.columnChart) {
+                    self.columnChart = new google.visualization.ColumnChart(document.getElementById(self.chartId));
+                }
+                chart = self.columnChart;
             }
             var data = new google.visualization.DataTable();
             data.addColumn('string', stats.xaxis);
             data.addColumn('number', stats.yaxis);
             data.addRows(values.length);
-            var daysAgo;
             for (var i = 0; i < values.length; i++) {
-                daysAgo = values.length - i;
-                data.setValue(i, 0, daysAgo +' day' + (daysAgo===1?'':'s') + ' ago');
+                if (labels && labels[i] !== undefined) {
+                    data.setValue(i, 0, labels[i]);
+                }
                 data.setValue(i, 1, values[i]);
             }
-            google.visualization.events.addListener(self.chart, 'ready', self.showChart);
-            self.chart.draw(data, {
+            var formatter = new google.visualization.NumberFormat({prefix: stats.prefix, fractionDigits: 0, negativeColor: 'red', negativeParens: true});
+            formatter.format(data, 1);
+            google.visualization.events.addListener(chart, 'ready', self.showChart);
+            var options = {
                 legend: 'none',
                 width: self.width,
                 height: self.height,
-                hAxis: {
-                    textPosition: 'none',
-                    title: stats.xaxis
-                },
-                vAxis: {
-                    title: stats.yaxis
-                },
-                title: stats.label.replace('Valume','Volume').trim(),
+                title: stats.label.trim(),
                 titleTextStyle: {
                     color: 'green',
                     fontSize: '16'
                 }
-            });
+            };
+            if (stats.xaxis) {
+                options.hAxis = {
+                    //textPosition: 'none',
+                    title: stats.xaxis
+                };
+            }
+            if (stats.yaxis) {
+                options.vAxis = {
+                    title: stats.yaxis
+                };
+            }
+            chart.draw(data, options);
         };
         self.showChart = function() {
             $('#statsbox').show();
@@ -1088,13 +1108,22 @@ $(function(){
             }
             $('#content-search-keywords').val(keywords);
             if (!args.profile_id) {
-                backend.bidStats(statistics.displayStats);
+                backend.bidStats(self.displayTopStats);
             }
             else {
                 $('#statsbox').hide();
             }
             var searchErrorCallback = function () { $('#search-message').html('unable to retrieve search results'); };
             backend.searchListings(args.search_type, keywords, args.profile_id, args.start_index, args.max_results, searchListings.displayResultsJson, searchErrorCallback);
+        };
+        self.displayTopStats = function(stats) {
+            if (stats) {
+                stats.prefix = '$';
+                if (stats.values) {
+                    stats.values.reverse();
+                }
+            }
+            statistics.displayStats(stats);
         };
         self.displayResultsJson = function(results_json) {
             if (!results_json) {
@@ -1216,7 +1245,7 @@ $(function(){
             backend.searchUsers(args.search_type, keywords, args.start_index, args.max_results, searchUsers.displayResultsJson, errorCallback);
         };
         self.displayResultsJson = function(results_json) {
-            if (!results_json.users_props) { // FIXME
+            if (!results_json.users_props) {
                 results_json.users_props = {
                     start_index: 0,
                     num_results: !results_json.users || results_json.users.length,
@@ -1229,25 +1258,60 @@ $(function(){
         self.displayResultsHtml = function(resultsHtml) {
             $('#user-search-results-list').hide().html(resultsHtml).show();
         };
-        self.displayResults = function(results, search_type, keywords, start_index, num_results, total_results){
-            var resultsHtml = '';
-            var userjson;
+        self.displayResults = function(users, search_type, keywords, start_index, num_results, total_results){
             $('#user-search-message').html('');
-            for (var i = 0; i < results.length; i++) { // create results
-                userjson = results[i];
+            util.displayPage('searchusers');
+            self.displayMemberStats(users);
+            self.displayUsers(users);
+            self.bindUsers(users);
+            //self.displayPagination(search_type, keywords, start_index); // set pagination
+        };
+        self.displayMemberStats = function(members) {
+            var member, memberDate, i, k;
+            var stats = {
+                label: 'Total Members',
+                xaxis: 'time',
+                yaxis: '#members',
+                values: []
+            }
+            var memberMap = {};
+            var memberDates = [];
+            var runningTotal = 0;
+            for (i = 0; i < members.length; i++) {
+                member = members[i];
+                memberDate = member.joined_date;
+                memberMap[memberDate] = memberMap[memberDate] ? memberMap[memberDate] + 1 : 1;
+            }
+            for (k in memberMap) {
+                memberDates.push(k);
+            }
+            memberDates.sort(function(a,b){return a-b;});
+            for (i = 0; i < memberDates.length; i++) {
+                memberDate = memberDates[i];
+                runningTotal += memberMap[memberDate];
+                stats.values[i] = runningTotal;
+            }
+            stats.values.reverse();
+            statistics.displayStats(stats);
+        };
+        self.displayUsers = function(users) {
+            var i, userjson;
+            var resultsHtml = '';
+            for (i = 0; i < users.length; i++) {
+                userjson = users[i];
                 resultsHtml += user.generateUserSnippetHtml(i, userjson);
             }
             if (resultsHtml == '') {
                 resultsHtml = '<i>no users found</i>';
             }
-            util.displayPage('searchusers');
             self.displayResultsHtml(resultsHtml);
-            for (var j = 0; j < results.length; j++) { // bind results
-                userjson = results[j];
+        };
+        self.bindUsers = function(users) {
+            var i, userjson;
+            for (var i = 0; i < users.length; j++) {
+                userjson = users[j];
                 user.bindUserSnippet(j, userjson);
             }
-            // set pagination
-            //self.displayPagination(search_type, keywords, start_index);
         };
         self.displayPagination = function(search_type, keywords, start_index) {
             var args = {
@@ -1313,6 +1377,21 @@ $(function(){
         self.showProfile = function(profile_id, errorCallback) {
             backend.getProfile(profile_id, self.displayProfile, errorCallback);
         };
+        self.displayProfileChart = function(profile) {
+            if (!profile) {
+                return;
+            }
+            var username = profile.username || profile.name || 'Profile';
+            var stats = {
+                label: username,
+                chartType: 'column',
+                xaxis: '',
+                yaxis: 'activity',
+                labels: [ '#votes', '#listings', '#bids', '#comments' ],
+                values: [ profile.num_votes || 0, profile.num_listings, profile.num_bids, profile.num_comments ]
+            };
+            statistics.displayStats(stats);
+        };
         self.displayProfile = function(data, msgClass, msgText){
             var profile = data && data.profile ? data.profile : data;
             if (!profile) {
@@ -1328,6 +1407,7 @@ $(function(){
             $('#profile-snippet').html(user.generateUserSnippetHtml('profile', profile));
             user.bindUserSnippet('profile', profile);
             $('#profile-header').show();
+            self.displayProfileChart(profile);
 
             // enable editable if logged in
             if (user.profile && user.profile.profile_id == profile.profile_id) {
@@ -1779,14 +1859,7 @@ $(function(){
             $('#comment-not-loggedin').hide();
             $('#comments-content-results-list').html(resultsHtml);
         };
-        self.displayResults = function(results, keepComment, msgClass, msgText){
-            $('#comments-message').html('');
-            $('#comment-save-message').attr('class', (msgClass || 'attention')).html(msgText || '');
-            if (!keepComment) {
-                $('#comment-textarea').val('');
-            }
-            util.displayPage('comments');
-            var comments_profile = results ? results.profile : null;
+        self.displayUserSnippet = function(comments_profile) {
             if (comments_profile) {
                 $('#comments-profile-snippet').html(user.generateUserSnippetHtml('comments', comments_profile));
                 user.bindUserSnippet('comments', comments_profile);
@@ -1796,15 +1869,14 @@ $(function(){
                 $('#comments-profile-header').hide();
                 $('#comments-profile-snippet').html('');
             }
-            var listing = results ? results.listing : null;
-            var comments = results ? results.comments : null;
-            var profile = user.profile;
+        };
+        self.displayComments = function(comments, listing) {
             var resultsHtml = '';
             var comment;
             if (comments && comments.length > 0) {
                 for (var i = 0; i < comments.length; i++) { // create results
                     comment = comments[i];
-                    resultsHtml += self.generateResultHtml(i, comment, listing, profile);
+                    resultsHtml += self.generateResultHtml(i, comment, listing, user.profile);
                 }
             }
             else if (comments && comments.length == 0) {
@@ -1812,35 +1884,36 @@ $(function(){
                 resultsHtml += ' <span id="comments-item-message" class="attention item-message">no comments found</span>';
                 resultsHtml += '</div>';
             }
-            // display html
-            $('#comments-content-results-list').hide().html(resultsHtml).show();
-            // enable editable if logged in
-            if (listing) {
-                if (listing.listing_id) {
-                    $('#comments-listing-snippet').html(listings.generateListingSnippetHtml('comments', listing));
-                    listings.bindListingSnippet('comments', listing);
-                    $('#comments-listing-header').show();
-                }
-                if (profile) {
-                    $('#comment-loggedin-add').show();
-                    $('#comment-not-loggedin').hide();
-                    $('#comment-save-button').show().unbind().data('listing_id',listing.listing_id).data('profile_id',profile.profile_id).bind('click',function(e){
-                        e.preventDefault();
-                        self.saveComment($(this).data('listing_id'), $(this).data('profile_id'));
-                    });
-                }
-                else {
-                    $('#comment-loggedin-add').hide();
-                    $('#comment-not-loggedin').show();
-                }
+            $('#comments-content-results-list').hide().html(resultsHtml).show(); // display html
+        };
+        self.displayListingSnippet = function(listing) {
+            if (listing && listing.listing_id) {
+                $('#comments-listing-snippet').html(listings.generateListingSnippetHtml('comments', listing));
+                listings.bindListingSnippet('comments', listing);
+                $('#comments-listing-header').show();
             }
-            else {
-                $('#comments-listing-header').hide();
+        };
+        self.displayCommentForm = function(listing) {
+            if (!listing) {
                 $('#comments-listing-snippet').html('Comments:');
-                $('#comment-loggedin-add').hide();
-                $('#comment-not-loggedin').hide();
+                $('#comments-listing-header,#comment-loggedin-add,#comment-not-loggedin').hide();
+                return;
             }
-            // bind results
+            if (!user.profile) {
+                $('#comment-loggedin-add').hide();
+                $('#comment-not-loggedin').show();
+                return;
+            }
+            // enable editable if logged in
+            $('#comment-loggedin-add').show();
+            $('#comment-not-loggedin').hide();
+            $('#comment-save-button').show().unbind().data('listing_id',listing.listing_id).data('profile_id',user.profile.profile_id).bind('click',function(e){
+                e.preventDefault();
+                self.saveComment($(this).data('listing_id'), $(this).data('profile_id'));
+            });
+        };
+        self.bindCommentLinks = function(comments, listing) {
+            var comment;
             if (!comments || comments.length == 0) {
                 return;
             }
@@ -1864,17 +1937,62 @@ $(function(){
                 $('#comments-item-listing-'+i).data({index:i,listing_id:comment.listing_id}).unbind().bind('click', function(){
                     util.hashedCall('comments', 'showCommentListing', [$(this).data('listing_id'), $(this).data('index')]);
                 });           
-                if (!profile || profile.profile_id != comment.profile_id) { // not my profile so I can't delete
+                if (!user.profile || user.profile.profile_id != comment.profile_id) { // not my profile so I can't delete
                     continue;
                 }
                 $('#comments-item-delete-'+i)
                     .data({
                         index: i,
                         comment_id: comment.comment_id,
-                        profile_id: (results.listing ? '' : comment.profile_id),
-                        listing_id: (results.listing ? results.listing.listing_id : '')})
+                        profile_id: (listing ? '' : comment.profile_id),
+                        listing_id: (listing ? listing.listing_id : '')})
                     .unbind().bind('click', deleteComment);
             }
+        };
+        self.displayCommentStats = function(comments) {
+            var comment, commentDate, i, k;
+            var stats = {
+                label: 'Comment Activity',
+                xaxis: 'time',
+                yaxis: '#comments',
+                values: []
+            }
+            var commentMap = {};
+            var commentDates = [];
+            for (i = 0; i < comments.length; i++) {
+                comment = comments[i];
+                commentDate = comment.comment_date;
+                commentMap[commentDate] = commentMap[commentDate] ? commentMap[commentDate] + 1 : 1;
+            }
+            for (k in commentMap) {
+                commentDates.push(k);
+            }
+            commentDates.sort(function(a,b){return a-b;});
+            for (i = 0; i < commentDates.length; i++) {
+                commentDate = commentDates[i];
+                stats.values[i] = commentMap[commentDate];
+            }
+            stats.values.reverse();
+            statistics.displayStats(stats);
+        };
+        self.displayResults = function(results, keepComment, msgClass, msgText){
+            var comments_profile = results ? results.profile : null;
+            var listing = results ? results.listing : null;
+            var comments = results ? results.comments : null;
+
+            $('#comments-message').html('');
+            $('#comment-save-message').attr('class', (msgClass || 'attention')).html(msgText || '');
+            if (!keepComment) {
+                $('#comment-textarea').val('');
+            }
+            util.displayPage('comments');
+
+            self.displayUserSnippet(comments_profile);
+            self.displayListingSnippet(listing);
+            self.displayCommentForm(listing);
+            self.displayComments(comments, listing);
+            self.displayCommentStats(comments);
+            self.bindCommentLinks(comments, listing);
         };
         self.showCommentProfile = function(profile_id, index) {
             var errorCallback = function() { $('#comments-item-message-'+index).attr('class', 'attention').html('unable to get profile'); };
@@ -2029,6 +2147,7 @@ $(function(){
             self.displayBidSnippet(bids_profile);
             self.displayBidForm(listing, profile, profileBid);
             self.displayBids(filteredBids, listing, profile);
+            self.displayBidStats(filteredBids);
             self.bindBidLinks(filteredBids, profile, listing, bidStatus);
         };
         self.widthdrawBidFunc = function(index) {
@@ -2300,6 +2419,22 @@ $(function(){
             resultHtml += '<div class="content-results-list-item-clear"></div>';
             return resultHtml;
         };
+        self.displayBidStats = function(bids) {
+            var bid, i;
+            var stats = {
+                label: 'Bid Activity',
+                xaxis: 'time',
+                yaxis: 'valuation',
+                prefix: '$',
+                values: []
+            }
+            for (i = 0; i < bids.length; i++) {
+                bid = bids[i];
+                stats.values[i] = bid.valuation;
+            }
+            stats.values.reverse();
+            statistics.displayStats(stats);
+        };
         self.recalculateValuation = function(){
             var bid_amt  = $('#bid-amt').val() || '';
             var bid_pct  = $('#bid-pct').val() || '';
@@ -2480,7 +2615,7 @@ $(function(){
 //            var stats = {
 //                    label: "10 Day Bid Volume",
 //                    xaxis: "days ago",
-//                    yaxis: "num bids",
+//                    yaxis: "#bids",
 //                    values: [ 7, 1, 9, 7, 5, 6, 2, 6, 7, 2 ]
 //                              2, 1, 8, 6, 8, 0, 6, 5, 4, 8,
 //                              3, 0, 1, 0, 8, 8, 9, 9, 7, 5 ]
