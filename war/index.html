@@ -574,7 +574,7 @@ $(function(){
                 self.createObjectMapper = function() {
                         self.objectMapper = { 'util': self, 'user': user, 'backend': backend, 'uploader': uploader, 'header': header,
                                 'searchListings': searchListings, 'searchUsers': searchUsers,
-                                'profiles': profiles, 'listings': listings, 'comments': comments, 'bids': bids };
+                                'profiles': profiles, 'listingClass': listingClass, 'comments': comments, 'bids': bids };
                 };
                 self.setHash = function(objectName, methodName, argArray) {
                         var methodCall = objectName + '.' + methodName;
@@ -583,9 +583,16 @@ $(function(){
                         location.hash = hashStr;
                 };
                 self.manualCall = function(objectName, methodName, argArray) {
-                        var object = self.objectMapper[objectName] || searchListings;
-                        var method = methodName || 'doTopSearch';
-                        var args = argArray || [];
+                        var object, method, args;
+                        if (objectName && self.objectMapper[objectName] && self.objectMapper[objectName][methodName]) {
+                            object = self.objectMapper[objectName];
+                            method = methodName;
+                        }
+                        else {
+                            object = searchListings;
+                            method = 'doTopSearch';
+                        }
+                        args = argArray || [];
                         (object[method]).apply(object, args);
                 };
                 self.hashedCall = function(objectName, methodName, argArray) {
@@ -807,7 +814,7 @@ $(function(){
                                                         user.logout();
                                                         });
                                         $('#header-menu-bar-submit').unbind().bind('click', function(){
-                                                        util.hashedCall('listings', 'newListing');
+                                                        util.hashedCall('listingClass', 'newListing');
                                                         });
                                         $('#header-menu-bar-top').unbind().bind('click', function(){
                                                         util.hashedCall('searchListings', 'doTopSearch');
@@ -1077,6 +1084,9 @@ $(function(){
             $('#'+self.columnChartId).hide();
             $('#statsbox,#'+self.lineChartId).show();
         };
+        self.hideCharts = function() {
+            $('#statsbox').hide();
+        };
         return self;
     };
 
@@ -1124,14 +1134,14 @@ $(function(){
                 keywords = keywords.replace(/\btype:\w*/g, '').replace(/\s+/g, ' ').trim();
             }
             $('#content-search-keywords').val(keywords);
-            if (!args.profile_id) {
-                backend.bidStats(self.displayTopStats);
+            if (args.profile_id) {
+                statistics.hideCharts();
             }
             else {
-                $('#statsbox').hide();
+                backend.bidStats(self.displayTopStats);
             }
             var searchErrorCallback = function () { $('#search-message').html('unable to retrieve search results'); };
-            backend.searchListings(args.search_type, keywords, args.profile_id, args.start_index, args.max_results, searchListings.displayResultsJson, searchErrorCallback);
+            backend.searchListings(args.search_type, keywords, args.profile_id, args.start_index, args.max_results, self.displayResultsJson, searchErrorCallback);
         };
         self.displayTopStats = function(stats) {
             var i;
@@ -1145,30 +1155,30 @@ $(function(){
             }
             statistics.displayStats(stats);
         };
-        self.displayResultsJson = function(results_json) {
-            if (!results_json) {
+        self.displayResultsJson = function(searchResults) {
+            if (!searchResults || !searchResults.listings_props) {
                 return;
             }
-            if (results_json.login_url) {
-                user.login_url = results_json.login_url;
-            }
-            if (results_json.logout_url) {
-                user.logout_url = results_json.logout_url;
-            }
-            if (results_json.listings_props) {
-                self.displayResults(results_json.listings, results_json.search_type, results_json.keywords,
-                    results_json.profile ? results_json.profile.profile_id : null, results_json.start_index,
-                    results_json.listings_props.num_results, results_json.listings_props.total_results, results_json.profile);
-            }
+            var searchStats = searchResults.listings_props;
+            var profile = searchResults.profile;
+            var profileId = profile ? profile.profile_id : null;
+            self.displayResults(searchResults.listings, searchResults.search_type, searchResults.keywords, profileId, searchResults.start_index, searchStats.num_results, searchStats.total_results, profile);
         };
         self.displayResultsHtml = function(resultsHtml) {
             util.displayPage('searchlistings');
             $('#search-content-results-list').hide().html(resultsHtml).show();
         };
-        self.displayResults = function(results, search_type, keywords, profile_id, start_index, num_results, total_results, profile){
-            var resultsHtml = '';
-            var listing;
+        self.displayResults = function(listings, search_type, keywords, profile_id, start_index, num_results, total_results, profile) {
             $('#search-message').html('');
+            self.displayMemberProfile(profile);
+            self.displayListings(listings);
+            self.bindListings(listings);
+            // self.displayPagination(search_type, keywords, start_index, profile_id);
+            if (profile) { // later we can make this always display these stats, and startupbidderindex in another div
+                self.displayListingStats(listings);
+            }
+        };
+        self.displayMemberProfile = function(profile) {
             if (profile) {
                 $('#content-search-box').hide();
                 $('#searchlistings-profile-snippet').html(user.generateUserSnippetHtml('search', profile));
@@ -1179,21 +1189,51 @@ $(function(){
                 $('#content-search-box').show();
                 $('#searchlistings-profile-header').hide();
                 $('#searchlistings-profile-snippet').html('');
-            } 
-            for (var i = 0; i < results.length; i++) { // create results
-                listing = results[i];
-                resultsHtml += listings.generateListingSnippetHtml(i, listing);
             }
-            if (resultsHtml == '') {
+        };
+        self.displayListings = function(listings) {
+            var i, listing;
+            var resultsHtml = '';
+            if (listings && listings.length) {
+                for (i = 0; i < listings.length; i++) {
+                    listing = listings[i];
+                    resultsHtml += listingClass.generateListingSnippetHtml(i, listing);
+                }
+            }
+            else {
                 resultsHtml = '<i>no listings found</i>';
             }
             self.displayResultsHtml(resultsHtml);
-            for (var j = 0; j < results.length; j++) { // bind results
-                listing = results[j];
-                listings.bindListingSnippet(j, listing);
+        };
+        self.bindListings = function(listings) {
+            var i, listing;
+            if (listings && listings.length) {
+                for (i = 0; i < listings.length; i++) {
+                    listing = listings[i];
+                    listingClass.bindListingSnippet(i, listing);
+                }
             }
-            // set pagination
-            // self.displayPagination(search_type, keywords, start_index, profile_id);
+        };
+        self.displayListingStats = function(listings) {
+            if (!listings || !listings.length) {
+                statistics.hideCharts();
+                return;
+            }
+            var listing, i;
+            var stats = {
+                label: 'Listings History',
+                xaxis: 'time',
+                yaxis: 'valuation',
+                prefix: '$',
+                suffix: 'k',
+                values: []
+            }
+            for (i = 0; i < listings.length; i++) {
+                listing = listings[i];
+                stats.values[i] = listing.valuation / 1000;
+            }
+            stats.values.reverse();
+            statistics.displayStats(stats);
         };
         self.displayPagination = function(search_type, keywords, start_index, profile_id) {
             var args = {
@@ -1403,6 +1443,7 @@ $(function(){
         };
         self.displayProfileChart = function(profile) {
             if (!profile) {
+                statistics.hideCharts();
                 return;
             }
             var username = profile.username || profile.name || 'Profile';
@@ -1496,7 +1537,7 @@ $(function(){
         return self;
     };
 
-    var Listings = function() {
+    var ListingClass = function() {
         var self = {};
         self.saveListing = function(listing_id){
             var listing = {};
@@ -1526,7 +1567,7 @@ $(function(){
                 var msg_class = savedListing ? 'confirmed' : 'attention';
                 $('#listing-save-message').attr('class', msg_class).html(msg);
                 if (savedListing) {
-                    listings.displayListing(savedListing);
+                    listingClass.displayListing(savedListing);
                 }
             };
             if (listing.status === 'new') {
@@ -1568,7 +1609,7 @@ $(function(){
         };
         self.displayListing = function(data){
             $('#listing-save-message').attr('class', 'attention').html('');
-            var listing = data.listing ? data.listing : data;
+            var listing = data && data.listing ? data.listing : data;
             var resultsHtml = '';
             var profile = user.profile;
             var isOwnListing = profile && profile.profile_id == listing.profile_id;
@@ -1585,11 +1626,12 @@ $(function(){
             }
             if (errorMsg) {
                 self.displayNullListing(errorMsg);
+                statistics.hideCharts();
                 return;
             }
             if (listing.listing_id) {
-                $('#listing-snippet').hide().html(listings.generateListingSnippetHtml('listing', listing)).show();
-                listings.bindListingSnippet('listing', listing);
+                $('#listing-snippet').hide().html(listingClass.generateListingSnippetHtml('listing', listing)).show();
+                listingClass.bindListingSnippet('listing', listing);
             }
 
             // display listing message
@@ -1603,6 +1645,22 @@ $(function(){
             else {
                 self.displayReadonlyListing(listing);
             }
+            self.displayListingChart(listing);
+        };
+        self.displayListingChart = function(listing) {
+            if (!listing || listing.status !== 'active') {
+                statistics.hideCharts();
+                return;
+            }
+            var stats = {
+                label: listing.title,
+                chartType: 'column',
+                xaxis: '',
+                yaxis: 'activity',
+                labels: [ '#votes', '#bids', '#comments' ],
+                values: [ listing.num_votes || 0, listing.num_bids || 0, listing.num_comments || 0 ]
+            };
+            statistics.displayStats(stats);
         };
         self.listingMessage = function(listingStatus, isOwnListing) {
             var msg = '';
@@ -1664,13 +1722,13 @@ $(function(){
             if (listing.status === 'new') {
                 $('#listing-save-link').unbind().bind('click',function(e){
                     e.preventDefault();
-                    listings.saveListing();
+                    listingClass.saveListing();
                 });
             }
             else {
                 $('#listing-save-link').unbind().data('listing_id',listing.listing_id).bind('click',function(e){
                     e.preventDefault();
-                    listings.saveListing($(this).data('listing_id'));
+                    listingClass.saveListing($(this).data('listing_id'));
                 });
             }
 
@@ -1751,17 +1809,17 @@ $(function(){
         self.bindListingSnippet = function(i, listing) {
             var upvote_item = document.getElementById('content-results-list-item-upvote-'+i);
             $('#content-results-list-item-profile-'+i).data({index: i, profile_id: listing.profile_id}).unbind().bind('click', function(){
-                util.hashedCall('listings', 'showListingProfile', [$(this).data('profile_id'), $(this).data('index')]);
+                util.hashedCall('listingClass', 'showListingProfile', [$(this).data('profile_id'), $(this).data('index')]);
             });           
             if (listing.listing_id) {
                 $('#content-results-list-item-title-'+i).data({index: i, listing_id: listing.listing_id}).unbind().bind('click', function(){
-                    util.hashedCall('listings', 'showListing', [$(this).data('listing_id'), $(this).data('index')]);
+                    util.hashedCall('listingClass', 'showListing', [$(this).data('listing_id'), $(this).data('index')]);
                 });           
                 $('#content-results-list-item-comments-'+i).data({index: i, listing_id: listing.listing_id}).unbind().bind('click', function(){
-                    util.hashedCall('listings', 'showCommentsForListing', [$(this).data('listing_id'), $(this).data('index')]);
+                    util.hashedCall('listingClass', 'showCommentsForListing', [$(this).data('listing_id'), $(this).data('index')]);
                 }); 
                 $('#content-results-list-item-bids-'+i).data({index: i, listing_id: listing.listing_id}).unbind().bind('click', function(){
-                    util.hashedCall('listings', 'showBidsForListing', [$(this).data('listing_id'), $(this).data('index')]);
+                    util.hashedCall('listingClass', 'showBidsForListing', [$(this).data('listing_id'), $(this).data('index')]);
                 });
             }
             $(upvote_item).data({index: i, listing_id: listing.listing_id, num_votes: listing.num_votes});
@@ -1912,8 +1970,8 @@ $(function(){
         };
         self.displayListingSnippet = function(listing) {
             if (listing && listing.listing_id) {
-                $('#comments-listing-snippet').html(listings.generateListingSnippetHtml('comments', listing));
-                listings.bindListingSnippet('comments', listing);
+                $('#comments-listing-snippet').html(listingClass.generateListingSnippetHtml('comments', listing));
+                listingClass.bindListingSnippet('comments', listing);
                 $('#comments-listing-header').show();
             }
         };
@@ -2024,7 +2082,7 @@ $(function(){
         };
         self.showCommentListing = function(listing_id, index) {
             var errorCallback = function() { $('#comments-item-message-'+index).attr('class', 'attention').html('unable to get listing'); };
-            backend.getListing(listing_id, listings.displayListing, errorCallback);
+            backend.getListing(listing_id, listingClass.displayListing, errorCallback);
         };
         self.generateResultHtml = function(i, comment, listing, profile) {
             var resultHtml = '';
@@ -2224,8 +2282,8 @@ $(function(){
                 return;
             }
             if (listing.listing_id) {
-                $('#bids-listing-snippet').html(listings.generateListingSnippetHtml('bids', listing));
-                listings.bindListingSnippet('bids', listing);
+                $('#bids-listing-snippet').html(listingClass.generateListingSnippetHtml('bids', listing));
+                listingClass.bindListingSnippet('bids', listing);
                 $('#bids-listing-header').show();
             }
             if (listing.status != 'active') {
@@ -2383,7 +2441,7 @@ $(function(){
         };
         self.showBidListing = function(listing_id, index) {
             var errorCallback = function() { $('#bids-item-message-'+index).attr('class', 'attention').html('unable to get listing'); };
-            backend.getListing(listing_id, listings.displayListing, errorCallback);
+            backend.getListing(listing_id, listingClass.displayListing, errorCallback);
         };
         self.formatBidType = function(bid_type) {
             var visualMapping = {
@@ -2494,9 +2552,17 @@ $(function(){
         var self = {};
         self.userAssignCallback = function(resultsCallback) { // always check if user is still logged in
             var callback = function(results) {
-                if (results && results.loggedin_profile) {
-                    user.setProfile(results.loggedin_profile);
-                    $('#userbox').trigger('display');
+                if (results) {
+                    if (results.login_url)     {
+                        user.login_url = results.login_url;
+                    }
+                    if (results.logout_url) {
+                        user.logout_url = results.logout_url;
+                    }
+                    if (results.loggedin_profile) {
+                        user.setProfile(results.loggedin_profile);
+                        $('#userbox').trigger('display');
+                    }
                 }
                 resultsCallback(results);
             };
@@ -2660,7 +2726,7 @@ $(function(){
     var searchUsers = new SearchUsers();
     var userbox = new Userbox();
     var profiles = new Profiles();
-    var listings = new Listings();
+    var listingClass = new ListingClass();
     var comments = new Comments();
     var bids = new Bids();
 
@@ -2729,7 +2795,7 @@ body {
   line-height: 1;
   color: black;
   background: white;
-  font-family: Arial,Helvetica,sans-serif;
+  font-family: Helvetica,Arial,sans-serif;
   overflow-x: hidden;
 }
 body:before { /*Opera Fix*/
@@ -3326,7 +3392,7 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
     -o-border-radius: 10px;
     -moz-border-radius: 10px;
     -webkit-border-radius: 10px;
-/*    display: none;*/ /* null display to start with */
+    display: none; /* null display to start with */
 }
 .stats-graph {
     margin: 10px 15px 10px 15px;
