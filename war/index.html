@@ -1309,8 +1309,8 @@ $(function(){
         self.bindUsers = function(users) {
             var i, userjson;
             for (var i = 0; i < users.length; j++) {
-                userjson = users[j];
-                user.bindUserSnippet(j, userjson);
+                userjson = users[i];
+                user.bindUserSnippet(i, userjson);
             }
         };
         self.displayPagination = function(search_type, keywords, start_index) {
