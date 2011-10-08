@@ -6,13 +6,13 @@
 <meta name="description" content="Startupbidder - list, bid, comment and vote on startup businesses worldwide"/>
 <meta name="keywords" content="startupbidder startup company auction bid business plan"/>
 <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0" />
-<meta http-equiv="Expires" CONTENT="0">
-<meta http-equiv="cache-control" content="no-cache">
-<meta http-equiv="Pragma" CONTENT="no-cache">
+<meta http-equiv="expires" CONTENT="0"/>
+<meta http-equiv="pragma" CONTENT="no-cache"/>
+<meta http-equiv="cache-control" content="max-age=0"/>
+<meta http-equiv="cache-control" content="no-cache"/>
+<meta http-equiv="cache-control" content="no-store"/>
 <title>Startupbidder - list, bid, comment, vote on startups</title>
-<script src="//www.google.com/jsapi"></script> 
-<!--	<script src="https://raw.github.com/DmitryBaranovskiy/raphael/master/raphael-min.js"></script> -->
-<!--	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.8/jquery-ui.min.js"></script> -->
+<script src="http://www.google.com/jsapi"></script> 
 <link rel="canonical" href="http://startupbidder.appspot.com"/>
 
 <!-- google analytics -->
@@ -574,7 +574,7 @@ $(function(){
                 self.createObjectMapper = function() {
                         self.objectMapper = { 'util': self, 'user': user, 'backend': backend, 'uploader': uploader, 'header': header,
                                 'searchListings': searchListings, 'searchUsers': searchUsers,
-                                'profiles': profiles, 'listings': listings, 'comments': comments, 'bids': bids };
+                                'profiles': profiles, 'listingClass': listingClass, 'comments': comments, 'bids': bids };
                 };
                 self.setHash = function(objectName, methodName, argArray) {
                         var methodCall = objectName + '.' + methodName;
@@ -583,9 +583,16 @@ $(function(){
                         location.hash = hashStr;
                 };
                 self.manualCall = function(objectName, methodName, argArray) {
-                        var object = self.objectMapper[objectName] || searchListings;
-                        var method = methodName || 'doTopSearch';
-                        var args = argArray || [];
+                        var object, method, args;
+                        if (objectName && self.objectMapper[objectName] && self.objectMapper[objectName][methodName]) {
+                            object = self.objectMapper[objectName];
+                            method = methodName;
+                        }
+                        else {
+                            object = searchListings;
+                            method = 'doTopSearch';
+                        }
+                        args = argArray || [];
                         (object[method]).apply(object, args);
                 };
                 self.hashedCall = function(objectName, methodName, argArray) {
@@ -807,7 +814,7 @@ $(function(){
                                                         user.logout();
                                                         });
                                         $('#header-menu-bar-submit').unbind().bind('click', function(){
-                                                        util.hashedCall('listings', 'newListing');
+                                                        util.hashedCall('listingClass', 'newListing');
                                                         });
                                         $('#header-menu-bar-top').unbind().bind('click', function(){
                                                         util.hashedCall('searchListings', 'doTopSearch');
@@ -950,7 +957,7 @@ $(function(){
             var memberType = self.getMemberType();
             var memberClass = 'userbox-' + memberType;
             $('#userbox-profile-id').val(profile.profile_id);
-            $('#userbox-title').html(profile.name);
+            $('#userbox-title').html(profile.username || profile.name || 'Profile');
             $('#userbox-score').html(self.getScore());
             $('#userbox-num-votes').html(profile.num_votes);
             $('#userbox-num-listings').html(profile.num_listings);
@@ -996,49 +1003,89 @@ $(function(){
 
     var Statistics = function() {
         var self = {};
-        self.chartId = 'stats-graph';
+        self.columnChartId = 'stats-graph-column';
+        self.lineChartId = 'stats-graph-line';
         self.width = 270;
         self.height = 180;
-        self.chart = undefined;
+        self.lineChart = undefined;
+        self.columnChart = undefined;
         self.displayStats = function(stats) {
-            if (!stats || !stats.values || !stats.values.length) {
+            var googChart;
+            var i;
+            if (!stats || !stats.values) {
                 return;
             }
+            var chartType = stats.chartType || 'line';
+            var label = stats.label ? $.trim(stats.label) : '';
+            var numPrefix = stats.prefix || '';
+            var numSuffix = stats.suffix || '';
+            var labels = stats.labels;
             var values = stats.values;
-            if (!self.chart) {
-                self.chart = new google.visualization.LineChart(document.getElementById(self.chartId));
-            }
-            var data = new google.visualization.DataTable();
-            data.addColumn('string', stats.xaxis);
-            data.addColumn('number', stats.yaxis);
-            data.addRows(values.length);
-            var daysAgo;
-            for (var i = 0; i < values.length; i++) {
-                daysAgo = values.length - i;
-                data.setValue(i, 0, daysAgo +' day' + (daysAgo===1?'':'s') + ' ago');
-                data.setValue(i, 1, values[i]);
-            }
-            google.visualization.events.addListener(self.chart, 'ready', self.showChart);
-            self.chart.draw(data, {
+            var chartOptions = {
                 legend: 'none',
                 width: self.width,
                 height: self.height,
-                hAxis: {
-                    textPosition: 'none',
-                    title: stats.xaxis
-                },
-                vAxis: {
-                    title: stats.yaxis
-                },
-                title: stats.label.replace('Valume','Volume').trim(),
+                title: label,
                 titleTextStyle: {
                     color: 'green',
                     fontSize: '16'
                 }
-            });
+            };            
+            var formatOptions = {
+                prefix: numPrefix,
+                suffix: numSuffix,
+                fractionDigits: 0,
+                negativeColor: 'red',
+                negativeParens: true
+            };
+            var numFormatter = new google.visualization.NumberFormat(formatOptions);
+            var chartData = new google.visualization.DataTable();
+            if (chartType === 'column') {
+                if (!self.columnChart) {
+                    self.columnChart = new google.visualization.ColumnChart(document.getElementById(self.columnChartId));
+                    google.visualization.events.addListener(self.columnChart, 'ready', self.showColumnChart);
+                }
+                googChart = self.columnChart;
+            }
+            else { // assume line
+                if (!self.lineChart) {
+                    self.lineChart = new google.visualization.LineChart(document.getElementById(self.lineChartId));
+                    google.visualization.events.addListener(self.lineChart, 'ready', self.showLineChart);
+                }
+                googChart = self.lineChart;
+            }
+            chartData.addColumn('string', stats.xaxis);
+            chartData.addColumn('number', stats.yaxis);
+            chartData.addRows(values.length);
+            for (i = 0; i < values.length; i++) {
+                if (labels && labels[i] !== undefined) {
+                    chartData.setValue(i, 0, labels[i]);
+                }
+                chartData.setValue(i, 1, values[i]);
+            }
+            numFormatter.format(chartData, 1);
+            if (stats.xaxis) {
+                chartOptions.hAxis = {
+                    title: stats.xaxis
+                };
+            }
+            if (stats.yaxis) {
+                chartOptions.vAxis = {
+                    title: stats.yaxis
+                };
+            }
+            googChart.draw(chartData, chartOptions);
         };
-        self.showChart = function() {
-            $('#statsbox').show();
+        self.showColumnChart = function() {
+            $('#'+self.lineChartId).hide();
+            $('#statsbox,#'+self.columnChartId).show();
+        };
+        self.showLineChart = function() {
+            $('#'+self.columnChartId).hide();
+            $('#statsbox,#'+self.lineChartId).show();
+        };
+        self.hideCharts = function() {
+            $('#statsbox').hide();
         };
         return self;
     };
@@ -1087,39 +1134,51 @@ $(function(){
                 keywords = keywords.replace(/\btype:\w*/g, '').replace(/\s+/g, ' ').trim();
             }
             $('#content-search-keywords').val(keywords);
-            if (!args.profile_id) {
-                backend.bidStats(statistics.displayStats);
+            if (args.profile_id) {
+                statistics.hideCharts();
             }
             else {
-                $('#statsbox').hide();
+                backend.bidStats(self.displayTopStats);
             }
             var searchErrorCallback = function () { $('#search-message').html('unable to retrieve search results'); };
-            backend.searchListings(args.search_type, keywords, args.profile_id, args.start_index, args.max_results, searchListings.displayResultsJson, searchErrorCallback);
+            backend.searchListings(args.search_type, keywords, args.profile_id, args.start_index, args.max_results, self.displayResultsJson, searchErrorCallback);
         };
-        self.displayResultsJson = function(results_json) {
-            if (!results_json) {
+        self.displayTopStats = function(stats) {
+            var i;
+            if (stats && stats.values) {
+                stats.prefix = '$';
+                stats.suffix = 'k';
+                stats.values.reverse();
+                for (i = 0; i < stats.values.length; i++) {
+                    stats.values[i] = stats.values[i] / 1000;
+                }
+            }
+            statistics.displayStats(stats);
+        };
+        self.displayResultsJson = function(searchResults) {
+            if (!searchResults || !searchResults.listings_props) {
                 return;
             }
-            if (results_json.login_url) {
-                user.login_url = results_json.login_url;
-            }
-            if (results_json.logout_url) {
-                user.logout_url = results_json.logout_url;
-            }
-            if (results_json.listings_props) {
-                self.displayResults(results_json.listings, results_json.search_type, results_json.keywords,
-                    results_json.profile ? results_json.profile.profile_id : null, results_json.start_index,
-                    results_json.listings_props.num_results, results_json.listings_props.total_results, results_json.profile);
-            }
+            var searchStats = searchResults.listings_props;
+            var profile = searchResults.profile;
+            var profileId = profile ? profile.profile_id : null;
+            self.displayResults(searchResults.listings, searchResults.search_type, searchResults.keywords, profileId, searchResults.start_index, searchStats.num_results, searchStats.total_results, profile);
         };
         self.displayResultsHtml = function(resultsHtml) {
             util.displayPage('searchlistings');
             $('#search-content-results-list').hide().html(resultsHtml).show();
         };
-        self.displayResults = function(results, search_type, keywords, profile_id, start_index, num_results, total_results, profile){
-            var resultsHtml = '';
-            var listing;
+        self.displayResults = function(listings, search_type, keywords, profile_id, start_index, num_results, total_results, profile) {
             $('#search-message').html('');
+            self.displayMemberProfile(profile);
+            self.displayListings(listings);
+            self.bindListings(listings);
+            // self.displayPagination(search_type, keywords, start_index, profile_id);
+            if (profile) { // later we can make this always display these stats, and startupbidderindex in another div
+                self.displayListingStats(listings);
+            }
+        };
+        self.displayMemberProfile = function(profile) {
             if (profile) {
                 $('#content-search-box').hide();
                 $('#searchlistings-profile-snippet').html(user.generateUserSnippetHtml('search', profile));
@@ -1130,21 +1189,51 @@ $(function(){
                 $('#content-search-box').show();
                 $('#searchlistings-profile-header').hide();
                 $('#searchlistings-profile-snippet').html('');
-            } 
-            for (var i = 0; i < results.length; i++) { // create results
-                listing = results[i];
-                resultsHtml += listings.generateListingSnippetHtml(i, listing);
             }
-            if (resultsHtml == '') {
+        };
+        self.displayListings = function(listings) {
+            var i, listing;
+            var resultsHtml = '';
+            if (listings && listings.length) {
+                for (i = 0; i < listings.length; i++) {
+                    listing = listings[i];
+                    resultsHtml += listingClass.generateListingSnippetHtml(i, listing);
+                }
+            }
+            else {
                 resultsHtml = '<i>no listings found</i>';
             }
             self.displayResultsHtml(resultsHtml);
-            for (var j = 0; j < results.length; j++) { // bind results
-                listing = results[j];
-                listings.bindListingSnippet(j, listing);
+        };
+        self.bindListings = function(listings) {
+            var i, listing;
+            if (listings && listings.length) {
+                for (i = 0; i < listings.length; i++) {
+                    listing = listings[i];
+                    listingClass.bindListingSnippet(i, listing);
+                }
             }
-            // set pagination
-            // self.displayPagination(search_type, keywords, start_index, profile_id);
+        };
+        self.displayListingStats = function(listings) {
+            if (!listings || !listings.length) {
+                statistics.hideCharts();
+                return;
+            }
+            var listing, i;
+            var stats = {
+                label: 'Listings History',
+                xaxis: 'time',
+                yaxis: 'valuation',
+                prefix: '$',
+                suffix: 'k',
+                values: []
+            }
+            for (i = 0; i < listings.length; i++) {
+                listing = listings[i];
+                stats.values[i] = listing.valuation / 1000;
+            }
+            stats.values.reverse();
+            statistics.displayStats(stats);
         };
         self.displayPagination = function(search_type, keywords, start_index, profile_id) {
             var args = {
@@ -1216,7 +1305,7 @@ $(function(){
             backend.searchUsers(args.search_type, keywords, args.start_index, args.max_results, searchUsers.displayResultsJson, errorCallback);
         };
         self.displayResultsJson = function(results_json) {
-            if (!results_json.users_props) { // FIXME
+            if (!results_json.users_props) {
                 results_json.users_props = {
                     start_index: 0,
                     num_results: !results_json.users || results_json.users.length,
@@ -1229,25 +1318,64 @@ $(function(){
         self.displayResultsHtml = function(resultsHtml) {
             $('#user-search-results-list').hide().html(resultsHtml).show();
         };
-        self.displayResults = function(results, search_type, keywords, start_index, num_results, total_results){
-            var resultsHtml = '';
-            var userjson;
+        self.displayResults = function(members, search_type, keywords, start_index, num_results, total_results){
             $('#user-search-message').html('');
-            for (var i = 0; i < results.length; i++) { // create results
-                userjson = results[i];
-                resultsHtml += user.generateUserSnippetHtml(i, userjson);
-            }
-            if (resultsHtml == '') {
-                resultsHtml = '<i>no users found</i>';
-            }
             util.displayPage('searchusers');
-            self.displayResultsHtml(resultsHtml);
-            for (var j = 0; j < results.length; j++) { // bind results
-                userjson = results[j];
-                user.bindUserSnippet(j, userjson);
+            self.displayMemberStats(members);
+            self.displayMembers(members);
+            self.bindMembers(members);
+            //self.displayPagination(search_type, keywords, start_index); // set pagination
+        };
+        self.displayMemberStats = function(members) {
+            var member, memberDate, i, k;
+            var stats = {
+                label: 'Total Members',
+                xaxis: 'time',
+                yaxis: '#members',
+                values: []
             }
-            // set pagination
-            //self.displayPagination(search_type, keywords, start_index);
+            var memberMap = {};
+            var memberDates = [];
+            var runningTotal = 0;
+            for (i = 0; i < members.length; i++) {
+                member = members[i];
+                memberDate = member.joined_date;
+                memberMap[memberDate] = memberMap[memberDate] ? memberMap[memberDate] + 1 : 1;
+            }
+            for (k in memberMap) {
+                memberDates.push(k);
+            }
+            memberDates.sort(function(a,b){return a-b;});
+            for (i = 0; i < memberDates.length; i++) {
+                memberDate = memberDates[i];
+                runningTotal += memberMap[memberDate];
+                stats.values[i] = runningTotal;
+            }
+            stats.values.reverse();
+            statistics.displayStats(stats);
+        };
+        self.displayMembers = function(members) {
+            if (!members || !members.length) {
+                self.displayResultsHtml('<i>no members found</i>');
+                return;
+            }
+            var i, member;
+            var resultsHtml = '';
+            for (i = 0; i < members.length; i++) {
+                member = members[i];
+                resultsHtml += user.generateUserSnippetHtml(i, member);
+            }
+            self.displayResultsHtml(resultsHtml);
+        };
+        self.bindMembers = function(members) {
+            if (!members || !members.length) {
+                return;
+            }
+            var i, member;
+            for (var i = 0; i < members.length; i++) {
+                member = members[i];
+                user.bindUserSnippet(i, member);
+            }
         };
         self.displayPagination = function(search_type, keywords, start_index) {
             var args = {
@@ -1313,6 +1441,22 @@ $(function(){
         self.showProfile = function(profile_id, errorCallback) {
             backend.getProfile(profile_id, self.displayProfile, errorCallback);
         };
+        self.displayProfileChart = function(profile) {
+            if (!profile) {
+                statistics.hideCharts();
+                return;
+            }
+            var username = profile.username || profile.name || 'Profile';
+            var stats = {
+                label: username,
+                chartType: 'column',
+                xaxis: '',
+                yaxis: 'activity',
+                labels: [ '#votes', '#listings', '#bids', '#comments' ],
+                values: [ profile.num_votes || 0, profile.num_listings || 0, profile.num_bids || 0, profile.num_comments || 0]
+            };
+            statistics.displayStats(stats);
+        };
         self.displayProfile = function(data, msgClass, msgText){
             var profile = data && data.profile ? data.profile : data;
             if (!profile) {
@@ -1328,6 +1472,7 @@ $(function(){
             $('#profile-snippet').html(user.generateUserSnippetHtml('profile', profile));
             user.bindUserSnippet('profile', profile);
             $('#profile-header').show();
+            self.displayProfileChart(profile);
 
             // enable editable if logged in
             if (user.profile && user.profile.profile_id == profile.profile_id) {
@@ -1392,7 +1537,7 @@ $(function(){
         return self;
     };
 
-    var Listings = function() {
+    var ListingClass = function() {
         var self = {};
         self.saveListing = function(listing_id){
             var listing = {};
@@ -1422,7 +1567,7 @@ $(function(){
                 var msg_class = savedListing ? 'confirmed' : 'attention';
                 $('#listing-save-message').attr('class', msg_class).html(msg);
                 if (savedListing) {
-                    listings.displayListing(savedListing);
+                    listingClass.displayListing(savedListing);
                 }
             };
             if (listing.status === 'new') {
@@ -1441,7 +1586,7 @@ $(function(){
                 return;
             }
             var listing = {};
-            listing.title = 'Enter listing title here';
+            listing.title = '';
             listing.median_valuation = 0;
             listing.num_votes = 0;
             listing.num_bids = 0;
@@ -1450,10 +1595,10 @@ $(function(){
             listing.profile_username = profile.username;
             listing.listing_date = util.today();
             listing.status = 'new';
-            listing.suggested_amt = 10000;
-            listing.suggested_pct = 10;
+            listing.suggested_amt = 0;
+            listing.suggested_pct = 0;
             listing.suggested_val = bids.calculateValuation(listing.suggested_amt, listing.suggested_pct);
-            listing.summary = 'Enter listing summary here.';
+            listing.summary = '';
             listing.business_plan_id = '';
             listing.presentation_id = '';
             listing.financials_id = '';
@@ -1464,7 +1609,7 @@ $(function(){
         };
         self.displayListing = function(data){
             $('#listing-save-message').attr('class', 'attention').html('');
-            var listing = data.listing ? data.listing : data;
+            var listing = data && data.listing ? data.listing : data;
             var resultsHtml = '';
             var profile = user.profile;
             var isOwnListing = profile && profile.profile_id == listing.profile_id;
@@ -1481,11 +1626,12 @@ $(function(){
             }
             if (errorMsg) {
                 self.displayNullListing(errorMsg);
+                statistics.hideCharts();
                 return;
             }
             if (listing.listing_id) {
-                $('#listing-snippet').hide().html(listings.generateListingSnippetHtml('listing', listing)).show();
-                listings.bindListingSnippet('listing', listing);
+                $('#listing-snippet').hide().html(listingClass.generateListingSnippetHtml('listing', listing)).show();
+                listingClass.bindListingSnippet('listing', listing);
             }
 
             // display listing message
@@ -1499,6 +1645,22 @@ $(function(){
             else {
                 self.displayReadonlyListing(listing);
             }
+            self.displayListingChart(listing);
+        };
+        self.displayListingChart = function(listing) {
+            if (!listing || listing.status !== 'active') {
+                statistics.hideCharts();
+                return;
+            }
+            var stats = {
+                label: listing.title,
+                chartType: 'column',
+                xaxis: '',
+                yaxis: 'activity',
+                labels: [ '#votes', '#bids', '#comments' ],
+                values: [ listing.num_votes || 0, listing.num_bids || 0, listing.num_comments || 0 ]
+            };
+            statistics.displayStats(stats);
         };
         self.listingMessage = function(listingStatus, isOwnListing) {
             var msg = '';
@@ -1560,13 +1722,13 @@ $(function(){
             if (listing.status === 'new') {
                 $('#listing-save-link').unbind().bind('click',function(e){
                     e.preventDefault();
-                    listings.saveListing();
+                    listingClass.saveListing();
                 });
             }
             else {
                 $('#listing-save-link').unbind().data('listing_id',listing.listing_id).bind('click',function(e){
                     e.preventDefault();
-                    listings.saveListing($(this).data('listing_id'));
+                    listingClass.saveListing($(this).data('listing_id'));
                 });
             }
 
@@ -1647,17 +1809,17 @@ $(function(){
         self.bindListingSnippet = function(i, listing) {
             var upvote_item = document.getElementById('content-results-list-item-upvote-'+i);
             $('#content-results-list-item-profile-'+i).data({index: i, profile_id: listing.profile_id}).unbind().bind('click', function(){
-                util.hashedCall('listings', 'showListingProfile', [$(this).data('profile_id'), $(this).data('index')]);
+                util.hashedCall('listingClass', 'showListingProfile', [$(this).data('profile_id'), $(this).data('index')]);
             });           
             if (listing.listing_id) {
                 $('#content-results-list-item-title-'+i).data({index: i, listing_id: listing.listing_id}).unbind().bind('click', function(){
-                    util.hashedCall('listings', 'showListing', [$(this).data('listing_id'), $(this).data('index')]);
+                    util.hashedCall('listingClass', 'showListing', [$(this).data('listing_id'), $(this).data('index')]);
                 });           
                 $('#content-results-list-item-comments-'+i).data({index: i, listing_id: listing.listing_id}).unbind().bind('click', function(){
-                    util.hashedCall('listings', 'showCommentsForListing', [$(this).data('listing_id'), $(this).data('index')]);
+                    util.hashedCall('listingClass', 'showCommentsForListing', [$(this).data('listing_id'), $(this).data('index')]);
                 }); 
                 $('#content-results-list-item-bids-'+i).data({index: i, listing_id: listing.listing_id}).unbind().bind('click', function(){
-                    util.hashedCall('listings', 'showBidsForListing', [$(this).data('listing_id'), $(this).data('index')]);
+                    util.hashedCall('listingClass', 'showBidsForListing', [$(this).data('listing_id'), $(this).data('index')]);
                 });
             }
             $(upvote_item).data({index: i, listing_id: listing.listing_id, num_votes: listing.num_votes});
@@ -1779,14 +1941,7 @@ $(function(){
             $('#comment-not-loggedin').hide();
             $('#comments-content-results-list').html(resultsHtml);
         };
-        self.displayResults = function(results, keepComment, msgClass, msgText){
-            $('#comments-message').html('');
-            $('#comment-save-message').attr('class', (msgClass || 'attention')).html(msgText || '');
-            if (!keepComment) {
-                $('#comment-textarea').val('');
-            }
-            util.displayPage('comments');
-            var comments_profile = results ? results.profile : null;
+        self.displayUserSnippet = function(comments_profile) {
             if (comments_profile) {
                 $('#comments-profile-snippet').html(user.generateUserSnippetHtml('comments', comments_profile));
                 user.bindUserSnippet('comments', comments_profile);
@@ -1796,15 +1951,14 @@ $(function(){
                 $('#comments-profile-header').hide();
                 $('#comments-profile-snippet').html('');
             }
-            var listing = results ? results.listing : null;
-            var comments = results ? results.comments : null;
-            var profile = user.profile;
+        };
+        self.displayComments = function(comments, listing) {
             var resultsHtml = '';
             var comment;
             if (comments && comments.length > 0) {
                 for (var i = 0; i < comments.length; i++) { // create results
                     comment = comments[i];
-                    resultsHtml += self.generateResultHtml(i, comment, listing, profile);
+                    resultsHtml += self.generateResultHtml(i, comment, listing, user.profile);
                 }
             }
             else if (comments && comments.length == 0) {
@@ -1812,35 +1966,36 @@ $(function(){
                 resultsHtml += ' <span id="comments-item-message" class="attention item-message">no comments found</span>';
                 resultsHtml += '</div>';
             }
-            // display html
-            $('#comments-content-results-list').hide().html(resultsHtml).show();
-            // enable editable if logged in
-            if (listing) {
-                if (listing.listing_id) {
-                    $('#comments-listing-snippet').html(listings.generateListingSnippetHtml('comments', listing));
-                    listings.bindListingSnippet('comments', listing);
-                    $('#comments-listing-header').show();
-                }
-                if (profile) {
-                    $('#comment-loggedin-add').show();
-                    $('#comment-not-loggedin').hide();
-                    $('#comment-save-button').show().unbind().data('listing_id',listing.listing_id).data('profile_id',profile.profile_id).bind('click',function(e){
-                        e.preventDefault();
-                        self.saveComment($(this).data('listing_id'), $(this).data('profile_id'));
-                    });
-                }
-                else {
-                    $('#comment-loggedin-add').hide();
-                    $('#comment-not-loggedin').show();
-                }
+            $('#comments-content-results-list').hide().html(resultsHtml).show(); // display html
+        };
+        self.displayListingSnippet = function(listing) {
+            if (listing && listing.listing_id) {
+                $('#comments-listing-snippet').html(listingClass.generateListingSnippetHtml('comments', listing));
+                listingClass.bindListingSnippet('comments', listing);
+                $('#comments-listing-header').show();
             }
-            else {
-                $('#comments-listing-header').hide();
+        };
+        self.displayCommentForm = function(listing) {
+            if (!listing) {
                 $('#comments-listing-snippet').html('Comments:');
-                $('#comment-loggedin-add').hide();
-                $('#comment-not-loggedin').hide();
+                $('#comments-listing-header,#comment-loggedin-add,#comment-not-loggedin').hide();
+                return;
             }
-            // bind results
+            if (!user.profile) {
+                $('#comment-loggedin-add').hide();
+                $('#comment-not-loggedin').show();
+                return;
+            }
+            // enable editable if logged in
+            $('#comment-loggedin-add').show();
+            $('#comment-not-loggedin').hide();
+            $('#comment-save-button').show().unbind().data('listing_id',listing.listing_id).data('profile_id',user.profile.profile_id).bind('click',function(e){
+                e.preventDefault();
+                self.saveComment($(this).data('listing_id'), $(this).data('profile_id'));
+            });
+        };
+        self.bindCommentLinks = function(comments, listing) {
+            var comment;
             if (!comments || comments.length == 0) {
                 return;
             }
@@ -1864,17 +2019,62 @@ $(function(){
                 $('#comments-item-listing-'+i).data({index:i,listing_id:comment.listing_id}).unbind().bind('click', function(){
                     util.hashedCall('comments', 'showCommentListing', [$(this).data('listing_id'), $(this).data('index')]);
                 });           
-                if (!profile || profile.profile_id != comment.profile_id) { // not my profile so I can't delete
+                if (!user.profile || user.profile.profile_id != comment.profile_id) { // not my profile so I can't delete
                     continue;
                 }
                 $('#comments-item-delete-'+i)
                     .data({
                         index: i,
                         comment_id: comment.comment_id,
-                        profile_id: (results.listing ? '' : comment.profile_id),
-                        listing_id: (results.listing ? results.listing.listing_id : '')})
+                        profile_id: (listing ? '' : comment.profile_id),
+                        listing_id: (listing ? listing.listing_id : '')})
                     .unbind().bind('click', deleteComment);
             }
+        };
+        self.displayCommentStats = function(comments) {
+            var comment, commentDate, i, k;
+            var stats = {
+                label: 'Comment Activity',
+                xaxis: 'time',
+                yaxis: '#comments',
+                values: []
+            }
+            var commentMap = {};
+            var commentDates = [];
+            for (i = 0; i < comments.length; i++) {
+                comment = comments[i];
+                commentDate = comment.comment_date;
+                commentMap[commentDate] = commentMap[commentDate] ? commentMap[commentDate] + 1 : 1;
+            }
+            for (k in commentMap) {
+                commentDates.push(k);
+            }
+            commentDates.sort(function(a,b){return a-b;});
+            for (i = 0; i < commentDates.length; i++) {
+                commentDate = commentDates[i];
+                stats.values[i] = commentMap[commentDate];
+            }
+            stats.values.reverse();
+            statistics.displayStats(stats);
+        };
+        self.displayResults = function(results, keepComment, msgClass, msgText){
+            var comments_profile = results ? results.profile : null;
+            var listing = results ? results.listing : null;
+            var comments = results ? results.comments : null;
+
+            $('#comments-message').html('');
+            $('#comment-save-message').attr('class', (msgClass || 'attention')).html(msgText || '');
+            if (!keepComment) {
+                $('#comment-textarea').val('');
+            }
+            util.displayPage('comments');
+
+            self.displayUserSnippet(comments_profile);
+            self.displayListingSnippet(listing);
+            self.displayCommentForm(listing);
+            self.displayComments(comments, listing);
+            self.displayCommentStats(comments);
+            self.bindCommentLinks(comments, listing);
         };
         self.showCommentProfile = function(profile_id, index) {
             var errorCallback = function() { $('#comments-item-message-'+index).attr('class', 'attention').html('unable to get profile'); };
@@ -1882,7 +2082,7 @@ $(function(){
         };
         self.showCommentListing = function(listing_id, index) {
             var errorCallback = function() { $('#comments-item-message-'+index).attr('class', 'attention').html('unable to get listing'); };
-            backend.getListing(listing_id, listings.displayListing, errorCallback);
+            backend.getListing(listing_id, listingClass.displayListing, errorCallback);
         };
         self.generateResultHtml = function(i, comment, listing, profile) {
             var resultHtml = '';
@@ -2029,7 +2229,10 @@ $(function(){
             self.displayBidSnippet(bids_profile);
             self.displayBidForm(listing, profile, profileBid);
             self.displayBids(filteredBids, listing, profile);
-
+            self.displayBidStats(filteredBids);
+            self.bindBidLinks(filteredBids, profile, listing, bidStatus);
+        };
+        self.widthdrawBidFunc = function(index) {
             var withdrawBid = function() {
                 var index = $(this).data('index');
                 var bid_id = $(this).data('bid_id');
@@ -2042,6 +2245,9 @@ $(function(){
                 var callback = listing_id ? listings_callback : profile_callback;
                 backend.withdrawBid($(this).data('bid_id'), callback, errorCallback);
             };
+            return withdrawBid;
+        };
+        self.acceptBidFunc = function(index) {
             var acceptBid = function() {
                 var index = $(this).data('index');
                 var bid_id = $(this).data('bid_id');
@@ -2054,7 +2260,7 @@ $(function(){
                 var callback = listing_id ? listings_callback : profile_callback;
                 backend.acceptBid($(this).data('bid_id'), callback, errorCallback);
             };
-            self.bindBidLinks(filteredBids, profile, listing, bidStatus);
+            return acceptBid;
         };
         self.displayBidSnippet = function(bids_profile) {
             if (bids_profile) {
@@ -2076,8 +2282,8 @@ $(function(){
                 return;
             }
             if (listing.listing_id) {
-                $('#bids-listing-snippet').html(listings.generateListingSnippetHtml('bids', listing));
-                listings.bindListingSnippet('bids', listing);
+                $('#bids-listing-snippet').html(listingClass.generateListingSnippetHtml('bids', listing));
+                listingClass.bindListingSnippet('bids', listing);
                 $('#bids-listing-header').show();
             }
             if (listing.status != 'active') {
@@ -2214,7 +2420,7 @@ $(function(){
                         .data('profile_id', listing ? '' : bid.profile_id)
                         .data('listing_id', listing ? results.listing.listing_id : '')
                         .unbind()
-                        .bind('click', withdrawBid);
+                        .bind('click', self.withdrawBidFunc(i));
                 }
                 if (listing
                     && profile
@@ -2223,9 +2429,9 @@ $(function(){
                     $('#bids-item-accept-'+i)
                         .data('bid_id', bid.bid_id)
                         .data('profile_id', listing ? '' : bid.profile_id)
-                        .data('listing_id', listing ? results.listing.listing_id : '')
+                        .data('listing_id', listing ? listing.listing_id : '')
                         .unbind()
-                        .bind('click', acceptBid);
+                        .bind('click', self.acceptBidFunc(i));
                 }
             }
         };
@@ -2235,7 +2441,7 @@ $(function(){
         };
         self.showBidListing = function(listing_id, index) {
             var errorCallback = function() { $('#bids-item-message-'+index).attr('class', 'attention').html('unable to get listing'); };
-            backend.getListing(listing_id, listings.displayListing, errorCallback);
+            backend.getListing(listing_id, listingClass.displayListing, errorCallback);
         };
         self.formatBidType = function(bid_type) {
             var visualMapping = {
@@ -2295,6 +2501,23 @@ $(function(){
             resultHtml += '<div class="content-results-list-item-clear"></div>';
             return resultHtml;
         };
+        self.displayBidStats = function(bids) {
+            var bid, i;
+            var stats = {
+                label: 'Bid Activity',
+                xaxis: 'time',
+                yaxis: 'valuation',
+                prefix: '$',
+                suffix: 'k',
+                values: []
+            }
+            for (i = 0; i < bids.length; i++) {
+                bid = bids[i];
+                stats.values[i] = bid.valuation / 1000;
+            }
+            stats.values.reverse();
+            statistics.displayStats(stats);
+        };
         self.recalculateValuation = function(){
             var bid_amt  = $('#bid-amt').val() || '';
             var bid_pct  = $('#bid-pct').val() || '';
@@ -2329,9 +2552,17 @@ $(function(){
         var self = {};
         self.userAssignCallback = function(resultsCallback) { // always check if user is still logged in
             var callback = function(results) {
-                if (results && results.loggedin_profile) {
-                    user.setProfile(results.loggedin_profile);
-                    $('#userbox').trigger('display');
+                if (results) {
+                    if (results.login_url)     {
+                        user.login_url = results.login_url;
+                    }
+                    if (results.logout_url) {
+                        user.logout_url = results.logout_url;
+                    }
+                    if (results.loggedin_profile) {
+                        user.setProfile(results.loggedin_profile);
+                        $('#userbox').trigger('display');
+                    }
                 }
                 resultsCallback(results);
             };
@@ -2475,7 +2706,7 @@ $(function(){
 //            var stats = {
 //                    label: "10 Day Bid Volume",
 //                    xaxis: "days ago",
-//                    yaxis: "num bids",
+//                    yaxis: "#bids",
 //                    values: [ 7, 1, 9, 7, 5, 6, 2, 6, 7, 2 ]
 //                              2, 1, 8, 6, 8, 0, 6, 5, 4, 8,
 //                              3, 0, 1, 0, 8, 8, 9, 9, 7, 5 ]
@@ -2495,7 +2726,7 @@ $(function(){
     var searchUsers = new SearchUsers();
     var userbox = new Userbox();
     var profiles = new Profiles();
-    var listings = new Listings();
+    var listingClass = new ListingClass();
     var comments = new Comments();
     var bids = new Bids();
 
@@ -2564,7 +2795,7 @@ body {
   line-height: 1;
   color: black;
   background: white;
-  font-family: Arial,Helvetica,sans-serif;
+  font-family: Helvetica,Arial,sans-serif;
   overflow-x: hidden;
 }
 body:before { /*Opera Fix*/
@@ -3077,6 +3308,103 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
 #loadingpage {
     display: block;
 }
+
+/* begin rightbox */
+.rightbox {
+    position: absolute;
+    right: 10px;
+    top: 40px;
+}
+/* begin userbox */
+.userbox {
+    float: right;
+    height: 70px;
+    width: 250px;
+    margin-top: 10px;
+    padding: 0px 10px 5px 10px;
+    border: 2px solid grey;
+    border-radius: 10px;
+    -o-border-radius: 10px;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    line-height: 16px;
+    display: none;
+}
+.userbox-title-link {
+    color: white;
+    line-height: 23px;
+    font-size: 16px;
+}
+.userbox-title-link:hover {
+    font-size: 18px;
+    cursor: pointer;
+}
+.userbox-medal {
+    margin-right: 5px;
+    width: 50px;
+    float: left;
+}
+.userbox-textbox {
+    margin-left: 55px;
+    float: left;
+}
+.userbox-score {
+    width: 50px:
+    height: 50px;
+    margin-top: 13px;
+    font-size: 24px;
+    text-align: center;
+}
+.userbox-chart {
+    position: absolute;
+    margin-left: 0px;
+    width: 42px;
+    height: 42px;
+    display: block;
+    border: 2px solid grey;
+    -moz-border-radius: 21px;
+    -webkit-border-radius: 21px;
+    border-radius: 21px;
+}
+.userbox-bronze {
+    background: #C69633;
+}
+.userbox-silver {
+    background: #C9CFC9;
+}
+.userbox-gold {
+    background: #FFCC00;
+}
+.userbox-platinum {
+    background: #909090;
+}
+/* end userbox styles */
+/* begin stats styles */
+.statsbox {
+    width: 300px;
+    height: 200px;
+    margin-top: 10px;
+    border: 2px solid grey;
+    border-radius: 10px;
+    -o-border-radius: 10px;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    display: none; /* null display to start with */
+}
+.stats-graph {
+    margin: 10px 15px 10px 15px;
+    width: 270px;
+    height: 180px;
+}
+/* end stats styles */
+.clearbox {
+    clear: both;
+}
+/* end rightbox style */
+
 </style>
 
 <!--[if !IE 7]>
@@ -3326,8 +3654,8 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
                             <input type="submit" id="listing-edit-business-plan-submit" value="Upload"/>
                             <iframe id="listing-edit-business-plan-iframe" name="listing-edit-business-plan-iframe" class="listing-iframe" src="#"></iframe>
                     </div>
-                    <div class="content-form-clear"></div>
                     </form>
+                    <div class="content-form-clear"></div>
                     <div class="content-form-line">
                         <span><b>Presentation</b></span>
                         <span class="link" id="listing-edit-presentation-link"><a target="_blank" href="#">view</a></span>
@@ -3335,15 +3663,14 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
                         <span class="link" id="listing-edit-presentation-remove">remove</span>
                     </div>
                     <div class="content-form-clear"></div>
-                    </form>
                     <form id="listing-edit-presentation-form" method="post" enctype="multipart/form-data" action="#">
                     <div class="content-form-line">
                             <input name="PRESENTATION" id="listing-edit-presentation-file" type="file"/>
                             <input type="submit" id="listing-edit-presentation-submit" value="Upload"/>
                             <iframe id="listing-edit-presentation-iframe" name="listing-edit-presentation-iframe" class="listing-iframe" src="#"></iframe>
                     </div>
-                    <div class="content-form-clear"></div>
                     </form>
+                    <div class="content-form-clear"></div>
                     <div class="content-form-line">
                         <span><b>Financial Statements</b></span>
                         <span class="link" id="listing-edit-financials-link"><a target="_blank" href="#">view</a></span>
@@ -3351,15 +3678,14 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
                         <span class="link" id="listing-edit-financials-remove">remove</span>
                     </div>
                     <div class="content-form-clear"></div>
-                    </form>
                     <form id="listing-edit-financials-form" method="post" enctype="multipart/form-data" action="#">
                     <div class="content-form-line">
                             <input name="FINANCIALS" id="listing-edit-financials-file" type="file"/>
                             <input type="submit" id="listing-edit-financials-submit" value="Upload"/>
                             <iframe id="listing-edit-financials-iframe" name="listing-edit-financials-iframe" class="listing-iframe" src="#"></iframe>
                     </div>
-                    <div class="content-form-clear"></div>
                     </form>
+                    <div class="content-form-clear"></div>
                     <div class="listing-executive-summary">
                         <div class="listing-execsum-content" id="listing-execsum-editable">
                             <p>Executive Summary</p>
@@ -3787,121 +4113,19 @@ s = (p + b + c + v) / (t + 2)^1.5
         </div>
     </div> <!-- end faq -->
 
-<!-- begin rightbox --> 
-<style>
-.rightbox {
-    position: absolute;
-    right: 10px;
-    top: 40px;
-}
-/* begin userbox */
-.userbox {
-    float: right;
-    height: 65px;
-    width: 250px;
-    margin-top: 10px;
-    padding: 5px 10px 5px 10px;
-    border: 2px solid #000;
-    border-radius: 10px;
-    -o-border-radius: 10px;
-    -moz-border-radius: 10px;
-    -webkit-border-radius: 10px;
-    color: white;
-    font-size: 12px;
-    font-weight: bold;
-    line-height: 16px;
-    display: none;
-}
-.userbox-title {
-    line-height: 18px;
-    font-size: 16px;
-}
-.userbox-medal {
-    margin-right: 5px;
-    width: 50px;
-    float: left;
-}
-.userbox-textbox {
-    margin-left: 55px;
-    float: left;
-}
-.userbox-score {
-    width: 50px:
-    height: 50px;
-    margin-top: 13px;
-    font-size: 24px;
-    text-align: center;
-}
-.userbox-chart {
-    position: absolute;
-    margin-left: 0px;
-    width: 42px;
-    height: 42px;
-    display: block;
-    border: 2px solid grey;
-    -moz-border-radius: 21px;
-    -webkit-border-radius: 21px;
-    border-radius: 21px;
-}
-.userbox-bronze {
-    background: #C69633;
-}
-.userbox-silver {
-    background: #C9CFC9;
-}
-.userbox-gold {
-    background: #FFCC00;
-}
-.userbox-platinum {
-    background: #909090;
-}
-/* end userbox styles */
-/* begin stats styles */
-.statsbox {
-    width: 320px;
-    height: 220px;
-    margin-top: 10px;
-    border: 2px solid #000;
-    border-radius: 10px;
-    -o-border-radius: 10px;
-    -moz-border-radius: 10px;
-    -webkit-border-radius: 10px;
-/*    display: none;*/ /* null display to start with */
-}
-.stats-label {
-    width: 320px;
-    height: 16px;
-    margin-top: 4px;
-    top: 0px;
-    left: 0px;
-    text-align: center;
-    font-size: 14px;
-    font-weight: bold;
-}
-.stats-graph {
-    margin: 10px 25px 10px 25px;
-    width: 270px;
-    height: 180px;
-}
-/* end stats styles */
-.clearbox {
-    clear: both;
-}
-</style> 
-<!-- end rightbox style -->
 
 <!-- begin rightbox div -->
 <div class="rightbox">
     <!-- begin userbox div -->
     <div id="userbox" class="userbox blue-gradient-bg">
-        <div><span class="userbox-title" id="userbox-title"></span></div>
+        <div><span class="userbox-title-link" id="userbox-details"><span id="userbox-title"></span></span></div>
         <div class="userbox-medal">
             <div class="userbox-chart userbox-bronze" id="userbox-chart">
                 <div class="userbox-score" id="userbox-score"></div>
             </div>
         </div>
         <div class="userbox-textbox">
-            <div><span id="userbox-member-type">Bronze</span> Member <span class="header-link" id="userbox-details">details</span></div>
+            <div><span id="userbox-member-type">Bronze</span> Member</div>
             <div>
                 <span id="userbox-num-votes">0</span> votes
                 <span class="header-link" id="userbox-listings"><span id="userbox-num-listings">0</span> listing<span id="userbox-listings-plural"></span></span>
@@ -3918,9 +4142,9 @@ s = (p + b + c + v) / (t + 2)^1.5
     <!-- end userbox div -->
     <div class="clearbox"></div>
     <!-- begin stats-graph div -->
-    <div id="statsbox" class="statsbox vertical-gradient-bg">
-        <div id="stats-label" class="stats-label"></div>
-        <div id="stats-graph" class="stats-graph"></div>
+    <div id="statsbox" class="statsbox blue-gradient-bg">
+        <div id="stats-graph-line" class="stats-graph"></div>
+        <div id="stats-graph-column" class="stats-graph"></div>
     </div>
     <!-- end stats-graph div -->
 </div>
