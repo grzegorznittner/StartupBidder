@@ -95,7 +95,8 @@ public class SystemController extends ModelDrivenController {
 		UserService userService = UserServiceFactory.getUserService();
 		User user = userService.getCurrentUser();
 		if (user != null) {
-			String deletedObjects = ServiceFacade.instance().clearDatastore(user);
+			UserVO loggedInUser = ServiceFacade.instance().getLoggedInUserData(user);
+			String deletedObjects = ServiceFacade.instance().clearDatastore(loggedInUser);
 			model = deletedObjects;
 		} else {
 			headers.setStatus(500);
@@ -109,7 +110,8 @@ public class SystemController extends ModelDrivenController {
 		UserService userService = UserServiceFactory.getUserService();
 		User user = userService.getCurrentUser();
 		if (user != null) {
-			String printedObjects = ServiceFacade.instance().printDatastoreContents(user);
+			UserVO loggedInUser = ServiceFacade.instance().getLoggedInUserData(user);
+			String printedObjects = ServiceFacade.instance().printDatastoreContents(loggedInUser);
 			model = printedObjects;
 		} else {
 			headers.setStatus(500);
@@ -123,7 +125,8 @@ public class SystemController extends ModelDrivenController {
 		UserService userService = UserServiceFactory.getUserService();
 		User user = userService.getCurrentUser();
 		if (user != null) {
-			String printedObjects = ServiceFacade.instance().createMockDatastore(user);
+			UserVO loggedInUser = ServiceFacade.instance().getLoggedInUserData(user);
+			String printedObjects = ServiceFacade.instance().createMockDatastore(loggedInUser);
 			model = printedObjects;
 		} else {
 			headers.setStatus(500);

@@ -22,6 +22,8 @@ public class VoteVO {
 	@JsonProperty("user_name")
 	private String userName;
 	private long value;
+	@JsonProperty("mockData")
+	private boolean mockData;
 	
 	public VoteVO() {
 	}
@@ -73,11 +75,19 @@ public class VoteVO {
 		this.userName = userName;
 	}
 
+	public boolean isMockData() {
+		return mockData;
+	}
+
+	public void setMockData(boolean mockData) {
+		this.mockData = mockData;
+	}
+
 	@Override
 	public String toString() {
 		return "VoteVO [id=" + id + ", listing=" + listing + ", listingName="
 				+ listingName + ", user=" + user + ", userName=" + userName
-				+ ", value=" + value + "]";
+				+ ", value=" + value + ", mockData=" + mockData + "]";
 	}
 
 }

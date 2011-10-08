@@ -43,6 +43,7 @@ public class PaidBidDTO extends BidDTO implements Serializable {
 
 	public Entity toEntity() {
 		Entity bid = new Entity(this.id);
+		bid.setProperty(MOCK_DATA, (Boolean)this.mockData);
 		bid.setProperty(FUND_TYPE, getFundType() != null ? getFundType().toString() : FundType.COMMON.toString());
 		bid.setProperty(STATUS, Status.PAID.toString());
 		bid.setProperty(BID, this.bid);
@@ -65,6 +66,9 @@ public class PaidBidDTO extends BidDTO implements Serializable {
 			// PaidBid can be also constructed from Bid
 			bid.createKey("" + entity.getKey().getId());
 			bid.setBid(KeyFactory.keyToString(entity.getKey()));
+		}
+		if (entity.hasProperty(MOCK_DATA)) {
+			bid.setMockData((Boolean)entity.getProperty(MOCK_DATA));
 		}
 		if (!StringUtils.isEmpty((String)entity.getProperty(FUND_TYPE))) {
 			bid.setFundType(FundType.valueOf((String)entity.getProperty(FUND_TYPE)));

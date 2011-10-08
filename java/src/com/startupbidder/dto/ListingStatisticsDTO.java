@@ -40,6 +40,7 @@ public class ListingStatisticsDTO extends AbstractDTO implements Serializable {
 	@Override
 	public Entity toEntity() {
 		Entity entity = new Entity(id);
+		entity.setProperty(MOCK_DATA, (Boolean)this.mockData);
 		entity.setProperty(NUM_OF_COMMENTS, (Long)this.numberOfComments);
 		entity.setProperty(NUM_OF_BIDS, (Long)this.numberOfBids);
 		entity.setProperty(NUM_OF_VOTES, (Long)this.numberOfVotes);
@@ -55,6 +56,9 @@ public class ListingStatisticsDTO extends AbstractDTO implements Serializable {
 	public static ListingStatisticsDTO fromEntity(Entity entity) {
 		ListingStatisticsDTO dto = new ListingStatisticsDTO();
 		dto.setKey(entity.getKey());
+		if (entity.hasProperty(MOCK_DATA)) {
+			dto.setMockData((Boolean)entity.getProperty(MOCK_DATA));
+		}
 		dto.numberOfComments = (Long)entity.getProperty(NUM_OF_COMMENTS);
 		dto.numberOfBids = (Long)entity.getProperty(NUM_OF_BIDS);
 		dto.numberOfVotes = (Long)entity.getProperty(NUM_OF_VOTES);

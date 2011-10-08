@@ -148,6 +148,7 @@ public class ListingDTO extends AbstractDTO implements Serializable {
 	@Override
 	public Entity toEntity() {
 		Entity listing = new Entity(id);
+		listing.setProperty(MOCK_DATA, (Boolean)this.mockData);
 		listing.setProperty(CLOSING_ON, this.closingOn);
 		listing.setProperty(LISTED_ON, this.listedOn);
 		listing.setProperty(NAME, this.name);
@@ -166,6 +167,9 @@ public class ListingDTO extends AbstractDTO implements Serializable {
 	public static ListingDTO fromEntity(Entity entity) {
 		ListingDTO listing = new ListingDTO();
 		listing.setKey(entity.getKey());
+		if (entity.hasProperty(MOCK_DATA)) {
+			listing.setMockData((Boolean)entity.getProperty(MOCK_DATA));
+		}
 		listing.closingOn = (Date)entity.getProperty(CLOSING_ON);
 		listing.listedOn = (Date)entity.getProperty(LISTED_ON);
 		listing.name = (String)entity.getProperty(NAME);

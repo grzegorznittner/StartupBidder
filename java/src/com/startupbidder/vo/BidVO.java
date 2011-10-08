@@ -45,6 +45,8 @@ public class BidVO {
 	private int valuation;
 	@JsonProperty("interest_rate")
 	private int interestRate;
+	@JsonProperty("mockData")
+	private boolean mockData;
 	@JsonProperty("status")
 	@JsonSerialize(using=LowecaseSerializer.class)
 	private String status;
@@ -164,6 +166,14 @@ public class BidVO {
 		this.orderNumber = orderNumber;
 	}
 
+	public boolean isMockData() {
+		return mockData;
+	}
+
+	public void setMockData(boolean mockData) {
+		this.mockData = mockData;
+	}
+
 	@Override
 	public String toString() {
 		return "BidVO [orderNumber=" + orderNumber + ", id=" + id + ", user="
@@ -172,7 +182,7 @@ public class BidVO {
 				+ listingName + ", placed=" + placed + ", value=" + value
 				+ ", percentOfCompany=" + percentOfCompany + ", fundType="
 				+ fundType + ", valuation=" + valuation + ", interestRate="
-				+ interestRate + ", status=" + status + "]";
+				+ interestRate + ", mockData=" + mockData + ", status="
+				+ status + "]";
 	}
-
 }

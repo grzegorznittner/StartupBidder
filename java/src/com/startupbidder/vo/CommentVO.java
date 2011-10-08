@@ -33,6 +33,8 @@ public class CommentVO {
 	@JsonProperty("comment_date")
 	@JsonSerialize(using=DateSerializer.class)
 	private Date   commentedOn;
+	@JsonProperty("mockData")
+	private boolean mockData;
 	
 	public CommentVO() {
 	}
@@ -100,11 +102,21 @@ public class CommentVO {
 		this.orderNumber = orderNumber;
 	}
 
+	public boolean isMockData() {
+		return mockData;
+	}
+
+	public void setMockData(boolean mockData) {
+		this.mockData = mockData;
+	}
+
 	@Override
 	public String toString() {
 		return "CommentVO [orderNumber=" + orderNumber + ", id=" + id
 				+ ", listing=" + listing + ", listingName=" + listingName
 				+ ", user=" + user + ", userName=" + userName + ", comment="
-				+ comment + ", commentedOn=" + commentedOn + "]";
+				+ comment + ", commentedOn=" + commentedOn + ", mockData="
+				+ mockData + "]";
 	}
+
 }

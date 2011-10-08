@@ -33,7 +33,7 @@ public class GraphDataVO implements Serializable {
 	@JsonProperty("created")
 	@JsonSerialize(using=DateSerializer.class)
 	private Date created;
-	
+
 	public GraphDataVO(String graphType) {
 		this.type = graphType;
 	}

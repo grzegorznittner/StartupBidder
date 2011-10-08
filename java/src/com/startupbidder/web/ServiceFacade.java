@@ -98,16 +98,16 @@ public class ServiceFacade {
 		}
 	}
 	
-	public String clearDatastore(User user) {
+	public String clearDatastore(UserVO loggedInUser) {
 		return getDAO().clearDatastore();
 	}
 
-	public String printDatastoreContents(User user) {
+	public String printDatastoreContents(UserVO loggedInUser) {
 		return getDAO().printDatastoreContents();
 	}
 	
-	public String createMockDatastore(User user) {
-		return getDAO().createMockDatastore();
+	public String createMockDatastore(UserVO loggedInUser) {
+		return getDAO().createMockDatastore(loggedInUser);
 	}
 	
 	public UserVO getLoggedInUserData(User loggedInUser) {

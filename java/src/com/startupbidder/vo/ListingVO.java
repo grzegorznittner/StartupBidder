@@ -62,6 +62,8 @@ public class ListingVO {
 	private int daysAgo;
 	@JsonProperty("days_left")
 	private int daysLeft;
+	@JsonProperty("mockData")
+	private boolean mockData;
 	@JsonProperty("business_plan_id")
 	private String buinessPlanId;
 	@JsonProperty("presentation_id")
@@ -256,6 +258,14 @@ public class ListingVO {
 		this.financialsId = financialsId;
 	}
 
+	public boolean isMockData() {
+		return mockData;
+	}
+
+	public void setMockData(boolean mockData) {
+		this.mockData = mockData;
+	}
+
 	@Override
 	public String toString() {
 		return "ListingVO [orderNumber=" + orderNumber + ", id=" + id
@@ -269,8 +279,9 @@ public class ListingVO {
 				+ numberOfComments + ", numberOfBids=" + numberOfBids
 				+ ", numberOfVotes=" + numberOfVotes + ", votable=" + votable
 				+ ", daysAgo=" + daysAgo + ", daysLeft=" + daysLeft
-				+ ", buinessPlanId=" + buinessPlanId + ", presentationId="
-				+ presentationId + ", financialsId=" + financialsId + "]";
+				+ ", mockData=" + mockData + ", buinessPlanId=" + buinessPlanId
+				+ ", presentationId=" + presentationId + ", financialsId="
+				+ financialsId + "]";
 	}
 
 }

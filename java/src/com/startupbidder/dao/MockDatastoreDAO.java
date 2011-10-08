@@ -25,6 +25,7 @@ import com.startupbidder.dto.UserDTO;
 import com.startupbidder.dto.UserStatisticsDTO;
 import com.startupbidder.dto.VoteDTO;
 import com.startupbidder.vo.ListPropertiesVO;
+import com.startupbidder.vo.UserVO;
 
 /**
  * Data access object which handles all interaction with underlying persistence layer.
@@ -71,7 +72,7 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		return "Operation not supported for MockDatastore";
 	}
 	
-	public String createMockDatastore() {
+	public String createMockDatastore(UserVO loggedInUser) {
 		return "Operation not supported for MockDatastore";
 	}
 

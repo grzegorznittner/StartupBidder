@@ -43,6 +43,8 @@ public class UserDTO extends AbstractDTO implements Serializable {
 	private Date   modified;
 	public static final String STATUS = "status";
 	private Status status;
+	public static final String ADMIN = "admin";
+	private boolean admin = false;
 	
 	public UserDTO() {
 	}
@@ -158,20 +160,19 @@ public class UserDTO extends AbstractDTO implements Serializable {
 		this.status = status;
 	}
 
-	@Override
-	public String toString() {
-		return "UserDTO [id=" + getIdAsString() + ", nickname=" + nickname + ", name=" + name
-				+ ", email=" + email + ", title="
-				+ title + ", organization=" + organization + ", facebook="
-				+ facebook + ", twitter=" + twitter + ", linkedin=" + linkedin
-				+ ", investor=" + investor + ", joined=" + joined
-				+ ", lastLoggedIn=" + lastLoggedIn + ", modified=" + modified
-				+ ", status=" + status + "]";
+	public boolean isAdmin() {
+		return admin;
+	}
+
+	public void setAdmin(boolean isAdmin) {
+		this.admin = isAdmin;
 	}
 
 	@Override
 	public Entity toEntity() {
 		Entity user = new Entity(id);
+		user.setProperty(MOCK_DATA, (Boolean)this.mockData);
+		user.setProperty(ADMIN, (Boolean)this.admin);
 		user.setProperty(OPEN_ID, StringUtils.defaultIfEmpty(this.openId, ""));
 		user.setProperty(EMAIL, StringUtils.defaultIfEmpty(this.email, ""));
 		user.setProperty(FACEBOOK, this.facebook);
@@ -192,6 +193,12 @@ public class UserDTO extends AbstractDTO implements Serializable {
 	public static UserDTO fromEntity(Entity entity) {
 		UserDTO user = new UserDTO();
 		user.setKey(entity.getKey());
+		if (entity.hasProperty(MOCK_DATA)) {
+			user.setMockData((Boolean)entity.getProperty(MOCK_DATA));
+		}
+		if (entity.hasProperty(ADMIN)) {
+			user.setAdmin((Boolean)entity.getProperty(ADMIN));
+		}
 		user.setOpenId((String)entity.getProperty(OPEN_ID));
 		user.setEmail((String)entity.getProperty(EMAIL));
 		user.setFacebook((String)entity.getProperty(FACEBOOK));
@@ -212,6 +219,18 @@ public class UserDTO extends AbstractDTO implements Serializable {
 	}
 
 	@Override
+	public String toString() {
+		return "UserDTO [openId=" + openId + ", nickname=" + nickname
+				+ ", name=" + name + ", email=" + email + ", title=" + title
+				+ ", organization=" + organization + ", facebook=" + facebook
+				+ ", twitter=" + twitter + ", linkedin=" + linkedin
+				+ ", investor=" + investor + ", joined=" + joined
+				+ ", lastLoggedIn=" + lastLoggedIn + ", modified=" + modified
+				+ ", status=" + status + ", isAdmin=" + admin + ", id=" + id
+				+ ", mockData=" + mockData + "]";
+	}
+
+	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
@@ -219,6 +238,7 @@ public class UserDTO extends AbstractDTO implements Serializable {
 		result = prime * result
 				+ ((facebook == null) ? 0 : facebook.hashCode());
 		result = prime * result + (investor ? 1231 : 1237);
+		result = prime * result + (admin ? 1231 : 1237);
 		result = prime * result + ((joined == null) ? 0 : joined.hashCode());
 		result = prime * result
 				+ ((lastLoggedIn == null) ? 0 : lastLoggedIn.hashCode());
@@ -244,7 +264,7 @@ public class UserDTO extends AbstractDTO implements Serializable {
 			return true;
 		if (!super.equals(obj))
 			return false;
-		if (getClass() != obj.getClass())
+		if (!(obj instanceof UserDTO))
 			return false;
 		UserDTO other = (UserDTO) obj;
 		if (email == null) {
@@ -258,6 +278,8 @@ public class UserDTO extends AbstractDTO implements Serializable {
 		} else if (!facebook.equals(other.facebook))
 			return false;
 		if (investor != other.investor)
+			return false;
+		if (admin != other.admin)
 			return false;
 		if (joined == null) {
 			if (other.joined != null)
@@ -313,5 +335,5 @@ public class UserDTO extends AbstractDTO implements Serializable {
 			return false;
 		return true;
 	}
-	
+
 }

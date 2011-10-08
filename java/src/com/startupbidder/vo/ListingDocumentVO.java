@@ -25,6 +25,9 @@ public class ListingDocumentVO {
 	@JsonProperty("type")
 	private String type;
 	private String state;
+	@JsonProperty("mockData")
+	private boolean mockData;
+
 	public String getId() {
 		return id;
 	}
@@ -61,10 +64,16 @@ public class ListingDocumentVO {
 	public void setState(String state) {
 		this.state = state;
 	}
+	public boolean isMockData() {
+		return mockData;
+	}
+	public void setMockData(boolean mockData) {
+		this.mockData = mockData;
+	}
 	@Override
 	public String toString() {
-		return "ListingDocumentVO [listing=" + listing + ", blob=" + blob
-				+ ", created=" + created + ", type=" + type + ", state="
-				+ state + "]";
+		return "ListingDocumentVO [id=" + id + ", listing=" + listing
+				+ ", blob=" + blob + ", created=" + created + ", type=" + type
+				+ ", state=" + state + ", mockData=" + mockData + "]";
 	}
 }

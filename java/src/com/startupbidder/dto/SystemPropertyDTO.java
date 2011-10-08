@@ -60,6 +60,7 @@ public class SystemPropertyDTO extends AbstractDTO implements Serializable {
 	@Override
 	public Entity toEntity() {
 		Entity entity = new Entity(id);
+		entity.setProperty(MOCK_DATA, (Boolean)this.mockData);
 		entity.setProperty(NAME, this.name);
 		entity.setProperty(CREATED, this.created);
 		entity.setProperty(AUTHOR, this.author);
@@ -70,6 +71,9 @@ public class SystemPropertyDTO extends AbstractDTO implements Serializable {
 	public static SystemPropertyDTO fromEntity(Entity entity) {
 		SystemPropertyDTO dto = new SystemPropertyDTO();
 		dto.setKey(entity.getKey());
+		if (entity.hasProperty(MOCK_DATA)) {
+			dto.setMockData((Boolean)entity.getProperty(MOCK_DATA));
+		}
 		dto.name = (String)entity.getProperty(NAME);
 		dto.created = (Date)entity.getProperty(CREATED);
 		dto.author = (String)entity.getProperty(AUTHOR);

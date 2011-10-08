@@ -116,6 +116,7 @@ public class BidDTO extends AbstractDTO implements Serializable {
 
 	public Entity toEntity() {
 		Entity bid = new Entity(this.id);
+		bid.setProperty(MOCK_DATA, (Boolean)this.mockData);
 		bid.setProperty(FUND_TYPE, fundType != null ? fundType.toString() : FundType.COMMON.toString());
 		bid.setProperty(STATUS, status != null ? status.toString() : Status.ACTIVE.toString());
 		bid.setProperty(LISTING, listing);
@@ -131,6 +132,9 @@ public class BidDTO extends AbstractDTO implements Serializable {
 	public static BidDTO fromEntity(Entity entity) {
 		BidDTO bid = new BidDTO();
 		bid.setKey(entity.getKey());
+		if (entity.hasProperty(MOCK_DATA)) {
+			bid.setMockData((Boolean)entity.getProperty(MOCK_DATA));
+		}
 		if (!StringUtils.isEmpty((String)entity.getProperty(FUND_TYPE))) {
 			bid.setFundType(FundType.valueOf((String)entity.getProperty(FUND_TYPE)));
 		}

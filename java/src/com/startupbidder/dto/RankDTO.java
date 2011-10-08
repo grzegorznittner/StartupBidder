@@ -51,6 +51,7 @@ public class RankDTO extends AbstractDTO implements Serializable {
 	@Override
 	public Entity toEntity() {
 		Entity entity = new Entity(id);
+		entity.setProperty(MOCK_DATA, (Boolean)this.mockData);
 		entity.setProperty(DATE, this.date);
 		entity.setProperty(LISTING, this.listing);
 		entity.setProperty(USER, this.user);
@@ -60,6 +61,9 @@ public class RankDTO extends AbstractDTO implements Serializable {
 	public static RankDTO fromEntity(Entity entity) {
 		RankDTO dto = new RankDTO();
 		dto.setKey(entity.getKey());
+		if (entity.hasProperty(MOCK_DATA)) {
+			dto.setMockData((Boolean)entity.getProperty(MOCK_DATA));
+		}
 		dto.date = (Date)entity.getProperty(DATE);
 		dto.listing = (String)entity.getProperty(LISTING);
 		dto.user = (String)entity.getProperty(USER);

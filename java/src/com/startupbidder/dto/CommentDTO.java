@@ -70,6 +70,7 @@ public class CommentDTO extends AbstractDTO implements Serializable {
 	@Override
 	public Entity toEntity() {
 		Entity comment = new Entity(this.id);
+		comment.setProperty(MOCK_DATA, (Boolean)this.mockData);
 		comment.setUnindexedProperty(COMMENT, this.comment != null ? new Text(this.comment) : null);
 		comment.setProperty(COMMENTED_ON, this.commentedOn);
 		comment.setProperty(LISTING, this.listing);
@@ -80,6 +81,9 @@ public class CommentDTO extends AbstractDTO implements Serializable {
 	public static CommentDTO fromEntity(Entity entity) {
 		CommentDTO comment = new CommentDTO();
 		comment.setKey(entity.getKey());
+		if (entity.hasProperty(MOCK_DATA)) {
+			comment.setMockData((Boolean)entity.getProperty(MOCK_DATA));
+		}
 		Text commentText = (Text)entity.getProperty(COMMENT);
 		comment.comment = commentText != null ? commentText.getValue() : null;
 		comment.commentedOn = (Date)entity.getProperty(COMMENTED_ON);

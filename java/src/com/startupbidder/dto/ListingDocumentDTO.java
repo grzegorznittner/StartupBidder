@@ -48,6 +48,7 @@ public class ListingDocumentDTO extends AbstractDTO implements Serializable {
 	@Override
 	public Entity toEntity() {
 		Entity entity = new Entity(id);
+		entity.setProperty(MOCK_DATA, (Boolean)this.mockData);
 		entity.setProperty(BLOB, this.blob);
 		entity.setProperty(TYPE, this.type != null ? this.type.toString() : Type.BUSINESS_PLAN.toString());
 		entity.setProperty(CREATED, this.created);		
@@ -56,6 +57,9 @@ public class ListingDocumentDTO extends AbstractDTO implements Serializable {
 	public static ListingDocumentDTO fromEntity(Entity entity) {
 		ListingDocumentDTO dto = new ListingDocumentDTO();
 		dto.setKey(entity.getKey());
+		if (entity.hasProperty(MOCK_DATA)) {
+			dto.setMockData((Boolean)entity.getProperty(MOCK_DATA));
+		}
 		dto.blob = (BlobKey)entity.getProperty(BLOB);
 		dto.created = (Date)entity.getProperty(CREATED);
 		if (!StringUtils.isEmpty((String)entity.getProperty(TYPE))) {

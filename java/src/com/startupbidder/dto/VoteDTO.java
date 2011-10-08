@@ -79,6 +79,7 @@ public class VoteDTO extends AbstractDTO implements Serializable {
 	@Override
 	public Entity toEntity() {
 		Entity vote = new Entity(id);
+		vote.setProperty(MOCK_DATA, (Boolean)this.mockData);
 		vote.setProperty(COMMENTED_ON, this.commentedOn);
 		vote.setProperty(LISTING, this.listing);
 		vote.setProperty(USER, this.user);
@@ -90,6 +91,9 @@ public class VoteDTO extends AbstractDTO implements Serializable {
 	public static VoteDTO fromEntity(Entity entity) {
 		VoteDTO vote = new VoteDTO();
 		vote.setKey(entity.getKey());
+		if (entity.hasProperty(MOCK_DATA)) {
+			vote.setMockData((Boolean)entity.getProperty(MOCK_DATA));
+		}
 		vote.setCommentedOn((Date)entity.getProperty(COMMENTED_ON));
 		vote.setListing((String)entity.getProperty(LISTING));
 		vote.setUser((String)entity.getProperty(USER));

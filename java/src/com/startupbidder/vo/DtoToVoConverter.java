@@ -24,6 +24,7 @@ public class DtoToVoConverter {
 		}
 		BidVO bid = new BidVO();
 		bid.setId(bidDTO.getIdAsString());
+		bid.setMockData(bidDTO.isMockData());
 		bid.setListing(bidDTO.getListing());
 		bid.setFundType(bidDTO.getFundType().toString());
 		bid.setPercentOfCompany(bidDTO.getPercentOfCompany());
@@ -42,6 +43,7 @@ public class DtoToVoConverter {
 		}
 		ListingVO listing = new ListingVO();
 		listing.setId(listingDTO.getIdAsString());
+		listing.setMockData(listingDTO.isMockData());
 		listing.setClosingOn(listingDTO.getClosingOn());
 		listing.setListedOn(listingDTO.getListedOn());
 		listing.setName(listingDTO.getName());
@@ -63,6 +65,7 @@ public class DtoToVoConverter {
 		}
 		CommentVO comment = new CommentVO();
 		comment.setId(commentDTO.getIdAsString());
+		comment.setMockData(commentDTO.isMockData());
 		comment.setComment(commentDTO.getComment());
 		comment.setCommentedOn(commentDTO.getCommentedOn());
 		comment.setListing(commentDTO.getListing());
@@ -75,6 +78,7 @@ public class DtoToVoConverter {
 			return null;
 		}
 		VoteVO rating = new VoteVO();
+		rating.setMockData(ratingDTO.isMockData());
 		rating.setId(ratingDTO.getIdAsString());
 		rating.setListing(ratingDTO.getListing());
 		rating.setUser(ratingDTO.getUser());
@@ -88,6 +92,7 @@ public class DtoToVoConverter {
 		}
 		ListingDocumentVO doc = new ListingDocumentVO();
 		doc.setId(docDTO.getIdAsString());
+		doc.setMockData(docDTO.isMockData());
 		doc.setBlob(docDTO.getBlob());
 		doc.setCreated(docDTO.getCreated());
 		doc.setType(docDTO.getType().toString());
@@ -100,6 +105,8 @@ public class DtoToVoConverter {
 		}
 		UserVO user = new UserVO();
 		user.setId(userDTO.getIdAsString());
+		user.setMockData(userDTO.isMockData());
+		user.setAdmin(userDTO.isAdmin());
 		user.setAccreditedInvestor(userDTO.isInvestor());
 		user.setEmail(userDTO.getEmail());
 		user.setFacebook(userDTO.getFacebook());

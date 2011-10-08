@@ -13,6 +13,7 @@ import com.startupbidder.dto.UserDTO;
 import com.startupbidder.dto.UserStatisticsDTO;
 import com.startupbidder.dto.VoteDTO;
 import com.startupbidder.vo.ListPropertiesVO;
+import com.startupbidder.vo.UserVO;
 
 /**
  * Interface defining all persistance methods of datastore.
@@ -33,7 +34,7 @@ public interface DatastoreDAO {
 	/**
 	 * Fills datastore with mock data
 	 */
-	String createMockDatastore();
+	String createMockDatastore(UserVO loggedInUser);
 	
 	/**
 	 * Returns user data object by userId

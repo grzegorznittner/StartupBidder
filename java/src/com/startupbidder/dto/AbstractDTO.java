@@ -16,6 +16,8 @@ import com.google.appengine.api.datastore.Query;
 @SuppressWarnings("serial")
 public abstract class AbstractDTO implements Serializable {
 	protected Key id;
+	public static final String MOCK_DATA = "mockData";
+	protected boolean mockData = false;
 	
 	/**
 	 * Returns entity's key
@@ -33,6 +35,14 @@ public abstract class AbstractDTO implements Serializable {
 		this.id = id;
 	}
 	
+	public boolean isMockData() {
+		return mockData;
+	}
+
+	public void setMockData(boolean mockData) {
+		this.mockData = mockData;
+	}
+
 	/**
 	 * Converts Key object into string which can be passed to web client
 	 * @return String representing Key
@@ -83,12 +93,13 @@ public abstract class AbstractDTO implements Serializable {
 	public static Double toDouble(Object entityField) {
 		return entityField == null ? 0.0 : (Double)entityField;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + (mockData ? 1231 : 1237);
 		return result;
 	}
 
@@ -98,7 +109,7 @@ public abstract class AbstractDTO implements Serializable {
 			return true;
 		if (obj == null)
 			return false;
-		if (getClass() != obj.getClass())
+		if (!(obj instanceof AbstractDTO))
 			return false;
 		AbstractDTO other = (AbstractDTO) obj;
 		if (id == null) {
@@ -106,6 +117,9 @@ public abstract class AbstractDTO implements Serializable {
 				return false;
 		} else if (!id.equals(other.id))
 			return false;
+		if (mockData != other.mockData)
+			return false;
 		return true;
 	}
+	
 }

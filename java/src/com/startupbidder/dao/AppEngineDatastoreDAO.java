@@ -30,8 +30,10 @@ import com.startupbidder.dto.RankDTO;
 import com.startupbidder.dto.SystemPropertyDTO;
 import com.startupbidder.dto.UserDTO;
 import com.startupbidder.dto.UserStatisticsDTO;
+import com.startupbidder.dto.VoToDtoConverter;
 import com.startupbidder.dto.VoteDTO;
 import com.startupbidder.vo.ListPropertiesVO;
+import com.startupbidder.vo.UserVO;
 
 /**
  * Datastore implementation which uses Google's AppEngine Datastore.
@@ -60,7 +62,11 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 		return iterateThroughDatastore(false);
 	}
 	
-	public String createMockDatastore() {
+	public String createMockDatastore(UserVO loggedInUser) {
+		// delete logged in user as he will be recreated
+		UserDTO loggedInUserDTO = VoToDtoConverter.convert(loggedInUser);
+		getDatastoreService().delete(loggedInUserDTO.getKey());
+		
 		initMocks();
 		return iterateThroughDatastore(false);
 	}
@@ -281,12 +287,19 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 		Query query = user.getQuery();
 		query.addFilter(UserDTO.OPEN_ID, FilterOperator.EQUAL, openId);
 		PreparedQuery pq = getDatastoreService().prepare(query);
-		Entity userEntity = pq.asSingleEntity();
-		if (userEntity != null) {
-			user = UserDTO.fromEntity(userEntity);
-			return user;
-		} else {
+		List<Entity> users = pq.asList(FetchOptions.Builder.withDefaults());
+		if (users.size() > 1) {
+			String msg = "Multiple users associated with openId: " + openId + ". ";
+			for (Entity userEntity : users) {
+				msg += UserDTO.fromEntity(userEntity).toString();
+			}
+			log.severe(msg);
+		}
+		if (users.size() == 0) {
 			return null;
+		} else {
+			user = UserDTO.fromEntity(users.get(users.size() - 1));
+			return user;
 		}
 	}
 
@@ -1234,7 +1247,6 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 			log.log(Level.WARNING, "Bidding for non existing listing with id '" + bid.getListing() + "'!");
 			return null;
 		}
-		
 		Query query = new BidDTO().getQuery();
 		query.addFilter(BidDTO.USER, Query.FilterOperator.EQUAL, loggedInUser);
 		query.addFilter(BidDTO.LISTING, Query.FilterOperator.EQUAL, listing.getIdAsString());

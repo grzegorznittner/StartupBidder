@@ -45,6 +45,7 @@ public class UserStatisticsDTO extends AbstractDTO {
 	@Override
 	public Entity toEntity() {
 		Entity entity = new Entity(id);
+		entity.setProperty(MOCK_DATA, (Boolean)this.mockData);
 		entity.setProperty(USER, this.user);
 		entity.setProperty(STATUS, this.status);
 		entity.setProperty(NUM_OF_COMMENTS, this.numberOfComments);
@@ -62,6 +63,9 @@ public class UserStatisticsDTO extends AbstractDTO {
 	public static UserStatisticsDTO fromEntity(Entity entity) {
 		UserStatisticsDTO dto = new UserStatisticsDTO();
 		dto.setKey(entity.getKey());
+		if (entity.hasProperty(MOCK_DATA)) {
+			dto.setMockData((Boolean)entity.getProperty(MOCK_DATA));
+		}
 		dto.user = (String)entity.getProperty(USER);
 		dto.status = (String)entity.getProperty(STATUS);
 		dto.numberOfComments = toLong(entity.getProperty(NUM_OF_COMMENTS));

@@ -31,6 +31,7 @@ public class VoToDtoConverter {
 		if (!StringUtils.isEmpty(bidVO.getStatus())) {
 			bid.setStatus(BidDTO.Status.valueOf(StringUtils.upperCase(bidVO.getStatus())));
 		}
+		bid.setMockData(bidVO.isMockData());
 		bid.setPercentOfCompany(bidVO.getPercentOfCompany());
 		bid.setPlaced(bidVO.getPlaced());
 		bid.setUser(bidVO.getUser());
@@ -45,6 +46,7 @@ public class VoToDtoConverter {
 		if (!StringUtils.isEmpty(listingVO.getId())) {
 			listing.setIdFromString(listingVO.getId());
 		}
+		listing.setMockData(listingVO.isMockData());
 		listing.setClosingOn(listingVO.getClosingOn());
 		listing.setListedOn(listingVO.getListedOn());
 		listing.setName(listingVO.getName());
@@ -67,6 +69,7 @@ public class VoToDtoConverter {
 		if (!StringUtils.isEmpty(commentVO.getId())) {
 			comment.setIdFromString(commentVO.getId());
 		}
+		comment.setMockData(commentVO.isMockData());
 		comment.setComment(commentVO.getComment());
 		comment.setListing(commentVO.getListing());
 		comment.setCommentedOn(commentVO.getCommentedOn());
@@ -79,6 +82,7 @@ public class VoToDtoConverter {
 		if (!StringUtils.isEmpty(ratingVO.getId())) {
 			rating.setIdFromString(ratingVO.getId());
 		}
+		rating.setMockData(ratingVO.isMockData());
 		rating.setListing(ratingVO.getListing());
 		rating.setUser(ratingVO.getUser());
 		rating.setValue(ratingVO.getValue());
@@ -90,6 +94,7 @@ public class VoToDtoConverter {
 		if (!StringUtils.isEmpty(docVO.getId())) {
 			doc.setIdFromString(docVO.getId());
 		}
+		doc.setMockData(docVO.isMockData());
 		doc.setBlob(docVO.getBlob());
 		doc.setCreated(docVO.getCreated());
 		if (!StringUtils.isEmpty(docVO.getType())) {
@@ -103,6 +108,8 @@ public class VoToDtoConverter {
 		if (!StringUtils.isEmpty(userVO.getId())) {
 			user.setIdFromString(userVO.getId());
 		}
+		user.setMockData(userVO.isMockData());
+		user.setAdmin(userVO.isAdmin());
 		user.setInvestor(userVO.isAccreditedInvestor());
 		user.setEmail(userVO.getEmail());
 		user.setFacebook(userVO.getFacebook());

@@ -69,6 +69,10 @@ public class UserVO {
 	private String status;
 	@JsonProperty("votable")
 	private boolean votable;
+	@JsonProperty("mockData")
+	private boolean mockData;
+	@JsonProperty("admin")
+	private boolean admin;
 	
 	public UserVO() {
 	}
@@ -228,6 +232,18 @@ public class UserVO {
 	public void setNumberOfFundedBids(long numberOfFundedBids) {
 		this.numberOfFundedBids = numberOfFundedBids;
 	}
+	public boolean isMockData() {
+		return mockData;
+	}
+	public void setMockData(boolean mockData) {
+		this.mockData = mockData;
+	}
+	public boolean isAdmin() {
+		return admin;
+	}
+	public void setAdmin(boolean admin) {
+		this.admin = admin;
+	}
 	@Override
 	public String toString() {
 		return "UserVO [orderNumber=" + orderNumber + ", id=" + id
@@ -242,6 +258,7 @@ public class UserVO {
 				+ numberOfAcceptedBids + ", numberOfFundedBids="
 				+ numberOfFundedBids + ", numberOfComments=" + numberOfComments
 				+ ", numberOfVotes=" + numberOfVotes + ", status=" + status
-				+ ", votable=" + votable + "]";
+				+ ", votable=" + votable + ", mockData=" + mockData
+				+ ", admin=" + admin + "]";
 	}
 }

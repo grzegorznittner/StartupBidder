@@ -18,11 +18,15 @@ import com.startupbidder.dto.UserDTO;
 import com.startupbidder.dto.VoteDTO;
 
 /**
- * 
+ * Generates mock data.
  * @author "Grzegorz Nittner" <grzegorz.nittner@gmail.com>
- *
  */
 public class MockDataBuilder {
+	private UserDTO greg;
+	private ListingDTO gregsListing;
+	private UserDTO john;
+	private ListingDTO johnsListing;
+	
 	/**
 	 * Generates random comments for business plans
 	 */
@@ -35,9 +39,10 @@ public class MockDataBuilder {
 			while (--commentNum > 0) {
 				CommentDTO comment = new CommentDTO();
 				comment.createKey(commentNum + "_" + bp.hashCode());
+				comment.setMockData(true);
 				comment.setListing(bp.getIdAsString());
 				comment.setUser(users.get(new Random().nextInt(users.size())).getIdAsString());
-				comment.setCommentedOn(new Date(System.currentTimeMillis() - commentNum * 45 * 60 * 1000));
+				comment.setCommentedOn(new Date(System.currentTimeMillis() - commentNum * 18 * 60 * 60 * 1000));
 				comment.setComment("Comment " + commentNum);
 				
 				comments.put(comment.getIdAsString(), comment);
@@ -66,29 +71,139 @@ public class MockDataBuilder {
 			while (--bidNum > 0) {
 				BidDTO bid = new BidDTO();
 				bid.createKey(bidNum + "_" + listing.hashCode());
-				bid.setUser(users.get(new Random().nextInt(users.size())).getIdAsString());
-				bid.setListing(listing.getIdAsString());
-				switch (fundTypeRandom.nextInt(3)) {
-					case 0: bid.setFundType(BidDTO.FundType.COMMON);
-					break;
-					case 1: bid.setFundType(BidDTO.FundType.NOTE);
-					break;
-					case 2: bid.setFundType(BidDTO.FundType.PREFERRED);
-					break;
-				}
-				bid.setPercentOfCompany(new Random().nextInt(50) + 10);
-				bid.setPlaced(new Date(listing.getListedOn().getTime() + bidNum * bidTimeSpan));
-				bid.setValue(new Random().nextInt(50) * 1000 + listing.getSuggestedValuation());
-				bid.setListingOwner(listing.getOwner());
-				// calculate valuation
-				bid.setValuation(bid.getValue() * 100 / bid.getPercentOfCompany());
+				bid.setMockData(true);
 				
-				bids.put(bid.getIdAsString(), bid);
+				String userId = users.get(new Random().nextInt(users.size())).getIdAsString();
+				if (!listing.getOwner().equals(userId)) {
+					bid.setUser(userId);
+					bid.setListing(listing.getIdAsString());
+					switch (fundTypeRandom.nextInt(3)) {
+						case 0: bid.setFundType(BidDTO.FundType.COMMON);
+						break;
+						case 1: bid.setFundType(BidDTO.FundType.NOTE);
+						break;
+						case 2: bid.setFundType(BidDTO.FundType.PREFERRED);
+						break;
+					}
+					bid.setPercentOfCompany(new Random().nextInt(50) + 10);
+					bid.setPlaced(new Date(listing.getListedOn().getTime() + bidNum * bidTimeSpan));
+					bid.setValue(new Random().nextInt(50) * 1000 + listing.getSuggestedValuation());
+					bid.setListingOwner(listing.getOwner());
+					// calculate valuation
+					bid.setValuation(bid.getValue() * 100 / bid.getPercentOfCompany());
+					
+					bids.put(bid.getIdAsString(), bid);
+				}
 			}
 		}
 		return bids;
 	}
 	
+	/**
+	 * Generates random bids for listings
+	 */
+	public Map<String, BidDTO> generateBidsForAdminListing(Collection<UserDTO> usersList) {
+		Collection<ListingDTO> listings = new ArrayList<ListingDTO>();
+		listings.add(gregsListing);
+		listings.add(johnsListing);
+		
+		Map<String, BidDTO> bids = new HashMap<String, BidDTO>();
+		
+		List<UserDTO> users = new ArrayList<UserDTO>();
+		for (UserDTO user : usersList) {
+			if (user.isInvestor()) {
+				users.add(user);
+			}
+		}
+		users.remove(greg);
+		users.remove(john);
+		
+		for (ListingDTO listing : listings) {
+			int bidNum = 4;
+			long bidTimeSpan = (System.currentTimeMillis() - listing.getListedOn().getTime()) / (bidNum + 1);
+			Random fundTypeRandom = new Random();
+			while (--bidNum > 0) {
+				BidDTO bid = new BidDTO();
+				String userId = users.get(new Random().nextInt(users.size())).getIdAsString();
+
+				bid.createKey(bidNum + "_" + userId + listing.hashCode());
+				bid.setMockData(true);
+				
+				if (!listing.getOwner().equals(userId)) {
+					bid.setUser(userId);
+					bid.setListing(listing.getIdAsString());
+					switch (fundTypeRandom.nextInt(3)) {
+						case 0: bid.setFundType(BidDTO.FundType.COMMON);
+						break;
+						case 1: bid.setFundType(BidDTO.FundType.NOTE);
+						break;
+						case 2: bid.setFundType(BidDTO.FundType.PREFERRED);
+						break;
+					}
+					bid.setPercentOfCompany(new Random().nextInt(50) + 10);
+					bid.setPlaced(new Date(listing.getListedOn().getTime() + bidNum * bidTimeSpan));
+					bid.setValue(new Random().nextInt(50) * 1000 + listing.getSuggestedValuation());
+					bid.setListingOwner(listing.getOwner());
+					// calculate valuation
+					bid.setValuation(bid.getValue() * 100 / bid.getPercentOfCompany());
+					
+					bids.put(bid.getIdAsString(), bid);
+				}
+			}
+		}
+		return bids;
+	}
+	
+	public Map<String, VoteDTO> createMockVotes(Collection<UserDTO> usersList, Collection<ListingDTO> listings) {
+		Map<String, VoteDTO> votes = new HashMap<String, VoteDTO>();
+		
+		List<UserDTO> users = new ArrayList<UserDTO>(usersList);
+		
+		for (ListingDTO listing : listings) {
+			int numOfVotes = new Random().nextInt(users.size());
+			long commentTimeSpan = (System.currentTimeMillis() - listing.getListedOn().getTime()) / (numOfVotes + 1);
+			while (numOfVotes > 0) {
+				VoteDTO vote = new VoteDTO();
+				vote.setMockData(true);
+				vote.setListing(listing.getIdAsString());
+				
+				String userId = users.get(numOfVotes).getIdAsString();
+				if (!listing.getOwner().equals(userId)) {
+					vote.setVoter(userId);
+					vote.setUser(null);
+					vote.setValue(1);
+					vote.setCommentedOn(new Date(listing.getListedOn().getTime() + numOfVotes * commentTimeSpan));
+					vote.createKey(String.valueOf(vote.hashCode()));
+					votes.put(vote.getIdAsString(), vote);
+				}
+				numOfVotes--;
+			}
+		}
+
+		for (UserDTO user : users) {
+			int numOfVotes = new Random().nextInt(users.size());
+			long commentTimeSpan = (System.currentTimeMillis() - user.getJoined().getTime()) / (numOfVotes + 1);
+			while (numOfVotes > 0) {
+				VoteDTO vote = new VoteDTO();
+				vote.setMockData(true);
+				vote.setUser(user.getIdAsString());
+				
+				String userId = users.get(numOfVotes).getIdAsString();
+				if (!user.getIdAsString().equals(userId)) {
+					vote.setVoter(userId);
+					vote.setListing(null);
+					vote.setValue(1);
+					vote.setCommentedOn(new Date(user.getJoined().getTime() + numOfVotes * commentTimeSpan));
+					vote.createKey(String.valueOf(vote.hashCode()));
+					votes.put(vote.getIdAsString(), vote);
+				}
+				numOfVotes--;
+			}
+		}
+		
+		return votes;
+	}
+
 	/**
 	 * Generates mock users
 	 */
@@ -99,14 +214,14 @@ public class MockDataBuilder {
 		UserDTO user = new UserDTO();
 		key = "deadahmed";
 		user.createKey(key);
+		user.setMockData(true);
 		user.setNickname("Dead");
 		user.setName("Ahmed");
 		user.setEmail("deadahmed@startupbidder.com");
 		user.setOpenId(user.getEmail());
-		user.setJoined(new Date(System.currentTimeMillis() - 2 * 24 * 60 * 60 * 1000));
+		user.setJoined(new Date(System.currentTimeMillis() - 22 * 24 * 60 * 60 * 1000));
 		user.setStatus(UserDTO.Status.ACTIVE);
 		user.setFacebook("fb_" + key);
-		user.setJoined(new Date());
 		user.setLastLoggedIn(new Date());
 		user.setModified(new Date());
 		user.setTitle("Dr");
@@ -117,14 +232,14 @@ public class MockDataBuilder {
 		user = new UserDTO();
 		key = "jpfowler";
 		user.createKey(key);
+		user.setMockData(true);
 		user.setNickname("fowler");
 		user.setName("Jackob");
 		user.setEmail("jpfowler@startupbidder.com");
 		user.setOpenId(user.getEmail());
-		user.setJoined(new Date(System.currentTimeMillis() - 3 * 24 * 60 * 60 * 1000));
+		user.setJoined(new Date(System.currentTimeMillis() - 23 * 24 * 60 * 60 * 1000));
 		user.setStatus(UserDTO.Status.ACTIVE);
 		user.setFacebook("fb_" + key);
-		user.setJoined(new Date());
 		user.setLastLoggedIn(new Date());
 		user.setModified(new Date());
 		user.setOrganization("org_" + key);
@@ -136,14 +251,14 @@ public class MockDataBuilder {
 		user = new UserDTO();
 		key = "businessinsider";
 		user.createKey(key);
+		user.setMockData(true);
 		user.setNickname("Insider");
 		user.setName("The");
 		user.setEmail("insider@startupbidder.com");
 		user.setOpenId(user.getEmail());
-		user.setJoined(new Date(System.currentTimeMillis() - 3 * 24 * 60 * 60 * 1000));
+		user.setJoined(new Date(System.currentTimeMillis() - 31 * 24 * 60 * 60 * 1000));
 		user.setStatus(UserDTO.Status.ACTIVE);
 		user.setFacebook("fb_" + key);
-		user.setJoined(new Date());
 		user.setLastLoggedIn(new Date());
 		user.setModified(new Date());
 		user.setTwitter("twit_" + key);
@@ -152,14 +267,14 @@ public class MockDataBuilder {
 		user = new UserDTO();
 		key = "dragonsden";
 		user.createKey(key);
+		user.setMockData(true);
 		user.setNickname("The Dragon");
 		user.setName("Mark");
 		user.setEmail("dragon@startupbidder.com");
 		user.setOpenId(user.getEmail());
-		user.setJoined(new Date(System.currentTimeMillis() - 6 * 24 * 60 * 60 * 1000));
+		user.setJoined(new Date(System.currentTimeMillis() - 26 * 24 * 60 * 60 * 1000));
 		user.setStatus(UserDTO.Status.ACTIVE);
 		user.setFacebook("fb_" + key);
-		user.setJoined(new Date());
 		user.setLastLoggedIn(new Date());
 		user.setModified(new Date());
 		user.setOrganization("org_" + key);
@@ -171,15 +286,15 @@ public class MockDataBuilder {
 		user = new UserDTO();
 		key = "crazyinvestor";
 		user.createKey(key);
+		user.setMockData(true);
 		user.setNickname("MadMax");
 		user.setName("Mad");
 		user.setEmail("madmax@startupbidder.com");
 		user.setOpenId(user.getEmail());
-		user.setJoined(new Date(System.currentTimeMillis() - 5 * 24 * 60 * 60 * 1000));
+		user.setJoined(new Date(System.currentTimeMillis() - 35 * 24 * 60 * 60 * 1000));
 		user.setStatus(UserDTO.Status.ACTIVE);
 		user.setInvestor(true);
 		user.setFacebook("fb_" + key);
-		user.setJoined(new Date());
 		user.setLastLoggedIn(new Date());
 		user.setModified(new Date());
 		user.setOrganization("org_" + key);
@@ -191,14 +306,14 @@ public class MockDataBuilder {
 		user = new UserDTO();
 		key = "chinese";
 		user.createKey(key);
+		user.setMockData(true);
 		user.setNickname("The One");
 		user.setName("Bruce");
 		user.setEmail("bruce@startupbidder.com");
 		user.setOpenId(user.getEmail());
-		user.setJoined(new Date(System.currentTimeMillis() - 1 * 24 * 60 * 60 * 1000));
+		user.setJoined(new Date(System.currentTimeMillis() - 30 * 24 * 60 * 60 * 1000));
 		user.setStatus(UserDTO.Status.DEACTIVATED);
 		user.setInvestor(true);
-		user.setJoined(new Date());
 		user.setLastLoggedIn(new Date());
 		user.setModified(new Date());
 		user.setOrganization("org_" + key);
@@ -207,30 +322,51 @@ public class MockDataBuilder {
 		user.setLinkedin("ln_" + key);
 		users.put(user.getIdAsString(), user);
 		
+		user = new UserDTO();
+		key = "johnarleyburns";
+		user.createKey(key);
+		user.setMockData(false);
+		user.setAdmin(true);
+		user.setNickname("John");
+		user.setName("John A. Burns");
+		user.setEmail("johnarleyburns@gmail.com");
+		user.setOpenId(user.getEmail());
+		user.setJoined(new Date(0L));
+		user.setStatus(UserDTO.Status.ACTIVE);
+		user.setInvestor(true);
+		user.setLastLoggedIn(new Date());
+		user.setModified(new Date());
+		user.setOrganization("StartupBidder.com");
+		user.setTitle("Mr");
+		user.setTwitter("johnarleyburns");
+		user.setLinkedin("johnarleyburns");
+		users.put(user.getIdAsString(), user);
+		john = user;
+		
+		user = new UserDTO();
+		key = "grzegorznittner";
+		user.createKey(key);
+		user.setMockData(false);
+		user.setAdmin(true);
+		user.setNickname("Greg");
+		user.setName("Grzegorz Nittner");
+		user.setEmail("grzegorz.nittner@gmail.com");
+		user.setOpenId(user.getEmail());
+		user.setJoined(new Date(0L));
+		user.setStatus(UserDTO.Status.ACTIVE);
+		user.setInvestor(true);
+		user.setLastLoggedIn(new Date());
+		user.setModified(new Date());
+		user.setOrganization("StartupBidder.com");
+		user.setTitle("Mr");
+		user.setTwitter("");
+		user.setLinkedin("grzegorznittner");
+		users.put(user.getIdAsString(), user);
+		greg = user;
+		
 		return users;
 	}
 	
-	public Map<String, VoteDTO> createMockVotes(Collection<UserDTO> usersList, Collection<ListingDTO> listings) {
-		Map<String, VoteDTO> votes = new HashMap<String, VoteDTO>();
-		
-		List<UserDTO> users = new ArrayList<UserDTO>(usersList);
-		
-		for (ListingDTO listing : listings) {
-			int numOfVotes = new Random().nextInt(users.size());
-			while (numOfVotes > 0) {
-				VoteDTO vote = new VoteDTO();
-				vote.setListing(listing.getIdAsString());
-				vote.setVoter(users.get(numOfVotes).getIdAsString());
-				vote.setUser(null);
-				vote.setValue(1);
-				vote.createKey(String.valueOf(vote.hashCode()));
-				votes.put(vote.getIdAsString(), vote);
-				numOfVotes--;
-			}
-		}
-		return votes;
-	}
-
 	/**
 	 * Generates mock listings
 	 */
@@ -238,16 +374,19 @@ public class MockDataBuilder {
 		Map<String, ListingDTO> listings = new HashMap<String, ListingDTO>();
 		
 		List<String> userIds = new ArrayList<String>(users.keySet());
+		userIds.remove(john.getIdAsString());
+		userIds.remove(greg.getIdAsString());
 		int bpNum = 0;
 	
 		ListingDTO bp = new ListingDTO();
 		bp.createKey("mislead");
+		bp.setMockData(true);
 		bp.setName("MisLead");
 		bp.setOwner(userIds.get(bpNum % userIds.size()));
 		bp.setSuggestedValuation(20000);
 		bp.setSuggestedPercentage(25);
 		bp.setSuggestedAmount(bp.getSuggestedValuation()*bp.getSuggestedPercentage()/100);
-		bp.setListedOn(new Date(System.currentTimeMillis() - 45 * 60 * 60 * 1000));
+		bp.setListedOn(new Date(System.currentTimeMillis() - 25 * 24 * 60 * 60 * 1000));
 		bp.setState(ListingDTO.State.CLOSED);
 		DateMidnight midnight = new DateMidnight(bp.getListedOn().getTime());
 		bp.setClosingOn(midnight.plus(Days.days(30)).toDate());
@@ -256,12 +395,13 @@ public class MockDataBuilder {
 	
 		bp = new ListingDTO();
 		bp.createKey("comp_training_camp");
+		bp.setMockData(true);
 		bp.setName("Computer Training Camp");
-		bp.setOwner(userIds.get(bpNum % userIds.size()));
+		bp.setOwner(john.getIdAsString());
 		bp.setSuggestedValuation(15000);
 		bp.setSuggestedPercentage(45);
 		bp.setSuggestedAmount(bp.getSuggestedValuation()*bp.getSuggestedPercentage()/100);
-		bp.setListedOn(new Date(System.currentTimeMillis() - 5 * 60 * 60 * 1000));
+		bp.setListedOn(new Date(System.currentTimeMillis() - 15 * 24 * 60 * 60 * 1000));
 		bp.setState(ListingDTO.State.CREATED);
 		midnight = new DateMidnight(bp.getListedOn().getTime());
 		bp.setClosingOn(midnight.plus(Days.days(30)).toDate());
@@ -275,15 +415,17 @@ public class MockDataBuilder {
 				" business that can be operated as an independent business venture or operated in" +
 				" conjunction with a community program or community center.");
 		listings.put(bp.getIdAsString(), bp);
+		johnsListing = bp;
 
 		bp = new ListingDTO();
 		bp.createKey("comp_upgrading_service");
+		bp.setMockData(true);
 		bp.setName("Computer Upgrading Service");
-		bp.setOwner(userIds.get(bpNum++ % userIds.size()));
+		bp.setOwner(greg.getIdAsString());
 		bp.setSuggestedValuation(35000);
 		bp.setSuggestedPercentage(33);
 		bp.setSuggestedAmount(bp.getSuggestedValuation()*bp.getSuggestedPercentage()/100);
-		bp.setListedOn(new Date(System.currentTimeMillis() - 15 * 60 * 60 * 1000));
+		bp.setListedOn(new Date(System.currentTimeMillis() - 15 * 24 * 60 * 60 * 1000));
 		bp.setState(ListingDTO.State.ACTIVE);
 		midnight = new DateMidnight(bp.getListedOn().getTime());
 		bp.setClosingOn(midnight.plus(Days.days(30)).toDate());
@@ -302,15 +444,17 @@ public class MockDataBuilder {
 				" size of the target market by expanding the service area, due to the fact the business" +
 				" operates on a mobile format.");
 		listings.put(bp.getIdAsString(), bp);
+		gregsListing = bp;
 
 		bp = new ListingDTO();
 		bp.createKey("semanticsearch");
+		bp.setMockData(true);
 		bp.setName("Semantic Search");
 		bp.setOwner(userIds.get(bpNum++ % userIds.size()));
 		bp.setSuggestedValuation(40000);
 		bp.setSuggestedPercentage(45);
 		bp.setSuggestedAmount(bp.getSuggestedValuation()*bp.getSuggestedPercentage()/100);
-		bp.setListedOn(new Date(System.currentTimeMillis() - 15 * 60 * 60 * 1000));
+		bp.setListedOn(new Date(System.currentTimeMillis() - 19 * 24 * 60 * 60 * 1000));
 		bp.setState(ListingDTO.State.ACTIVE);
 		midnight = new DateMidnight(bp.getListedOn().getTime());
 		bp.setClosingOn(midnight.plus(Days.days(30)).toDate());
@@ -323,12 +467,13 @@ public class MockDataBuilder {
 
 		bp = new ListingDTO();
 		bp.createKey("socialrecommendations");
+		bp.setMockData(true);
 		bp.setName("Social recommendations");
 		bp.setOwner(userIds.get(bpNum++ % userIds.size()));
 		bp.setSuggestedValuation(15000);
 		bp.setSuggestedPercentage(10);
 		bp.setSuggestedAmount(bp.getSuggestedValuation()*bp.getSuggestedPercentage()/100);
-		bp.setListedOn(new Date(System.currentTimeMillis() - 20 * 60 * 60 * 1000));
+		bp.setListedOn(new Date(System.currentTimeMillis() - 20 * 24 * 60 * 60 * 1000));
 		bp.setState(ListingDTO.State.ACTIVE);
 		midnight = new DateMidnight(bp.getListedOn().getTime());
 		bp.setClosingOn(midnight.plus(Days.days(30)).toDate());
@@ -342,12 +487,13 @@ public class MockDataBuilder {
 
 		bp = new ListingDTO();
 		bp.createKey("localnewssites");
+		bp.setMockData(true);
 		bp.setName("Local news sites");
 		bp.setOwner(userIds.get(bpNum++ % userIds.size()));
 		bp.setSuggestedValuation(49000);
 		bp.setSuggestedPercentage(20);
 		bp.setSuggestedAmount(bp.getSuggestedValuation()*bp.getSuggestedPercentage()/100);
-		bp.setListedOn(new Date(System.currentTimeMillis() - 3 * 60 * 60 * 1000));
+		bp.setListedOn(new Date(System.currentTimeMillis() - 13 * 24 * 60 * 60 * 1000));
 		bp.setState(ListingDTO.State.ACTIVE);
 		midnight = new DateMidnight(bp.getListedOn().getTime());
 		bp.setClosingOn(midnight.plus(Days.days(30)).toDate());
@@ -361,12 +507,13 @@ public class MockDataBuilder {
 
 		bp = new ListingDTO();
 		bp.createKey("micropayments");
+		bp.setMockData(true);
 		bp.setName("Micropayments");
 		bp.setOwner(userIds.get(bpNum++ % userIds.size()));
 		bp.setSuggestedValuation(5000);
 		bp.setSuggestedPercentage(49);
 		bp.setSuggestedAmount(bp.getSuggestedValuation()*bp.getSuggestedPercentage()/100);
-		bp.setListedOn(new Date(System.currentTimeMillis() - 23 * 60 * 60 * 1000));
+		bp.setListedOn(new Date(System.currentTimeMillis() - 23 * 24 * 60 * 60 * 1000));
 		bp.setState(ListingDTO.State.ACTIVE);
 		midnight = new DateMidnight(bp.getListedOn().getTime());
 		bp.setClosingOn(midnight.plus(Days.days(30)).toDate());
@@ -379,6 +526,7 @@ public class MockDataBuilder {
 
 		bp = new ListingDTO();
 		bp.createKey("kill email");
+		bp.setMockData(true);
 		bp.setName("Kill email");
 		bp.setOwner(userIds.get(bpNum++ % userIds.size()));
 		bp.setSuggestedValuation(40000);
@@ -397,12 +545,13 @@ public class MockDataBuilder {
 
 		bp = new ListingDTO();
 		bp.createKey("better company car");
+		bp.setMockData(true);
 		bp.setName("Better company car");
 		bp.setOwner(userIds.get(bpNum++ % userIds.size()));
 		bp.setSuggestedValuation(100000);
 		bp.setSuggestedPercentage(15);
 		bp.setSuggestedAmount(bp.getSuggestedValuation()*bp.getSuggestedPercentage()/100);
-		bp.setListedOn(new Date(System.currentTimeMillis() - 8 * 60 * 60 * 1000));
+		bp.setListedOn(new Date(System.currentTimeMillis() - 8 * 24 * 60 * 60 * 1000));
 		bp.setState(ListingDTO.State.WITHDRAWN);
 		midnight = new DateMidnight(bp.getListedOn().getTime());
 		bp.setClosingOn(midnight.plus(Days.days(30)).toDate());
