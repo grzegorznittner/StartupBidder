@@ -96,19 +96,24 @@ public class MockDataBuilder {
 				}
 			}
 		}
+		
+		bids.putAll(generateBidsForAdminListing(usersList));
+		bids.putAll(generateBidsByAdmins(listings));
+		
 		return bids;
 	}
 	
 	/**
-	 * Generates random bids for listings
+	 * Generates random bids for admin listings (john and greg)
 	 */
 	public Map<String, BidDTO> generateBidsForAdminListing(Collection<UserDTO> usersList) {
+		Map<String, BidDTO> bids = new HashMap<String, BidDTO>();
+		BidDTO.Status statuses[] = BidDTO.Status.values();
+
 		Collection<ListingDTO> listings = new ArrayList<ListingDTO>();
 		listings.add(gregsListing);
 		listings.add(johnsListing);
-		
-		Map<String, BidDTO> bids = new HashMap<String, BidDTO>();
-		
+				
 		List<UserDTO> users = new ArrayList<UserDTO>();
 		for (UserDTO user : usersList) {
 			if (user.isInvestor()) {
@@ -146,6 +151,61 @@ public class MockDataBuilder {
 					bid.setListingOwner(listing.getOwner());
 					// calculate valuation
 					bid.setValuation(bid.getValue() * 100 / bid.getPercentOfCompany());
+					bid.setStatus(statuses[bidNum]);
+					
+					bids.put(bid.getIdAsString(), bid);
+				}
+			}
+		}
+		return bids;
+	}
+	
+	/**
+	 * Generates random bids for admin listings (john and greg)
+	 */
+	public Map<String, BidDTO> generateBidsByAdmins(Collection<ListingDTO> listingList) {
+		List<ListingDTO> listings = new ArrayList<ListingDTO>(listingList);
+		Map<String, BidDTO> bids = new HashMap<String, BidDTO>();
+		BidDTO.Status statuses[] = BidDTO.Status.values();
+
+		listings.remove(gregsListing);
+		listings.remove(johnsListing);
+				
+		List<UserDTO> users = new ArrayList<UserDTO>();
+		users.add(greg);
+		users.add(john);
+		
+		Random fundTypeRandom = new Random();
+		
+		for (UserDTO user : users) {
+			int bidNum = 4;
+			while (--bidNum > 0) {
+				BidDTO bid = new BidDTO();
+				String userId = user.getIdAsString();
+				ListingDTO listing = listings.get(new Random().nextInt(listings.size()));
+
+				bid.createKey(bidNum + "_" + userId + listing.hashCode());
+				bid.setMockData(true);
+				
+				long bidTimeSpan = (System.currentTimeMillis() - listing.getListedOn().getTime()) / (bidNum + 1);
+				if (!listing.getOwner().equals(userId)) {
+					bid.setUser(userId);
+					bid.setListing(listing.getIdAsString());
+					switch (fundTypeRandom.nextInt(3)) {
+						case 0: bid.setFundType(BidDTO.FundType.COMMON);
+						break;
+						case 1: bid.setFundType(BidDTO.FundType.NOTE);
+						break;
+						case 2: bid.setFundType(BidDTO.FundType.PREFERRED);
+						break;
+					}
+					bid.setPercentOfCompany(new Random().nextInt(50) + 10);
+					bid.setPlaced(new Date(listing.getListedOn().getTime() + bidNum * bidTimeSpan));
+					bid.setValue(new Random().nextInt(50) * 1000 + listing.getSuggestedValuation());
+					bid.setListingOwner(listing.getOwner());
+					// calculate valuation
+					bid.setValuation(bid.getValue() * 100 / bid.getPercentOfCompany());
+					bid.setStatus(statuses[bidNum]);
 					
 					bids.put(bid.getIdAsString(), bid);
 				}
