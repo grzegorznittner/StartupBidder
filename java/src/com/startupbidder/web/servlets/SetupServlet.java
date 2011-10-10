@@ -52,10 +52,10 @@ public class SetupServlet extends HttpServlet {
 			if (currentUser == null) {
 				currentUser = service.createUser(user);
 			}
-			if (!currentUser.isAdmin()) {
-				out.println("<p>You're not authorized to use setup page! Only Admin users can access this page! </p>");
-				return;
-			}
+			//if (!currentUser.isAdmin()) {
+			//	out.println("<p>You're not authorized to use setup page! Only Admin users can access this page! </p>");
+			//	return;
+			//}
 			
 			out.println("<p>Current datastore: " + ServiceFacade.currentDAO + "</p>");
 			out.println("<form method=\"POST\" action=\"/system/set-datastore/.html\">"
