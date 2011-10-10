@@ -816,6 +816,12 @@ $(function(){
                                         $('#header-menu-bar-submit').unbind().bind('click', function(){
                                                         util.hashedCall('listingClass', 'newListing');
                                                         });
+                                        $('#header-menu-bar-setup').unbind().bind('click', function(){
+                                                        document.location = '/setup';
+                                                        });
+                                        $('#header-menu-bar-test').unbind().bind('click', function(){
+                                                        document.location = '/hello';
+                                                        });
                                         $('#header-menu-bar-top').unbind().bind('click', function(){
                                                         util.hashedCall('searchListings', 'doTopSearch');
                                                         });
@@ -856,26 +862,26 @@ $(function(){
                                 };
                                 self.displayUser = function(userobj) {
                                         if (userobj.profile && userobj.logout_url) {
-                                                $('#header-menu-name-login').hide();
+                                                $('#header-menu-name-login,#header-menu-command-login').hide();
                                                 $('#header-menu-name-username').html(userobj.profile.username).data('profile_id',userobj.profile.profile_id).show().unbind().bind('click', function(){
                                                                 util.hashedCall('header', 'showHeaderProfile', [$(this).data('profile_id')]);
                                                                 });
-                                                $('#header-menu-command-login').hide();
-                                                $('#header-menu-command-logout').show();
+                                                $('#header-menu-command-logout,#header-menu-bar-submit-spacer,#header-menu-bar-submit').show();
                                                 $('#header-menu-command-logout').data('logout_url',userobj.logout_url).show().unbind().bind('click', function(){
                                                                 var errorCallback = function () { $('#header-menu-message').html('unable to retrieve user'); };
                                                                 userobj.logout($(this).data('logout_url'), errorCallback);
                                                                 });
-                                                $('#header-menu-bar-submit-spacer').show();
-                                                $('#header-menu-bar-submit').show();
                                         }
                                         else {
-                                                $('#header-menu-name-login').show();
+                                                $('#header-menu-name-login,#header-menu-command-login').show();
                                                 $('#header-menu-name-username').html(null).hide();
-                                                $('#header-menu-command-login').show();
-                                                $('#header-menu-command-logout').hide();
-                                                $('#header-menu-bar-submit-spacer').hide();
-                                                $('#header-menu-bar-submit').hide();
+                                                $('#header-menu-command-logout,#header-menu-bar-submit-spacer,#header-menu-bar-submit').hide();
+                                        }
+                                        if (userobj.profile && userobj.logout_url && userobj.profile.admin) {
+                                                $('#header-menu-bar-setup-spacer,#header-menu-bar-setup,#header-menu-bar-test-spacer,#header-menu-bar-test').show();
+                                        }
+                                        else {
+                                                $('#header-menu-bar-setup-spacer,#header-menu-bar-setup,#header-menu-bar-test-spacer,#header-menu-bar-test').hide();
                                         }
                                 };
                                 self.narrowClasses = {
@@ -2219,8 +2225,8 @@ $(function(){
             var profileBid = profileBids && profileBids.length ? profileBids[0] : undefined;
 
             $('#bids-message').html('');
-            self.recalculateValuation();
             $('#bid-save-message').attr('class', (msgClass || 'attention')).html(msgText || '');
+            self.recalculateValuation();
             if (!keepBid) {
                 self.clearBidFields();
             }
@@ -2232,7 +2238,7 @@ $(function(){
             self.displayBidStats(filteredBids);
             self.bindBidLinks(filteredBids, profile, listing, bidStatus);
         };
-        self.widthdrawBidFunc = function(index) {
+        self.withdrawBidFunc = function(index) {
             var withdrawBid = function() {
                 var index = $(this).data('index');
                 var bid_id = $(this).data('bid_id');
@@ -3305,6 +3311,18 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
 .header-menu-bar-submit {
     display: none;
 }
+.header-menu-bar-setup-spacer {
+    display: none;
+}
+.header-menu-bar-setup {
+    display: none;
+}
+.header-menu-bar-test-spacer {
+    display: none;
+}
+.header-menu-bar-test {
+    display: none;
+}
 #loadingpage {
     display: block;
 }
@@ -3447,6 +3465,10 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
             <span class="header-link" id="header-menu-bar-top-users">members</span>
             <span class="header-menu-bar-submit-spacer" id="header-menu-bar-submit-spacer"> | </span>
             <span class="header-menu-bar-submit header-link" id="header-menu-bar-submit">submit</span>
+            <span class="header-menu-bar-setup-spacer" id="header-menu-bar-setup-spacer"> | </span>
+            <span class="header-menu-bar-setup header-link" id="header-menu-bar-setup">setup</span>
+            <span class="header-menu-bar-test-spacer" id="header-menu-bar-test-spacer"> | </span>
+            <span class="header-menu-bar-test header-link" id="header-menu-bar-test">test</span>
         </div>
     </div>
 
@@ -3635,6 +3657,7 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAwCAIA
                     <div class="content-form-clear"></div>
                     <div class="content-form-line"><b>Asking Funding</b></div>
                     <div class="content-form-inputline">$<input id="listing-edit-suggested-amt" name="suggested_bid_amt" type="text" size="9" maxlength="9" value="30,000"/></div>
+                    <div class="content-form-clear"></div>
                     <div class="content-form-line"><b>Asking Equity</b></div>
                     <div class="content-form-inputline"><input id="listing-edit-suggested-pct" name="suggested_bid_pct" type="text" size="2" maxlength="2" value="10"/>%</div>
                     <div class="content-form-clear"></div>
