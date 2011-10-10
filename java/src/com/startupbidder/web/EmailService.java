@@ -48,8 +48,8 @@ public class EmailService {
         try {
             Message msg = new MimeMessage(session);
             msg.setFrom(new InternetAddress("admin@startupbidder.com", "StartupBidder.com Admin"));
-            //msg.addRecipient(Message.RecipientType.TO,
-            //                 new InternetAddress("johnarleyburns@gmail.com", "John A. Burns"));
+            msg.addRecipient(Message.RecipientType.TO,
+                             new InternetAddress("johnarleyburns@gmail.com", "John A. Burns"));
             msg.addRecipient(Message.RecipientType.TO,
                     new InternetAddress("grzegorz.nittner@gmail.com", "Greg Nittner"));
             msg.setSubject("[StartupBidder.com] Congratulations on reaching a preliminary funding agreement!");
