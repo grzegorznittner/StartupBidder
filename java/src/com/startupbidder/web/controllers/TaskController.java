@@ -11,6 +11,10 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 
+import com.startupbidder.vo.BidAndUserVO;
+import com.startupbidder.vo.ListingAndUserVO;
+import com.startupbidder.vo.UserAndUserVO;
+import com.startupbidder.web.EmailService;
 import com.startupbidder.web.HttpHeaders;
 import com.startupbidder.web.HttpHeadersImpl;
 import com.startupbidder.web.ModelDrivenController;
@@ -48,6 +52,8 @@ public class TaskController extends ModelDrivenController {
 			return calculateListingStats(request);
 		} else if("set-datastore".equalsIgnoreCase(getCommand(1))) {
 			return setDatastore(request);
+		} else if("send-accepted-bid-notification".equalsIgnoreCase(getCommand(1))) {
+			return sendAcceptedBidNotification(request);
 		}
 		return null;
 	}
@@ -66,6 +72,21 @@ public class TaskController extends ModelDrivenController {
 		
 		String listingId = getCommandOrParameter(request, 2, "id");
 		ServiceFacade.instance().calculateListingStatistics(listingId);
+		
+		return headers;
+	}
+
+	private HttpHeaders sendAcceptedBidNotification(HttpServletRequest request) {
+		HttpHeaders headers = new HttpHeadersImpl("send-accepted-bid-notification");
+		
+		String bidId = getCommandOrParameter(request, 2, "id");
+		BidAndUserVO bid = ServiceFacade.instance().getBid(null, bidId);
+		UserAndUserVO listingOwner = ServiceFacade.instance().getUser(null, bid.getBid().getListingOwner());
+		UserAndUserVO investor = ServiceFacade.instance().getUser(null, bid.getBid().getUser());
+		ListingAndUserVO listing = ServiceFacade.instance().getListing(null, bid.getBid().getListing());
+		
+		EmailService.instance().sendAcceptedBidNotification(bid.getBid(), listing.getListing(),
+				listingOwner.getUser(), investor.getUser());
 		
 		return headers;
 	}

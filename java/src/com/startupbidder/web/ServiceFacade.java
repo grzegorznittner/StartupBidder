@@ -957,6 +957,11 @@ public class ServiceFacade {
 	public BidVO acceptBid(UserVO loggedInUser, String bidId) {
 		BidVO bid = DtoToVoConverter.convert(getDAO().acceptBid(loggedInUser.getId(), bidId));
 		if (bid != null) {
+			String taskName = timeStampFormatter.print(new Date().getTime()) + "send_accept_bid_email_" + bidId;
+			Queue queue = QueueFactory.getDefaultQueue();
+			queue.add(TaskOptions.Builder.withUrl("/task/send-accepted-bid-notification").param("id", bidId)
+					.taskName(taskName));
+
 			scheduleUpdateOfListingStatistics(bid.getListing(), ListingStatsUpdateReason.NONE);
 		}
 		return bid;
