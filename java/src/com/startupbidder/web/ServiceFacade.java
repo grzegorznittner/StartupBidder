@@ -1,5 +1,6 @@
 package com.startupbidder.web;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -357,7 +358,6 @@ public class ServiceFacade {
 	}
 	
 	public ListingStatisticsDTO calculateListingStatistics(String listingId) {
-		log.log(Level.INFO, "Calculating listing stats for '" + listingId + "'");
 		ListingStatisticsDTO listingStats = getDAO().updateListingStatistics(listingId);
 		log.log(Level.INFO, "Calculated listing stats for '" + listingId + "' : " + listingStats);
 		cache.put(LISTING_STATISTICS_KEY + listingId, listingStats);
@@ -375,6 +375,17 @@ public class ServiceFacade {
 		}
 		log.log(Level.INFO, "Listing stats for '" + listingId + "' : " + listingStats);
 		return listingStats;
+	}
+	
+	public List<ListingStatisticsDTO> updateAllListingStatistics() {
+		List<ListingStatisticsDTO> list = new ArrayList<ListingStatisticsDTO>();
+
+		for (ListingDTO listing : getDAO().getAllListings()) {
+			String listingId = listing.getIdAsString();
+			list.add(calculateListingStatistics(listingId));
+		}
+		log.log(Level.INFO, "Update stats for " + list.size() + " listings: " + list);
+		return list;
 	}
 	
 	/**

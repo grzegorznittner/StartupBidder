@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.startupbidder.web.controllers.BidController;
 import com.startupbidder.web.controllers.CommentController;
+import com.startupbidder.web.controllers.CronTaskController;
 import com.startupbidder.web.controllers.FileController;
 import com.startupbidder.web.controllers.ListingController;
 import com.startupbidder.web.controllers.SystemController;
@@ -52,6 +53,8 @@ public class FrontController extends HttpServlet {
 			controller = new FileController();
 		} else if (pathInfo.startsWith("/task")) {
 			controller = new TaskController();
+		} else if (pathInfo.startsWith("/cron")) {
+			controller = new CronTaskController();
 		} else {
 			log.log(Level.WARNING, "Unknown action '" + pathInfo + "'");
 		}

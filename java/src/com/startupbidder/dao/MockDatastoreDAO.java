@@ -321,6 +321,10 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		return lCache.get(listingId);
 	}
 	
+	public List<ListingDTO> getAllListings() {
+		return new ArrayList<ListingDTO>(lCache.values());
+	}
+	
 	public ListingDTO createListing(ListingDTO listing) {
 		listing.createKey(listing.getName() + listing.getOwner());
 		listing.setState(ListingDTO.State.CREATED);

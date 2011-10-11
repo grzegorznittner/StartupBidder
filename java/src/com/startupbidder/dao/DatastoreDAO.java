@@ -126,6 +126,11 @@ public interface DatastoreDAO {
 	ListingDTO getListing(String listingId);
 	
 	/**
+	 * Returns list of all listings.
+	 */
+	List<ListingDTO> getAllListings();
+	
+	/**
 	 * Returns user's active listings
 	 */
 	List<ListingDTO> getUserActiveListings(String userId, ListPropertiesVO listingProperties);

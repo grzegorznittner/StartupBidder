@@ -677,6 +677,19 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 	}
 
 	@Override
+	public List<ListingDTO> getAllListings() {
+		List<ListingDTO> listings = new ArrayList<ListingDTO>();
+		
+		Query query = new ListingDTO().getQuery();
+		query.addSort(ListingDTO.LISTED_ON, Query.SortDirection.ASCENDING);
+		PreparedQuery pq = getDatastoreService().prepare(query);
+		for (Entity user : pq.asIterable(FetchOptions.Builder.withLimit(1000))) {
+			listings.add(ListingDTO.fromEntity(user));
+		}
+		return listings;
+	}
+
+	@Override
 	public List<ListingDTO> getUserActiveListings(String userId, ListPropertiesVO listingProperties) {
 		List<ListingDTO> listings = new ArrayList<ListingDTO>();
 		
