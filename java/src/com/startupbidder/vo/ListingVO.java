@@ -31,10 +31,14 @@ public class ListingVO {
 	private int suggestedPercentage;
 	@JsonProperty("suggested_val")
 	private int suggestedValuation;
+	@JsonProperty("previous_val")
+	private int previousValuation;
 	@JsonProperty("valuation")
 	private int   valuation;
 	@JsonProperty("median_valuation")
 	private int   medianValuation;
+	@JsonProperty("score")
+	private int   score;
 	@JsonProperty("listing_date")
 	@JsonSerialize(using=DateSerializer.class)
 	private Date  listedOn;
@@ -266,22 +270,39 @@ public class ListingVO {
 		this.mockData = mockData;
 	}
 
+	public int getPreviousValuation() {
+		return previousValuation;
+	}
+
+	public void setPreviousValuation(int previousValuation) {
+		this.previousValuation = previousValuation;
+	}
+
+	public int getScore() {
+		return score;
+	}
+
+	public void setScore(int score) {
+		this.score = score;
+	}
+
 	@Override
 	public String toString() {
 		return "ListingVO [orderNumber=" + orderNumber + ", id=" + id
 				+ ", name=" + name + ", suggestedAmount=" + suggestedAmount
 				+ ", suggestedPercentage=" + suggestedPercentage
-				+ ", suggestedValuation=" + suggestedValuation + ", valuation="
+				+ ", suggestedValuation=" + suggestedValuation
+				+ ", previousValuation=" + previousValuation + ", valuation="
 				+ valuation + ", medianValuation=" + medianValuation
-				+ ", listedOn=" + listedOn + ", closingOn=" + closingOn
-				+ ", state=" + state + ", summary=" + summary + ", owner="
-				+ owner + ", ownerName=" + ownerName + ", numberOfComments="
-				+ numberOfComments + ", numberOfBids=" + numberOfBids
-				+ ", numberOfVotes=" + numberOfVotes + ", votable=" + votable
-				+ ", daysAgo=" + daysAgo + ", daysLeft=" + daysLeft
-				+ ", mockData=" + mockData + ", buinessPlanId=" + buinessPlanId
-				+ ", presentationId=" + presentationId + ", financialsId="
-				+ financialsId + "]";
+				+ ", score=" + score + ", listedOn=" + listedOn
+				+ ", closingOn=" + closingOn + ", state=" + state
+				+ ", summary=" + summary + ", owner=" + owner + ", ownerName="
+				+ ownerName + ", numberOfComments=" + numberOfComments
+				+ ", numberOfBids=" + numberOfBids + ", numberOfVotes="
+				+ numberOfVotes + ", votable=" + votable + ", daysAgo="
+				+ daysAgo + ", daysLeft=" + daysLeft + ", mockData=" + mockData
+				+ ", buinessPlanId=" + buinessPlanId + ", presentationId="
+				+ presentationId + ", financialsId=" + financialsId + "]";
 	}
 
 }

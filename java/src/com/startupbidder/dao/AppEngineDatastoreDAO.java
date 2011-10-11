@@ -10,6 +10,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.datanucleus.util.StringUtils;
+import org.joda.time.DateMidnight;
+import org.joda.time.DateTime;
+import org.joda.time.Days;
 
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
@@ -459,14 +462,31 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 			log.severe("Listing with id '" + listingId + "' doesn't exist!");
 		}
 
-		ListingStatisticsDTO listingStats = new ListingStatisticsDTO();		
-		listingStats.createKey(listingId);
-		listingStats.setListing(listingId);
+		ListingStatisticsDTO listingStats = new ListingStatisticsDTO();
+		Query query = listingStats.getQuery();
+		query.addFilter(ListingStatisticsDTO.LISTING, Query.FilterOperator.EQUAL, listingId);
+		PreparedQuery pq = getDatastoreService().prepare(query);
+		List<Entity> list = pq.asList(FetchOptions.Builder.withDefaults());
+		if (list.size() > 0) {
+			listingStats = ListingStatisticsDTO.fromEntity(pq.asSingleEntity());
+			DateMidnight lastStatMidnight = new DateMidnight(listingStats.getPreviousValuationDate().getTime());
+			DateMidnight midnight = new DateMidnight();
+			if (lastStatMidnight.isBefore(midnight)) {
+				listingStats.setPreviousValuation(listingStats.getValuation());
+				listingStats.setPreviousValuationDate(listingStats.getDate());
+			}
+		} else {
+			listingStats.createKey(listingId);
+			listingStats.setListing(listingId);
+			listingStats.setPreviousValuation(listing.getSuggestedValuation());
+			listingStats.setPreviousValuationDate(listing.getListedOn());
+		}
+		
 		listingStats.setStatus(listing.getState().toString());
 		
-		Query query = new BidDTO().getQuery().setKeysOnly();
+		query = new BidDTO().getQuery().setKeysOnly();
 		query.addFilter(BidDTO.LISTING, Query.FilterOperator.EQUAL, listingId);
-		PreparedQuery pq = getDatastoreService().prepare(query);
+		pq = getDatastoreService().prepare(query);
 		listingStats.setNumberOfBids(pq.countEntities(FetchOptions.Builder.withDefaults()));
 		
 		query = new CommentDTO().getQuery().setKeysOnly();
@@ -509,8 +529,13 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 		} else {
 			median = (values.get(values.size() / 2 - 1) + values.get(values.size() / 2)) / 2;
 		}
-		listingStats.setBidValuation(median);
-
+		listingStats.setMedianValuation(median);
+		
+		double timeFactor = Math.pow((double)(Days.daysBetween(new DateTime(listing.getListedOn()), new DateTime()).getDays() + 2), 1.5d);
+		double score = (listingStats.getNumberOfVotes() + listingStats.getNumberOfComments() + listingStats.getNumberOfVotes() + median) / timeFactor;
+		listingStats.setScore(score);
+		
+		listingStats.setDate(new Date());
 		log.info("listing: " + listingId + ", statistics: " + listingStats);
 		getDatastoreService().put(listingStats.toEntity());
 		
@@ -519,13 +544,14 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 	
 	public ListingStatisticsDTO getListingStatistics(String listingId) {
 		ListingStatisticsDTO listingStats = new ListingStatisticsDTO();
-		listingStats.createKey(listingId);
-		try {
-			Entity listingStatsEntity = getDatastoreService().get(listingStats.getKey());
-			listingStats = ListingStatisticsDTO.fromEntity(listingStatsEntity);
+		Query query = listingStats.getQuery();
+		query.addFilter(ListingStatisticsDTO.LISTING, Query.FilterOperator.EQUAL, listingId);
+		PreparedQuery pq = getDatastoreService().prepare(query);
+		if (pq.countEntities(FetchOptions.Builder.withDefaults()) > 0) {
+			listingStats = ListingStatisticsDTO.fromEntity(pq.asSingleEntity());
 			return listingStats;
-		} catch (EntityNotFoundException e) {
-			log.log(Level.WARNING, "User statistics entity '" + listingStats.getKey() + "'not found", e);
+		} else {
+			log.log(Level.WARNING, "User statistics entity for listing '" + listingId + "' not found!");
 			return null;
 		}
 	}
@@ -685,7 +711,7 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 	public List<ListingDTO> getTopListings(ListPropertiesVO listingProperties) {
 		Query query = new ListingStatisticsDTO().getQuery();
 		query.addFilter(ListingStatisticsDTO.STATUS, Query.FilterOperator.EQUAL, ListingDTO.State.ACTIVE.toString());
-		query.addSort(ListingStatisticsDTO.NUM_OF_VOTES, Query.SortDirection.DESCENDING);
+		query.addSort(ListingStatisticsDTO.SCORE, Query.SortDirection.DESCENDING);
 		
 		PreparedQuery pq = getDatastoreService().prepare(query);
 		List<Key> listingKeys = new ArrayList<Key>();

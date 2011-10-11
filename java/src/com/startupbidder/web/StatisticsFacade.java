@@ -54,7 +54,7 @@ public class StatisticsFacade {
 		return null;
 	}
 
-	public static TickerDataVO getGraphData(TickerType type) {
+	public static TickerDataVO getTickerData(TickerType type) {
 		switch (type) {
 		case LISTING_VALUATION_CHANGE:
 			return instance().getListingValuationChange();
@@ -63,8 +63,21 @@ public class StatisticsFacade {
 	}
 
 	private TickerDataVO getListingValuationChange() {
-		// TODO Auto-generated method stub
+		DateMidnight midnight = new DateMidnight();
+		TickerDataVO data = (TickerDataVO)cache.get(TickerType.LISTING_VALUATION_CHANGE);
+		// are data created today?
+		if (data != null && Days.daysBetween(new DateTime(data.getCreated().getTime()), midnight).isLessThan(Days.ONE)) {
+			return data;
+		}
+		data = calculateListingValuationChange();
+		
 		return null;
+	}
+	
+	public TickerDataVO calculateListingValuationChange() {
+		TickerDataVO data = new TickerDataVO();
+		
+		return data;
 	}
 
 	private GraphDataVO getBidDayVolume() {
@@ -74,6 +87,15 @@ public class StatisticsFacade {
 		if (data != null && Days.daysBetween(new DateTime(data.getCreated().getTime()), midnight).isLessThan(Days.ONE)) {
 			return data;
 		}
+		
+		data = calculateBidDayVolume();
+		
+		return data;
+	}
+
+	public GraphDataVO calculateBidDayVolume() {
+		DateMidnight midnight = new DateMidnight();
+		GraphDataVO data = new GraphDataVO(GraphType.BID_DAY_VOLUME.toString());
 		
 		ListPropertiesVO bidsProperties = new ListPropertiesVO();
 		bidsProperties.setMaxResults(100);
@@ -93,14 +115,12 @@ public class StatisticsFacade {
 			}
 		}
 		
-		data = new GraphDataVO(GraphType.BID_DAY_VOLUME.toString());
 		data.setLabel(values.length + " Day Bid Volume");
 		data.setxAxis("days ago");
 		data.setyAxis("num bids");
 		data.setValues(values);
 		data.setCreated(new Date());
 		cache.put(GraphType.BID_DAY_VOLUME, data);
-		
 		return data;
 	}
 	
@@ -111,6 +131,15 @@ public class StatisticsFacade {
 		if (data != null && Days.daysBetween(new DateTime(data.getCreated().getTime()), midnight).isLessThan(Days.ONE)) {
 			return data;
 		}
+		
+		data = calculateBidDayValuation();
+
+		return data;
+	}
+
+	public GraphDataVO calculateBidDayValuation() {
+		DateMidnight midnight = new DateMidnight();
+		GraphDataVO data = new GraphDataVO(GraphType.BID_DAY_VALUATION.toString());
 		
 		ListPropertiesVO bidsProperties = new ListPropertiesVO();
 		bidsProperties.setMaxResults(100);
@@ -130,14 +159,12 @@ public class StatisticsFacade {
 			}
 		}
 		
-		data = new GraphDataVO(GraphType.BID_DAY_VALUATION.toString());
 		data.setLabel(values.length + " Day Bid Valuation");
 		data.setxAxis("days ago");
 		data.setyAxis("bids valuation");
 		data.setValues(values);
 		data.setCreated(new Date());
 		cache.put(GraphType.BID_DAY_VALUATION, data);
-
 		return data;
 	}
 

@@ -18,6 +18,10 @@ public class ListingStatisticsDTO extends AbstractDTO implements Serializable {
 	private String status;
 	public static final String VALUATION = "valuation";
 	private double valuation;
+	public static final String PREVIOUS_VALUATION = "previousValuation";
+	private double previousValuation;
+	public static final String PREVIOUS_VALUATION_DATE = "previousValuationDate";
+	private Date previousValuationDate;
 	public static final String MEDIAN_VALUATION = "medianValuation";
 	private double medianValuation;
 	public static final String NUM_OF_COMMENTS = "numberOfComments";
@@ -26,6 +30,8 @@ public class ListingStatisticsDTO extends AbstractDTO implements Serializable {
 	private long numberOfBids;
 	public static final String NUM_OF_VOTES = "numberOfVotes";
 	private long numberOfVotes;
+	public static final String SCORE = "score";
+	private double score;
 	public static final String DATE = "date";
 	private Date date;
 	
@@ -48,7 +54,10 @@ public class ListingStatisticsDTO extends AbstractDTO implements Serializable {
 		entity.setProperty(LISTING, this.listing);
 		entity.setProperty(STATUS, this.status);
 		entity.setProperty(VALUATION, (Double)this.valuation);
+		entity.setProperty(PREVIOUS_VALUATION, (Double)this.previousValuation);
+		entity.setProperty(PREVIOUS_VALUATION_DATE, this.previousValuationDate);
 		entity.setProperty(MEDIAN_VALUATION, (Double)this.medianValuation);
+		entity.setProperty(SCORE, (Double)this.score);
 		
 		return entity;
 	}
@@ -66,7 +75,10 @@ public class ListingStatisticsDTO extends AbstractDTO implements Serializable {
 		dto.listing = (String)entity.getProperty(LISTING);
 		dto.status = (String)entity.getProperty(STATUS);
 		dto.valuation = entity.getProperty(VALUATION) != null ? (Double)entity.getProperty(VALUATION) : 0.0;
+		dto.previousValuation = entity.getProperty(PREVIOUS_VALUATION) != null ? (Double)entity.getProperty(PREVIOUS_VALUATION) : 0.0;
+		dto.previousValuationDate = (Date)entity.getProperty(PREVIOUS_VALUATION_DATE);
 		dto.medianValuation = entity.getProperty(MEDIAN_VALUATION) != null ? (Double)entity.getProperty(MEDIAN_VALUATION) : 0.0;
+		dto.score = entity.getProperty(SCORE) != null ? (Double)entity.getProperty(SCORE) : 0.0;
 
 		return dto;
 	}
@@ -135,29 +147,71 @@ public class ListingStatisticsDTO extends AbstractDTO implements Serializable {
 		this.medianValuation = bidValuation;
 	}
 
+	public double getPreviousValuation() {
+		return previousValuation;
+	}
+
+	public void setPreviousValuation(double previousValuation) {
+		this.previousValuation = previousValuation;
+	}
+
+	public Date getPreviousValuationDate() {
+		return previousValuationDate;
+	}
+
+	public void setPreviousValuationDate(Date previousValuationDate) {
+		this.previousValuationDate = previousValuationDate;
+	}
+
+	public double getMedianValuation() {
+		return medianValuation;
+	}
+
+	public void setMedianValuation(double medianValuation) {
+		this.medianValuation = medianValuation;
+	}
+
+	public double getScore() {
+		return score;
+	}
+
+	public void setScore(double score) {
+		this.score = score;
+	}
+
 	@Override
 	public String toString() {
 		return "ListingStatisticsDTO [listing=" + listing + ", status="
-				+ status + ", valuation=" + valuation + ", medianValuation="
+				+ status + ", valuation=" + valuation + ", previousValuation="
+				+ previousValuation + ", previousValuationDate="
+				+ previousValuationDate + ", medianValuation="
 				+ medianValuation + ", numberOfComments=" + numberOfComments
 				+ ", numberOfBids=" + numberOfBids + ", numberOfVotes="
-				+ numberOfVotes + ", date=" + date + "]";
+				+ numberOfVotes + ", score=" + score + ", date=" + date + "]";
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
+		result = prime * result + ((date == null) ? 0 : date.hashCode());
+		result = prime * result + ((listing == null) ? 0 : listing.hashCode());
 		long temp;
 		temp = Double.doubleToLongBits(medianValuation);
 		result = prime * result + (int) (temp ^ (temp >>> 32));
-		result = prime * result + ((date == null) ? 0 : date.hashCode());
-		result = prime * result + ((listing == null) ? 0 : listing.hashCode());
 		result = prime * result + (int) (numberOfBids ^ (numberOfBids >>> 32));
 		result = prime * result
 				+ (int) (numberOfComments ^ (numberOfComments >>> 32));
 		result = prime * result
 				+ (int) (numberOfVotes ^ (numberOfVotes >>> 32));
+		temp = Double.doubleToLongBits(previousValuation);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		result = prime
+				* result
+				+ ((previousValuationDate == null) ? 0 : previousValuationDate
+						.hashCode());
+		temp = Double.doubleToLongBits(score);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
 		result = prime * result + ((status == null) ? 0 : status.hashCode());
 		temp = Double.doubleToLongBits(valuation);
 		result = prime * result + (int) (temp ^ (temp >>> 32));
@@ -173,9 +227,6 @@ public class ListingStatisticsDTO extends AbstractDTO implements Serializable {
 		if (!(obj instanceof ListingStatisticsDTO))
 			return false;
 		ListingStatisticsDTO other = (ListingStatisticsDTO) obj;
-		if (Double.doubleToLongBits(medianValuation) != Double
-				.doubleToLongBits(other.medianValuation))
-			return false;
 		if (date == null) {
 			if (other.date != null)
 				return false;
@@ -186,11 +237,25 @@ public class ListingStatisticsDTO extends AbstractDTO implements Serializable {
 				return false;
 		} else if (!listing.equals(other.listing))
 			return false;
+		if (Double.doubleToLongBits(medianValuation) != Double
+				.doubleToLongBits(other.medianValuation))
+			return false;
 		if (numberOfBids != other.numberOfBids)
 			return false;
 		if (numberOfComments != other.numberOfComments)
 			return false;
 		if (numberOfVotes != other.numberOfVotes)
+			return false;
+		if (Double.doubleToLongBits(previousValuation) != Double
+				.doubleToLongBits(other.previousValuation))
+			return false;
+		if (previousValuationDate == null) {
+			if (other.previousValuationDate != null)
+				return false;
+		} else if (!previousValuationDate.equals(other.previousValuationDate))
+			return false;
+		if (Double.doubleToLongBits(score) != Double
+				.doubleToLongBits(other.score))
 			return false;
 		if (status == null) {
 			if (other.status != null)
@@ -202,5 +267,4 @@ public class ListingStatisticsDTO extends AbstractDTO implements Serializable {
 			return false;
 		return true;
 	}
-
 }
