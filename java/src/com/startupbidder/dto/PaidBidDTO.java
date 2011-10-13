@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
+import org.codehaus.jackson.annotate.JsonAutoDetect;
+import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.KeyFactory;
@@ -13,6 +15,8 @@ import com.google.appengine.api.datastore.KeyFactory;
  * @author "Grzegorz Nittner" <grzegorz.nittner@gmail.com>
  */
 @SuppressWarnings("serial")
+@JsonAutoDetect(getterVisibility=Visibility.DEFAULT, setterVisibility=Visibility.DEFAULT,
+		fieldVisibility=Visibility.DEFAULT, isGetterVisibility=Visibility.DEFAULT)
 public class PaidBidDTO extends BidDTO implements Serializable {
 	public static final String BID = "bid_id";
 	private String bid;

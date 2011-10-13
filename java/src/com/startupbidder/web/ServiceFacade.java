@@ -30,6 +30,7 @@ import com.google.appengine.api.utils.SystemProperty;
 import com.startupbidder.dao.AppEngineDatastoreDAO;
 import com.startupbidder.dao.DatastoreDAO;
 import com.startupbidder.dao.MockDatastoreDAO;
+import com.startupbidder.dto.AbstractDTO;
 import com.startupbidder.dto.BidDTO;
 import com.startupbidder.dto.ListingDTO;
 import com.startupbidder.dto.ListingDocumentDTO;
@@ -109,6 +110,10 @@ public class ServiceFacade {
 	
 	public String createMockDatastore(UserVO loggedInUser) {
 		return getDAO().createMockDatastore(loggedInUser);
+	}
+	
+	public List<AbstractDTO> exportDatastoreContents(UserVO loggedInUser) {
+		return getDAO().exportDatastoreContents();
 	}
 	
 	public UserVO getLoggedInUserData(User loggedInUser) {

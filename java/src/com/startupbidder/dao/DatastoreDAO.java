@@ -2,6 +2,7 @@ package com.startupbidder.dao;
 
 import java.util.List;
 
+import com.startupbidder.dto.AbstractDTO;
 import com.startupbidder.dto.BidDTO;
 import com.startupbidder.dto.CommentDTO;
 import com.startupbidder.dto.ListingDTO;
@@ -36,6 +37,11 @@ public interface DatastoreDAO {
 	 */
 	String createMockDatastore(UserVO loggedInUser);
 	
+	/**
+	 * Exports datastore objects.
+	 */
+	List<AbstractDTO> exportDatastoreContents();
+
 	/**
 	 * Returns user data object by userId
 	 * 

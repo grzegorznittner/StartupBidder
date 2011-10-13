@@ -1,5 +1,8 @@
 package com.startupbidder.dto;
 
+import org.codehaus.jackson.annotate.JsonAutoDetect;
+import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
+
 import com.google.appengine.api.datastore.Entity;
 
 /**
@@ -8,6 +11,8 @@ import com.google.appengine.api.datastore.Entity;
  * @author "Grzegorz Nittner" <grzegorz.nittner@gmail.com>
  */
 @SuppressWarnings("serial")
+@JsonAutoDetect(getterVisibility=Visibility.DEFAULT, setterVisibility=Visibility.DEFAULT,
+		fieldVisibility=Visibility.DEFAULT, isGetterVisibility=Visibility.DEFAULT)
 public class UserStatisticsDTO extends AbstractDTO {
 	public static final String USER = "user";
 	private String user;

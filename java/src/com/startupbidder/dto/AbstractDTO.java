@@ -2,6 +2,10 @@ package com.startupbidder.dto;
 
 import java.io.Serializable;
 
+import org.codehaus.jackson.annotate.JsonAutoDetect;
+import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
+import org.codehaus.jackson.annotate.JsonProperty;
+
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
@@ -14,6 +18,8 @@ import com.google.appengine.api.datastore.Query;
  * @author "Grzegorz Nittner" <grzegorz.nittner@gmail.com>
  */
 @SuppressWarnings("serial")
+@JsonAutoDetect(getterVisibility=Visibility.NONE, setterVisibility=Visibility.NONE,
+		fieldVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE)
 public abstract class AbstractDTO implements Serializable {
 	protected Key id;
 	public static final String MOCK_DATA = "mockData";
@@ -47,6 +53,7 @@ public abstract class AbstractDTO implements Serializable {
 	 * Converts Key object into string which can be passed to web client
 	 * @return String representing Key
 	 */
+	@JsonProperty("id")
 	public String getIdAsString() {
 		return KeyFactory.keyToString(getKey());
 	}
@@ -55,6 +62,7 @@ public abstract class AbstractDTO implements Serializable {
 	 * Sets id by key provided in string format (eg. from web client)
 	 * @param stringId String representing object key
 	 */
+	@JsonProperty("id")
 	public void setIdFromString(String stringId) {
 		setKey(KeyFactory.stringToKey(stringId));
 	}

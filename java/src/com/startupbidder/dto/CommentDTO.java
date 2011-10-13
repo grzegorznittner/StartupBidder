@@ -3,6 +3,9 @@ package com.startupbidder.dto;
 import java.io.Serializable;
 import java.util.Date;
 
+import org.codehaus.jackson.annotate.JsonAutoDetect;
+import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
+
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.Text;
 
@@ -11,6 +14,8 @@ import com.google.appengine.api.datastore.Text;
  * @author "Grzegorz Nittner" <grzegorz.nittner@gmail.com>
  */
 @SuppressWarnings("serial")
+@JsonAutoDetect(getterVisibility=Visibility.DEFAULT, setterVisibility=Visibility.DEFAULT,
+		fieldVisibility=Visibility.DEFAULT, isGetterVisibility=Visibility.DEFAULT)
 public class CommentDTO extends AbstractDTO implements Serializable {
 	public static final String LISTING = "listing";
 	private String listing;

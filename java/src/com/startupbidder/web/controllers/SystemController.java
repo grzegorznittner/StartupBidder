@@ -1,16 +1,21 @@
 package com.startupbidder.web.controllers;
 
 import java.io.IOException;
+import java.util.Date;
+import java.util.logging.Level;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
+import com.startupbidder.vo.ListingDocumentVO;
 import com.startupbidder.vo.SystemPropertyVO;
 import com.startupbidder.vo.UserVO;
 import com.startupbidder.web.HttpHeaders;
@@ -38,6 +43,8 @@ public class SystemController extends ModelDrivenController {
 				return printDatastoreContents(request);
 			} else if("create-mock-datastore".equalsIgnoreCase(getCommand(1))) {
 				return createMockDatastore(request);
+			} else if("export-datastore".equalsIgnoreCase(getCommand(1))) {
+				return exportDatastore(request);
 			}
 		}
 		return null;
@@ -109,8 +116,8 @@ public class SystemController extends ModelDrivenController {
 		
 		UserService userService = UserServiceFactory.getUserService();
 		User user = userService.getCurrentUser();
-		if (user != null) {
-			UserVO loggedInUser = ServiceFacade.instance().getLoggedInUserData(user);
+		UserVO loggedInUser = ServiceFacade.instance().getLoggedInUserData(user);
+		if (loggedInUser != null && loggedInUser.isAdmin()) {
 			String printedObjects = ServiceFacade.instance().printDatastoreContents(loggedInUser);
 			model = printedObjects;
 		} else {
@@ -124,8 +131,8 @@ public class SystemController extends ModelDrivenController {
 		
 		UserService userService = UserServiceFactory.getUserService();
 		User user = userService.getCurrentUser();
-		if (user != null) {
-			UserVO loggedInUser = ServiceFacade.instance().getLoggedInUserData(user);
+		UserVO loggedInUser = ServiceFacade.instance().getLoggedInUserData(user);
+		if (loggedInUser != null && loggedInUser.isAdmin()) {
 			String printedObjects = ServiceFacade.instance().createMockDatastore(loggedInUser);
 			model = printedObjects;
 		} else {
@@ -134,6 +141,23 @@ public class SystemController extends ModelDrivenController {
 		return headers;
 	}
 
+	private HttpHeaders exportDatastore(HttpServletRequest request) {
+		HttpHeaders headers = new HttpHeadersImpl("export-datastore");
+		
+		UserService userService = UserServiceFactory.getUserService();
+		UserVO loggedInUser = ServiceFacade.instance().getLoggedInUserData(userService.getCurrentUser());
+		if (loggedInUser != null && loggedInUser.isAdmin()) {
+			model = ServiceFacade.instance().exportDatastoreContents(loggedInUser);
+		
+			DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyyMMdd_HHmm_ss");
+			headers.addHeader("Content-Disposition", "attachment; filename=export" + fmt.print(new Date().getTime()) + ".json");
+		} else {
+			headers.setStatus(500);
+		}
+		
+		return headers;
+	}
+	
 	@Override
 	public Object getModel() {
 		return model;

@@ -23,6 +23,7 @@ import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.FilterOperator;
+import com.startupbidder.dto.AbstractDTO;
 import com.startupbidder.dto.BidDTO;
 import com.startupbidder.dto.CommentDTO;
 import com.startupbidder.dto.ListingDTO;
@@ -58,11 +59,17 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 	}
 	
 	public String clearDatastore() {
-		return iterateThroughDatastore(true);
+		return iterateThroughDatastore(true, new ArrayList<AbstractDTO>());
 	}
 	
 	public String printDatastoreContents() {
-		return iterateThroughDatastore(false);
+		return iterateThroughDatastore(false, new ArrayList<AbstractDTO>());
+	}
+	
+	public List<AbstractDTO> exportDatastoreContents() {
+		List<AbstractDTO> dtoList = new ArrayList<AbstractDTO>();
+		iterateThroughDatastore(false, dtoList);
+		return dtoList;
 	}
 	
 	public String createMockDatastore(UserVO loggedInUser) {
@@ -71,10 +78,10 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 		getDatastoreService().delete(loggedInUserDTO.getKey());
 		
 		initMocks();
-		return iterateThroughDatastore(false);
+		return iterateThroughDatastore(false, new ArrayList<AbstractDTO>());
 	}
 	
-	public String iterateThroughDatastore(boolean delete) {
+	public String iterateThroughDatastore(boolean delete, List<AbstractDTO> dtoList) {
 		StringBuffer outputBuffer = new StringBuffer();
 		outputBuffer.append("<a href=\"/setup\">Setup page</a>");
 		if (delete) {
@@ -89,7 +96,9 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 		PreparedQuery pq = getDatastoreService().prepare(query);
 		for (Entity entity : pq.asIterable()) {
 			keys.add(entity.getKey());
-			outputBuffer.append(UserDTO.fromEntity(entity).toString()).append("<br/>");
+			UserDTO user = UserDTO.fromEntity(entity);
+			dtoList.add(user);
+			outputBuffer.append(user.toString()).append("<br/>");
 		}
 		if (delete) {
 			getDatastoreService().delete(keys);
@@ -102,7 +111,9 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 		pq = getDatastoreService().prepare(query);
 		for (Entity entity : pq.asIterable()) {
 			keys.add(entity.getKey());
-			outputBuffer.append(BidDTO.fromEntity(entity).toString()).append("<br/>");
+			BidDTO bid = BidDTO.fromEntity(entity);
+			dtoList.add(bid);
+			outputBuffer.append(bid.toString()).append("<br/>");
 		}
 		if (delete) {
 			getDatastoreService().delete(keys);
@@ -115,7 +126,9 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 		pq = getDatastoreService().prepare(query);
 		for (Entity entity : pq.asIterable()) {
 			keys.add(entity.getKey());
-			outputBuffer.append(PaidBidDTO.fromEntity(entity).toString()).append("<br/>");
+			PaidBidDTO paidBid = PaidBidDTO.fromEntity(entity);
+			dtoList.add(paidBid);
+			outputBuffer.append(paidBid.toString()).append("<br/>");
 		}
 		if (delete) {
 			getDatastoreService().delete(keys);
@@ -128,7 +141,9 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 		pq = getDatastoreService().prepare(query);
 		for (Entity entity : pq.asIterable()) {
 			keys.add(entity.getKey());
-			outputBuffer.append(CommentDTO.fromEntity(entity).toString()).append("<br/>");
+			CommentDTO comment = CommentDTO.fromEntity(entity);
+			dtoList.add(comment);
+			outputBuffer.append(comment.toString()).append("<br/>");
 		}
 		if (delete) {
 			getDatastoreService().delete(keys);
@@ -141,7 +156,9 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 		pq = getDatastoreService().prepare(query);
 		for (Entity entity : pq.asIterable()) {
 			keys.add(entity.getKey());
-			outputBuffer.append(ListingDocumentDTO.fromEntity(entity).toString()).append("<br/>");
+			ListingDocumentDTO doc = ListingDocumentDTO.fromEntity(entity);
+			dtoList.add(doc);
+			outputBuffer.append(doc.toString()).append("<br/>");
 		}
 		if (delete) {
 			getDatastoreService().delete(keys);
@@ -154,7 +171,9 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 		pq = getDatastoreService().prepare(query);
 		for (Entity entity : pq.asIterable()) {
 			keys.add(entity.getKey());
-			outputBuffer.append(ListingDTO.fromEntity(entity).toString()).append("<br/>");
+			ListingDTO listing = ListingDTO.fromEntity(entity);
+			dtoList.add(listing);
+			outputBuffer.append(listing.toString()).append("<br/>");
 		}
 		if (delete) {
 			getDatastoreService().delete(keys);
@@ -167,7 +186,9 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 		pq = getDatastoreService().prepare(query);
 		for (Entity entity : pq.asIterable()) {
 			keys.add(entity.getKey());
-			outputBuffer.append(ListingStatisticsDTO.fromEntity(entity).toString()).append("<br/>");
+			ListingStatisticsDTO stat = ListingStatisticsDTO.fromEntity(entity);
+			dtoList.add(stat);
+			outputBuffer.append(stat.toString()).append("<br/>");
 		}
 		if (delete) {
 			getDatastoreService().delete(keys);
@@ -180,7 +201,9 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 		pq = getDatastoreService().prepare(query);
 		for (Entity entity : pq.asIterable()) {
 			keys.add(entity.getKey());
-			outputBuffer.append(RankDTO.fromEntity(entity).toString()).append("<br/>");
+			RankDTO rank = RankDTO.fromEntity(entity);
+			dtoList.add(rank);
+			outputBuffer.append(rank.toString()).append("<br/>");
 		}
 		if (delete) {
 			getDatastoreService().delete(keys);
@@ -193,7 +216,9 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 		pq = getDatastoreService().prepare(query);
 		for (Entity entity : pq.asIterable()) {
 			keys.add(entity.getKey());
-			outputBuffer.append(SystemPropertyDTO.fromEntity(entity).toString()).append("<br/>");
+			SystemPropertyDTO prop = SystemPropertyDTO.fromEntity(entity);
+			dtoList.add(prop);
+			outputBuffer.append(prop.toString()).append("<br/>");
 		}
 		if (delete) {
 			getDatastoreService().delete(keys);
@@ -206,7 +231,9 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 		pq = getDatastoreService().prepare(query);
 		for (Entity entity : pq.asIterable()) {
 			keys.add(entity.getKey());
-			outputBuffer.append(UserStatisticsDTO.fromEntity(entity).toString()).append("<br/>");
+			UserStatisticsDTO stat = UserStatisticsDTO.fromEntity(entity);
+			dtoList.add(stat);
+			outputBuffer.append(stat.toString()).append("<br/>");
 		}
 		if (delete) {
 			getDatastoreService().delete(keys);
@@ -219,7 +246,9 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 		pq = getDatastoreService().prepare(query);
 		for (Entity entity : pq.asIterable()) {
 			keys.add(entity.getKey());
-			outputBuffer.append(VoteDTO.fromEntity(entity).toString()).append("<br/>");
+			VoteDTO vote = VoteDTO.fromEntity(entity);
+			dtoList.add(vote);
+			outputBuffer.append(vote.toString()).append("<br/>");
 		}
 		if (delete) {
 			getDatastoreService().delete(keys);

@@ -14,6 +14,7 @@ import org.datanucleus.util.StringUtils;
 
 import com.google.appengine.api.blobstore.BlobstoreService;
 import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
+import com.startupbidder.dto.AbstractDTO;
 import com.startupbidder.dto.BidDTO;
 import com.startupbidder.dto.CommentDTO;
 import com.startupbidder.dto.ListingDTO;
@@ -74,6 +75,10 @@ public class MockDatastoreDAO implements DatastoreDAO {
 	
 	public String createMockDatastore(UserVO loggedInUser) {
 		return "Operation not supported for MockDatastore";
+	}
+	
+	public List<AbstractDTO> exportDatastoreContents() {
+		return null;
 	}
 
 	public UserDTO getUser(String key) {
