@@ -8,6 +8,7 @@ import org.codehaus.jackson.annotate.JsonAutoDetect;
 import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.Text;
 
 /**
  * 
@@ -18,7 +19,11 @@ import com.google.appengine.api.datastore.Entity;
 		fieldVisibility=Visibility.DEFAULT, isGetterVisibility=Visibility.DEFAULT)
 public class BidDTO extends AbstractDTO implements Serializable {
 	public enum FundType {SYNDICATE, SOLE_INVESTOR, COMMON, PREFERRED, NOTE};
-	public enum Status { ACTIVE, WITHDRAWN, ACCEPTED, PAID};
+	/**
+	 * Bid flow: POSTED -> ACTIVE or REJECTED -> ACCEPTED -> PAID
+	 * Apart from that bid can be always marked as REJECTED.
+	 */
+	public enum Status { POSTED, ACTIVE, WITHDRAWN, REJECTED, ACCEPTED, PAID};
 	
 	public static final String USER = "user";
 	private String user;
@@ -38,6 +43,8 @@ public class BidDTO extends AbstractDTO implements Serializable {
 	private FundType fundType;
 	public static final String STATUS = "status";
 	private Status status = Status.ACTIVE;
+	public static final String COMMENT = "comment";
+	private String comment;
 	
 	public BidDTO() {
 	}
@@ -118,6 +125,14 @@ public class BidDTO extends AbstractDTO implements Serializable {
 		this.listingOwner = listingOwner;
 	}
 
+	public String getComment() {
+		return comment;
+	}
+
+	public void setComment(String comment) {
+		this.comment = comment;
+	}
+
 	public Entity toEntity() {
 		Entity bid = new Entity(this.id);
 		bid.setProperty(MOCK_DATA, (Boolean)this.mockData);
@@ -130,6 +145,7 @@ public class BidDTO extends AbstractDTO implements Serializable {
 		bid.setProperty(USER, user);
 		bid.setProperty(VALUATION, valuation);
 		bid.setProperty(VALUE, value);
+		bid.setUnindexedProperty(COMMENT, this.comment != null ? new Text(this.comment) : null);
 		return bid;
 	}
 	
@@ -152,6 +168,8 @@ public class BidDTO extends AbstractDTO implements Serializable {
 		bid.setUser((String)entity.getProperty(USER));
 		bid.setValuation(((Long)entity.getProperty(VALUATION)).intValue());
 		bid.setValue(((Long)entity.getProperty(VALUE)).intValue());
+		Text commentText = (Text)entity.getProperty(COMMENT);
+		bid.comment = commentText != null ? commentText.getValue() : null;
 		return bid;
 	}
 
@@ -161,13 +179,14 @@ public class BidDTO extends AbstractDTO implements Serializable {
 				+ ", listingOwner=" + listingOwner + ", placed=" + placed
 				+ ", value=" + value + ", percentOfCompany=" + percentOfCompany
 				+ ", valuation=" + valuation + ", fundType=" + fundType
-				+ ", status=" + status + "]";
+				+ ", status=" + status + ", comment=" + comment + "]";
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
+		result = prime * result + ((comment == null) ? 0 : comment.hashCode());
 		result = prime * result
 				+ ((fundType == null) ? 0 : fundType.hashCode());
 		result = prime * result + ((listing == null) ? 0 : listing.hashCode());
@@ -188,9 +207,14 @@ public class BidDTO extends AbstractDTO implements Serializable {
 			return true;
 		if (!super.equals(obj))
 			return false;
-		if (getClass() != obj.getClass())
+		if (!(obj instanceof BidDTO))
 			return false;
 		BidDTO other = (BidDTO) obj;
+		if (comment == null) {
+			if (other.comment != null)
+				return false;
+		} else if (!comment.equals(other.comment))
+			return false;
 		if (fundType != other.fundType)
 			return false;
 		if (listing == null) {
@@ -223,4 +247,5 @@ public class BidDTO extends AbstractDTO implements Serializable {
 			return false;
 		return true;
 	}
+
 }

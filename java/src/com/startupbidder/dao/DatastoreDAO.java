@@ -365,6 +365,11 @@ public interface DatastoreDAO {
 	BidDTO activateBid(String loggedInUser, String bidId);
 
 	/**
+	 * Rejects bid
+	 */
+	BidDTO rejectBid(String loggedInUser, String bidId);
+	
+	/**
 	 * Sets bid status to WITHDRAWN
 	 * @param bidId
 	 */

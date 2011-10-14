@@ -50,7 +50,8 @@ public class BidVO {
 	@JsonProperty("status")
 	@JsonSerialize(using=LowecaseSerializer.class)
 	private String status;
-
+	@JsonProperty("bid_note")
+	private String comment;
 	
 	public BidVO() {
 	}
@@ -174,6 +175,14 @@ public class BidVO {
 		this.mockData = mockData;
 	}
 
+	public String getComment() {
+		return comment;
+	}
+
+	public void setComment(String comment) {
+		this.comment = comment;
+	}
+
 	@Override
 	public String toString() {
 		return "BidVO [orderNumber=" + orderNumber + ", id=" + id + ", user="
@@ -183,6 +192,6 @@ public class BidVO {
 				+ ", percentOfCompany=" + percentOfCompany + ", fundType="
 				+ fundType + ", valuation=" + valuation + ", interestRate="
 				+ interestRate + ", mockData=" + mockData + ", status="
-				+ status + "]";
+				+ status + ", comment=" + comment + "]";
 	}
 }

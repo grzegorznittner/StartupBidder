@@ -861,6 +861,16 @@ public class MockDatastoreDAO implements DatastoreDAO {
 			return null;
 		}
 	}
+	
+	public BidDTO rejectBid(String loggedInUser, String bidId) {
+		if (bidCache.containsKey(bidId)) {
+			BidDTO bid = bidCache.get(bidId);
+			bid.setStatus(BidDTO.Status.REJECTED);
+			return bid;
+		} else {
+			return null;
+		}
+	}
 
 	public BidDTO withdrawBid(String loggedInUser, String bidId) {
 		if (bidCache.containsKey(bidId)) {

@@ -985,6 +985,19 @@ public class ServiceFacade {
 		return bid;
 	}
 
+	public BidVO rejectBid(UserVO loggedInUser, String bidId) {
+		BidVO bid = DtoToVoConverter.convert(getDAO().rejectBid(loggedInUser.getId(), bidId));
+		if (bid != null) {
+			String taskName = timeStampFormatter.print(new Date().getTime()) + "send_reject_bid_email_" + bidId;
+			Queue queue = QueueFactory.getDefaultQueue();
+			queue.add(TaskOptions.Builder.withUrl("/task/send-reject-bid-notification").param("id", bidId)
+					.taskName(taskName));
+
+			scheduleUpdateOfListingStatistics(bid.getListing(), ListingStatsUpdateReason.NONE);
+		}
+		return bid;
+	}
+
 	public BidVO markBidAsPaid(UserVO loggedInUser, String bidId) {
 		BidVO bid = DtoToVoConverter.convert(getDAO().markBidAsPaid(loggedInUser.getId(), bidId));
 		if (bid != null) {

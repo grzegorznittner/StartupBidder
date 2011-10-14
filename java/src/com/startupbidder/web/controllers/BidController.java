@@ -60,6 +60,8 @@ public class BidController extends ModelDrivenController {
 				return update(request);
 			} else if("activate".equalsIgnoreCase(getCommand(1))) {
 				return activate(request);
+			} else if("reject".equalsIgnoreCase(getCommand(1))) {
+				return reject(request);
 			} else if("withdraw".equalsIgnoreCase(getCommand(1))) {
 				return withdraw(request);
 			} else if("accept".equalsIgnoreCase(getCommand(1))) {
@@ -122,6 +124,26 @@ public class BidController extends ModelDrivenController {
 		String bidId = getCommandOrParameter(request, 3, "id");
 		if (!StringUtils.isEmpty(bidId)) {
 			model = ServiceFacade.instance().acceptBid(getLoggedInUser(), bidId);
+			if (model == null) {
+				headers.setStatus(500);
+			}
+		} else {
+			log.log(Level.WARNING, "Parameter 'id' is not provided!");
+			headers.setStatus(500);
+		}
+		
+		return headers;
+	}
+
+	/*
+	 * PUT /bid/reject?id=<id>
+	 */
+	private HttpHeaders reject(HttpServletRequest request) {
+		HttpHeaders headers = new HttpHeadersImpl("reject");
+		
+		String bidId = getCommandOrParameter(request, 3, "id");
+		if (!StringUtils.isEmpty(bidId)) {
+			model = ServiceFacade.instance().rejectBid(getLoggedInUser(), bidId);
 			if (model == null) {
 				headers.setStatus(500);
 			}

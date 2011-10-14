@@ -26,6 +26,8 @@ public class UserStatisticsDTO extends AbstractDTO {
 	private long numberOfAcceptedBids;
 	public static final String NUM_OF_FUNDED_BIDS = "numberOfFundedBids";
 	private long numberOfFundedBids;
+	public static final String NUM_OF_REJECTED_BIDS = "numberOfRejectedBids";
+	private long numberOfRejectedBids;
 	public static final String NUM_OF_LISTINGS = "numberOfListings";
 	private long numberOfListings;
 	public static final String NUM_OF_VOTES = "numberOfVotes";
@@ -58,6 +60,9 @@ public class UserStatisticsDTO extends AbstractDTO {
 		entity.setProperty(NUM_OF_LISTINGS, this.numberOfListings);
 		entity.setProperty(NUM_OF_VOTES, this.numberOfVotes);
 		entity.setProperty(NUM_OF_VOTES_ADDED, this.numberOfVotesAdded);
+		entity.setProperty(NUM_OF_REJECTED_BIDS, this.numberOfRejectedBids);
+		entity.setProperty(NUM_OF_ACCEPTED_BIDS, this.numberOfAcceptedBids);
+		entity.setProperty(NUM_OF_FUNDED_BIDS, this.numberOfFundedBids);
 		entity.setProperty(SUM_OF_BIDS, this.sumOfBids);
 		entity.setProperty(SUM_OF_ACCEPTED_BIDS, this.sumOfAcceptedBids);
 		entity.setProperty(SUM_OF_FUNDED_BIDS, this.sumOfFundedBids);
@@ -75,6 +80,9 @@ public class UserStatisticsDTO extends AbstractDTO {
 		dto.status = (String)entity.getProperty(STATUS);
 		dto.numberOfComments = toLong(entity.getProperty(NUM_OF_COMMENTS));
 		dto.numberOfBids = toLong(entity.getProperty(NUM_OF_BIDS));
+		dto.numberOfAcceptedBids = toLong(entity.getProperty(NUM_OF_ACCEPTED_BIDS));
+		dto.numberOfFundedBids = toLong(entity.getProperty(NUM_OF_FUNDED_BIDS));
+		dto.numberOfRejectedBids = toLong(entity.getProperty(NUM_OF_REJECTED_BIDS));
 		dto.numberOfListings = toLong(entity.getProperty(NUM_OF_LISTINGS));
 		dto.numberOfVotes = toLong(entity.getProperty(NUM_OF_VOTES));
 		dto.numberOfVotesAdded = toLong(entity.getProperty(NUM_OF_VOTES_ADDED));
@@ -181,18 +189,26 @@ public class UserStatisticsDTO extends AbstractDTO {
 		this.numberOfFundedBids = numberOfFundedBids;
 	}
 
+	public long getNumberOfRejectedBids() {
+		return numberOfRejectedBids;
+	}
+
+	public void setNumberOfRejectedBids(long numberOfRejectedBids) {
+		this.numberOfRejectedBids = numberOfRejectedBids;
+	}
+
 	@Override
 	public String toString() {
 		return "UserStatisticsDTO [user=" + user + ", status=" + status
 				+ ", numberOfComments=" + numberOfComments + ", numberOfBids="
 				+ numberOfBids + ", numberOfAcceptedBids="
 				+ numberOfAcceptedBids + ", numberOfFundedBids="
-				+ numberOfFundedBids + ", numberOfListings=" + numberOfListings
-				+ ", numberOfVotes=" + numberOfVotes
-				+ ", numberOfVotesReceived=" + numberOfVotesAdded
-				+ ", sumOfBids=" + sumOfBids + ", sumOfAcceptedBids="
-				+ sumOfAcceptedBids + ", sumOfPayedBids=" + sumOfFundedBids
-				+ "]";
+				+ numberOfFundedBids + ", numberOfRejectedBids="
+				+ numberOfRejectedBids + ", numberOfListings="
+				+ numberOfListings + ", numberOfVotes=" + numberOfVotes
+				+ ", numberOfVotesAdded=" + numberOfVotesAdded + ", sumOfBids="
+				+ sumOfBids + ", sumOfAcceptedBids=" + sumOfAcceptedBids
+				+ ", sumOfFundedBids=" + sumOfFundedBids + "]";
 	}
 
 	@Override
@@ -205,13 +221,14 @@ public class UserStatisticsDTO extends AbstractDTO {
 		result = prime * result
 				+ (int) (numberOfComments ^ (numberOfComments >>> 32));
 		result = prime * result
-				+ (int) (numberOfListings ^ (numberOfListings >>> 32));
-		result = prime * result
 				+ (int) (numberOfFundedBids ^ (numberOfFundedBids >>> 32));
 		result = prime * result
+				+ (int) (numberOfListings ^ (numberOfListings >>> 32));
+		result = prime * result
+				+ (int) (numberOfRejectedBids ^ (numberOfRejectedBids >>> 32));
+		result = prime * result
 				+ (int) (numberOfVotes ^ (numberOfVotes >>> 32));
-		result = prime
-				* result
+		result = prime * result
 				+ (int) (numberOfVotesAdded ^ (numberOfVotesAdded >>> 32));
 		result = prime * result + ((status == null) ? 0 : status.hashCode());
 		result = prime * result
@@ -229,7 +246,7 @@ public class UserStatisticsDTO extends AbstractDTO {
 			return true;
 		if (!super.equals(obj))
 			return false;
-		if (getClass() != obj.getClass())
+		if (!(obj instanceof UserStatisticsDTO))
 			return false;
 		UserStatisticsDTO other = (UserStatisticsDTO) obj;
 		if (numberOfAcceptedBids != other.numberOfAcceptedBids)
@@ -238,9 +255,11 @@ public class UserStatisticsDTO extends AbstractDTO {
 			return false;
 		if (numberOfComments != other.numberOfComments)
 			return false;
+		if (numberOfFundedBids != other.numberOfFundedBids)
+			return false;
 		if (numberOfListings != other.numberOfListings)
 			return false;
-		if (numberOfFundedBids != other.numberOfFundedBids)
+		if (numberOfRejectedBids != other.numberOfRejectedBids)
 			return false;
 		if (numberOfVotes != other.numberOfVotes)
 			return false;
