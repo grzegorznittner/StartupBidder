@@ -148,12 +148,12 @@ public class SystemController extends ModelDrivenController {
 		UserService userService = UserServiceFactory.getUserService();
 		User user = userService.getCurrentUser();
 		UserVO loggedInUser = ServiceFacade.instance().getLoggedInUserData(user);
-		if (loggedInUser != null && loggedInUser.isAdmin()) {
+//		if (loggedInUser != null && loggedInUser.isAdmin()) {
 			String printedObjects = ServiceFacade.instance().createMockDatastore(loggedInUser);
 			model = printedObjects;
-		} else {
-			headers.setStatus(500);
-		}
+//		} else {
+//			headers.setStatus(500);
+//		}
 		return headers;
 	}
 
