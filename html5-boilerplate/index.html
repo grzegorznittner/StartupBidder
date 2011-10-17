@@ -1,0 +1,842 @@
+<!doctype html>
+<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
+<!--[if lt IE 7]> <html class="no-js ie6 oldie" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js ie7 oldie" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js ie8 oldie" lang="en"> <![endif]-->
+<!-- Consider adding an manifest.appcache: h5bp.com/d/Offline -->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+
+  <!-- Use the .htaccess and remove these lines to avoid edge case issues.
+       More info: h5bp.com/b/378 -->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+  <title></title>
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <!-- Mobile viewport optimized: j.mp/bplateviewport -->
+  <!-- <meta name="viewport" content="width=device-width,initial-scale=1"> -->
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0">
+
+  <meta name="description" content="Startupbidder - list, bid, comment and vote on startup businesses worldwide"/>
+  <meta name="keywords" content="startupbidder startup company auction bid business plan"/>
+  <!-- Place favicon.ico and apple-touch-icon.png in the root directory: mathiasbynens.be/notes/touch-icons -->
+
+  <!-- CSS: implied media=all -->
+  <!-- CSS concatenated and minified via ant build script-->
+  <link rel="stylesheet" href="css/style.css">
+  <!-- end CSS-->
+  <link rel="canonical" href="http://startupbidder.appspot.com"/>
+
+  <!-- More ideas for your <head> here: h5bp.com/d/head-Tips -->
+
+  <!-- All JavaScript at the bottom, except for Modernizr / Respond.
+       Modernizr enables HTML5 elements & feature detects; Respond is a polyfill for min/max-width CSS3 Media Queries
+       For optimal performance, use a custom Modernizr build: www.modernizr.com/download/ -->
+  <!-- <script src="js/libs/modernizr-2.0.6.min.js"></script> -->
+  <script src="http://www.google.com/jsapi"></script> 
+</head>
+
+<body id="mainbody">
+
+  <div id="container">
+    <header>
+
+    </header>
+    <div id="main" role="main">
+
+    </div>
+    <footer>
+
+    </footer>
+  </div> <!--! end of #container -->
+
+  <div class="site">
+    <div id="header" class="header blue-gradient-bg">
+        <div id="header-logo" class="header-logo"></div>
+        <div id="header-title" class="header-title">
+            <span class="title-link" id="header-title-link">startupbidder</span>
+        </div>
+        <div id="header-menu-name" class="header-menu-name">
+            <span class="attention" id="header-menu-message"></span>
+            <span class="header-menu-name-username header-link" id="header-menu-name-username"></span>
+            <span class="header-menu-command-logout header-link" id="header-menu-command-logout">(logout)</span>
+        </div>
+        <div id="header-menu-command" class="header-menu-command">
+            <span class="header-menu-command-login header-link" id="header-menu-command-login">(login)</span>
+        </div>
+        <div id="header-menu-bar" class="header-menu-bar">
+            <span class="header-link" id="header-menu-bar-top">top</span>
+            <span> | </span>
+            <span class="header-link" id="header-menu-bar-latest">latest</span>
+            <span> | </span>
+            <span class="header-link" id="header-menu-bar-valuation">valuation</span>
+            <span> | </span>
+            <span class="header-link" id="header-menu-bar-active">active</span>
+            <span> | </span>
+            <span class="header-link" id="header-menu-bar-popular">popular</span>
+            <span> | </span>
+            <span class="header-link" id="header-menu-bar-discussed">discussed</span>
+            <span> | </span>
+            <span class="header-link" id="header-menu-bar-top-users">members</span>
+            <span class="header-menu-bar-submit-spacer" id="header-menu-bar-submit-spacer"> | </span>
+            <span class="header-menu-bar-submit header-link" id="header-menu-bar-submit">submit</span>
+            <span class="header-menu-bar-setup-spacer" id="header-menu-bar-setup-spacer"> | </span>
+            <span class="header-menu-bar-setup header-link" id="header-menu-bar-setup">setup</span>
+            <span class="header-menu-bar-test-spacer" id="header-menu-bar-test-spacer"> | </span>
+            <span class="header-menu-bar-test header-link" id="header-menu-bar-test">test</span>
+        </div>
+    </div>
+
+    <div id="loadingpage" class="content page">
+        <div class="content-header">
+            <div class="content-results-list">
+                <span>loading...</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="searchlistingspage" class="content page">
+        <div class="content-header" id="searchlistings-profile-header">
+            <div class="content-results-list" id="searchlistings-profile-snippet"></div>
+        </div>
+        <div class="content-search" id="content-search-box">
+            <input id="content-search-keywords" name="keywords" type="text" size="30"/>
+            <button id="content-search-submit">search</button>
+        </div>
+        <div class="content-results">
+            <div id="search-message" class="attention"></div>
+            <div id="search-content-results-list" class="content-results-list"></div>
+            <div class="content-results-footer">
+                <span class="link search-cursor" id="search-prev-results">prev</span>
+                <span class="link search-cursor" id="search-next-results">next</span>
+            </div>
+            <div class="content-results-list-item-clear"></div>
+        </div>
+    </div>
+
+    <div id="searchuserspage" class="content page">
+        <div class="content-search" id="user-search-box">
+            <input id="user-search-keywords" name="keywords" type="text" size="30"/>
+            <button id="user-search-submit">search</button>
+        </div>
+        <div class="attention" id="user-search-message"></div>
+        <div class="content-results">
+            <div id="user-search-results-list" class="content-results-list"></div>
+            <div class="content-results-footer">
+                <span class="link search-cursor" id="user-search-prev-results">prev</span>
+                <span class="link search-cursor" id="user-search-next-results">next</span>
+            </div>
+            <div class="user-search-results-list-item-clear"></div>
+        </div>
+    </div>
+
+    <div id="commentspage" class="content page">
+        <div class="content-header" id="comments-message"></div>
+        <div class="content-header" id="comments-profile-header">
+            <div class="content-results-list" id="comments-profile-snippet"></div>
+        </div>
+        <div class="content-header" id="comments-listing-header">
+            <div class="content-results-list" id="comments-listing-snippet"></div>
+        </div>
+        <form action="#" method="post">
+        <div class="content-comment" id="comment-loggedin-add">
+                <div class="content-comment-label">your comment:</div>
+                <input name="page" type="hidden" value="comments"/>
+                <textarea class="content-comment-textarea" id="comment-textarea" name="comment" cols="55" rows="6" wrap="soft"></textarea>
+                <br/>
+                <button id="comment-save-button">Save</button> <span class="attention" id="comment-save-message"></span>
+        </div>
+        </form>
+        <div class="content-form">
+            <div class="content-form-line"><span class="attention" id="comment-not-loggedin">You must be logged in to comment</span></div>
+            <div class="content-form-clear"></div>
+        </div>
+        <div class="content-results-list-item-clear"></div>
+        <div class="content-results">
+            <div class="content-results-list" id="comments-content-results-list"></div>
+        </div>
+    </div>
+    
+    <div id="profilepage" class="content page">
+        <div class="content-header" id="profile-header">
+            <div class="content-results-list" id="profile-snippet"></div>
+        </div>
+        <div class="content-form" id="profile-form-editable">
+            <form action="#" method="post">
+            <input name="page" type="hidden" value="profile"/>
+            <input id="profile-edit-profile-id" name="profile-id" type="hidden" value=""/>
+            <input id="profile-edit-profile-username" name="profile-username" type="hidden" value=""/>
+
+            <div class="content-form-label">Name </div>
+            <div class="content-form-input"><input id="profile-edit-name" name="name" type="text" size="35" value="John Arley Burns"/></div>
+            <div class="content-form-clear"></div>
+
+            <div class="content-form-label">Title </div>
+            <div class="content-form-input"><input id="profile-edit-title" name="title" type="text" size="20" value="CEO"/></div>
+            <div class="content-form-clear"></div>
+
+            <div class="content-form-label">Organization </div>
+            <div class="content-form-input"><input id="profile-edit-organization" name="organization" type="text" size="35" value="Steinwasser, Inc."/></div>
+            <div class="content-form-clear"></div>
+
+            <div class="content-form-label">Email </div>
+            <div class="content-form-input"><input id="profile-edit-email" name="email" type="text" size="35" value="johnarleyburns@gmail.com"/></div>
+            <div class="content-form-clear"></div>
+
+            <div class="content-form-label">Facebook </div>
+            <div class="content-form-input"><input id="profile-edit-facebook" name="facebook" type="text" size="20" value="johnarleyburns"/></div>
+            <div class="content-form-clear"></div>
+
+            <div class="content-form-label">Twitter </div>
+            <div class="content-form-input"><input id="profile-edit-twitter" name="twitter" type="text" size="20" value="jarleyburns"/></div>
+            <div class="content-form-clear"></div>
+
+            <div class="content-form-label">Linkedin </div>
+            <div class="content-form-input"><input id="profile-edit-linkedin" name="linkedin" type="text" size="20" value=""/></div>
+            <div class="content-form-clear"></div>
+
+            <div class="content-form-line">Accredited Investor</div>
+            <div class="content-form-inputline content-form-checkbox"><input id="profile-edit-investor" name="investor" type="checkbox" checked="checked"/></div>
+            <div class="content-form-clear"></div>
+            
+            <div class="content-form-clear"></div>
+            <div class="content-form-line">Member since <span id="profile-edit-joined-date">15 June 2011</span></div>
+            <div class="content-form-clear"></div>
+<!--
+            <div class="content-form-line">Linked via OpenID <span id="profile-edit-open-id">johnarleyburns32.google.com</span></div>
+            <div class="content-form-clear"></div>
+-->
+            <div class="content-form-inputline"><button id="profile-save-link">Save</button> <span class="attention" id="profile-save-message"></span> </div>
+            <div class="content-form-clear"></div>
+
+            <div class="content-form-linkline">
+                <span class="link" id="profile-deactivate-link">(deactivate profile)</span>
+                <span class="link" id="profile-activate-link">(activate profile)</span>
+            </div>
+            <div class="content-form-clear"></div>
+            </form>
+        </div>
+        <div class="content-form" id="profile-form-readonly">
+            <div class="content-form-line"><span id="profile-title">CEO</span></div>
+            <div class="content-form-line">at <span id="profile-organization">Steinwasser, Inc.</span></div>
+            <div class="content-form-clear"></div>
+
+            <div class="content-form-line">Email <a id="profile-email-href" href="" target="_blank"><span id="profile-email">johnarleyburns@gmail.com</span></a></div>
+            <div class="content-form-clear"></div>
+
+            <div class="content-form-line">Facebook <a id="profile-facebook-href" href="" target="_blank"><span id="profile-facebook">johnarleyburns59</span></a></div>
+            <div class="content-form-clear"></div>
+            <div class="content-form-line">Twitter <a id="profile-twitter-href" href="" target="_blank"><span id="profile-twitter">johnarleyburns21</span></a></div>
+            <div class="content-form-clear"></div>
+            <div class="content-form-line">Linkedin <a id="profile-linkedin-href" href="" target="_blank"><span id="profile-linkedin">johnarleyburns63</span></a></div>
+            <div class="content-form-clear"></div>
+
+            <div class="content-form-line">Accredited Investor</div>
+            <div class="content-form-inputline content-form-checkbox"><input id="profile-investor" name="investor" type="checkbox" disabled="disabled"/></div>
+            <div class="content-form-clear"></div>
+            
+            <div class="content-form-clear"></div>
+            <div class="content-form-line">Member since <span id="profile-joined-date">15 June 2011</span></div>
+            <div class="content-form-clear"></div>
+<!--
+            <div class="content-form-line">Linked via OpenID <span id="profile-open-id">johnarleyburns32.google.com</span></div>
+            <div class="content-form-clear"></div>
+            -->
+        </div>
+    </div>
+    
+    <div id="listingpage" class="content page">
+        <div class="content-header">
+            <div class="content-results-list" id="listing-snippet"></div>
+        </div>
+        <div class="content-form">
+            <div class="content-form-line"><span id="listing-form-message"></span></div>
+            <div class="content-form-clear"></div>
+        </div>
+
+        <div class="listing-content-form">
+                <div class="content-form" id="listing-form-editable">
+                    <form action="#" method="post" enctype="multipart/form-data">
+                    <input name="page" type="hidden" value="listing"/>
+                    <input id="listing-edit-listing-id" name="listing-id" type="hidden" value=""/>
+                    <input id="listing-edit-median-valuation" name="median-valuation" type="hidden" value=""/>
+                    <input id="listing-edit-num-votes" name="num-votes" type="hidden" value=""/>
+                    <input id="listing-edit-num-bids" name="num-bids" type="hidden" value=""/>
+                    <input id="listing-edit-num-comments" name="num-comments" type="hidden" value=""/>
+                    <input id="listing-edit-profile-id" name="profile-id" type="hidden" value=""/>
+                    <input id="listing-edit-profile-username" name="profile-username" type="hidden" value=""/>
+                    <input id="listing-edit-listing-date" name="listing-date" type="hidden" value=""/>
+                    <input id="listing-edit-status" name="listing-id" type="hidden" value=""/>
+                    <div class="content-form-line"><b>Business Name</b></div>
+                    <div class="content-form-maininputline"><input id="listing-edit-title" name="title" type="text" size="30" value="type listing title here"/></div>
+                    <div class="content-form-clear"></div>
+                    <div class="content-form-line"><b>Asking Funding</b></div>
+                    <div class="content-form-inputline">$<input id="listing-edit-suggested-amt" name="suggested_bid_amt" type="text" size="9" maxlength="9" value="30,000"/></div>
+                    <div class="content-form-clear"></div>
+                    <div class="content-form-line"><b>Asking Equity</b></div>
+                    <div class="content-form-inputline"><input id="listing-edit-suggested-pct" name="suggested_bid_pct" type="text" size="2" maxlength="2" value="10"/>%</div>
+                    <div class="content-form-clear"></div>
+                    <div class="content-form-line"><b>Calculated Valuation <span class="confirmed">$</span><span id="listing-edit-suggested-val" class="confirmed"></span></b></div>
+                    <div class="content-form-clear"></div>
+                    <div class="content-form-line">
+                        <span><b>Business Plan</b></span>
+                        <span class="link" id="listing-edit-business-plan-link"><a target="_blank" href="#">view</a></span>
+                        <span class="link" id="listing-edit-business-plan-add">upload</span>
+                        <span class="link" id="listing-edit-business-plan-remove">remove</span>
+                    </div>
+                    <div class="content-form-clear"></div>
+                    </form>
+                    <form id="listing-edit-business-plan-form" method="post" enctype="multipart/form-data" action="#">
+                    <div class="content-form-line">
+                            <input name="BUSINESS_PLAN" id="listing-edit-business-plan-file" type="file"/>
+                            <input type="submit" id="listing-edit-business-plan-submit" value="Upload"/>
+                            <iframe id="listing-edit-business-plan-iframe" name="listing-edit-business-plan-iframe" class="listing-iframe" src="#"></iframe>
+                    </div>
+                    </form>
+                    <div class="content-form-clear"></div>
+                    <div class="content-form-line">
+                        <span><b>Presentation</b></span>
+                        <span class="link" id="listing-edit-presentation-link"><a target="_blank" href="#">view</a></span>
+                        <span class="link" id="listing-edit-presentation-add">upload</span>
+                        <span class="link" id="listing-edit-presentation-remove">remove</span>
+                    </div>
+                    <div class="content-form-clear"></div>
+                    <form id="listing-edit-presentation-form" method="post" enctype="multipart/form-data" action="#">
+                    <div class="content-form-line">
+                            <input name="PRESENTATION" id="listing-edit-presentation-file" type="file"/>
+                            <input type="submit" id="listing-edit-presentation-submit" value="Upload"/>
+                            <iframe id="listing-edit-presentation-iframe" name="listing-edit-presentation-iframe" class="listing-iframe" src="#"></iframe>
+                    </div>
+                    </form>
+                    <div class="content-form-clear"></div>
+                    <div class="content-form-line">
+                        <span><b>Financial Statements</b></span>
+                        <span class="link" id="listing-edit-financials-link"><a target="_blank" href="#">view</a></span>
+                        <span class="link" id="listing-edit-financials-add">upload</span>
+                        <span class="link" id="listing-edit-financials-remove">remove</span>
+                    </div>
+                    <div class="content-form-clear"></div>
+                    <form id="listing-edit-financials-form" method="post" enctype="multipart/form-data" action="#">
+                    <div class="content-form-line">
+                            <input name="FINANCIALS" id="listing-edit-financials-file" type="file"/>
+                            <input type="submit" id="listing-edit-financials-submit" value="Upload"/>
+                            <iframe id="listing-edit-financials-iframe" name="listing-edit-financials-iframe" class="listing-iframe" src="#"></iframe>
+                    </div>
+                    </form>
+                    <div class="content-form-clear"></div>
+                    <div class="listing-executive-summary">
+                        <div class="listing-execsum-content" id="listing-execsum-editable">
+                            <p>Executive Summary</p>
+                            <form action="#" method="post" enctype="multipart/form-data">
+                                <p class="listing-execsum-multiline-editable">
+                                    <textarea class="listing-execsum-textarea" id="listing-edit-summary" name="executive_summary" rows="10" cols="60" wrap="soft"></textarea>
+                                </p>
+                            </form>
+                        </div> <!-- ending #listing-execsum-editable-->
+                    </div> <!-- end listing-executive-summary -->
+                    <form action="#" method="post" enctype="multipart/form-data">
+                    <div class="content-form-line"><button id="listing-save-link">Save</button> <span class="attention" id="listing-save-message"></span> </div>
+                    <div class="content-form-clear"></div>
+                    <div class="content-form-linkline"><span class="link" id="listing-activate-link">(activate listing)</span></div>
+                    <div class="content-form-clear"></div>
+                    <div class="content-form-linkline"><span class="link" id="listing-withdraw-link">(withdraw listing)</span></div>
+                    <div class="content-form-clear"></div>
+                    </form>
+                </div> <!-- end #listing-form-editable -->
+    
+                <div class="listing-content-form-readonly" id="listing-form-readonly">
+                    <div class="content-form-line">
+                        Asking Funding <b>$<span id="listing-readonly-suggested-amt"></span></b>
+                    </div>
+                    <div class="content-form-clear"></div>
+                    <div class="content-form-line">
+                        Asking Equity <b><span id="listing-readonly-suggested-pct"></span>%</b>
+                    </div>
+                    <div class="content-form-clear"></div>
+                    <div class="content-form-line"><b>Calculated Valuation <span class="confirmed">$</span><span id="listing-readonly-suggested-val" class="confirmed"></span></b></div>
+                    <div class="content-form-clear"></div>
+                    <div class="content-form-line">
+                        <span class="link" id="listing-readonly-business-plan-link"><a target="_blank" href="#">view business plan</a></span>
+                    </div>
+                    <div class="content-form-clear"></div>
+                    <div class="content-form-line">
+                        <span class="link" id="listing-readonly-presentation-link"><a target="_blank" href="#">view presentation</a></span>
+                    </div>
+                    <div class="content-form-clear"></div>
+                    <div class="listing-executive-summary">
+                        <div class="listing-execsum-content" id="listing-execsum-readonly">
+                            <p>Executive Summary</p>
+                            <p class="listing-execsum-multiline-readonly" id="listing-readonly-summary"></p>
+                        </div> <!-- ending #listing-execsum-readonly -->
+                    </div> <!-- end listing-executive-summary -->
+                </div> <!-- end #listing-form-readonly -->
+
+
+
+        </div> <!-- end #listing-content-form -->
+
+    </div> <!-- end #listingpage -->
+    
+    <div id="bidspage" class="content page">
+        <div class="content-header" id="bids-message"></div>
+        <div class="content-header" id="bids-profile-header">
+            <div class="content-results-list" id="bids-profile-snippet"></div>
+        </div>
+        <div class="content-header" id="bids-listing-header">
+            <div class="content-results-list" id="bids-listing-snippet"></div>
+        </div>
+        <div class="content-form">
+            <div class="content-form-line"><span class="attention" id="bids-form-not-loggedin">You must be logged in to place a bid</span></div>
+            <div class="content-form-clear"></div>
+        </div>
+        <div class="content-form" id="bids-form-loggedin">
+            <form action="#" method="post" enctype="multipart/form-data">
+                <input name="page" type="hidden" value="listing"/>
+                <div class="content-form-mainline" id="bid-form-new">New Bid</div>
+                <div class="content-form-mainline" style="display:none;" id="bid-form-update">Revise Bid placed on <span id="bid-form-update-date"></span></div>
+                <div class="content-form-clear"></div>
+                <div class="content-form-line"><b>Bidding</b> $</div>
+                <div class="content-form-inputline"><input id="bid-amt" name="bid_amt" type="text" size="9" maxlength="9" value="30,000"/></div>
+                <div class="content-form-line">for</div>
+                <div class="content-form-inputline"><input id="bid-pct" name="bid_pct" type="text" size="2" maxlength="2" value="10"/></div>
+                <div class="content-form-inputline">% equity (fully diluted)</div>
+                <div class="content-form-clear"></div>
+                <div class="content-form-line"><b>as</b></div>
+                <div class="content-form-line">
+                    <select id="bid-type" name="bid_type">
+                        <option value="common">Common Stock</option>
+                        <option value="preferred">Preferred Stock</option>
+                        <option value="note">Convertible Note</option>
+                    </select>
+                </div>
+                <div class="content-form-line">@</div>
+                <div class="content-form-inputline"><input id="bid-rate" name="bid_rate" type="text" size="2" maxlength="2" value="10" disabled/></div>
+                <div class="content-form-inputline">% interest</div>
+                <div class="content-form-clear"></div>
+
+                <div class="content-form-line"><b>Calculated Valuation <span class="confirmed">$</span><span id="bid-calculated-valuation" class="confirmed"></span></b></div>
+                <div class="content-form-clear"></div>
+
+                <div class="content-form-line">
+                    <button id="bid-save-button">Place Bid</button> <span class="attention" id="bid-save-message"></span>
+                </div>
+                <div class="content-form-clear"></div>
+            </form>
+        </div>
+        <!--
+        <div class="content-form">
+            <div class="content-form-line-emphasized">Bid history:</div>
+            <div class="content-form-clear"></div>
+        </div>
+        -->
+        <div class="content-results">
+            <div class="content-results-list" id="bids-content-results-list"></div>
+        </div>
+    </div>
+  
+    <div id="loginpage" class="content page">
+        <div class="content-header">
+            <div class="content-header-title">
+                Sign in via:
+            </div>
+        </div>
+        <div class="content-form">
+            <div class="content-form-line">
+                <a href="#"><div class="content-form-login content-form-login-google"></div>Google</a>
+            </div>
+            <div class="content-form-clear"></div>
+            <div class="content-form-line">
+                <a href="#"><div class="content-form-login content-form-login-yahoo"></div>Yahoo</a>
+            </div>
+        </div>
+    </div>
+
+    <div id="contactpage" class="content page">
+        <div class="content-header">
+            <div class="content-header-title">
+                Contact Us
+            </div>
+        </div>
+        <div class="content-results">
+            <div class="content-results-list">
+                <div class="content-results-list-item content-results-list-item-odd">
+                    <div class="content-results-list-item-num"></div>
+                    <div class="content-results-list-item-upvote-none"></div>
+                    <div class="content-results-list-item-title">
+                        Email: <a href="mailto:admin@startupbidder.com">admin@startupbidder.com</a>
+                    </div>
+                </div>
+                <div class="content-results-list-item-clear"></div>
+                <div class="content-results-list-item content-results-list-item-even">
+                    <div class="content-results-list-item-num"></div>
+                    <div class="content-results-list-item-upvote-none"></div>
+                    <div class="content-results-list-item-title">
+                        Phone: +49 162.179.2450
+                    </div>
+                </div>
+                <div class="content-results-list-item-clear"></div>
+                <div class="content-results-list-item content-results-list-item-odd">
+                    <div class="content-results-list-item-num"></div>
+                    <div class="content-results-list-item-upvote-none"></div>
+                    <div class="content-results-list-item-title">
+                        Postal Address:
+                    </div>
+                    <div class="content-results-list-item-clear"></div>
+                    <div class="content-results-list-item-detail">
+                        <pre>
+                        Startupbidder.com
+                        c/o John Burns
+                        Kaiserswertherstr 197
+                        40474 Dusseldorf
+                        Germany
+                        </pre>
+                    </div>
+                </div>
+                <div class="content-results-list-item-clear"></div>
+            </div>
+        </div>
+    </div> <!-- end contactpage -->
+
+    <div id="disclaimerpage" class="content page">
+        <div class="content-header">
+            <div class="content-header-title">
+                Disclaimer
+            </div>
+        </div>
+        <div class="content-results">
+            <div class="content-results-list">
+                <div class="content-results-list-item content-results-list-item-odd">
+                    <div class="content-results-list-item-num">1.</div>
+                    <div class="content-results-list-item-upvote-none"></div>
+                    <div class="content-results-list-item-title">
+                        General Disclaimer
+                    </div>
+                    <div class="content-results-list-item-clear"></div>
+                    <div class="content-results-list-item-detail">
+This web site provides general information only. It is not intended as professional and/or financial advice nor does any information on this site constitute a comprehensive or complete statement of the matters discussed or the law relating thereto. The information contained on this web site is subject to change without notice. It may therefore not be accurate or current. The information on this web site (in particular the information contained in any business plan) are not intended as an offer or recommendation to buy, sell or call on any security, product, service or investment.
+                    </div>
+                </div>
+                <div class="content-results-list-item-clear"></div>
+
+                <div class="content-results-list-item content-results-list-item-even">
+                    <div class="content-results-list-item-num">2.</div>
+                    <div class="content-results-list-item-upvote-none"></div>
+                    <div class="content-results-list-item-title">
+                        Further Important Notice
+                    </div>
+                    <div class="content-results-list-item-clear"></div>
+                    <div class="content-results-list-item-detail">
+The information contained on the web site does not constitute an offer to sell securities or a solicitation of an offer to buy securities within the United States of America. Securities may not be sold in the United States of America absent registration or an exemption from registration under the Securities Act. Moreover, none of the information contained on this web site is a recommendation for investment in any securities.
+                    </div>
+                </div>
+                <div class="content-results-list-item-clear"></div>
+
+                <div class="content-results-list-item content-results-list-item-odd">
+                    <div class="content-results-list-item-num">3.</div>
+                    <div class="content-results-list-item-upvote-none"></div>
+                    <div class="content-results-list-item-title">
+                        Local Restrictions
+                    </div>
+                    <div class="content-results-list-item-clear"></div>
+                    <div class="content-results-list-item-detail">
+There are legal requirements in various countries which may restrict the information which we can lawfully provide to residents of certain countries only. Persons into whose possession the information in this website comes should inform themselves about and observe any restrictions imposed in the jurisdiction in which the website is accessed.
+                    </div>
+                </div>
+                <div class="content-results-list-item-clear"></div>
+
+                <div class="content-results-list-item content-results-list-item-even">
+                    <div class="content-results-list-item-num">4.</div>
+                    <div class="content-results-list-item-upvote-none"></div>
+                    <div class="content-results-list-item-title">
+                        Business Plans
+                    </div>
+                    <div class="content-results-list-item-clear"></div>
+                    <div class="content-results-list-item-detail">
+The information contained in any business plan does not constitute an offer to sell securities or the solicitation of an offer to buy, or recommendation for investment in, any securities within the United States or any other jurisdiction. The information in any business plan is not intended as financial advice. Moreover, none of the business plans is intended as a prospectus within the meaning of the applicable laws of any jurisdiction and none of the business plans is directed to any person in any country in which the distribution of such business plan is unlawful. Any business plan provides general information only. The information and opinions in each business plan constitute a judgement as at the date indicated and are subject to change without notice. The information may therefore not be accurate or current. The information and opinions contained in business plans have been compiled or arrived at from sources believed to be reliable in good faith, but no representation or warranty, express or implied, is made by Startupbidder as to their accuracy, completeness or correctness and Startupbidder does also not warrant that the information is up to date. Moreover, you should be aware of the fact that investments in undertakings, securities or other financial instruments involve risks. Past results do not guarantee future performance. In the United States securities may not be sold absent registration or an exemption from registration under the Securities Act.
+                    </div>
+                </div>
+                <div class="content-results-list-item-clear"></div>
+
+                <div class="content-results-list-item content-results-list-item-odd">
+                    <div class="content-results-list-item-num">5.</div>
+                    <div class="content-results-list-item-upvote-none"></div>
+                    <div class="content-results-list-item-title">
+                        Linked Sites
+                    </div>
+                    <div class="content-results-list-item-clear"></div>
+                    <div class="content-results-list-item-detail">
+The hyperlinks within the web site will take you to publicly available sites which are not within the control of Startupbidder. Startupbidder is not responsible for the content or accuracy of those web sites. The user should read any terms and conditions applying to the use of any such site carefully. The inclusion of a link in Startupbidder's web site does not imply that Startupbidder endorses, recommends or approves any material on the linked page or accessible from it.
+                    </div>
+                </div>
+                <div class="content-results-list-item-clear"></div>
+
+                <div class="content-results-list-item content-results-list-item-even">
+                    <div class="content-results-list-item-num">6.</div>
+                    <div class="content-results-list-item-upvote-none"></div>
+                    <div class="content-results-list-item-title">
+                        Copyright Notice
+                    </div>
+                    <div class="content-results-list-item-clear"></div>
+                    <div class="content-results-list-item-detail">
+Unless otherwise stated the copyright for all material on this site rests with Startupbidder. All rights reserved. All copying is forbidden other than in accordance with the following limited permissions. You are permitted to view the contents of this site on screen. You are also permitted to print the site for your personal use or private study and to save it to your local hard ware for your personal use or private study. All other copying or use of any of the contents on this web site is strictly forbidden. If you are viewing this web site in the course of your employer's business you must observe the restrictions set out above. Other than as necessary for the purpose of viewing the site, it is strictly forbidden to copy any material on this site for commercial use in the course of a business or to store any or all of the contents of this site on a proxy server, cache or other similar form of storage.
+                    </div>
+                </div>
+                <div class="content-results-list-item-clear"></div>
+
+                <div class="content-results-list-item content-results-list-item-odd">
+                    <div class="content-results-list-item-num">7.</div>
+                    <div class="content-results-list-item-upvote-none"></div>
+                    <div class="content-results-list-item-title">
+                        Important Notice on Exclusion of Liability
+                    </div>
+                    <div class="content-results-list-item-clear"></div>
+                    <div class="content-results-list-item-detail">
+A. General
+<br/>
+<br/>
+Startupbidder examines and updates the information on its web site regularly. In spite of all our care and work, data still can have changed since our last update. Data contained in this web site may not be accurate or up to date due to such changes or due to other reasons. Therefore, Startupbidder does not accept any liability or guarantee for the accuracy or completeness of the information presented here and does not warrant that the information is complete. Any use of information contained on this web site takes place at your own risk.
+<br/>
+<br/>
+B. Rules applying to the use of this website by persons located in Germany
+<br/>
+<br/>
+The posting of information on this web site is neither an offer for a contract on information (Auskunftsvertrag) nor an offer for the entering into any other contractual relationship. Any use of information contained on this web site is at your own risk. However, in any case the following limitations of liability for damages or futile expenditures are applicable irrespective of the legal basis for such liability: In case of willful acts, gross negligence, malice (Arglist) as well as in case of any injury of life, personal injury or injury to health, we will be liable in accordance with the statutory provisions. In cases of slight negligence, we will not be liable unless a breach of a material contractual obligation occurs. In such cases, our liability will be limited to typical, foreseeable damage. In any other case of slight negligence including tort, our liability is excluded.
+<br/>
+<br/>
+C. Rules applying to the use of this website by persons located outside of Germany
+<br/>
+<br/>
+Except to the extent that liability under any applicable law or regulation cannot be excluded, neither Startupbidder nor any affiliate accepts any liability whatsoever for any direct or consequential loss or damage arising as a result of any opinion or information expressly or impliedly published in this web site notwithstanding negligence, default or lack of care by it or that such loss or damage was foreseeable. Neither Startupbidder nor any affiliate accepts responsibility arising in any way (including by reason of negligence) for errors in, or omissions from, the information in this web site. Any use of information contained on this web site is at your own risk.
+                </div> 
+            </div>
+            <div class="content-results-list-item-clear"></div>
+        </div>
+</div>
+    </div> <!-- end disclaimerpage -->
+  
+   
+    <div id="faqpage" class="content page">
+        <div class="content-header">
+            <div class="content-header-title">
+                FAQ - Frequently Asked Questions
+            </div>
+        </div>
+        <div class="content-results">
+            <div class="content-results-list">
+                <div class="content-results-list-item content-results-list-item-odd">
+                    <div class="content-results-list-item-num">1.</div>
+                    <div class="content-results-list-item-upvote-none"></div>
+                    <div class="content-results-list-item-title">
+                        What is Startupbidder?
+                    </div>
+                    <div class="content-results-list-item-clear"></div>
+                    <div class="content-results-list-item-detail">
+                        A crowdsourced startup company information site. On it you can place your business plan,
+                        comment on business plans, up or down vote a business plan, and if you're an investor,
+                        bid for a stake in the company!
+                    </div>
+                </div>
+                <div class="content-results-list-item-clear"></div>
+                <div class="content-results-list-item content-results-list-item-even">
+                    <div class="content-results-list-item-num">2.</div>
+                    <div class="content-results-list-item-upvote-none"></div>
+                    <div class="content-results-list-item-title">
+                        Who runs Startupbidder?
+                    </div>
+                    <div class="content-results-list-item-clear"></div>
+                    <div class="content-results-list-item-detail">
+                        Greg Nittner and John Arley Burns, two guys who wanted to bring more visibility to the otherwise opaque world of
+                        startup business plan valuation.
+                    </div>
+                </div>
+                <div class="content-results-list-item-clear"></div>
+                <div class="content-results-list-item content-results-list-item-odd">
+                    <div class="content-results-list-item-num">3.</div>
+                    <div class="content-results-list-item-upvote-none"></div>
+                    <div class="content-results-list-item-title">
+                        How can I contact you?
+                    </div>
+                    <div class="content-results-list-item-clear"></div>
+                    <div class="content-results-list-item-detail">
+                        See the
+                            <span class="link" id="faq-contact">contact page</span>
+                        for more detail.
+                    </div>
+                </div>
+                <div class="content-results-list-item-clear"></div>
+                <div class="content-results-list-item content-results-list-item-even">
+                    <div class="content-results-list-item-num">4.</div>
+                    <div class="content-results-list-item-upvote-none"></div>
+                    <div class="content-results-list-item-title">
+                        What is the algorithm you use to rank business plans?
+                    </div>
+                    <div class="content-results-list-item-clear"></div>
+                    <div class="content-results-list-item-detail">
+<pre>
+Used by search for the 'top listings' query:
+
+p = votes from users
+b = number of bids
+c = number of comments
+v = median valuation (normalized / $100,000)
+t = time since submission in days
+s = score
+
+putting it together:
+
+s = (p + b + c + v) / (t + 2)^1.5
+
+Reference:
+</pre>
+<a target="_blank" href="http://www.seomoz.org/blog/reddit-stumbleupon-delicious-and-hacker-news-algorithms-exposed">seomoz.org</a>
+                    </div>
+                </div>
+                <div class="content-results-list-item-clear"></div>
+                <div class="content-results-list-item content-results-list-item-odd">
+                    <div class="content-results-list-item-num">4.</div>
+                    <div class="content-results-list-item-upvote-none"></div>
+                    <div class="content-results-list-item-title">
+                        What happens when a user accepts a bid?
+                    </div>
+                    <div class="content-results-list-item-clear"></div>
+                    <div class="content-results-list-item-detail">
+                        When the owner of the listing accepts a bid, the lister
+                        and the users who made the bid are then notified via email of the bid acceptance.
+                        The lister will then be billed a an acceptance charge of 0.5% of the funding amount.  For instance,
+                        funding of $10,000 would have an acceptance charge of $50.
+                        It is then the responsibility of the lister to follow up with the member for a formal legal funding agreement.  
+                    </div>
+                </div>
+                <div class="content-results-list-item-clear"></div>
+                <div class="content-results-list-item content-results-list-item-odd">
+                    <div class="content-results-list-item-num">5.</div>
+                    <div class="content-results-list-item-upvote-none"></div>
+                    <div class="content-results-list-item-title">
+                        Are you offering shares in these companies for sale?
+                    </div>
+                    <div class="content-results-list-item-clear"></div>
+                    <div class="content-results-list-item-detail">
+                        No.  Startupbidder is an informational site linking startup entpreneurs with investors.
+                        We are not offering shares for sale or promoting any shares via this site.
+                        All investments must be concluded between the parties themselves with proper legal representation.
+                    </div>
+                </div>
+                <div class="content-results-list-item-clear"></div>
+                <div class="content-results-list-item content-results-list-item-even">
+                    <div class="content-results-list-item-num">6.</div>
+                    <div class="content-results-list-item-upvote-none"></div>
+                    <div class="content-results-list-item-title">
+                        What is the algorithm you use to rank users?
+                    </div>
+                    <div class="content-results-list-item-clear"></div>
+                    <div class="content-results-list-item-detail">
+<pre>
+Ranking is similar as to that done for the 'top listings' query, except from a user standpoint:
+
+p = votes from other users
+b = number of bids placed
+c = number of comments in total
+v = median valuation of bids (normalized / $100,000)
+t = time since last activity in days
+s = score
+
+putting it together:
+
+s = (p + b + c + v) / (t + 2)^1.5
+</pre>
+                    </div>
+                </div>
+                <div class="content-results-list-item-clear"></div>
+             </div>
+        </div>
+    </div> <!-- end faq -->
+
+
+<!-- begin rightbox div -->
+<div class="rightbox">
+    <!-- begin userbox div -->
+    <div id="userbox" class="userbox blue-gradient-bg">
+        <div><span class="userbox-title-link" id="userbox-details"><span id="userbox-title"></span></span></div>
+        <div class="userbox-medal">
+            <div class="userbox-chart userbox-bronze" id="userbox-chart">
+                <div class="userbox-score" id="userbox-score"></div>
+            </div>
+        </div>
+        <div class="userbox-textbox">
+            <div><span id="userbox-member-type">Bronze</span> Member</div>
+            <div>
+                <span id="userbox-num-votes">0</span> votes
+                <span class="header-link" id="userbox-listings"><span id="userbox-num-listings">0</span> listing<span id="userbox-listings-plural"></span></span>
+                <span class="header-link" id="userbox-comments"><span id="userbox-num-comments">0</span> comment<span id="userbox-comments-plural"></span></span>
+            </div>
+            <div>
+                <span class="header-link" id="userbox-bids"><span id="userbox-num-bids">0</span> bid<span id="userbox-bids-plural"></span></span>
+                <span class="header-link" id="userbox-bids-accepted"><span id="userbox-num-bids-accepted">0</span> accepted</span>
+                <span class="header-link" id="userbox-bids-paid"><span id="userbox-num-bids-paid">0</span> paid</span>
+            </div>
+        </div>
+        <input id="userbox-profile-id" type="hidden" value=""/>
+    </div>
+    <!-- end userbox div -->
+    <div class="clearbox"></div>
+    <!-- begin stats-graph div -->
+    <div id="statsbox" class="statsbox blue-gradient-bg">
+        <div id="stats-graph-line" class="stats-graph"></div>
+        <div id="stats-graph-column" class="stats-graph"></div>
+    </div>
+    <!-- end stats-graph div -->
+</div>
+<!-- end rightbox div -->
+
+</div> <!-- end site -->
+
+    <div id="footer" class="footer vertical-gradient-bg">
+        <div id="footer-menu-bar" class="footer-menu-bar">
+            <span class="link" id="footer-menu-bar-contact">contact</span>
+            <span> | </span>
+            <span class="link" id="footer-menu-bar-faq">faq</span>
+            <span> | </span>
+            <span class="link" id="footer-menu-bar-disclaimer">disclaimer</span>
+        </div>
+        <div id="footer-copyright" class="footer-copyright">
+           Copyright © 2011 Startupbidder.com
+        </div>
+    </div>
+
+  <!-- JavaScript at the bottom for fast page loading -->
+
+  <!-- Grab Google CDN's jQuery, with a protocol relative URL; fall back to local if offline -->
+<!--
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+  <script>window.jQuery || document.write('<script src="js/libs/jquery-1.6.2.min.js"><\/script>')</script>
+-->
+
+  <!-- scripts concatenated and minified via ant build script-->
+  <script src="js/plugins.js"></script>
+  <script src="js/script.js"></script>
+  <!-- end scripts-->
+
+	
+  <!-- Change UA-XXXXX-X to be your site's ID -->
+  <script>
+  window._gaq = [['_setAccount','UA-23942052-1'],['_trackPageview'],['_trackPageLoadTime']];
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+  </script>
+
+
+  <!-- Prompt IE 6 users to install Chrome Frame. Remove this if you want to support IE 6.
+       chromium.org/developers/how-tos/chrome-frame-getting-started -->
+  <!--[if lt IE 7 ]>
+    <script src="//ajax.googleapis.com/ajax/libs/chrome-frame/1.0.3/CFInstall.min.js"></script>
+    <script>window.attachEvent('onload',function(){CFInstall.check({mode:'overlay'})})</script>
+  <![endif]-->
+  
+</body>
+</html>
