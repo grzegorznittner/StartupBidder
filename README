@@ -17,4 +17,7 @@ How to upload war to appengine:
    
    %APPENGINE_HOME%/bin/appcfg.cmd --sdk_root=%APPENGINE_HOME% --email=%APPENGINE_EMAIL% update war
 4. After first successful usage of appcfg you can use ant script to upload application
-
+5. Then to build client:
+   cd html5-boilerplate/build
+   ant
+6. Note that if you get stuck you can clean the war/ directory then rebuild the backend and client (in that order)
