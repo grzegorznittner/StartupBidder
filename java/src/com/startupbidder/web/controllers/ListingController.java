@@ -49,6 +49,10 @@ public class ListingController extends ModelDrivenController {
 				return user(request);
 			} else if("get".equalsIgnoreCase(getCommand(1))) {
 				return get(request);
+			} else if("keyword".equalsIgnoreCase(getCommand(1))) {
+				return keyword(request);
+			} else if("get-all-documents".equalsIgnoreCase(getCommand(1))) {
+				return getAllDocuments(request);
 			} else {
 				// default action
 				return index(request);
@@ -133,6 +137,14 @@ public class ListingController extends ModelDrivenController {
 		return headers;
 	}
 	
+    // GET /listings/keyword
+    private HttpHeaders keyword(HttpServletRequest request) {
+		ListPropertiesVO listingProperties = getListProperties(request);
+    	String text = getCommandOrParameter(request, 2, "text");
+    	model = ServiceFacade.instance().listingKeywordSearch(getLoggedInUser(), text, listingProperties);
+        return new HttpHeadersImpl("keyword").disableCaching();
+    }
+
 	// GET /listings/closing
 	private HttpHeaders closing(HttpServletRequest request) {
 		ListPropertiesVO listingProperties = getListProperties(request);
@@ -224,6 +236,13 @@ public class ListingController extends ModelDrivenController {
     	String listingId = getCommandOrParameter(request, 1, "id");
     	model = ServiceFacade.instance().getListing(getLoggedInUser(), listingId);
         return new HttpHeadersImpl("index").disableCaching();
+    }
+
+    // GET /listings/get-all-documents
+    private HttpHeaders getAllDocuments(HttpServletRequest request) {
+    	//String listingId = getCommandOrParameter(request, 1, "get-all-documents");
+    	model = ServiceFacade.instance().getGoogleDocDocuments();
+        return new HttpHeadersImpl("get-all-documents").disableCaching();
     }
 
 	public Object getModel() {

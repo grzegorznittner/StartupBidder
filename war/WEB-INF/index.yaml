@@ -107,6 +107,12 @@ indexes:
   properties:
     - name: user
     - name: listing
+
+- kind: Bid
+  ancestor: no
+  properties:
+    - name: user
+    - name: listing
     - name: status
 
 - kind: Comment

@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 
+import com.startupbidder.web.DocService;
 import com.startupbidder.web.HttpHeaders;
 import com.startupbidder.web.HttpHeadersImpl;
 import com.startupbidder.web.ModelDrivenController;
@@ -24,11 +25,14 @@ public class CronTaskController extends ModelDrivenController {
 	@Override
 	protected HttpHeaders executeAction(HttpServletRequest request) throws JsonParseException, JsonMappingException, IOException {
 		if (!("true".equalsIgnoreCase(request.getHeader("X-AppEngine-Cron")) || getLoggedInUser().isAdmin())) {
+			log.warning("Cron actions can be only executed by AppEngine's Cron or StartupBidder admins");
 			return null;
 		}
 		
 		if("update-listing-stats".equalsIgnoreCase(getCommand(1))) {
 			return updateListingStats(request);
+		} else if("update-user-stats".equalsIgnoreCase(getCommand(1))) {
+			return updateUserStats(request);
 		}
 		return null;
 	}
@@ -37,6 +41,14 @@ public class CronTaskController extends ModelDrivenController {
 		HttpHeaders headers = new HttpHeadersImpl("update-listing-stats");
 		
 		model = ServiceFacade.instance().updateAllListingStatistics();
+
+		return headers;
+	}
+
+	private HttpHeaders updateUserStats(HttpServletRequest request) {
+		HttpHeaders headers = new HttpHeadersImpl("update-user-stats");
+		
+		model = ServiceFacade.instance().updateAllUserStatistics();
 
 		return headers;
 	}

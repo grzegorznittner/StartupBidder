@@ -13,7 +13,9 @@ import org.codehaus.jackson.map.JsonMappingException;
 
 import com.startupbidder.vo.BidAndUserVO;
 import com.startupbidder.vo.ListingAndUserVO;
+import com.startupbidder.vo.ListingVO;
 import com.startupbidder.vo.UserAndUserVO;
+import com.startupbidder.web.DocService;
 import com.startupbidder.web.EmailService;
 import com.startupbidder.web.HttpHeaders;
 import com.startupbidder.web.HttpHeadersImpl;
@@ -72,6 +74,8 @@ public class TaskController extends ModelDrivenController {
 		
 		String listingId = getCommandOrParameter(request, 2, "id");
 		ServiceFacade.instance().calculateListingStatistics(listingId);
+		ListingVO listing = ServiceFacade.instance().getListing(null, listingId).getListing();
+		DocService.instance().updateListingData(listing);
 		
 		return headers;
 	}

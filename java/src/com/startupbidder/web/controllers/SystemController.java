@@ -3,6 +3,7 @@ package com.startupbidder.web.controllers;
 import java.io.IOException;
 import java.util.Date;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -15,7 +16,9 @@ import org.joda.time.format.DateTimeFormatter;
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
-import com.startupbidder.vo.ListingDocumentVO;
+import com.google.gdata.client.docs.DocsService;
+import com.google.gdata.util.AuthenticationException;
+import com.startupbidder.dto.SystemPropertyDTO;
 import com.startupbidder.vo.SystemPropertyVO;
 import com.startupbidder.vo.UserVO;
 import com.startupbidder.web.HttpHeaders;
@@ -28,6 +31,8 @@ import com.startupbidder.web.ServiceFacade;
  * @author "Grzegorz Nittner" <grzegorz.nittner@gmail.com>
  */
 public class SystemController extends ModelDrivenController {
+	private static final Logger log = Logger.getLogger(SystemController.class.getName());
+	
 	private Object model;
 
 	@Override
@@ -61,13 +66,24 @@ public class SystemController extends ModelDrivenController {
 		property.setValue(value);
 		model = ServiceFacade.instance().setSystemProperty(getLoggedInUser(), property);
 
-		name = request.getParameter("name.1");
+		String name1 = request.getParameter("name.1");
 		if (!StringUtils.isEmpty(name)) {
-			value = request.getParameter("value.1");
+			String value1 = request.getParameter("value.1");
 			property = new SystemPropertyVO();
-			property.setName(name);
-			property.setValue(value);
+			property.setName(name1);
+			property.setValue(value1);
 			ServiceFacade.instance().setSystemProperty(getLoggedInUser(), property);
+			
+			if (SystemPropertyDTO.GOOGLEDOC_USER.equals(name) && SystemPropertyDTO.GOOGLEDOC_PASSWORD.equals(name1)) {
+				DocsService client = new DocsService("www-startupbidder-v1");
+				try {
+					client.setUserCredentials(value, value1);
+					model = "Google Doc user/password verified!";
+				} catch (AuthenticationException e) {
+					model = "Google Doc user/password verification error!";
+					log.log(Level.SEVERE, "Error while logging to GoogleDoc!", e);
+				}
+			}
 		}
 
 		return headers;

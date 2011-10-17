@@ -1560,7 +1560,7 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 	@Override
 	public SystemPropertyDTO setSystemProperty(SystemPropertyDTO property) {
 		property.setCreated(new Date());
-		property.setIdFromString(property.getName());
+		property.createKey(property.getName());
 		
 		getDatastoreService().put(property.toEntity());
 		return property;

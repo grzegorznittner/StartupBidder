@@ -240,7 +240,7 @@ public class ServiceFacade {
 		return StringUtils.notEmpty(userName) && getDAO().checkUserName(userName);
 	}
 	
-	private void scheduleUpdateOfUserStatistics(String userId, UserStatsUpdateReason reason) {
+	public void scheduleUpdateOfUserStatistics(String userId, UserStatsUpdateReason reason) {
 		log.log(Level.INFO, "Scheduling user stats update for '" + userId + "', reason: " + reason);
 		UserStatisticsDTO userStats = (UserStatisticsDTO)cache.get(USER_STATISTICS_KEY + userId);
 		if (userStats != null) {
@@ -290,6 +290,15 @@ public class ServiceFacade {
 		return userStats;
 	}
 	
+	public List<UserStatisticsDTO> updateAllUserStatistics() {
+		List<UserStatisticsDTO> list = new ArrayList<UserStatisticsDTO>();
+		for (UserDTO user : getDAO().getAllUsers()) {
+			list.add(calculateUserStatistics(user.getIdAsString()));
+		}
+		
+		return list;
+	}
+	
 	private void applyUserStatistics(UserVO loggedInUser, UserVO user) {
 		if (user != null && user.getId() != null) {
 			if (loggedInUser != null) {
@@ -336,7 +345,7 @@ public class ServiceFacade {
 		}
 	}
 	
-	private void scheduleUpdateOfListingStatistics(String listingId, ListingStatsUpdateReason reason) {
+	public void scheduleUpdateOfListingStatistics(String listingId, ListingStatsUpdateReason reason) {
 		log.log(Level.INFO, "Scheduling listing stats update for '" + listingId + "', reason: " + reason);
 		ListingStatisticsDTO listingStats = (ListingStatisticsDTO)cache.get(LISTING_STATISTICS_KEY + listingId);
 		if (listingStats != null) {
@@ -385,14 +394,37 @@ public class ServiceFacade {
 	public List<ListingStatisticsDTO> updateAllListingStatistics() {
 		List<ListingStatisticsDTO> list = new ArrayList<ListingStatisticsDTO>();
 
-		for (ListingDTO listing : getDAO().getAllListings()) {
+		List<ListingDTO> listings = getDAO().getAllListings();
+		for (ListingDTO listing : listings) {
 			String listingId = listing.getIdAsString();
 			list.add(calculateListingStatistics(listingId));
 		}
-		log.log(Level.INFO, "Update stats for " + list.size() + " listings: " + list);
+		log.log(Level.INFO, "Updated stats for " + list.size() + " listings: " + list);
+		int updatedDocs = DocService.instance().updateListingData(listings);
+		log.log(Level.INFO, "Updated docs for " + updatedDocs + " listings.");
 		return list;
 	}
 	
+	public ListingListVO listingKeywordSearch(UserVO loggedInUser, String text,
+			ListPropertiesVO listingProperties) {
+		ListingListVO listingsList = new ListingListVO();
+		List<ListingVO> listings = new ArrayList<ListingVO>();
+		List<String> ids = DocService.instance().fullTextSearch(text);
+		for (String id : ids) {
+			ListingAndUserVO listingUser = getListing(loggedInUser, id);
+			if (listingUser != null) {
+				ListingVO listing = listingUser.getListing();
+				listing.setOrderNumber(listings.size());
+				listings.add(listing);
+				listingsList.setUser(listingUser.getLoggedUser());
+			}
+		}
+		listingsList.setListings(listings);
+		listingProperties.setNumberOfResults(listings.size());
+		listingsList.setListingsProperties(listingProperties);
+		return listingsList;
+	}
+
 	/**
 	 * Returns listings created by specified user
 	 * 
@@ -862,6 +894,7 @@ public class ServiceFacade {
 		listing.setClosingOn(midnight.plus(Days.days(30)).toDate());
 		ListingVO newListing = DtoToVoConverter.convert(getDAO().createListing(VoToDtoConverter.convert(listing)));
 		scheduleUpdateOfUserStatistics(loggedInUser.getId(), UserStatsUpdateReason.NEW_LISTING);
+		scheduleUpdateOfListingStatistics(newListing.getId(), ListingStatsUpdateReason.NONE);
 		applyListingData(loggedInUser, newListing);
 		return newListing;
 	}
@@ -880,6 +913,7 @@ public class ServiceFacade {
 		}
 		ListingVO updatedListing = DtoToVoConverter.convert(getDAO().updateListing(VoToDtoConverter.convert(listing)));
 		applyListingData(loggedInUser, updatedListing);
+		scheduleUpdateOfListingStatistics(updatedListing.getId(), ListingStatsUpdateReason.NONE);
 		return updatedListing;
 	}
 
@@ -1060,4 +1094,8 @@ public class ServiceFacade {
 		return urls;
 	}
 
+	public List<ListingDocumentVO> getGoogleDocDocuments() {
+		DocService.instance().createFolders();
+		return DocService.instance().getAllDocuments();
+	}
 }

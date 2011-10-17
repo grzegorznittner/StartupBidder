@@ -16,6 +16,9 @@ import com.google.appengine.api.datastore.Entity;
 @JsonAutoDetect(getterVisibility=Visibility.DEFAULT, setterVisibility=Visibility.DEFAULT,
 		fieldVisibility=Visibility.DEFAULT, isGetterVisibility=Visibility.DEFAULT)
 public class SystemPropertyDTO extends AbstractDTO implements Serializable {
+	public static final String GOOGLEDOC_USER = "googledoc.user";
+	public static final String GOOGLEDOC_PASSWORD = "googledoc.password";
+	
 	public static final String NAME = "name";
 	private String name;
 	public static final String VALUE = "value";
