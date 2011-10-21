@@ -233,19 +233,19 @@ touch: typeof Touch == "object"
 });
 
 
-var lastTap = null;			// Holds last tapped element (so we can compare for double tap)
-var tapValid = false;			// Are we still in the .6 second window where a double tap can occur
-var tapTimeout = null;			// The timeout reference
+var lastTap = null;            // Holds last tapped element (so we can compare for double tap)
+var tapValid = false;            // Are we still in the .6 second window where a double tap can occur
+var tapTimeout = null;            // The timeout reference
 
 function cancelTap() {
         tapValid = false;
 }
 
 
-var rightClickPending = false;	// Is a right click still feasible
-var rightClickEvent = null;		// the original event
-var holdTimeout = null;			// timeout reference
-var cancelMouseUp = false;		// prevents a click from occuring as we want the context menu
+var rightClickPending = false;    // Is a right click still feasible
+var rightClickEvent = null;        // the original event
+var holdTimeout = null;            // timeout reference
+var cancelMouseUp = false;        // prevents a click from occuring as we want the context menu
 
 
 function cancelHold() {
@@ -339,7 +339,7 @@ function iPadTouchStart(event) {
 
                 //
                 // If a double tap is still a possibility and the elements are the same
-                //	Then perform a double click
+                //    Then perform a double click
                 //
                 if (first.target == lastTap) {
                         lastTap = null;
@@ -414,8 +414,8 @@ function iPadTouchHandler(event) {
 
         first.target.dispatchEvent(simulatedEvent);
 
-        if (type == "mouseup" && tapValid && first.target == lastTap) {	// This actually emulates the ipads default behaviour (which we prevented)
-                simulatedEvent = document.createEvent("MouseEvent");		// This check avoids click being emulated on a double tap
+        if (type == "mouseup" && tapValid && first.target == lastTap) {    // This actually emulates the ipads default behaviour (which we prevented)
+                simulatedEvent = document.createEvent("MouseEvent");        // This check avoids click being emulated on a double tap
 
                 simulatedEvent.initMouseEvent("click", true, true, window, 1, first.screenX, first.screenY, first.clientX, first.clientY,
                                 false, false, false, false, button, null);
@@ -1076,7 +1076,7 @@ $(function(){
             $('#content-search-submit').unbind().bind('click', function(){
                 util.hashedCall('searchListings', 'doKeywordSearch');
             });
-            $('#content-search-keywords').unbind().bind('keyup', function(e){
+            $('#content-search-keywords').unbind().bind('keydown', function(e){
                 if (e.keyCode == 13) { // return key
                     util.hashedCall('searchListings', 'doKeywordSearch');
                 }
@@ -1109,10 +1109,10 @@ $(function(){
             args.start_index = args.start_index || 0;
             args.max_results = args.max_results || 20;
             var keywords = $('#content-search-keywords').val();
-            if (keywords) {
+            if (keywords && keywords.length) {
                 keywords = keywords.replace(/\btype:\w*/g, '').replace(/\s+/g, ' ').trim();
+                $('#content-search-keywords').val(keywords);
             }
-            $('#content-search-keywords').val(keywords);
             if (args.profile_id) {
                 statistics.hideCharts();
             }
@@ -2557,8 +2557,8 @@ $(function(){
             $.getJSON(url).success(self.userAssignCallback(callback)).error(errorCallback);
         };
         self.saveProfile = function(profile, callback, errorCallback) {
-        	var url = '/user/update/?id=' + profile.profile_id;
-        	$.post(url, {profile: $.JSON.encode(profile)}).success(self.userAssignCallback(callback)).error(errorCallback);
+            var url = '/user/update/?id=' + profile.profile_id;
+            $.post(url, {profile: $.JSON.encode(profile)}).success(self.userAssignCallback(callback)).error(errorCallback);
         };
         self.activateProfile = function(profile_id, callback, errorCallback) {
             var url = '/user/activate/' + profile_id;
@@ -2570,7 +2570,8 @@ $(function(){
         };
         self.searchUsers = function(searchType, keywords, start_index, max_results, callback, errorCallback) {
             searchType = 'all'; // FIXME
-            var pathSuffix = searchType + '/?max_results=20';
+            var pathSuffix = searchType + '/?max_results=20'
+                + (keywords && keywords.length > 0 ? '&text='+keywords : '');
             var url = '/users/' + pathSuffix;
             $.getJSON(url).success(self.userAssignCallback(callback)).error(errorCallback);
         };
@@ -2595,16 +2596,17 @@ $(function(){
             else {
                 pathSuffix = searchType + '/?max_results=20';
             }
+            pathSuffix += (keywords && keywords.length > 0 ? '&text='+keywords : '');
             var url = '/listings/' + pathSuffix;
             $.getJSON(url).success(self.userAssignCallback(callback)).error(errorCallback);
         };
         self.createListing = function(listing, callback, errorCallback) {
             var url = '/listings/create/';
-        	$.post(url, {listing: $.JSON.encode(listing)}).success(self.userAssignCallback(callback)).error(errorCallback);
+            $.post(url, {listing: $.JSON.encode(listing)}).success(self.userAssignCallback(callback)).error(errorCallback);
         };
         self.saveListing = function(listing, callback, errorCallback) {
             var url = '/listings/update/';
-        	$.post(url, {listing: $.JSON.encode(listing)}).success(self.userAssignCallback(callback)).error(errorCallback);
+            $.post(url, {listing: $.JSON.encode(listing)}).success(self.userAssignCallback(callback)).error(errorCallback);
         };
         self.upvoteListing = function(listing_id, callback, errorCallback) {
             var url = '/listings/up/' + listing_id;
