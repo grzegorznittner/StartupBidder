@@ -3,6 +3,7 @@
 <project name="Boilerplate Build" default="build" basedir="../"> <!-- one back since we're in build/ -->
 
 
+	<echo message="basedir=${basedir}"/>
     <!-- Load in Ant-Contrib to give us access to some very useful tasks! -->
     <!-- the .jar file is located in the tools directory -->
     <taskdef resource="net/sf/antcontrib/antlib.xml">

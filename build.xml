@@ -51,9 +51,13 @@
     </copy>
   </target>
   
-  <target name="compile" depends="check-appengine-home, copyjars"
+  <target name="compile" depends="compile-static-files, compile-java"
+      description="Compiles Java and static files">
+  </target>
+
+  <target name="compile-java" depends="check-appengine-home, copyjars"
       description="Compiles Java source and copies other source files to the WAR.">
-    <mkdir dir="war/WEB-INF/classes" />
+  	<mkdir dir="war/WEB-INF/classes" />
     <copy todir="war/WEB-INF/classes">
       <fileset dir="java/src">
         <exclude name="**/*.java" />
@@ -66,6 +70,16 @@
         debug="on" />
   </target>
   
+  <target name="compile-static-files" depends="check-appengine-home, copyjars"
+      description="Runs html5-boilerplate for static files">
+  	<ant dir="html5-boilerplate" antfile="build/build.xml" target="build">
+  	</ant>
+    <copy todir="war">
+      <fileset dir="html5-boilerplate/publish">
+      </fileset>
+    </copy>
+  </target>
+
   <target name="datanucleusenhance" depends="compile"
       description="Performs JDO enhancement on compiled data classes.">
     <enhance_war war="war" />
@@ -119,7 +133,7 @@
   </target>
 
   <target name="request_logs" depends="check-appengine-home" description="Downloads log data from App Engine for the application.">
-	<appcfg action="request_logs" war="war">
+	<appcfg action="request_logs" antfile="build/build.xml" war="war">
 	   <options>
 	   	  <arg value="--email=${env.APPENGINE_EMAIL}"/>
 	   	  <arg value="--proxy=${env.http_proxy}"/>
@@ -132,7 +146,24 @@
 	</appcfg>
   </target>
   
-  <target name="clean" depends="check-appengine-home" description="Cleans project">
+  <target name="clean" depends="clean-static-files, clean-java"
+  	      description="Cleans generated files">
+  </target>
+
+  <target name="clean-static-files" description="Cleans generated static files">
+  	<ant dir="html5-boilerplate" antfile="build/build.xml" target="clean">
+  	</ant>
+    <delete includeEmptyDirs="true" failonerror="false">
+      <fileset dir="war">
+    	<include name="*" />
+      	<include name="css/**" />
+      	<include name="img/**" />
+     	<include name="js/**" />
+      </fileset>
+    </delete>
+  </target>
+
+  <target name="clean-java" depends="check-appengine-home" description="Cleans Java artefacts">
     <delete includeEmptyDirs="true" failonerror="false">
       <fileset dir="war/WEB-INF/classes"/>
       <fileset dir="war/WEB-INF/lib">
