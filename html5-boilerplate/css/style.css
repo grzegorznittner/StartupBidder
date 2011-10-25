@@ -418,6 +418,9 @@ background: linear-gradient(top, #7db9e8 0%,#1e5799 100%); /* W3C */
 .confirmed {
     color: green;
 }
+.inactive {
+    color: grey;
+}
 .header {
     font-size: 12px;
     width: 100%;

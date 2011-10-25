@@ -5,16 +5,19 @@ function Bids() {
 				var raw_pct = $('#bid-pct').val() || '';
 				var raw_type = $('#bid-type').val() || '';
 				var raw_rate = $('#bid-rate').val() || '';
+                var raw_note = $('#bid-note').val() || '';
 
 				raw_amt = raw_amt.replace(/[^\d]+/g, '');
 				raw_pct = raw_pct.replace(/[^\d]+/g, '');
 				raw_rate = raw_rate.replace(/[^\d]+/g, '');
+                raw_note = raw_note.trim();
 
 				var bid_amt = raw_amt != '' ? raw_amt : 0;
 				var bid_type = ((raw_type === 'common' || raw_type === 'preferred') || raw_type === 'note') ? raw_type
 						: 'common';
 				var bid_rate = raw_rate != '' ? raw_rate : 0;
 				var bid_pct = raw_pct != '' ? raw_pct : 0;
+                var bid_note = raw_note;
 
 				var valuation = self.calculateValuation(bid_amt, bid_pct, true);
 
@@ -49,7 +52,7 @@ function Bids() {
 							'unable to add bid');
 				};
 				self.imports.backend.addBid(listing_id, profile_id, profile_username,
-						bid_amt, bid_pct, bid_type, bid_rate, valuation,
+						bid_amt, bid_pct, bid_type, bid_rate, valuation, bid_note,
 						callback, errorCallback);
 			};
 			self.validateBid = function(bid_amt, bid_type, bid_rate, bid_pct,
@@ -81,6 +84,7 @@ function Bids() {
 				$('#bid-rate').val('');
 				$('#bid-rate').attr('disabled', true);
 				$('#bid-calculated-valuation').html('');
+				$('#bid-note').val('');
 			};
 			self.displayNoResultsHtml = function(resultsHtml) {
 				self.imports.util.displayPage('bids');
@@ -96,8 +100,7 @@ function Bids() {
 			};
 			self.displayPaidResults = function(results, keepBid, msgClass,
 					msgText) {
-				self
-						.displayResults(results, keepBid, msgClass, msgText,
+				self.displayResults(results, keepBid, msgClass, msgText,
 								'paid');
 			};
 			self.displayResults = function(results, keepBid, msgClass, msgText,
@@ -194,8 +197,8 @@ function Bids() {
 							'This bid is no longer active');
 				} else if (profile && profile.profile_id == listing.profile_id) {
 					$('#bids-form-loggedin').hide();
-					$('#bids-form-not-loggedin').show().html(
-							'You may not bid on your own listing');
+					$('#bids-form-not-loggedin').show().removeClass('attention').addClass('confirmed').html(
+							'Bids for your listing');
 				} else if (profile && profile.investor) {
 					if (profileBid) { /* prefill form with previous bid */
 						$('#bid-form-new').hide();
@@ -214,12 +217,20 @@ function Bids() {
 						}
 						$('#bid-calculated-valuation').html(
 								self.imports.util.addCommas(profileBid.valuation));
+					    if (profileBid.bid_note && profileBid.bid_note.length) {
+					        $('#bid-note').val(profileBid.bid_note);
+					    }
+					    else {
+					        $('#bid-note').val('');
+					    }
+					    $('#bid-save-button').html('Update Bid');
 					} else { /* new bid, default to suggested numbers */
 						self.clearBidFields();
 						$('#bid-amt').val(self.imports.util.addCommas(listing.suggested_amt));
 						$('#bid-pct').val(listing.suggested_pct);
 						$('#bid-form-update').hide();
 						$('#bid-form-new').show();
+						$('#bid-save-button').html('Place Bid');
 					}
 					$('#bids-form-loggedin').show();
 					$('#bids-form-not-loggedin').hide();
@@ -247,11 +258,11 @@ function Bids() {
 				} else if (profile && !profile.investor) {
 					$('#bids-form-loggedin').hide();
 					$('#bids-form-not-loggedin').show().html(
-							'You must be an investor to place a bid');
+							'Register as an investor to place a bid');
 				} else {
 					$('#bids-form-loggedin').hide();
 					$('#bids-form-not-loggedin').show().html(
-							'You must be a logged in investor to place a bid');
+							'Log in and register as an investor to place a bid');
 				}
 			};
 			self.filterBidsWithProfile = function(bids, profile) {
@@ -340,7 +351,7 @@ function Bids() {
 						profile_id: listing ? '' : bid.profile_id,
 						listing_id: listing ? listing.listing_id : ''
 					};
-					$('#bids-item-delete-' + i).unbind().data(boundData).bind('click', self.changeBidFunc('withdraw'));
+					$('#bids-item-delete-' + i).unbind().data(boundData).bind('click', self.changeBidFunc(i, 'withdraw'));
 					$('#bids-item-consider-' + i).data(boundData)
 							.unbind().bind('click', self.changeBidFunc(i, 'consider'));
 					$('#bids-item-accept-' + i).data(boundData)
@@ -376,16 +387,24 @@ function Bids() {
 						: bid_type;
 				return bidType;
 			};
+			self.bidStatusToClassMap = {
+			    withdrawn: 'inactive',
+			    accepted: 'confirmed',
+			    rejected: 'attention',
+			    paid: 'confirmed'
+			};
 			self.generateResultHtml = function(i, bid, listing, profile) {
 				var resultHtml = '';
+				var classList = '';
 				var evenOdd;
 				if (isFinite(i)) {
 					evenOdd = (i % 2 == 0) ? 'even' : 'odd';
-					resultHtml += '<div class="content-results-list-item content-results-list-item-'
-							+ evenOdd + '">';
-				} else {
-					resultHtml += '<div class="content-results-list-item">';
+					classList += ' content-results-list-item-' + evenOdd;
 				}
+				if (bid.status in self.bidStatusToClassMap) {
+				    classList += ' ' + self.bidStatusToClassMap[bid.status];
+				}
+				resultHtml += '<div class="content-results-list-item' + classList + '">';
 				resultHtml += '<div class="content-results-list-item-num">'
 						+ bid.num + '</div>';
 				resultHtml += '<div class="content-results-list-item-title">';
@@ -437,7 +456,17 @@ function Bids() {
 						: ' for <span class="link" id="bids-item-listing-' + i
 								+ '">' + bid.listing_title + '</span>';
 				resultHtml += ' <b>' + (bid.status === 'active' ? 'considering bid' : 'bid '+bid.status) + '</b>';
+				if (bid.mockData) {
+				    resultHtml += ' <span class="attention">mock data</span>';
+				}
 				resultHtml += '</div>';
+				if (bid.bid_note && bid.bid_note.length) {
+                    resultHtml += ''
+				        + '<div class="content-results-list-item-clear"></div>'
+				        + '<div class="content-results-list-item-detail">'
+				        + '<b>Note by bidder:</b> ' + bid.bid_note
+				        + '</div>';
+				}
 				resultHtml += '</div>';
 				resultHtml += '<div class="content-results-list-item-clear"></div>';
 				return resultHtml;

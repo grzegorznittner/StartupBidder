@@ -74,11 +74,16 @@ function Header() {
 				self.imports.profiles.showProfile(profile_id, errorCallback);
 			};
 			self.displayUser = function(userobj) {
+			    var username;
 				if (userobj.profile && userobj.logout_url) {
+				    username = userobj.profile.username;
+				    if (userobj.profile.mockData) {
+                        username += ' <span class="attention">mock data</span>';
+                    }
 					$('#header-menu-name-login,#header-menu-command-login')
 							.hide();
 					$('#header-menu-name-username').html(
-							userobj.profile.username).data('profile_id',
+							username).data('profile_id',
 							userobj.profile.profile_id).show().unbind().bind(
 							'click',
 							function() {

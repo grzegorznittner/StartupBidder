@@ -167,8 +167,8 @@ function Backend() {
 						.error(errorCallback);
 			};
 			self.addBid = function(listing_id, profile_id, profile_username,
-					bid_amt, bid_pct, bid_type, bid_rate, valuation, callback,
-					errorCallback) {
+					bid_amt, bid_pct, bid_type, bid_rate, valuation, bid_note,
+					callback, errorCallback) {
 				var url = '/bid/create/';
 				var bid = {
 					listing_id : listing_id,
@@ -178,7 +178,8 @@ function Backend() {
 					equity_pct : bid_pct,
 					bid_type : bid_type,
 					interest_rate : bid_rate,
-					valuation : valuation
+					valuation : valuation,
+					bid_note: bid_note
 				};
 				$.post(url, {
 					bid : $.JSON.encode(bid)

@@ -506,6 +506,9 @@ function Listings() {
 						+ (listing.num_bids == 1 ? '' : 's');
 				resultHtml += '</span> | ';
 				resultHtml += 'listed ' + self.imports.util.formatDate(listing.listing_date);
+				if (listing.mockData) {
+				    resultHtml += ' <span class="attention">mock data</span>';
+				}
 				resultHtml += '</div>';
 				resultHtml += '</div>';
 				resultHtml += '<div class="content-results-list-item-clear"></div>';

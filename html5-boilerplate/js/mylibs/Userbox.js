@@ -49,9 +49,12 @@ function Userbox() { // module showing a summary box for the logged in user
 				}
 				var memberType = self.getMemberType();
 				var memberClass = 'userbox-' + memberType;
+				var memberName = profile.username || profile.name || 'Profile';
+				if (profile.mockData) {
+				    memberName += ' <span class="attention">mock data</span>';
+				}
 				$('#userbox-profile-id').val(profile.profile_id);
-				$('#userbox-title').html(
-						profile.username || profile.name || 'Profile');
+				$('#userbox-title').html(memberName);
 				$('#userbox-score').html(self.getScore());
 				$('#userbox-num-votes').html(profile.num_votes);
 				$('#userbox-num-listings').html(profile.num_listings);

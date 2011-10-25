@@ -86,6 +86,9 @@ function User() {
 				resultHtml += ' | ';
 				resultHtml += 'joined ' + self.imports.util.formatDate(userjson.joined_date);
 				resultHtml += userjson.investor ? ' | <b>investor</b>' : '';
+				if (userjson.mockData) {
+				    resultHtml += ' <span class="attention">mock data</span>';
+				}
 				resultHtml += '</div>';
 				resultHtml += '</div>';
 				resultHtml += '<div class="content-results-list-item-clear"></div>';

@@ -396,7 +396,7 @@
             <form action="#" method="post" enctype="multipart/form-data">
                 <input name="page" type="hidden" value="listing"/>
                 <div class="content-form-mainline" id="bid-form-new">New Bid</div>
-                <div class="content-form-mainline" style="display:none;" id="bid-form-update">Change bid placed on <span id="bid-form-update-date"></span></div>
+                <div class="content-form-mainline" style="display:none;" id="bid-form-update">Change your bid placed on <span id="bid-form-update-date"></span></div>
                 <div class="content-form-clear"></div>
                 <div class="content-form-line"><b>Bidding</b> $</div>
                 <div class="content-form-inputline"><input id="bid-amt" name="bid_amt" type="text" size="9" maxlength="9" value="30,000"/></div>
@@ -418,6 +418,13 @@
                 <div class="content-form-clear"></div>
 
                 <div class="content-form-line"><b>Calculated Valuation <span class="confirmed">$</span><span id="bid-calculated-valuation" class="confirmed"></span></b></div>
+                <div class="content-form-clear"></div>
+
+                <div class="content-form-line"><b>Note to listing owner regarding bid:</b></div>
+                <div class="content-form-clear"></div>
+                <div class="content-form-line">
+                    <textarea id="bid-note" name="bid_note" rows="3" cols="60" wrap="soft"></textarea>
+                </div>
                 <div class="content-form-clear"></div>
 
                 <div class="content-form-line">
