@@ -456,6 +456,9 @@ function Bids() {
 						: ' for <span class="link" id="bids-item-listing-' + i
 								+ '">' + bid.listing_title + '</span>';
 				resultHtml += ' <b>' + (bid.status === 'active' ? 'considering bid' : 'bid '+bid.status) + '</b>';
+				if (bid.mockData) {
+				    resultHtml += ' <span class="attention">mock data</span>';
+				}
 				resultHtml += '</div>';
 				if (bid.bid_note && bid.bid_note.length) {
                     resultHtml += ''

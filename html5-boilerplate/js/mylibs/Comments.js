@@ -262,6 +262,9 @@ function Comments() {
 				resultHtml += listing ? ''
 						: ' for <span class="link" id="comments-item-listing-'
 								+ i + '">' + comment.listing_title + '</span>';
+				if (comment.mockData) {
+				    resultHtml += ' <span class="attention">mock data</span>';
+				}
 				resultHtml += '</div>';
 				resultHtml += '</div>';
 				resultHtml += '<div class="content-results-list-item-clear"></div>';
