@@ -1420,7 +1420,7 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 			Entity bidEntity = getDatastoreService().get(bid.getKey());
 			bid = BidDTO.fromEntity(bidEntity);
 			
-			if (bid.getStatus() != BidDTO.Status.POSTED || bid.getStatus() != BidDTO.Status.ACTIVE) {
+			if (bid.getStatus() != BidDTO.Status.POSTED && bid.getStatus() != BidDTO.Status.ACTIVE) {
 				log.log(Level.SEVERE, "User '" + loggedInUser + "' is trying to reject bid '" + bid + "' which is not POSTED or ACTIVE!");
 				return null;
 			}
