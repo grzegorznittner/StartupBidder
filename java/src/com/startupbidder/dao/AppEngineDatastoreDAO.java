@@ -1374,6 +1374,7 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 			bid.setValue(newBid.getValue());
 			bid.setValuation(newBid.getValuation());
 			bid.setPercentOfCompany(newBid.getPercentOfCompany());
+			bid.setInterestRate(newBid.getInterestRate());
 			bid.setComment(newBid.getComment());
 			log.info("Updating bid: " + newBid);
 			getDatastoreService().put(bid.toEntity());

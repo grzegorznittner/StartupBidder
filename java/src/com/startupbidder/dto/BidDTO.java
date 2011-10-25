@@ -45,6 +45,8 @@ public class BidDTO extends AbstractDTO implements Serializable {
 	private Status status = Status.ACTIVE;
 	public static final String COMMENT = "comment";
 	private String comment;
+	public static final String INTEREST_RATE = "interestRate";
+	private int interestRate;
 	
 	public BidDTO() {
 	}
@@ -133,6 +135,14 @@ public class BidDTO extends AbstractDTO implements Serializable {
 		this.comment = comment;
 	}
 
+	public int getInterestRate() {
+		return interestRate;
+	}
+
+	public void setInterestRate(int interestRate) {
+		this.interestRate = interestRate;
+	}
+
 	public Entity toEntity() {
 		Entity bid = new Entity(this.id);
 		bid.setProperty(MOCK_DATA, (Boolean)this.mockData);
@@ -141,6 +151,7 @@ public class BidDTO extends AbstractDTO implements Serializable {
 		bid.setProperty(LISTING, listing);
 		bid.setProperty(LISTING_OWNER, listingOwner);
 		bid.setProperty(PERCENT_OF_COMPANY, percentOfCompany);
+		bid.setProperty(INTEREST_RATE, interestRate);
 		bid.setProperty(PLACED, placed);
 		bid.setProperty(USER, user);
 		bid.setProperty(VALUATION, valuation);
@@ -170,6 +181,9 @@ public class BidDTO extends AbstractDTO implements Serializable {
 		bid.setValue(((Long)entity.getProperty(VALUE)).intValue());
 		Text commentText = (Text)entity.getProperty(COMMENT);
 		bid.comment = commentText != null ? commentText.getValue() : null;
+		if (entity.getProperty(INTEREST_RATE) != null) {
+			bid.setInterestRate(((Long)entity.getProperty(INTEREST_RATE)).intValue());
+		}
 		return bid;
 	}
 
@@ -179,7 +193,8 @@ public class BidDTO extends AbstractDTO implements Serializable {
 				+ ", listingOwner=" + listingOwner + ", placed=" + placed
 				+ ", value=" + value + ", percentOfCompany=" + percentOfCompany
 				+ ", valuation=" + valuation + ", fundType=" + fundType
-				+ ", status=" + status + ", comment=" + comment + "]";
+				+ ", status=" + status + ", comment=" + comment
+				+ ", interestRate=" + interestRate + "]";
 	}
 
 	@Override
@@ -189,6 +204,7 @@ public class BidDTO extends AbstractDTO implements Serializable {
 		result = prime * result + ((comment == null) ? 0 : comment.hashCode());
 		result = prime * result
 				+ ((fundType == null) ? 0 : fundType.hashCode());
+		result = prime * result + interestRate;
 		result = prime * result + ((listing == null) ? 0 : listing.hashCode());
 		result = prime * result
 				+ ((listingOwner == null) ? 0 : listingOwner.hashCode());
@@ -216,6 +232,8 @@ public class BidDTO extends AbstractDTO implements Serializable {
 		} else if (!comment.equals(other.comment))
 			return false;
 		if (fundType != other.fundType)
+			return false;
+		if (interestRate != other.interestRate)
 			return false;
 		if (listing == null) {
 			if (other.listing != null)

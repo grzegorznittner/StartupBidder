@@ -27,6 +27,7 @@ public class DtoToVoConverter {
 		bid.setListing(bidDTO.getListing());
 		bid.setFundType(bidDTO.getFundType().toString());
 		bid.setPercentOfCompany(bidDTO.getPercentOfCompany());
+		bid.setInterestRate(bidDTO.getInterestRate());
 		bid.setPlaced(bidDTO.getPlaced());
 		bid.setUser(bidDTO.getUser());
 		bid.setListingOwner(bidDTO.getListingOwner());

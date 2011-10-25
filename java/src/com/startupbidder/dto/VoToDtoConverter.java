@@ -33,6 +33,7 @@ public class VoToDtoConverter {
 		}
 		bid.setMockData(bidVO.isMockData());
 		bid.setPercentOfCompany(bidVO.getPercentOfCompany());
+		bid.setInterestRate(bidVO.getInterestRate());
 		bid.setPlaced(bidVO.getPlaced());
 		bid.setUser(bidVO.getUser());
 		bid.setValue(bidVO.getValue());
