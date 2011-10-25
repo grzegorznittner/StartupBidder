@@ -414,8 +414,14 @@ public class ServiceFacade {
 			ListingAndUserVO listingUser = getListing(loggedInUser, id);
 			if (listingUser != null) {
 				ListingVO listing = listingUser.getListing();
-				listing.setOrderNumber(listings.size());
-				listings.add(listing);
+				listing.setOrderNumber(listings.size() + 1);
+				if (ListingDTO.State.ACTIVE.toString().equalsIgnoreCase(listing.getState())) {
+					log.info("Active listing added to keyword search results " + listing);
+					listings.add(listing);
+				} else if (loggedInUser.getId().equals(listing.getOwner())) {
+					log.info("Owned listing added to keyword search results " + listing);
+					listings.add(listing);
+				}
 				listingsList.setUser(listingUser.getLoggedUser());
 			}
 		}

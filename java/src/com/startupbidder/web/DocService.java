@@ -170,6 +170,7 @@ public class DocService {
 			for (DocumentListEntry entry : feed.getEntries()) {
 				list.add(entry.getTitle().getPlainText());
 			}
+			log.info("Full text search for term '" + searchText + "' returned " + list.size() + " items.");
 		} catch (Exception e) {
 			log.log(Level.WARNING, "Error while searching docs", e);
 		}
