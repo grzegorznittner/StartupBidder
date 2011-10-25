@@ -707,7 +707,9 @@
         <echo message=" - maintaining whitespace"/>
         <echo message=" - removing html comments"/>
         <echo message=" - compressing inline style/script tag contents"/>
-        <apply executable="java" parallel="false" dest="./${dir.publish}/" >
+    	<echo message="tool.htmlcompressor=${tool.htmlcompressor} dir.publish=${dir.publish} dir.intermediate=${dir.intermediate} page-files=${page-files} dir.build.tools=${dir.build.tools}"/>
+    	
+        <apply executable="java" parallel="false" dest="" >
             <fileset dir="./${dir.intermediate}/" includes="${page-files}"/>
             <arg value="-jar"/>
             <arg path="./${dir.build.tools}/${tool.htmlcompressor}"/>

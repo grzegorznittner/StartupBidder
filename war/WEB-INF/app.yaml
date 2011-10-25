@@ -16,19 +16,5 @@ handlers:
     servlet: com.startupbidder.web.servlets.HelloServlet
   - url: /setup/*
     servlet: com.startupbidder.web.servlets.SetupServlet
-  - url: /user/*
-    servlet: com.startupbidder.web.FrontController
-  - url: /listing/*
-    servlet: com.startupbidder.web.FrontController
-  - url: /bid/*
-    servlet: com.startupbidder.web.FrontController
-  - url: /comment/*
-    servlet: com.startupbidder.web.FrontController
-  - url: /system/*
-    servlet: com.startupbidder.web.FrontController
-  - url: /file/*
-    servlet: com.startupbidder.web.FrontController
-  - url: /task/*
-    servlet: com.startupbidder.web.FrontController
-  - url: /cron/*
+  - url: /*
     servlet: com.startupbidder.web.FrontController

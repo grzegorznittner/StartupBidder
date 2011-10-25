@@ -72,7 +72,9 @@
   
   <target name="compile-static-files" depends="check-appengine-home, copyjars"
       description="Runs html5-boilerplate for static files">
-  	<ant dir="html5-boilerplate" antfile="build/build.xml" target="build">
+  	<ant dir="html5-boilerplate" antfile="build/build.xml">
+  	  <!-- target name="clean"/ -->
+  	  <target name="build"/>
   	</ant>
     <copy todir="war">
       <fileset dir="html5-boilerplate/publish">
