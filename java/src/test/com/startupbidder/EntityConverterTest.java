@@ -1,6 +1,8 @@
 package test.com.startupbidder;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -12,12 +14,13 @@ import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EntityNotFoundException;
-import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.startupbidder.dto.BidDTO;
 import com.startupbidder.dto.CommentDTO;
 import com.startupbidder.dto.ListingDTO;
 import com.startupbidder.dto.ListingDocumentDTO;
+import com.startupbidder.dto.NotificationDTO;
+import com.startupbidder.dto.NotificationDTO.Type;
 import com.startupbidder.dto.RankDTO;
 import com.startupbidder.dto.UserDTO;
 import com.startupbidder.dto.VoteDTO;
@@ -27,8 +30,7 @@ import com.startupbidder.dto.VoteDTO;
  * @author "Grzegorz Nittner" <grzegorz.nittner@gmail.com>
  */
 public class EntityConverterTest {
-	private final LocalServiceTestHelper helper = new LocalServiceTestHelper(
-			new LocalDatastoreServiceTestConfig().setDefaultHighRepJobPolicyUnappliedJobPercentage(100));
+	private final LocalServiceTestHelper helper = new LocalServiceTestHelper();
 	private DatastoreService datastore = null;
 	
 	@Before
@@ -132,6 +134,12 @@ public class EntityConverterTest {
 		user.setStatus(UserDTO.Status.DEACTIVATED);
 		user.setTitle("title");
 		user.setTwitter("twitter");
+		
+		List<NotificationDTO.Type> notifications = new ArrayList<NotificationDTO.Type>();
+		notifications.add(Type.BID_PAID_FOR_YOUR_LISTING);
+		notifications.add(Type.NEW_COMMENT_FOR_YOUR_LISTING);
+		notifications.add(Type.NEW_LISTING);
+		user.setNotifications(notifications);
 		
 		System.out.println("Original: " + user);
 		

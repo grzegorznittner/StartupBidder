@@ -1,7 +1,10 @@
 package com.startupbidder.dto;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.StringTokenizer;
 
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.annotate.JsonAutoDetect;
@@ -49,6 +52,8 @@ public class UserDTO extends AbstractDTO implements Serializable {
 	private Status status;
 	public static final String ADMIN = "admin";
 	private boolean admin = false;
+	public static final String NOTIFICATIONS = "notifications";
+	private List<NotificationDTO.Type> notifications = new ArrayList<NotificationDTO.Type>();
 	
 	public UserDTO() {
 	}
@@ -172,6 +177,15 @@ public class UserDTO extends AbstractDTO implements Serializable {
 		this.admin = isAdmin;
 	}
 
+	public List<NotificationDTO.Type> getNotifications() {
+		return notifications;
+	}
+
+	public void setNotifications(List<NotificationDTO.Type> notifications) {
+		this.notifications.clear();
+		this.notifications.addAll(notifications);
+	}
+
 	@Override
 	public Entity toEntity() {
 		Entity user = new Entity(id);
@@ -191,6 +205,7 @@ public class UserDTO extends AbstractDTO implements Serializable {
 		user.setProperty(TITLE, this.title);
 		user.setProperty(TWITTER, this.twitter);
 		user.setProperty(STATUS, this.status != null ? this.status.toString() : Status.CREATED.toString());
+		user.setProperty(NOTIFICATIONS, notifications.toString());
 		return user;
 	}
 	
@@ -219,6 +234,17 @@ public class UserDTO extends AbstractDTO implements Serializable {
 		if (!StringUtils.isEmpty((String)entity.getProperty(STATUS))) {
 			user.setStatus(UserDTO.Status.valueOf((String)entity.getProperty(STATUS)));
 		}
+		// notifications are stored as string, eg. "[BID_PAID_FOR_YOUR_LISTING, NEW_COMMENT_FOR_YOUR_LISTING, NEW_LISTING]"
+		user.notifications.clear();
+		if (!StringUtils.isEmpty((String)entity.getProperty(NOTIFICATIONS))) {
+			String notifStr = (String)entity.getProperty(NOTIFICATIONS);
+			notifStr = notifStr.substring(1, notifStr.length() - 1);
+			StringTokenizer tokenizer = new StringTokenizer(notifStr, ",");
+			while (tokenizer.hasMoreTokens()) {
+				String token = tokenizer.nextToken().trim();
+				user.notifications.add(NotificationDTO.Type.valueOf(token));
+			}
+		}
 		return user;
 	}
 
@@ -230,6 +256,7 @@ public class UserDTO extends AbstractDTO implements Serializable {
 				+ ", twitter=" + twitter + ", linkedin=" + linkedin
 				+ ", investor=" + investor + ", joined=" + joined
 				+ ", lastLoggedIn=" + lastLoggedIn + ", modified=" + modified
+				+ ", notifications=" + notifications.toString()
 				+ ", status=" + status + ", isAdmin=" + admin + ", id=" + id
 				+ ", mockData=" + mockData + "]";
 	}
@@ -238,11 +265,11 @@ public class UserDTO extends AbstractDTO implements Serializable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
+		result = prime * result + (admin ? 1231 : 1237);
 		result = prime * result + ((email == null) ? 0 : email.hashCode());
 		result = prime * result
 				+ ((facebook == null) ? 0 : facebook.hashCode());
 		result = prime * result + (investor ? 1231 : 1237);
-		result = prime * result + (admin ? 1231 : 1237);
 		result = prime * result + ((joined == null) ? 0 : joined.hashCode());
 		result = prime * result
 				+ ((lastLoggedIn == null) ? 0 : lastLoggedIn.hashCode());
@@ -253,6 +280,8 @@ public class UserDTO extends AbstractDTO implements Serializable {
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result
 				+ ((nickname == null) ? 0 : nickname.hashCode());
+		result = prime * result
+				+ ((notifications == null) ? 0 : notifications.hashCode());
 		result = prime * result + ((openId == null) ? 0 : openId.hashCode());
 		result = prime * result
 				+ ((organization == null) ? 0 : organization.hashCode());
@@ -271,6 +300,8 @@ public class UserDTO extends AbstractDTO implements Serializable {
 		if (!(obj instanceof UserDTO))
 			return false;
 		UserDTO other = (UserDTO) obj;
+		if (admin != other.admin)
+			return false;
 		if (email == null) {
 			if (other.email != null)
 				return false;
@@ -282,8 +313,6 @@ public class UserDTO extends AbstractDTO implements Serializable {
 		} else if (!facebook.equals(other.facebook))
 			return false;
 		if (investor != other.investor)
-			return false;
-		if (admin != other.admin)
 			return false;
 		if (joined == null) {
 			if (other.joined != null)
@@ -314,6 +343,11 @@ public class UserDTO extends AbstractDTO implements Serializable {
 			if (other.nickname != null)
 				return false;
 		} else if (!nickname.equals(other.nickname))
+			return false;
+		if (notifications == null) {
+			if (other.notifications != null)
+				return false;
+		} else if (!notifications.equals(other.notifications))
 			return false;
 		if (openId == null) {
 			if (other.openId != null)

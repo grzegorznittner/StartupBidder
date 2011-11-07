@@ -210,3 +210,44 @@ indexes:
     - name: voter
     - name: listing
 
+- kind: Notification
+  ancestor: no
+  properties:
+    - name: user
+    - name: created
+      direction: desc
+
+- kind: Notification
+  ancestor: no
+  properties:
+    - name: user
+    - name: acknowledged
+    - name: created
+      direction: desc
+
+- kind: Monitor
+  ancestor: no
+  properties:
+    - name: user
+    - name: active
+
+- kind: Monitor
+  ancestor: no
+  properties:
+    - name: user
+    - name: type
+    - name: active
+
+- kind: Monitor
+  ancestor: no
+  properties:
+    - name: object
+    - name: type
+    - name: active
+
+- kind: Monitor
+  ancestor: no
+  properties:
+    - name: user
+    - name: object
+    - name: type

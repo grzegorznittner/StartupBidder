@@ -7,6 +7,8 @@ import com.startupbidder.dto.BidDTO;
 import com.startupbidder.dto.CommentDTO;
 import com.startupbidder.dto.ListingDTO;
 import com.startupbidder.dto.ListingDocumentDTO;
+import com.startupbidder.dto.MonitorDTO;
+import com.startupbidder.dto.NotificationDTO;
 import com.startupbidder.dto.SystemPropertyDTO;
 import com.startupbidder.dto.UserDTO;
 import com.startupbidder.dto.VoteDTO;
@@ -121,6 +123,7 @@ public class DtoToVoConverter {
 		user.setTitle(userDTO.getTitle());
 		user.setTwitter(userDTO.getTwitter());
 		user.setStatus(userDTO.getStatus().toString());
+		user.setNotifications(userDTO.getNotifications());
 		return user;
 	}
 	
@@ -129,6 +132,39 @@ public class DtoToVoConverter {
 			return null;
 		}
 		return new SystemPropertyVO(propertyDTO);
+	}
+	
+	public static NotificationVO convert(NotificationDTO notifDTO) {
+		if (notifDTO == null) {
+			return null;
+		}
+		NotificationVO notif = new NotificationVO();
+		notif.setId(notifDTO.getIdAsString());
+		notif.setMockData(notifDTO.isMockData());
+		notif.setCreated(notifDTO.getCreated());
+		notif.setEmailDate(notifDTO.getEmailDate());
+		notif.setUser(notifDTO.getUser());
+		notif.setMessage(notifDTO.getMessage());
+		notif.setObject(notifDTO.getObject());
+		notif.setType(notifDTO.getType().toString());
+		notif.setAcknowledged(notifDTO.isAcknowledged());
+		return notif;
+	}
+	
+	public static MonitorVO convert(MonitorDTO monitorDTO) {
+		if (monitorDTO == null) {
+			return null;
+		}
+		MonitorVO monitor = new MonitorVO();
+		monitor.setId(monitorDTO.getIdAsString());
+		monitor.setMockData(monitorDTO.isMockData());
+		monitor.setCreated(monitorDTO.getCreated());
+		monitor.setDeactivated(monitorDTO.getDeactivated());
+		monitor.setObjectId(monitorDTO.getObject());
+		monitor.setUser(monitorDTO.getUser());
+		monitor.setType(monitorDTO.getType().toString());
+		monitor.setActive(monitorDTO.isActive());
+		return monitor;
 	}
 	
 	public static List<ListingVO> convertListings(List<ListingDTO> bpDtoList) {
@@ -213,5 +249,29 @@ public class DtoToVoConverter {
 			docVoList.add(docVO);
 		}
 		return docVoList;
+	}
+
+	public static List<NotificationVO> convertNotifications(List<NotificationDTO> notifDtoList) {
+		if (notifDtoList == null) {
+			return null;
+		}
+		List<NotificationVO> notifVoList = new ArrayList<NotificationVO>();
+		for (NotificationDTO notifDTO : notifDtoList) {
+			NotificationVO notifVO = convert(notifDTO);
+			notifVoList.add(notifVO);
+		}
+		return notifVoList;
+	}
+
+	public static List<MonitorVO> convertMonitors(List<MonitorDTO> monitorDtoList) {
+		if (monitorDtoList == null) {
+			return null;
+		}
+		List<MonitorVO> monitorVoList = new ArrayList<MonitorVO>();
+		for (MonitorDTO monitorDTO : monitorDtoList) {
+			MonitorVO monitorVO = convert(monitorDTO);
+			monitorVoList.add(monitorVO);
+		}
+		return monitorVoList;
 	}
 }

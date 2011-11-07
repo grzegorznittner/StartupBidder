@@ -35,6 +35,8 @@ import com.startupbidder.dto.BidDTO;
 import com.startupbidder.dto.ListingDTO;
 import com.startupbidder.dto.ListingDocumentDTO;
 import com.startupbidder.dto.ListingStatisticsDTO;
+import com.startupbidder.dto.MonitorDTO;
+import com.startupbidder.dto.NotificationDTO;
 import com.startupbidder.dto.UserDTO;
 import com.startupbidder.dto.UserStatisticsDTO;
 import com.startupbidder.dto.VoToDtoConverter;
@@ -49,6 +51,10 @@ import com.startupbidder.vo.ListingAndUserVO;
 import com.startupbidder.vo.ListingDocumentVO;
 import com.startupbidder.vo.ListingListVO;
 import com.startupbidder.vo.ListingVO;
+import com.startupbidder.vo.MonitorListVO;
+import com.startupbidder.vo.MonitorVO;
+import com.startupbidder.vo.NotificationListVO;
+import com.startupbidder.vo.NotificationVO;
 import com.startupbidder.vo.SystemPropertyVO;
 import com.startupbidder.vo.UserAndUserVO;
 import com.startupbidder.vo.UserListVO;
@@ -1104,4 +1110,164 @@ public class ServiceFacade {
 		DocService.instance().createFolders();
 		return DocService.instance().getAllDocuments();
 	}
+
+	public NotificationVO createNotification(UserVO loggedInUser, NotificationVO notification) {
+		try {
+			NotificationDTO.Type.valueOf(notification.getType().toUpperCase());
+		} catch (Exception e) {
+			log.log(Level.WARNING, "Notification cannot be created as type is empty or not recognized!", e);
+		}
+		if (StringUtils.isEmpty(notification.getUser())) {
+			log.warning("Notification cannot be created as user is empty!");
+		}
+		notification.setCreated(new Date());
+		notification.setAcknowledged(false);
+		notification.setEmailDate(null);
+		notification = DtoToVoConverter.convert(getDAO().createNotification(VoToDtoConverter.convert(notification)));
+		if (notification != null) {
+			scheduleNotification(loggedInUser.getId(), notification);
+		}
+		return notification;
+	}
+
+	private void scheduleNotification(String userId, NotificationVO notification) {
+		String taskName = timeStampFormatter.print(new Date().getTime()) + "send_notification_" + notification.getType() + "_" + userId;
+		Queue queue = QueueFactory.getDefaultQueue();
+		queue.add(TaskOptions.Builder.withUrl("/task/send-notification").param("id", notification.getId())
+				.taskName(taskName));
+	}
+
+	public NotificationVO acknowledgeNotification(UserVO loggedInUser, String notifId) {
+		NotificationVO notification = DtoToVoConverter.convert(getDAO().acknowledgeNotification(notifId));
+		if (notification == null) {
+			log.warning("Notification with id '" + notifId + "' not found!");
+		} else {
+			log.info("Notification with id '" + notifId + "' was acknowledged.");
+		}
+		return notification;
+	}
+
+	public NotificationListVO getAllNotificationsForUser(UserVO loggedInUser, String userId, ListPropertiesVO notifProperties) {
+		NotificationListVO list = new NotificationListVO();
+		List<NotificationVO> notifications = null;
+
+		UserVO user = getUser(loggedInUser, userId).getUser();
+		if (user == null) {
+			log.log(Level.WARNING, "User '" + userId + "' not found");
+			return null;
+		}
+
+		notifications = DtoToVoConverter.convertNotifications(getDAO().getUserNotification(userId, notifProperties));
+		prepareNotificationList(notifications, user);
+		list.setNotifications(notifications);
+		list.setNotificationsProperties(notifProperties);
+		list.setUser(user);
+		
+		return list;
+	}
+
+	public NotificationListVO getNotificationsForUser(UserVO loggedInUser, String userId, ListPropertiesVO notifProperties) {
+		NotificationListVO list = new NotificationListVO();
+		List<NotificationVO> notifications = null;
+
+		UserVO user = getUser(loggedInUser, userId).getUser();
+		if (user == null) {
+			log.log(Level.WARNING, "User '" + userId + "' not found");
+			return null;
+		}
+
+		notifications = DtoToVoConverter.convertNotifications(getDAO().getAllUserNotification(userId, notifProperties));
+		notifProperties.setTotalResults(notifications.size());
+		prepareNotificationList(notifications, user);
+		list.setNotifications(notifications);
+		list.setNotificationsProperties(notifProperties);
+		list.setUser(user);
+		
+		return list;
+	}
+
+	private void prepareNotificationList(List<NotificationVO> notifications, UserVO user) {
+		for (NotificationVO notif : notifications) {
+			notif.setUserName(user.getName());
+		}
+	}
+
+	public NotificationVO getNotification(UserVO loggedInUser, String notifId) {
+		NotificationVO notification = DtoToVoConverter.convert(getDAO().getNotification(notifId));
+		if (notification == null) {
+			log.warning("Notification with id '" + notifId + "' not found!");
+		}
+		return notification;
+	}
+	
+	public MonitorVO setMonitor(UserVO loggedInUser, MonitorVO monitor) {
+		if (StringUtils.isEmpty(monitor.getObjectId())) {
+			log.warning("Monitored object id is empty!");
+			return null;
+		}
+		if (StringUtils.isEmpty(monitor.getType())) {
+			log.warning("Monitored object type is empty!");
+			return null;
+		}
+		monitor.setActive(true);
+		monitor = DtoToVoConverter.convert(getDAO().setMonitor(VoToDtoConverter.convert(monitor)));
+		return monitor;
+	}
+
+	public MonitorVO deactivateMonitor(UserVO loggedInUser, String monitorId) {
+		MonitorVO notification = DtoToVoConverter.convert(getDAO().deactivateMonitor(monitorId));
+		if (notification == null) {
+			log.warning("Monitor with id '" + monitorId + "' not found!");
+		} else {
+			log.info("Monitor with id '" + monitorId + "' was deactivated.");
+		}
+		return notification;
+	}
+
+	public MonitorListVO getMonitorsForObject(UserVO loggedInUser, String objectId, String type) {
+		MonitorListVO list = new MonitorListVO();
+		List<MonitorVO> monitors = null;
+
+		if (StringUtils.isEmpty(objectId)) {
+			log.warning("Parameter objectId not provided!");
+			return null;
+		}
+		if (StringUtils.isEmpty(type)) {
+			log.warning("Parameter type not provided!");
+			return null;
+		}
+		MonitorDTO.Type typeEnum = null;
+		try {
+			typeEnum = MonitorDTO.Type.valueOf(type.toUpperCase());
+		} catch (Exception e) {
+			log.log(Level.WARNING, "Parameter type has wrong value", e);
+		}
+		monitors = DtoToVoConverter.convertMonitors(getDAO().getMonitorsForObject(objectId, typeEnum));
+		list.setMonitors(monitors);
+		
+		return list;
+	}
+
+	public MonitorListVO getMonitorsForUser(UserVO loggedInUser, String userId, String type) {
+		MonitorListVO list = new MonitorListVO();
+		List<MonitorVO> monitors = null;
+
+		MonitorDTO.Type typeEnum = null;
+		if (StringUtils.notEmpty(type)) {
+			try {
+				typeEnum = MonitorDTO.Type.valueOf(type.toUpperCase());
+			} catch (Exception e) {
+				log.log(Level.WARNING, "Parameter type has wrong value", e);
+			}
+		}
+		if (StringUtils.isEmpty(userId) && loggedInUser != null) {
+			userId = loggedInUser.getId();
+		}
+		monitors = DtoToVoConverter.convertMonitors(getDAO().getMonitorsForUser(userId, typeEnum));
+		list.setMonitors(monitors);
+		list.setUser(loggedInUser);
+		
+		return list;
+	}
+
 }

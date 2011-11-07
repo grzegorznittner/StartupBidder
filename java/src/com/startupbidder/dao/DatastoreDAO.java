@@ -8,6 +8,8 @@ import com.startupbidder.dto.CommentDTO;
 import com.startupbidder.dto.ListingDTO;
 import com.startupbidder.dto.ListingDocumentDTO;
 import com.startupbidder.dto.ListingStatisticsDTO;
+import com.startupbidder.dto.MonitorDTO;
+import com.startupbidder.dto.NotificationDTO;
 import com.startupbidder.dto.PaidBidDTO;
 import com.startupbidder.dto.SystemPropertyDTO;
 import com.startupbidder.dto.UserDTO;
@@ -429,4 +431,48 @@ public interface DatastoreDAO {
 	 */
 	ListingDocumentDTO deleteDocument(String docId);
 
+	/**
+	 * Creates new notificaiton
+	 */
+	NotificationDTO createNotification(NotificationDTO notification);
+	
+	/**
+	 * Acknowledges notificaiton
+	 */
+	NotificationDTO acknowledgeNotification(String notificationId);
+	
+	/**
+	 * Returns not acknowledged user's notifications.
+	 */
+	List<NotificationDTO> getUserNotification(String userId, ListPropertiesVO notificationProperties);
+
+	/**
+	 * Returns all user's notifications.
+	 */
+	List<NotificationDTO> getAllUserNotification(String userId, ListPropertiesVO notificationProperties);
+
+	/**
+	 * Returns notification by id
+	 */
+	NotificationDTO getNotification(String notifId);
+
+	/**
+	 * Creates/updates monitor for user on provided object
+	 */
+	MonitorDTO setMonitor(MonitorDTO convert);
+
+	/**
+	 * Deactivates monitor
+	 */
+	MonitorDTO deactivateMonitor(String monitorId);
+
+	/**
+	 * Returns all monitors for given object
+	 */
+	List<MonitorDTO> getMonitorsForObject(String objectId, MonitorDTO.Type type);
+
+	/**
+	 * Returns all active monitors for given user
+	 */
+	List<MonitorDTO> getMonitorsForUser(String id, MonitorDTO.Type type);
 }

@@ -11,10 +11,18 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 
+import com.startupbidder.dto.ListingDTO;
+import com.startupbidder.dto.NotificationDTO;
 import com.startupbidder.vo.BidAndUserVO;
+import com.startupbidder.vo.BidVO;
+import com.startupbidder.vo.CommentVO;
 import com.startupbidder.vo.ListingAndUserVO;
 import com.startupbidder.vo.ListingVO;
+import com.startupbidder.vo.MonitorListVO;
+import com.startupbidder.vo.MonitorVO;
+import com.startupbidder.vo.NotificationVO;
 import com.startupbidder.vo.UserAndUserVO;
+import com.startupbidder.vo.UserVO;
 import com.startupbidder.web.DocService;
 import com.startupbidder.web.EmailService;
 import com.startupbidder.web.HttpHeaders;
@@ -23,7 +31,6 @@ import com.startupbidder.web.ModelDrivenController;
 import com.startupbidder.web.ServiceFacade;
 
 /**
- * 
  * @author "Grzegorz Nittner" <grzegorz.nittner@gmail.com>
  */
 public class TaskController extends ModelDrivenController {
@@ -56,6 +63,8 @@ public class TaskController extends ModelDrivenController {
 			return setDatastore(request);
 		} else if("send-accepted-bid-notification".equalsIgnoreCase(getCommand(1))) {
 			return sendAcceptedBidNotification(request);
+		} else if("send-notification".equalsIgnoreCase(getCommand(1))) {
+			return sendNotification(request);
 		}
 		return null;
 	}
@@ -93,6 +102,172 @@ public class TaskController extends ModelDrivenController {
 				listingOwner.getUser(), investor.getUser());
 		
 		return headers;
+	}
+
+	private HttpHeaders sendNotification(HttpServletRequest request) {
+		HttpHeaders headers = new HttpHeadersImpl("send-notification");
+		
+		String notifId = getCommandOrParameter(request, 2, "id");
+		NotificationVO notification = ServiceFacade.instance().getNotification(null, notifId);
+		NotificationDTO.Type type = NotificationDTO.Type.valueOf(notification.getType());
+
+		if (!notification.isAcknowledged()) {
+			Object notifObject = getNotificationObject(type, notification);
+			log.info("Sending notification " + notification + " for object " + notifObject);
+			if (notifObject instanceof BidVO) {
+				sendBidNotification(type, notification, (BidVO)notifObject);
+			} else if (notifObject instanceof CommentVO) {
+				sendCommentNotification(type, notification, (CommentVO)notifObject);
+			} else if (notifObject instanceof UserVO) {
+				sendProfileNotification(type, notification, (UserVO)notifObject);
+			} else if (notifObject instanceof ListingVO) {
+				sendListingNotification(type, notification, (ListingVO)notifObject);
+			}
+		} else {
+			log.info("Notification email was already sent for " + notification);
+		}
+		
+		return headers;
+	}
+	
+	private void sendBidNotification(NotificationDTO.Type type, NotificationVO notification, BidVO bid) {
+		UserAndUserVO listingOwner = ServiceFacade.instance().getUser(null, bid.getListingOwner());
+		if (!listingOwner.getUser().getNotifications().contains(type)) {
+			log.info("User '" + listingOwner.getUser().getName() + "' is not subscribed to get '" + type + "' email notification.");
+			return;
+		}
+		UserAndUserVO investor = ServiceFacade.instance().getUser(null, bid.getUser());
+		ListingAndUserVO listing = ServiceFacade.instance().getListing(null, bid.getListing());
+
+		switch (type) {
+		case YOUR_BID_WAS_ACCEPTED:
+			EmailService.instance().sendYourBidAcceptedNotification(notification, bid, listing.getListing(),
+					listingOwner.getUser(), investor.getUser());
+			break;
+		case YOUR_BID_WAS_ACTIVATED:
+			EmailService.instance().sendYourBidActivatedNotification(notification, bid, listing.getListing(),
+					listingOwner.getUser(), investor.getUser());
+			break;
+		case YOUR_BID_WAS_REJECTED:
+			EmailService.instance().sendYourBidRejectedNotification(notification, bid, listing.getListing(),
+					listingOwner.getUser(), investor.getUser());
+			break;
+		case NEW_BID_FOR_YOUR_LISTING:
+			EmailService.instance().sendNewBidForYourListingNotification(notification, bid, listing.getListing(),
+					listingOwner.getUser(), investor.getUser());
+			break;
+		case YOU_PAID_BID:
+			EmailService.instance().sendPaidBidNotification(notification, bid, listing.getListing(),
+					listingOwner.getUser(), investor.getUser());
+			break;
+		case BID_PAID_FOR_YOUR_LISTING:
+			EmailService.instance().sendBidPaidForYourListingNotification(notification, bid, listing.getListing(),
+					listingOwner.getUser(), investor.getUser());
+			break;
+		case YOU_ACCEPTED_BID:
+			EmailService.instance().sendAcceptedBidNotification(notification, bid, listing.getListing(),
+				listingOwner.getUser(), investor.getUser());
+			break;
+		case BID_WAS_WITHDRAWN:
+			EmailService.instance().sendBidWithdrawnNotification(notification, bid, listing.getListing(),
+					listingOwner.getUser(), investor.getUser());
+			break;
+		}
+	}
+	
+	private void sendCommentNotification(NotificationDTO.Type type, NotificationVO notification, CommentVO comment) {
+		ListingAndUserVO listing = ServiceFacade.instance().getListing(null, comment.getListing());
+		UserAndUserVO listingOwner = ServiceFacade.instance().getUser(null, listing.getListing().getOwner());
+		UserAndUserVO commenter = ServiceFacade.instance().getUser(null, comment.getUser());
+		switch (type) {
+		case NEW_COMMENT_FOR_YOUR_LISTING:
+			if (!listingOwner.getUser().getNotifications().contains(type)) {
+				log.info("User '" + listingOwner.getUser().getName() + "' is not subscribed to get '" + type + "' email notification.");
+				return;
+			}
+			EmailService.instance().sendNewCommentForYourListingNotification(notification, comment, listing.getListing(),
+					commenter.getUser(), listingOwner.getUser());
+			break;
+		case NEW_COMMENT_FOR_MONITORED_LISTING:
+			MonitorListVO list = ServiceFacade.instance().getMonitorsForObject(null, comment.getListing(), new ListingDTO().getKind());
+			for (MonitorVO monitor : list.getMonitors()) {
+				UserVO monitoringUser = ServiceFacade.instance().getUser(null, monitor.getUser()).getUser();
+				if (!monitoringUser.getNotifications().contains(type)) {
+					log.info("User '" + monitoringUser.getName() + "' is not subscribed to get '" + type + "' email notification.");
+					continue;
+				}
+				EmailService.instance().sendNewCommentForMonitoredListingNotification(notification, monitoringUser,
+						comment, listing.getListing(), commenter.getUser(), listingOwner.getUser());
+			}
+			break;
+		}
+	}
+	
+	private void sendProfileNotification(NotificationDTO.Type type, NotificationVO notification, UserVO user) {
+		if (!user.getNotifications().contains(type)) {
+			log.info("User '" + user.getName() + "' is not subscribed to get '" + type + "' email notification.");
+			return;
+		}
+		switch (type) {
+		case YOUR_PROFILE_WAS_MODIFIED:
+			EmailService.instance().sendYourProfileWasModifiedNotification(notification, user);
+			break;
+		case NEW_VOTE_FOR_YOU:
+			EmailService.instance().sendNewVoteForYourProfileNotification(notification, user);
+			break;
+		}
+	}
+	
+	private void sendListingNotification(NotificationDTO.Type type, NotificationVO notification, ListingVO listing) {
+		UserAndUserVO listingOwner = ServiceFacade.instance().getUser(null, listing.getOwner());
+		switch (type) {
+		case NEW_VOTE_FOR_YOUR_LISTING:
+			if (!listingOwner.getUser().getNotifications().contains(type)) {
+				log.info("User '" + listingOwner.getUser().getName() + "' is not subscribed to get '" + type + "' email notification.");
+				return;
+			}
+			EmailService.instance().sendNewVoteForYourListingNotification(notification, listing, listingOwner.getUser());
+			break;
+		case NEW_LISTING:
+			MonitorListVO list = ServiceFacade.instance().getMonitorsForObject(null, listing.getId(), new ListingDTO().getKind());
+			for (MonitorVO monitor : list.getMonitors()) {
+				UserVO monitoringUser = ServiceFacade.instance().getUser(null, monitor.getUser()).getUser();
+				if (!monitoringUser.getNotifications().contains(type)) {
+					log.info("User '" + monitoringUser.getName() + "' is not subscribed to get '" + type + "' email notification.");
+					continue;
+				}
+				EmailService.instance().sendNewListingNotification(notification, monitoringUser, listing, listingOwner.getUser());
+			}
+			break;
+		}
+	}
+	
+	private Object getNotificationObject(NotificationDTO.Type type, NotificationVO notification) {
+		switch (type) {
+		case BID_PAID_FOR_YOUR_LISTING:
+		case BID_WAS_WITHDRAWN:
+		case YOUR_BID_WAS_ACCEPTED:
+		case YOUR_BID_WAS_ACTIVATED:
+		case YOUR_BID_WAS_REJECTED:
+		case NEW_BID_FOR_YOUR_LISTING:
+		case YOU_PAID_BID:
+		case YOU_ACCEPTED_BID:
+			// object is bid
+			return ServiceFacade.instance().getBid(null, notification.getObject()).getBid();
+		case NEW_COMMENT_FOR_YOUR_LISTING:
+		case NEW_COMMENT_FOR_MONITORED_LISTING:
+			// object is comment
+			return ServiceFacade.instance().getComment(null, notification.getObject()).getComment();
+		case YOUR_PROFILE_WAS_MODIFIED:
+		case NEW_VOTE_FOR_YOU:
+			// object is profile
+			return ServiceFacade.instance().getUser(null, notification.getObject()).getUser();
+		case NEW_VOTE_FOR_YOUR_LISTING:
+		case NEW_LISTING:
+			// object is listing
+			return ServiceFacade.instance().getListing(null, notification.getObject()).getListing();
+		}
+		return null;
 	}
 
 	private HttpHeaders setDatastore(HttpServletRequest request) {

@@ -29,6 +29,8 @@ import com.startupbidder.dto.CommentDTO;
 import com.startupbidder.dto.ListingDTO;
 import com.startupbidder.dto.ListingDocumentDTO;
 import com.startupbidder.dto.ListingStatisticsDTO;
+import com.startupbidder.dto.MonitorDTO;
+import com.startupbidder.dto.NotificationDTO;
 import com.startupbidder.dto.PaidBidDTO;
 import com.startupbidder.dto.RankDTO;
 import com.startupbidder.dto.SystemPropertyDTO;
@@ -607,6 +609,7 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 			user.setOrganization(newUser.getOrganization());
 			user.setTitle(newUser.getTitle());
 			user.setTwitter(newUser.getTwitter());
+			user.setNotifications(newUser.getNotifications());
 			user.setModified(new Date(System.currentTimeMillis()));
 			
 			getDatastoreService().put(user.toEntity());
@@ -1627,6 +1630,155 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 			log.log(Level.WARNING, "Listing Document with id '" + docId + "' not found!");
 			return null;
 		}
+	}
+
+	@Override
+	public NotificationDTO createNotification(NotificationDTO notification) {
+		notification.setCreated(new Date());
+		notification.createKey("Notif" + notification.hashCode());
+		
+		getDatastoreService().put(notification.toEntity());
+		return notification;
+	}
+
+	@Override
+	public NotificationDTO acknowledgeNotification(String notificationId) {
+		NotificationDTO notification = new NotificationDTO();
+		notification.setIdFromString(notificationId);
+		try {
+			Entity notEntity = getDatastoreService().get(notification.getKey());
+			notification = NotificationDTO.fromEntity(notEntity);
+			notification.setAcknowledged(true);
+			getDatastoreService().put(notification.toEntity());
+			return notification;
+		} catch (EntityNotFoundException e) {
+			log.log(Level.WARNING, "Notification with id '" + notificationId + "' not found!");
+			return null;
+		}
+	}
+
+	@Override
+	public List<NotificationDTO> getUserNotification(String userId, ListPropertiesVO notificationProperties) {
+		List<NotificationDTO> notifications = new ArrayList<NotificationDTO>();
+		
+		Query query = new NotificationDTO().getQuery();
+		query.addFilter(NotificationDTO.USER, Query.FilterOperator.EQUAL, userId);
+		query.addFilter(NotificationDTO.ACKNOWLEDGED, Query.FilterOperator.EQUAL, Boolean.FALSE);
+		query.addSort(NotificationDTO.CREATED, Query.SortDirection.DESCENDING);
+		PreparedQuery pq = getDatastoreService().prepare(query);
+		for (Entity user : pq.asIterable(FetchOptions.Builder.withLimit(1000))) {
+			notifications.add(NotificationDTO.fromEntity(user));
+		}
+		return notifications;
+	}
+
+	@Override
+	public List<NotificationDTO> getAllUserNotification(String userId, ListPropertiesVO notificationProperties) {
+		List<NotificationDTO> notifications = new ArrayList<NotificationDTO>();
+		
+		Query query = new NotificationDTO().getQuery();
+		query.addFilter(NotificationDTO.USER, Query.FilterOperator.EQUAL, userId);
+		query.addSort(NotificationDTO.CREATED, Query.SortDirection.DESCENDING);
+		PreparedQuery pq = getDatastoreService().prepare(query);
+		for (Entity user : pq.asIterable(FetchOptions.Builder.withLimit(1000))) {
+			notifications.add(NotificationDTO.fromEntity(user));
+		}
+		return notifications;
+	}
+
+	@Override
+	public NotificationDTO getNotification(String notifId) {
+		try {
+			NotificationDTO notification = new NotificationDTO();
+			notification.setIdFromString(notifId);
+			Entity notifEntity = getDatastoreService().get(notification.getKey());
+			notification = NotificationDTO.fromEntity(notifEntity);
+			
+			return notification;
+		} catch (EntityNotFoundException e) {
+			log.log(Level.WARNING, "Notification with id '" + notifId + "' not found!");
+			return null;
+		}
+	}
+
+	@Override
+	public MonitorDTO setMonitor(MonitorDTO monitor) {
+		Query query = new MonitorDTO().getQuery();
+		query.addFilter(MonitorDTO.USER, Query.FilterOperator.EQUAL, monitor.getUser());
+		query.addFilter(MonitorDTO.OBJECT, Query.FilterOperator.EQUAL, monitor.getObject());
+		query.addFilter(MonitorDTO.TYPE, Query.FilterOperator.EQUAL, monitor.getType().toString());
+		PreparedQuery pq = getDatastoreService().prepare(query);
+		Iterator<Entity> entityIt = pq.asIterator(FetchOptions.Builder.withLimit(10));
+		if (entityIt.hasNext()) {
+			// monitor already exists
+			MonitorDTO existingMonitor = MonitorDTO.fromEntity(entityIt.next());
+			existingMonitor.setActive(true);
+			existingMonitor.setDeactivated(null);
+			existingMonitor.setCreated(new Date());
+			
+			getDatastoreService().put(existingMonitor.toEntity());
+			return existingMonitor;
+		} else {
+			// we need to create new monitor
+			monitor.createKey("" + monitor.hashCode());
+			monitor.setCreated(new Date());
+			monitor.setDeactivated(null);
+			monitor.setActive(true);
+
+			getDatastoreService().put(monitor.toEntity());
+			return monitor;
+		}
+	}
+
+	@Override
+	public MonitorDTO deactivateMonitor(String monitorId) {
+		try {
+			MonitorDTO monitor = new MonitorDTO();
+			monitor.setIdFromString(monitorId);
+			Entity monitorEntity = getDatastoreService().get(monitor.getKey());
+			monitor = MonitorDTO.fromEntity(monitorEntity);
+			
+			monitor.setActive(false);
+			monitor.setDeactivated(new Date());
+			getDatastoreService().put(monitor.toEntity());
+			
+			return monitor;
+		} catch (EntityNotFoundException e) {
+			log.log(Level.WARNING, "Notification with id '" + monitorId + "' not found!");
+			return null;
+		}
+	}
+
+	@Override
+	public List<MonitorDTO> getMonitorsForObject(String objectId, MonitorDTO.Type type) {
+		List<MonitorDTO> notifications = new ArrayList<MonitorDTO>();
+		
+		Query query = new MonitorDTO().getQuery();
+		query.addFilter(MonitorDTO.OBJECT, Query.FilterOperator.EQUAL, objectId);
+		query.addFilter(MonitorDTO.TYPE, Query.FilterOperator.EQUAL, type.toString());
+		query.addFilter(MonitorDTO.ACTIVE, Query.FilterOperator.EQUAL, Boolean.TRUE);
+		PreparedQuery pq = getDatastoreService().prepare(query);
+		for (Entity user : pq.asIterable(FetchOptions.Builder.withLimit(10000))) {
+			notifications.add(MonitorDTO.fromEntity(user));
+		}
+		return notifications;
+	}
+
+	@Override
+	public List<MonitorDTO> getMonitorsForUser(String userId, MonitorDTO.Type type) {
+		List<MonitorDTO> monitors = new ArrayList<MonitorDTO>();
+		
+		Query query = new MonitorDTO().getQuery();
+		query.addFilter(MonitorDTO.USER, Query.FilterOperator.EQUAL, userId);
+		if (type != null) {
+			query.addFilter(MonitorDTO.TYPE, Query.FilterOperator.EQUAL, type.toString());
+		}
+		query.addFilter(MonitorDTO.ACTIVE, Query.FilterOperator.EQUAL, Boolean.TRUE);
+		PreparedQuery pq = getDatastoreService().prepare(query);
+		for (Entity user : pq.asIterable(FetchOptions.Builder.withLimit(10000))) {
+			monitors.add(MonitorDTO.fromEntity(user));
+		}
+		return monitors;
 	}
 
 }
