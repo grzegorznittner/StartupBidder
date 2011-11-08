@@ -21,7 +21,9 @@ import com.startupbidder.dao.DatastoreDAO;
 import com.startupbidder.dto.BidDTO;
 import com.startupbidder.dto.CommentDTO;
 import com.startupbidder.dto.ListingDTO;
+import com.startupbidder.dto.MonitorDTO;
 import com.startupbidder.dto.ListingDocumentDTO;
+import com.startupbidder.dto.NotificationDTO;
 import com.startupbidder.dto.UserDTO;
 import com.startupbidder.vo.ListPropertiesVO;
 import com.startupbidder.vo.ListingDocumentVO;
@@ -137,6 +139,34 @@ public class HelloServlet extends HttpServlet {
 						+ "</textarea><input type=\"submit\" value=\"Create a comment\"/></form>");
 			out.println("<form method=\"POST\" action=\"/comment/delete/.json?id=" + comments.get(0).getIdAsString() + "\"><input type=\"submit\" value=\"Deletes comment id '" + comments.get(0).getIdAsString() + "'\"/></form>");
 			out.println("<br/>");
+			
+			out.println("<p>Notification API:</p>");
+			out.println("<a href=\"/notification/user/" + currentUser.getId() + "/.json?max_results=6\">Notifications for current user</a><br/>");
+			List<NotificationDTO> notifications = datastore.getUserNotification(currentUser.getId(), new ListPropertiesVO());
+			if (!notifications.isEmpty()) {
+				out.println("<a href=\"/notification/get/" + notifications.get(0).getIdAsString() + "/.json\">First notification for current user</a><br/>");
+				out.println("<a href=\"/notification/ack/" + notifications.get(0).getIdAsString() + "/.json\">Acknowledging first notification for current user</a><br/>");
+			} else {
+				out.println("Current user doesn't have any notification, create one first</a><br/>");
+			}
+			out.println("<form method=\"POST\" action=\"/notification/create/.json\"><textarea name=\"notification\" rows=\"5\" cols=\"100\">"
+						+ "{ \"object_id\":\"" + topListing.getIdAsString() + "\", \"profile_id\":\"" + currentUser.getId() + "\", "
+						+ "  \"type\":\"new_listing\", \"message\":\"Sample message\" }"
+						+ "</textarea><input type=\"submit\" value=\"Create a notification\"/></form>");
+			out.println("<br/>");
+			
+			out.println("<p>Monitor API:</p>");
+			out.println("<a href=\"/monitors/active-for-user/.json?type=Listing\">All active monitors for logged in user</a><br/>");
+			out.println("<a href=\"/monitors/active-for-user/.json?\">Active listing monitors for logged in user</a><br/>");
+			out.println("<a href=\"/monitors/active-for-object/?type=Listing&id=" + topListing.getIdAsString() + "\">Monitors for top listing</a><br/>");
+			out.println("<form method=\"POST\" action=\"/monitor/set/.json\"><textarea name=\"monitor\" rows=\"5\" cols=\"100\">"
+					+ "{ \"object_id\":\"" + topListing.getIdAsString() + "\", \"profile_id\":\"" + currentUser.getId() + "\", \"type\":\"Listing\" }"
+					+ "</textarea><input type=\"submit\" value=\"Create a monitor for top listing\"/></form>");
+			List<MonitorDTO> monitors = datastore.getMonitorsForUser(currentUser.getId(), null);
+			out.println("<form method=\"POST\" action=\"/monitor/deactivate/.json\"" + (monitors.isEmpty() ? " disabled=\"disabled\">" : ">")
+					+ "<input type=\"hidden\" name=\"id\" value=\"" + (monitors.isEmpty() ? "empty" : monitors.get(0).getIdAsString()) + "\"/>"
+					+ "<input type=\"submit\" value=\"Deactivate monitor "
+					+ (monitors.isEmpty() ? "(no monitors)" : (monitors.get(0).getType() + " " + monitors.get(0).getObject())) + "\"/></form>");
 			
 			out.println("<p>File API:</p>");
 			out.println("<a href=\"/file/get-upload-url/2/.json\">Get upload URL(s)</a><br/>");

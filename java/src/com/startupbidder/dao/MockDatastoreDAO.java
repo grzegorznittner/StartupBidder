@@ -20,6 +20,8 @@ import com.startupbidder.dto.CommentDTO;
 import com.startupbidder.dto.ListingDTO;
 import com.startupbidder.dto.ListingDocumentDTO;
 import com.startupbidder.dto.ListingStatisticsDTO;
+import com.startupbidder.dto.MonitorDTO;
+import com.startupbidder.dto.NotificationDTO;
 import com.startupbidder.dto.PaidBidDTO;
 import com.startupbidder.dto.SystemPropertyDTO;
 import com.startupbidder.dto.UserDTO;
@@ -55,6 +57,7 @@ public class MockDatastoreDAO implements DatastoreDAO {
 	public Map<String, UserDTO> userCache = new HashMap<String, UserDTO>();
 	public Map<String, SystemPropertyDTO> propCache = new HashMap<String, SystemPropertyDTO>();
 	public Map<String, ListingDocumentDTO> docCache = new HashMap<String, ListingDocumentDTO>();
+	public Map<String, NotificationDTO> notifCache = new HashMap<String, NotificationDTO>();
 
 	public MockDatastoreDAO() {
 		MockDataBuilder mocks = new MockDataBuilder();
@@ -997,6 +1000,76 @@ public class MockDatastoreDAO implements DatastoreDAO {
 		} else {
 			return null;
 		}
+	}
+
+	@Override
+	public NotificationDTO createNotification(NotificationDTO notification) {
+		notification.setCreated(new Date());
+		notification.createKey("Notif" + notification.hashCode());
+		
+		notifCache.put(notification.getIdAsString(), notification);
+		return notification;
+	}
+
+	@Override
+	public NotificationDTO acknowledgeNotification(String notificationId) {
+		NotificationDTO notif = notifCache.get(notificationId);
+		if (notif != null) {
+			notif.setAcknowledged(true);
+		}
+		return notif;
+	}
+
+	@Override
+	public List<NotificationDTO> getUserNotification(String userId, ListPropertiesVO notificationProperties) {
+		List<NotificationDTO> list = new ArrayList<NotificationDTO>();
+		for (NotificationDTO notif : notifCache.values()) {
+			if (userId.equals(notif.getUser()) && notif.isAcknowledged()) {
+				list.add(notif);
+			}
+		}
+		return list;
+	}
+
+	@Override
+	public List<NotificationDTO> getAllUserNotification(String userId, ListPropertiesVO notificationProperties) {
+		List<NotificationDTO> list = new ArrayList<NotificationDTO>();
+		for (NotificationDTO notif : notifCache.values()) {
+			if (userId.equals(notif.getUser())) {
+				list.add(notif);
+			}
+		}
+		return list;
+	}
+
+	@Override
+	public NotificationDTO getNotification(String notifId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public MonitorDTO setMonitor(MonitorDTO convert) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public MonitorDTO deactivateMonitor(String monitorId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<MonitorDTO> getMonitorsForObject(String objectId, MonitorDTO.Type type) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<MonitorDTO> getMonitorsForUser(String id, MonitorDTO.Type type) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }

@@ -21,10 +21,14 @@ public class CommentDTO extends AbstractDTO implements Serializable {
 	private String listing;
 	public static final String USER = "user";
 	private String user;
+	public static final String PROFILE = "profile";
+	private String profile;
 	public static final String COMMENT = "comment";
 	private String comment;
 	public static final String COMMENTED_ON = "commentedOn";
 	private Date   commentedOn;
+	public static final String PARENT = "parent";
+	private String parent;
 	
 	public CommentDTO() {
 	}
@@ -65,11 +69,20 @@ public class CommentDTO extends AbstractDTO implements Serializable {
 		this.commentedOn = commentedOn;
 	}
 
-	@Override
-	public String toString() {
-		return "CommentDTO [id=" + getIdAsString() + ", listing=" + listing
-				+ ", user=" + user + ", comment=" + comment + ", commentedOn="
-				+ commentedOn + "]";
+	public String getProfile() {
+		return profile;
+	}
+
+	public void setProfile(String profile) {
+		this.profile = profile;
+	}
+
+	public String getParent() {
+		return parent;
+	}
+
+	public void setParent(String parent) {
+		this.parent = parent;
 	}
 
 	@Override
@@ -80,6 +93,8 @@ public class CommentDTO extends AbstractDTO implements Serializable {
 		comment.setProperty(COMMENTED_ON, this.commentedOn);
 		comment.setProperty(LISTING, this.listing);
 		comment.setProperty(USER, this.user);
+		comment.setProperty(PARENT, this.parent);
+		comment.setProperty(PROFILE, this.profile);
 		return comment;
 	}
 	
@@ -94,7 +109,17 @@ public class CommentDTO extends AbstractDTO implements Serializable {
 		comment.commentedOn = (Date)entity.getProperty(COMMENTED_ON);
 		comment.listing = (String)entity.getProperty(LISTING);
 		comment.user = (String)entity.getProperty(USER);
+		comment.parent = (String)entity.getProperty(PARENT);
+		comment.profile = (String)entity.getProperty(PROFILE);
 		return comment;
+	}
+
+	@Override
+	public String toString() {
+		return "CommentDTO [listing=" + listing + ", user=" + user
+				+ ", profile=" + profile + ", comment=" + comment
+				+ ", commentedOn=" + commentedOn + ", parent=" + parent
+				+ ", id=" + id + ", mockData=" + mockData + "]";
 	}
 
 	@Override
@@ -105,6 +130,8 @@ public class CommentDTO extends AbstractDTO implements Serializable {
 		result = prime * result
 				+ ((commentedOn == null) ? 0 : commentedOn.hashCode());
 		result = prime * result + ((listing == null) ? 0 : listing.hashCode());
+		result = prime * result + ((parent == null) ? 0 : parent.hashCode());
+		result = prime * result + ((profile == null) ? 0 : profile.hashCode());
 		result = prime * result + ((user == null) ? 0 : user.hashCode());
 		return result;
 	}
@@ -115,7 +142,7 @@ public class CommentDTO extends AbstractDTO implements Serializable {
 			return true;
 		if (!super.equals(obj))
 			return false;
-		if (getClass() != obj.getClass())
+		if (!(obj instanceof CommentDTO))
 			return false;
 		CommentDTO other = (CommentDTO) obj;
 		if (comment == null) {
@@ -133,6 +160,16 @@ public class CommentDTO extends AbstractDTO implements Serializable {
 				return false;
 		} else if (!listing.equals(other.listing))
 			return false;
+		if (parent == null) {
+			if (other.parent != null)
+				return false;
+		} else if (!parent.equals(other.parent))
+			return false;
+		if (profile == null) {
+			if (other.profile != null)
+				return false;
+		} else if (!profile.equals(other.profile))
+			return false;
 		if (user == null) {
 			if (other.user != null)
 				return false;
@@ -140,4 +177,5 @@ public class CommentDTO extends AbstractDTO implements Serializable {
 			return false;
 		return true;
 	}
+
 }

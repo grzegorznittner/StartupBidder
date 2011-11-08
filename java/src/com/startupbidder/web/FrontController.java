@@ -15,6 +15,8 @@ import com.startupbidder.web.controllers.CommentController;
 import com.startupbidder.web.controllers.CronTaskController;
 import com.startupbidder.web.controllers.FileController;
 import com.startupbidder.web.controllers.ListingController;
+import com.startupbidder.web.controllers.MonitorController;
+import com.startupbidder.web.controllers.NotificationController;
 import com.startupbidder.web.controllers.SystemController;
 import com.startupbidder.web.controllers.TaskController;
 import com.startupbidder.web.controllers.UserController;
@@ -53,6 +55,10 @@ public class FrontController extends HttpServlet {
 			controller = new FileController();
 		} else if (pathInfo.startsWith("/task")) {
 			controller = new TaskController();
+		} else if (pathInfo.startsWith("/notification")) {
+			controller = new NotificationController();
+		} else if (pathInfo.startsWith("/monitor")) {
+			controller = new MonitorController();
 		} else if (pathInfo.startsWith("/cron")) {
 			controller = new CronTaskController();
 		} else {

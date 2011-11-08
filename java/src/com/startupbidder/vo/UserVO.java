@@ -1,15 +1,21 @@
 package com.startupbidder.vo;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.codehaus.jackson.annotate.JsonAutoDetect;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
+import org.codehaus.jackson.map.annotate.JsonDeserialize;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
+import com.startupbidder.dto.NotificationDTO;
 import com.startupbidder.util.DateSerializer;
 import com.startupbidder.util.LowecaseSerializer;
+import com.startupbidder.util.NotificationTypeDeserializer;
+import com.startupbidder.util.NotificationTypeSerializer;
 
 /**
  * 
@@ -64,6 +70,12 @@ public class UserVO {
 	private long numberOfComments;
 	@JsonProperty("num_votes")
 	private long numberOfVotes;
+	@JsonProperty("num_notifications")
+	private long numberOfNotifications;
+	@JsonProperty("notifications")
+	@JsonDeserialize(using=NotificationTypeDeserializer.class)
+	@JsonSerialize(using=NotificationTypeSerializer.class)
+	private List<NotificationDTO.Type> notifications = new ArrayList<NotificationDTO.Type>();
 	@JsonProperty("status")
 	@JsonSerialize(using=LowecaseSerializer.class)
 	private String status;
@@ -244,6 +256,19 @@ public class UserVO {
 	public void setAdmin(boolean admin) {
 		this.admin = admin;
 	}
+	public List<NotificationDTO.Type> getNotifications() {
+		return notifications;
+	}
+	public void setNotifications(List<NotificationDTO.Type> notifications) {
+		this.notifications.clear();
+		this.notifications.addAll(notifications);
+	}
+	public long getNumberOfNotifications() {
+		return numberOfNotifications;
+	}
+	public void setNumberOfNotifications(long numberOfNotifications) {
+		this.numberOfNotifications = numberOfNotifications;
+	}
 	@Override
 	public String toString() {
 		return "UserVO [orderNumber=" + orderNumber + ", id=" + id
@@ -257,7 +282,9 @@ public class UserVO {
 				+ ", numberOfBids=" + numberOfBids + ", numberOfAcceptedBids="
 				+ numberOfAcceptedBids + ", numberOfFundedBids="
 				+ numberOfFundedBids + ", numberOfComments=" + numberOfComments
-				+ ", numberOfVotes=" + numberOfVotes + ", status=" + status
+				+ ", numberOfVotes=" + numberOfVotes
+				+ ", numberOfNotifications=" + numberOfNotifications
+				+ ", notifications=" + notifications + ", status=" + status
 				+ ", votable=" + votable + ", mockData=" + mockData
 				+ ", admin=" + admin + "]";
 	}

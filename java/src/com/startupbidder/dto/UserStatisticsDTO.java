@@ -40,6 +40,8 @@ public class UserStatisticsDTO extends AbstractDTO {
 	private long sumOfAcceptedBids;
 	public static final String SUM_OF_FUNDED_BIDS = "sumOfFundedBids";
 	private long sumOfFundedBids;
+	public static final String NUM_OF_NOTIFICATIONS = "numberOfNotifications";
+	private long numberOfNotifications;
 	
 	public UserStatisticsDTO() {
 	}
@@ -66,6 +68,7 @@ public class UserStatisticsDTO extends AbstractDTO {
 		entity.setProperty(SUM_OF_BIDS, this.sumOfBids);
 		entity.setProperty(SUM_OF_ACCEPTED_BIDS, this.sumOfAcceptedBids);
 		entity.setProperty(SUM_OF_FUNDED_BIDS, this.sumOfFundedBids);
+		entity.setProperty(NUM_OF_NOTIFICATIONS, this.numberOfNotifications);
 		
 		return entity;
 	}
@@ -89,6 +92,7 @@ public class UserStatisticsDTO extends AbstractDTO {
 		dto.sumOfBids = toLong(entity.getProperty(SUM_OF_BIDS));
 		dto.sumOfAcceptedBids = toLong(entity.getProperty(SUM_OF_ACCEPTED_BIDS));
 		dto.sumOfFundedBids = toLong(entity.getProperty(SUM_OF_FUNDED_BIDS));
+		dto.numberOfNotifications = toLong(entity.getProperty(NUM_OF_NOTIFICATIONS));
 
 		return dto;
 	}
@@ -197,6 +201,14 @@ public class UserStatisticsDTO extends AbstractDTO {
 		this.numberOfRejectedBids = numberOfRejectedBids;
 	}
 
+	public long getNumberOfNotifications() {
+		return numberOfNotifications;
+	}
+
+	public void setNumberOfNotifications(long numberOfNotifications) {
+		this.numberOfNotifications = numberOfNotifications;
+	}
+
 	@Override
 	public String toString() {
 		return "UserStatisticsDTO [user=" + user + ", status=" + status
@@ -208,7 +220,9 @@ public class UserStatisticsDTO extends AbstractDTO {
 				+ numberOfListings + ", numberOfVotes=" + numberOfVotes
 				+ ", numberOfVotesAdded=" + numberOfVotesAdded + ", sumOfBids="
 				+ sumOfBids + ", sumOfAcceptedBids=" + sumOfAcceptedBids
-				+ ", sumOfFundedBids=" + sumOfFundedBids + "]";
+				+ ", sumOfFundedBids=" + sumOfFundedBids
+				+ ", numberOfNotifications=" + numberOfNotifications + ", id="
+				+ id + ", mockData=" + mockData + "]";
 	}
 
 	@Override
@@ -224,6 +238,9 @@ public class UserStatisticsDTO extends AbstractDTO {
 				+ (int) (numberOfFundedBids ^ (numberOfFundedBids >>> 32));
 		result = prime * result
 				+ (int) (numberOfListings ^ (numberOfListings >>> 32));
+		result = prime
+				* result
+				+ (int) (numberOfNotifications ^ (numberOfNotifications >>> 32));
 		result = prime * result
 				+ (int) (numberOfRejectedBids ^ (numberOfRejectedBids >>> 32));
 		result = prime * result
@@ -258,6 +275,8 @@ public class UserStatisticsDTO extends AbstractDTO {
 		if (numberOfFundedBids != other.numberOfFundedBids)
 			return false;
 		if (numberOfListings != other.numberOfListings)
+			return false;
+		if (numberOfNotifications != other.numberOfNotifications)
 			return false;
 		if (numberOfRejectedBids != other.numberOfRejectedBids)
 			return false;
