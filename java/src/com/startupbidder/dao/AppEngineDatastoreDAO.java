@@ -468,6 +468,12 @@ public class AppEngineDatastoreDAO implements DatastoreDAO {
 		pq = getDatastoreService().prepare(query);
 		userStats.setNumberOfVotes(pq.countEntities(FetchOptions.Builder.withDefaults()));
 
+		query = new NotificationDTO().getQuery();
+		query.addFilter(NotificationDTO.USER, Query.FilterOperator.EQUAL, userId);
+		query.addFilter(NotificationDTO.ACKNOWLEDGED, Query.FilterOperator.EQUAL, Boolean.FALSE);
+		query.addSort(NotificationDTO.CREATED, Query.SortDirection.DESCENDING);
+		userStats.setNumberOfNotifications(pq.countEntities(FetchOptions.Builder.withDefaults()));
+		
 		log.info("user: " + userId + ", statistics: " + userStats);
 
 		getDatastoreService().put(userStats.toEntity());

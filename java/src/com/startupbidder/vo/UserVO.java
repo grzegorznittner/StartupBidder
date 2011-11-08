@@ -70,6 +70,8 @@ public class UserVO {
 	private long numberOfComments;
 	@JsonProperty("num_votes")
 	private long numberOfVotes;
+	@JsonProperty("num_notifications")
+	private long numberOfNotifications;
 	@JsonProperty("notifications")
 	@JsonDeserialize(using=NotificationTypeDeserializer.class)
 	@JsonSerialize(using=NotificationTypeSerializer.class)
@@ -261,6 +263,12 @@ public class UserVO {
 		this.notifications.clear();
 		this.notifications.addAll(notifications);
 	}
+	public long getNumberOfNotifications() {
+		return numberOfNotifications;
+	}
+	public void setNumberOfNotifications(long numberOfNotifications) {
+		this.numberOfNotifications = numberOfNotifications;
+	}
 	@Override
 	public String toString() {
 		return "UserVO [orderNumber=" + orderNumber + ", id=" + id
@@ -274,8 +282,10 @@ public class UserVO {
 				+ ", numberOfBids=" + numberOfBids + ", numberOfAcceptedBids="
 				+ numberOfAcceptedBids + ", numberOfFundedBids="
 				+ numberOfFundedBids + ", numberOfComments=" + numberOfComments
-				+ ", numberOfVotes=" + numberOfVotes + ", notifications="
-				+ notifications + ", status=" + status + ", votable=" + votable
-				+ ", mockData=" + mockData + ", admin=" + admin + "]";
+				+ ", numberOfVotes=" + numberOfVotes
+				+ ", numberOfNotifications=" + numberOfNotifications
+				+ ", notifications=" + notifications + ", status=" + status
+				+ ", votable=" + votable + ", mockData=" + mockData
+				+ ", admin=" + admin + "]";
 	}
 }

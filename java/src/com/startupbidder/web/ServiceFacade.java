@@ -37,6 +37,7 @@ import com.startupbidder.dto.ListingDocumentDTO;
 import com.startupbidder.dto.ListingStatisticsDTO;
 import com.startupbidder.dto.MonitorDTO;
 import com.startupbidder.dto.NotificationDTO;
+import com.startupbidder.dto.NotificationDTO.Type;
 import com.startupbidder.dto.UserDTO;
 import com.startupbidder.dto.UserStatisticsDTO;
 import com.startupbidder.dto.VoToDtoConverter;
@@ -184,7 +185,10 @@ public class ServiceFacade {
 			return null;
 		}
 		UserVO user = DtoToVoConverter.convert(getDAO().updateUser(VoToDtoConverter.convert(userData)));
-		applyUserStatistics(loggedInUser, user);
+		if (user != null) {
+			applyUserStatistics(loggedInUser, user);
+			createNotification(user.getId(), user.getId(), Type.YOUR_PROFILE_WAS_MODIFIED, "");
+		}
 		return user;
 	}
 
@@ -320,6 +324,7 @@ public class ServiceFacade {
 			user.setNumberOfVotes(userStats.getNumberOfVotes());
 			user.setNumberOfAcceptedBids(userStats.getNumberOfAcceptedBids());
 			user.setNumberOfFundedBids(userStats.getNumberOfFundedBids());
+			user.setNumberOfNotifications(userStats.getNumberOfNotifications());
 		}
 	}
 	
@@ -626,6 +631,7 @@ public class ServiceFacade {
 		if (listing != null) {
 			scheduleUpdateOfListingStatistics(listing.getId(), ListingStatsUpdateReason.NEW_VOTE);
 			scheduleUpdateOfUserStatistics(loggedInUser.getId(), UserStatsUpdateReason.NEW_VOTE);
+			createNotification(listing.getOwner(), listing.getId(), Type.NEW_VOTE_FOR_YOUR_LISTING, "");
 			applyListingData(loggedInUser, listing);
 		}
 		return listing;
@@ -641,6 +647,7 @@ public class ServiceFacade {
 		UserVO user =  DtoToVoConverter.convert(getDAO().valueUpUser(userId, voter.getId()));
 		if (user != null) {
 			scheduleUpdateOfUserStatistics(userId, UserStatsUpdateReason.NEW_VOTE);
+			createNotification(user.getId(), user.getId(), Type.NEW_VOTE_FOR_YOU, "");
 			applyUserStatistics(voter, user);
 		}
 		return user;
@@ -907,6 +914,7 @@ public class ServiceFacade {
 		ListingVO newListing = DtoToVoConverter.convert(getDAO().createListing(VoToDtoConverter.convert(listing)));
 		scheduleUpdateOfUserStatistics(loggedInUser.getId(), UserStatsUpdateReason.NEW_LISTING);
 		scheduleUpdateOfListingStatistics(newListing.getId(), ListingStatsUpdateReason.NONE);
+		//createNotification(user.getId(), listing.getId(), Type.NEW_LISTING, "");
 		applyListingData(loggedInUser, newListing);
 		return newListing;
 	}
@@ -950,6 +958,7 @@ public class ServiceFacade {
 		comment = DtoToVoConverter.convert(getDAO().createComment(VoToDtoConverter.convert(comment)));
 		scheduleUpdateOfUserStatistics(loggedInUser.getId(), UserStatsUpdateReason.NEW_COMMENT);
 		scheduleUpdateOfListingStatistics(comment.getListing(), ListingStatsUpdateReason.NEW_COMMENT);
+		//createNotification(comment.get, comment.getId(), Type.NEW_COMMENT_FOR_YOUR_LISTING, "");
 		return comment;
 	}
 
@@ -978,6 +987,7 @@ public class ServiceFacade {
 		bid = DtoToVoConverter.convert(getDAO().createBid(loggedInUser.getId(), VoToDtoConverter.convert(bid)));
 		if (bid != null) {
 			scheduleUpdateOfUserStatistics(loggedInUser.getId(), UserStatsUpdateReason.NEW_BID);
+			createNotification(bid.getListingOwner(), bid.getId(), Type.NEW_BID_FOR_YOUR_LISTING, "");
 		}
 		return bid;
 	}
@@ -998,6 +1008,7 @@ public class ServiceFacade {
 		bid = DtoToVoConverter.convert(getDAO().updateBid(loggedInUser.getId(), VoToDtoConverter.convert(bid)));
 		if (bid != null) {
 			scheduleUpdateOfListingStatistics(bid.getListing(), ListingStatsUpdateReason.NONE);
+			createNotification(bid.getListingOwner(), bid.getId(), Type.NEW_BID_FOR_YOUR_LISTING, "");
 		}
 		return bid;
 	}
@@ -1006,6 +1017,7 @@ public class ServiceFacade {
 		BidVO bid = DtoToVoConverter.convert(getDAO().activateBid(loggedInUser.getId(), bidId));
 		if (bid != null) {
 			scheduleUpdateOfListingStatistics(bid.getListing(), ListingStatsUpdateReason.NEW_BID);
+			createNotification(bid.getUser(), bid.getId(), Type.YOUR_BID_WAS_ACTIVATED, "");
 		}
 		return bid;
 	}
@@ -1014,6 +1026,7 @@ public class ServiceFacade {
 		BidVO bid = DtoToVoConverter.convert(getDAO().withdrawBid(loggedInUser.getId(), bidId));
 		if (bid != null) {
 			scheduleUpdateOfListingStatistics(bid.getListing(), ListingStatsUpdateReason.NONE);
+			createNotification(bid.getListingOwner(), bid.getId(), Type.BID_WAS_WITHDRAWN, "");
 		}
 		return bid;
 	}
@@ -1021,11 +1034,8 @@ public class ServiceFacade {
 	public BidVO acceptBid(UserVO loggedInUser, String bidId) {
 		BidVO bid = DtoToVoConverter.convert(getDAO().acceptBid(loggedInUser.getId(), bidId));
 		if (bid != null) {
-			String taskName = timeStampFormatter.print(new Date().getTime()) + "send_accept_bid_email_" + bidId;
-			Queue queue = QueueFactory.getDefaultQueue();
-			queue.add(TaskOptions.Builder.withUrl("/task/send-accepted-bid-notification").param("id", bidId)
-					.taskName(taskName));
-
+			createNotification(bid.getUser(), bid.getId(), Type.YOUR_BID_WAS_ACCEPTED, "");
+			createNotification(bid.getListingOwner(), bid.getId(), Type.YOU_ACCEPTED_BID, "");
 			scheduleUpdateOfListingStatistics(bid.getListing(), ListingStatsUpdateReason.NONE);
 		}
 		return bid;
@@ -1034,11 +1044,7 @@ public class ServiceFacade {
 	public BidVO rejectBid(UserVO loggedInUser, String bidId) {
 		BidVO bid = DtoToVoConverter.convert(getDAO().rejectBid(loggedInUser.getId(), bidId));
 		if (bid != null) {
-			String taskName = timeStampFormatter.print(new Date().getTime()) + "send_reject_bid_email_" + bidId;
-			Queue queue = QueueFactory.getDefaultQueue();
-			queue.add(TaskOptions.Builder.withUrl("/task/send-reject-bid-notification").param("id", bidId)
-					.taskName(taskName));
-
+			createNotification(bid.getUser(), bid.getId(), Type.YOUR_BID_WAS_REJECTED, "");
 			scheduleUpdateOfListingStatistics(bid.getListing(), ListingStatsUpdateReason.NONE);
 		}
 		return bid;
@@ -1047,6 +1053,7 @@ public class ServiceFacade {
 	public BidVO markBidAsPaid(UserVO loggedInUser, String bidId) {
 		BidVO bid = DtoToVoConverter.convert(getDAO().markBidAsPaid(loggedInUser.getId(), bidId));
 		if (bid != null) {
+			createNotification(bid.getUser(), bid.getId(), Type.YOU_PAID_BID, "");
 			scheduleUpdateOfListingStatistics(bid.getListing(), ListingStatsUpdateReason.NONE);
 		}
 		return bid;
@@ -1128,6 +1135,25 @@ public class ServiceFacade {
 			scheduleNotification(loggedInUser.getId(), notification);
 		}
 		return notification;
+	}
+	
+	private void createNotification(String userId, String objectId, Type type, String message) {
+		NotificationDTO notification = new NotificationDTO();
+		notification.setUser(userId);
+		notification.setObject(objectId);
+		notification.setType(type);
+		notification.setCreated(new Date());
+		notification.setAcknowledged(false);
+		notification.setEmailDate(null);
+		notification = getDAO().createNotification(notification);
+		if (notification != null) {
+			String taskName = timeStampFormatter.print(new Date().getTime()) + "send_notification_" + notification.getType() + "_" + userId;
+			Queue queue = QueueFactory.getDefaultQueue();
+			queue.add(TaskOptions.Builder.withUrl("/task/send-notification").param("id", notification.getIdAsString())
+					.taskName(taskName));
+		} else {
+			log.warning("Can't schedule notification " + notification);
+		}
 	}
 
 	private void scheduleNotification(String userId, NotificationVO notification) {
