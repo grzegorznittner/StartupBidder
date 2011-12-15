@@ -21,7 +21,7 @@
         </span>
         <span class="sideboxcol2">
         <ul class="sideboxlist">
-            <li>Internet</li>
+            <li><a href="industry-internet-page.html">Internet</a></li>
             <li>Manufacturing</li>
             <li>Media</li>
             <li>Medical</li>

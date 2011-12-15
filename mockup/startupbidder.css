@@ -12,7 +12,10 @@ body > #wrap { height: auto; min-height: 100%; }
 .footertext { font-size: 18px; font-weight: bold; top: 4px; position: relative; }
 .copyrighttext { font-size: 10px; font-weight: bold; top: 10px; position: relative; }
 
-/* generic styles */
+/* link styles */
+a { text-decoration: none; }
+
+/* colors */
 .crystalbluebg { background: #efffff; }
 .brokenwhitebg { background: #f2f2f2; }
 .silverbg { background: #e3e3e3; }
