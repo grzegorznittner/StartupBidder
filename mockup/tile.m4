@@ -8,8 +8,7 @@ define(`tilediv',`
     <div class="tilepoints darkblue">
         <div class="tilevotes">$4</div>
         <div class="thumbup tilevoteimg"></div>
-        <div class="eye tilewatchimg"></div>
-        <div class="tilewatch">$5</div>
+        <div class="tileposted">on $5</div>
     </div>
     <p class="tiledesc darkblue">
         <span class="tilecompany">$6</span><br/>

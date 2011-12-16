@@ -13,7 +13,7 @@
       <span class="spacertext lightgrey">&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;</span>
       <a href="closing-page.html"><span class="headertext lightgrey">Closing</span></a>
       <span class="spacertext lightgrey">&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;</span>
-      <span class="headertext lightgrey">About</span>
+      <a href="about-page.html"><span class="headertext lightgrey">About</span></a>
     </div>
     <div class="span-8 last alignright">
       <span class="logintext lightgrey">Login or Sign Up</span>
