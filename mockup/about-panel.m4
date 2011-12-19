@@ -1,7 +1,7 @@
 `<!-- left column -->
 <div class="span-16">
-    <div class="boxtitle smokegrey">ABOUT STARTUPBIDDER</div>
-    <p class="boxpanel boxtext darkblue silverbg">
+    <div class="boxtitle">ABOUT STARTUPBIDDER</div>
+    <p class="boxpanel">
 The world of startup founding and investment is traditionally opaque and
 inaccessable.  It is difficult and time consuming for an entpreneur to go
 around by hand to countless angels and venture funds, hoping for that one shot
@@ -19,8 +19,8 @@ questions, make comments, and see how the startup progresses.  Startupbidder is
 the brave new world of startup financing.
     </p>
 
-    <div class="boxtitle smokegrey">USING STARTUPBIDDER</div>
-    <div class="boxpanel darkblue silverbg">
+    <div class="boxtitle">USING STARTUPBIDDER</div>
+    <div class="boxpanel">
         <span class="boxoption boxoption1 boxselected">video</span>&nbsp;&nbsp;&nbsp;<span class="boxoption boxoption2">entrepreneur</span>&nbsp;&nbsp;&nbsp;<span class="boxoption boxoption3">investor</span>
         <br/>
         <iframe width="622" height="452" src="http://www.youtube.com/embed/tQlsXFfSuZU" frameborder="0" allowfullscreen></iframe> 

@@ -1,22 +1,22 @@
 `
-<div class="header darkgreybg">
+<div class="header">
   <div class="container">
     <div class="span-5">
-      <a href="main-page.html"><span class="logotext lightblue">startup</span><span class="logotext lightgrey">bidder</span></a>
+      <a href="main-page.html"><span class="logotextblue">startup</span><span class="logotextgrey">bidder</span></a>
     </div>
     <div class="span-11">
-      <a href="top-page.html"><span class="headertext lightgrey">Top</span></a>
-      <span class="spacertext lightgrey">&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;</span>
-      <a href="latest-page.html"><span class="headertext lightgrey">Latest</span></a>
-      <span class="spacertext lightgrey">&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;</span>
-      <a href="nearby-page.html"><span class="headertext lightgrey">Nearby</span></a>
-      <span class="spacertext lightgrey">&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;</span>
-      <a href="closing-page.html"><span class="headertext lightgrey">Closing</span></a>
-      <span class="spacertext lightgrey">&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;</span>
-      <a href="about-page.html"><span class="headertext lightgrey">About</span></a>
+      <a href="top-page.html"><span class="headertext">Top</span></a>
+      <span class="headertext">&nbsp;&nbsp;|&nbsp;&nbsp;</span>
+      <a href="latest-page.html"><span class="headertext">Latest</span></a>
+      <span class="headertext">&nbsp;&nbsp;|&nbsp;&nbsp;</span>
+      <a href="nearby-page.html"><span class="headertext">Nearby</span></a>
+      <span class="headertext">&nbsp;&nbsp;|&nbsp;&nbsp;</span>
+      <a href="closing-page.html"><span class="headertext">Closing</span></a>
+      <span class="headertext">&nbsp;&nbsp;|&nbsp;&nbsp;</span>
+      <a href="about-page.html"><span class="headertext">About</span></a>
     </div>
-    <div class="span-8 last alignright">
-      <span class="logintext lightgrey">Login or Sign Up</span>
+    <div class="span-8 last loginspan">
+      <a href="login-page.html"><span class="headertext">Login or Sign Up</span></a>
     </div>
   </div>
 </div>

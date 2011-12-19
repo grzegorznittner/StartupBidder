@@ -3,7 +3,7 @@
 '
 include(head.m4)
 `
-<body class="brokenwhitebg">
+<body>
 <div id="wrap">
 <div id="main">
 '
@@ -12,7 +12,7 @@ include(header.m4)
 <div class="container">
 '
 include(about-panel.m4)
-include(about-sidebar.m4)
+include(generic-sidebar.m4)
 `
 </div> <!-- end container -->
 </div> <!-- end main -->

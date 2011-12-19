@@ -1,11 +1,11 @@
 `
 <!-- right column -->
 <div class="span-8 last">
-    <div class="boxtitle smokegrey">ADD YOUR STARTUP</div>
-    <div class="sideboxbutton darkblue buttonbg">POST NOW</div>
+    <div class="boxtitle">ADD YOUR STARTUP</div>
+    <div class="sideboxbutton">POST NOW</div>
 
-    <div class="boxtitle smokegrey">INDUSTRIES</div>
-    <div class="sidebox sidetext darkblue silverbg">
+    <div class="boxtitle">INDUSTRIES</div>
+    <div class="sidebox">
         <span class="sideboxcol1">
         <ul class="sideboxlist">
             <li>Biotech</li>
@@ -34,8 +34,8 @@
         </span>
     </div>
     
-    <div class="boxtitle smokegrey">LOCATIONS</div>
-    <div class="sidebox sidetext darkblue silverbg">
+    <div class="boxtitle">LOCATIONS</div>
+    <div class="sidebox">
         <span class="sideboxcol1">
         <ul class="sideboxlist">
             <li>Austin, USA</li>
