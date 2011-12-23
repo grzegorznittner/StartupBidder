@@ -14,7 +14,7 @@ body > #wrap { height: auto; min-height: 100%; }
 
 /* general styles */
 body { font-size: 14px; font-weight: bold; color: #4083a9; background: #f2f2f2; }
-.curvedborder, .sidebox, .sideboxbutton, .tile, .boxpanel, .boxselected, .loginbutton { -moz-border-radius: 5px; -webkit-border-radius: 5px; border-radius: 5px; }
+.curvedborder, .sidebox, .sideboxbutton, .tile, .boxpanel, .boxselected, .inputbutton { -moz-border-radius: 5px; -webkit-border-radius: 5px; border-radius: 5px; }
 
 
 /* link styles */
@@ -44,7 +44,7 @@ background: -ms-linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 
 background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%);
 filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e2e2e2', endColorstr='#999999',GradientType=0 );
 }
-.smallbuttonbg, .loginbutton {
+.smallbuttonbg, .inputbutton {
 background: #999999;
 background: -moz-linear-gradient(top, #dcd8db 0%, #d1d1d1 49%, #dbdbdb 50%, #999999 100%);
 background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#dcd8db), color-stop(49%,#d1d1d1), color-stop(50%,#dbdbdb), color-stop(100%,#999999));
@@ -98,14 +98,14 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .inputlabel { text-align: right; width: 106px; float: left; padding-top: 10px; margin-right: 10px; color: #49515a; }
 .inputfield { float: left; margin-right: 10px; }
 .inputtext { font-size: 14px !important; font-weight: bold; color: white !important; background: #49515a !important; }
+.inputcheckbox { font-size: 14px !important; font-weight: bold; color: white !important; background: #49515a !important; margin-top: 4px; height: 33px; }
 .inputhelp { float: left; padding-top: 10px; height: 33px; }
-.inputhelp:hover { opacity: 0.5; cursor: pointer; }
 .inputlink { float: left; margin-right: 10px; padding-top: 10px; height: 33px; }
 .inputlink:hover { opacity: 0.5; cursor: pointer; }
 .inputimgbutton { float: left; margin-right: 10px; margin-top: 5px; }
 .inputimgbutton:hover { opacity: 0.5; cursor: pointer; }
-.loginbutton { text-align: center; font-size: 18px; height: 33px; padding-top: 6px; } 
-.loginbutton:hover { opacity: 0.5; cursor: pointer; }
+.inputbutton { text-align: center; font-size: 18px; height: 33px; padding-top: 6px; margin-bottom: 10px; margin-top: 5px; } 
+.inputbutton:hover { opacity: 0.5; cursor: pointer; }
 
 
 /* box styles */
@@ -153,5 +153,5 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .gkleen { background: url(images/gkleen.jpg); border-radius: 3px; }
 
 /* debug styles */
-.container { background: url(images/blueprint.jpg); background-position: -160px 0px; } 
+/*.container { background: url(images/blueprint.jpg); background-position: -160px 0px; } */
 
