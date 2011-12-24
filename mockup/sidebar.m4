@@ -4,6 +4,9 @@
     <div class="boxtitle">ADD YOUR STARTUP</div>
     <div class="sideboxbutton">POST NOW</div>
 
+    <div class="boxtitle">FUND A STARTUP</div>
+    <div class="sideboxbutton">INVEST NOW</div>
+
     <div class="boxtitle">INDUSTRIES</div>
     <div class="sidebox">
         <span class="sideboxcol1">

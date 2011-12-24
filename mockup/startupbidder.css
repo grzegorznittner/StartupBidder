@@ -14,7 +14,9 @@ body > #wrap { height: auto; min-height: 100%; }
 
 /* general styles */
 body { font-size: 14px; font-weight: bold; color: #4083a9; background: #f2f2f2; }
-.curvedborder, .sidebox, .sideboxbutton, .tile, .boxpanel, .boxselected, .inputbutton { -moz-border-radius: 5px; -webkit-border-radius: 5px; border-radius: 5px; }
+.curvedborder, .sidebox, .sideboxbutton, .tile, .boxpanel, .boxselected, .inputbutton {
+  -moz-border-radius: 5px; -webkit-border-radius: 5px; border-radius: 5px;
+  -moz-box-shadow: 3px 3px 3px 3px #ccc; -webkit-box-shadow: 3px 3px 3px 3px #ccc; box-shadow: 3px 3px 3px 3px #ccc; }
 
 
 /* link styles */
@@ -111,7 +113,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 /* box styles */
 .boxtitle { margin-top: 10px; color: #333333; }
 .boxpanel { width: 622px; border: 2px solid #999999; padding: 2px; overflow: auto; background: #e3e3e3; }
-.boxoption { display: block; float: left; text-align: center; height: 25px; padding-top: 5px; }
+.boxoption { display: block; float: left; text-align: center; height: 25px; padding-top: 5px; margin-bottom: 5px; }
 .boxoption1 { width: 146px; }
 .boxoption2 { width: 160px; }
 .boxoption3 { width: 160px; }
