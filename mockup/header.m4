@@ -5,18 +5,18 @@
       <a href="main-page.html"><span class="logotextblue">startup</span><span class="logotextgrey">bidder</span></a>
     </div>
     <div class="span-11">
-      <a href="top-page.html"><span class="headertext">Top</span></a>
+      <a href="top-page.html"><span class="headerlink">Top</span></a>
       <span class="headertext">&nbsp;&nbsp;|&nbsp;&nbsp;</span>
-      <a href="latest-page.html"><span class="headertext">Latest</span></a>
+      <a href="latest-page.html"><span class="headerlink">Latest</span></a>
       <span class="headertext">&nbsp;&nbsp;|&nbsp;&nbsp;</span>
-      <a href="nearby-page.html"><span class="headertext">Nearby</span></a>
+      <a href="nearby-page.html"><span class="headerlink">Nearby</span></a>
       <span class="headertext">&nbsp;&nbsp;|&nbsp;&nbsp;</span>
-      <a href="closing-page.html"><span class="headertext">Closing</span></a>
+      <a href="closing-page.html"><span class="headerlink">Closing</span></a>
       <span class="headertext">&nbsp;&nbsp;|&nbsp;&nbsp;</span>
-      <a href="about-page.html"><span class="headertext">About</span></a>
+      <a href="about-page.html"><span class="headerlink">About</span></a>
     </div>
     <div class="span-8 last loginspan">
-      <a href="login-page.html"><span class="headertext">Login or Sign Up</span></a>
+      <a href="login-page.html"><span class="headerlink">Login or Sign Up</span></a>
     </div>
   </div>
 </div>

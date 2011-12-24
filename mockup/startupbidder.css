@@ -9,7 +9,8 @@ body > #wrap { height: auto; min-height: 100%; }
 .clearfix { display: inline-block; }
 * html .clearfix { height: 1%; }
 .clearfix { display: block; }
-.footertext { font-size: 18px; font-weight: bold; top: 4px; position: relative; }
+.footertext, .footerlink { position: relative; font-weight: bold; font-size: 18px; top: 2px; color: #dcd8db; }
+.footerlink:hover { opacity: 0.5; cursor: pointer; }
 .copyrighttext { font-size: 10px; font-weight: bold; top: 10px; position: relative; }
 
 /* general styles */
@@ -60,10 +61,10 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 
 /* header styles */
 .header { width: 100%; height: 55px; background: #49515a; }
-.headertext { position: relative; font-weight: bold; font-size: 18px; top: 14px; color: #dcd8db; }
+.headertext, .headerlink { position: relative; font-weight: bold; font-size: 18px; top: 14px; color: #dcd8db; }
 .logotextblue { position: relative; font-weight: bold; font-size: 24px; top: 8px; color: #32aff6; }
 .logotextgrey { position: relative; font-weight: bold; font-size: 24px; top: 8px; color: #dcd8db; }
-.headertext:hover { opacity: 0.5; cursor: pointer; }
+.headerlink:hover { opacity: 0.5; cursor: pointer; }
 .logotext:hover { opacity: 0.5; cursor: pointer; }
 .loginspan { text-align: right; }
 
@@ -112,7 +113,9 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 
 /* box styles */
 .boxtitle { margin-top: 10px; color: #333333; }
-.boxpanel { width: 622px; border: 2px solid #999999; padding: 2px; overflow: auto; background: #e3e3e3; }
+.boxpanel { width: 622px; border: 2px solid #999999; padding: 2px; overflow: auto; background: #e3e3e3; margin-bottom: 10px; }
+.boxpanel dl dt { margin-left: 0; padding: 5px; }
+.boxpanel dl dd { margin-left: 0; padding: 5px; background: #f2f2f2; }
 .boxoption { display: block; float: left; text-align: center; height: 25px; padding-top: 5px; margin-bottom: 5px; }
 .boxoption1 { width: 146px; }
 .boxoption2 { width: 160px; }
