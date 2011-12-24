@@ -1,7 +1,8 @@
 `<!-- left column -->
 <div class="span-16">
     <div class="boxtitle">ABOUT STARTUPBIDDER</div>
-    <p class="boxpanel">
+    <div class="boxpanel">
+    <p>
 The world of startup founding and investment is traditionally opaque and
 inaccessable.  It is difficult and time consuming for an entpreneur to go
 around by hand to countless angels and venture funds, hoping for that one shot
@@ -9,7 +10,8 @@ in a hundred to get a callback, time that could be spent getting new customers
 and growing the business.  Likewise those wanting to invest in startups will
 find the door closed to all but those with very large wallets and pre-existing
 personal connections.
-<br/>
+    </p>
+    <p>
 Startupbidder changes all that.  Any entrepreneur worldwide can place their
 startup and businessplan online and get instant feedback, commentary, and bids
 from interested investors.  Investors liktewise can view the gamut of startup
@@ -18,6 +20,7 @@ the company.  Those more of the armchair-quarterback variety can sit back, ask
 questions, make comments, and see how the startup progresses.  Startupbidder is
 the brave new world of startup financing.
     </p>
+    </div>
 
     <div class="boxtitle">USING STARTUPBIDDER</div>
     <div class="boxpanel">

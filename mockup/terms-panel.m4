@@ -30,7 +30,7 @@ By way of example, and not as a limitation, you shall not (and shall not permit 
 <br/>
     you know is false, misleading, untruthful or inaccurate;
 <br/>
-    is unlawful, threatening, abusive, harassing, defamatory, libelous, deceptive, fraudulent, invasive of another's privacy, tortious, obscene, offensive, or profane;
+    is unlawful, threatening, abusive, harassing, defamatory, libelous, deceptive, fraudulent, invasive of another&rsquo;s privacy, tortious, obscene, offensive, or profane;
 </br>
     constitutes unsolicited or unauthorized advertising or promotional material or any junk mail, spam or chain letters;
 <br/>
@@ -54,7 +54,7 @@ Startupbidder.com ("Startupbidder") is a venue for fund-raising and commerce. St
 <br/>
 Startupbidder shall not be liable for your interactions with any organizations and/or individuals found on or through the Startupbidder service. This includes, but is not limited to, delivery of goods and services, and any other terms, conditions, warranties or representations associated with listings on Startupbidder. Startupbidder does not oversee the performance or punctuality of projects. Startupbidder is not responsible for any damage or loss incurred as a result of any such dealings. All dealings are solely between you and such organizations and/or individuals. Startupbidder is under no obligation to become involved in disputes between Investors and Entrepreneurs, or between site members and any third party. In the event of a dispute, you release Startupbidder, its officers, employees, agents and successors in rights from claims, damages and demands of every kind, known or unknown, suspected or unsuspected, disclosed or undisclosed, arising out of or in any way related to such disputes and our service.
 <br/>
-Though Startupbidder cannot be held liable for the actions of a Entrepreneur, Entrepreneurs are nevertheless wholly responsible for fulfilling obligations both implied and stated in any project listing they create. Startupbidder reserves the right to cancel a project listing and refund all associated members' payments at any time for any reason. Startupbidder reserves the right to remove a project listing from public listings for any reason.
+Though Startupbidder cannot be held liable for the actions of a Entrepreneur, Entrepreneurs are nevertheless wholly responsible for fulfilling obligations both implied and stated in any project listing they create. Startupbidder reserves the right to cancel a project listing and refund all associated members&rsquo; payments at any time for any reason. Startupbidder reserves the right to remove a project listing from public listings for any reason.
 <br/>
 Startupbidder makes no guarantees regarding the performance or fairness of Paypal. Additionally, because of occasional failures of some credit cards, Startupbidder cannot guarantee the full receipt of the targeted amount.
 <br/>
@@ -70,18 +70,18 @@ You are responsible for paying all fees and applicable taxes associated with you
 <br/>
 8. Third Party Site
 <br/>
-The Service may permit you to link to other websites or resources on the Internet, and other websites or resources may contain links to the Site. When you access third party websites, you do so at your own risk. These other websites are not under Company's control, and you acknowledge that Company is not responsible or liable for the content, functions, accuracy, legality, appropriateness or any other aspect of such websites or resources. The inclusion of any such link does not imply endorsement by Company or any association with its operators. You further acknowledge and agree that Company shall not be responsible or liable, directly or indirectly, for any damage or loss caused or alleged to be caused by or in connection with the use of or reliance on any such Content, goods or services available on or through any such website or resource.
+The Service may permit you to link to other websites or resources on the Internet, and other websites or resources may contain links to the Site. When you access third party websites, you do so at your own risk. These other websites are not under Company&rsquo;s control, and you acknowledge that Company is not responsible or liable for the content, functions, accuracy, legality, appropriateness or any other aspect of such websites or resources. The inclusion of any such link does not imply endorsement by Company or any association with its operators. You further acknowledge and agree that Company shall not be responsible or liable, directly or indirectly, for any damage or loss caused or alleged to be caused by or in connection with the use of or reliance on any such Content, goods or services available on or through any such website or resource.
 <br/>
 9. Content and License
 <br/>
 You agree that the Service contains Content specifically provided by Company or its partners and that such Content is protected by copyrights, trademarks, service marks, patents, trade secrets or other proprietary rights and laws. You shall abide by and maintain all copyright notices, information, and restrictions contained in any Content accessed through the Service.
 <br/>
-Company grants each user of the Site and/or Service a worldwide, non-exclusive, non-sublicensable and non-transferable license to use, modify and reproduce the Content, solely for personal, non-commercial use. Use, reproduction, modification, distribution or storage of any Content for other than personal, non-commercial use is expressly prohibited without prior written permission from Company, or from the copyright holder identified in such Content's copyright notice. You shall not sell, license, rent, or otherwise use or exploit any Content for commercial use or in any way that violates any third party right.
+Company grants each user of the Site and/or Service a worldwide, non-exclusive, non-sublicensable and non-transferable license to use, modify and reproduce the Content, solely for personal, non-commercial use. Use, reproduction, modification, distribution or storage of any Content for other than personal, non-commercial use is expressly prohibited without prior written permission from Company, or from the copyright holder identified in such Content&rsquo;s copyright notice. You shall not sell, license, rent, or otherwise use or exploit any Content for commercial use or in any way that violates any third party right.
 Third Party Intellectual Property — Copyright Notifications
 <br/>
 Startupbidder respects the intellectual property of others, and we ask our users to do the same. Startupbidder may, in appropriate circumstances and at its discretion, terminate the accounts of users who infringe the intellectual property rights of others. Startupbidder will remove infringing materials in accordance with the Digital Millennium Copyright Act if properly notified that content infringes copyright.
 <br/>
-If you believe that your work has been copied in a way that constitutes copyright infringement, please provide Startupbidder's Copyright Agent with a written notification containing at least the following information (please confirm these requirements with your legal counsel, or see Section 512(c)(3) of the U.S. Copyright Act, 17 U.S.C. §512(c)(3), for more information):
+If you believe that your work has been copied in a way that constitutes copyright infringement, please provide Startupbidder&rsquo;s Copyright Agent with a written notification containing at least the following information (please confirm these requirements with your legal counsel, or see Section 512(c)(3) of the U.S. Copyright Act, 17 U.S.C. §512(c)(3), for more information):
 <br/>
     an electronic or physical signature of the person authorized to act on behalf of the owner of the copyright interest;
     <br/>
@@ -93,7 +93,7 @@ If you believe that your work has been copied in a way that constitutes copyrigh
     <br/>
     a statement by you that you have a good faith belief that the disputed use is not authorized by the copyright owner, its agent, or the law; and
     <br/>
-    a statement by you that the above information in your notice is accurate and, under penalty of perjury, that you are the copyright owner or authorized to act on the copyright owner's behalf.
+    a statement by you that the above information in your notice is accurate and, under penalty of perjury, that you are the copyright owner or authorized to act on the copyright owner&rsquo;s behalf.
     <br/>
 If you believe that your work has been removed or disabled by mistake or misidentification, please provide the Startupbidder’s Copyright Agent with a written counter-notification containing at least the following information (please confirm these requirements with your legal counsel or see Section 512(g)(3) of the U.S. Copyright Act, 17 U.S.C. §512(g)(3), for more information):
 <br/>
@@ -103,7 +103,7 @@ If you believe that your work has been removed or disabled by mistake or misiden
     <br/>
     a statement made under penalty of perjury that the subscriber has a good faith belief that the material was removed or disabled as a result of mistake or misidentification of the material to be removed or disabled; and
     <br/>
-    the subscriber's name, address, telephone number, and a statement that the subscriber consents to the jurisdiction of the Federal District Court for the judicial district in which the address is located, or if the subscriber's address is outside of the United States, for any judicial district in which the service provider may be found, and that the subscriber will accept service of process from the person who provided notification under subsection (c)(1)(C) or an agent of such person.
+    the subscriber&rsquo;s name, address, telephone number, and a statement that the subscriber consents to the jurisdiction of the Federal District Court for the judicial district in which the address is located, or if the subscriber&rsquo;s address is outside of the United States, for any judicial district in which the service provider may be found, and that the subscriber will accept service of process from the person who provided notification under subsection (c)(1)(C) or an agent of such person.
     <br/>
 You acknowledge that if you fail to comply with all of the aforementioned notice requirements, your notification or counter-notification may not be valid and that Startupbidder may ignore such incomplete or inaccurate notices without liability of any kind.
 <br/>
@@ -161,7 +161,7 @@ Electronic Communications Privacy Act Notice (18USC 2701-2711): COMPANY MAKES NO
 <br/>
 13. Indemnification
 <br/>
-You shall defend, indemnify, and hold harmless Company, its affiliates and each of its, and its affiliates employees, contractors, directors, suppliers and representatives from all liabilities, claims, and expenses, including reasonable attorneys' fees, that arise from or relate to your use or misuse of, or access to, the Site, Service, Content or otherwise from your User Submissions, violation of the Terms of Use, or infringement by you, or any third party using the your account, of any intellectual property or other right of any person or entity. Company reserves the right to assume the exclusive defense and control of any matter otherwise subject to indemnification by you, in which event you will assist and cooperate with Company in asserting any available defenses.
+You shall defend, indemnify, and hold harmless Company, its affiliates and each of its, and its affiliates employees, contractors, directors, suppliers and representatives from all liabilities, claims, and expenses, including reasonable attorneys&rsquo; fees, that arise from or relate to your use or misuse of, or access to, the Site, Service, Content or otherwise from your User Submissions, violation of the Terms of Use, or infringement by you, or any third party using the your account, of any intellectual property or other right of any person or entity. Company reserves the right to assume the exclusive defense and control of any matter otherwise subject to indemnification by you, in which event you will assist and cooperate with Company in asserting any available defenses.
 <br/>
 14.  Limitation of Liability
 <br/>
@@ -184,7 +184,7 @@ The Terms of Use are the entire agreement between you and Company with respect t
 <br/>
 18. Miscellaneous
 <br/>
-Company shall not be liable for any failure to perform its obligations hereunder where such failure results from any cause beyond Company’s reasonable control, including, without limitation, mechanical, electronic or communications failure or degradation (including "line-noise" interference). The Terms of Use are personal to you, and are not assignable, transferable or sublicensable by you except with Company's prior written consent. Company may assign, transfer or delegate any of its rights and obligations hereunder without consent. No agency, partnership, joint venture, or employment relationship is created as a result of the Terms of Use and neither party has any authority of any kind to bind the other in any respect. In any action or proceeding to enforce rights under the Terms of Use, the prevailing party will be entitled to recover costs and attorneys' fees. All notices under the Terms of Use will be in writing and will be deemed to have been duly given when received, if personally delivered or sent by certified or registered mail, return receipt requested; when receipt is electronically confirmed, if transmitted by facsimile or e-mail; or the day after it is sent, if sent for next day delivery by recognized overnight delivery service.
+Company shall not be liable for any failure to perform its obligations hereunder where such failure results from any cause beyond Company’s reasonable control, including, without limitation, mechanical, electronic or communications failure or degradation (including "line-noise" interference). The Terms of Use are personal to you, and are not assignable, transferable or sublicensable by you except with Company&rsquo;s prior written consent. Company may assign, transfer or delegate any of its rights and obligations hereunder without consent. No agency, partnership, joint venture, or employment relationship is created as a result of the Terms of Use and neither party has any authority of any kind to bind the other in any respect. In any action or proceeding to enforce rights under the Terms of Use, the prevailing party will be entitled to recover costs and attorneys&rsquo; fees. All notices under the Terms of Use will be in writing and will be deemed to have been duly given when received, if personally delivered or sent by certified or registered mail, return receipt requested; when receipt is electronically confirmed, if transmitted by facsimile or e-mail; or the day after it is sent, if sent for next day delivery by recognized overnight delivery service.
 <br/>
 Effective Date: January 1, 2012
             </dd>
@@ -218,12 +218,12 @@ Any personal information or content that you voluntarily disclose in public area
 <br/>
 5. Entrepreneurs
 <br/>
-By entering into our User Agreement, Startupbidder Entrepreneurs agree to not abuse other users' personal information. Abuse is defined as using personal information for any purpose other than those explicitly specified in the Entrepreneur’s Listing, or is not related to fulfilling delivery of a product or service explicitly specified in the Entrepreneur’s Listing.
-Startupbidder Entrepreneurs never receive users' financial information.
+By entering into our User Agreement, Startupbidder Entrepreneurs agree to not abuse other users&rsquo; personal information. Abuse is defined as using personal information for any purpose other than those explicitly specified in the Entrepreneur’s Listing, or is not related to fulfilling delivery of a product or service explicitly specified in the Entrepreneur’s Listing.
+Startupbidder Entrepreneurs never receive users&rsquo; financial information.
 <br/>
 6. Investors
 <br/>
-A Startupbidder Investor's information is only available to the entrpreneurs for which they have placed a bid, and then only basic identifying information such as the name, location, and number and size of previous funded projects in the aggregate without revealing which projects were funded or the specific details of such funding.  Investor bids details are never made available to other investors in any fashion.
+A Startupbidder Investor&rsquo;s information is only available to the entrpreneurs for which they have placed a bid, and then only basic identifying information such as the name, location, and number and size of previous funded projects in the aggregate without revealing which projects were funded or the specific details of such funding.  Investor bids details are never made available to other investors in any fashion.
 <br/>
 7. Modification
 <br/>

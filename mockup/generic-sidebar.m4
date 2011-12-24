@@ -3,15 +3,17 @@ include(tile.m4)
 <!-- right column -->
 <div class="span-8 last">
     <div class="boxtitle">A PIECE OF THE ACTION</div>
-    <p class="sidebox">
-With Startupbidder, you're plugged into the pulse of the startup community.
+    <div class="sidebox">
+        <p>
+With Startupbidder, you&rsquo;re plugged into the pulse of the startup community.
 Keep up to date on all the latest startups.  Post your own startup as an
 entrepreneuer, getting feedback and exposure to investors worldwide.  As an
 accredited investor, you can bid for a piece of the action. 
-    </p>
+        </p>
+    </div>
 
     <div class="boxtitle">TOP COMPANIES</div>
-
+'
 tilespan(`einstein', `5 days left', `SOFTWARE', `117', `2011-08-24', `Semantic Search', `Waltham, MA, USA', `
         Semantic search seeks to improve search accuracy by
         understanding searcher intent and the contextual meaning of terms as they

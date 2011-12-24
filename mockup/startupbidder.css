@@ -114,8 +114,9 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 /* box styles */
 .boxtitle { margin-top: 10px; color: #333333; }
 .boxpanel { width: 622px; border: 2px solid #999999; padding: 2px; overflow: auto; background: #e3e3e3; margin-bottom: 10px; }
-.boxpanel dl dt { margin-left: 0; padding: 5px; }
-.boxpanel dl dd { margin-left: 0; padding: 5px; background: #f2f2f2; }
+.boxpanel p { padding: 10px; text-indent: 50px; }
+.boxpanel dl dt { margin-left: 0; padding: 10px; }
+.boxpanel dl dd { margin-left: 0; padding: 10px; background: #f2f2f2; font-weight: normal; }
 .boxoption { display: block; float: left; text-align: center; height: 25px; padding-top: 5px; margin-bottom: 5px; }
 .boxoption1 { width: 146px; }
 .boxoption2 { width: 160px; }
@@ -123,6 +124,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .boxoption:hover { opacity: 0.5; }
 .boxselected { background: white; }
 .sidebox { width: 302px; border: 2px solid #999999; padding: 2px; overflow: auto; background: #e3e3e3; }
+.sidebox p { padding: 10px; text-indent: 50px; }
 .sideboxcol1 { width: 146px; float: left; margin-right: 10px; }
 .sideboxcol2 { width: 146px; float: left; }
 .sideboxlist { list-style: none; list-style-position: inside; margin-left: 0; padding-left: 0; }
