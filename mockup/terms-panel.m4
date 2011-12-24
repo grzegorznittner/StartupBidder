@@ -188,6 +188,7 @@ Company shall not be liable for any failure to perform its obligations hereunder
 <br/>
 Effective Date: January 1, 2012
             </dd>
+
             <dt>Privacy Policy</dt>
             <dd>
 1. General<br/>
@@ -235,9 +236,242 @@ To modify or delete any or all of the personal information you have provided to 
 <br/>
 People under 18 are not permitted to use Startupbidder on their own, and so this privacy policy makes no provision for their use of the site.
             </dd>
+
             <dt>Investors</dt>
             <dd>
+In order to place a bid on the Startupbidder site, you must certify that you are legally able to bid on small company investments in your jurisdiction.  You may be required to be an "accredited investor", "sophisticated investor", "professional investor", or some other term depending on jurisdiction.  Generally it depends on which country you are currently residing in.  Specific rules you must follow concerning applicable countries are included below:
+
+<p>
+1. Australia
+<br/>
+You confirm that you are a "Sophisticated Investor" client as defined in the Corporations Act of Australia.
+<br/>
+The Corporations Act requires that an offer of securities or debentures needs prospectus disclosure to investors unless excluded in section 708. Along with exclusions for small offerings, subsections 708(8) to 708(20) of the Corporations Act identify certain persons and circumstances as not requiring disclosure, including the following persons:
+<br/>
+    a 'sophisticated investor;' which is defined where:
+<br/>
+        the minimum amount payable for securities is at least $500,000; or
+<br/>
+        the collective amount invested in the same class of securities adds up to $500,000; or
+<br/>
+        a qualified accountant certifies the net asset worth of $2.5 million or gross income for each of the last two financial years of at least $250,000 per annum.
+<br/>
+The exemption for 'sophisticated investors' recognises that certain investors are able to protect their own investment interests without regulatory protection.
+<br/>
+BY PLACING A BID ON THIS SITE, YOU ARE HEREBY CERTIFYING THAT YOU MEET THE CONDITIONS REQUIRED TO BE CONSIDERED A SOPHISTICATED INVESTOR UNDER THE LAWS OF AUSTRALIA.
+</p>
+
+<p>
+2. Canada
+<br/>
+You confirm that you are a An "Accredited Investor" (as defined in NI 45 106) as:
+<br/>
+    1. a person registered under the securities legislation of a jurisdiction of Canada, as an adviser or dealer, other than a person registered solely as a limited market dealer under one or both of the Securities Act (Ontario) or the Securities Act (Newfoundland and Labrador); or
+<br/>
+    2. an individual registered or formerly registered under the securities legislation of a jurisdiction of Canada as a representative of a person referred to in paragraph (a); or
+<br/>
+    3. an individual who, either alone or with a spouse, beneficially owns financial assets having an aggregate realizable value that before taxes, but net of any related liabilities, exceeds $1,000,000; or
+<br/>
+    4. an individual whose net income before taxes exceeded $200,000 in each of the two most recent calendar years or whose net income before taxes combined with that of a spouse exceeded $300,000 in each of the two most recent calendar years and who, in either case, reasonably expects to exceed that net income level in the current calendar year; or
+<br/>
+    5. an individual who, either alone or with a spouse, has net assets of at least $5,000,000; or
+<br/>
+    6. a person, other than an individual or investment fund, that has net assets of at least $5,000,000 as shown on its most recently prepared financial statements; or
+<br/>
+    7. a trust company or trust corporation registered or authorized to carry on business under the Trust and Loan Companies Act (Canada) or under comparable legislation in a jurisdiction of Canada or a foreign jurisdiction, acting on behalf of a fully managed account managed by the trust company or trust corporation, as the case may be; or
+<br/>
+    8. an investment fund that distributes or has distributed its securities only to (i) a person that is or was an accredited investor at the time of the distribution, (ii) a person that acquires or acquired securities in the circumstances referred to in sections 2.10 of NI 45 106 [Minimum amount investment] or 2.19 of NI 45 106 [Additional investment in investment funds], or (iii) a person described in paragraph (i) or (ii) that acquires or acquired securities under section 2.18 of NI 45 106 [Investment fund reinvestment];
+<br/>
+    9. a person acting on behalf of a fully managed account managed by that person, if that person is registered or authorized to carry on business as an adviser or the equivalent under the securities legislation of a jurisdiction of Canada or a foreign jurisdiction; or
+<br/>
+    10. a person in respect of which all of the owners of interests, direct, indirect or beneficial, except the voting securities required by law to be owned by directors, are persons that are accredited investors (as defined in NI 45 106); or
+<br/>
+    11. an investment fund that is advised by a person registered as an adviser or a person that is exempt from registration as an adviser.
+<br/>
+BY PLACING A BID ON THIS SITE, YOU ARE HEREBY CERTIFYING THAT YOU MEET THE CONDITIONS REQUIRED TO BE CONSIDERED AN ACCREDITED INVESTOR UNDER THE JURISDICTION OF THE CANADA.
+</p>
+
+<p>
+3. European Union
+<br/>
+You confirm that you are a "Professional Investor" client as defined in Annex II of Directive 2004/39/EC of the European Parliament and of the Council of 21 April 2004 on markets in financial instruments.
+<br/>
+At a minimum, two of the following criteria should be satisfied:
+<br/>
+- you have carried out transactions, in significant size, on the relevant market at an average frequency of 10 per quarter over the previous four quarters,
+<br/>
+- the size of the your financial instrument portfolio, defined as including cash deposits and financial instruments exceeds EUR 500000,
+<br/>
+- you work or have worked in the financial sector for at least one year in a professional position, which requires knowledge of the transactions or services envisaged.
+<br/>
+You agree that you are a client as defined above and waive the benefit of the detailed rules of conduct according to the following procedure:
+<br/>
+- you are agreeing in writing that you wish to be treated as a professional client, either generally or in respect of a particular investment service or transaction, or type of transaction or product,
+<br/>
+- you have been given a clear written warning of the protections and investor compensation rights you may lose,
+<br/>
+- you are agreeing in writing, that you are aware of the consequences of losing such protections.
+<br/>
+BY PLACING A BID ON THIS SITE, YOU ARE HEREBY CERTIFYING THAT YOU MEET THE CONDITIONS REQUIRED TO BE CONSIDERED A PROFESSIONAL INVESTOR UNDER THE LAWS OF THE EUROPEAN UNION.
+</p>
+
+<p>
+4. Hong Kong
+<br/>
+You hereby assert that you are a Professional Investor as defined by the Hong Kong
+Securities and Futures (Professional Investor) Rules (Made by the Securities
+and Futures Commission under section 397(1) of the Securities and Futures
+Ordinance (Cap. 571)), Section 3:
+<br/>
+Persons prescribed as professional investors
+<br/>
+For the purposes of paragraph (j) of the definition of "professional investor"
+in section 1 of Part 1 of Schedule 1 to the Ordinance, the following persons are
+prescribed as within the meaning of that definition for the purposes of any provision
+of the Ordinance other than Schedule 5---
+<br/>
+(a) any trust corporation having been entrusted under the trust or trusts of which
+it acts as a trustee with total assets of not less than $40 million or its equivalent
+in any foreign currency---
+<br/>
+(i) as stated in the most recent audited financial statement prepared---
+<br/>
+(A) in respect of the trust corporation; and
+<br/>
+(B) within 16 months before the relevant date;
+<br/>
+(ii)
+as ascertained by referring to one or more audited financial statements,
+each being the most recent audited financial statement, prepared---
+<br/>
+(A) in respect of the trust or any of the trusts; and
+<br/>
+(B) within 16 months before the relevant date; or
+<br/>
+(iii)
+as ascertained by referring to one or more custodian statements issued
+to the trust corporation---
+<br/>
+(A) in respect of the trust or any of the trusts; and
+<br/>
+(B) within 12 months before the relevant date;
+<br/>
+(b) any individual, either alone or with any of his associates on a joint account,
+having a portfolio of not less than $8 million or its equivalent in any foreign
+currency---
+<br/>
+(i) as stated in a certificate issued by an auditor or a professional accountant
+of the individual within 12 months before the relevant date; or
+<br/>
+(ii)
+as ascertained by referring to one or more custodian statements issued
+to the individual (either alone or with the associate) within 12 months before the
+relevant date;
+<br/>
+(c) any corporation or partnership having---
+<br/>
+(i) a portfolio of not less than $8 million or its equivalent in any foreign
+currency; or
+<br/>
+(ii)
+total assets of not less than $40 million or its equivalent in any foreign
+currency,
+as ascertained by referring to---
+<br/>
+(iii)
+the most recent audited financial statement prepared---
+<br/>
+(A) in respect of the corporation or partnership (as the case may be); and
+<br/>
+(B) within 16 months before the relevant date; or
+<br/>
+(iv)
+one or more custodian statements issued to the corporation or partnership
+(as the case may be) within 12 months before the relevant date; and
+<br/>
+(d) any corporation the sole business of which is to hold investments and which is
+wholly owned by an individual who, either alone or with any of his associates on a
+joint account, falls within the description in paragraph (b).
+</p>
+
+<p>
+6. Singapore
+<br/>
+You hereby assert that you are an accredited investor as per Notice No: COMP-2009-002, Subject: Accredited, Professional and Expert Investors in Singapore permitted to trade DGCX Products, Issue Date: January 7, 2009, whereby it is stated that:
+<br/>
+(a) “accredited investor” means —
+<br/>
+(i) an individual —
+<br/>
+(A) whose net personal assets exceed in value SGD 2 million (or its equivalent in a
+foreign currency) or such other amount as the Authority may prescribe in place of the
+first amount; or
+<br/>
+(B) whose income in the preceding 12 months is not less than SGD 300,000 (or its
+equivalent in a foreign currency) or such other amount as the Authority may
+prescribe in place of the first amount;
+<br/>
+(ii) a corporation with net assets exceeding SGD 10 million in value (or its equivalent in a
+foreign currency) or such other amount as the Authority may prescribe, in place of the first
+amount, as determined by —
+<br/>
+(A) the most recent audited balance-sheet of the corporation; or
+<br/>
+(B) where the corporation is not required to prepare audited accounts regularly, a
+balance-sheet of the corporation certified by the corporation as giving a true and fair
+view of the state of affairs of the corporation as of the date of the balance-sheet,
+which date shall be within the preceding 12 months;
+<br/>
+(iii) the trustee of such trust as the Authority may prescribe, when acting in that capacity; or
+<br/>
+(iv) such other person as the Authority may prescribe;
+</p>
+
+<p>
+7. United Kingdom
+<br/>
+You confirm that you are a certified high net worth individual or sophisticated investor for the purposes of the Financial Services and Markets Act 2000 (Financial Promotion) Order 2001.  You are a high net worth individual because at least one of the following applies:
+<br/>
+You had during the financial year immediately preceding the date of this registration an annual income of £100,000 or more you held throughout the financial year immediately preceding the date of this registration net assets of £250,000 or more excluding: the property which is your primary residence or any loan secured on that residence any rights under a qualifying contract of insurance within the meaning of the Financial Services and Markets Act 2000 (Regulated Activities) Order 2001 any benefits (in the form of pensions or otherwise) which are payable on termination of service or death or retirement and to which you are (or your dependents are) or may be entitled.
+<br/>
+You are a sophisticated investor in respect of investment in Early Stage Businesses because at least one of the following applies:
+<br/>
+You are: a member of a network or syndicate of business angels and have been so for at least the last six months prior to the date below; or have made more than one investment in an unlisted company in the two years prior to the date below;  or are working, or have worked in the two years prior to the date below, in a professional capacity in the private equity sector, or in the provision of finance for small and medium enterprises; or are currently, or have been in the two years prior to the date below, a director of a company with an annual turnover of at least £1 million.
+<br/>
+You understand that being a certified high net worth individual or a sophisticated investor means:
+<br/>
+You can receive financial promotions that may not have been approved by a person authorised by the Financial Services Authority the content of such financial promotions may not conform to rules issued by the Financial Services Authority by registering and agreeing to this statement you may lose significant rights: you may have no right to seek compensation from the Financial Services Compensation Scheme you may have no right to complain to the Financial Services Authority or the Financial Ombudsman Scheme.
+<br/>
+BY PLACING A BID ON THIS SITE, YOU ARE HEREBY CERTIFYING THAT YOU MEET THE CONDITIONS REQUIRED TO BE CONSIDERED A HIGH NET WORTH INDIVIDUAL OR SOPHISTICATED INVESTOR UNDER THE LAWS OF THE UNITED KINGDOM.
+</p>
+
+<p>
+8. United States
+<br/>
+Under the Securities Act of 1933, a company that offers or sells its securities must register the securities with the SEC or find an exemption from the registration requirements. The Act provides companies with a number of exemptions. For some of the exemptions, such as rules 505 and 506 of Regulation D, a company may sell its securities to what are known as "accredited investors."
+<br/>
+The federal securities laws define the term accredited investor in Rule 501 of Regulation D as:
+<br/>
+    a bank, insurance company, registered investment company, business development company, or small business investment company;
+<br/>
+    an employee benefit plan, within the meaning of the Employee Retirement Income Security Act, if a bank, insurance company, or registered investment adviser makes the investment decisions, or if the plan has total assets in excess of $5 million;
+<br/>
+    a charitable organization, corporation, or partnership with assets exceeding $5 million;
+<br/>
+    a director, executive officer, or general partner of the company selling the securities;
+<br/>
+    a business in which all the equity owners are accredited investors;
+<br/>
+    a natural person who has individual net worth, or joint net worth with the person’s spouse, that exceeds $1 million at the time of the purchase, excluding the value of the primary residence of such person;
+<br/>
+    a natural person with income exceeding $200,000 in each of the two most recent years or joint income with a spouse exceeding $300,000 for those years and a reasonable expectation of the same income level in the current year; or
+<br/>
+    a trust with assets in excess of $5 million, not formed to acquire the securities offered, whose purchases a sophisticated person makes.
+<br/>
+BY PLACING A BID ON THIS SITE, YOU ARE HEREBY CERTIFYING THAT YOU MEET THE CONDITIONS REQUIRED TO BE CONSIDERED AN ACCREDITED INVESTOR UNDER THE LAWS OF THE UNITED STATES.
+</p>
             </dd>
+
             <dt>Disclaimers</dt>
             <dd>
 1. General Disclaimer
