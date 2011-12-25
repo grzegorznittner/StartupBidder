@@ -6,21 +6,29 @@
         <div class="formitem">
             <span class="inputlabel">QUESTION</span>
             <span class="inputfield">
-                <input class="text inputtext" type="text" name="question" id="question"></input>
+                <input class="text inputwidetext" type="text" name="question" id="question"></input>
+            </span>
+            <span class="inputicon">
+                <div class="checkboxredicon"></div>
             </span>
         </div>
         <div class="formitem clear">
             <span class="inputlabel">DETAILS</span>
             <span class="inputfield">
-                <textarea class="textarea inputtext" cols="20" rows="5" name="details" id="details"></textarea>
+                <textarea class="textarea inputwidetext" cols="20" rows="5" name="details" id="details"></textarea>
+            </span>
+            <span class="inputicon">
+                <div class="checkboxredicon"></div>
             </span>
         </div>
         <div class="formitem clear">
             <span class="inputlabel">LINK</span>
             <span class="inputfield">
-                <input class="text inputtext" type="text" name="linkurl" id="linkurl"></input>
+                <input class="text inputwidetext" type="text" name="linkurl" id="linkurl"></input>
             </span>
-            <span class="inputhelp">Relevant URL, if any.</span>
+            <span class="inputicon">
+                <div class="checkboxredicon"></div>
+            </span>
         </div>
         <!-- recaptcha section
             public key: 6LdaiMsSAAAAAM1nDtyXO1iXqRc15_qZ0D81_s0K
@@ -39,7 +47,7 @@
 	    </div>
         <div class="formitem clear">
 	        <span class="inputlabel"></span>
-            <span class="span-3 inputbutton" id="submitbutton">
+            <span class="push-9 span-3 inputbutton" id="submitbutton">
                 SUBMIT
             </span>
         </div>

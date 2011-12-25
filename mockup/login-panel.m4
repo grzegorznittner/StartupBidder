@@ -6,20 +6,29 @@
         <div class="formitem">
             <span class="inputlabel">EMAIL</span>
             <span class="inputfield">
-                <input class="text inputtext" type="text" name="loginemail" id="loginemail"></input>
+                <input class="text inputwidetext" type="text" name="loginemail" id="loginemail"></input>
+            </span>
+            <span class="inputicon">
+                <div class="checkboxredicon"></div>
             </span>
         </div>
         <div class="formitem clear">
             <span class="inputlabel">PASSWORD</span>
             <span class="inputfield">
-                <input class="text inputtext" type="password" name="loginpassword" id="loginpassword"></input>
+                <input class="text inputwidetext" type="password" name="loginpassword" id="loginpassword"></input>
             </span>
+            <span class="inputicon">
+                <div class="checkboxredicon"></div>
+            </span>
+        </div>
+        <div class="formitem clear">
+	        <span class="inputlabel"></span>
             <a href="forgot-password.html"><span class="inputlink">Forgot your password?</span></a>
         </div>
         <div class="formitem clear">
-	    <span class="inputlabel"></span>
+	        <span class="inputlabel"></span>
             <a href="profile-page.html">
-                <span class="span-3 inputbutton" id="loginbutton">
+                <span class="push-9 span-3 inputbutton" id="loginbutton">
                     LOGIN
                 </span>
             </a>
@@ -38,13 +47,13 @@
         <div class="formitem clear">
             <span class="inputlabel">NAME</span>
             <span class="inputfield">
-                <input class="text inputtext" type="text" name="signupname" id="signupname"></input>
+                <input class="text inputwidetext" type="text" name="signupname" id="signupname"></input>
             </span>
         </div>
         <div class="formitem clear">
             <span class="inputlabel">LOCATION</span>
             <span class="inputfield">
-                <input class="text inputtext" type="text" name="signuplocation" id="signuplocation"></input>
+                <input class="text inputwidetext" type="text" name="signuplocation" id="signuplocation"></input>
             </span>
             <span class="inputfield">Address, City<br>State/Province, Country</span>
         </div>
@@ -52,19 +61,28 @@
         <div class="formitem clear">
             <span class="inputlabel">EMAIL</span>
             <span class="inputfield">
-                <input class="text inputtext" type="text" name="signupemail" id="signupemail"></input>
+                <input class="text inputwidetext" type="text" name="signupemail" id="signupemail"></input>
+            </span>
+            <span class="inputicon">
+                <div class="checkboxredicon"></div>
             </span>
         </div>
         <div class="formitem clear">
             <span class="inputlabel">PASSWORD</span>
             <span class="inputfield">
-                <input class="text inputtext" type="password" name="signuppassword" id="signuppassword"></input>
+                <input class="text inputwidetext" type="password" name="signuppassword" id="signuppassword"></input>
+            </span>
+            <span class="inputicon">
+                <div class="checkboxredicon"></div>
             </span>
         </div>
         <div class="formitem clear">
             <span class="inputlabel">CONFIRM</span>
             <span class="inputfield">
-                <input class="text inputtext" type="password" name="signupconfirm" id="signupconfirm"></input>
+                <input class="text inputwidetext" type="password" name="signupconfirm" id="signupconfirm"></input>
+            </span>
+            <span class="inputicon">
+                <div class="checkboxredicon"></div>
             </span>
         </div>
 <!--
@@ -99,7 +117,7 @@
         </div>
         <div class="formitem clear">
 	    <span class="inputlabel"></span>
-            <span class="span-3 inputbutton" id="joinbutton">
+            <span class="push-9 span-3 inputbutton" id="joinbutton">
                 JOIN
             </span>
         </div>

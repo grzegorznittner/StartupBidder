@@ -12,6 +12,7 @@ body > #wrap { height: auto; min-height: 100%; }
 .footertext, .footerlink { position: relative; font-weight: bold; font-size: 18px; top: 2px; color: #dcd8db; }
 .footerlink:hover { opacity: 0.5; cursor: pointer; }
 .copyrighttext { font-size: 10px; font-weight: bold; top: 10px; position: relative; }
+.attention { color: #8A1F11; }
 
 /* general styles */
 body { font-size: 14px; font-weight: bold; color: #4083a9; background: #f2f2f2; }
@@ -73,6 +74,8 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 /* banner styles */
 .banner { width: 980px; height: 80px; margin-top: 10px; }
 .bannertext { font-size: 30px; font-weight: bold; top: 15px; position: relative; left: 15px; }
+.bannersmall { width: 980px; height: 50px; margin-top: 10px; }
+.bannertextsmall { font-size: 30px; font-weight: bold; }
 .follow { top: 33px; position: relative; }
 .followpromo { top: 20px; position: relative; }
 .followimg { top: 20px; position: relative; }
@@ -93,6 +96,8 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .commenticon { width: 20px; height: 20px; background: url(images/icons/comment_20x20.png); }
 .bidicon { width: 20px; height: 20px; background: url(images/icons/bid_20x20.png); }
 .notificationicon { width: 20px; height: 20px; background: url(images/icons/email_20x20.png); background-position: 0px 2px; }
+.checkboxgreenicon { width: 32px; height: 32px; background: url(images/icons/checkbox_green_32x32.png); background-position: 0px 0px; }
+.checkboxredicon { width: 32px; height: 32px; background: url(images/icons/checkbox_red_32x32.png); background-position: 0px 0px; }
 
 /* searchbar styles */
 .searchbar { height: 24px; margin-top: 4px; font-size: 14px !important; font-weight: bold; }
@@ -106,9 +111,11 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .inputlabel { text-align: right; width: 106px; float: left; padding-top: 10px; margin-right: 10px; color: #49515a; }
 .inputfield { float: left; margin-right: 10px; }
 .inputcaptcha { float: left; margin-right: 10px; margin-bottom: 10px; }
-.inputtext { font-size: 14px !important; font-weight: bold; color: white !important; background: #49515a !important; }
+.inputtext,.inputwidetext { font-size: 14px !important; font-weight: bold; color: white !important; background: #49515a !important; }
+.inputwidetext { width: 420px !important; }
 .inputcheckbox { font-size: 14px !important; font-weight: bold; color: white !important; background: #49515a !important; margin-top: 4px; height: 33px; }
 .inputhelp { float: left; padding-top: 10px; height: 33px; }
+.inputicon { float: left; padding-top: 6px; }
 .inputlink { float: left; margin-right: 10px; padding-top: 10px; height: 33px; }
 .inputlink:hover { opacity: 0.5; cursor: pointer; }
 .inputimgbutton { float: left; margin-right: 10px; margin-top: 5px; }
