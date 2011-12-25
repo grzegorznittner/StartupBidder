@@ -18,9 +18,11 @@
         </div>
         <div class="formitem clear">
 	    <span class="inputlabel"></span>
-            <span class="span-3 inputbutton" id="loginbutton">
-                LOGIN
-            </span>
+            <a href="profile-page.html">
+                <span class="span-3 inputbutton" id="loginbutton">
+                    LOGIN
+                </span>
+            </a>
         </div>
     </div>
 

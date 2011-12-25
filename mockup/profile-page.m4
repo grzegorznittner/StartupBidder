@@ -1,4 +1,3 @@
-define(`companiespage',`
 `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 '
@@ -8,14 +7,12 @@ include(head.m4)
 <div id="wrap">
 <div id="main">
 '
-include(header.m4)
+include(header-loggedin.m4)
 `
 <div class="container">
 '
-include(banner.m4)
-include(searchbar.m4)
-include($1)
-include(main-sidebar.m4)
+include(profile-panel.m4)
+include(profile-sidebar.m4)
 `
 </div> <!-- end container -->
 </div> <!-- end main -->
@@ -26,4 +23,3 @@ include(footer.m4)
 </body>
 </html>
 '
-')

@@ -1,6 +1,6 @@
 `
   <div class="searchbar span-15 searchbox">
-    <input type="text" class="text inputtext" name="searchbox" id="searchbox" value="search"></input>
+    <input type="text" class="text inputtext" name="searchbox" id="searchbox" value="Search"></input>
   </div>
   <div class="searchbar span-1 searchbutton">
     <a href="search-results-page.html"><div class="spritebg searchimg"></div></a>

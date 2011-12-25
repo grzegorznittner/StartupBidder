@@ -15,7 +15,7 @@ body > #wrap { height: auto; min-height: 100%; }
 
 /* general styles */
 body { font-size: 14px; font-weight: bold; color: #4083a9; background: #f2f2f2; }
-.curvedborder, .sidebox, .sideboxbutton, .tile, .boxpanel, .boxselected, .inputbutton {
+.curvedborder, .sidebox, .sideboxbutton, .tile, .boxpanel, .boxselected, .inputbutton, .sideboxselected {
   -moz-border-radius: 5px; -webkit-border-radius: 5px; border-radius: 5px;
   -moz-box-shadow: 3px 3px 3px 3px #ccc; -webkit-box-shadow: 3px 3px 3px 3px #ccc; box-shadow: 3px 3px 3px 3px #ccc; }
 
@@ -66,7 +66,9 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .logotextgrey { position: relative; font-weight: bold; font-size: 24px; top: 8px; color: #dcd8db; }
 .headerlink:hover { opacity: 0.5; cursor: pointer; }
 .logotext:hover { opacity: 0.5; cursor: pointer; }
-.loginspan { text-align: right; }
+.headerprofile { float: right; text-align: right; }
+.headerprofilelink:hover { opacity: 0.5; cursor: pointer; }
+.headericon { position: relative; top: 16px; width: 26px; margin-right: 10px; float: right; }
 
 /* banner styles */
 .banner { width: 980px; height: 80px; margin-top: 10px; }
@@ -88,6 +90,9 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .google { width: 32px; height: 32px; background: url(images/icons/google_32.png); }
 .searchimg { width: 29px; height: 24px; background: url(images/icons/search.gif); }
 .thumbup { width: 20px; height: 20px; background: url(images/icons/thumb_up.gif); }
+.commenticon { width: 20px; height: 20px; background: url(images/icons/comment_20x20.png); }
+.bidicon { width: 20px; height: 20px; background: url(images/icons/bid_20x20.png); }
+.notificationicon { width: 20px; height: 20px; background: url(images/icons/email_20x20.png); background-position: 0px 2px; }
 
 /* searchbar styles */
 .searchbar { height: 24px; margin-top: 4px; font-size: 14px !important; font-weight: bold; }
@@ -108,9 +113,13 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .inputlink:hover { opacity: 0.5; cursor: pointer; }
 .inputimgbutton { float: left; margin-right: 10px; margin-top: 5px; }
 .inputimgbutton:hover { opacity: 0.5; cursor: pointer; }
-.inputbutton { text-align: center; font-size: 18px; height: 33px; padding-top: 6px; margin-bottom: 10px; margin-top: 5px; } 
+.inputbutton { text-align: center; font-size: 18px; height: 33px; padding-top: 4px; margin-bottom: 10px; margin-top: 5px; } 
 .inputbutton:hover { opacity: 0.5; cursor: pointer; }
-
+.formtitle { font-size: 24px; padding-left: 5px; }
+.formfull { float: left; }
+.formcol1 { float: left; width: 301px; margin-right: 10px; padding-left: 5px; }
+.formcol2 { float: left; width: 306px; }
+.formcol1text { margin-left: 10px; }
 
 /* box styles */
 .boxtitle { margin-top: 10px; color: #333333; }
@@ -124,6 +133,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .boxoption3 { width: 160px; }
 .boxoption:hover { opacity: 0.5; }
 .boxselected { background: white; }
+.sideboxselected { background: white; !important}
 .sidebox { width: 302px; border: 2px solid #999999; padding: 2px; overflow: auto; background: #e3e3e3; }
 .sidebox p { padding: 10px; text-indent: 10px; }
 .sideboxcol1 { width: 146px; float: left; margin-right: 10px; }
@@ -132,6 +142,15 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .sideboxlist>li:hover { opacity: 0.5; cursor: pointer; }
 .sideboxbutton { width: 310px; height: 50px; font-size: 34px; font-weight: bold; text-align: center; }
 .sideboxbutton:hover { opacity: 0.5; cursor: pointer; }
+.sideboxcompanylink { width: 298px; float: left; margin-left: 2px; }
+.sideboxcompanylink:hover { opacity: 0.5; cursor: pointer; }
+.sideboxlink:hover { opacity: 0.5; cursor: pointer; }
+.sideboxtitle { float: left; font-size: 24px; text-align: right; margin-left: 10px; margin-right: 10px; height: 43px; }
+.sideboxtitledetail { float: left; padding-top: 11px; }
+.sideboxnotify { float: left; width: 302px; }
+.sideboxicon { width: 26px; margin-right: 10px; float: left; }
+.sideboxnotifytext { float: left; width: 266px; font-weight: normal; }
+.sideboxdate { font-size: 10px; }
 
 /* tiles */
 .tile { width: 146px; height: 296px; border: 2px solid #999999; border-radius: 5px; overflow: hidden; margin-bottom: 10px; position: relative; background: #e3e3e3; }
@@ -161,5 +180,5 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .gkleen { background: url(images/gkleen.jpg); border-radius: 3px; }
 
 /* debug styles */
-/*.container { background: url(images/blueprint.jpg); background-position: -160px 0px; } */
+/* .container { background: url(images/blueprint.jpg); background-position: -160px 0px; }  */
 
