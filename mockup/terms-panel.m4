@@ -248,7 +248,7 @@ You confirm that you are a "Sophisticated Investor" client as defined in the Cor
 <br/>
 The Corporations Act requires that an offer of securities or debentures needs prospectus disclosure to investors unless excluded in section 708. Along with exclusions for small offerings, subsections 708(8) to 708(20) of the Corporations Act identify certain persons and circumstances as not requiring disclosure, including the following persons:
 <br/>
-    a 'sophisticated investor;' which is defined where:
+    a &rsquo;sophisticated investor;&rsquo; which is defined where:
 <br/>
         the minimum amount payable for securities is at least $500,000; or
 <br/>
@@ -256,7 +256,7 @@ The Corporations Act requires that an offer of securities or debentures needs pr
 <br/>
         a qualified accountant certifies the net asset worth of $2.5 million or gross income for each of the last two financial years of at least $250,000 per annum.
 <br/>
-The exemption for 'sophisticated investors' recognises that certain investors are able to protect their own investment interests without regulatory protection.
+The exemption for &rsquo;sophisticated investors&rsquo; recognises that certain investors are able to protect their own investment interests without regulatory protection.
 <br/>
 BY PLACING A BID ON THIS SITE, YOU ARE HEREBY CERTIFYING THAT YOU MEET THE CONDITIONS REQUIRED TO BE CONSIDERED A SOPHISTICATED INVESTOR UNDER THE LAWS OF AUSTRALIA.
 </p>
