@@ -102,6 +102,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .presentationicon { width: 16px; height: 16px; background: url(images/icons/presentation.png); }
 .spreadsheeticon { width: 16px; height: 16px; background: url(images/icons/spreadsheet.png); }
 .linkicon { width: 16px; height: 16px; background: url(images/icons/jump.png); }
+.mapicon { width: 16px; height: 16px; background: url(images/icons/map.png); }
 
 /* searchbar styles */
 .searchbar { height: 24px; margin-top: 4px; font-size: 14px !important; font-weight: bold; }
@@ -176,6 +177,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .sideboxicon { width: 26px; margin-right: 10px; float: left; }
 .sideboxnotifytext { float: left; width: 266px; font-weight: normal; }
 .sideboxdate { font-size: 10px; }
+.sideboxmap { width: 302px; height: 302px; }
 
 /* tiles */
 .tile { width: 146px; height: 296px; border: 2px solid #999999; border-radius: 5px; overflow: hidden; margin-bottom: 10px; position: relative; background: #e3e3e3; }

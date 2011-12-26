@@ -13,5 +13,6 @@
 
     <!-- startupbidder specific overrides -->
   	<link rel="stylesheet" href="startupbidder.css" type="text/css" />
+
 </head>
 '

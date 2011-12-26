@@ -1,20 +1,31 @@
 `
 <!-- right column -->
 <div class="span-8 last">
-    <div class="boxtitle">ABOUT LISTING</div>
+    <div class="boxtitle">ABOUT COMPANY</div>
     <div class="sidebox">
         <span class="formlabel">CATEGORY</span>
         <span class="formlabelvalue">Software</span>
-        <span class="formlabel clear">LOCATION</span>
-        <span class="formlabelvalue">London, UK</span>
         <span class="formlabel clear">POSTED</span>
         <span class="formlabelvalue">2011-09-16</span>
         <span class="formlabel clear">WEBSITE</span>
         <span class="formlabelvalue formlink">
-            <a href="wave.google.com">
+            <a href="http://wave.google.com" target="_blank">
                 <div class="span-1 linkicon"></div>weliketokillemail.com
             </a>
         </span>
+    </div>
+
+    <div class="boxtitle">COMPANY LOCATION</div>
+    <div class="sidebox">
+            <div>
+        <a href="http://nominatim.openstreetmap.org/search?q=221b baker st,london,uk" class="formlink" target="_blank">
+                <div class="span-1 mapicon"></div>221B Baker St, London, UK
+        </a>
+        
+            </div>
+            <div class="sideboxmap">
+                <img src="http://ojw.dev.openstreetmap.org/StaticMap/?lat=51.499117116569&lon=-0.12359619140625&z=5&show=1&fmt=png&w=302&h=302&att=none"></img>
+            </div>
     </div>
 
     <div class="boxtitle">DOCUMENTS</div>
