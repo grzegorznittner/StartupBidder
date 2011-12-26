@@ -5,10 +5,11 @@ define(`tilediv',`
     <div class="tiledaystext">$2</div>
     <div class="tiletype"></div>
     <div class="tiletypetext">$3</div>
-    <div class="tilepoints">
+    <div class="tilepoints"></div>
+    <div class="tilepointstext">
         <div class="tilevotes">$4</div>
         <div class="thumbup tilevoteimg"></div>
-        <div class="tileposted">on $5</div>
+        <div class="tileposted">$5</div>
     </div>
     <a href="listing-guest-page.html">
     <p class="tiledesc">

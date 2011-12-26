@@ -6,7 +6,7 @@
             <div class="formimg wave"></div>
         </div>
         <div class="formcol2fourth">
-            <span class="formtitlefourth">Kill Email, Inc.</span><br/>
+            <span class="formtitlefourth uneditabletext">Kill Email, Inc.</span><br/>
             by Rashdi Ambudalabamahadi<br/>
             Making email as obsolete as the paper memo.
             <div class="formbottom span-11">

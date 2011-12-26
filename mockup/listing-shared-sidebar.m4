@@ -30,28 +30,31 @@
 
     <div class="boxtitle">DOCUMENTS</div>
     <div class="sidebox">
-        <span class="formlabel clear">Slide Deck</span>
+        <span class="smallformlabel clear">Slide Deck</span>
         <span class="formlabelvalue formlink">
+            <div class="span-1 smallinputicon presentationicon"></div>
             <a href="http://oamp.od.nih.gov/contracttoolbox/Roadmap_StartBusiness/RoadmapPowerpointSlides%5CTomSidesFinalRoadmapPresentation.ppt">
-                <div class="span-1 presentationicon"></div>Presentation
+                <span class="span-3 smallinputbutton" id="downloadpresentation">DOWNLOAD</span>
             </a>
         </span>
-        <span class="formlabel">Business Plan</span>
+        <span class="smallformlabel">Business Plan</span>
         <span class="formlabelvalue formlink">
+            <div class="span-1 smallinputicon documenticon"></div>
             <a href="www.freep.com/assets/PDF/1202gmplan.pdf">
-                <div class="span-1 documenticon"></div>Document
+                <span class="span-3 smallinputbutton" id="downloadbusinessplan">DOWNLOAD</span>
             </a>
         </span>
-        <span class="formlabel clear">Financials</span>
+        <span class="smallformlabel clear">Financials</span>
         <span class="formlabelvalue formlink">
+            <div class="span-1 smallinputicon spreadsheeticon"></div>
             <a href="http://andrewchenblog.com/wp-content/uploads/2009/01/virtual-items-ltv-model.xls">
-                <div class="span-1 spreadsheeticon"></div>Statements
+                <span class="span-3 smallinputbutton" id="downloadfinancials">DOWNLOAD</span>
             </a>
         </span>
     </div>
 
     <div class="boxtitle">ASKING FUNDING</div>
-    <div class="sidebox">
+    <div class="sidebox uneditabletext">
         <div class="sideboxtitlecompact">$25,000</div>
         <div class="sideboxdesc">FOR 10% COMMON EQUITY</div>
         <div class="sideboxdesc">OWNER VALUATION IS $250,000</div>
@@ -59,7 +62,7 @@
     </div>
 
     <div class="boxtitle">CURRENT BIDS</div>
-    <div class="sidebox">
+    <div class="sidebox uneditabletext">
         <div class="sideboxtitlecompact">2 BIDS</div>
         <div class="sideboxdesc">BEST BID IS</div>
         <div class="sideboxtitlecompact">$16,000</div>

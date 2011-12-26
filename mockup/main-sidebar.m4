@@ -5,7 +5,7 @@
     <div class="sideboxbutton">POST NOW</div>
 
     <div class="boxtitle">FUND A STARTUP</div>
-    <div class="sideboxbutton">INVEST NOW</div>
+    <a href="closing-page.html"><div class="sideboxbutton">INVEST NOW</div></a>
 
     <div class="boxtitle">INDUSTRIES</div>
     <div class="sidebox">

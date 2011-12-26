@@ -10,13 +10,12 @@ body > #wrap { height: auto; min-height: 100%; }
 * html .clearfix { height: 1%; }
 .clearfix { display: block; }
 .footertext, .footerlink { position: relative; font-weight: bold; font-size: 18px; top: 2px; color: #dcd8db; }
-.footerlink:hover { opacity: 0.5; cursor: pointer; }
 .copyrighttext { font-size: 10px; font-weight: bold; top: 10px; position: relative; }
 .attention { color: #8A1F11; }
 
 /* general styles */
 body { font-size: 14px; font-weight: bold; color: #4083a9; background: #f2f2f2; }
-.curvedborder, .sidebox, .sideboxbutton, .tile, .boxpanel, .boxselected, .inputbutton, .sideboxselected {
+.curvedborder, .sidebox, .sideboxbutton, .tile, .boxpanel, .boxselected, .inputbutton, .smallinputbutton, .sideboxselected {
   -moz-border-radius: 5px; -webkit-border-radius: 5px; border-radius: 5px;
   -moz-box-shadow: 3px 3px 3px 3px #ccc; -webkit-box-shadow: 3px 3px 3px 3px #ccc; box-shadow: 3px 3px 3px 3px #ccc; }
 
@@ -36,6 +35,7 @@ a { text-decoration: none; }
 .darkgreybg { background: #49515a; }
 .smokegrey { color: #333333; }
 .white { color: #ffffff; }
+.uneditabletext { color: #49515a; }
 
 /* buttons */
 .buttonbg, .sideboxbutton {
@@ -48,7 +48,7 @@ background: -ms-linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 
 background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%);
 filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e2e2e2', endColorstr='#999999',GradientType=0 );
 }
-.smallbuttonbg, .inputbutton {
+.smallbuttonbg, .inputbutton, .smallinputbutton {
 background: #999999;
 background: -moz-linear-gradient(top, #dcd8db 0%, #d1d1d1 49%, #dbdbdb 50%, #999999 100%);
 background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#dcd8db), color-stop(49%,#d1d1d1), color-stop(50%,#dbdbdb), color-stop(100%,#999999));
@@ -65,10 +65,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .headertext, .headerlink { position: relative; font-weight: bold; font-size: 18px; top: 14px; color: #dcd8db; }
 .logotextblue { position: relative; font-weight: bold; font-size: 24px; top: 8px; color: #32aff6; }
 .logotextgrey { position: relative; font-weight: bold; font-size: 24px; top: 8px; color: #dcd8db; }
-.headerlink:hover { opacity: 0.5; cursor: pointer; }
-.logotext:hover { opacity: 0.5; cursor: pointer; }
 .headerprofile { float: right; text-align: right; }
-.headerprofilelink:hover { opacity: 0.5; cursor: pointer; }
 .headericon { position: relative; top: 16px; width: 26px; margin-right: 10px; float: right; }
 
 /* banner styles */
@@ -79,7 +76,6 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .follow { top: 33px; position: relative; }
 .followpromo { top: 20px; position: relative; }
 .followimg { top: 20px; position: relative; }
-.followimg:hover { opacity: 0.5; cursor: pointer; }
 .followtext {}
 .followtextit { font-style: italic; }
 .pull-15px { left: -15px; position: relative; }
@@ -92,7 +88,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .googleplus { width: 32px; height: 32px; background: url(images/icons/google_plus.png); background-position: 1px 1px; }
 .google { width: 32px; height: 32px; background: url(images/icons/google_32.png); }
 .searchimg { width: 29px; height: 24px; background: url(images/icons/search.gif); }
-.thumbup { width: 20px; height: 20px; background: url(images/icons/thumb_up.gif); }
+.thumbup { width: 20px; height: 20px; background: url(images/icons/thumbs_up.png); }
 .commenticon { width: 20px; height: 20px; background: url(images/icons/comment_20x20.png); }
 .bidicon { width: 20px; height: 20px; background: url(images/icons/bid_20x20.png); }
 .notificationicon { width: 20px; height: 20px; background: url(images/icons/email_20x20.png); background-position: 0px 2px; }
@@ -109,53 +105,55 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .searchtext { padding-top: 10px; height: 18px; }
 #searchbox { width: 580px; }
 .searchbutton { height: 20px; padding-top: 8px; }
-.searchbutton:hover { opacity: 0.5; cursor: pointer; }
 
 /* form styles */
 .formitem { }
-.inputlabel { text-align: right; width: 106px; float: left; padding-top: 10px; margin-right: 10px; color: #49515a; }
-.formlabel { text-align: right; width: 106px; float: left; margin-right: 10px; color: #49515a; }
-.inputfield { float: left; margin-right: 10px; }
-.inputcaptcha { float: left; margin-right: 10px; margin-bottom: 10px; }
+.inputlabel, .formlabel, .smallformlabel, .inputfield, .inputcaptcha, .inputhelp,
+.inputicon, .inputlink, .inputimgbutton,
+.formlabelvalue, .formfull, .formcol1, .formcol2, .formcol1fourth, .formcol2fourth,
+.formimg, .formcolicon
+    { float: left; }
+.inputlabel, .formlabel, .smallformlabel, .inputfield, .inputcaptcha, .inputlink, .inputimgbutton, .formcol1, .formcol1fourth, .formimg
+    { margin-right: 10px; }
+.inputlabel, .formlabel, .smallformlabel { text-align: right; width: 106px; color: #49515a; }
+.inputlabel { padding-top: 10px; }
+.inputcaptcha { margin-bottom: 10px; }
 .inputtext,.inputwidetext { font-size: 14px !important; font-weight: bold; color: white !important; background: #49515a !important; }
 .inputwidetext { width: 420px !important; }
 .inputcheckbox { font-size: 14px !important; font-weight: bold; color: white !important; background: #49515a !important; margin-top: 4px; height: 33px; }
-.inputhelp { float: left; padding-top: 10px; height: 33px; }
-.formlabelvalue { float: left; width: 180px; }
-.formlink:hover { opacity: 0.5; cursor: pointer; }
-.inputicon { float: left; padding-top: 6px; }
-.inputlink { float: left; margin-right: 10px; padding-top: 10px; height: 33px; }
-.inputlink:hover { opacity: 0.5; cursor: pointer; }
-.inputimgbutton { float: left; margin-right: 10px; margin-top: 5px; }
-.inputimgbutton:hover { opacity: 0.5; cursor: pointer; }
+.inputhelp { padding-top: 10px; height: 33px; }
+.formlabelvalue { width: 180px; }
+.inputicon { padding-top: 6px; }
+.inputlink { padding-top: 10px; height: 33px; }
+.inputimgbutton { margin-top: 5px; }
 .inputbutton { text-align: center; font-size: 18px; height: 33px; padding-top: 4px; margin-bottom: 10px; margin-top: 5px; } 
-.inputbutton:hover { opacity: 0.5; cursor: pointer; }
+.smallinputbutton { text-align: center; font-size: 14px; height: 26px; padding-top: 2px; margin-bottom: 5px; margin-top: 5px; } 
 .formtitle { font-size: 24px; padding-left: 5px; }
 .formtitlefourth { font-size: 24px; padding-left: }
-.formfull { float: left; }
-.formcol1 { float: left; width: 301px; margin-right: 10px; padding-left: 5px; }
-.formcol2 { float: left; width: 306px; }
-.formcol1fourth { float: left; width: 146px; margin-right: 10px; padding-left: 0px; }
-.formcol2fourth { float: left; width: 456px; position: relative; height: 146px; }
+.formcol1 { width: 301px; padding-left: 5px; }
+.formcol2 { width: 306px; }
+.formcol1fourth { width: 146px; padding-left: 0px; }
+.formcol2fourth { width: 456px; position: relative; height: 146px; }
 .formcol1text { margin-left: 10px; }
-.formimg { float: left; width: 146px; height: 146px; margin-right: 10px; }
-.formcolicon { float: left; width: 40px; }
+.formimg { width: 146px; height: 146px; }
+.formcolicon { width: 40px; }
 .formbottom { bottom: 0; position: absolute; }
 .formstatistic { font-size: 18px; text-align: center; }
 .formstatisticicon { padding-top: 3px; }
+.smallinputicon { margin-top: 10px; }
+.smallformlabel { margin-top: 10px; }
 
 /* box styles */
 .boxtitle { margin-top: 10px; color: #333333; }
 .boxpanel { width: 622px; border: 2px solid #999999; padding: 2px; overflow: auto; background: #e3e3e3; margin-bottom: 10px; }
 .boxpanel p { padding: 10px; text-indent: 10px; }
-.boxpanel dl dt { margin-left: 0; padding: 10px; }
+.boxpanel dl dt { margin-left: 0; padding: 10px; color: #333333; }
 .boxpanel dl dd { margin-left: 0; padding: 10px; background: #f2f2f2; font-weight: normal; }
-.commentpanel dl dt { font-size: 10px; }
+.commentpanel dl dt { font-size: 10px; padding-top: 5px; padding-bottom: 5px; }
 .boxoption { display: block; float: left; text-align: center; height: 25px; padding-top: 5px; margin-bottom: 5px; }
 .boxoption1 { width: 146px; }
 .boxoption2 { width: 160px; }
 .boxoption3 { width: 160px; }
-.boxoption:hover { opacity: 0.5; }
 .boxselected { background: white; }
 .sideboxselected { background: white; !important}
 .sidebox { width: 302px; border: 2px solid #999999; padding: 2px; overflow: auto; background: #e3e3e3; }
@@ -163,12 +161,8 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .sideboxcol1 { width: 146px; float: left; margin-right: 10px; }
 .sideboxcol2 { width: 146px; float: left; }
 .sideboxlist { list-style: none; list-style-position: inside; margin-left: 0; padding-left: 0; }
-.sideboxlist>li:hover { opacity: 0.5; cursor: pointer; }
 .sideboxbutton { width: 310px; height: 50px; font-size: 34px; font-weight: bold; text-align: center; }
-.sideboxbutton:hover { opacity: 0.5; cursor: pointer; }
 .sideboxcompanylink { width: 298px; float: left; margin-left: 2px; }
-.sideboxcompanylink:hover { opacity: 0.5; cursor: pointer; }
-.sideboxlink:hover { opacity: 0.5; cursor: pointer; }
 .sideboxtitle { float: left; font-size: 24px; text-align: right; margin-left: 10px; margin-right: 10px; height: 43px; }
 .sideboxtitledetail { float: left; padding-top: 11px; }
 .sideboxtitlecompact { font-size: 24px; margin-left: 5px; margin-right: 10px; }
@@ -182,21 +176,19 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 /* tiles */
 .tile { width: 146px; height: 296px; border: 2px solid #999999; border-radius: 5px; overflow: hidden; margin-bottom: 10px; position: relative; background: #e3e3e3; }
 .tileimg { width: 146px; height: 146px; }
-.tileimg:hover { opacity: 0.5; cursor: pointer; }
-.tiledays { width: 146px; height: 30px; opacity: 0.5; background-color: #000000; position: absolute; top: 0px; }
-.tiledaystext { width: 146px; height; 30px; position: absolute; top: 0px; padding: 2px; padding-top: 5px; color: white; }
-.tiletype { width: 146px; height: 30px; opacity: 0.5; background-color: #000000; position: absolute; bottom: 150px; }
-.tiletypetext { width: 146px; height; 30px; position: absolute; bottom: 150px; padding: 2px; padding-top: 5px; color: white; }
+.tiledays, .tiledaystext, .tiletype, .tiletypetext, .tilepoints, .tilepointstext { width: 146px; height: 30px; position: absolute; }
+.tiledays, .tiletype, .tilepoints { opacity: 0.5; background-color: #000000; }
+.tiledaystext, .tiletypetext, .tilepointstext { padding: 4px; color: white; }
+.tiledays, .tiledaystext { top: 0px; }
+.tiletype, .tiletypetext { top: 116px; }
+.tilepoints, .tilepointstext { top: 266px; }
 .tiledesc { width: 142px; height: 110px; position: absolute; top: 150px; padding: 2px; overflow: hidden; }
-.tiledesc:hover { opacity: 0.5; cursor: pointer; }
 .tilecompany { }
-.tileloc { font-size: 12px; }
-.tiledetails { font-size: 12px; font-weight: normal; }
-.tilepoints { width: 142px; height: 30px; position: absolute; top: 265px; padding-left: 2px; padding-right: 2px; }
-.tilevotes { float: left; height: 25px; padding-top: 4px; padding-right: 2px; }
-.tilevoteimg { float: left; margin-top: 2px;}
-.tilevoteimg:hover { opacity: 0.5; cursor: pointer; }
-.tileposted { float: right; height: 25px; padding-top: 5px; padding-right: 2px; font-size: 12px; font-weight: normal; }
+.tileloc, .tiledetails, .tileposted { font-size: 12px; }
+.tiledetails, .tileposted { font-weight: normal; }
+.tilevotes, .tilevoteimg, .tileposted { position: absolute; }
+.tilevotes { left: 30px; }
+.tileposted { top: 6px; right: 12px; text-align: right; }
 
 /* images */
 .einstein { background: url(images/einstein.jpg); border-radius: 3px; }
@@ -205,6 +197,16 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .telecom { background: url(images/telecom.jpg); border-radius: 3px; }
 .socialrec { background: url(images/socialrec.jpg); border-radius: 3px; }
 .gkleen { background: url(images/gkleen.jpg); border-radius: 3px; }
+
+/* hover effect */
+.tileimg:hover, .tiledesc:hover, .tilevoteimg:hover,
+.boxoption:hover, .sideboxlist>li:hover, .sideboxbutton:hover, .sideboxcompanylink:hover, .sideboxlink:hover,
+.followimg:hover,
+.headerlink:hover, .logotext:hover, .headerprofilelink:hover,
+.footerlink:hover,
+.searchbutton:hover,
+.formlink:hover, .inputlink:hover, .inputimgbutton:hover, .inputbutton:hover, .smallinputbutton:hover
+{ opacity: 0.5; cursor: pointer; }
 
 /* debug styles */
 /* .container { background: url(images/blueprint.jpg); background-position: -160px 0px; } */
