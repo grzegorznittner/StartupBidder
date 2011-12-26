@@ -23,12 +23,9 @@
         </div>
         <div class="formitem clear">
 	        <span class="inputlabel"></span>
-            <a href="forgot-password.html"><span class="inputlink">Forgot your password?</span></a>
-        </div>
-        <div class="formitem clear">
-	        <span class="inputlabel"></span>
+            <span class="inputhelp span-9"><a href="forgot-password.html"><span class="inputlink">Forgot your password?</span></a></span>
             <a href="profile-page.html">
-                <span class="push-9 span-3 inputbutton" id="loginbutton">
+                <span class="span-3 inputbutton" id="loginbutton">
                     LOGIN
                 </span>
             </a>
@@ -110,14 +107,11 @@
             </span>
 	    </div>
         <div class="formitem clear">
-	    <span class="inputlabel"></span>
-            <span class="inputhelp">
-                By clicking below you hereby agree to the <a href="terms-page.html">Terms and Conditions</a>.
+	        <span class="inputlabel"></span>
+            <span class="inputhelp span-9">
+                You hereby agree to the <a href="terms-page.html">Terms and Conditions</a>.
             </span>
-        </div>
-        <div class="formitem clear">
-	    <span class="inputlabel"></span>
-            <span class="push-9 span-3 inputbutton" id="joinbutton">
+            <span class="span-3 inputbutton" id="joinbutton">
                 JOIN
             </span>
         </div>

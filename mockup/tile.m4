@@ -1,6 +1,6 @@
 define(`tilediv',`
 <div class="tile">
-    <div class="tileimg $1"></div>
+    <a href="listing-guest-page.html"><div class="tileimg $1"></div></a>
     <div class="tiledays"></div>
     <div class="tiledaystext">$2</div>
     <div class="tiletype"></div>
@@ -10,11 +10,13 @@ define(`tilediv',`
         <div class="thumbup tilevoteimg"></div>
         <div class="tileposted">on $5</div>
     </div>
+    <a href="listing-guest-page.html">
     <p class="tiledesc">
         <span class="tilecompany">$6</span><br/>
         <span class="tileloc">$7</span><br/>
         <span class="tiledetails">$8</span>
     </p>
+    </a>
 </div>
 ')
 define(`tilespan',`

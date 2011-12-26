@@ -51,12 +51,36 @@ Reference:
 
             <dt>Are you offering shares in these companies for sale?</dt>
             <dd>
-                        No.  Startupbidder is an informational site linking startup entpreneurs with investors.
-                        We are not offering shares for sale or promoting any shares via this site.
-                        All investments must be concluded between the parties themselves with proper legal representation.
-                        Furthermore, only accredited investors may notify the lister of their interest in bidding.
+                No.  Startupbidder is an informational site linking startup entpreneurs with investors.
+                We are not offering shares for sale or promoting any shares via this site.
+                All investments must be concluded between the parties themselves with proper legal representation.
+                Furthermore, only accredited investors may notify the lister of their interest in bidding.
             </dd>
 
+            <dt>What stops people from using this site to steal my idea?</dt>
+            <dd>
+
+The short answer is that the Terms of Use of this site forbid violation of any
+copyrights or intellectual property that you may have posted to this site.  The
+long answer is that nothing stops someone from stealing your idea in the
+startup community, but this is not important.  For one, ideas are not
+patentable or copyrightable, and trade secrets seldom remain so for long.  If
+you really need protection for your idea, you must devise an embodied method
+and apparatus for it, and going through the long and difficult and expensive
+process of acquiring a patent in all marketed jurisdictions is the only way to
+protect your invention.  But more importantly, ideas are always floating around
+and being shared.  What is more important in the startup community is not your
+idea, but your implementation and the team that is driving the business.  Just
+ask any venture capitalist, what matters more to a startup, the idea, or the
+team. Team, team, team, team, team, I even like just saying the word, team.
+Marketing, sales, strategy, operations, these are what make or break a company.
+Microsoft was not the first desktop application provider, Google was not the
+first search engine, and Facebook was not the first social network.  Rather,
+they were able to implement and execute on existing ideas in a new and better
+way.  And this site is aimed to help you do just that.
+
+            </dd>
+ 
         </dl>
     </div>
 

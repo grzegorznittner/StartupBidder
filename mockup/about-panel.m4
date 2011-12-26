@@ -25,9 +25,9 @@ the brave new world of startup financing.
     <div class="boxtitle">USING STARTUPBIDDER</div>
     <div class="boxpanel">
         <span class="boxoption boxoption1 boxselected">video</span>&nbsp;&nbsp;&nbsp;<span class="boxoption boxoption2">entrepreneur</span>&nbsp;&nbsp;&nbsp;<span class="boxoption boxoption3">investor</span>
-	<div class="videocontainer">
+	    <div class="videocontainer">
       	    <iframe width="622" height="452" src="http://www.youtube.com/embed/tQlsXFfSuZU" frameborder="0" allowfullscreen></iframe> 
-	</div>
+	    </div>
     </div>
 
 </div> <!-- end left column -->
