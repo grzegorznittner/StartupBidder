@@ -15,7 +15,7 @@ body > #wrap { height: auto; min-height: 100%; }
 
 /* general styles */
 body { font-size: 14px; font-weight: bold; color: #4083a9; background: #f2f2f2; }
-.curvedborder, .sidebox, .sideboxbutton, .tile, .boxpanel, .boxselected, .inputbutton, .smallinputbutton, .sideboxselected {
+.curvedborder, .sidebox, .sideboxbutton, .sideboxbuttoninterior, .tile, .boxpanel, .boxselected, .inputbutton, .smallinputbutton, .sideboxselected {
   -moz-border-radius: 5px; -webkit-border-radius: 5px; border-radius: 5px;
   -moz-box-shadow: 3px 3px 3px 3px #ccc; -webkit-box-shadow: 3px 3px 3px 3px #ccc; box-shadow: 3px 3px 3px 3px #ccc; }
 
@@ -38,7 +38,7 @@ a { text-decoration: none; }
 .uneditabletext { color: #49515a; }
 
 /* buttons */
-.buttonbg, .sideboxbutton {
+.buttonbg, .sideboxbutton, .sideboxbuttoninterior {
 background: #999999;
 background: -moz-linear-gradient(top, #e2e2e2 0%, #d1d1d1 49%, #dbdbdb 50%, #999999 100%);
 background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#e2e2e2), color-stop(49%,#d1d1d1), color-stop(50%,#dbdbdb), color-stop(100%,#999999));
@@ -118,16 +118,23 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .inputlabel, .formlabel, .smallformlabel { text-align: right; width: 106px; color: #49515a; }
 .inputlabel { padding-top: 10px; }
 .inputcaptcha { margin-bottom: 10px; }
-.inputtext,.inputwidetext { font-size: 14px !important; font-weight: bold; color: white !important; background: #49515a !important; }
+.inputtext, .inputtextpct, .inputwidetext, .sideinputtext, .sideinputtitle, .sideinputtextarea,
+.inputselect, .inputcheckbox
+    { font-weight: bold; color: white !important; background: #49515a !important; }
+.inputtext, .inputtextpct, .inputwidetext, .sideinputtext, .sideinputtextarea,
+.inputselect, .inputcheckbox
+    { font-size: 14px !important; }
 .inputwidetext { width: 420px !important; }
-.inputcheckbox { font-size: 14px !important; font-weight: bold; color: white !important; background: #49515a !important; margin-top: 4px; height: 33px; }
+.inputcheckbox { margin-top: 4px; height: 33px; }
+.inputselect { margin-top: 2px; height: 29px; }
 .inputhelp { padding-top: 10px; height: 33px; }
 .formlabelvalue { width: 180px; }
 .inputicon { padding-top: 6px; }
 .inputlink { padding-top: 10px; height: 33px; }
 .inputimgbutton { margin-top: 5px; }
-.inputbutton { text-align: center; font-size: 18px; height: 33px; padding-top: 4px; margin-bottom: 10px; margin-top: 5px; } 
-.smallinputbutton { text-align: center; font-size: 14px; height: 26px; padding-top: 2px; margin-bottom: 5px; margin-top: 5px; } 
+.inputbutton, .smallinputbutton { text-align: center; margin-top: 5px; } 
+.inputbutton { font-size: 18px; height: 33px; padding-top: 4px; margin-bottom: 10px; } 
+.smallinputbutton { font-size: 14px; height: 26px; padding-top: 2px; margin-bottom: 5px; } 
 .formtitle { font-size: 24px; padding-left: 5px; }
 .formtitlefourth { font-size: 24px; padding-left: }
 .formcol1 { width: 301px; padding-left: 5px; }
@@ -142,6 +149,11 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .formstatisticicon { padding-top: 3px; }
 .smallinputicon { margin-top: 10px; }
 .smallformlabel { margin-top: 10px; }
+.inputtextpct { width: 35px !important; }
+.sideinputtitle { font-size: 24px !important; }
+.sideinputtitle, .sideinputtextarea { width: 280px !important; }
+.sideinputtextarea { height: 80px; }
+.sideboxlabelsmall { float: left; padding-top: 12px; width: 35px; }
 
 /* box styles */
 .boxtitle { margin-top: 10px; color: #333333; }
@@ -161,7 +173,9 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .sideboxcol1 { width: 146px; float: left; margin-right: 10px; }
 .sideboxcol2 { width: 146px; float: left; }
 .sideboxlist { list-style: none; list-style-position: inside; margin-left: 0; padding-left: 0; }
-.sideboxbutton { width: 310px; height: 50px; font-size: 34px; font-weight: bold; text-align: center; }
+.sideboxbutton, .sideboxbuttoninterior { height: 50px; font-size: 34px; font-weight: bold; text-align: center; }
+.sideboxbutton { width: 310px; }
+.sideboxbuttoninterior { width: 290px; margin: 6px; }
 .sideboxcompanylink { width: 298px; float: left; margin-left: 2px; }
 .sideboxtitle { float: left; font-size: 24px; text-align: right; margin-left: 10px; margin-right: 10px; height: 43px; }
 .sideboxtitledetail { float: left; padding-top: 11px; }
@@ -200,7 +214,8 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 
 /* hover effect */
 .tileimg:hover, .tiledesc:hover, .tilevoteimg:hover,
-.boxoption:hover, .sideboxlist>li:hover, .sideboxbutton:hover, .sideboxcompanylink:hover, .sideboxlink:hover,
+.boxoption:hover, .sideboxlist>li:hover, .sideboxbutton:hover, .sideboxbuttoninterior:hover,
+.sideboxcompanylink:hover, .sideboxlink:hover,
 .followimg:hover,
 .headerlink:hover, .logotext:hover, .headerprofilelink:hover,
 .footerlink:hover,

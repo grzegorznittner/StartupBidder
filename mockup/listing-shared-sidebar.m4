@@ -71,7 +71,32 @@
     </div>
 
     <div class="boxtitle">YOUR BID</div>
-    <div class="sideboxbutton">INVEST NOW</div>
+    <div class="sidebox uneditabletext">
+        <div class="sideboxtitlecompact">
+            <input class="title sideinputtitle" type="text" value="$25,000" maxlength="8" size="8" id="bidamount" name="bidamonut"></input>
+        </div>
+        <div class="sideboxdesc">
+            <span class="sideboxlabelsmall">FOR</span>
+            <input class="text inputtextpct" type="text" value="10%" maxlength="3" size="3" id="bidequity" name="bidequity"></input>
+            <select class="inputselect" id="bidtype" name="bidtype">
+                <option value="common">Common Stock</option>
+                <option value="convertible">Convertible Note</option>
+                <option value="preferred">Preferred Stock</option>
+            </select>
+        </div>
+        <div class="sideboxdesc">
+            <span class="sideboxlabelsmall">@</span>
+            <input class="text inputtextpct" type="text" value="12%" maxlength="3" size="3" id="bidrate" name="bidrate" disabled="true"></input>
+            % INTEREST
+        </div>
+        <div class="sideboxdesc">YOUR VALUATION IS $250,000</div>
+        <div class="sideboxdesc">
+            <textarea class="sideinputtextarea" id="bidnote" name="bidnote" rows="20" cols="5">Your note to the bidder here...</textarea>
+        </div>
+        <a href="listing-page.html">
+            <div class="sideboxbuttoninterior">BID NOW</div>
+        </a>
+    </div>
 
 '
 include(companies-sidebar.m4)

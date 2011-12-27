@@ -11,7 +11,7 @@ define(`tilediv',`
         <div class="thumbup tilevoteimg"></div>
         <div class="tileposted">$5</div>
     </div>
-    <a href="listing-guest-page.html">
+    <a href="listing-page.html">
     <p class="tiledesc">
         <span class="tilecompany">$6</span><br/>
         <span class="tileloc">$7</span><br/>
