@@ -22,7 +22,7 @@ body { font-size: 14px; font-weight: bold; color: #4083a9; background: #f2f2f2; 
 
 /* link styles */
 a:link, a:visited { text-decoration: none; color: #4083a9; }
-a:hover, a:focus { opacity: 0.5; cursor: pointer; }
+a:hover { opacity: 0.6; cursor: pointer; }
 
 /* colors */
 .crystalbluebg { background: #efffff; }
@@ -195,7 +195,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .tile { width: 146px; height: 296px; border: 2px solid #999999; border-radius: 5px; overflow: hidden; margin-bottom: 10px; position: relative; background: #e3e3e3; }
 .tileimg { width: 146px; height: 146px; }
 .tiledays, .tiledaystext, .tiletype, .tiletypetext, .tilepoints, .tilepointstext { width: 146px; height: 30px; position: absolute; }
-.tiledays, .tiletype, .tilepoints { opacity: 0.5; background-color: #000000; }
+.tiledays, .tiletype, .tilepoints { opacity: 0.6; background-color: #000000; }
 .tiledaystext, .tiletypetext, .tilepointstext { padding: 4px; color: white; }
 .tiledays, .tiledaystext { top: 0px; }
 .tiletype, .tiletypetext { top: 116px; }
@@ -226,7 +226,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .footerlink:hover,
 .searchbutton:hover,
 .formlink:hover, .inputlink:hover, .inputimgbutton:hover, .inputbutton:hover, .smallinputbutton:hover
-{ opacity: 0.5; cursor: pointer; }
+{ opacity: 0.6; cursor: pointer; }
 
 /* debug styles */
 /* .container { background: url(images/blueprint.jpg); background-position: -160px 0px; } */
