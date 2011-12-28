@@ -72,7 +72,7 @@
 
     <div class="boxtitle">YOUR BID</div>
     <div class="sidebox uneditabletext">
-        <div class="sideboxtitlecompact">
+        <div>
             <input class="title sideinputtitle" type="text" value="$25,000" maxlength="8" size="8" id="bidamount" name="bidamonut"></input>
         </div>
         <div class="sideboxdesc">
@@ -85,9 +85,9 @@
             </select>
         </div>
         <div class="sideboxdesc">
-            <span class="sideboxlabelsmall">@</span>
+            <span class="sideboxlabelsmall">AT</span>
             <input class="text inputtextpct" type="text" value="12%" maxlength="3" size="3" id="bidrate" name="bidrate" disabled="true"></input>
-            % INTEREST
+            INTEREST
         </div>
         <div class="sideboxdesc">YOUR VALUATION IS $250,000</div>
         <div class="sideboxdesc">

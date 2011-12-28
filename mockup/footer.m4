@@ -11,7 +11,7 @@
       </span>
     </div>
     <div class="span-4 last">
-      <span class="copyrighttext lightgrey">Copyright &copy; 2011 Startupbidder</span>
+      <span class="copyrighttext lightgrey">Copyright &copy;2011 Startupbidder</span>
     </div>
   </div>
 </div>

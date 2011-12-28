@@ -64,6 +64,20 @@ say the least, did not happen.
         </dl>
 	</div>
 
+    <div class="boxtitle">ADD COMMENT</div>
+    <div class="boxpanel commentpanel">
+        <div>
+            <textarea class="textarea inputfullwidetextshort" id="addcommenttext" name="addcommentnext" cols="20" rows="5">Put your comment here..."</textarea>
+        </div>
+        <div>
+            <a href="listing-page.html">
+                <span class="push-12 span-3 inputbutton" id="addcommentbutton">
+                    POST
+                </span>
+            </a>
+        </div>
+    </div>
+
     <div class="boxtitle">COMMENTS</div>
     <div class="boxpanel commentpanel">
         <dl>

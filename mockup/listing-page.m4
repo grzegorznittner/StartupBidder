@@ -11,8 +11,8 @@ include(header.m4)
 `
 <div class="container">
 '
-include(listing-shared-panel.m4)
-include(listing-shared-sidebar.m4)
+include(listing-panel.m4)
+include(listing-sidebar.m4)
 `
 </div> <!-- end container -->
 </div> <!-- end main -->
