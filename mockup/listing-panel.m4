@@ -36,6 +36,91 @@ say the least, did not happen.
         </p>
 	</div>
 
+<!-- OWNER VIEW -->
+<!--
+    <div class="boxtitle">BIDS</div>
+    <div class="boxpanel">
+        <dl>
+            <dt>Offered by CUSTOMER - WHO IS THE TARGET CUSTOMER?</dt>
+            <dd>Any computer geek bored with their current email client.</dd>
+            <dt>PROBLEM - WHAT IS THE PROBLEM THEY HAVE NOW?</dt>
+            <dd>Email clients are very poorly designed in terms of the number of advertisements shown there, so that advertisers are missing eyeballs.</dd>
+        </dl>
+    </div>
+-->
+
+    <!-- INVESTOR VIEW -->
+    <div class="boxtitle">YOUR BIDS</div>
+    <div class="boxpanel">
+        <dl>
+            <dt>
+                <div>
+                    <div class="normalicon bidicon"></div>
+                    You offerred on 2011/11/29 11:45
+                </div>
+                <div>$16,000 for 50% equity as common stock, company valued at $32,000</div>
+            </dt>
+            <dd>We see a lot of potential in you, but given your limited history, we feel that a conservative valuation is appropriate at this time.</dd>
+            <dt>
+                <div>
+                    <div class="normalicon countericon"></div>
+                    The owner counter-offerred on 2011/11/29 11:50
+                </div>
+                <div>$16,000 for 20% equity as common stock, company valued at $80,000</div>
+            </dt>
+            <dd>Even though my history is limited, the fact that I have a working prototype with paying customers requires a higher valuation be assigned.</dd>
+            <dt>
+                <div>
+                    <div class="normalicon countericon"></div>
+                    You counter-offerred on 2011/11/30 9:10
+                </div>
+                <div>$16,000 for 25% equity as a convertible note at 20% a interest rate, company valued at $64,000</div>
+            </dt>
+            <dd>After reviewing the prototype again, we feel that a higher valuation is warranted, however we need the greater security of a convertible note to justify this valuation.</dd>
+            <dt>
+                <div>
+                    <div class="normalicon thumbdownicon"></div>
+                    The owner rejected your counter-offer on 2011/11/29 12:32
+                </div>
+            </dt>
+            <dd>There is no way I can afford a 20% interest rate and still have enough left over for needed capital investment.</dd>
+        </dl>
+    </div>
+
+    <!-- <div class="boxtitle">MAKE OFFER</div> -->
+    <div class="boxtitle">MAKE COUNTER-OFFER</div>
+    <div class="boxpanel uneditabletext bidpanel">
+            <div>
+                <span class="bidformlabel">
+                    <input class="text narrowinputtitle" type="text" value="$16,000" maxlength="8" size="8" id="bidamount" name="bidamount"></input>
+                </span>
+                <span class="bidsmall span-1">FOR</span>
+                <span class="span-9">
+                    <input class="text bidinputtextpct" type="text" value="25%" maxlength="3" size="3" id="bidequity" name="bidequity"></input>
+                    <select class="bidinputselect" id="bidtype" name="bidtype">
+                        <option value="convertible">CONVERTIBLE NOTE</option>
+                        <option value="common">COMMON STOCK</option>
+                        <option value="preferred">PREFERRED STOCK</option>
+                    </select>
+                    @
+                </span>
+                <span>
+                    <!-- <input class="text bidinputtextpct pctwide" type="text" value="20%" maxlength="3" size="3" id="bidrate" name="bidrate" disabled="true"></input> -->
+                    <input class="text bidinputtextpct pctwide" type="text" value="20%" maxlength="3" size="3" id="bidrate" name="bidrate"></input>
+                </span>
+        </div>
+        <div>
+            <textarea class="textarea inputfullwidetextshort" id="bidnote" name="addcommentnext" cols="20" rows="5">Your note to the entrepreneur here...</textarea>
+        </div>
+        <div>
+            <span class="widelabel">YOUR VALUATION IS $64,000</span>
+            <a href="listing-page.html">
+                <span class="push-1 span-6 inputbutton" id="makeofferbutton">MAKE COUNTER-OFFER</span>
+                <!-- <span class="push-3 span-4 inputbutton" id="makeofferbutton">MAKE OFFER</span> -->
+            </a>
+        </div>
+    </div>
+
     <div class="boxtitle">QUESTIONS AND ANSWERS</div>
     <div class="boxpanel">
         <dl>
