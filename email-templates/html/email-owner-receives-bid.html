@@ -1,3 +1,17 @@
+
+
+
+
+# [[1. Subject of the email]]
+# 2. Plain text description, will be used as preview (if possible)
+# 3. Link to "View in browser"
+# 4. Title of the email (not subject!)
+# 5. HTML description rendered below title
+# 6. Additional info below description
+# 7. email address of the mailing list
+# 8. Link to the header image (eg. "Notificaiton from startupbidder")
+# 9. Link to company's logo for which email was sent
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
     <head>
@@ -49,7 +63,7 @@ body, #backgroundTable{
 * @style heading 1
 */
 h1, .h1{
-        /*@editable*/ color:#DCD8DB;
+        /*@editable*/ color:#49515a;
 	display:block;
         /*@editable*/ font-family:"Helvetica Neue",Arial,Helvetica,sans-serif;
 	/*@editable*/ font-size:14px;
@@ -60,7 +74,7 @@ h1, .h1{
 	margin-bottom:10px;
 	margin-left:0;
 	/*@editable*/ text-align:center;
-	/*GREGN @editable */background:#49515a;
+	/*GREGN @editable background:#49515a;*/
 }
 
 /**
@@ -81,6 +95,11 @@ h2, .h2{
 	margin-bottom:10px;
 	margin-left:0;
 	/*@editable*/ text-align:left;
+	/*@editable*/ text-decoration:none;
+}
+
+h2 a:link, h2 a:visited, .h2 a:link, .h2 a:visited{
+	/*@editable*/ text-decoration:none;
 }
 
 /**
@@ -194,7 +213,7 @@ h4, .h4{
 * @tip Set the styling for your email's header links. Choose a color that helps them stand out from your text.
 */
 .headerContent a:link, .headerContent a:visited, /* Yahoo! Mail Override */ .headerContent a .yshortcuts /* Yahoo! Mail Override */{
-	/*@editable*/ color:#336699;
+	/*@editable*/ color:#202020;
 	/*@editable*/ font-weight:normal;
 	/*@editable*/ text-decoration:underline;
 }
@@ -235,7 +254,7 @@ h4, .h4{
 * @tip Set the styling for your email's main content links. Choose a color that helps them stand out from your text.
 */
 .bodyContent div a:link, .bodyContent div a:visited, /* Yahoo! Mail Override */ .bodyContent div a .yshortcuts /* Yahoo! Mail Override */{
-	/*@editable*/ color:#336699;
+	/*@editable*/ color:#505050;
 	/*@editable*/ font-weight:normal;
 	/*@editable*/ text-decoration:underline;
 }
@@ -350,14 +369,14 @@ h4, .h4{
                                     <table border="0" cellpadding="10" cellspacing="0" width="100%">
                                     	<tr>
                                         	<td valign="top">
-                                            	<div mc:edit="std_preheader_content">
-                                                	 An accredited investor G...r offered $25,000 for 45% common stock for your listing Social Recommendations.
+                                            	<div>
+                                                	 An accredited investor G...r offered $25,000 for 45% common stock for your listing "Social Recommendations".
                                                 </div>
                                             </td>
                                             <!-- *|IFNOT:ARCHIVE_PAGE|* -->
 											<td valign="top" width="190">
-                                            	<div mc:edit="std_preheader_links">
-                                                	Is this email not displaying correctly?<br /><a href="*|ARCHIVE|*" target="_blank">View it in your browser</a>.
+                                            	<div>
+                                                	Is this email not displaying correctly?<br /><a href="http://www.startupbidder.com/n/435634653.html" target="_blank">View it in your browser</a>.
                                                 </div>
                                             </td>
 											<!-- *|END:IF|* -->
@@ -376,11 +395,9 @@ h4, .h4{
                                 	<table border="0" cellpadding="0" cellspacing="0" width="600" id="templateHeader">
                                         <tr>
                                             <td class="headerContent">
-
                                             	<!-- // Begin Module: Standard Header Image \\ -->
-                                            	<img src="images/email-notification.jpg" style="max-width:600px;" id="headerImage campaign-icon" mc:label="header_image" mc:edit="header_image" mc:allowdesigner mc:allowtext />
+                                            	<img src="http://img210.imageshack.us/img210/8564/emailnotification.jpg" style="max-width:600px;" id="headerImage campaign-icon"/>
                                             	<!-- // End Module: Standard Header Image \\ -->
-                                                <h1 class="h1">Social Recommendation received a bid </h1>
                                             </td>
                                         </tr>
                                     </table>
@@ -398,26 +415,28 @@ h4, .h4{
                                                 <table border="0" cellpadding="20" cellspacing="0" width="100%">
                                                     <tr>
                                                         <td valign="top">
-                                                            <div mc:edit="std_content00">
-                                                                An accredited investor <strong>G...r</strong> offered <strong>$25,000</strong> for <strong>45%</strong> common stock for your listing <strong>Social Recommendations</strong>.
+                                                            <div>
+                                                                <h1 class="h1">Listing "Social Recommendation" received a bid</h1>
+                                                                <br />
+                                                                An accredited investor <strong>G...r</strong> offered <strong>$25,000</strong> for <strong>45%</strong> common stock for your listing <strong>"Social Recommendations"</strong>.
                                                                 <br />
                                                                 <br />
-                                                                In order to accept, counter offer or reject this offer please visit <a href="http://www.startupbidder.com/l/2345346.html">company's page at startupbidder</a>
+                                                                In order to accept, counter offer or reject this offer please visit <a href="http://www.startupbidder.com/l/2345346.html">company's page at startupbidder</a>.
                                                             </div>
-														</td>
+							</td>
                                                     </tr>
                                                 </table>
                                                 <!-- // End Module: Standard Content \\ -->
 
                                                 <!-- // Begin Module: Left Image with Content \\ -->
-                                                <table border="0" cellpadding="20" cellspacing="0" width="100%" class="moduleContent" mc:repeatable="siwc_600" mc:variant="content with left image">
+                                                <table border="0" cellpadding="20" cellspacing="0" width="100%" class="moduleContent">
                                                     <tr>
                                                         <td align="center" valign="top">
-                                                            <img src="images/socialrec.jpg" style="max-width:250px;" mc:label="image" mc:edit="liwc600_image00" />
+                                                            <a href="http://startupbidder.com/l/345345345.html"><img src="http://img804.imageshack.us/img804/6324/socialrec.jpg" style="max-width:250px;"/></a>
                                                         </td>
                                                         <td valign="top">
-                                                            <div mc:edit="liwc600_content00">
-                                                               <h2 class="h2">Social Recommendations</h2>
+                                                            <div>
+                                                               <a href="http://startupbidder.com/l/345345345.html"><h2 class="h2">Social Recommendations</h2></a>
  	                                                       <h4 class="h4">INTERNET <br>London, UK</h4>
                                                                Identifying with your peer group through joint purchases.
                                                             </div>
@@ -443,32 +462,32 @@ h4, .h4{
                                                 <table border="0" cellpadding="10" cellspacing="0" width="100%">
                                                     <tr>
                                                         <td colspan="2" valign="middle" id="social">
-                                                            <div mc:edit="std_social">
+                                                            <div>
                                                                 &nbsp;<a href="*|TWITTER:PROFILEURL|*">follow on Twitter</a> | <a href="*|FACEBOOK:PROFILEURL|*">friend on Facebook</a> | <a href="*|FORWARD|*">forward to a friend</a>&nbsp;
                                                             </div>
                                                         </td>
                                                     </tr>
                                                     <tr>
                                                         <td valign="top" width="350">
-                                                            <div mc:edit="std_footer">
+                                                            <div>
 								<em>Copyright &copy; 2011 Startupbidder, All rights reserved.</em>
-																<br />
+								<br />
 
-																<br />
-																<strong>Our mailing address is:</strong>
-																<br />
-								this-week-on@startupbidder.com
+								<br />
+								<strong>Our mailing address is:</strong>
+								<br />
+								notifications@startupbidder.com
                                                             </div>
                                                         </td>
                                                         <td valign="top" width="190" id="monkeyRewards">
-                                                            <div mc:edit="monkeyrewards">
+                                                            <div>
 
                                                             </div>
                                                         </td>
                                                     </tr>
                                                     <tr>
                                                         <td colspan="2" valign="middle" id="utility">
-                                                            <div mc:edit="std_utility">
+                                                            <div>
                                                                 &nbsp;<a href="*|UPDATE_PROFILE|*">update email notification preferences</a>&nbsp;
                                                             </div>
                                                         </td>
@@ -490,3 +509,5 @@ h4, .h4{
         </center>
     </body>
 </html>
+
+

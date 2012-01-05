@@ -1,0 +1,48 @@
+1. Emails not specific to one listing:
+
+  a) email newsletter (weekly)
+  b) welcome email with activation link
+  c) forgot password email
+  d) account deactivation email (will contain deactivation link)
+  e) registered contact from user (contact us page)
+  f) our response for user contact
+
+2. listing email notification:
+  a) owner receives bid
+  b) owner receives counteroffer
+  c) owner receives counteroffer accept
+  d) owner receives counteroffer reject
+  e) investor receives counteroffer
+  f) investor receives accept
+  g) investor receives reject
+  h) owner accepts bid and should contact investor
+  i) investor receives bid acceptance and should contact owner (ideally this should be a single email addressed to both parties so they both see the same thing
+  j) owner receives notice of payment
+  k) owner receives notice of invoice due
+  l) owner receives notice of past due invoice
+  m) owner (and investor?) receives thank you email after payment
+  n) investors receives info about listing withdrawal
+
+  o) new comment
+  p) weekly summary for your active listing
+  q) you haven't activated your listing yet
+  r) our comments for listing (eg. about not appropriate descriptions)
+
+
+
+email testing:
+ 1. gmail
+ 2. yahoo
+ 3. hotmail
+ 4. aol (is it possible?)
+ 5. outlook express
+ 6. outlook 2003
+ 7. outlook 2010?
+ 8. thunderbird
+ 9. apple client
+ 10. mobiles
+   a) iphone
+   b) ipad
+   c) android 240, 320, 480
+   d) bb6 320 and 480
+   e) winmob 7 and 7.5
