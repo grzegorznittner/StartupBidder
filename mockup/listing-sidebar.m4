@@ -60,7 +60,7 @@
         <div class="sideboxdesc">OWNER VALUATION IS $250,000</div>
         <div class="sideboxdesc">CLOSES ON 24 DEC 2011 (45 DAYS LEFT)</div>
     </div>
-
+<!--
     <div class="boxtitle">CURRENT BIDS</div>
     <div class="sidebox uneditabletext">
         <div class="sideboxtitlecompact">2 BIDS</div>
@@ -97,7 +97,7 @@
             <div class="sideboxbuttoninterior">BID NOW</div>
         </a>
     </div>
-
+-->
 '
 include(companies-sidebar.m4)
 companiessidebardiv(`RELATED COMPANIES')
