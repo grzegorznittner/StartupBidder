@@ -95,17 +95,17 @@ h2 a:link, h2 a:visited, .h2 a:link, .h2 a:visited{
 * @style heading 3
 */
 h3, .h3{
-	/*@editable*/ color:#202020;
+	/*@editable*/ color:#49515a;
 	display:block;
         /*@editable*/ font-family:"Helvetica Neue",Arial,Helvetica,sans-serif;
         /*@editable*/ font-size:14px;
-        /*@editable*/ font-weight:normal;
+        /*@editable*/ font-weight:bold;
 	/*@editable*/ line-height:100%;
 	margin-top:0;
 	margin-right:0;
 	margin-bottom:10px;
 	margin-left:0;
-	/*@editable*/ text-align:left;
+	/*@editable*/ text-align:center;
 }
 
 /**
@@ -517,7 +517,7 @@ h4, .h4{
                                                     <tr>
                                                         <td valign="top">
                                                             <div>
-                                                            	<h1 class="h1">$5</h1>
+                                                            	<center><h3 class="h3">$5</h1></center>
                                                             	<br/>
                                                                 $6
                                                             </div>

@@ -1,16 +1,5 @@
 changequote([[, ]])
 include(template-fancy-variablelayout.m4)
-
-# 1. Subject of the email
-# 2. Plain text description, will be used as preview (if possible)
-# 3. Link to "View in browser"
-# 4. Title of the email (not subject!)
-# 5. HTML description rendered below title
-# 6. Additional info below description
-# 7. email address of the mailing list
-# 8. Link to the header image (eg. "Notificaiton from startupbidder")
-# 9. Link to company's logo for which email was sent
-
 fancyvariablelayout([[Your listing received a bid]],
   [[An accredited investor G...r offered $25,000 for 45% common stock for your listing "Social Recommendations".]],
   [[http://www.startupbidder.com/n/435634653.html]],
@@ -21,3 +10,14 @@ fancyvariablelayout([[Your listing received a bid]],
   [[http://img210.imageshack.us/img210/8564/emailnotification.jpg]],
   [[http://img804.imageshack.us/img804/6324/socialrec.jpg]])
 
+define([[comment-for-fancyvariablelayout]],
+[[ 1. Subject of the email ]],
+[[ 2. Plain text description, will be used as preview (if possible) ]],
+[[ 3. Link to "View in browser" ]],
+[[ 4. Title of the email (not subject!) ]],
+[[ 5. HTML description rendered below title ]],
+[[ 6. Additional info below description ]],
+[[ 7. email address of the mailing list ]],
+[[ 8. Link to the header image (eg. "Notificaiton from startupbidder") ]],
+[[ 9. Link to company's logo for which email was sent ]]
+)
