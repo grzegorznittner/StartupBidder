@@ -1,5 +1,5 @@
 /* layout styles */
-* { margin: 0; padding: 0; }
+* { margin: 0; padding: 0; font-family: 'OFL Sorts Mill Goudy', Georgia, serif !important; }
 html, body, #wrap { height: 100%; }
 body { margin: 0; }
 body > #wrap { height: auto; min-height: 100%; }
@@ -172,6 +172,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .bidinputtextpct  { font-weight: bold; color: white !important; background: #49515a !important; font-size: 24px !important; width: 45px !important; margin: 0 0 0 0 !important; }
 .bidsmall { padding-top: 14px; }
 .pctwide { width: 49px !important; }
+.inputtextareatwoline { height: 35px; overflow: hidden; overflow-x: hidden; overflow-y: hidden; }
 
 /* box styles */
 .boxtitle { margin-top: 10px; color: #333333; }

@@ -45,7 +45,7 @@ is well it will be live on the site!
         <div class="formitem clear">
             <span class="inputlabel">MANTRA</span>
             <span class="inputfield">
-                <input class="text inputwidetext" type="text" name="mantra" id="mantra" value="Making email as obsolete as the paper memo through real-time collaborative chat."></input>
+                <textarea class="inputtextareatwoline inputwidetext" cols="20" rows="5" name="mantra" id="mantra">Making email as obsolete as the paper memo through real-time collaborative chat.</textarea>
             </span>
             <span class="inputicon">
                 <div class="checkboxgreenicon"></div>
