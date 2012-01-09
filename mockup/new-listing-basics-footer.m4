@@ -1,5 +1,16 @@
 `
-<div id="footer" class="darkgreybg">
+<div id="newlistingfootertop">
+  <div class="container">
+    <div class="boxstep last">
+        <span class="boxstep1 boxstepcomplete"><div class="boxsteptext">BASICS</div></span>
+        <span class="boxstep2"><div class="boxsteptext">Q &amp; A</div></span>
+        <span class="boxstep3"><div class="boxsteptext">FINANCIALS</div></span>
+        <span class="boxstep4"><div class="boxsteptext">MEDIA</div></span>
+        <span class="boxstep5"><div class="boxsteptext">SUBMIT</div></span>
+    </div>
+</div>
+
+<div id="newlistingfooterbottom" class="darkgreybg">
   <div class="container">
     <div class="prepend-5 span-13">
       <span class="footertext lightgrey">

@@ -5,11 +5,14 @@ body { margin: 0; }
 body > #wrap { height: auto; min-height: 100%; }
 #main { padding-bottom: 35px; }
 #footer { position: relative; margin-top: -35px; height: 35px; clear: both; width: 100%; }
+#newlistingfooterbottom { position: relative; margin-top: 1px; height: 35px; clear: both; width: 100%; }
+#newlistingfootertop { position: relative; margin-top: -80px; height: 40px; clear: both; width: 100%; }
 .clearfix:after { content: "."; display: block; height: 0; clear: both; visibility: hidden; }
 .clearfix { display: inline-block; }
 * html .clearfix { height: 1%; }
 .clearfix { display: block; }
 .footertext, .footerlink { position: relative; font-weight: bold; font-size: 18px; top: 2px; color: #dcd8db; }
+.copyrightspan { text-align: right; }
 .copyrighttext { font-size: 10px; font-weight: bold; top: 10px; position: relative; }
 .attention { color: #8A1F11; }
 
@@ -67,6 +70,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .logotextblue { position: relative; font-weight: bold; font-size: 24px; top: 8px; color: #32aff6; }
 .logotextgrey { position: relative; font-weight: bold; font-size: 24px; top: 8px; color: #dcd8db; }
 .headerprofile { float: right; text-align: right; }
+.loginspan { text-align: right; }
 .headericon { position: relative; top: 16px; width: 26px; margin-right: 10px; float: right; }
 
 /* banner styles */
@@ -125,7 +129,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .inputlabel { padding-top: 10px; }
 .widelabel { padding-top: 15px; margin-left: 5px; }
 .inputcaptcha { margin-top: 10px; margin-bottom: 10px; }
-.inputtext, .narrowinputtitle, .narrowinputtext, .inputtextpct, .inputwidetext, .inputfullwidetextshort,
+.inputtext, .narrowinputtitle, .bidinputtitle, .narrowinputtext, .inputtextpct, .inputwidetext, .inputfullwidetextshort,
 .sideinputtext, .sideinputtitle, .sideinputtextarea,
 .inputselect, .inputcheckbox
     { font-weight: bold; color: white !important; background: #49515a !important; }
@@ -165,11 +169,12 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .sideinputtitle, .sideinputtextarea { width: 280px !important; }
 .narrowinputtext { width: 90px !important; }
 .narrowinputtitle { font-size: 24px !important; margin: 0 10px 5px 5px !important; width: 130px !important; }
+.bidinputtitle { font-size: 22px !important; margin: 0 10px 5px 5px !important; width: 130px !important; }
 .sideinputtextarea { height: 80px; margin-top: 0; }
 .sideboxlabelsmall { float: left; padding-top: 5px; width: 35px; }
 .inputselect { height: 29px; padding: 5px; top: 1px; position: relative;  }
-.bidinputselect { margin: 0 0 0 0 !important; height: 42px; font-weight: bold; color: white !important; background: #49515a !important; font-size: 24px !important; }
-.bidinputtextpct  { font-weight: bold; color: white !important; background: #49515a !important; font-size: 24px !important; width: 45px !important; margin: 0 0 0 0 !important; }
+.bidinputselect { margin: 0 0 0 0 !important; height: 42px; font-weight: bold; color: white !important; background: #49515a !important; font-size: 22px !important; }
+.bidinputtextpct  { font-weight: bold; color: white !important; background: #49515a !important; font-size: 22px !important; width: 45px !important; margin: 0 0 0 0 !important; }
 .bidsmall { padding-top: 14px; }
 .pctwide { width: 49px !important; }
 .inputtextareatwoline { height: 35px; overflow: hidden; overflow-x: hidden; overflow-y: hidden; }
@@ -199,7 +204,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .boxoption3 { width: 160px; }
 .boxselected { background: white; }
 .sideboxselected { background: white; !important}
-.sidebox { width: 302px; border: 2px solid #999999; padding: 2px; overflow: auto; background: #e3e3e3; }
+.sidebox { width: 302px; border: 2px solid #999999; padding: 2px; overflow: auto; background: #e3e3e3; margin-bottom: 10px; }
 .sidebox p { margin: 5px 10px 10px 10px; text-indent: 0px; }
 .sideboxcol1 { width: 146px; float: left; margin-right: 10px; }
 .sideboxcol2 { width: 146px; float: left; }

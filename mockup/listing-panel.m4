@@ -88,11 +88,11 @@ say the least, did not happen.
     </div>
 
     <!-- <div class="boxtitle">MAKE OFFER</div> -->
-    <div class="boxtitle">MAKE COUNTER-OFFER</div>
+    <div class="boxtitle">MAKE COUNTEROFFER</div>
     <div class="boxpanel uneditabletext bidpanel">
             <div>
                 <span class="bidformlabel">
-                    <input class="text narrowinputtitle" type="text" value="$16,000" maxlength="8" size="8" id="bidamount" name="bidamount"></input>
+                    <input class="text bidinputtitle" type="text" value="$16,000" maxlength="8" size="8" id="bidamount" name="bidamount"></input>
                 </span>
                 <span class="bidsmall span-1">FOR</span>
                 <span class="span-9">
@@ -115,7 +115,7 @@ say the least, did not happen.
         <div>
             <span class="widelabel">YOUR VALUATION IS $64,000</span>
             <a href="listing-page.html">
-                <span class="push-1 span-6 inputbutton" id="makeofferbutton">MAKE COUNTER-OFFER</span>
+                <span class="span-7 inputbutton" id="makeofferbutton">MAKE COUNTEROFFER</span>
                 <!-- <span class="push-3 span-4 inputbutton" id="makeofferbutton">MAKE OFFER</span> -->
             </a>
         </div>
@@ -184,7 +184,7 @@ say the least, did not happen.
         </div>
         <div>
             <a href="listing-page.html">
-                <span class="push-10 span-5 inputbutton" id="withdrawbutton">
+                <span class="push-9 span-6 inputbutton" id="withdrawbutton">
                     WITHDRAW LISTING
                 </span>
             </a>

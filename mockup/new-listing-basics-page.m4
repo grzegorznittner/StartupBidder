@@ -19,7 +19,7 @@ include(new-listing-sidebar.m4)
 </div> <!-- end main -->
 </div> <!-- end wrap -->
 '
-include(footer.m4)
+include(new-listing-basics-footer.m4)
 `
 </body>
 </html>

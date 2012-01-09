@@ -17,8 +17,9 @@ the right panel we also display a preview of your company panel as it will appea
 on the site in the search results.  After the last step is completed, you will have
 a chance to view a full preview of your company listing page before submitting.
 Note that once a listing is submitted, it cannot be changed.  Startupbidder will
-review your listing, contact you regarding any necessary changes, and then if all
-is well it will be live on the site!
+review your listing and contact you regarding any necessary changes.  Once we have
+approved the listing it will be posted as the top item on the Latest company listing
+and will appear in relevant search results.
     </p>
     </div>
 
@@ -66,14 +67,6 @@ is well it will be live on the site!
                 NEXT
             </span>
         </div>
-    </div>
-
-    <div class="boxstep">
-        <span class="boxstep1 boxstepcomplete"><div class="boxsteptext">BASICS</div></span>
-        <span class="boxstep2"><div class="boxsteptext">Q &amp; A</div></span>
-        <span class="boxstep3"><div class="boxsteptext">FINANCIALS</div></span>
-        <span class="boxstep4"><div class="boxsteptext">MEDIA</div></span>
-        <span class="boxstep5"><div class="boxsteptext">SUBMIT</div></span>
     </div>
 
 </div> <!-- end left column -->
