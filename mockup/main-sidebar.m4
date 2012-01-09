@@ -2,7 +2,7 @@
 <!-- right column -->
 <div class="span-8 last">
     <div class="boxtitle">ADD YOUR STARTUP</div>
-    <div class="sideboxbutton">POST NOW</div>
+    <a href="new-listing-basics-page.html"><div class="sideboxbutton">POST NOW</div></a>
 
     <div class="boxtitle">FUND A STARTUP</div>
     <a href="closing-page.html"><div class="sideboxbutton">INVEST NOW</div></a>

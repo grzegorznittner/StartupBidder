@@ -1,6 +1,6 @@
 define(`tilediv',`
 <div class="tile">
-    <a href="listing-guest-page.html"><div class="tileimg $1"></div></a>
+    <a href="listing-page.html"><div class="tileimg $1"></div></a>
     <div class="tiledays"></div>
     <div class="tiledaystext">$2</div>
     <div class="tiletype"></div>

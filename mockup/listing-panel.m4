@@ -177,6 +177,21 @@ say the least, did not happen.
         </dl>
 	</div>
 
+    <div class="boxtitle">WITHDRAW LISTING</div>
+    <div class="boxpanel commentpanel">
+        <div>
+            ARE YOU SURE YOU WANT TO WITHRDAW LISTING?  NO BIDS MAY BE RECEIVED AFTER THE LISTING IS WITHDRAWN.  THIS OPERATION CANNOT BE UNDONE.
+        </div>
+        <div>
+            <a href="listing-page.html">
+                <span class="push-10 span-5 inputbutton" id="withdrawbutton">
+                    WITHDRAW LISTING
+                </span>
+            </a>
+        </div>
+    </div>
+
+
 </div> <!-- end left column -->
 '
 
