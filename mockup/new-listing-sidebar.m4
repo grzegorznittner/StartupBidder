@@ -1,4 +1,5 @@
 include(tile.m4)
+define(`newlistingsidebar',`
 `
 <!-- right column -->
 <div class="span-8 last">
@@ -9,12 +10,10 @@ tilespanlast(`missingimg', `30 days left', `SOFTWARE', `1', `2012-01-08', `Kill 
 
     <div class="boxtitle clear">TIPS</div>
     <div class="sidebox">
-        <p>NAME - short name for your company</p>
-        <p>CATEGORY - your company industry classification</p>
-        <p>MANTRA - tagline for your company, generally a single sentence, up to 140 characters</p>
-        <p>LOCATION - e.g. San Jose, CA, USA, where your business is located, or has a nexus</p>
+        $1
     </div>
 
 </div>
 <!-- end right column -->
 '
+')

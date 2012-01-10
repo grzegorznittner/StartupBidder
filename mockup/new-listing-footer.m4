@@ -1,12 +1,12 @@
-`
+define(`newlistingfooter',`
 <div id="newlistingfootertop">
   <div class="container">
     <div class="boxstep last">
-        <span class="boxstep1 boxstepcomplete"><div class="boxsteptext">BASICS</div></span>
-        <span class="boxstep2"><div class="boxsteptext">Q &amp; A</div></span>
-        <span class="boxstep3"><div class="boxsteptext">FINANCIALS</div></span>
-        <span class="boxstep4"><div class="boxsteptext">MEDIA</div></span>
-        <span class="boxstep5"><div class="boxsteptext">SUBMIT</div></span>
+        <span class="boxstep1 $1"><div class="boxsteptext">BASICS</div></span>
+        <span class="boxstep2 $2"><div class="boxsteptext">Q &amp; A</div></span>
+        <span class="boxstep3 $3"><div class="boxsteptext">FINANCIALS</div></span>
+        <span class="boxstep4 $4"><div class="boxsteptext">MEDIA</div></span>
+        <span class="boxstep5 $5"><div class="boxsteptext">SUBMIT</div></span>
     </div>
 </div>
 
@@ -26,4 +26,5 @@
     </div>
   </div>
 </div>
-'
+
+')

@@ -61,11 +61,15 @@ and will appear in relevant search results.
                 <div class="checkgreenicon"></div>
             </span>
         </div>
+    </div>
+
+    <div>
         <div class="formitem clear">
-	        <span class="inputlabel"></span>
-            <span class="push-9 span-3 inputbutton" id="nextbutton">
-                NEXT
-            </span>
+            <a href="new-listing-qa-page.html">
+                <span class="push-13 span-3 inputbutton" id="nextbutton">
+                    NEXT
+                </span>
+            </a>
         </div>
     </div>
 
