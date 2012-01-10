@@ -5,7 +5,7 @@ include(head.m4)
 `
 <body>
 <div id="wrap">
-<div id="main">
+<div id="newlistingmain">
 '
 include(header.m4)
 `

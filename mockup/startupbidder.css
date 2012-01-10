@@ -4,6 +4,7 @@ html, body, #wrap { height: 100%; }
 body { margin: 0; }
 body > #wrap { height: auto; min-height: 100%; }
 #main { padding-bottom: 35px; }
+#newlistingmain { padding-bottom: 80px; }
 #footer { position: relative; margin-top: -35px; height: 35px; clear: both; width: 100%; }
 #newlistingfooterbottom { position: relative; margin-top: 1px; height: 35px; clear: both; width: 100%; }
 #newlistingfootertop { position: relative; margin-top: -80px; height: 40px; clear: both; width: 100%; }
