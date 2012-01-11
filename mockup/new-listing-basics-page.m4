@@ -17,10 +17,11 @@ newlistingbanner(`boxstepcomplete',`',`',`',`',`YOU HAVE FILLED 20% OF YOUR COMP
 include(new-listing-basics-panel.m4)
 include(new-listing-sidebar.m4)
 newlistingsidebar(`
-        <p>NAME - short name for your company</p>
-        <p>CATEGORY - your company industry classification</p>
-        <p>MANTRA - tagline for your company, generally a single sentence, up to 140 characters</p>
-        <p>LOCATION - e.g. San Jose, CA, USA, where your business is located, or has a nexus</p>
+<p>NAME - short name for your company</p>
+<p>CATEGORY - your company industry classification</p>
+<p>MANTRA - tagline for your company, generally a single sentence, up to 140 characters</p>
+<p>LOCATION - e.g. San Jose, CA, USA, where your business is located, or has a nexus</p>
+<p>WEBSITE - your company website, if you don&rsquo;t have one then a link to your facebook page or google profile</p>
 ')
 `
 </div> <!-- end container -->

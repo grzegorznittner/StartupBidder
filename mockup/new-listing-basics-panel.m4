@@ -5,11 +5,12 @@
     <div class="boxtitle">INSTRUCTIONS</div>
     <div class="boxpanel">
     <p>
-The first step to list a company in startupbidder is to create a public profile.
+The first step to list a company in startupbidder is to create a public listing.
 The goal is to provide enough information about your company to interest potential
 customers, reviewers, and investors.  Using this information they will be able to
 better engage with your business and, if you are seeking investment, to make a bid
-for part of your company.
+for part of your company. NOTE THAT YOU MUST BE THE OWNER OR AN AUTHORIZED AGENT OF
+THE BUSINESS TO LIST IT ON THIS SITE.
     </p>
     <p>
 Please follow the steps using the tips on the right hand panel for guidance.  On
@@ -56,6 +57,15 @@ and will appear in relevant search results.
             <span class="inputlabel">LOCATION</span>
             <span class="inputfield">
                 <input class="text inputwidetext" type="text" name="location" id="location" value="San Jose, CA, USA"></input>
+            </span>
+            <span class="inputicon">
+                <div class="checkboxgreenicon"></div>
+            </span>
+        </div>
+        <div class="formitem clear">
+            <span class="inputlabel">WEBSITE</span>
+            <span class="inputfield">
+                <input class="text inputwidetext" type="text" name="website" id="website" value="http://wave.google.com"></input>
             </span>
             <span class="inputicon">
                 <div class="checkboxgreenicon"></div>
