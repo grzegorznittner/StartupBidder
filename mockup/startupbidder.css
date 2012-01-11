@@ -1,5 +1,5 @@
 /* layout styles */
-* { margin: 0; padding: 0; font-family: 'OFL Sorts Mill Goudy', Georgia, serif !important; }
+* { margin: 0; padding: 0; font-family: Verdana, Arial, Helvetica, sans-serif !important; }
 html, body, #wrap { height: 100%; }
 body { margin: 0; }
 body > #wrap { height: auto; min-height: 100%; }
@@ -19,7 +19,7 @@ body > #wrap { height: auto; min-height: 100%; }
 
 /* general styles */
 body { font-size: 14px; font-weight: bold; color: #4083a9; background: #f2f2f2; }
-.curvedborder, .sidebox, .sideboxbutton, .sideboxbuttoninterior, .tile, .boxpanel, .boxselected, .inputbutton, .smallinputbutton, .sideboxselected {
+.curvedborder, .sidebox, .sideboxbutton, .sideboxbuttoninterior, .tile, .boxpanel, .boxstep, .boxselected, .inputbutton, .smallinputbutton, .sideboxselected {
   -moz-border-radius: 5px; -webkit-border-radius: 5px; border-radius: 5px;
   -moz-box-shadow: 3px 3px 3px 3px #ccc; -webkit-box-shadow: 3px 3px 3px 3px #ccc; box-shadow: 3px 3px 3px 3px #ccc; }
 
@@ -133,13 +133,15 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .inputcaptcha { margin-top: 10px; margin-bottom: 10px; }
 .inputtext, .narrowinputtitle, .bidinputtitle, .narrowinputtext, .inputtextpct, .inputwidetext, .inputfullwidetextshort,
 .sideinputtext, .sideinputtitle, .sideinputtextarea,
-.inputselect, .inputcheckbox, .inputwidewithvalidate
+.inputselect, .inputmedselect, .inputcheckbox, .inputwidewithvalidate, .inputmedtext
     { font-weight: bold; color: white !important; background: #49515a !important; }
 .inputfullwidetextshort { font-weight: normal; }
 .inputtext, .inputtextpct, .inputwidetext, .inputfullwidetextshort, .sideinputtext, .sideinputtextarea,
-.inputselect, .inputcheckbox, .narrowinputtext, .inputwidewithvalidate
+.inputselect, .inputmedselect, .inputcheckbox, .narrowinputtext, .inputwidewithvalidate, .inputmedtext
     { font-size: 14px !important; }
 .inputwidetext { width: 420px !important; }
+.inputmedtext { width: 230px !important; }
+.inputmedselect { width: 242px !important; }
 .inputfullwidetextshort, .inputwidewithvalidate { margin: 0px 5px 5px 5px; height: 60px; }
 .inputfullwidetextshort { width: 600px !important; }
 .inputwidewithvalidate { width: 540px !important; }
@@ -176,7 +178,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .bidinputtitle { font-size: 22px !important; margin: 0 10px 5px 5px !important; width: 130px !important; }
 .sideinputtextarea { height: 80px; margin-top: 0; }
 .sideboxlabelsmall { float: left; padding-top: 5px; width: 35px; }
-.inputselect { height: 29px; padding: 5px; top: 1px; position: relative;  }
+.inputselect, .inputmedselect { height: 29px; padding: 5px; top: 1px; position: relative;  }
 .bidinputselect { margin: 0 0 0 0 !important; height: 42px; font-weight: bold; color: white !important; background: #49515a !important; font-size: 22px !important; }
 .bidinputtextpct  { font-weight: bold; color: white !important; background: #49515a !important; font-size: 22px !important; width: 45px !important; margin: 0 0 0 0 !important; }
 .bidsmall { padding-top: 14px; }

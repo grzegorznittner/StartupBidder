@@ -58,7 +58,7 @@ and will appear in relevant search results.
                 <input class="text inputwidetext" type="text" name="location" id="location" value="San Jose, CA, USA"></input>
             </span>
             <span class="inputicon">
-                <div class="checkgreenicon"></div>
+                <div class="checkboxgreenicon"></div>
             </span>
         </div>
     </div>

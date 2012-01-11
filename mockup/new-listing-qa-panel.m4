@@ -46,7 +46,7 @@ newlistingqaitem(`property', `PROPERTY - WHAT INTELLECTUAL PROPERTY DO YOU HAVE?
                     PREV
                 </span>
             </a>
-            <a href="new-listing-qa-page.html">
+            <a href="new-listing-financials-page.html">
                 <span class="push-10 span-3 inputbutton" id="nextbutton">
                     NEXT
                 </span>
