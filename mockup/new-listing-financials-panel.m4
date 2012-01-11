@@ -72,6 +72,15 @@ any investigations that may result.
             </span>
         </div>
         <div class="formitem clear">
+            <span class="inputlabel">AT</span>
+            <span class="inputfield">
+                <input class="text inputmedtext" type="text" name="offerrate" id="offerrate" value="8%"></input>
+            </span>
+            <span class="inputicon">
+                <div class="checkboxgreenicon"></div>
+            </span>
+        </div>
+        <div class="formitem clear">
             <span class="inputlabel">BY</span>
             <span class="inputfield">
                 <input class="text inputmedtext" type="text" name="offerdate" id="offerdate" value="22 December 2012"></input>

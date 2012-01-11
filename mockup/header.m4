@@ -13,7 +13,7 @@
       <span class="headertext">&nbsp;&nbsp;|&nbsp;&nbsp;</span>
       <a href="closing-page.html"><span class="headerlink">Closing</span></a>
       <span class="headertext">&nbsp;&nbsp;|&nbsp;&nbsp;</span>
-      <a href="about-page.html"><span class="headerlink">About</span></a>
+      <a href="new-listing-basics-page.html"><span class="headerlink">Submit</span></a>
     </div>
     <div class="span-8 last loginspan">
       <a href="login-page.html"><span class="headerlink">Login or Sign Up</span></a>

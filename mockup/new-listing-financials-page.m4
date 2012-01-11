@@ -19,7 +19,8 @@ include(new-listing-sidebar.m4)
 newlistingsidebar(`
 <p>ASKING - amount of money you want for investment, between $5,000 and $500,000 USD</p>
 <p>FOR - what percentage of common equity you are selling in exchange for the investment, between 5% and 50%</p>
-<p>AS - what kind of investment do you prefer: pure common equity, convertible debt, or preferred stock?</p>
+<p>AS - what kind of investment do you prefer: pure common equity, convertible note, or preferred stock?</p>
+<p>AT - what interest rate you want to pay on your liability, only applies to convertible note or preferred stock</p>
 <p>BY - end date for your bidding between 30 and 90 days in the future</p>
 <p>PLAN - your business plan, a Word or PDF document that describes your business in detail</p>
 <p>SLIDE DECK - your presentation to investors, a Powerpoint or PDF document, keep it short</p>

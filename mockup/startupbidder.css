@@ -1,5 +1,5 @@
 /* layout styles */
-* { margin: 0; padding: 0; font-family: Verdana, Arial, Helvetica, sans-serif !important; }
+* { margin: 0; padding: 0; font-family: Arial, Helvetica, sans-serif !important; }
 html, body, #wrap { height: 100%; }
 body { margin: 0; }
 body > #wrap { height: auto; min-height: 100%; }
@@ -120,14 +120,15 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .inputlabel, .widelabel, .formlabel, .smallformlabel, .inputfield, .inputcaptcha, .inputhelp,
 .inputicon, .topinputicon, .inputlink, .inputimgbutton,
 .formlabelvalue, .formfull, .formcol1, .formcol2, .formcol1fourth, .formcol2fourth,
-.formimg, .formcolicon
+.formimg, .formcolicon, .medialabel
     { float: left; }
-.inputlabel, .widelabel, .formlabel, .smallformlabel, .inputfield, .inputcaptcha, .inputlink, .inputimgbutton, .formcol1, .formcol1fourth, .formimg
+.inputlabel, .widelabel, .formlabel, .smallformlabel, .inputfield, .inputcaptcha, .inputlink, .inputimgbutton, .formcol1, .formcol1fourth, .formimg, .medialabel
     { margin-right: 10px; }
 .fulllabel { margin-left: 5px; color: #49515a; }
 .inputlabel, .formlabel, .smallformlabel { text-align: right; width: 106px; color: #49515a; }
 .bidformlabel { float: left; margin-right: 10px; width: 146px; color: #49515a; }
 .widelabel { width: 296px; }
+.medialabel { width: 316px; margin-left: 5px; }
 .inputlabel { padding-top: 10px; }
 .widelabel { padding-top: 15px; margin-left: 5px; }
 .inputcaptcha { margin-top: 10px; margin-bottom: 10px; }
@@ -161,6 +162,8 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .formcol2 { width: 306px; }
 .formcol1fourth { width: 146px; padding-left: 0px; }
 .formcol2fourth { width: 456px; position: relative; height: 146px; }
+.mediacol1 { padding-left: 0px; margin-right: 10px; float: left; }
+.mediacol2 { width: 146px; float: right; }
 .formcol1text { margin-left: 10px; }
 .formimg { width: 146px; height: 146px; }
 .formcolicon { width: 40px; }
@@ -181,6 +184,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .inputselect, .inputmedselect { height: 29px; padding: 5px; top: 1px; position: relative;  }
 .bidinputselect { margin: 0 0 0 0 !important; height: 42px; font-weight: bold; color: white !important; background: #49515a !important; font-size: 22px !important; }
 .bidinputtextpct  { font-weight: bold; color: white !important; background: #49515a !important; font-size: 22px !important; width: 45px !important; margin: 0 0 0 0 !important; }
+.mediainputlink  { margin-left: 3px !important; font-weight: bold; color: white !important; background: #49515a !important; font-size: 14px !important; width: 383px !important; }
 .bidsmall { padding-top: 14px; }
 .pctwide { width: 49px !important; }
 .inputtextareatwoline { height: 35px; overflow: hidden; overflow-x: hidden; overflow-y: hidden; }

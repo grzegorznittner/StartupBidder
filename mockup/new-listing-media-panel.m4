@@ -15,25 +15,24 @@ record a voiceover of a quick run through your slide deck.
 
     <div class="boxtitle">LOGO</div>
     <div class="boxpanel">
-        <div class="formcolthreefourth clear">
+        <div class="mediacol1 clear">
             <div class="formitem">
                 <span class="inputfield">
-                    <input class="text inputwidetext" type="text" maxlength="255" name="logourl" id="logourl" value=""></input>
-                </span>
+                    <input class="text mediainputlink" type="text" maxlength="255" name="logourl" id="logourl" value=""></input> </span>
                 <span class="inputicon">
                     <div class="checkboxredicon"></div>
                 </span>
             </div>
             <div class="formitem clear">
-                <span class="formlabel">
+                <span class="medialabel">
                     PNG file, 146px wide, 146px high, resized if not this size
                 </span>
-                <span class="pull-7 span-3 inputbutton" id="logouploadbutton">
+                <span class="span-3 inputbutton" id="logouploadbutton">
                     UPLOAD
                 </span>
             </div>
         </div>
-        <div class="formcolonefourth">
+        <div class="mediacol2">
             <div class="tileimg wave"></div>
         </div>
     </div>
@@ -42,17 +41,17 @@ record a voiceover of a quick run through your slide deck.
     <div class="boxpanel">
         <div class="formitem">
             <span class="inputfield">
-                <input class="text inputwidetext" type="text" maxlength="255" name="logourl" id="logourl" value=""></input>
+                <input class="text mediainputlink" type="text" maxlength="255" name="logourl" id="logourl" value=""></input>
             </span>
             <span class="inputicon">
                 <div class="checkboxredicon"></div>
             </span>
         </div>
         <div class="formitem clear">
-            <span class="formlabel">
+            <span class="medialabel">
                 Link to video on youtube, vimeo, or elsewhere allowing embedded urls
             </span>
-            <span class="pull-7 span-3 inputbutton" id="videouploadbutton">
+            <span class="span-3 inputbutton" id="videouploadbutton">
                 UPDATE
             </span>
         </div>
