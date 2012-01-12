@@ -3,18 +3,6 @@
 <div class="span-8 last">
     <div class="boxtitle">YOUR COMPANIES</div>
     <div class="sidebox">
-        <div class="sideboxcompanylink">
-            <span class="sideboxtitle">1</span>
-            <span class="sideboxtitledetail">SUBMITTED</span>
-        </div>
-        <div class="sideboxcompanylink">
-            <span class="sideboxtitle">2</span>
-            <span class="sideboxtitledetail">ACTIVE</span>
-        </div>
-        <div class="sideboxcompanylink">
-            <span class="sideboxtitle">1</span>
-            <span class="sideboxtitledetail">INACTIVE</span>
-        </div>
         <div class="sideboxcompanylink sideboxselected clear">
             <span class="sideboxtitle">4</span>
             <span class="sideboxtitledetail">UPVOTED</span>
@@ -26,6 +14,22 @@
         <div href="" class="sideboxcompanylink clear">
             <span class="sideboxtitle">1</span>
             <span class="sideboxtitledetail">INVESTED</span>
+        </div>
+        <div class="sideboxcompanylink">
+            <span class="sideboxtitle">1</span>
+            <span class="sideboxtitledetail">UNSUBMITTED</span>
+        </div>
+        <div class="sideboxcompanylink">
+            <span class="sideboxtitle">1</span>
+            <span class="sideboxtitledetail">SUBMITTED</span>
+        </div>
+        <div class="sideboxcompanylink">
+            <span class="sideboxtitle">2</span>
+            <span class="sideboxtitledetail">ACTIVE</span>
+        </div>
+        <div class="sideboxcompanylink">
+            <span class="sideboxtitle">1</span>
+            <span class="sideboxtitledetail">ENDED</span>
         </div>
     </div>
     
