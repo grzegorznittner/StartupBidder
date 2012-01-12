@@ -5,7 +5,15 @@
     <div class="sidebox">
         <div class="sideboxcompanylink">
             <span class="sideboxtitle">1</span>
-            <span class="sideboxtitledetail">POSTED</span>
+            <span class="sideboxtitledetail">SUBMITTED</span>
+        </div>
+        <div class="sideboxcompanylink">
+            <span class="sideboxtitle">2</span>
+            <span class="sideboxtitledetail">ACTIVE</span>
+        </div>
+        <div class="sideboxcompanylink">
+            <span class="sideboxtitle">1</span>
+            <span class="sideboxtitledetail">INACTIVE</span>
         </div>
         <div class="sideboxcompanylink sideboxselected clear">
             <span class="sideboxtitle">4</span>
