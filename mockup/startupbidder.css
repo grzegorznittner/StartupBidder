@@ -90,6 +90,8 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .followtextit { font-style: italic; }
 .pull-15px { left: -15px; position: relative; }
 .push-15px { left: 15px; position: relative; }
+.welcometext { font-size: 14px; font-weight: normal; }
+.welcometext a { font-weight: bold; }
 
 /* icons */
 .spritebg { width: 32px; height: 32px; background: url(images/icons/spritebg.gif); }

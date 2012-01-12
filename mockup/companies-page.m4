@@ -1,4 +1,4 @@
-define(`companiespage',`
+define(`companiespageroot',`
 `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 '
@@ -12,9 +12,9 @@ include(header.m4)
 `
 <div class="container">
 '
-include(banner.m4)
-include(searchbar.m4)
 include($1)
+include(searchbar.m4)
+include($2)
 include(main-sidebar.m4)
 `
 </div> <!-- end container -->
@@ -27,3 +27,6 @@ include(footer.m4)
 </html>
 '
 ')
+define(`companiespage',`
+companiespageroot(`banner.m4',$1)')
+
