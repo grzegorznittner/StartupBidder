@@ -6,6 +6,8 @@ static_files:
   - include: /**.css
   - include: /**.js
   - include: /**.png
+  - include: /**.jpg
+  - include: /**.gif
   - include: /**.ico
   - include: /**.txt
   - include: /crossdomain.xml
@@ -18,3 +20,6 @@ handlers:
     servlet: com.startupbidder.web.servlets.SetupServlet
   - url: /*
     servlet: com.startupbidder.web.FrontController
+
+welcome_files:
+  - main-page.html
