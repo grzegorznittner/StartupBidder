@@ -5,7 +5,7 @@ pl(function() {
         load: function() {
             var i, pairs, keyval;
             this.vars = new Array();
-            pairs = window.location.search.split( "&" );
+            pairs = window.location.search ? window.location.search.split( "&" ) : {};
             for (i in pairs) {
                 keyval = pairs[ i ].split( "=" );
                 this.vars[ keyval[0] ] = keyval[1];
@@ -98,8 +98,9 @@ orderNumber=1, id=ag1zdGFydHVwYmlkZGVychcLEgdMaXN0aW5nIgpraWxsIGVtYWlsDA, name=K
 */
     function CompanyListClass() {}
     pl.implement(CompanyListClass, {
-        storeList: function(json) {
+        storeList: function(json, colsPerRow) {
             var companies, html;
+            colsPerRow = colsPerRow || 4;
             companies = json && json.listings && json.listings.length > 0 ? json.listings : null;
             html = "";
             if (!companies) {
@@ -113,7 +114,7 @@ orderNumber=1, id=ag1zdGFydHVwYmlkZGVychcLEgdMaXN0aW5nIgpraWxsIGVtYWlsDA, name=K
                 tile  = new CompanyTileClass();
                 tile.setValues(company);
                 reali = companies.length - (i+1);
-                last = (reali+1)%4 === 0 ? 'last' : '';
+                last = (reali+1)%colsPerRow === 0 ? 'last' : '';
                 html += tile.makeHtml(last);
             });
             pl('#companydiv').html(html);
@@ -181,8 +182,8 @@ orderNumber=1, id=ag1zdGFydHVwYmlkZGVychcLEgdMaXN0aW5nIgpraWxsIGVtYWlsDA, name=K
         }
     });
 
-    function MainPageClass() {};
-    pl.implement(MainPageClass,{
+    function BasePageClass() {};
+    pl.implement(BasePageClass,{
         getListingsType: function() {
             var type;
             if (!this.queryString) {
@@ -200,29 +201,14 @@ orderNumber=1, id=ag1zdGFydHVwYmlkZGVychcLEgdMaXN0aW5nIgpraWxsIGVtYWlsDA, name=K
             var title = type.toUpperCase() + ' COMPANIES';
             pl('#listingstitle').html(title);
         },
-        loadPage: function() {
-            var header = new HeaderClass();
-            var companyList = new CompanyListClass();
-            var categoryList = new CategoryListClass();
-            var locationList = new LocationListClass();
+        loadPage: function(successFunc) {
             var type = this.getListingsType();
             var url = this.getListingsUrl(type);
-            this.storeListingsTitle(type);
             var loadFunc = function() {
                 pl('#companydiv').html('<span class="notice">Loading companies...</span>');
             };
             var errorFunc = function(errorNum) {
                 pl('#companydiv').html('<span class="attention">Error while loading page: '+errorNum+'</span>');
-            };
-            var successFunc = function(json) {
-                if (!json) {
-                    pl('#companydiv').html('<span class="attention">Error: null response from server</span>');
-                    return;
-                }
-                header.setLogin(json);
-                companyList.storeList(json);
-                categoryList.storeList(json);
-                locationList.storeList(json);
             };
             var ajax = {
                 async: true,
@@ -234,11 +220,74 @@ orderNumber=1, id=ag1zdGFydHVwYmlkZGVychcLEgdMaXN0aW5nIgpraWxsIGVtYWlsDA, name=K
                 error: errorFunc,
                 success: successFunc
             };
+            this.storeListingsTitle(type);
             pl.ajax(ajax);
         }
     });
 
-    /* go */
-    var mainPage = new MainPageClass();
-    mainPage.loadPage();
+
+    function MainPageClass() {};
+    pl.implement(MainPageClass,{
+        loadPage: function() {
+            var successFunc, basePage;
+            successFunc = function(json) {
+                var header, companyList, categoryList, locationList;
+                if (!json) {
+                    pl('#companydiv').html('<span class="attention">Error: null response from server</span>');
+                    return;
+                }
+                header = new HeaderClass();
+                companyList = new CompanyListClass();
+                categoryList = new CategoryListClass();
+                locationList = new LocationListClass();
+                header.setLogin(json);
+                companyList.storeList(json,4);
+                categoryList.storeList(json);
+                locationList.storeList(json);
+            };
+            basePage = new BasePageClass();
+            basePage.loadPage(successFunc);
+        }
+    });
+
+    function InformationPageClass() {}
+    pl.implement(InformationPageClass,{
+        loadPage: function() {
+            var successFunc, basePage;
+            successFunc = function(json) {
+                var header, companyList;
+                if (!json) {
+                    pl('#companydiv').html('<span class="attention">Error: null response from server</span>');
+                    return;
+                }
+                header = new HeaderClass();
+                companyList = new CompanyListClass();
+                header.setLogin(json);
+                companyList.storeList(json,2);
+            };
+            basePage = new BasePageClass();
+            basePage.loadPage(successFunc);
+        }
+    });
+
+    function DispatcherClass() {}
+    pl.implement(DispatcherClass,{
+        loadPage: function() {
+            var pageClass, page;
+            if (pl('body').hasClass('help-page')) {
+                pageClass = InformationPageClass;
+            }
+            else if (pl('body').hasClass('main-page')) {
+                pageClass = MainPageClass;
+            }
+            else {
+                pageClass = MainPageClass;
+            }
+            page = new pageClass();
+            page.loadPage();
+        }
+    });
+
+    var dispatcher = new DispatcherClass();
+    dispatcher.loadPage();
 });
