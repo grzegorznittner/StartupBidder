@@ -22,15 +22,19 @@ body > #wrap { height: auto; min-height: 100%; }
 .previewtext4 { top: 3100px; }
 
 /* general styles */
-body { font-size: 14px; font-weight: bold; color: #4083a9; background: #f2f2f2; }
-.curvedborder, .sidebox, .sideboxbutton, .sideboxbuttoninterior, .tile, .boxpanel, .boxstep, .boxselected, .inputbutton, .smallinputbutton, .sideboxselected {
+/* body { font-size: 14px; font-weight: bold; color: #4083a9; background: #f2f2f2; } */
+body { font-size: 14px; font-weight: normal; color: #4083a9; background: #f2f2f2; }
+.curvedborder, .sidebox, .sideboxbutton, .sideboxbuttoninterior, .tile, .boxpanel, .boxstep, .boxselected, .inputbutton, .smallinputbutton, .sideboxselected, .banner {
   -moz-border-radius: 5px; -webkit-border-radius: 5px; border-radius: 5px;
-  -moz-box-shadow: 3px 3px 3px 3px #ccc; -webkit-box-shadow: 3px 3px 3px 3px #ccc; box-shadow: 3px 3px 3px 3px #ccc; }
-
+  -moz-box-shadow: 3px 3px 3px rgba(0,0,0,0.5); -webkit-box-shadow: 3px 3px 3px rgba(0,0,0,0.5); box-shadow: 3px 3px 3px rgba(0,0,0,0.5);
+  filter: progid:DXImageTransform.Microsoft.Blur(PixelRadius=3,MakeShadow=true,ShadowOpacity=0.30);
+  -ms-filter: "progid:DXImageTransform.Microsoft.Blur(PixelRadius=3,MakeShadow=true,ShadowOpacity=0.30)";
+  zoom: 1;
+}
 
 /* link styles */
 a:link, a:visited { text-decoration: none; color: #4083a9; }
-a:hover { opacity: 0.6; cursor: pointer; }
+a:hover { opacity: 0.7; cursor: pointer; }
 
 /* colors */
 .crystalbluebg { background: #efffff; }
@@ -86,12 +90,12 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .follow { top: 33px; position: relative; }
 .followpromo { top: 20px; position: relative; }
 .followimg { top: 20px; position: relative; }
-.followtext {}
+.followtext { font-weight: bold; }
 .followtextit { font-style: italic; }
 .pull-15px { left: -15px; position: relative; }
 .push-15px { left: 15px; position: relative; }
 .welcometext { font-size: 14px; font-weight: normal; }
-.welcometext a { font-weight: bold; }
+/* .welcometext a { font-weight: bold; } */
 
 /* icons */
 .spritebg { width: 32px; height: 32px; background: url(../img/icons/spritebg.gif); }
@@ -197,7 +201,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .inputtextareaeightline { height: 140px; overflow: hidden; overflow-x: hidden; overflow-y: hidden; }
 
 /* box styles */
-.boxtitle { margin-top: 10px; color: #333333; }
+.boxtitle { margin-top: 10px; color: #333333; font-weight: bold; }
 .boxpanel, .boxstep { border: 2px solid #999999; padding: 2px; overflow: auto; background: #e3e3e3; margin-bottom: 10px; }
 .boxpanel { width: 622px; }
 .boxpanel p { margin: 5px 10px 10px 10px; text-indent: 0px; }
@@ -215,14 +219,14 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .boxstep5 { left: 500px; width: 126px; }
 .boxstepcomplete { background-color: #999999; }
 .commentpanel dl dt { font-size: 10px; padding-top: 5px; padding-bottom: 5px; }
-.boxoption { display: block; float: left; text-align: center; height: 25px; padding-top: 5px; margin-bottom: 5px; }
+.boxoption { display: block; float: left; text-align: center; height: 25px; padding-top: 5px; margin-bottom: 5px; font-weight: bold; }
 .boxoption1 { width: 146px; }
 .boxoption2 { width: 160px; }
 .boxoption3 { width: 160px; }
 .boxselected { background: white; }
 .sideboxselected { background: white; !important}
 .sidebox { width: 302px; border: 2px solid #999999; padding: 2px; overflow: auto; background: #e3e3e3; margin-bottom: 10px; }
-.sidebox p { margin: 5px 10px 10px 10px; text-indent: 0px; }
+.sidebox p { margin: 5px 10px 10px 10px; text-indent: 0px; font-weight: normal; }
 .sideboxcol1 { width: 146px; float: left; margin-right: 10px; }
 .sideboxcol2 { width: 146px; float: left; }
 .sideboxlist { list-style: none; list-style-position: inside; margin-left: 0; padding-left: 0; }
@@ -230,7 +234,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .sideboxbutton { width: 310px; }
 .sideboxbuttoninterior { width: 292px; margin: 0 5px 5px 5px; }
 .sideboxcompanylink { width: 298px; float: left; margin-left: 2px; }
-.sideboxtitle { float: left; font-size: 24px; text-align: right; margin-left: 10px; margin-right: 10px; height: 43px; }
+.sideboxtitle { float: left; font-size: 24px; text-align: right; margin-left: 10px; margin-right: 10px; height: 43px; font-weight: bold; }
 .sideboxtitledetail { float: left; padding-top: 11px; }
 .sideboxtitlecompact { font-size: 24px; margin-left: 5px; margin-right: 10px; }
 .sideboxdesc { margin-left: 5px; }
@@ -246,18 +250,18 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .tileimg { width: 146px; height: 146px; }
 .tiledays, .tiledaystext, .tiletype, .tiletypetext, .tilepoints, .tilepointstext { width: 146px; height: 30px; position: absolute; }
 .tiledays, .tiletype, .tilepoints { opacity: 0.6; background-color: #000000; }
-.tiledaystext, .tiletypetext, .tilepointstext { padding: 4px; color: white; }
+.tiledaystext, .tiletypetext, .tilepointstext { padding: 4px; color: white; font-weight: bold; }
 .tiledays, .tiledaystext { top: 0px; }
 .tiletype, .tiletypetext { top: 116px; }
 .tilepoints, .tilepointstext { top: 266px; }
 .tiledesc { width: 142px; height: 116px; position: absolute; top: 146px; padding: 0 2px 2px 2px; margin:0; overflow: hidden; }
-.tilecompany { font-size: 14px; line-height: 19px; color: #333333; }
-.tileloc { color: #333333; }
+.tilecompany { font-size: 14px; line-height: 19px; color: #333333; font-weight: bold; }
+.tileloc { color: #333333; font-weight: bold; }
 .tileloc, .tiledetails, .tileposted, .tiledesc { font-size: 12px; line-height: 16px; }
 .tiledetails, .tileposted { font-weight: normal; }
 .tilevotes, .tilevoteimg, .tileposted { position: absolute; }
 .tilevotes { left: 30px; }
-.tileposted { top: 6px; right: 12px; text-align: right; }
+.tileposted { top: 6px; right: 12px; text-align: right; font-weight: bold; }
 
 /* img */
 .einstein { background: url(../img/einstein.jpg); border-radius: 3px; }
@@ -277,7 +281,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .footerlink:hover,
 .searchbutton:hover,
 .formlink:hover, .inputlink:hover, .inputimgbutton:hover, .inputbutton:hover, .smallinputbutton:hover
-{ opacity: 0.6; cursor: pointer; }
+{ opacity: 0.7; cursor: pointer; }
 
 /* debug styles */
 /* .container { background: url(../img/blueprint.jpg); background-position: -160px 0px; } */

@@ -225,7 +225,6 @@ orderNumber=1, id=ag1zdGFydHVwYmlkZGVychcLEgdMaXN0aW5nIgpraWxsIGVtYWlsDA, name=K
         }
     });
 
-
     function MainPageClass() {};
     pl.implement(MainPageClass,{
         loadPage: function() {
@@ -274,14 +273,14 @@ orderNumber=1, id=ag1zdGFydHVwYmlkZGVychcLEgdMaXN0aW5nIgpraWxsIGVtYWlsDA, name=K
     pl.implement(DispatcherClass,{
         loadPage: function() {
             var pageClass, page;
-            if (pl('body').hasClass('help-page')) {
+            if (pl('body').hasClass('main-page')) {
+                pageClass = MainPageClass;
+            }
+            else if (pl('body').hasClass('help-page') || pl('body').hasClass('terms-page') || pl('body').hasClass('contact-page')) {
                 pageClass = InformationPageClass;
             }
-            else if (pl('body').hasClass('main-page')) {
-                pageClass = MainPageClass;
-            }
             else {
-                pageClass = MainPageClass;
+                pageClass = InformationPageClass;
             }
             page = new pageClass();
             page.loadPage();
