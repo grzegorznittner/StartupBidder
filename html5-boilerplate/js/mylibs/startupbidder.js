@@ -19,13 +19,15 @@ pl(function() {
             var profile = json ? json.loggedin_profile : null;
             var username;
             if (profile) {
-                pl('#loginlink').attr('href', 'profile-page.html');
                 username = profile.username || 'You';
+                pl('#loginlink').attr('href', 'profile-page.html');
                 pl('#logintext').html(username);
+                pl('#logout').css({display:'block'});
             }
             else {
                 pl('#loginlink').attr('href', 'login-page.html');
                 pl('#logintext').html('Login or Sign Up');
+                pl('#logout').css({display:'none'});
             }
         }
     });
@@ -275,9 +277,6 @@ orderNumber=1, id=ag1zdGFydHVwYmlkZGVychcLEgdMaXN0aW5nIgpraWxsIGVtYWlsDA, name=K
             var pageClass, page;
             if (pl('body').hasClass('main-page')) {
                 pageClass = MainPageClass;
-            }
-            else if (pl('body').hasClass('help-page') || pl('body').hasClass('terms-page') || pl('body').hasClass('contact-page')) {
-                pageClass = InformationPageClass;
             }
             else {
                 pageClass = InformationPageClass;

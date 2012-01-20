@@ -81,6 +81,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .headerprofile { float: right; text-align: right; }
 .loginspan { text-align: right; }
 .headericon { position: relative; top: 16px; width: 26px; margin-right: 10px; float: right; }
+.logout { positon:relative; margin-top:6px; display: none; }
 
 /* banner styles */
 .banner { width: 980px; height: 80px; margin-top: 10px; }
@@ -273,6 +274,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .missingimg { background: url(http://www.minimus.biz/img/Your%20Logo%20Here%20Black%202.jpg) -65px -55px; border-radius: 3px; height: 146px; width: 146px; }
 
 /* hover effect */
+/*
 .tileimg:hover, .tiledesc:hover, .tilevoteimg:hover,
 .boxoption:hover, .sideboxlist>li:hover, .sideboxbutton:hover, .sideboxbuttoninterior:hover,
 .sideboxcompanylink:hover, .sideboxlink:hover,
@@ -282,7 +284,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .searchbutton:hover,
 .formlink:hover, .inputlink:hover, .inputimgbutton:hover, .inputbutton:hover, .smallinputbutton:hover
 { opacity: 0.7; cursor: pointer; }
+*/
 
 /* debug styles */
 /* .container { background: url(../img/blueprint.jpg); background-position: -160px 0px; } */
-
