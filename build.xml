@@ -1,11 +1,14 @@
 <project name="StartupBidder.com">
   <property environment="env"/>
   <echo message="\'APPENGINE_HOME\'=${env.APPENGINE_HOME}"/>
+  <property name="env.APPENGINE_ADDRESS" value="127.0.0.1"/>
+  <echo message="\'APPENGINE_ADDRESS\'=${env.APPENGINE_ADDRESS}"/>
   <import file="${env.APPENGINE_HOME}/config/user/ant-macros.xml" />
-	
+
   <target name="check-appengine-home" unless="env.APPENGINE_HOME">
   	<echo message="Set \'APPENGINE_HOME\' environment variable to folder where you installed AppEngine SDK."/> 
   	<echo message="Set \'APPENGINE_EMAIL\' environment variable to email address of AppEngine adminstator of your application."/> 
+  	<echo message="Set \'APPENGINE_ADDRESS\' environment variable to the local network address of AppEngine, so you can access from other machines on the local network."/> 
   	<echo message="Set \'http_proxy\' and \'https_proxy\' environment variables if you use proxy to connect to appengine website."/> 
   </target>
 
@@ -99,6 +102,7 @@
         <arg value="--jvm_flag=-Dhttps.proxyHost=${https_proxy_host}"/>
         <arg value="--jvm_flag=-Dhttps.proxyPort=${https_proxy_port}"/>
         <arg value="--jvm_flag=-Dhttp.nonProxyHosts=local*|127*"/>         
+        <arg value="--address=${env.APPENGINE_ADDRESS}"/>         
       </options>
     </dev_appserver>
   </target>
