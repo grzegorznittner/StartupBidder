@@ -28,10 +28,9 @@
   <link rel="canonical" href="http://startupbidder.appspot.com"/>
 </head>
 
-<body class="main-page">
+<body class="profile-page">
 <div id="wrap">
 <div id="main">
-
 
 <div class="header">
   <div class="container">
@@ -58,88 +57,74 @@
 
 <div class="container">
 
-<div class="banner crystalbluebg pull-15px">
-    <span class="bannertext span-16 push-15px">
-        <div>Welcome to Startupbidder!</div>
-        <div class="welcometext">
-            Explore our <a href="latest-companies.html">latest</a> listings,
-            <a href="new-listing-basics-page.html">post</a> your own company,
-            and <a href="closing-companies.html">invest</a> in startups worldwide
-        </div>
-    </span>
-    <div class="span-4 push-15px follow">
-        <div class="followtext">follow us</div>
-    </div>
-    <span class="span-1 push-15px pull-2">
-        <div class="spritebg facebook followimg"></div>
-    </span>
-    <span class="span-1 push-15px pull-1">
-        <div class="spritebg twitter followimg"></div>
-    </span>
-    <span class="span-2 last push-15px">
-        <div class="spritebg googleplus followimg"></div>
-    </span>
-    <!-- <div class="span-8 push-15px followpromo followtext">for a limited time, listing is free!</div> -->
-</div> <!-- end banner -->
-
-<!-- searchbar -->
-  <div class="searchbar span-15 searchbox">
-    <input type="text" class="text inputtext" name="searchbox" id="searchbox" value="Search"></input>
-  </div>
-  <div class="searchbar span-1 searchbutton">
-    <a href="search-results-page.html"><div class="spritebg searchimg"></div></a>
-  </div>
-<!--
-  <div class="searchbar searchtext span-8 last">
-    <input type="checkbox" name="searchcheckbox" id="searchcheckbox" value="false"></input>&nbsp;only search open for bidding
-  </div>
--->
-<!-- end searchbar -->
-
 <!-- left column -->
 <div class="span-16">
-    <div class="boxtitle smokegrey" id="listingstitle"></div>
-
-    <!-- companydiv -->
-    <div id="companydiv">
-        loading...
+    <div class="boxtitle">YOUR PROFILE</div>
+    <div class="boxpanel">
+        <div id="profilestatus"></div>
+        <div class="formfull">
+            <span class="formtitle" id="name"></span>
+        </div>
+        <div class="formcol1 clear">
+            <span id="title"></span><br/>
+            <span id="organization"></span><br/>
+            <br/>
+            <span id="email"></span><br/>
+            <span id="phone"></span><br/>
+            <span id="address"></span><br/>
+        </div>
+        <div class="formcol2">
+            Member since <span id="joineddate"></span><br/>
+            <span id="investor"></span><br/>
+            Email notifications <span id="notifyenabled"></span><br/>
+            <br/>
+            <a href="edit-profile-page.html">
+                <span class="push-4 span-3 inputbutton" id="editprofilebutton">
+                    EDIT
+                </span>
+            </a>
+        </div>
     </div>
-    <!-- end companydiv -->
 
-</div>
-<!-- end left column -->
+    <div class="boxtitle clear"><a name="posted"></a>YOU POSTED</div>
+    <div id="posteddiv"></div>
+
+    <div class="boxtitle clear"><a name="bidon"></a>YOU BID ON</div>
+    <div id="bidondiv"></div>
+
+    <div class="boxtitle clear"><a name="upvoted"></a>YOU UPVOTED</div>
+    <div id="upvoteddiv"></div>
+
+</div> <!-- end left column -->
 
 <!-- right column -->
 <div class="span-8 last">
-    <div class="boxtitle">ADD YOUR STARTUP</div>
-    <a href="new-listing-basics-page.html"><div class="sideboxbutton">POST NOW</div></a>
-
-    <div class="boxtitle">FUND A STARTUP</div>
-    <a href="closing-page.html"><div class="sideboxbutton">INVEST NOW</div></a>
-
-    <div class="boxtitle">INDUSTRIES</div>
+    <div class="boxtitle">YOUR COMPANIES</div>
     <div class="sidebox">
-        <span class="sideboxcol1">
-            <ul class="sideboxlist" id="categorydivcol1">
-                <li>loading...</li>
-            </ul>
-        </span>
-        <span class="sideboxcol2">
-            <ul class="sideboxlist" id="categorydivcol2"></ul>
-        </span>
+        <a href="#posted">
+        <!-- <div class="sideboxcompanylink sideboxselected clear"> -->
+        <div class="sideboxcompanylink clear">
+            <span class="sideboxtitle" id="mylistingscount">0</span>
+            <span class="sideboxtitledetail">YOU POSTED</span>
+        </div>
+        </a>
+        <a href="#bidon">
+        <div class="sideboxcompanylink">
+            <span class="sideboxtitle" id="biddedoncount">0</span>
+            <span class="sideboxtitledetail">YOU BID ON</span>
+        </div>
+        </a>
+        <a href="#upvoted">
+        <div class="sideboxcompanylink">
+            <span class="sideboxtitle" id="upvotedcount">0</span>
+            <span class="sideboxtitledetail">YOU UPVOTED</span>
+        </div>
+        </a>
     </div>
     
-    <div class="boxtitle">LOCATIONS</div>
-    <div class="sidebox">
-        <span class="sideboxcol1">
-            <ul class="sideboxlist" id="locationdivcol1">
-                <li>loading...</li>
-            </ul>
-        </span>
-        <span class="sideboxcol2">
-            <ul class="sideboxlist" id="locationdivcol2"></ul>
-        </span>
-    </div>
+    <div class="boxtitle clear">YOUR NOTIFICATIONS</div>
+    <div class="sidebox" id="notifylist"></div>
+
 </div> <!-- end right column -->
 
 </div> <!-- end container -->
@@ -189,6 +174,6 @@
     <script src="//ajax.googleapis.com/ajax/libs/chrome-frame/1.0.3/CFInstall.min.js"></script>
     <script>window.attachEvent('onload',function(){CFInstall.check({mode:'overlay'})})</script>
   <![endif]-->
-  
+
 </body>
 </html>
