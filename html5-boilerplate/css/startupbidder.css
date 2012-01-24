@@ -142,7 +142,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .bidformlabel { float: left; margin-right: 10px; width: 146px; color: #49515a; }
 .widelabel { width: 296px; }
 .medialabel { width: 316px; margin-left: 5px; }
-.inputlabel { padding-top: 10px; }
+.inputlabel { padding-top: 10px; font-weight: bold; }
 .widelabel { padding-top: 15px; margin-left: 5px; }
 .inputcaptcha { margin-top: 10px; margin-bottom: 10px; }
 .inputtext, .narrowinputtitle, .bidinputtitle, .narrowinputtext, .inputtextpct, .inputwidetext, .inputfullwidetextshort,

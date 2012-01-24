@@ -7,7 +7,6 @@ pl(function() {
         }
     });
 
-
     function QueryStringClass() {}
     pl.implement(QueryStringClass, {
         load: function() {
@@ -17,6 +16,19 @@ pl(function() {
             for (i in pairs) {
                 keyval = pairs[ i ].split( "=" );
                 this.vars[ keyval[0] ] = keyval[1];
+            }
+        }
+    });
+
+    function CheckboxClass() {}
+    pl.implement(CheckboxClass, {
+        setChecked: function(id, isChecked) {
+            var idsel = '#' + id;
+            if (isChecked) {
+                pl(idsel).attr({checked: 'checked', value: 'true'});
+            }
+            else {
+                pl(idsel).removeAttr('checked').attr({value: 'false'});
             }
         }
     });
@@ -309,8 +321,8 @@ pl(function() {
         }
     });
 
-    function ProfileClass() {};
-    pl.implement(ProfileClass,{
+    function ProfileClass() {}
+    pl.implement(ProfileClass, {
         setProfile: function(json) {
             var date, joindate, investor;
             date = new DateClass();
@@ -332,6 +344,24 @@ pl(function() {
         }
     });
 
+    function EditProfileClass() {}
+    pl.implement(EditProfileClass, {
+        setProfile: function(json) {
+            var checkbox;
+            pl('#profilestatus').html('');
+            pl('#name').attr({value: json.name || 'Anonymous'});
+            pl('#title').attr({value: json.title || ''});
+            pl('#organization').attr({value: json.organization || ''});
+            pl('#email').attr({value: json.email || 'unknown@unknown.com'});
+            pl('#phone').attr({value: json.phone || ''});
+            pl('#address').attr({value: json.address || ''});
+            checkbox = new CheckboxClass();
+            checkbox.setChecked('investor', json.investor);
+            checkbox.setChecked('notifyenabled', json.notifyenabled);
+            //- newpassword
+            //- confirmpassword
+        }
+    });
 
     function TestCompaniesClass() {}
     pl.implement(TestCompaniesClass, {
@@ -426,6 +456,42 @@ pl(function() {
         }
     });
 
+    function EditProfilePageClass() {};
+    pl.implement(EditProfilePageClass,{
+        loadPage: function() {
+            var url, loadFunc, errorFunc, successFunc, ajax;
+            url = '/user/loggedin';
+            loadFunc = function() {
+                pl('#profilestatus').html('<span class="notice">Loading profile...</span>');
+            };
+            errorFunc = function(errorNum) {
+                pl('#profilestatus').html('<span class="notice">Error while loading profile: '+errorNum+'</span>');
+            };
+            successFunc = function(json) {
+                var header, profile;
+                if (!json) {
+                    pl('#profilestatus').html('<span class="notice">Error: null response from server</span>');
+                    return;
+                }
+                header = new HeaderClass();
+                editProfile = new EditProfileClass();
+                header.setLogin(json);
+                editProfile.setProfile(json);
+            };
+            ajax = {
+                async: true,
+                url: url,
+                type: 'GET',
+                dataType: 'json',
+                charset: 'utf-8',
+                load: loadFunc,
+                error: errorFunc,
+                success: successFunc
+            };
+            pl.ajax(ajax);
+        }
+    });
+
     function DispatcherClass() {}
     pl.implement(DispatcherClass,{
         loadPage: function() {
@@ -435,6 +501,9 @@ pl(function() {
             }
             else if (pl('body').hasClass('profile-page')) {
                 pageClass = ProfilePageClass;;
+            }
+            else if (pl('body').hasClass('edit-profile-page')) {
+                pageClass = EditProfilePageClass;;
             }
             else {
                 pageClass = InformationPageClass;
