@@ -16,6 +16,8 @@ body > #wrap { height: auto; min-height: 100%; }
 .copyrightspan { text-align: right; }
 .copyrighttext { font-size: 10px; font-weight: bold; top: 10px; position: relative; }
 .attention { color: #8A1F11; }
+.inprogress { color: #3F4A11; }
+.successful { color: #009900; }
 .notice { position: relative; top: 15px; }
 .emptyattention { color: #8A1F11; position: relative; top: 15px; }
 .previewtext { z-index: 1000; position: absolute; background: rgba(0,0,0,0.6); top: 560px; left: 400px; font-size: 72px; color: white; font-weight: bold; padding: 20px; padding-left: 40px; padding-right: 40px; border-radius: 25px; }

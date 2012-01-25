@@ -1,5 +1,12 @@
 pl(function() {
 
+    function SafeStringClass() {}
+    pl.implement(SafeStringClass, {
+        htmlEntities: function (str) {
+            return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+        }
+    });
+
     function DateClass() {}
     pl.implement(DateClass, {
         format: function(yyyymmdd) {
@@ -16,6 +23,20 @@ pl(function() {
             for (i in pairs) {
                 keyval = pairs[ i ].split( "=" );
                 this.vars[ keyval[0] ] = keyval[1];
+            }
+        }
+    });
+
+    function Validator() {}
+    pl.implement(Validator, {
+        isNotEmpty: function(str) {
+            var trimmedStr;
+            trimmedStr = str.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
+            if (trimmedStr !== null && trimmedStr.length > 0) {
+                return true;
+            }
+            else {
+                return false;
             }
         }
     });
@@ -344,10 +365,91 @@ pl(function() {
         }
     });
 
+    function UserMessageClass() {}
+    pl.implement(UserMessageClass, {
+        setId: function(id) {
+            this.sel = '#'+id;
+        },
+        show: function(cssClass, text) {
+            pl(this.sel).html('').removeClass('attention').removeClass('inprogress').removeClass('successful').addClass(cssClass).html(text);
+        },
+        clear: function() {
+            pl(this.sel).html('').removeClass('attention').removeClass('inprogress').removeClass('successful');
+        }
+    });
+
     function EditProfileClass() {}
     pl.implement(EditProfileClass, {
+        bindEvents: function() {
+            var self, nameel;
+            self = this;
+            nameel = pl('#name').get();
+            nameel.onfocus = function() {
+                console.log('gotfocus');
+                self.name = pl('#name').attr('value'); // save the value
+            };
+            nameel.onblur = function() { // push to server
+                var msg, safeStr, filter, newname, url, data, loadFunc, errorFunc, successFunc, ajax;
+                console.log('gotblur');
+                msg = new UserMessageClass();
+                msg.setId('personalinfomsg');
+                newname = pl('#name').attr('value');
+                if (self.name === newname) {
+                    console.log('name unchanged, not saving');
+                    msg.clear();
+                    return;
+                }
+                safeStr = new SafeStringClass();
+                newname = safeStr.htmlEntities(newname);
+                // validate newname
+                validator = new Validator();
+                if (!validator.isNotEmpty(newname)) {
+                    console.log('name null, not saving');
+                    msg.show('attention', 'Name cannot be empty');
+                    return;
+                }
+                console.log('save name:' + newname + ' to server');
+                url = '/user/update?id=' + self.profile_id;
+                data = { profile: {
+                    profile_id: self.profile_id,
+                    username: self.username,
+                    stauts: self.status,
+                    open_id: self.open_id,
+                    name: pl('#name').attr('value'),
+                    email: pl('#email').attr('value'),
+                    title: pl('#title').attr('value'),
+                    organization: pl('#organization').attr('value'),
+                    investor: pl('#investor').attr('value') || false,
+                    facebook:'',
+                    twitter:'',
+                    linkedin:'',
+                } };
+                data.profile.name = newname;
+                console.log('url: ',url);
+                console.log('data: ',data);
+                loadFunc = function() { msg.show('inprogress', 'Saving changes to server...'); };
+                errorFunc = function(errorNum) { msg.show('attention', 'Error saving changes to server: ' + errorNum); };
+                successFunc = function() { msg.show('inprogress', 'Saved changes to server'); };
+                ajax = {
+                    async: true,
+                    url: url,
+                    type: 'POST',
+                    data: data,
+                    dataType: 'json',
+                    charset: 'utf-8',
+                    load: loadFunc,
+                    error: errorFunc,
+                    success: successFunc
+                };
+                pl.ajax(ajax);
+            };
+        },
         setProfile: function(json) {
             var checkbox;
+            this.profile_id = json.profile_id;
+            this.status = json.status;
+            this.username = json.username;
+            this.open_id = json.open_id;
             pl('#profilestatus').html('');
             pl('#name').attr({value: json.name || 'Anonymous'});
             pl('#title').attr({value: json.title || ''});
@@ -477,6 +579,7 @@ pl(function() {
                 editProfile = new EditProfileClass();
                 header.setLogin(json);
                 editProfile.setProfile(json);
+                editProfile.bindEvents();
             };
             ajax = {
                 async: true,
