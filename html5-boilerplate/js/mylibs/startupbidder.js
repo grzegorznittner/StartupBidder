@@ -27,17 +27,102 @@ pl(function() {
         }
     });
 
-    function Validator() {}
-    pl.implement(Validator, {
+    function EmailCheckClass() {}
+    pl.implement(EmailCheckClass, {
+        emailCheck: function(emailStr) {
+            var checkTLD=1;
+            var knownDomsPat=/^(com|net|org|edu|int|mil|gov|arpa|biz|aero|name|coop|info|pro|museum)$/;
+            var emailPat=/^(.+)@(.+)$/;
+            var specialChars="\\(\\)><@,;:\\\\\\\"\\.\\[\\]";
+            var validChars="\[^\\s" + specialChars + "\]";
+            var quotedUser="(\"[^\"]*\")";
+            var ipDomainPat=/^\[(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})\]$/;
+            var atom=validChars + '+';
+            var word="(" + atom + "|" + quotedUser + ")";
+            var userPat=new RegExp("^" + word + "(\\." + word + ")*$");
+            var domainPat=new RegExp("^" + atom + "(\\." + atom +")*$");
+            var matchArray=emailStr.match(emailPat);
+            if (matchArray==null) {
+                return "Email address seems incorrect (check @ and .'s)";
+            }
+            var user=matchArray[1];
+            var domain=matchArray[2];
+            for (i=0; i<user.length; i++) {
+                    if (user.charCodeAt(i)>127) {
+                            return "This username contains invalid characters.";
+                    }
+            }
+            for (i=0; i<domain.length; i++) {
+                    if (domain.charCodeAt(i)>127) {
+                            return "This domain name contains invalid characters.";
+                    }
+            }
+            if (user.match(userPat)==null) {
+                    return "The username doesn't seem to be valid.";
+            }
+            var IPArray=domain.match(ipDomainPat);
+            if (IPArray!=null) {
+                    for (var i=1;i<=4;i++) {
+                            if (IPArray[i]>255) {
+                                    return "Destination IP address is invalid!";
+                            }
+                    }
+                    return true;
+            }
+            var atomPat=new RegExp("^" + atom + "$");
+            var domArr=domain.split(".");
+            var len=domArr.length;
+            for (i=0;i<len;i++) {
+                    if (domArr[i].search(atomPat)==-1) {
+                            return "The domain name does not seem to be valid.";
+                    }
+            }
+            if (checkTLD && domArr[domArr.length-1].length!=2 && 
+                            domArr[domArr.length-1].search(knownDomsPat)==-1) {
+                    return "The address must end in a well-known domain or two letter country.";
+            }
+            if (len<2) {
+                    return "This address is missing a hostname.";
+            }
+            return 0;
+        }
+    });
+
+    function ValidatorClass() {}
+    pl.implement(ValidatorClass, {
         isNotEmpty: function(str) {
             var trimmedStr;
             trimmedStr = str.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
             if (trimmedStr !== null && trimmedStr.length > 0) {
-                return true;
+                return 0;
             }
             else {
-                return false;
+                return "Value cannot be empty.";
             }
+        },
+        isEmail: function(str) {
+            var checker;
+            checker = new EmailCheckClass();
+            return checker.emailCheck(str);
+        },
+        add: function(test) {
+            if (!this.tests) {
+                this.tests = [];
+            }
+            this.tests.push(test);
+        },
+        validate: function(str) {
+            var i, result;
+            if (!this.tests) {
+                return;
+            }
+            for (i = 0; i < this.tests.length; i++) {
+                result = this.tests[i](str);
+                if (result !== 0) {
+                    return result;
+                }
+            }
+            return 0;
         }
     });
 
@@ -369,52 +454,107 @@ pl(function() {
     pl.implement(UserMessageClass, {
         setId: function(id) {
             this.sel = '#'+id;
+            this.isClear = false;
         },
         show: function(cssClass, text) {
+            this.isClear = false;
             pl(this.sel).html('').removeClass('attention').removeClass('inprogress').removeClass('successful').addClass(cssClass).html(text);
         },
         clear: function() {
+            this.isClear = true;
             pl(this.sel).html('').removeClass('attention').removeClass('inprogress').removeClass('successful');
         }
     });
 
-    function EditProfileClass() {}
-    pl.implement(EditProfileClass, {
+    function ValidIconClass() {}
+    pl.implement(ValidIconClass, {
+        setId: function(id) {
+            this.sel = '#' + id;
+            this.isValid = false;
+        },
+        showValid: function() {
+            this.isValid = true;
+            this.clearClasses().addClass('checkboxgreenicon');
+        },
+        showInvalid: function() {
+            this.isValid = false;
+            this.clearClasses().addClass('checkboxredicon');
+        },
+        clear: function() {
+            this.isValid = false;
+            this.clearClasses();
+        },
+        clearClasses: function() {
+            return pl(this.sel).removeClass('checkboxgreenicon').removeClass('checkboxredicon');
+        }
+    });
+
+    function TextFieldClass() {}
+    pl.implement(TextFieldClass, {
+        setId: function(id) {
+            this.id = id;
+            this.sel = '#' + id;
+            this.validator = new ValidatorClass();
+        },
+        setValue: function(value) {
+            this.value = value || ''; // save for later
+            pl(this.sel).attr({value: this.value});
+        },
+        setProfile: function(profile) {
+            this.profile = profile;
+        },
+        addValidator: function(validatorFunc) {
+            this.validator.add(validatorFunc);
+        },
         bindEvents: function() {
-            var self, nameel;
+            var self, msg, iconId, icon, safeStr;
             self = this;
-            nameel = pl('#name').get();
-            nameel.onfocus = function() {
-                console.log('gotfocus');
-                self.name = pl('#name').attr('value'); // save the value
+            msg = new UserMessageClass();
+            msg.setId('personalinfomsg');
+            iconId = self.id + 'icon';
+            icon = new ValidIconClass();
+            icon.setId(iconId);
+            safeStr = new SafeStringClass();
+            var onchange = function() {
+                var newval, validMsg;
+                newval = safeStr.htmlEntities(pl(self.sel).attr('value'));
+                validMsg = self.validator.validate(newval);
+                if (validMsg !== 0) {
+                    msg.show('attention', validMsg);
+                    icon.showInvalid();
+                    return;
+                }
+                if (!msg.isClear) {
+                    msg.clear();
+                }
+                if (!icon.isValid) {
+                    icon.showValid();
+                }
             };
-            nameel.onblur = function() { // push to server
-                var msg, safeStr, filter, newname, url, data, loadFunc, errorFunc, successFunc, ajax;
-                console.log('gotblur');
-                msg = new UserMessageClass();
-                msg.setId('personalinfomsg');
-                newname = pl('#name').attr('value');
-                if (self.name === newname) {
-                    console.log('name unchanged, not saving');
+            var onfocus = function() {
+                self.value = pl(self.sel).attr('value'); // save the value
+            };
+            var onblur = function(event) { // push to server
+                var filter, newval, validMsg, url, data, changeKey, loadFunc, errorFunc, successFunc, ajax;
+                newval = safeStr.htmlEntities(pl(self.sel).attr('value'));
+                validMsg = self.validator.validate(newval);
+                if (validMsg !== 0) {
+                    pl(self.sel).attr('value', self.value); // restore old name
+                    msg.clear();
+                    icon.clear();
+                    return;
+                }
+                icon.clear();
+                if (self.value === newval) {
                     msg.clear();
                     return;
                 }
-                safeStr = new SafeStringClass();
-                newname = safeStr.htmlEntities(newname);
-                // validate newname
-                validator = new Validator();
-                if (!validator.isNotEmpty(newname)) {
-                    console.log('name null, not saving');
-                    msg.show('attention', 'Name cannot be empty');
-                    return;
-                }
-                console.log('save name:' + newname + ' to server');
-                url = '/user/update?id=' + self.profile_id;
+                url = '/user/update?id=' + self.profile.profile_id;
                 data = { profile: {
-                    profile_id: self.profile_id,
-                    username: self.username,
-                    stauts: self.status,
-                    open_id: self.open_id,
+                    profile_id: self.profile.profile_id,
+                    username: self.profile.username,
+                    stauts: self.profile.status,
+                    open_id: self.profile.open_id,
                     name: pl('#name').attr('value'),
                     email: pl('#email').attr('value'),
                     title: pl('#title').attr('value'),
@@ -424,12 +564,17 @@ pl(function() {
                     twitter:'',
                     linkedin:'',
                 } };
-                data.profile.name = newname;
-                console.log('url: ',url);
-                console.log('data: ',data);
+                changeKey = self.id;
+                data.profile[changeKey] = newval;
                 loadFunc = function() { msg.show('inprogress', 'Saving changes to server...'); };
-                errorFunc = function(errorNum) { msg.show('attention', 'Error saving changes to server: ' + errorNum); };
-                successFunc = function() { msg.show('inprogress', 'Saved changes to server'); };
+                errorFunc = function(errorNum) {
+                    pl(self.sel).attr('value', self.value); // restore old val
+                    msg.show('attention', 'Error saving changes to server: ' + errorNum);
+                };
+                successFunc = function() {
+                    msg.show('successful', 'Saved changes to server');
+                    self.value = newval;
+                };
                 ajax = {
                     async: true,
                     url: url,
@@ -443,20 +588,39 @@ pl(function() {
                 };
                 pl.ajax(ajax);
             };
-        },
+            pl(self.sel).bind({
+                blur: onblur,
+                focus: onfocus,
+                change: onchange,
+                keyup: onchange
+            });
+        }
+    });
+
+    function EditProfileClass() {}
+    pl.implement(EditProfileClass, {
         setProfile: function(json) {
-            var checkbox;
-            this.profile_id = json.profile_id;
-            this.status = json.status;
-            this.username = json.username;
-            this.open_id = json.open_id;
+            var properties, i, property, textFields, textFieldId, textFieldObj, checkbox;
+            properties = ['profile_id', 'status', 'name', 'username', 'open_id', 'profilestatus', 'title', 'organization', 'email', 'phone', 'address'];
+            textFields = ['email', 'name', 'title', 'organization', 'phone', 'address'];
+            this.profile_id = json
+            for (i = 0; i < properties.length; i++) {
+                property = properties[i];
+                this[property] = json[property];
+            }
+            for (i = 0; i < textFields.length; i++) {
+                textFieldId = textFields[i];
+                textFieldObj = new TextFieldClass();
+                textFieldObj.setId(textFieldId);
+                textFieldObj.setValue(json[textFieldId]);
+                textFieldObj.setProfile(this);
+                textFieldObj.addValidator(textFieldObj.validator.isNotEmpty);
+                if (textFieldId === 'email') {
+                    textFieldObj.addValidator(textFieldObj.validator.isEmail);
+                }
+                textFieldObj.bindEvents();
+            }
             pl('#profilestatus').html('');
-            pl('#name').attr({value: json.name || 'Anonymous'});
-            pl('#title').attr({value: json.title || ''});
-            pl('#organization').attr({value: json.organization || ''});
-            pl('#email').attr({value: json.email || 'unknown@unknown.com'});
-            pl('#phone').attr({value: json.phone || ''});
-            pl('#address').attr({value: json.address || ''});
             checkbox = new CheckboxClass();
             checkbox.setChecked('investor', json.investor);
             checkbox.setChecked('notifyenabled', json.notifyenabled);
@@ -579,7 +743,6 @@ pl(function() {
                 editProfile = new EditProfileClass();
                 header.setLogin(json);
                 editProfile.setProfile(json);
-                editProfile.bindEvents();
             };
             ajax = {
                 async: true,
