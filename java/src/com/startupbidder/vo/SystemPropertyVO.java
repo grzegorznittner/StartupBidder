@@ -1,21 +1,71 @@
 package com.startupbidder.vo;
 
-import com.startupbidder.dto.SystemPropertyDTO;
+import java.util.Date;
+
+import org.codehaus.jackson.annotate.JsonAutoDetect;
+import org.codehaus.jackson.annotate.JsonProperty;
+import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 
 /**
  * 
  * @author "Grzegorz Nittner" <grzegorz.nittner@gmail.com>
  */
-@SuppressWarnings("serial")
-public class SystemPropertyVO extends SystemPropertyDTO {
-	public SystemPropertyVO() {	
+@JsonAutoDetect(getterVisibility=Visibility.NONE, setterVisibility=Visibility.NONE,
+	fieldVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE)
+public class SystemPropertyVO {
+	@JsonProperty("name") private String name;
+	@JsonProperty("value") private String value;
+	@JsonProperty("created") private Date created;
+	@JsonProperty("author") private String author;
+	@JsonProperty("modified") private Date modified;
+
+	public SystemPropertyVO() {
 	}
 	
-	public SystemPropertyVO (SystemPropertyDTO property) {
-		setAuthor(property.getAuthor());
-		setCreated(property.getCreated());
-		setKey(property.getKey());
-		setName(property.getName());
-		setValue(property.getValue());
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getValue() {
+		return value;
+	}
+
+	public void setValue(String value) {
+		this.value = value;
+	}
+
+	public Date getCreated() {
+		return created;
+	}
+
+	public void setCreated(Date created) {
+		this.created = created;
+	}
+
+	public String getAuthor() {
+		return author;
+	}
+
+	public void setAuthor(String author) {
+		this.author = author;
+	}
+
+	public Date getModified() {
+		return modified;
+	}
+
+	public void setModified(Date modified) {
+		this.modified = modified;
+	}
+
+	@Override
+	public String toString() {
+		return "SystemPropertyVO [name=" + name + ", value=" + value
+				+ ", created=" + created + ", author=" + author + ", modified="
+				+ modified + "]";
 	}
 }

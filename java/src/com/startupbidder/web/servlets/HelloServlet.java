@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.math.NumberUtils;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
@@ -17,14 +18,14 @@ import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
-import com.startupbidder.dao.DatastoreDAO;
-import com.startupbidder.dto.BidDTO;
-import com.startupbidder.dto.CommentDTO;
-import com.startupbidder.dto.ListingDTO;
-import com.startupbidder.dto.MonitorDTO;
-import com.startupbidder.dto.ListingDocumentDTO;
-import com.startupbidder.dto.NotificationDTO;
-import com.startupbidder.dto.UserDTO;
+import com.startupbidder.dao.ObjectifyDatastoreDAO;
+import com.startupbidder.datamodel.Bid;
+import com.startupbidder.datamodel.Comment;
+import com.startupbidder.datamodel.Listing;
+import com.startupbidder.datamodel.ListingDoc;
+import com.startupbidder.datamodel.Monitor;
+import com.startupbidder.datamodel.Notification;
+import com.startupbidder.datamodel.SBUser;
 import com.startupbidder.vo.ListPropertiesVO;
 import com.startupbidder.vo.ListingDocumentVO;
 import com.startupbidder.vo.UserVO;
@@ -50,7 +51,7 @@ public class HelloServlet extends HttpServlet {
 		}
 		
 		ServiceFacade service = ServiceFacade.instance();
-		DatastoreDAO datastore = ServiceFacade.instance().getDAO();
+		ObjectifyDatastoreDAO datastore = ServiceFacade.instance().getDAO();
 		
 		PrintWriter out = resp.getWriter();
 		try {
@@ -64,17 +65,17 @@ public class HelloServlet extends HttpServlet {
 //			}
 			out.println("<a href=\"/setup/\">Setup page</a></p>");
 			
-			UserDTO topInvestor = datastore.getTopInvestor();
+			SBUser topInvestor = datastore.getTopInvestor();
 			UserVO currentUser = service.getLoggedInUserData(user);
 			if (currentUser == null) {
 				currentUser = service.createUser(user);
 			}
 			ListPropertiesVO listProperties = new ListPropertiesVO();
 			listProperties.setMaxResults(1);
-			ListingDTO topListing = datastore.getTopListings(listProperties).get(0);
-			List<BidDTO> bids = datastore.getBidsForUser(topInvestor.getIdAsString());
-			List<ListingDTO> usersListings = datastore.getUserActiveListings(currentUser.getId(), listProperties);
-			List<CommentDTO> comments = datastore.getCommentsForListing(datastore.getMostDiscussedListings(listProperties).get(0).getIdAsString());
+			Listing topListing = datastore.getTopListings(listProperties).get(0);
+			List<Bid> bids = datastore.getBidsForUser(topInvestor.id);
+			List<Listing> usersListings = datastore.getUserActiveListings(NumberUtils.toLong(currentUser.getId()), listProperties);
+			List<Comment> comments = datastore.getCommentsForListing(datastore.getMostDiscussedListings(listProperties).get(0).id);
 			
 			//testMockDatastore(user, datastore, out);
 			out.println("<p>User API:</p>");
@@ -84,24 +85,24 @@ public class HelloServlet extends HttpServlet {
 			out.println("<a href=\"/user/all/.json\">All users</a><br/>");
 			out.println("<form method=\"POST\" action=\"/user/activate/" + currentUser.getId() + "/.json\"><input type=\"submit\" value=\"Activates logged in user\"/></form>");
 			out.println("<form method=\"POST\" action=\"/user/deactivate/" + currentUser.getId() + "/.json\"><input type=\"submit\" value=\"Deactivates logged in user\"/></form>");
-			out.println("<form method=\"POST\" action=\"/user/up/" + topInvestor.getIdAsString() + "/.json\"><input type=\"submit\" value=\"Logged in user votes for top investor\"/></form>");
+			out.println("<form method=\"POST\" action=\"/user/up/" + topInvestor.getWebKey() + "/.json\"><input type=\"submit\" value=\"Logged in user votes for top investor\"/></form>");
 			out.println("<a href=\"/user/votes/" + currentUser.getId() + "/.json\">Logged in user votes</a><br/>");
 			out.println("<form method=\"GET\" action=\"/user/check-user-name/.json\"><input name=\"name\" type=\"text\" value=\"greg\"/>"
 					+ "<input type=\"submit\" value=\"Check user name\"/></form>");
 			
 			out.println("<p>Listings API:</p>");
-			out.println("<a href=\"/listings/get/" + topListing.getIdAsString() + "/.json\">Top listing data</a><br/>");
-			out.println("<form method=\"POST\" action=\"/listing/up/" + topListing.getIdAsString() + "/.json\"><input type=\"submit\" value=\"Logged in user votes for top listing (works only once per user)\"/></form>");
-			out.println("<form method=\"POST\" action=\"/listing/up/.json\"><input type=\"hidden\" name=\"id\" value=\"" + topListing.getIdAsString() + "\"/><input type=\"submit\" value=\"Logged in user votes for top listing (works only once per user), 2nd form\"/></form>");
-			out.println("<form method=\"POST\" action=\"/listing/activate/" + topListing.getIdAsString() + "/.json\"><input type=\"submit\" value=\"Activate top listing\"/></form>");
-			out.println("<form method=\"POST\" action=\"/listing/withdraw/" + topListing.getIdAsString() + "/.json\"><input type=\"submit\" value=\"Withdraw top listing\"/></form>");
+			out.println("<a href=\"/listings/get/" + topListing.getWebKey() + "/.json\">Top listing data</a><br/>");
+			out.println("<form method=\"POST\" action=\"/listing/up/" + topListing.getWebKey() + "/.json\"><input type=\"submit\" value=\"Logged in user votes for top listing (works only once per user)\"/></form>");
+			out.println("<form method=\"POST\" action=\"/listing/up/.json\"><input type=\"hidden\" name=\"id\" value=\"" + topListing.getWebKey() + "\"/><input type=\"submit\" value=\"Logged in user votes for top listing (works only once per user), 2nd form\"/></form>");
+			out.println("<form method=\"POST\" action=\"/listing/activate/" + topListing.getWebKey() + "/.json\"><input type=\"submit\" value=\"Activate top listing\"/></form>");
+			out.println("<form method=\"POST\" action=\"/listing/withdraw/" + topListing.getWebKey() + "/.json\"><input type=\"submit\" value=\"Withdraw top listing\"/></form>");
 			out.println("<a href=\"/listings/top/.json?max_results=6\">Top listings</a><br/>");
 			out.println("<a href=\"/listings/active/.json?max_results=6\">Active listings</a><br/>");
 			out.println("<a href=\"/listings/valuation/.json?max_results=6\">Top valued listings</a><br/>");
 			out.println("<a href=\"/listings/popular/.json?max_results=6\">Most popular listings</a><br/>");
 			out.println("<a href=\"/listings/latest/.json?max_results=6\">Latest listings</a><br/>");
 			out.println("<a href=\"/listings/closing/.json?max_results=6\">Closing listings</a><br/>");
-			out.println("<a href=\"/listings/user/" + topInvestor.getIdAsString() + "/.json?max_results=6\">Top investor's listings</a><br/>");
+			out.println("<a href=\"/listings/user/" + topInvestor.getWebKey() + "/.json?max_results=6\">Top investor's listings</a><br/>");
 			out.println("<form method=\"POST\" action=\"/listing/create/.json\"><textarea name=\"listing\" rows=\"5\" cols=\"100\">"
 					+ "{\"title\":\"Listing title\",\"median_valuation\":\"0\",\"num_votes\":\"0\",\"num_bids\":\"0\",\"num_comments\":\"0\",\"profile_id\":\"ag1zdGFydHVwYmlkZGVych4LEgRVc2VyIhQxODU4MDQ3NjQyMjAxMzkxMjQxMQw\",\"profile_username\":\"test@example.com\",\"listing_date\":\"20110802\",\"closing_date\":\"2011-08-01\",\"status\":\"new\",\"suggested_amt\":\"10000\",\"suggested_pct\":\"10\",\"suggested_val\":100000,\"summary\":\"Enter listing summary here.\",\"business_plan_url\":\"\",\"presentation_url\":\"\"}"
 					+ "</textarea><input type=\"submit\" value=\"Create a listing\"/></form>");
@@ -110,20 +111,20 @@ public class HelloServlet extends HttpServlet {
 
 			out.println("<p>Bids API:</p>");
 			log.info("Selected bid: " + bids.get(0).toString());
-			out.println("<a href=\"/bids/listing/" + topListing.getIdAsString() + "/.json?max_results=6\">Bids for top listing</a><br/>");
-			out.println("<a href=\"/bids/user/" + topInvestor.getIdAsString() + "/.json?max_results=6\">Bids for top investor</a><br/>");
-			out.println("<a href=\"/bids/accepted-by-user/" + topInvestor.getIdAsString() + "/.json?max_results=6\">Bids accepted by top investor</a><br/>");
-			out.println("<a href=\"/bids/funded-by-user/" + topInvestor.getIdAsString() + "/.json?max_results=6\">Bids funded by top investor</a><br/>");
-			out.println("<a href=\"/bids/get/" + bids.get(0).getIdAsString() + "/.json\">Get bid id '" + bids.get(0).getIdAsString() + "'</a><br/>");
+			out.println("<a href=\"/bids/listing/" + topListing.getWebKey() + "/.json?max_results=6\">Bids for top listing</a><br/>");
+			out.println("<a href=\"/bids/user/" + topInvestor.getWebKey() + "/.json?max_results=6\">Bids for top investor</a><br/>");
+			out.println("<a href=\"/bids/accepted-by-user/" + topInvestor.getWebKey() + "/.json?max_results=6\">Bids accepted by top investor</a><br/>");
+			out.println("<a href=\"/bids/funded-by-user/" + topInvestor.getWebKey() + "/.json?max_results=6\">Bids funded by top investor</a><br/>");
+			out.println("<a href=\"/bids/get/" + bids.get(0).getWebKey() + "/.json\">Get bid id '" + bids.get(0).getWebKey() + "'</a><br/>");
 			out.println("<form method=\"POST\" action=\"/bid/create/.json\"><textarea name=\"bid\" rows=\"5\" cols=\"100\">"
-					+ "{ \"listing_id\":\"" + topListing.getIdAsString() + "\", \"profile_id\":\"" + topInvestor.getIdAsString() + "\", \"amount\":\"14000\", \"equity_pct\":\"10\", \"bid_type\":\"common\", \"interest_rate\":0 }"
+					+ "{ \"listing_id\":\"" + topListing.getWebKey() + "\", \"profile_id\":\"" + topInvestor.getWebKey() + "\", \"amount\":\"14000\", \"equity_pct\":\"10\", \"bid_type\":\"common\", \"interest_rate\":0 }"
 					+ "</textarea><input type=\"submit\" value=\"Create a bid\"/></form>");
-			out.println("<form method=\"POST\" action=\"/bid/activate/.json\"> <input type=\"hidden\" name=\"id\" value=\"" + bids.get(0).getIdAsString() + "\"/><input type=\"submit\" value=\"Activate bid id '" + bids.get(0).getIdAsString() + "'\"/></form>");
-			out.println("<form method=\"POST\" action=\"/bid/reject/.json\"> <input type=\"hidden\" name=\"id\" value=\"" + bids.get(0).getIdAsString() + "\"/><input type=\"submit\" value=\"Reject bid id '" + bids.get(0).getIdAsString() + "'\"/></form>");
-			out.println("<form method=\"POST\" action=\"/bid/withdraw/.json\"> <input type=\"hidden\" name=\"id\" value=\"" + bids.get(0).getIdAsString() + "\"/><input type=\"submit\" value=\"Withdraw bid id '" + bids.get(0).getIdAsString() + "'\"/></form>");
-			out.println("<form method=\"POST\" action=\"/bid/accept/.json\"> <input type=\"hidden\" name=\"id\" value=\"" + bids.get(0).getIdAsString() + "\"/><input type=\"submit\" value=\"Accept bid id '" + bids.get(0).getIdAsString() + "' (most likely fails)\"/></form>");
+			out.println("<form method=\"POST\" action=\"/bid/activate/.json\"> <input type=\"hidden\" name=\"id\" value=\"" + bids.get(0).getWebKey() + "\"/><input type=\"submit\" value=\"Activate bid id '" + bids.get(0).getWebKey() + "'\"/></form>");
+			out.println("<form method=\"POST\" action=\"/bid/reject/.json\"> <input type=\"hidden\" name=\"id\" value=\"" + bids.get(0).getWebKey() + "\"/><input type=\"submit\" value=\"Reject bid id '" + bids.get(0).getWebKey() + "'\"/></form>");
+			out.println("<form method=\"POST\" action=\"/bid/withdraw/.json\"> <input type=\"hidden\" name=\"id\" value=\"" + bids.get(0).getWebKey() + "\"/><input type=\"submit\" value=\"Withdraw bid id '" + bids.get(0).getWebKey() + "'\"/></form>");
+			out.println("<form method=\"POST\" action=\"/bid/accept/.json\"> <input type=\"hidden\" name=\"id\" value=\"" + bids.get(0).getWebKey() + "\"/><input type=\"submit\" value=\"Accept bid id '" + bids.get(0).getWebKey() + "' (most likely fails)\"/></form>");
 			printAcceptBid(datastore, out, usersListings);
-			out.println("<form method=\"POST\" action=\"/bid/paid/.json\"> <input type=\"hidden\" name=\"id\" value=\"" + bids.get(0).getIdAsString() + "\"/><input type=\"submit\" value=\"Mark bid as paid, id '" + bids.get(0).getIdAsString() + "' (most likely fails)\"/></form>");
+			out.println("<form method=\"POST\" action=\"/bid/paid/.json\"> <input type=\"hidden\" name=\"id\" value=\"" + bids.get(0).getWebKey() + "\"/><input type=\"submit\" value=\"Mark bid as paid, id '" + bids.get(0).getWebKey() + "' (most likely fails)\"/></form>");
 			printPayBid(datastore, out, usersListings);
 			
 			out.println("<a href=\"/bids/statistics/.json\">Get bid statistics (deprecated)</a><br/>");
@@ -131,26 +132,26 @@ public class HelloServlet extends HttpServlet {
 			out.println("<a href=\"/bids/bid-day-valuation/.json\">Get bid day valuation</a><br/>");
 			
 			out.println("<p>Comments API:</p>");
-			out.println("<a href=\"/comments/listing/" + topListing.getIdAsString() + "/.json?max_results=6\">Comments for top listing</a><br/>");
-			out.println("<a href=\"/comments/user/" + topInvestor.getIdAsString() + "/.json?max_results=6\">Comments for top investor</a><br/>");
-			out.println("<a href=\"/comments/get/" + comments.get(0).getIdAsString() + "/.json\">Get comment id '" + comments.get(0).getIdAsString() + "'</a><br/>");
+			out.println("<a href=\"/comments/listing/" + topListing.getWebKey() + "/.json?max_results=6\">Comments for top listing</a><br/>");
+			out.println("<a href=\"/comments/user/" + topInvestor.getWebKey() + "/.json?max_results=6\">Comments for top investor</a><br/>");
+			out.println("<a href=\"/comments/get/" + comments.get(0).getWebKey() + "/.json\">Get comment id '" + comments.get(0).getWebKey() + "'</a><br/>");
 			out.println("<form method=\"POST\" action=\"/comment/create/.json\"><textarea name=\"comment\" rows=\"5\" cols=\"100\">"
-						+ "{ \"listing_id\":\"" + topListing.getIdAsString() + "\", \"profile_id\":\"" + topInvestor.getIdAsString() + "\", \"text\":\"comment test\" }"
+						+ "{ \"listing_id\":\"" + topListing.getWebKey() + "\", \"profile_id\":\"" + topInvestor.getWebKey() + "\", \"text\":\"comment test\" }"
 						+ "</textarea><input type=\"submit\" value=\"Create a comment\"/></form>");
-			out.println("<form method=\"POST\" action=\"/comment/delete/.json?id=" + comments.get(0).getIdAsString() + "\"><input type=\"submit\" value=\"Deletes comment id '" + comments.get(0).getIdAsString() + "'\"/></form>");
+			out.println("<form method=\"POST\" action=\"/comment/delete/.json?id=" + comments.get(0).getWebKey() + "\"><input type=\"submit\" value=\"Deletes comment id '" + comments.get(0).getWebKey() + "'\"/></form>");
 			out.println("<br/>");
 			
 			out.println("<p>Notification API:</p>");
 			out.println("<a href=\"/notification/user/" + currentUser.getId() + "/.json?max_results=6\">Notifications for current user</a><br/>");
-			List<NotificationDTO> notifications = datastore.getUserNotification(currentUser.getId(), new ListPropertiesVO());
+			List<Notification> notifications = datastore.getUserNotification(NumberUtils.toLong(currentUser.getId()), new ListPropertiesVO());
 			if (!notifications.isEmpty()) {
-				out.println("<a href=\"/notification/get/" + notifications.get(0).getIdAsString() + "/.json\">First notification for current user</a><br/>");
-				out.println("<a href=\"/notification/ack/" + notifications.get(0).getIdAsString() + "/.json\">Acknowledging first notification for current user</a><br/>");
+				out.println("<a href=\"/notification/get/" + notifications.get(0).getWebKey() + "/.json\">First notification for current user</a><br/>");
+				out.println("<a href=\"/notification/ack/" + notifications.get(0).getWebKey() + "/.json\">Acknowledging first notification for current user</a><br/>");
 			} else {
 				out.println("Current user doesn't have any notification, create one first</a><br/>");
 			}
 			out.println("<form method=\"POST\" action=\"/notification/create/.json\"><textarea name=\"notification\" rows=\"5\" cols=\"100\">"
-						+ "{ \"object_id\":\"" + topListing.getIdAsString() + "\", \"profile_id\":\"" + currentUser.getId() + "\", "
+						+ "{ \"object_id\":\"" + topListing.getWebKey() + "\", \"profile_id\":\"" + currentUser.getId() + "\", "
 						+ "  \"type\":\"new_listing\", \"message\":\"Sample message\" }"
 						+ "</textarea><input type=\"submit\" value=\"Create a notification\"/></form>");
 			out.println("<br/>");
@@ -158,27 +159,27 @@ public class HelloServlet extends HttpServlet {
 			out.println("<p>Monitor API:</p>");
 			out.println("<a href=\"/monitors/active-for-user/.json?type=Listing\">All active monitors for logged in user</a><br/>");
 			out.println("<a href=\"/monitors/active-for-user/.json?\">Active listing monitors for logged in user</a><br/>");
-			out.println("<a href=\"/monitors/active-for-object/?type=Listing&id=" + topListing.getIdAsString() + "\">Monitors for top listing</a><br/>");
+			out.println("<a href=\"/monitors/active-for-object/?type=Listing&id=" + topListing.getWebKey() + "\">Monitors for top listing</a><br/>");
 			out.println("<form method=\"POST\" action=\"/monitor/set/.json\"><textarea name=\"monitor\" rows=\"5\" cols=\"100\">"
-					+ "{ \"object_id\":\"" + topListing.getIdAsString() + "\", \"profile_id\":\"" + currentUser.getId() + "\", \"type\":\"Listing\" }"
+					+ "{ \"object_id\":\"" + topListing.getWebKey() + "\", \"profile_id\":\"" + currentUser.getId() + "\", \"type\":\"Listing\" }"
 					+ "</textarea><input type=\"submit\" value=\"Create a monitor for top listing\"/></form>");
-			List<MonitorDTO> monitors = datastore.getMonitorsForUser(currentUser.getId(), null);
+			List<Monitor> monitors = datastore.getMonitorsForUser(NumberUtils.toLong(currentUser.getId()), null);
 			out.println("<form method=\"POST\" action=\"/monitor/deactivate/.json\"" + (monitors.isEmpty() ? " disabled=\"disabled\">" : ">")
-					+ "<input type=\"hidden\" name=\"id\" value=\"" + (monitors.isEmpty() ? "empty" : monitors.get(0).getIdAsString()) + "\"/>"
+					+ "<input type=\"hidden\" name=\"id\" value=\"" + (monitors.isEmpty() ? "empty" : monitors.get(0).getWebKey()) + "\"/>"
 					+ "<input type=\"submit\" value=\"Deactivate monitor "
-					+ (monitors.isEmpty() ? "(no monitors)" : (monitors.get(0).getType() + " " + monitors.get(0).getObject())) + "\"/></form>");
+					+ (monitors.isEmpty() ? "(no monitors)" : (monitors.get(0).type + " " + monitors.get(0).object)) + "\"/></form>");
 			
 			out.println("<p>File API:</p>");
 			out.println("<a href=\"/file/get-upload-url/2/.json\">Get upload URL(s)</a><br/>");
 			String[] urls = service.createUploadUrls(currentUser, "/file/upload", 3);
 			out.println("<form action=\"" + urls[0] + "\" method=\"post\" enctype=\"multipart/form-data\">"
-					+ "<input type=\"file\" name=\"" + ListingDocumentDTO.Type.BUSINESS_PLAN.toString() + "\"/>"
+					+ "<input type=\"file\" name=\"" + ListingDoc.Type.BUSINESS_PLAN.toString() + "\"/>"
 					+ "<input type=\"submit\" value=\"Upload business plan\"/></form>");
 			out.println("<form action=\"" + urls[1] + "\" method=\"post\" enctype=\"multipart/form-data\">"
-					+ "<input type=\"file\" name=\"" + ListingDocumentDTO.Type.PRESENTATION.toString() + "\"/>"
+					+ "<input type=\"file\" name=\"" + ListingDoc.Type.PRESENTATION.toString() + "\"/>"
 					+ "<input type=\"submit\" value=\"Upload presentation\"/></form>");
 			out.println("<form action=\"" + urls[2] + "\" method=\"post\" enctype=\"multipart/form-data\">"
-					+ "<input type=\"file\" name=\"" + ListingDocumentDTO.Type.FINANCIALS.toString() + "\"/>"
+					+ "<input type=\"file\" name=\"" + ListingDoc.Type.FINANCIALS.toString() + "\"/>"
 					+ "<input type=\"submit\" value=\"Upload financials\"/></form>");
 			List<ListingDocumentVO> docs = service.getAllListingDocuments(currentUser);
 			DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy/MM/dd HH:mm");
@@ -203,17 +204,17 @@ public class HelloServlet extends HttpServlet {
 		}
 	}
 
-	private void printAcceptBid(DatastoreDAO datastore, PrintWriter out,
-			List<ListingDTO> usersListings) {
+	private void printAcceptBid(ObjectifyDatastoreDAO datastore, PrintWriter out,
+			List<Listing> usersListings) {
 		if (usersListings.size() == 0) {
 			out.println("Can't test bid accept as user doesn't have any listing.</br>");
 		} else {
 			boolean validBid = false;
-			for (ListingDTO listing : usersListings) {
-				List<BidDTO> bidsForUserListings = datastore.getBidsForListing(listing.getIdAsString());
-				for (BidDTO bid : bidsForUserListings) {
-					if (BidDTO.Status.ACTIVE.equals(bid.getStatus())) {
-						out.println("<form method=\"POST\" action=\"/bid/accept/.json\"> <input type=\"hidden\" name=\"id\" value=\"" + bid.getIdAsString() + "\"/><input type=\"submit\" value=\"Accept bid id '" + bid.getIdAsString() + "' (should work)\"/></form>");
+			for (Listing listing : usersListings) {
+				List<Bid> bidsForUserListings = datastore.getBidsForListing(listing.id);
+				for (Bid bid : bidsForUserListings) {
+					if (Bid.Status.ACTIVE.equals(bid.status)) {
+						out.println("<form method=\"POST\" action=\"/bid/accept/.json\"> <input type=\"hidden\" name=\"id\" value=\"" + bid.getWebKey() + "\"/><input type=\"submit\" value=\"Accept bid id '" + bid.getWebKey() + "' (should work)\"/></form>");
 						validBid = true;
 						break;
 					}
@@ -228,17 +229,17 @@ public class HelloServlet extends HttpServlet {
 		}
 	}
 
-	private void printPayBid(DatastoreDAO datastore, PrintWriter out,
-			List<ListingDTO> usersListings) {
+	private void printPayBid(ObjectifyDatastoreDAO datastore, PrintWriter out,
+			List<Listing> usersListings) {
 		if (usersListings.size() == 0) {
 			out.println("Can't test marking bid as paid as user doesn't have any listing.</br>");
 		} else {
 			boolean validBid = false;
-			for (ListingDTO listing : usersListings) {
-				List<BidDTO> bidsForUserListings = datastore.getBidsForListing(listing.getIdAsString());
-				for (BidDTO bid : bidsForUserListings) {
-					if (BidDTO.Status.ACCEPTED.equals(bid.getStatus())) {
-						out.println("<form method=\"POST\" action=\"/bid/paid/.json\"> <input type=\"hidden\" name=\"id\" value=\"" + bid.getIdAsString() + "\"/><input type=\"submit\" value=\"Mark bid id '" + bid.getIdAsString() + "' as paid (should work)\"/></form>");
+			for (Listing listing : usersListings) {
+				List<Bid> bidsForUserListings = datastore.getBidsForListing(listing.id);
+				for (Bid bid : bidsForUserListings) {
+					if (Bid.Status.ACCEPTED.equals(bid.status)) {
+						out.println("<form method=\"POST\" action=\"/bid/paid/.json\"> <input type=\"hidden\" name=\"id\" value=\"" + bid.getWebKey() + "\"/><input type=\"submit\" value=\"Mark bid id '" + bid.getWebKey() + "' as paid (should work)\"/></form>");
 						validBid = true;
 						break;
 					}
@@ -253,10 +254,10 @@ public class HelloServlet extends HttpServlet {
 		}
 	}
 
-	private void testMockDatastore(User user, DatastoreDAO datastore, PrintWriter out) {
+	private void testMockDatastore(User user, PrintWriter out) {
 		out.println("<p><b>Datastore key function test:</b></p>");
-		Key testStringKey = KeyFactory.createKey(ListingDTO.class.getSimpleName(), "bpId");
-		Key testLongKey = KeyFactory.createKey(ListingDTO.class.getSimpleName(), 1234L);
+		Key testStringKey = KeyFactory.createKey(Listing.class.getSimpleName(), "bpId");
+		Key testLongKey = KeyFactory.createKey(Listing.class.getSimpleName(), 1234L);
 		out.println("testStringKey.toString() = " + testStringKey.toString() + "</br>");
 		out.println("testLongKey.toString() = " + testLongKey.toString() + "</br>");
 		out.println("KeyFactory.keyToString(testStringKey) = " + KeyFactory.keyToString(testStringKey) + "</br>");
@@ -265,63 +266,63 @@ public class HelloServlet extends HttpServlet {
 		out.println("KeyFactory.stringToKey(KeyFactory.keyToString(testLongKey)) = " + KeyFactory.stringToKey(KeyFactory.keyToString(testLongKey)) + "</br>");
 		
 		out.println("<p><b>Current user data:</b></p>");
-		UserDTO currentUser = datastore.getUser(user.getNickname());
+		SBUser currentUser = ObjectifyDatastoreDAO.getInstance().getUser(user.getNickname());
 		out.println("<p>" + currentUser + "</p>");
 		
-		currentUser.setInvestor(true);
-		currentUser.setOrganization("Mock organization");
-		datastore.updateUser(currentUser);
+		currentUser.investor = true;
+		ObjectifyDatastoreDAO.getInstance().updateUser(currentUser);
 		out.println("<p><b>Updated current user data:</b></p>");
 		out.println("<p>" + currentUser + "</p>");
 		
 		ListPropertiesVO listProperties = new ListPropertiesVO();
 		listProperties.setMaxResults(10);
 		
+		ObjectifyDatastoreDAO datastore = ObjectifyDatastoreDAO.getInstance();
 		out.println("<p><b>Current user business plans:</b></p>");
-		for (ListingDTO bp : datastore.getUserActiveListings(currentUser.getIdAsString(), listProperties)) {
-			int rating = datastore.getNumberOfVotesForListing(bp.getIdAsString());
-			int activity = datastore.getActivity(bp.getIdAsString());
+		for (Listing bp : datastore.getUserActiveListings(currentUser.id, listProperties)) {
+			int rating = datastore.getNumberOfVotesForListing(bp.id);
+			int activity = datastore.getActivity(bp.id);
 			out.println("<p>" + "<b>R=" + rating + "</b>" + "<b>A=" + activity + "</b>" + bp + "</p>");
-			datastore.valueUpListing(bp.getIdAsString(), currentUser.getIdAsString());
+			datastore.valueUpListing(bp.id, currentUser.id);
 		}
 		
 		out.println("<p><b>Top business plans:</b></p>");
-		for (ListingDTO bp : datastore.getTopListings(listProperties)) {
-			int rating = datastore.getNumberOfVotesForListing(bp.getIdAsString());
-			int activity = datastore.getActivity(bp.getIdAsString());
+		for (Listing bp : datastore.getTopListings(listProperties)) {
+			int rating = datastore.getNumberOfVotesForListing(bp.id);
+			int activity = datastore.getActivity(bp.id);
 			out.println("<p>" + "<b>R=" + rating + "</b>" + "<b>A=" + activity + "</b>" + bp + "</p>");
-			datastore.valueUpListing(bp.getIdAsString(), currentUser.getIdAsString());
+			datastore.valueUpListing(bp.id, currentUser.id);
 		}
 		out.println("<p><b>Active business plans:</b></p>");
-		for (ListingDTO bp : datastore.getActiveListings(listProperties)) {
-			int rating = datastore.getNumberOfVotesForListing(bp.getIdAsString());
-			int activity = datastore.getActivity(bp.getIdAsString());
+		for (Listing bp : datastore.getActiveListings(listProperties)) {
+			int rating = datastore.getNumberOfVotesForListing(bp.id);
+			int activity = datastore.getActivity(bp.id);
 			out.println("<p>" + "<b>R=" + rating + "</b>" + "<b>A=" + activity + "</b>" + bp + "</p>");
 		}
 		
 		out.println("<p><b>Top business plans (2):</b></p>");
-		for (ListingDTO bp : datastore.getTopListings(listProperties)) {
-			int rating = datastore.getNumberOfVotesForListing(bp.getIdAsString());
-			int activity = datastore.getActivity(bp.getIdAsString());
+		for (Listing bp : datastore.getTopListings(listProperties)) {
+			int rating = datastore.getNumberOfVotesForListing(bp.id);
+			int activity = datastore.getActivity(bp.id);
 			out.println("<p>" + "<b>R=" + rating + "</b>" + "<b>A=" + activity + "</b>" + bp + "</p>");
-			datastore.valueUpListing(bp.getIdAsString(), currentUser.getIdAsString());
+			datastore.valueUpListing(bp.id, currentUser.id);
 		}
 		out.println("<p><b>Active business plans (2):</b></p>");
-		for (ListingDTO bp : datastore.getActiveListings(listProperties)) {
-			int rating = datastore.getNumberOfVotesForListing(bp.getIdAsString());
-			int activity = datastore.getActivity(bp.getIdAsString());
+		for (Listing bp : datastore.getActiveListings(listProperties)) {
+			int rating = datastore.getNumberOfVotesForListing(bp.id);
+			int activity = datastore.getActivity(bp.id);
 			out.println("<p>" + "<b>R=" + rating + "</b>" + "<b>A=" + activity + "</b>" + bp + "</p>");
 		}
 
-		ListingDTO topBP = datastore.getTopListings(listProperties).get(0);
+		Listing topBP = datastore.getTopListings(listProperties).get(0);
 		out.println("<p><b>Bids for top business plan '" + topBP + "</b></p>");
-		for (BidDTO bid : datastore.getBidsForListing(topBP.getIdAsString())) {
+		for (Bid bid : datastore.getBidsForListing(topBP.id)) {
 			out.println("<p>" + bid + "</p>");
 		}
 
-		ListingDTO topActiveBP = datastore.getActiveListings(listProperties).get(0);
+		Listing topActiveBP = datastore.getActiveListings(listProperties).get(0);
 		out.println("<p><b>Comments for most active business plan '" + topActiveBP + "</b></p>");
-		for (CommentDTO comment : datastore.getCommentsForListing(topActiveBP.getIdAsString())) {
+		for (Comment comment : datastore.getCommentsForListing(topActiveBP.id)) {
 			out.println("<p>" + comment + "</p>");
 		}
 	}

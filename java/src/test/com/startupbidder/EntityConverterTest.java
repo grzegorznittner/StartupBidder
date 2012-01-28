@@ -1,29 +1,27 @@
 package test.com.startupbidder;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.google.appengine.api.blobstore.BlobKey;
-import com.google.appengine.api.datastore.DatastoreService;
-import com.google.appengine.api.datastore.DatastoreServiceFactory;
-import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
-import com.startupbidder.dto.BidDTO;
-import com.startupbidder.dto.CommentDTO;
-import com.startupbidder.dto.ListingDTO;
-import com.startupbidder.dto.ListingDocumentDTO;
-import com.startupbidder.dto.NotificationDTO;
-import com.startupbidder.dto.NotificationDTO.Type;
-import com.startupbidder.dto.RankDTO;
-import com.startupbidder.dto.UserDTO;
-import com.startupbidder.dto.VoteDTO;
+import com.googlecode.objectify.Key;
+import com.googlecode.objectify.Objectify;
+import com.googlecode.objectify.ObjectifyService;
+import com.startupbidder.datamodel.Bid;
+import com.startupbidder.datamodel.Comment;
+import com.startupbidder.datamodel.Listing;
+import com.startupbidder.datamodel.ListingDoc;
+import com.startupbidder.datamodel.Rank;
+import com.startupbidder.datamodel.SBUser;
+import com.startupbidder.datamodel.UserStats;
+import com.startupbidder.datamodel.Vote;
 
 /**
  * 
@@ -31,12 +29,24 @@ import com.startupbidder.dto.VoteDTO;
  */
 public class EntityConverterTest {
 	private final LocalServiceTestHelper helper = new LocalServiceTestHelper();
-	private DatastoreService datastore = null;
+	private Objectify ofy = null;
+	
+	@BeforeClass
+	public static void registerOfyClasses() {
+		ObjectifyService.register(SBUser.class);
+		ObjectifyService.register(Listing.class);
+		ObjectifyService.register(UserStats.class);
+		ObjectifyService.register(Comment.class);
+		ObjectifyService.register(Vote.class);
+		ObjectifyService.register(Rank.class);
+		ObjectifyService.register(Bid.class);
+		ObjectifyService.register(ListingDoc.class);
+	}
 	
 	@Before
 	public void setUp() {
 		helper.setUp();
-		datastore = DatastoreServiceFactory.getDatastoreService();
+		ofy = ObjectifyService.begin();
 	}
 	
 	@After
@@ -46,23 +56,20 @@ public class EntityConverterTest {
 
 	@Test
 	public void testBid() throws EntityNotFoundException {
-		BidDTO bid = new BidDTO();
-		bid.createKey("" + bid.hashCode());
-		bid.setFundType(BidDTO.FundType.NOTE);
-		bid.setListing("listing_id");
-		bid.setPercentOfCompany(44);
-		bid.setPlaced(new Date(100000));
-		bid.setStatus(BidDTO.Status.WITHDRAWN);
-		bid.setUser("user_id");
-		bid.setValuation(99999);
-		bid.setValue(44444);
+		Bid bid = new Bid();
+		bid.fundType = Bid.FundType.NOTE;
+		bid.listing = new Key<Listing>(Listing.class, 1000L);
+		bid.percentOfCompany = 44;
+		bid.placed = new Date(100000);
+		bid.status = Bid.Status.WITHDRAWN;
+		bid.bidder = new Key<SBUser>(SBUser.class, 1001L);
+		bid.valuation = 99999;
+		bid.value = 44444;
 		
 		System.out.println("Original: " + bid);
 		
-		Entity bidEntity = bid.toEntity();
-		datastore.put(bidEntity);
-		bidEntity = datastore.get(bidEntity.getKey());
-		BidDTO newBid = BidDTO.fromEntity(bidEntity);
+		ofy.put(bid);
+		Bid newBid = ofy.get(Bid.class, bid.id);
 
 		System.out.println("Recreated: " + newBid);
 		
@@ -71,19 +78,16 @@ public class EntityConverterTest {
 	
 	@Test
 	public void testComment() throws EntityNotFoundException {
-		CommentDTO comment = new CommentDTO();
-		comment.createKey("" + comment.hashCode());
-		comment.setComment("comment");
-		comment.setCommentedOn(new Date());
-		comment.setListing("listing_id");
-		comment.setUser("user_id");
+		Comment comment = new Comment();
+		comment.comment = "comment";
+		comment.commentedOn = new Date();
+		comment.listing = new Key<Listing>(Listing.class, 1002L);
+		comment.user = new Key<SBUser>(SBUser.class, 1003L);
 		
 		System.out.println("Original: " + comment);
 		
-		Entity commentEntity = comment.toEntity();
-		datastore.put(commentEntity);
-		commentEntity = datastore.get(commentEntity.getKey());
-		CommentDTO newComment = CommentDTO.fromEntity(commentEntity);
+		ofy.put(comment);
+		Comment newComment = ofy.get(Comment.class, comment.id);
 
 		System.out.println("Recreated: " + newComment);
 		
@@ -92,24 +96,21 @@ public class EntityConverterTest {
 	
 	@Test
 	public void testListing() throws EntityNotFoundException {
-		ListingDTO listing = new ListingDTO();
-		listing.createKey("" + listing.hashCode());
-		listing.setClosingOn(new Date(9999999));
-		listing.setListedOn(new Date());
-		listing.setName("listing name");
-		listing.setOwner("owner id");
-		listing.setState(ListingDTO.State.WITHDRAWN);
-		listing.setSuggestedAmount(9999999);
-		listing.setSuggestedPercentage(49);
-		listing.setSuggestedValuation(456789);
-		listing.setSummary("summary");
+		Listing listing = new Listing();
+		listing.closingOn = new Date(9999999);
+		listing.listedOn = new Date();
+		listing.name = "listing name";
+		listing.owner = new Key<SBUser>(SBUser.class, 1005L);
+		listing.state = Listing.State.WITHDRAWN;
+		listing.suggestedAmount = 9999999;
+		listing.suggestedPercentage = 49;
+		listing.suggestedValuation = 456789;
+		listing.summary = "summary";
 		
 		System.out.println("Original: " + listing);
 		
-		Entity listingEntity = listing.toEntity();
-		datastore.put(listingEntity);
-		listingEntity = datastore.get(listingEntity.getKey());
-		ListingDTO newListing = ListingDTO.fromEntity(listingEntity);
+		ofy.put(listing);
+		Listing newListing = ofy.get(Listing.class, listing.id);
 
 		System.out.println("Recreated: " + newListing);
 		
@@ -118,35 +119,27 @@ public class EntityConverterTest {
 	
 	@Test
 	public void testUser() throws EntityNotFoundException {
-		UserDTO user = new UserDTO();
-		user.createKey("" + user.hashCode());
-		user.setEmail("email");
-		user.setFacebook("facebook");
-		user.setInvestor(true);
-		user.setJoined(new Date(4444444));
-		user.setLastLoggedIn(new Date(222222));
-		user.setLinkedin("linkedin");
-		user.setModified(new Date(333333));
-		user.setName("name");
-		user.setNickname("nickame");
-		user.setOpenId("open_id");
-		user.setOrganization("organization");
-		user.setStatus(UserDTO.Status.DEACTIVATED);
-		user.setTitle("title");
-		user.setTwitter("twitter");
+		SBUser user = new SBUser();
+		user.email = "email";
+		user.investor = true;
+		user.joined = new Date(4444444);
+		user.lastLoggedIn = new Date(222222);
+		user.modified = new Date(333333);
+		user.name = "name";
+		user.nickname = "nickame";
+		user.openId = "open_id";
+		user.status = SBUser.Status.DEACTIVATED;
 		
-		List<NotificationDTO.Type> notifications = new ArrayList<NotificationDTO.Type>();
-		notifications.add(Type.BID_PAID_FOR_YOUR_LISTING);
-		notifications.add(Type.NEW_COMMENT_FOR_YOUR_LISTING);
-		notifications.add(Type.NEW_LISTING);
-		user.setNotifications(notifications);
+//		List<Notification.Type> notifications = new ArrayList<Notification.Type>();
+//		notifications.add(Notification.Type.BID_PAID_FOR_YOUR_LISTING);
+//		notifications.add(Notification.Type.NEW_COMMENT_FOR_YOUR_LISTING);
+//		notifications.add(Notification.Type.NEW_LISTING);
+//		user.setNotifications(notifications);
 		
 		System.out.println("Original: " + user);
+		ofy.put(user);
 		
-		Entity userEntity = user.toEntity();
-		datastore.put(userEntity);
-		userEntity = datastore.get(userEntity.getKey());
-		UserDTO newUser = UserDTO.fromEntity(userEntity);
+		SBUser newUser = ofy.get(SBUser.class, user.id);
 
 		System.out.println("Recreated: " + newUser);
 		
@@ -155,19 +148,16 @@ public class EntityConverterTest {
 	
 	@Test
 	public void testVote() throws EntityNotFoundException {
-		VoteDTO vote = new VoteDTO();
-		vote.createKey("" + vote.hashCode());
-		vote.setCommentedOn(new Date());
-		vote.setListing("listing_id");
-		vote.setUser("user_id");
-		vote.setValue(1);
+		Vote vote = new Vote();
+		vote.commentedOn = new Date();
+		vote.listing = new Key<Listing>(Listing.class, 1002L);
+		vote.user = new Key<SBUser>(SBUser.class, 1003L);
+		vote.value = 1;
 		
 		System.out.println("Original: " + vote);
 		
-		Entity voteEntity = vote.toEntity();
-		datastore.put(voteEntity);
-		voteEntity = datastore.get(voteEntity.getKey());
-		VoteDTO newVote = VoteDTO.fromEntity(voteEntity);
+		ofy.put(vote);
+		Vote newVote = ofy.get(Vote.class, vote.id);
 
 		System.out.println("Recreated: " + newVote);
 		
@@ -177,18 +167,15 @@ public class EntityConverterTest {
 
 	@Test
 	public void testListingRank() throws EntityNotFoundException {
-		RankDTO rank = new RankDTO();
-		rank.createKey("" + rank.hashCode());
-		rank.setDate(new Date());
-		rank.setListing("listing_id");
-		rank.setRank(1);
+		Rank rank = new Rank();
+		rank.date = new Date();
+		rank.listing = new Key<Listing>(Listing.class, 1002L);
+		rank.rank = 1;
 		
 		System.out.println("Original: " + rank);
 		
-		Entity rankEntity = rank.toEntity();
-		datastore.put(rankEntity);
-		rankEntity = datastore.get(rankEntity.getKey());
-		RankDTO newRank = RankDTO.fromEntity(rankEntity);
+		ofy.put(rank);
+		Rank newRank = ofy.get(Rank.class, rank.id);
 
 		System.out.println("Recreated: " + newRank);
 		
@@ -197,18 +184,15 @@ public class EntityConverterTest {
 	
 	@Test
 	public void testListingDocument() throws EntityNotFoundException {
-		ListingDocumentDTO doc = new ListingDocumentDTO();
-		doc.createKey("" + doc.hashCode());
-		doc.setBlob(new BlobKey("xxxxx"));
-		doc.setCreated(new Date());
-		doc.setType(ListingDocumentDTO.Type.PRESENTATION);
+		ListingDoc doc = new ListingDoc();
+		doc.blob = new BlobKey("xxxxx");
+		doc.created = new Date();
+		doc.type = ListingDoc.Type.PRESENTATION;
 		
 		System.out.println("Original: " + doc);
 		
-		Entity docEntity = doc.toEntity();
-		datastore.put(docEntity);
-		docEntity = datastore.get(docEntity.getKey());
-		ListingDocumentDTO newDoc = ListingDocumentDTO.fromEntity(docEntity);
+		ofy.put(doc);
+		ListingDoc newDoc = ofy.get(ListingDoc.class, doc.id);
 
 		System.out.println("Recreated: " + newDoc);
 		

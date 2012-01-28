@@ -7,7 +7,7 @@ import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
-import com.startupbidder.dto.NotificationDTO;
+import com.startupbidder.datamodel.Notification;
 import com.startupbidder.util.DateSerializer;
 import com.startupbidder.util.LowecaseSerializer;
 
@@ -104,7 +104,7 @@ public class NotificationVO {
 	@JsonProperty("link")
 	public String getLink() {
 		String link = "";
-		NotificationDTO.Type type = NotificationDTO.Type.valueOf(this.type);
+		Notification.Type type = Notification.Type.valueOf(this.type);
 		switch (type) {
 		case BID_PAID_FOR_YOUR_LISTING:
 		case BID_WAS_WITHDRAWN:

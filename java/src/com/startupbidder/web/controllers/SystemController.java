@@ -18,7 +18,7 @@ import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gdata.client.docs.DocsService;
 import com.google.gdata.util.AuthenticationException;
-import com.startupbidder.dto.SystemPropertyDTO;
+import com.startupbidder.datamodel.SystemProperty;
 import com.startupbidder.vo.SystemPropertyVO;
 import com.startupbidder.vo.UserVO;
 import com.startupbidder.web.HttpHeaders;
@@ -40,14 +40,10 @@ public class SystemController extends ModelDrivenController {
 		if ("POST".equalsIgnoreCase(request.getMethod())) {
 			if("set-property".equalsIgnoreCase(getCommand(1))) {
 				return setProperty(request);
-			} else if("set-datastore".equalsIgnoreCase(getCommand(1))) {
-				return setDatastore(request);
 			} else if("clear-datastore".equalsIgnoreCase(getCommand(1))) {
 				return clearDatastore(request);
 			} else if("print-datastore".equalsIgnoreCase(getCommand(1))) {
 				return printDatastoreContents(request);
-			} else if("create-mock-datastore".equalsIgnoreCase(getCommand(1))) {
-				return createMockDatastore(request);
 			} else if("export-datastore".equalsIgnoreCase(getCommand(1))) {
 				return exportDatastore(request);
 			}
@@ -74,7 +70,7 @@ public class SystemController extends ModelDrivenController {
 			property.setValue(value1);
 			ServiceFacade.instance().setSystemProperty(getLoggedInUser(), property);
 			
-			if (SystemPropertyDTO.GOOGLEDOC_USER.equals(name) && SystemPropertyDTO.GOOGLEDOC_PASSWORD.equals(name1)) {
+			if (SystemProperty.GOOGLEDOC_USER.equals(name) && SystemProperty.GOOGLEDOC_PASSWORD.equals(name1)) {
 				DocsService client = new DocsService("www-startupbidder-v1");
 				try {
 					client.setUserCredentials(value, value1);
@@ -86,29 +82,6 @@ public class SystemController extends ModelDrivenController {
 			}
 		}
 
-		return headers;
-	}
-
-	private HttpHeaders setDatastore(HttpServletRequest request) {
-		HttpHeaders headers = new HttpHeadersImpl("set-datastore");
-		
-		UserService userService = UserServiceFactory.getUserService();
-		User user = userService.getCurrentUser();
-		if (user != null) {
-			String type = request.getParameter("type");
-			ServiceFacade.currentDAO = ServiceFacade.Datastore.valueOf(type);
-			
-			// after changing datastore we need to make sure that user is created in datastore
-			UserVO loggedInUser = ServiceFacade.instance().getLoggedInUserData(user);
-			if (loggedInUser == null) {
-				// first time logged in
-				loggedInUser = ServiceFacade.instance().createUser(user);
-			}
-			
-			headers.setRedirectUrl("/setup");
-		} else {
-			headers.setStatus(500);
-		}
 		return headers;
 	}
 
@@ -139,21 +112,6 @@ public class SystemController extends ModelDrivenController {
 		} else {
 			headers.setStatus(500);
 		}
-		return headers;
-	}
-
-	private HttpHeaders createMockDatastore(HttpServletRequest request) {
-		HttpHeaders headers = new HttpHeadersImpl("create-mock-datastore");
-		
-		UserService userService = UserServiceFactory.getUserService();
-		User user = userService.getCurrentUser();
-		UserVO loggedInUser = ServiceFacade.instance().getLoggedInUserData(user);
-//		if (loggedInUser != null && loggedInUser.isAdmin()) {
-			String printedObjects = ServiceFacade.instance().createMockDatastore(loggedInUser);
-			model = printedObjects;
-//		} else {
-//			headers.setStatus(500);
-//		}
 		return headers;
 	}
 

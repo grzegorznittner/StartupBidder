@@ -26,8 +26,8 @@ import com.google.gdata.data.docs.DocumentListFeed;
 import com.google.gdata.data.docs.FolderEntry;
 import com.google.gdata.data.media.MediaByteArraySource;
 import com.google.gdata.util.AuthenticationException;
-import com.startupbidder.dto.ListingDTO;
-import com.startupbidder.dto.SystemPropertyDTO;
+import com.startupbidder.datamodel.Listing;
+import com.startupbidder.datamodel.SystemProperty;
 import com.startupbidder.vo.ListingDocumentVO;
 import com.startupbidder.vo.ListingVO;
 import com.startupbidder.vo.UserListVO;
@@ -61,17 +61,17 @@ public class DocService {
 	}
 	
 	private DocsService getDocsService() {
-		String user = (String)cache.get(SystemPropertyDTO.GOOGLEDOC_USER);
+		String user = (String)cache.get(SystemProperty.GOOGLEDOC_USER);
 		if (user == null) {
-			SystemPropertyDTO userProp = ServiceFacade.instance().getDAO().getSystemProperty(SystemPropertyDTO.GOOGLEDOC_USER);
-			user = userProp.getValue();
-			cache.put(SystemPropertyDTO.GOOGLEDOC_USER, user);
+			SystemProperty userProp = ServiceFacade.instance().getDAO().getSystemProperty(SystemProperty.GOOGLEDOC_USER);
+			user = userProp.value;
+			cache.put(SystemProperty.GOOGLEDOC_USER, user);
 		}
-		String pass = (String)cache.get(SystemPropertyDTO.GOOGLEDOC_PASSWORD);
+		String pass = (String)cache.get(SystemProperty.GOOGLEDOC_PASSWORD);
 		if (pass == null) {
-			SystemPropertyDTO passProp = ServiceFacade.instance().getDAO().getSystemProperty(SystemPropertyDTO.GOOGLEDOC_PASSWORD);
-			pass = passProp.getValue();
-			cache.put(SystemPropertyDTO.GOOGLEDOC_PASSWORD, pass);
+			SystemProperty passProp = ServiceFacade.instance().getDAO().getSystemProperty(SystemProperty.GOOGLEDOC_PASSWORD);
+			pass = passProp.value;
+			cache.put(SystemProperty.GOOGLEDOC_PASSWORD, pass);
 		}
 		DocsService client = new DocsService("www-startupbidder-v1");
 		try {
@@ -113,7 +113,7 @@ public class DocService {
 		}
 	}
 	
-	public int updateListingData(List<ListingDTO> listings) {
+	public int updateListingData(List<Listing> listings) {
 		DocsService client = getDocsService();
 		if (client == null) {
 			return 0;
@@ -132,23 +132,23 @@ public class DocService {
 		}
 		
 		int updatedDocs = 0;
-		for (ListingDTO listing : listings) {
+		for (Listing listing : listings) {
 			try {
 				DocumentListEntry newDocument = new DocumentEntry();
-				newDocument.setTitle(new PlainTextConstruct(listing.getIdAsString()));
+				newDocument.setTitle(new PlainTextConstruct("" + listing.id));
 				// Prevent collaborators from sharing the document with others?
 				newDocument.setWritersCanInvite(false);
 				newDocument = client.insert(new URL("https://docs.google.com/feeds/default/private/full/" + summaryId + "/contents"), newDocument);
 
-				UserVO user = users.get(listing.getOwner());
-				byte[] bytes = (user.getName() + " " + listing.getName() + " " + listing.getSummary()).getBytes();
+				UserVO user = users.get(listing.owner);
+				byte[] bytes = (user.getName() + " " + listing.name + " " + listing.summary).getBytes();
 				newDocument.setEtag("*");
 				newDocument.setMediaSource(new MediaByteArraySource(bytes,
 						DocumentListEntry.MediaType.TXT.getMimeType()));
 				newDocument.updateMedia(true);
 				updatedDocs++;
 			} catch (Exception e) {
-				log.log(Level.WARNING, "Error while creating document for listing '" + listing.getIdAsString() + "'", e);
+				log.log(Level.WARNING, "Error while creating document for listing '" + listing.id + "'", e);
 			}
 		}
 		return updatedDocs;

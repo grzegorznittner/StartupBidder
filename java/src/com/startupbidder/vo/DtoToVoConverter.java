@@ -3,15 +3,16 @@ package com.startupbidder.vo;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.startupbidder.dto.BidDTO;
-import com.startupbidder.dto.CommentDTO;
-import com.startupbidder.dto.ListingDTO;
-import com.startupbidder.dto.ListingDocumentDTO;
-import com.startupbidder.dto.MonitorDTO;
-import com.startupbidder.dto.NotificationDTO;
-import com.startupbidder.dto.SystemPropertyDTO;
-import com.startupbidder.dto.UserDTO;
-import com.startupbidder.dto.VoteDTO;
+import com.googlecode.objectify.Key;
+import com.startupbidder.datamodel.Bid;
+import com.startupbidder.datamodel.Comment;
+import com.startupbidder.datamodel.Listing;
+import com.startupbidder.datamodel.ListingDoc;
+import com.startupbidder.datamodel.Monitor;
+import com.startupbidder.datamodel.Notification;
+import com.startupbidder.datamodel.SBUser;
+import com.startupbidder.datamodel.SystemProperty;
+import com.startupbidder.datamodel.Vote;
 
 /**
  * Helper class which converts DTO objects to VO objects.
@@ -19,256 +20,273 @@ import com.startupbidder.dto.VoteDTO;
  * @author "Grzegorz Nittner" <grzegorz.nittner@gmail.com>
  */
 public class DtoToVoConverter {
-	public static BidVO convert(BidDTO bidDTO) {
+	public static String keyToString(Key<?> key) {
+		if (key != null) {
+			return "" + key.getId();
+		} else {
+			return null;
+		}
+	}
+
+	public static String keyToString(long key) {
+		if (key != 0) {
+			return "" + key;
+		} else {
+			return null;
+		}
+	}
+
+	public static BidVO convert(Bid bidDTO) {
 		if (bidDTO == null) {
 			return null;
 		}
 		BidVO bid = new BidVO();
-		bid.setId(bidDTO.getIdAsString());
-		bid.setMockData(bidDTO.isMockData());
-		bid.setListing(bidDTO.getListing());
-		bid.setFundType(bidDTO.getFundType().toString());
-		bid.setPercentOfCompany(bidDTO.getPercentOfCompany());
-		bid.setInterestRate(bidDTO.getInterestRate());
-		bid.setPlaced(bidDTO.getPlaced());
-		bid.setUser(bidDTO.getUser());
-		bid.setListingOwner(bidDTO.getListingOwner());
-		bid.setValue(bidDTO.getValue());
-		bid.setValuation(bidDTO.getValuation());
-		bid.setStatus(bidDTO.getStatus().toString());
-		bid.setComment(bidDTO.getComment());
+		bid.setId(keyToString(bidDTO.id));
+		bid.setMockData(bidDTO.mockData);
+		bid.setListing(keyToString(bidDTO.listing));
+		bid.setFundType(bidDTO.fundType.toString());
+		bid.setPercentOfCompany(bidDTO.percentOfCompany);
+		bid.setInterestRate(bidDTO.interestRate);
+		bid.setPlaced(bidDTO.placed);
+		bid.setUser(keyToString(bidDTO.bidder));
+		bid.setListingOwner(keyToString(bidDTO.listingOwner));
+		bid.setValue(bidDTO.value);
+		bid.setValuation(bidDTO.valuation);
+		bid.setStatus(bidDTO.status.toString());
+		bid.setComment(bidDTO.comment);
 		return bid;
 	}
 	
-	public static ListingVO convert(ListingDTO listingDTO) {
+	public static ListingVO convert(Listing listingDTO) {
 		if (listingDTO == null) {
 			return null;
 		}
 		ListingVO listing = new ListingVO();
-		listing.setId(listingDTO.getIdAsString());
-		listing.setMockData(listingDTO.isMockData());
-		listing.setClosingOn(listingDTO.getClosingOn());
-		listing.setListedOn(listingDTO.getListedOn());
-		listing.setName(listingDTO.getName());
-		listing.setOwner(listingDTO.getOwner());
-		listing.setSuggestedValuation(listingDTO.getSuggestedValuation());
-		listing.setSuggestedAmount(listingDTO.getSuggestedAmount());
-		listing.setSuggestedPercentage(listingDTO.getSuggestedPercentage());
-		listing.setState(listingDTO.getState().toString());
-		listing.setPresentationId(listingDTO.getPresentationId());
-		listing.setBuinessPlanId(listingDTO.getBusinessPlanId());
-		listing.setFinancialsId(listingDTO.getFinancialsId());
-		listing.setSummary(listingDTO.getSummary());
+		listing.setId(keyToString(listingDTO.id));
+		listing.setMockData(listingDTO.mockData);
+		listing.setClosingOn(listingDTO.closingOn);
+		listing.setListedOn(listingDTO.listedOn);
+		listing.setName(listingDTO.name);
+		listing.setOwner(keyToString(listingDTO.owner));
+		listing.setSuggestedValuation(listingDTO.suggestedValuation);
+		listing.setSuggestedAmount(listingDTO.suggestedAmount);
+		listing.setSuggestedPercentage(listingDTO.suggestedPercentage);
+		listing.setState(listingDTO.state.toString());
+		listing.setPresentationId(keyToString(listingDTO.presentationId));
+		listing.setBuinessPlanId(keyToString(listingDTO.businessPlanId));
+		listing.setFinancialsId(keyToString(listingDTO.financialsId));
+		listing.setSummary(listingDTO.summary);
 		return listing;
 	}
 	
-	public static CommentVO convert(CommentDTO commentDTO) {
+	public static CommentVO convert(Comment commentDTO) {
 		if (commentDTO == null) {
 			return null;
 		}
 		CommentVO comment = new CommentVO();
-		comment.setId(commentDTO.getIdAsString());
-		comment.setMockData(commentDTO.isMockData());
-		comment.setComment(commentDTO.getComment());
-		comment.setCommentedOn(commentDTO.getCommentedOn());
-		comment.setListing(commentDTO.getListing());
-		comment.setUser(commentDTO.getUser());
+		comment.setId(keyToString(commentDTO.id));
+		comment.setMockData(commentDTO.mockData);
+		comment.setComment(commentDTO.comment);
+		comment.setCommentedOn(commentDTO.commentedOn);
+		comment.setListing(keyToString(commentDTO.listing));
+		comment.setUser(keyToString(commentDTO.user));
 		return comment;
 	}
 	
-	public static VoteVO convert(VoteDTO ratingDTO) {
+	public static VoteVO convert(Vote ratingDTO) {
 		if (ratingDTO == null) {
 			return null;
 		}
 		VoteVO rating = new VoteVO();
-		rating.setMockData(ratingDTO.isMockData());
-		rating.setId(ratingDTO.getIdAsString());
-		rating.setListing(ratingDTO.getListing());
-		rating.setUser(ratingDTO.getUser());
-		rating.setValue(ratingDTO.getValue());
+		rating.setMockData(ratingDTO.mockData);
+		rating.setId(keyToString(ratingDTO.id));
+		rating.setListing(keyToString(ratingDTO.listing));
+		rating.setUser(keyToString(ratingDTO.user));
+		rating.setValue(ratingDTO.value);
 		return rating;
 	}
 	
-	public static ListingDocumentVO convert(ListingDocumentDTO docDTO) {
+	public static ListingDocumentVO convert(ListingDoc docDTO) {
 		if (docDTO == null) {
 			return null;
 		}
 		ListingDocumentVO doc = new ListingDocumentVO();
-		doc.setId(docDTO.getIdAsString());
-		doc.setMockData(docDTO.isMockData());
-		doc.setBlob(docDTO.getBlob());
-		doc.setCreated(docDTO.getCreated());
-		doc.setType(docDTO.getType().toString());
+		doc.setId(keyToString(docDTO.id));
+		doc.setMockData(docDTO.mockData);
+		doc.setBlob(docDTO.blob);
+		doc.setCreated(docDTO.created);
+		doc.setType(docDTO.type.toString());
 		return doc;
 	}
 	
-	public static UserVO convert(UserDTO userDTO) {
+	public static UserVO convert(SBUser userDTO) {
 		if (userDTO == null) {
 			return null;
 		}
 		UserVO user = new UserVO();
-		user.setId(userDTO.getIdAsString());
-		user.setMockData(userDTO.isMockData());
-		user.setAdmin(userDTO.isAdmin());
-		user.setAccreditedInvestor(userDTO.isInvestor());
-		user.setEmail(userDTO.getEmail());
-		user.setFacebook(userDTO.getFacebook());
-		user.setName(userDTO.getName());
-		user.setJoined(userDTO.getJoined());
-		user.setLastLoggedIn(userDTO.getLastLoggedIn());
-		user.setLinkedin(userDTO.getLinkedin());
-		user.setModified(userDTO.getModified());
-		user.setNickname(userDTO.getNickname());
-		user.setOrganization(userDTO.getOrganization());
-		user.setTitle(userDTO.getTitle());
-		user.setTwitter(userDTO.getTwitter());
-		user.setStatus(userDTO.getStatus().toString());
-		user.setNotifications(userDTO.getNotifications());
+		user.setId(keyToString(userDTO.id));
+		user.setMockData(userDTO.mockData);
+		user.setAdmin(userDTO.admin);
+		user.setAccreditedInvestor(userDTO.investor);
+		user.setEmail(userDTO.email);
+		user.setName(userDTO.name);
+		user.setJoined(userDTO.joined);
+		user.setLastLoggedIn(userDTO.lastLoggedIn);
+		user.setModified(userDTO.modified);
+		user.setNickname(userDTO.nickname);
+		user.setStatus(userDTO.status.toString());
+		//user.set(userDTO.notifyEnabled);
 		return user;
 	}
 	
-	public static SystemPropertyVO convert(SystemPropertyDTO propertyDTO) {
+	public static SystemPropertyVO convert(SystemProperty propertyDTO) {
 		if (propertyDTO == null) {
 			return null;
 		}
-		return new SystemPropertyVO(propertyDTO);
+		SystemPropertyVO prop = new SystemPropertyVO();
+		prop.setName(propertyDTO.name);
+		prop.setValue(propertyDTO.value);
+		prop.setAuthor(propertyDTO.author);
+		prop.setCreated(propertyDTO.created);
+		prop.setModified(propertyDTO.modified);
+		return prop;
 	}
 	
-	public static NotificationVO convert(NotificationDTO notifDTO) {
+	public static NotificationVO convert(Notification notifDTO) {
 		if (notifDTO == null) {
 			return null;
 		}
 		NotificationVO notif = new NotificationVO();
-		notif.setId(notifDTO.getIdAsString());
-		notif.setMockData(notifDTO.isMockData());
-		notif.setCreated(notifDTO.getCreated());
-		notif.setEmailDate(notifDTO.getEmailDate());
-		notif.setUser(notifDTO.getUser());
-		notif.setMessage(notifDTO.getMessage());
-		notif.setObject(notifDTO.getObject());
-		notif.setType(notifDTO.getType().toString());
-		notif.setAcknowledged(notifDTO.isAcknowledged());
+		notif.setId(keyToString(notifDTO.id));
+		notif.setMockData(notifDTO.mockData);
+		notif.setCreated(notifDTO.created);
+		notif.setEmailDate(notifDTO.emailDate);
+		notif.setUser(keyToString(notifDTO.user));
+		notif.setMessage(notifDTO.message);
+		notif.setObject(keyToString(notifDTO.object));
+		notif.setType(notifDTO.type.toString());
+		notif.setAcknowledged(notifDTO.acknowledged);
 		return notif;
 	}
 	
-	public static MonitorVO convert(MonitorDTO monitorDTO) {
+	public static MonitorVO convert(Monitor monitorDTO) {
 		if (monitorDTO == null) {
 			return null;
 		}
 		MonitorVO monitor = new MonitorVO();
-		monitor.setId(monitorDTO.getIdAsString());
-		monitor.setMockData(monitorDTO.isMockData());
-		monitor.setCreated(monitorDTO.getCreated());
-		monitor.setDeactivated(monitorDTO.getDeactivated());
-		monitor.setObjectId(monitorDTO.getObject());
-		monitor.setUser(monitorDTO.getUser());
-		monitor.setType(monitorDTO.getType().toString());
-		monitor.setActive(monitorDTO.isActive());
+		monitor.setId(keyToString(monitorDTO.id));
+		monitor.setMockData(monitorDTO.mockData);
+		monitor.setCreated(monitorDTO.created);
+		monitor.setDeactivated(monitorDTO.deactivated);
+		monitor.setObjectId(keyToString(monitorDTO.object));
+		monitor.setUser(keyToString(monitorDTO.user));
+		monitor.setType(monitorDTO.type.toString());
+		monitor.setActive(monitorDTO.active);
 		return monitor;
 	}
 	
-	public static List<ListingVO> convertListings(List<ListingDTO> bpDtoList) {
+	public static List<ListingVO> convertListings(List<Listing> bpDtoList) {
 		if (bpDtoList == null) {
 			return null;
 		}
 		List<ListingVO> bpVoList = new ArrayList<ListingVO>();
-		for (ListingDTO bpDTO : bpDtoList) {
+		for (Listing bpDTO : bpDtoList) {
 			ListingVO bpVO = convert(bpDTO);
 			bpVoList.add(bpVO);
 		}
 		return bpVoList;
 	}
 
-	public static List<CommentVO> convertComments(List<CommentDTO> commentDtoList) {
+	public static List<CommentVO> convertComments(List<Comment> commentDtoList) {
 		if (commentDtoList == null) {
 			return null;
 		}
 		List<CommentVO> commentVoList = new ArrayList<CommentVO>();
-		for (CommentDTO commentDTO : commentDtoList) {
+		for (Comment commentDTO : commentDtoList) {
 			CommentVO commentVO = convert(commentDTO);
 			commentVoList.add(commentVO);
 		}
 		return commentVoList;
 	}
 
-	public static List<BidVO> convertBids(List<BidDTO> bidDtoList) {
+	public static List<BidVO> convertBids(List<Bid> bidDtoList) {
 		if (bidDtoList == null) {
 			return null;
 		}
 		List<BidVO> bidVoList = new ArrayList<BidVO>();
-		for (BidDTO bidDTO : bidDtoList) {
+		for (Bid bidDTO : bidDtoList) {
 			BidVO bidVO = convert(bidDTO);
 			bidVoList.add(bidVO);
 		}
 		return bidVoList;
 	}
 
-	public static List<UserVO> convertUsers(List<UserDTO> userDtoList) {
+	public static List<UserVO> convertUsers(List<SBUser> userDtoList) {
 		if (userDtoList == null) {
 			return null;
 		}
 		List<UserVO> userVoList = new ArrayList<UserVO>();
-		for (UserDTO userDTO : userDtoList) {
+		for (SBUser userDTO : userDtoList) {
 			UserVO bidVO = convert(userDTO);
 			userVoList.add(bidVO);
 		}
 		return userVoList;
 	}
 	
-	public static List<VoteVO> convertVotes(List<VoteDTO> votesDtoList) {
+	public static List<VoteVO> convertVotes(List<Vote> votesDtoList) {
 		if (votesDtoList == null) {
 			return null;
 		}
 		List<VoteVO> votesVoList = new ArrayList<VoteVO>();
-		for (VoteDTO voteDTO : votesDtoList) {
+		for (Vote voteDTO : votesDtoList) {
 			VoteVO voteVO = convert(voteDTO);
 			votesVoList.add(voteVO);
 		}
 		return votesVoList;
 	}
 
-	public static List<SystemPropertyVO> convertSystemProperties(List<SystemPropertyDTO> propertiesDtoList) {
+	public static List<SystemPropertyVO> convertSystemProperties(List<SystemProperty> propertiesDtoList) {
 		if (propertiesDtoList == null) {
 			return null;
 		}
 		List<SystemPropertyVO> propertyVoList = new ArrayList<SystemPropertyVO>();
-		for (SystemPropertyDTO propertyDTO : propertiesDtoList) {
+		for (SystemProperty propertyDTO : propertiesDtoList) {
 			SystemPropertyVO propertyVO = convert(propertyDTO);
 			propertyVoList.add(propertyVO);
 		}
 		return propertyVoList;
 	}
 
-	public static List<ListingDocumentVO> convertListingDocuments(List<ListingDocumentDTO> docDtoList) {
+	public static List<ListingDocumentVO> convertListingDocuments(List<ListingDoc> docDtoList) {
 		if (docDtoList == null) {
 			return null;
 		}
 		List<ListingDocumentVO> docVoList = new ArrayList<ListingDocumentVO>();
-		for (ListingDocumentDTO docDTO : docDtoList) {
+		for (ListingDoc docDTO : docDtoList) {
 			ListingDocumentVO docVO = convert(docDTO);
 			docVoList.add(docVO);
 		}
 		return docVoList;
 	}
 
-	public static List<NotificationVO> convertNotifications(List<NotificationDTO> notifDtoList) {
+	public static List<NotificationVO> convertNotifications(List<Notification> notifDtoList) {
 		if (notifDtoList == null) {
 			return null;
 		}
 		List<NotificationVO> notifVoList = new ArrayList<NotificationVO>();
-		for (NotificationDTO notifDTO : notifDtoList) {
+		for (Notification notifDTO : notifDtoList) {
 			NotificationVO notifVO = convert(notifDTO);
 			notifVoList.add(notifVO);
 		}
 		return notifVoList;
 	}
 
-	public static List<MonitorVO> convertMonitors(List<MonitorDTO> monitorDtoList) {
+	public static List<MonitorVO> convertMonitors(List<Monitor> monitorDtoList) {
 		if (monitorDtoList == null) {
 			return null;
 		}
 		List<MonitorVO> monitorVoList = new ArrayList<MonitorVO>();
-		for (MonitorDTO monitorDTO : monitorDtoList) {
+		for (Monitor monitorDTO : monitorDtoList) {
 			MonitorVO monitorVO = convert(monitorDTO);
 			monitorVoList.add(monitorVO);
 		}

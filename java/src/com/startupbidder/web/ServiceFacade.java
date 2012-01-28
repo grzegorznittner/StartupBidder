@@ -13,6 +13,7 @@ import net.sf.jsr107cache.CacheException;
 import net.sf.jsr107cache.CacheFactory;
 import net.sf.jsr107cache.CacheManager;
 
+import org.apache.commons.lang.math.NumberUtils;
 import org.datanucleus.util.StringUtils;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
@@ -27,20 +28,18 @@ import com.google.appengine.api.taskqueue.QueueFactory;
 import com.google.appengine.api.taskqueue.TaskOptions;
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.utils.SystemProperty;
-import com.startupbidder.dao.AppEngineDatastoreDAO;
-import com.startupbidder.dao.DatastoreDAO;
-import com.startupbidder.dao.MockDatastoreDAO;
-import com.startupbidder.dto.AbstractDTO;
-import com.startupbidder.dto.BidDTO;
-import com.startupbidder.dto.ListingDTO;
-import com.startupbidder.dto.ListingDocumentDTO;
-import com.startupbidder.dto.ListingStatisticsDTO;
-import com.startupbidder.dto.MonitorDTO;
-import com.startupbidder.dto.NotificationDTO;
-import com.startupbidder.dto.NotificationDTO.Type;
-import com.startupbidder.dto.UserDTO;
-import com.startupbidder.dto.UserStatisticsDTO;
-import com.startupbidder.dto.VoToDtoConverter;
+import com.googlecode.objectify.Key;
+import com.startupbidder.dao.ObjectifyDatastoreDAO;
+import com.startupbidder.datamodel.BaseObject;
+import com.startupbidder.datamodel.Bid;
+import com.startupbidder.datamodel.Listing;
+import com.startupbidder.datamodel.ListingDoc;
+import com.startupbidder.datamodel.ListingStats;
+import com.startupbidder.datamodel.Monitor;
+import com.startupbidder.datamodel.Notification;
+import com.startupbidder.datamodel.SBUser;
+import com.startupbidder.datamodel.UserStats;
+import com.startupbidder.datamodel.VoToModelConverter;
 import com.startupbidder.vo.BidAndUserVO;
 import com.startupbidder.vo.BidListVO;
 import com.startupbidder.vo.BidVO;
@@ -71,9 +70,6 @@ public class ServiceFacade {
 	private static final Logger log = Logger.getLogger(ServiceFacade.class.getName());
 	private static ServiceFacade instance;
 	
-	public enum Datastore {MOCK, APPENGINE};
-	public static Datastore currentDAO = Datastore.APPENGINE;
-
 	private enum UserStatsUpdateReason {NEW_BID, NEW_COMMENT, NEW_LISTING, NEW_VOTE, NONE};
 	private enum ListingStatsUpdateReason {NEW_BID, NEW_COMMENT, NEW_VOTE, NONE};
 	
@@ -99,12 +95,8 @@ public class ServiceFacade {
         }
 	}
 	
-	public DatastoreDAO getDAO () {
-		if (currentDAO.equals(Datastore.MOCK)) {
-			return MockDatastoreDAO.getInstance();
-		} else {
-			return AppEngineDatastoreDAO.getInstance();
-		}
+	public ObjectifyDatastoreDAO getDAO () {
+		return ObjectifyDatastoreDAO.getInstance();
 	}
 	
 	public String clearDatastore(UserVO loggedInUser) {
@@ -115,11 +107,7 @@ public class ServiceFacade {
 		return getDAO().printDatastoreContents();
 	}
 	
-	public String createMockDatastore(UserVO loggedInUser) {
-		return getDAO().createMockDatastore(loggedInUser);
-	}
-	
-	public List<AbstractDTO> exportDatastoreContents(UserVO loggedInUser) {
+	public List<Object> exportDatastoreContents(UserVO loggedInUser) {
 		return getDAO().exportDatastoreContents();
 	}
 	
@@ -160,8 +148,7 @@ public class ServiceFacade {
 	}
 	
 	public UserVO createUser(User loggedInUser) {
-		UserVO user = DtoToVoConverter.convert(getDAO().createUser(
-				loggedInUser.getEmail(), loggedInUser.getEmail(), loggedInUser.getNickname()));
+		UserVO user = DtoToVoConverter.convert(getDAO().createUser(loggedInUser.getEmail()));
 		applyUserStatistics(user, user);
 		return user;
 	}
@@ -173,8 +160,8 @@ public class ServiceFacade {
 	 * @param userData User data object
 	 */
 	public UserVO updateUser(UserVO loggedInUser, UserVO userData) {
-		UserDTO oldUser = getDAO().getUser(userData.getId());
-		if (!(oldUser != null && StringUtils.areStringsEqual(oldUser.getNickname(), userData.getNickname()))) {
+		SBUser oldUser = getDAO().getUser(userData.getId());
+		if (!(oldUser != null && StringUtils.areStringsEqual(oldUser.nickname, userData.getNickname()))) {
 			if (!checkUserName(loggedInUser, userData.getNickname())) {
 				log.warning("Nickname for user '" + userData.getId() + "' is not unique!");
 				return null;
@@ -184,10 +171,10 @@ public class ServiceFacade {
 			log.warning("User's name for user '" + userData.getId() + "' is empty!");
 			return null;
 		}
-		UserVO user = DtoToVoConverter.convert(getDAO().updateUser(VoToDtoConverter.convert(userData)));
+		UserVO user = DtoToVoConverter.convert(getDAO().updateUser(VoToModelConverter.convert(userData)));
 		if (user != null) {
 			applyUserStatistics(loggedInUser, user);
-			createNotification(user.getId(), user.getId(), Type.YOUR_PROFILE_WAS_MODIFIED, "");
+			createNotification(user.getId(), user.getId(), Notification.Type.YOUR_PROFILE_WAS_MODIFIED, "");
 		}
 		return user;
 	}
@@ -219,13 +206,13 @@ public class ServiceFacade {
 	}
 
 	public UserVO activateUser(UserVO loggedInUser, String userId) {
-		UserVO user = DtoToVoConverter.convert(getDAO().activateUser(userId));
+		UserVO user = DtoToVoConverter.convert(getDAO().activateUser(NumberUtils.toLong(userId)));
 		applyUserStatistics(loggedInUser, user);
 		return user;
 	}
 
 	public UserVO deactivateUser(UserVO loggedInUser, String userId) {
-		UserVO user = DtoToVoConverter.convert(getDAO().deactivateUser(userId));
+		UserVO user = DtoToVoConverter.convert(getDAO().deactivateUser(NumberUtils.toLong(userId)));
 		applyUserStatistics(loggedInUser, user);
 		return user;
 	}
@@ -235,11 +222,11 @@ public class ServiceFacade {
 		UserVO user = DtoToVoConverter.convert(getDAO().getUser(userId));
 		applyUserStatistics(loggedInUser, user);
 		
-		List<VoteVO> votes = DtoToVoConverter.convertVotes(getDAO().getUserVotes(userId));
+		List<VoteVO> votes = DtoToVoConverter.convertVotes(getDAO().getUserVotes(NumberUtils.toLong(userId)));
 		for (VoteVO vote : votes) {
 			vote.setUserName(user.getName());
-			ListingDTO listing = getDAO().getListing(vote.getListing());
-			vote.setListingName(listing.getName());
+			Listing listing = getDAO().getListing(NumberUtils.toLong(vote.getListing()));
+			vote.setListingName(listing.name);
 		}
 		userVotes.setVotes(votes);
 		
@@ -252,20 +239,20 @@ public class ServiceFacade {
 	
 	public void scheduleUpdateOfUserStatistics(String userId, UserStatsUpdateReason reason) {
 		log.log(Level.INFO, "Scheduling user stats update for '" + userId + "', reason: " + reason);
-		UserStatisticsDTO userStats = (UserStatisticsDTO)cache.get(USER_STATISTICS_KEY + userId);
+		UserStats userStats = (UserStats)cache.get(USER_STATISTICS_KEY + userId);
 		if (userStats != null) {
 			switch(reason) {
 			case NEW_BID:
-				userStats.setNumberOfBids(userStats.getNumberOfBids() + 1);
+				userStats.numberOfBids = userStats.numberOfBids + 1;
 				break;
 			case NEW_COMMENT:
-				userStats.setNumberOfComments(userStats.getNumberOfComments() + 1);
+				userStats.numberOfComments = userStats.numberOfComments + 1;
 				break;
 			case NEW_LISTING:
-				userStats.setNumberOfListings(userStats.getNumberOfListings() + 1);
+				userStats.numberOfListings = userStats.numberOfListings + 1;
 				break;
 			case NEW_VOTE:
-				userStats.setNumberOfVotes(userStats.getNumberOfVotes() + 1);
+				userStats.numberOfVotes = userStats.numberOfVotes + 1;
 				break;
 			default:
 				// reason can be also null
@@ -279,18 +266,18 @@ public class ServiceFacade {
 				.taskName(taskName));
 	}
 	
-	public UserStatisticsDTO calculateUserStatistics(String userId) {
+	public UserStats calculateUserStatistics(String userId) {
 		log.log(Level.INFO, "Calculating user stats for '" + userId + "'");
-		UserStatisticsDTO userStats = getDAO().updateUserStatistics(userId);
+		UserStats userStats = getDAO().updateUserStatistics(NumberUtils.toLong(userId));
 		log.log(Level.INFO, "Calculated user stats for '" + userId + "' : " + userStats);
 		cache.put(USER_STATISTICS_KEY + userId, userStats);
 		return userStats;
 	}
 	
-	private UserStatisticsDTO getUserStatistics(String userId) {
-		UserStatisticsDTO userStats = (UserStatisticsDTO)cache.get(USER_STATISTICS_KEY + userId);
+	private UserStats getUserStatistics(String userId) {
+		UserStats userStats = (UserStats)cache.get(USER_STATISTICS_KEY + userId);
 		if (userStats == null) {
-			userStats = getDAO().getUserStatistics(userId);
+			userStats = getDAO().getUserStatistics(NumberUtils.toLong(userId));
 			if (userStats == null) {
 				// calculating user stats here may be disabled here
 				userStats = calculateUserStatistics(userId);
@@ -300,10 +287,10 @@ public class ServiceFacade {
 		return userStats;
 	}
 	
-	public List<UserStatisticsDTO> updateAllUserStatistics() {
-		List<UserStatisticsDTO> list = new ArrayList<UserStatisticsDTO>();
-		for (UserDTO user : getDAO().getAllUsers()) {
-			list.add(calculateUserStatistics(user.getIdAsString()));
+	public List<UserStats> updateAllUserStatistics() {
+		List<UserStats> list = new ArrayList<UserStats>();
+		for (SBUser user : getDAO().getAllUsers()) {
+			list.add(calculateUserStatistics("" + user.id));
 		}
 		
 		return list;
@@ -312,35 +299,36 @@ public class ServiceFacade {
 	private void applyUserStatistics(UserVO loggedInUser, UserVO user) {
 		if (user != null && user.getId() != null) {
 			if (loggedInUser != null) {
-				user.setVotable(getDAO().userCanVoteForUser(loggedInUser.getId(), user.getId()));
+				user.setVotable(getDAO().userCanVoteForUser(
+						NumberUtils.toLong(loggedInUser.getId()), NumberUtils.toLong(user.getId())));
 			} else {
 				user.setVotable(false);
 			}
 			
-			UserStatisticsDTO userStats = getUserStatistics(user.getId());
-			user.setNumberOfBids(userStats.getNumberOfBids());
-			user.setNumberOfComments(userStats.getNumberOfComments());
-			user.setNumberOfListings(userStats.getNumberOfListings());
-			user.setNumberOfVotes(userStats.getNumberOfVotes());
-			user.setNumberOfAcceptedBids(userStats.getNumberOfAcceptedBids());
-			user.setNumberOfFundedBids(userStats.getNumberOfFundedBids());
-			user.setNumberOfNotifications(userStats.getNumberOfNotifications());
+			UserStats userStats = getUserStatistics(user.getId());
+			user.setNumberOfBids(userStats.numberOfBids);
+			user.setNumberOfComments(userStats.numberOfComments);
+			user.setNumberOfListings(userStats.numberOfListings);
+			user.setNumberOfVotes(userStats.numberOfVotes);
+			user.setNumberOfAcceptedBids(userStats.numberOfAcceptedBids);
+			user.setNumberOfFundedBids(userStats.numberOfFundedBids);
+			user.setNumberOfNotifications(userStats.numberOfNotifications);
 		}
 	}
 	
 	private void applyListingData(UserVO loggedInUser, ListingVO listing) {
 		// set user data
-		UserDTO user = getDAO().getUser(listing.getOwner());
-		listing.setOwnerName(user != null ? user.getNickname() : "<<unknown>>");
+		SBUser user = getDAO().getUser(listing.getOwner());
+		listing.setOwnerName(user != null ? user.nickname : "<<unknown>>");
 		
-		ListingStatisticsDTO listingStats = getListingStatistics(listing.getId());
-		listing.setNumberOfBids(listingStats.getNumberOfBids());
-		listing.setNumberOfComments(listingStats.getNumberOfComments());
-		listing.setNumberOfVotes(listingStats.getNumberOfVotes());
-		listing.setValuation((int)listingStats.getValuation());
-		listing.setMedianValuation((int)listingStats.getBidValuation());
-		listing.setPreviousValuation((int)listingStats.getPreviousValuation());
-		listing.setScore((int)listingStats.getScore());
+		ListingStats listingStats = getListingStatistics(NumberUtils.toLong(listing.getId()));
+		listing.setNumberOfBids(listingStats.numberOfBids);
+		listing.setNumberOfComments(listingStats.numberOfComments);
+		listing.setNumberOfVotes(listingStats.numberOfVotes);
+		listing.setValuation((int)listingStats.valuation);
+		listing.setMedianValuation((int)listingStats.medianValuation);
+		listing.setPreviousValuation((int)listingStats.previousValuation);
+		listing.setScore((int)listingStats.score);
 		
 		// calculate daysAgo and daysLeft
 		Days daysAgo = Days.daysBetween(new DateTime(listing.getListedOn()), new DateTime());
@@ -350,7 +338,8 @@ public class ServiceFacade {
 		listing.setDaysLeft(daysLeft.getDays());
 		
 		if (loggedInUser != null) {
-			listing.setVotable(getDAO().userCanVoteForListing(loggedInUser.getId(), listing.getId()));
+			listing.setVotable(getDAO().userCanVoteForListing(
+					NumberUtils.toLong(loggedInUser.getId()), NumberUtils.toLong(listing.getId())));
 		} else {
 			listing.setVotable(false);
 		}
@@ -358,17 +347,17 @@ public class ServiceFacade {
 	
 	public void scheduleUpdateOfListingStatistics(String listingId, ListingStatsUpdateReason reason) {
 		log.log(Level.INFO, "Scheduling listing stats update for '" + listingId + "', reason: " + reason);
-		ListingStatisticsDTO listingStats = (ListingStatisticsDTO)cache.get(LISTING_STATISTICS_KEY + listingId);
+		ListingStats listingStats = (ListingStats)cache.get(LISTING_STATISTICS_KEY + listingId);
 		if (listingStats != null) {
 			switch(reason) {
 			case NEW_BID:
-				listingStats.setNumberOfBids(listingStats.getNumberOfBids() + 1);
+				listingStats.numberOfBids = listingStats.numberOfBids + 1;
 				break;
 			case NEW_COMMENT:
-				listingStats.setNumberOfComments(listingStats.getNumberOfComments() + 1);
+				listingStats.numberOfComments = listingStats.numberOfComments + 1;
 				break;
 			case NEW_VOTE:
-				listingStats.setNumberOfVotes(listingStats.getNumberOfVotes() + 1);
+				listingStats.numberOfVotes = listingStats.numberOfVotes + 1;
 				break;
 			default:
 				// reason can be also null
@@ -382,15 +371,15 @@ public class ServiceFacade {
 				.taskName(taskName));
 	}
 	
-	public ListingStatisticsDTO calculateListingStatistics(String listingId) {
-		ListingStatisticsDTO listingStats = getDAO().updateListingStatistics(listingId);
+	public ListingStats calculateListingStatistics(long listingId) {
+		ListingStats listingStats = getDAO().updateListingStatistics(listingId);
 		log.log(Level.INFO, "Calculated listing stats for '" + listingId + "' : " + listingStats);
 		cache.put(LISTING_STATISTICS_KEY + listingId, listingStats);
 		return listingStats;
 	}
 	
-	private ListingStatisticsDTO getListingStatistics(String listingId) {
-		ListingStatisticsDTO listingStats = (ListingStatisticsDTO)cache.get(LISTING_STATISTICS_KEY + listingId);
+	private ListingStats getListingStatistics(long listingId) {
+		ListingStats listingStats = (ListingStats)cache.get(LISTING_STATISTICS_KEY + listingId);
 		if (listingStats == null) {
 			listingStats = getDAO().getListingStatistics(listingId);
 			if (listingStats == null) {
@@ -402,13 +391,12 @@ public class ServiceFacade {
 		return listingStats;
 	}
 	
-	public List<ListingStatisticsDTO> updateAllListingStatistics() {
-		List<ListingStatisticsDTO> list = new ArrayList<ListingStatisticsDTO>();
+	public List<ListingStats> updateAllListingStatistics() {
+		List<ListingStats> list = new ArrayList<ListingStats>();
 
-		List<ListingDTO> listings = getDAO().getAllListings();
-		for (ListingDTO listing : listings) {
-			String listingId = listing.getIdAsString();
-			list.add(calculateListingStatistics(listingId));
+		List<Listing> listings = getDAO().getAllListings();
+		for (Listing listing : listings) {
+			list.add(calculateListingStatistics(listing.id));
 		}
 		log.log(Level.INFO, "Updated stats for " + list.size() + " listings: " + list);
 		int updatedDocs = DocService.instance().updateListingData(listings);
@@ -426,7 +414,7 @@ public class ServiceFacade {
 			if (listingUser != null) {
 				ListingVO listing = listingUser.getListing();
 				listing.setOrderNumber(listings.size() + 1);
-				if (ListingDTO.State.ACTIVE.toString().equalsIgnoreCase(listing.getState())) {
+				if (Listing.State.ACTIVE.toString().equalsIgnoreCase(listing.getState())) {
 					log.info("Active listing added to keyword search results " + listing);
 					listings.add(listing);
 				} else if (loggedInUser.getId().equals(listing.getOwner())) {
@@ -454,10 +442,10 @@ public class ServiceFacade {
 		List<ListingVO> listings = null;
 		if (loggedInUser != null && StringUtils.areStringsEqual(userId, loggedInUser.getId())) {
 			listings = DtoToVoConverter.convertListings(
-				getDAO().getUserListings(userId, listingProperties));
+				getDAO().getUserListings(NumberUtils.toLong(userId), listingProperties));
 		} else {
 			listings = DtoToVoConverter.convertListings(
-					getDAO().getUserActiveListings(userId, listingProperties));
+					getDAO().getUserActiveListings(NumberUtils.toLong(userId), listingProperties));
 		}
 		int index = listingProperties.getStartIndex() > 0 ? listingProperties.getStartIndex() : 1;
 		for (ListingVO listing : listings) {
@@ -627,11 +615,12 @@ public class ServiceFacade {
 		if (loggedInUser == null) {
 			return null;
 		}
-		ListingVO listing =  DtoToVoConverter.convert(getDAO().valueUpListing(listingId, loggedInUser.getId()));
+		ListingVO listing =  DtoToVoConverter.convert(getDAO().valueUpListing(
+				NumberUtils.toLong(listingId), NumberUtils.toLong(loggedInUser.getId())));
 		if (listing != null) {
 			scheduleUpdateOfListingStatistics(listing.getId(), ListingStatsUpdateReason.NEW_VOTE);
 			scheduleUpdateOfUserStatistics(loggedInUser.getId(), UserStatsUpdateReason.NEW_VOTE);
-			createNotification(listing.getOwner(), listing.getId(), Type.NEW_VOTE_FOR_YOUR_LISTING, "");
+			createNotification(listing.getOwner(), listing.getId(), Notification.Type.NEW_VOTE_FOR_YOUR_LISTING, "");
 			applyListingData(loggedInUser, listing);
 		}
 		return listing;
@@ -644,10 +633,11 @@ public class ServiceFacade {
 		if (voter == null) {
 			return null;
 		}
-		UserVO user =  DtoToVoConverter.convert(getDAO().valueUpUser(userId, voter.getId()));
+		UserVO user =  DtoToVoConverter.convert(getDAO().valueUpUser(
+				NumberUtils.toLong(userId), NumberUtils.toLong(voter.getId())));
 		if (user != null) {
 			scheduleUpdateOfUserStatistics(userId, UserStatsUpdateReason.NEW_VOTE);
-			createNotification(user.getId(), user.getId(), Type.NEW_VOTE_FOR_YOU, "");
+			createNotification(user.getId(), user.getId(), Notification.Type.NEW_VOTE_FOR_YOU, "");
 			applyUserStatistics(voter, user);
 		}
 		return user;
@@ -679,7 +669,7 @@ public class ServiceFacade {
 	 */
 	public CommentListVO getCommentsForListing(UserVO loggedInUser, String listingId, ListPropertiesVO commentProperties) {
 		CommentListVO list = new CommentListVO();
-		ListingVO listing = DtoToVoConverter.convert(getDAO().getListing(listingId));
+		ListingVO listing = DtoToVoConverter.convert(getDAO().getListing(NumberUtils.toLong(listingId)));
 		if (listing == null) {
 			log.log(Level.WARNING, "Listing '" + listingId + "' not found");
 
@@ -688,10 +678,11 @@ public class ServiceFacade {
 			commentProperties.setTotalResults(0);
 		} else {
 			applyListingData(loggedInUser, listing);
-			List<CommentVO> comments = DtoToVoConverter.convertComments(getDAO().getCommentsForListing(listingId));
+			List<CommentVO> comments = DtoToVoConverter.convertComments(
+					getDAO().getCommentsForListing(NumberUtils.toLong(listingId)));
 			int index = commentProperties.getStartIndex() > 0 ? commentProperties.getStartIndex() : 1;
 			for (CommentVO comment : comments) {
-				comment.setUserName(getDAO().getUser(comment.getUser()).getNickname());
+				comment.setUserName(getDAO().getUser(comment.getUser()).nickname);
 				comment.setOrderNumber(index++);
 			}
 			list.setComments(comments);
@@ -722,15 +713,16 @@ public class ServiceFacade {
 			commentProperties.setStartIndex(0);
 			commentProperties.setTotalResults(0);
 		} else {
-			List<CommentVO> comments = DtoToVoConverter.convertComments(getDAO().getCommentsForUser(userId));
+			List<CommentVO> comments = DtoToVoConverter.convertComments(
+					getDAO().getCommentsForUser(NumberUtils.toLong(userId)));
 			int index = commentProperties.getStartIndex() > 0 ? commentProperties.getStartIndex() : 1;
 			for (CommentVO comment : comments) {
 				comment.setUserName(user.getNickname());
-				ListingDTO listing = getDAO().getListing(comment.getListing());
+				Listing listing = getDAO().getListing(NumberUtils.toLong(comment.getListing()));
 				if (listing == null) {
 					log.log(Level.SEVERE, "Comment '" + comment.getId() + "' doesn't have listing id");
 				}
-				comment.setListingName(listing.getName());
+				comment.setListingName(listing.name);
 				comment.setOrderNumber(index++);
 			}
 			list.setComments(comments);
@@ -749,7 +741,7 @@ public class ServiceFacade {
 	 */
 	public BidListVO getBidsForListing(UserVO loggedInUser, String listingId, ListPropertiesVO bidProperties) {		
 		BidListVO list = new BidListVO();
-		ListingVO listing = DtoToVoConverter.convert(getDAO().getListing(listingId));
+		ListingVO listing = DtoToVoConverter.convert(getDAO().getListing(NumberUtils.toLong(listingId)));
 		if (listing == null) {
 			log.log(Level.WARNING, "Listing '" + listingId + "' not found");
 			bidProperties.setNumberOfResults(0);
@@ -757,10 +749,11 @@ public class ServiceFacade {
 			bidProperties.setTotalResults(0);
 		} else {
 			applyListingData(loggedInUser, listing);
-			List<BidVO> bids = DtoToVoConverter.convertBids(getDAO().getBidsForListing(listingId));
+			List<BidVO> bids = DtoToVoConverter.convertBids(
+					getDAO().getBidsForListing(NumberUtils.toLong(listingId)));
 			int index = bidProperties.getStartIndex() > 0 ? bidProperties.getStartIndex() : 1;
 			for (BidVO bid : bids) {
-				bid.setUserName(getDAO().getUser(bid.getUser()).getNickname());
+				bid.setUserName(getDAO().getUser(bid.getUser()).nickname);
 				bid.setListingOwner(listing.getOwner());
 				bid.setOrderNumber(index++);
 			}			
@@ -779,10 +772,10 @@ public class ServiceFacade {
 	private void prepareBidList(ListPropertiesVO bidProperties, List<BidVO> bids, UserVO user) {
 		int index = bidProperties.getStartIndex() > 0 ? bidProperties.getStartIndex() : 1;
 		for (BidVO bid : bids) {
-			ListingDTO listing = getDAO().getListing(bid.getListing());
+			Listing listing = getDAO().getListing(NumberUtils.toLong(bid.getListing()));
 			bid.setUserName(user.getNickname());
-			bid.setListingName(listing.getName());
-			bid.setListingOwner(listing.getOwner());
+			bid.setListingName(listing.name);
+			bid.setListingOwner(listing.owner.getString());
 			bid.setOrderNumber(index++);
 		}
 		bidProperties.setNumberOfResults(bids.size());
@@ -803,7 +796,8 @@ public class ServiceFacade {
 			return null;
 		}
 
-		bids = DtoToVoConverter.convertBids(getDAO().getBidsForUser(userId));
+		bids = DtoToVoConverter.convertBids(
+				getDAO().getBidsForUser(NumberUtils.toLong(userId)));
 		prepareBidList(bidProperties, bids, user);
 		list.setBids(bids);
 		list.setBidsProperties(bidProperties);
@@ -822,7 +816,7 @@ public class ServiceFacade {
 			return null;
 		}
 		
-		bids = DtoToVoConverter.convertBids(getDAO().getBidsAcceptedByUser(userId));
+		bids = DtoToVoConverter.convertBids(getDAO().getBidsAcceptedByUser(NumberUtils.toLong(userId)));
 		prepareBidList(bidProperties, bids, user);
 		list.setBids(bids);
 		list.setBidsProperties(bidProperties);
@@ -857,7 +851,7 @@ public class ServiceFacade {
 	 * @return Current rating
 	 */
 	public int getRating(User loggedInUser, String listingId) {
-		return getDAO().getNumberOfVotesForListing(listingId);
+		return getDAO().getNumberOfVotesForListing(NumberUtils.toLong(listingId));
 	}
 	
 	/**
@@ -866,7 +860,7 @@ public class ServiceFacade {
 	 * @return Activity
 	 */
 	public int getActivity(User loggedInUser, String listingId) {
-		return getDAO().getActivity(listingId);
+		return getDAO().getActivity(NumberUtils.toLong(listingId));
 	}
  
 	/**
@@ -874,9 +868,10 @@ public class ServiceFacade {
 	 * @param bidId Bid id
 	 */
 	public BidAndUserVO getBid(UserVO loggedInUser, String bidId) {
-		BidVO bid = DtoToVoConverter.convert(getDAO().getBid(bidId));
+		BidVO bid = DtoToVoConverter.convert(getDAO().getBid(NumberUtils.toLong(bidId)));
 		UserVO user = getUser(loggedInUser, bid.getUser()).getUser();
-		ListingVO listing = DtoToVoConverter.convert(getDAO().getListing(bid.getListing()));
+		ListingVO listing = DtoToVoConverter.convert(
+				getDAO().getListing(NumberUtils.toLong(bid.getListing())));
 		bid.setUserName(user.getNickname());
 		bid.setListingName(listing.getName());
 		
@@ -892,7 +887,8 @@ public class ServiceFacade {
 	}
 
 	public ListingAndUserVO getListing(UserVO loggedInUser, String listingId) {
-		ListingVO listing = DtoToVoConverter.convert(getDAO().getListing(listingId));
+		ListingVO listing = DtoToVoConverter.convert(
+				getDAO().getListing(NumberUtils.toLong(listingId)));
 		if (listing != null) {
 			applyListingData(loggedInUser, listing);
 			ListingAndUserVO listingAndUser = new ListingAndUserVO();
@@ -906,12 +902,12 @@ public class ServiceFacade {
 		if (loggedInUser == null) {
 			return null;
 		}
-		listing.setState(ListingDTO.State.ACTIVE.toString());
+		listing.setState(Listing.State.ACTIVE.toString());
 		listing.setOwner(loggedInUser.getId());
 		
 		DateMidnight midnight = new DateMidnight();
 		listing.setClosingOn(midnight.plus(Days.days(30)).toDate());
-		ListingVO newListing = DtoToVoConverter.convert(getDAO().createListing(VoToDtoConverter.convert(listing)));
+		ListingVO newListing = DtoToVoConverter.convert(getDAO().createListing(VoToModelConverter.convert(listing)));
 		scheduleUpdateOfUserStatistics(loggedInUser.getId(), UserStatsUpdateReason.NEW_LISTING);
 		scheduleUpdateOfListingStatistics(newListing.getId(), ListingStatsUpdateReason.NONE);
 		//createNotification(user.getId(), listing.getId(), Type.NEW_LISTING, "");
@@ -931,31 +927,33 @@ public class ServiceFacade {
 			log.warning("Listing '" + listing.getId() + "' cannot be updated with empty summary");
 			return null;
 		}
-		ListingVO updatedListing = DtoToVoConverter.convert(getDAO().updateListing(VoToDtoConverter.convert(listing)));
+		ListingVO updatedListing = DtoToVoConverter.convert(getDAO().updateListing(VoToModelConverter.convert(listing)));
 		applyListingData(loggedInUser, updatedListing);
 		scheduleUpdateOfListingStatistics(updatedListing.getId(), ListingStatsUpdateReason.NONE);
 		return updatedListing;
 	}
 
 	public ListingVO activateListing(UserVO loggedInUser, String listingId) {
-		ListingVO updatedListing = DtoToVoConverter.convert(getDAO().activateListing(listingId));
+		ListingVO updatedListing = DtoToVoConverter.convert(
+				getDAO().upadateListingState(NumberUtils.toLong(listingId), Listing.State.ACTIVE));
 		applyListingData(loggedInUser, updatedListing);
 		return updatedListing;
 	}
 
 	public ListingVO withdrawListing(UserVO loggedInUser, String listingId) {
-		ListingVO updatedListing = DtoToVoConverter.convert(getDAO().withdrawListing(listingId));
+		ListingVO updatedListing = DtoToVoConverter.convert(
+				getDAO().upadateListingState(NumberUtils.toLong(listingId), Listing.State.WITHDRAWN));
 		applyListingData(loggedInUser, updatedListing);
 		return updatedListing;
 	}
 
 	public CommentVO deleteComment(UserVO loggedInUser, String commentId) {
-		CommentVO comment = DtoToVoConverter.convert(getDAO().deleteComment(commentId));
-		return comment;
+		getDAO().deleteComment(NumberUtils.toLong(commentId));
+		return null;
 	}
 
 	public CommentVO createComment(UserVO loggedInUser, CommentVO comment) {
-		comment = DtoToVoConverter.convert(getDAO().createComment(VoToDtoConverter.convert(comment)));
+		comment = DtoToVoConverter.convert(getDAO().createComment(VoToModelConverter.convert(comment)));
 		scheduleUpdateOfUserStatistics(loggedInUser.getId(), UserStatsUpdateReason.NEW_COMMENT);
 		scheduleUpdateOfListingStatistics(comment.getListing(), ListingStatsUpdateReason.NEW_COMMENT);
 		//createNotification(comment.get, comment.getId(), Type.NEW_COMMENT_FOR_YOUR_LISTING, "");
@@ -967,12 +965,12 @@ public class ServiceFacade {
 			log.warning("Comment '" + comment.getId() + "' cannot be updated with empty text");
 			return null;
 		}
-		comment = DtoToVoConverter.convert(getDAO().updateComment(VoToDtoConverter.convert(comment)));
+		comment = DtoToVoConverter.convert(getDAO().updateComment(VoToModelConverter.convert(comment)));
 		return comment;
 	}
 
 	public BidVO deleteBid(UserVO loggedInUser, String bidId) {
-		BidVO bid = DtoToVoConverter.convert(getDAO().deleteBid(loggedInUser.getId(), bidId));
+		BidVO bid = DtoToVoConverter.convert(getDAO().deleteBid(NumberUtils.toLong(loggedInUser.getId()), NumberUtils.toLong(bidId)));
 		scheduleUpdateOfListingStatistics(bid.getListing(), ListingStatsUpdateReason.NONE);
 		return bid;
 	}
@@ -983,11 +981,12 @@ public class ServiceFacade {
 			return null;
 		}
 
-		bid.setStatus(BidDTO.Status.ACTIVE.toString());
-		bid = DtoToVoConverter.convert(getDAO().createBid(loggedInUser.getId(), VoToDtoConverter.convert(bid)));
+		bid.setStatus(Bid.Status.ACTIVE.toString());
+		bid = DtoToVoConverter.convert(
+				getDAO().createBid(NumberUtils.toLong(loggedInUser.getId()), VoToModelConverter.convert(bid)));
 		if (bid != null) {
 			scheduleUpdateOfUserStatistics(loggedInUser.getId(), UserStatsUpdateReason.NEW_BID);
-			createNotification(bid.getListingOwner(), bid.getId(), Type.NEW_BID_FOR_YOUR_LISTING, "");
+			createNotification(bid.getListingOwner(), bid.getId(), Notification.Type.NEW_BID_FOR_YOUR_LISTING, "");
 		}
 		return bid;
 	}
@@ -997,63 +996,69 @@ public class ServiceFacade {
 			log.warning("Bid '" + bid.getId() + "' cannot be updated with non positive value");
 			return null;
 		}
-		BidDTO.FundType fundType = BidDTO.FundType.valueOf(bid.getFundType());
-		if (fundType != BidDTO.FundType.COMMON
-				&& fundType != BidDTO.FundType.NOTE
-				&& fundType != BidDTO.FundType.PREFERRED) {
+		Bid.FundType fundType = Bid.FundType.valueOf(bid.getFundType());
+		if (fundType != Bid.FundType.COMMON
+				&& fundType != Bid.FundType.NOTE
+				&& fundType != Bid.FundType.PREFERRED) {
 			log.log(Level.WARNING, "Bid id '" + bid.getId() + "' has not valid fund type '" + fundType + "'!");
 			return null;
 		}
 
-		bid = DtoToVoConverter.convert(getDAO().updateBid(loggedInUser.getId(), VoToDtoConverter.convert(bid)));
+		bid = DtoToVoConverter.convert(getDAO().createBid(
+				NumberUtils.toLong(loggedInUser.getId()), VoToModelConverter.convert(bid)));
 		if (bid != null) {
 			scheduleUpdateOfListingStatistics(bid.getListing(), ListingStatsUpdateReason.NONE);
-			createNotification(bid.getListingOwner(), bid.getId(), Type.NEW_BID_FOR_YOUR_LISTING, "");
+			createNotification(bid.getListingOwner(), bid.getId(), Notification.Type.NEW_BID_FOR_YOUR_LISTING, "");
 		}
 		return bid;
 	}
 
 	public BidVO activateBid(UserVO loggedInUser, String bidId) {
-		BidVO bid = DtoToVoConverter.convert(getDAO().activateBid(loggedInUser.getId(), bidId));
+		BidVO bid = DtoToVoConverter.convert(
+				getDAO().activateBid(NumberUtils.toLong(loggedInUser.getId()), NumberUtils.toLong(bidId)));
 		if (bid != null) {
 			scheduleUpdateOfListingStatistics(bid.getListing(), ListingStatsUpdateReason.NEW_BID);
-			createNotification(bid.getUser(), bid.getId(), Type.YOUR_BID_WAS_ACTIVATED, "");
+			createNotification(bid.getUser(), bid.getId(), Notification.Type.YOUR_BID_WAS_ACTIVATED, "");
 		}
 		return bid;
 	}
 
 	public BidVO withdrawBid(UserVO loggedInUser, String bidId) {
-		BidVO bid = DtoToVoConverter.convert(getDAO().withdrawBid(loggedInUser.getId(), bidId));
+		BidVO bid = DtoToVoConverter.convert(
+				getDAO().withdrawBid(NumberUtils.toLong(loggedInUser.getId()), NumberUtils.toLong(bidId)));
 		if (bid != null) {
 			scheduleUpdateOfListingStatistics(bid.getListing(), ListingStatsUpdateReason.NONE);
-			createNotification(bid.getListingOwner(), bid.getId(), Type.BID_WAS_WITHDRAWN, "");
+			createNotification(bid.getListingOwner(), bid.getId(), Notification.Type.BID_WAS_WITHDRAWN, "");
 		}
 		return bid;
 	}
 	
 	public BidVO acceptBid(UserVO loggedInUser, String bidId) {
-		BidVO bid = DtoToVoConverter.convert(getDAO().acceptBid(loggedInUser.getId(), bidId));
+		BidVO bid = DtoToVoConverter.convert(
+				getDAO().acceptBid(NumberUtils.toLong(loggedInUser.getId()), NumberUtils.toLong(bidId)));
 		if (bid != null) {
-			createNotification(bid.getUser(), bid.getId(), Type.YOUR_BID_WAS_ACCEPTED, "");
-			createNotification(bid.getListingOwner(), bid.getId(), Type.YOU_ACCEPTED_BID, "");
+			createNotification(bid.getUser(), bid.getId(), Notification.Type.YOUR_BID_WAS_ACCEPTED, "");
+			createNotification(bid.getListingOwner(), bid.getId(), Notification.Type.YOU_ACCEPTED_BID, "");
 			scheduleUpdateOfListingStatistics(bid.getListing(), ListingStatsUpdateReason.NONE);
 		}
 		return bid;
 	}
 
 	public BidVO rejectBid(UserVO loggedInUser, String bidId) {
-		BidVO bid = DtoToVoConverter.convert(getDAO().rejectBid(loggedInUser.getId(), bidId));
+		BidVO bid = DtoToVoConverter.convert(
+				getDAO().rejectBid(NumberUtils.toLong(loggedInUser.getId()), NumberUtils.toLong(bidId)));
 		if (bid != null) {
-			createNotification(bid.getUser(), bid.getId(), Type.YOUR_BID_WAS_REJECTED, "");
+			createNotification(bid.getUser(), bid.getId(), Notification.Type.YOUR_BID_WAS_REJECTED, "");
 			scheduleUpdateOfListingStatistics(bid.getListing(), ListingStatsUpdateReason.NONE);
 		}
 		return bid;
 	}
 
 	public BidVO markBidAsPaid(UserVO loggedInUser, String bidId) {
-		BidVO bid = DtoToVoConverter.convert(getDAO().markBidAsPaid(loggedInUser.getId(), bidId));
+		BidVO bid = DtoToVoConverter.convert(
+				getDAO().markBidAsPaid(NumberUtils.toLong(loggedInUser.getId()), NumberUtils.toLong(bidId)));
 		if (bid != null) {
-			createNotification(bid.getUser(), bid.getId(), Type.YOU_PAID_BID, "");
+			createNotification(bid.getUser(), bid.getId(), Notification.Type.YOU_PAID_BID, "");
 			scheduleUpdateOfListingStatistics(bid.getListing(), ListingStatsUpdateReason.NONE);
 		}
 		return bid;
@@ -1072,7 +1077,7 @@ public class ServiceFacade {
 			return null;
 		}
 		property.setAuthor(loggedInUser.getEmail());
-		return DtoToVoConverter.convert(getDAO().setSystemProperty(VoToDtoConverter.convert(property)));
+		return DtoToVoConverter.convert(getDAO().setSystemProperty(VoToModelConverter.convert(property)));
 	}
 
 	public ListingDocumentVO createListingDocument(UserVO loggedInUser, ListingDocumentVO doc) {
@@ -1082,17 +1087,18 @@ public class ServiceFacade {
 			blobstoreService.delete(doc.getBlob());
 			return null;
 		}
-		ListingDocumentDTO docDTO = VoToDtoConverter.convert(doc);
-		docDTO.setCreated(new Date());
+		ListingDoc docDTO = VoToModelConverter.convert(doc);
+		docDTO.created = new Date();
 		return DtoToVoConverter.convert(getDAO().createListingDocument(docDTO));
 	}
 	
 	public ListingDocumentVO getListingDocument(UserVO loggedInUser, String docId) {
-		return DtoToVoConverter.convert(getDAO().getListingDocument(docId));
+		return DtoToVoConverter.convert(getDAO().getListingDocument(NumberUtils.toLong(docId)));
 	}
 	
 	public ListingDocumentVO deleteDocument(UserVO loggedInUser, String docId) {
-		return DtoToVoConverter.convert(getDAO().deleteDocument(docId));
+		getDAO().deleteDocument(NumberUtils.toLong(docId));
+		return null;
 	}
 	
 	public List<ListingDocumentVO> getAllListingDocuments(UserVO loggedInUser) {
@@ -1120,7 +1126,7 @@ public class ServiceFacade {
 
 	public NotificationVO createNotification(UserVO loggedInUser, NotificationVO notification) {
 		try {
-			NotificationDTO.Type.valueOf(notification.getType().toUpperCase());
+			Notification.Type.valueOf(notification.getType().toUpperCase());
 		} catch (Exception e) {
 			log.log(Level.WARNING, "Notification cannot be created as type is empty or not recognized!", e);
 		}
@@ -1130,26 +1136,26 @@ public class ServiceFacade {
 		notification.setCreated(new Date());
 		notification.setAcknowledged(false);
 		notification.setEmailDate(null);
-		notification = DtoToVoConverter.convert(getDAO().createNotification(VoToDtoConverter.convert(notification)));
+		notification = DtoToVoConverter.convert(getDAO().createNotification(VoToModelConverter.convert(notification)));
 		if (notification != null) {
 			scheduleNotification(loggedInUser.getId(), notification);
 		}
 		return notification;
 	}
 	
-	private void createNotification(String userId, String objectId, Type type, String message) {
-		NotificationDTO notification = new NotificationDTO();
-		notification.setUser(userId);
-		notification.setObject(objectId);
-		notification.setType(type);
-		notification.setCreated(new Date());
-		notification.setAcknowledged(false);
-		notification.setEmailDate(null);
+	private void createNotification(String userId, String objectId, Notification.Type type, String message) {
+		Notification notification = new Notification();
+		notification.user = new Key<SBUser>(SBUser.class, userId);
+		notification.object = new Key<BaseObject>(objectId);
+		notification.type = type;
+		notification.created = new Date();
+		notification.acknowledged = false;
+		notification.emailDate = null;
 		notification = getDAO().createNotification(notification);
 		if (notification != null) {
-			String taskName = timeStampFormatter.print(new Date().getTime()) + "send_notification_" + notification.getType() + "_" + userId;
+			String taskName = timeStampFormatter.print(new Date().getTime()) + "send_notification_" + notification.type + "_" + userId;
 			Queue queue = QueueFactory.getDefaultQueue();
-			queue.add(TaskOptions.Builder.withUrl("/task/send-notification").param("id", notification.getIdAsString())
+			queue.add(TaskOptions.Builder.withUrl("/task/send-notification").param("id", notification.id.toString())
 					.taskName(taskName));
 		} else {
 			log.warning("Can't schedule notification " + notification);
@@ -1164,7 +1170,8 @@ public class ServiceFacade {
 	}
 
 	public NotificationVO acknowledgeNotification(UserVO loggedInUser, String notifId) {
-		NotificationVO notification = DtoToVoConverter.convert(getDAO().acknowledgeNotification(notifId));
+		NotificationVO notification = DtoToVoConverter.convert(
+				getDAO().acknowledgeNotification(NumberUtils.toLong(notifId)));
 		if (notification == null) {
 			log.warning("Notification with id '" + notifId + "' not found!");
 		} else {
@@ -1183,7 +1190,9 @@ public class ServiceFacade {
 			return null;
 		}
 
-		notifications = DtoToVoConverter.convertNotifications(getDAO().getUserNotification(userId, notifProperties));
+		notifications = DtoToVoConverter.convertNotifications(
+				getDAO().getUserNotification(NumberUtils.toLong(userId), notifProperties));
+		notifProperties.setNumberOfResults(notifications.size());
 		prepareNotificationList(notifications, user);
 		list.setNotifications(notifications);
 		list.setNotificationsProperties(notifProperties);
@@ -1196,18 +1205,20 @@ public class ServiceFacade {
 		NotificationListVO list = new NotificationListVO();
 		List<NotificationVO> notifications = null;
 
-		UserVO user = getUser(loggedInUser, userId).getUser();
-		if (user == null) {
-			log.log(Level.WARNING, "User '" + userId + "' not found");
+		//UserVO user = getUser(loggedInUser, userId).getUser();
+		if (loggedInUser == null) {
+			log.log(Level.WARNING, "User not logged in!");
 			return null;
 		}
+		userId = loggedInUser.getId();
 
-		notifications = DtoToVoConverter.convertNotifications(getDAO().getAllUserNotification(userId, notifProperties));
+		notifications = DtoToVoConverter.convertNotifications(
+				getDAO().getAllUserNotification(NumberUtils.toLong(userId), notifProperties));
 		notifProperties.setTotalResults(notifications.size());
-		prepareNotificationList(notifications, user);
+		prepareNotificationList(notifications, loggedInUser);
 		list.setNotifications(notifications);
 		list.setNotificationsProperties(notifProperties);
-		list.setUser(user);
+		list.setUser(loggedInUser);
 		
 		return list;
 	}
@@ -1219,7 +1230,8 @@ public class ServiceFacade {
 	}
 
 	public NotificationVO getNotification(UserVO loggedInUser, String notifId) {
-		NotificationVO notification = DtoToVoConverter.convert(getDAO().getNotification(notifId));
+		NotificationVO notification = DtoToVoConverter.convert(
+				getDAO().getNotification(NumberUtils.toLong(notifId)));
 		if (notification == null) {
 			log.warning("Notification with id '" + notifId + "' not found!");
 		}
@@ -1236,12 +1248,13 @@ public class ServiceFacade {
 			return null;
 		}
 		monitor.setActive(true);
-		monitor = DtoToVoConverter.convert(getDAO().setMonitor(VoToDtoConverter.convert(monitor)));
+		monitor = DtoToVoConverter.convert(getDAO().setMonitor(VoToModelConverter.convert(monitor)));
 		return monitor;
 	}
 
 	public MonitorVO deactivateMonitor(UserVO loggedInUser, String monitorId) {
-		MonitorVO notification = DtoToVoConverter.convert(getDAO().deactivateMonitor(monitorId));
+		MonitorVO notification = DtoToVoConverter.convert(
+				getDAO().deactivateMonitor(NumberUtils.toLong(monitorId)));
 		if (notification == null) {
 			log.warning("Monitor with id '" + monitorId + "' not found!");
 		} else {
@@ -1262,13 +1275,14 @@ public class ServiceFacade {
 			log.warning("Parameter type not provided!");
 			return null;
 		}
-		MonitorDTO.Type typeEnum = null;
+		Monitor.Type typeEnum = null;
 		try {
-			typeEnum = MonitorDTO.Type.valueOf(type.toUpperCase());
+			typeEnum = Monitor.Type.valueOf(type.toUpperCase());
 		} catch (Exception e) {
 			log.log(Level.WARNING, "Parameter type has wrong value", e);
 		}
-		monitors = DtoToVoConverter.convertMonitors(getDAO().getMonitorsForObject(objectId, typeEnum));
+		monitors = DtoToVoConverter.convertMonitors(
+				getDAO().getMonitorsForObject(NumberUtils.toLong(objectId), typeEnum));
 		list.setMonitors(monitors);
 		
 		return list;
@@ -1278,10 +1292,10 @@ public class ServiceFacade {
 		MonitorListVO list = new MonitorListVO();
 		List<MonitorVO> monitors = null;
 
-		MonitorDTO.Type typeEnum = null;
+		Monitor.Type typeEnum = null;
 		if (StringUtils.notEmpty(type)) {
 			try {
-				typeEnum = MonitorDTO.Type.valueOf(type.toUpperCase());
+				typeEnum = Monitor.Type.valueOf(type.toUpperCase());
 			} catch (Exception e) {
 				log.log(Level.WARNING, "Parameter type has wrong value", e);
 			}
@@ -1289,7 +1303,8 @@ public class ServiceFacade {
 		if (StringUtils.isEmpty(userId) && loggedInUser != null) {
 			userId = loggedInUser.getId();
 		}
-		monitors = DtoToVoConverter.convertMonitors(getDAO().getMonitorsForUser(userId, typeEnum));
+		monitors = DtoToVoConverter.convertMonitors(
+				getDAO().getMonitorsForUser(NumberUtils.toLong(userId), typeEnum));
 		list.setMonitors(monitors);
 		list.setUser(loggedInUser);
 		

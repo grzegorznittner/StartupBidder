@@ -57,14 +57,6 @@ public class SetupServlet extends HttpServlet {
 			//	return;
 			//}
 			
-			out.println("<p>Current datastore: " + ServiceFacade.currentDAO + "</p>");
-			out.println("<form method=\"POST\" action=\"/system/set-datastore/.html\">"
-					+ "<input name=\"type\" type=\"hidden\" value=\"" + ServiceFacade.Datastore.MOCK + "\"/></br>"
-					+ "<input type=\"submit\" value=\"Activate " + ServiceFacade.Datastore.MOCK + " datastore\"/></form>");
-			out.println("<form method=\"POST\" action=\"/system/set-datastore/.html\">"
-					+ "<input name=\"type\" type=\"hidden\" value=\"" + ServiceFacade.Datastore.APPENGINE + "\"/></br>"
-					+ "<input type=\"submit\" value=\"Activate " + ServiceFacade.Datastore.APPENGINE + " datastore\"/></form>");
-
 			out.println("<form method=\"POST\" action=\"/system/print-datastore/.html\">"
 					+ "<input type=\"submit\" value=\"Print datastore\"/></form>");
 

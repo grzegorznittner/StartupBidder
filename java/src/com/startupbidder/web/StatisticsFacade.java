@@ -15,7 +15,7 @@ import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 
-import com.startupbidder.dto.BidDTO;
+import com.startupbidder.datamodel.Bid;
 import com.startupbidder.vo.GraphDataVO;
 import com.startupbidder.vo.ListPropertiesVO;
 import com.startupbidder.vo.TickerDataVO;
@@ -99,16 +99,16 @@ public class StatisticsFacade {
 		
 		ListPropertiesVO bidsProperties = new ListPropertiesVO();
 		bidsProperties.setMaxResults(100);
-		List<BidDTO> bids = ServiceFacade.instance().getDAO().getBidsByDate(bidsProperties);
+		List<Bid> bids = ServiceFacade.instance().getDAO().getBidsByDate(bidsProperties);
 
 		int[] values = new int[2];
 		if (bids.size() > 1) {
-			int bidTimeSpan = Math.abs(Days.daysBetween(new DateTime(bids.get(0).getPlaced()),
-					new DateTime(bids.get(bids.size() - 1).getPlaced())).getDays());
+			int bidTimeSpan = Math.abs(Days.daysBetween(new DateTime(bids.get(0).placed),
+					new DateTime(bids.get(bids.size() - 1).placed)).getDays());
 			
 			values = new int[bidTimeSpan];
-			for (BidDTO bid : bids) {
-				int days = Math.abs(Days.daysBetween(new DateTime(bid.getPlaced().getTime()), midnight).getDays());
+			for (Bid bid : bids) {
+				int days = Math.abs(Days.daysBetween(new DateTime(bid.placed.getTime()), midnight).getDays());
 				if (days < values.length) {
 					values[days]++;
 				}
@@ -143,18 +143,18 @@ public class StatisticsFacade {
 		
 		ListPropertiesVO bidsProperties = new ListPropertiesVO();
 		bidsProperties.setMaxResults(100);
-		List<BidDTO> bids = ServiceFacade.instance().getDAO().getBidsByDate(bidsProperties);
+		List<Bid> bids = ServiceFacade.instance().getDAO().getBidsByDate(bidsProperties);
 
 		int[] values = new int[2];
 		if (bids.size() > 1) {
-			int bidTimeSpan = Math.abs(Days.daysBetween(new DateTime(bids.get(0).getPlaced()),
-					new DateTime(bids.get(bids.size() - 1).getPlaced())).getDays());
+			int bidTimeSpan = Math.abs(Days.daysBetween(new DateTime(bids.get(0).placed),
+					new DateTime(bids.get(bids.size() - 1).placed)).getDays());
 			
 			values = new int[bidTimeSpan];
-			for (BidDTO bid : bids) {
-				int days = Math.abs(Days.daysBetween(new DateTime(bid.getPlaced().getTime()), midnight).getDays());
+			for (Bid bid : bids) {
+				int days = Math.abs(Days.daysBetween(new DateTime(bid.placed.getTime()), midnight).getDays());
 				if (days < values.length) {
-					values[days] += bid.getValuation();
+					values[days] += bid.valuation;
 				}
 			}
 		}

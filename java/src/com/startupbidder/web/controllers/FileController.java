@@ -15,7 +15,7 @@ import org.codehaus.jackson.map.JsonMappingException;
 import com.google.appengine.api.blobstore.BlobKey;
 import com.google.appengine.api.blobstore.BlobstoreService;
 import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
-import com.startupbidder.dto.ListingDocumentDTO;
+import com.startupbidder.datamodel.ListingDoc;
 import com.startupbidder.vo.ListingDocumentVO;
 import com.startupbidder.web.HttpHeaders;
 import com.startupbidder.web.HttpHeadersImpl;
@@ -120,27 +120,27 @@ public class FileController extends ModelDrivenController {
 		
 		log.log(Level.INFO, "Got blobs : " + blobs);
 		ListingDocumentVO doc = null;
-		if (blobs.containsKey(ListingDocumentDTO.Type.BUSINESS_PLAN.toString())) {
-			BlobKey blobKey = blobs.get(ListingDocumentDTO.Type.BUSINESS_PLAN.toString());
+		if (blobs.containsKey(ListingDoc.Type.BUSINESS_PLAN.toString())) {
+			BlobKey blobKey = blobs.get(ListingDoc.Type.BUSINESS_PLAN.toString());
 			doc = new ListingDocumentVO();
 			doc.setBlob(blobKey);
-			doc.setType(ListingDocumentDTO.Type.BUSINESS_PLAN.toString());
+			doc.setType(ListingDoc.Type.BUSINESS_PLAN.toString());
 			
-			blobs.remove(ListingDocumentDTO.Type.BUSINESS_PLAN.toString());
-		} else if (blobs.containsKey(ListingDocumentDTO.Type.PRESENTATION.toString())) {
-			BlobKey blobKey = blobs.get(ListingDocumentDTO.Type.PRESENTATION.toString());
+			blobs.remove(ListingDoc.Type.BUSINESS_PLAN.toString());
+		} else if (blobs.containsKey(ListingDoc.Type.PRESENTATION.toString())) {
+			BlobKey blobKey = blobs.get(ListingDoc.Type.PRESENTATION.toString());
 			doc = new ListingDocumentVO();
 			doc.setBlob(blobKey);
-			doc.setType(ListingDocumentDTO.Type.PRESENTATION.toString());
+			doc.setType(ListingDoc.Type.PRESENTATION.toString());
 			
-			blobs.remove(ListingDocumentDTO.Type.PRESENTATION.toString());
-		} else if (blobs.containsKey(ListingDocumentDTO.Type.FINANCIALS.toString())) {
-			BlobKey blobKey = blobs.get(ListingDocumentDTO.Type.FINANCIALS.toString());
+			blobs.remove(ListingDoc.Type.PRESENTATION.toString());
+		} else if (blobs.containsKey(ListingDoc.Type.FINANCIALS.toString())) {
+			BlobKey blobKey = blobs.get(ListingDoc.Type.FINANCIALS.toString());
 			doc = new ListingDocumentVO();
 			doc.setBlob(blobKey);
-			doc.setType(ListingDocumentDTO.Type.FINANCIALS.toString());
+			doc.setType(ListingDoc.Type.FINANCIALS.toString());
 			
-			blobs.remove(ListingDocumentDTO.Type.FINANCIALS.toString());
+			blobs.remove(ListingDoc.Type.FINANCIALS.toString());
 		}
 
 		// delete unwanted attachements

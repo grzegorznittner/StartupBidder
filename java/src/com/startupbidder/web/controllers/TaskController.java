@@ -11,8 +11,7 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 
-import com.startupbidder.dto.ListingDTO;
-import com.startupbidder.dto.NotificationDTO;
+import com.startupbidder.datamodel.Notification;
 import com.startupbidder.vo.BidAndUserVO;
 import com.startupbidder.vo.BidVO;
 import com.startupbidder.vo.CommentVO;
@@ -82,7 +81,7 @@ public class TaskController extends ModelDrivenController {
 		HttpHeaders headers = new HttpHeadersImpl("calculate-listing-stats");
 		
 		String listingId = getCommandOrParameter(request, 2, "id");
-		ServiceFacade.instance().calculateListingStatistics(listingId);
+		ServiceFacade.instance().calculateListingStatistics(NumberUtils.toLong(listingId));
 		ListingVO listing = ServiceFacade.instance().getListing(null, listingId).getListing();
 		DocService.instance().updateListingData(listing);
 		
@@ -109,7 +108,7 @@ public class TaskController extends ModelDrivenController {
 		
 		String notifId = getCommandOrParameter(request, 2, "id");
 		NotificationVO notification = ServiceFacade.instance().getNotification(null, notifId);
-		NotificationDTO.Type type = NotificationDTO.Type.valueOf(notification.getType());
+		Notification.Type type = Notification.Type.valueOf(notification.getType());
 
 		if (!notification.isAcknowledged()) {
 			Object notifObject = getNotificationObject(type, notification);
@@ -130,7 +129,7 @@ public class TaskController extends ModelDrivenController {
 		return headers;
 	}
 	
-	private void sendBidNotification(NotificationDTO.Type type, NotificationVO notification, BidVO bid) {
+	private void sendBidNotification(Notification.Type type, NotificationVO notification, BidVO bid) {
 		UserAndUserVO listingOwner = ServiceFacade.instance().getUser(null, bid.getListingOwner());
 		if (!listingOwner.getUser().getNotifications().contains(type)) {
 			log.info("User '" + listingOwner.getUser().getName() + "' is not subscribed to get '" + type + "' email notification.");
@@ -175,7 +174,7 @@ public class TaskController extends ModelDrivenController {
 		}
 	}
 	
-	private void sendCommentNotification(NotificationDTO.Type type, NotificationVO notification, CommentVO comment) {
+	private void sendCommentNotification(Notification.Type type, NotificationVO notification, CommentVO comment) {
 		ListingAndUserVO listing = ServiceFacade.instance().getListing(null, comment.getListing());
 		UserAndUserVO listingOwner = ServiceFacade.instance().getUser(null, listing.getListing().getOwner());
 		UserAndUserVO commenter = ServiceFacade.instance().getUser(null, comment.getUser());
@@ -189,7 +188,7 @@ public class TaskController extends ModelDrivenController {
 					commenter.getUser(), listingOwner.getUser());
 			break;
 		case NEW_COMMENT_FOR_MONITORED_LISTING:
-			MonitorListVO list = ServiceFacade.instance().getMonitorsForObject(null, comment.getListing(), new ListingDTO().getKind());
+			MonitorListVO list = ServiceFacade.instance().getMonitorsForObject(null, comment.getListing(), "LISTING");
 			for (MonitorVO monitor : list.getMonitors()) {
 				UserVO monitoringUser = ServiceFacade.instance().getUser(null, monitor.getUser()).getUser();
 				if (!monitoringUser.getNotifications().contains(type)) {
@@ -203,7 +202,7 @@ public class TaskController extends ModelDrivenController {
 		}
 	}
 	
-	private void sendProfileNotification(NotificationDTO.Type type, NotificationVO notification, UserVO user) {
+	private void sendProfileNotification(Notification.Type type, NotificationVO notification, UserVO user) {
 		if (!user.getNotifications().contains(type)) {
 			log.info("User '" + user.getName() + "' is not subscribed to get '" + type + "' email notification.");
 			return;
@@ -218,7 +217,7 @@ public class TaskController extends ModelDrivenController {
 		}
 	}
 	
-	private void sendListingNotification(NotificationDTO.Type type, NotificationVO notification, ListingVO listing) {
+	private void sendListingNotification(Notification.Type type, NotificationVO notification, ListingVO listing) {
 		UserAndUserVO listingOwner = ServiceFacade.instance().getUser(null, listing.getOwner());
 		switch (type) {
 		case NEW_VOTE_FOR_YOUR_LISTING:
@@ -229,7 +228,7 @@ public class TaskController extends ModelDrivenController {
 			EmailService.instance().sendNewVoteForYourListingNotification(notification, listing, listingOwner.getUser());
 			break;
 		case NEW_LISTING:
-			MonitorListVO list = ServiceFacade.instance().getMonitorsForObject(null, listing.getId(), new ListingDTO().getKind());
+			MonitorListVO list = ServiceFacade.instance().getMonitorsForObject(null, listing.getId(), "LISTING");
 			for (MonitorVO monitor : list.getMonitors()) {
 				UserVO monitoringUser = ServiceFacade.instance().getUser(null, monitor.getUser()).getUser();
 				if (!monitoringUser.getNotifications().contains(type)) {
@@ -242,7 +241,7 @@ public class TaskController extends ModelDrivenController {
 		}
 	}
 	
-	private Object getNotificationObject(NotificationDTO.Type type, NotificationVO notification) {
+	private Object getNotificationObject(Notification.Type type, NotificationVO notification) {
 		switch (type) {
 		case BID_PAID_FOR_YOUR_LISTING:
 		case BID_WAS_WITHDRAWN:

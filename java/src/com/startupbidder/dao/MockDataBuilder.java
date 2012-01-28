@@ -3,49 +3,54 @@ package com.startupbidder.dao;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 import org.joda.time.DateMidnight;
 import org.joda.time.Days;
 
-import com.startupbidder.dto.BidDTO;
-import com.startupbidder.dto.CommentDTO;
-import com.startupbidder.dto.ListingDTO;
-import com.startupbidder.dto.UserDTO;
-import com.startupbidder.dto.VoteDTO;
+import com.googlecode.objectify.Key;
+import com.startupbidder.datamodel.Bid;
+import com.startupbidder.datamodel.Comment;
+import com.startupbidder.datamodel.Listing;
+import com.startupbidder.datamodel.SBUser;
+import com.startupbidder.datamodel.Vote;
 
 /**
  * Generates mock data.
  * @author "Grzegorz Nittner" <grzegorz.nittner@gmail.com>
  */
 public class MockDataBuilder {
-	private UserDTO greg;
-	private ListingDTO gregsListing;
-	private UserDTO john;
-	private ListingDTO johnsListing;
+	private SBUser greg;
+	private Listing gregsListing;
+	private SBUser john;
+	private Listing johnsListing;
+	
+	private long id = 2000L;
+	
+	private long id() {
+		return id++;
+	}
 	
 	/**
-	 * Generates random comments for business plans
+	 * Generates random comments for listings
 	 */
-	public Map<String, CommentDTO> generateComments(Collection<UserDTO> usersList, Collection<ListingDTO> listings) {
-		Map<String, CommentDTO> comments = new HashMap<String, CommentDTO>();
+	public List<Comment> generateComments(Collection<SBUser> usersList, Collection<Listing> listings) {
+		List<Comment> comments = new ArrayList<Comment>();
 		
-		List<UserDTO> users = new ArrayList<UserDTO>(usersList);
-		for (ListingDTO bp : listings) {
+		List<SBUser> users = new ArrayList<SBUser>(usersList);
+		for (Listing bp : listings) {
 			int commentNum = new Random().nextInt(30);
 			while (--commentNum > 0) {
-				CommentDTO comment = new CommentDTO();
-				comment.createKey(commentNum + "_" + bp.hashCode());
-				comment.setMockData(true);
-				comment.setListing(bp.getIdAsString());
-				comment.setUser(users.get(new Random().nextInt(users.size())).getIdAsString());
-				comment.setCommentedOn(new Date(System.currentTimeMillis() - commentNum * 18 * 60 * 60 * 1000));
-				comment.setComment("Comment " + commentNum);
+				Comment comment = new Comment();
+				comment.id = id();
+				comment.mockData = true;
+				comment.listing = new Key<Listing>(Listing.class, bp.id);
+				comment.user = new Key<SBUser>(SBUser.class, users.get(new Random().nextInt(users.size())).id);
+				comment.commentedOn = new Date(System.currentTimeMillis() - commentNum * 18 * 60 * 60 * 1000);
+				comment.comment = "Comment " + commentNum;
 				
-				comments.put(comment.getIdAsString(), comment);
+				comments.add(comment);
 			}
 		}
 		return comments;
@@ -54,51 +59,51 @@ public class MockDataBuilder {
 	/**
 	 * Generates random bids for listings
 	 */
-	public Map<String, BidDTO> generateBids(Collection<UserDTO> usersList, Collection<ListingDTO> listings) {
-		Map<String, BidDTO> bids = new HashMap<String, BidDTO>();
+	public List<Bid> generateBids(Collection<SBUser> usersList, Collection<Listing> listings) {
+		List<Bid> bids = new ArrayList<Bid>();
 		
-		List<UserDTO> users = new ArrayList<UserDTO>();
-		for (UserDTO user : usersList) {
-			if (user.isInvestor()) {
+		List<SBUser> users = new ArrayList<SBUser>();
+		for (SBUser user : usersList) {
+			if (user.investor) {
 				users.add(user);
 			}
 		}
 		
-		for (ListingDTO listing : listings) {
+		for (Listing listing : listings) {
 			int bidNum = new Random().nextInt(15);
-			long bidTimeSpan = (System.currentTimeMillis() - listing.getListedOn().getTime()) / (bidNum + 1);
+			long bidTimeSpan = (System.currentTimeMillis() - listing.listedOn.getTime()) / (bidNum + 1);
 			Random fundTypeRandom = new Random();
 			while (--bidNum > 0) {
-				BidDTO bid = new BidDTO();
-				bid.createKey(bidNum + "_" + listing.hashCode());
-				bid.setMockData(true);
+				Bid bid = new Bid();
+				bid.id = id();
+				bid.mockData = true;
 				
-				String userId = users.get(new Random().nextInt(users.size())).getIdAsString();
-				if (!listing.getOwner().equals(userId)) {
-					bid.setUser(userId);
-					bid.setListing(listing.getIdAsString());
+				Key<SBUser> userId = new Key<SBUser>(SBUser.class, users.get(new Random().nextInt(users.size())).id);
+				if (!listing.owner.equals(userId)) {
+					bid.bidder = userId;
+					bid.listing = new Key<Listing>(Listing.class, listing.id);
 					switch (fundTypeRandom.nextInt(3)) {
-						case 0: bid.setFundType(BidDTO.FundType.COMMON);
+						case 0: bid.fundType = Bid.FundType.COMMON;
 						break;
-						case 1: bid.setFundType(BidDTO.FundType.NOTE);
+						case 1: bid.fundType = Bid.FundType.NOTE;
 						break;
-						case 2: bid.setFundType(BidDTO.FundType.PREFERRED);
+						case 2: bid.fundType = Bid.FundType.PREFERRED;
 						break;
 					}
-					bid.setPercentOfCompany(new Random().nextInt(50) + 10);
-					bid.setPlaced(new Date(listing.getListedOn().getTime() + bidNum * bidTimeSpan));
-					bid.setValue(new Random().nextInt(50) * 1000 + listing.getSuggestedValuation());
-					bid.setListingOwner(listing.getOwner());
+					bid.percentOfCompany = new Random().nextInt(50) + 10;
+					bid.placed = new Date(listing.listedOn.getTime() + bidNum * bidTimeSpan);
+					bid.value = new Random().nextInt(50) * 1000 + listing.suggestedValuation;
+					bid.listingOwner = listing.owner;
 					// calculate valuation
-					bid.setValuation(bid.getValue() * 100 / bid.getPercentOfCompany());
+					bid.valuation = bid.value * 100 / bid.percentOfCompany;
 					
-					bids.put(bid.getIdAsString(), bid);
+					bids.add(bid);
 				}
 			}
 		}
 		
-		bids.putAll(generateBidsForAdminListing(usersList));
-		bids.putAll(generateBidsByAdmins(listings));
+		bids.addAll(generateBidsForAdminListing(usersList));
+		bids.addAll(generateBidsByAdmins(listings));
 		
 		return bids;
 	}
@@ -106,54 +111,54 @@ public class MockDataBuilder {
 	/**
 	 * Generates random bids for admin listings (john and greg)
 	 */
-	public Map<String, BidDTO> generateBidsForAdminListing(Collection<UserDTO> usersList) {
-		Map<String, BidDTO> bids = new HashMap<String, BidDTO>();
-		BidDTO.Status statuses[] = BidDTO.Status.values();
+	private List<Bid> generateBidsForAdminListing(Collection<SBUser> usersList) {
+		List<Bid> bids = new ArrayList<Bid>();
+		Bid.Status statuses[] = Bid.Status.values();
 
-		Collection<ListingDTO> listings = new ArrayList<ListingDTO>();
+		Collection<Listing> listings = new ArrayList<Listing>();
 		listings.add(gregsListing);
 		listings.add(johnsListing);
 				
-		List<UserDTO> users = new ArrayList<UserDTO>();
-		for (UserDTO user : usersList) {
-			if (user.isInvestor()) {
+		List<SBUser> users = new ArrayList<SBUser>();
+		for (SBUser user : usersList) {
+			if (user.investor) {
 				users.add(user);
 			}
 		}
 		users.remove(greg);
 		users.remove(john);
 		
-		for (ListingDTO listing : listings) {
+		for (Listing listing : listings) {
 			int bidNum = 4;
-			long bidTimeSpan = (System.currentTimeMillis() - listing.getListedOn().getTime()) / (bidNum + 1);
+			long bidTimeSpan = (System.currentTimeMillis() - listing.listedOn.getTime()) / (bidNum + 1);
 			Random fundTypeRandom = new Random();
 			while (--bidNum > 0) {
-				BidDTO bid = new BidDTO();
-				String userId = users.get(new Random().nextInt(users.size())).getIdAsString();
+				Bid bid = new Bid();
+				bid.id = id();
+				Key<SBUser> userId = new Key<SBUser>(SBUser.class, users.get(new Random().nextInt(users.size())).id);
 
-				bid.createKey(bidNum + "_" + userId + listing.hashCode());
-				bid.setMockData(true);
+				bid.mockData = true;
 				
-				if (!listing.getOwner().equals(userId)) {
-					bid.setUser(userId);
-					bid.setListing(listing.getIdAsString());
+				if (!listing.owner.equals(userId)) {
+					bid.bidder = userId;
+					bid.listing = new Key<Listing>(Listing.class, listing.id);
 					switch (fundTypeRandom.nextInt(3)) {
-						case 0: bid.setFundType(BidDTO.FundType.COMMON);
+						case 0: bid.fundType = Bid.FundType.COMMON;
 						break;
-						case 1: bid.setFundType(BidDTO.FundType.NOTE);
+						case 1: bid.fundType = Bid.FundType.NOTE;
 						break;
-						case 2: bid.setFundType(BidDTO.FundType.PREFERRED);
+						case 2: bid.fundType = Bid.FundType.PREFERRED;
 						break;
 					}
-					bid.setPercentOfCompany(new Random().nextInt(50) + 10);
-					bid.setPlaced(new Date(listing.getListedOn().getTime() + bidNum * bidTimeSpan));
-					bid.setValue(new Random().nextInt(50) * 1000 + listing.getSuggestedValuation());
-					bid.setListingOwner(listing.getOwner());
+					bid.percentOfCompany = new Random().nextInt(50) + 10;
+					bid.placed = new Date(listing.listedOn.getTime() + bidNum * bidTimeSpan);
+					bid.value = new Random().nextInt(50) * 1000 + listing.suggestedValuation;
+					bid.listingOwner = listing.owner;
 					// calculate valuation
-					bid.setValuation(bid.getValue() * 100 / bid.getPercentOfCompany());
-					bid.setStatus(statuses[bidNum]);
+					bid.valuation = bid.value * 100 / bid.percentOfCompany;
+					bid.status = statuses[bidNum];
 					
-					bids.put(bid.getIdAsString(), bid);
+					bids.add(bid);
 				}
 			}
 		}
@@ -163,99 +168,99 @@ public class MockDataBuilder {
 	/**
 	 * Generates random bids for admin listings (john and greg)
 	 */
-	public Map<String, BidDTO> generateBidsByAdmins(Collection<ListingDTO> listingList) {
-		List<ListingDTO> listings = new ArrayList<ListingDTO>(listingList);
-		Map<String, BidDTO> bids = new HashMap<String, BidDTO>();
-		BidDTO.Status statuses[] = BidDTO.Status.values();
+	private List<Bid> generateBidsByAdmins(Collection<Listing> listingList) {
+		List<Listing> listings = new ArrayList<Listing>(listingList);
+		List<Bid> bids = new ArrayList<Bid>();
+		Bid.Status statuses[] = Bid.Status.values();
 
 		listings.remove(gregsListing);
 		listings.remove(johnsListing);
 				
-		List<UserDTO> users = new ArrayList<UserDTO>();
+		List<SBUser> users = new ArrayList<SBUser>();
 		users.add(greg);
 		users.add(john);
 		
 		Random fundTypeRandom = new Random();
 		
-		for (UserDTO user : users) {
+		for (SBUser user : users) {
 			int bidNum = 4;
 			while (--bidNum > 0) {
-				BidDTO bid = new BidDTO();
-				String userId = user.getIdAsString();
-				ListingDTO listing = listings.get(new Random().nextInt(listings.size()));
+				Bid bid = new Bid();
+				bid.id = id();
+				Key<SBUser> userId = new Key<SBUser>(SBUser.class, user.id);
+				Listing listing = listings.get(new Random().nextInt(listings.size()));
 
-				bid.createKey(bidNum + "_" + userId + listing.hashCode());
-				bid.setMockData(true);
+				bid.mockData = true;
 				
-				long bidTimeSpan = (System.currentTimeMillis() - listing.getListedOn().getTime()) / (bidNum + 1);
-				if (!listing.getOwner().equals(userId)) {
-					bid.setUser(userId);
-					bid.setListing(listing.getIdAsString());
+				long bidTimeSpan = (System.currentTimeMillis() - listing.listedOn.getTime()) / (bidNum + 1);
+				if (!listing.owner.equals(userId)) {
+					bid.bidder = userId;
+					bid.listing = new Key<Listing>(Listing.class, listing.id);
 					switch (fundTypeRandom.nextInt(3)) {
-						case 0: bid.setFundType(BidDTO.FundType.COMMON);
+						case 0: bid.fundType = Bid.FundType.COMMON;
 						break;
-						case 1: bid.setFundType(BidDTO.FundType.NOTE);
+						case 1: bid.fundType = Bid.FundType.NOTE;
 						break;
-						case 2: bid.setFundType(BidDTO.FundType.PREFERRED);
+						case 2: bid.fundType = Bid.FundType.PREFERRED;
 						break;
 					}
-					bid.setPercentOfCompany(new Random().nextInt(50) + 10);
-					bid.setPlaced(new Date(listing.getListedOn().getTime() + bidNum * bidTimeSpan));
-					bid.setValue(new Random().nextInt(50) * 1000 + listing.getSuggestedValuation());
-					bid.setListingOwner(listing.getOwner());
+					bid.percentOfCompany = new Random().nextInt(50) + 10;
+					bid.placed = new Date(listing.listedOn.getTime() + bidNum * bidTimeSpan);
+					bid.value = new Random().nextInt(50) * 1000 + listing.suggestedValuation;
+					bid.listingOwner = listing.owner;
 					// calculate valuation
-					bid.setValuation(bid.getValue() * 100 / bid.getPercentOfCompany());
-					bid.setStatus(statuses[bidNum]);
+					bid.valuation = bid.value * 100 / bid.percentOfCompany;
+					bid.status = statuses[bidNum];
 					
-					bids.put(bid.getIdAsString(), bid);
+					bids.add(bid);
 				}
 			}
 		}
 		return bids;
 	}
 	
-	public Map<String, VoteDTO> createMockVotes(Collection<UserDTO> usersList, Collection<ListingDTO> listings) {
-		Map<String, VoteDTO> votes = new HashMap<String, VoteDTO>();
+	public List<Vote> createMockVotes(Collection<SBUser> usersList, Collection<Listing> listings) {
+		List<Vote> votes = new ArrayList<Vote>();
 		
-		List<UserDTO> users = new ArrayList<UserDTO>(usersList);
+		List<SBUser> users = new ArrayList<SBUser>(usersList);
 		
-		for (ListingDTO listing : listings) {
+		for (Listing listing : listings) {
 			int numOfVotes = new Random().nextInt(users.size());
-			long commentTimeSpan = (System.currentTimeMillis() - listing.getListedOn().getTime()) / (numOfVotes + 1);
+			long commentTimeSpan = (System.currentTimeMillis() - listing.listedOn.getTime()) / (numOfVotes + 1);
 			while (numOfVotes > 0) {
-				VoteDTO vote = new VoteDTO();
-				vote.setMockData(true);
-				vote.setListing(listing.getIdAsString());
+				Vote vote = new Vote();
+				vote.id = id();
+				vote.mockData = true;
+				vote.listing = new Key<Listing>(Listing.class, listing.id);
 				
-				String userId = users.get(numOfVotes).getIdAsString();
-				if (!listing.getOwner().equals(userId)) {
-					vote.setVoter(userId);
-					vote.setUser(null);
-					vote.setValue(1);
-					vote.setCommentedOn(new Date(listing.getListedOn().getTime() + numOfVotes * commentTimeSpan));
-					vote.createKey(String.valueOf(vote.hashCode()));
-					votes.put(vote.getIdAsString(), vote);
+				Key<SBUser> userId = new Key<SBUser>(SBUser.class, users.get(numOfVotes).id);
+				if (!listing.owner.equals(userId)) {
+					vote.voter = userId;
+					vote.user = null;
+					vote.value = 1;
+					vote.commentedOn = new Date(listing.listedOn.getTime() + numOfVotes * commentTimeSpan);
+					votes.add(vote);
 				}
 				numOfVotes--;
 			}
 		}
 
-		for (UserDTO user : users) {
+		for (SBUser user : users) {
 			int numOfVotes = new Random().nextInt(users.size());
-			long commentTimeSpan = (System.currentTimeMillis() - user.getJoined().getTime()) / (numOfVotes + 1);
+			long commentTimeSpan = (System.currentTimeMillis() - user.joined.getTime()) / (numOfVotes + 1);
 			while (numOfVotes > 0) {
-				VoteDTO vote = new VoteDTO();
-				vote.setMockData(true);
-				vote.setUser(user.getIdAsString());
+				Vote vote = new Vote();
+				vote.id = id();
+				vote.mockData = true;
+				vote.user = new Key<SBUser>(SBUser.class, user.id);
 				
-				String userId = users.get(numOfVotes).getIdAsString();
-				if (!user.getIdAsString().equals(userId)) {
-					vote.setVoter(userId);
-					vote.setListing(null);
-					vote.setValue(1);
-					vote.setCommentedOn(new Date(user.getJoined().getTime() + numOfVotes * commentTimeSpan));
-					vote.createKey(String.valueOf(vote.hashCode()));
-					votes.put(vote.getIdAsString(), vote);
+				Key<SBUser> userId = new Key<SBUser>(SBUser.class, users.get(numOfVotes).id);
+				if (!user.id.equals(userId)) {
+					vote.voter = userId;
+					vote.listing = null;
+					vote.value = 1;
+					vote.commentedOn = new Date(user.joined.getTime() + numOfVotes * commentTimeSpan);
+					votes.add(vote);
 				}
 				numOfVotes--;
 			}
@@ -267,161 +272,111 @@ public class MockDataBuilder {
 	/**
 	 * Generates mock users
 	 */
-	public Map<String, UserDTO> createMockUsers() {
-		Map<String, UserDTO> users = new HashMap<String, UserDTO>();
-		String key = "";
+	public List<SBUser> createMockUsers() {
+		List<SBUser> users = new ArrayList<SBUser>();
 		
-		UserDTO user = new UserDTO();
-		key = "deadahmed";
-		user.createKey(key);
-		user.setMockData(true);
-		user.setNickname("Dead");
-		user.setName("Ahmed");
-		user.setEmail("deadahmed@startupbidder.com");
-		user.setOpenId(user.getEmail());
-		user.setJoined(new Date(System.currentTimeMillis() - 22 * 24 * 60 * 60 * 1000));
-		user.setStatus(UserDTO.Status.ACTIVE);
-		user.setFacebook("fb_" + key);
-		user.setLastLoggedIn(new Date());
-		user.setModified(new Date());
-		user.setTitle("Dr");
-		user.setTwitter("twit_" + key);
-		user.setLinkedin("ln_" + key);
-		users.put(user.getIdAsString(), user);
+		SBUser user = new SBUser();
+		user.id = id();
+		user.mockData = true;
+		user.nickname = "Dead";
+		user.name = "Ahmed";
+		user.email = "deadahmed@startupbidder.com";
+		user.openId = user.email;
+		user.joined = new Date(System.currentTimeMillis() - 22 * 24 * 60 * 60 * 1000);
+		user.status = SBUser.Status.ACTIVE;
+		user.lastLoggedIn = new Date();
+		users.add(user);
 
-		user = new UserDTO();
-		key = "jpfowler";
-		user.createKey(key);
-		user.setMockData(true);
-		user.setNickname("fowler");
-		user.setName("Jackob");
-		user.setEmail("jpfowler@startupbidder.com");
-		user.setOpenId(user.getEmail());
-		user.setJoined(new Date(System.currentTimeMillis() - 23 * 24 * 60 * 60 * 1000));
-		user.setStatus(UserDTO.Status.ACTIVE);
-		user.setFacebook("fb_" + key);
-		user.setLastLoggedIn(new Date());
-		user.setModified(new Date());
-		user.setOrganization("org_" + key);
-		user.setTitle("Dr");
-		user.setTwitter("twit_" + key);
-		user.setLinkedin("ln_" + key);
-		users.put(user.getIdAsString(), user);
+		user = new SBUser();
+		user.id = id();
+		user.mockData = true;
+		user.nickname = "fowler";
+		user.name = "Jackob";
+		user.email = "jpfowler@startupbidder.com";
+		user.openId = user.email;
+		user.joined = new Date(System.currentTimeMillis() - 23 * 24 * 60 * 60 * 1000);
+		user.status = SBUser.Status.ACTIVE;
+		user.lastLoggedIn = new Date();
+		users.add(user);
 
-		user = new UserDTO();
-		key = "businessinsider";
-		user.createKey(key);
-		user.setMockData(true);
-		user.setNickname("Insider");
-		user.setName("The");
-		user.setEmail("insider@startupbidder.com");
-		user.setOpenId(user.getEmail());
-		user.setJoined(new Date(System.currentTimeMillis() - 31 * 24 * 60 * 60 * 1000));
-		user.setStatus(UserDTO.Status.ACTIVE);
-		user.setFacebook("fb_" + key);
-		user.setLastLoggedIn(new Date());
-		user.setModified(new Date());
-		user.setTwitter("twit_" + key);
-		users.put(user.getIdAsString(), user);
+		user = new SBUser();
+		user.id = id();
+		user.mockData = true;
+		user.nickname = "Insider";
+		user.name = "The";
+		user.email = "insider@startupbidder.com";
+		user.openId = user.email;
+		user.joined = new Date(System.currentTimeMillis() - 31 * 24 * 60 * 60 * 1000);
+		user.status = SBUser.Status.ACTIVE;
+		users.add(user);
 
-		user = new UserDTO();
-		key = "dragonsden";
-		user.createKey(key);
-		user.setMockData(true);
-		user.setNickname("The Dragon");
-		user.setName("Mark");
-		user.setEmail("dragon@startupbidder.com");
-		user.setOpenId(user.getEmail());
-		user.setJoined(new Date(System.currentTimeMillis() - 26 * 24 * 60 * 60 * 1000));
-		user.setStatus(UserDTO.Status.ACTIVE);
-		user.setFacebook("fb_" + key);
-		user.setLastLoggedIn(new Date());
-		user.setModified(new Date());
-		user.setOrganization("org_" + key);
-		user.setTitle("Dr");
-		user.setLinkedin("ln_" + key);
-		user.setInvestor(true);
-		users.put(user.getIdAsString(), user);
+		user = new SBUser();
+		user.id = id();
+		user.mockData = true;
+		user.nickname = "The Dragon";
+		user.name = "Mark";
+		user.email = "dragon@startupbidder.com";
+		user.openId = user.email;
+		user.joined = new Date(System.currentTimeMillis() - 26 * 24 * 60 * 60 * 1000);
+		user.status = SBUser.Status.ACTIVE;
+		user.lastLoggedIn = new Date();
+		user.investor = true;
+		users.add(user);
 
-		user = new UserDTO();
-		key = "crazyinvestor";
-		user.createKey(key);
-		user.setMockData(true);
-		user.setNickname("MadMax");
-		user.setName("Mad");
-		user.setEmail("madmax@startupbidder.com");
-		user.setOpenId(user.getEmail());
-		user.setJoined(new Date(System.currentTimeMillis() - 35 * 24 * 60 * 60 * 1000));
-		user.setStatus(UserDTO.Status.ACTIVE);
-		user.setInvestor(true);
-		user.setFacebook("fb_" + key);
-		user.setLastLoggedIn(new Date());
-		user.setModified(new Date());
-		user.setOrganization("org_" + key);
-		user.setTitle("Dr");
-		user.setTwitter("twit_" + key);
-		user.setLinkedin("ln_" + key);
-		users.put(user.getIdAsString(), user);
+		user = new SBUser();
+		user.id = id();
+		user.mockData = true;
+		user.nickname = "MadMax";
+		user.name = "Mad";
+		user.email = "madmax@startupbidder.com";
+		user.openId = user.email;
+		user.joined = new Date(System.currentTimeMillis() - 35 * 24 * 60 * 60 * 1000);
+		user.status = SBUser.Status.ACTIVE;
+		user.investor = true;
+		user.lastLoggedIn = new Date();
+		users.add(user);
 
-		user = new UserDTO();
-		key = "chinese";
-		user.createKey(key);
-		user.setMockData(true);
-		user.setNickname("The One");
-		user.setName("Bruce");
-		user.setEmail("bruce@startupbidder.com");
-		user.setOpenId(user.getEmail());
-		user.setJoined(new Date(System.currentTimeMillis() - 30 * 24 * 60 * 60 * 1000));
-		user.setStatus(UserDTO.Status.DEACTIVATED);
-		user.setInvestor(true);
-		user.setLastLoggedIn(new Date());
-		user.setModified(new Date());
-		user.setOrganization("org_" + key);
-		user.setTitle("Dr");
-		user.setTwitter("twit_" + key);
-		user.setLinkedin("ln_" + key);
-		users.put(user.getIdAsString(), user);
+		user = new SBUser();
+		user.id = id();
+		user.mockData = true;
+		user.nickname = "The One";
+		user.name = "Bruce";
+		user.email = "bruce@startupbidder.com";
+		user.openId = user.email;
+		user.joined = new Date(System.currentTimeMillis() - 30 * 24 * 60 * 60 * 1000);
+		user.status = SBUser.Status.DEACTIVATED;
+		user.investor = true;
+		user.lastLoggedIn = new Date();
+		users.add(user);
 		
-		user = new UserDTO();
-		key = "johnarleyburns";
-		user.createKey(key);
-		user.setMockData(false);
-		user.setAdmin(true);
-		user.setNickname("John");
-		user.setName("John A. Burns");
-		user.setEmail("johnarleyburns@gmail.com");
-		user.setOpenId(user.getEmail());
-		user.setJoined(new Date(0L));
-		user.setStatus(UserDTO.Status.ACTIVE);
-		user.setInvestor(true);
-		user.setLastLoggedIn(new Date());
-		user.setModified(new Date());
-		user.setOrganization("StartupBidder.com");
-		user.setTitle("Mr");
-		user.setTwitter("johnarleyburns");
-		user.setLinkedin("johnarleyburns");
-		users.put(user.getIdAsString(), user);
+		user = new SBUser();
+		user.id = id();
+		user.mockData = true;
+		user.admin = true;
+		user.nickname = "John";
+		user.name = "John A. Burns";
+		user.email = "johnarleyburns@gmail.com";
+		user.openId = user.email;
+		user.joined = new Date(0L);
+		user.status = SBUser.Status.ACTIVE;
+		user.investor = true;
+		user.lastLoggedIn = new Date();
+		users.add(user);
 		john = user;
 		
-		user = new UserDTO();
-		key = "grzegorznittner";
-		user.createKey(key);
-		user.setMockData(false);
-		user.setAdmin(true);
-		user.setNickname("Greg");
-		user.setName("Grzegorz Nittner");
-		user.setEmail("grzegorz.nittner@gmail.com");
-		user.setOpenId(user.getEmail());
-		user.setJoined(new Date(0L));
-		user.setStatus(UserDTO.Status.ACTIVE);
-		user.setInvestor(true);
-		user.setLastLoggedIn(new Date());
-		user.setModified(new Date());
-		user.setOrganization("StartupBidder.com");
-		user.setTitle("Mr");
-		user.setTwitter("");
-		user.setLinkedin("grzegorznittner");
-		users.put(user.getIdAsString(), user);
+		user = new SBUser();
+		user.id = id();
+		user.mockData = true;
+		user.admin = true;
+		user.nickname = "Greg";
+		user.name = "Grzegorz Nittner";
+		user.email = "grzegorz.nittner@gmail.com";
+		user.openId = user.email;
+		user.joined = new Date(0L);
+		user.status = SBUser.Status.ACTIVE;
+		user.investor = true;
+		user.lastLoggedIn = new Date();
+		users.add(user);
 		greg = user;
 		
 		return users;
@@ -430,42 +385,45 @@ public class MockDataBuilder {
 	/**
 	 * Generates mock listings
 	 */
-	public Map<String, ListingDTO> createMockListings(Map<String, UserDTO> users) {
-		Map<String, ListingDTO> listings = new HashMap<String, ListingDTO>();
+	public List<Listing> createMockListings(List<SBUser> users) {
+		List<Listing> listings = new ArrayList<Listing>();
 		
-		List<String> userIds = new ArrayList<String>(users.keySet());
-		userIds.remove(john.getIdAsString());
-		userIds.remove(greg.getIdAsString());
+		List<Key<SBUser>> userIds = new ArrayList<Key<SBUser>>();
+		for (SBUser user : users) {
+			userIds.add(new Key<SBUser>(SBUser.class, user.id));
+		}
+		userIds.remove(john);
+		userIds.remove(greg);
 		int bpNum = 0;
 	
-		ListingDTO bp = new ListingDTO();
-		bp.createKey("mislead");
-		bp.setMockData(true);
-		bp.setName("MisLead");
-		bp.setOwner(userIds.get(bpNum % userIds.size()));
-		bp.setSuggestedValuation(20000);
-		bp.setSuggestedPercentage(25);
-		bp.setSuggestedAmount(bp.getSuggestedValuation()*bp.getSuggestedPercentage()/100);
-		bp.setListedOn(new Date(System.currentTimeMillis() - 25 * 24 * 60 * 60 * 1000));
-		bp.setState(ListingDTO.State.CLOSED);
-		DateMidnight midnight = new DateMidnight(bp.getListedOn().getTime());
-		bp.setClosingOn(midnight.plus(Days.days(30)).toDate());
-		bp.setSummary("Executive summary for <b>MisLead</b>");
-		listings.put(bp.getIdAsString(), bp);
+		Listing bp = new Listing();
+		bp.id = id();
+		bp.mockData = true;
+		bp.name = "MisLead";
+		bp.owner = userIds.get(bpNum % userIds.size());
+		bp.suggestedValuation = 20000;
+		bp.suggestedPercentage = 25;
+		bp.suggestedAmount = bp.suggestedValuation*bp.suggestedPercentage/100;
+		bp.listedOn = new Date(System.currentTimeMillis() - 25 * 24 * 60 * 60 * 1000);
+		bp.state = Listing.State.CLOSED;
+		DateMidnight midnight = new DateMidnight(bp.listedOn.getTime());
+		bp.closingOn = midnight.plus(Days.days(30)).toDate();
+		bp.summary = "Executive summary for <b>MisLead</b>";
+		listings.add(bp);
 	
-		bp = new ListingDTO();
-		bp.createKey("comp_training_camp");
-		bp.setMockData(true);
-		bp.setName("Computer Training Camp");
-		bp.setOwner(john.getIdAsString());
-		bp.setSuggestedValuation(15000);
-		bp.setSuggestedPercentage(45);
-		bp.setSuggestedAmount(bp.getSuggestedValuation()*bp.getSuggestedPercentage()/100);
-		bp.setListedOn(new Date(System.currentTimeMillis() - 15 * 24 * 60 * 60 * 1000));
-		bp.setState(ListingDTO.State.CREATED);
-		midnight = new DateMidnight(bp.getListedOn().getTime());
-		bp.setClosingOn(midnight.plus(Days.days(30)).toDate());
-		bp.setSummary("Starting a computer training camp for children is a terrific new business " +
+		bp = new Listing();
+		bp.id = id();
+		bp.mockData = true;
+		bp.name = "Computer Training Camp";
+		bp.owner = new Key<SBUser>(SBUser.class, john.id);
+		bp.suggestedValuation = 15000;
+		bp.suggestedPercentage = 45;
+		bp.suggestedAmount = bp.suggestedValuation*bp.suggestedPercentage/100;
+		bp.listedOn = new Date(System.currentTimeMillis() - 15 * 24 * 60 * 60 * 1000);
+		bp.state = Listing.State.CREATED;
+		midnight = new DateMidnight(bp.listedOn.getTime());
+		bp.closingOn = midnight.plus(Days.days(30)).toDate();
+		bp.summary = "Starting a computer training camp for children is a terrific new business " +
 				"venture to set in motion. In spite of the fact that many children now receive " +
 				"computer training in school, attending computer camps ensures parents and" +
 				" children a better and more complete understanding of the course material. " +
@@ -473,23 +431,23 @@ public class MockDataBuilder {
 				"Typically, these camps are one or two days in length and available for various " +
 				"training needs, from beginner to advanced. Once again, this is the kind of children's" +
 				" business that can be operated as an independent business venture or operated in" +
-				" conjunction with a community program or community center.");
-		listings.put(bp.getIdAsString(), bp);
+				" conjunction with a community program or community center.";
+		listings.add(bp);
 		johnsListing = bp;
 
-		bp = new ListingDTO();
-		bp.createKey("comp_upgrading_service");
-		bp.setMockData(true);
-		bp.setName("Computer Upgrading Service");
-		bp.setOwner(greg.getIdAsString());
-		bp.setSuggestedValuation(35000);
-		bp.setSuggestedPercentage(33);
-		bp.setSuggestedAmount(bp.getSuggestedValuation()*bp.getSuggestedPercentage()/100);
-		bp.setListedOn(new Date(System.currentTimeMillis() - 15 * 24 * 60 * 60 * 1000));
-		bp.setState(ListingDTO.State.ACTIVE);
-		midnight = new DateMidnight(bp.getListedOn().getTime());
-		bp.setClosingOn(midnight.plus(Days.days(30)).toDate());
-		bp.setSummary("Starting a business that specializes in upgrading existing computer systems" +
+		bp = new Listing();
+		bp.id = id();
+		bp.mockData = true;
+		bp.name = "Computer Upgrading Service";
+		bp.owner = new Key<SBUser>(SBUser.class, greg.id);
+		bp.suggestedValuation = 35000;
+		bp.suggestedPercentage = 33;
+		bp.suggestedAmount = bp.suggestedValuation*bp.suggestedPercentage/100;
+		bp.listedOn = new Date(System.currentTimeMillis() - 15 * 24 * 60 * 60 * 1000);
+		bp.state = Listing.State.ACTIVE;
+		midnight = new DateMidnight(bp.listedOn.getTime());
+		bp.closingOn = midnight.plus(Days.days(30)).toDate();
+		bp.summary = "Starting a business that specializes in upgrading existing computer systems" +
 				" with new internal and external equipment is a terrific homebased business to " +
 				"initiate that has great potential to earn an outstanding income for the operator" +
 				" of the business. A computer upgrading service is a very easy business to get" +
@@ -502,126 +460,126 @@ public class MockDataBuilder {
 				" the business from a homebased location while providing clients with a mobile service" +
 				" is the best way to keep operating overheads minimized and potentially increases the" +
 				" size of the target market by expanding the service area, due to the fact the business" +
-				" operates on a mobile format.");
-		listings.put(bp.getIdAsString(), bp);
+				" operates on a mobile format.";
+		listings.add(bp);
 		gregsListing = bp;
 
-		bp = new ListingDTO();
-		bp.createKey("semanticsearch");
-		bp.setMockData(true);
-		bp.setName("Semantic Search");
-		bp.setOwner(userIds.get(bpNum++ % userIds.size()));
-		bp.setSuggestedValuation(40000);
-		bp.setSuggestedPercentage(45);
-		bp.setSuggestedAmount(bp.getSuggestedValuation()*bp.getSuggestedPercentage()/100);
-		bp.setListedOn(new Date(System.currentTimeMillis() - 19 * 24 * 60 * 60 * 1000));
-		bp.setState(ListingDTO.State.ACTIVE);
-		midnight = new DateMidnight(bp.getListedOn().getTime());
-		bp.setClosingOn(midnight.plus(Days.days(30)).toDate());
-		bp.setSummary("The fact of the matter is Google, and to a much lesser extent Bing, " + 
+		bp = new Listing();
+		bp.id = id();
+		bp.mockData = true;
+		bp.name = "Semantic Search";
+		bp.owner = userIds.get(bpNum++ % userIds.size());
+		bp.suggestedValuation = 40000;
+		bp.suggestedPercentage = 45;
+		bp.suggestedAmount = bp.suggestedValuation*bp.suggestedPercentage/100;
+		bp.listedOn = new Date(System.currentTimeMillis() - 19 * 24 * 60 * 60 * 1000);
+		bp.state = Listing.State.ACTIVE;
+		midnight = new DateMidnight(bp.listedOn.getTime());
+		bp.closingOn = midnight.plus(Days.days(30)).toDate();
+		bp.summary = "The fact of the matter is Google, and to a much lesser extent Bing, " + 
 				"own the search market. Ask Barry Diller, if you don't believe us." +
 				"Yet, startups still spring up hoping to disrupt the incumbents. " +
 				"Cuil flopped. Wolfram Alpha is irrelevant. Powerset, which was a semantic" + 
-				" search engine was bailed out by Microsoft, which acquired it.");
-		listings.put(bp.getIdAsString(), bp);
+				" search engine was bailed out by Microsoft, which acquired it.";
+		listings.add(bp);
 
-		bp = new ListingDTO();
-		bp.createKey("socialrecommendations");
-		bp.setMockData(true);
-		bp.setName("Social recommendations");
-		bp.setOwner(userIds.get(bpNum++ % userIds.size()));
-		bp.setSuggestedValuation(15000);
-		bp.setSuggestedPercentage(10);
-		bp.setSuggestedAmount(bp.getSuggestedValuation()*bp.getSuggestedPercentage()/100);
-		bp.setListedOn(new Date(System.currentTimeMillis() - 20 * 24 * 60 * 60 * 1000));
-		bp.setState(ListingDTO.State.ACTIVE);
-		midnight = new DateMidnight(bp.getListedOn().getTime());
-		bp.setClosingOn(midnight.plus(Days.days(30)).toDate());
-		bp.setSummary("It's a very tempting idea. Collect data from people about their tastes" +
+		bp = new Listing();
+		bp.id = id();
+		bp.mockData = true;
+		bp.name = "Social recommendations";
+		bp.owner = userIds.get(bpNum++ % userIds.size());
+		bp.suggestedValuation = 15000;
+		bp.suggestedPercentage = 10;
+		bp.suggestedAmount = bp.suggestedValuation*bp.suggestedPercentage/100;
+		bp.listedOn = new Date(System.currentTimeMillis() - 20 * 24 * 60 * 60 * 1000);
+		bp.state = Listing.State.ACTIVE;
+		midnight = new DateMidnight(bp.listedOn.getTime());
+		bp.closingOn = midnight.plus(Days.days(30)).toDate();
+		bp.summary = "It's a very tempting idea. Collect data from people about their tastes" +
 				" and preferences. Then use that data to create recommendations for others. " +
 				"Or, use that data to create recommendations for the people that filled in " +
 				"the information. It doesn't work. The latest to try is Hunch and Get Glue." +
 				"Hunch is pivoting towards non-consumer-facing white label business. " +
-				"Get Glue has had some success of late, but it's hardly a breakout business.");
-		listings.put(bp.getIdAsString(), bp);
+				"Get Glue has had some success of late, but it's hardly a breakout business.";
+		listings.add(bp);
 
-		bp = new ListingDTO();
-		bp.createKey("localnewssites");
-		bp.setMockData(true);
-		bp.setName("Local news sites");
-		bp.setOwner(userIds.get(bpNum++ % userIds.size()));
-		bp.setSuggestedValuation(49000);
-		bp.setSuggestedPercentage(20);
-		bp.setSuggestedAmount(bp.getSuggestedValuation()*bp.getSuggestedPercentage()/100);
-		bp.setListedOn(new Date(System.currentTimeMillis() - 13 * 24 * 60 * 60 * 1000));
-		bp.setState(ListingDTO.State.ACTIVE);
-		midnight = new DateMidnight(bp.getListedOn().getTime());
-		bp.setClosingOn(midnight.plus(Days.days(30)).toDate());
-		bp.setSummary("Maybe Tim Armstrong, AOL, and Patch will prove it wrong, but to this point" +
+		bp = new Listing();
+		bp.id = id();
+		bp.mockData = true;
+		bp.name = "Local news sites";
+		bp.owner = userIds.get(bpNum++ % userIds.size());
+		bp.suggestedValuation = 49000;
+		bp.suggestedPercentage = 20;
+		bp.suggestedAmount = bp.suggestedValuation*bp.suggestedPercentage/100;
+		bp.listedOn = new Date(System.currentTimeMillis() - 13 * 24 * 60 * 60 * 1000);
+		bp.state = Listing.State.ACTIVE;
+		midnight = new DateMidnight(bp.listedOn.getTime());
+		bp.closingOn = midnight.plus(Days.days(30)).toDate();
+		bp.summary = "Maybe Tim Armstrong, AOL, and Patch will prove it wrong, but to this point" +
 				" nobody has been able to crack the local news market and make a sustainable business." +
 				"In theory creating a network of local news sites that people care about is a good" +
 				" idea. You build a community, there's a baked in advertising group with local " +
 				"businesses, and classifieds. But, it appears to be too niche to scale into a big" +
-				" business.");
-		listings.put(bp.getIdAsString(), bp);
+				" business.";
+		listings.add(bp);
 
-		bp = new ListingDTO();
-		bp.createKey("micropayments");
-		bp.setMockData(true);
-		bp.setName("Micropayments");
-		bp.setOwner(userIds.get(bpNum++ % userIds.size()));
-		bp.setSuggestedValuation(5000);
-		bp.setSuggestedPercentage(49);
-		bp.setSuggestedAmount(bp.getSuggestedValuation()*bp.getSuggestedPercentage()/100);
-		bp.setListedOn(new Date(System.currentTimeMillis() - 23 * 24 * 60 * 60 * 1000));
-		bp.setState(ListingDTO.State.ACTIVE);
-		midnight = new DateMidnight(bp.getListedOn().getTime());
-		bp.setClosingOn(midnight.plus(Days.days(30)).toDate());
-		bp.setSummary("Micropayments are one idea that's tossed around to solve the problem" +
+		bp = new Listing();
+		bp.id = id();
+		bp.mockData = true;
+		bp.name = "Micropayments";
+		bp.owner = userIds.get(bpNum++ % userIds.size());
+		bp.suggestedValuation = 5000;
+		bp.suggestedPercentage = 49;
+		bp.suggestedAmount = bp.suggestedValuation*bp.suggestedPercentage/100;
+		bp.listedOn = new Date(System.currentTimeMillis() - 23 * 24 * 60 * 60 * 1000);
+		bp.state = Listing.State.ACTIVE;
+		midnight = new DateMidnight(bp.listedOn.getTime());
+		bp.closingOn = midnight.plus(Days.days(30)).toDate();
+		bp.summary = "Micropayments are one idea that's tossed around to solve the problem" +
 				" of paying for content on the Web. If you want to read a New York Times " +
 				"story it would only cost a nickel! Or on Tumblr, if you want to tip a blogger" +
 				" or pay for a small design you could with ease. So far, these micropayment" +
-				" plans have not worked.");
-		listings.put(bp.getIdAsString(), bp);
+				" plans have not worked.";
+		listings.add(bp);
 
-		bp = new ListingDTO();
-		bp.createKey("kill email");
-		bp.setMockData(true);
-		bp.setName("Kill email");
-		bp.setOwner(userIds.get(bpNum++ % userIds.size()));
-		bp.setSuggestedValuation(40000);
-		bp.setSuggestedPercentage(50);
-		bp.setSuggestedAmount(bp.getSuggestedValuation()*bp.getSuggestedPercentage()/100);
-		bp.setListedOn(new Date(System.currentTimeMillis() - 6 * 24 * 60 * 60 * 1000));
-		bp.setState(ListingDTO.State.ACTIVE);
-		midnight = new DateMidnight(bp.getListedOn().getTime());
-		bp.setClosingOn(midnight.plus(Days.days(30)).toDate());
-		bp.setSummary("If any startup says it's going to eliminate email, it's destined for failure. " +
+		bp = new Listing();
+		bp.id = id();
+		bp.mockData = true;
+		bp.name = "Kill email";
+		bp.owner = userIds.get(bpNum++ % userIds.size());
+		bp.suggestedValuation = 40000;
+		bp.suggestedPercentage = 50;
+		bp.suggestedAmount = bp.suggestedValuation*bp.suggestedPercentage/100;
+		bp.listedOn = new Date(System.currentTimeMillis() - 6 * 24 * 60 * 60 * 1000);
+		bp.state = Listing.State.ACTIVE;
+		midnight = new DateMidnight(bp.listedOn.getTime());
+		bp.closingOn = midnight.plus(Days.days(30)).toDate();
+		bp.summary = "If any startup says it's going to eliminate email, it's destined for failure. " +
 				"You can iterate on the inbox, and try to improve it, but even that's " +
 				"not much of a business. The latest high profile flop in this arena is " +
 				"Google Wave. It was supposed to change email forever. It was going to " +
-				"displace email. Didn't happen.");
-		listings.put(bp.getIdAsString(), bp);
+				"displace email. Didn't happen.";
+		listings.add(bp);
 
-		bp = new ListingDTO();
-		bp.createKey("better company car");
-		bp.setMockData(true);
-		bp.setName("Better company car");
-		bp.setOwner(userIds.get(bpNum++ % userIds.size()));
-		bp.setSuggestedValuation(100000);
-		bp.setSuggestedPercentage(15);
-		bp.setSuggestedAmount(bp.getSuggestedValuation()*bp.getSuggestedPercentage()/100);
-		bp.setListedOn(new Date(System.currentTimeMillis() - 8 * 24 * 60 * 60 * 1000));
-		bp.setState(ListingDTO.State.WITHDRAWN);
-		midnight = new DateMidnight(bp.getListedOn().getTime());
-		bp.setClosingOn(midnight.plus(Days.days(30)).toDate());
-		bp.setSummary("Considering how frustrated people are with car companies, you'd think " +
+		bp = new Listing();
+		bp.id = id();
+		bp.mockData = true;
+		bp.name = "Better company car";
+		bp.owner = userIds.get(bpNum++ % userIds.size());
+		bp.suggestedValuation = 100000;
+		bp.suggestedPercentage = 15;
+		bp.suggestedAmount = bp.suggestedValuation*bp.suggestedPercentage/100;
+		bp.listedOn = new Date(System.currentTimeMillis() - 8 * 24 * 60 * 60 * 1000);
+		bp.state = Listing.State.WITHDRAWN;
+		midnight = new DateMidnight(bp.listedOn.getTime());
+		bp.closingOn = midnight.plus(Days.days(30)).toDate();
+		bp.summary = "Considering how frustrated people are with car companies, you'd think " +
 				"launching a new one would be perfect for a startup. So far, that's not the case. " +
 				"You can point to Tesla as a success, and considering it IPO'd it's hard to argue " +
 				"against it. But, Tesla has sold fewer than 2,000 cars since it was founded in 2003. " +
 				"It's far from certain it will succeed. Even when its next car comes out, Nissan " +
-				"could be making a luxury electric car that competes with Tesla.");
-		listings.put(bp.getIdAsString(), bp);
+				"could be making a luxury electric car that competes with Tesla.";
+		listings.add(bp);
 		
 		return listings;
 	}

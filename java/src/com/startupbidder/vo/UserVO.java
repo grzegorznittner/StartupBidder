@@ -5,13 +5,13 @@ import java.util.Date;
 import java.util.List;
 
 import org.codehaus.jackson.annotate.JsonAutoDetect;
+import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
-import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 import org.codehaus.jackson.map.annotate.JsonDeserialize;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
-import com.startupbidder.dto.NotificationDTO;
+import com.startupbidder.datamodel.Notification;
 import com.startupbidder.util.DateSerializer;
 import com.startupbidder.util.LowecaseSerializer;
 import com.startupbidder.util.NotificationTypeDeserializer;
@@ -75,7 +75,7 @@ public class UserVO {
 	@JsonProperty("notifications")
 	@JsonDeserialize(using=NotificationTypeDeserializer.class)
 	@JsonSerialize(using=NotificationTypeSerializer.class)
-	private List<NotificationDTO.Type> notifications = new ArrayList<NotificationDTO.Type>();
+	private List<Notification.Type> notifications = new ArrayList<Notification.Type>();
 	@JsonProperty("status")
 	@JsonSerialize(using=LowecaseSerializer.class)
 	private String status;
@@ -256,10 +256,10 @@ public class UserVO {
 	public void setAdmin(boolean admin) {
 		this.admin = admin;
 	}
-	public List<NotificationDTO.Type> getNotifications() {
+	public List<Notification.Type> getNotifications() {
 		return notifications;
 	}
-	public void setNotifications(List<NotificationDTO.Type> notifications) {
+	public void setNotifications(List<Notification.Type> notifications) {
 		this.notifications.clear();
 		this.notifications.addAll(notifications);
 	}

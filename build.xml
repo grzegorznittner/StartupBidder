@@ -1,5 +1,6 @@
 <project name="StartupBidder.com">
   <property environment="env"/>
+	<echo message="\'JAVA_HOME\'=${env.JAVA_HOME}"/>
   <echo message="\'APPENGINE_HOME\'=${env.APPENGINE_HOME}"/>
   <property name="env.APPENGINE_ADDRESS" value="127.0.0.1"/>
   <echo message="\'APPENGINE_ADDRESS\'=${env.APPENGINE_ADDRESS}"/>
@@ -38,6 +39,7 @@
     </fileset>
     <fileset dir="${env.APPENGINE_HOME}/lib">
       <include name="shared/**/*.jar" />
+      <exclude name="**/repackaged-appengine-ant*.jar"/>
     </fileset>
     <fileset dir="lib">
       <include name="**/*.jar" />
@@ -85,12 +87,36 @@
     </copy>
   </target>
 
-  <target name="datanucleusenhance" depends="compile"
-      description="Performs JDO enhancement on compiled data classes.">
-    <enhance_war war="war" />
-  </target>
-  
-  <target name="runserver" depends="datanucleusenhance" description="Starts the development server.">
+	<target name="ensure-test-name" unless="test">
+	    <fail message="You must run this target with -Dtest=fully.specified.class.Name"/>
+	</target>
+	
+	<target name="runtest" description="Runs the test you specify on the command line with -Dtest="
+		depends="compile-java, ensure-test-name">
+	    <junit printsummary="withOutAndErr" fork="yes"> 
+	        <classpath refid="project.classpath" />
+	        <formatter type="plain" usefile="false"/>
+	        <batchtest>
+	            <fileset dir="war/WEB-INF/classes">
+	                <include name="**/${test}.class"/>
+	            </fileset>
+	        </batchtest>
+	    </junit>
+	</target>
+	
+	<target name="runtests" description="Runs all provided tests" depends="compile-java">
+	    <junit printsummary="withOutAndErr" fork="yes"> 
+	        <classpath refid="project.classpath" />
+	        <formatter type="plain" usefile="false"/>
+	        <batchtest>
+	            <fileset dir="${src}">
+	                <include name="**/${test}.java"/>
+	            </fileset>
+	        </batchtest>
+	    </junit>
+	</target>
+	
+  <target name="runserver" description="Starts the development server.">
   	<extract_host_and_port proxy="${env.http_proxy}" host_property="http_proxy_host" port_property="http_proxy_port"/>
   	<extract_host_and_port proxy="${env.https_proxy}" host_property="https_proxy_host" port_property="https_proxy_port"/>
   	<dev_appserver war="war" port="7777" >
@@ -107,7 +133,7 @@
     </dev_appserver>
   </target>
 
-  <target name="update" depends="datanucleusenhance" description="Uploads the application to App Engine.">
+  <target name="update" description="Uploads the application to App Engine.">
 	<appcfg action="update" war="war">
 	   <options>
 	   	  <arg value="--passin"/>
@@ -118,7 +144,7 @@
 	</appcfg>
   </target>
 
-  <target name="update_indexes" depends="datanucleusenhance" description="Uploads just the datastore index configuration to App Engine.">
+  <target name="update_indexes" description="Uploads just the datastore index configuration to App Engine.">
 	<appcfg action="update_indexes" war="war">
 	   <options>
 	   	  <arg value="--email=${env.APPENGINE_EMAIL}"/>
@@ -128,7 +154,7 @@
 	</appcfg>
   </target>
 
-  <target name="rollback" depends="datanucleusenhance" description="Rolls back an interrupted application update.">
+  <target name="rollback" description="Rolls back an interrupted application update.">
 	<appcfg action="rollback" war="war">
 	   <options>
 	   	  <arg value="--email=${env.APPENGINE_EMAIL}"/>

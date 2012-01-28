@@ -1,0 +1,40 @@
+/**
+ * StartupBidder.com
+ * Copyright 2012
+ */
+package com.startupbidder.datamodel;
+
+import java.util.Date;
+
+import com.googlecode.objectify.Key;
+import com.googlecode.objectify.annotation.Cached;
+import com.googlecode.objectify.annotation.Entity;
+import com.googlecode.objectify.annotation.Indexed;
+import com.googlecode.objectify.annotation.Unindexed;
+
+/**
+ * @author "Grzegorz Nittner" <grzegorz.nittner@gmail.com>
+ *
+ */
+@Unindexed
+@Entity
+@Cached(expirationSeconds=60*30)
+public class ListingStats extends BaseObject {
+	@Indexed public Key<Listing> listing;
+	@Indexed public Listing.State state;
+	
+	@Indexed public Date created;
+
+	public double valuation;
+	public double previousValuation;
+	public Date previousValuationDate;
+	public double medianValuation;
+	public long numberOfComments;
+	public long numberOfBids;
+	public long numberOfVotes;
+	public double score;
+	
+	public String getWebKey() {
+		return new Key<ListingStats>(ListingStats.class, id).getString();
+	}
+}
