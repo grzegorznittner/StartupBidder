@@ -126,19 +126,6 @@ pl(function() {
         }
     });
 
-    function CheckboxClass() {}
-    pl.implement(CheckboxClass, {
-        setChecked: function(id, isChecked) {
-            var idsel = '#' + id;
-            if (isChecked) {
-                pl(idsel).attr({checked: 'checked', value: 'true'});
-            }
-            else {
-                pl(idsel).removeAttr('checked').attr({value: 'false'});
-            }
-        }
-    });
-
     function HeaderClass() {}
     pl.implement(HeaderClass, {
         setLogin: function(json) {
@@ -450,12 +437,12 @@ pl(function() {
         }
     });
 
-    function UserMessageClass() {}
+    function UserMessageClass(id) {
+        this.id = id;
+        this.sel = '#' + id;
+        this.isClear = false;
+    }
     pl.implement(UserMessageClass, {
-        setId: function(id) {
-            this.sel = '#'+id;
-            this.isClear = false;
-        },
         show: function(cssClass, text) {
             this.isClear = false;
             pl(this.sel).html('').removeClass('attention').removeClass('inprogress').removeClass('successful').addClass(cssClass).html(text);
@@ -466,12 +453,12 @@ pl(function() {
         }
     });
 
-    function ValidIconClass() {}
+    function ValidIconClass(id) {
+        this.id = id;
+        this.sel = '#' + id;
+        this.isValid = false;
+    }
     pl.implement(ValidIconClass, {
-        setId: function(id) {
-            this.sel = '#' + id;
-            this.isValid = false;
-        },
         showValid: function() {
             this.isValid = true;
             this.clearClasses().addClass('checkboxgreenicon');
@@ -489,106 +476,125 @@ pl(function() {
         }
     });
 
-    function TextFieldClass() {}
-    pl.implement(TextFieldClass, {
-        setId: function(id) {
-            this.id = id;
-            this.sel = '#' + id;
-            this.validator = new ValidatorClass();
-        },
-        setValue: function(value) {
-            this.value = value || ''; // save for later
-            pl(this.sel).attr({value: this.value});
-        },
-        setProfile: function(profile) {
-            this.profile = profile;
-        },
+    function FieldBaseClass(id, value, updateFunction, msgId) {
+        this.id = id;
+        this.value = value !== null ? value : '';
+        this.updateFunction = updateFunction;
+        this.sel = '#' + id;
+        this.validator = new ValidatorClass();
+        this.msg = new UserMessageClass(msgId);
+    }
+    pl.implement(FieldBaseClass, {
         addValidator: function(validatorFunc) {
             this.validator.add(validatorFunc);
         },
+        getLoadFunc: function() {
+            var self = this;
+            return function() {
+                self.msg.show('inprogress', 'Saving changes to server...');
+            };
+        },
+        getErrorFunc: function(displayFunc) {
+            var self = this;
+            return function(errorNum) {
+                displayFunc();
+                self.msg.show('attention', 'Error saving changes to server: ' + errorNum);
+            };
+        },
+        getSuccessFunc: function() {
+            var self = this;
+            return function() {
+                self.msg.show('successful', 'Saved changes to server');
+                self.value = newval;
+            };
+        }
+    });
+
+    function CheckboxFieldClass(id, value, updateFunction, msgId) {
+        this.fieldBase = new FieldBaseClass(id, value, updateFunction, msgId);
+        this.getDisplayFunc()();
+    }
+    pl.implement(CheckboxFieldClass, {
+        getDisplayFunc: function() {
+            var self = this;
+            return function() {
+                if (self.fieldBase.value) {
+                    pl(self.fieldBase.sel).attr({checked: 'checked'});
+                }
+                else {
+                    pl(self.fieldBase.sel).removeAttr('checked');
+                }
+            };
+        },
         bindEvents: function() {
-            var self, msg, iconId, icon, safeStr;
+            var self, onchange;
             self = this;
-            msg = new UserMessageClass();
-            msg.setId('personalinfomsg');
-            iconId = self.id + 'icon';
-            icon = new ValidIconClass();
-            icon.setId(iconId);
+            onchange = function() {
+                var newval, changeKey;
+                changeKey = self.fieldBaseid;
+                newval = pl(self.fieldBase.sel).attr('checked');
+                self.fieldBase.updateFunction({ changeKey: newval }, self.fieldBase.getLoadFunc(), self.fieldBase.getErrorFunc(self.getDisplayFunc()), self.fieldBase.getSuccessFunc());
+            }
+            pl(self.fieldBase.sel).bind({
+                change: onchange
+            });
+        }
+    });
+
+    function TextFieldClass(id, value, updateFunction, msgId) {
+        this.fieldBase = new FieldBaseClass(id, value, updateFunction, msgId);
+        this.getDisplayFunc()();
+    }
+    pl.implement(TextFieldClass, {
+        getDisplayFunc: function() {
+            var self = this;
+            return function() {
+                pl(self.fieldBase.sel).attr({value: self.fieldBase.value});
+            };
+        },
+        bindEvents: function() {
+            var self, icon, safeStr, onchange, onfocus, onblur;
+            self = this;
+            icon = new ValidIconClass(self.fieldBase.id + 'icon');
             safeStr = new SafeStringClass();
-            var onchange = function() {
+            onchange = function() {
                 var newval, validMsg;
-                newval = safeStr.htmlEntities(pl(self.sel).attr('value'));
-                validMsg = self.validator.validate(newval);
+                newval = safeStr.htmlEntities(pl(self.fieldBase.sel).attr('value'));
+                validMsg = self.fieldBase.validator.validate(newval);
                 if (validMsg !== 0) {
-                    msg.show('attention', validMsg);
+                    self.fieldBase.msg.show('attention', validMsg);
                     icon.showInvalid();
                     return;
                 }
-                if (!msg.isClear) {
-                    msg.clear();
+                if (!self.fieldBase.msg.isClear) {
+                    self.fieldBase.msg.clear();
                 }
                 if (!icon.isValid) {
                     icon.showValid();
                 }
             };
-            var onfocus = function() {
-                self.value = pl(self.sel).attr('value'); // save the value
+            onfocus = function() {
+                self.value = pl(self.fieldBase.sel).attr('value'); // save the value
             };
-            var onblur = function(event) { // push to server
-                var filter, newval, validMsg, url, data, changeKey, loadFunc, errorFunc, successFunc, ajax;
-                newval = safeStr.htmlEntities(pl(self.sel).attr('value'));
-                validMsg = self.validator.validate(newval);
+            onblur = function(event) { // push to server
+                var changeKey, newval, validMsg;
+                changeKey = self.fieldBase.id;
+                newval = safeStr.htmlEntities(pl(self.fieldBase.sel).attr('value'));
+                validMsg = self.fieldBase.validator.validate(newval);
                 if (validMsg !== 0) {
-                    pl(self.sel).attr('value', self.value); // restore old name
-                    msg.clear();
+                    pl(self.fieldBase.sel).attr('value', self.value); // restore old name
+                    self.fieldBase.msg.clear();
                     icon.clear();
                     return;
                 }
                 icon.clear();
                 if (self.value === newval) {
-                    msg.clear();
+                    self.fieldBase.msg.clear();
                     return;
                 }
-                url = '/user/update?id=' + self.profile.profile_id;
-                data = { profile: {
-                    profile_id: self.profile.profile_id,
-                    username: self.profile.username,
-                    stauts: self.profile.status,
-                    open_id: self.profile.open_id,
-                    name: pl('#name').attr('value'),
-                    email: pl('#email').attr('value'),
-                    title: pl('#title').attr('value'),
-                    organization: pl('#organization').attr('value'),
-                    investor: pl('#investor').attr('value') || false,
-                    facebook:'',
-                    twitter:'',
-                    linkedin:'',
-                } };
-                changeKey = self.id;
-                data.profile[changeKey] = newval;
-                loadFunc = function() { msg.show('inprogress', 'Saving changes to server...'); };
-                errorFunc = function(errorNum) {
-                    pl(self.sel).attr('value', self.value); // restore old val
-                    msg.show('attention', 'Error saving changes to server: ' + errorNum);
-                };
-                successFunc = function() {
-                    msg.show('successful', 'Saved changes to server');
-                    self.value = newval;
-                };
-                ajax = {
-                    async: true,
-                    url: url,
-                    type: 'POST',
-                    data: data,
-                    dataType: 'json',
-                    charset: 'utf-8',
-                    load: loadFunc,
-                    error: errorFunc,
-                    success: successFunc
-                };
-                pl.ajax(ajax);
+                self.fieldBase.updateFunction({ changeKey: newval }, self.fieldBase.getLoadFunc(), self.fieldBase.getErrorFunc(self.getDisplayFunc()), self.fieldBase.getSuccessFunc());
             };
-            pl(self.sel).bind({
+            pl(self.fieldBase.sel).bind({
                 blur: onblur,
                 focus: onfocus,
                 change: onchange,
@@ -599,31 +605,65 @@ pl(function() {
 
     function EditProfileClass() {}
     pl.implement(EditProfileClass, {
+        getUpdater: function() {
+            var self = this;
+            return function(newdata, loadFunc, errorFunc, successFunc) {
+            var data, field, ajax;
+            data = { profile: {
+                profile_id: self.profile_id,
+                username: self.username,
+                stauts: self.status,
+                open_id: self.open_id,
+                name: pl('#name').attr('value'),
+                email: pl('#email').attr('value'),
+                title: pl('#title').attr('value'),
+                organization: pl('#organization').attr('value'),
+                investor: pl('#investor').attr('value') || false,
+                facebook:'',
+                twitter:'',
+                linkedin:'',
+            } };
+            for (field in newdata) {
+                data.profile[field] = newdata[field];
+            }
+            ajax = {
+                async: true,
+                url: self.updateUrl,
+                type: 'POST',
+                data: data,
+                dataType: 'json',
+                charset: 'utf-8',
+                load: loadFunc,
+                error: errorFunc,
+                success: successFunc
+            };
+            pl.ajax(ajax);
+            };
+        },
         setProfile: function(json) {
-            var properties, i, property, textFields, textFieldId, textFieldObj, checkbox;
+            var properties, updateUrl, i, property, textFields, textFieldId, textFieldObj, investorCheckbox, notifyCheckbox;
             properties = ['profile_id', 'status', 'name', 'username', 'open_id', 'profilestatus', 'title', 'organization', 'email', 'phone', 'address'];
             textFields = ['email', 'name', 'title', 'organization', 'phone', 'address'];
-            this.profile_id = json
+            this.profile_id = json.profile_id;
+            this.updateUrl = '/user/update?id=' + this.profile_id;
             for (i = 0; i < properties.length; i++) {
                 property = properties[i];
                 this[property] = json[property];
             }
             for (i = 0; i < textFields.length; i++) {
                 textFieldId = textFields[i];
-                textFieldObj = new TextFieldClass();
-                textFieldObj.setId(textFieldId);
-                textFieldObj.setValue(json[textFieldId]);
-                textFieldObj.setProfile(this);
-                textFieldObj.addValidator(textFieldObj.validator.isNotEmpty);
+                textFieldObj = new TextFieldClass(textFieldId, json[textFieldId], this.getUpdater(), 'personalinfomsg');
+                textFieldObj.fieldBase.addValidator(textFieldObj.fieldBase.validator.isNotEmpty);
                 if (textFieldId === 'email') {
-                    textFieldObj.addValidator(textFieldObj.validator.isEmail);
+                    textFieldObj.fieldBase.addValidator(textFieldObj.fieldBase.validator.isEmail);
                 }
                 textFieldObj.bindEvents();
             }
             pl('#profilestatus').html('');
-            checkbox = new CheckboxClass();
-            checkbox.setChecked('investor', json.investor);
-            checkbox.setChecked('notifyenabled', json.notifyenabled);
+            investorCheckbox = new CheckboxFieldClass('investor', json.investor, this.getUpdater(), 'settingsmsg');
+            investorCheckbox.bindEvents();
+            notifyCheckbox = new CheckboxFieldClass('notifyenabled', json.notifyenabled, this.getUpdater(), 'settingsmsg');
+            notifyCheckbox.bindEvents();
             //- newpassword
             //- confirmpassword
         }
