@@ -88,7 +88,10 @@ pl(function() {
         }
     });
 
-    function ValidatorClass() {}
+    function ValidatorClass() {
+        this.tests = [];
+        this.postValidator = function(result) {};
+    }
     pl.implement(ValidatorClass, {
         isNotEmpty: function(str) {
             var trimmedStr;
@@ -105,24 +108,92 @@ pl(function() {
             checker = new EmailCheckClass();
             return checker.emailCheck(str);
         },
+        makePasswordChecker: function(options) {
+            return function(pw) {
+                var o, property, re, rule, i, matchlen, lower, upper, numbers, qwerty, start, seq;
+                o = { /* default options (allows any password) */
+                    lower:    0,
+                    upper:    0,
+                    alpha:    0, /* lower + upper */
+                    numeric:  0,
+                    special:  0,
+                    length:   [0, Infinity],
+                    custom:   [ /* regexes and/or functions */ ],
+                    badWords: [],
+                    badSequenceLength: 0,
+                    noQwertySequences: false,
+                    noSequential:      false
+                };
+                for (property in options)
+                    o[property] = options[property];
+                re = {
+                    lower:   /[a-z]/g,
+                    upper:   /[A-Z]/g,
+                    alpha:   /[A-Z]/gi,
+                    numeric: /[0-9]/g,
+                    special: /[\W_]/g
+                };
+                if (pw.length < o.length[0])
+                    return "password must be at least " + o.length[0] + " characters";
+                if (pw.length > o.length[1])
+                    return "password must be no more than " + o.length[1] + " characters";
+                for (rule in re) {
+                    matchlen = (pw.match(re[rule]) || []).length;
+                    if (matchlen < o[rule])
+                        return "password must have at least " + o[rule] + " " + rule + " characters";
+                }
+                for (i = 0; i < o.badWords.length; i++) {
+                    if (pw.toLowerCase().indexOf(o.badWords[i].toLowerCase()) > -1)
+                        return "password cannot contain the word " + o.badWords[i];
+                }
+                if (o.noSequential && /([\S\s])\1/.test(pw))
+                    return "password cannot contain sequential identical characters";
+                if (o.badSequenceLength) {
+                    var lower   = "abcdefghijklmnopqrstuvwxyz",
+                        upper   = lower.toUpperCase(),
+                        numbers = "0123456789",
+                        qwerty  = "qwertyuiopasdfghjklzxcvbnm",
+                        start   = o.badSequenceLength - 1,
+                        seq     = "_" + pw.slice(0, start);
+                    for (i = start; i < pw.length; i++) {
+                        seq = seq.slice(1) + pw.charAt(i);
+                        if (
+                            lower.indexOf(seq)   > -1 ||
+                            upper.indexOf(seq)   > -1 ||
+                            numbers.indexOf(seq) > -1 ||
+                            (o.noQwertySequences && qwerty.indexOf(seq) > -1)
+                        ) {
+                            return "password cannot contain an alphanumeric or qwerty sequence of more than " + o.badSequenceLength + " characters";
+                        }
+                    }
+                }
+                for (i = 0; i < o.custom.length; i++) {
+                    rule = o.custom[i];
+                    if (rule instanceof RegExp) {
+                        if (!rule.test(pw))
+                            return "password cannot match the regular expression " + rule;
+                    } else if (rule instanceof Function) {
+                        if (!rule(pw))
+                            return "password failed custom rule " + rule;
+                    }
+                }
+                return 0; // good password
+            };
+        },
         add: function(test) {
-            if (!this.tests) {
-                this.tests = [];
-            }
             this.tests.push(test);
         },
         validate: function(str) {
             var i, result;
-            if (!this.tests) {
-                return;
-            }
+            result = 0;
             for (i = 0; i < this.tests.length; i++) {
                 result = this.tests[i](str);
                 if (result !== 0) {
-                    return result;
+                    break;
                 }
             }
-            return 0;
+            this.postValidator(result);
+            return result;
         }
     });
 
@@ -507,6 +578,12 @@ pl(function() {
                 self.msg.show('successful', 'Saved changes to server');
                 self.value = newval;
             };
+        },
+        disable: function() {
+            pl(this.sel).attr({disabled: 'disabled'});
+        },
+        enable: function() {
+            pl(this.sel).removeAttr('disabled');
         }
     });
 
@@ -664,8 +741,32 @@ pl(function() {
             investorCheckbox.bindEvents();
             notifyCheckbox = new CheckboxFieldClass('notifyenabled', json.notifyenabled, this.getUpdater(), 'settingsmsg');
             notifyCheckbox.bindEvents();
-            //- newpassword
-            //- confirmpassword
+            var newPassword = new TextFieldClass('newpassword', '', function(){}, 'passwordmsg');
+            var passwordOptions = {
+                length: [8, 32],
+                badWords: ['password', this.name, this.username, this.email, (this.email&&this.email.indexOf('@')>0?this.email.split('@')[0]:'')],
+                badSequenceLength: 3
+            };
+            newPassword.fieldBase.addValidator(newPassword.fieldBase.validator.makePasswordChecker(passwordOptions));
+            newPassword.fieldBase.validator.postValidator = function(result) {
+                if (result === 0) {
+                    pl('#confirmpassword').removeAttr('disabled');
+                }
+                else {
+                    pl('#confirmpassword').attr({disabled: 'disabled'});
+                }
+            };
+            newPassword.bindEvents();
+            var confirmPassword = new TextFieldClass('confirmpassword', '', this.getUpdater(), 'passwordmsg');
+            confirmPassword.fieldBase.addValidator(function(val) {
+                if (pl('#newpassword').attr('value') === val) {
+                    return 0;
+                }
+                else {
+                    return "confirm must match new password";
+                }
+            });
+            confirmPassword.bindEvents();
         }
     });
 
@@ -777,6 +878,7 @@ pl(function() {
                 var header, profile;
                 if (!json) {
                     pl('#profilestatus').html('<span class="notice">Error: null response from server</span>');
+                    pl('#profilecolumn').hide();
                     return;
                 }
                 header = new HeaderClass();
