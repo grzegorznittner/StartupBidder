@@ -160,10 +160,11 @@ pl(function() {
                         if (
                             lower.indexOf(seq)   > -1 ||
                             upper.indexOf(seq)   > -1 ||
-                            numbers.indexOf(seq) > -1 ||
-                            (o.noQwertySequences && qwerty.indexOf(seq) > -1)
-                        ) {
-                            return "password cannot contain an alphanumeric or qwerty sequence of more than " + o.badSequenceLength + " characters";
+                            numbers.indexOf(seq) > -1) {
+                            return "password cannot have an alphanumeric sequence more than " + o.badSequenceLength + " characters";
+                        }
+                         if (o.noQwertySequences && qwerty.indexOf(seq) > -1) {
+                            return "password cannot have a qwerty sequence more than " + o.badSequenceLength + " characters";
                         }
                     }
                 }
@@ -682,6 +683,25 @@ pl(function() {
 
     function EditProfileClass() {}
     pl.implement(EditProfileClass, {
+        deactivateUser: function() {
+            var ajax;
+            ajax = {
+                async: true,
+                url: this.deactivateUrl,
+                type: 'POST',
+                data: {},
+                dataType: 'json',
+                charset: 'utf-8',
+                load: function(){ pl('#deactivatemsg').html('DEACTIVATING...'); },
+                error: function() { pl('#deactivatemsg').html('UNABLE TO DEACTIVATE'); pl('#deactivatebutton').html('DEACTIVATE'); },
+                success: function() {
+                    pl('#deactivatemsg').html('DEACTIVATED, GOING HOME...');
+                    pl('#deactivatebutton').hide();
+                    setTimeout(function(){window.location='/';}, 4000);
+                }
+            };
+            pl.ajax(ajax);
+        },
         getUpdater: function() {
             var self = this;
             return function(newdata, loadFunc, errorFunc, successFunc) {
@@ -718,11 +738,14 @@ pl(function() {
             };
         },
         setProfile: function(json) {
-            var properties, updateUrl, i, property, textFields, textFieldId, textFieldObj, investorCheckbox, notifyCheckbox;
+            var self, properties, updateUrl, i, property, textFields, textFieldId, textFieldObj,
+                investorCheckbox, notifyCheckbox, newPassword, passwordOptions, confirmPassword;
+            self = this;
             properties = ['profile_id', 'status', 'name', 'username', 'open_id', 'profilestatus', 'title', 'organization', 'email', 'phone', 'address'];
             textFields = ['email', 'name', 'title', 'organization', 'phone', 'address'];
             this.profile_id = json.profile_id;
             this.updateUrl = '/user/update?id=' + this.profile_id;
+            this.deactivateUrl = '/user/deactivate?id=' + this.profile_id;
             for (i = 0; i < properties.length; i++) {
                 property = properties[i];
                 this[property] = json[property];
@@ -741,8 +764,8 @@ pl(function() {
             investorCheckbox.bindEvents();
             notifyCheckbox = new CheckboxFieldClass('notifyenabled', json.notifyenabled, this.getUpdater(), 'settingsmsg');
             notifyCheckbox.bindEvents();
-            var newPassword = new TextFieldClass('newpassword', '', function(){}, 'passwordmsg');
-            var passwordOptions = {
+            newPassword = new TextFieldClass('newpassword', '', function(){}, 'passwordmsg');
+            passwordOptions = {
                 length: [8, 32],
                 badWords: ['password', this.name, this.username, this.email, (this.email&&this.email.indexOf('@')>0?this.email.split('@')[0]:'')],
                 badSequenceLength: 3
@@ -757,7 +780,7 @@ pl(function() {
                 }
             };
             newPassword.bindEvents();
-            var confirmPassword = new TextFieldClass('confirmpassword', '', this.getUpdater(), 'passwordmsg');
+            confirmPassword = new TextFieldClass('confirmpassword', '', this.getUpdater(), 'passwordmsg');
             confirmPassword.fieldBase.addValidator(function(val) {
                 if (pl('#newpassword').attr('value') === val) {
                     return 0;
@@ -767,6 +790,16 @@ pl(function() {
                 }
             });
             confirmPassword.bindEvents();
+            pl('#deactivatebutton').bind({click: function(){
+                if (pl('#deactivatemsg').html() === '') {
+                    pl('#deactivatemsg').html('ARE YOU SURE?');
+                    pl('#deactivatebutton').html('YES, DEACTIVATE');
+                }
+                else {
+                    self.deactivateUser();
+                }
+                return false;
+            }});
         }
     });
 
