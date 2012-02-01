@@ -14,6 +14,14 @@ pl(function() {
         }
     });
 
+    function CurrencyClass() {}
+    pl.implement(CurrencyClass, {
+        format: function(num) {
+            return num;
+        }
+    });
+
+
     function QueryStringClass() {}
     pl.implement(QueryStringClass, {
         load: function() {
@@ -239,18 +247,19 @@ pl(function() {
             listingdate = json.listing_date ? date.format(json.listing_date) : 'not posted';
             this.imgClass = images[Math.floor(Math.random()*images.length)];
             this.daysText = json.days_left ? (json.days_left === 0 ? 'closing today!' : (json.days_left < 0 ? 'bidding closed' : json.days_left + ' days left')) : 'closed for bidding';
-            this.typeText = Math.floor(Math.random()*2) ? 'INTERNET' : 'SOFTWARE'; // FIXME: unimplemented API
+            this.typeText = Math.floor(Math.random()*2) ? 'INTERNET' : 'SOFTWARE'; // FIXME
             this.votes = json.num_votes || 0;
             this.posted = listingdate;
             this.name = json.title || 'Listed Company';
-            this.loc = Math.floor(Math.random()*2) ? 'London, UK' : 'San Jose, CA, USA'; // FIXME: unimplemented API
-            this.details = json.summary || 'Company details not provided';
+            this.loc = Math.floor(Math.random()*2) ? 'London, UK' : 'San Jose, CA, USA'; // FIXME
+            this.details = json.mantra || json.summary || 'Company details not provided';
+            this.url = '/listing_page.html?id=' + json.listing_id;
         },
         makeHtml: function(lastClass) {
             var html = '\
 <span class="span-4 '+ (lastClass?lastClass:'') +'">\
 <div class="tile">\
-    <a href="listing-page.html"><div class="tileimg ' + this.imgClass + '"></div></a>\
+    <a href="' + this.url + '"><div class="tileimg ' + this.imgClass + '"></div></a>\
     <div class="tiledays"></div>\
     <div class="tiledaystext">' + this.daysText + '</div>\
     <div class="tiletype"></div>\
@@ -813,7 +822,7 @@ pl(function() {
                 var isPosOrNeg = temp>5 ? 1 : -1;
                 return( isOddOrEven*isPosOrNeg );
             };
-            allCompanies = [{"num":1,"listing_id":"ag1zdGFydHVwYmlkZGVychcLEgdMaXN0aW5nIgpraWxsIGVtYWlsDA","title":"Kill email","suggested_amt":20000,"suggested_pct":50,"suggested_val":40000,"previous_val":40000,"valuation":40000,"median_valuation":75000,"score":3316,"listing_date":"20111018","closing_date":"20111117","status":"active","summary":"If any startup says it's going to eliminate email, it's destined for failure. You can iterate on the inbox, and try to improve it, but even that's not much of a business. The latest high profile flop in this arena is Google Wave. It was supposed to change email forever. It was going to displace email. Didn't happen.","profile_id":"ag1zdGFydHVwYmlkZGVychkLEgRVc2VyIg9idXNpbmVzc2luc2lkZXIM","profile_username":"Insider","num_comments":38,"num_bids":15,"num_votes":4,"votable":true,"days_ago":95,"days_left":-66,"mockData":true,"business_plan_id":null,"presentation_id":null,"financials_id":null},{"num":2,"listing_id":"ag1zdGFydHVwYmlkZGVychsLEgdMaXN0aW5nIg5sb2NhbG5ld3NzaXRlcww","title":"Local news sites","suggested_amt":9800,"suggested_pct":20,"suggested_val":49000,"previous_val":365217,"valuation":365217,"median_valuation":77000,"score":1326,"listing_date":"20111011","closing_date":"20111110","status":"active","summary":"Maybe Tim Armstrong, AOL, and Patch will prove it wrong, but to this point nobody has been able to crack the local news market and make a sustainable business.In theory creating a network of local news sites that people care about is a good idea. You build a community, there's a baked in advertising group with local businesses, and classifieds. But, it appears to be too niche to scale into a big business.","profile_id":"ag1zdGFydHVwYmlkZGVychQLEgRVc2VyIgpkcmFnb25zZGVuDA","profile_username":"The Dragon","num_comments":22,"num_bids":19,"num_votes":11,"votable":false,"days_ago":102,"days_left":-73,"mockData":true,"business_plan_id":null,"presentation_id":null,"financials_id":null},{"num":3,"listing_id":"ag1zdGFydHVwYmlkZGVyciMLEgdMaXN0aW5nIhZjb21wX3VwZ3JhZGluZ19zZXJ2aWNlDA","title":"Computer Upgrading Service","suggested_amt":11550,"suggested_pct":33,"suggested_val":35000,"previous_val":35000,"valuation":35000,"median_valuation":63000,"score":899,"listing_date":"20111009","closing_date":"20111108","status":"active","summary":"Starting a business that specializes in upgrading existing computer systems with new internal and external equipment is a terrific homebased business to initiate that has great potential to earn an outstanding income for the operator of the business. A computer upgrading service is a very easy business to get rolling, providing you have the skills and equipment necessary to complete upgrading tasks, such as installing more memory into the hard drive, replacing a hard drive, or adding a new disk drive to the computer system. Ideally, to secure the most profitable segment of the potential market, the service should specialize in upgrading business computers as there are many reasons why a business would upgrade a computer system as opposed to replacing the computer system. Additionally, managing the business from a homebased location while providing clients with a mobile service is the best way to keep operating overheads minimized and potentially increases the size of the target market by expanding the service area, due to the fact the business operates on a mobile format.","profile_id":"ag1zdGFydHVwYmlkZGVychkLEgRVc2VyIg9ncnplZ29yem5pdHRuZXIM","profile_username":"Greg","num_comments":34,"num_bids":27,"num_votes":11,"votable":false,"days_ago":104,"days_left":-75,"mockData":true,"business_plan_id":null,"presentation_id":null,"financials_id":null},{"num":4,"listing_id":"ag1zdGFydHVwYmlkZGVychsLEgdMaXN0aW5nIg5zZW1hbnRpY3NlYXJjaAw","title":"Semantic Search","suggested_amt":18000,"suggested_pct":45,"suggested_val":40000,"previous_val":40000,"valuation":40000,"median_valuation":61500,"score":639,"listing_date":"20111005","closing_date":"20111104","status":"active","summary":"The fact of the matter is Google, and to a much lesser extent Bing, own the search market. Ask Barry Diller, if you don't believe us.Yet, startups still spring up hoping to disrupt the incumbents. Cuil flopped. Wolfram Alpha is irrelevant. Powerset, which was a semantic search engine was bailed out by Microsoft, which acquired it.","profile_id":"ag1zdGFydHVwYmlkZGVychILEgRVc2VyIghqcGZvd2xlcgw","profile_username":"fowler","num_comments":2,"num_bids":24,"num_votes":4,"votable":false,"days_ago":108,"days_left":-79,"mockData":true,"business_plan_id":null,"presentation_id":null,"financials_id":null},{"num":5,"listing_id":"ag1zdGFydHVwYmlkZGVyciILEgdMaXN0aW5nIhVzb2NpYWxyZWNvbW1lbmRhdGlvbnMM","title":"Social recommendations","suggested_amt":1500,"suggested_pct":10,"suggested_val":15000,"previous_val":15000,"valuation":15000,"median_valuation":42500,"score":412,"listing_date":"20111004","closing_date":"20111103","status":"active","summary":"It's a very tempting idea. Collect data from people about their tastes and preferences. Then use that data to create recommendations for others. Or, use that data to create recommendations for the people that filled in the information. It doesn't work. The latest to try is Hunch and Get Glue.Hunch is pivoting towards non-consumer-facing white label business. Get Glue has had some success of late, but it's hardly a breakout business.","profile_id":"ag1zdGFydHVwYmlkZGVychELEgRVc2VyIgdjaGluZXNlDA","profile_username":"The One","num_comments":42,"num_bids":20,"num_votes":3,"votable":false,"days_ago":109,"days_left":-80,"mockData":true,"business_plan_id":null,"presentation_id":null,"financials_id":null}];
+            allCompanies = [{"num":1,"listing_id":"ag1zdGFydHVwYmlkZGVychcLEgdMaXN0aW5nIgpraWxsIGVtYWlsDA","title":"Kill email","suggested_amt":20000,"suggested_pct":50,"suggested_val":40000,"previous_val":40000,"valuation":40000,"median_valuation":75000,"score":3316,"listing_date":"20111018","closing_date":"20111117","status":"active","mantra":"Making email as obsolete as the memo.","summary":"If any startup says it's going to eliminate email, it's destined for failure. You can iterate on the inbox, and try to improve it, but even that's not much of a business. The latest high profile flop in this arena is Google Wave. It was supposed to change email forever. It was going to displace email. Didn't happen.","profile_id":"ag1zdGFydHVwYmlkZGVychkLEgRVc2VyIg9idXNpbmVzc2luc2lkZXIM","profile_username":"Insider","num_comments":38,"num_bids":15,"num_votes":4,"votable":true,"days_ago":95,"days_left":-66,"mockData":true,"business_plan_id":null,"presentation_id":null,"financials_id":null},{"num":2,"listing_id":"ag1zdGFydHVwYmlkZGVychsLEgdMaXN0aW5nIg5sb2NhbG5ld3NzaXRlcww","title":"Local news sites","suggested_amt":9800,"suggested_pct":20,"suggested_val":49000,"previous_val":365217,"valuation":365217,"median_valuation":77000,"score":1326,"listing_date":"20111011","closing_date":"20111110","status":"active","mantra":"Local news made global","summary":"Maybe Tim Armstrong, AOL, and Patch will prove it wrong, but to this point nobody has been able to crack the local news market and make a sustainable business.In theory creating a network of local news sites that people care about is a good idea. You build a community, there's a baked in advertising group with local businesses, and classifieds. But, it appears to be too niche to scale into a big business.","profile_id":"ag1zdGFydHVwYmlkZGVychQLEgRVc2VyIgpkcmFnb25zZGVuDA","profile_username":"The Dragon","num_comments":22,"num_bids":19,"num_votes":11,"votable":false,"days_ago":102,"days_left":-73,"mockData":true,"business_plan_id":null,"presentation_id":null,"financials_id":null},{"num":3,"listing_id":"ag1zdGFydHVwYmlkZGVyciMLEgdMaXN0aW5nIhZjb21wX3VwZ3JhZGluZ19zZXJ2aWNlDA","title":"Computer Upgrading Service","suggested_amt":11550,"suggested_pct":33,"suggested_val":35000,"previous_val":35000,"valuation":35000,"median_valuation":63000,"score":899,"listing_date":"20111009","closing_date":"20111108","status":"active","mantra":"Taking the pain out of managing your technology","summary":"Starting a business that specializes in upgrading existing computer systems with new internal and external equipment is a terrific homebased business to initiate that has great potential to earn an outstanding income for the operator of the business. A computer upgrading service is a very easy business to get rolling, providing you have the skills and equipment necessary to complete upgrading tasks, such as installing more memory into the hard drive, replacing a hard drive, or adding a new disk drive to the computer system. Ideally, to secure the most profitable segment of the potential market, the service should specialize in upgrading business computers as there are many reasons why a business would upgrade a computer system as opposed to replacing the computer system. Additionally, managing the business from a homebased location while providing clients with a mobile service is the best way to keep operating overheads minimized and potentially increases the size of the target market by expanding the service area, due to the fact the business operates on a mobile format.","profile_id":"ag1zdGFydHVwYmlkZGVychkLEgRVc2VyIg9ncnplZ29yem5pdHRuZXIM","profile_username":"Greg","num_comments":34,"num_bids":27,"num_votes":11,"votable":false,"days_ago":104,"days_left":-75,"mockData":true,"business_plan_id":null,"presentation_id":null,"financials_id":null},{"num":4,"listing_id":"ag1zdGFydHVwYmlkZGVychsLEgdMaXN0aW5nIg5zZW1hbnRpY3NlYXJjaAw","title":"Semantic Search","suggested_amt":18000,"suggested_pct":45,"suggested_val":40000,"previous_val":40000,"valuation":40000,"median_valuation":61500,"score":639,"listing_date":"20111005","closing_date":"20111104","status":"active","mantra":"Adding meaning to your search experience","summary":"The fact of the matter is Google, and to a much lesser extent Bing, own the search market. Ask Barry Diller, if you don't believe us.Yet, startups still spring up hoping to disrupt the incumbents. Cuil flopped. Wolfram Alpha is irrelevant. Powerset, which was a semantic search engine was bailed out by Microsoft, which acquired it.","profile_id":"ag1zdGFydHVwYmlkZGVychILEgRVc2VyIghqcGZvd2xlcgw","profile_username":"fowler","num_comments":2,"num_bids":24,"num_votes":4,"votable":false,"days_ago":108,"days_left":-79,"mockData":true,"business_plan_id":null,"presentation_id":null,"financials_id":null},{"num":5,"listing_id":"ag1zdGFydHVwYmlkZGVyciILEgdMaXN0aW5nIhVzb2NpYWxyZWNvbW1lbmRhdGlvbnMM","title":"Social recommendations","suggested_amt":1500,"suggested_pct":10,"suggested_val":15000,"previous_val":15000,"valuation":15000,"median_valuation":42500,"score":412,"listing_date":"20111004","closing_date":"20111103","status":"active","mantra":"Purchasing for status in your peer group","summary":"It's a very tempting idea. Collect data from people about their tastes and preferences. Then use that data to create recommendations for others. Or, use that data to create recommendations for the people that filled in the information. It doesn't work. The latest to try is Hunch and Get Glue.Hunch is pivoting towards non-consumer-facing white label business. Get Glue has had some success of late, but it's hardly a breakout business.","profile_id":"ag1zdGFydHVwYmlkZGVychELEgRVc2VyIgdjaGluZXNlDA","profile_username":"The One","num_comments":42,"num_bids":20,"num_votes":3,"votable":false,"days_ago":109,"days_left":-80,"mockData":true,"business_plan_id":null,"presentation_id":null,"financials_id":null}];
             allCompanies.sort(randomSort);
             randomLen = Math.floor(Math.random() * allCompanies.length);
             companies = [];
@@ -933,21 +942,110 @@ pl(function() {
         }
     });
 
+    function ListingClass(json) {
+        var key;
+        if (json && json.listing && json.listing.listing_id) {
+            this.id = json.listing.listing_id;
+            for (key in json.listing) {
+                this[key] = json.listing[key];
+            }
+        }
+        this.dateobj = new DateClass();
+        this.currency = new CurrencyClass();
+        this.testcompany = (new TestCompanies()).testJson()[0]; // FIXME
+    };
+    pl.implement(ListingClass, {
+        displayListing: function() {
+            this.mantra = this.mantra || this.testcompany.mantra; // FIXME
+            this.videourl = this.videourl || this.testcompany.videourl || 'http://www.youtube.com/watch?v=QoAOzMTLP5s'; // FIXME
+            this.category = this.category || (Math.floor(Math.random()*2) ? 'INTERNET' : 'SOFTWARE'); // FIXME
+            this.websiteurl = this.websiteurl || 'http://wave.google.com';
+            this.address = this.address || Math.floor(Math.random()*2) ? '221B Baker St, London, UK' : '170W Tasman Dr, San Jose, CA, USA'; // FIXME
+            this.addressurl = this.addressurl || 'http://nominatim.openstreetmap.org/search?q=' + encodeURIComponent(this.address);
+            this.latitude = this.latitude || '51.499117116569'; // FIXME
+            this.longitude = this.longitude || '-0.12359619140625'; // FIXME
+            this.mapurl = 'http://ojw.dev.openstreetmap.org/StaticMap/?lat=' + this.latitude + '&lon=' + this.longitude + '&z=5&show=1&fmt=png&w=302&h=302&att=none';
+            this.suggested_type = this.suggested_type || (Math.floor(Math.random()*2) ? 'COMMON EQUITY' : 'COMMON AS CONVERTIBLE DEBT'); // FIXME
+            pl('#title').html(this.title);
+            pl('#profile_username').html(this.profile_username);
+            pl('#mantra').html(this.mantra);
+            pl('#num_votes').html(this.num_votes);
+            pl('#num_comments').html(this.num_comments);
+            pl('#videopresentation').attr({src: this.videourl});
+            pl('#summary').html(this.summary);
+            pl('#category').html(this.category);
+            pl('#listing_date').html(this.listing_date ? this.dateobj.format(this.listing_date) : 'not posted');
+            pl('#websitelink').attr({href: this.websiteurl});
+            pl('#address').html(this.address);
+            pl('#addresslink').attr({href: this.addressurl});
+            pl('#mapimg').attr({src: this.mapurl});
+            pl('#suggested_amt').html(this.currency.format(this.suggested_amt));
+            pl('#suggested_pct').html(this.suggested_pct);
+            pl('#suggested_val').html(this.suggested_val);
+            pl('#suggested_type').html(this.suggested_type);
+            pl('#closing_date').html(this.closing_date && this.days_left >= 0 ? 'CLOSES ON ' + this.dateobj.format(closing_date) + ' (' + (this.days_left > 0 ? this.days_left + ' DAYS LEFT' : 'CLOSES TODAY!') + ')' : 'BIDDING CLOSED');
+        }
+    });
+
+    function ListingPageClass() {
+        if (!this.queryString) {
+            this.queryString = new QueryStringClass();
+            this.queryString.load();
+        }
+        this.id = this.queryString.vars.id;
+        this.url = '/listings/get/' + this.id;
+    };
+    pl.implement(ListingPageClass,{
+        loadPage: function() {
+            var loadFunc, errorFunc, successFunc, ajax;
+            loadFunc = function() {
+                pl('#listingstatus').html('<span class="notice">Loading profile...</span>');
+            };
+            errorFunc = function(errorNum) {
+                pl('#listingstatus').html('<span class="notice">Error while loading profile: '+errorNum+'</span>');
+            };
+            successFunc = function(json) {
+                var header, listing;
+                if (!json) {
+                    pl('#listingstatus').html('<span class="notice">Error: null response from server</span>');
+                    return;
+                }
+                header = new HeaderClass();
+                header.setLogin(json);
+                listing = new ListingClass(json);
+                listing.displayListing();
+            };
+            ajax = {
+                async: true,
+                url: this.url,
+                type: 'GET',
+                dataType: 'json',
+                charset: 'utf-8',
+                load: loadFunc,
+                error: errorFunc,
+                success: successFunc
+            };
+            pl.ajax(ajax);
+        }
+    });
+
     function DispatcherClass() {}
     pl.implement(DispatcherClass,{
         loadPage: function() {
-            var pageClass, page;
-            if (pl('body').hasClass('main-page')) {
-                pageClass = MainPageClass;
-            }
-            else if (pl('body').hasClass('profile-page')) {
-                pageClass = ProfilePageClass;;
-            }
-            else if (pl('body').hasClass('edit-profile-page')) {
-                pageClass = EditProfilePageClass;;
-            }
-            else {
-                pageClass = InformationPageClass;
+            var classList, i, bodyClass, pageClass, page;
+            classList = [
+                [ 'main-page', MainPageClass ],
+                [ 'profile-page', ProfilePageClass ],
+                [ 'edit-profile-page', EditProfilePageClass ],
+                [ 'listing-page', ListingPageClass ],
+                [ 'default', InformationPageClass ] // default must be last
+            ];
+            for (i = 0; i < classList.length; i++) {
+                bodyClass = classList[i][0];
+                pageClass = classList[i][1];
+                if (pl('body').hasClass(bodyClass)) {
+                    break;
+                }
             }
             page = new pageClass();
             page.loadPage();
