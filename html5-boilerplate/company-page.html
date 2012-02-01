@@ -28,7 +28,7 @@
   <link rel="canonical" href="http://startupbidder.appspot.com"/>
 </head>
 
-<body class="listing-page">
+<body class="company-page">
 <div id="wrap">
 <div id="main">
 
@@ -57,7 +57,7 @@
 
 <div class="container">
 
-!-- left column -->
+<!-- left column -->
 <div class="span-16">
     <div class="boxtitle">COMPANY LISTING</div>
     <div class="boxpanel">
@@ -168,7 +168,7 @@
         </div>
         <div>
             <span class="widelabel">YOUR VALUATION IS $64,000</span>
-            <a href="listing-page.html">
+            <a href="#">
                 <span class="span-7 inputbutton" id="makeofferbutton">MAKE COUNTEROFFER</span>
                 <!-- <span class="push-3 span-4 inputbutton" id="makeofferbutton">MAKE OFFER</span> -->
             </a>
@@ -209,7 +209,7 @@
             <textarea class="textarea inputfullwidetextshort" id="addcommenttext" name="addcommentnext" cols="20" rows="5">Put your comment here..."</textarea>
         </div>
         <div>
-            <a href="listing-page.html">
+            <a href="#">
                 <span class="push-12 span-3 inputbutton" id="addcommentbutton">
                     POST
                 </span>
@@ -237,7 +237,7 @@
             ARE YOU SURE YOU WANT TO WITHRDAW LISTING?  NO BIDS MAY BE RECEIVED AFTER THE LISTING IS WITHDRAWN.  THIS OPERATION CANNOT BE UNDONE.
         </div>
         <div>
-            <a href="listing-page.html">
+            <a href="#">
                 <span class="push-9 span-6 inputbutton" id="withdrawbutton">
                     WITHDRAW LISTING
                 </span>
@@ -256,13 +256,13 @@
     <div class="boxtitle">ABOUT COMPANY</div>
     <div class="sidebox">
         <span class="formlabel">CATEGORY</span>
-        <span class="formlabelvalue" id="category">Software</span>
+        <span class="formlabelvalue" id="category"></span>
         <span class="formlabel clear">POSTED</span>
-        <span class="formlabelvalue" id="listing_date">2011-09-16</span>
+        <span class="formlabelvalue" id="listing_date"></span>
         <span class="formlabel clear">WEBSITE</span>
         <span class="formlabelvalue formlink">
             <a href="#" target="_blank" id="websitelink">
-                <div class="span-1 linkicon">company website</div>
+                <div class="span-1 linkicon"></div><span id="domainname"></span>
             </a>
         </span>
     </div>
@@ -271,7 +271,7 @@
     <div class="sidebox">
             <div>
         <a href="#" class="formlink" target="_blank" id="addresslink">
-                <div class="span-1 mapicon" id="address"></div>
+                <div class="span-1 mapicon"></div><span id="address"></span>
         </a>
         
             </div>
@@ -307,10 +307,13 @@
 
     <div class="boxtitle">ASKING FUNDING</div>
     <div class="sidebox uneditabletext">
-        <div class="sideboxtitlecompact" id="suggested_amt">$25,000</div>
-        <div class="sideboxdesc">FOR <span id="suggested_pct">10</span>% <span id="suggested_type">COMMON EQUITY</span></div>
-        <div class="sideboxdesc">OWNER VALUATION IS <span id="suggested_val">$250,000</span></div>
-        <div class="sideboxdesc">CLOSES ON <span id="closing_date">24 DEC 2011</span> (45 DAYS LEFT)</div>
+        <div class="sideboxdesc" id="suggestedmsg"></div>
+        <div id="suggestedinfo">
+            <div class="sideboxtitlecompact" id="suggested_amt">$25,000</div>
+            <div class="sideboxdesc">FOR <span id="suggested_pct"></span>% <span id="suggested_type"></span></div>
+            <div class="sideboxdesc">OWNER VALUATION IS <span id="suggested_val">$250,000</span></div>
+            <div class="sideboxdesc"><span id="closingmsg"></span></div>
+        </div>
     </div>
 <!--
     <div class="boxtitle">CURRENT BIDS</div>
@@ -345,7 +348,7 @@
         <div class="sideboxdesc">
             <textarea class="sideinputtextarea" id="bidnote" name="bidnote" rows="20" cols="5">Your note to the bidder here...</textarea>
         </div>
-        <a href="listing-page.html">
+        <a href="#">
             <div class="sideboxbuttoninterior">BID NOW</div>
         </a>
     </div>
@@ -364,7 +367,7 @@
 
 <span class="span-4">
 <div class="tile">
-    <a href="listing-page.html"><div class="tileimg einstein"></div></a>
+    <a href="company-page.html"><div class="tileimg einstein"></div></a>
     <div class="tiledays"></div>
     <div class="tiledaystext">5 days left</div>
     <div class="tiletype"></div>
@@ -375,7 +378,7 @@
         <div class="thumbup tilevoteimg"></div>
         <div class="tileposted">2011-08-24</div>
     </div>
-    <a href="listing-page.html">
+    <a href="company-page.html">
     <p class="tiledesc">
         <span class="tilecompany">Semantic Search</span><br/>
         <span class="tileloc">Waltham, MA, USA</span><br/>
@@ -393,7 +396,7 @@
 
 <span class="span-4 last">
 <div class="tile">
-    <a href="listing-page.html"><div class="tileimg wave"></div></a>
+    <a href="company-page.html"><div class="tileimg wave"></div></a>
     <div class="tiledays"></div>
     <div class="tiledaystext">30 days left</div>
     <div class="tiletype"></div>
@@ -404,7 +407,7 @@
         <div class="thumbup tilevoteimg"></div>
         <div class="tileposted">2011-09-16</div>
     </div>
-    <a href="listing-page.html">
+    <a href="company-page.html">
     <p class="tiledesc">
         <span class="tilecompany">Kill Email Ltd.</span><br/>
         <span class="tileloc">Melbourne, Australia</span><br/>
@@ -417,7 +420,7 @@
 
 <span class="span-4">
 <div class="tile">
-    <a href="listing-page.html"><div class="tileimg upgrades"></div></a>
+    <a href="company-page.html"><div class="tileimg upgrades"></div></a>
     <div class="tiledays"></div>
     <div class="tiledaystext">bidding closed</div>
     <div class="tiletype"></div>
@@ -428,7 +431,7 @@
         <div class="thumbup tilevoteimg"></div>
         <div class="tileposted">2010-10-11</div>
     </div>
-    <a href="listing-page.html">
+    <a href="company-page.html">
     <p class="tiledesc">
         <span class="tilecompany">Computer Upgrades</span><br/>
         <span class="tileloc">San Jose, CA, USA</span><br/>
@@ -441,7 +444,7 @@
 
 <span class="span-4 last">
 <div class="tile">
-    <a href="listing-page.html"><div class="tileimg telecom"></div></a>
+    <a href="company-page.html"><div class="tileimg telecom"></div></a>
     <div class="tiledays"></div>
     <div class="tiledaystext">fully funded</div>
     <div class="tiletype"></div>
@@ -452,7 +455,7 @@
         <div class="thumbup tilevoteimg"></div>
         <div class="tileposted">2011-12-13</div>
     </div>
-    <a href="listing-page.html">
+    <a href="company-page.html">
     <p class="tiledesc">
         <span class="tilecompany">M-Pesa Micropayments</span><br/>
         <span class="tileloc">Nairobi, Kenya</span><br/>
