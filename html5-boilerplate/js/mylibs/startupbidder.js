@@ -31,6 +31,16 @@ pl(function() {
         }
     });
 
+    function URLClass(url) {
+        this.url = url;
+    }
+    pl.implement(URLClass, {
+        getHostname: function() {
+            var re = new RegExp('^(?:f|ht)tp(?:s)?\://([^/]+)', 'im');
+            return this.url.match(re)[1].toString();
+        }
+    });
+
     function QueryStringClass() {}
     pl.implement(QueryStringClass, {
         load: function() {
@@ -418,8 +428,8 @@ pl(function() {
         }
     });
 
-    function BasePageClass() {};
-    pl.implement(BasePageClass,{
+    function BaseCompanyListPageClass() {};
+    pl.implement(BaseCompanyListPageClass,{
         getListingsType: function() {
             var type;
             if (!this.queryString) {
@@ -437,40 +447,22 @@ pl(function() {
             var title = type.toUpperCase() + ' COMPANIES';
             pl('#listingstitle').html(title);
         },
-        loadPage: function(successFunc) {
-            var type = this.getListingsType();
-            var url = this.getListingsUrl(type);
-            var loadFunc = function() {
-                pl('#companydiv').html('<span class="notice">Loading companies...</span>');
-            };
-            var errorFunc = function(errorNum) {
-                pl('#companydiv').html('<span class="notice">Error while loading page: '+errorNum+'</span>');
-            };
-            var ajax = {
-                async: true,
-                url: url,
-                type: 'GET',
-                dataType: 'json',
-                charset: 'utf-8',
-                load: loadFunc,
-                error: errorFunc,
-                success: successFunc
-            };
+        loadPage: function(completeFunc) {
+            var type, url, ajax;
+            type = this.getListingsType();
             this.storeListingsTitle(type);
-            pl.ajax(ajax);
+            url = this.getListingsUrl(type);
+            ajax = new AjaxClass('GET', url, 'companydiv', completeFunc);
+            ajax.call();
         }
     });
 
     function MainPageClass() {};
     pl.implement(MainPageClass,{
         loadPage: function() {
-            var successFunc, basePage;
-            successFunc = function(json) {
+            var completeFunc, basePage;
+            completeFunc = function(json) {
                 var header, companyList, categoryList, locationList;
-                if (!json) {
-                    pl('#companydiv').html('<span class="notice">Error: null response from server</span>');
-                    return;
-                }
                 header = new HeaderClass();
                 companyList = new CompanyListClass();
                 categoryList = new CategoryListClass();
@@ -480,28 +472,24 @@ pl(function() {
                 categoryList.storeList(json);
                 locationList.storeList(json);
             };
-            basePage = new BasePageClass();
-            basePage.loadPage(successFunc);
+            basePage = new BaseCompanyListPageClass();
+            basePage.loadPage(completeFunc);
         }
     });
 
     function InformationPageClass() {}
     pl.implement(InformationPageClass,{
         loadPage: function() {
-            var successFunc, basePage;
-            successFunc = function(json) {
+            var completeFunc, basePage;
+            completeFunc = function(json) {
                 var header, companyList;
-                if (!json) {
-                    pl('#companydiv').html('<span class="notice">Error: null response from server</span>');
-                    return;
-                }
                 header = new HeaderClass();
                 companyList = new CompanyListClass();
                 header.setLogin(json);
                 companyList.storeList(json,2);
             };
-            basePage = new BasePageClass();
-            basePage.loadPage(successFunc);
+            basePage = new BaseCompanyListPageClass();
+            basePage.loadPage(completeFunc);
         }
     });
 
@@ -724,36 +712,26 @@ pl(function() {
         getUpdater: function() {
             var self = this;
             return function(newdata, loadFunc, errorFunc, successFunc) {
-            var data, field, ajax;
-            data = { profile: {
-                profile_id: self.profile_id,
-                username: self.username,
-                stauts: self.status,
-                open_id: self.open_id,
-                name: pl('#name').attr('value'),
-                email: pl('#email').attr('value'),
-                title: pl('#title').attr('value'),
-                organization: pl('#organization').attr('value'),
-                investor: pl('#investor').attr('value') || false,
-                facebook:'',
-                twitter:'',
-                linkedin:'',
-            } };
-            for (field in newdata) {
-                data.profile[field] = newdata[field];
-            }
-            ajax = {
-                async: true,
-                url: self.updateUrl,
-                type: 'POST',
-                data: data,
-                dataType: 'json',
-                charset: 'utf-8',
-                load: loadFunc,
-                error: errorFunc,
-                success: successFunc
-            };
-            pl.ajax(ajax);
+                var data, field, ajax;
+                data = { profile: {
+                    profile_id: self.profile_id,
+                    username: self.username,
+                    stauts: self.status,
+                    open_id: self.open_id,
+                    name: pl('#name').attr('value'),
+                    email: pl('#email').attr('value'),
+                    title: pl('#title').attr('value'),
+                    organization: pl('#organization').attr('value'),
+                    investor: pl('#investor').attr('value') || false,
+                    facebook:'',
+                    twitter:'',
+                    linkedin:'',
+                } };
+                for (field in newdata) {
+                    data.profile[field] = newdata[field];
+                }
+                ajax = new AjaxClass('POST', self.updateUrl, '?', null, successFunc, loadFunc, errorFunc);
+                ajax.call();
             };
         },
         setProfile: function(json) {
@@ -863,20 +841,9 @@ pl(function() {
     function ProfilePageClass() {};
     pl.implement(ProfilePageClass,{
         loadPage: function() {
-            var url, loadFunc, errorFunc, successFunc, ajax;
-            url = '/user/loggedin';
-            loadFunc = function() {
-                pl('#profilestatus').html('<span class="notice">Loading profile...</span>');
-            };
-            errorFunc = function(errorNum) {
-                pl('#profilestatus').html('<span class="notice">Error while loading profile: '+errorNum+'</span>');
-            };
-            successFunc = function(json) {
+            var completeFunc, ajax;
+            completeFunc = function(json) {
                 var header, profile, notifyList, companyList, testCompanies;
-                if (!json) {
-                    pl('#profilestatus').html('<span class="notice">Error: null response from server</span>');
-                    return;
-                }
                 header = new HeaderClass();
                 profile = new ProfileClass();
                 notifyList = new NotifyListClass();
@@ -901,31 +868,15 @@ pl(function() {
                 companyList.storeList(json, 4, 'bidondiv', 'bidon');
                 companyList.storeList(json, 4, 'upvoteddiv', 'upvoted');
             };
-            ajax = {
-                async: true,
-                url: url,
-                type: 'GET',
-                dataType: 'json',
-                charset: 'utf-8',
-                load: loadFunc,
-                error: errorFunc,
-                success: successFunc
-            };
-            pl.ajax(ajax);
+            ajax = new AjaxClass('GET', '/user/loggedin', 'profilestatus', completeFunc);
+            ajax.call();
         }
     });
 
-    function EditProfilePageClass() {};
+    function EditProfilePageClass() {}
     pl.implement(EditProfilePageClass,{
         loadPage: function() {
-            var url, loadFunc, errorFunc, successFunc, ajax;
-            url = '/user/loggedin';
-            loadFunc = function() {
-                pl('#profilestatus').html('<span class="notice">Loading profile...</span>');
-            };
-            errorFunc = function(errorNum) {
-                pl('#profilestatus').html('<span class="notice">Error while loading profile: '+errorNum+'</span>');
-            };
+            var successFunc, ajax;
             successFunc = function(json) {
                 var header, profile;
                 if (!json) {
@@ -938,34 +889,42 @@ pl(function() {
                 header.setLogin(json);
                 editProfile.setProfile(json);
             };
-            ajax = {
-                async: true,
-                url: url,
-                type: 'GET',
-                dataType: 'json',
-                charset: 'utf-8',
-                load: loadFunc,
-                error: errorFunc,
-                success: successFunc
-            };
-            pl.ajax(ajax);
+            ajax = new AjaxClass('GET', '/user/loggedin', 'profilestatus', null, successFunc);
+            ajax.call();
         }
     });
 
-    function ListingClass(json) {
-        var key;
-        if (json && json.listing && json.listing.listing_id) {
-            this.id = json.listing.listing_id;
-            for (key in json.listing) {
-                this[key] = json.listing[key];
-            }
-        }
-        this.dateobj = new DateClass();
-        this.currency = new CurrencyClass();
-        this.testcompany = (new TestCompaniesClass()).testJson()[0]; // FIXME
+    function ListingClass(id) {
+        var self = this;
+        this.id = id;
+        this.url = '/listings/get/' + this.id;
+        this.statusId = 'listingstatus';
+        this.completeFunc = function(json) {
+            var header, listing;
+            header = new HeaderClass();
+            header.setLogin(json);
+            self.store(json);
+            self.display();
+        };
+        this.ajax = new AjaxClass('GET', this.url, this.statusId, this.completeFunc);
     };
     pl.implement(ListingClass, {
-        displayListing: function() {
+        store: function(json) {
+            var key;
+            if (json && json.listing && json.listing.listing_id) {
+                for (key in json.listing) {
+                    this[key] = json.listing[key];
+                }
+            }
+            this.dateobj = new DateClass();
+            this.currency = new CurrencyClass();
+            this.testcompanies = new TestCompaniesClass();
+            this.testcompany = this.testcompanies.allCompanies[0]; // FIXME
+        },
+        load: function() {
+            this.ajax.call();
+        },
+        display: function() {
             this.displayBasics();
             this.displayInfobox();
             this.displayMap();
@@ -983,9 +942,11 @@ pl(function() {
             pl('#summary').html(this.summary);
         },
         displayInfobox: function() {
+            var url;
             this.category = this.category || (Math.floor(Math.random()*2) ? 'INTERNET' : 'SOFTWARE'); // FIXME
             this.websiteurl = this.websiteurl || 'http://wave.google.com';
-            this.domainname = this.websiteurl.split('/')[2].split('?');
+            url = new URLClass(this.websiteurl);
+            this.domainname = url.getHostname();
             pl('#category').html(this.category);
             pl('#listing_date').html(this.listing_date ? this.dateobj.format(this.listing_date) : 'not posted');
             pl('#websitelink').attr({href: this.websiteurl});
@@ -1018,46 +979,102 @@ pl(function() {
         }
     });
 
+    function CommentsClass(listing_id) {
+        var self;
+        self = this;
+        this.listing_id = listing_id;
+        this.url = '/comments/listing/' + this.listing_id;
+        this.statusId = 'commentsmsg';
+        this.completeFunc = function(json) {
+            self.store(json);
+            self.display();
+        };
+        this.ajax = new AjaxClass('GET', this.url, this.statusId, this.completeFunc);
+        this.date = new DateClass();
+        this.safeStr = new SafeStringClass();
+    }
+    pl.implement(CommentsClass, {
+        load: function() {
+            this.ajax.call();
+        },
+        store: function(json) {
+            this.comments = json.comments || [];
+        },
+        display: function() {
+            var html, i, comment;
+            if (this.comments.length === 0) {
+                pl('#commentlist').hide();
+                pl('#commentsmsg').html('No comments').show();
+            }
+            else {
+                html = '';
+                for (i = 0; i < this.comments.length; i++) {
+                    comment = this.comments[i];
+                    html += this.makeComment(comment);
+                }
+                pl('#commentmsg').hide();
+                pl('#commentlist').html(html).show();
+            }
+        },
+        makeComment: function(comment) {
+            return '\
+<dt>Posted by ' + comment.profile_username + ' on ' + this.date.format(comment.comment_date) + '</dt>\
+<dd>' + this.safeStr.htmlEntities(comment.text) + '</dd>\
+';
+        }
+    });
+
+    function AjaxClass(type, url, statusId, completeFunc, successFunc, loadFunc, errorFunc) {
+        var self;
+        self = this;
+        this.type = type; // GET or POST
+        this.url = url;
+        this.statusId = statusId;
+        this.statusSel = '#' + statusId;
+        this.completeFunc = completeFunc || function(json) {};
+        this.successFunc = successFunc || function(json) {
+            if (!json) {
+                pl('#listingstatus').html('<span class="notice">Error: null response from server</span>');
+                return;
+            }
+            pl(self.statusSel).html('');
+            self.completeFunc(json);
+        };
+        this.loadFunc = loadFunc || function() { pl(self.statusSel).html('<span class="notice">Loading...</span>'); };
+        this.errorFunc = errorFunc || function(errorNum) { pl(self.statusSel).html('<span class="notice">Error from server: ' + errorNum + '</span>'); };
+        this.ajaxOpts = {
+            async: true,
+            url: this.url,
+            type: this.type,
+            dataType: 'json',
+            charset: 'utf-8',
+            load: this.loadFunc,
+            error: this.errorFunc,
+            success: this.successFunc
+        };
+    }
+    pl.implement(AjaxClass, {
+        call: function() {
+            pl.ajax(this.ajaxOpts);
+        }
+    });
+    
     function ListingPageClass() {
         if (!this.queryString) {
             this.queryString = new QueryStringClass();
             this.queryString.load();
         }
         this.id = this.queryString.vars.id;
-        this.url = '/listings/get/' + this.id;
     };
     pl.implement(ListingPageClass,{
         loadPage: function() {
-            var loadFunc, errorFunc, successFunc, ajax;
-            loadFunc = function() {
-                pl('#listingstatus').html('<span class="notice">Loading profile...</span>');
-            };
-            errorFunc = function(errorNum) {
-                pl('#listingstatus').html('<span class="notice">Error while loading profile: '+errorNum+'</span>');
-            };
-            successFunc = function(json) {
-                var header, listing;
-                if (!json) {
-                    pl('#listingstatus').html('<span class="notice">Error: null response from server</span>');
-                    return;
-                }
-                pl('#listingstatus').html('');
-                header = new HeaderClass();
-                header.setLogin(json);
-                listing = new ListingClass(json);
-                listing.displayListing();
-            };
-            ajax = {
-                async: true,
-                url: this.url,
-                type: 'GET',
-                dataType: 'json',
-                charset: 'utf-8',
-                load: loadFunc,
-                error: errorFunc,
-                success: successFunc
-            };
-            pl.ajax(ajax);
+            var listing, bids, comments;
+            listing = new ListingClass(this.id);
+            //bids = new BidsClass(this.id);
+            comments = new CommentsClass(this.id);
+            listing.load();
+            //bids.load();
+            comments.load();
         }
     });
 
