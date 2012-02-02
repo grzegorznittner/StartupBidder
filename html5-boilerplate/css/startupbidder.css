@@ -205,6 +205,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .pctwide { width: 49px !important; }
 .inputtextareatwoline { height: 35px; overflow: hidden; overflow-x: hidden; overflow-y: hidden; }
 .inputtextareaeightline { height: 140px; overflow: hidden; overflow-x: hidden; overflow-y: hidden; }
+.inputgooglesignin { float: left; margin-right: 10px; }
 
 /* box styles */
 .boxtitle { margin-top: 10px; color: #333333; font-weight: bold; }
