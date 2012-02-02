@@ -173,7 +173,8 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .inputbutton { font-size: 18px; height: 33px; padding-top: 4px; margin-bottom: 10px; } 
 .smallinputbutton { font-size: 14px; height: 26px; padding-top: 2px; margin-bottom: 5px; } 
 .formtitle { font-size: 24px; padding-left: 5px; }
-.formtitlefourth { font-size: 24px; padding-left: }
+.formtitlefourth { font-size: 24px; padding-left: 0; }
+.companytitle { margin-right: 10px; }
 .formcol1 { width: 301px; padding-left: 5px; }
 .formcol2 { width: 306px; }
 .formcol1fourth { width: 146px; padding-left: 0px; }
@@ -184,6 +185,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .formimg { width: 146px; height: 146px; }
 .formcolicon { width: 40px; }
 .formbottom { bottom: 0; position: absolute; }
+.companystats { right: 0; }
 .formstatistic { font-size: 18px; text-align: center; }
 .formstatisticicon { padding-top: 3px; }
 .smallinputicon { margin-top: 10px; }

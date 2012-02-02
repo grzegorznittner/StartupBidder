@@ -29,6 +29,7 @@
 </head>
 
 <body class="company-page">
+<div id="fb-root"></div> <!-- for fb like button -->
 <div id="wrap">
 <div id="main">
 
@@ -66,23 +67,22 @@
             <div class="formimg wave"></div>
         </div>
         <div class="formcol2fourth">
-            <span class="formtitlefourth uneditabletext" id="title"></span><br/>
-            by <span id="profile_username"></span><br/>
-            <span id="mantra"></span>
-            <div class="formbottom span-11">
+            <span class="formtitlefourth uneditabletext companytitle" id="title"></span> by <span id="profile_username"></span><br/>
+            <span class="inputmsg" id="mantra"></span><br/>
+            <span class="span-11">
+                <div class="fb-like" data-send="true" data-width="430" data-show-faces="false" data-font="arial"></div> <!-- FIXME: add opengraph meta tags -->
+            </span><br/>
+            <span class="span-11">
+                <g:plusone annotation="inline" width="430"></g:plusone>
+            </span><br/>
+            <span class="span-11">
+                <a href="https://twitter.com/share" class="twitter-share-button" data-via="startupbidder" data-related="startupbidder" data-hashtags="startupbidder">Tweet</a>
+            </span><br/>
+            <div class="formbottom span-5 companystats">
                 <span class="span-1 formstatistic" id="num_votes"></span>
                 <span class="span-1 formstatisticicon"><a href="upvote" class="formlink"><div class="thumbup"></div></a></span>
                 <span class="span-1 formstatistic" id="num_comments"></span>
                 <span class="span-1 formstatisticicon"><div class="commenticon"></div></span>
-                <span class="span-1">
-                    <div class="spritebg facebook"></div>
-                </span>
-                <span class="span-1">
-                    <div class="spritebg twitter"></div>
-                </span>
-                <span class="span-1 last">
-                    <div class="spritebg googleplus"></div>
-                </span>
             </div>
         </div>
     </div>
@@ -509,6 +509,29 @@
   })();
   </script>
 
+  <!-- for facebook like button -->
+  <script>
+    (function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "//connect.facebook.net/en_US/all.js#xfbml=1";
+    fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));
+  </script>
+
+  <!-- for google plus +1 button -->
+  <script type="text/javascript">
+    (function() {
+      var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+      po.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+    })();
+  </script>
+ 
+  <!-- for twitter tweet button -->
+  <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+ 
   <!-- Prompt IE 6 users to install Chrome Frame. Remove this if you want to support IE 6.
        chromium.org/developers/how-tos/chrome-frame-getting-started -->
   <!--[if lt IE 7 ]>
