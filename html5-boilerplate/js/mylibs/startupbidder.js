@@ -14,12 +14,29 @@ pl(function() {
         }
     });
 
+    function CurrencyClass(symbol) {
+        this.symbol = symbol || '$';
+    }
+    pl.implement(CurrencyClass, {
+        format: function(num) {
+		    var nStr = num + '';
+			var x = nStr.split('.');
+			var x1 = x[0];
+			var x2 = x.length > 1 ? '.' + x[1] : '';
+			var rgx = /(\d+)(\d{3})/;
+			while (rgx.test(x1)) {
+				x1 = x1.replace(rgx, '$1' + ',' + '$2');
+			}
+			return this.symbol + x1 + x2;
+        }
+    });
+
     function QueryStringClass() {}
     pl.implement(QueryStringClass, {
         load: function() {
             var i, pairs, keyval;
             this.vars = new Array();
-            pairs = window.location.search ? window.location.search.split( "&" ) : {};
+            pairs = window.location.search ? window.location.search.substr(1).split( "&" ) : {};
             for (i in pairs) {
                 keyval = pairs[ i ].split( "=" );
                 this.vars[ keyval[0] ] = keyval[1];
@@ -88,7 +105,10 @@ pl(function() {
         }
     });
 
-    function ValidatorClass() {}
+    function ValidatorClass() {
+        this.tests = [];
+        this.postValidator = function(result) {};
+    }
     pl.implement(ValidatorClass, {
         isNotEmpty: function(str) {
             var trimmedStr;
@@ -105,37 +125,93 @@ pl(function() {
             checker = new EmailCheckClass();
             return checker.emailCheck(str);
         },
+        makePasswordChecker: function(options) {
+            return function(pw) {
+                var o, property, re, rule, i, matchlen, lower, upper, numbers, qwerty, start, seq;
+                o = { /* default options (allows any password) */
+                    lower:    0,
+                    upper:    0,
+                    alpha:    0, /* lower + upper */
+                    numeric:  0,
+                    special:  0,
+                    length:   [0, Infinity],
+                    custom:   [ /* regexes and/or functions */ ],
+                    badWords: [],
+                    badSequenceLength: 0,
+                    noQwertySequences: false,
+                    noSequential:      false
+                };
+                for (property in options)
+                    o[property] = options[property];
+                re = {
+                    lower:   /[a-z]/g,
+                    upper:   /[A-Z]/g,
+                    alpha:   /[A-Z]/gi,
+                    numeric: /[0-9]/g,
+                    special: /[\W_]/g
+                };
+                if (pw.length < o.length[0])
+                    return "password must be at least " + o.length[0] + " characters";
+                if (pw.length > o.length[1])
+                    return "password must be no more than " + o.length[1] + " characters";
+                for (rule in re) {
+                    matchlen = (pw.match(re[rule]) || []).length;
+                    if (matchlen < o[rule])
+                        return "password must have at least " + o[rule] + " " + rule + " characters";
+                }
+                for (i = 0; i < o.badWords.length; i++) {
+                    if (pw.toLowerCase().indexOf(o.badWords[i].toLowerCase()) > -1)
+                        return "password cannot contain the word " + o.badWords[i];
+                }
+                if (o.noSequential && /([\S\s])\1/.test(pw))
+                    return "password cannot contain sequential identical characters";
+                if (o.badSequenceLength) {
+                    var lower   = "abcdefghijklmnopqrstuvwxyz",
+                        upper   = lower.toUpperCase(),
+                        numbers = "0123456789",
+                        qwerty  = "qwertyuiopasdfghjklzxcvbnm",
+                        start   = o.badSequenceLength - 1,
+                        seq     = "_" + pw.slice(0, start);
+                    for (i = start; i < pw.length; i++) {
+                        seq = seq.slice(1) + pw.charAt(i);
+                        if (
+                            lower.indexOf(seq)   > -1 ||
+                            upper.indexOf(seq)   > -1 ||
+                            numbers.indexOf(seq) > -1) {
+                            return "password cannot have an alphanumeric sequence more than " + o.badSequenceLength + " characters";
+                        }
+                         if (o.noQwertySequences && qwerty.indexOf(seq) > -1) {
+                            return "password cannot have a qwerty sequence more than " + o.badSequenceLength + " characters";
+                        }
+                    }
+                }
+                for (i = 0; i < o.custom.length; i++) {
+                    rule = o.custom[i];
+                    if (rule instanceof RegExp) {
+                        if (!rule.test(pw))
+                            return "password cannot match the regular expression " + rule;
+                    } else if (rule instanceof Function) {
+                        if (!rule(pw))
+                            return "password failed custom rule " + rule;
+                    }
+                }
+                return 0; // good password
+            };
+        },
         add: function(test) {
-            if (!this.tests) {
-                this.tests = [];
-            }
             this.tests.push(test);
         },
         validate: function(str) {
             var i, result;
-            if (!this.tests) {
-                return;
-            }
+            result = 0;
             for (i = 0; i < this.tests.length; i++) {
                 result = this.tests[i](str);
                 if (result !== 0) {
-                    return result;
+                    break;
                 }
             }
-            return 0;
-        }
-    });
-
-    function CheckboxClass() {}
-    pl.implement(CheckboxClass, {
-        setChecked: function(id, isChecked) {
-            var idsel = '#' + id;
-            if (isChecked) {
-                pl(idsel).attr({checked: 'checked', value: 'true'});
-            }
-            else {
-                pl(idsel).removeAttr('checked').attr({value: 'false'});
-            }
+            this.postValidator(result);
+            return result;
         }
     });
 
@@ -180,18 +256,20 @@ pl(function() {
             listingdate = json.listing_date ? date.format(json.listing_date) : 'not posted';
             this.imgClass = images[Math.floor(Math.random()*images.length)];
             this.daysText = json.days_left ? (json.days_left === 0 ? 'closing today!' : (json.days_left < 0 ? 'bidding closed' : json.days_left + ' days left')) : 'closed for bidding';
-            this.typeText = Math.floor(Math.random()*2) ? 'INTERNET' : 'SOFTWARE'; // FIXME: unimplemented API
+            this.typeText = Math.floor(Math.random()*2) ? 'INTERNET' : 'SOFTWARE'; // FIXME
             this.votes = json.num_votes || 0;
             this.posted = listingdate;
             this.name = json.title || 'Listed Company';
-            this.loc = Math.floor(Math.random()*2) ? 'London, UK' : 'San Jose, CA, USA'; // FIXME: unimplemented API
-            this.details = json.summary || 'Company details not provided';
+            this.loc = Math.floor(Math.random()*2) ? 'London, UK' : 'San Jose, CA, USA'; // FIXME
+            this.details = json.mantra || json.summary || 'Company details not provided';
+            this.url = '/company-page.html?id=' + json.listing_id;
         },
         makeHtml: function(lastClass) {
-            var html = '\
+            var html;
+            html = '\
 <span class="span-4 '+ (lastClass?lastClass:'') +'">\
 <div class="tile">\
-    <a href="listing-page.html"><div class="tileimg ' + this.imgClass + '"></div></a>\
+    <a href="' + this.url + '"><div class="tileimg ' + this.imgClass + '"></div></a>\
     <div class="tiledays"></div>\
     <div class="tiledaystext">' + this.daysText + '</div>\
     <div class="tiletype"></div>\
@@ -202,7 +280,7 @@ pl(function() {
         <div class="thumbup tilevoteimg"></div>\
         <div class="tileposted">' + this.posted + '</div>\
     </div>\
-    <a href="listing-page.html">\
+    <a href="' + this.url + '">\
     <p class="tiledesc">\
         <span class="tilecompany">' + this.name + '</span><br/>\
         <span class="tileloc">' + this.loc + '</span><br/>\
@@ -450,12 +528,12 @@ pl(function() {
         }
     });
 
-    function UserMessageClass() {}
+    function UserMessageClass(id) {
+        this.id = id;
+        this.sel = '#' + id;
+        this.isClear = false;
+    }
     pl.implement(UserMessageClass, {
-        setId: function(id) {
-            this.sel = '#'+id;
-            this.isClear = false;
-        },
         show: function(cssClass, text) {
             this.isClear = false;
             pl(this.sel).html('').removeClass('attention').removeClass('inprogress').removeClass('successful').addClass(cssClass).html(text);
@@ -466,12 +544,12 @@ pl(function() {
         }
     });
 
-    function ValidIconClass() {}
+    function ValidIconClass(id) {
+        this.id = id;
+        this.sel = '#' + id;
+        this.isValid = false;
+    }
     pl.implement(ValidIconClass, {
-        setId: function(id) {
-            this.sel = '#' + id;
-            this.isValid = false;
-        },
         showValid: function() {
             this.isValid = true;
             this.clearClasses().addClass('checkboxgreenicon');
@@ -489,106 +567,131 @@ pl(function() {
         }
     });
 
-    function TextFieldClass() {}
-    pl.implement(TextFieldClass, {
-        setId: function(id) {
-            this.id = id;
-            this.sel = '#' + id;
-            this.validator = new ValidatorClass();
-        },
-        setValue: function(value) {
-            this.value = value || ''; // save for later
-            pl(this.sel).attr({value: this.value});
-        },
-        setProfile: function(profile) {
-            this.profile = profile;
-        },
+    function FieldBaseClass(id, value, updateFunction, msgId) {
+        this.id = id;
+        this.value = value !== null ? value : '';
+        this.updateFunction = updateFunction;
+        this.sel = '#' + id;
+        this.validator = new ValidatorClass();
+        this.msg = new UserMessageClass(msgId);
+    }
+    pl.implement(FieldBaseClass, {
         addValidator: function(validatorFunc) {
             this.validator.add(validatorFunc);
         },
+        getLoadFunc: function() {
+            var self = this;
+            return function() {
+                self.msg.show('inprogress', 'Saving changes to server...');
+            };
+        },
+        getErrorFunc: function(displayFunc) {
+            var self = this;
+            return function(errorNum) {
+                displayFunc();
+                self.msg.show('attention', 'Error saving changes to server: ' + errorNum);
+            };
+        },
+        getSuccessFunc: function() {
+            var self = this;
+            return function() {
+                self.msg.show('successful', 'Saved changes to server');
+                self.value = newval;
+            };
+        },
+        disable: function() {
+            pl(this.sel).attr({disabled: 'disabled'});
+        },
+        enable: function() {
+            pl(this.sel).removeAttr('disabled');
+        }
+    });
+
+    function CheckboxFieldClass(id, value, updateFunction, msgId) {
+        this.fieldBase = new FieldBaseClass(id, value, updateFunction, msgId);
+        this.getDisplayFunc()();
+    }
+    pl.implement(CheckboxFieldClass, {
+        getDisplayFunc: function() {
+            var self = this;
+            return function() {
+                if (self.fieldBase.value) {
+                    pl(self.fieldBase.sel).attr({checked: 'checked'});
+                }
+                else {
+                    pl(self.fieldBase.sel).removeAttr('checked');
+                }
+            };
+        },
         bindEvents: function() {
-            var self, msg, iconId, icon, safeStr;
+            var self, onchange;
             self = this;
-            msg = new UserMessageClass();
-            msg.setId('personalinfomsg');
-            iconId = self.id + 'icon';
-            icon = new ValidIconClass();
-            icon.setId(iconId);
+            onchange = function() {
+                var newval, changeKey;
+                changeKey = self.fieldBaseid;
+                newval = pl(self.fieldBase.sel).attr('checked');
+                self.fieldBase.updateFunction({ changeKey: newval }, self.fieldBase.getLoadFunc(), self.fieldBase.getErrorFunc(self.getDisplayFunc()), self.fieldBase.getSuccessFunc());
+            }
+            pl(self.fieldBase.sel).bind({
+                change: onchange
+            });
+        }
+    });
+
+    function TextFieldClass(id, value, updateFunction, msgId) {
+        this.fieldBase = new FieldBaseClass(id, value, updateFunction, msgId);
+        this.getDisplayFunc()();
+    }
+    pl.implement(TextFieldClass, {
+        getDisplayFunc: function() {
+            var self = this;
+            return function() {
+                pl(self.fieldBase.sel).attr({value: self.fieldBase.value});
+            };
+        },
+        bindEvents: function() {
+            var self, icon, safeStr, onchange, onfocus, onblur;
+            self = this;
+            icon = new ValidIconClass(self.fieldBase.id + 'icon');
             safeStr = new SafeStringClass();
-            var onchange = function() {
+            onchange = function() {
                 var newval, validMsg;
-                newval = safeStr.htmlEntities(pl(self.sel).attr('value'));
-                validMsg = self.validator.validate(newval);
+                newval = safeStr.htmlEntities(pl(self.fieldBase.sel).attr('value'));
+                validMsg = self.fieldBase.validator.validate(newval);
                 if (validMsg !== 0) {
-                    msg.show('attention', validMsg);
+                    self.fieldBase.msg.show('attention', validMsg);
                     icon.showInvalid();
                     return;
                 }
-                if (!msg.isClear) {
-                    msg.clear();
+                if (!self.fieldBase.msg.isClear) {
+                    self.fieldBase.msg.clear();
                 }
                 if (!icon.isValid) {
                     icon.showValid();
                 }
             };
-            var onfocus = function() {
-                self.value = pl(self.sel).attr('value'); // save the value
+            onfocus = function() {
+                self.value = pl(self.fieldBase.sel).attr('value'); // save the value
             };
-            var onblur = function(event) { // push to server
-                var filter, newval, validMsg, url, data, changeKey, loadFunc, errorFunc, successFunc, ajax;
-                newval = safeStr.htmlEntities(pl(self.sel).attr('value'));
-                validMsg = self.validator.validate(newval);
+            onblur = function(event) { // push to server
+                var changeKey, newval, validMsg;
+                changeKey = self.fieldBase.id;
+                newval = safeStr.htmlEntities(pl(self.fieldBase.sel).attr('value'));
+                validMsg = self.fieldBase.validator.validate(newval);
                 if (validMsg !== 0) {
-                    pl(self.sel).attr('value', self.value); // restore old name
-                    msg.clear();
+                    pl(self.fieldBase.sel).attr('value', self.value); // restore old name
+                    self.fieldBase.msg.clear();
                     icon.clear();
                     return;
                 }
                 icon.clear();
                 if (self.value === newval) {
-                    msg.clear();
+                    self.fieldBase.msg.clear();
                     return;
                 }
-                url = '/user/update?id=' + self.profile.profile_id;
-                data = { profile: {
-                    profile_id: self.profile.profile_id,
-                    username: self.profile.username,
-                    stauts: self.profile.status,
-                    open_id: self.profile.open_id,
-                    name: pl('#name').attr('value'),
-                    email: pl('#email').attr('value'),
-                    title: pl('#title').attr('value'),
-                    organization: pl('#organization').attr('value'),
-                    investor: pl('#investor').attr('value') || false,
-                    facebook:'',
-                    twitter:'',
-                    linkedin:'',
-                } };
-                changeKey = self.id;
-                data.profile[changeKey] = newval;
-                loadFunc = function() { msg.show('inprogress', 'Saving changes to server...'); };
-                errorFunc = function(errorNum) {
-                    pl(self.sel).attr('value', self.value); // restore old val
-                    msg.show('attention', 'Error saving changes to server: ' + errorNum);
-                };
-                successFunc = function() {
-                    msg.show('successful', 'Saved changes to server');
-                    self.value = newval;
-                };
-                ajax = {
-                    async: true,
-                    url: url,
-                    type: 'POST',
-                    data: data,
-                    dataType: 'json',
-                    charset: 'utf-8',
-                    load: loadFunc,
-                    error: errorFunc,
-                    success: successFunc
-                };
-                pl.ajax(ajax);
+                self.fieldBase.updateFunction({ changeKey: newval }, self.fieldBase.getLoadFunc(), self.fieldBase.getErrorFunc(self.getDisplayFunc()), self.fieldBase.getSuccessFunc());
             };
-            pl(self.sel).bind({
+            pl(self.fieldBase.sel).bind({
                 blur: onblur,
                 focus: onfocus,
                 change: onchange,
@@ -599,65 +702,155 @@ pl(function() {
 
     function EditProfileClass() {}
     pl.implement(EditProfileClass, {
+        deactivateUser: function() {
+            var ajax;
+            ajax = {
+                async: true,
+                url: this.deactivateUrl,
+                type: 'POST',
+                data: {},
+                dataType: 'json',
+                charset: 'utf-8',
+                load: function(){ pl('#deactivatemsg').html('DEACTIVATING...'); },
+                error: function() { pl('#deactivatemsg').html('UNABLE TO DEACTIVATE'); pl('#deactivatebutton').html('DEACTIVATE'); },
+                success: function() {
+                    pl('#deactivatemsg').html('DEACTIVATED, GOING HOME...');
+                    pl('#deactivatebutton').hide();
+                    setTimeout(function(){window.location='/';}, 4000);
+                }
+            };
+            pl.ajax(ajax);
+        },
+        getUpdater: function() {
+            var self = this;
+            return function(newdata, loadFunc, errorFunc, successFunc) {
+            var data, field, ajax;
+            data = { profile: {
+                profile_id: self.profile_id,
+                username: self.username,
+                stauts: self.status,
+                open_id: self.open_id,
+                name: pl('#name').attr('value'),
+                email: pl('#email').attr('value'),
+                title: pl('#title').attr('value'),
+                organization: pl('#organization').attr('value'),
+                investor: pl('#investor').attr('value') || false,
+                facebook:'',
+                twitter:'',
+                linkedin:'',
+            } };
+            for (field in newdata) {
+                data.profile[field] = newdata[field];
+            }
+            ajax = {
+                async: true,
+                url: self.updateUrl,
+                type: 'POST',
+                data: data,
+                dataType: 'json',
+                charset: 'utf-8',
+                load: loadFunc,
+                error: errorFunc,
+                success: successFunc
+            };
+            pl.ajax(ajax);
+            };
+        },
         setProfile: function(json) {
-            var properties, i, property, textFields, textFieldId, textFieldObj, checkbox;
+            var self, properties, updateUrl, i, property, textFields, textFieldId, textFieldObj,
+                investorCheckbox, notifyCheckbox, newPassword, passwordOptions, confirmPassword;
+            self = this;
             properties = ['profile_id', 'status', 'name', 'username', 'open_id', 'profilestatus', 'title', 'organization', 'email', 'phone', 'address'];
             textFields = ['email', 'name', 'title', 'organization', 'phone', 'address'];
-            this.profile_id = json
+            this.profile_id = json.profile_id;
+            this.updateUrl = '/user/update?id=' + this.profile_id;
+            this.deactivateUrl = '/user/deactivate?id=' + this.profile_id;
             for (i = 0; i < properties.length; i++) {
                 property = properties[i];
                 this[property] = json[property];
             }
             for (i = 0; i < textFields.length; i++) {
                 textFieldId = textFields[i];
-                textFieldObj = new TextFieldClass();
-                textFieldObj.setId(textFieldId);
-                textFieldObj.setValue(json[textFieldId]);
-                textFieldObj.setProfile(this);
-                textFieldObj.addValidator(textFieldObj.validator.isNotEmpty);
+                textFieldObj = new TextFieldClass(textFieldId, json[textFieldId], this.getUpdater(), 'personalinfomsg');
+                textFieldObj.fieldBase.addValidator(textFieldObj.fieldBase.validator.isNotEmpty);
                 if (textFieldId === 'email') {
-                    textFieldObj.addValidator(textFieldObj.validator.isEmail);
+                    textFieldObj.fieldBase.addValidator(textFieldObj.fieldBase.validator.isEmail);
                 }
                 textFieldObj.bindEvents();
             }
             pl('#profilestatus').html('');
-            checkbox = new CheckboxClass();
-            checkbox.setChecked('investor', json.investor);
-            checkbox.setChecked('notifyenabled', json.notifyenabled);
-            //- newpassword
-            //- confirmpassword
+            investorCheckbox = new CheckboxFieldClass('investor', json.investor, this.getUpdater(), 'settingsmsg');
+            investorCheckbox.bindEvents();
+            notifyCheckbox = new CheckboxFieldClass('notifyenabled', json.notifyenabled, this.getUpdater(), 'settingsmsg');
+            notifyCheckbox.bindEvents();
+            newPassword = new TextFieldClass('newpassword', '', function(){}, 'passwordmsg');
+            passwordOptions = {
+                length: [8, 32],
+                badWords: ['password', this.name, this.username, this.email, (this.email&&this.email.indexOf('@')>0?this.email.split('@')[0]:'')],
+                badSequenceLength: 3
+            };
+            newPassword.fieldBase.addValidator(newPassword.fieldBase.validator.makePasswordChecker(passwordOptions));
+            newPassword.fieldBase.validator.postValidator = function(result) {
+                if (result === 0) {
+                    pl('#confirmpassword').removeAttr('disabled');
+                }
+                else {
+                    pl('#confirmpassword').attr({disabled: 'disabled'});
+                }
+            };
+            newPassword.bindEvents();
+            confirmPassword = new TextFieldClass('confirmpassword', '', this.getUpdater(), 'passwordmsg');
+            confirmPassword.fieldBase.addValidator(function(val) {
+                if (pl('#newpassword').attr('value') === val) {
+                    return 0;
+                }
+                else {
+                    return "confirm must match new password";
+                }
+            });
+            confirmPassword.bindEvents();
+            pl('#deactivatebutton').bind({click: function(){
+                if (pl('#deactivatemsg').html() === '') {
+                    pl('#deactivatemsg').html('ARE YOU SURE?');
+                    pl('#deactivatebutton').html('YES, DEACTIVATE');
+                }
+                else {
+                    self.deactivateUser();
+                }
+                return false;
+            }});
         }
     });
 
-    function TestCompaniesClass() {}
-    pl.implement(TestCompaniesClass, {
-        testJson: function() {
-            var randomSort, allCompanies, randomLen, companies, i;
-            randomSort = function (a,b) {
+    function TestCompaniesClass() {
+            var randomLen, i;
+            this.randomSort = function (a,b) {
                 var temp = parseInt( Math.random()*10 );
                 var isOddOrEven = temp%2;
                 var isPosOrNeg = temp>5 ? 1 : -1;
                 return( isOddOrEven*isPosOrNeg );
             };
-            allCompanies = [{"num":1,"listing_id":"ag1zdGFydHVwYmlkZGVychcLEgdMaXN0aW5nIgpraWxsIGVtYWlsDA","title":"Kill email","suggested_amt":20000,"suggested_pct":50,"suggested_val":40000,"previous_val":40000,"valuation":40000,"median_valuation":75000,"score":3316,"listing_date":"20111018","closing_date":"20111117","status":"active","summary":"If any startup says it's going to eliminate email, it's destined for failure. You can iterate on the inbox, and try to improve it, but even that's not much of a business. The latest high profile flop in this arena is Google Wave. It was supposed to change email forever. It was going to displace email. Didn't happen.","profile_id":"ag1zdGFydHVwYmlkZGVychkLEgRVc2VyIg9idXNpbmVzc2luc2lkZXIM","profile_username":"Insider","num_comments":38,"num_bids":15,"num_votes":4,"votable":true,"days_ago":95,"days_left":-66,"mockData":true,"business_plan_id":null,"presentation_id":null,"financials_id":null},{"num":2,"listing_id":"ag1zdGFydHVwYmlkZGVychsLEgdMaXN0aW5nIg5sb2NhbG5ld3NzaXRlcww","title":"Local news sites","suggested_amt":9800,"suggested_pct":20,"suggested_val":49000,"previous_val":365217,"valuation":365217,"median_valuation":77000,"score":1326,"listing_date":"20111011","closing_date":"20111110","status":"active","summary":"Maybe Tim Armstrong, AOL, and Patch will prove it wrong, but to this point nobody has been able to crack the local news market and make a sustainable business.In theory creating a network of local news sites that people care about is a good idea. You build a community, there's a baked in advertising group with local businesses, and classifieds. But, it appears to be too niche to scale into a big business.","profile_id":"ag1zdGFydHVwYmlkZGVychQLEgRVc2VyIgpkcmFnb25zZGVuDA","profile_username":"The Dragon","num_comments":22,"num_bids":19,"num_votes":11,"votable":false,"days_ago":102,"days_left":-73,"mockData":true,"business_plan_id":null,"presentation_id":null,"financials_id":null},{"num":3,"listing_id":"ag1zdGFydHVwYmlkZGVyciMLEgdMaXN0aW5nIhZjb21wX3VwZ3JhZGluZ19zZXJ2aWNlDA","title":"Computer Upgrading Service","suggested_amt":11550,"suggested_pct":33,"suggested_val":35000,"previous_val":35000,"valuation":35000,"median_valuation":63000,"score":899,"listing_date":"20111009","closing_date":"20111108","status":"active","summary":"Starting a business that specializes in upgrading existing computer systems with new internal and external equipment is a terrific homebased business to initiate that has great potential to earn an outstanding income for the operator of the business. A computer upgrading service is a very easy business to get rolling, providing you have the skills and equipment necessary to complete upgrading tasks, such as installing more memory into the hard drive, replacing a hard drive, or adding a new disk drive to the computer system. Ideally, to secure the most profitable segment of the potential market, the service should specialize in upgrading business computers as there are many reasons why a business would upgrade a computer system as opposed to replacing the computer system. Additionally, managing the business from a homebased location while providing clients with a mobile service is the best way to keep operating overheads minimized and potentially increases the size of the target market by expanding the service area, due to the fact the business operates on a mobile format.","profile_id":"ag1zdGFydHVwYmlkZGVychkLEgRVc2VyIg9ncnplZ29yem5pdHRuZXIM","profile_username":"Greg","num_comments":34,"num_bids":27,"num_votes":11,"votable":false,"days_ago":104,"days_left":-75,"mockData":true,"business_plan_id":null,"presentation_id":null,"financials_id":null},{"num":4,"listing_id":"ag1zdGFydHVwYmlkZGVychsLEgdMaXN0aW5nIg5zZW1hbnRpY3NlYXJjaAw","title":"Semantic Search","suggested_amt":18000,"suggested_pct":45,"suggested_val":40000,"previous_val":40000,"valuation":40000,"median_valuation":61500,"score":639,"listing_date":"20111005","closing_date":"20111104","status":"active","summary":"The fact of the matter is Google, and to a much lesser extent Bing, own the search market. Ask Barry Diller, if you don't believe us.Yet, startups still spring up hoping to disrupt the incumbents. Cuil flopped. Wolfram Alpha is irrelevant. Powerset, which was a semantic search engine was bailed out by Microsoft, which acquired it.","profile_id":"ag1zdGFydHVwYmlkZGVychILEgRVc2VyIghqcGZvd2xlcgw","profile_username":"fowler","num_comments":2,"num_bids":24,"num_votes":4,"votable":false,"days_ago":108,"days_left":-79,"mockData":true,"business_plan_id":null,"presentation_id":null,"financials_id":null},{"num":5,"listing_id":"ag1zdGFydHVwYmlkZGVyciILEgdMaXN0aW5nIhVzb2NpYWxyZWNvbW1lbmRhdGlvbnMM","title":"Social recommendations","suggested_amt":1500,"suggested_pct":10,"suggested_val":15000,"previous_val":15000,"valuation":15000,"median_valuation":42500,"score":412,"listing_date":"20111004","closing_date":"20111103","status":"active","summary":"It's a very tempting idea. Collect data from people about their tastes and preferences. Then use that data to create recommendations for others. Or, use that data to create recommendations for the people that filled in the information. It doesn't work. The latest to try is Hunch and Get Glue.Hunch is pivoting towards non-consumer-facing white label business. Get Glue has had some success of late, but it's hardly a breakout business.","profile_id":"ag1zdGFydHVwYmlkZGVychELEgRVc2VyIgdjaGluZXNlDA","profile_username":"The One","num_comments":42,"num_bids":20,"num_votes":3,"votable":false,"days_ago":109,"days_left":-80,"mockData":true,"business_plan_id":null,"presentation_id":null,"financials_id":null}];
-            allCompanies.sort(randomSort);
-            randomLen = Math.floor(Math.random() * allCompanies.length);
-            companies = [];
+            this.allCompanies = [{"num":1,"listing_id":"ag1zdGFydHVwYmlkZGVychcLEgdMaXN0aW5nIgpraWxsIGVtYWlsDA","title":"Kill email","suggested_amt":20000,"suggested_pct":50,"suggested_val":40000,"previous_val":40000,"valuation":40000,"median_valuation":75000,"score":3316,"listing_date":"20111018","closing_date":"20111117","status":"active","mantra":"Making email as obsolete as the memo.","summary":"If any startup says it's going to eliminate email, it's destined for failure. You can iterate on the inbox, and try to improve it, but even that's not much of a business. The latest high profile flop in this arena is Google Wave. It was supposed to change email forever. It was going to displace email. Didn't happen.","profile_id":"ag1zdGFydHVwYmlkZGVychkLEgRVc2VyIg9idXNpbmVzc2luc2lkZXIM","profile_username":"Insider","num_comments":38,"num_bids":15,"num_votes":4,"votable":true,"days_ago":95,"days_left":-66,"mockData":true,"business_plan_id":null,"presentation_id":null,"financials_id":null},{"num":2,"listing_id":"ag1zdGFydHVwYmlkZGVychsLEgdMaXN0aW5nIg5sb2NhbG5ld3NzaXRlcww","title":"Local news sites","suggested_amt":9800,"suggested_pct":20,"suggested_val":49000,"previous_val":365217,"valuation":365217,"median_valuation":77000,"score":1326,"listing_date":"20111011","closing_date":"20111110","status":"active","mantra":"Local news made global","summary":"Maybe Tim Armstrong, AOL, and Patch will prove it wrong, but to this point nobody has been able to crack the local news market and make a sustainable business.In theory creating a network of local news sites that people care about is a good idea. You build a community, there's a baked in advertising group with local businesses, and classifieds. But, it appears to be too niche to scale into a big business.","profile_id":"ag1zdGFydHVwYmlkZGVychQLEgRVc2VyIgpkcmFnb25zZGVuDA","profile_username":"The Dragon","num_comments":22,"num_bids":19,"num_votes":11,"votable":false,"days_ago":102,"days_left":-73,"mockData":true,"business_plan_id":null,"presentation_id":null,"financials_id":null},{"num":3,"listing_id":"ag1zdGFydHVwYmlkZGVyciMLEgdMaXN0aW5nIhZjb21wX3VwZ3JhZGluZ19zZXJ2aWNlDA","title":"Computer Upgrading Service","suggested_amt":11550,"suggested_pct":33,"suggested_val":35000,"previous_val":35000,"valuation":35000,"median_valuation":63000,"score":899,"listing_date":"20111009","closing_date":"20111108","status":"active","mantra":"Taking the pain out of managing your technology","summary":"Starting a business that specializes in upgrading existing computer systems with new internal and external equipment is a terrific homebased business to initiate that has great potential to earn an outstanding income for the operator of the business. A computer upgrading service is a very easy business to get rolling, providing you have the skills and equipment necessary to complete upgrading tasks, such as installing more memory into the hard drive, replacing a hard drive, or adding a new disk drive to the computer system. Ideally, to secure the most profitable segment of the potential market, the service should specialize in upgrading business computers as there are many reasons why a business would upgrade a computer system as opposed to replacing the computer system. Additionally, managing the business from a homebased location while providing clients with a mobile service is the best way to keep operating overheads minimized and potentially increases the size of the target market by expanding the service area, due to the fact the business operates on a mobile format.","profile_id":"ag1zdGFydHVwYmlkZGVychkLEgRVc2VyIg9ncnplZ29yem5pdHRuZXIM","profile_username":"Greg","num_comments":34,"num_bids":27,"num_votes":11,"votable":false,"days_ago":104,"days_left":-75,"mockData":true,"business_plan_id":null,"presentation_id":null,"financials_id":null},{"num":4,"listing_id":"ag1zdGFydHVwYmlkZGVychsLEgdMaXN0aW5nIg5zZW1hbnRpY3NlYXJjaAw","title":"Semantic Search","suggested_amt":18000,"suggested_pct":45,"suggested_val":40000,"previous_val":40000,"valuation":40000,"median_valuation":61500,"score":639,"listing_date":"20111005","closing_date":"20111104","status":"active","mantra":"Adding meaning to your search experience","summary":"The fact of the matter is Google, and to a much lesser extent Bing, own the search market. Ask Barry Diller, if you don't believe us.Yet, startups still spring up hoping to disrupt the incumbents. Cuil flopped. Wolfram Alpha is irrelevant. Powerset, which was a semantic search engine was bailed out by Microsoft, which acquired it.","profile_id":"ag1zdGFydHVwYmlkZGVychILEgRVc2VyIghqcGZvd2xlcgw","profile_username":"fowler","num_comments":2,"num_bids":24,"num_votes":4,"votable":false,"days_ago":108,"days_left":-79,"mockData":true,"business_plan_id":null,"presentation_id":null,"financials_id":null},{"num":5,"listing_id":"ag1zdGFydHVwYmlkZGVyciILEgdMaXN0aW5nIhVzb2NpYWxyZWNvbW1lbmRhdGlvbnMM","title":"Social recommendations","suggested_amt":1500,"suggested_pct":10,"suggested_val":15000,"previous_val":15000,"valuation":15000,"median_valuation":42500,"score":412,"listing_date":"20111004","closing_date":"20111103","status":"active","mantra":"Purchasing for status in your peer group","summary":"It's a very tempting idea. Collect data from people about their tastes and preferences. Then use that data to create recommendations for others. Or, use that data to create recommendations for the people that filled in the information. It doesn't work. The latest to try is Hunch and Get Glue.Hunch is pivoting towards non-consumer-facing white label business. Get Glue has had some success of late, but it's hardly a breakout business.","profile_id":"ag1zdGFydHVwYmlkZGVychELEgRVc2VyIgdjaGluZXNlDA","profile_username":"The One","num_comments":42,"num_bids":20,"num_votes":3,"votable":false,"days_ago":109,"days_left":-80,"mockData":true,"business_plan_id":null,"presentation_id":null,"financials_id":null}];
+            this.allCompanies.sort(this.randomSort);
+            randomLen = Math.floor(Math.random() * this.allCompanies.length);
+            this.companies = [];
             for (i = 0; i < randomLen; i++) {
-                companies[i] = allCompanies[i];
+                this.companies[i] = this.allCompanies[i];
             }
-            return companies;
+    }
+    pl.implement(TestCompaniesClass, {
+        testJson: function() {
+            return this.companies;
         },
         testNotifications: function() {
-            var types, dates, companies, i, company, notifications, notification;
+            var types, dates, i, company, notifications, notification;
             types = ['comment', 'bid'];
             dates = ['2011/11/29 13:12', '2011/12/20 9:46', '2012/01/13 8:37'];
-            companies = this.testJson();
             notifications = [];
-            for (i = 0; i < companies.length; i++) {
-                company = companies[i];
+            for (i = 0; i < this.companies.length; i++) {
+                company = this.companies[i];
                 notification = {};
-                notification.url = '/listing_page.html?id=' + company.listing_id;
+                notification.url = '/company-page.html?id=' + company.listing_id;
                 notification.type = types[Math.floor(Math.random() * types.length)]
                 notification.text =  'You received a ' + notification.type + ' on ' + company.title;
                 notification.date = dates[Math.floor(Math.random() * dates.length)]
@@ -737,6 +930,7 @@ pl(function() {
                 var header, profile;
                 if (!json) {
                     pl('#profilestatus').html('<span class="notice">Error: null response from server</span>');
+                    pl('#profilecolumn').hide();
                     return;
                 }
                 header = new HeaderClass();
@@ -758,21 +952,132 @@ pl(function() {
         }
     });
 
+    function ListingClass(json) {
+        var key;
+        if (json && json.listing && json.listing.listing_id) {
+            this.id = json.listing.listing_id;
+            for (key in json.listing) {
+                this[key] = json.listing[key];
+            }
+        }
+        this.dateobj = new DateClass();
+        this.currency = new CurrencyClass();
+        this.testcompany = (new TestCompaniesClass()).testJson()[0]; // FIXME
+    };
+    pl.implement(ListingClass, {
+        displayListing: function() {
+            this.displayBasics();
+            this.displayInfobox();
+            this.displayMap();
+            this.displayFunding();
+        },
+        displayBasics: function() {
+            this.mantra = this.mantra || this.testcompany.mantra; // FIXME
+            this.videourl = this.videourl || this.testcompany.videourl || 'http://www.youtube.com/embed/QoAOzMTLP5s'; // FIXME
+            pl('#title').html(this.title);
+            pl('#profile_username').html(this.profile_username);
+            pl('#mantra').html(this.mantra);
+            pl('#num_votes').html(this.num_votes);
+            pl('#num_comments').html(this.num_comments);
+            pl('#videopresentation').attr({src: this.videourl});
+            pl('#summary').html(this.summary);
+        },
+        displayInfobox: function() {
+            this.category = this.category || (Math.floor(Math.random()*2) ? 'INTERNET' : 'SOFTWARE'); // FIXME
+            this.websiteurl = this.websiteurl || 'http://wave.google.com';
+            this.domainname = this.websiteurl.split('/')[2].split('?');
+            pl('#category').html(this.category);
+            pl('#listing_date').html(this.listing_date ? this.dateobj.format(this.listing_date) : 'not posted');
+            pl('#websitelink').attr({href: this.websiteurl});
+            pl('#domainname').html(this.domainname);
+        },
+        displayMap: function() {
+            this.address = this.address || Math.floor(Math.random()*2) ? '221B Baker St, London, UK' : '170W Tasman Dr, San Jose, CA, USA'; // FIXME
+            this.addressurl = this.addressurl || 'http://nominatim.openstreetmap.org/search?q=' + encodeURIComponent(this.address);
+            this.latitude = this.latitude || '51.499117116569'; // FIXME
+            this.longitude = this.longitude || '-0.12359619140625'; // FIXME
+            this.mapurl = 'http://ojw.dev.openstreetmap.org/StaticMap/?lat=' + this.latitude + '&lon=' + this.longitude + '&z=5&show=1&fmt=png&w=302&h=302&att=none';
+            pl('#address').html(this.address);
+            pl('#addresslink').attr({href: this.addressurl});
+            pl('#mapimg').attr({src: this.mapurl});
+        },
+        displayFunding: function() {
+            this.askingFunding = this.askingFunding || (this.suggested_amt > 0 ? true : false);
+            if (this.askingFunding) {
+                this.suggested_type = this.suggested_type || (Math.floor(Math.random()*2) ? 'COMMON EQUITY' : 'COMMON AS CONVERTIBLE DEBT'); // FIXME
+                pl('#suggested_amt').html(this.currency.format(this.suggested_amt));
+                pl('#suggested_pct').html(this.suggested_pct);
+                pl('#suggested_val').html(this.currency.format(this.suggested_val));
+                pl('#suggested_type').html(this.suggested_type);
+                pl('#closingmsg').html(this.closing_date && this.days_left >= 0 ? 'CLOSES ON ' + this.dateobj.format(closing_date) + ' (' + (this.days_left > 0 ? this.days_left + ' DAYS LEFT' : 'CLOSES TODAY!') + ')' : 'BIDDING CLOSED');
+            }
+            else {
+                pl('#suggestedmsg').html('NOT SEEKING FUNDING');
+                pl('#suggestedinfo').hide();
+            }
+        }
+    });
+
+    function ListingPageClass() {
+        if (!this.queryString) {
+            this.queryString = new QueryStringClass();
+            this.queryString.load();
+        }
+        this.id = this.queryString.vars.id;
+        this.url = '/listings/get/' + this.id;
+    };
+    pl.implement(ListingPageClass,{
+        loadPage: function() {
+            var loadFunc, errorFunc, successFunc, ajax;
+            loadFunc = function() {
+                pl('#listingstatus').html('<span class="notice">Loading profile...</span>');
+            };
+            errorFunc = function(errorNum) {
+                pl('#listingstatus').html('<span class="notice">Error while loading profile: '+errorNum+'</span>');
+            };
+            successFunc = function(json) {
+                var header, listing;
+                if (!json) {
+                    pl('#listingstatus').html('<span class="notice">Error: null response from server</span>');
+                    return;
+                }
+                pl('#listingstatus').html('');
+                header = new HeaderClass();
+                header.setLogin(json);
+                listing = new ListingClass(json);
+                listing.displayListing();
+            };
+            ajax = {
+                async: true,
+                url: this.url,
+                type: 'GET',
+                dataType: 'json',
+                charset: 'utf-8',
+                load: loadFunc,
+                error: errorFunc,
+                success: successFunc
+            };
+            pl.ajax(ajax);
+        }
+    });
+
     function DispatcherClass() {}
     pl.implement(DispatcherClass,{
         loadPage: function() {
-            var pageClass, page;
-            if (pl('body').hasClass('main-page')) {
-                pageClass = MainPageClass;
-            }
-            else if (pl('body').hasClass('profile-page')) {
-                pageClass = ProfilePageClass;;
-            }
-            else if (pl('body').hasClass('edit-profile-page')) {
-                pageClass = EditProfilePageClass;;
-            }
-            else {
-                pageClass = InformationPageClass;
+            var classList, i, bodyClass, pageClass, page;
+            classList = [
+                [ 'main-page', MainPageClass ],
+                [ 'profile-page', ProfilePageClass ],
+                [ 'edit-profile-page', EditProfilePageClass ],
+                [ 'company-page', ListingPageClass ],
+                [ 'default', InformationPageClass ] // default must be last
+            ];
+            for (i = 0; i < classList.length; i++) {
+                bodyClass = classList[i][0];
+                pageClass = classList[i][1];
+                if (pl('body').hasClass(bodyClass)) {
+                    break;
+                }
             }
             page = new pageClass();
             page.loadPage();

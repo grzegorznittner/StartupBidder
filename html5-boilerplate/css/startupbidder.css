@@ -164,6 +164,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .inputcheckbox { margin-top: 4px; height: 33px; }
 /* .inputselect { margin-top: 0px; height: 29px; }  */
 .inputhelp { padding-top: 10px; height: 33px; }
+.inputmsg { font-weight: bold; }
 .formlabelvalue { width: 180px; }
 .inputicon { padding-top: 6px; }
 .inputlink { padding-top: 10px; height: 33px; }
