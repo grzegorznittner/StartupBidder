@@ -124,6 +124,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .mapicon { width: 16px; height: 16px; background: url(../img/icons/map.png); }
 .normalicon { float: left; margin-right: 5px; }
 
+
 /* searchbar styles */
 .searchbar { height: 24px; margin-top: 4px; font-size: 14px !important; font-weight: bold; }
 .searchtext { padding-top: 10px; height: 18px; }
@@ -232,7 +233,11 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .boxstep4 { left: 375px; }
 .boxstep5 { left: 500px; width: 126px; }
 .boxstepcomplete { background-color: #999999; }
-.commentpanel dl dt { font-size: 10px; padding-top: 5px; padding-bottom: 5px; }
+.commentpanel dl dt { font-size: 12px; height: 32px; padding: 0 0 0 10px; }
+.commentdttitle { position: relative; height: 32px; }
+.commentdttitleline { padding-top: 7px; }
+.commentdelete { width: 32px; height: 32px; margin: 0; position: absolute; top: 0; right: 0; }
+.commentdelete:hover { opacity: 0.7; cursor: pointer; }
 .boxoption { display: block; float: left; text-align: center; height: 25px; padding-top: 5px; margin-bottom: 5px; font-weight: bold; }
 .boxoption1 { width: 146px; }
 .boxoption2 { width: 160px; }
