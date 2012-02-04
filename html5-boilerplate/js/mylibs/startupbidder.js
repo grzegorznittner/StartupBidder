@@ -963,10 +963,12 @@ pl(function() {
         },
         displayMap: function() {
             this.address = this.address || Math.floor(Math.random()*2) ? '221B Baker St, London, UK' : '170W Tasman Dr, San Jose, CA, USA'; // FIXME
-            this.addressurl = this.addressurl || 'http://nominatim.openstreetmap.org/search?q=' + encodeURIComponent(this.address);
+            //this.addressurl = this.addressurl || 'http://nominatim.openstreetmap.org/search?q=' + encodeURIComponent(this.address);
+            this.addressurl = 'http://maps.google.com/maps?q=' + encodeURI(this.title) + ',' + encodeURI(this.address);
             this.latitude = this.latitude || '51.499117116569'; // FIXME
             this.longitude = this.longitude || '-0.12359619140625'; // FIXME
-            this.mapurl = 'http://ojw.dev.openstreetmap.org/StaticMap/?lat=' + this.latitude + '&lon=' + this.longitude + '&z=5&show=1&fmt=png&w=302&h=302&att=none';
+            //this.mapurl = 'http://ojw.dev.openstreetmap.org/StaticMap/?lat=' + this.latitude + '&lon=' + this.longitude + '&z=5&show=1&fmt=png&w=302&h=302&att=none';
+            this.mapurl = 'http://maps.googleapis.com/maps/api/staticmap?center=' + encodeURI(this.address) + '&zoom=10&size=302x298&maptype=roadmap&markers=color:blue%7Clabel:' + encodeURI(this.title) + '%7C' + encodeURI(this.address) + '&sensor=false';
             pl('#address').html(this.address);
             pl('#addresslink').attr({href: this.addressurl});
             pl('#mapimg').attr({src: this.mapurl});
