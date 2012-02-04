@@ -64,22 +64,27 @@
     <div class="boxpanel companylistingbox">
         <div id="listingstatus"></div>
         <div class="listingbox" id="listingdata">
-        <div class="formcol1fourth">
-            <img class="formimg companylogo" id="companylogo" src=""></img>
-        </div>
-        <div class="formcol2fourth">
-            <span class="formtitlefourth uneditabletext companytitle" id="title"></span><br/>
-            by <span id="profile_username"></span><br/>
-            <span class="inputmsg" id="mantra"></span><br/>
-        </div>
-        <div class="span-15 companylistingstats">
-            <span class="span-1 formstatistic" id="num_votes"></span>
-            <span class="span-1 formstatisticicon"><a href="upvote" class="formlink"><div class="thumbup"></div></a></span>
-            <span class="span-1 formstatistic" id="num_comments"></span>
-            <span class="span-1 formstatisticicon"><div class="commenticon"></div></span>
-        </div>
+            <div class="formcol1fourth">
+                <img class="formimg companylogo" id="companylogo" src=""></img>
+            </div>
+            <div class="formcol2fourth">
+                <span class="formtitlefourth uneditabletext companytitle" id="title"></span><br/>
+                by <span id="profile_username"></span><br/>
+                <span class="inputmsg" id="mantra"></span><br/>
+                <div class="span-11 companylistingstats">
+                    <span class="span-1 formstatistic" id="num_votes"></span>
+                    <span class="span-1 formstatisticicon"><a href="upvote" class="formlink"><div class="thumbup"></div></a></span>
+                    <span class="span-1 formstatistic" id="num_comments"></span>
+                    <span class="span-1 formstatisticicon"><div class="commenticon"></div></span>
+                </div>
+            </div>
         </div>
     </div>
+
+    <div class="boxtitle">ELEVATOR PITCH</div>
+    <div class="boxpanel">
+        <p id="summary"></p>
+	</div>
 
     <div class="boxtitle">VIDEO PRESENTATION</div>
     <div class="boxpanel">
@@ -87,11 +92,6 @@
       	    <iframe width="622" height="452" id="videopresentation" src="http://www.youtube.com/embed/tQlsXFfSuZU" frameborder="0" allowfullscreen></iframe> 
 	    </div>
     </div>
-
-    <div class="boxtitle">ELEVATOR PITCH</div>
-    <div class="boxpanel">
-        <p id="summary"></p>
-	</div>
 
  <!-- OWNER VIEW -->
 <!--
@@ -167,7 +167,7 @@
                 </span>
         </div>
         <div>
-            <textarea class="textarea inputfullwidetextshort" id="bidnote" name="addcommentnext" cols="20" rows="5">Your note to the entrepreneur here...</textarea>
+            <textarea class="textarea inputfullwidetextshort" id="bidnote" name="bidnote" cols="20" rows="5">Your note to the entrepreneur here...</textarea>
         </div>
         <div>
             <span class="widelabel">YOUR VALUATION IS $64,000</span>
@@ -206,18 +206,12 @@
         </dl>
 	</div>
 
-    <div class="boxtitle">ADD COMMENT</div>
-    <div class="boxpanel commentpanel">
+    <div class="boxtitle addcommenttitle" id="addcommenttitle">ADD COMMENT</div>
+    <div class="boxpanel commentpanel addcommentbox" id="addcommentbox">
         <div>
-            <textarea class="textarea inputfullwidetextshort" id="addcommenttext" name="addcommentnext" cols="20" rows="5">Put your comment here..."</textarea>
+            <textarea class="textarea inputfullwidetextshort notedited" id="addcommenttext" name="addcommenttext" cols="20" rows="5">Put your comment here...</textarea>
         </div>
-        <div>
-            <a href="#">
-                <span class="push-12 span-3 inputbutton" id="addcommentbutton">
-                    POST
-                </span>
-            </a>
-        </div>
+        <div class="addcommentmsg successful" id="addcommentmsg"></div>
     </div>
 
     <div class="boxtitle">COMMENTS</div>

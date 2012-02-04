@@ -452,7 +452,7 @@ pl(function() {
             type = this.getListingsType();
             this.storeListingsTitle(type);
             url = this.getListingsUrl(type);
-            ajax = new AjaxClass('GET', url, 'companydiv', completeFunc);
+            ajax = new AjaxClass(url, 'companydiv', completeFunc);
             ajax.call();
         }
     });
@@ -730,7 +730,8 @@ pl(function() {
                 for (field in newdata) {
                     data.profile[field] = newdata[field];
                 }
-                ajax = new AjaxClass('POST', self.updateUrl, '?', null, successFunc, loadFunc, errorFunc);
+                ajax = new AjaxClass(self.updateUrl, '', null, successFunc, loadFunc, errorFunc);
+                ajax.setPostData(data);
                 ajax.call();
             };
         },
@@ -868,7 +869,7 @@ pl(function() {
                 companyList.storeList(json, 4, 'bidondiv', 'bidon');
                 companyList.storeList(json, 4, 'upvoteddiv', 'upvoted');
             };
-            ajax = new AjaxClass('GET', '/user/loggedin', 'profilestatus', completeFunc);
+            ajax = new AjaxClass('/user/loggedin', 'profilestatus', completeFunc);
             ajax.call();
         }
     });
@@ -889,7 +890,7 @@ pl(function() {
                 header.setLogin(json);
                 editProfile.setProfile(json);
             };
-            ajax = new AjaxClass('GET', '/user/loggedin', 'profilestatus', null, successFunc);
+            ajax = new AjaxClass('/user/loggedin', 'profilestatus', null, successFunc);
             ajax.call();
         }
     });
@@ -906,7 +907,7 @@ pl(function() {
             self.store(json);
             self.display();
         };
-        this.ajax = new AjaxClass('GET', this.url, this.statusId, this.completeFunc);
+        this.ajax = new AjaxClass(this.url, this.statusId, this.completeFunc);
     };
     pl.implement(ListingClass, {
         store: function(json) {
@@ -1043,7 +1044,7 @@ pl(function() {
             self.store(json);
             self.display();
         };
-        this.ajax = new AjaxClass('GET', this.url, this.statusId, this.completeFunc);
+        this.ajax = new AjaxClass(this.url, this.statusId, this.completeFunc);
         this.date = new DateClass();
         this.safeStr = new SafeStringClass();
     }
@@ -1053,8 +1054,50 @@ pl(function() {
         },
         store: function(json) {
             this.comments = json.comments || [];
+            this.loggedin_profile_id = json.loggedin_profile ? json.loggedin_profile.profile_id : null;
         },
         display: function() {
+            this.displayAddCommentBox();
+            this.displayComments();
+        },
+        displayAddCommentBox: function() {
+            var self;
+            self = this;
+            if (!this.loggedin_profile_id) {
+                return;
+            }
+            pl('#addcommenttext').bind({
+                focus: function() {
+                    if (pl('#addcommenttext').hasClass('notedited')) {
+                        pl('#addcommenttext').removeClass('notedited').html('').attr({value: ''});
+                    }
+                },
+                keyup: function(event) {
+                    var keycode, completeFunc, ajax;
+                    keycode = event.keyCode || event.which;
+                    if (keycode && keycode === 13) {
+                        completeFunc = function() {
+                            pl('#addcommenttext').addClass('notedited').attr({value: 'Put your comment here...'}).get(0).blur();
+                            pl('#addcommentmsg').html('Comment posted');
+                            self.load();
+                        };
+                        ajax = new AjaxClass('/comment/create', 'addcommentmsg', completeFunc);
+                        ajax.setPostData({
+                            comment: {
+                                listing_id: self.listing_id,
+                                profile_id: self.loggedin_profile_id,
+                                text: pl('#addcommenttext').attr('value')
+                            }
+                        });
+                        ajax.call();
+                    }
+                    return false;
+                }
+            });
+            pl('#addcommenttitle').show();
+            pl('#addcommentbox').show();            
+        },
+        displayComments: function() {
             var html, i, comment;
             if (this.comments.length === 0) {
                 pl('#commentlist').hide();
@@ -1078,28 +1121,27 @@ pl(function() {
         }
     });
 
-    function AjaxClass(type, url, statusId, completeFunc, successFunc, loadFunc, errorFunc) {
+    function AjaxClass(url, statusId, completeFunc, successFunc, loadFunc, errorFunc) {
         var self;
         self = this;
-        this.type = type; // GET or POST
         this.url = url;
         this.statusId = statusId;
         this.statusSel = '#' + statusId;
         this.completeFunc = completeFunc || function(json) {};
         this.successFunc = successFunc || function(json) {
             if (!json) {
-                pl('#listingstatus').html('<span class="notice">Error: null response from server</span>');
+                pl('#listingstatus').html('<span class="attention">Error: null response from server</span>');
                 return;
             }
             pl(self.statusSel).html('');
             self.completeFunc(json);
         };
-        this.loadFunc = loadFunc || function() { pl(self.statusSel).html('<span class="notice">Loading...</span>'); };
-        this.errorFunc = errorFunc || function(errorNum) { pl(self.statusSel).html('<span class="notice">Error from server: ' + errorNum + '</span>'); };
+        this.loadFunc = loadFunc || function() { pl(self.statusSel).html('<span class="inprogress">Loading...</span>'); };
+        this.errorFunc = errorFunc || function(errorNum) { pl(self.statusSel).html('<span class="attention">Error from server: ' + errorNum + '</span>'); };
         this.ajaxOpts = {
             async: true,
             url: this.url,
-            type: this.type,
+            type: 'GET',
             dataType: 'json',
             charset: 'utf-8',
             load: this.loadFunc,
@@ -1108,6 +1150,16 @@ pl(function() {
         };
     }
     pl.implement(AjaxClass, {
+        setPostData: function(data) { // for post operations
+            var property, propertyData, serializedData;
+            serializedData = {};
+            for (property in data) {
+                propertyData = data[property];
+                serializedData[property] = JSON.stringify(propertyData);
+            }
+            this.ajaxOpts.type = 'POST';
+            this.ajaxOpts.data = serializedData;
+        },
         call: function() {
             pl.ajax(this.ajaxOpts);
         }
