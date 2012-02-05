@@ -584,7 +584,9 @@ pl(function() {
             };
         },
         getSuccessFunc: function() {
-            var self = this;
+            var self, newval;
+            self = this;
+            newval = self.value;
             return function() {
                 self.msg.show('successful', 'Saved changes to server');
                 self.value = newval;
@@ -677,7 +679,7 @@ pl(function() {
                 }
                 icon.clear();
                 if (self.value === newval) {
-                    self.fieldBase.msg.clear();
+                    //self.fieldBase.msg.clear();
                     return;
                 }
                 self.fieldBase.updateFunction({ changeKey: newval }, self.fieldBase.getLoadFunc(), self.fieldBase.getErrorFunc(self.getDisplayFunc()), self.fieldBase.getSuccessFunc());
@@ -725,7 +727,7 @@ pl(function() {
                     email: pl('#email').attr('value'),
                     title: pl('#title').attr('value'),
                     organization: pl('#organization').attr('value'),
-                    investor: pl('#investor').attr('value') || false,
+                    investor: pl('#investor').attr('value') ? 'true' : 'false',
                     facebook:'',
                     twitter:'',
                     linkedin:'',
@@ -1075,12 +1077,12 @@ pl(function() {
                 focus: function() {
                     console.log('focus');
                     if (!pl('#addcommenttext').hasClass('edited')) {
-                        pl('#addcommenttext').attr({value: ' '});
+                        pl('#addcommenttext').attr({value: ''});
                         pl('#addcommentmsg').html('');
                     }
                 },
                 change: function() {
-                    pl('#addcommenttext').addClass('edited').attr({value: ' '});
+                    pl('#addcommenttext').addClass('edited').attr({value: ''});
                     pl('#addcommentmsg').html('');
                 },
                 blur: function() {
