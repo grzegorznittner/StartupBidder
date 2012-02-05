@@ -1041,6 +1041,120 @@ pl(function() {
         }
     });
 
+    function BidsClass(listing_id) {
+        var self;
+        self = this;
+        this.listing_id = listing_id;
+        this.url = '/bids/listing/' + this.listing_id;
+        this.statusId = 'bidsmsg';
+        this.completeFunc = function(json) {
+            self.store(json);
+            self.display();
+        };
+        this.ajax = new AjaxClass(this.url, this.statusId, this.completeFunc);
+        this.date = new DateClass();
+        this.safeStr = new SafeStringClass();
+        this.currency = new CurrencyClass();
+    }
+    pl.implement(BidsClass, {
+        load: function() {
+            this.ajax.call();
+        },
+        store: function(json) {
+            this.bids = json.bids || [];
+            this.loggedin_profile_id = json.loggedin_profile ? json.loggedin_profile.profile_id : null;
+        },
+        display: function() {
+            this.displayMakeBid();
+            this.displayReviseBid();
+            this.displayBids();
+        },
+        displayMakeBid: function () {
+        },
+        displayReviseBid: function () {
+        },
+        displayBids: function() {
+            var html, i, bid, mybid;
+            if (this.bids.length === 0) {
+                pl('#bidslist').hide();
+                pl('#bidsmsg').html('No bids').show();
+                return;
+            }
+            html = '';
+            withdrawableBids = [];
+            for (i = 0; i < this.bids.length; i++) {
+                bid = this.bids[i];
+                if (bid.profile_id === this.loggedin_profile_id) {
+                    mybid = true;
+                }
+                else {
+                    mybid = false;
+                }
+                html += this.makeBid(bid, mybid);
+            }
+            pl('#bidsmsg').hide();
+            pl('#bidslist').html(html).show();
+        },
+        makeBid: function(bid, mybid) {
+            var actor, action, bidIcon, displayType, bidNote;
+            if (mybid) {
+                actor = 'You';
+            }
+            else if (bid.profile_id === bid.listing_profile_id) {
+                actor = 'The owner';
+            }
+            else {
+                actor = bid.profile_username;
+            }
+            if (bid.status === 'accepted') {
+                action = 'accepted the bid';
+                bidIcon = 'thumbup';
+            }
+            else if (bid.status === 'rejected') {
+                action = 'rejected the bid';
+                bidIcon = 'thumbdownicon';
+            }
+            else if (bid.status === 'withdrawn') {
+                action = 'withdrew their bid';
+                bidIcon = 'withdrawicon';
+            }
+            else if (bid.status === 'countered') { // FIXME: unimplemented
+                action = 'made a counteroffer for the bid';
+                bidIcon = 'countericon';
+            }
+            else { // active status
+                action = 'made a bid';
+                bidIcon = 'bidicon';
+            }
+            if (bid.bid_type === 'note') {
+                displayType = 'a convertible note'; // FIXME: interest rate needed
+            }
+            else if (bid.bid_type === 'preferred') {
+                displayType = 'convertible preferred stock'; // FIXME: interest rate needed
+            }
+            else {
+                displayType = 'common stock'
+            }
+            bidNote = bid.bid_note ? this.safeStr.htmlEntities(bid.bid_note) : (
+                actor === 'The owner'
+                ? (Math.random() > 0.5 ? 'My company is worth more than this' : 'There is a huge opportunity in investing in me')
+                : (Math.random() > 0.5 ? 'This is the best I can offer' : 'I see a lot of potential here')
+            ); // FIXME: should usually be bid note
+            return '\
+<dt id="bid_' + bid.bid_id + '">\
+    <div>\
+        <div class="normalicon ' + bidIcon + '"></div>\
+        ' + actor + ' ' + action + ' on ' + this.date.format(bid.bid_date) + '\
+    </div>\
+    <div>\
+        ' + this.currency.format(bid.amount) + ' for ' + bid.equity_pct + '% equity as ' + displayType +' with company valued at ' + this.currency.format(bid.valuation) + '\
+    </div>\
+</dt>\
+<dd id="bid_dd_' + bid.bid_id + '">' + bidNote + '</dd>\
+';
+        }
+    });
+
     function CommentsClass(listing_id) {
         var self;
         self = this;
@@ -1075,7 +1189,6 @@ pl(function() {
             }
             pl('#addcommenttext').bind({
                 focus: function() {
-                    console.log('focus');
                     if (!pl('#addcommenttext').hasClass('edited')) {
                         pl('#addcommenttext').attr({value: ''});
                         pl('#addcommentmsg').html('');
@@ -1141,7 +1254,6 @@ pl(function() {
                 comment = this.comments[i];
                 commentDeleteSel = '#comment_delete_' + comment.comment_id;
                 pl(commentDeleteSel).bind({click: this.deleteCommentGenerator(comment)});
-                console.log('sel:', commentDeleteSel);
             }
         },
         deleteCommentGenerator: function(comment) {
@@ -1166,7 +1278,7 @@ pl(function() {
         },
         makeComment: function(comment, deletable) {
             return '\
-<dt id="comment_' + comment.comment_id + '" style="">\
+<dt id="comment_' + comment.comment_id + '">\
     <div class="commentdttitle">\
     <div class="commentdttitleline">Posted by ' + comment.profile_username + ' on ' + this.date.format(comment.comment_date) + '\
         ' + (deletable ? ' <span id="comment_delete_msg_' + comment.comment_id + '"></span>' : '') + '\
@@ -1237,10 +1349,10 @@ pl(function() {
         loadPage: function() {
             var listing, bids, comments;
             listing = new ListingClass(this.id);
-            //bids = new BidsClass(this.id);
+            bids = new BidsClass(this.id);
             comments = new CommentsClass(this.id);
             listing.load();
-            //bids.load();
+            bids.load();
             comments.load();
         }
     });
