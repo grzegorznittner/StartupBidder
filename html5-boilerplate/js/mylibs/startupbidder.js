@@ -433,16 +433,24 @@ pl(function() {
 
     function BaseCompanyListPageClass() {};
     pl.implement(BaseCompanyListPageClass,{
-        getListingsType: function() {
-            var type;
-            if (!this.queryString) {
-                this.queryString = new QueryStringClass();
-                this.queryString.load();
-            }
-            type = this.queryString.vars.type || 'top';
-            return type;
+        setListingsType: function(type) {
+            this.type = type;
         },
-        getListingsUrl: function(type) {
+        getListingsType: function() {
+            if (!this.type) {
+                if (!this.queryString) {
+                    this.queryString = new QueryStringClass();
+                    this.queryString.load();
+                }
+                this.type = this.queryString.vars.type || 'top';
+            }
+            return this.type;
+        },
+        getListingsUrl: function(type, listing_id) {
+            if (type === 'related') { // FIXME: related unimplemented
+                // type = 'related?id='+listing_id
+                type = 'top';
+            }
             var url = '/listings/' + type;
             return url;
         },
@@ -457,6 +465,22 @@ pl(function() {
             url = this.getListingsUrl(type);
             ajax = new AjaxClass(url, 'companydiv', completeFunc);
             ajax.call();
+        }
+    });
+
+    function RelatedCompaniesClass(listing_id) {
+        this.listing_id = listing_id;
+    }
+    pl.implement(RelatedCompaniesClass, {
+        load: function() {
+            var completeFunc, basePage;
+            completeFunc = function(json) {
+                companyList = new CompanyListClass();
+                companyList.storeList(json,2);
+            };
+            basePage = new BaseCompanyListPageClass();
+            basePage.setListingsType('related', this.listing_id);
+            basePage.loadPage(completeFunc);
         }
     });
 
@@ -1351,9 +1375,11 @@ pl(function() {
             listing = new ListingClass(this.id);
             bids = new BidsClass(this.id);
             comments = new CommentsClass(this.id);
+            companies = new RelatedCompaniesClass(this.id);
             listing.load();
             bids.load();
             comments.load();
+            companies.load();
         }
     });
 
