@@ -958,6 +958,7 @@ pl(function() {
             this.displayBasics();
             this.displayInfobox();
             this.displayMap();
+            this.displayDocuments();
             this.displayFunding();
             this.displaySocial();
         },
@@ -999,10 +1000,32 @@ pl(function() {
             pl('#addresslink').attr({href: this.addressurl});
             pl('#mapimg').attr({src: this.mapurl});
         },
+        displayDocumentLink: function(linkId, btnId, docId) {
+            var url;
+            if (!docId && Math.random() > 0.5) { // FIXME: simulation
+                docId = 'ag1zdGFydHVwYmlkZGVych4LEgpMaXN0aW5nRG9jIg5Eb2MtMjExMzY3MzkxOAw';
+            }
+            if (docId) {
+                url = '/file/download/' + docId;
+                pl('#'+btnId).addClass('span-3 smallinputbutton').html('DOWNLOAD');
+                pl('#'+linkId).attr({href: url});
+                
+            }
+            else {
+                pl('#'+btnId).addClass('span-3 doclinkmsg attention').html('NONE');
+                pl('#'+linkId).attr({href: '#'}).addClass('nohover').bind({click: function() { return false; }});
+            }
+        },
+        displayDocuments: function() {
+            this.displayDocumentLink('presentationlink', 'presentationbtn', this.presentation_id);
+            this.displayDocumentLink('businessplanlink', 'businessplanbtn', this.business_plan_id);
+            this.displayDocumentLink('financialslink', 'financialsbtn', this.financials_id);
+            pl('#documentbox').show();
+        },
         displayFunding: function() {
             this.askingFunding = this.askingFunding || (this.suggested_amt > 0 ? true : false);
             if (this.askingFunding) {
-                this.suggested_type = this.suggested_type || (Math.floor(Math.random()*2) ? 'COMMON EQUITY' : 'COMMON AS CONVERTIBLE DEBT'); // FIXME
+                this.suggested_type = this.suggested_type || (Math.floor(Math.random()*2) ? 'COMMON STOCK' : 'PREFERRED STOCK'); // FIXME
                 pl('#suggested_amt').html(this.currency.format(this.suggested_amt));
                 pl('#suggested_pct').html(this.suggested_pct);
                 pl('#suggested_val').html(this.currency.format(this.suggested_val));
