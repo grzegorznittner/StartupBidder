@@ -76,6 +76,7 @@
                     <span class="span-1 formstatisticicon"><a href="upvote" class="formlink"><div class="thumbup"></div></a></span>
                     <span class="span-1 formstatistic" id="num_comments"></span>
                     <span class="span-1 formstatisticicon"><div class="commenticon"></div></span>
+                    <span class="span-6 formstatistictxt" id="companystatus"></span>
                 </div>
             </div>
         </div>
@@ -187,25 +188,18 @@
         <dl id="commentlist"></dl>
 	</div>
 
-    <div class="boxtitle">WITHDRAW LISTING</div>
-    <div class="boxpanel commentpanel">
+    <div class="boxtitle withdrawtitle" id="withdrawtitle">WITHDRAW LISTING</div>
+    <div class="boxpanel commentpanel withdrawbox" id="withdrawbox">
         <p>
-            <span class="attention inputmsg">ARE YOU SURE YOU WANT TO WITHRDAW LISTING?  NO BIDS MAY BE RECEIVED AFTER THE LISTING IS WITHDRAWN.  THIS OPERATION CANNOT BE UNDONE.</span>
+            <span class="attention inputmsg">NO BIDS MAY BE RECEIVED AFTER THE LISTING IS WITHDRAWN.  THIS OPERATION CANNOT BE UNDONE.</span>
         </p>
-        <div>
-            <a href="#">
-                <span class="push-9 span-6 inputbutton" id="withdrawbutton">
-                    WITHDRAW LISTING
-                </span>
-            </a>
-        </div>
+        <p>
+            <span class="span-9 attention inputmsg" id="withdrawmsg">&nbsp;</span>
+            <span class="span-6 inputbutton" id="withdrawbtn">WITHDRAW LISTING</span>
+        </p>
     </div>
 
-
 </div> <!-- end left column -->
-
-
-
 
 <!-- right column -->
 <div class="span-8 last">
@@ -213,6 +207,8 @@
     <div class="sidebox">
         <span class="formlabel">CATEGORY</span>
         <span class="formlabelvalue" id="category"></span>
+        <span class="formlabel">TYPE</span>
+        <span class="formlabelvalue" id="legaltype"></span>
         <span class="formlabel clear">POSTED</span>
         <span class="formlabelvalue" id="listing_date"></span>
         <span class="formlabel clear">WEBSITE</span>

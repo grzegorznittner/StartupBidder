@@ -39,6 +39,7 @@ body { font-size: 14px; font-weight: normal; color: #4083a9; background: #f2f2f2
 /* link styles */
 a:link, a:visited { text-decoration: none; color: #4083a9; }
 a:hover { opacity: 0.7; cursor: pointer; }
+.inputbutton:hover { opacity: 0.7; cursor: pointer }
 .nohover:hover { opacity: 1.0; cursor: default; }
 
 /* colors */
@@ -191,6 +192,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .formbottom { bottom: 0; position: absolute; }
 .companystats { right: 0; }
 .formstatistic { font-size: 18px; text-align: center; }
+.formstatistictxt { font-size: 18px; text-align: left; }
 .formstatisticicon { padding-top: 3px; }
 .smallinputicon { margin-top: 10px; }
 .smallformlabel { margin-top: 10px; }
@@ -270,6 +272,8 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .bidpanel { padding-top: 5px; }
 .listingbox { display: none; }
 .documentbox { display: none; }
+.withdrawtitle { display: none; }
+.withdrawbox { display: none; }
 
 /* tiles */
 .tile { width: 146px; height: 296px; border: 2px solid #999999; border-radius: 5px; overflow: hidden; margin-bottom: 10px; position: relative; background: #e3e3e3; }
