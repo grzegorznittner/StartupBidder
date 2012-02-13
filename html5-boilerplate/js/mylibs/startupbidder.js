@@ -1033,16 +1033,29 @@ pl(function() {
         displayFunding: function() {
             this.askingFunding = this.askingFunding || (this.suggested_amt > 0 ? true : false);
             if (this.askingFunding) {
-                this.suggested_type = this.suggested_type || (Math.floor(Math.random()*2) ? 'COMMON STOCK' : 'PREFERRED STOCK'); // FIXME
                 pl('#suggested_amt').html(this.currency.format(this.suggested_amt));
                 pl('#suggested_pct').html(this.suggested_pct);
                 pl('#suggested_val').html(this.currency.format(this.suggested_val));
-                pl('#suggested_type').html(this.suggested_type);
                 pl('#closingmsg').html(this.closing_date && this.days_left >= 0 ? 'CLOSES ON ' + this.dateobj.format(closing_date) + ' (' + (this.days_left > 0 ? this.days_left + ' DAYS LEFT' : 'CLOSES TODAY!') + ')' : 'BIDDING CLOSED');
+                if (this.num_bids && this.num_bids > 0) {
+                    this.best_bid_pct = 10 + 5*Math.floor(8*Math.random()); // FIXME
+                    this.best_bid_amt = this.valuation ? Math.floor((this.best_bid_pct / 100) * this.valuation) : 1000 + 1000*Math.floor(99*Math.random());
+                    this.best_bid_val = this.valuation || (100 * this.best_bid_amt / this.best_bid_pct); // FIXME
+                    pl('#num_bids').html(this.num_bids);
+                    pl('#best_bid_amt').html(this.currency.format(this.best_bid_amt));
+                    pl('#best_bid_pct').html(this.best_bid_pct);
+                    pl('#best_bid_val').html(this.currency.format(this.best_bid_val));
+                    pl('#bidboxinfo').show();
+                }
+                else {
+                    pl('#bidboxstatus').html('NO BIDS').show();
+                }
+                pl('#suggestedinfo').show();
+                pl('#bidboxtitle').show();
+                pl('#bidbox').show();
             }
             else {
-                pl('#suggestedmsg').html('NOT SEEKING FUNDING');
-                pl('#suggestedinfo').hide();
+                pl('#suggestedmsg').html('NOT SEEKING FUNDING').show();
             }
         },
         displaySocial: function() {

@@ -60,7 +60,7 @@
 
 <!-- left column -->
 <div class="span-16">
-    <div class="boxtitle">COMPANY LISTING</div>
+    <div class="boxtitle">COMPANY</div>
     <div class="boxpanel companylistingbox">
         <div id="listingstatus"></div>
         <div class="listingbox" id="listingdata">
@@ -82,15 +82,15 @@
         </div>
     </div>
 
-    <div class="boxtitle">ELEVATOR PITCH</div>
+    <div class="boxtitle">SUMMARY</div>
     <div class="boxpanel">
         <p id="summary"></p>
 	</div>
 
-    <div class="boxtitle">VIDEO PRESENTATION</div>
+    <div class="boxtitle">VIDEO</div>
     <div class="boxpanel">
 	    <div class="videocontainer">
-      	    <iframe width="622" height="452" id="videopresentation" src="http://www.youtube.com/embed/tQlsXFfSuZU" frameborder="0" allowfullscreen></iframe> 
+      	    <iframe width="622" height="452" id="videopresentation" src="" frameborder="0" allowfullscreen></iframe> 
 	    </div>
     </div>
 
@@ -106,7 +106,7 @@
         </dl>
     </div>
 -->
-    <div class="boxtitle">BIDS</div>
+    <div class="boxtitle">BID DETAILS</div>
     <div class="boxpanel">
         <div id="bidsmsg"></div>
         <dl id="bidslist"></dl>
@@ -146,7 +146,7 @@
         </div>
     </div>
 
-    <div class="boxtitle">QUESTIONS AND ANSWERS</div>
+    <div class="boxtitle">Q&amp;A</div>
     <div class="boxpanel">
         <dl>
             <dt>CUSTOMER - WHO IS THE TARGET CUSTOMER?</dt>
@@ -203,15 +203,15 @@
 
 <!-- right column -->
 <div class="span-8 last">
-    <div class="boxtitle">ABOUT COMPANY</div>
+    <div class="boxtitle">ABOUT</div>
     <div class="sidebox">
-        <span class="formlabel">CATEGORY</span>
+        <span class="aboutlabel">CATEGORY</span>
         <span class="formlabelvalue" id="category"></span>
-        <span class="formlabel">TYPE</span>
+        <span class="aboutlabel">TYPE</span>
         <span class="formlabelvalue" id="legaltype"></span>
-        <span class="formlabel clear">POSTED</span>
+        <span class="aboutlabel clear">POSTED</span>
         <span class="formlabelvalue" id="listing_date"></span>
-        <span class="formlabel clear">WEBSITE</span>
+        <span class="aboutlabel clear">WEBSITE</span>
         <span class="formlabelvalue formlink">
             <a href="#" target="_blank" id="websitelink">
                 <div class="span-1 linkicon"></div><span id="domainname"></span>
@@ -219,7 +219,7 @@
         </span>
     </div>
 
-    <div class="boxtitle">COMPANY LOCATION</div>
+    <div class="boxtitle">LOCATION</div>
     <div class="sidebox">
         <a href="#" class="formlink" target="_blank" id="addresslink">
             <div>
@@ -233,21 +233,21 @@
 
     <div class="boxtitle">DOCUMENTS</div>
     <div class="sidebox documentbox" id="documentbox">
-        <span class="smallformlabel clear">Slide Deck</span>
+        <span class="doclabel clear">Slide Deck</span>
         <span class="formlabelvalue formlink">
             <div class="span-1 smallinputicon presentationicon"></div>
             <a href="#" id="presentationlink">
                 <span id="presentationbtn"></span>
             </a>
         </span>
-        <span class="smallformlabel">Business Plan</span>
+        <span class="doclabel">Business Plan</span>
         <span class="formlabelvalue formlink">
             <div class="span-1 smallinputicon documenticon"></div>
             <a href="#" id="businessplanlink">
                 <span id="businessplanbtn"></span>
             </a>
         </span>
-        <span class="smallformlabel clear">Financials</span>
+        <span class="doclabel clear">Financials</span>
         <span class="formlabelvalue formlink">
             <div class="span-1 smallinputicon spreadsheeticon"></div>
             <a href="#" id="financialslink">
@@ -256,28 +256,30 @@
         </span>
     </div>
 
-    <div class="boxtitle">ASKING FUNDING</div>
+    <div class="boxtitle">ASKING</div>
     <div class="sidebox uneditabletext">
-        <div class="sideboxdesc" id="suggestedmsg"></div>
-        <div id="suggestedinfo">
+        <div class="sideboxdesc suggestedmsg" id="suggestedmsg"></div>
+        <div class="suggestedinfo" id="suggestedinfo">
             <div class="sideboxtitlecompact" id="suggested_amt"></div>
-            <div class="sideboxdesc">FOR <span id="suggested_qty"></span>1,000,000 <span id="suggested_qtytype">SHARES</span></div>
-            <div class="sideboxdesc">AS <span id="suggested_type"></span></div>
-            <div class="sideboxdesc">BEING <span id="suggested_pct"></span>% FULLY DILUTED</div>
-            <div class="sideboxdesc">AT A PRE-MONEY VALUATION OF <span id="suggested_val"></span></div>
+            <div class="sideboxdesc">FOR <span id="suggested_pct"></span>% EQUITY</div>
+            <div class="sideboxdesc">OWNER VALUATION IS <span id="suggested_val"></span></div>
             <div class="sideboxdesc"><span id="closingmsg"></span></div>
         </div>
     </div>
-<!--
-    <div class="boxtitle">CURRENT BIDS</div>
-    <div class="sidebox uneditabletext">
-        <div class="sideboxtitlecompact">2 BIDS</div>
-        <div class="sideboxdesc">BEST BID IS</div>
-        <div class="sideboxtitlecompact">$16,000</div>
-        <div class="sideboxdesc">FOR 25% COMMON EQUITY</div>
-        <div class="sideboxdesc">BID VALUATION IS $64,000</div>
+
+    <div class="boxtitle bidboxtitle" id="bidboxtitle">BIDS</div>
+    <div class="sidebox uneditabletext bidbox" id="bidbox">
+        <div class="sideboxtitlecompact bidboxstatus" id="bidboxstatus"></div>
+        <div class="bidboxinfo" id="bidboxinfo">
+            <div class="sideboxtitlecompact"><span id="num_bids"></span> BIDS</div>
+            <div class="sideboxdesc">BEST BID IS</div>
+            <div class="sideboxtitlecompact" id="best_bid_amt"></div>
+            <div class="sideboxdesc">FOR <span id="best_bid_pct"></span>% EQUITY</div>
+            <div class="sideboxdesc">BID VALUATION IS <span id="best_bid_val"></span></div>
+        </div>
     </div>
 
+<!--
     <div class="boxtitle">YOUR BID</div>
     <div class="sidebox uneditabletext">
         <div>
@@ -307,7 +309,7 @@
     </div>
 -->
 
-    <div class="boxtitle">SPREAD THE LOVE</div>
+    <div class="boxtitle">SHARE</div>
     <div class="sidebox socialsidebox">
         <span class="span-11">
             <a href="https://twitter.com/share" class="twitter-share-button" data-size="large" data-via="startupbidder" data-related="startupbidder" data-hashtags="startupbidder"></a><br/>
