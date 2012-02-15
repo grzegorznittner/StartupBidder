@@ -31,7 +31,20 @@ pl(function() {
 				x1 = x1.replace(rgx, '$1' + ',' + '$2');
 			}
 			return this.symbol + x1 + x2;
-        }
+        },
+        clean: function(str) {
+            var cleaned;
+            cleaned = str.replace(/[^0-9]/g, '');
+            return cleaned;
+        },
+        isCurrency: function(str) {
+            if (str.match(/^[$]?[0-9]{1,3}(,?[0-9]{3})*$/)) {
+                return 0;
+            }
+            else {
+                return 'Please enter a currency value';
+            }
+        },
     });
 
     function URLClass(url) {
@@ -217,6 +230,9 @@ pl(function() {
         validate: function(str) {
             var i, result;
             result = 0;
+            if (this.preValidateTransform) {
+                str = this.preValidateTransform(str);
+            }
             for (i = 0; i < this.tests.length; i++) {
                 result = this.tests[i](str);
                 if (result !== 0) {
@@ -1173,16 +1189,72 @@ pl(function() {
         },
         store: function(json) {
             this.bids = json.bids || [];
+            this.listing = json.listing || {};
             this.loggedin_profile_id = json.loggedin_profile ? json.loggedin_profile.profile_id : null;
         },
         display: function() {
-            this.displayMakeBid();
-            this.displayReviseBid();
+            if (this.listing.status === 'active') {
+                this.displayMakeBid();
+                this.displayCounterBid();
+            }
             this.displayBids();
         },
         displayMakeBid: function () {
+            var i, bid, existingBid;
+            for (i = 0; i < this.bids.length; i++) {
+                bid = this.bids[i];
+                if (bid.profile_id === this.loggedin_profile_id && bid.status === 'active') { // they have an active bid
+                    existingBid = bid;
+                    break;
+                }
+                i++;
+            }
+            if (existingBid) { // prefill and set to revise bid
+                this.displayReviseBid(existingBid);
+            }
+            else {
+                this.displayNewBid();
+            }
+            pl('#makebidboxtitle').show();
+            pl('#makebidbox').show();
         },
-        displayReviseBid: function () {
+        displayReviseBid: function(existingBid) {
+            pl('#makebidboxtitle').html('REVISE BID');
+            pl('#makebid_amt').attr({value: this.currency.format(existingBid.amount)});
+            pl('#makebid_pct').attr({value: existingBid.equity_pct});
+            pl('#makebid_type').attr({value: existingBid.bid_type});
+            if (existingBid.bid_type !== 'common' && existingBid.interest_rate) {
+                pl('#makebid_rate').attr({value: existingBid.interest_rate});
+                pl('#makebid_rate_box').show();
+            }
+            pl('#makebid_val').html(this.currency.format(existingBid.valuation));
+            pl('#makebid_note').attr({value: 'This bid replaces the existing bid placed on ' + this.date.format(existingBid.bid_date)});
+            pl('#makebid_btn').html('REVISE BID');
+        },
+        displayNewBid: function() {
+            var self, makebidAmt;
+            self = this;
+            pl('#makebid_pct').attr({value: this.listing.suggested_pct});
+            pl('#makebid_type').attr({value: 'common'});
+            pl('#makebid_val').html(this.currency.format(this.listing.suggested_val));
+            pl('#makebid_note').attr({value: 'Your note to the bidder here...'});
+            makebidAmt = new TextFieldClass('makebid_amt', this.currency.format(this.listing.suggested_amt), function(){}, 'makebid_msg');
+            makebidAmt.fieldBase.addValidator(this.currency.isCurrency);
+            makebidAmt.fieldBase.validator.preValidateTransform = this.currency.clean;
+            makebidAmt.fieldBase.validator.postValidator = function(result) {
+                var src, cleaned, displayed;
+                if (result === 0) {
+                    src = pl('#makebid_amt').attr('value');
+                    cleaned = self.currency.clean(src);
+                    displayed = self.currency.format(cleaned);
+                    pl('#makebid_amt').attr({value: displayed});
+                }
+            };
+            makebidAmt.bindEvents();
+        },
+        displayCounterBid: function () {
+            pl('#counterboxtitle').show();
+            pl('#counterbox').show();
         },
         displayBids: function() {
             var html, i, bid, mybid;
@@ -1214,8 +1286,11 @@ pl(function() {
             else if (bid.profile_id === bid.listing_profile_id) {
                 actor = 'The owner';
             }
-            else {
+            else if (bid.listing_profile_id === this.loggedin_profile_id) { // i'm the logged in owner of this listing // FIXME: backend should do this
                 actor = bid.profile_username;
+            }
+            else {
+                actor = 'Anonymous';
             }
             if (bid.status === 'accepted') {
                 action = 'accepted the bid';
@@ -1244,7 +1319,7 @@ pl(function() {
                 displayType = 'convertible preferred stock'; // FIXME: interest rate needed
             }
             else {
-                displayType = 'common stock'
+                displayType = 'common stock';
             }
             bidNote = bid.bid_note ? this.safeStr.htmlEntities(bid.bid_note) : (
                 actor === 'The owner'

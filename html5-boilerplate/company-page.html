@@ -112,9 +112,8 @@
         <dl id="bidslist"></dl>
 	</div>
 
-    <!-- <div class="boxtitle">MAKE OFFER</div> -->
-    <div class="boxtitle">MAKE COUNTEROFFER</div>
-    <div class="boxpanel uneditabletext bidpanel">
+    <div class="boxtitle counterboxtitle" id="counterboxtitle">MAKE COUNTEROFFER</div>
+    <div class="boxpanel uneditabletext bidpanel counterbox" id="counterbox">
             <div>
                 <span class="bidformlabel">
                     <input class="text bidinputtitle" type="text" value="$16,000" maxlength="8" size="8" id="bidamount" name="bidamount"></input>
@@ -279,35 +278,34 @@
         </div>
     </div>
 
-<!--
-    <div class="boxtitle">YOUR BID</div>
-    <div class="sidebox uneditabletext">
+    <div class="boxtitle makebidboxtitle" id="makebidboxtitle">MAKE BID</div>
+    <div class="sidebox uneditabletext makebidbox" id="makebidbox">
         <div>
-            <input class="title sideinputtitle" type="text" value="$25,000" maxlength="8" size="8" id="bidamount" name="bidamonut"></input>
+            <input class="title sideinputtitle" type="text" value="" maxlength="8" size="8" id="makebid_amt" name="makebid_amt"></input>
         </div>
         <div class="sideboxdesc">
-            <span class="sideboxlabelsmall">FOR</span>
-            <input class="text inputtextpct" type="text" value="10%" maxlength="3" size="3" id="bidequity" name="bidequity"></input>
-            <select class="inputselect" id="bidtype" name="bidtype">
+            <span class="makebidboxlabel">FOR</span>
+            <input class="text inputtextpct" type="text" value="" maxlength="2" size="2" id="makebid_pct" name="makebid_pct"></input>%
+            <select class="inputselect" id="makebid_type" name="makebid_type">
                 <option value="common">Common Stock</option>
-                <option value="convertible">Convertible Note</option>
                 <option value="preferred">Preferred Stock</option>
+                <option value="convertible">Convertible Note</option>
             </select>
         </div>
-        <div class="sideboxdesc">
-            <span class="sideboxlabelsmall">AT</span>
-            <input class="text inputtextpct" type="text" value="12%" maxlength="3" size="3" id="bidrate" name="bidrate" disabled="true"></input>
+        <div class="sideboxdesc makebid_rate_box" id="makebid_rate_box">
+            <span class="makebidboxlabel">AT</span>
+            <input class="text inputtextpct" type="text" value="" maxlength="2" size="2" id="makebid_rate" name="makebid_rate"></input>%
             INTEREST
         </div>
-        <div class="sideboxdesc">YOUR VALUATION IS $250,000</div>
+        <div class="sideboxdesc">YOUR VALUATION IS <span id="makebid_val"></span></div>
         <div class="sideboxdesc">
-            <textarea class="sideinputtextarea" id="bidnote" name="bidnote" rows="20" cols="5">Your note to the bidder here...</textarea>
+            <textarea class="sideinputtextarea" id="makebid_note" name="makebid_note" rows="20" cols="5"></textarea>
         </div>
+        <div class="sideboxdesc" id="makebid_msg"></div>
         <a href="#">
-            <div class="sideboxbuttoninterior">BID NOW</div>
+            <div class="sideboxbuttoninterior" id="makebid_btn">BID NOW</div>
         </a>
     </div>
--->
 
     <div class="boxtitle">SHARE</div>
     <div class="sidebox socialsidebox">
