@@ -1195,7 +1195,6 @@ pl(function() {
         display: function() {
             if (this.listing.status === 'active') {
                 this.displayMakeBid();
-                this.displayCounterBid();
             }
             this.displayBids();
         },
@@ -1237,7 +1236,7 @@ pl(function() {
             pl('#makebid_pct').attr({value: this.listing.suggested_pct});
             pl('#makebid_type').attr({value: 'common'});
             pl('#makebid_val').html(this.currency.format(this.listing.suggested_val));
-            pl('#makebid_note').attr({value: 'Your note to the bidder here...'});
+            pl('#makebid_note').attr({value: 'Your note to the owner here...'});
             makebidAmt = new TextFieldClass('makebid_amt', this.currency.format(this.listing.suggested_amt), function(){}, 'makebid_msg');
             makebidAmt.fieldBase.addValidator(this.currency.isCurrency);
             makebidAmt.fieldBase.validator.preValidateTransform = this.currency.clean;
@@ -1251,10 +1250,6 @@ pl(function() {
                 }
             };
             makebidAmt.bindEvents();
-        },
-        displayCounterBid: function () {
-            pl('#counterboxtitle').show();
-            pl('#counterbox').show();
         },
         displayBids: function() {
             var html, i, bid, mybid;
