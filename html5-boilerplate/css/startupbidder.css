@@ -289,6 +289,8 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .makebid_rate_box { display: none; }
 .counterboxtitle { display: none; }
 .counterbox { display: none; }
+.bidclosedtitle { display: none; }
+.bidclosedbox { display: none; }
 
 /* tiles */
 .tile { width: 146px; height: 296px; border: 2px solid #999999; border-radius: 5px; overflow: hidden; margin-bottom: 10px; position: relative; background: #e3e3e3; }

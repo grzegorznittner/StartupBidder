@@ -1193,10 +1193,23 @@ pl(function() {
             this.loggedin_profile_id = json.loggedin_profile ? json.loggedin_profile.profile_id : null;
         },
         display: function() {
-            if (this.listing.status === 'active') {
+            if (this.listing.status !== 'active') {
+                //this.displayBidClosed(); // FIXME: uncomment for production
+                //return;
+            }
+            if (this.loggedin_profile_id !== this.listing.profile_id) { // it's not user's listing
                 this.displayMakeBid();
             }
-            this.displayBids();
+            if (this.bids.length !== 0) {
+                this.displayBids();
+            }
+        },
+        displayBidClosed: function () {
+            var str;
+            str = "Bidding closed " + -1 * this.listing.days_left + " days ago."; // FIXME: state the winner, what was accepted
+            pl('#bidclosedmsg').html(str);
+            pl('#bidclosedtitle').show();
+            pl('#bidclosedbox').show();
         },
         displayMakeBid: function () {
             var i, bid, existingBid;
@@ -1253,13 +1266,7 @@ pl(function() {
         },
         displayBids: function() {
             var html, i, bid, mybid;
-            if (this.bids.length === 0) {
-                pl('#bidslist').hide();
-                pl('#bidsmsg').html('No bids').show();
-                return;
-            }
             html = '';
-            withdrawableBids = [];
             for (i = 0; i < this.bids.length; i++) {
                 bid = this.bids[i];
                 if (bid.profile_id === this.loggedin_profile_id) {
@@ -1268,10 +1275,9 @@ pl(function() {
                 else {
                     mybid = false;
                 }
-                html += this.makeBid(bid, mybid);
+                html += this.makeBidHtml(bid, mybid);
             }
-            pl('#bidsmsg').hide();
-            pl('#bidslist').html(html).show();
+            pl('#makebidbox').after(html);
         },
         makeBid: function(bid, mybid) {
             var actor, action, bidIcon, displayType, bidNote;
@@ -1332,6 +1338,83 @@ pl(function() {
     </div>\
 </dt>\
 <dd id="bid_dd_' + bid.bid_id + '">' + bidNote + '</dd>\
+';
+        },
+        makeBidHtml : function(bid) {
+            var bidid, bidtitleid, bidboxid, bidamtid, bidpctid, bidtypeid, bidrateboxid, bidrateid, bidnoteid, bidmsgid, bidvalid, bidbtnid, biddate, username,
+                bidamt, bidpct, bidtype, bidrate, bidnote, bidval, bidmsg;
+            bidid = bid.bid_id;
+            bidtitleid = 'bidtitle_' + bidid;
+            bidboxid = 'bidbox_' + bidid;
+            bidamtid = 'bidamt_' + bidid;
+            bidpctid = 'bidpct_' + bidid;
+            bidtypeid = 'bidtype_' + bidid;
+            bidrateboxid = 'bidratebox_' + bidid;
+            bidrateid = 'bidrate_' + bidid;
+            bidnoteid = 'bidnote_' + bidid;
+            bidmsgid = 'bidmsg_' + bidid;
+            bidvalid  = 'bidval_' + bidid;
+            bidbtnid = 'bidbtn_' + bidid;
+            biddate = this.date.format(bid.bid_date);
+            username = bid.profile_username.toUpperCase();
+            bidamt = this.currency.format(bid.amount);
+            bidpct = bid.equity_pct;
+            bidtype = bid.bid_type;
+            bidrate = bid.interest_rate;
+            bidnote = bid.bid_note || '';
+            bidval = this.currency.format(bid.valuation);
+            if (bid.status === 'accepted') {
+                bidmsg = 'OWNER ACCEPTED BID';
+            }
+            else if (bid.status === 'withdrawn') {
+                bidmsg = 'INVESTOR WITHDREW BID';
+            }
+            else if (bid.status === 'withdrawn') {
+                bidmsg = 'ACTIVE BID';
+            }
+            else {
+                bidmsg = '';
+            }
+return '\
+    <div class="boxtitle" id="' + bidtitleid + '">BID FROM ' + username + ' ON ' + biddate + '</div>\
+    <div class="boxpanel uneditabletext bidpanel" id="' + bidboxid + '">\
+        <div>\
+            <span class="bidformlabel">\
+                <input class="text bidinputtitle" type="text" value="" maxlength="8" size="8" id="' + bidamtid + '" name="' + bidamtid + '" value="' + bidamt + '"></input>\
+            </span>\
+            <span class="bidformtext span-1">FOR</span>\
+            <span class="bidformitem">\
+                <input class="text bidinputtextpct" type="text" value="" maxlength="2" size="2" id="' + bidpctid + '" name="' + bidpctid + '" value="' + bidpct + '"></input>\
+            </span>\
+            <span class="bidformtext span-1">%&nbsp;&nbsp;AS</span>\
+            <span class="bidformitem">\
+                <select class="bidinputselect" id="' + bidtypeid + '" name="' + bidtypeid + '" value="' + bidtype + '">\
+                    <option value="common">COMMON STOCK</option>\
+                    <option value="preferred">PREFERRED STOCK</option>\
+                    <option value="note">CONVERTIBLE NOTE</option>\
+                </select>\
+            </span>\
+'+(bidrate > 0 ? '\
+            <span class="bidformitem" id="' + bidrateboxid + '">\
+                <span class="bidformtext">@</span>\
+                <input class="text bidinputtextpct pctwide" type="text" value="" maxlength="2" size="2" id="' + bidrateid + '" name="' + bidrateid + '" value="' + bidrate +'"></input>\
+                <span class="bidformtext">%</span>\
+            </span>\
+' : '') + '\
+        </div>\
+        <div>\
+            <textarea class="textarea inputfullwidetextshort" id="' + bidnoteid + '" name="' + bidnoteid + '" rows="20" cols="5" value="' + bidnote + '"></textarea>\
+        </div>\
+        <div class="inputmsg" id="' + bidmsgid + '">' + bidmsg + '</div>\
+        <div>\
+            <span class="bidvallabel">BID VALUATION IS <span id="' + bidvalid + '">' + bidval + '</span></span>\
+' + (this.loggedin_profile_id === this.listing.profile_id && bid.status === "active" ? '\
+            <a href="#">\
+                <span class="push-3 span-4 inputbutton" id="' + bidbtnid + '">ACCEPT BID</span>\
+            </a>\
+' : '') + '\
+        </div>\
+    </div>\
 ';
         }
     });
