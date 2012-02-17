@@ -1188,11 +1188,25 @@ pl(function() {
             this.ajax.call();
         },
         store: function(json) {
-            this.bids = json.bids || [];
             this.listing = json.listing || {};
+            this.bids = this.filterBids(json.bids || []);
             this.loggedin_profile_id = json.loggedin_profile ? json.loggedin_profile.profile_id : null;
             this.bidmap = this.getBidProfileMap();
             this.bidorder = this.getBidOrder();
+        },
+        filterBids: function(bids) { // remove invisible status bids FIXME
+            var filteredbids, i, bid;
+            filteredbids = [];
+            for (i = 0; i < bids.length; i++) {
+                bid = bids[i];
+                if (this.listing.status !== 'active') { // FIXME: backend workaround after closing
+                    bid.status = 'closed';
+                }
+                if (bid.status !== 'posted') { // FIXME: posted bids should be eliminated???
+                    filteredbids.push(bid);
+                }
+            }
+            return filteredbids;
         },
         getBidProfileMap: function() {
             var bidmap, i, bid, profile_id;
@@ -1307,7 +1321,6 @@ pl(function() {
             pl('#makebidbox').show();
         },
         displayBids: function() {
-            console.log(this.bidorder);
             var html, i, j, bidrec, profile_id, bidlist, bid, mybid, actionable;
             html = '';
             for (i = 0; i < this.bidorder.length; i++) {
@@ -1321,7 +1334,10 @@ pl(function() {
                         html += this.makeBidHeader(bid);
                         actionable = this.isBidActionable(bid);
                         if (actionable) {
-                            html += this.makeBidHtml(bid, actionable);
+                            html += this.makeActionableBid(bid);
+                            if (bidlist.length > 1) {
+                                html += this.makeBidSpacer();
+                            }
                             html += this.startBidList();
                         }
                         else {
@@ -1354,10 +1370,11 @@ pl(function() {
                 actor = 'You';
             }
             else if (bid.profile_id === bid.listing_profile_id) {
-                actor = 'The Owner';
+                actor = 'Owner';
             }
             else if (bid.listing_profile_id === this.loggedin_profile_id) { // i'm the logged in owner of this listing // FIXME: backend should do this
-                actor = bid.profile_username;
+                // actor = bid.profile_username; // FIXME: identity?
+                actor = 'Investor';
             }
             else {
                 actor = bid.profile_username;
@@ -1399,7 +1416,7 @@ pl(function() {
                 : (Math.random() > 0.5 ? 'This is the best I can offer' : 'I see a lot of potential here')
             ); // FIXME: should usually be bid note
             return '\
-<dt id="bid_' + bid.bid_id + '">\
+<dt class="bidsummary" id="bid_' + bid.bid_id + '">\
     <div>\
         <div class="normalicon ' + bidIcon + '"></div>\
         ' + actor + ' ' + action + ' on ' + this.date.format(bid.bid_date) + '\
@@ -1408,7 +1425,7 @@ pl(function() {
         ' + this.currency.format(bid.amount) + ' for ' + bid.equity_pct + '% equity as ' + displayType +' with company valued at ' + this.currency.format(bid.valuation) + '\
     </div>\
 </dt>\
-<dd id="bid_dd_' + bid.bid_id + '">' + bidNote + '</dd>\
+<dd class="bidsummary" id="bid_dd_' + bid.bid_id + '">' + bidNote + '</dd>\
 ';
         },
         makeBidHeader: function(bid) {
@@ -1418,9 +1435,12 @@ pl(function() {
             displayUsername = bid.profile_username.toUpperCase();
             displayDate = this.date.format(bid.bid_date);
             return '\
-                <div class="boxtitle" id="' + bidtitleid + '">BID FROM ' + displayUsername + ' LAST UPDATED ' + displayDate + '</div>\
+                <div class="boxtitle" id="' + bidtitleid + '">BID FROM ' + displayUsername + ' ON ' + displayDate + '</div>\
                 <div class="boxpanel uneditabletext bidpanel" id="' + bidboxid + '">\
             ';
+        },
+        makeBidSpacer: function() {
+            return '<div class="bidspacer">PREVIOUS BIDS</div>';
         },
         startBidList: function() {
             return '<dl>';
@@ -1440,12 +1460,15 @@ pl(function() {
             bidnoteid = 'bidnote_' + bidid;
             bidmsgid = 'bidmsg_' + bidid;
             bidvalid  = 'bidval_' + bidid;
-            bidbtnid = 'bidbtn_' + bidid;
+            bidacceptid = 'bidaccept_' + bidid;
+            bidrejectid = 'bidreject_' + bidid;
+            bidcounterid = 'bidcounter_' + bidid;
             bidamt = this.currency.format(bid.amount);
             bidpct = bid.equity_pct;
             bidtype = bid.bid_type;
             bidrate = bid.interest_rate;
-            bidnote = bid.bid_note || '';
+            bidnote = bid.bid_note || 'random bid note';
+            console.log(bidnote);
             bidval = this.currency.format(bid.valuation);
             if (bid.status === 'accepted') {
                 bidmsg = 'OWNER ACCEPTED BID';
@@ -1461,11 +1484,11 @@ pl(function() {
             }
 return '<div>\
             <span class="bidformlabel">\
-                <input class="text bidinputtitle" type="text" value="" maxlength="8" size="8" id="' + bidamtid + '" name="' + bidamtid + '" value="' + bidamt + '"></input>\
+                <input class="text bidinputtitle" type="text" maxlength="8" size="8" id="' + bidamtid + '" name="' + bidamtid + '" value="' + bidamt + '"></input>\
             </span>\
             <span class="bidformtext span-1">FOR</span>\
             <span class="bidformitem">\
-                <input class="text bidinputtextpct" type="text" value="" maxlength="2" size="2" id="' + bidpctid + '" name="' + bidpctid + '" value="' + bidpct + '"></input>\
+                <input class="text bidinputtextpct" type="text" maxlength="2" size="2" id="' + bidpctid + '" name="' + bidpctid + '" value="' + bidpct + '"></input>\
             </span>\
             <span class="bidformtext span-1">%&nbsp;&nbsp;AS</span>\
             <span class="bidformitem">\
@@ -1478,20 +1501,26 @@ return '<div>\
 '+(bidrate > 0 ? '\
             <span class="bidformitem" id="' + bidrateboxid + '">\
                 <span class="bidformtext">@</span>\
-                <input class="text bidinputtextpct pctwide" type="text" value="" maxlength="2" size="2" id="' + bidrateid + '" name="' + bidrateid + '" value="' + bidrate +'"></input>\
+                <input class="text bidinputtextpct pctwide" type="text" maxlength="2" size="2" id="' + bidrateid + '" name="' + bidrateid + '" value="' + bidrate +'"></input>\
                 <span class="bidformtext">%</span>\
             </span>\
 ' : '') + '\
         </div>\
         <div>\
-            <textarea class="textarea inputfullwidetextshort" id="' + bidnoteid + '" name="' + bidnoteid + '" rows="20" cols="5" value="' + bidnote + '"></textarea>\
+            <textarea class="textarea inputfullwidetextshort" id="' + bidnoteid + '" name="' + bidnoteid + '" rows="20" cols="5" value="' + bidnote + '">' + bidnote + '</textarea>\
         </div>\
         <div class="inputmsg" id="' + bidmsgid + '">' + bidmsg + '</div>\
         <div>\
-            <span class="bidvallabel">BID VALUATION IS <span id="' + bidvalid + '">' + bidval + '</span></span>\
+            <span class="bidvallabel"><span id="' + bidvalid + '">' + bidval + '</span> VALUATION</span>\
 ' + (this.loggedin_profile_id === this.listing.profile_id && bid.status === "active" ? '\
             <a href="#">\
-                <span class="push-3 span-4 inputbutton" id="' + bidbtnid + '">ACCEPT BID</span>\
+                <span class="span-4 inputbutton bidactionbtn" id="' + bidacceptid + '"><div class="bidactionicon thumbup"></div>ACCEPT</span>\
+            </a>\
+            <a href="#">\
+                <span class="span-4 inputbutton bidactionbtn" id="' + bidrejectid + '"><div class="bidactionicon thumbdownicon"></div>REJECT</span>\
+            </a>\
+            <a href="#">\
+                <span class="span-4 inputbutton bidactionbtn" id="' + bidcounterid + '"><div class="bidactioniconnarrow countericon"></div>COUNTER</span>\
             </a>\
 ' : '') + '\
         </div>\

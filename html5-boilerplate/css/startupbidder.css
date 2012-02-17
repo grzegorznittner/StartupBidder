@@ -125,6 +125,9 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .spreadsheeticon { width: 16px; height: 16px; background: url(../img/icons/spreadsheet.png); }
 .linkicon { width: 16px; height: 16px; background: url(../img/icons/jump.png); }
 .mapicon { width: 16px; height: 16px; background: url(../img/icons/map.png); }
+.bidactionicon { float: left; margin-left: 10px; margin-top: 5px; margin-right: 15px; }
+.bidactioniconnarrow { float: left; margin-left: 10px; margin-top: 5px; margin-right: 10px; }
+.bidactionbtn { text-align: left !important; }
 .normalicon { float: left; margin-right: 5px; }
 
 /* searchbar styles */
@@ -206,7 +209,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .sideboxlabelsmall { float: left; padding-top: 5px; width: 35px; }
 .makebidboxlabel { float: left; padding-top: 11px; width: 35px; }
 .inputselect, .inputmedselect { height: 29px; padding: 5px; top: 1px; position: relative;  }
-.bidinputselect { margin: 0 0 0 0 !important; height: 42px; font-weight: bold; color: white !important; background: #49515a !important; font-size: 22px !important; }
+.bidinputselect { margin: 0 0 0 0 !important; height: 38px !important; font-weight: bold; color: white !important; background: #49515a !important; font-size: 22px !important; padding-top: 5px !important;}
 .bidinputtextpct  { font-weight: bold; color: white !important; background: #49515a !important; font-size: 22px !important; width: 45px !important; margin: 0 0 0 0 !important; }
 .mediainputlink  { margin-left: 3px !important; font-weight: bold; color: white !important; background: #49515a !important; font-size: 14px !important; width: 383px !important; }
 .pctwide { width: 49px !important; }
@@ -216,8 +219,9 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .aboutlabel { float: left; margin-right: 10px; text-align: right; width: 106px; color: #49515a; font-weight: bold; }
 .doclabel { float: left; margin-right: 10px; text-align: right; width: 106px; color: #49515a; font-weight: bold; margin-top: 10px; }
 .bidformtext { padding-top: 10px; font-weight: bold; }
-.bidvallabel { float: left; margin-right: 10px; width: 296px; padding-top: 15px; margin-left: 5px; font-weight: bold; }
+.bidvallabel { float: left; margin-right: 10px; width: 120px; padding-top: 3px; margin-left: 10px; font-weight: bold; }
 .bidformitem { float: left; }
+.bidspacer { border: 2px solid #49515A; height: 20px; right: 5px; background: #efefef; font-weight: bold; clear: both; text-align: center; }
 
 /* box styles */
 .boxtitle { margin-top: 10px; color: #333333; font-weight: bold; }
@@ -291,6 +295,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .counterbox { display: none; }
 .bidclosedtitle { display: none; }
 .bidclosedbox { display: none; }
+.bidsummary { font-size: 10px; }
 
 /* tiles */
 .tile { width: 146px; height: 296px; border: 2px solid #999999; border-radius: 5px; overflow: hidden; margin-bottom: 10px; position: relative; background: #e3e3e3; }
