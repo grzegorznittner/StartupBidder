@@ -1191,14 +1191,54 @@ pl(function() {
             this.bids = json.bids || [];
             this.listing = json.listing || {};
             this.loggedin_profile_id = json.loggedin_profile ? json.loggedin_profile.profile_id : null;
+            this.bidmap = this.getBidProfileMap();
+            this.bidorder = this.getBidOrder();
+        },
+        getBidProfileMap: function() {
+            var bidmap, i, bid, profile_id;
+            bidmap = {};
+            for (i = 0; i < this.bids.length; i++) {
+                bid = this.bids[i];
+                profile_id = bid.profile_id;
+                if (!bidmap[profile_id]) {
+                    bidmap[profile_id] = [];
+                }
+                bidmap[profile_id].push(bid);
+            }
+            var biddatesorter = function(bida, bidb) { // bid date desc
+                return bidb.bid_date - bida.bid_date;
+            };
+            for (profile_id in bidmap) {
+                bidmap[profile_id].sort(biddatesorter);
+            }
+            return bidmap;
+        },
+        getBidOrder: function() {
+            var bidorder, biddate, profile_id, bidrec;
+            bidorder = [];
+            for (profile_id in this.bidmap) {
+                biddate = this.bidmap[profile_id][0].bid_date;
+                bidrec = {
+                    bid_date: biddate,
+                    profile_id: profile_id
+                }
+                bidorder.push(bidrec);
+            }
+            var bidrecsorter = function(bidreca, bidrecb) { // bid date desc
+                return bidrecb.bid_date - bidreca.bid_date;
+            }
+            bidorder.sort(bidrecsorter);
+            return bidorder;
         },
         display: function() {
+            /* 
             if (this.listing.status !== 'active') {
                 //this.displayBidClosed(); // FIXME: uncomment for production
                 //return;
             }
-            if (this.loggedin_profile_id !== this.listing.profile_id) { // it's not user's listing
-                this.displayMakeBid();
+            */
+            if (this.loggedin_profile_id !== this.listing.profile_id && !this.bidmap[this.loggedin_profile_id]) { // it's not user's listing and no exsiting bid for logged in user
+                this.displayNewBid();
             }
             if (this.bids.length !== 0) {
                 this.displayBids();
@@ -1211,6 +1251,7 @@ pl(function() {
             pl('#bidclosedtitle').show();
             pl('#bidclosedbox').show();
         },
+/*
         displayMakeBid: function () {
             var i, bid, existingBid;
             for (i = 0; i < this.bids.length; i++) {
@@ -1225,11 +1266,9 @@ pl(function() {
                 this.displayReviseBid(existingBid);
             }
             else {
-                this.displayNewBid();
             }
-            pl('#makebidboxtitle').show();
-            pl('#makebidbox').show();
         },
+/*
         displayReviseBid: function(existingBid) {
             pl('#makebidboxtitle').html('REVISE BID');
             pl('#makebid_amt').attr({value: this.currency.format(existingBid.amount)});
@@ -1243,6 +1282,7 @@ pl(function() {
             pl('#makebid_note').attr({value: 'This bid replaces the existing bid placed on ' + this.date.format(existingBid.bid_date)});
             pl('#makebid_btn').html('REVISE BID');
         },
+*/
         displayNewBid: function() {
             var self, makebidAmt;
             self = this;
@@ -1263,37 +1303,68 @@ pl(function() {
                 }
             };
             makebidAmt.bindEvents();
+            pl('#makebidboxtitle').show();
+            pl('#makebidbox').show();
         },
         displayBids: function() {
-            var html, i, bid, mybid;
+            console.log(this.bidorder);
+            var html, i, j, bidrec, profile_id, bidlist, bid, mybid, actionable;
             html = '';
-            for (i = 0; i < this.bids.length; i++) {
-                bid = this.bids[i];
-                if (bid.profile_id === this.loggedin_profile_id) {
-                    mybid = true;
+            for (i = 0; i < this.bidorder.length; i++) {
+                bidrec = this.bidorder[i];
+                profile_id = bidrec.profile_id;
+                bidlist = this.bidmap[profile_id];
+                for (j = 0; j < bidlist.length; j++) {
+                    bid = bidlist[j];
+                    mybid = (bid.profile_id === this.loggedin_profile_id) ? true : false;
+                    if (j === 0) {
+                        html += this.makeBidHeader(bid);
+                        actionable = this.isBidActionable(bid);
+                        if (actionable) {
+                            html += this.makeBidHtml(bid, actionable);
+                            html += this.startBidList();
+                        }
+                        else {
+                            html += this.startBidList();
+                            html += this.makeBidSummary(bid, mybid);
+                        }
+                    }
+                    else {
+                        html += this.makeBidSummary(bid, mybid);
+                    }
                 }
-                else {
-                    mybid = false;
-                }
-                html += this.makeBidHtml(bid, mybid);
+                html += this.makeBidFooter();
             }
             pl('#makebidbox').after(html);
         },
-        makeBid: function(bid, mybid) {
+        isBidActionable: function(bid) {
+            if (bid.profile_id === this.loggedin_profile_id) { // my bid is always actionable
+                return true;
+            }
+            else if (this.listing.profile_id === this.loggedin_profile_id && bid.status === 'active') {
+                return true;
+            }
+            else {
+                return false;
+            }
+        },
+        makeBidSummary: function(bid, mybid) {
             var actor, action, bidIcon, displayType, bidNote;
             if (mybid) {
                 actor = 'You';
             }
             else if (bid.profile_id === bid.listing_profile_id) {
-                actor = 'The owner';
+                actor = 'The Owner';
             }
             else if (bid.listing_profile_id === this.loggedin_profile_id) { // i'm the logged in owner of this listing // FIXME: backend should do this
                 actor = bid.profile_username;
             }
             else {
-                actor = 'Anonymous';
+                actor = bid.profile_username;
+                // actor = 'Anonymous'; // FIXME - privacy?
             }
             if (bid.status === 'accepted') {
+                actor = mybid ? 'You' : 'The Owner';
                 action = 'accepted the bid';
                 bidIcon = 'thumbup';
             }
@@ -1340,12 +1411,27 @@ pl(function() {
 <dd id="bid_dd_' + bid.bid_id + '">' + bidNote + '</dd>\
 ';
         },
-        makeBidHtml : function(bid) {
-            var bidid, bidtitleid, bidboxid, bidamtid, bidpctid, bidtypeid, bidrateboxid, bidrateid, bidnoteid, bidmsgid, bidvalid, bidbtnid, biddate, username,
-                bidamt, bidpct, bidtype, bidrate, bidnote, bidval, bidmsg;
-            bidid = bid.bid_id;
+        makeBidHeader: function(bid) {
+            var bidid, bidtitleid, bidboxid, displayUsername, displayDate;
             bidtitleid = 'bidtitle_' + bidid;
             bidboxid = 'bidbox_' + bidid;
+            displayUsername = bid.profile_username.toUpperCase();
+            displayDate = this.date.format(bid.bid_date);
+            return '\
+                <div class="boxtitle" id="' + bidtitleid + '">BID FROM ' + displayUsername + ' LAST UPDATED ' + displayDate + '</div>\
+                <div class="boxpanel uneditabletext bidpanel" id="' + bidboxid + '">\
+            ';
+        },
+        startBidList: function() {
+            return '<dl>';
+        },
+        makeBidFooter: function() {
+            return '</dl></div>';
+        },
+        makeActionableBid: function(bid) {
+            var bidid, bidamtid, bidpctid, bidtypeid, bidrateboxid, bidrateid, bidnoteid, bidmsgid, bidvalid, bidbtnid, 
+                bidamt, bidpct, bidtype, bidrate, bidnote, bidval, bidmsg;
+            bidid = bid.bid_id;
             bidamtid = 'bidamt_' + bidid;
             bidpctid = 'bidpct_' + bidid;
             bidtypeid = 'bidtype_' + bidid;
@@ -1355,8 +1441,6 @@ pl(function() {
             bidmsgid = 'bidmsg_' + bidid;
             bidvalid  = 'bidval_' + bidid;
             bidbtnid = 'bidbtn_' + bidid;
-            biddate = this.date.format(bid.bid_date);
-            username = bid.profile_username.toUpperCase();
             bidamt = this.currency.format(bid.amount);
             bidpct = bid.equity_pct;
             bidtype = bid.bid_type;
@@ -1375,10 +1459,7 @@ pl(function() {
             else {
                 bidmsg = '';
             }
-return '\
-    <div class="boxtitle" id="' + bidtitleid + '">BID FROM ' + username + ' ON ' + biddate + '</div>\
-    <div class="boxpanel uneditabletext bidpanel" id="' + bidboxid + '">\
-        <div>\
+return '<div>\
             <span class="bidformlabel">\
                 <input class="text bidinputtitle" type="text" value="" maxlength="8" size="8" id="' + bidamtid + '" name="' + bidamtid + '" value="' + bidamt + '"></input>\
             </span>\
@@ -1414,7 +1495,6 @@ return '\
             </a>\
 ' : '') + '\
         </div>\
-    </div>\
 ';
         }
     });
