@@ -112,11 +112,15 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .google { width: 32px; height: 32px; background: url(../img/icons/google_32.png); }
 .searchimg { width: 29px; height: 24px; background: url(../img/icons/search.gif); }
 .thumbup { width: 20px; height: 20px; background: url(../img/icons/thumbs_up.png); }
+.bidaccepticon { width: 20px; height: 20px; background: url(../img/icons/thumbs_up.png); }
 .commenticon { width: 20px; height: 20px; background: url(../img/icons/comment_20x20.png); }
 .bidicon { width: 20px; height: 20px; background: url(../img/icons/bid_20x20.png); }
 .thumbdownicon { width: 20px; height: 20px; background: url(../img/icons/thumbs_down.png); }
+.bidrejecticon { width: 20px; height: 20px; background: url(../img/icons/thumbs_down.png); }
 .withdrawicon { width: 20px; height: 20px; background: url(../img/icons/withdraw_20x20.png); }
+.bidwithdrawicon { width: 20px; height: 20px; background: url(../img/icons/withdraw_20x20.png); }
 .countericon { width: 20px; height: 20px; background: url(../img/icons/counter.png); }
+.bidcountericon { width: 20px; height: 20px; background: url(../img/icons/counter.png); }
 .notificationicon { width: 20px; height: 20px; background: url(../img/icons/email_20x20.png); background-position: 0px 2px; }
 .checkboxgreenicon { width: 32px; height: 32px; background: url(../img/icons/checkbox_green_32x32.png); background-position: 0px 0px; }
 .checkboxredicon { width: 32px; height: 32px; background: url(../img/icons/checkbox_red_32x32.png); background-position: 0px 0px; }
