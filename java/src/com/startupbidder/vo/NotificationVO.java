@@ -16,7 +16,7 @@ import com.startupbidder.util.LowecaseSerializer;
  */
 @JsonAutoDetect(getterVisibility=Visibility.NONE, setterVisibility=Visibility.NONE,
 		fieldVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE)
-public class NotificationVO {
+public class NotificationVO extends BaseVO {
 
 	@JsonProperty("notification_id")
 	private String id;

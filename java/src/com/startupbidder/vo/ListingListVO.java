@@ -18,7 +18,7 @@ public class ListingListVO extends BaseResultVO {
 	@JsonProperty("listings_props")
 	private ListPropertiesVO listingsProperties;
 	@JsonProperty("profile")
-	private UserVO user;
+	private UserBasicVO user;
 
 	public List<ListingVO> getListings() {
 		return listings;
@@ -32,10 +32,10 @@ public class ListingListVO extends BaseResultVO {
 	public void setListingsProperties(ListPropertiesVO listingsProperties) {
 		this.listingsProperties = listingsProperties;
 	}
-	public void setUser(UserVO user) {
+	public void setUser(UserBasicVO user) {
 		this.user = user;
 	}
-	public UserVO getUser() {
+	public UserBasicVO getUser() {
 		return user;
 	}
 	@Override

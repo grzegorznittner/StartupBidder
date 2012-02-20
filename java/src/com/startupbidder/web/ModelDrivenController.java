@@ -52,10 +52,10 @@ public abstract class ModelDrivenController {
 		UserService userService = UserServiceFactory.getUserService();
 		User user = userService.getCurrentUser();
 		if (user != null) {
-			loggedInUser = ServiceFacade.instance().getLoggedInUserData(user);
+			loggedInUser = UserMgmtFacade.instance().getLoggedInUserData(user);
 			if (loggedInUser == null) {
 				// first time logged in
-				loggedInUser = ServiceFacade.instance().createUser(user);
+				loggedInUser = UserMgmtFacade.instance().createUser(user);
 			}
 		} else {
 			// not logged in

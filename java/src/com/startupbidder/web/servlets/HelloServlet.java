@@ -9,7 +9,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.math.NumberUtils;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
@@ -29,7 +28,10 @@ import com.startupbidder.datamodel.SBUser;
 import com.startupbidder.vo.ListPropertiesVO;
 import com.startupbidder.vo.ListingDocumentVO;
 import com.startupbidder.vo.UserVO;
+import com.startupbidder.web.FrontController;
+import com.startupbidder.web.ListingFacade;
 import com.startupbidder.web.ServiceFacade;
+import com.startupbidder.web.UserMgmtFacade;
 
 /**
  * 
@@ -38,6 +40,10 @@ import com.startupbidder.web.ServiceFacade;
 @SuppressWarnings("serial")
 public class HelloServlet extends HttpServlet {
 	private static final Logger log = Logger.getLogger(HelloServlet.class.getName());
+	
+	static {
+		new FrontController ();
+	}
 	
 	public void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws IOException {
@@ -66,15 +72,16 @@ public class HelloServlet extends HttpServlet {
 			out.println("<a href=\"/setup/\">Setup page</a></p>");
 			
 			SBUser topInvestor = datastore.getTopInvestor();
-			UserVO currentUser = service.getLoggedInUserData(user);
+			UserVO currentUser = UserMgmtFacade.instance().getLoggedInUserData(user);
 			if (currentUser == null) {
-				currentUser = service.createUser(user);
+				currentUser = UserMgmtFacade.instance().createUser(user);
 			}
 			ListPropertiesVO listProperties = new ListPropertiesVO();
 			listProperties.setMaxResults(1);
-			Listing topListing = datastore.getTopListings(listProperties).get(0);
+			List<Listing> listings = datastore.getAllListings();
+			Listing topListing = listings != null ? listings.get(0) : new Listing();
 			List<Bid> bids = datastore.getBidsForUser(topInvestor.id);
-			List<Listing> usersListings = datastore.getUserActiveListings(NumberUtils.toLong(currentUser.getId()), listProperties);
+			List<Listing> usersListings = datastore.getUserActiveListings(currentUser.toKeyId(), listProperties);
 			List<Comment> comments = datastore.getCommentsForListing(datastore.getMostDiscussedListings(listProperties).get(0).id);
 			
 			//testMockDatastore(user, datastore, out);
@@ -143,7 +150,7 @@ public class HelloServlet extends HttpServlet {
 			
 			out.println("<p>Notification API:</p>");
 			out.println("<a href=\"/notification/user/" + currentUser.getId() + "/.json?max_results=6\">Notifications for current user</a><br/>");
-			List<Notification> notifications = datastore.getUserNotification(NumberUtils.toLong(currentUser.getId()), new ListPropertiesVO());
+			List<Notification> notifications = datastore.getUserNotification(currentUser.toKeyId(), new ListPropertiesVO());
 			if (!notifications.isEmpty()) {
 				out.println("<a href=\"/notification/get/" + notifications.get(0).getWebKey() + "/.json\">First notification for current user</a><br/>");
 				out.println("<a href=\"/notification/ack/" + notifications.get(0).getWebKey() + "/.json\">Acknowledging first notification for current user</a><br/>");
@@ -163,7 +170,7 @@ public class HelloServlet extends HttpServlet {
 			out.println("<form method=\"POST\" action=\"/monitor/set/.json\"><textarea name=\"monitor\" rows=\"5\" cols=\"100\">"
 					+ "{ \"object_id\":\"" + topListing.getWebKey() + "\", \"profile_id\":\"" + currentUser.getId() + "\", \"type\":\"Listing\" }"
 					+ "</textarea><input type=\"submit\" value=\"Create a monitor for top listing\"/></form>");
-			List<Monitor> monitors = datastore.getMonitorsForUser(NumberUtils.toLong(currentUser.getId()), null);
+			List<Monitor> monitors = datastore.getMonitorsForUser(currentUser.toKeyId(), null);
 			out.println("<form method=\"POST\" action=\"/monitor/deactivate/.json\"" + (monitors.isEmpty() ? " disabled=\"disabled\">" : ">")
 					+ "<input type=\"hidden\" name=\"id\" value=\"" + (monitors.isEmpty() ? "empty" : monitors.get(0).getWebKey()) + "\"/>"
 					+ "<input type=\"submit\" value=\"Deactivate monitor "
@@ -181,7 +188,7 @@ public class HelloServlet extends HttpServlet {
 			out.println("<form action=\"" + urls[2] + "\" method=\"post\" enctype=\"multipart/form-data\">"
 					+ "<input type=\"file\" name=\"" + ListingDoc.Type.FINANCIALS.toString() + "\"/>"
 					+ "<input type=\"submit\" value=\"Upload financials\"/></form>");
-			List<ListingDocumentVO> docs = service.getAllListingDocuments(currentUser);
+			List<ListingDocumentVO> docs = ListingFacade.instance().getAllListingDocuments(currentUser);
 			DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy/MM/dd HH:mm");
 			if (docs != null && !docs.isEmpty()) {
 				out.println("<table border=\"1\"><tr><td colspan=\"2\">Uploaded documents</td></tr>");

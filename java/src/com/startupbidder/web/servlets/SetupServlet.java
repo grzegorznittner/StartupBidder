@@ -21,7 +21,9 @@ import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.startupbidder.vo.SystemPropertyVO;
 import com.startupbidder.vo.UserVO;
+import com.startupbidder.web.FrontController;
 import com.startupbidder.web.ServiceFacade;
+import com.startupbidder.web.UserMgmtFacade;
 
 /**
  * 
@@ -30,6 +32,10 @@ import com.startupbidder.web.ServiceFacade;
 @SuppressWarnings("serial")
 public class SetupServlet extends HttpServlet {
 	
+	static {
+		new FrontController ();
+	}
+
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		UserService userService = UserServiceFactory.getUserService();
 		User user = userService.getCurrentUser();
@@ -48,9 +54,9 @@ public class SetupServlet extends HttpServlet {
 			out.println("<p>Hello, " + user.getNickname() + " ..................................");
 			out.println("<a href=\"" + userService.createLogoutURL("/hello") + "\">logout</a></p>");
 			
-			UserVO currentUser = service.getLoggedInUserData(user);
+			UserVO currentUser = UserMgmtFacade.instance().getLoggedInUserData(user);
 			if (currentUser == null) {
-				currentUser = service.createUser(user);
+				currentUser = UserMgmtFacade.instance().createUser(user);
 			}
 			//if (!currentUser.isAdmin()) {
 			//	out.println("<p>You're not authorized to use setup page! Only Admin users can access this page! </p>");

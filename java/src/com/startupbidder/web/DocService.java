@@ -125,7 +125,7 @@ public class DocService {
 			log.severe("Cannot get folder " + Folder.SUMMARY);
 			return 0;
 		}
-		UserListVO userList = ServiceFacade.instance().getAllUsers(null);
+		UserListVO userList = UserMgmtFacade.instance().getAllUsers(null);
 		Map<String, UserVO> users = new HashMap<String, UserVO>();
 		for (UserVO user : userList.getUsers()) {
 			users.put(user.getId(), user);

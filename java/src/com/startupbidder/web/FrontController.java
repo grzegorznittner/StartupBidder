@@ -10,6 +10,20 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.googlecode.objectify.ObjectifyService;
+import com.startupbidder.datamodel.Bid;
+import com.startupbidder.datamodel.Comment;
+import com.startupbidder.datamodel.Listing;
+import com.startupbidder.datamodel.ListingDoc;
+import com.startupbidder.datamodel.ListingStats;
+import com.startupbidder.datamodel.Monitor;
+import com.startupbidder.datamodel.Notification;
+import com.startupbidder.datamodel.PaidBid;
+import com.startupbidder.datamodel.Rank;
+import com.startupbidder.datamodel.SBUser;
+import com.startupbidder.datamodel.SystemProperty;
+import com.startupbidder.datamodel.UserStats;
+import com.startupbidder.datamodel.Vote;
 import com.startupbidder.web.controllers.BidController;
 import com.startupbidder.web.controllers.CommentController;
 import com.startupbidder.web.controllers.CronTaskController;
@@ -28,6 +42,22 @@ import com.startupbidder.web.controllers.UserController;
 @SuppressWarnings("serial")
 public class FrontController extends HttpServlet {
 	private static final Logger log = Logger.getLogger(FrontController.class.getName());
+	
+	static {
+		ObjectifyService.register(SBUser.class);
+		ObjectifyService.register(Listing.class);
+		ObjectifyService.register(UserStats.class);
+		ObjectifyService.register(Bid.class);
+		ObjectifyService.register(Comment.class);
+		ObjectifyService.register(ListingDoc.class);
+		ObjectifyService.register(ListingStats.class);
+		ObjectifyService.register(Monitor.class);
+		ObjectifyService.register(Notification.class);
+		ObjectifyService.register(PaidBid.class);
+		ObjectifyService.register(Rank.class);
+		ObjectifyService.register(SystemProperty.class);
+		ObjectifyService.register(Vote.class);
+	}
 	
 	@Override
 	public void init(ServletConfig config) throws ServletException {

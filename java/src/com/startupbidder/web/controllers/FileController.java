@@ -19,6 +19,7 @@ import com.startupbidder.datamodel.ListingDoc;
 import com.startupbidder.vo.ListingDocumentVO;
 import com.startupbidder.web.HttpHeaders;
 import com.startupbidder.web.HttpHeadersImpl;
+import com.startupbidder.web.ListingFacade;
 import com.startupbidder.web.ModelDrivenController;
 import com.startupbidder.web.ServiceFacade;
 
@@ -70,7 +71,7 @@ public class FileController extends ModelDrivenController {
 		
 		String docId = getCommandOrParameter(request, 2, "doc");
 
-		ListingDocumentVO doc = ServiceFacade.instance().getListingDocument(getLoggedInUser(), docId);
+		ListingDocumentVO doc = ListingFacade.instance().getListingDocument(getLoggedInUser(), docId);
 		log.log(Level.INFO, "Sending back document: " + doc);
 		if (doc != null && doc.getBlob() != null) {
 			headers.addHeader("Content-Disposition", "attachment; filename=" + doc.getType().toLowerCase());
@@ -106,7 +107,7 @@ public class FileController extends ModelDrivenController {
 		
 		String docId = getCommandOrParameter(request, 2, "doc");
 
-		model = ServiceFacade.instance().getListingDocument(getLoggedInUser(), docId);
+		model = ListingFacade.instance().getListingDocument(getLoggedInUser(), docId);
 		log.log(Level.INFO, "Returning document: " + model);
 		
 		return headers;
@@ -151,7 +152,7 @@ public class FileController extends ModelDrivenController {
 
 		if (doc != null) {
 			log.log(Level.INFO, "Storing document: " + doc);
-			doc = ServiceFacade.instance().createListingDocument(getLoggedInUser(), doc);
+			doc = ListingFacade.instance().createListingDocument(getLoggedInUser(), doc);
 			headers.setRedirectUrl("/file/return-document/" + doc.getId());
 		} else {
 			log.log(Level.INFO, "No docs to store!");

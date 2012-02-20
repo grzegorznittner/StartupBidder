@@ -10,7 +10,7 @@ import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
  */
 @JsonAutoDetect(getterVisibility=Visibility.NONE, setterVisibility=Visibility.NONE,
 		fieldVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE)
-public class VoteVO {
+public class VoteVO extends BaseVO {
 	@JsonProperty("id")
 	private String id;
 	@JsonProperty("listing_id")

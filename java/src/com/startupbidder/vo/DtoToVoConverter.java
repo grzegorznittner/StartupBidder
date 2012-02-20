@@ -20,17 +20,9 @@ import com.startupbidder.datamodel.Vote;
  * @author "Grzegorz Nittner" <grzegorz.nittner@gmail.com>
  */
 public class DtoToVoConverter {
-	public static String keyToString(Key<?> key) {
+	private static String keyToString(Key<?> key) {
 		if (key != null) {
-			return "" + key.getId();
-		} else {
-			return null;
-		}
-	}
-
-	public static String keyToString(long key) {
-		if (key != 0) {
-			return "" + key;
+			return key.getString();
 		} else {
 			return null;
 		}
@@ -41,7 +33,7 @@ public class DtoToVoConverter {
 			return null;
 		}
 		BidVO bid = new BidVO();
-		bid.setId(keyToString(bidDTO.id));
+		bid.setId(new Key<Bid>(Bid.class, bidDTO.id).getString());
 		bid.setMockData(bidDTO.mockData);
 		bid.setListing(keyToString(bidDTO.listing));
 		bid.setFundType(bidDTO.fundType.toString());
@@ -62,7 +54,7 @@ public class DtoToVoConverter {
 			return null;
 		}
 		ListingVO listing = new ListingVO();
-		listing.setId(keyToString(listingDTO.id));
+		listing.setId(new Key<Listing>(Listing.class, listingDTO.id).getString());
 		listing.setMockData(listingDTO.mockData);
 		listing.setClosingOn(listingDTO.closingOn);
 		listing.setListedOn(listingDTO.listedOn);
@@ -84,7 +76,7 @@ public class DtoToVoConverter {
 			return null;
 		}
 		CommentVO comment = new CommentVO();
-		comment.setId(keyToString(commentDTO.id));
+		comment.setId(new Key<Comment>(Comment.class, commentDTO.id).getString());
 		comment.setMockData(commentDTO.mockData);
 		comment.setComment(commentDTO.comment);
 		comment.setCommentedOn(commentDTO.commentedOn);
@@ -99,7 +91,7 @@ public class DtoToVoConverter {
 		}
 		VoteVO rating = new VoteVO();
 		rating.setMockData(ratingDTO.mockData);
-		rating.setId(keyToString(ratingDTO.id));
+		rating.setId(new Key<Vote>(Vote.class, ratingDTO.id).getString());
 		rating.setListing(keyToString(ratingDTO.listing));
 		rating.setUser(keyToString(ratingDTO.user));
 		rating.setValue(ratingDTO.value);
@@ -111,7 +103,7 @@ public class DtoToVoConverter {
 			return null;
 		}
 		ListingDocumentVO doc = new ListingDocumentVO();
-		doc.setId(keyToString(docDTO.id));
+		doc.setId(new Key<ListingDoc>(ListingDoc.class, docDTO.id).getString());
 		doc.setMockData(docDTO.mockData);
 		doc.setBlob(docDTO.blob);
 		doc.setCreated(docDTO.created);
@@ -124,7 +116,7 @@ public class DtoToVoConverter {
 			return null;
 		}
 		UserVO user = new UserVO();
-		user.setId(keyToString(userDTO.id));
+		user.setId(new Key<SBUser>(SBUser.class, userDTO.id).getString());
 		user.setMockData(userDTO.mockData);
 		user.setAdmin(userDTO.admin);
 		user.setAccreditedInvestor(userDTO.investor);
@@ -134,7 +126,10 @@ public class DtoToVoConverter {
 		user.setLastLoggedIn(userDTO.lastLoggedIn);
 		user.setModified(userDTO.modified);
 		user.setNickname(userDTO.nickname);
+		user.setPhone(userDTO.phone);
+		user.setLocation(userDTO.location);
 		user.setStatus(userDTO.status.toString());
+		user.setNotifyEnabled(userDTO.notifyEnabled);
 		//user.set(userDTO.notifyEnabled);
 		return user;
 	}
@@ -157,7 +152,7 @@ public class DtoToVoConverter {
 			return null;
 		}
 		NotificationVO notif = new NotificationVO();
-		notif.setId(keyToString(notifDTO.id));
+		notif.setId(new Key<Notification>(Notification.class, notifDTO.id).getString());
 		notif.setMockData(notifDTO.mockData);
 		notif.setCreated(notifDTO.created);
 		notif.setEmailDate(notifDTO.emailDate);
@@ -174,7 +169,7 @@ public class DtoToVoConverter {
 			return null;
 		}
 		MonitorVO monitor = new MonitorVO();
-		monitor.setId(keyToString(monitorDTO.id));
+		monitor.setId(new Key<Monitor>(Monitor.class, monitorDTO.id).getString());
 		monitor.setMockData(monitorDTO.mockData);
 		monitor.setCreated(monitorDTO.created);
 		monitor.setDeactivated(monitorDTO.deactivated);

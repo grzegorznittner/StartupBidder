@@ -5,6 +5,9 @@ package com.startupbidder.datamodel;
 
 import java.util.Date;
 
+import javax.persistence.Id;
+import javax.persistence.PrePersist;
+
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.annotation.Cached;
 import com.googlecode.objectify.annotation.Entity;
@@ -19,8 +22,24 @@ import com.googlecode.objectify.annotation.Unindexed;
 @Entity
 @Cached(expirationSeconds=60*30)
 public class Listing extends BaseObject implements Monitor.Monitored {
-	public enum State {NEW, CREATED, POSTED, ACTIVE, CLOSED, WITHDRAWN};
+	public enum State {NEW, POSTED, ACTIVE, CLOSED, WITHDRAWN, FROZEN};
 
+	@Id public Long id;
+	
+	public boolean mockData;
+	
+	public Date modified;
+	@PrePersist void updateModifiedDate() {
+		this.modified = new Date();
+	}
+	@PrePersist void updateSuggestedValuation() {
+		if (suggestedPercentage == 0) {
+			this.suggestedValuation = 0;
+		} else {
+			this.suggestedValuation = suggestedAmount * 100 / suggestedPercentage;
+		}
+	}
+	
 	@Indexed public Key<SBUser> owner;
 	
 	public String name;

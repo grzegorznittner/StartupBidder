@@ -1,5 +1,18 @@
 indexes:
 
+- kind: SBUser
+  ancestor: no
+  properties:
+    - name: email
+      direction: asc
+
+- kind: UserStats
+  ancestor: no
+  properties:
+    - name: status
+    - name: sumOfBids
+      direction: desc
+
 - kind: Bid
   ancestor: no
   properties:
@@ -189,13 +202,6 @@ indexes:
   properties:
     - name: status
     - name: valuation
-      direction: desc
-
-- kind: UserStat
-  ancestor: no
-  properties:
-    - name: status
-    - name: sumOfBids
       direction: desc
 
 - kind: Vote

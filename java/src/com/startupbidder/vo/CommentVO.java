@@ -15,7 +15,7 @@ import com.startupbidder.util.DateSerializer;
  */
 @JsonAutoDetect(getterVisibility=Visibility.NONE, setterVisibility=Visibility.NONE,
 		fieldVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE)
-public class CommentVO {
+public class CommentVO extends BaseVO {
 	@JsonProperty("num")
 	private int orderNumber;
 	@JsonProperty("comment_id")

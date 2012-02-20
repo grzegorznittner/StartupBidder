@@ -9,13 +9,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.datanucleus.util.StringUtils;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 
 import com.google.appengine.api.datastore.QueryResultIterable;
 import com.googlecode.objectify.Key;
-import com.googlecode.objectify.NotFoundException;
 import com.googlecode.objectify.Objectify;
 import com.googlecode.objectify.ObjectifyService;
 import com.startupbidder.datamodel.Bid;
@@ -66,9 +66,9 @@ public class ObjectifyDatastoreDAO {
 		return dtoList;
 	}
 	
-	public String createMockDatastore(SBUser loggedInUser) {
+	public String createMockDatastore(long loggedInUserId) {
 		// delete logged in user as he will be recreated
-		getOfy().delete(loggedInUser);
+		getOfy().delete(SBUser.class, loggedInUserId);
 		
 		initMocks();
 		return iterateThroughDatastore(false, new ArrayList<Object>());
@@ -106,89 +106,101 @@ public class ObjectifyDatastoreDAO {
 		List<Key<Bid>> bidKeys = new ArrayList<Key<Bid>>();
 		CollectionUtils.addAll(bidKeys, getOfy().query(Bid.class).fetchKeys().iterator());
 		outputBuffer.append("<p>Bids (" + bidKeys.size() + "):</p>");
-		for (Bid obj : getOfy().get(bidKeys).values()) {
-			outputBuffer.append(obj).append("<br/>");
-		}
-		if (delete) {
-			getOfy().delete(bidKeys);
+		if (bidKeys.size() > 0) {
+			//for (Bid obj : getOfy().get(bidKeys).values()) {
+			for (Key<Bid> key : bidKeys) {
+				Bid obj = getOfy().get(key);
+				outputBuffer.append(obj).append("<br/>");
+			}
+			if (delete) {
+				getOfy().delete(bidKeys);
+			}
 		}
 		
 		List<Key<PaidBid>> paidBidKeys = new ArrayList<Key<PaidBid>>();
 		CollectionUtils.addAll(paidBidKeys, getOfy().query(PaidBid.class).fetchKeys().iterator());
 		outputBuffer.append("<p>Paid bids (" + paidBidKeys.size() + "):</p>");
-		for (PaidBid obj : getOfy().get(paidBidKeys).values()) {
-			outputBuffer.append(obj).append("<br/>");
-		}
-		if (delete) {
-			getOfy().delete(paidBidKeys);
+		if (paidBidKeys.size() > 0) {
+			for (PaidBid obj : getOfy().get(paidBidKeys).values()) {
+				outputBuffer.append(obj).append("<br/>");
+			}
+			if (delete) {
+				getOfy().delete(paidBidKeys);
+			}
 		}
 		
 		List<Key<Comment>> comKeys = new ArrayList<Key<Comment>>();
 		CollectionUtils.addAll(comKeys, getOfy().query(Comment.class).fetchKeys().iterator());
 		outputBuffer.append("<p>Comments (" + comKeys.size() + "):</p>");
-		for (Comment obj : getOfy().get(comKeys).values()) {
-			outputBuffer.append(obj).append("<br/>");
-		}
-		if (delete) {
-			getOfy().delete(comKeys);
+		if (comKeys.size() > 0) {
+			for (Comment obj : getOfy().get(comKeys).values()) {
+				outputBuffer.append(obj).append("<br/>");
+			}
+			if (delete) {
+				getOfy().delete(comKeys);
+			}
 		}
 
 		List<Key<Listing>> listingKeys = new ArrayList<Key<Listing>>();
 		CollectionUtils.addAll(listingKeys, getOfy().query(Listing.class).fetchKeys().iterator());
 		outputBuffer.append("<p>Listings (" + listingKeys.size() + "):</p>");
-		for (Listing obj : getOfy().get(listingKeys).values()) {
-			outputBuffer.append(obj).append("<br/>");
-		}
-		if (delete) {
-			getOfy().delete(listingKeys);
+		if (listingKeys.size() > 0) {
+//			for (Listing obj : getOfy().get(listingKeys).values()) {
+//				outputBuffer.append(obj).append("<br/>");
+//			}
+			if (delete) {
+				getOfy().delete(listingKeys);
+			}
 		}
 
 		List<Key<ListingDoc>> listingDocKeys = new ArrayList<Key<ListingDoc>>();
 		CollectionUtils.addAll(listingDocKeys, getOfy().query(ListingDoc.class).fetchKeys().iterator());
 		outputBuffer.append("<p>Listing docs (" + listingDocKeys.size() + "):</p>");
-		for (ListingDoc obj : getOfy().get(listingDocKeys).values()) {
-			outputBuffer.append(obj).append("<br/>");
-		}
-		if (delete) {
-			getOfy().delete(listingDocKeys);
+		if (listingDocKeys.size() > 0) {
+//			for (ListingDoc obj : getOfy().get(listingDocKeys).values()) {
+//				outputBuffer.append(obj).append("<br/>");
+//			}
+			if (delete) {
+				getOfy().delete(listingDocKeys);
+			}
 		}
 		
 		List<Key<ListingStats>> listingStatKeys = new ArrayList<Key<ListingStats>>();
 		CollectionUtils.addAll(listingStatKeys, getOfy().query(ListingStats.class).fetchKeys().iterator());
-		outputBuffer.append("<p>Listing stats (" + listingStatKeys.size() + "):</p>");
-		for (ListingStats obj : getOfy().get(listingStatKeys).values()) {
-			outputBuffer.append(obj).append("<br/>");
-		}
+//		outputBuffer.append("<p>Listing stats (" + listingStatKeys.size() + "):</p>");
+//		for (ListingStats obj : getOfy().get(listingStatKeys).values()) {
+//			outputBuffer.append(obj).append("<br/>");
+//		}
 		if (delete) {
 			getOfy().delete(listingStatKeys);
 		}
 		
 		List<Key<Rank>> rankKeys = new ArrayList<Key<Rank>>();
 		CollectionUtils.addAll(rankKeys, getOfy().query(Rank.class).fetchKeys().iterator());
-		outputBuffer.append("<p>Listing stats (" + rankKeys.size() + "):</p>");
-		for (Rank obj : getOfy().get(rankKeys).values()) {
-			outputBuffer.append(obj).append("<br/>");
-		}
+//		outputBuffer.append("<p>Listing stats (" + rankKeys.size() + "):</p>");
+//		for (Rank obj : getOfy().get(rankKeys).values()) {
+//			outputBuffer.append(obj).append("<br/>");
+//		}
 		if (delete) {
 			getOfy().delete(rankKeys);
 		}
 
 		List<Key<SystemProperty>> propKeys = new ArrayList<Key<SystemProperty>>();
 		CollectionUtils.addAll(propKeys, getOfy().query(SystemProperty.class).fetchKeys().iterator());
-		outputBuffer.append("<p>System properties (" + propKeys.size() + "):</p>");
-		for (SystemProperty obj : getOfy().get(propKeys).values()) {
-			outputBuffer.append(obj).append("<br/>");
-		}
+//		outputBuffer.append("<p>System properties (" + propKeys.size() + "):</p>");
+//		for (SystemProperty obj : getOfy().get(propKeys).values()) {
+//			outputBuffer.append(obj).append("<br/>");
+//		}
 		if (delete) {
 			getOfy().delete(propKeys);
 		}
 
 		List<Key<Vote>> voteKeys = new ArrayList<Key<Vote>>();
 		CollectionUtils.addAll(voteKeys, getOfy().query(Vote.class).fetchKeys().iterator());
-		outputBuffer.append("<p>Votes (" + voteKeys.size() + "):</p>");
-		for (Vote obj : getOfy().get(voteKeys).values()) {
-			outputBuffer.append(obj).append("<br/>");
-		}
+//		outputBuffer.append("<p>Votes (" + voteKeys.size() + "):</p>");
+//		for (Vote obj : getOfy().get(voteKeys).values()) {
+//			outputBuffer.append(obj).append("<br/>");
+//		}
 		if (delete) {
 			getOfy().delete(voteKeys);
 		}
@@ -227,15 +239,23 @@ public class ObjectifyDatastoreDAO {
 
 	public SBUser getUser(String userId) {
 		try {
-			return getOfy().get(new Key<SBUser>(userId));
-		} catch (NotFoundException e) {
+			return (SBUser)getOfy().get(Key.create(userId));
+		} catch (Exception e) {
 			log.log(Level.WARNING, "User '" + userId + "'not found", e);
 			return null;
 		}
 	}
 
-	public SBUser getUserByOpenId(String openId) {
-		return getOfy().query(SBUser.class).filter("openId =", openId).get();
+	public SBUser getUserByEmail(String email) {
+		SBUser user = getOfy().query(SBUser.class).filter("email =", email).get();
+		log.info("User for " + email + " is: " + user);
+		return user;
+	}
+
+	public SBUser getUserByAuthCookie(String authCookie) {
+		SBUser user = getOfy().query(SBUser.class).filter("authCookie =", authCookie).get();
+		log.info("User for cookie '" + authCookie + "' is: " + user);
+		return user != null && user.status == SBUser.Status.ACTIVE ? user : null;
 	}
 
 	public SBUser createUser(String email) {
@@ -259,12 +279,35 @@ public class ObjectifyDatastoreDAO {
 		}
 		return user;
 	}
+	
+	public SBUser createUser(String email, String password, String authCookie, String name, String location, boolean investor) {
+		SBUser user = getOfy().query(SBUser.class).filter("email =", email).get();
+		if (user == null) {
+			user = new SBUser();
+			user.email = email;
+			user.name = name;
+			user.password = password;
+			user.authCookie = authCookie;
+			user.location = location;
+			user.investor = investor;
+			user.status = SBUser.Status.CREATED;
+			user.joined = new Date();
+			user.activationCode = "" + email.hashCode() + user.joined.hashCode();
+			
+			getOfy().put(user);
+			return user;
+		} else {
+			log.warning("User with email '" + email + "' already exists!");
+			return null;
+		}
+	}
+
 
 	public UserStats updateUserStatistics(long userId) {
 		SBUser user = null;
 		try {
 			user = getOfy().get(SBUser.class, userId);
-		} catch (NotFoundException e) {
+		} catch (Exception e) {
 			log.severe("User with id '" + userId + "' doesn't exist!");
 			return null;
 		}
@@ -278,12 +321,12 @@ public class ObjectifyDatastoreDAO {
 
 		QueryResultIterable<Key<Bid>> bidsIt = getOfy().query(Bid.class)
 				.filter("user =", userStats.user).filter("status =", Bid.Status.ACTIVE).fetchKeys();
-		userStats.numberOfBids = CollectionUtils.size(bidsIt);
+		userStats.numberOfBids = CollectionUtils.size(bidsIt.iterator());
 		
 		// calculating rejected bids
 		bidsIt = getOfy().query(Bid.class)
 				.filter("user =", userStats.user).filter("status =", Bid.Status.REJECTED).fetchKeys();
-		userStats.numberOfRejectedBids = CollectionUtils.size(bidsIt);
+		userStats.numberOfRejectedBids = CollectionUtils.size(bidsIt.iterator());
 				
 		// calculating accepted (and paid) bids for user's listings
 		bidsIt = getOfy().query(Bid.class)
@@ -308,22 +351,22 @@ public class ObjectifyDatastoreDAO {
 		
 		QueryResultIterable<Key<Comment>> commentsIt = getOfy().query(Comment.class)
 				.filter("user =", userStats.user).fetchKeys();
-		userStats.numberOfComments = CollectionUtils.size(commentsIt);
+		userStats.numberOfComments = CollectionUtils.size(commentsIt.iterator());
 		
 		QueryResultIterable<Key<Listing>> listingsIt = getOfy().query(Listing.class)
-				.filter("owner =", userStats.user).filter("state !=", Listing.State.CREATED).fetchKeys();
-		userStats.numberOfListings = CollectionUtils.size(listingsIt);
+				.filter("owner =", userStats.user).filter("state =", Listing.State.ACTIVE).fetchKeys();
+		userStats.numberOfListings = CollectionUtils.size(listingsIt.iterator());
 		
 		QueryResultIterable<Key<Vote>> votesIt = getOfy().query(Vote.class)
 				.filter("voter =", userStats.user).fetchKeys();
-		userStats.numberOfVotesAdded = CollectionUtils.size(votesIt);
+		userStats.numberOfVotesAdded = CollectionUtils.size(votesIt.iterator());
 		votesIt = getOfy().query(Vote.class)
 				.filter("user =", userStats.user).fetchKeys();
-		userStats.numberOfVotes = CollectionUtils.size(votesIt);
+		userStats.numberOfVotes = CollectionUtils.size(votesIt.iterator());
 
 		QueryResultIterable<Key<Notification>> notifsIt = getOfy().query(Notification.class)
 				.filter("user =", userStats.user).filter("acknowledged !=", Boolean.FALSE).fetchKeys();
-		userStats.numberOfNotifications = CollectionUtils.size(notifsIt);
+		userStats.numberOfNotifications = CollectionUtils.size(notifsIt.iterator());
 		
 		log.info("user: " + userId + ", statistics: " + userStats);
 
@@ -333,19 +376,20 @@ public class ObjectifyDatastoreDAO {
 	}
 	
 	public UserStats getUserStatistics(long userId) {
-		try {
-			return getOfy().get(new Key<UserStats>(UserStats.class, userId));
-		} catch (NotFoundException e) {
-			log.log(Level.WARNING, "User statistics entity '" + userId + "'not found", e);
-			return null;
-		}
+//		try {
+//			return getOfy().get(new Key<UserStats>(UserStats.class, userId));
+//		} catch (Exception e) {
+//			log.log(Level.WARNING, "User statistics entity '" + userId + "' not found");
+//			return null;
+//		}
+		throw new java.lang.RuntimeException("User statistics are not implemented");
 	}
 
 	public ListingStats updateListingStatistics(long listingId) {
 		Listing listing = new Listing();
 		try {
 			listing = getOfy().get(new Key<Listing>(Listing.class, listingId));
-		} catch (NotFoundException e) {
+		} catch (Exception e) {
 			log.severe("Listing with id '" + listingId + "' doesn't exist!");
 			return null;
 		}
@@ -371,31 +415,32 @@ public class ObjectifyDatastoreDAO {
 		
 		QueryResultIterable<Key<Bid>> bidsIt = getOfy().query(Bid.class)
 				.filter("listing =", listingStats.listing).filter("status !=", Bid.Status.WITHDRAWN).fetchKeys();
-		listingStats.numberOfBids = CollectionUtils.size(bidsIt);
+		listingStats.numberOfBids = CollectionUtils.size(bidsIt.iterator());
 		
 		QueryResultIterable<Key<Comment>> commentsIt = getOfy().query(Comment.class)
 				.filter("listing =", listingStats.listing).fetchKeys();
-		listingStats.numberOfComments = CollectionUtils.size(commentsIt);
+		listingStats.numberOfComments = CollectionUtils.size(commentsIt.iterator());
 
 		QueryResultIterable<Key<Vote>> votesIt = getOfy().query(Vote.class)
 				.filter("listing =", listingStats.listing).fetchKeys();
-		listingStats.numberOfVotes = CollectionUtils.size(votesIt);
+		listingStats.numberOfVotes = CollectionUtils.size(votesIt.iterator());
 
 		// calculate valuation for listing (max accepted bid or suggested valuation)
-		Bid mostValuedBid = getOfy().query(Bid.class)
-				.filter("listing =", listingStats.listing).filter("status !=", Bid.Status.ACCEPTED)
-				.order("-valuation").get();
+		Bid mostValuedBid = null;		
+		// calculate median for bids and set total number of bids
+		List<Integer> values = new ArrayList<Integer>();
+		for (Bid bid : getBidsForListing(listingId)) {
+			if (mostValuedBid == null || mostValuedBid.valuation < bid.valuation) {
+				mostValuedBid = bid;
+			}
+			values.add(bid.value);
+		}
 		if (mostValuedBid != null) {
 			listingStats.valuation = mostValuedBid.valuation;
 		} else {
 			listingStats.valuation = listing.suggestedValuation;
 		}
-		
-		// calculate median for bids and set total number of bids
-		List<Integer> values = new ArrayList<Integer>();
-		for (Bid bid : getBidsForListing(listingId)) {
-			values.add(bid.value);
-		}
+
 		Collections.sort(values);
 		int median = 0;
 		if (values.size() == 0) {
@@ -423,7 +468,7 @@ public class ObjectifyDatastoreDAO {
 	public ListingStats getListingStatistics(long listingId) {
 		try {
 			return getOfy().get(new Key<ListingStats>(ListingStats.class, listingId));
-		} catch (NotFoundException e) {
+		} catch (Exception e) {
 			log.log(Level.WARNING, "Listing statistics entity '" + listingId + "'not found", e);
 			return null;
 		}
@@ -432,17 +477,20 @@ public class ObjectifyDatastoreDAO {
 	public SBUser updateUser(SBUser newUser) {
 		try {
 			SBUser user = getOfy().get(SBUser.class, newUser.id);
-			user.phone = newUser.phone;
-			user.investor = newUser.investor;
 			user.name = newUser.name;
 			user.nickname = newUser.nickname;
+			user.location = newUser.location;
+			user.phone = newUser.phone;
+			user.investor = newUser.investor;
 			user.notifyEnabled = newUser.notifyEnabled;
+			user.password = newUser.password;
+			user.authCookie = newUser.authCookie;
 			
 			getOfy().put(user);
 			
 			log.log(Level.INFO, "Updated user: " + user);
 			return user;
-		} catch (NotFoundException e) {
+		} catch (Exception e) {
 			log.log(Level.WARNING, "User '" + newUser.id + "' not found", e);
 			return null;
 		}
@@ -450,9 +498,9 @@ public class ObjectifyDatastoreDAO {
 
 	public List<SBUser> getAllUsers() {
 		QueryResultIterable<Key<SBUser>> usersIt = getOfy().query(SBUser.class)
-				.order("+nickname").fetchKeys();
-		List<SBUser> acceptedBids = new ArrayList<SBUser>(getOfy().get(usersIt).values());
-		return acceptedBids;
+				.order("email").fetchKeys();
+		List<SBUser> users = new ArrayList<SBUser>(getOfy().get(usersIt).values());
+		return users;
 	}
 
 	public SBUser getTopInvestor() {
@@ -476,7 +524,6 @@ public class ObjectifyDatastoreDAO {
 	}
 
 	public Listing createListing(Listing listing) {
-		listing.state = Listing.State.CREATED;
 		getOfy().put(listing);
 		return listing;
 	}
@@ -484,20 +531,21 @@ public class ObjectifyDatastoreDAO {
 	public Listing updateListing(Listing newListing) {
 		try {
 			Listing listing = getOfy().get(new Key<Listing>(Listing.class, newListing.id));
-			if (listing.state != Listing.State.POSTED && listing.state == Listing.State.CLOSED) { 
-				listing.name = newListing.name;
-			}
+			listing.name = newListing.name;
+			listing.summary = newListing.summary;
 			listing.suggestedAmount = newListing.suggestedAmount;
 			listing.suggestedPercentage = newListing.suggestedPercentage;
-			listing.suggestedValuation = newListing.suggestedValuation;
 			listing.businessPlanId = newListing.businessPlanId;
 			listing.presentationId = newListing.presentationId;
 			listing.financialsId = newListing.financialsId;
-			listing.summary = newListing.summary;
-		
+			listing.state = newListing.state;
+			listing.closingOn = newListing.closingOn;
+			listing.created = newListing.created;
+			listing.posted = newListing.posted;
+
 			getOfy().put(listing);
 			return listing;
-		} catch (NotFoundException e) {
+		} catch (Exception e) {
 			log.log(Level.WARNING, "Listing entity name '" + newListing.name
 					+ "', id '" + newListing.id + "' not found", e);
 			return null;
@@ -507,7 +555,7 @@ public class ObjectifyDatastoreDAO {
 	public Listing getListing(long listingId) {
 		try {
 			return getOfy().get(new Key<Listing>(Listing.class, listingId));
-		} catch (NotFoundException e) {
+		} catch (Exception e) {
 			log.log(Level.WARNING, "Listing entity '" + listingId + "'not found", e);
 			return null;
 		}
@@ -526,6 +574,7 @@ public class ObjectifyDatastoreDAO {
 				.filter("state =", Listing.State.ACTIVE)
 				.order("-listedOn").prefetchSize(listingProperties.getMaxResults()).fetchKeys();
 		List<Listing> listings = new ArrayList<Listing>(getOfy().get(listingsIt).values());
+		listingProperties.setNumberOfResults(listings.size());
 		return listings;
 	}
 
@@ -534,6 +583,7 @@ public class ObjectifyDatastoreDAO {
 				.filter("owner =", new Key<SBUser>(SBUser.class, userId))
 				.order("-listedOn").prefetchSize(listingProperties.getMaxResults()).fetchKeys();
 		List<Listing> listings = new ArrayList<Listing>(getOfy().get(listingsIt).values());
+		listingProperties.setNumberOfResults(listings.size());
 		return listings;
 	}
 
@@ -548,6 +598,7 @@ public class ObjectifyDatastoreDAO {
 		}
 		
 		List<Listing> listings = new ArrayList<Listing>(getOfy().get(listingKeys).values());
+		listingProperties.setNumberOfResults(listings.size());
 		return listings;
 	}
 
@@ -556,12 +607,13 @@ public class ObjectifyDatastoreDAO {
 				.filter("state =", Listing.State.ACTIVE)
 				.order("-listedOn").prefetchSize(listingProperties.getMaxResults()).fetchKeys();
 		List<Listing> listings = new ArrayList<Listing>(getOfy().get(listingsIt).values());
+		listingProperties.setNumberOfResults(listings.size());
 		return listings;
 	}
 
 	public List<Listing> getMostValuedListings(ListPropertiesVO listingProperties) {
 		QueryResultIterable<Key<ListingStats>> topListingsStat = getOfy().query(ListingStats.class)
-				.filter("state =", Listing.State.POSTED)
+				.filter("state =", Listing.State.ACTIVE)
 				.order("-valuation").prefetchSize(listingProperties.getMaxResults()).fetchKeys();
 		
 		List<Key<Listing>> listingKeys = new ArrayList<Key<Listing>>();
@@ -570,12 +622,13 @@ public class ObjectifyDatastoreDAO {
 		}
 		
 		List<Listing> listings = new ArrayList<Listing>(getOfy().get(listingKeys).values());
+		listingProperties.setNumberOfResults(listings.size());
 		return listings;
 	}
 
 	public List<Listing> getMostDiscussedListings(ListPropertiesVO listingProperties) {
 		QueryResultIterable<Key<ListingStats>> topListingsStat = getOfy().query(ListingStats.class)
-				.filter("state =", Listing.State.POSTED)
+				.filter("state =", Listing.State.ACTIVE)
 				.order("-numberOfComments").prefetchSize(listingProperties.getMaxResults()).fetchKeys();
 		
 		List<Key<Listing>> listingKeys = new ArrayList<Key<Listing>>();
@@ -584,12 +637,13 @@ public class ObjectifyDatastoreDAO {
 		}
 		
 		List<Listing> listings = new ArrayList<Listing>(getOfy().get(listingKeys).values());
+		listingProperties.setNumberOfResults(listings.size());
 		return listings;
 	}
 
 	public List<Listing> getMostPopularListings(ListPropertiesVO listingProperties) {
 		QueryResultIterable<Key<ListingStats>> topListingsStat = getOfy().query(ListingStats.class)
-				.filter("state =", Listing.State.POSTED)
+				.filter("state =", Listing.State.ACTIVE)
 				.order("-numberOfVotes").prefetchSize(listingProperties.getMaxResults()).fetchKeys();
 		
 		List<Key<Listing>> listingKeys = new ArrayList<Key<Listing>>();
@@ -598,43 +652,26 @@ public class ObjectifyDatastoreDAO {
 		}
 		
 		List<Listing> listings = new ArrayList<Listing>(getOfy().get(listingKeys).values());
+		listingProperties.setNumberOfResults(listings.size());
 		return listings;
 	}
 
 	public List<Listing> getLatestListings(ListPropertiesVO listingProperties) {
 		QueryResultIterable<Key<Listing>> listingsIt = getOfy().query(Listing.class)
-				.filter("state =", Listing.State.POSTED)
+				.filter("state =", Listing.State.ACTIVE)
 				.order("-listedOn").prefetchSize(listingProperties.getMaxResults()).fetchKeys();
 		List<Listing> listings = new ArrayList<Listing>(getOfy().get(listingsIt).values());
+		listingProperties.setNumberOfResults(listings.size());
 		return listings;
 	}
 
 	public List<Listing> getClosingListings(ListPropertiesVO listingProperties) {
 		QueryResultIterable<Key<Listing>> listingsIt = getOfy().query(Listing.class)
-				.filter("state =", Listing.State.POSTED)
+				.filter("state =", Listing.State.ACTIVE)
 				.order("-closingOn").prefetchSize(listingProperties.getMaxResults()).fetchKeys();
 		List<Listing> listings = new ArrayList<Listing>(getOfy().get(listingsIt).values());
+		listingProperties.setNumberOfResults(listings.size());
 		return listings;
-	}
-
-	public Listing upadateListingState(long listingId, Listing.State state) {
-		try {
-			Listing listing = getOfy().get(Listing.class, listingId);
-			listing.state = state;
-			getOfy().put(listing);
-			
-			try {
-				ListingStats stats = getOfy().get(ListingStats.class, listingId);
-				stats.state = state;
-				getOfy().put(stats);
-			} catch (Exception e) {
-				log.log(Level.SEVERE, "Error while updating listing statistics '" + listingId + "'", e);
-			}
-			return listing;
-		} catch (NotFoundException e) {
-			log.log(Level.WARNING, "Listing entity '" + listingId + "'not found", e);
-			return null;
-		}
 	}
 
 	public Listing valueUpListing(long listingId, long voterId) {
@@ -662,7 +699,7 @@ public class ObjectifyDatastoreDAO {
 			} else {
 				log.log(Level.WARNING, "User '" + voterId + "' owns listing '" + listingId + "', cannot vote");
 			}
-		} catch (NotFoundException e) {
+		} catch (Exception e) {
 			log.log(Level.WARNING, "Listing entity '" + listingId + "'not found", e);
 		}
 		return null;
@@ -693,7 +730,7 @@ public class ObjectifyDatastoreDAO {
 			} else {
 				log.log(Level.WARNING, "User '" + userId + "' cannot vote for himself/herself");
 			}
-		} catch (NotFoundException e) {
+		} catch (Exception e) {
 			log.log(Level.WARNING, "User entity '" + userId + "'not found", e);
 		}
 		return null;
@@ -770,7 +807,7 @@ public class ObjectifyDatastoreDAO {
 	public Bid getBid(long bidId) {
 		try {
 			return getOfy().get(Bid.class, bidId);
-		} catch (NotFoundException e) {
+		} catch (Exception e) {
 			log.log(Level.WARNING, "Bid entity '" + bidId + "' not found", e);
 			return null;
 		}
@@ -779,7 +816,7 @@ public class ObjectifyDatastoreDAO {
 	public Comment getComment(String commentId) {
 		try {
 			return getOfy().get(Comment.class, commentId);
-		} catch (NotFoundException e) {
+		} catch (Exception e) {
 			log.log(Level.WARNING, "Comment entity '" + commentId + "' not found", e);
 			return null;
 		}
@@ -789,7 +826,7 @@ public class ObjectifyDatastoreDAO {
 		Listing listing = null;
 		try {
 			listing = getOfy().get(Listing.class, listingId);
-		} catch (NotFoundException e) {
+		} catch (Exception e) {
 			log.log(Level.WARNING, "Listing entity '" + listingId + "' not found", e);
 			return false;
 		}
@@ -806,7 +843,7 @@ public class ObjectifyDatastoreDAO {
 		SBUser user = null;
 		try {
 			user = getOfy().get(SBUser.class, userId);
-		} catch (NotFoundException e) {
+		} catch (Exception e) {
 			log.log(Level.WARNING, "User entity '" + userId + "' not found", e);
 			return false;
 		}
@@ -819,13 +856,21 @@ public class ObjectifyDatastoreDAO {
 		return notOwnerOfListing && notVotedForListing;
 	}
 
-	public SBUser activateUser(long userId) {
+	public SBUser activateUser(long userId, String activationCode) {
 		try {
 			SBUser user = getOfy().get(SBUser.class, userId);
-			user.status = SBUser.Status.ACTIVE;
-			getOfy().put(user);
-			return user;
-		} catch (NotFoundException e) {
+			if (user.status == SBUser.Status.ACTIVE) {
+				// for already activated users don't do anything
+				return user;
+			}
+			if (StringUtils.areStringsEqual(user.activationCode, activationCode)) {
+				user.status = SBUser.Status.ACTIVE;
+				getOfy().put(user);
+				return user;
+			} else {
+				return null;
+			}
+		} catch (Exception e) {
 			log.log(Level.WARNING, "User with id '" + userId + "' not found!");
 			return null;
 		}
@@ -837,20 +882,20 @@ public class ObjectifyDatastoreDAO {
 			user.status = SBUser.Status.DEACTIVATED;
 			getOfy().put(user);
 			return user;
-		} catch (NotFoundException e) {
+		} catch (Exception e) {
 			log.log(Level.WARNING, "User with id '" + userId + "' not found!");
 			return null;
 		}
 	}
 
-	public boolean checkUserName(String userName) {
-		return getOfy().query(SBUser.class).filter("nickname =", userName).get() == null;
+	public boolean checkNickName(String nickName) {
+		return getOfy().query(SBUser.class).filter("nickname =", nickName).count() == 0;
 	}
 
 	public void deleteComment(long commentId) {
 		try {
 			getOfy().delete(Comment.class, commentId);
-		} catch (NotFoundException e) {
+		} catch (Exception e) {
 			log.log(Level.WARNING, "Comment with id '" + commentId + "' not found!");
 		}
 	}
@@ -867,7 +912,7 @@ public class ObjectifyDatastoreDAO {
 			comment.comment = newComment.comment;
 			getOfy().put(comment);
 			return comment;
-		} catch (NotFoundException e) {
+		} catch (Exception e) {
 			log.log(Level.WARNING, "Comment with id '" + newComment.id + "' not found!");
 			return null;
 		}
@@ -883,7 +928,7 @@ public class ObjectifyDatastoreDAO {
 
 			getOfy().delete(Bid.class, bidId);
 			return bid;
-		} catch (NotFoundException e) {
+		} catch (Exception e) {
 			log.log(Level.WARNING, "Bid with id '" + bidId + "' not found!");
 			return null;
 		}
@@ -894,7 +939,7 @@ public class ObjectifyDatastoreDAO {
 		Listing listing = null;
 		try {
 			listing = getOfy().get(bid.listing);
-		} catch (NotFoundException e) {
+		} catch (Exception e) {
 			log.log(Level.WARNING, "Bidding for non existing listing with id '" + bid.listing + "'!");
 			return null;
 		}
@@ -946,7 +991,7 @@ public class ObjectifyDatastoreDAO {
 			log.info("Activating bid: " + bid);
 			getOfy().put(bid);
 			return bid;
-		} catch (NotFoundException e) {
+		} catch (Exception e) {
 			log.log(Level.WARNING, "Bid with id '" + bidId + "' not found!");
 			return null;
 		}
@@ -968,7 +1013,7 @@ public class ObjectifyDatastoreDAO {
 			log.info("Rejecting bid: " + bid);
 			getOfy().put(bid);
 			return bid;
-		} catch (NotFoundException e) {
+		} catch (Exception e) {
 			log.log(Level.WARNING, "Bid with id '" + bidId + "' not found!");
 			return null;
 		}
@@ -986,7 +1031,7 @@ public class ObjectifyDatastoreDAO {
 			log.info("Withdrawing bid: " + bid);
 			getOfy().put(bid);
 			return bid;
-		} catch (NotFoundException e) {
+		} catch (Exception e) {
 			log.log(Level.WARNING, "Bid with id '" + bidId + "' not found!");
 			return null;
 		}
@@ -1018,7 +1063,7 @@ public class ObjectifyDatastoreDAO {
 			log.info("Accepting bid: " + bid);
 			getOfy().put(bid);
 			return bid;
-		} catch (NotFoundException e) {
+		} catch (Exception e) {
 			log.log(Level.WARNING, "Bid with id '" + bidId + "' not found!");
 			return null;
 		}
@@ -1046,7 +1091,7 @@ public class ObjectifyDatastoreDAO {
 			getOfy().put(paidBid);
 			log.info("Marked bid as active: " + paidBid);
 			return paidBid;
-		} catch (NotFoundException e) {
+		} catch (Exception e) {
 			log.log(Level.WARNING, "Bid with id '" + bidId + "' not found!");
 			return null;
 		}
@@ -1117,7 +1162,7 @@ public class ObjectifyDatastoreDAO {
 			notification.acknowledged = true;
 			getOfy().put(notification);
 			return notification;
-		} catch (NotFoundException e) {
+		} catch (Exception e) {
 			log.log(Level.WARNING, "Notification with id '" + notificationId + "' not found!");
 			return null;
 		}
@@ -1143,7 +1188,7 @@ public class ObjectifyDatastoreDAO {
 	public Notification getNotification(long notifId) {
 		try {
 			return getOfy().get(Notification.class, notifId);
-		} catch (NotFoundException e) {
+		} catch (Exception e) {
 			log.log(Level.WARNING, "Notification with id '" + notifId + "' not found!");
 			return null;
 		}
@@ -1182,7 +1227,7 @@ public class ObjectifyDatastoreDAO {
 			monitor.deactivated = new Date();
 			getOfy().put(monitor);
 			return monitor;
-		} catch (NotFoundException e) {
+		} catch (Exception e) {
 			log.log(Level.WARNING, "Notification with id '" + monitorId + "' not found!");
 			return null;
 		}

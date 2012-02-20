@@ -11,8 +11,10 @@ import org.codehaus.jackson.map.JsonMappingException;
 import com.startupbidder.web.DocService;
 import com.startupbidder.web.HttpHeaders;
 import com.startupbidder.web.HttpHeadersImpl;
+import com.startupbidder.web.ListingFacade;
 import com.startupbidder.web.ModelDrivenController;
 import com.startupbidder.web.ServiceFacade;
+import com.startupbidder.web.UserMgmtFacade;
 
 /**
  * 
@@ -40,7 +42,7 @@ public class CronTaskController extends ModelDrivenController {
 	private HttpHeaders updateListingStats(HttpServletRequest request) {
 		HttpHeaders headers = new HttpHeadersImpl("update-listing-stats");
 		
-		model = ServiceFacade.instance().updateAllListingStatistics();
+		model = ListingFacade.instance().updateAllListingStatistics();
 
 		return headers;
 	}
@@ -48,7 +50,7 @@ public class CronTaskController extends ModelDrivenController {
 	private HttpHeaders updateUserStats(HttpServletRequest request) {
 		HttpHeaders headers = new HttpHeadersImpl("update-user-stats");
 		
-		model = ServiceFacade.instance().updateAllUserStatistics();
+		model = UserMgmtFacade.instance().updateAllUserStatistics();
 
 		return headers;
 	}

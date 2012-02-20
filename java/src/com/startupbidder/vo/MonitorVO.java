@@ -16,7 +16,7 @@ import com.startupbidder.util.LowecaseSerializer;
  */
 @JsonAutoDetect(getterVisibility=Visibility.NONE, setterVisibility=Visibility.NONE,
 		fieldVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE)
-public class MonitorVO {
+public class MonitorVO extends BaseVO {
 	@JsonProperty("num")
 	private int orderNumber;
 	@JsonProperty("monitor_id")

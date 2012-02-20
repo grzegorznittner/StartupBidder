@@ -23,6 +23,15 @@ import com.startupbidder.vo.VoteVO;
  * @author "Grzegorz Nittner" <grzegorz.nittner@gmail.com>
  */
 public class VoToModelConverter {
+	@SuppressWarnings("rawtypes")
+	public static Key stringToKey(String webSafeKey) {
+		try {
+			return Key.create(webSafeKey);
+		} catch (Exception e) {
+			return null;
+		}
+	}
+	
 	public static Bid convert(BidVO bidVO) {
 		Bid bid = new Bid();
 		if (!StringUtils.isEmpty(bidVO.getId())) {
@@ -56,16 +65,16 @@ public class VoToModelConverter {
 		listing.closingOn = listingVO.getClosingOn();
 		listing.listedOn = listingVO.getListedOn();
 		listing.name = listingVO.getName();
-		listing.owner = new Key<SBUser>(listingVO.getOwner());
+		listing.owner = (Key<SBUser>)stringToKey(listingVO.getOwner());
 		listing.suggestedValuation = listingVO.getSuggestedValuation();
 		listing.suggestedPercentage = listingVO.getSuggestedPercentage();
 		listing.suggestedAmount = listingVO.getSuggestedAmount();
 		if (!StringUtils.isEmpty(listingVO.getState())) {
 			listing.state = Listing.State.valueOf(StringUtils.upperCase(listingVO.getState()));
 		}
-		listing.presentationId = listingVO.getPresentationId() != null ? new Key<ListingDoc>(listingVO.getPresentationId()) : null;
-		listing.businessPlanId = listingVO.getBuinessPlanId() != null ? new Key<ListingDoc>(listingVO.getBuinessPlanId()) : null;
-		listing.financialsId = listingVO.getFinancialsId() != null ? new Key<ListingDoc>(listingVO.getFinancialsId()) : null;
+		listing.presentationId = listingVO.getPresentationId() != null ? stringToKey(listingVO.getPresentationId()) : null;
+		listing.businessPlanId = listingVO.getBuinessPlanId() != null ? stringToKey(listingVO.getBuinessPlanId()) : null;
+		listing.financialsId = listingVO.getFinancialsId() != null ? stringToKey(listingVO.getFinancialsId()) : null;
 		listing.summary = listingVO.getSummary();
 		return listing;
 	}
@@ -123,9 +132,9 @@ public class VoToModelConverter {
 		user.lastLoggedIn = userVO.getLastLoggedIn();
 		user.modified = userVO.getModified();
 		user.nickname = userVO.getNickname();
-		/* @FIXIT
-		 * user.notifyEnabled = userVO.getNotifications();
-		 */
+		user.notifyEnabled = userVO.isNotifyEnabled();
+		user.phone = userVO.getPhone();
+		user.location = userVO.getLocation();
 		if (!StringUtils.isEmpty(userVO.getStatus())) {
 			user.status = SBUser.Status.valueOf(StringUtils.upperCase(userVO.getStatus()));
 		}

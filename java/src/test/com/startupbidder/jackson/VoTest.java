@@ -19,7 +19,9 @@ import com.startupbidder.vo.ListPropertiesVO;
 import com.startupbidder.vo.ListingListVO;
 import com.startupbidder.vo.ListingVO;
 import com.startupbidder.vo.UserVO;
+import com.startupbidder.web.ListingFacade;
 import com.startupbidder.web.ServiceFacade;
+import com.startupbidder.web.UserMgmtFacade;
 
 /**
  * 
@@ -27,7 +29,6 @@ import com.startupbidder.web.ServiceFacade;
  */
 public class VoTest {
 	private final LocalServiceTestHelper helper = new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
-	private ServiceFacade service = ServiceFacade.instance();
 	private UserService userService = null;
 	private UserVO user;
 	
@@ -36,9 +37,9 @@ public class VoTest {
 		helper.setUp();
 		userService = UserServiceFactory.getUserService();
 		if(userService.getCurrentUser() != null) {
-			user = service.getLoggedInUserData(userService.getCurrentUser());
+			user = UserMgmtFacade.instance().getLoggedInUserData(userService.getCurrentUser());
 			if (user == null) {
-				user = service.createUser(userService.getCurrentUser());
+				user = UserMgmtFacade.instance().createUser(userService.getCurrentUser());
 			}
 		}
 	}
@@ -52,9 +53,9 @@ public class VoTest {
 	public void arrayNodeTest() {
 		ListPropertiesVO listingProperties = new ListPropertiesVO();
 		listingProperties.setMaxResults(10);
-		ListingListVO listings = service.getTopListings(user, listingProperties);
+		ListingListVO listings = ListingFacade.instance().getTopListings(user, listingProperties);
 		
-		CommentListVO comments = service.getCommentsForListing(user, listings.getListings().get(0).getId(), listingProperties);
+		CommentListVO comments = ServiceFacade.instance().getCommentsForListing(user, listings.getListings().get(0).getId(), listingProperties);
 		
 		//assertEquals(7, bpList.size());
 				

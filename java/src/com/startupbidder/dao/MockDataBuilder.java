@@ -420,7 +420,7 @@ public class MockDataBuilder {
 		bp.suggestedPercentage = 45;
 		bp.suggestedAmount = bp.suggestedValuation*bp.suggestedPercentage/100;
 		bp.listedOn = new Date(System.currentTimeMillis() - 15 * 24 * 60 * 60 * 1000);
-		bp.state = Listing.State.CREATED;
+		bp.state = Listing.State.POSTED;
 		midnight = new DateMidnight(bp.listedOn.getTime());
 		bp.closingOn = midnight.plus(Days.days(30)).toDate();
 		bp.summary = "Starting a computer training camp for children is a terrific new business " +

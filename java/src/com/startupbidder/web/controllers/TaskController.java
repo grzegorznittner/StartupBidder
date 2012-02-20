@@ -26,8 +26,10 @@ import com.startupbidder.web.DocService;
 import com.startupbidder.web.EmailService;
 import com.startupbidder.web.HttpHeaders;
 import com.startupbidder.web.HttpHeadersImpl;
+import com.startupbidder.web.ListingFacade;
 import com.startupbidder.web.ModelDrivenController;
 import com.startupbidder.web.ServiceFacade;
+import com.startupbidder.web.UserMgmtFacade;
 
 /**
  * @author "Grzegorz Nittner" <grzegorz.nittner@gmail.com>
@@ -72,7 +74,7 @@ public class TaskController extends ModelDrivenController {
 		HttpHeaders headers = new HttpHeadersImpl("calculate-user-stats");
 		
 		String userId = getCommandOrParameter(request, 2, "id");
-		ServiceFacade.instance().calculateUserStatistics(userId);
+		UserMgmtFacade.instance().calculateUserStatistics(userId);
 		
 		return headers;
 	}
@@ -81,8 +83,8 @@ public class TaskController extends ModelDrivenController {
 		HttpHeaders headers = new HttpHeadersImpl("calculate-listing-stats");
 		
 		String listingId = getCommandOrParameter(request, 2, "id");
-		ServiceFacade.instance().calculateListingStatistics(NumberUtils.toLong(listingId));
-		ListingVO listing = ServiceFacade.instance().getListing(null, listingId).getListing();
+		ListingFacade.instance().calculateListingStatistics(NumberUtils.toLong(listingId));
+		ListingVO listing = ListingFacade.instance().getListing(null, listingId).getListing();
 		DocService.instance().updateListingData(listing);
 		
 		return headers;
@@ -93,9 +95,9 @@ public class TaskController extends ModelDrivenController {
 		
 		String bidId = getCommandOrParameter(request, 2, "id");
 		BidAndUserVO bid = ServiceFacade.instance().getBid(null, bidId);
-		UserAndUserVO listingOwner = ServiceFacade.instance().getUser(null, bid.getBid().getListingOwner());
-		UserAndUserVO investor = ServiceFacade.instance().getUser(null, bid.getBid().getUser());
-		ListingAndUserVO listing = ServiceFacade.instance().getListing(null, bid.getBid().getListing());
+		UserAndUserVO listingOwner = UserMgmtFacade.instance().getUser(null, bid.getBid().getListingOwner());
+		UserAndUserVO investor = UserMgmtFacade.instance().getUser(null, bid.getBid().getUser());
+		ListingAndUserVO listing = ListingFacade.instance().getListing(null, bid.getBid().getListing());
 		
 		EmailService.instance().sendAcceptedBidNotification(bid.getBid(), listing.getListing(),
 				listingOwner.getUser(), investor.getUser());
@@ -130,13 +132,13 @@ public class TaskController extends ModelDrivenController {
 	}
 	
 	private void sendBidNotification(Notification.Type type, NotificationVO notification, BidVO bid) {
-		UserAndUserVO listingOwner = ServiceFacade.instance().getUser(null, bid.getListingOwner());
+		UserAndUserVO listingOwner = UserMgmtFacade.instance().getUser(null, bid.getListingOwner());
 		if (!listingOwner.getUser().getNotifications().contains(type)) {
 			log.info("User '" + listingOwner.getUser().getName() + "' is not subscribed to get '" + type + "' email notification.");
 			return;
 		}
-		UserAndUserVO investor = ServiceFacade.instance().getUser(null, bid.getUser());
-		ListingAndUserVO listing = ServiceFacade.instance().getListing(null, bid.getListing());
+		UserAndUserVO investor = UserMgmtFacade.instance().getUser(null, bid.getUser());
+		ListingAndUserVO listing = ListingFacade.instance().getListing(null, bid.getListing());
 
 		switch (type) {
 		case YOUR_BID_WAS_ACCEPTED:
@@ -175,9 +177,9 @@ public class TaskController extends ModelDrivenController {
 	}
 	
 	private void sendCommentNotification(Notification.Type type, NotificationVO notification, CommentVO comment) {
-		ListingAndUserVO listing = ServiceFacade.instance().getListing(null, comment.getListing());
-		UserAndUserVO listingOwner = ServiceFacade.instance().getUser(null, listing.getListing().getOwner());
-		UserAndUserVO commenter = ServiceFacade.instance().getUser(null, comment.getUser());
+		ListingAndUserVO listing = ListingFacade.instance().getListing(null, comment.getListing());
+		UserAndUserVO listingOwner = UserMgmtFacade.instance().getUser(null, listing.getListing().getOwner());
+		UserAndUserVO commenter = UserMgmtFacade.instance().getUser(null, comment.getUser());
 		switch (type) {
 		case NEW_COMMENT_FOR_YOUR_LISTING:
 			if (!listingOwner.getUser().getNotifications().contains(type)) {
@@ -190,7 +192,7 @@ public class TaskController extends ModelDrivenController {
 		case NEW_COMMENT_FOR_MONITORED_LISTING:
 			MonitorListVO list = ServiceFacade.instance().getMonitorsForObject(null, comment.getListing(), "LISTING");
 			for (MonitorVO monitor : list.getMonitors()) {
-				UserVO monitoringUser = ServiceFacade.instance().getUser(null, monitor.getUser()).getUser();
+				UserVO monitoringUser = UserMgmtFacade.instance().getUser(null, monitor.getUser()).getUser();
 				if (!monitoringUser.getNotifications().contains(type)) {
 					log.info("User '" + monitoringUser.getName() + "' is not subscribed to get '" + type + "' email notification.");
 					continue;
@@ -218,7 +220,7 @@ public class TaskController extends ModelDrivenController {
 	}
 	
 	private void sendListingNotification(Notification.Type type, NotificationVO notification, ListingVO listing) {
-		UserAndUserVO listingOwner = ServiceFacade.instance().getUser(null, listing.getOwner());
+		UserAndUserVO listingOwner = UserMgmtFacade.instance().getUser(null, listing.getOwner());
 		switch (type) {
 		case NEW_VOTE_FOR_YOUR_LISTING:
 			if (!listingOwner.getUser().getNotifications().contains(type)) {
@@ -230,7 +232,7 @@ public class TaskController extends ModelDrivenController {
 		case NEW_LISTING:
 			MonitorListVO list = ServiceFacade.instance().getMonitorsForObject(null, listing.getId(), "LISTING");
 			for (MonitorVO monitor : list.getMonitors()) {
-				UserVO monitoringUser = ServiceFacade.instance().getUser(null, monitor.getUser()).getUser();
+				UserVO monitoringUser = UserMgmtFacade.instance().getUser(null, monitor.getUser()).getUser();
 				if (!monitoringUser.getNotifications().contains(type)) {
 					log.info("User '" + monitoringUser.getName() + "' is not subscribed to get '" + type + "' email notification.");
 					continue;
@@ -260,11 +262,11 @@ public class TaskController extends ModelDrivenController {
 		case YOUR_PROFILE_WAS_MODIFIED:
 		case NEW_VOTE_FOR_YOU:
 			// object is profile
-			return ServiceFacade.instance().getUser(null, notification.getObject()).getUser();
+			return UserMgmtFacade.instance().getUser(null, notification.getObject()).getUser();
 		case NEW_VOTE_FOR_YOUR_LISTING:
 		case NEW_LISTING:
 			// object is listing
-			return ServiceFacade.instance().getListing(null, notification.getObject()).getListing();
+			return ListingFacade.instance().getListing(null, notification.getObject()).getListing();
 		}
 		return null;
 	}

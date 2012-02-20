@@ -5,6 +5,11 @@
   <property name="env.APPENGINE_ADDRESS" value="127.0.0.1"/>
   <echo message="\'APPENGINE_ADDRESS\'=${env.APPENGINE_ADDRESS}"/>
   <import file="${env.APPENGINE_HOME}/config/user/ant-macros.xml" />
+	
+  <property name="java-classes" value="war/WEB-INF/classes"/>
+  <property name="java-src" value="java/src"/>
+  <property name="test-classes" value="tests/classes"/>
+  <property name="test-reports" value="tests/reports"/>
 
   <target name="check-appengine-home" unless="env.APPENGINE_HOME">
   	<echo message="Set \'APPENGINE_HOME\' environment variable to folder where you installed AppEngine SDK."/> 
@@ -33,7 +38,7 @@
   </scriptdef>
 
   <path id="project.classpath">
-    <pathelement path="war/WEB-INF/classes" />
+    <pathelement path="${java-classes}" />
     <fileset dir="war/WEB-INF/lib">
       <include name="**/*.jar" />
     </fileset>
@@ -62,17 +67,27 @@
 
   <target name="compile-java" depends="check-appengine-home, copyjars"
       description="Compiles Java source and copies other source files to the WAR.">
-  	<mkdir dir="war/WEB-INF/classes" />
-    <copy todir="war/WEB-INF/classes">
-      <fileset dir="java/src">
+  	<mkdir dir="${java-classes}" />
+    <copy todir="${java-classes}">
+      <fileset dir="${java-src}">
         <exclude name="**/*.java" />
       </fileset>
     </copy>
     <javac
-        srcdir="java/src"
-        destdir="war/WEB-INF/classes"
+        destdir="${java-classes}"
         classpathref="project.classpath"
-        debug="on" />
+        debug="on">
+    	<src path="${java-src}"/>
+    	<exclude name="**/test/**"/>
+    </javac>
+  	<mkdir dir="${test-classes}"/>
+    <javac
+        destdir="${test-classes}"
+        classpathref="project.classpath"
+        debug="on">
+    	<src path="${java-src}"/>
+    	<include name="**/test/**"/>
+    </javac>
   </target>
   
   <target name="compile-static-files" depends="check-appengine-home, copyjars"
@@ -93,27 +108,43 @@
 	
 	<target name="runtest" description="Runs the test you specify on the command line with -Dtest="
 		depends="compile-java, ensure-test-name">
-	    <junit printsummary="withOutAndErr" fork="yes"> 
+		<mkdir dir="${test-reports}"/>
+	    <junit printsummary="withOutAndErr" fork="yes" > 
 	        <classpath refid="project.classpath" />
-	        <formatter type="plain" usefile="false"/>
-	        <batchtest>
-	            <fileset dir="war/WEB-INF/classes">
+	    	<classpath path="${test-classes}"/>
+	        <batchtest todir="${test-reports}">
+	        	<formatter type="xml"/>
+	            <fileset dir="${test-classes}">
 	                <include name="**/${test}.class"/>
 	            </fileset>
 	        </batchtest>
 	    </junit>
+		<junitreport todir="${test-reports}">
+		  <fileset dir="${test-reports}">
+		    <include name="TEST-*.xml"/>
+		  </fileset>
+		  <report format="frames" todir="${test-reports}"/>
+		</junitreport>
 	</target>
 	
 	<target name="runtests" description="Runs all provided tests" depends="compile-java">
+		<mkdir dir="${test-reports}"/>
 	    <junit printsummary="withOutAndErr" fork="yes"> 
 	        <classpath refid="project.classpath" />
-	        <formatter type="plain" usefile="false"/>
-	        <batchtest>
-	            <fileset dir="${src}">
-	                <include name="**/${test}.java"/>
+	    	<classpath path="${test-classes}"/>
+	        <formatter type="plain" usefile="true"/>
+	        <batchtest todir="${test-reports}">
+	            <fileset dir="${test-classes}">
+	                <include name="**/*Test.class"/>
 	            </fileset>
 	        </batchtest>
 	    </junit>
+		<junitreport todir="${test-reports}">
+			<fileset dir="${test-reports}">
+				<include name="TEST-*.xml"/>
+			</fileset>
+			<report format="frames" todir="${test-reports}"/>
+		</junitreport>
 	</target>
 	
   <target name="runserver" description="Starts the development server.">
@@ -197,7 +228,8 @@
 
   <target name="clean-java" depends="check-appengine-home" description="Cleans Java artefacts">
     <delete includeEmptyDirs="true" failonerror="false">
-      <fileset dir="war/WEB-INF/classes"/>
+      <fileset dir="${java-classes}"/>
+      <fileset dir="${test-classes}"/>
       <fileset dir="war/WEB-INF/lib">
     	<include name="appengine*" />
       	<include name="jsr107*" />

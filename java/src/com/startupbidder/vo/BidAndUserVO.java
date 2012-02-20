@@ -14,7 +14,7 @@ public class BidAndUserVO extends BaseResultVO {
 	@JsonProperty("bid")
 	private BidVO bid;
 	@JsonProperty("profile")
-	private UserVO user;
+	private UserBasicVO user;
 
 	public BidVO getBid() {
 		return bid;
@@ -22,10 +22,10 @@ public class BidAndUserVO extends BaseResultVO {
 	public void setBid(BidVO bid) {
 		this.bid = bid;
 	}
-	public UserVO getUser() {
+	public UserBasicVO getUser() {
 		return user;
 	}
-	public void setUser(UserVO user) {
+	public void setUser(UserBasicVO user) {
 		this.user = user;
 	}
 	@Override

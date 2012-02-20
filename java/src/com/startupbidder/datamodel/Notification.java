@@ -6,6 +6,9 @@ package com.startupbidder.datamodel;
 
 import java.util.Date;
 
+import javax.persistence.Id;
+import javax.persistence.PrePersist;
+
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.annotation.Cached;
 import com.googlecode.objectify.annotation.Entity;
@@ -25,6 +28,15 @@ public class Notification extends BaseObject {
 		NEW_VOTE_FOR_YOU, NEW_COMMENT_FOR_YOUR_LISTING, NEW_COMMENT_FOR_MONITORED_LISTING,
 		YOUR_PROFILE_WAS_MODIFIED, NEW_VOTE_FOR_YOUR_LISTING, NEW_LISTING};
 
+	@Id public Long id;
+	
+	public boolean mockData;
+	
+	public Date modified;
+	@PrePersist void updateModifiedDate() {
+		this.modified = new Date();
+	}
+		
 	@Indexed public Key<SBUser> user;
 	@Indexed public Type type;
 	public Key<BaseObject> object;

@@ -6,6 +6,9 @@ package com.startupbidder.datamodel;
 
 import java.util.Date;
 
+import javax.persistence.Id;
+import javax.persistence.PrePersist;
+
 import com.google.appengine.api.blobstore.BlobKey;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.annotation.Cached;
@@ -22,6 +25,15 @@ import com.googlecode.objectify.annotation.Unindexed;
 public class ListingDoc extends BaseObject {
 	public enum Type {BUSINESS_PLAN, PRESENTATION, FINANCIALS};
 
+	@Id public Long id;
+	
+	public boolean mockData;
+	
+	public Date modified;
+	@PrePersist void updateModifiedDate() {
+		this.modified = new Date();
+	}
+	
 	public BlobKey blob;
 	public Date created;
 	public Type type;

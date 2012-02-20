@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="java/src"/>
-	<classpathentry kind="con" path="com.google.appengine.eclipse.core.GAE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jre6"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/jackson-all-1.8.2.jar">
 		<attributes>
@@ -9,7 +8,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
-	<classpathentry kind="lib" path="lib/appengine-testing.jar"/>
 	<classpathentry kind="lib" path="lib/junit.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/commons-collections-3.1.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/commons-fileupload-1.2.2.jar"/>
@@ -22,10 +20,7 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/activation-1.1.jar"/>
-	<classpathentry kind="lib" path="war/WEB-INF/lib/appengine-api-1.0-sdk-1.5.3.jar"/>
-	<classpathentry kind="lib" path="war/WEB-INF/lib/appengine-api-labs-1.5.3.jar"/>
-	<classpathentry kind="lib" path="war/WEB-INF/lib/appengine-jsr107cache-1.5.3.jar"/>
-	<classpathentry kind="lib" path="war/WEB-INF/lib/gdata-base-1.0.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/gdata-base-1.0.jar" sourcepath="E:/projects/gdata-src.java-1.46.0/src"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/gdata-client-1.0.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/gdata-core-1.0.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/gdata-docs-3.0.jar"/>
@@ -34,5 +29,15 @@
 	<classpathentry kind="lib" path="war/WEB-INF/lib/google-collect-1.0-rc1.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/jsr305.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/mail-1.4.jar"/>
+	<classpathentry kind="con" path="com.google.appengine.eclipse.core.GAE_CONTAINER/appengine-java-sdk-1.6.1"/>
+	<classpathentry kind="lib" path="lib/httpclient-4.1.2.jar"/>
+	<classpathentry kind="lib" path="lib/httpcore-4.1.2.jar"/>
+	<classpathentry kind="lib" path="lib/httpmime-4.1.2.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/objectify-3.1.jar" sourcepath="E:/projects/objectify-3.1/src"/>
+	<classpathentry kind="lib" path="lib/appengine-api-1.0-sdk-1.6.1.jar"/>
+	<classpathentry kind="lib" path="lib/appengine-api-labs-1.6.1.jar"/>
+	<classpathentry kind="lib" path="lib/appengine-testing.jar"/>
+	<classpathentry kind="lib" path="lib/appengine-api-stubs.jar"/>
+	<classpathentry kind="lib" path="lib/javaee-api-5.0.5.jar"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>

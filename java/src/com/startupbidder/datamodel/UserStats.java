@@ -1,5 +1,10 @@
 package com.startupbidder.datamodel;
 
+import java.util.Date;
+
+import javax.persistence.Id;
+import javax.persistence.PrePersist;
+
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.annotation.Cached;
 import com.googlecode.objectify.annotation.Entity;
@@ -15,6 +20,15 @@ import com.googlecode.objectify.annotation.Unindexed;
 @Cached(expirationSeconds=60*30*2)
 public class UserStats extends BaseObject {
 	// long value of id for UserStats is the same as SBUser's one 
+	
+	@Id public Long id;
+	
+	public boolean mockData;
+	
+	public Date modified;
+	@PrePersist void updateModifiedDate() {
+		this.modified = new Date();
+	}
 	
 	@Indexed public Key<SBUser> user;
 	@Indexed public SBUser.Status status;

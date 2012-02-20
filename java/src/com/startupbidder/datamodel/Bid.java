@@ -5,6 +5,9 @@ package com.startupbidder.datamodel;
 
 import java.util.Date;
 
+import javax.persistence.Id;
+import javax.persistence.PrePersist;
+
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.annotation.Cached;
 import com.googlecode.objectify.annotation.Entity;
@@ -26,6 +29,15 @@ public class Bid extends BaseObject implements Monitor.Monitored {
 	 */
 	public enum Status { POSTED, ACTIVE, WITHDRAWN, REJECTED, ACCEPTED, PAID};
 
+	@Id public Long id;
+	
+	public boolean mockData;
+	
+	public Date modified;
+	@PrePersist void updateModifiedDate() {
+		this.modified = new Date();
+	}
+	
 	@Indexed public Key<SBUser> bidder;
 	@Indexed public Key<Listing> listing;
 	@Indexed public Key<SBUser> listingOwner;
@@ -43,5 +55,4 @@ public class Bid extends BaseObject implements Monitor.Monitored {
 	public String getWebKey() {
 		return new Key<Bid>(Bid.class, id).getString();
 	}
-
 }
