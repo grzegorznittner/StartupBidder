@@ -295,8 +295,13 @@ pl.implement(BidsClass, {
         return bidmap;
     },
     getBidOrder: function() {
-        var bidorder, biddate, profile_id, bidrec;
-        bidorder = [];
+        var biddate,
+            profile_id,
+            bidrec,
+            bidorder = [],
+            bidrecsorter = function(bidreca, bidrecb) { // bid date desc
+                return bidrecb.bid_date - bidreca.bid_date;
+            };
         for (profile_id in this.bidmap) {
             biddate = this.bidmap[profile_id][0].bid_date;
             bidrec = {
@@ -304,9 +309,6 @@ pl.implement(BidsClass, {
                 profile_id: profile_id
             }
             bidorder.push(bidrec);
-        }
-        var bidrecsorter = function(bidreca, bidrecb) { // bid date desc
-            return bidrecb.bid_date - bidreca.bid_date;
         }
         bidorder.sort(bidrecsorter);
         return bidorder;
@@ -318,12 +320,7 @@ pl.implement(BidsClass, {
             //return;
         }
         */
-        if (this.loggedin_profile_id !== this.listing.profile_id && !this.bidmap[this.loggedin_profile_id]) { // it's not user's listing and no exsiting bid for logged in user
-            this.displayNewBid();
-        }
-        if (this.bids.length !== 0) {
-            this.displayBids();
-        }
+        this.displayBids();
     },
     displayBidClosed: function () {
         var str;
@@ -332,45 +329,8 @@ pl.implement(BidsClass, {
         pl('#bidclosedtitle').show();
         pl('#bidclosedbox').show();
     },
+    makeNewBidBox: function() {
 /*
-    displayMakeBid: function () {
-        var i, bid, existingBid;
-        for (i = 0; i < this.bids.length; i++) {
-            bid = this.bids[i];
-            if (bid.profile_id === this.loggedin_profile_id && bid.status === 'active') { // they have an active bid
-                existingBid = bid;
-                break;
-            }
-            i++;
-        }
-        if (existingBid) { // prefill and set to revise bid
-            this.displayReviseBid(existingBid);
-        }
-        else {
-        }
-    },
-/*
-    displayReviseBid: function(existingBid) {
-        pl('#makebidboxtitle').html('REVISE BID');
-        pl('#makebid_amt').attr({value: this.currency.format(existingBid.amount)});
-        pl('#makebid_pct').attr({value: existingBid.equity_pct});
-        pl('#makebid_type').attr({value: existingBid.bid_type});
-        if (existingBid.bid_type !== 'common' && existingBid.interest_rate) {
-            pl('#makebid_rate').attr({value: existingBid.interest_rate});
-            pl('#makebid_rate_box').show();
-        }
-        pl('#makebid_val').html(this.currency.format(existingBid.valuation));
-        pl('#makebid_note').attr({value: 'This bid replaces the existing bid placed on ' + this.date.format(existingBid.bid_date)});
-        pl('#makebid_btn').html('REVISE BID');
-    },
-*/
-    displayNewBid: function() {
-        var self, makebidAmt;
-        self = this;
-        pl('#makebid_pct').attr({value: this.listing.suggested_pct});
-        pl('#makebid_type').attr({value: 'common'});
-        pl('#makebid_val').html(this.currency.format(this.listing.suggested_val));
-        pl('#makebid_note').attr({value: 'Your note to the owner here...'});
         makebidAmt = new TextFieldClass('makebid_amt', this.currency.format(this.listing.suggested_amt), function(){}, 'makebid_msg');
         makebidAmt.fieldBase.addValidator(this.currency.isCurrency);
         makebidAmt.fieldBase.validator.preValidateTransform = this.currency.clean;
@@ -384,23 +344,53 @@ pl.implement(BidsClass, {
             }
         };
         makebidAmt.bindEvents();
-        pl('#makebidboxtitle').show();
-        pl('#makebidbox').show();
+*/
+        var bid = this.makeNewBid(),
+            html = this.makeBidHeader(bid)
+                + this.makeActionableBid(bid)
+                + this.makeBidFooter();
+        return html;
+    },
+    makeNewBid: function() {
+        var bid = {
+                status: 'new',
+                bid_id: '123new', // FIXME: should come from backend
+                profile_id: this.loggedin_profile_id,
+                profile_username: (this.loggedin_username || 'user'), // FIXME: use user's name
+                bid_date: '2011-12-12', // FIXME: today
+                listing_profile_id: this.listing.profile_id,
+                listing_id: this.listing.listing_id,
+                amount: this.listing.suggested_amt,
+                equity_pct: this.listing.suggested_pct,
+                bid_type: (this.listing.suggested_type || 'common'),
+                interest_rate: (this.listing.suggested_rate || 0),
+                bid_note: 'Note to the owner...',
+                valuation: this.listing.suggested_val
+            };
+        bid.actions = this.bidActions(bid);
+        return bid;
     },
     displayBids: function() {
         var i,
             profile_id,
+            bidsForProfile,
             html = '';
+        if (this.loggedin_profile_id && !this.userIsOwner() && !this.userHasBid()) {
+            html += this.makeNewBidBox();
+        }
         for (i = 0; i < this.bidorder.length; i++) {
             profile_id = this.bidorder[i].profile_id;
             bidsForProfile = this.bidmap[profile_id];
             if (bidsForProfile.length > 0) {
-                html += this.displayBidsForOneProfile(profile_id);
+                html += this.makeBidsForOneProfile(profile_id);
             }
         }
-        pl('#makebidbox').after(html);
+        pl('#bidclosedbox').after(html);
     },
-    displayBidsForOneProfile: function(profile_id) {
+    userHasBid: function() {
+        return this.bidmap[this.loggedin_profile_id] ? true : false;
+    },
+    makeBidsForOneProfile: function(profile_id) {
         var i,
             bid,
             bidlist = this.bidmap[profile_id],
@@ -408,9 +398,6 @@ pl.implement(BidsClass, {
             start = 0;
         bid = bidlist[0];
         bid.actions = this.bidActions(bid); // only the first item can have acitons
-        if (bid.mybid) {
-            console.log('mybid:',bid);
-        }
         html += this.makeBidHeader(bid); 
         if (bid.actions.length > 0) { // actionable bid
             html += this.makeActionableBid(bid);
@@ -424,6 +411,7 @@ pl.implement(BidsClass, {
             bid = bidlist[i];
             html += this.makeBidSummary(bid);
         }
+        html += this.endBidList();
         html += this.makeBidFooter();
         return html;
     },
@@ -432,21 +420,22 @@ pl.implement(BidsClass, {
     },
     bidActions: function(bid) {
         var actions = [];
-        if (bid.status === 'active') {
+        if (bid.status === 'new') {
+            actions = ['makebid'];
+        }
+        else if (bid.status === 'active') {
             if (bid.mybid) {
                 actions = ['withdraw']; // withdraw my bid or counter
             }
+            // FIXME: there's currently no way in the current API to know which side countered last
+            else if (this.userIsOwner()) {
+                actions = ['accept', 'reject', 'counter']; // it's another user's bid
+            }
+            else if (bid.ownerbid) {
+                actions = ['accept', 'reject', 'counter']; // owner counteroffer
+            }
             else {
-                // FIXME: there's currently no way in the current API to know which side countered last
-                if (this.userIsOwner()) {
-                    actions = ['accept', 'reject', 'counter']; // it's another user's bid
-                }
-                else if (bid.ownerbid) {
-                    actions = ['accept', 'reject', 'counter']; // owner counteroffer
-                }
-                else {
-                    actions = []; // other investor's bid
-                }
+                actions = []; // other investor's bid
             }
         }
         return actions;
@@ -514,9 +503,10 @@ pl.implement(BidsClass, {
         var bidtitleid = 'bidtitle_' + bid.bid_id;
             bidboxid = 'bidbox_' + bid.bid_id;
             displayUsername = bid.mybid ? 'YOU' : bid.profile_username.toUpperCase();
-            displayDate = this.date.format(bid.bid_date);
+            displayDate = this.date.format(bid.bid_date),
+            title = bid.status === 'new' ? 'MAKE A BID' : 'BID FROM ' + displayUsername + ' ON ' + displayDate;
         return '\
-            <div class="boxtitle" id="' + bidtitleid + '">BID FROM ' + displayUsername + ' ON ' + displayDate + '</div>\
+            <div class="boxtitle" id="' + bidtitleid + '">' + title + '</div>\
             <div class="boxpanel uneditabletext bidpanel" id="' + bidboxid + '">\
         ';
     },
@@ -526,24 +516,20 @@ pl.implement(BidsClass, {
     startBidList: function() {
         return '<dl>';
     },
+    endBidList: function() {
+        return '</dl>';
+    },
     makeBidFooter: function() {
-        return '</dl></div>';
+        return '</div>';
     },
     bidStatusMsg: function(bid) {
-        var bidmsg = '';
-        if (bid.status === 'accepted') {
-            bidmsg = 'BID ACCEPTED';
-        }
-        else if (bid.status === 'withdrawn') {
-            bidmsg = 'BID WITHDRAWN';
-        }
-        else if (bid.status === 'countered') { // FIXME: unimplemented
-            bidmsg = 'BID COUNTERED';
-        }
-        else {
-            bidmsg = '';
-        }
-        return bidmsg;
+        var statusMap = {
+                'new': '',
+                'accepted': 'BID ACCEPTED',
+                'withdrawn': 'BID WITHDRAWN',
+                'countered': 'BID COUNTERED'
+            };
+        return statusMap[bid.status] || '';
     },
     makeActionButtons: function(bid) {
         var i,
@@ -560,7 +546,7 @@ pl.implement(BidsClass, {
         var id = 'bid_action_' + action + '_' + bid.bid_id,
             iconType = 'bidactionicon' + (action === 'counter' ? 'narrow' : ''),
             icon = 'bid' + action + 'icon',
-            text = action.toUpperCase(); 
+            text = action === 'makebid' ? 'MAKE BID' : action.toUpperCase(); 
         return '\
             <a href="#">\
                 <span class="' + pushclass + ' span-4 inputbutton bidactionbtn" id="' + id + '"><div class="' + iconType + ' ' + icon + '"></div>' + text + '</span>\
@@ -611,7 +597,7 @@ return '<div>\
     <div>\
         <textarea class="textarea inputfullwidetextshort" id="' + bidnoteid + '" name="' + bidnoteid + '" rows="20" cols="5" value="' + bidnote + '">' + bidnote + '</textarea>\
     </div>\
-    <div class="inputmsg" id="' + bidmsgid + '">' + bidmsg + '</div>\
+    <p class="inputmsg" id="' + bidmsgid + '">' + bidmsg + '</p>\
     <div>\
         <span class="bidvallabel"><span id="' + bidvalid + '">' + bidval + '</span> VALUATION</span>\
 ' + buttons + '\

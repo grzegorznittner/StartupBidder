@@ -2,9 +2,15 @@
 function SafeStringClass() {}
 pl.implement(SafeStringClass, {
     trim: function(str) {
+        if (!str) {
+            return '';
+        }
         return str.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
     },
     htmlEntities: function (str) {
+        if (!str) {
+            return '';
+        }
         return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
     }
 });
@@ -21,28 +27,28 @@ function CurrencyClass(symbol) {
 }
 pl.implement(CurrencyClass, {
     format: function(num) {
-		    var nStr = num + '';
-			var x = nStr.split('.');
-			var x1 = x[0];
-			var x2 = x.length > 1 ? '.' + x[1] : '';
-			var rgx = /(\d+)(\d{3})/;
-			while (rgx.test(x1)) {
-				x1 = x1.replace(rgx, '$1' + ',' + '$2');
-			}
-			return this.symbol + x1 + x2;
+        if (!num) {
+            return '';
+        }
+	    var nStr = num + '';
+		var x = nStr.split('.');
+		var x1 = x[0];
+		var x2 = x.length > 1 ? '.' + x[1] : '';
+		var rgx = /(\d+)(\d{3})/;
+		while (rgx.test(x1)) {
+			x1 = x1.replace(rgx, '$1' + ',' + '$2');
+		}
+		return this.symbol + x1 + x2;
     },
     clean: function(str) {
-        var cleaned;
-        cleaned = str.replace(/[^0-9]/g, '');
-        return cleaned;
+        if (!str) {
+            return '';
+        }
+        return str.replace(/[^0-9]/g, '');
     },
     isCurrency: function(str) {
-        if (str.match(/^[$]?[0-9]{1,3}(,?[0-9]{3})*$/)) {
-            return 0;
-        }
-        else {
-            return 'Please enter a currency value';
-        }
+        var match = str ? str.match(/^[$]?[0-9]{1,3}(,?[0-9]{3})*$/) : false;
+        return (match ? 0 : 'Please enter a currency value');
     }
 });
 
@@ -51,6 +57,9 @@ function URLClass(url) {
 }
 pl.implement(URLClass, {
     getHostname: function() {
+        if (!this.url) {
+            return '';
+        }
         var re = new RegExp('^(?:f|ht)tp(?:s)?\://([^/]+)', 'im');
         return this.url.match(re)[1].toString();
     }

@@ -115,6 +115,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .bidaccepticon { width: 20px; height: 20px; background: url(../img/icons/thumbs_up.png); }
 .commenticon { width: 20px; height: 20px; background: url(../img/icons/comment_20x20.png); }
 .bidicon { width: 20px; height: 20px; background: url(../img/icons/bid_20x20.png); }
+.bidmakebidicon { width: 20px; height: 20px; background: url(../img/icons/bid_20x20.png); }
 .thumbdownicon { width: 20px; height: 20px; background: url(../img/icons/thumbs_down.png); }
 .bidrejecticon { width: 20px; height: 20px; background: url(../img/icons/thumbs_down.png); }
 .withdrawicon { width: 20px; height: 20px; background: url(../img/icons/withdraw_20x20.png); }
