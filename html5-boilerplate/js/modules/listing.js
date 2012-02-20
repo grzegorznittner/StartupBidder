@@ -295,7 +295,7 @@ pl.implement(BidsClass, {
         return bidmap;
     },
     getBidOrder: function() {
-        var biddate,
+        var headbid,
             profile_id,
             bidrec,
             bidorder = [],
@@ -303,10 +303,11 @@ pl.implement(BidsClass, {
                 return bidrecb.bid_date - bidreca.bid_date;
             };
         for (profile_id in this.bidmap) {
-            biddate = this.bidmap[profile_id][0].bid_date;
+            headbid = this.bidmap[profile_id][0];
             bidrec = {
-                bid_date: biddate,
-                profile_id: profile_id
+                bid_date: headbid.bid_date,
+                profile_id: profile_id,
+                status: headbid.status
             }
             bidorder.push(bidrec);
         }
@@ -372,14 +373,16 @@ pl.implement(BidsClass, {
     },
     displayBids: function() {
         var i,
+            headbid,
             profile_id,
             bidsForProfile,
             html = '';
-        if (this.loggedin_profile_id && !this.userIsOwner() && !this.userHasBid()) {
+        if (this.loggedin_profile_id && !this.userIsOwner() && !this.userHasActiveBid()) {
             html += this.makeNewBidBox();
         }
         for (i = 0; i < this.bidorder.length; i++) {
-            profile_id = this.bidorder[i].profile_id;
+            headbid = this.bidorder[i];
+            profile_id = headbid.profile_id;
             bidsForProfile = this.bidmap[profile_id];
             if (bidsForProfile.length > 0) {
                 html += this.makeBidsForOneProfile(profile_id);
@@ -387,8 +390,21 @@ pl.implement(BidsClass, {
         }
         pl('#bidclosedbox').after(html);
     },
-    userHasBid: function() {
-        return this.bidmap[this.loggedin_profile_id] ? true : false;
+    userCanMakeNewBid: function() {
+        return (this.loggedin_profile_id && !this.userIsOwner() && !this.userHasActiveBid());
+    },
+    userHasActiveBid: function() {
+        var has = false;
+        for (i = 0; i < this.bidorder.length; i++) {
+            headbid = this.bidorder[i];
+            if (headbid.profile_id === this.loggedin_profile_id) {
+                if (headbid.status === 'active' || headbid.status === 'counterowner') { // FIXME: counter status undecided
+                    has = true;
+                }
+                break;
+            }
+        }
+        return has;
     },
     makeBidsForOneProfile: function(profile_id) {
         var i,
