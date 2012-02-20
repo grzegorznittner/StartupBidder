@@ -8,7 +8,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 
-  <title>Startupbidder</title>
+  <title>Startupbidder Listing</title>
   <meta name="description" content="">
   <meta name="author" content="">
 
@@ -29,6 +29,7 @@
 </head>
 
 <body class="company-page">
+<div id="fb-root"></div> <!-- for fb like button -->
 <div id="wrap">
 <div id="main">
 
@@ -59,123 +60,82 @@
 
 <!-- left column -->
 <div class="span-16">
-    <div class="boxtitle">COMPANY LISTING</div>
-    <div class="boxpanel">
+    <div class="boxtitle">COMPANY</div>
+    <div class="boxpanel companylistingbox">
         <div id="listingstatus"></div>
-        <div class="formcol1fourth">
-            <div class="formimg wave"></div>
-        </div>
-        <div class="formcol2fourth">
-            <span class="formtitlefourth uneditabletext" id="title"></span><br/>
-            by <span id="profile_username"></span><br/>
-            <span id="mantra"></span>
-            <div class="formbottom span-11">
-                <span class="span-1 formstatistic" id="num_votes"></span>
-                <span class="span-1 formstatisticicon"><a href="upvote" class="formlink"><div class="thumbup"></div></a></span>
-                <span class="span-1 formstatistic" id="num_comments"></span>
-                <span class="span-1 formstatisticicon"><div class="commenticon"></div></span>
+        <div class="listingbox" id="listingdata">
+            <div class="formcol1fourth">
+                <img class="formimg companylogo" id="companylogo" src=""></img>
+            </div>
+            <div class="formcol2fourth">
+                <span class="formtitlefourth uneditabletext companytitle" id="title"></span><br/>
+                by <span id="profile_username"></span><br/>
+                <span class="inputmsg" id="mantra"></span><br/>
+                <div class="span-11 companylistingstats">
+                    <span class="span-1 formstatistic" id="num_votes"></span>
+                    <span class="span-1 formstatisticicon"><a href="upvote" class="formlink"><div class="thumbup"></div></a></span>
+                    <span class="span-1 formstatistic" id="num_comments"></span>
+                    <span class="span-1 formstatisticicon"><div class="commenticon"></div></span>
+                    <span class="span-6 formstatistictxt" id="companystatus"></span>
+                </div>
             </div>
         </div>
     </div>
-    
-    <div class="boxtitle">VIDEO PRESENTATION</div>
-    <div class="boxpanel">
-	    <div class="videocontainer">
-      	    <iframe width="622" height="452" id="videopresentation" src="http://www.youtube.com/embed/tQlsXFfSuZU" frameborder="0" allowfullscreen></iframe> 
-	    </div>
-    </div>
 
-    <div class="boxtitle">ELEVATOR PITCH</div>
+    <div class="boxtitle">SUMMARY</div>
     <div class="boxpanel">
         <p id="summary"></p>
 	</div>
 
-<!-- OWNER VIEW -->
-<!--
-    <div class="boxtitle">BIDS</div>
+    <div class="boxtitle">VIDEO</div>
     <div class="boxpanel">
-        <dl>
-            <dt>Offered by CUSTOMER - WHO IS THE TARGET CUSTOMER?</dt>
-            <dd>Any computer geek bored with their current email client.</dd>
-            <dt>PROBLEM - WHAT IS THE PROBLEM THEY HAVE NOW?</dt>
-            <dd>Email clients are very poorly designed in terms of the number of advertisements shown there, so that advertisers are missing eyeballs.</dd>
-        </dl>
-    </div>
--->
-
-    <!-- INVESTOR VIEW -->
-    <div class="boxtitle">YOUR BIDS</div>
-    <div class="boxpanel">
-        <dl>
-            <dt>
-                <div>
-                    <div class="normalicon bidicon"></div>
-                    You offerred on 2011/11/29 11:45
-                </div>
-                <div>$16,000 for 50% equity as common stock, company valued at $32,000</div>
-            </dt>
-            <dd>We see a lot of potential in you, but given your limited history, we feel that a conservative valuation is appropriate at this time.</dd>
-            <dt>
-                <div>
-                    <div class="normalicon countericon"></div>
-                    The owner counter-offerred on 2011/11/29 11:50
-                </div>
-                <div>$16,000 for 20% equity as common stock, company valued at $80,000</div>
-            </dt>
-            <dd>Even though my history is limited, the fact that I have a working prototype with paying customers requires a higher valuation be assigned.</dd>
-            <dt>
-                <div>
-                    <div class="normalicon countericon"></div>
-                    You counter-offerred on 2011/11/30 9:10
-                </div>
-                <div>$16,000 for 25% equity as a convertible note at 20% a interest rate, company valued at $64,000</div>
-            </dt>
-            <dd>After reviewing the prototype again, we feel that a higher valuation is warranted, however we need the greater security of a convertible note to justify this valuation.</dd>
-            <dt>
-                <div>
-                    <div class="normalicon thumbdownicon"></div>
-                    The owner rejected your counter-offer on 2011/11/29 12:32
-                </div>
-            </dt>
-            <dd>There is no way I can afford a 20% interest rate and still have enough left over for needed capital investment.</dd>
-        </dl>
+	    <div class="videocontainer">
+      	    <iframe width="622" height="452" id="videopresentation" src="" frameborder="0" allowfullscreen></iframe> 
+	    </div>
     </div>
 
-    <!-- <div class="boxtitle">MAKE OFFER</div> -->
-    <div class="boxtitle">MAKE COUNTEROFFER</div>
-    <div class="boxpanel uneditabletext bidpanel">
-            <div>
-                <span class="bidformlabel">
-                    <input class="text bidinputtitle" type="text" value="$16,000" maxlength="8" size="8" id="bidamount" name="bidamount"></input>
-                </span>
-                <span class="bidsmall span-1">FOR</span>
-                <span class="span-9">
-                    <input class="text bidinputtextpct" type="text" value="25%" maxlength="3" size="3" id="bidequity" name="bidequity"></input>
-                    <select class="bidinputselect" id="bidtype" name="bidtype">
-                        <option value="convertible">CONVERTIBLE NOTE</option>
-                        <option value="common">COMMON STOCK</option>
-                        <option value="preferred">PREFERRED STOCK</option>
-                    </select>
-                    @
-                </span>
-                <span>
-                    <!-- <input class="text bidinputtextpct pctwide" type="text" value="20%" maxlength="3" size="3" id="bidrate" name="bidrate" disabled="true"></input> -->
-                    <input class="text bidinputtextpct pctwide" type="text" value="20%" maxlength="3" size="3" id="bidrate" name="bidrate"></input>
-                </span>
+    <div class="boxtitle bidclosedtitle" id="bidclosedtitle">BIDDING IS CLOSED</div>
+    <div class="boxpanel bidclosedbox" id="bidclosedbox">
+        <div id="bidclosedmsg"></div>
+	</div>
+
+    <div class="boxtitle makebidboxtitle" id="makebidboxtitle">MAKE A BID</div>
+    <div class="boxpanel uneditabletext bidpanel makebidbox" id="makebidbox">
+        <div>
+            <span class="bidformlabel">
+                <input class="text bidinputtitle" type="text" value="" maxlength="8" size="8" id="makebid_amt" name="makebid_amt"></input>
+            </span>
+            <span class="bidformtext span-1">FOR</span>
+            <span class="bidformitem">
+                <input class="text bidinputtextpct" type="text" value="" maxlength="2" size="2" id="makebid_pct" name="makebid_pct"></input>
+            </span>
+            <span class="bidformtext span-1">%&nbsp;&nbsp;AS</span>
+            <span class="bidformitem">
+                <select class="bidinputselect" id="makebid_type" name="makebid_type">
+                    <option value="common">COMMON STOCK</option>
+                    <option value="preferred">PREFERRED STOCK</option>
+                    <option value="convertible">CONVERTIBLE NOTE</option>
+                </select>
+            </span>
+            <span class="bidformitem makebid_rate_box" id="makebid_rate_box">
+                <span class="bidformtext">@</span>
+                <input class="text bidinputtextpct pctwide" type="text" value="" maxlength="2" size="2" id="makebid_rate" name="makebid_rate"></input>
+                <span class="bidformtext">%</span>
+            </span>
         </div>
         <div>
-            <textarea class="textarea inputfullwidetextshort" id="bidnote" name="addcommentnext" cols="20" rows="5">Your note to the entrepreneur here...</textarea>
+            <textarea class="textarea inputfullwidetextshort" id="makebid_note" name="makebid_note" rows="20" cols="5"></textarea>
         </div>
+        <div class="inputmsg" id="makebid_msg"></div>
         <div>
-            <span class="widelabel">YOUR VALUATION IS $64,000</span>
+            <span class="bidvallabel">YOUR VALUATION IS <span id="makebid_val"></span></span>
             <a href="#">
-                <span class="span-7 inputbutton" id="makeofferbutton">MAKE COUNTEROFFER</span>
-                <!-- <span class="push-3 span-4 inputbutton" id="makeofferbutton">MAKE OFFER</span> -->
+                <span class="push-3 span-4 inputbutton" id="makebid_btn">MAKE BID</span>
             </a>
         </div>
     </div>
 
-    <div class="boxtitle">QUESTIONS AND ANSWERS</div>
+    <div class="boxtitle">Q&amp;A</div>
     <div class="boxpanel">
         <dl>
             <dt>CUSTOMER - WHO IS THE TARGET CUSTOMER?</dt>
@@ -203,63 +163,44 @@
         </dl>
 	</div>
 
-    <div class="boxtitle">ADD COMMENT</div>
-    <div class="boxpanel commentpanel">
+    <div class="boxtitle addcommenttitle" id="addcommenttitle">ADD COMMENT</div>
+    <div class="boxpanel commentpanel addcommentbox" id="addcommentbox">
         <div>
-            <textarea class="textarea inputfullwidetextshort" id="addcommenttext" name="addcommentnext" cols="20" rows="5">Put your comment here..."</textarea>
+            <textarea class="textarea inputfullwidetextshort" id="addcommenttext" name="addcommenttext" cols="20" rows="5">Put your comment here...</textarea>
         </div>
-        <div>
-            <a href="#">
-                <span class="push-12 span-3 inputbutton" id="addcommentbutton">
-                    POST
-                </span>
-            </a>
-        </div>
+        <div class="addcommentmsg successful" id="addcommentmsg"></div>
     </div>
 
     <div class="boxtitle">COMMENTS</div>
     <div class="boxpanel commentpanel">
-        <dl>
-            <dt>Posted by gn on 2011/11/29 08:55</dt>
-            <dd>Last comment, boy do I love this idea!</dd>
-            <dt>Posted by jab on 2011/11/29 09:55</dt>
-            <dd>Last but one comment, man does this suck.!</dd>
-            <dt>Posted by gn on 2011/11/29 08:55</dt>
-            <dd>Not sure what font my email client should use, this is really the most important part of the entire project.  You only get one chance to make a first impression, and after that it is impossible to change.  If I go with Helvetica, will everything thing this is the same old client they have been using for ages?  But if I go with an innovative font such as Wingdings, will users feel uncomfortable with such a nascent and unusual offering, not willing to trust their most personal and sacred electronically transmitted treasures to us?  I have been agonizing over the choice of font for months now.</dd>
-            <dt>Posted by jab on 2011/11/29 09:55</dt>
-            <dd>furst post!!!!!!!!!</dd>
-        </dl>
+        <div id="commentsmsg"></div>
+        <dl id="commentlist"></dl>
 	</div>
 
-    <div class="boxtitle">WITHDRAW LISTING</div>
-    <div class="boxpanel commentpanel">
-        <div>
-            ARE YOU SURE YOU WANT TO WITHRDAW LISTING?  NO BIDS MAY BE RECEIVED AFTER THE LISTING IS WITHDRAWN.  THIS OPERATION CANNOT BE UNDONE.
-        </div>
-        <div>
-            <a href="#">
-                <span class="push-9 span-6 inputbutton" id="withdrawbutton">
-                    WITHDRAW LISTING
-                </span>
-            </a>
-        </div>
+    <div class="boxtitle withdrawtitle" id="withdrawtitle">WITHDRAW LISTING</div>
+    <div class="boxpanel commentpanel withdrawbox" id="withdrawbox">
+        <p>
+            <span class="attention inputmsg">NO BIDS MAY BE RECEIVED AFTER THE LISTING IS WITHDRAWN.  THIS OPERATION CANNOT BE UNDONE.</span>
+        </p>
+        <p>
+            <span class="span-9 attention inputmsg" id="withdrawmsg">&nbsp;</span>
+            <span class="span-6 inputbutton" id="withdrawbtn">WITHDRAW LISTING</span>
+        </p>
     </div>
-
 
 </div> <!-- end left column -->
 
-
-
-
 <!-- right column -->
 <div class="span-8 last">
-    <div class="boxtitle">ABOUT COMPANY</div>
+    <div class="boxtitle">ABOUT</div>
     <div class="sidebox">
-        <span class="formlabel">CATEGORY</span>
+        <span class="aboutlabel">CATEGORY</span>
         <span class="formlabelvalue" id="category"></span>
-        <span class="formlabel clear">POSTED</span>
+        <span class="aboutlabel">TYPE</span>
+        <span class="formlabelvalue" id="legaltype"></span>
+        <span class="aboutlabel clear">POSTED</span>
         <span class="formlabelvalue" id="listing_date"></span>
-        <span class="formlabel clear">WEBSITE</span>
+        <span class="aboutlabel clear">WEBSITE</span>
         <span class="formlabelvalue formlink">
             <a href="#" target="_blank" id="websitelink">
                 <div class="span-1 linkicon"></div><span id="domainname"></span>
@@ -267,204 +208,82 @@
         </span>
     </div>
 
-    <div class="boxtitle">COMPANY LOCATION</div>
+    <div class="boxtitle">LOCATION</div>
     <div class="sidebox">
-            <div>
         <a href="#" class="formlink" target="_blank" id="addresslink">
+            <div>
                 <div class="span-1 mapicon"></div><span id="address"></span>
-        </a>
-        
             </div>
             <div class="sideboxmap">
                 <img src="" id="mapimg"></img>
             </div>
+        </a>
     </div>
 
     <div class="boxtitle">DOCUMENTS</div>
-    <div class="sidebox">
-        <span class="smallformlabel clear">Slide Deck</span>
+    <div class="sidebox documentbox" id="documentbox">
+        <span class="doclabel clear">Slide Deck</span>
         <span class="formlabelvalue formlink">
             <div class="span-1 smallinputicon presentationicon"></div>
-            <a href="http://oamp.od.nih.gov/contracttoolbox/Roadmap_StartBusiness/RoadmapPowerpointSlides%5CTomSidesFinalRoadmapPresentation.ppt">
-                <span class="span-3 smallinputbutton" id="downloadpresentation">DOWNLOAD</span>
+            <a href="#" id="presentationlink">
+                <span id="presentationbtn"></span>
             </a>
         </span>
-        <span class="smallformlabel">Business Plan</span>
+        <span class="doclabel">Business Plan</span>
         <span class="formlabelvalue formlink">
             <div class="span-1 smallinputicon documenticon"></div>
-            <a href="www.freep.com/assets/PDF/1202gmplan.pdf">
-                <span class="span-3 smallinputbutton" id="downloadbusinessplan">DOWNLOAD</span>
+            <a href="#" id="businessplanlink">
+                <span id="businessplanbtn"></span>
             </a>
         </span>
-        <span class="smallformlabel clear">Financials</span>
+        <span class="doclabel clear">Financials</span>
         <span class="formlabelvalue formlink">
             <div class="span-1 smallinputicon spreadsheeticon"></div>
-            <a href="http://andrewchenblog.com/wp-content/uploads/2009/01/virtual-items-ltv-model.xls">
-                <span class="span-3 smallinputbutton" id="downloadfinancials">DOWNLOAD</span>
+            <a href="#" id="financialslink">
+                <span id="financialsbtn"></span>
             </a>
         </span>
     </div>
 
-    <div class="boxtitle">ASKING FUNDING</div>
+    <div class="boxtitle">ASKING</div>
     <div class="sidebox uneditabletext">
-        <div class="sideboxdesc" id="suggestedmsg"></div>
-        <div id="suggestedinfo">
-            <div class="sideboxtitlecompact" id="suggested_amt">$25,000</div>
-            <div class="sideboxdesc">FOR <span id="suggested_pct"></span>% <span id="suggested_type"></span></div>
-            <div class="sideboxdesc">OWNER VALUATION IS <span id="suggested_val">$250,000</span></div>
+        <div class="sideboxdesc suggestedmsg" id="suggestedmsg"></div>
+        <div class="suggestedinfo" id="suggestedinfo">
+            <div class="sideboxtitlecompact" id="suggested_amt"></div>
+            <div class="sideboxdesc">FOR <span id="suggested_pct"></span>% EQUITY</div>
+            <div class="sideboxdesc">OWNER VALUATION IS <span id="suggested_val"></span></div>
             <div class="sideboxdesc"><span id="closingmsg"></span></div>
         </div>
     </div>
-<!--
-    <div class="boxtitle">CURRENT BIDS</div>
-    <div class="sidebox uneditabletext">
-        <div class="sideboxtitlecompact">2 BIDS</div>
-        <div class="sideboxdesc">BEST BID IS</div>
-        <div class="sideboxtitlecompact">$16,000</div>
-        <div class="sideboxdesc">FOR 25% COMMON EQUITY</div>
-        <div class="sideboxdesc">BID VALUATION IS $64,000</div>
-    </div>
 
-    <div class="boxtitle">YOUR BID</div>
-    <div class="sidebox uneditabletext">
-        <div>
-            <input class="title sideinputtitle" type="text" value="$25,000" maxlength="8" size="8" id="bidamount" name="bidamonut"></input>
+    <div class="boxtitle bidboxtitle" id="bidboxtitle">BIDS</div>
+    <div class="sidebox uneditabletext bidbox" id="bidbox">
+        <div class="sideboxtitlecompact bidboxstatus" id="bidboxstatus"></div>
+        <div class="bidboxinfo" id="bidboxinfo">
+            <div class="sideboxtitlecompact"><span id="num_bids"></span> BIDS</div>
+            <div class="sideboxdesc">BEST BID IS</div>
+            <div class="sideboxtitlecompact" id="best_bid_amt"></div>
+            <div class="sideboxdesc">FOR <span id="best_bid_pct"></span>% EQUITY</div>
+            <div class="sideboxdesc">BID VALUATION IS <span id="best_bid_val"></span></div>
         </div>
-        <div class="sideboxdesc">
-            <span class="sideboxlabelsmall">FOR</span>
-            <input class="text inputtextpct" type="text" value="10%" maxlength="3" size="3" id="bidequity" name="bidequity"></input>
-            <select class="inputselect" id="bidtype" name="bidtype">
-                <option value="common">Common Stock</option>
-                <option value="convertible">Convertible Note</option>
-                <option value="preferred">Preferred Stock</option>
-            </select>
-        </div>
-        <div class="sideboxdesc">
-            <span class="sideboxlabelsmall">AT</span>
-            <input class="text inputtextpct" type="text" value="12%" maxlength="3" size="3" id="bidrate" name="bidrate" disabled="true"></input>
-            INTEREST
-        </div>
-        <div class="sideboxdesc">YOUR VALUATION IS $250,000</div>
-        <div class="sideboxdesc">
-            <textarea class="sideinputtextarea" id="bidnote" name="bidnote" rows="20" cols="5">Your note to the bidder here...</textarea>
-        </div>
-        <a href="#">
-            <div class="sideboxbuttoninterior">BID NOW</div>
-        </a>
     </div>
--->
 
-
-
-
-
-
-
-
-
-    <div class="boxtitle">RELATED COMPANIES</div>
-
-
-<span class="span-4">
-<div class="tile">
-    <a href="company-page.html"><div class="tileimg einstein"></div></a>
-    <div class="tiledays"></div>
-    <div class="tiledaystext">5 days left</div>
-    <div class="tiletype"></div>
-    <div class="tiletypetext">SOFTWARE</div>
-    <div class="tilepoints"></div>
-    <div class="tilepointstext">
-        <div class="tilevotes">117</div>
-        <div class="thumbup tilevoteimg"></div>
-        <div class="tileposted">2011-08-24</div>
+    <div class="boxtitle">SHARE</div>
+    <div class="sidebox socialsidebox">
+        <span class="span-11">
+            <a href="https://twitter.com/share" class="twitter-share-button" data-size="large" data-via="startupbidder" data-related="startupbidder" data-hashtags="startupbidder"></a><br/>
+        </span><br/>
+        <span class="span-11">
+            <g:plusone annotation="inline" width="290"></g:plusone>
+        </span><br/>
+        <span class="span-11" style="overflow:visible;">
+            <div class="fb-like" data-send="true" data-width="290" data-show-faces="true" data-font="arial"></div> <!-- FIXME: add opengraph meta tags -->
+        </span>
     </div>
-    <a href="company-page.html">
-    <p class="tiledesc">
-        <span class="tilecompany">Semantic Search</span><br/>
-        <span class="tileloc">Waltham, MA, USA</span><br/>
-        <span class="tiledetails">
-        Semantic search seeks to improve search accuracy by
-        understanding searcher intent and the contextual meaning of terms as they
-        appear in the searchable dataspace, whether on the Web or within a closed
-        system, to generate more relevant results.
-</span>
-    </p>
-    </a>
-</div>
-</span>
 
-
-<span class="span-4 last">
-<div class="tile">
-    <a href="company-page.html"><div class="tileimg wave"></div></a>
-    <div class="tiledays"></div>
-    <div class="tiledaystext">30 days left</div>
-    <div class="tiletype"></div>
-    <div class="tiletypetext">INTERNET</div>
-    <div class="tilepoints"></div>
-    <div class="tilepointstext">
-        <div class="tilevotes">98</div>
-        <div class="thumbup tilevoteimg"></div>
-        <div class="tileposted">2011-09-16</div>
-    </div>
-    <a href="company-page.html">
-    <p class="tiledesc">
-        <span class="tilecompany">Kill Email Ltd.</span><br/>
-        <span class="tileloc">Melbourne, Australia</span><br/>
-        <span class="tiledetails">Making email as obsolete as the paper memo through real-time collaborative chat.</span>
-    </p>
-    </a>
-</div>
-</span>
-
-
-<span class="span-4">
-<div class="tile">
-    <a href="company-page.html"><div class="tileimg upgrades"></div></a>
-    <div class="tiledays"></div>
-    <div class="tiledaystext">bidding closed</div>
-    <div class="tiletype"></div>
-    <div class="tiletypetext">RETAIL</div>
-    <div class="tilepoints"></div>
-    <div class="tilepointstext">
-        <div class="tilevotes">78</div>
-        <div class="thumbup tilevoteimg"></div>
-        <div class="tileposted">2010-10-11</div>
-    </div>
-    <a href="company-page.html">
-    <p class="tiledesc">
-        <span class="tilecompany">Computer Upgrades</span><br/>
-        <span class="tileloc">San Jose, CA, USA</span><br/>
-        <span class="tiledetails">Environmentally-friendly life-extension for business computer systems.</span>
-    </p>
-    </a>
-</div>
-</span>
-
-
-<span class="span-4 last">
-<div class="tile">
-    <a href="company-page.html"><div class="tileimg telecom"></div></a>
-    <div class="tiledays"></div>
-    <div class="tiledaystext">fully funded</div>
-    <div class="tiletype"></div>
-    <div class="tiletypetext">TELECOM</div>
-    <div class="tilepoints"></div>
-    <div class="tilepointstext">
-        <div class="tilevotes">64</div>
-        <div class="thumbup tilevoteimg"></div>
-        <div class="tileposted">2011-12-13</div>
-    </div>
-    <a href="company-page.html">
-    <p class="tiledesc">
-        <span class="tilecompany">M-Pesa Micropayments</span><br/>
-        <span class="tileloc">Nairobi, Kenya</span><br/>
-        <span class="tiledetails">Liberating trapped value in high-volume transactions.</span>
-    </p>
-    </a>
-</div>
-</span>
-
+    <div class="boxtitle" id="listingstitle"></div>
+    <div id="companydiv"></div>
+    
 </div> <!-- end right column -->
 
 </div> <!-- end container -->
@@ -491,12 +310,11 @@
 </div>
 
   <!-- JavaScript at the bottom for fast page loading -->
-  <script>window.pl || document.write('<script src="js/libs/prevel.min.js"><\/script>')</script>
-  <script>window.mainPage || document.write('<script src="js/mylibs/startupbidder.js"><\/script>')</script>
-
-  <!-- scripts concatenated and minified via ant build script-->
-  <script src="js/script.js"></script>
-  <!-- end scripts-->
+  <script src="js/libs/prevel.min.js"></script>
+  <script src="js/modules/base.js"></script>
+  <script src="js/modules/companylist.js"></script>
+  <script src="js/modules/forms.js"></script>
+  <script src="js/modules/listing.js"></script>
 
   <!-- Change UA-XXXXX-X to be your site's ID -->
   <script>

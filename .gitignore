@@ -1,6 +1,15 @@
 !.gitignore
+.idea
+*.iml
+*.ipr
+*.iws
+env.bat
+env.sh
+old
+myoldlibs
 html5-boilerplate/intermediate
 html5-boilerplate/publish
+war/.settings
 war/css
 war/js
 war/img
@@ -12,3 +21,4 @@ war/WEB-INF/appengine-generated
 war/WEB-INF/appengine-web.xml
 war/WEB-INF/classes
 war/WEB-INF/web.xml
+mockup/*.html

@@ -39,6 +39,8 @@ body { font-size: 14px; font-weight: normal; color: #4083a9; background: #f2f2f2
 /* link styles */
 a:link, a:visited { text-decoration: none; color: #4083a9; }
 a:hover { opacity: 0.7; cursor: pointer; }
+.inputbutton:hover { opacity: 0.7; cursor: pointer }
+.nohover:hover { opacity: 1.0; cursor: default; }
 
 /* colors */
 .crystalbluebg { background: #efffff; }
@@ -110,10 +112,15 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .google { width: 32px; height: 32px; background: url(../img/icons/google_32.png); }
 .searchimg { width: 29px; height: 24px; background: url(../img/icons/search.gif); }
 .thumbup { width: 20px; height: 20px; background: url(../img/icons/thumbs_up.png); }
+.bidaccepticon { width: 20px; height: 20px; background: url(../img/icons/thumbs_up.png); }
 .commenticon { width: 20px; height: 20px; background: url(../img/icons/comment_20x20.png); }
 .bidicon { width: 20px; height: 20px; background: url(../img/icons/bid_20x20.png); }
 .thumbdownicon { width: 20px; height: 20px; background: url(../img/icons/thumbs_down.png); }
+.bidrejecticon { width: 20px; height: 20px; background: url(../img/icons/thumbs_down.png); }
+.withdrawicon { width: 20px; height: 20px; background: url(../img/icons/withdraw_20x20.png); }
+.bidwithdrawicon { width: 20px; height: 20px; background: url(../img/icons/withdraw_20x20.png); }
 .countericon { width: 20px; height: 20px; background: url(../img/icons/counter.png); }
+.bidcountericon { width: 20px; height: 20px; background: url(../img/icons/counter.png); }
 .notificationicon { width: 20px; height: 20px; background: url(../img/icons/email_20x20.png); background-position: 0px 2px; }
 .checkboxgreenicon { width: 32px; height: 32px; background: url(../img/icons/checkbox_green_32x32.png); background-position: 0px 0px; }
 .checkboxredicon { width: 32px; height: 32px; background: url(../img/icons/checkbox_red_32x32.png); background-position: 0px 0px; }
@@ -122,6 +129,9 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .spreadsheeticon { width: 16px; height: 16px; background: url(../img/icons/spreadsheet.png); }
 .linkicon { width: 16px; height: 16px; background: url(../img/icons/jump.png); }
 .mapicon { width: 16px; height: 16px; background: url(../img/icons/map.png); }
+.bidactionicon { float: left; margin-left: 10px; margin-top: 5px; margin-right: 15px; }
+.bidactioniconnarrow { float: left; margin-left: 10px; margin-top: 5px; margin-right: 10px; }
+.bidactionbtn { text-align: left !important; }
 .normalicon { float: left; margin-right: 5px; }
 
 /* searchbar styles */
@@ -170,21 +180,25 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .inputlink { padding-top: 10px; height: 33px; }
 .inputimgbutton { margin-top: 5px; }
 .inputbutton, .smallinputbutton { text-align: center; margin-top: 5px; font-weight: bold; } 
+.doclinkmsg { text-align: center; margin-top: 5px; font-weight: bold; font-size: 14px; height: 26px; padding-top: 2px; margin-bottom: 5px; } 
 .inputbutton { font-size: 18px; height: 33px; padding-top: 4px; margin-bottom: 10px; } 
 .smallinputbutton { font-size: 14px; height: 26px; padding-top: 2px; margin-bottom: 5px; } 
 .formtitle { font-size: 24px; padding-left: 5px; }
-.formtitlefourth { font-size: 24px; padding-left: }
+.formtitlefourth { font-size: 24px; padding-left: 0; }
+.companytitle { margin-right: 10px; }
 .formcol1 { width: 301px; padding-left: 5px; }
 .formcol2 { width: 306px; }
-.formcol1fourth { width: 146px; padding-left: 0px; }
-.formcol2fourth { width: 456px; position: relative; height: 146px; }
+.formcol1fourth { float: left; width: 146px; padding-left: 0px; }
+.formcol2fourth { float: left; }
 .mediacol1 { padding-left: 0px; margin-right: 10px; float: left; }
 .mediacol2 { width: 146px; float: right; }
 .formcol1text { margin-left: 10px; }
 .formimg { width: 146px; height: 146px; }
 .formcolicon { width: 40px; }
 .formbottom { bottom: 0; position: absolute; }
+.companystats { right: 0; }
 .formstatistic { font-size: 18px; text-align: center; }
+.formstatistictxt { font-size: 18px; text-align: left; }
 .formstatisticicon { padding-top: 3px; }
 .smallinputicon { margin-top: 10px; }
 .smallformlabel { margin-top: 10px; }
@@ -197,19 +211,29 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .bidinputtitle { font-size: 22px !important; margin: 0 10px 5px 5px !important; width: 130px !important; }
 .sideinputtextarea { height: 80px; margin-top: 0; }
 .sideboxlabelsmall { float: left; padding-top: 5px; width: 35px; }
+.makebidboxlabel { float: left; padding-top: 11px; width: 35px; }
 .inputselect, .inputmedselect { height: 29px; padding: 5px; top: 1px; position: relative;  }
-.bidinputselect { margin: 0 0 0 0 !important; height: 42px; font-weight: bold; color: white !important; background: #49515a !important; font-size: 22px !important; }
+.bidinputselect { margin: 0 0 0 0 !important; height: 38px !important; font-weight: bold; color: white !important; background: #49515a !important; font-size: 22px !important; padding-top: 5px !important;}
 .bidinputtextpct  { font-weight: bold; color: white !important; background: #49515a !important; font-size: 22px !important; width: 45px !important; margin: 0 0 0 0 !important; }
 .mediainputlink  { margin-left: 3px !important; font-weight: bold; color: white !important; background: #49515a !important; font-size: 14px !important; width: 383px !important; }
-.bidsmall { padding-top: 14px; }
 .pctwide { width: 49px !important; }
 .inputtextareatwoline { height: 35px; overflow: hidden; overflow-x: hidden; overflow-y: hidden; }
 .inputtextareaeightline { height: 140px; overflow: hidden; overflow-x: hidden; overflow-y: hidden; }
+.inputgooglesignin { float: left; margin-right: 10px; }
+.aboutlabel { float: left; margin-right: 10px; text-align: right; width: 106px; color: #49515a; font-weight: bold; }
+.doclabel { float: left; margin-right: 10px; text-align: right; width: 106px; color: #49515a; font-weight: bold; margin-top: 10px; }
+.bidformtext { padding-top: 10px; font-weight: bold; }
+.bidvallabel { float: left; margin-right: 10px; width: 120px; padding-top: 3px; margin-left: 10px; font-weight: bold; }
+.bidformitem { float: left; }
+.bidspacer { border: 2px solid #49515A; height: 20px; right: 5px; background: #efefef; font-weight: bold; clear: both; text-align: center; }
 
 /* box styles */
 .boxtitle { margin-top: 10px; color: #333333; font-weight: bold; }
 .boxpanel, .boxstep { border: 2px solid #999999; padding: 2px; overflow: auto; background: #e3e3e3; margin-bottom: 10px; }
-.boxpanel { width: 622px; }
+.boxpanel { width: 622px; overflow: auto; position: relative; }
+/*.companylistingbox { height: 180px; overflow: visible; } */
+.addcommentmsg { height: 20px; margin-left: 5px; }
+.companylistingstats { position: absolute; bottom: 0; }
 .boxpanel p { margin: 5px 10px 10px 10px; text-indent: 0px; }
 .boxpanel dl dt { margin-left: 0; padding: 5px 10px 5px 10px; color: #333333; }
 .boxpanel dl dd { margin-left: 0; padding: 5px 10px 5px 10px; background: #f2f2f2; font-weight: normal; }
@@ -224,15 +248,20 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .boxstep4 { left: 375px; }
 .boxstep5 { left: 500px; width: 126px; }
 .boxstepcomplete { background-color: #999999; }
-.commentpanel dl dt { font-size: 10px; padding-top: 5px; padding-bottom: 5px; }
+.commentpanel dl dt { font-size: 12px; height: 32px; padding: 0 0 0 10px; }
+.commentdttitle { position: relative; height: 32px; }
+.commentdttitleline { padding-top: 7px; }
+.commentdelete { width: 32px; height: 32px; margin: 0; position: absolute; top: 0; right: 0; }
+.commentdelete:hover { opacity: 0.7; cursor: pointer; }
 .boxoption { display: block; float: left; text-align: center; height: 25px; padding-top: 5px; margin-bottom: 5px; font-weight: bold; }
 .boxoption1 { width: 146px; }
 .boxoption2 { width: 160px; }
 .boxoption3 { width: 160px; }
 .boxselected { background: white; }
 .sideboxselected { background: white; !important}
-.sidebox { width: 302px; border: 2px solid #999999; padding: 2px; overflow: auto; background: #e3e3e3; margin-bottom: 10px; }
+.sidebox { width: 302px; border: 2px solid #999999; padding: 2px; overflow: auto; background: #e3e3e3; margin-bottom: 10px; overflow: hidden; }
 .sidebox p { margin: 5px 10px 10px 10px; text-indent: 0px; font-weight: normal; }
+.socialsidebox { height: 130px; overflow: visible; }
 .sideboxcol1 { width: 146px; float: left; margin-right: 10px; }
 .sideboxcol2 { width: 146px; float: left; }
 .sideboxlist { list-style: none; list-style-position: inside; margin-left: 0; padding-left: 0; }
@@ -243,14 +272,34 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .sideboxcompanylink:hover { background: #f2f2f2; }
 .sideboxtitle { float: left; font-size: 24px; text-align: right; margin-left: 10px; margin-right: 10px; height: 43px; font-weight: bold; }
 .sideboxtitledetail { float: left; padding-top: 11px; font-weight: bold; }
-.sideboxtitlecompact { font-size: 24px; margin-left: 5px; margin-right: 10px; }
-.sideboxdesc { margin-left: 5px; }
+.sideboxtitlecompact { font-size: 24px; margin-left: 5px; margin-right: 10px; font-weight: bold; }
+.sideboxdesc { margin-left: 5px; font-weight: bold; }
 .sideboxnotify { float: left; width: 302px; }
 .sideboxicon { width: 26px; margin-right: 10px; float: left; }
 .sideboxnotifytext { float: left; width: 266px; font-weight: normal; }
 .sideboxdate { font-size: 10px; }
 .sideboxmap { width: 302px; height: 302px; }
 .bidpanel { padding-top: 5px; }
+.addcommenttitle { display: none; }
+.addcommentbox { display: none; }
+.listingbox { display: none; }
+.documentbox { display: none; }
+.withdrawtitle { display: none; }
+.withdrawbox { display: none; }
+.bidboxtitle { display: none; }
+.bidbox { display: none; }
+.bidboxstatus { display: none; }
+.bidboxinfo { display: none; }
+.suggestedmsg { display: none; }
+.suggestedinfo { display: none; }
+.makebidboxtitle { display: none; }
+.makebidbox { display: none; }
+.makebid_rate_box { display: none; }
+.counterboxtitle { display: none; }
+.counterbox { display: none; }
+.bidclosedtitle { display: none; }
+.bidclosedbox { display: none; }
+.bidsummary { font-size: 10px; }
 
 /* tiles */
 .tile { width: 146px; height: 296px; border: 2px solid #999999; border-radius: 5px; overflow: hidden; margin-bottom: 10px; position: relative; background: #e3e3e3; }
@@ -271,6 +320,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .tileposted { top: 6px; right: 12px; text-align: right; font-weight: bold; }
 
 /* img */
+.companylogo { border-radius: 3px; height: 146px; width: 146px; }
 .einstein { background: url(../img/einstein.jpg); border-radius: 3px; }
 .wave { background: url(../img/wave.jpg); border-radius: 3px; height: 146px; width: 146px; }
 .upgrades { background: url(../img/upgrades.jpg); border-radius: 3px; }
