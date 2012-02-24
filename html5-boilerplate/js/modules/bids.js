@@ -13,6 +13,7 @@ function BidsClass(listing_id) {
     this.safeStr = new SafeStringClass();
     this.currency = new CurrencyClass();
     this.html = '';
+    this.eventBinders = [];
 }
 pl.implement(BidsClass, {
     load: function() {
@@ -197,7 +198,7 @@ pl.implement(BidsClass, {
         }
         else if (bid.status === 'active') {
             if (bid.mybid) {
-                actions = ['withdraw']; // withdraw my bid or counter
+                actions = ['revise', 'withdraw']; // withdraw my bid or counter
             }
             // FIXME: there's currently no way in the current API to know which side countered last
             else if (this.userIsOwner()) {
@@ -306,10 +307,20 @@ pl.implement(BidsClass, {
     makeActionButtons: function(bid) {
         var i,
             action, // accept, reject, counter, or withdraw
-            pushclass = (bid.actions.length < 3 ? 'push-' + (4*(3-bid.actions.length)) : 0);
+            pushclass = [];
+        if (bid.actions.length === 3) {
+            pushclass = ['', '', ''];
+        }
+        else if (bid.actions.length === 2) {
+            pushclass[0] = 'push-3';
+            pushclass[1] = 'push-4';
+        }
+        else {
+            pushclass[0] = 'push-8';
+        }
         for (i = 0; i < bid.actions.length; i++) {
             action = bid.actions[i];
-            this.makeActionButton(bid, action, (i === 0 ? pushclass : ''));
+            this.makeActionButton(bid, action, pushclass[i]);
         }
     },
     makeActionButton: function(bid, action, pushclass) {
@@ -324,7 +335,8 @@ pl.implement(BidsClass, {
             ';
     },
     makeActionableBid: function(bid) {
-        var bidamtid = 'bidamt_' + bid.bid_id,
+        var self = this,
+            bidamtid = 'bidamt_' + bid.bid_id,
             bidpctid = 'bidpct_' + bid.bid_id,
             bidtypeid = 'bidtype_' + bid.bid_id,
             bidrateboxid = 'bidratebox_' + bid.bid_id,
@@ -339,21 +351,6 @@ pl.implement(BidsClass, {
             bidnote = bid.bid_note || 'random bid note',
             bidval = this.currency.format(bid.valuation),
             bidmsg = this.bidStatusMsg(bid);
-/*
-        makebidAmt = new TextFieldClass('makebid_amt', this.currency.format(this.listing.suggested_amt), function(){}, 'makebid_msg');
-        makebidAmt.fieldBase.addValidator(this.currency.isCurrency);
-        makebidAmt.fieldBase.validator.preValidateTransform = this.currency.clean;
-        makebidAmt.fieldBase.validator.postValidator = function(result) {
-            var src, cleaned, displayed;
-            if (result === 0) {
-                src = pl('#makebid_amt').attr('value');
-                cleaned = self.currency.clean(src);
-                displayed = self.currency.format(cleaned);
-                pl('#makebid_amt').attr({value: displayed});
-            }
-        };
-        makebidAmt.bindEvents();
-*/
         this.html += '\
     <div>\
         <span class="bidformlabel">\
@@ -390,6 +387,29 @@ pl.implement(BidsClass, {
         this.html += '\
     </div>\
 ';
+        this.eventBinders.push(this.makeActionableBidEvents(bid));
+    },
+    makeActionableBidEvents: function(bid) {
+        var self = this;
+        return function() {
+            var bidAmt = {},
+                bidamtid = 'bidamt_' + bid.bid_id,
+                bidamtsel = '#' + bidamtid,
+                bidmsgid = 'bidmsg_' + bid.bid_id;
+            bidAmt = new TextFieldClass(bidamtid, self.currency.format(self.listing.suggested_amt), function(){}, bidmsgid);
+            bidAmt.fieldBase.addValidator(self.currency.isCurrency);
+            bidAmt.fieldBase.validator.preValidateTransform = self.currency.clean;
+            bidAmt.fieldBase.validator.postValidator = function(result) {
+                var src, cleaned, displayed;
+                if (result === 0) {
+                    src = pl(bidamtsel).attr('value');
+                    cleaned = self.currency.clean(src);
+                    displayed = self.currency.format(cleaned);
+                    pl(bidamtsel).attr({value: displayed});
+                }
+            };
+            bidAmt.bindEvents();
+        };
     }
 });
 
