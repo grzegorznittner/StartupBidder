@@ -21,6 +21,7 @@ pl.implement(BidsClass, {
         this.ajax.call();
     },
     store: function(json) {
+        pl('.bidtitle,.bidpanel').remove();
         this.listing = json.listing || {};
         this.loggedin_profile_id = json.loggedin_profile ? json.loggedin_profile.profile_id : null;
         this.bids = json.bids || [];
@@ -44,6 +45,12 @@ pl.implement(BidsClass, {
             bid = this.bids[i];
             if (this.listing.status !== 'active') { // FIXME: backend workaround after closing
                 bid.status = 'closed';
+            }
+            if (bid.status === 'posted') { // FIXME: posted has disappeared
+                bid.status = 'active';
+            }
+            if (bid.status === 'active' && !bid.valuation) { // FIXME: sometimes backend has zero bid valuation
+                this.recalculateValuation(bid);
             }
             if (bid.status !== 'posted') { // FIXME: posted bids should be eliminated???
                 filteredbids.push(bid);
@@ -125,7 +132,7 @@ pl.implement(BidsClass, {
                 equity_pct: this.listing.suggested_pct,
                 bid_type: 'preferred', // HARDCODE
                 interest_rate: 0, // HARDCODE
-                bid_note: 'Note to the owner...',
+                bid_note: 'Note to conterparty...',
                 valuation: this.listing.suggested_val
             };
         bid.actions = this.bidActions(bid);
@@ -263,7 +270,6 @@ pl.implement(BidsClass, {
     ' + actor + ' ' + action + ' on ' + this.date.format(bid.bid_date) + '\
 </div>\
 <div>\
-//    ' + this.currency.format(bid.amount) + ' for ' + bid.equity_pct + '% equity as ' + displayType +' with company valued at ' + this.currency.format(bid.valuation) + '\
     ' + this.currency.format(bid.amount) + ' for ' + bid.equity_pct + '% equity at a valuation of ' + this.currency.format(bid.valuation) + '\
 </div>\
 </dt>\
@@ -277,7 +283,7 @@ pl.implement(BidsClass, {
             displayDate = this.date.format(bid.bid_date),
             title = bid.status === 'new' ? 'MAKE A BID' : 'BID FROM ' + displayUsername + ' ON ' + displayDate;
         this.html += '\
-            <div class="boxtitle" id="' + bidtitleid + '">' + title + '</div>\
+            <div class="boxtitle bidtitle" id="' + bidtitleid + '">' + title + '</div>\
             <div class="boxpanel uneditabletext bidpanel" id="' + bidboxid + '">\
         ';
     },
@@ -327,10 +333,52 @@ pl.implement(BidsClass, {
             icon = 'bid' + action + 'icon',
             text = action === 'makebid' ? 'MAKE BID' : action.toUpperCase(); 
         this.html += '\
-            <a href="#">\
-                <span class="' + pushclass + ' span-4 inputbutton bidactionbtn" id="' + id + '"><div class="' + iconType + ' ' + icon + '"></div>' + text + '</span>\
-            </a>\
-            ';
+            <span class="' + pushclass + ' span-4 inputbutton bidactionbtn" id="' + id + '"><div class="' + iconType + ' ' + icon + '"></div>' + text + '</span>\
+        ';
+    },
+    makeActionButtonEvents: function(bid) {
+        var i,
+            action;
+        for (i = 0; i < bid.actions.length; i++) {
+            action = bid.actions[i];
+            if (action === 'makebid') {
+                this.makeMakeBidEvent(bid);
+            }
+            else {
+                console.log('unsupported action:', action);
+            }
+        }
+    },
+    makeMakeBidEvent: function(bid) {
+        var action = 'makebid',
+            id = 'bid_action_' + action + '_' + bid.bid_id,
+            sel = '#' + id,
+            self = this;
+        this.eventBinders.push(function(){
+            pl(sel).bind('click', function() {
+                var bidid = bid.bid_id,
+                    amt = self.currency.clean(pl('#bidamt_'+bidid).attr('value')),
+                    pct = self.number.clean(pl('#bidpct_'+bidid).attr('value')),
+                    note = self.safeStr.clean(pl('#bidnote_'+bidid).attr('value')),
+                    url = '/bid/create',
+                    newbid = {
+                        listing_id: bid.listing_id,
+                        profile_id: self.loggedin_profile_id,
+                        amount: amt,
+                        equity_pct: pct,
+                        bid_note: note,
+                        bid_type: 'preferred',
+                        interest_rate: 0
+                    },
+                    completeFunc = function() {
+                        pl('#bidmsg_'+bidid).html('Bid posted');
+                        self.load();
+                    },
+                    ajax = new AjaxClass('/bid/create', 'bidmsg_'+bidid, completeFunc);
+                    ajax.setPostData({bid: newbid});
+                    ajax.call();
+            });
+        });
     },
     makeActionableBid: function(bid) {
         var self = this,
@@ -341,7 +389,7 @@ pl.implement(BidsClass, {
             bidvalid  = 'bidval_' + bid.bid_id,
             bidamt = this.currency.format(bid.amount),
             bidpct = bid.equity_pct,
-            bidnote = bid.bid_note || 'random bid note',
+            bidnote = bid.bid_note || 'Note to the counterparty...',
             bidval = this.currency.format(bid.valuation),
             bidmsg = this.bidStatusMsg(bid);
         this.html += '\
@@ -366,30 +414,45 @@ pl.implement(BidsClass, {
         this.html += '\
     </div>\
 ';
-        this.eventBinders.push(this.makeActionableBidEvents(bid));
+        this.makeActionableBidEvents(bid);
+        this.makeActionButtonEvents(bid);
+    },
+    recalculateValuation: function(bid) {
+        bid.valuation = (bid.amount && bid.equity_pct) ? Math.floor(100 * bid.amount / bid.equity_pct) : 0;
+    },
+    redisplayValuation: function(bid) {
+        var bidval = this.currency.format(bid.valuation);
+        pl('#bidval_'+bid.bid_id).html(bidval);
     },
     makeActionableBidEvents: function(bid) {
         var self = this;
-        return function() {
-            console.log('foo');
+        this.eventBinders.push(function() {
             var bidamt = {},
                 bidpct = {},
                 bidamtid = 'bidamt_' + bid.bid_id,
                 bidpctid = 'bidpct_' + bid.bid_id,
+                bidnoteid = 'bidnote_' + bid.bid_id,
+                bidmsgid = 'bidmsg_' + bid.bid_id,
                 bidamtsel = '#' + bidamtid,
                 bidpctsel = '#' + bidpctid,
-                bidmsgid = 'bidmsg_' + bid.bid_id;
+                bidnotesel = '#' + bidnoteid,
+                bidmsgsel = '#' + bidmsgid,
+                action = '';
             bidamt = new TextFieldClass(bidamtid, self.currency.format(bid.amount), function(){}, bidmsgid);
             bidamt.fieldBase.addValidator(self.currency.isCurrency);
             bidamt.fieldBase.validator.preValidateTransform = self.currency.clean;
             bidamt.fieldBase.validator.postValidator = function(result) {
                 var src, cleaned, displayed;
-                if (result === 0) {
-                    src = pl(bidamtsel).attr('value');
-                    cleaned = self.currency.clean(src);
-                    displayed = self.currency.format(cleaned);
-                    pl(bidamtsel).attr({value: displayed});
+                if (result !== 0) {
+                    return;
                 }
+                src = pl(bidamtsel).attr('value');
+                cleaned = self.currency.clean(src);
+                displayed = self.currency.format(cleaned);
+                pl(bidamtsel).attr({value: displayed});
+                bid.amount = cleaned;
+                self.recalculateValuation(bid);
+                self.redisplayValuation(bid);
             };
             bidamt.bindEvents();
             bidpct = new TextFieldClass(bidpctid, bid.equity_pct, function(){}, bidmsgid);
@@ -409,15 +472,37 @@ pl.implement(BidsClass, {
             bidpct.fieldBase.validator.preValidateTransform = self.number.clean;
             bidpct.fieldBase.validator.postValidator = function(result) {
                 var src, cleaned, displayed;
-                if (result === 0) {
-                    src = pl(bidpctsel).attr('value');
-                    cleaned = self.number.clean(src);
-                    displayed = self.number.format(cleaned);
-                    pl(bidpctsel).attr({value: displayed});
+                if (result !== 0) {
+                    return;
                 }
+                src = pl(bidpctsel).attr('value');
+                cleaned = self.number.clean(src);
+                displayed = self.number.format(cleaned);
+                pl(bidpctsel).attr({value: displayed});
+                bid.equity_pct = cleaned;
+                self.recalculateValuation(bid);
+                self.redisplayValuation(bid);
             };
             bidpct.bindEvents();
-        };
+            pl(bidnotesel).bind({
+                focus: function() {
+                    if (!pl(bidnotesel).hasClass('edited')) {
+                        pl(bidnotesel).attr({value: ''});
+                        pl(bidmsgsel).html('');
+                    }
+                },
+                change: function() {
+                    if (!pl(bidnotesel).hasClass('edited')) {
+                        pl(bidnotesel).addClass('edited');
+                    }
+                },
+                blur: function() {
+                    if (!pl(bidnotesel).hasClass('edited')) {
+                        pl(bidnotesel).attr({value: 'Note to counterparty...'});
+                    }
+                }
+            });
+        });
     }
 });
 

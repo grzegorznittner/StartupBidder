@@ -12,6 +12,9 @@ pl.implement(SafeStringClass, {
             return '';
         }
         return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    },
+    clean: function(str) {
+        return SafeStringClass.prototype.htmlEntities(SafeStringClass.prototype.trim(str));
     }
 });
 
