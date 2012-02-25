@@ -122,7 +122,7 @@ pl.implement(BidsClass, {
     makeNewBid: function() {
         var bid = {
                 status: 'new',
-                bid_id: '123new', // FIXME: should come from backend
+                bid_id: Math.floor(Math.random()*10000000000), // just need something to be unique
                 profile_id: this.loggedin_profile_id,
                 profile_username: (this.loggedin_username || 'user'), // FIXME: use user's name
                 bid_date: '2011-12-12', // FIXME: today
@@ -331,18 +331,29 @@ pl.implement(BidsClass, {
         var id = 'bid_action_' + action + '_' + bid.bid_id,
             iconType = 'bidactionicon' + (action === 'counter' ? 'narrow' : ''),
             icon = 'bid' + action + 'icon',
+            textid = 'bid_text_' + action + '_' + bid.bid_id,
             text = action === 'makebid' ? 'MAKE BID' : action.toUpperCase(); 
         this.html += '\
-            <span class="' + pushclass + ' span-4 inputbutton bidactionbtn" id="' + id + '"><div class="' + iconType + ' ' + icon + '"></div>' + text + '</span>\
+            <span class="' + pushclass + ' span-4 inputbutton bidactionbtn" id="' + id + '">\
+                <div class="' + iconType + ' ' + icon + '"></div>\
+                <span id="' + textid + '">' + text + '</span>\
+            </span>\
         ';
     },
     makeActionButtonEvents: function(bid) {
         var i,
-            action;
+            action,
+            actionFunc,
+            actionMap = {
+                'makebid': this.makeMakeBidEvent,
+                'withdraw': this.makeWithdrawBidEvent,
+                'revise': this.makeReviseBidEvent
+            };
         for (i = 0; i < bid.actions.length; i++) {
             action = bid.actions[i];
-            if (action === 'makebid') {
-                this.makeMakeBidEvent(bid);
+            actionFunc = actionMap[action];
+            if (actionFunc) {
+                actionFunc.call(this, bid);
             }
             else {
                 console.log('unsupported action:', action);
@@ -354,13 +365,12 @@ pl.implement(BidsClass, {
             id = 'bid_action_' + action + '_' + bid.bid_id,
             sel = '#' + id,
             self = this;
-        this.eventBinders.push(function(){
+        this.eventBinders.push(function() {
             pl(sel).bind('click', function() {
                 var bidid = bid.bid_id,
                     amt = self.currency.clean(pl('#bidamt_'+bidid).attr('value')),
                     pct = self.number.clean(pl('#bidpct_'+bidid).attr('value')),
                     note = self.safeStr.clean(pl('#bidnote_'+bidid).attr('value')),
-                    url = '/bid/create',
                     newbid = {
                         listing_id: bid.listing_id,
                         profile_id: self.loggedin_profile_id,
@@ -370,15 +380,63 @@ pl.implement(BidsClass, {
                         bid_type: 'preferred',
                         interest_rate: 0
                     },
-                    completeFunc = function() {
+                    completeFunc = function(json) {
+                        var new_bidid = json.bid_id,
+                            activatedFunc = function() { // FIXME: activation unnecessary in new model
+                                pl('#bidmsg_'+bidid).html('Bid activated');
+                                self.load();
+                            },
+                            ajax = new AjaxClass('/bid/activate?id='+new_bidid, 'bidmsg_'+bidid, activatedFunc);
                         pl('#bidmsg_'+bidid).html('Bid posted');
-                        self.load();
+                        ajax.setPost();
+                        //ajax.call();// doesn't actually work since i'm not the owner
+                        activatedFunc(); // FIXME: remove with greg's new stuff
                     },
                     ajax = new AjaxClass('/bid/create', 'bidmsg_'+bidid, completeFunc);
                     ajax.setPostData({bid: newbid});
                     ajax.call();
             });
         });
+    },
+    makeWithdrawBidEvent: function(bid) {
+        var action = 'withdraw',
+            id = 'bid_action_' + action + '_' + bid.bid_id,
+            sel = '#' + id,
+            msgid = 'bidmsg_' + bid.bid_id,
+            msgsel = '#' + msgid,
+            textid = 'bid_text_' + action + '_' + bid.bid_id,
+            textsel = '#' + textid,
+            self = this;
+        this.eventBinders.push(function() {
+            pl(sel).bind({
+                'click': function() {
+                    var bidid = bid.bid_id,
+                        withdrawmsg = 'ARE YOU SURE YOU WANT TO WITHDRAW THIS BID?',
+                        ajax,
+                        completeFunc;
+                    if (pl(msgsel).html() !== withdrawmsg) {
+                        pl(msgsel).addClass('attention').html(withdrawmsg);
+                        pl(textsel).html('YES');
+                    }
+                    else {
+                        completeFunc = function() {
+                            pl(msgsel).html('BID WITHRDAWN');
+                            self.load();
+                        };
+                        ajax = new AjaxClass('/bid/withdraw?id='+bidid, msgid, completeFunc);
+                        ajax.setPost();
+                        ajax.call();
+                    }
+                },
+                'mouseout': function() {
+                    pl(msgsel).removeClass('attention').html('&nbsp;');
+                    pl(textsel).html('WITHDRAW');
+                }
+            });
+        });
+    },
+    makeReviseBidEvent: function(bid) {
+        
     },
     makeActionableBid: function(bid) {
         var self = this,
