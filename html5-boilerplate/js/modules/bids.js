@@ -12,6 +12,7 @@ function BidsClass(listing_id) {
     this.date = new DateClass();
     this.safeStr = new SafeStringClass();
     this.currency = new CurrencyClass();
+    this.number = new NumberClass();
     this.html = '';
     this.eventBinders = [];
 }
@@ -122,8 +123,8 @@ pl.implement(BidsClass, {
                 listing_id: this.listing.listing_id,
                 amount: this.listing.suggested_amt,
                 equity_pct: this.listing.suggested_pct,
-                bid_type: (this.listing.suggested_type || 'common'),
-                interest_rate: (this.listing.suggested_rate || 0),
+                bid_type: 'preferred', // HARDCODE
+                interest_rate: 0, // HARDCODE
                 bid_note: 'Note to the owner...',
                 valuation: this.listing.suggested_val
             };
@@ -147,6 +148,10 @@ pl.implement(BidsClass, {
             }
         }
         pl('#bidclosedbox').after(this.html);
+        for (i = 0; i < this.eventBinders.length; i++) {
+            this.eventBinders[i]();
+        }
+        this.eventBinders = [];
         this.html = '';
     },
     userCanMakeNewBid: function() {
@@ -214,7 +219,8 @@ pl.implement(BidsClass, {
         return actions;
     },
     makeBidSummary: function(bid) {
-        var actor, action, bidIcon, displayType, bidNote;
+        var actor, action, bidIcon, bidNote,
+            displayType = 'preferred stock';
         if (bid.mybid) {
             actor = 'You';
         }
@@ -245,15 +251,6 @@ pl.implement(BidsClass, {
             action = 'made a bid';
             bidIcon = 'bidicon';
         }
-        if (bid.bid_type === 'note') {
-            displayType = 'a convertible note'; // FIXME: interest rate needed
-        }
-        else if (bid.bid_type === 'preferred') {
-            displayType = 'convertible preferred stock'; // FIXME: interest rate needed
-        }
-        else {
-            displayType = 'common stock';
-        }
         bidNote = bid.bid_note ? this.safeStr.htmlEntities(bid.bid_note) : (
             actor === 'The owner'
             ? (Math.random() > 0.5 ? 'My company is worth more than this' : 'There is a huge opportunity in investing in me')
@@ -266,7 +263,8 @@ pl.implement(BidsClass, {
     ' + actor + ' ' + action + ' on ' + this.date.format(bid.bid_date) + '\
 </div>\
 <div>\
-    ' + this.currency.format(bid.amount) + ' for ' + bid.equity_pct + '% equity as ' + displayType +' with company valued at ' + this.currency.format(bid.valuation) + '\
+//    ' + this.currency.format(bid.amount) + ' for ' + bid.equity_pct + '% equity as ' + displayType +' with company valued at ' + this.currency.format(bid.valuation) + '\
+    ' + this.currency.format(bid.amount) + ' for ' + bid.equity_pct + '% equity at a valuation of ' + this.currency.format(bid.valuation) + '\
 </div>\
 </dt>\
 <dd class="bidsummary" id="bid_dd_' + bid.bid_id + '">' + bidNote + '</dd>\
@@ -338,16 +336,11 @@ pl.implement(BidsClass, {
         var self = this,
             bidamtid = 'bidamt_' + bid.bid_id,
             bidpctid = 'bidpct_' + bid.bid_id,
-            bidtypeid = 'bidtype_' + bid.bid_id,
-            bidrateboxid = 'bidratebox_' + bid.bid_id,
-            bidrateid = 'bidrate_' + bid.bid_id,
             bidnoteid = 'bidnote_' + bid.bid_id,
             bidmsgid = 'bidmsg_' + bid.bid_id,
             bidvalid  = 'bidval_' + bid.bid_id,
             bidamt = this.currency.format(bid.amount),
             bidpct = bid.equity_pct,
-            bidtype = bid.bid_type,
-            bidrate = bid.interest_rate,
             bidnote = bid.bid_note || 'random bid note',
             bidval = this.currency.format(bid.valuation),
             bidmsg = this.bidStatusMsg(bid);
@@ -360,21 +353,7 @@ pl.implement(BidsClass, {
         <span class="bidformitem">\
             <input class="text bidinputtextpct" type="text" maxlength="2" size="2" id="' + bidpctid + '" name="' + bidpctid + '" value="' + bidpct + '"></input>\
         </span>\
-        <span class="bidformtext span-1">%&nbsp;&nbsp;AS</span>\
-        <span class="bidformitem">\
-            <select class="bidinputselect" id="' + bidtypeid + '" name="' + bidtypeid + '" value="' + bidtype + '">\
-                <option value="common">COMMON STOCK</option>\
-                <option value="preferred">PREFERRED STOCK</option>\
-                <option value="note">CONVERTIBLE NOTE</option>\
-            </select>\
-        </span>\
-'+(bidrate > 0 ? '\
-        <span class="bidformitem" id="' + bidrateboxid + '">\
-            <span class="bidformtext">@</span>\
-            <input class="text bidinputtextpct pctwide" type="text" maxlength="2" size="2" id="' + bidrateid + '" name="' + bidrateid + '" value="' + bidrate +'"></input>\
-            <span class="bidformtext">%</span>\
-        </span>\
-' : '') + '\
+        <span class="bidformtext span-7">%&nbsp;&nbsp;EQUITY AS PREFERRED STOCK</span>\
     </div>\
     <div>\
         <textarea class="textarea inputfullwidetextshort" id="' + bidnoteid + '" name="' + bidnoteid + '" rows="20" cols="5" value="' + bidnote + '">' + bidnote + '</textarea>\
@@ -392,14 +371,18 @@ pl.implement(BidsClass, {
     makeActionableBidEvents: function(bid) {
         var self = this;
         return function() {
-            var bidAmt = {},
+            console.log('foo');
+            var bidamt = {},
+                bidpct = {},
                 bidamtid = 'bidamt_' + bid.bid_id,
+                bidpctid = 'bidpct_' + bid.bid_id,
                 bidamtsel = '#' + bidamtid,
+                bidpctsel = '#' + bidpctid,
                 bidmsgid = 'bidmsg_' + bid.bid_id;
-            bidAmt = new TextFieldClass(bidamtid, self.currency.format(self.listing.suggested_amt), function(){}, bidmsgid);
-            bidAmt.fieldBase.addValidator(self.currency.isCurrency);
-            bidAmt.fieldBase.validator.preValidateTransform = self.currency.clean;
-            bidAmt.fieldBase.validator.postValidator = function(result) {
+            bidamt = new TextFieldClass(bidamtid, self.currency.format(bid.amount), function(){}, bidmsgid);
+            bidamt.fieldBase.addValidator(self.currency.isCurrency);
+            bidamt.fieldBase.validator.preValidateTransform = self.currency.clean;
+            bidamt.fieldBase.validator.postValidator = function(result) {
                 var src, cleaned, displayed;
                 if (result === 0) {
                     src = pl(bidamtsel).attr('value');
@@ -408,7 +391,32 @@ pl.implement(BidsClass, {
                     pl(bidamtsel).attr({value: displayed});
                 }
             };
-            bidAmt.bindEvents();
+            bidamt.bindEvents();
+            bidpct = new TextFieldClass(bidpctid, bid.equity_pct, function(){}, bidmsgid);
+            pctValidator = function(num) {
+                if (num < 5) {
+                    return 'Minimum bid is 5% of common';
+                }
+                else if (num > 50) {
+                    return 'Maximum bid is 50% of common';
+                }
+                else {
+                    return 0;
+                }
+            };
+            bidpct.fieldBase.addValidator(self.number.isNumber);
+            bidpct.fieldBase.addValidator(pctValidator);
+            bidpct.fieldBase.validator.preValidateTransform = self.number.clean;
+            bidpct.fieldBase.validator.postValidator = function(result) {
+                var src, cleaned, displayed;
+                if (result === 0) {
+                    src = pl(bidpctsel).attr('value');
+                    cleaned = self.number.clean(src);
+                    displayed = self.number.format(cleaned);
+                    pl(bidpctsel).attr({value: displayed});
+                }
+            };
+            bidpct.bindEvents();
         };
     }
 });

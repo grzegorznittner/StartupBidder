@@ -22,6 +22,20 @@ pl.implement(DateClass, {
     }
 });
 
+function NumberClass() {}
+pl.implement(NumberClass, {
+    format: function(num) {
+        return num ? num.replace(/[^0-9]*/g, '') : '';
+    },
+    clean: function(str) {
+        return NumberClass.prototype.format(str);
+    },
+    isNumber: function(str) {
+        var match = str ? str.match(/^[0-9]*$/) : false;
+        return (match ? 0 : 'Please enter a numeric value');
+    }
+});
+
 function CurrencyClass(symbol) {
     this.symbol = symbol || '$';
 }
