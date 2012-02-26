@@ -294,7 +294,8 @@ pl.implement(BidsClass, {
     },
     bidStatusMsg: function(bid) {
         var statusMap = {
-                'new': '',
+                'new': 'Make a bid for your piece of the company',
+                'active': (bid.actions && bid.actions[0] === 'accept') ? 'Accept, reject, or counter this bid' : 'Revise or withdraw this bid',
                 'accepted': 'BID ACCEPTED',
                 'withdrawn': 'BID WITHDRAWN',
                 'countered': 'BID COUNTERED'
@@ -322,7 +323,7 @@ pl.implement(BidsClass, {
     },
     makeActionButton: function(bid, action, pushclass) {
         var id = 'bid_action_' + action + '_' + bid.bid_id,
-            iconType = 'bidactionicon' + (action === 'counter' ? 'narrow' : ''),
+            iconType = 'bidactionicon' + ((action === 'counter' || action === 'withdraw') ? 'narrow' : ''),
             icon = 'bid' + action + 'icon',
             textid = 'bid_text_' + action + '_' + bid.bid_id,
             text = action === 'makebid' ? 'MAKE BID' : action.toUpperCase(); 
@@ -397,46 +398,59 @@ pl.implement(BidsClass, {
     },
     makeWithdrawBidEvent: function(bid) {
         var action = 'withdraw',
+            revaction = 'revise',
+            cancelaction = 'cancel',
             id = 'bid_action_' + action + '_' + bid.bid_id,
             sel = '#' + id,
+            revid = 'bid_action_' + revaction + '_' + bid.bid_id,
+            revsel = '#' + revid,
+            cancelid = 'bid_action_' + cancelaction + '_' + bid.bid_id,
+            cancelsel = '#' + cancelid,
             msgid = 'bidmsg_' + bid.bid_id,
             msgsel = '#' + msgid,
             textid = 'bid_text_' + action + '_' + bid.bid_id,
             textsel = '#' + textid,
             self = this;
         this.eventBinders.push(function() {
-            pl(sel).bind({
-                'click': function() {
-                    var bidid = bid.bid_id,
-                        withdrawmsg = 'ARE YOU SURE YOU WANT TO WITHDRAW THIS BID?',
-                        ajax,
-                        completeFunc;
-                    if (pl(msgsel).html() !== withdrawmsg) {
-                        pl(msgsel).addClass('attention').html(withdrawmsg);
-                        pl(textsel).html('YES');
-                    }
-                    else {
-                        completeFunc = function() {
-                            pl(msgsel).html('BID WITHRDAWN');
-                            self.load();
-                        };
-                        ajax = new AjaxClass('/bid/withdraw?id='+bidid, msgid, completeFunc);
-                        ajax.setPost();
-                        ajax.call();
-                    }
-                },
-                'mouseout': function() {
-                    pl(msgsel).removeClass('attention').html('&nbsp;');
-                    pl(textsel).html('WITHDRAW');
+            pl(sel).bind('click', function() {
+                var bidid = bid.bid_id,
+                    completeFunc = function() {
+                        pl(msgsel).html('BID WITHRDAWN');
+                        self.load();
+                    },
+                    ajax = new AjaxClass('/bid/withdraw?id='+bidid, msgid, completeFunc);
+                if (!pl(msgsel).hasClass('cancelable')) {
+                    pl(msgsel).addClass('cancelable').addClass('attention').html('ARE YOU SURE YOU WANT TO WITHDRAW THIS BID?');
+                    pl(revsel).hide();
+                    self.html = '';
+                    self.makeActionButton(bid, 'cancel', 'push-4');
+                    pl(sel).removeClass('push-4').addClass('push-3').after(self.html);
+                    self.html = '';
+                    pl(cancelsel).bind('click', function() {
+                        pl(msgsel).removeClass('cancelable').removeClass('attention').html('Revise or withdraw this bid');
+                        pl(cancelsel).remove();
+                        pl(sel).removeClass('push-3').addClass('push-4');
+                        pl(revsel).show();
+                    });
+                }
+                else {
+                    ajax.setPost();
+                    ajax.call();
                 }
             });
         });
     },
     makeReviseBidEvent: function(bid) {
-       // FIXME: implemented as withdraw + make
-       var action = 'revise',
+        // FIXME: implemented as withdraw + make
+        var action = 'revise',
+            withdrawaction = 'withdraw',
+            cancelaction = 'cancel',
             id = 'bid_action_' + action + '_' + bid.bid_id,
             sel = '#' + id,
+            withdrawid = 'bid_action_' + withdrawaction + '_' + bid.bid_id,
+            withdrawsel = '#' + withdrawid,
+            cancelid = 'bid_action_' + cancelaction + '_' + bid.bid_id,
+            cancelsel = '#' + cancelid,
             msgid = 'bidmsg_' + bid.bid_id,
             msgsel = '#' + msgid,
             textid = 'bid_text_' + action + '_' + bid.bid_id,
@@ -450,8 +464,25 @@ pl.implement(BidsClass, {
                         makebid();
                     },
                     ajax = new AjaxClass('/bid/withdraw?id='+bidid, msgid, completeFunc);
-                ajax.setPost();
-                ajax.call();
+                if (!pl(msgsel).hasClass('cancelable')) {
+                    pl(msgsel).addClass('cancelable').html('Make a revision to your existing bid');
+                    pl(withdrawsel).hide();
+                    self.html = '';
+                    self.makeActionButton(bid, 'cancel', 'push-4');
+                    pl(sel).after(self.html);
+                    self.html = '';
+                    self.enableBidForEdit(bid);
+                    pl(cancelsel).bind('click', function() {
+                        self.disableBidForEdit(bid);
+                        pl(msgsel).removeClass('cancelable').html('Revise or withdraw this bid');
+                        pl(cancelsel).remove();
+                        pl(withdrawsel).show();
+                    });
+                }
+                else {
+                    ajax.setPost();
+                    ajax.call();
+                }
             });
         });
        
@@ -467,22 +498,23 @@ pl.implement(BidsClass, {
             bidpct = bid.equity_pct,
             bidnote = bid.bid_note || 'Note to counterparty...',
             bidval = this.currency.format(bid.valuation),
-            bidmsg = this.bidStatusMsg(bid);
+            bidmsg = this.bidStatusMsg(bid),
+            disabled = bid.status !== 'new' ? ' disabled="disabled"' : '';
         this.html += '\
     <div>\
         <span class="bidformlabel">\
-            <input class="text bidinputtitle" type="text" maxlength="8" size="8" id="' + bidamtid + '" name="' + bidamtid + '" value="' + bidamt + '"></input>\
+            <input class="text bidinputtitle" type="text" maxlength="8" size="8" id="' + bidamtid + '" name="' + bidamtid + '" value="' + bidamt + '"' + disabled +'></input>\
         </span>\
         <span class="bidformtext span-1">FOR</span>\
         <span class="bidformitem">\
-            <input class="text bidinputtextpct" type="text" maxlength="2" size="2" id="' + bidpctid + '" name="' + bidpctid + '" value="' + bidpct + '"></input>\
+            <input class="text bidinputtextpct" type="text" maxlength="2" size="2" id="' + bidpctid + '" name="' + bidpctid + '" value="' + bidpct + '"' + disabled +'></input>\
         </span>\
         <span class="bidformtext span-7">%&nbsp;&nbsp;EQUITY AS PREFERRED STOCK</span>\
     </div>\
     <div>\
-        <textarea class="textarea inputfullwidetextshort" id="' + bidnoteid + '" name="' + bidnoteid + '" rows="20" cols="5" value="' + bidnote + '">' + bidnote + '</textarea>\
+        <textarea class="textarea inputfullwidetextshort" id="' + bidnoteid + '" name="' + bidnoteid + '" rows="20" cols="5" value="' + bidnote + '"' + disabled +'>' + bidnote + '</textarea>\
     </div>\
-    <p class="inputmsg bidmsg" id="' + bidmsgid + '">' + bidmsg + '</p>\
+    <p class="inputmsg bidmsg inprogress" id="' + bidmsgid + '">' + bidmsg + '</p>\
     <div>\
         <span class="bidvallabel"><span id="' + bidvalid + '">' + bidval + '</span> VALUATION</span>\
 ';
@@ -492,6 +524,19 @@ pl.implement(BidsClass, {
 ';
         this.makeActionableBidEvents(bid);
         this.makeActionButtonEvents(bid);
+    },
+    enableBidForEdit: function(bid) {
+        pl(this.editableFieldSel(bid)).removeAttr('disabled');
+    },
+    disableBidForEdit: function(bid) {
+        pl(this.editableFieldSel(bid)).attr({disabled: 'disabled'});
+    },
+    editableFieldSel: function(bid) {
+        var bidamtsel = '#bidamt_' + bid.bid_id,
+            bidpctsel = '#bidpct_' + bid.bid_id,
+            bidnotesel = '#bidnote_' + bid.bid_id,
+            fieldsel = bidamtsel + ',' + bidpctsel + ',' + bidnotesel;
+        return fieldsel;
     },
     recalculateValuation: function(bid) {
         bid.valuation = (bid.amount && bid.equity_pct) ? Math.floor(100 * bid.amount / bid.equity_pct) : 0;

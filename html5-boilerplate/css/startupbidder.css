@@ -16,7 +16,7 @@ body > #wrap { height: auto; min-height: 100%; }
 .copyrightspan { text-align: right; }
 .copyrighttext { font-size: 10px; font-weight: bold; top: 10px; position: relative; }
 .attention { color: #8A1F11; }
-.inprogress { color: #3F4A11; }
+.inprogress { color: #8F8A11; }
 .successful { color: #009900; }
 .notice { position: relative; top: 15px; }
 .emptyattention { color: #8A1F11; position: relative; top: 15px; }
@@ -121,6 +121,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .bidmakebidicon { width: 20px; height: 20px; background: url(../img/icons/bid_20x20.png); }
 .bidreviseicon { width: 20px; height: 20px; background: url(../img/icons/bid_20x20.png); }
 .thumbdownicon { width: 20px; height: 20px; background: url(../img/icons/thumbs_down.png); }
+.bidcancelicon { width: 20px; height: 20px; background: url(../img/icons/cancel_20x20.gif); }
 .bidrejecticon { width: 20px; height: 20px; background: url(../img/icons/thumbs_down.png); }
 .bidrejectedicon { width: 20px; height: 20px; background: url(../img/icons/thumbs_down.png); }
 .withdrawicon { width: 20px; height: 20px; background: url(../img/icons/withdraw_20x20.png); }
@@ -337,6 +338,9 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .socialrec { background: url(../img/socialrec.jpg); border-radius: 3px; }
 .gkleen { background: url(../img/gkleen.jpg); border-radius: 3px; }
 .missingimg { background: url(http://www.minimus.biz/img/Your%20Logo%20Here%20Black%202.jpg) -65px -55px; border-radius: 3px; height: 146px; width: 146px; }
+
+input[disabled] { color: #999 !important; }
+textarea[disabled] { color: #999 !important; }
 
 /* hover effect */
 /*
