@@ -132,7 +132,7 @@ pl.implement(BidsClass, {
                 equity_pct: this.listing.suggested_pct,
                 bid_type: 'preferred', // HARDCODE
                 interest_rate: 0, // HARDCODE
-                bid_note: 'Note to conterparty...',
+                bid_note: 'Note to counterparty...',
                 valuation: this.listing.suggested_val
             };
         bid.actions = this.bidActions(bid);
@@ -143,7 +143,7 @@ pl.implement(BidsClass, {
             headbid,
             profile_id,
             bidsForProfile;
-        if (this.loggedin_profile_id && !this.userIsOwner() && !this.userHasActiveBid()) {
+        if (this.userCanMakeNewBid() && !this.userHasBidHistory()) {
             this.makeNewBidBox();
         }
         for (i = 0; i < this.bidorder.length; i++) {
@@ -177,6 +177,17 @@ pl.implement(BidsClass, {
         }
         return has;
     },
+    userHasBidHistory: function() {
+        var has = false;
+        for (i = 0; i < this.bidorder.length; i++) {
+            headbid = this.bidorder[i];
+            if (headbid.profile_id === this.loggedin_profile_id) {
+                has = true;
+                break;
+            }
+        }
+        return has;
+    },
     makeBidsForOneProfile: function(profile_id) {
         var i,
             bid,
@@ -184,13 +195,22 @@ pl.implement(BidsClass, {
             start = 0;
         bid = bidlist[0];
         bid.actions = this.bidActions(bid); // only the first item can have acitons
-        this.makeBidHeader(bid); 
         if (bid.actions.length > 0) { // actionable bid
+            this.makeBidHeader(bid); 
             this.makeActionableBid(bid);
             if (bidlist.length > 1) {
                 this.makeBidSpacer();
             }
             start = 1; // skip first bid since we just processed it
+        }
+        else if (profile_id === this.loggedin_profile_id && this.userCanMakeNewBid()) {
+            bid = this.makeNewBid();
+            this.makeBidHeader(bid); 
+            this.makeActionableBid(bid);
+            this.makeBidSpacer();
+        }
+        else {
+            this.makeBidHeader(bid); 
         }
         this.startBidList();
         for (i = start; i < bidlist.length; i++) {
@@ -226,48 +246,21 @@ pl.implement(BidsClass, {
         return actions;
     },
     makeBidSummary: function(bid) {
-        var actor, action, bidIcon, bidNote,
+        var actor = bid.mybid ? 'You' : ((bid.status === 'accepted' || bid.ownerbid) ? 'Owner' : 'Investor'),
+            action = bid.status === 'active' ? 'made' : (bid.status === 'withdrawn' ? 'withdrew' : bid.status),
+            bidIcon = 'bid' + bid.status + 'icon',
+            bidNote = bid.bid_note ? this.safeStr.htmlEntities(bid.bid_note) : (
+                actor === 'Owner'
+                ? (Math.random() > 0.5 ? 'My company is worth more than this' : 'There is a huge opportunity in investing in me')
+                : (Math.random() > 0.5 ? 'This is the best I can offer' : 'I see a lot of potential here')
+            ), // FIXME: should usually be bid note
             displayType = 'preferred stock';
-        if (bid.mybid) {
-            actor = 'You';
-        }
-        else if (bid.ownerbid) {
-            actor = 'Owner';
-        }
-        else {
-            actor = 'Investor';
-        }
-        if (bid.status === 'accepted') {
-            actor = bid.mybid ? 'You' : 'The Owner';
-            action = 'accepted the bid';
-            bidIcon = 'thumbup';
-        }
-        else if (bid.status === 'rejected') {
-            action = 'rejected the bid';
-            bidIcon = 'thumbdownicon';
-        }
-        else if (bid.status === 'withdrawn') {
-            action = 'withdrew the bid';
-            bidIcon = 'withdrawicon';
-        }
-        else if (bid.status === 'countered') { // FIXME: unimplemented
-            action = 'made a counteroffer for the bid';
-            bidIcon = 'countericon';
-        }
-        else { // active status
-            action = 'made a bid';
-            bidIcon = 'bidicon';
-        }
-        bidNote = bid.bid_note ? this.safeStr.htmlEntities(bid.bid_note) : (
-            actor === 'The owner'
-            ? (Math.random() > 0.5 ? 'My company is worth more than this' : 'There is a huge opportunity in investing in me')
-            : (Math.random() > 0.5 ? 'This is the best I can offer' : 'I see a lot of potential here')
-        ); // FIXME: should usually be bid note
+        this.recalculateValuation(bid); // FIXME: backend is screwed up
         this.html += '\
 <dt class="bidsummary" id="bid_' + bid.bid_id + '">\
 <div>\
     <div class="normalicon ' + bidIcon + '"></div>\
-    ' + actor + ' ' + action + ' on ' + this.date.format(bid.bid_date) + '\
+    ' + actor + ' ' + action + ' the bid on ' + this.date.format(bid.bid_date) + '\
 </div>\
 <div>\
     ' + this.currency.format(bid.amount) + ' for ' + bid.equity_pct + '% equity at a valuation of ' + this.currency.format(bid.valuation) + '\
@@ -281,7 +274,7 @@ pl.implement(BidsClass, {
             bidboxid = 'bidbox_' + bid.bid_id;
             displayUsername = bid.mybid ? 'YOU' : bid.profile_username.toUpperCase();
             displayDate = this.date.format(bid.bid_date),
-            title = bid.status === 'new' ? 'MAKE A BID' : 'BID FROM ' + displayUsername + ' ON ' + displayDate;
+            title = bid.status === 'new' ? 'MAKE A BID' : 'BIDS FROM ' + displayUsername + ' SINCE ' + displayDate;
         this.html += '\
             <div class="boxtitle bidtitle" id="' + bidtitleid + '">' + title + '</div>\
             <div class="boxpanel uneditabletext bidpanel" id="' + bidboxid + '">\
@@ -365,38 +358,42 @@ pl.implement(BidsClass, {
             id = 'bid_action_' + action + '_' + bid.bid_id,
             sel = '#' + id,
             self = this;
-        this.eventBinders.push(function() {
-            pl(sel).bind('click', function() {
-                var bidid = bid.bid_id,
-                    amt = self.currency.clean(pl('#bidamt_'+bidid).attr('value')),
-                    pct = self.number.clean(pl('#bidpct_'+bidid).attr('value')),
-                    note = self.safeStr.clean(pl('#bidnote_'+bidid).attr('value')),
-                    newbid = {
-                        listing_id: bid.listing_id,
-                        profile_id: self.loggedin_profile_id,
-                        amount: amt,
-                        equity_pct: pct,
-                        bid_note: note,
-                        bid_type: 'preferred',
-                        interest_rate: 0
-                    },
-                    completeFunc = function(json) {
-                        var new_bidid = json.bid_id,
-                            activatedFunc = function() { // FIXME: activation unnecessary in new model
-                                pl('#bidmsg_'+bidid).html('Bid activated');
-                                self.load();
-                            },
-                            ajax = new AjaxClass('/bid/activate?id='+new_bidid, 'bidmsg_'+bidid, activatedFunc);
-                        pl('#bidmsg_'+bidid).html('Bid posted');
-                        ajax.setPost();
-                        //ajax.call();// doesn't actually work since i'm not the owner
-                        activatedFunc(); // FIXME: remove with greg's new stuff
-                    },
-                    ajax = new AjaxClass('/bid/create', 'bidmsg_'+bidid, completeFunc);
-                    ajax.setPostData({bid: newbid});
-                    ajax.call();
-            });
+        self.eventBinders.push(function() {
+            pl(sel).bind('click', self.makeMakeBidAPICaller(bid));
         });
+    },
+    makeMakeBidAPICaller: function(bid) {
+        var self = this;
+        return function() {
+            var bidid = bid.bid_id,
+                amt = self.currency.clean(pl('#bidamt_'+bidid).attr('value')),
+                pct = self.number.clean(pl('#bidpct_'+bidid).attr('value')),
+                note = self.safeStr.clean(pl('#bidnote_'+bidid).attr('value')),
+                newbid = {
+                    listing_id: bid.listing_id,
+                    profile_id: self.loggedin_profile_id,
+                    amount: amt,
+                    equity_pct: pct,
+                    bid_note: note,
+                    bid_type: 'preferred',
+                    interest_rate: 0
+                },
+                completeFunc = function(json) {
+                    var new_bidid = json.bid_id,
+                        activatedFunc = function() { // FIXME: activation unnecessary in new model
+                            pl('#bidmsg_'+bidid).html('Bid activated');
+                            self.load();
+                        },
+                        ajax = new AjaxClass('/bid/activate?id='+new_bidid, 'bidmsg_'+bidid, activatedFunc);
+                    pl('#bidmsg_'+bidid).html('Bid posted');
+                    ajax.setPost();
+                    //ajax.call();// doesn't actually work since i'm not the owner
+                    activatedFunc(); // FIXME: remove with greg's new stuff
+                },
+                ajax = new AjaxClass('/bid/create', 'bidmsg_'+bidid, completeFunc);
+            ajax.setPostData({bid: newbid});
+            ajax.call();
+        };
     },
     makeWithdrawBidEvent: function(bid) {
         var action = 'withdraw',
@@ -436,7 +433,28 @@ pl.implement(BidsClass, {
         });
     },
     makeReviseBidEvent: function(bid) {
-        
+       // FIXME: implemented as withdraw + make
+       var action = 'revise',
+            id = 'bid_action_' + action + '_' + bid.bid_id,
+            sel = '#' + id,
+            msgid = 'bidmsg_' + bid.bid_id,
+            msgsel = '#' + msgid,
+            textid = 'bid_text_' + action + '_' + bid.bid_id,
+            textsel = '#' + textid,
+            self = this;
+        this.eventBinders.push(function() {
+            pl(sel).bind('click', function() {
+                var bidid = bid.bid_id,
+                    makebid = self.makeMakeBidAPICaller(bid),
+                    completeFunc = function() {
+                        makebid();
+                    },
+                    ajax = new AjaxClass('/bid/withdraw?id='+bidid, msgid, completeFunc);
+                ajax.setPost();
+                ajax.call();
+            });
+        });
+       
     },
     makeActionableBid: function(bid) {
         var self = this,
@@ -447,7 +465,7 @@ pl.implement(BidsClass, {
             bidvalid  = 'bidval_' + bid.bid_id,
             bidamt = this.currency.format(bid.amount),
             bidpct = bid.equity_pct,
-            bidnote = bid.bid_note || 'Note to the counterparty...',
+            bidnote = bid.bid_note || 'Note to counterparty...',
             bidval = this.currency.format(bid.valuation),
             bidmsg = this.bidStatusMsg(bid);
         this.html += '\
@@ -464,7 +482,7 @@ pl.implement(BidsClass, {
     <div>\
         <textarea class="textarea inputfullwidetextshort" id="' + bidnoteid + '" name="' + bidnoteid + '" rows="20" cols="5" value="' + bidnote + '">' + bidnote + '</textarea>\
     </div>\
-    <p class="inputmsg" id="' + bidmsgid + '">' + bidmsg + '</p>\
+    <p class="inputmsg bidmsg" id="' + bidmsgid + '">' + bidmsg + '</p>\
     <div>\
         <span class="bidvallabel"><span id="' + bidvalid + '">' + bidval + '</span> VALUATION</span>\
 ';
@@ -544,19 +562,19 @@ pl.implement(BidsClass, {
             bidpct.bindEvents();
             pl(bidnotesel).bind({
                 focus: function() {
-                    if (!pl(bidnotesel).hasClass('edited')) {
+                    if (!pl(bidnotesel).hasClass('edited') && pl(bidnotesel).attr('value') === 'Note to counterparty...') {
                         pl(bidnotesel).attr({value: ''});
                         pl(bidmsgsel).html('');
                     }
                 },
                 change: function() {
-                    if (!pl(bidnotesel).hasClass('edited')) {
+                    if (!pl(bidnotesel).hasClass('edited') && pl(bidnotesel).attr('value') !== bid.bid_note) {
                         pl(bidnotesel).addClass('edited');
                     }
                 },
                 blur: function() {
                     if (!pl(bidnotesel).hasClass('edited')) {
-                        pl(bidnotesel).attr({value: 'Note to counterparty...'});
+                        pl(bidnotesel).attr({value: bid.bid_note});
                     }
                 }
             });
