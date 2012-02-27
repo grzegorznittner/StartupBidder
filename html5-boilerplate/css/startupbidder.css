@@ -16,7 +16,7 @@ body > #wrap { height: auto; min-height: 100%; }
 .copyrightspan { text-align: right; }
 .copyrighttext { font-size: 10px; font-weight: bold; top: 10px; position: relative; }
 .attention { color: #8A1F11; }
-.inprogress { color: #3F4A11; }
+.inprogress { color: #8F8A11; }
 .successful { color: #009900; }
 .notice { position: relative; top: 15px; }
 .emptyattention { color: #8A1F11; position: relative; top: 15px; }
@@ -113,14 +113,23 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .searchimg { width: 29px; height: 24px; background: url(../img/icons/search.gif); }
 .thumbup { width: 20px; height: 20px; background: url(../img/icons/thumbs_up.png); }
 .bidaccepticon { width: 20px; height: 20px; background: url(../img/icons/thumbs_up.png); }
+.bidacceptedicon { width: 20px; height: 20px; background: url(../img/icons/thumbs_up.png); }
 .commenticon { width: 20px; height: 20px; background: url(../img/icons/comment_20x20.png); }
 .bidicon { width: 20px; height: 20px; background: url(../img/icons/bid_20x20.png); }
+.bidpostedicon { width: 20px; height: 20px; background: url(../img/icons/bid_20x20.png); }
+.bidactiveicon { width: 20px; height: 20px; background: url(../img/icons/bid_20x20.png); }
+.bidmakebidicon { width: 20px; height: 20px; background: url(../img/icons/bid_20x20.png); }
+.bidreviseicon { width: 20px; height: 20px; background: url(../img/icons/bid_20x20.png); }
 .thumbdownicon { width: 20px; height: 20px; background: url(../img/icons/thumbs_down.png); }
+.bidcancelicon { width: 20px; height: 20px; background: url(../img/icons/cancel_20x20.gif); }
 .bidrejecticon { width: 20px; height: 20px; background: url(../img/icons/thumbs_down.png); }
+.bidrejectedicon { width: 20px; height: 20px; background: url(../img/icons/thumbs_down.png); }
 .withdrawicon { width: 20px; height: 20px; background: url(../img/icons/withdraw_20x20.png); }
 .bidwithdrawicon { width: 20px; height: 20px; background: url(../img/icons/withdraw_20x20.png); }
+.bidwithdrawnicon { width: 20px; height: 20px; background: url(../img/icons/withdraw_20x20.png); }
 .countericon { width: 20px; height: 20px; background: url(../img/icons/counter.png); }
 .bidcountericon { width: 20px; height: 20px; background: url(../img/icons/counter.png); }
+.bidcounteredicon { width: 20px; height: 20px; background: url(../img/icons/counter.png); }
 .notificationicon { width: 20px; height: 20px; background: url(../img/icons/email_20x20.png); background-position: 0px 2px; }
 .checkboxgreenicon { width: 32px; height: 32px; background: url(../img/icons/checkbox_green_32x32.png); background-position: 0px 0px; }
 .checkboxredicon { width: 32px; height: 32px; background: url(../img/icons/checkbox_red_32x32.png); background-position: 0px 0px; }
@@ -175,6 +184,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 /* .inputselect { margin-top: 0px; height: 29px; }  */
 .inputhelp { padding-top: 10px; height: 33px; }
 .inputmsg { font-weight: bold; }
+.bidmsg { height: 20px; }
 .formlabelvalue { width: 180px; }
 .inputicon { padding-top: 6px; }
 .inputlink { padding-top: 10px; height: 33px; }
@@ -328,6 +338,9 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .socialrec { background: url(../img/socialrec.jpg); border-radius: 3px; }
 .gkleen { background: url(../img/gkleen.jpg); border-radius: 3px; }
 .missingimg { background: url(http://www.minimus.biz/img/Your%20Logo%20Here%20Black%202.jpg) -65px -55px; border-radius: 3px; height: 146px; width: 146px; }
+
+input[disabled] { color: #999 !important; }
+textarea[disabled] { color: #999 !important; }
 
 /* hover effect */
 /*

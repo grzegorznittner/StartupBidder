@@ -80,10 +80,7 @@ pl.implement(BaseCompanyListPageClass,{
     getListingsType: function() {
         if (!this.type) {
             if (!this.queryString) {
-                //console.log('about to include...');
-                //this.queryString = new (pl.include('Base').QueryStringClass)();
                 this.queryString = new QueryStringClass();
-                //console.log('did it...');
                 this.queryString.load();
             }
             this.type = this.queryString.vars.type || 'top';
