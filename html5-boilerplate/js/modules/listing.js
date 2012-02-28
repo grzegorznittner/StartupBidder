@@ -33,6 +33,8 @@ pl.implement(ListingClass, {
     },
     display: function() {
         this.displayBasics();
+        this.displayQA();
+        this.displayMessage();
         this.displayInfobox();
         this.displayMap();
         this.displayDocuments();
@@ -58,6 +60,14 @@ pl.implement(ListingClass, {
         pl('#videopresentation').attr({src: this.videourl});
         pl('#summary').html(this.summary);
         pl('#listingdata').show();
+    },
+    displayQA: function() { // FIXME
+    },
+    displayMessage: function() {
+        if (this.loggedin_profile) {
+            message = new MessageClass(this.id, this.loggedin_profile.profile_id);
+            message.display();
+        }
     },
     displayInfobox: function() {
         var legalTypes, url;

@@ -92,11 +92,6 @@
 	    </div>
     </div>
 
-    <div class="boxtitle bidclosedtitle" id="bidclosedtitle">BIDDING IS CLOSED</div>
-    <div class="boxpanel bidclosedbox" id="bidclosedbox">
-        <div id="bidclosedmsg"></div>
-	</div>
-
     <div class="boxtitle">Q&amp;A</div>
     <div class="boxpanel">
         <dl>
@@ -125,12 +120,22 @@
         </dl>
 	</div>
 
+    <div class="boxtitle addmessagetitle" id="addmessagetitle">PRIVATE MESSAGE TO THE OWNER</div>
+    <div class="boxpanel messagepanel addmessagebox" id="addmessagebox">
+        <p>
+            <textarea class="textarea messagetextarea" id="addmessagetext" name="addmessagetext" cols="20" rows="5">Put your private message here...</textarea>
+            <span class="span-12 inputmsg successful" id="addmessagemsg">&nbsp;</span>
+            <span class="span-3 inputbutton" id="addmessagebtn">SEND</span>
+        </p>
+    </div>
+
     <div class="boxtitle addcommenttitle" id="addcommenttitle">ADD COMMENT</div>
     <div class="boxpanel commentpanel addcommentbox" id="addcommentbox">
-        <div>
-            <textarea class="textarea inputfullwidetextshort" id="addcommenttext" name="addcommenttext" cols="20" rows="5">Put your comment here...</textarea>
-        </div>
-        <div class="addcommentmsg successful" id="addcommentmsg"></div>
+        <p>
+            <textarea class="textarea messagetextarea" id="addcommenttext" name="addcommenttext" cols="20" rows="5">Put your comment here...</textarea>
+            <span class="span-12 inputmsg successful" id="addcommentmsg">&nbsp;</span>
+            <span class="span-3 inputbutton" id="addcommentbtn">POST</span>
+        </p>
     </div>
 
     <div class="boxtitle">COMMENTS</div>
@@ -217,19 +222,7 @@
             <div class="sideboxdesc"><span id="closingmsg"></span></div>
         </div>
     </div>
-<!--
-    <div class="boxtitle bidboxtitle" id="bidboxtitle">BIDS</div>
-    <div class="sidebox uneditabletext bidbox" id="bidbox">
-        <div class="sideboxtitlecompact bidboxstatus" id="bidboxstatus"></div>
-        <div class="bidboxinfo" id="bidboxinfo">
-            <div class="sideboxtitlecompact"><span id="num_bids"></span> BIDS</div>
-            <div class="sideboxdesc">BEST BID IS</div>
-            <div class="sideboxtitlecompact" id="best_bid_amt"></div>
-            <div class="sideboxdesc">FOR <span id="best_bid_pct"></span>% EQUITY</div>
-            <div class="sideboxdesc">BID VALUATION IS <span id="best_bid_val"></span></div>
-        </div>
-    </div>
--->
+
     <div class="boxtitle">SHARE</div>
     <div class="sidebox socialsidebox">
         <span class="span-11">
@@ -276,7 +269,7 @@
   <script src="js/modules/base.js"></script>
   <script src="js/modules/companylist.js"></script>
   <script src="js/modules/forms.js"></script>
-  <!-- <script src="js/modules/bids.js"></script> -->
+  <script src="js/modules/message.js"></script>
   <script src="js/modules/comments.js"></script>
   <script src="js/modules/listing.js"></script>
   <script src="js/modules/listingpage.js"></script>

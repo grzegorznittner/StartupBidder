@@ -7,13 +7,11 @@ function ListingPageClass() {
 };
 pl.implement(ListingPageClass,{
     loadPage: function() {
-        var listing, bids, comments;
+        var listing, comments, companies;
         listing = new ListingClass(this.id);
-        //bids = new BidsClass(this.id);
         comments = new CommentsClass(this.id);
         companies = new RelatedCompaniesClass(this.id);
         listing.load();
-        //bids.load();
         comments.load();
         companies.load();
     }
