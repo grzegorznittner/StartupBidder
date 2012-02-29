@@ -162,14 +162,18 @@ pl.implement(HeaderClass, {
         }
         if (profile) {
             username = profile.username || 'You';
+            pl('#postlink').attr('href', 'new-listing-basics-page.html');
+            pl('#posttext').html('Post');
             pl('#loginlink').attr('href', 'profile-page.html');
             pl('#logintext').html(username);
-            pl('#logout').css({display:'block'});
+            pl('#logout').show();
         }
         else {
+            pl('#postlink').attr('href', 'login-page.html');
+            pl('#posttext').html('Login to Post');
             pl('#loginlink').attr('href', 'login-page.html');
             pl('#logintext').html('Login or Sign Up');
-            pl('#logout').css({display:'none'});
+            pl('#logout').hide();
         }
     }
 });

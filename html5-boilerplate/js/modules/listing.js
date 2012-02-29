@@ -4,8 +4,7 @@ function ListingClass(id) {
     this.url = '/listings/get/' + this.id;
     this.statusId = 'listingstatus';
     this.completeFunc = function(json) {
-        var header, listing;
-        header = new HeaderClass();
+        var header = new HeaderClass();
         header.setLogin(json);
         self.store(json);
         self.display();
