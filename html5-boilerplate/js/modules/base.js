@@ -22,6 +22,29 @@ function DateClass() {}
 pl.implement(DateClass, {
     format: function(yyyymmdd) {
         return yyyymmdd ? yyyymmdd.substr(0,4) + '-' + yyyymmdd.substr(4,2) + '-' + yyyymmdd.substr(6,2) : '';
+    },
+    formatDate: function(dateObj) {
+        var year = dateObj.getUTCFullYear(),
+            month = dateObj.getUTCMonth()+1,
+            date = dateObj.getUTCDate();
+        return '' + year + (month < 10 ? 0 : '') + month + (date < 10 ? 0 : '') + date;
+    },
+    today: function() {
+        var today = new Date();
+        return DateClass.prototype.formatDate(today);
+    },
+    todayPlus: function(days) {
+        var today = new Date();
+            todayPlus = DateClass.prototype.addDays(today, days);
+        return DateClass.prototype.formatDate(todayPlus);
+    },
+    addDays: function(dateObj, days) {
+        var t1 = dateObj.getTime(),
+            d = 86400 * days,
+            t2 = t1 + d,
+            newDate = new Date();
+        newDate.setTime(t2);
+        return newDate;
     }
 });
 
@@ -82,15 +105,22 @@ pl.implement(URLClass, {
     }
 });
 
-function QueryStringClass() {}
-pl.implement(QueryStringClass, {
-    load: function() {
-        var i, pairs, keyval;
-        this.vars = new Array();
-        pairs = window.location.search ? window.location.search.substr(1).split( "&" ) : {};
-        for (i in pairs) {
-            keyval = pairs[ i ].split( "=" );
-            this.vars[ keyval[0] ] = keyval[1];
+function QueryStringClass() {
+    var pairs = window.location.search ? window.location.search.substr(1).split( "&" ) : {},
+        i,
+        keyval;
+    this.vars = {};
+    for (i in pairs) {
+        keyval = pairs[ i ].split( "=" );
+        this.vars[ keyval[0] ] = keyval[1];
+    }
+}
+
+function CollectionsClass() {}
+pl.implement(CollectionsClass, {
+    merge : function(o1, o2) {
+        for (k in o2) {
+            o1[k] = o2[k];
         }
     }
 });
@@ -145,7 +175,7 @@ pl.implement(AjaxClass, {
 function HeaderClass() {}
 pl.implement(HeaderClass, {
     setLogin: function(json) {
-        var profile, username;
+        var profile, username, newlistingurl;
         if (json) {
             if (json.loggedin_profile) {
                 profile = json.loggedin_profile;
@@ -162,7 +192,8 @@ pl.implement(HeaderClass, {
         }
         if (profile) {
             username = profile.username || 'You';
-            pl('#postlink').attr('href', 'new-listing-basics-page.html');
+            newlistingurl = 'new-listing-basics-page.html?profile_id=' + profile.profile_id + '&username=' + username;
+            pl('#postlink').attr('href', newlistingurl);
             pl('#posttext').html('Post');
             pl('#loginlink').attr('href', 'profile-page.html');
             pl('#logintext').html(username);

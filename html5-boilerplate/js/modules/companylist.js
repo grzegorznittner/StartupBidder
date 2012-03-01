@@ -72,39 +72,25 @@ pl.implement(CompanyListClass, {
     }
 });
 
-function BaseCompanyListPageClass() {};
+function BaseCompanyListPageClass() {
+    this.queryString = new QueryStringClass();
+    this.type = this.queryString.vars.type || 'top';
+};
 pl.implement(BaseCompanyListPageClass,{
-    setListingsType: function(type) {
-        this.type = type;
-    },
-    getListingsType: function() {
-        if (!this.type) {
-            if (!this.queryString) {
-                this.queryString = new QueryStringClass();
-                this.queryString.load();
-            }
-            this.type = this.queryString.vars.type || 'top';
-        }
-        return this.type;
-    },
-    getListingsUrl: function(type, listing_id) {
-        if (type === 'related') { // FIXME: related unimplemented
-            // type = 'related?id='+listing_id
+    getListingsUrl: function() {
+        var type = this.type;
+        if (this.type === 'related') { // FIXME: related unimplemented
+            // type = 'related?id='+this.listing_id
             type = 'top';
         }
         var url = '/listings/' + type;
         return url;
     },
-    storeListingsTitle: function(type) {
-        var title = type.toUpperCase() + ' COMPANIES';
-        pl('#listingstitle').html(title);
-    },
     loadPage: function(completeFunc) {
-        var type, url, ajax;
-        type = this.getListingsType();
-        this.storeListingsTitle(type);
-        url = this.getListingsUrl(type);
-        ajax = new AjaxClass(url, 'companydiv', completeFunc);
+        var url = this.getListingsUrl(),
+            title = this.type.toUpperCase() + ' COMPANIES',
+            ajax = new AjaxClass(url, 'companydiv', completeFunc);
+        pl('#listingstitle').html(title);
         ajax.call();
     }
 });
@@ -120,7 +106,8 @@ pl.implement(RelatedCompaniesClass, {
             companyList.storeList(json,2);
         };
         basePage = new BaseCompanyListPageClass();
-        basePage.setListingsType('related', this.listing_id);
+        basePage.type = 'related';
+        basePage.listing_id = listing_id;
         basePage.loadPage(completeFunc);
     }
 });
