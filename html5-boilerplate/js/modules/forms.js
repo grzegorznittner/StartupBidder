@@ -12,7 +12,10 @@ pl.implement(EmailCheckClass, {
         var word="(" + atom + "|" + quotedUser + ")";
         var userPat=new RegExp("^" + word + "(\\." + word + ")*$");
         var domainPat=new RegExp("^" + atom + "(\\." + atom +")*$");
-        var matchArray=emailStr.match(emailPat);
+        var matchArray = emailStr ? emailStr.match(emailPat) : '';
+        if (!emailStr) {
+            return "Email address must not be empty";
+        }
         if (matchArray==null) {
             return "Email address seems incorrect (check @ and .'s)";
         }
@@ -65,8 +68,7 @@ function ValidatorClass() {
 }
 pl.implement(ValidatorClass, {
     isNotEmpty: function(str) {
-        var trimmedStr;
-        trimmedStr = str.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
+        var trimmedStr = str ? str.replace(/^\s\s*/, '').replace(/\s\s*$/, '') : '';
         if (trimmedStr !== null && trimmedStr.length > 0) {
             return 0;
         }
@@ -75,8 +77,7 @@ pl.implement(ValidatorClass, {
         }
     },
     isEmail: function(str) {
-        var checker;
-        checker = new EmailCheckClass();
+        var checker = new EmailCheckClass();
         return checker.emailCheck(str);
     },
     makePasswordChecker: function(options) {
@@ -220,6 +221,12 @@ function FieldBaseClass(id, value, updateFunction, msgId) {
     this.msg = new UserMessageClass(msgId);
 }
 pl.implement(FieldBaseClass, {
+    setDisplayName: function(name) {
+        this.displayName = name;
+    },
+    getDisplayName: function() {
+        return this.displayName || this.id.toUpperCase();
+    },
     addValidator: function(validatorFunc) {
         this.validator.add(validatorFunc);
     },
@@ -295,48 +302,52 @@ pl.implement(TextFieldClass, {
             pl(self.fieldBase.sel).attr({value: self.fieldBase.value});
         };
     },
+    validate: function() {
+        var value = pl(this.fieldBase.sel).attr('value');
+        return this.fieldBase.validator.validate(value);
+    },
     bindEvents: function() {
-        var self, icon, safeStr, onchange, onfocus, onblur;
-        self = this;
-        icon = new ValidIconClass(self.fieldBase.id + 'icon');
-        safeStr = new SafeStringClass();
-        onchange = function() {
-            var newval, validMsg;
-            newval = safeStr.htmlEntities(pl(self.fieldBase.sel).attr('value'));
-            validMsg = self.fieldBase.validator.validate(newval);
-            if (validMsg !== 0) {
-                self.fieldBase.msg.show('attention', validMsg);
-                icon.showInvalid();
-                return;
-            }
-            if (!self.fieldBase.msg.isClear) {
-                self.fieldBase.msg.clear();
-            }
-            if (!icon.isValid) {
-                icon.showValid();
-            }
-        };
-        onfocus = function() {
-            self.value = pl(self.fieldBase.sel).attr('value'); // save the value
-        };
-        onblur = function(event) { // push to server
-            var changeKey, newval, validMsg;
-            changeKey = self.fieldBase.id;
-            newval = safeStr.htmlEntities(pl(self.fieldBase.sel).attr('value'));
-            validMsg = self.fieldBase.validator.validate(newval);
-            if (validMsg !== 0) {
-                pl(self.fieldBase.sel).attr('value', self.value); // restore old name
-                self.fieldBase.msg.clear();
+        var self = this,
+            icon = new ValidIconClass(self.fieldBase.id + 'icon'),
+            safeStr = new SafeStringClass(),
+            onchange = function() {
+                var newval, validMsg;
+                newval = safeStr.htmlEntities(pl(self.fieldBase.sel).attr('value'));
+                validMsg = self.fieldBase.validator.validate(newval);
+                if (validMsg !== 0) {
+                    self.fieldBase.msg.show('attention', validMsg);
+                    icon.showInvalid();
+                    return;
+                }
+                if (!self.fieldBase.msg.isClear) {
+                    self.fieldBase.msg.clear();
+                }
+                if (!icon.isValid) {
+                    icon.showValid();
+                }
+            },
+            onfocus = function() {
+                self.value = pl(self.fieldBase.sel).attr('value'); // save the value
+            },
+            onblur = function(event) { // push to server
+                var changeKey, newval, validMsg;
+                changeKey = self.fieldBase.id;
+                newval = safeStr.htmlEntities(pl(self.fieldBase.sel).attr('value'));
+                validMsg = self.fieldBase.validator.validate(newval);
+                if (validMsg !== 0) {
+                    pl(self.fieldBase.sel).attr('value', self.value); // restore old name
+                    self.fieldBase.msg.clear();
+                    icon.clear();
+                    return;
+                }
                 icon.clear();
-                return;
-            }
-            icon.clear();
-            if (self.value === newval) {
-                //self.fieldBase.msg.clear();
-                return;
-            }
-            self.fieldBase.updateFunction({ changeKey: newval }, self.fieldBase.getLoadFunc(), self.fieldBase.getErrorFunc(self.getDisplayFunc()), self.fieldBase.getSuccessFunc());
-        };
+                if (self.value === newval) {
+                    //self.fieldBase.msg.clear();
+                    return;
+                }
+                self.fieldBase.updateFunction({ changeKey: newval },
+                    self.fieldBase.getLoadFunc(), self.fieldBase.getErrorFunc(self.getDisplayFunc()), self.fieldBase.getSuccessFunc());
+            };
         pl(self.fieldBase.sel).bind({
             blur: onblur,
             focus: onfocus,

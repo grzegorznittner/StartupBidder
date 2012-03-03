@@ -58,7 +58,7 @@
 <!-- begin banner -->
 
 <div class="bannersmall">
-    <span class="bannertextsmall span-16">NEW COMPANY WIZARD</span><span class="newlistingmsg" id="newlistingmsg"></span>
+    <span class="bannertextsmall span-16">NEW COMPANY WIZARD</span>
 </div>
 
 <div class="boxstep">
@@ -80,77 +80,73 @@
     <div class="boxtitle">INSTRUCTIONS</div>
     <div class="boxpanel">
     <p>
-The first step to list a company in startupbidder is to create a public listing.
-The goal is to provide enough information about your company to interest potential
-customers, reviewers, and investors.  Using this information they will be able to
-better engage with your business and, if you are seeking investment, to make a bid
-for part of your company. NOTE THAT YOU MUST BE THE OWNER OR AN AUTHORIZED AGENT OF
+List your company here on startupbidder and submit a funding request to your choice of investors.
+Startupbidder will review the listing and suggest any changes before approving.
+NOTE THAT YOU MUST BE THE OWNER OR AN AUTHORIZED AGENT OF
 THE BUSINESS TO LIST IT ON THIS SITE.
-    </p>
-    <p>
-Please follow the steps using the tips on the right hand panel for guidance.  On
-the right panel we also display a preview of your company panel as it will appear
-on the site in the search results.  After the last step is completed, you will have
-a chance to view a full preview of your company listing page before submitting.
-Note that once a listing is submitted, it cannot be changed.  Startupbidder will
-review your listing and contact you regarding any necessary changes.  Once we have
-approved the listing it will be posted as the top item on the Latest company listing
-and will appear in relevant search results.
     </p>
     </div>
 
-    <div class="boxtitle">BASIC INFO</div>
+    <div class="boxtitle">COMPANY INFO</div>
     <div class="boxpanel">
         <div class="formitem">
             <span class="inputlabel">NAME</span>
             <span class="inputfield">
-                <input class="text inputwidetext" type="text" name="companyname" id="companyname" value="Kill Email Ltd."></input>
+                <input class="text inputwidetext" type="text" name="title" id="title" value=""></input>
             </span>
             <span class="inputicon">
-                <div class="checkboxgreenicon"></div>
+                <div id="titleicon"></div>
             </span>
         </div>
         <div class="formitem clear">
             <span class="inputlabel">CATEGORY</span>
             <span class="inputfield">
-                <input class="text inputwidetext" type="text" name="category" id="category" value="Software"></input>
+                <input class="text inputwidetext" type="text" name="category" id="category" value=""></input>
             </span>
             <span class="inputicon">
-                <div class="checkboxgreenicon"></div>
+                <div id="categoryicon"></div>
             </span>
         </div>
         <div class="formitem clear">
             <span class="inputlabel">MANTRA</span>
             <span class="inputfield">
-                <textarea class="inputtextareatwoline inputwidetext" cols="20" rows="5" name="mantra" id="mantra">Making email as obsolete as the paper memo through real-time collaborative chat.</textarea>
+                <textarea class="inputtextareatwoline inputwidetext" cols="20" rows="5" name="mantra" id="mantra" maxlength="140"></textarea>
             </span>
             <span class="inputicon">
-                <div class="checkboxgreenicon"></div>
-            </span>
-        </div>
-        <div class="formitem clear">
-            <span class="inputlabel">LOCATION</span>
-            <span class="inputfield">
-                <input class="text inputwidetext" type="text" name="location" id="location" value="San Jose, CA, USA"></input>
-            </span>
-            <span class="inputicon">
-                <div class="checkboxgreenicon"></div>
+                <div id="mantraicon"></div>
             </span>
         </div>
         <div class="formitem clear">
             <span class="inputlabel">WEBSITE</span>
             <span class="inputfield">
-                <input class="text inputwidetext" type="text" name="website" id="website" value="http://wave.google.com"></input>
+                <input class="text inputwidetext" type="text" name="website" id="website" value=""></input>
             </span>
             <span class="inputicon">
-                <div class="checkboxgreenicon"></div>
+                <div id="websiteicon"></div>
             </span>
+        </div>
+        <div class="formitem clear">
+            <span class="inputlabel">LOCATION</span>
+            <span class="inputfield">
+                <input class="text inputwidetext" type="text" name="address" id="address" value=""></input>
+            </span>
+            <span class="inputicon">
+                <div id="locationicon"></div>
+            </span>
+        </div>
+        <div class="formitem clean">
+            <span class="inputlabel"></span>
+            <span class="inputmap" id="addressmap"></span>
+        </div>
+        <div class="formitem clear">
+            <span class="inputlabel"></span>
+            <span class="inputfield newlistingbasicsmsg" id="infomsg">&nbsp;</span>
         </div>
     </div>
 
     <div>
         <div class="formitem clear">
-            <a href="new-listing-qa-page.html">
+            <a href="#" id="nextbuttonlink">
                 <span class="push-13 span-3 inputbutton" id="nextbutton">
                     NEXT
                 </span>
@@ -192,8 +188,8 @@ and will appear in relevant search results.
         <p>NAME - short name for your company</p>
         <p>CATEGORY - your company industry classification</p>
         <p>MANTRA - tagline for your company, generally a single sentence, up to 140 characters</p>
-        <p>LOCATION - e.g. San Jose, CA, USA, where your business is located, or has a nexus</p>
         <p>WEBSITE - your company website, if you don&rsquo;t have one then a link to your facebook page or google profile</p>
+        <p>LOCATION - e.g. San Jose, CA, USA, where your business is located, or has a nexus</p>
     </div>
 
 </div>
@@ -234,6 +230,7 @@ and will appear in relevant search results.
 </div>
 
   <!-- JavaScript at the bottom for fast page loading -->
+  <script src="http://maps.googleapis.com/maps/api/js?libraries=places&sensor=true"></script>
   <script src="js/libs/prevel.min.js"></script>
   <script src="js/modules/base.js"></script>
   <script src="js/modules/companylist.js"></script>
@@ -257,7 +254,6 @@ and will appear in relevant search results.
     <script src="//ajax.googleapis.com/ajax/libs/chrome-frame/1.0.3/CFInstall.min.js"></script>
     <script>window.attachEvent('onload',function(){CFInstall.check({mode:'overlay'})})</script>
   <![endif]-->
-
 
 </body>
 </html>

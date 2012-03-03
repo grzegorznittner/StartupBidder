@@ -107,7 +107,7 @@ pl.implement(RelatedCompaniesClass, {
         };
         basePage = new BaseCompanyListPageClass();
         basePage.type = 'related';
-        basePage.listing_id = listing_id;
+        basePage.listing_id = this.listing_id;
         basePage.loadPage(completeFunc);
     }
 });
