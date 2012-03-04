@@ -1,6 +1,5 @@
 function CommentsClass(listing_id) {
-    var self;
-    self = this;
+    var self = this;
     this.listing_id = listing_id;
     this.url = '/comments/listing/' + this.listing_id;
     this.statusId = 'commentsmsg';
@@ -21,55 +20,60 @@ pl.implement(CommentsClass, {
         this.loggedin_profile_id = json.loggedin_profile ? json.loggedin_profile.profile_id : null;
     },
     display: function() {
-        this.displayAddCommentBox();
+        if (this.loggedin_profile_id) {
+            this.displayAddCommentBox();
+        }
         this.displayComments();
     },
-    displayAddCommentBox: function() {
-        var self;
-        self = this;
-        if (!this.loggedin_profile_id) {
-            return;
-        }
+    bindAddCommentBox: function() {
+        var self = this;
         pl('#addcommenttext').bind({
             focus: function() {
                 if (!pl('#addcommenttext').hasClass('edited')) {
                     pl('#addcommenttext').attr({value: ''});
-                    pl('#addcommentmsg').html('');
+                    pl('#addcommentmsg').html('&nbsp;');
                 }
             },
             change: function() {
-                pl('#addcommenttext').addClass('edited').attr({value: ''});
-                pl('#addcommentmsg').html('');
+                if (!pl('#addcommenttext').hasClass('edited')) {
+                    pl('#addcommenttext').addClass('edited');
+                    pl('#addcommentmsg').html('&nbsp;');
+                }
             },
             blur: function() {
                 if (!pl('#addcommenttext').hasClass('edited')) {
                     pl('#addcommenttext').attr({value: 'Put your comment here...'});
                 }
-            },
-            keyup: function(event) {
-                var keycode, completeFunc, safeStr, commentText, ajax;
-                keycode = event.keyCode || event.which;
-                if (keycode && keycode === 13) {
-                    completeFunc = function() {
+            }
+        });
+        pl('#addcommentbtn').bind({
+            click: function(event) {
+                var completeFunc = function() {
                         pl('#addcommenttext').removeClass('edited').get(0).blur();
                         pl('#addcommentmsg').html('Comment posted');
-                        self.load();
-                    };
-                    safeStr = new SafeStringClass();
-                    commentText = safeStr.htmlEntities(safeStr.trim(pl('#addcommenttext').attr('value')));
+                        self.ajax.call();
+                    },
+                    safeStr = new SafeStringClass(),
+                    commentText = safeStr.clean(pl('#addcommenttext').attr('value')),
                     ajax = new AjaxClass('/comment/create', 'addcommentmsg', completeFunc);
-                    ajax.setPostData({
-                        comment: {
-                            listing_id: self.listing_id,
-                            profile_id: self.loggedin_profile_id,
-                            text: commentText
-                        }
-                    });
-                    ajax.call();
-                }
+                ajax.setPostData({
+                    comment: {
+                        listing_id: self.listing_id,
+                        profile_id: self.loggedin_profile_id,
+                        text: commentText
+                    }
+                });
+                ajax.call();
                 return false;
             }
         });
+        pl('#addcommentbox').addClass('bound');
+    },
+    displayAddCommentBox: function() {
+        var self = this;
+        if (!pl('#addcommentbox').hasClass('bound')) {
+            this.bindAddCommentBox();
+        }
         pl('#addcommenttitle').show();
         pl('#addcommentbox').show();            
     },
@@ -131,27 +135,6 @@ pl.implement(CommentsClass, {
 </dt>\
 <dd id="comment_dd_' + comment.comment_id + '">' + this.safeStr.htmlEntities(comment.text) + '</dd>\
 ';
-    }
-});
-
-function ListingPageClass() {
-    if (!this.queryString) {
-        this.queryString = new QueryStringClass();
-        this.queryString.load();
-    }
-    this.id = this.queryString.vars.id;
-};
-pl.implement(ListingPageClass,{
-    loadPage: function() {
-        var listing, bids, comments;
-        listing = new ListingClass(this.id);
-        bids = new BidsClass(this.id);
-        comments = new CommentsClass(this.id);
-        companies = new RelatedCompaniesClass(this.id);
-        listing.load();
-        bids.load();
-        comments.load();
-        companies.load();
     }
 });
 

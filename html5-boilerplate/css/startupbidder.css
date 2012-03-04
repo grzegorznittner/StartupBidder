@@ -16,6 +16,7 @@ body > #wrap { height: auto; min-height: 100%; }
 .copyrightspan { text-align: right; }
 .copyrighttext { font-size: 10px; font-weight: bold; top: 10px; position: relative; }
 .attention { color: #8A1F11; }
+.errorcolor { color: #8A1F11; }
 .inprogress { color: #8F8A11; }
 .successful { color: #009900; }
 .notice { position: relative; top: 15px; }
@@ -151,13 +152,15 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 
 /* form styles */
 .formitem { }
-.inputlabel, .widelabel, .formlabel, .smallformlabel, .inputfield, .inputcaptcha, .inputhelp,
+.inputlabel, .widelabel, .formlabel, .smallformlabel, .inputcaptcha, .inputhelp,
 .inputicon, .topinputicon, .inputlink, .inputimgbutton,
 .formlabelvalue, .formfull, .formcol1, .formcol2, .formcol1fourth, .formcol2fourth,
 .formimg, .formcolicon, .medialabel
     { float: left; }
-.inputlabel, .widelabel, .formlabel, .smallformlabel, .inputfield, .inputcaptcha, .inputlink, .inputimgbutton, .formcol1, .formcol1fourth, .formimg, .medialabel
+.inputlabel, .widelabel, .formlabel, .smallformlabel, .inputcaptcha, .inputlink, .inputimgbutton, .formcol1, .formcol1fourth, .formimg, .medialabel
     { margin-right: 10px; }
+.inputfield { float: left; margin-right: 10px; }
+.inputmap { float: left; margin-right: 10px; width: 420px; height: 315px; }
 .fulllabel { margin-left: 5px; color: #49515a; }
 .inputlabel, .formlabel, .smallformlabel { text-align: right; width: 106px; color: #49515a; }
 .bidformlabel { float: left; margin-right: 10px; width: 146px; color: #49515a; }
@@ -170,13 +173,13 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .sideinputtext, .sideinputtitle, .sideinputtextarea,
 .inputselect, .inputmedselect, .inputcheckbox, .inputwidewithvalidate, .inputmedtext
     { font-weight: bold; color: white !important; background: #49515a !important; }
-.inputfullwidetextshort { font-weight: normal; }
 .inputtext, .inputtextpct, .inputwidetext, .inputfullwidetextshort, .sideinputtext, .sideinputtextarea,
 .inputselect, .inputmedselect, .inputcheckbox, .narrowinputtext, .inputwidewithvalidate, .inputmedtext
     { font-size: 14px !important; }
 .inputwidetext { width: 420px !important; }
 .inputmedtext { width: 230px !important; }
 .inputmedselect { width: 242px !important; }
+.messagetextarea { color: white !important; background: #49515a !important; font-weight: normal; height: 60px; width: 540px !important; }
 .inputfullwidetextshort, .inputwidewithvalidate { margin: 0px 5px 5px 5px; height: 60px; }
 .inputfullwidetextshort { width: 600px !important; }
 .inputwidewithvalidate { width: 540px !important; }
@@ -236,6 +239,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .bidvallabel { float: left; margin-right: 10px; width: 120px; padding-top: 3px; margin-left: 10px; font-weight: bold; }
 .bidformitem { float: left; }
 .bidspacer { border: 2px solid #49515A; height: 20px; right: 5px; background: #efefef; font-weight: bold; clear: both; text-align: center; }
+.messagetextarea { color: white !important; background: #49515a !important; font-weight: normal; height: 60px; width: 580px !important; }
 
 /* box styles */
 .boxtitle { margin-top: 10px; color: #333333; font-weight: bold; }
@@ -243,6 +247,8 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .boxpanel { width: 622px; overflow: auto; position: relative; }
 /*.companylistingbox { height: 180px; overflow: visible; } */
 .addcommentmsg { height: 20px; margin-left: 5px; }
+.addmessagemsg { height: 20px; margin-left: 5px; }
+.newlistingbasicsmsg { float: left; margin-right; 10px; padding-left: 116px; width: 420px; height: 60px; }
 .companylistingstats { position: absolute; bottom: 0; }
 .boxpanel p { margin: 5px 10px 10px 10px; text-indent: 0px; }
 .boxpanel dl dt { margin-left: 0; padding: 5px 10px 5px 10px; color: #333333; }
@@ -251,6 +257,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .boxsteptitle, .boxsteptext { padding-top: 5px; font-weight: bold; color: #333333; left: 0; text-align: center; position: absolute; }
 .boxsteptitle { padding-left: 5px; width: 617px; }
 .boxsteptext { width: 123px; } 
+.boxstepn { left: 0; position: absolute; height: 30px; width: 0px; background-color: #999999; }
 .boxstep1, .boxstep2, .boxstep3, .boxstep4, .boxstep5 { left: 0; position: absolute; height: 30px; width: 125px }
 .boxstep1 { left: 0; }
 .boxstep2 { left: 125px; }
@@ -292,6 +299,8 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .bidpanel { padding-top: 5px; }
 .addcommenttitle { display: none; }
 .addcommentbox { display: none; }
+.addmessagetitle { display: none; }
+.addmessagebox { display: none; }
 .listingbox { display: none; }
 .documentbox { display: none; }
 .withdrawtitle { display: none; }
@@ -331,6 +340,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 
 /* img */
 .companylogo { border-radius: 3px; height: 146px; width: 146px; }
+.noimage { background: url(../img/noimage_146x146.jpg); border-radius: 3px; }
 .einstein { background: url(../img/einstein.jpg); border-radius: 3px; }
 .wave { background: url(../img/wave.jpg); border-radius: 3px; height: 146px; width: 146px; }
 .upgrades { background: url(../img/upgrades.jpg); border-radius: 3px; }

@@ -1,47 +1,54 @@
-function CompanyTileClass() {}
+function CompanyTileClass(options) {
+    this.options = options || {};
+}
 pl.implement(CompanyTileClass, {
     setValues: function(json) {
-        var date, images, listingdate;
-        date = new DateClass();
-        images = ['einstein','wave','upgrades','telecom','socialrec','gkleen']; // FIXME
-        listingdate = json.listing_date ? date.format(json.listing_date) : 'not posted';
-        this.imgClass = images[Math.floor(Math.random()*images.length)];
+        var testimages = ['einstein','wave','upgrades','telecom','socialrec','gkleen'], // FIXME
+            listingdate = json.listing_date ? DateClass.prototype.format(json.listing_date) : 'not posted';
+        this.imgClass = this.options.preview ? 'noimage' : testimages[Math.floor(Math.random()*testimages.length)];
         this.daysText = json.days_left ? (json.days_left === 0 ? 'closing today!' : (json.days_left < 0 ? 'bidding closed' : json.days_left + ' days left')) : 'closed for bidding';
-        this.typeText = Math.floor(Math.random()*2) ? 'INTERNET' : 'SOFTWARE'; // FIXME
-        this.votes = json.num_votes || 0;
+        this.category = this.options.preview ? json.category : (json.category || Math.floor(Math.random()*2) ? 'INTERNET' : 'SOFTWARE'); // FIXME
+        this.votes = json.num_votes || 1;
         this.posted = listingdate;
-        this.name = json.title || 'Listed Company';
-        this.loc = Math.floor(Math.random()*2) ? 'London, UK' : 'San Jose, CA, USA'; // FIXME
-        this.details = json.mantra || json.summary || 'Company details not provided';
+        this.name = this.options.preview ? json.title : (json.title || 'Listed Company');
+        this.address = this.options.preview ? json.address : Math.floor(Math.random()*2) ? 'London, UK' : 'San Jose, CA, USA'; // FIXME
+        this.details = this.options.preview ? json.mantra : (json.summary || 'Company details not provided');
         this.url = '/company-page.html?id=' + json.listing_id;
     },
     makeHtml: function(lastClass) {
-        var html;
-        html = '\
+        var openAnchor = this.options.preview ? '<a href="' + this.url + '">' : '',
+            closeAnchor = this.options.preview ? '</a>' : '',
+            html = '\
 <span class="span-4 '+ (lastClass?lastClass:'') +'">\
 <div class="tile">\
-<a href="' + this.url + '"><div class="tileimg ' + this.imgClass + '"></div></a>\
+' + openAnchor + '\
+<div class="tileimg ' + this.imgClass + '"></div>\
+' + closeAnchor + '\
 <div class="tiledays"></div>\
 <div class="tiledaystext">' + this.daysText + '</div>\
 <div class="tiletype"></div>\
-<div class="tiletypetext">' + this.typeText + '</div>\
+<div class="tiletypetext">' + this.category + '</div>\
 <div class="tilepoints"></div>\
 <div class="tilepointstext">\
     <div class="tilevotes">' + this.votes + '</div>\
     <div class="thumbup tilevoteimg"></div>\
     <div class="tileposted">' + this.posted + '</div>\
 </div>\
-<a href="' + this.url + '">\
+' + openAnchor + '\
 <p class="tiledesc">\
     <span class="tilecompany">' + this.name + '</span><br/>\
-    <span class="tileloc">' + this.loc + '</span><br/>\
+    <span class="tileloc">' + this.address + '</span><br/>\
     <span class="tiledetails">' + this.details + '</span>\
 </p>\
-</a>\
+' + closeAnchor + '\
 </div>\
 </span>\
 ';
         return html;
+    },
+    display: function(listing, divid) {
+        this.setValues(listing);
+        pl('#'+divid).html(this.makeHtml('last'));
     }
 });
 
@@ -59,7 +66,6 @@ pl.implement(CompanyListClass, {
             pl(companysel).html('<span class="attention">No companies found</span>');
             return;
         }
-        companies.reverse(); // prevel has a bug, it does each in reverse order
         pl.each(companies, function(i, company) {
             var tile, last, reali;
             tile  = new CompanyTileClass();
@@ -72,39 +78,25 @@ pl.implement(CompanyListClass, {
     }
 });
 
-function BaseCompanyListPageClass() {};
+function BaseCompanyListPageClass() {
+    this.queryString = new QueryStringClass();
+    this.type = this.queryString.vars.type || 'top';
+};
 pl.implement(BaseCompanyListPageClass,{
-    setListingsType: function(type) {
-        this.type = type;
-    },
-    getListingsType: function() {
-        if (!this.type) {
-            if (!this.queryString) {
-                this.queryString = new QueryStringClass();
-                this.queryString.load();
-            }
-            this.type = this.queryString.vars.type || 'top';
-        }
-        return this.type;
-    },
-    getListingsUrl: function(type, listing_id) {
-        if (type === 'related') { // FIXME: related unimplemented
-            // type = 'related?id='+listing_id
+    getListingsUrl: function() {
+        var type = this.type;
+        if (this.type === 'related') { // FIXME: related unimplemented
+            // type = 'related?id='+this.listing_id
             type = 'top';
         }
         var url = '/listings/' + type;
         return url;
     },
-    storeListingsTitle: function(type) {
-        var title = type.toUpperCase() + ' COMPANIES';
-        pl('#listingstitle').html(title);
-    },
     loadPage: function(completeFunc) {
-        var type, url, ajax;
-        type = this.getListingsType();
-        this.storeListingsTitle(type);
-        url = this.getListingsUrl(type);
-        ajax = new AjaxClass(url, 'companydiv', completeFunc);
+        var url = this.getListingsUrl(),
+            title = this.type.toUpperCase() + ' COMPANIES',
+            ajax = new AjaxClass(url, 'companydiv', completeFunc);
+        pl('#listingstitle').html(title);
         ajax.call();
     }
 });
@@ -120,7 +112,8 @@ pl.implement(RelatedCompaniesClass, {
             companyList.storeList(json,2);
         };
         basePage = new BaseCompanyListPageClass();
-        basePage.setListingsType('related', this.listing_id);
+        basePage.type = 'related';
+        basePage.listing_id = this.listing_id;
         basePage.loadPage(completeFunc);
     }
 });

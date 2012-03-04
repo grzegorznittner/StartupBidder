@@ -8,7 +8,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 
-  <title>Startupbidder</title>
+  <title>Startupbidder Listing</title>
   <meta name="description" content="">
   <meta name="author" content="">
 
@@ -28,9 +28,9 @@
   <link rel="canonical" href="http://startupbidder.appspot.com"/>
 </head>
 
-<body class="login-page">
+<body class="new-listing-basics-page">
 <div id="wrap">
-<div id="main">
+<div id="newlistingmain">
 
 <div class="header">
   <div class="container">
@@ -55,136 +55,93 @@
 
 <div class="container">
 
+<!-- begin banner -->
+<div class="bannersmall">
+    <span class="bannertextsmall span-16">NEW COMPANY WIZARD</span>
+</div>
+
+<div class="boxstep">
+    <span class="boxstepn" id="boxstepn"></span>
+    <span class="boxsteptitle">YOU HAVE FILLED <span id="boxsteppct">0</span>% OF YOUR COMPANY PROFILE</span>
+</div>
+<!-- end banner -->
+
 <!-- left column -->
 <div class="span-16">
-    <div class="boxtitle">SIGN IN WITH YOUR GOOGLE ACCOUNT</div>
+
+    <div class="boxtitle">INSTRUCTIONS</div>
     <div class="boxpanel">
-        <div class="formitem clear">
-            <a href="/_ah/login?continue=%2F">
-	            <span class="inputlabel">
-	            </span>
-                <span class="inputhelp span-9">
-                    <div class="inputgooglesignin spritebg google"></div>
-                    <span class="inputlink inputmsg">Link your account to startupbidder</span>
-                </span>
-                <span class="span-3 inputbutton">SIGN IN</span>
-            </a>
-        </div>
+    <p>
+List your company here on startupbidder and submit a funding request to your choice of investors.
+Startupbidder will review the listing and suggest any changes before approving.
+NOTE THAT YOU MUST BE THE OWNER OR AN AUTHORIZED AGENT OF
+THE BUSINESS TO LIST IT ON THIS SITE.
+    </p>
     </div>
 
-    <div class="boxtitle">OR LOGIN WITH YOUR STARTUPBIDDER ACCOUNT</div>
+    <div class="boxtitle">COMPANY INFO</div>
     <div class="boxpanel">
         <div class="formitem">
-            <span class="inputlabel">EMAIL</span>
-            <span class="inputfield">
-                <input class="text inputwidetext" type="text" name="loginemail" id="loginemail"></input>
-            </span>
-            <span class="inputicon">
-                <div class="checkboxredicon"></div>
-            </span>
-        </div>
-        <div class="formitem clear">
-            <span class="inputlabel">PASSWORD</span>
-            <span class="inputfield">
-                <input class="text inputwidetext" type="password" name="loginpassword" id="loginpassword"></input>
-            </span>
-            <span class="inputicon">
-                <div class="checkboxredicon"></div>
-            </span>
-        </div>
-        <div class="formitem clear">
-	        <span class="inputlabel"></span>
-            <span class="inputhelp span-9"><a href="forgot-password.html"><span class="inputlink">Forgot your password?</span></a></span>
-            <a href="profile-page.html">
-                <span class="span-3 inputbutton" id="loginbutton">
-                    LOGIN
-                </span>
-            </a>
-        </div>
-    </div>
-
-    <div class="boxtitle">OR SIGN UP FOR A STARTUPBIDDER ACCOUNT</div>
-    <div class="boxpanel">
-        <div class="formitem">
-	    <span class="inputlabel"></span>
-            <span class="inputhelp">
-                If you don&rsquo;t have a startupbidder account, join today!
-            </span>
-        </div>
-<!--
-        <div class="formitem clear">
             <span class="inputlabel">NAME</span>
             <span class="inputfield">
-                <input class="text inputwidetext" type="text" name="signupname" id="signupname"></input>
+                <input class="text inputwidetext" type="text" name="title" id="title" value=""></input>
+            </span>
+            <span class="inputicon">
+                <div id="titleicon"></div>
+            </span>
+        </div>
+        <div class="formitem clear">
+            <span class="inputlabel">CATEGORY</span>
+            <span class="inputfield">
+                <input class="text inputwidetext" type="text" name="category" id="category" value=""></input>
+            </span>
+            <span class="inputicon">
+                <div id="categoryicon"></div>
+            </span>
+        </div>
+        <div class="formitem clear">
+            <span class="inputlabel">MANTRA</span>
+            <span class="inputfield">
+                <textarea class="inputtextareatwoline inputwidetext" cols="20" rows="5" name="mantra" id="mantra" maxlength="140"></textarea>
+            </span>
+            <span class="inputicon">
+                <div id="mantraicon"></div>
+            </span>
+        </div>
+        <div class="formitem clear">
+            <span class="inputlabel">WEBSITE</span>
+            <span class="inputfield">
+                <input class="text inputwidetext" type="text" name="website" id="website" value=""></input>
+            </span>
+            <span class="inputicon">
+                <div id="websiteicon"></div>
             </span>
         </div>
         <div class="formitem clear">
             <span class="inputlabel">LOCATION</span>
             <span class="inputfield">
-                <input class="text inputwidetext" type="text" name="signuplocation" id="signuplocation"></input>
-            </span>
-            <span class="inputfield">Address, City<br>State/Province, Country</span>
-        </div>
--->
-        <div class="formitem clear">
-            <span class="inputlabel">EMAIL</span>
-            <span class="inputfield">
-                <input class="text inputwidetext" type="text" name="signupemail" id="signupemail"></input>
+                <input class="text inputwidetext" type="text" name="address" id="address" value=""></input>
             </span>
             <span class="inputicon">
-                <div class="checkboxredicon"></div>
+                <div id="locationicon"></div>
             </span>
         </div>
-        <div class="formitem clear">
-            <span class="inputlabel">PASSWORD</span>
-            <span class="inputfield">
-                <input class="text inputwidetext" type="password" name="signuppassword" id="signuppassword"></input>
-            </span>
-            <span class="inputicon">
-                <div class="checkboxredicon"></div>
-            </span>
-        </div>
-        <div class="formitem clear">
-            <span class="inputlabel">CONFIRM</span>
-            <span class="inputfield">
-                <input class="text inputwidetext" type="password" name="signupconfirm" id="signupconfirm"></input>
-            </span>
-            <span class="inputicon">
-                <div class="checkboxredicon"></div>
-            </span>
-        </div>
-<!--
-        <div class="formitem clear">
-            <span class="inputlabel">INVESTOR</span>
-            <span class="inputfield">
-                <input class="checkbox inputcheckbox" type="checkbox" value="false" name="signupinvestor" id="signupinvestor"></input>
-            </span>
-            <span class="inputhelp">Only check if you are an <a href="terms-page.html#accredited">accredited investor</a> in your location</span>
-        </div>
--->
-        <!-- recaptcha section
-            public key: 6LdaiMsSAAAAAM1nDtyXO1iXqRc15_qZ0D81_s0K
-            private key: 6LdaiMsSAAAAAC3TK-RYDijl_mYCfeWsdIP-JZ02
-        -->
-        <div class="formitem clear">
+        <div class="formitem clean">
             <span class="inputlabel"></span>
-            <span class="inputcaptcha">
-  	        <script type="text/javascript" src="http://www.google.com/recaptcha/api/challenge?k=6LdaiMsSAAAAAM1nDtyXO1iXqRc15_qZ0D81_s0K"></script>
-  	        <noscript>
-                <iframe src="http://www.google.com/recaptcha/api/noscript?k=6LdaiMsSAAAAAM1nDtyXO1iXqRc15_qZ0D81_s0K" height="300" width="500" frameborder="0"></iframe><br>
-                <textarea name="recaptcha_challenge_field" rows="3" cols="40"></textarea>
-                <input type="hidden" name="recaptcha_response_field" value="manual_challenge">
-            </noscript>
-            </span>
-	    </div>
+            <span class="inputmap" id="addressmap"></span>
+        </div>
         <div class="formitem clear">
-	        <span class="inputlabel"></span>
-            <span class="inputhelp span-9">
-                You hereby agree to the <a href="terms-page.html">Terms and Conditions</a>.
-            </span>
-            <span class="span-3 inputbutton" id="joinbutton">
-                JOIN
-            </span>
+            <span class="newlistingbasicsmsg" id="infomsg">&nbsp;</span>
+        </div>
+    </div>
+
+    <div>
+        <div class="formitem clear">
+            <a href="#" id="nextbuttonlink">
+                <span class="push-13 span-3 inputbutton" id="nextbutton">
+                    NEXT
+                </span>
+            </a>
         </div>
     </div>
 
@@ -192,31 +149,36 @@
 
 <!-- right column -->
 <div class="span-8 last">
-    <div class="boxtitle">A PIECE OF THE ACTION</div>
+    <div class="boxtitle">SUMMARY PREVIEW</div>
+    <div id="summarypreview"></div>
+
+    <div class="boxtitle clear">TIPS</div>
     <div class="sidebox">
-        <p>
-With Startupbidder, you&rsquo;re plugged into the pulse of the startup community.
-Keep up to date on all the latest startups.  Post your own startup as an
-entrepreneuer, getting feedback and exposure to investors worldwide.  As an
-accredited investor, you can bid for a piece of the action. 
-        </p>
+        <p>NAME - short name for your company</p>
+        <p>CATEGORY - your company industry classification</p>
+        <p>MANTRA - tagline for your company, generally a single sentence, up to 140 characters</p>
+        <p>WEBSITE - your company website, if you don&rsquo;t have one then a link to your facebook page or google profile</p>
+        <p>LOCATION - e.g. San Jose, CA, USA, where your business is located, or has a nexus</p>
     </div>
-
-    <div class="boxtitle" id="listingstitle"></div>
-
-    <!-- companydiv -->
-    <div id="companydiv">
-        loading...
-    </div>
-    <!-- end companydiv -->
-
-</div> <!-- end right column -->
+</div>
+<!-- end right column -->
 
 </div> <!-- end container -->
 </div> <!-- end main -->
 </div> <!-- end wrap -->
 
-<div id="footer" class="darkgreybg">
+<div id="newlistingfootertop">
+  <div class="container">
+    <div class="boxstep last">
+        <span class="boxstep1 boxstepcomplete"><div class="boxsteptext">BASICS</div></span>
+        <span class="boxstep2 "><div class="boxsteptext">Q &amp; A</div></span>
+        <span class="boxstep3 "><div class="boxsteptext">FINANCIALS</div></span>
+        <span class="boxstep4 "><div class="boxsteptext">MEDIA</div></span>
+        <span class="boxstep5 "><div class="boxsteptext">SUBMIT</div></span>
+    </div>
+</div>
+
+<div id="newlistingfooterbottom" class="darkgreybg">
   <div class="container">
     <div class="prepend-2 span-14">
       <span class="footertext lightgrey">
@@ -235,13 +197,15 @@ accredited investor, you can bid for a piece of the action.
   </div>
 </div>
 
-
   <!-- JavaScript at the bottom for fast page loading -->
+  <script src="http://maps.googleapis.com/maps/api/js?libraries=places&sensor=true"></script>
   <script src="js/libs/prevel.min.js"></script>
   <script src="js/modules/base.js"></script>
   <script src="js/modules/companylist.js"></script>
-  <script src="js/modules/infopage.js"></script>
-	
+  <script src="js/modules/forms.js"></script>
+  <script src="js/modules/newlisting.js"></script>
+  <script src="js/modules/newlistingpage.js"></script>
+
   <!-- Change UA-XXXXX-X to be your site's ID -->
   <script>
   window._gaq = [['_setAccount','UA-23942052-1'],['_trackPageview'],['_trackPageLoadTime']];
@@ -252,13 +216,13 @@ accredited investor, you can bid for a piece of the action.
   })();
   </script>
 
-
   <!-- Prompt IE 6 users to install Chrome Frame. Remove this if you want to support IE 6.
        chromium.org/developers/how-tos/chrome-frame-getting-started -->
   <!--[if lt IE 7 ]>
     <script src="//ajax.googleapis.com/ajax/libs/chrome-frame/1.0.3/CFInstall.min.js"></script>
     <script>window.attachEvent('onload',function(){CFInstall.check({mode:'overlay'})})</script>
   <![endif]-->
-  
+
 </body>
 </html>
+

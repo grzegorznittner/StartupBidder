@@ -4,8 +4,7 @@ function ListingClass(id) {
     this.url = '/listings/get/' + this.id;
     this.statusId = 'listingstatus';
     this.completeFunc = function(json) {
-        var header, listing;
-        header = new HeaderClass();
+        var header = new HeaderClass();
         header.setLogin(json);
         self.store(json);
         self.display();
@@ -20,6 +19,9 @@ pl.implement(ListingClass, {
                 this[key] = json.listing[key];
             }
         }
+        if (json && json.loggedin_profile) {
+            this.loggedin_profile = json.loggedin_profile;
+        }
         this.dateobj = new DateClass();
         this.currency = new CurrencyClass();
         this.testcompanies = new TestCompaniesClass();
@@ -30,6 +32,8 @@ pl.implement(ListingClass, {
     },
     display: function() {
         this.displayBasics();
+        this.displayQA();
+        this.displayMessage();
         this.displayInfobox();
         this.displayMap();
         this.displayDocuments();
@@ -55,6 +59,14 @@ pl.implement(ListingClass, {
         pl('#videopresentation').attr({src: this.videourl});
         pl('#summary').html(this.summary);
         pl('#listingdata').show();
+    },
+    displayQA: function() { // FIXME
+    },
+    displayMessage: function() {
+        if (this.loggedin_profile) {
+            message = new MessageClass(this.id, this.loggedin_profile.profile_id);
+            message.display();
+        }
     },
     displayInfobox: function() {
         var legalTypes, url;
@@ -111,6 +123,7 @@ pl.implement(ListingClass, {
             pl('#suggested_pct').html(this.suggested_pct);
             pl('#suggested_val').html(this.currency.format(this.suggested_val));
             pl('#closingmsg').html(this.closing_date && this.days_left >= 0 ? 'CLOSES ON ' + this.dateobj.format(closing_date) + ' (' + (this.days_left > 0 ? this.days_left + ' DAYS LEFT' : 'CLOSES TODAY!') + ')' : 'BIDDING CLOSED');
+/*
             if (this.num_bids && this.num_bids > 0) {
                 this.best_bid_pct = 10 + 5*Math.floor(8*Math.random()); // FIXME
                 this.best_bid_amt = this.valuation ? Math.floor((this.best_bid_pct / 100) * this.valuation) : 1000 + 1000*Math.floor(99*Math.random());
@@ -124,9 +137,10 @@ pl.implement(ListingClass, {
             else {
                 pl('#bidboxstatus').html('NO BIDS').show();
             }
-            pl('#suggestedinfo').show();
             pl('#bidboxtitle').show();
             pl('#bidbox').show();
+*/
+            pl('#suggestedinfo').show();
         }
         else {
             pl('#suggestedmsg').html('NOT SEEKING FUNDING').show();
@@ -181,10 +195,13 @@ pl.implement(ListingClass, {
             }
         }(document,"script","twitter-wjs");
     },
+    shouldDisplayWithdraw: function() {
+        return (this.status === 'active' && this.profile_id === this.loggedin_profile.profile_id);
+    },
     displayWithdraw: function() {
         var self;
         self = this;
-        if (this.status === 'withdrawn') {
+        if (!this.shouldDisplayWithdraw()) {
             return;
         }
         pl('#withdrawbtn').bind({
@@ -225,6 +242,4 @@ pl.implement(ListingClass, {
         ajax.call();
     }
 });
-
-(new ListingPageClass()).loadPage();
 
