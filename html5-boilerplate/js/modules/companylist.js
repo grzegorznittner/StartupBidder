@@ -16,8 +16,8 @@ pl.implement(CompanyTileClass, {
         this.url = '/company-page.html?id=' + json.listing_id;
     },
     makeHtml: function(lastClass) {
-        var openAnchor = this.options.preview ? '<a href="' + this.url + '">' : '',
-            closeAnchor = this.options.preview ? '</a>' : '',
+        var openAnchor = !this.options.preview ? '<a href="' + this.url + '">' : '',
+            closeAnchor = !this.options.preview ? '</a>' : '',
             html = '\
 <span class="span-4 '+ (lastClass?lastClass:'') +'">\
 <div class="tile">\
