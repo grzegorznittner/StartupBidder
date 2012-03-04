@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -23,6 +25,7 @@ import com.google.appengine.api.taskqueue.TaskOptions;
 import com.google.appengine.api.utils.SystemProperty;
 import com.googlecode.objectify.Key;
 import com.startupbidder.dao.ObjectifyDatastoreDAO;
+import com.startupbidder.datamodel.Category;
 import com.startupbidder.datamodel.Listing;
 import com.startupbidder.datamodel.ListingDoc;
 import com.startupbidder.datamodel.ListingStats;
@@ -605,4 +608,13 @@ public class ListingFacade {
 		return DocService.instance().getAllDocuments();
 	}
 
+	public Map<String, String> getCategories() {
+		List<Category> categories = getDAO().getCategories();
+		
+		Map<String, String> result = new LinkedHashMap<String, String>();
+		for (Category cat : categories) {
+			result.put(cat.id.toString(), cat.name);
+		}
+		return result;
+	}
 }

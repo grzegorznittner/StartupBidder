@@ -56,8 +56,8 @@ public class Listing extends BaseObject implements Monitor.Monitored {
 	public String summary;
 	public String website;
 	
-	/** @FIXME this needs to be a proper key to category */
-	public String category;
+	/** Category of the listing */
+	public Key<Category> category;
 	
 	@Indexed public Date  created;
 	@Indexed public Date  posted;

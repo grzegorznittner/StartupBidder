@@ -11,6 +11,7 @@ import org.joda.time.Days;
 
 import com.googlecode.objectify.Key;
 import com.startupbidder.datamodel.Bid;
+import com.startupbidder.datamodel.Category;
 import com.startupbidder.datamodel.Comment;
 import com.startupbidder.datamodel.Listing;
 import com.startupbidder.datamodel.SBUser;
@@ -30,6 +31,30 @@ public class MockDataBuilder {
 	
 	private long id() {
 		return id++;
+	}
+
+	public List<Category> createCategories() {
+		List<Category> categories = new ArrayList<Category>();
+		categories.add(new Category(1, "Biotech"));
+		categories.add(new Category(2, "Chemical"));
+		categories.add(new Category(3, "Retail"));
+		categories.add(new Category(4, "Electronics"));
+		categories.add(new Category(5, "Energy"));
+		categories.add(new Category(6, "Environmental"));
+		categories.add(new Category(7, "Financial"));
+		categories.add(new Category(8, "Hardware"));
+		categories.add(new Category(9, "Healthcare"));
+		categories.add(new Category(10, "Industrial"));
+		categories.add(new Category(11, "Internet"));
+		categories.add(new Category(12, "Manufacturing"));
+		categories.add(new Category(13, "Media"));
+		categories.add(new Category(14, "Medical"));
+		categories.add(new Category(15, "Pharma"));
+		categories.add(new Category(16, "Software"));
+		categories.add(new Category(17, "Telecom"));
+		categories.add(new Category(18, "Other"));
+
+		return categories;
 	}
 	
 	/**

@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.googlecode.objectify.ObjectifyService;
 import com.startupbidder.datamodel.Bid;
+import com.startupbidder.datamodel.Category;
 import com.startupbidder.datamodel.Comment;
 import com.startupbidder.datamodel.Listing;
 import com.startupbidder.datamodel.ListingDoc;
@@ -57,6 +58,7 @@ public class FrontController extends HttpServlet {
 		ObjectifyService.register(Rank.class);
 		ObjectifyService.register(SystemProperty.class);
 		ObjectifyService.register(Vote.class);
+		ObjectifyService.register(Category.class);
 	}
 	
 	@Override

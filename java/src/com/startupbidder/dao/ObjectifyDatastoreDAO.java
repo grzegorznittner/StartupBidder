@@ -21,6 +21,7 @@ import com.googlecode.objectify.Key;
 import com.googlecode.objectify.Objectify;
 import com.googlecode.objectify.ObjectifyService;
 import com.startupbidder.datamodel.Bid;
+import com.startupbidder.datamodel.Category;
 import com.startupbidder.datamodel.Comment;
 import com.startupbidder.datamodel.Listing;
 import com.startupbidder.datamodel.ListingDoc;
@@ -105,6 +106,20 @@ public class ObjectifyDatastoreDAO {
 		}
 		if (delete) {
 			getOfy().delete(userStatKeys);
+		}
+		
+		List<Key<Category>> catKeys = new ArrayList<Key<Category>>();
+		CollectionUtils.addAll(catKeys, getOfy().query(Category.class).fetchKeys().iterator());
+		outputBuffer.append("<p>Categories (" + catKeys.size() + "):</p>");
+		if (catKeys.size() > 0) {
+			//for (Bid obj : getOfy().get(bidKeys).values()) {
+			for (Key<Category> key : catKeys) {
+				Category obj = getOfy().get(key);
+				outputBuffer.append(obj).append("<br/>");
+			}
+			if (delete) {
+				getOfy().delete(catKeys);
+			}
 		}
 		
 		List<Key<Bid>> bidKeys = new ArrayList<Key<Bid>>();
@@ -218,6 +233,8 @@ public class ObjectifyDatastoreDAO {
 		
 		List<SBUser> users = mockBuilder.createMockUsers();
 		getOfy().put(users);
+		
+		getOfy().put(mockBuilder.createCategories());
 		
 		List<Listing> listings = mockBuilder.createMockListings(users);
 		getOfy().put(listings);
@@ -1245,5 +1262,13 @@ public class ObjectifyDatastoreDAO {
 		List<Monitor> mons = new ArrayList<Monitor>(getOfy().get(monIt).values());
 		return mons;
 	}
+
+	public List<Category> getCategories() {
+		QueryResultIterable<Key<Category>> catIt = getOfy().query(Category.class)
+				.order("name").fetchKeys();
+		List<Category> categories = new ArrayList<Category>(getOfy().get(catIt).values());
+		return categories;
+	}
+
 
 }

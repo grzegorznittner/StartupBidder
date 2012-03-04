@@ -78,7 +78,7 @@ public class DtoToVoConverter {
 		listing.setDescription(listingDTO.description);
 		listing.setAddress(listingDTO.address);
 		listing.setWebsite(listingDTO.website);
-		listing.setCategory(listingDTO.category);
+		listing.setCategory(keyToString(listingDTO.category));
 		return listing;
 	}
 	

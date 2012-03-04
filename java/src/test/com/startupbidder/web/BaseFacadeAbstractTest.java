@@ -27,6 +27,7 @@ import com.googlecode.objectify.Key;
 import com.googlecode.objectify.Objectify;
 import com.googlecode.objectify.ObjectifyService;
 import com.startupbidder.datamodel.Bid;
+import com.startupbidder.datamodel.Category;
 import com.startupbidder.datamodel.Comment;
 import com.startupbidder.datamodel.Listing;
 import com.startupbidder.datamodel.ListingDoc;
@@ -79,6 +80,7 @@ public abstract class BaseFacadeAbstractTest {
 		ObjectifyService.register(Rank.class);
 		ObjectifyService.register(SystemProperty.class);
 		ObjectifyService.register(Vote.class);
+		ObjectifyService.register(Category.class);
 	}
 	
 	protected void setupUsers() {

@@ -81,12 +81,11 @@ public class VoToModelConverter {
 		}
 		listing.presentationId = listingVO.getPresentationId() != null ? stringToKey(listingVO.getPresentationId()) : null;
 		listing.businessPlanId = listingVO.getBuinessPlanId() != null ? stringToKey(listingVO.getBuinessPlanId()) : null;
-		listing.financialsId = 
-		listingVO.getFinancialsId() != null ? stringToKey(listingVO.getFinancialsId()) : null;
+		listing.financialsId = listingVO.getFinancialsId() != null ? stringToKey(listingVO.getFinancialsId()) : null;
 		listing.summary = listingVO.getSummary();
 		listing.description = listingVO.getDescription();
 		listing.website = listingVO.getWebsite();
-		listing.category = listingVO.getCategory();
+		listing.category = listingVO.getCategory() != null ? stringToKey(listingVO.getCategory()) : null;
 		listing.address = listingVO.getAddress();
 		return listing;
 	}
