@@ -122,7 +122,7 @@ pl.implement(ListingClass, {
             pl('#suggested_amt').html(this.currency.format(this.suggested_amt));
             pl('#suggested_pct').html(this.suggested_pct);
             pl('#suggested_val').html(this.currency.format(this.suggested_val));
-            pl('#closingmsg').html(this.closing_date && this.days_left >= 0 ? 'CLOSES ON ' + this.dateobj.format(closing_date) + ' (' + (this.days_left > 0 ? this.days_left + ' DAYS LEFT' : 'CLOSES TODAY!') + ')' : 'BIDDING CLOSED');
+            pl('#closingmsg').html(this.closing_date && this.days_left >= 0 ? 'CLOSES ON ' + this.dateobj.format(this.closing_date) + ' (' + (this.days_left > 0 ? this.days_left + ' DAYS LEFT' : 'CLOSES TODAY!') + ')' : 'BIDDING CLOSED');
 /*
             if (this.num_bids && this.num_bids > 0) {
                 this.best_bid_pct = 10 + 5*Math.floor(8*Math.random()); // FIXME
