@@ -75,7 +75,10 @@ public class DtoToVoConverter {
 		listing.setBuinessPlanId(keyToString(listingDTO.businessPlanId));
 		listing.setFinancialsId(keyToString(listingDTO.financialsId));
 		listing.setSummary(listingDTO.summary);
+		listing.setDescription(listingDTO.description);
 		listing.setAddress(listingDTO.address);
+		listing.setWebsite(listingDTO.website);
+		listing.setCategory(listingDTO.category);
 		return listing;
 	}
 	

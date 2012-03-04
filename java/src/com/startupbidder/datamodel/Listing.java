@@ -52,7 +52,12 @@ public class Listing extends BaseObject implements Monitor.Monitored {
 	@Indexed public Key<SBUser> owner;
 	
 	public String name;
+	public String description;
 	public String summary;
+	public String website;
+	
+	/** @FIXME this needs to be a proper key to category */
+	public String category;
 	
 	@Indexed public Date  created;
 	@Indexed public Date  posted;

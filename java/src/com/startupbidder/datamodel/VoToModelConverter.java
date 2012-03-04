@@ -84,6 +84,9 @@ public class VoToModelConverter {
 		listing.financialsId = 
 		listingVO.getFinancialsId() != null ? stringToKey(listingVO.getFinancialsId()) : null;
 		listing.summary = listingVO.getSummary();
+		listing.description = listingVO.getDescription();
+		listing.website = listingVO.getWebsite();
+		listing.category = listingVO.getCategory();
 		listing.address = listingVO.getAddress();
 		return listing;
 	}

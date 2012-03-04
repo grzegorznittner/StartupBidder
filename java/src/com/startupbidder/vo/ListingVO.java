@@ -51,8 +51,14 @@ public class ListingVO extends BaseVO {
 	@JsonProperty("status")
 	@JsonSerialize(using=LowecaseSerializer.class)
 	private String state;
+	@JsonProperty("description")
+	private String description;
 	@JsonProperty("summary")
 	private String summary;
+	@JsonProperty("website")
+	private String website;
+	@JsonProperty("category")
+	private String category;
 	@JsonProperty("profile_id")
 	private String owner;
 	@JsonProperty("profile_username")
@@ -305,5 +311,29 @@ public class ListingVO extends BaseVO {
 
 	public void setAddress(String address) {
 		this.address = address;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public String getWebsite() {
+		return website;
+	}
+
+	public void setWebsite(String website) {
+		this.website = website;
+	}
+
+	public String getCategory() {
+		return category;
+	}
+
+	public void setCategory(String category) {
+		this.category = category;
 	}
 }
