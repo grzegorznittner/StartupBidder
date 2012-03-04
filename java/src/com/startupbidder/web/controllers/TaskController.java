@@ -94,7 +94,7 @@ public class TaskController extends ModelDrivenController {
 		HttpHeaders headers = new HttpHeadersImpl("send-accepted-bid-notification");
 		
 		String bidId = getCommandOrParameter(request, 2, "id");
-		BidAndUserVO bid = ServiceFacade.instance().getBid(null, bidId);
+		BidAndUserVO bid = null; //BidFacade.instance().getBid(null, bidId);
 		UserAndUserVO listingOwner = UserMgmtFacade.instance().getUser(null, bid.getBid().getListingOwner());
 		UserAndUserVO investor = UserMgmtFacade.instance().getUser(null, bid.getBid().getUser());
 		ListingAndUserVO listing = ListingFacade.instance().getListing(null, bid.getBid().getListing());
@@ -145,7 +145,7 @@ public class TaskController extends ModelDrivenController {
 			EmailService.instance().sendYourBidAcceptedNotification(notification, bid, listing.getListing(),
 					listingOwner.getUser(), investor.getUser());
 			break;
-		case YOUR_BID_WAS_ACTIVATED:
+		case YOUR_BID_WAS_COUNTERED:
 			EmailService.instance().sendYourBidActivatedNotification(notification, bid, listing.getListing(),
 					listingOwner.getUser(), investor.getUser());
 			break;
@@ -248,13 +248,13 @@ public class TaskController extends ModelDrivenController {
 		case BID_PAID_FOR_YOUR_LISTING:
 		case BID_WAS_WITHDRAWN:
 		case YOUR_BID_WAS_ACCEPTED:
-		case YOUR_BID_WAS_ACTIVATED:
+		case YOUR_BID_WAS_COUNTERED:
 		case YOUR_BID_WAS_REJECTED:
 		case NEW_BID_FOR_YOUR_LISTING:
 		case YOU_PAID_BID:
 		case YOU_ACCEPTED_BID:
 			// object is bid
-			return ServiceFacade.instance().getBid(null, notification.getObject()).getBid();
+			return null; //ServiceFacade.instance().getBid(null, notification.getObject()).getBid();
 		case NEW_COMMENT_FOR_YOUR_LISTING:
 		case NEW_COMMENT_FOR_MONITORED_LISTING:
 			// object is comment

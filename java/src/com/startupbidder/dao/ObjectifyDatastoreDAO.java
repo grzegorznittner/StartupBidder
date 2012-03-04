@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -68,7 +70,9 @@ public class ObjectifyDatastoreDAO {
 	
 	public String createMockDatastore(long loggedInUserId) {
 		// delete logged in user as he will be recreated
-		getOfy().delete(SBUser.class, loggedInUserId);
+		if (loggedInUserId != 0 && getOfy().get(new Key<SBUser>(SBUser.class, loggedInUserId)) != null) {
+			getOfy().delete(SBUser.class, loggedInUserId);
+		}
 		
 		initMocks();
 		return iterateThroughDatastore(false, new ArrayList<Object>());
@@ -320,17 +324,17 @@ public class ObjectifyDatastoreDAO {
 		log.info("Updating user statistics, user: " + user.email);
 
 		QueryResultIterable<Key<Bid>> bidsIt = getOfy().query(Bid.class)
-				.filter("user =", userStats.user).filter("status =", Bid.Status.ACTIVE).fetchKeys();
+				.filter("user =", userStats.user).filter("status =", Bid.Action.ACTIVATE).fetchKeys();
 		userStats.numberOfBids = CollectionUtils.size(bidsIt.iterator());
 		
 		// calculating rejected bids
-		bidsIt = getOfy().query(Bid.class)
-				.filter("user =", userStats.user).filter("status =", Bid.Status.REJECTED).fetchKeys();
-		userStats.numberOfRejectedBids = CollectionUtils.size(bidsIt.iterator());
+//		bidsIt = getOfy().query(Bid.class)
+//				.filter("user =", userStats.user).filter("status =", Bid.Action.REJECTED).fetchKeys();
+//		userStats.numberOfRejectedBids = CollectionUtils.size(bidsIt.iterator());
 				
 		// calculating accepted (and paid) bids for user's listings
 		bidsIt = getOfy().query(Bid.class)
-				.filter("listingOwner =", userStats.user).filter("status =", Bid.Status.ACCEPTED).fetchKeys();
+				.filter("listingOwner =", userStats.user).filter("status =", Bid.Action.ACCEPT).fetchKeys();
 		Collection<Bid> acceptedBids = getOfy().get(bidsIt).values();
 		userStats.numberOfAcceptedBids = acceptedBids.size();		
 		// calculating sum of accepted bids
@@ -343,7 +347,7 @@ public class ObjectifyDatastoreDAO {
 		Collection<Bid> userBids = getOfy().get(bidsIt).values();
 		for (Bid bid : userBids) {
 			userStats.sumOfBids += bid.valuation;
-			if (bid.status == Bid.Status.ACCEPTED) {
+			if (bid.action == Bid.Action.ACCEPT) {
 				userStats.numberOfFundedBids++;
 				userStats.sumOfFundedBids += bid.valuation;
 			}
@@ -386,16 +390,13 @@ public class ObjectifyDatastoreDAO {
 	}
 
 	public ListingStats updateListingStatistics(long listingId) {
-		Listing listing = new Listing();
-		try {
-			listing = getOfy().get(new Key<Listing>(Listing.class, listingId));
-		} catch (Exception e) {
+		Listing listing = getOfy().find(new Key<Listing>(Listing.class, listingId));
+		if (listing == null) {
 			log.severe("Listing with id '" + listingId + "' doesn't exist!");
 			return null;
 		}
 
-		ListingStats listingStats = getOfy().find(new Key<ListingStats>(ListingStats.class, listingId));
-		
+		ListingStats listingStats = getOfy().find(new Key<ListingStats>(ListingStats.class, listingId));		
 		if (listingStats != null) {
 			DateMidnight lastStatMidnight = new DateMidnight(listingStats.previousValuationDate.getTime());
 			DateMidnight midnight = new DateMidnight();
@@ -414,7 +415,7 @@ public class ObjectifyDatastoreDAO {
 		listingStats.state = listing.state;
 		
 		QueryResultIterable<Key<Bid>> bidsIt = getOfy().query(Bid.class)
-				.filter("listing =", listingStats.listing).filter("status !=", Bid.Status.WITHDRAWN).fetchKeys();
+				.filter("listing =", listingStats.listing).filter("status !=", Bid.Action.CANCEL).fetchKeys();
 		listingStats.numberOfBids = CollectionUtils.size(bidsIt.iterator());
 		
 		QueryResultIterable<Key<Comment>> commentsIt = getOfy().query(Comment.class)
@@ -455,7 +456,7 @@ public class ObjectifyDatastoreDAO {
 		listingStats.medianValuation = median;
 		
 		double timeFactor = Math.pow((double)(Days.daysBetween(new DateTime(listing.listedOn), new DateTime()).getDays() + 2), 1.5d);
-		double score = (listingStats.numberOfVotes + listingStats.numberOfComments + listingStats.numberOfVotes + median) / timeFactor;
+		double score = (listingStats.numberOfVotes + listingStats.numberOfComments + listingStats.numberOfBids + median) / timeFactor;
 		listingStats.score = score;
 		
 		listingStats.created = new Date();
@@ -466,12 +467,12 @@ public class ObjectifyDatastoreDAO {
 	}
 	
 	public ListingStats getListingStatistics(long listingId) {
-		try {
-			return getOfy().get(new Key<ListingStats>(ListingStats.class, listingId));
-		} catch (Exception e) {
-			log.log(Level.WARNING, "Listing statistics entity '" + listingId + "'not found", e);
-			return null;
-		}
+		return getOfy().find(new Key<ListingStats>(ListingStats.class, listingId));
+	}
+	
+	public ListingStats storeListingStatistics(ListingStats stats) {
+		getOfy().put(stats);
+		return stats;
 	}
 
 	public SBUser updateUser(SBUser newUser) {
@@ -762,7 +763,7 @@ public class ObjectifyDatastoreDAO {
 
 	public List<Bid> getBidsForUser(long userId) {
 		QueryResultIterable<Key<Bid>> bidsIt = getOfy().query(Bid.class)
-				.filter("user =", new Key<SBUser>(SBUser.class, userId))
+				.filter("bidder =", new Key<SBUser>(SBUser.class, userId))
 				.order("-placed").fetchKeys();
 		List<Bid> bids = new ArrayList<Bid>(getOfy().get(bidsIt).values());
 		return bids;
@@ -771,7 +772,7 @@ public class ObjectifyDatastoreDAO {
 	public List<Bid> getBidsAcceptedByUser(long userId) {
 		QueryResultIterable<Key<Bid>> bidsIt = getOfy().query(Bid.class)
 				.filter("listingOwner =", new Key<SBUser>(SBUser.class, userId))
-				.filter("status =", Bid.Status.ACCEPTED)
+				.filter("status =", Bid.Action.ACCEPT)
 				.order("-placed").fetchKeys();
 		List<Bid> bids = new ArrayList<Bid>(getOfy().get(bidsIt).values());
 		return bids;
@@ -779,8 +780,8 @@ public class ObjectifyDatastoreDAO {
 
 	public List<Bid> getBidsFundedByUser(String userId) {
 		QueryResultIterable<Key<Bid>> bidsIt = getOfy().query(Bid.class)
-				.filter("user =", new Key<SBUser>(SBUser.class, userId))
-				.filter("status =", Bid.Status.ACCEPTED)
+				.filter("bidder =", new Key<SBUser>(SBUser.class, userId))
+				.filter("status =", Bid.Action.ACCEPT)
 				.order("-placed").fetchKeys();
 		List<Bid> bids = new ArrayList<Bid>(getOfy().get(bidsIt).values());
 		return bids;
@@ -794,7 +795,7 @@ public class ObjectifyDatastoreDAO {
 
 	public int getNumberOfVotesForUser(long userId) {
 		return getOfy().query(Vote.class)
-				.filter("user =", new Key<SBUser>(SBUser.class, userId))
+				.filter("bidder =", new Key<SBUser>(SBUser.class, userId))
 				.count();
 	}
 	
@@ -918,106 +919,88 @@ public class ObjectifyDatastoreDAO {
 		}
 	}
 
-	public Bid deleteBid(long loggedInUser, long bidId) {
-		try {
-			Bid bid = getOfy().get(Bid.class, bidId);
-			if (loggedInUser != bid.bidder.getId()) {
-				log.log(Level.SEVERE, "User '" + loggedInUser + "' is not the owner of the bid " + bid);
-				return null;
+	/**
+	 * Returns all bids for listing.
+	 */
+	public Map<Key<SBUser>, List<Bid>> getAllBids(Key<Listing> listing) {
+		Map<Key<SBUser>, List<Bid>> result = new HashMap<Key<SBUser>, List<Bid>>();
+		QueryResultIterable<Key<Bid>> bidKeys = getOfy().query(Bid.class).filter("listing =", listing).fetchKeys();
+		Collection<Bid> bids = getOfy().get(bidKeys).values();
+		
+		for (Bid bid : bids) {
+			if (result.containsKey(bid.bidder)) {
+				result.get(bid.bidder).add(bid);
+			} else {
+				List<Bid> bidList = new ArrayList<Bid>();
+				bidList.add(bid);
+				result.put(bid.bidder, bidList);
 			}
-
-			getOfy().delete(Bid.class, bidId);
-			return bid;
-		} catch (Exception e) {
-			log.log(Level.WARNING, "Bid with id '" + bidId + "' not found!");
-			return null;
 		}
+		return result;
 	}
 
-	public Bid createBid(long loggedInUser, Bid bid) {
-		bid.bidder = new Key<SBUser>(SBUser.class, loggedInUser);
-		Listing listing = null;
-		try {
-			listing = getOfy().get(bid.listing);
-		} catch (Exception e) {
-			log.log(Level.WARNING, "Bidding for non existing listing with id '" + bid.listing + "'!");
-			return null;
-		}
-
-		// checking if users has already have POSTED or ACTIVE bids
-		QueryResultIterable<Key<Bid>> bidKeyIt = getOfy().query(Bid.class).filter("user =", bid.bidder)
-				.filter("listing =", bid.listing).fetchKeys();
-		Bid updatedBid = null;
-		for (Bid bidForListing : getOfy().get(bidKeyIt).values()) {
-			if (bidForListing.status == Bid.Status.POSTED
-					|| bidForListing.status == Bid.Status.ACTIVE) {
-				updatedBid = bidForListing;
-				break;
-			}
-		}
-		if (updatedBid != null) {
-			log.info("Bid already exists: " + updatedBid);
-			updatedBid.fundType = bid.fundType;
-			updatedBid.percentOfCompany = bid.percentOfCompany;
-			updatedBid.value = bid.value;
-			updatedBid.valuation = bid.valuation;
-			updatedBid.comment = bid.comment;
-			log.info("Updating bid: " + updatedBid);
-			getOfy().put(updatedBid);
-			return updatedBid;
-		} else {
-			bid.listingOwner = listing.owner;
-			bid.placed = new Date();
-			bid.status = Bid.Status.POSTED;
-			log.info("Creating new bid: " + bid);
-			getOfy().put(bid);
-			return bid;
-		}
+	public Bid makeBid(long loggedInUser, Bid bid) {
+		getOfy().put(bid);
+		return bid;
 	}
 
-	public Bid activateBid(long loggedInUser, long bidId) {
+	public Bid counterOfferedByOwner(long loggedInUser, Bid newBid) {
 		try {
-			Bid bid = getOfy().get(Bid.class, bidId);
-			if (bid.status != Bid.Status.POSTED) {
-				log.log(Level.SEVERE, "User '" + loggedInUser + "' is trying to activate bid '" + bid + "' which is not POSTED!");
-				return null;
-			}
+			Bid bid = getOfy().get(Bid.class, newBid.id);
 			if (loggedInUser != bid.listingOwner.getId()) {
 				log.log(Level.SEVERE, "User '" + loggedInUser + "' is not the owner of the listing " + bid.listing);
 				return null;
 			}
 			
-			bid.status = Bid.Status.ACTIVE;
+			bid.action = Bid.Action.ACTIVATE;
 			log.info("Activating bid: " + bid);
 			getOfy().put(bid);
 			return bid;
 		} catch (Exception e) {
-			log.log(Level.WARNING, "Bid with id '" + bidId + "' not found!");
+			log.log(Level.WARNING, "Bid with id '" + newBid.id + "' not found!");
 			return null;
 		}
 	}
 
-	public Bid rejectBid(long loggedInUser, long bidId) {
+	public Bid counterOfferedByInvestor(long loggedInUser, Bid newBid) {
 		try {
-			Bid bid = getOfy().get(Bid.class, bidId);
-			if (bid.status != Bid.Status.POSTED && bid.status != Bid.Status.ACTIVE) {
-				log.log(Level.SEVERE, "User '" + loggedInUser + "' is trying to reject bid '" + bid + "' which is not POSTED or ACTIVE!");
-				return null;
-			}
+			Bid bid = getOfy().get(Bid.class, newBid.id);
 			if (loggedInUser != bid.listingOwner.getId()) {
 				log.log(Level.SEVERE, "User '" + loggedInUser + "' is not the owner of the listing " + bid.listing);
 				return null;
 			}
 			
-			bid.status = Bid.Status.REJECTED;
-			log.info("Rejecting bid: " + bid);
+			bid.action = Bid.Action.ACTIVATE;
+			log.info("Activating bid: " + bid);
 			getOfy().put(bid);
 			return bid;
 		} catch (Exception e) {
-			log.log(Level.WARNING, "Bid with id '" + bidId + "' not found!");
+			log.log(Level.WARNING, "Bid with id '" + newBid.id + "' not found!");
 			return null;
 		}
 	}
+
+//	public Bid rejectBid(long loggedInUser, long bidId) {
+//		try {
+//			Bid bid = getOfy().get(Bid.class, bidId);
+//			if (bid.status != Bid.Action.ACTIVE) {
+//				log.log(Level.SEVERE, "User '" + loggedInUser + "' is trying to reject bid '" + bid + "' which is not POSTED or ACTIVE!");
+//				return null;
+//			}
+//			if (loggedInUser != bid.listingOwner.getId()) {
+//				log.log(Level.SEVERE, "User '" + loggedInUser + "' is not the owner of the listing " + bid.listing);
+//				return null;
+//			}
+//			
+//			bid.status = Bid.Action.REJECTED;
+//			log.info("Rejecting bid: " + bid);
+//			getOfy().put(bid);
+//			return bid;
+//		} catch (Exception e) {
+//			log.log(Level.WARNING, "Bid with id '" + bidId + "' not found!");
+//			return null;
+//		}
+//	}
 
 	public Bid withdrawBid(long loggedInUser, long bidId) {
 		try {
@@ -1027,7 +1010,7 @@ public class ObjectifyDatastoreDAO {
 				return null;
 			}
 			
-			bid.status = Bid.Status.WITHDRAWN;
+			bid.action = Bid.Action.CANCEL;
 			log.info("Withdrawing bid: " + bid);
 			getOfy().put(bid);
 			return bid;
@@ -1040,7 +1023,7 @@ public class ObjectifyDatastoreDAO {
 	public Bid acceptBid(long loggedInUser, long bidId) {
 		try {
 			Bid bid = getOfy().get(Bid.class, bidId);
-			if (Bid.Status.ACTIVE != bid.status) {
+			if (Bid.Action.ACTIVATE != bid.action) {
 				log.log(Level.WARNING, "Bid is not active. " + bid);
 				return null;
 			}
@@ -1059,7 +1042,7 @@ public class ObjectifyDatastoreDAO {
 				return null;
 			}
 			
-			bid.status = Bid.Status.ACCEPTED;
+			bid.action = Bid.Action.ACCEPT;
 			log.info("Accepting bid: " + bid);
 			getOfy().put(bid);
 			return bid;
@@ -1072,7 +1055,7 @@ public class ObjectifyDatastoreDAO {
 	public Bid markBidAsPaid(long loggedInUser, long bidId) {
 		try {
 			Bid bid = getOfy().get(Bid.class, bidId);
-			if (Bid.Status.ACCEPTED != bid.status) {
+			if (Bid.Action.ACCEPT != bid.action) {
 				log.log(Level.WARNING, "Bid is not accepted. " + bid);
 				return null;
 			}
@@ -1099,7 +1082,7 @@ public class ObjectifyDatastoreDAO {
 	
 	public List<Bid> getBidsByDate(ListPropertiesVO bidsProperties) {
 		QueryResultIterable<Key<Bid>> bidsIt = getOfy().query(Bid.class)
-				.filter("status =", Bid.Status.ACTIVE)
+				.filter("status =", Bid.Action.ACTIVATE)
 				.order("-placed").fetchKeys();
 		List<Bid> bids = new ArrayList<Bid>(getOfy().get(bidsIt).values());
 		return bids;

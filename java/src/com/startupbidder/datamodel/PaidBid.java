@@ -32,7 +32,7 @@ public class PaidBid extends Bid {
 		this.mockData = bid.mockData;
 		this.percentOfCompany = bid.percentOfCompany;
 		this.placed = bid.placed;
-		this.status = bid.status;
+		this.action = bid.action;
 		this.valuation = bid.valuation;
 		this.value = bid.value;
 		this.bid = new Key<Bid>(Bid.class, bid.id);

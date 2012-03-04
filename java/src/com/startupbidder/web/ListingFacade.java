@@ -20,8 +20,6 @@ import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
 import com.google.appengine.api.taskqueue.Queue;
 import com.google.appengine.api.taskqueue.QueueFactory;
 import com.google.appengine.api.taskqueue.TaskOptions;
-import com.google.appengine.api.users.UserService;
-import com.google.appengine.api.users.UserServiceFactory;
 import com.google.appengine.api.utils.SystemProperty;
 import com.googlecode.objectify.Key;
 import com.startupbidder.dao.ObjectifyDatastoreDAO;
@@ -44,7 +42,15 @@ import com.startupbidder.vo.UserVO;
 public class ListingFacade {
 	private static final Logger log = Logger.getLogger(ListingFacade.class.getName());
 	
-	public enum UpdateReason {NEW_BID, NEW_COMMENT, NEW_VOTE, NONE};
+	public static enum UpdateReason {NEW_BID, BID_UPDATE, NEW_COMMENT, NEW_VOTE, NONE};
+	/**
+	 * Delay for listing stats task execution.
+	 */
+	private static final int LISTING_STATS_UPDATE_DELAY = 60 * 1000;
+	/**
+	 * Default value for closing on date set during listing activation.
+	 */
+	private static final int LISTING_DEFAULT_CLOSING_ON_DAYS = 30;
 	
 	private DateTimeFormatter timeStampFormatter = DateTimeFormat.forPattern("yyyyMMdd_HHmmss_SSS");
 	private static ListingFacade instance;
@@ -109,7 +115,7 @@ public class ListingFacade {
 			return null;
 		}
 		boolean adminOrOwner = StringUtils.areStringsEqual(loggedInUser.getId(), dbListing.owner.getString())
-				|| UserServiceFactory.getUserService().isUserAdmin();
+				|| loggedInUser.isAdmin();
 		if (!adminOrOwner) {
 			log.warning("User must be an owner of the listing or an admin");
 			return null;
@@ -143,50 +149,56 @@ public class ListingFacade {
 	 */
 	public ListingVO activateListing(UserVO loggedInUser, String listingId) {
 		Listing dbListing = getDAO().getListing(BaseVO.toKeyId(listingId));
-		if (loggedInUser == null || dbListing == null
-				|| !StringUtils.areStringsEqual(loggedInUser.getId(), dbListing.owner.getString())) {
-			log.warning("User " + loggedInUser + " is not owner of the listing. Admins cannot activate listings");
+		if (dbListing.state != Listing.State.POSTED && dbListing.state != Listing.State.FROZEN) {
+			log.log(Level.WARNING, "Only posted and frozen listings can be activated. This listing is " + dbListing.state, new Exception("Not valid state"));
 			return null;
 		}
-		
-		// only NEW listings can be activated
-		if (dbListing.state == Listing.State.NEW) {
-			ListingVO forUpdate = DtoToVoConverter.convert(dbListing);
-
-			forUpdate.setState(Listing.State.ACTIVE.toString());
-			
-			Listing updatedListing = getDAO().updateListing(VoToModelConverter.convert(forUpdate));
-			if (updatedListing != null) {
-				scheduleUpdateOfListingStatistics(updatedListing.getWebKey(), UpdateReason.NONE);
-			}
-			ListingVO toReturn = DtoToVoConverter.convert(updatedListing);
-			applyListingData(loggedInUser, toReturn);
-			return toReturn;
+		if (loggedInUser == null) {
+			log.log(Level.WARNING, "User is not logged in!", new Exception("Not logged in user"));
+			return null;
 		}
-		log.warning("Only listing with state NEW can be activated");
-		return null;
+		// Only admins can do activation
+		if (!loggedInUser.isAdmin()) {
+			log.log(Level.WARNING, "User " + loggedInUser + " is not an admin. Only admin can activate listings.", new Exception("Not an admin"));
+			return null;
+		}
+		if (dbListing.state == Listing.State.POSTED) {
+			DateMidnight midnight = new DateMidnight();
+			dbListing.closingOn = midnight.plusDays(LISTING_DEFAULT_CLOSING_ON_DAYS).toDate();
+		}
+		ListingVO forUpdate = DtoToVoConverter.convert(dbListing);
+
+		forUpdate.setState(Listing.State.ACTIVE.toString());
+		
+		Listing updatedListing = getDAO().updateListing(VoToModelConverter.convert(forUpdate));
+		if (updatedListing != null) {
+			scheduleUpdateOfListingStatistics(updatedListing.getWebKey(), UpdateReason.NONE);
+		}
+		ListingVO toReturn = DtoToVoConverter.convert(updatedListing);
+		applyListingData(loggedInUser, toReturn);
+		return toReturn;
 	}
 
 	/**
-	 * Makes listing available for bidding on startupbidder.
-	 * Only admin users can do that.
+	 * Action can be done only by listing owner.
+	 * Makes listing ready to be published on StartupBidder website, but t
 	 */
 	public ListingVO postListing(UserVO loggedInUser, String listingId) {
 		Listing dbListing = getDAO().getListing(BaseVO.toKeyId(listingId));
-		if (loggedInUser == null || dbListing == null
-				|| !UserServiceFactory.getUserService().isUserAdmin()) {
-			log.warning("User " + loggedInUser + " is not admin or owner of the listing");
+		if (loggedInUser == null || dbListing == null) {
+			log.log(Level.WARNING, "User " + loggedInUser + " is logged in or listing doesn't exist", new Exception("Not logged in"));
+			return null;
+		}
+		if (!StringUtils.areStringsEqual(loggedInUser.getId(), dbListing.owner.getString())) {
+			log.log(Level.WARNING, "User '" + loggedInUser + "' is not an owner of listing " + dbListing, new Exception("Not listing owner"));
 			return null;
 		}
 		
-		// only NEW listings can be activated
-		if (dbListing.state == Listing.State.ACTIVE) {
+		// only NEW listings can be posted
+		if (dbListing.state == Listing.State.NEW) {
 			ListingVO forUpdate = DtoToVoConverter.convert(dbListing);
 
-			DateMidnight midnight = new DateMidnight();
-			forUpdate.setClosingOn(midnight.plus(Days.days(30)).toDate());
-			// @FIXME: add postedOn property
-			//forUpdate.setPostedOn(new Date());
+			forUpdate.setPostedOn(new Date());
 			forUpdate.setState(Listing.State.POSTED.toString());
 			
 			Listing updatedListing = getDAO().updateListing(VoToModelConverter.convert(forUpdate));
@@ -197,7 +209,7 @@ public class ListingFacade {
 			applyListingData(loggedInUser, toReturn);
 			return toReturn;
 		}
-		log.warning("Only ACTIVE listing can be marked as POSTED");
+		log.log(Level.WARNING, "Only NEW listing can be marked as POSTED (state is " + dbListing.state + ")", new Exception("Not valid state"));
 		return null;
 	}
 
@@ -207,16 +219,16 @@ public class ListingFacade {
 	public ListingVO withdrawListing(UserVO loggedInUser, String listingId) {
 		Listing dbListing = getDAO().getListing(BaseVO.toKeyId(listingId));
 		if (loggedInUser == null || dbListing == null) {
-			log.warning("Listing doesn't exist or user not logged in");
+			log.log(Level.WARNING, "Listing doesn't exist or user not logged in", new Exception("Listing doesn't exist"));
 			return null;
 		}
 		if (!StringUtils.areStringsEqual(loggedInUser.getId(), dbListing.owner.getString())) {
-			log.warning("User must be an owner of the listing");
+			log.log(Level.WARNING, "User must be an owner of the listing", new Exception("Not an owner"));
 			return null;
 		}
 		
-		// only for POSTED listings
-		if (dbListing.state == Listing.State.POSTED) {
+		// only ACTIVE and POSTED listings can be WITHDRAWN
+		if (dbListing.state != Listing.State.CLOSED && dbListing.state != Listing.State.WITHDRAWN) {
 			ListingVO forUpdate = DtoToVoConverter.convert(dbListing);
 
 			forUpdate.setState(Listing.State.WITHDRAWN.toString());
@@ -229,7 +241,7 @@ public class ListingFacade {
 			applyListingData(loggedInUser, toReturn);
 			return toReturn;
 		}
-		log.warning("CLOSED or WITHDRAWN listings cannot be withdrawn");
+		log.log(Level.WARNING, "CLOSED or WITHDRAWN listings cannot be withdrawn (state was " + dbListing.state + ")", new Exception("Not valid state"));
 		return null;
 	}
 
@@ -238,7 +250,7 @@ public class ListingFacade {
 	 */
 	public ListingVO sendBackListingToOwner(UserVO loggedInUser, String listingId) {
 		Listing dbListing = getDAO().getListing(BaseVO.toKeyId(listingId));
-		if (loggedInUser == null || dbListing == null || !UserServiceFactory.getUserService().isUserAdmin()) {
+		if (loggedInUser == null || dbListing == null || !loggedInUser.isAdmin()) {
 			log.warning("User " + loggedInUser + " is not admin");
 			return null;
 		}
@@ -264,7 +276,7 @@ public class ListingFacade {
 	 */
 	public ListingVO freezeListing(UserVO loggedInUser, String listingId) {
 		Listing dbListing = getDAO().getListing(BaseVO.toKeyId(listingId));
-		if (loggedInUser == null || dbListing == null || !UserServiceFactory.getUserService().isUserAdmin()) {
+		if (loggedInUser == null || dbListing == null || !loggedInUser.isAdmin()) {
 			log.warning("User " + loggedInUser + " is not admin");
 			return null;
 		}
@@ -281,22 +293,8 @@ public class ListingFacade {
 		return toReturn;
 	}
 
-	public ListingListVO getClosingListings(UserVO loggedInUser, ListPropertiesVO listingProperties) {
+	public ListingListVO getClosingActiveListings(UserVO loggedInUser, ListPropertiesVO listingProperties) {
 		List<ListingVO> listings = DtoToVoConverter.convertListings(getDAO().getClosingListings(listingProperties));
-		int index = listingProperties.getStartIndex() > 0 ? listingProperties.getStartIndex() : 1;
-		for (ListingVO listing : listings) {
-			applyListingData(loggedInUser, listing);
-			listing.setOrderNumber(index++);
-		}
-		ListingListVO list = new ListingListVO();
-		list.setListings(listings);		
-		list.setListingsProperties(listingProperties);
-	
-		return list;
-	}
-
-	public ListingListVO getLatestListings(UserVO loggedInUser, ListPropertiesVO listingProperties) {
-		List<ListingVO> listings = DtoToVoConverter.convertListings(getDAO().getLatestListings(listingProperties));
 		int index = listingProperties.getStartIndex() > 0 ? listingProperties.getStartIndex() : 1;
 		for (ListingVO listing : listings) {
 			applyListingData(loggedInUser, listing);
@@ -311,10 +309,8 @@ public class ListingFacade {
 
 	/**
 	 * Returns the most commented listings
-	 * @param listingProperties
-	 * @return List of listings
 	 */
-	public ListingListVO getMostDiscussedListings(UserVO loggedInUser, ListPropertiesVO listingProperties) {
+	public ListingListVO getMostDiscussedActiveListings(UserVO loggedInUser, ListPropertiesVO listingProperties) {
 		List<ListingVO> listings = DtoToVoConverter.convertListings(getDAO().getMostDiscussedListings(listingProperties));
 		int index = listingProperties.getStartIndex() > 0 ? listingProperties.getStartIndex() : 1;
 		for (ListingVO listing : listings) {
@@ -333,7 +329,7 @@ public class ListingFacade {
 	 * @param listingProperties
 	 * @return List of listings
 	 */
-	public ListingListVO getMostPopularListings(UserVO loggedInUser, ListPropertiesVO listingProperties) {
+	public ListingListVO getMostPopularActiveListings(UserVO loggedInUser, ListPropertiesVO listingProperties) {
 		List<ListingVO> listings = DtoToVoConverter.convertListings(getDAO().getMostPopularListings(listingProperties));
 		int index = listingProperties.getStartIndex() > 0 ? listingProperties.getStartIndex() : 1;
 		for (ListingVO listing : listings) {
@@ -352,7 +348,7 @@ public class ListingFacade {
 	 * @param listingProperties
 	 * @return
 	 */
-	public ListingListVO getMostValuedListings(UserVO loggedInUser, ListPropertiesVO listingProperties) {
+	public ListingListVO getMostValuedActiveListings(UserVO loggedInUser, ListPropertiesVO listingProperties) {
 		ListPropertiesVO tmpProperties = new ListPropertiesVO();
 		tmpProperties.setMaxResults(Integer.MAX_VALUE);
 		List<ListingVO> listings = DtoToVoConverter.convertListings(getDAO().getTopListings(tmpProperties));
@@ -394,7 +390,7 @@ public class ListingFacade {
 	 * @param listingProperties Standard query parameters (maxResults and cursors)
 	 * @return List of listings
 	 */
-	public ListingListVO getTopListings(UserVO loggedInUser, ListPropertiesVO listingProperties) {
+	public ListingListVO getTopActiveListings(UserVO loggedInUser, ListPropertiesVO listingProperties) {
 		List<ListingVO> listings = DtoToVoConverter.convertListings(getDAO().getTopListings(listingProperties));
 		int index = listingProperties.getStartIndex() > 0 ? listingProperties.getStartIndex() : 1;
 		for (ListingVO listing : listings) {
@@ -410,7 +406,7 @@ public class ListingFacade {
 
 	/**
 	 * If queried user is logged in then returns all listings created by specified user.
-	 * If not only POSTED listings are returned.
+	 * If not only ACTIVE listings are returned.
 	 */
 	public ListingListVO getUserListings(UserVO loggedInUser, String userId, ListPropertiesVO listingProperties) {
 		
@@ -439,7 +435,7 @@ public class ListingFacade {
 	/**
 	 * Returns active listings created by logged in user, sorted by listed on date
 	 */
-	public ListingListVO getActiveListings(UserVO loggedInUser, ListPropertiesVO listingProperties) {
+	public ListingListVO getLatestActiveListings(UserVO loggedInUser, ListPropertiesVO listingProperties) {
 		List<ListingVO> listings = DtoToVoConverter.convertListings(getDAO().getActiveListings(listingProperties));
 		int index = listingProperties.getStartIndex() > 0 ? listingProperties.getStartIndex() : 1;
 		for (ListingVO listing : listings) {
@@ -492,12 +488,30 @@ public class ListingFacade {
 		return list;
 	}
 
+	/**
+	 * Value up listing
+	 */
+	public ListingVO valueUpListing(UserVO loggedInUser, String listingId) {
+		if (loggedInUser == null) {
+			return null;
+		}
+		ListingVO listing =  DtoToVoConverter.convert(getDAO().valueUpListing(
+				BaseVO.toKeyId(listingId), BaseVO.toKeyId(loggedInUser.getId())));
+		if (listing != null) {
+			scheduleUpdateOfListingStatistics(listing.getId(), UpdateReason.NEW_VOTE);
+			UserMgmtFacade.instance().scheduleUpdateOfUserStatistics(loggedInUser.getId(), UserMgmtFacade.UpdateReason.NEW_VOTE);
+			ServiceFacade.instance().createNotification(listing.getOwner(), listing.getId(), Notification.Type.NEW_VOTE_FOR_YOUR_LISTING, "");
+			applyListingData(loggedInUser, listing);
+		}
+		return listing;
+	}
+
 	public void applyListingData(UserVO loggedInUser, ListingVO listing) {
 		// set user data
 		SBUser user = getDAO().getUser(listing.getOwner());
 		listing.setOwnerName(user != null ? user.nickname : "<<unknown>>");
 		
-		ListingStats listingStats = getListingStatistics(BaseVO.toKeyId(listing.getId()));
+		ListingStats listingStats = getListingStatistics(listing.toKeyId());
 		listing.setNumberOfBids(listingStats.numberOfBids);
 		listing.setNumberOfComments(listingStats.numberOfComments);
 		listing.setNumberOfVotes(listingStats.numberOfVotes);
@@ -520,7 +534,7 @@ public class ListingFacade {
 		}
 	}
 
-	private ListingStats getListingStatistics(long listingId) {
+	public ListingStats getListingStatistics(long listingId) {
 		ListingStats listingStats = getDAO().getListingStatistics(listingId);
 		if (listingStats == null) {
 			// calculating user stats here may be disabled here
@@ -533,8 +547,34 @@ public class ListingFacade {
 	public ListingStats calculateListingStatistics(long listingId) {
 		ListingStats listingStats = getDAO().updateListingStatistics(listingId);
 		log.log(Level.INFO, "Calculated listing stats for '" + listingId + "' : " + listingStats);
-		//cache.put(LISTING_STATISTICS_KEY + listingId, listingStats);
 		return listingStats;
+	}
+
+	public void scheduleUpdateOfListingStatistics(String listingWebKey, UpdateReason reason) {
+		log.log(Level.INFO, "Scheduling listing stats update for '" + listingWebKey + "', reason: " + reason);
+		ListingStats listingStats = getDAO().getListingStatistics(VoToModelConverter.stringToKey(listingWebKey).getId());
+		if (listingStats != null) {
+			switch(reason) {
+			case NEW_BID:
+				listingStats.numberOfBids = listingStats.numberOfBids + 1;
+				break;
+			case NEW_COMMENT:
+				listingStats.numberOfComments = listingStats.numberOfComments + 1;
+				break;
+			case NEW_VOTE:
+				listingStats.numberOfVotes = listingStats.numberOfVotes + 1;
+				break;
+			default:
+				// reason can be also null
+				break;
+			}
+			// updates stats in datastore and memcache
+			getDAO().storeListingStatistics(listingStats);
+		}
+		String taskName = timeStampFormatter.print(new Date().getTime()) + "listing_stats_update_" + reason + "_" + listingWebKey;
+		Queue queue = QueueFactory.getDefaultQueue();
+		queue.add(TaskOptions.Builder.withUrl("/task/calculate-listing-stats").param("id", listingWebKey)
+				.taskName(taskName).countdownMillis(LISTING_STATS_UPDATE_DELAY));
 	}
 
 	public ListingDocumentVO createListingDocument(UserVO loggedInUser, ListingDocumentVO doc) {
@@ -558,67 +598,6 @@ public class ListingFacade {
 
 	public ListingDocumentVO getListingDocument(UserVO loggedInUser, String docId) {
 		return DtoToVoConverter.convert(getDAO().getListingDocument(BaseVO.toKeyId(docId)));
-	}
-
-	/**
-	 * Value down listing
-	 *
-	 * @param listingId Listing id
-	 * @param userId User identifier
-	 * @return Number of votes per listing
-	 */
-	public ListingVO valueDownListing(UserVO loggedInUser, String listingId) {
-	//		if (loggedInUser == null) {
-	//			return null;
-	//		}
-	//		ListingVO listing =  DtoToVoConverter.convert(getDAO().valueDownListing(listingId, loggedInUser.getId()));
-	//		computeListingData(loggedInUser, listing);
-	//		return listing;
-		return null;
-	}
-
-	/**
-	 * Value up listing
-	 */
-	public ListingVO valueUpListing(UserVO loggedInUser, String listingId) {
-		if (loggedInUser == null) {
-			return null;
-		}
-		ListingVO listing =  DtoToVoConverter.convert(getDAO().valueUpListing(
-				BaseVO.toKeyId(listingId), BaseVO.toKeyId(loggedInUser.getId())));
-		if (listing != null) {
-			scheduleUpdateOfListingStatistics(listing.getId(), UpdateReason.NEW_VOTE);
-			UserMgmtFacade.instance().scheduleUpdateOfUserStatistics(loggedInUser.getId(), UserMgmtFacade.UserStatsUpdateReason.NEW_VOTE);
-			ServiceFacade.instance().createNotification(listing.getOwner(), listing.getId(), Notification.Type.NEW_VOTE_FOR_YOUR_LISTING, "");
-			applyListingData(loggedInUser, listing);
-		}
-		return listing;
-	}
-
-	public void scheduleUpdateOfListingStatistics(String listingId, UpdateReason reason) {
-		log.log(Level.INFO, "Scheduling listing stats update for '" + listingId + "', reason: " + reason);
-	//		ListingStats listingStats = (ListingStats)cache.get(LISTING_STATISTICS_KEY + listingId);
-	//		if (listingStats != null) {
-	//			switch(reason) {
-	//			case NEW_BID:
-	//				listingStats.numberOfBids = listingStats.numberOfBids + 1;
-	//				break;
-	//			case NEW_COMMENT:
-	//				listingStats.numberOfComments = listingStats.numberOfComments + 1;
-	//				break;
-	//			case NEW_VOTE:
-	//				listingStats.numberOfVotes = listingStats.numberOfVotes + 1;
-	//				break;
-	//			default:
-	//				// reason can be also null
-	//				break;
-	//			}
-	//			cache.put(LISTING_STATISTICS_KEY + listingId, listingStats);
-	//		}
-		String taskName = timeStampFormatter.print(new Date().getTime()) + "listing_stats_update_" + reason + "_" + listingId;
-		Queue queue = QueueFactory.getDefaultQueue();
-		queue.add(TaskOptions.Builder.withUrl("/task/calculate-listing-stats").param("id", listingId)
-				.taskName(taskName));
 	}
 
 	public List<ListingDocumentVO> getGoogleDocDocuments() {

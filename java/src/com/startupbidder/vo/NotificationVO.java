@@ -109,7 +109,7 @@ public class NotificationVO extends BaseVO {
 		case BID_PAID_FOR_YOUR_LISTING:
 		case BID_WAS_WITHDRAWN:
 		case YOUR_BID_WAS_ACCEPTED:
-		case YOUR_BID_WAS_ACTIVATED:
+		case YOUR_BID_WAS_COUNTERED:
 		case YOUR_BID_WAS_REJECTED:
 		case NEW_BID_FOR_YOUR_LISTING:
 		case YOU_PAID_BID:

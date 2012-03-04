@@ -19,23 +19,23 @@ import com.googlecode.objectify.annotation.Unindexed;
  * @author "Grzegorz Nittner" <grzegorz.nittner@gmail.com>
  *
  */
-@Unindexed
+@Indexed
 @Entity
 @Cached(expirationSeconds=60*30)
 public class ListingStats extends BaseObject {
 	@Id public Long id;
 	
-	public boolean mockData;
+	@Unindexed public boolean mockData;
 	
-	public Date modified;
+	@Unindexed public Date modified;
 	@PrePersist void updateModifiedDate() {
 		this.modified = new Date();
 	}
 	
-	@Indexed public Key<Listing> listing;
-	@Indexed public Listing.State state;
+	public Key<Listing> listing;
+	public Listing.State state;
 	
-	@Indexed public Date created;
+	public Date created;
 
 	public double valuation;
 	public double previousValuation;

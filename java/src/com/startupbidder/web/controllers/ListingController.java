@@ -149,49 +149,49 @@ public class ListingController extends ModelDrivenController {
 	// GET /listings/closing
 	private HttpHeaders closing(HttpServletRequest request) {
 		ListPropertiesVO listingProperties = getListProperties(request);
-    	model = ListingFacade.instance().getClosingListings(getLoggedInUser(), listingProperties);
+    	model = ListingFacade.instance().getClosingActiveListings(getLoggedInUser(), listingProperties);
         return new HttpHeadersImpl("valued").disableCaching();
 	}
 
 	// GET /listings/latest
 	private HttpHeaders latest(HttpServletRequest request) {
 		ListPropertiesVO listingProperties = getListProperties(request);
-    	model = ListingFacade.instance().getLatestListings(getLoggedInUser(), listingProperties);
+    	model = ListingFacade.instance().getLatestActiveListings(getLoggedInUser(), listingProperties);
         return new HttpHeadersImpl("valued").disableCaching();
 	}
 
 	// GET /listings/discussed
 	private HttpHeaders discussed(HttpServletRequest request) {
 		ListPropertiesVO listingProperties = getListProperties(request);
-    	model = ListingFacade.instance().getMostDiscussedListings(getLoggedInUser(), listingProperties);
+    	model = ListingFacade.instance().getMostDiscussedActiveListings(getLoggedInUser(), listingProperties);
         return new HttpHeadersImpl("valued").disableCaching();
 	}
 
 	// GET /listings/popular
 	private HttpHeaders popular(HttpServletRequest request) {
 		ListPropertiesVO listingProperties = getListProperties(request);
-    	model = ListingFacade.instance().getMostPopularListings(getLoggedInUser(), listingProperties);
+    	model = ListingFacade.instance().getMostPopularActiveListings(getLoggedInUser(), listingProperties);
         return new HttpHeadersImpl("valued").disableCaching();
 	}
 
 	// GET /listings/valuation
 	private HttpHeaders valuation(HttpServletRequest request) {
 		ListPropertiesVO listingProperties = getListProperties(request);
-    	model = ListingFacade.instance().getMostValuedListings(getLoggedInUser(), listingProperties);
+    	model = ListingFacade.instance().getMostValuedActiveListings(getLoggedInUser(), listingProperties);
         return new HttpHeadersImpl("valued").disableCaching();
 	}
 
 	// GET /listings/top
     private HttpHeaders top(HttpServletRequest request) {
     	ListPropertiesVO listingProperties = getListProperties(request);
-    	model = ListingFacade.instance().getTopListings(getLoggedInUser(), listingProperties);
+    	model = ListingFacade.instance().getTopActiveListings(getLoggedInUser(), listingProperties);
         return new HttpHeadersImpl("top").disableCaching();
     }
 
     // GET /listings/active
     private HttpHeaders active(HttpServletRequest request) {
 		ListPropertiesVO listingProperties = getListProperties(request);
-    	model = ListingFacade.instance().getActiveListings(getLoggedInUser(), listingProperties);
+    	model = ListingFacade.instance().getLatestActiveListings(getLoggedInUser(), listingProperties);
         return new HttpHeadersImpl("active").disableCaching();
     }
 

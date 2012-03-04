@@ -155,113 +155,6 @@ public class ServiceFacade {
 		return list;
 	}
 	
-	/**
-	 * Returns list of listing's bids
-	 */
-	public BidListVO getBidsForListing(UserVO loggedInUser, String listingId, ListPropertiesVO bidProperties) {		
-		BidListVO list = new BidListVO();
-		ListingVO listing = DtoToVoConverter.convert(getDAO().getListing(BaseVO.toKeyId(listingId)));
-		if (listing == null) {
-			log.log(Level.WARNING, "Listing '" + listingId + "' not found");
-			bidProperties.setNumberOfResults(0);
-			bidProperties.setStartIndex(0);
-			bidProperties.setTotalResults(0);
-		} else {
-			ListingFacade.instance().applyListingData(loggedInUser, listing);
-			List<BidVO> bids = DtoToVoConverter.convertBids(
-					getDAO().getBidsForListing(BaseVO.toKeyId(listingId)));
-			int index = bidProperties.getStartIndex() > 0 ? bidProperties.getStartIndex() : 1;
-			for (BidVO bid : bids) {
-				bid.setUserName(getDAO().getUser(bid.getUser()).nickname);
-				bid.setListingOwner(listing.getOwner());
-				bid.setOrderNumber(index++);
-			}			
-			list.setBids(bids);
-			list.setListing(listing);
-			
-			bidProperties.setNumberOfResults(bids.size());
-			bidProperties.setStartIndex(0);
-			bidProperties.setTotalResults(bids.size());
-		}
-		list.setBidsProperties(bidProperties);
-		
-		return list;
-	}
-	
-	private void prepareBidList(ListPropertiesVO bidProperties, List<BidVO> bids, UserVO user) {
-		int index = bidProperties.getStartIndex() > 0 ? bidProperties.getStartIndex() : 1;
-		for (BidVO bid : bids) {
-			Listing listing = getDAO().getListing(BaseVO.toKeyId(bid.getListing()));
-			bid.setUserName(user.getNickname());
-			bid.setListingName(listing.name);
-			bid.setListingOwner(listing.owner.getString());
-			bid.setOrderNumber(index++);
-		}
-		bidProperties.setNumberOfResults(bids.size());
-		bidProperties.setStartIndex(0);
-		bidProperties.setTotalResults(bids.size());
-	}
-
-	/**
-	 * Returns list of user's bids
-	 */
-	public BidListVO getBidsForUser(UserVO loggedInUser, String userId, ListPropertiesVO bidProperties) {
-		BidListVO list = new BidListVO();
-		List<BidVO> bids = null;
-
-		UserVO user = UserMgmtFacade.instance().getUser(loggedInUser, userId).getUser();
-		if (user == null) {
-			log.log(Level.WARNING, "User '" + userId + "' not found");
-			return null;
-		}
-
-		bids = DtoToVoConverter.convertBids(
-				getDAO().getBidsForUser(BaseVO.toKeyId(userId)));
-		prepareBidList(bidProperties, bids, user);
-		list.setBids(bids);
-		list.setBidsProperties(bidProperties);
-		list.setUser(new UserBasicVO(user));
-		
-		return list;
-	}
-	
-	public BidListVO getBidsAcceptedByUser(UserVO loggedInUser, String userId, ListPropertiesVO bidProperties) {
-		BidListVO list = new BidListVO();
-		List<BidVO> bids = null;
-
-		UserVO user = UserMgmtFacade.instance().getUser(loggedInUser, userId).getUser();
-		if (user == null) {
-			log.log(Level.WARNING, "User '" + userId + "' not found");
-			return null;
-		}
-		
-		bids = DtoToVoConverter.convertBids(getDAO().getBidsAcceptedByUser(BaseVO.toKeyId(userId)));
-		prepareBidList(bidProperties, bids, user);
-		list.setBids(bids);
-		list.setBidsProperties(bidProperties);
-		list.setUser(new UserBasicVO(user));
-		
-		return list;
-	}
-
-	public BidListVO getBidsFundedByUser(UserVO loggedInUser, String userId, ListPropertiesVO bidProperties) {
-		BidListVO list = new BidListVO();
-		List<BidVO> bids = null;
-
-		UserVO user = UserMgmtFacade.instance().getUser(loggedInUser, userId).getUser();
-		if (user == null) {
-			log.log(Level.WARNING, "User '" + userId + "' not found");
-			return null;
-		}
-		
-		bids = DtoToVoConverter.convertBids(getDAO().getBidsFundedByUser(userId));
-		prepareBidList(bidProperties, bids, user);
-		list.setBids(bids);
-		list.setBidsProperties(bidProperties);
-		list.setUser(new UserBasicVO(user));
-		
-		return list;
-	}
 
 
 	/**
@@ -282,25 +175,6 @@ public class ServiceFacade {
 		return getDAO().getActivity(BaseVO.toKeyId(listingId));
 	}
  
-	/**
-	 * Returns bid for a given id and corresponding user profile
-	 * @param bidId Bid id
-	 */
-	public BidAndUserVO getBid(UserVO loggedInUser, String bidId) {
-		BidVO bid = DtoToVoConverter.convert(getDAO().getBid(BaseVO.toKeyId(bidId)));
-		UserVO user = UserMgmtFacade.instance().getUser(loggedInUser, bid.getUser()).getUser();
-		ListingVO listing = DtoToVoConverter.convert(
-				getDAO().getListing(BaseVO.toKeyId(bid.getListing())));
-		bid.setUserName(user.getNickname());
-		bid.setListingName(listing.getName());
-		
-		BidAndUserVO bidAndUser = new BidAndUserVO();
-		bidAndUser.setBid(bid);
-		bidAndUser.setUser(new UserBasicVO(user));
-		
-		return bidAndUser;
-	}
-
 	public CommentVO getComment(UserVO loggedInUser, String commentId) {
 		return DtoToVoConverter.convert(getDAO().getComment(commentId));
 	}
@@ -312,7 +186,7 @@ public class ServiceFacade {
 
 	public CommentVO createComment(UserVO loggedInUser, CommentVO comment) {
 		comment = DtoToVoConverter.convert(getDAO().createComment(VoToModelConverter.convert(comment)));
-		UserMgmtFacade.instance().scheduleUpdateOfUserStatistics(loggedInUser.getId(), UserMgmtFacade.UserStatsUpdateReason.NEW_COMMENT);
+		UserMgmtFacade.instance().scheduleUpdateOfUserStatistics(loggedInUser.getId(), UserMgmtFacade.UpdateReason.NEW_COMMENT);
 		ListingFacade.instance().scheduleUpdateOfListingStatistics(comment.getListing(), UpdateReason.NEW_COMMENT);
 		//createNotification(comment.get, comment.getId(), Type.NEW_COMMENT_FOR_YOUR_LISTING, "");
 		return comment;
@@ -325,101 +199,6 @@ public class ServiceFacade {
 		}
 		comment = DtoToVoConverter.convert(getDAO().updateComment(VoToModelConverter.convert(comment)));
 		return comment;
-	}
-
-	public BidVO deleteBid(UserVO loggedInUser, String bidId) {
-		BidVO bid = DtoToVoConverter.convert(getDAO().deleteBid(loggedInUser.toKeyId(), BaseVO.toKeyId(bidId)));
-		ListingFacade.instance().scheduleUpdateOfListingStatistics(bid.getListing(), UpdateReason.NONE);
-		return bid;
-	}
-
-	public BidVO createBid(UserVO loggedInUser, BidVO bid) {
-		if (bid.getValue() <= 0) {
-			log.warning("Bid cannot be created with non positive value");
-			return null;
-		}
-
-		bid.setStatus(Bid.Status.ACTIVE.toString());
-		bid = DtoToVoConverter.convert(
-				getDAO().createBid(loggedInUser.toKeyId(), VoToModelConverter.convert(bid)));
-		if (bid != null) {
-			UserMgmtFacade.instance().scheduleUpdateOfUserStatistics(loggedInUser.getId(), UserMgmtFacade.UserStatsUpdateReason.NEW_BID);
-			createNotification(bid.getListingOwner(), bid.getId(), Notification.Type.NEW_BID_FOR_YOUR_LISTING, "");
-		}
-		return bid;
-	}
-
-	public BidVO updateBid(UserVO loggedInUser, BidVO bid) {
-		if (bid.getValue() <= 0) {
-			log.warning("Bid '" + bid.getId() + "' cannot be updated with non positive value");
-			return null;
-		}
-		Bid.FundType fundType = Bid.FundType.valueOf(bid.getFundType());
-		if (fundType != Bid.FundType.COMMON
-				&& fundType != Bid.FundType.NOTE
-				&& fundType != Bid.FundType.PREFERRED) {
-			log.log(Level.WARNING, "Bid id '" + bid.getId() + "' has not valid fund type '" + fundType + "'!");
-			return null;
-		}
-
-		bid = DtoToVoConverter.convert(getDAO().createBid(
-				loggedInUser.toKeyId(), VoToModelConverter.convert(bid)));
-		if (bid != null) {
-			ListingFacade.instance().scheduleUpdateOfListingStatistics(bid.getListing(), UpdateReason.NONE);
-			createNotification(bid.getListingOwner(), bid.getId(), Notification.Type.NEW_BID_FOR_YOUR_LISTING, "");
-		}
-		return bid;
-	}
-
-	public BidVO activateBid(UserVO loggedInUser, String bidId) {
-		BidVO bid = DtoToVoConverter.convert(
-				getDAO().activateBid(loggedInUser.toKeyId(), BaseVO.toKeyId(bidId)));
-		if (bid != null) {
-			ListingFacade.instance().scheduleUpdateOfListingStatistics(bid.getListing(), UpdateReason.NEW_BID);
-			createNotification(bid.getUser(), bid.getId(), Notification.Type.YOUR_BID_WAS_ACTIVATED, "");
-		}
-		return bid;
-	}
-
-	public BidVO withdrawBid(UserVO loggedInUser, String bidId) {
-		BidVO bid = DtoToVoConverter.convert(
-				getDAO().withdrawBid(loggedInUser.toKeyId(), BaseVO.toKeyId(bidId)));
-		if (bid != null) {
-			ListingFacade.instance().scheduleUpdateOfListingStatistics(bid.getListing(), UpdateReason.NONE);
-			createNotification(bid.getListingOwner(), bid.getId(), Notification.Type.BID_WAS_WITHDRAWN, "");
-		}
-		return bid;
-	}
-	
-	public BidVO acceptBid(UserVO loggedInUser, String bidId) {
-		BidVO bid = DtoToVoConverter.convert(
-				getDAO().acceptBid(loggedInUser.toKeyId(), BaseVO.toKeyId(bidId)));
-		if (bid != null) {
-			createNotification(bid.getUser(), bid.getId(), Notification.Type.YOUR_BID_WAS_ACCEPTED, "");
-			createNotification(bid.getListingOwner(), bid.getId(), Notification.Type.YOU_ACCEPTED_BID, "");
-			ListingFacade.instance().scheduleUpdateOfListingStatistics(bid.getListing(), UpdateReason.NONE);
-		}
-		return bid;
-	}
-
-	public BidVO rejectBid(UserVO loggedInUser, String bidId) {
-		BidVO bid = DtoToVoConverter.convert(
-				getDAO().rejectBid(loggedInUser.toKeyId(), BaseVO.toKeyId(bidId)));
-		if (bid != null) {
-			createNotification(bid.getUser(), bid.getId(), Notification.Type.YOUR_BID_WAS_REJECTED, "");
-			ListingFacade.instance().scheduleUpdateOfListingStatistics(bid.getListing(), UpdateReason.NONE);
-		}
-		return bid;
-	}
-
-	public BidVO markBidAsPaid(UserVO loggedInUser, String bidId) {
-		BidVO bid = DtoToVoConverter.convert(
-				getDAO().markBidAsPaid(loggedInUser.toKeyId(), BaseVO.toKeyId(bidId)));
-		if (bid != null) {
-			createNotification(bid.getUser(), bid.getId(), Notification.Type.YOU_PAID_BID, "");
-			ListingFacade.instance().scheduleUpdateOfListingStatistics(bid.getListing(), UpdateReason.NONE);
-		}
-		return bid;
 	}
 
 	public SystemPropertyVO getSystemProperty(UserVO loggedInUser, String name) {
@@ -483,9 +262,9 @@ public class ServiceFacade {
 		notification.emailDate = null;
 		notification = getDAO().createNotification(notification);
 		if (notification != null) {
-			String taskName = timeStampFormatter.print(new Date().getTime()) + "send_notification_" + notification.type + "_" + userId;
+			String taskName = timeStampFormatter.print(new Date().getTime()) + "send_notification_" + notification.type + "_" + notification.user.getId();
 			Queue queue = QueueFactory.getDefaultQueue();
-			queue.add(TaskOptions.Builder.withUrl("/task/send-notification").param("id", notification.id.toString())
+			queue.add(TaskOptions.Builder.withUrl("/task/send-notification").param("id", "" + notification.id)
 					.taskName(taskName));
 		} else {
 			log.warning("Can't schedule notification " + notification);

@@ -94,8 +94,8 @@ public class MockDataBuilder {
 					bid.placed = new Date(listing.listedOn.getTime() + bidNum * bidTimeSpan);
 					bid.value = new Random().nextInt(50) * 1000 + listing.suggestedValuation;
 					bid.listingOwner = listing.owner;
-					// calculate valuation
-					bid.valuation = bid.value * 100 / bid.percentOfCompany;
+					bid.action = Bid.Action.ACTIVATE;
+					bid.actor = Bid.Actor.BIDDER;
 					
 					bids.add(bid);
 				}
@@ -113,7 +113,7 @@ public class MockDataBuilder {
 	 */
 	private List<Bid> generateBidsForAdminListing(Collection<SBUser> usersList) {
 		List<Bid> bids = new ArrayList<Bid>();
-		Bid.Status statuses[] = Bid.Status.values();
+		Bid.Action statuses[] = Bid.Action.values();
 
 		Collection<Listing> listings = new ArrayList<Listing>();
 		listings.add(gregsListing);
@@ -156,7 +156,7 @@ public class MockDataBuilder {
 					bid.listingOwner = listing.owner;
 					// calculate valuation
 					bid.valuation = bid.value * 100 / bid.percentOfCompany;
-					bid.status = statuses[bidNum];
+					bid.action = statuses[bidNum];
 					
 					bids.add(bid);
 				}
@@ -171,7 +171,7 @@ public class MockDataBuilder {
 	private List<Bid> generateBidsByAdmins(Collection<Listing> listingList) {
 		List<Listing> listings = new ArrayList<Listing>(listingList);
 		List<Bid> bids = new ArrayList<Bid>();
-		Bid.Status statuses[] = Bid.Status.values();
+		Bid.Action statuses[] = Bid.Action.values();
 
 		listings.remove(gregsListing);
 		listings.remove(johnsListing);
@@ -210,7 +210,7 @@ public class MockDataBuilder {
 					bid.listingOwner = listing.owner;
 					// calculate valuation
 					bid.valuation = bid.value * 100 / bid.percentOfCompany;
-					bid.status = statuses[bidNum];
+					bid.action = statuses[bidNum];
 					
 					bids.add(bid);
 				}

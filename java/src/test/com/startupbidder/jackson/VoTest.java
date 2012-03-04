@@ -10,10 +10,10 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import test.com.startupbidder.web.BaseFacadeAbstractTest;
+
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
-import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
-import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.startupbidder.vo.CommentListVO;
 import com.startupbidder.vo.ListPropertiesVO;
 import com.startupbidder.vo.ListingListVO;
@@ -27,8 +27,7 @@ import com.startupbidder.web.UserMgmtFacade;
  * 
  * @author "Grzegorz Nittner" <grzegorz.nittner@gmail.com>
  */
-public class VoTest {
-	private final LocalServiceTestHelper helper = new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
+public class VoTest extends BaseFacadeAbstractTest {
 	private UserService userService = null;
 	private UserVO user;
 	
@@ -53,7 +52,7 @@ public class VoTest {
 	public void arrayNodeTest() {
 		ListPropertiesVO listingProperties = new ListPropertiesVO();
 		listingProperties.setMaxResults(10);
-		ListingListVO listings = ListingFacade.instance().getTopListings(user, listingProperties);
+		ListingListVO listings = ListingFacade.instance().getTopActiveListings(user, listingProperties);
 		
 		CommentListVO comments = ServiceFacade.instance().getCommentsForListing(user, listings.getListings().get(0).getId(), listingProperties);
 		

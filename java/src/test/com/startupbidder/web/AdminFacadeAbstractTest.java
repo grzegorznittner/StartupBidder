@@ -5,7 +5,7 @@ import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.google.appengine.tools.development.testing.LocalTaskQueueTestConfig;
 import com.google.appengine.tools.development.testing.LocalUserServiceTestConfig;
 
-public class AdminFacadeTest extends BaseFacadeTest {
+public abstract class AdminFacadeAbstractTest extends BaseFacadeAbstractTest {
 	protected LocalServiceTestHelper helper = new LocalServiceTestHelper(new LocalTaskQueueTestConfig(),
 			new LocalUserServiceTestConfig(),
 			new LocalDatastoreServiceTestConfig().setNoStorage(true))

@@ -1,7 +1,9 @@
 package com.startupbidder.vo;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.googlecode.objectify.Key;
 import com.startupbidder.datamodel.Bid;
@@ -33,18 +35,22 @@ public class DtoToVoConverter {
 			return null;
 		}
 		BidVO bid = new BidVO();
-		bid.setId(new Key<Bid>(Bid.class, bidDTO.id).getString());
+		bid.setId(bidDTO.id != null ? new Key<Bid>(Bid.class, bidDTO.id).getString() : null);
 		bid.setMockData(bidDTO.mockData);
 		bid.setListing(keyToString(bidDTO.listing));
+		bid.setListingName(bidDTO.listingName);
 		bid.setFundType(bidDTO.fundType.toString());
 		bid.setPercentOfCompany(bidDTO.percentOfCompany);
 		bid.setInterestRate(bidDTO.interestRate);
 		bid.setPlaced(bidDTO.placed);
 		bid.setUser(keyToString(bidDTO.bidder));
+		bid.setUserName(bidDTO.bidderName);
 		bid.setListingOwner(keyToString(bidDTO.listingOwner));
 		bid.setValue(bidDTO.value);
 		bid.setValuation(bidDTO.valuation);
-		bid.setStatus(bidDTO.status.toString());
+		bid.setAction(bidDTO.action.toString());
+		bid.setActor(bidDTO.actor.toString());
+		bid.setExpires(bidDTO.expires);
 		bid.setComment(bidDTO.comment);
 		return bid;
 	}
@@ -58,6 +64,7 @@ public class DtoToVoConverter {
 		listing.setMockData(listingDTO.mockData);
 		listing.setClosingOn(listingDTO.closingOn);
 		listing.setListedOn(listingDTO.listedOn);
+		listing.setPostedOn(listingDTO.posted);
 		listing.setName(listingDTO.name);
 		listing.setOwner(keyToString(listingDTO.owner));
 		listing.setSuggestedValuation(listingDTO.suggestedValuation);
@@ -68,6 +75,7 @@ public class DtoToVoConverter {
 		listing.setBuinessPlanId(keyToString(listingDTO.businessPlanId));
 		listing.setFinancialsId(keyToString(listingDTO.financialsId));
 		listing.setSummary(listingDTO.summary);
+		listing.setAddress(listingDTO.address);
 		return listing;
 	}
 	
@@ -82,6 +90,7 @@ public class DtoToVoConverter {
 		comment.setCommentedOn(commentDTO.commentedOn);
 		comment.setListing(keyToString(commentDTO.listing));
 		comment.setUser(keyToString(commentDTO.user));
+		comment.setUserName(commentDTO.userNickName);
 		return comment;
 	}
 	
@@ -286,5 +295,13 @@ public class DtoToVoConverter {
 			monitorVoList.add(monitorVO);
 		}
 		return monitorVoList;
+	}
+	
+	public static Map<String, List<BidVO>> convertBidMap(Map<Key<SBUser>, List<Bid>> bidMap) {
+		Map<String, List<BidVO>> result = new HashMap<String, List<BidVO>>();
+		for (Map.Entry<Key<SBUser>, List<Bid>> entry : bidMap.entrySet()) {
+			result.put(entry.getKey().getString(), convertBids(entry.getValue()));
+		}
+		return result;
 	}
 }

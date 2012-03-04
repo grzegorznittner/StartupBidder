@@ -179,7 +179,7 @@ public class BasicModelTest {
 		bid.interestRate = 10;
 		bid.percentOfCompany = 45;
 		bid.placed = new Date();
-		bid.status = Bid.Status.POSTED;
+		bid.action = Bid.Action.ACTIVATE;
 		bid.valuation = 4500;
 		bid.value = 100;
 		bid.bidder = new Key<SBUser>(SBUser.class, 1000L);
@@ -198,7 +198,7 @@ public class BasicModelTest {
 		assertEquals(bid.interestRate, retrievedUser.interestRate);
 		assertEquals(bid.percentOfCompany, retrievedUser.percentOfCompany);
 		assertEquals(bid.placed, retrievedUser.placed);
-		assertEquals(bid.status, retrievedUser.status);
+		assertEquals(bid.action, retrievedUser.action);
 		assertEquals(bid.valuation, retrievedUser.valuation);
 		assertEquals(bid.value, retrievedUser.value);
 		assertEquals(bid.bidder, retrievedUser.bidder);

@@ -29,7 +29,7 @@ import com.startupbidder.vo.UserListVO;
 import com.startupbidder.vo.UserVO;
 import com.startupbidder.web.UserMgmtFacade;
 
-public class UserMgmtFacadeTest extends BaseFacadeTest {
+public class UserMgmtFacadeTest extends BaseFacadeAbstractTest {
 	private static final Logger log = Logger.getLogger(UserMgmtFacadeTest.class.getName());
 	
 	@Before
@@ -48,20 +48,20 @@ public class UserMgmtFacadeTest extends BaseFacadeTest {
 	public void testGetLoggedInUserData() {
 		log.info("google user: " + googleUser);
 		UserVO user2 = UserMgmtFacade.instance().getLoggedInUserData(googleUser);
-		assertEquals("Same user should be returned", loggedInUser.getId(), user2.getId());
+		assertEquals("Same user should be returned", googleUserVO.getId(), user2.getId());
 	}
 
 	@Test
 	public void testGetUser() {
-		UserAndUserVO returnedUser = UserMgmtFacade.instance().getUser(loggedInUser, userList.get(1).getWebKey());
+		UserAndUserVO returnedUser = UserMgmtFacade.instance().getUser(googleUserVO, userList.get(1).getWebKey());
 		assertEquals("Id should be the same", userList.get(1).getWebKey(), returnedUser.getUser().getId());
 		assertEquals("Id should be the same", userList.get(1).name, returnedUser.getUser().getName());
 		
-		UserAndUserVO returnedUser2 = UserMgmtFacade.instance().getUser(loggedInUser, userList.get(2).getWebKey());
+		UserAndUserVO returnedUser2 = UserMgmtFacade.instance().getUser(googleUserVO, userList.get(2).getWebKey());
 		assertNotSame("Id should be different", returnedUser2.getUser().getId(), returnedUser.getUser().getId());
 		assertNotSame("Name should be different", returnedUser2.getUser().getName(), returnedUser.getUser().getName());
 		
-		UserAndUserVO returnedUser3 = UserMgmtFacade.instance().getUser(loggedInUser, "fakekey");
+		UserAndUserVO returnedUser3 = UserMgmtFacade.instance().getUser(googleUserVO, "fakekey");
 		assertNull("User should be empty for non existing web key", returnedUser3);
 	}
 
@@ -133,16 +133,20 @@ public class UserMgmtFacadeTest extends BaseFacadeTest {
 
 	@Test
 	public void testGetAllUsers() {
-		UserListVO allUsers = UserMgmtFacade.instance().getAllUsers(loggedInUser);
-
+		UserListVO allUsers = UserMgmtFacade.instance().getAllUsers(admin);
 		assertNotNull(allUsers.getUsers());
-		assertEquals("getAllUsers should return all created users", userList.size(), allUsers.getUsers().size());
+		assertEquals("Admin called getAllUsers, should return all created users", userList.size(), allUsers.getUsers().size());
 		assertTrue("allUsers should be sorted by email asceding order", 
 				allUsers.getUsers().get(0).getEmail().compareTo(allUsers.getUsers().get(1).getEmail()) < 0);
 		assertTrue("allUsers should be sorted by email asceding order",
 				allUsers.getUsers().get(1).getEmail().compareTo(allUsers.getUsers().get(2).getEmail()) < 0);
 		
-		UserListVO allUsers2 = UserMgmtFacade.instance().getAllUsers(null);
+		UserListVO allUsers2 = UserMgmtFacade.instance().getAllUsers(googleUserVO);
+		assertNotNull("allUsers called by non admin, should not return null", allUsers2);
+		assertNotNull("allUsers called by non admin, should not return null user list", allUsers2.getUsers());
+		assertEquals("allUsers called by non admin, should return empty allUser list", 0, allUsers2.getUsers().size());
+
+		allUsers2 = UserMgmtFacade.instance().getAllUsers(null);
 		assertNotNull("allUsers should not return null", allUsers2);
 		assertNotNull("allUsers should not return null user list", allUsers2.getUsers());
 		assertEquals("empty logged in user should cause empty allUser list", 0, allUsers2.getUsers().size());
@@ -150,7 +154,7 @@ public class UserMgmtFacadeTest extends BaseFacadeTest {
 
 	@Test
 	public void testActivateUser() {
-		UserVO user = UserMgmtFacade.instance().activateUser(loggedInUser, loggedInUser.getId(), loggedInSBUser.activationCode);
+		UserVO user = UserMgmtFacade.instance().activateUser(googleUserVO, googleUserVO.getId(), googleSBUser.activationCode);
 		assertNotNull("Should not be null as activated correctly", user);
 		assertEquals("Should be activated", SBUser.Status.ACTIVE.toString(), user.getStatus());
 		
@@ -161,28 +165,28 @@ public class UserMgmtFacadeTest extends BaseFacadeTest {
 		assertEquals("User's status should be CREATED before activation", SBUser.Status.CREATED, newSBUser.status);
 		
 		// trying to activate with wrong code
-		UserVO shouldBeNull = UserMgmtFacade.instance().activateUser(loggedInUser, newUser.getId(), loggedInSBUser.activationCode);
+		UserVO shouldBeNull = UserMgmtFacade.instance().activateUser(googleUserVO, newUser.getId(), googleSBUser.activationCode);
 		assertNull("Trying to activate with wrong code, should be null", shouldBeNull);
 		
 		// proper activation
-		UserVO activatedUser = UserMgmtFacade.instance().activateUser(loggedInUser, newUser.getId(), newSBUser.activationCode);
+		UserVO activatedUser = UserMgmtFacade.instance().activateUser(googleUserVO, newUser.getId(), newSBUser.activationCode);
 		assertNotNull("Activate correctly, we should get actived user", activatedUser);
 		assertEquals("And user should be active", SBUser.Status.ACTIVE.toString(), activatedUser.getStatus());
 		assertEquals("Joined date should not be modified", newUser.getJoined(), activatedUser.getJoined());
 		assertEquals("We haven't activated created account", "test@sb.com", activatedUser.getEmail());
 
 		// trying to activate already activated account with valid code
-		UserVO user3 = UserMgmtFacade.instance().activateUser(loggedInUser, newUser.getId(), newSBUser.activationCode);
+		UserVO user3 = UserMgmtFacade.instance().activateUser(googleUserVO, newUser.getId(), newSBUser.activationCode);
 		assertNotNull("Already activated user should return user", user3);
 		// trying to activate already activated account with invalid code
-		UserVO user4 = UserMgmtFacade.instance().activateUser(loggedInUser, newUser.getId(), newSBUser.activationCode);
+		UserVO user4 = UserMgmtFacade.instance().activateUser(googleUserVO, newUser.getId(), newSBUser.activationCode);
 		assertNotNull("Already activated user should return user", user4);
 	}
 
 	@Test
 	public void testDectivateUser() {
-		Date previousModifcation = loggedInUser.getModified();
-		UserVO user = UserMgmtFacade.instance().deactivateUser(loggedInUser, loggedInUser.getId());
+		Date previousModifcation = googleUserVO.getModified();
+		UserVO user = UserMgmtFacade.instance().deactivateUser(googleUserVO, googleUserVO.getId());
 		assertNotNull("Should not be null as deactivated correctly", user);
 		assertEquals("Should be deactivated", SBUser.Status.DEACTIVATED.toString(), user.getStatus());
 		assertTrue("Deactivation should change modification date", previousModifcation.getTime() < user.getModified().getTime());
@@ -190,8 +194,8 @@ public class UserMgmtFacadeTest extends BaseFacadeTest {
 
 	@Test
 	public void testValidUpdateUser() {
-		UserVO previousUser = loggedInUser;
-		UserVO user = UserMgmtFacade.instance().updateUser(loggedInUser, null, "New Nickname", null, null, null, null);
+		UserVO previousUser = googleUserVO;
+		UserVO user = UserMgmtFacade.instance().updateUser(googleUserVO, null, "New Nickname", null, null, null, null);
 		assertNotNull("Name updated correctly", user);
 		assertEquals("Name should not be touched", previousUser.getName(), user.getName());
 		assertEquals("Nickname should be updated", "New Nickname", user.getNickname());
@@ -202,7 +206,7 @@ public class UserMgmtFacadeTest extends BaseFacadeTest {
 		assertTrue("Update should change modification date", previousUser.getModified().getTime() < user.getModified().getTime());
 
 		previousUser = user;
-		user = UserMgmtFacade.instance().updateUser(loggedInUser, "Brand New Name", null, null, null, null, null);
+		user = UserMgmtFacade.instance().updateUser(googleUserVO, "Brand New Name", null, null, null, null, null);
 		assertNotNull("Name updated correctly", user);
 		assertEquals("Name should be updated", "Brand New Name", user.getName());
 		assertEquals("Nickname should not be touched", previousUser.getNickname(), user.getNickname());
@@ -213,7 +217,7 @@ public class UserMgmtFacadeTest extends BaseFacadeTest {
 		assertTrue("Update should change modification date", previousUser.getModified().getTime() < user.getModified().getTime());
 
 		previousUser = user;
-		user = UserMgmtFacade.instance().updateUser(loggedInUser, null, null, "Des Moines, IO, US", null, null, null);
+		user = UserMgmtFacade.instance().updateUser(googleUserVO, null, null, "Des Moines, IO, US", null, null, null);
 		assertNotNull("Name updated correctly", user);
 		assertEquals("Name should not be touched", previousUser.getName(), user.getName());
 		assertEquals("Nickname should not be touched", previousUser.getNickname(), user.getNickname());
@@ -224,7 +228,7 @@ public class UserMgmtFacadeTest extends BaseFacadeTest {
 		assertTrue("Update should change modification date", previousUser.getModified().getTime() < user.getModified().getTime());
 
 		previousUser = user;
-		user = UserMgmtFacade.instance().updateUser(loggedInUser, null, null, null, "1234567890", null, null);
+		user = UserMgmtFacade.instance().updateUser(googleUserVO, null, null, null, "1234567890", null, null);
 		assertNotNull("Name updated correctly", user);
 		assertEquals("Name should not be touched", previousUser.getName(), user.getName());
 		assertEquals("Nickname should not be touched", previousUser.getNickname(), user.getNickname());
@@ -235,7 +239,7 @@ public class UserMgmtFacadeTest extends BaseFacadeTest {
 		assertTrue("Update should change modification date", previousUser.getModified().getTime() < user.getModified().getTime());
 
 		previousUser = user;
-		user = UserMgmtFacade.instance().updateUser(loggedInUser, null, null, null, null, !previousUser.isAccreditedInvestor(), null);
+		user = UserMgmtFacade.instance().updateUser(googleUserVO, null, null, null, null, !previousUser.isAccreditedInvestor(), null);
 		assertNotNull("Name updated correctly", user);
 		assertEquals("Name should not be touched", previousUser.getName(), user.getName());
 		assertEquals("Nickname should not be touched", previousUser.getNickname(), user.getNickname());
@@ -246,7 +250,7 @@ public class UserMgmtFacadeTest extends BaseFacadeTest {
 		assertTrue("Update should change modification date", previousUser.getModified().getTime() < user.getModified().getTime());
 
 		previousUser = user;
-		user = UserMgmtFacade.instance().updateUser(loggedInUser, null, null, null, null, null, !previousUser.isNotifyEnabled());
+		user = UserMgmtFacade.instance().updateUser(googleUserVO, null, null, null, null, null, !previousUser.isNotifyEnabled());
 		assertNotNull("Name updated correctly", user);
 		assertEquals("Name should not be touched", previousUser.getName(), user.getName());
 		assertEquals("Nickname should not be touched", previousUser.getNickname(), user.getNickname());
@@ -259,16 +263,16 @@ public class UserMgmtFacadeTest extends BaseFacadeTest {
 
 	@Test
 	public void testInvalidUpdateUser() {
-		UserVO user = UserMgmtFacade.instance().updateUser(loggedInUser, null, "guy", null, null, null, null);
+		UserVO user = UserMgmtFacade.instance().updateUser(googleUserVO, null, "guy", null, null, null, null);
 		assertNull("Nick already exist", user);
 		
-		user = UserMgmtFacade.instance().updateUser(loggedInUser, "name", null, null, null, null, null);
+		user = UserMgmtFacade.instance().updateUser(googleUserVO, "name", null, null, null, null, null);
 		assertNull("Name too short", user);
 
-		user = UserMgmtFacade.instance().updateUser(loggedInUser, null, null, "Here", null, null, null);
+		user = UserMgmtFacade.instance().updateUser(googleUserVO, null, null, "Here", null, null, null);
 		assertNull("Location too short", user);
 
-		user = UserMgmtFacade.instance().updateUser(loggedInUser, null, null, null, "123", null, null);
+		user = UserMgmtFacade.instance().updateUser(googleUserVO, null, null, null, "123", null, null);
 		assertNull("Phone too short", user);
 	}
 
@@ -297,7 +301,7 @@ public class UserMgmtFacadeTest extends BaseFacadeTest {
 		
 		assertNull("Not activated yet", UserMgmtFacade.instance().checkUserCredentials(createdSBUser.authCookie));
 		
-		UserMgmtFacade.instance().activateUser(loggedInUser, createdUser.getId(), createdSBUser.activationCode);
+		UserMgmtFacade.instance().activateUser(googleUserVO, createdUser.getId(), createdSBUser.activationCode);
 		createdSBUser = ObjectifyDatastoreDAO.getInstance().getUser(createdUser.getId());
 		assertNotNull("user should exist", createdSBUser);
 		assertEquals("User should be active now", SBUser.Status.ACTIVE, createdSBUser.status);

@@ -13,6 +13,7 @@ import com.googlecode.objectify.annotation.Cached;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Indexed;
 import com.googlecode.objectify.annotation.Unindexed;
+import com.googlecode.objectify.condition.IfNotNull;
 
 /**
  * @author "Grzegorz Nittner" <grzegorz.nittner@gmail.com>
@@ -22,6 +23,14 @@ import com.googlecode.objectify.annotation.Unindexed;
 @Entity
 @Cached(expirationSeconds=60*30)
 public class Listing extends BaseObject implements Monitor.Monitored {
+	/**
+	 * NEW - just created, not submited by user
+	 * POSTED - submited by user, passed simple verfication, needs to be checked by Admins to be available on website
+	 * ACTIVE - verified by admins, available on website
+	 * WITHDRAWN - discarded by owner, still available on website if you have direct link, but users cannot post it
+	 * FROZEN - only admins can do that, it's done when listing needs an action from admins (eg. law violation)
+	 * CLOSED - automatic action done after certain time or when bid was accepted
+	 */
 	public enum State {NEW, POSTED, ACTIVE, CLOSED, WITHDRAWN, FROZEN};
 
 	@Id public Long id;
@@ -50,6 +59,13 @@ public class Listing extends BaseObject implements Monitor.Monitored {
 	@Indexed public Date  listedOn;
 	@Indexed public Date  closingOn;
 	@Indexed public State state = State.NEW;
+	
+	// address parts
+	@Indexed public String country;
+	@Indexed(IfNotNull.class) public String usState;
+	@Indexed(IfNotNull.class) public String usCounty;
+	@Indexed public String city;
+	public String address;
 	
 	public int   suggestedValuation;
 	public int   suggestedPercentage;

@@ -2,11 +2,13 @@ package test.com.startupbidder.web;
 
 import static org.junit.Assert.*;
 
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.joda.time.DateMidnight;
+import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.junit.After;
 import org.junit.Before;
@@ -43,7 +45,7 @@ import com.startupbidder.vo.UserVO;
 import com.startupbidder.web.ListingFacade;
 import com.startupbidder.web.UserMgmtFacade;
 
-public class ListingFacadeTest extends BaseFacadeTest {
+public class ListingFacadeTest extends BaseFacadeAbstractTest {
 	private static final Logger log = Logger.getLogger(ListingFacadeTest.class.getName());
 	
 	@Before
@@ -66,11 +68,11 @@ public class ListingFacadeTest extends BaseFacadeTest {
 		listing.setSuggestedAmount(30000);
 		listing.setSuggestedPercentage(35);
 		
-		ListingVO newListing = ListingFacade.instance().createListing(loggedInUser, listing);
+		ListingVO newListing = ListingFacade.instance().createListing(googleUserVO, listing);
 		assertNotNull("Listing not created", newListing);
 		assertEquals("Name not stored", "New listing", newListing.getName());
 		assertNull("Summary should be null", newListing.getSummary());
-		assertEquals("Proper owner set", loggedInUser.getId(), newListing.getOwner());
+		assertEquals("Proper owner set", googleUserVO.getId(), newListing.getOwner());
 		assertEquals("State is not NEW", Listing.State.NEW.toString(), newListing.getState());
 		assertEquals("Suggested amount not stored properly", 30000, newListing.getSuggestedAmount());
 		assertEquals("Suggested percentage not stored properly", 35, newListing.getSuggestedPercentage());
@@ -85,12 +87,12 @@ public class ListingFacadeTest extends BaseFacadeTest {
 		listing.setSuggestedValuation(5);
 		
 		// overwriting valuation if provided
-		newListing = ListingFacade.instance().createListing(loggedInUser, listing);
+		newListing = ListingFacade.instance().createListing(googleUserVO, listing);
 		assertNotNull("Listing not created", newListing);
 		assertEquals("Name not stored", "New listing", newListing.getName());
 		assertEquals("Summary should be set", "Summary", newListing.getSummary());
 		assertEquals("State is not NEW", Listing.State.NEW.toString(), newListing.getState());
-		assertEquals("Proper owner set", loggedInUser.getId(), newListing.getOwner());
+		assertEquals("Proper owner set", googleUserVO.getId(), newListing.getOwner());
 		assertEquals("Suggested amount not stored properly", 30000, newListing.getSuggestedAmount());
 		assertEquals("Suggested percentage not stored properly", 35, newListing.getSuggestedPercentage());
 		assertEquals("Suggested valuation not calculated properly", 30000 * 100 / 35, newListing.getSuggestedValuation());
@@ -98,12 +100,12 @@ public class ListingFacadeTest extends BaseFacadeTest {
 		
 		listing = new ListingVO();
 		// empty listing
-		newListing = ListingFacade.instance().createListing(loggedInUser, listing);
+		newListing = ListingFacade.instance().createListing(googleUserVO, listing);
 		assertNotNull("Listing not created", newListing);
 		assertNull("Name not provided", newListing.getName());
 		assertNull("Summary not provided", newListing.getSummary());
 		assertEquals("State is not NEW", Listing.State.NEW.toString(), newListing.getState());
-		assertEquals("Proper owner set", loggedInUser.getId(), newListing.getOwner());
+		assertEquals("Proper owner set", googleUserVO.getId(), newListing.getOwner());
 		assertEquals("Suggested amount should be 0", 0, newListing.getSuggestedAmount());
 		assertEquals("Suggested percentage should be 0", 0, newListing.getSuggestedPercentage());
 		assertEquals("Suggested valuation should be 0", 0, newListing.getSuggestedValuation());
@@ -112,17 +114,17 @@ public class ListingFacadeTest extends BaseFacadeTest {
 		// we allow for creating listing with wrong values, we verify everything before activation
 		listing = new ListingVO();
 		listing.setSuggestedAmount(10);
-		newListing = ListingFacade.instance().createListing(loggedInUser, listing);
+		newListing = ListingFacade.instance().createListing(googleUserVO, listing);
 		assertNotNull("Suggested valuation too low but listing should be created", newListing);
 
 		listing = new ListingVO();
 		listing.setSuggestedPercentage(-10);
-		newListing = ListingFacade.instance().createListing(loggedInUser, listing);
+		newListing = ListingFacade.instance().createListing(googleUserVO, listing);
 		assertNotNull("Suggested percentage wrong but listing should be created", newListing);
 		
 		listing = new ListingVO();
 		listing.setSuggestedValuation(-30);
-		newListing = ListingFacade.instance().createListing(loggedInUser, listing);
+		newListing = ListingFacade.instance().createListing(googleUserVO, listing);
 		assertNotNull("Suggested percentage wrong but listing should be created", newListing);
 	}
 	
@@ -131,13 +133,13 @@ public class ListingFacadeTest extends BaseFacadeTest {
 		ListingVO listing = new ListingVO();
 		String name = RandomStringUtils.randomAlphabetic(512);
 		listing.setName(name);
-		ListingVO newListing = ListingFacade.instance().createListing(loggedInUser, listing);
+		ListingVO newListing = ListingFacade.instance().createListing(googleUserVO, listing);
 		assertEquals("Long name stored", name, newListing.getName());
 		
 		listing = new ListingVO();
 		String summary = RandomStringUtils.randomAlphabetic(8196);
 		listing.setSummary(summary);
-		newListing = ListingFacade.instance().createListing(loggedInUser, listing);
+		newListing = ListingFacade.instance().createListing(googleUserVO, listing);
 		assertEquals("Long summary stored", summary, newListing.getSummary());
 	}
 	
@@ -151,7 +153,7 @@ public class ListingFacadeTest extends BaseFacadeTest {
 	@Test
 	public void testGetListing() {
 		Listing expected = super.listingList.get(0);
-		ListingAndUserVO returned = ListingFacade.instance().getListing(loggedInUser, expected.getWebKey());
+		ListingAndUserVO returned = ListingFacade.instance().getListing(googleUserVO, expected.getWebKey());
 		assertNotNull("Listing is a test one, should exist", returned);
 		assertEquals(expected.name, returned.getListing().getName());
 		assertEquals(expected.summary, returned.getListing().getSummary());
@@ -161,7 +163,7 @@ public class ListingFacadeTest extends BaseFacadeTest {
 		assertEquals(expected.suggestedPercentage, returned.getListing().getSuggestedPercentage());
 
 		expected = super.listingList.get(5);
-		returned = ListingFacade.instance().getListing(loggedInUser, expected.getWebKey());
+		returned = ListingFacade.instance().getListing(googleUserVO, expected.getWebKey());
 		assertNotNull("Listing is a test one, should exist", returned);
 		assertEquals(expected.name, returned.getListing().getName());
 		assertEquals(expected.summary, returned.getListing().getSummary());
@@ -171,7 +173,7 @@ public class ListingFacadeTest extends BaseFacadeTest {
 		assertEquals(expected.suggestedPercentage, returned.getListing().getSuggestedPercentage());
 
 		expected = super.listingList.get(7);
-		returned = ListingFacade.instance().getListing(loggedInUser, expected.getWebKey());
+		returned = ListingFacade.instance().getListing(googleUserVO, expected.getWebKey());
 		assertNotNull("Listing is a test one, should exist", returned);
 		assertEquals(expected.name, returned.getListing().getName());
 		assertEquals(expected.summary, returned.getListing().getSummary());
@@ -181,7 +183,7 @@ public class ListingFacadeTest extends BaseFacadeTest {
 		assertEquals(expected.suggestedPercentage, returned.getListing().getSuggestedPercentage());
 		
 		expected = super.listingList.get(8);
-		returned = ListingFacade.instance().getListing(loggedInUser, expected.getWebKey());
+		returned = ListingFacade.instance().getListing(googleUserVO, expected.getWebKey());
 		assertNotNull("Listing is a test one, should exist", returned);
 		assertEquals(expected.name, returned.getListing().getName());
 		assertEquals(expected.summary, returned.getListing().getSummary());
@@ -191,7 +193,7 @@ public class ListingFacadeTest extends BaseFacadeTest {
 		assertEquals(expected.suggestedPercentage, returned.getListing().getSuggestedPercentage());
 
 		expected = super.listingList.get(9);
-		returned = ListingFacade.instance().getListing(loggedInUser, expected.getWebKey());
+		returned = ListingFacade.instance().getListing(googleUserVO, expected.getWebKey());
 		assertNotNull("Listing is a test one, should exist", returned);
 		assertEquals(expected.name, returned.getListing().getName());
 		assertEquals(expected.summary, returned.getListing().getSummary());
@@ -201,7 +203,7 @@ public class ListingFacadeTest extends BaseFacadeTest {
 		assertEquals(expected.suggestedPercentage, returned.getListing().getSuggestedPercentage());
 
 		expected = super.listingList.get(10);
-		returned = ListingFacade.instance().getListing(loggedInUser, expected.getWebKey());
+		returned = ListingFacade.instance().getListing(googleUserVO, expected.getWebKey());
 		assertNotNull("Listing is a test one, should exist", returned);
 		assertEquals(expected.name, returned.getListing().getName());
 		assertEquals(expected.summary, returned.getListing().getSummary());
@@ -214,10 +216,10 @@ public class ListingFacadeTest extends BaseFacadeTest {
 	
 	@Test
 	public void testGetNonValidListing() {
-		ListingAndUserVO returned = ListingFacade.instance().getListing(loggedInUser, "fakekey"); //new Key<Listing>(Listing.class, 1000).getString());
+		ListingAndUserVO returned = ListingFacade.instance().getListing(googleUserVO, "fakekey"); //new Key<Listing>(Listing.class, 1000).getString());
 		assertNull("Key was fake so listing should be null", returned);
 
-		returned = ListingFacade.instance().getListing(loggedInUser, null);
+		returned = ListingFacade.instance().getListing(googleUserVO, null);
 		assertNull("Key was null so listing should be null", returned);
 	}
 	
@@ -229,13 +231,13 @@ public class ListingFacadeTest extends BaseFacadeTest {
 		listing.setId(new Key<Listing>(Listing.class, 999).getString());
 		listing.setName("fakename");
 		listing.setOwner(super.userList.get(1).getWebKey());
-		ListingVO updatedListing = ListingFacade.instance().updateListing(loggedInUser, listing);
+		ListingVO updatedListing = ListingFacade.instance().updateListing(googleUserVO, listing);
 		assertNull("Listing with given id should not be present", updatedListing);
 		
 		listing = DtoToVoConverter.convert(super.listingList.get(6));
 		// setting owner here should not be taken into account
-		listing.setOwner(loggedInUser.getId());
-		updatedListing = ListingFacade.instance().updateListing(loggedInUser, listing);
+		listing.setOwner(googleUserVO.getId());
+		updatedListing = ListingFacade.instance().updateListing(googleUserVO, listing);
 		assertNull("Logged in user is not owner of the listing", updatedListing);
 
 		listing = DtoToVoConverter.convert(super.listingList.get(1));
@@ -249,7 +251,7 @@ public class ListingFacadeTest extends BaseFacadeTest {
 		
 		ListingVO listing = DtoToVoConverter.convert(super.listingList.get(1));
 		listing.setName("Updated name");
-		ListingVO updatedListing = ListingFacade.instance().updateListing(loggedInUser, listing);
+		ListingVO updatedListing = ListingFacade.instance().updateListing(googleUserVO, listing);
 		assertNotNull("Listing should be returned", updatedListing);
 		assertEquals(listing.getName(), updatedListing.getName());
 		assertEquals(listing.getSummary(), updatedListing.getSummary());
@@ -273,7 +275,7 @@ public class ListingFacadeTest extends BaseFacadeTest {
 		listing.setPresentationId(new Key<ListingDoc>(ListingDoc.class, 1001).getString());
 		listing.setBuinessPlanId(new Key<ListingDoc>(ListingDoc.class, 1002).getString());
 		listing.setFinancialsId(new Key<ListingDoc>(ListingDoc.class, 1003).getString());
-		updatedListing = ListingFacade.instance().updateListing(loggedInUser, listing);
+		updatedListing = ListingFacade.instance().updateListing(googleUserVO, listing);
 		assertNotNull("Listing should be updated", updatedListing);
 		assertEquals(listing.getName(), updatedListing.getName());
 		assertEquals(listing.getSummary(), updatedListing.getSummary());
@@ -296,7 +298,7 @@ public class ListingFacadeTest extends BaseFacadeTest {
 		listing.setPresentationId(new Key<ListingDoc>(ListingDoc.class, 1001).getString());
 		listing.setBuinessPlanId(new Key<ListingDoc>(ListingDoc.class, 1002).getString());
 		listing.setFinancialsId(new Key<ListingDoc>(ListingDoc.class, 1003).getString());
-		updatedListing = ListingFacade.instance().updateListing(loggedInUser, listing);
+		updatedListing = ListingFacade.instance().updateListing(googleUserVO, listing);
 		assertNotNull("Listing should be updated", updatedListing);
 		assertEquals(listing.getName(), updatedListing.getName());
 		assertEquals(listing.getSummary(), updatedListing.getSummary());
@@ -319,7 +321,7 @@ public class ListingFacadeTest extends BaseFacadeTest {
 		listing.setPresentationId(new Key<ListingDoc>(ListingDoc.class, 1001).getString());
 		listing.setBuinessPlanId(new Key<ListingDoc>(ListingDoc.class, 1002).getString());
 		listing.setFinancialsId(new Key<ListingDoc>(ListingDoc.class, 1003).getString());
-		updatedListing = ListingFacade.instance().updateListing(loggedInUser, listing);
+		updatedListing = ListingFacade.instance().updateListing(googleUserVO, listing);
 		assertNull("Closed listing should not be updated", updatedListing);
 
 		// we should not be able to update name of posted listing
@@ -333,7 +335,7 @@ public class ListingFacadeTest extends BaseFacadeTest {
 		listing.setPresentationId(new Key<ListingDoc>(ListingDoc.class, 1001).getString());
 		listing.setBuinessPlanId(new Key<ListingDoc>(ListingDoc.class, 1002).getString());
 		listing.setFinancialsId(new Key<ListingDoc>(ListingDoc.class, 1003).getString());
-		updatedListing = ListingFacade.instance().updateListing(loggedInUser, listing);
+		updatedListing = ListingFacade.instance().updateListing(googleUserVO, listing);
 		assertNull("Posted listing should not be updated", updatedListing);
 		
 		// we should not be able to update name of withdrawn listing
@@ -347,7 +349,7 @@ public class ListingFacadeTest extends BaseFacadeTest {
 		listing.setPresentationId(new Key<ListingDoc>(ListingDoc.class, 1001).getString());
 		listing.setBuinessPlanId(new Key<ListingDoc>(ListingDoc.class, 1002).getString());
 		listing.setFinancialsId(new Key<ListingDoc>(ListingDoc.class, 1003).getString());
-		updatedListing = ListingFacade.instance().updateListing(loggedInUser, listing);
+		updatedListing = ListingFacade.instance().updateListing(googleUserVO, listing);
 		assertNull("Withdrawn listing should not be updated", updatedListing);
 		
 	}
@@ -355,100 +357,105 @@ public class ListingFacadeTest extends BaseFacadeTest {
 	@Test
 	public void testActivateListing() {
 		ListingVO listing = DtoToVoConverter.convert(super.listingList.get(11));
-		ListingVO activatedListing = ListingFacade.instance().activateListing(loggedInUser, listing.getId());
+		ListingVO activatedListing = ListingFacade.instance().activateListing(googleUserVO, listing.getId());
 		assertNull("Withdrawn listing cannot be activated", activatedListing);
 		
-		listing = DtoToVoConverter.convert(super.listingList.get(8));
-		activatedListing = ListingFacade.instance().activateListing(loggedInUser, listing.getId());
-		assertNull("Already posted listing cannot be activated", activatedListing);
+		listing = DtoToVoConverter.convert(super.listingList.get(7));
+		activatedListing = ListingFacade.instance().activateListing(googleUserVO, listing.getId());
+		assertNull("New listing cannot be activated", activatedListing);
 
 		listing = DtoToVoConverter.convert(super.listingList.get(12));
-		activatedListing = ListingFacade.instance().activateListing(loggedInUser, listing.getId());
+		activatedListing = ListingFacade.instance().activateListing(googleUserVO, listing.getId());
 		assertNull("Closed listing cannot be activated", activatedListing);
 
 		listing = DtoToVoConverter.convert(super.listingList.get(5));
-		activatedListing = ListingFacade.instance().activateListing(loggedInUser, listing.getId());
+		activatedListing = ListingFacade.instance().activateListing(googleUserVO, listing.getId());
 		assertNull("Active listing cannot be activated", activatedListing);
 
 		listing = DtoToVoConverter.convert(super.listingList.get(6));
-		activatedListing = ListingFacade.instance().activateListing(loggedInUser, listing.getId());
+		activatedListing = ListingFacade.instance().activateListing(googleUserVO, listing.getId());
 		assertNull("Active listing cannot be activated", activatedListing);
 		
 		listing = DtoToVoConverter.convert(super.listingList.get(13));
-		activatedListing = ListingFacade.instance().activateListing(loggedInUser, listing.getId());
+		activatedListing = ListingFacade.instance().activateListing(googleUserVO, listing.getId());
 		assertNull("New listing but logged in user is not an owner", activatedListing);
 
 		listing = DtoToVoConverter.convert(super.listingList.get(13));
 		activatedListing = ListingFacade.instance().activateListing(null, listing.getId());
 		assertNull("New listing but logged in is null", activatedListing);
 
-		listing = DtoToVoConverter.convert(super.listingList.get(7));
-		activatedListing = ListingFacade.instance().activateListing(loggedInUser, listing.getId());
-		assertNotNull("New listing and logged in user is an owner, should be activated", activatedListing);
-		assertFalse("Activated listing should be a new instance of the object", listing == activatedListing);
-		assertEquals("State should be ACTIVE", Listing.State.ACTIVE.toString(), activatedListing.getState());
-		assertEquals(listing.getName(), activatedListing.getName());
-		assertEquals(listing.getSummary(), activatedListing.getSummary());
-		assertEquals(listing.getOwner(), activatedListing.getOwner());
-		assertEquals(listing.getClosingOn(), activatedListing.getClosingOn());
-		assertEquals(listing.getSuggestedAmount(), activatedListing.getSuggestedAmount());
-		assertEquals(listing.getSuggestedPercentage(), activatedListing.getSuggestedPercentage());
-		assertEquals(listing.getPresentationId(), activatedListing.getPresentationId());
-		assertEquals(listing.getBuinessPlanId(), activatedListing.getBuinessPlanId());
-		assertEquals(listing.getFinancialsId(), activatedListing.getFinancialsId());
+		listing = DtoToVoConverter.convert(super.listingList.get(8));
+		activatedListing = ListingFacade.instance().activateListing(googleUserVO, listing.getId());
+		assertNull("Posted listing, but logged in user is an admin", activatedListing);
 	}
 	
 	@Test
 	public void testPostListing() {
 		ListingVO listing = DtoToVoConverter.convert(super.listingList.get(11));
-		ListingVO postedListing = ListingFacade.instance().postListing(loggedInUser, listing.getId());
-		assertNull("Withdrawn listing should not be posted", postedListing);
+		ListingVO postedListing = ListingFacade.instance().postListing(googleUserVO, listing.getId());
+		assertNull("Withdrawn listing cannot be posted", postedListing);
 		
 		listing = DtoToVoConverter.convert(super.listingList.get(8));
-		postedListing = ListingFacade.instance().postListing(loggedInUser, listing.getId());
+		postedListing = ListingFacade.instance().postListing(googleUserVO, listing.getId());
 		assertNull("Already posted listing cannot be posted", postedListing);
 
 		listing = DtoToVoConverter.convert(super.listingList.get(12));
-		postedListing = ListingFacade.instance().postListing(loggedInUser, listing.getId());
+		postedListing = ListingFacade.instance().postListing(googleUserVO, listing.getId());
 		assertNull("Closed listing cannot be posted", postedListing);
 
 		listing = DtoToVoConverter.convert(super.listingList.get(7));
-		postedListing = ListingFacade.instance().postListing(loggedInUser, listing.getId());
-		assertNull("New listing cannot be posted", postedListing);
+		postedListing = ListingFacade.instance().postListing(DtoToVoConverter.convert(userList.get(BIDDER1)), listing.getId());
+		assertNull("New listing, but user is not an owner", postedListing);
+
+		listing = DtoToVoConverter.convert(super.listingList.get(7));
+		postedListing = ListingFacade.instance().postListing(googleUserVO, listing.getId());
+		assertNotNull("New listing can be posted", postedListing);
+		assertFalse("Activated listing should be a new instance of the object", listing == postedListing);
+		assertEquals("State should be POSTED", Listing.State.POSTED.toString(), postedListing.getState());
+		assertNotNull("Posted date should be set", postedListing.getPostedOn());
+		assertEquals(listing.getName(), postedListing.getName());
+		assertEquals(listing.getSummary(), postedListing.getSummary());
+		assertEquals(listing.getOwner(), postedListing.getOwner());
+		assertEquals(listing.getClosingOn(), postedListing.getClosingOn());
+		assertEquals(listing.getSuggestedAmount(), postedListing.getSuggestedAmount());
+		assertEquals(listing.getSuggestedPercentage(), postedListing.getSuggestedPercentage());
+		assertEquals(listing.getPresentationId(), postedListing.getPresentationId());
+		assertEquals(listing.getBuinessPlanId(), postedListing.getBuinessPlanId());
+		assertEquals(listing.getFinancialsId(), postedListing.getFinancialsId());
+
+		listing = DtoToVoConverter.convert(super.listingList.get(4));
+		postedListing = ListingFacade.instance().postListing(googleUserVO, listing.getId());
+		assertNull("Active listing cannot be posted", postedListing);
 
 		listing = DtoToVoConverter.convert(super.listingList.get(5));
-		postedListing = ListingFacade.instance().postListing(loggedInUser, listing.getId());
-		assertNull("Active listing cannot be posted by non admin", postedListing);
-
-		listing = DtoToVoConverter.convert(super.listingList.get(6));
-		postedListing = ListingFacade.instance().postListing(loggedInUser, listing.getId());
-		assertNull("Active listing cannot be posted by non admin", postedListing);
+		postedListing = ListingFacade.instance().postListing(googleUserVO, listing.getId());
+		assertNull("Active listing cannot be posted, additionally user is not an owner of the listing", postedListing);
 	}
 
 	@Test
 	public void testFreezeListing() {
 		ListingVO listing = DtoToVoConverter.convert(super.listingList.get(11));
-		ListingVO freezedListing = ListingFacade.instance().freezeListing(loggedInUser, listing.getId());
+		ListingVO freezedListing = ListingFacade.instance().freezeListing(googleUserVO, listing.getId());
 		assertNull("Only admin can freeze listing", freezedListing);
 		
 		listing = DtoToVoConverter.convert(super.listingList.get(7));
-		freezedListing = ListingFacade.instance().freezeListing(loggedInUser, listing.getId());
+		freezedListing = ListingFacade.instance().freezeListing(googleUserVO, listing.getId());
 		assertNull("Only admin can freeze listing", freezedListing);
 
 		listing = DtoToVoConverter.convert(super.listingList.get(12));
-		freezedListing = ListingFacade.instance().freezeListing(loggedInUser, listing.getId());
+		freezedListing = ListingFacade.instance().freezeListing(googleUserVO, listing.getId());
 		assertNull("Only admin can freeze listing", freezedListing);
 
 		listing = DtoToVoConverter.convert(super.listingList.get(5));
-		freezedListing = ListingFacade.instance().freezeListing(loggedInUser, listing.getId());
+		freezedListing = ListingFacade.instance().freezeListing(googleUserVO, listing.getId());
 		assertNull("Only admin can freeze listing", freezedListing);
 
 		listing = DtoToVoConverter.convert(super.listingList.get(6));
-		freezedListing = ListingFacade.instance().freezeListing(loggedInUser, listing.getId());
+		freezedListing = ListingFacade.instance().freezeListing(googleUserVO, listing.getId());
 		assertNull("Only admin can freeze listing", freezedListing);
 		
 		listing = DtoToVoConverter.convert(super.listingList.get(14));
-		freezedListing = ListingFacade.instance().freezeListing(loggedInUser, listing.getId());
+		freezedListing = ListingFacade.instance().freezeListing(googleUserVO, listing.getId());
 		assertNull("Only admin can freeze listing", freezedListing);
 
 		listing = DtoToVoConverter.convert(super.listingList.get(10));
@@ -456,34 +463,34 @@ public class ListingFacadeTest extends BaseFacadeTest {
 		assertNull("Only admin can freeze listing", freezedListing);
 
 		listing = DtoToVoConverter.convert(super.listingList.get(10));
-		freezedListing = ListingFacade.instance().freezeListing(loggedInUser, listing.getId());
+		freezedListing = ListingFacade.instance().freezeListing(googleUserVO, listing.getId());
 		assertNull("Only admin can freeze listing", freezedListing);
 	}
 	
 	@Test
 	public void testSendBackListingToOwner() {
 		ListingVO listing = DtoToVoConverter.convert(super.listingList.get(11));
-		ListingVO postedListing = ListingFacade.instance().sendBackListingToOwner(loggedInUser, listing.getId());
+		ListingVO postedListing = ListingFacade.instance().sendBackListingToOwner(googleUserVO, listing.getId());
 		assertNull("Withdrawn listing cannot be send back to owner", postedListing);
 		
 		listing = DtoToVoConverter.convert(super.listingList.get(8));
-		postedListing = ListingFacade.instance().sendBackListingToOwner(loggedInUser, listing.getId());
+		postedListing = ListingFacade.instance().sendBackListingToOwner(googleUserVO, listing.getId());
 		assertNull("Already posted listing cannot be send back to owner", postedListing);
 
 		listing = DtoToVoConverter.convert(super.listingList.get(12));
-		postedListing = ListingFacade.instance().sendBackListingToOwner(loggedInUser, listing.getId());
+		postedListing = ListingFacade.instance().sendBackListingToOwner(googleUserVO, listing.getId());
 		assertNull("Closed listing cannot be send back to owner", postedListing);
 
 		listing = DtoToVoConverter.convert(super.listingList.get(7));
-		postedListing = ListingFacade.instance().sendBackListingToOwner(loggedInUser, listing.getId());
+		postedListing = ListingFacade.instance().sendBackListingToOwner(googleUserVO, listing.getId());
 		assertNull("New listing cannot be send back to owner", postedListing);
 
 		listing = DtoToVoConverter.convert(super.listingList.get(5));
-		postedListing = ListingFacade.instance().sendBackListingToOwner(loggedInUser, listing.getId());
+		postedListing = ListingFacade.instance().sendBackListingToOwner(googleUserVO, listing.getId());
 		assertNull("Active listing cannot be send back by non admin", postedListing);
 
 		listing = DtoToVoConverter.convert(super.listingList.get(6));
-		postedListing = ListingFacade.instance().sendBackListingToOwner(loggedInUser, listing.getId());
+		postedListing = ListingFacade.instance().sendBackListingToOwner(googleUserVO, listing.getId());
 		assertNull("Active listing cannot be send back by non admin", postedListing);
 	}
 	
@@ -491,7 +498,7 @@ public class ListingFacadeTest extends BaseFacadeTest {
 	public void testGetUserListings() {
 		// logged in user the same as the one in query
 		ListPropertiesVO listProps = new ListPropertiesVO();
-		ListingListVO list = ListingFacade.instance().getUserListings(loggedInUser, loggedInUser.getId(), listProps);
+		ListingListVO list = ListingFacade.instance().getUserListings(googleUserVO, googleUserVO.getId(), listProps);
 		assertNotNull("Logged in user, so list should not be empty", list);
 		checkListingsReturned(list.getListings(), listingList.get(0), listingList.get(1), listingList.get(2), listingList.get(3),
 				listingList.get(4), listingList.get(7), listingList.get(8), listingList.get(9), listingList.get(10),
@@ -502,7 +509,7 @@ public class ListingFacadeTest extends BaseFacadeTest {
 
 		// logged in user different to user in query, but listings exist
 		listProps = new ListPropertiesVO();
-		list = ListingFacade.instance().getUserListings(loggedInUser, super.userList.get(1).getWebKey(), listProps);
+		list = ListingFacade.instance().getUserListings(googleUserVO, super.userList.get(1).getWebKey(), listProps);
 		assertNotNull("Logged in user, so list should not be empty", list);
 		checkListingsReturned(list.getListings(), listingList.get(5), listingList.get(6));
 		checkListingsNotReturned(list.getListings(), listingList.get(14)); // 14 is POSTED listing
@@ -523,7 +530,7 @@ public class ListingFacadeTest extends BaseFacadeTest {
 
 		// logged in user different to user in query, listings doesn't exist
 		listProps = new ListPropertiesVO();
-		list = ListingFacade.instance().getUserListings(loggedInUser, super.userList.get(0).getWebKey(), listProps);
+		list = ListingFacade.instance().getUserListings(googleUserVO, super.userList.get(0).getWebKey(), listProps);
 		assertNotNull("Logged in user, so list should not be empty", list);
 		assertEquals("We don't have any listings for that user in test data!", 0, list.getListings().size());
 		assertEquals("Number of result properly set", list.getListings().size(), list.getListingsProperties().getNumberOfResults());
@@ -534,7 +541,7 @@ public class ListingFacadeTest extends BaseFacadeTest {
 	public void testGetActiveListings() {
 		// logged in user
 		ListPropertiesVO listProps = new ListPropertiesVO();
-		ListingListVO list = ListingFacade.instance().getActiveListings(loggedInUser, listProps);
+		ListingListVO list = ListingFacade.instance().getLatestActiveListings(googleUserVO, listProps);
 		assertNotNull("Logged in user, so list should not be empty", list);
 		List<ListingVO> listings = list.getListings();
 		checkListingsReturned(listings, listingList.get(0), listingList.get(1), listingList.get(2), listingList.get(3),
@@ -548,7 +555,7 @@ public class ListingFacadeTest extends BaseFacadeTest {
 		
 		// logged in user null, but this should not affect returned list
 		listProps = new ListPropertiesVO();
-		list = ListingFacade.instance().getActiveListings(null, listProps);
+		list = ListingFacade.instance().getLatestActiveListings(null, listProps);
 		assertNotNull("Logged in user null, but returned object should not be null", list);
 		listings = list.getListings();
 		checkListingsReturned(listings, listingList.get(0), listingList.get(1), listingList.get(2), listingList.get(3),
@@ -565,7 +572,7 @@ public class ListingFacadeTest extends BaseFacadeTest {
 	public void testGetClosingListings() {
 		// logged in user
 		ListPropertiesVO listProps = new ListPropertiesVO();
-		ListingListVO list = ListingFacade.instance().getClosingListings(loggedInUser, listProps);
+		ListingListVO list = ListingFacade.instance().getClosingActiveListings(googleUserVO, listProps);
 		assertNotNull("Logged in user, so list should not be empty", list);
 		List<ListingVO> listings = list.getListings();
 		checkListingsReturned(listings, listingList.get(0), listingList.get(1), listingList.get(2), listingList.get(3),
@@ -579,7 +586,7 @@ public class ListingFacadeTest extends BaseFacadeTest {
 		
 		// logged in user null, but this should not affect returned list
 		listProps = new ListPropertiesVO();
-		list = ListingFacade.instance().getClosingListings(null, listProps);
+		list = ListingFacade.instance().getClosingActiveListings(null, listProps);
 		assertNotNull("Logged in user null, but returned object should not be null", list);
 		listings = list.getListings();
 		checkListingsReturned(listings, listingList.get(0), listingList.get(1), listingList.get(2), listingList.get(3),
@@ -590,5 +597,158 @@ public class ListingFacadeTest extends BaseFacadeTest {
 		//assertEquals("Total result properly set", list.getListings().size(), list.getListingsProperties().getTotalResults());
 		assertTrue("Sorted by listedon property", listings.get(0).getClosingOn().getTime() > listings.get(1).getClosingOn().getTime());
 		assertTrue("Sorted by listedon property", listings.get(1).getClosingOn().getTime() > listings.get(2).getClosingOn().getTime());
+	}
+	
+	@Test
+	public void testGetMostDiscussedActiveListings() {
+		fail("Not implemented");
+	}
+	
+	@Test
+	public void testGetMostPopularActiveListings() {
+		fail("Not implemented");
+	}
+	
+	@Test
+	public void testGetMostValuedActiveListings() {
+		fail("Not implemented");
+	}
+
+	@Test
+	public void testGetTopActiveListings() {
+		fail("Not implemented");
+	}
+	
+	@Test
+	public void testLatestActiveListings() {
+		fail("Not implemented");
+	}
+	
+	@Test
+	public void testListingKeywordSearch() {
+		fail("Not implemented");
+	}
+
+	@Test
+	public void testCalculateListingStatisticsWithEmptyBidsCommentsAndVotes() {
+		DateTime beforeTest = new DateTime();
+		ListingStats stats = ListingFacade.instance().calculateListingStatistics(listingList.get(0).id);
+		assertNotNull("Listing exists so stats should be created", stats);
+		assertEquals("Listing key should be set", listingList.get(0).id, (Long)stats.listing.getId());
+		assertTrue("Created time should be set", beforeTest.isBefore(new DateTime(stats.created)));
+		assertTrue("Modified time should be set", beforeTest.isBefore(new DateTime(stats.modified)));
+		assertEquals(listingList.get(0).mockData, stats.mockData);
+		assertEquals(listingList.get(0).state, stats.state);
+		assertEquals(listingList.get(0).listedOn, stats.previousValuationDate);
+		assertEquals(listingList.get(0).suggestedValuation, stats.previousValuation, 0.0001);
+		assertEquals(0, stats.numberOfBids);
+		assertEquals(0, stats.numberOfComments);
+		assertEquals(0, stats.numberOfVotes);
+		// no bids then suggested valuation should be used
+		assertEquals(listingList.get(0).suggestedValuation, stats.valuation, 0.0001);
+		// median is 0 when no bids
+		assertEquals(0.0, stats.medianValuation, 0.0001);
+		// score is: (votes+comments+bids+median)/timefactor
+		assertEquals(0.0, stats.score, 0.0001);
+
+		Date previousValuationDate = stats.created;
+		double previousValuation = stats.valuation;
+		
+		beforeTest = new DateTime();
+		// second calculation
+		stats = ListingFacade.instance().calculateListingStatistics(listingList.get(0).id);
+		assertNotNull("Listing exists so stats should be created", stats);
+		assertEquals("Listing key should be set", listingList.get(0).id, (Long)stats.listing.getId());
+		assertTrue("Created time should be set", beforeTest.isBefore(new DateTime(stats.created)));
+		assertTrue("Modified time should be set", beforeTest.isBefore(new DateTime(stats.modified)));
+		assertEquals(listingList.get(0).mockData, stats.mockData);
+		assertEquals(listingList.get(0).state, stats.state);
+		assertEquals(previousValuationDate, stats.previousValuationDate);
+		assertEquals(previousValuation, stats.previousValuation, 0.0001);
+		assertEquals(0, stats.numberOfBids);
+		assertEquals(0, stats.numberOfComments);
+		assertEquals(0, stats.numberOfVotes);
+		// no bids then suggested valuation should be used
+		assertEquals(listingList.get(0).suggestedValuation, stats.valuation, 0.0001);
+		// median is 0 when no bids
+		assertEquals(0.0, stats.medianValuation, 0.0001);
+		// score is: (votes+comments+bids+median)/timefactor
+		assertEquals(0.0, stats.score, 0.0001);
+
+		stats = ListingFacade.instance().calculateListingStatistics(1001);
+		assertNull("We should get null for non existing listing", stats);
+	}
+
+	@Test
+	public void testCalculateListingStatisticsWithData() {
+		fail("Needs to be done");
+	}
+
+	@Test
+	public void testGetListingStatistics() {
+		DateTime beforeTest = new DateTime();
+		ListingStats stats = ListingFacade.instance().getListingStatistics(listingList.get(0).id);
+		assertNotNull("Listing exists so stats should be created", stats);
+		assertEquals("Listing key should be set", listingList.get(0).id, (Long)stats.listing.getId());
+		assertTrue("Created time should be set", beforeTest.isBefore(new DateTime(stats.created)));
+		assertTrue("Modified time should be set", beforeTest.isBefore(new DateTime(stats.modified)));
+		assertEquals(listingList.get(0).mockData, stats.mockData);
+		assertEquals(listingList.get(0).state, stats.state);
+		assertEquals(listingList.get(0).listedOn, stats.previousValuationDate);
+		assertEquals(listingList.get(0).suggestedValuation, stats.previousValuation, 0.0001);
+		assertEquals(0, stats.numberOfBids);
+		assertEquals(0, stats.numberOfComments);
+		assertEquals(0, stats.numberOfVotes);
+		// no bids then suggested valuation should be used
+		assertEquals(listingList.get(0).suggestedValuation, stats.valuation, 0.0001);
+		// median is 0 when no bids
+		assertEquals(0.0, stats.medianValuation, 0.0001);
+		// score is: (votes+comments+bids+median)/timefactor
+		assertEquals(0.0, stats.score, 0.0001);
+
+		// this time statistics should not be calculated
+		ListingStats stats2 = ListingFacade.instance().getListingStatistics(listingList.get(0).id);
+		assertNotNull("Listing exists so stats should be created", stats2);
+		assertEquals("Listing key should be set", listingList.get(0).id, (Long)stats2.listing.getId());
+		assertEquals(stats.created, stats2.created);
+		assertEquals(stats.modified, stats2.modified);
+		assertEquals(listingList.get(0).mockData, stats.mockData);
+		assertEquals(listingList.get(0).state, stats.state);
+		assertEquals(stats.previousValuationDate, stats2.previousValuationDate);
+		assertEquals(stats.previousValuation, stats2.previousValuation, 0.0001);
+
+		stats = ListingFacade.instance().calculateListingStatistics(1001);
+		assertNull("We should get null for non existing listing", stats);
+	}
+
+	@Test
+	public void testUpdateAllListingStatistics() {
+		fail("Not implemented");
+	}
+
+	@Test
+	public void testCreateListingDocument() {
+		fail("Not implemented");
+	}
+
+	@Test
+	public void testGetListingDocument() {
+		fail("Not implemented");
+	}
+	
+	@Test
+	public void testGetAllListingDocuments() {
+		// getAllListingDocuments should work only for admins
+		fail("Not implemented");
+	}
+
+	@Test
+	public void testValueUpListing() {
+		fail("Not implemented");
+	}
+	
+	@Test
+	public void testPartialUpdateListing() {
+		fail("Not implemented");
 	}
 }

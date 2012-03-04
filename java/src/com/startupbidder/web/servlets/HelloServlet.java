@@ -27,6 +27,7 @@ import com.startupbidder.datamodel.Notification;
 import com.startupbidder.datamodel.SBUser;
 import com.startupbidder.vo.ListPropertiesVO;
 import com.startupbidder.vo.ListingDocumentVO;
+import com.startupbidder.vo.UserListVO;
 import com.startupbidder.vo.UserVO;
 import com.startupbidder.web.FrontController;
 import com.startupbidder.web.ListingFacade;
@@ -71,7 +72,6 @@ public class HelloServlet extends HttpServlet {
 //			}
 			out.println("<a href=\"/setup/\">Setup page</a></p>");
 			
-			SBUser topInvestor = datastore.getTopInvestor();
 			UserVO currentUser = UserMgmtFacade.instance().getLoggedInUserData(user);
 			if (currentUser == null) {
 				currentUser = UserMgmtFacade.instance().createUser(user);
@@ -80,6 +80,21 @@ public class HelloServlet extends HttpServlet {
 			listProperties.setMaxResults(1);
 			List<Listing> listings = datastore.getAllListings();
 			Listing topListing = listings != null ? listings.get(0) : new Listing();
+
+			List<SBUser> users = datastore.getAllUsers();
+			SBUser topInvestor = null;
+			int maxBids = 0;
+			for (SBUser userItem : users) {
+				List<Bid> bids = datastore.getBidsForUser(userItem.id);
+				if (bids.size() > maxBids) {
+					maxBids = bids.size();
+					topInvestor = userItem;
+				}
+			}
+			if (topInvestor == null) {
+				out.println("<p>Method getBidsForUser returned empty results for all users!</p>");
+			}
+
 			List<Bid> bids = datastore.getBidsForUser(topInvestor.id);
 			List<Listing> usersListings = datastore.getUserActiveListings(currentUser.toKeyId(), listProperties);
 			List<Comment> comments = datastore.getCommentsForListing(datastore.getMostDiscussedListings(listProperties).get(0).id);
@@ -220,7 +235,7 @@ public class HelloServlet extends HttpServlet {
 			for (Listing listing : usersListings) {
 				List<Bid> bidsForUserListings = datastore.getBidsForListing(listing.id);
 				for (Bid bid : bidsForUserListings) {
-					if (Bid.Status.ACTIVE.equals(bid.status)) {
+					if (Bid.Action.ACTIVATE.equals(bid.action)) {
 						out.println("<form method=\"POST\" action=\"/bid/accept/.json\"> <input type=\"hidden\" name=\"id\" value=\"" + bid.getWebKey() + "\"/><input type=\"submit\" value=\"Accept bid id '" + bid.getWebKey() + "' (should work)\"/></form>");
 						validBid = true;
 						break;
@@ -245,7 +260,7 @@ public class HelloServlet extends HttpServlet {
 			for (Listing listing : usersListings) {
 				List<Bid> bidsForUserListings = datastore.getBidsForListing(listing.id);
 				for (Bid bid : bidsForUserListings) {
-					if (Bid.Status.ACCEPTED.equals(bid.status)) {
+					if (Bid.Action.ACCEPT.equals(bid.action)) {
 						out.println("<form method=\"POST\" action=\"/bid/paid/.json\"> <input type=\"hidden\" name=\"id\" value=\"" + bid.getWebKey() + "\"/><input type=\"submit\" value=\"Mark bid id '" + bid.getWebKey() + "' as paid (should work)\"/></form>");
 						validBid = true;
 						break;

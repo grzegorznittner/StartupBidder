@@ -37,21 +37,27 @@ public class VoToModelConverter {
 		if (!StringUtils.isEmpty(bidVO.getId())) {
 			bid.id = new Key<Bid>(bidVO.getId()).getId();
 		}
-		bid.listing = new Key<Listing>(bidVO.getListing());
+		bid.listing = (Key<Listing>)stringToKey(bidVO.getListing());
+		bid.listingName = bidVO.getListingName();
 		if (!StringUtils.isEmpty(bidVO.getFundType())) {
 			bid.fundType = Bid.FundType.valueOf(StringUtils.upperCase(bidVO.getFundType()));
 		}
-		if (!StringUtils.isEmpty(bidVO.getStatus())) {
-			bid.status = Bid.Status.valueOf(StringUtils.upperCase(bidVO.getStatus()));
+		if (!StringUtils.isEmpty(bidVO.getAction())) {
+			bid.action = Bid.Action.valueOf(StringUtils.upperCase(bidVO.getAction()));
 		}
+		if (!StringUtils.isEmpty(bidVO.getActor())) {
+			bid.actor = Bid.Actor.valueOf(StringUtils.upperCase(bidVO.getActor()));
+		}
+		bid.expires = bidVO.getExpires();
 		bid.mockData = bidVO.isMockData();
 		bid.percentOfCompany = bidVO.getPercentOfCompany();
 		bid.interestRate = bidVO.getInterestRate();
 		bid.placed = bidVO.getPlaced();
-		bid.bidder = new Key<SBUser>(bidVO.getUser());
+		bid.bidder = (Key<SBUser>)stringToKey(bidVO.getUser());
+		bid.bidderName = bidVO.getUserName();
 		bid.value = bidVO.getValue();
 		bid.valuation = bidVO.getValuation();
-		bid.listingOwner = new Key<SBUser>(bidVO.getListingOwner());
+		bid.listingOwner = (Key<SBUser>)stringToKey(bidVO.getListingOwner());
 		bid.comment = bidVO.getComment();
 		return bid;
 	}
@@ -64,6 +70,7 @@ public class VoToModelConverter {
 		listing.mockData = listingVO.isMockData();
 		listing.closingOn = listingVO.getClosingOn();
 		listing.listedOn = listingVO.getListedOn();
+		listing.posted = listingVO.getPostedOn();
 		listing.name = listingVO.getName();
 		listing.owner = (Key<SBUser>)stringToKey(listingVO.getOwner());
 		listing.suggestedValuation = listingVO.getSuggestedValuation();
@@ -74,8 +81,10 @@ public class VoToModelConverter {
 		}
 		listing.presentationId = listingVO.getPresentationId() != null ? stringToKey(listingVO.getPresentationId()) : null;
 		listing.businessPlanId = listingVO.getBuinessPlanId() != null ? stringToKey(listingVO.getBuinessPlanId()) : null;
-		listing.financialsId = listingVO.getFinancialsId() != null ? stringToKey(listingVO.getFinancialsId()) : null;
+		listing.financialsId = 
+		listingVO.getFinancialsId() != null ? stringToKey(listingVO.getFinancialsId()) : null;
 		listing.summary = listingVO.getSummary();
+		listing.address = listingVO.getAddress();
 		return listing;
 	}
 
@@ -89,6 +98,7 @@ public class VoToModelConverter {
 		comment.listing = new Key<Listing>(commentVO.getListing());
 		comment.commentedOn = commentVO.getCommentedOn();
 		comment.user = new Key<SBUser>(commentVO.getUser());
+		comment.userNickName = commentVO.getUserName();
 		return comment;
 	}
 	

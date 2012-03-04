@@ -2,6 +2,8 @@ package test.com.startupbidder;
 
 import java.util.Date;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.joda.time.DateMidnight;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -56,15 +58,19 @@ public class EntityConverterTest {
 
 	@Test
 	public void testBid() throws EntityNotFoundException {
+		DateMidnight midnight = new DateMidnight();
+		
 		Bid bid = new Bid();
 		bid.fundType = Bid.FundType.NOTE;
 		bid.listing = new Key<Listing>(Listing.class, 1000L);
 		bid.percentOfCompany = 44;
 		bid.placed = new Date(100000);
-		bid.status = Bid.Status.WITHDRAWN;
+		bid.action = Bid.Action.ACTIVATE;
 		bid.bidder = new Key<SBUser>(SBUser.class, 1001L);
-		bid.valuation = 99999;
+		bid.bidderName = "Bidder name";
 		bid.value = 44444;
+		bid.expires = midnight.plusDays(3).toDate();
+		bid.placed = midnight.minusDays(1).toDate();
 		
 		System.out.println("Original: " + bid);
 		
@@ -73,7 +79,7 @@ public class EntityConverterTest {
 
 		System.out.println("Recreated: " + newBid);
 		
-		Assert.assertEquals(bid, newBid);
+		Assert.assertTrue(EqualsBuilder.reflectionEquals(bid, newBid));
 	}
 	
 	@Test
@@ -91,7 +97,7 @@ public class EntityConverterTest {
 
 		System.out.println("Recreated: " + newComment);
 		
-		Assert.assertEquals(comment, newComment);
+		Assert.assertTrue(EqualsBuilder.reflectionEquals(comment, newComment));
 	}
 	
 	@Test
@@ -114,7 +120,7 @@ public class EntityConverterTest {
 
 		System.out.println("Recreated: " + newListing);
 		
-		Assert.assertEquals(listing, newListing);
+		Assert.assertTrue(EqualsBuilder.reflectionEquals(listing, newListing));
 	}
 	
 	@Test
@@ -143,7 +149,7 @@ public class EntityConverterTest {
 
 		System.out.println("Recreated: " + newUser);
 		
-		Assert.assertEquals(user, newUser);
+		Assert.assertTrue(EqualsBuilder.reflectionEquals(user, newUser));
 	}
 	
 	@Test
@@ -161,7 +167,7 @@ public class EntityConverterTest {
 
 		System.out.println("Recreated: " + newVote);
 		
-		Assert.assertEquals(vote, newVote);
+		Assert.assertTrue(EqualsBuilder.reflectionEquals(vote, newVote));
 
 	}
 
@@ -179,7 +185,7 @@ public class EntityConverterTest {
 
 		System.out.println("Recreated: " + newRank);
 		
-		Assert.assertEquals(rank, newRank);
+		Assert.assertTrue(EqualsBuilder.reflectionEquals(rank, newRank));
 	}
 	
 	@Test
@@ -196,7 +202,7 @@ public class EntityConverterTest {
 
 		System.out.println("Recreated: " + newDoc);
 		
-		Assert.assertEquals(doc, newDoc);
+		Assert.assertTrue(EqualsBuilder.reflectionEquals(doc, newDoc));
 	}
 }
 

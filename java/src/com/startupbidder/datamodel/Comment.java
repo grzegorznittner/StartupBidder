@@ -36,7 +36,7 @@ public class Comment extends BaseObject {
 	@Indexed public Key<SBUser> user;
 	@Indexed public Date   commentedOn;
 	@Indexed public Key<Comment> parent;
-	public String profile;
+	public String userNickName;
 	public String comment;
 
 	public String getWebKey() {

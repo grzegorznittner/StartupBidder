@@ -34,6 +34,9 @@ public class BidVO extends BaseVO {
 	@JsonProperty("bid_date")
 	@JsonSerialize(using=DateSerializer.class)
 	private Date   placed;
+	@JsonProperty("expires_date")
+	@JsonSerialize(using=DateSerializer.class)
+	private Date   expires;
 	@JsonProperty("amount")
 	private int    value;
 	@JsonProperty("equity_pct")
@@ -47,9 +50,12 @@ public class BidVO extends BaseVO {
 	private int interestRate;
 	@JsonProperty("mockData")
 	private boolean mockData;
-	@JsonProperty("status")
+	@JsonProperty("action")
 	@JsonSerialize(using=LowecaseSerializer.class)
-	private String status;
+	private String action;
+	@JsonProperty("actor")
+	@JsonSerialize(using=LowecaseSerializer.class)
+	private String actor;
 	@JsonProperty("bid_note")
 	private String comment;
 	
@@ -151,14 +157,6 @@ public class BidVO extends BaseVO {
 		this.interestRate = interestRate;
 	}
 
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
-	}
-
 	public int getOrderNumber() {
 		return orderNumber;
 	}
@@ -183,15 +181,41 @@ public class BidVO extends BaseVO {
 		this.comment = comment;
 	}
 
+	public Date getExpires() {
+		return expires;
+	}
+
+	public void setExpires(Date expires) {
+		this.expires = expires;
+	}
+
+	public String getAction() {
+		return action;
+	}
+
+	public void setAction(String action) {
+		this.action = action;
+	}
+
+	public String getActor() {
+		return actor;
+	}
+
+	public void setActor(String actor) {
+		this.actor = actor;
+	}
+
 	@Override
 	public String toString() {
 		return "BidVO [orderNumber=" + orderNumber + ", id=" + id + ", user="
 				+ user + ", listingOwner=" + listingOwner + ", userName="
 				+ userName + ", listing=" + listing + ", listingName="
-				+ listingName + ", placed=" + placed + ", value=" + value
-				+ ", percentOfCompany=" + percentOfCompany + ", fundType="
-				+ fundType + ", valuation=" + valuation + ", interestRate="
-				+ interestRate + ", mockData=" + mockData + ", status="
-				+ status + ", comment=" + comment + "]";
+				+ listingName + ", placed=" + placed + ", expires=" + expires
+				+ ", value=" + value + ", percentOfCompany=" + percentOfCompany
+				+ ", fundType=" + fundType + ", valuation=" + valuation
+				+ ", interestRate=" + interestRate + ", mockData=" + mockData
+				+ ", action=" + action + ", actor=" + actor + ", comment="
+				+ comment + "]";
 	}
+
 }

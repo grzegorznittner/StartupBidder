@@ -78,7 +78,7 @@
         classpathref="project.classpath"
         debug="on">
     	<src path="${java-src}"/>
-    	<exclude name="**/test/**"/>
+    	<include name="com/**"/>
     </javac>
   	<mkdir dir="${test-classes}"/>
     <javac
@@ -86,7 +86,7 @@
         classpathref="project.classpath"
         debug="on">
     	<src path="${java-src}"/>
-    	<include name="**/test/**"/>
+    	<include name="test/**"/>
     </javac>
   </target>
   
@@ -109,8 +109,8 @@
 	<target name="runtest" description="Runs the test you specify on the command line with -Dtest="
 		depends="compile-java, ensure-test-name">
 		<mkdir dir="${test-reports}"/>
-	    <junit printsummary="withOutAndErr" fork="yes" > 
-	        <classpath refid="project.classpath" />
+	    <junit printsummary="withOutAndErr" fork="yes" >
+	    	<classpath refid="project.classpath" />
 	    	<classpath path="${test-classes}"/>
 	        <batchtest todir="${test-reports}">
 	        	<formatter type="xml"/>
@@ -129,12 +129,16 @@
 	
 	<target name="runtests" description="Runs all provided tests" depends="compile-java">
 		<mkdir dir="${test-reports}"/>
-	    <junit printsummary="withOutAndErr" fork="yes"> 
+		<delete includeEmptyDirs="true" failonerror="false">
+		   <fileset dir="${test-reports}" includes="**/*"/>
+		</delete>
+	    <junit printsummary="withOutAndErr" fork="yes">
 	        <classpath refid="project.classpath" />
 	    	<classpath path="${test-classes}"/>
-	        <formatter type="plain" usefile="true"/>
 	        <batchtest todir="${test-reports}">
+	        	<formatter type="xml"/>
 	            <fileset dir="${test-classes}">
+	            	<exclude name="**/*AbstractTest.class"/>
 	                <include name="**/*Test.class"/>
 	            </fileset>
 	        </batchtest>

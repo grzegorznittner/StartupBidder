@@ -8,8 +8,11 @@ public interface ErrorCodes {
 	int NOT_AN_ADMIN = 3;
 	
 	// validation
-	int ENTITY_VALIDATION = 10;
+	int ENTITY_VALIDATION = 100;
+	
+	// operation not allowed
+	int OPERATION_NOT_ALLOWED = 200;
 	
 	// general errors
-	int DATASTORE_ERROR = 100;
+	int DATASTORE_ERROR = 300;
 }

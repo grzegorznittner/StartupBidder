@@ -34,7 +34,7 @@ import com.startupbidder.vo.VoteVO;
 public class UserMgmtFacade {
 	private static final Logger log = Logger.getLogger(UserMgmtFacade.class.getName());
 	
-	public enum UserStatsUpdateReason {NEW_BID, NEW_COMMENT, NEW_LISTING, NEW_VOTE, NONE};
+	public enum UpdateReason {BID_UPDATE, NEW_BID, NEW_COMMENT, NEW_LISTING, NEW_VOTE, NONE};
 	
 	private static UserMgmtFacade instance;
 	
@@ -274,6 +274,7 @@ public class UserMgmtFacade {
 	public UserListVO getAllUsers(UserVO loggedInUser) {
 		UserListVO userList = new UserListVO();
 		if (loggedInUser == null || !loggedInUser.isAdmin()) {
+			log.warning("Only admins can retrieve all users list");
 			userList.setUsers(new ArrayList<UserVO>());
 			return userList;
 		}
@@ -362,7 +363,7 @@ public class UserMgmtFacade {
 		return StringUtils.notEmpty(nickName) && getDAO().checkNickName(nickName);
 	}
 	
-	public void scheduleUpdateOfUserStatistics(String userId, UserStatsUpdateReason reason) {
+	public void scheduleUpdateOfUserStatistics(String userId, UpdateReason reason) {
 		log.log(Level.INFO, "Scheduling user stats update for '" + userId + "', reason: " + reason);
 //		UserStats userStats = (UserStats)cache.get(USER_STATISTICS_KEY + userId);
 //		if (userStats != null)
@@ -426,7 +427,7 @@ public class UserMgmtFacade {
 		UserVO user =  DtoToVoConverter.convert(getDAO().valueUpUser(
 				BaseVO.toKeyId(userId), BaseVO.toKeyId(voter.getId())));
 		if (user != null) {
-			UserMgmtFacade.instance().scheduleUpdateOfUserStatistics(userId, UserMgmtFacade.UserStatsUpdateReason.NEW_VOTE);
+			UserMgmtFacade.instance().scheduleUpdateOfUserStatistics(userId, UserMgmtFacade.UpdateReason.NEW_VOTE);
 			ServiceFacade.instance().createNotification(user.getId(), user.getId(), Notification.Type.NEW_VOTE_FOR_YOU, "");
 			//UserMgmtFacade.instance().applyUserStatistics(voter, user);
 		}

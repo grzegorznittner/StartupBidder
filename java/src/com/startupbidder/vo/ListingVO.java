@@ -39,6 +39,9 @@ public class ListingVO extends BaseVO {
 	private int   medianValuation;
 	@JsonProperty("score")
 	private int   score;
+	@JsonProperty("posted_date")
+	@JsonSerialize(using=DateSerializer.class)
+	private Date  postedOn;
 	@JsonProperty("listing_date")
 	@JsonSerialize(using=DateSerializer.class)
 	private Date  listedOn;
@@ -54,6 +57,8 @@ public class ListingVO extends BaseVO {
 	private String owner;
 	@JsonProperty("profile_username")
 	private String ownerName;
+	@JsonProperty("address")
+	private String address;
 	@JsonProperty("num_comments")
 	private long numberOfComments;
 	@JsonProperty("num_bids")
@@ -286,23 +291,19 @@ public class ListingVO extends BaseVO {
 		this.score = score;
 	}
 
-	@Override
-	public String toString() {
-		return "ListingVO [orderNumber=" + orderNumber + ", id=" + id
-				+ ", name=" + name + ", suggestedAmount=" + suggestedAmount
-				+ ", suggestedPercentage=" + suggestedPercentage
-				+ ", suggestedValuation=" + suggestedValuation
-				+ ", previousValuation=" + previousValuation + ", valuation="
-				+ valuation + ", medianValuation=" + medianValuation
-				+ ", score=" + score + ", listedOn=" + listedOn
-				+ ", closingOn=" + closingOn + ", state=" + state
-				+ ", summary=" + summary + ", owner=" + owner + ", ownerName="
-				+ ownerName + ", numberOfComments=" + numberOfComments
-				+ ", numberOfBids=" + numberOfBids + ", numberOfVotes="
-				+ numberOfVotes + ", votable=" + votable + ", daysAgo="
-				+ daysAgo + ", daysLeft=" + daysLeft + ", mockData=" + mockData
-				+ ", buinessPlanId=" + buinessPlanId + ", presentationId="
-				+ presentationId + ", financialsId=" + financialsId + "]";
+	public Date getPostedOn() {
+		return postedOn;
 	}
 
+	public void setPostedOn(Date postedOn) {
+		this.postedOn = postedOn;
+	}
+
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
 }
