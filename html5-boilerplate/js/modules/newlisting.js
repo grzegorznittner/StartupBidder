@@ -7,7 +7,7 @@ function NewListingClass() {
             }
         },
         listing = {
-            title: 'Your Company Name',
+            title: '',
             median_valuation: 0,
             num_votes: 0,
             num_bids: 0,
@@ -17,15 +17,25 @@ function NewListingClass() {
             listing_date: DateClass.prototype.today(),
             closing_date: DateClass.prototype.todayPlus(30),
             status: 'new',
-            suggested_amt: 10000,
-            suggested_pct: 10,
-            suggested_val: 100000,
-            summary: 'Your Elevator Pitch.',
+            suggested_amt: 0,
+            suggested_pct: 0,
+            suggested_val: 0,
+            summary: 'Elevator pitch here.', // FIXME
             business_plan_url: '',
-            presentation_url: ''
+            presentation_url: '',
+            // FIXME: new props
+            category: '',
+            mantra: '',
+            website: '',
+            address: ''
         },
+        editableprops = ['title', 'suggested_amt', 'suggested_pct', 'summary', 'business_plan_url', 'presentation_url',
+            'category', 'mantra', 'website', 'address'],
+        companyTile = new CompanyTileClass({preview: true}),
         header = new HeaderClass();
     this.listing = listing;
+    this.editableprops = editableprops;
+    this.companyTile = companyTile;
     this.profile = virtualProfile.loggedin_profile;
     header.setLogin(virtualProfile);
 };
@@ -46,8 +56,31 @@ pl.implement(NewListingClass, {
         var self = this;
         if (json) {
             CollectionsClass.prototype.merge(this.listing, json);
-            pl('#newlistingmsg').html('Listing loaded');
+            this.displayCalculated();
         }
+    },
+    displayCalculated: function() {
+        this.displayPctComplete();
+        this.displaySummaryPreview();
+    },
+    displayPctComplete: function() {
+        var numprops = this.editableprops.length,
+            filledprops = 0,
+            pctcomplete,
+            i,
+            k;
+        for (i = 0; i < numprops; i++) {
+            k = this.editableprops[i];
+            if (this.listing[k]) {
+                filledprops++
+            }
+        } 
+        console.log('filled,num',filledprops,numprops);
+        pctcomplete = Math.floor(100 * filledprops / numprops);
+        pctwidth = Math.floor(626 * pctcomplete / 100) + 'px';
+        console.log(pctwidth);
+        pl('#boxsteppct').text(pctcomplete);
+        pl('#boxstepn').css({width: pctwidth});
     },
     display: function() {
         if (!this.bound) {
@@ -102,7 +135,7 @@ pl.implement(NewListingClass, {
         this.fields = [];
         for (i = 0; i < textFields.length; i++) {
             id = textFields[i];
-            field = new TextFieldClass(id, this.listing[id], this.getUpdater(), msgid);
+            field = new TextFieldClass(id, this.listing[id], this.getUpdater(id), msgid);
             if (id === 'address') {
                 field.fieldBase.setDisplayName('LOCATION');
             }
@@ -142,14 +175,22 @@ pl.implement(NewListingClass, {
             url = '/new-listing-qa-page.html?listing_id=' + lid + '&profile_id=' + pid + '&username=' + usr;
         document.location = url;
     },
-    getUpdater: function() {
+    displaySummaryPreview: function() {
+        this.companyTile.display(this.listing, 'summarypreview');
+    },
+    getUpdater: function(fieldName) {
         var self = this;
         return function(newdata, loadFunc, errorFunc, successFunc) {
             var data = { listing: self.listing },
-                ajax = new AjaxClass('/listing/update', '', null, successFunc, loadFunc, errorFunc),
-                field;
-            for (field in newdata) {
-                data.listing[field] = newdata[field];
+                pctSuccessFunc = function(json) {
+                    successFunc(json);
+                    self.displayCalculated();
+                }
+                ajax = new AjaxClass('/listing/update', '', null, pctSuccessFunc, loadFunc, errorFunc),
+                newval = newdata ? newdata.changeKey : undefined;
+            console.log('newdata',newdata);
+            if (newdata) {
+                data.listing[fieldName] = newdata.changeKey;
             }
             ajax.setPostData(data);
             ajax.call();

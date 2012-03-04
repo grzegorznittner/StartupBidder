@@ -248,7 +248,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 /*.companylistingbox { height: 180px; overflow: visible; } */
 .addcommentmsg { height: 20px; margin-left: 5px; }
 .addmessagemsg { height: 20px; margin-left: 5px; }
-.newlistingbasicsmsg { height: 40px; }
+.newlistingbasicsmsg { float: left; margin-right; 10px; padding-left: 116px; width: 420px; height: 60px; }
 .companylistingstats { position: absolute; bottom: 0; }
 .boxpanel p { margin: 5px 10px 10px 10px; text-indent: 0px; }
 .boxpanel dl dt { margin-left: 0; padding: 5px 10px 5px 10px; color: #333333; }
@@ -257,6 +257,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .boxsteptitle, .boxsteptext { padding-top: 5px; font-weight: bold; color: #333333; left: 0; text-align: center; position: absolute; }
 .boxsteptitle { padding-left: 5px; width: 617px; }
 .boxsteptext { width: 123px; } 
+.boxstepn { left: 0; position: absolute; height: 30px; width: 0px; background-color: #999999; }
 .boxstep1, .boxstep2, .boxstep3, .boxstep4, .boxstep5 { left: 0; position: absolute; height: 30px; width: 125px }
 .boxstep1 { left: 0; }
 .boxstep2 { left: 125px; }
@@ -339,6 +340,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 
 /* img */
 .companylogo { border-radius: 3px; height: 146px; width: 146px; }
+.noimage { background: url(../img/noimage_146x146.jpg); border-radius: 3px; }
 .einstein { background: url(../img/einstein.jpg); border-radius: 3px; }
 .wave { background: url(../img/wave.jpg); border-radius: 3px; height: 146px; width: 146px; }
 .upgrades { background: url(../img/upgrades.jpg); border-radius: 3px; }

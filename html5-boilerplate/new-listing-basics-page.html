@@ -56,23 +56,15 @@
 <div class="container">
 
 <!-- begin banner -->
-
 <div class="bannersmall">
     <span class="bannertextsmall span-16">NEW COMPANY WIZARD</span>
 </div>
 
 <div class="boxstep">
-    <span class="boxstep1 boxstepcomplete"></span>
-    <span class="boxstep2 "></span>
-    <span class="boxstep3 "></span>
-    <span class="boxstep4 "></span>
-    <span class="boxstep5 "></span>
-    <span class="boxsteptitle">YOU HAVE FILLED 20% OF YOUR COMPANY PROFILE</span>
+    <span class="boxstepn" id="boxstepn"></span>
+    <span class="boxsteptitle">YOU HAVE FILLED <span id="boxsteppct">0</span>% OF YOUR COMPANY PROFILE</span>
 </div>
-
 <!-- end banner -->
-
-
 
 <!-- left column -->
 <div class="span-16">
@@ -139,8 +131,7 @@ THE BUSINESS TO LIST IT ON THIS SITE.
             <span class="inputmap" id="addressmap"></span>
         </div>
         <div class="formitem clear">
-            <span class="inputlabel"></span>
-            <span class="inputfield newlistingbasicsmsg" id="infomsg">&nbsp;</span>
+            <span class="newlistingbasicsmsg" id="infomsg">&nbsp;</span>
         </div>
     </div>
 
@@ -159,29 +150,7 @@ THE BUSINESS TO LIST IT ON THIS SITE.
 <!-- right column -->
 <div class="span-8 last">
     <div class="boxtitle">SUMMARY PREVIEW</div>
-
-<span class="span-4 last">
-<div class="tile">
-    <a href="listing-page.html"><div class="tileimg wave"></div></a>
-    <div class="tiledays"></div>
-    <div class="tiledaystext">30 days left</div>
-    <div class="tiletype"></div>
-    <div class="tiletypetext">SOFTWARE</div>
-    <div class="tilepoints"></div>
-    <div class="tilepointstext">
-        <div class="tilevotes">1</div>
-        <div class="thumbup tilevoteimg"></div>
-        <div class="tileposted">2012-01-08</div>
-    </div>
-    <a href="listing-page.html">
-    <p class="tiledesc">
-        <span class="tilecompany">Kill Email Ltd.</span><br/>
-        <span class="tileloc">San Jose, CA, USA</span><br/>
-        <span class="tiledetails">Making email as obsolete as the paper memo through real-time collaborative chat.</span>
-    </p>
-    </a>
-</div>
-</span>
+    <div id="summarypreview"></div>
 
     <div class="boxtitle clear">TIPS</div>
     <div class="sidebox">
@@ -191,7 +160,6 @@ THE BUSINESS TO LIST IT ON THIS SITE.
         <p>WEBSITE - your company website, if you don&rsquo;t have one then a link to your facebook page or google profile</p>
         <p>LOCATION - e.g. San Jose, CA, USA, where your business is located, or has a nexus</p>
     </div>
-
 </div>
 <!-- end right column -->
 
