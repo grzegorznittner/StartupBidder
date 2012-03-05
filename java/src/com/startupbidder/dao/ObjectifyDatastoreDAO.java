@@ -542,8 +542,15 @@ public class ObjectifyDatastoreDAO {
 	}
 
 	public Listing createListing(Listing listing) {
-		getOfy().put(listing);
-		return listing;
+		SBUser owner = getOfy().get(listing.owner);
+		if (owner.editedListing == null) {
+			getOfy().put(listing);
+			owner.editedListing = new Key<Listing>(Listing.class, listing.id);
+			getOfy().put(owner);
+			return listing;
+		} else {
+			return getOfy().get(owner.editedListing);
+		}		
 	}
 
 	public Listing updateListing(Listing newListing) {

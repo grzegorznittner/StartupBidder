@@ -31,6 +31,7 @@ public class UserVO extends BaseVO {
 	@JsonProperty("phone") private String phone;
 	@JsonProperty("investor") private boolean accreditedInvestor;
 	@JsonProperty("notify_enabled") private boolean notifyEnabled;
+	@JsonProperty("edited_listing") private String editedListing;
 	@JsonProperty("joined_date")
 	@JsonSerialize(using=DateSerializer.class) private Date   joined;
 	@JsonProperty("last_login")
@@ -201,14 +202,21 @@ public class UserVO extends BaseVO {
 	public void setPhone(String phone) {
 		this.phone = phone;
 	}
+	public String getEditedListing() {
+		return editedListing;
+	}
+	public void setEditedListing(String editedListing) {
+		this.editedListing = editedListing;
+	}
 	@Override
 	public String toString() {
 		return "UserVO [orderNumber=" + orderNumber + ", id=" + id
 				+ ", nickname=" + nickname + ", name=" + name + ", email="
 				+ email + ", location=" + location + ", phone=" + phone
 				+ ", accreditedInvestor=" + accreditedInvestor
-				+ ", notifyEnabled=" + notifyEnabled + ", joined=" + joined
-				+ ", lastLoggedIn=" + lastLoggedIn + ", modified=" + modified
+				+ ", notifyEnabled=" + notifyEnabled + ", editedListing="
+				+ editedListing + ", joined=" + joined + ", lastLoggedIn="
+				+ lastLoggedIn + ", modified=" + modified
 				+ ", numberOfListings=" + numberOfListings + ", numberOfBids="
 				+ numberOfBids + ", numberOfAcceptedBids="
 				+ numberOfAcceptedBids + ", numberOfFundedBids="

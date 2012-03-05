@@ -58,13 +58,6 @@ public class AdminListingFacadeTest extends AdminFacadeAbstractTest {
 	}
 	
 	@Test
-	public void testCreateNotValidListing() {
-		ListingVO listing = new ListingVO();
-		ListingVO newListing = ListingFacade.instance().createListing(null, listing);
-		assertNull("Listing with empty owner", newListing);
-	}
-	
-	@Test
 	public void testGetNonValidListing() {
 		ListingAndUserVO returned = ListingFacade.instance().getListing(admin, "fakekey"); //new Key<Listing>(Listing.class, 1000).getString());
 		assertNull("Key was fake so listing should be null", returned);

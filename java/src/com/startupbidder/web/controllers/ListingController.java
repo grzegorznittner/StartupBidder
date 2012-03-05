@@ -62,7 +62,7 @@ public class ListingController extends ModelDrivenController {
 			}
 		} else if ("POST".equalsIgnoreCase(request.getMethod())) {
 			if ("create".equalsIgnoreCase(getCommand(1))) {
-				return create(request);
+				return startEditing(request);
 			}else if ("update".equalsIgnoreCase(getCommand(1))) {
 				return update(request);
 			} else if("up".equalsIgnoreCase(getCommand(1))) {
@@ -88,25 +88,15 @@ public class ListingController extends ModelDrivenController {
 
     // PUT /listing/create
     // POST /listing/create
-	private HttpHeaders create(HttpServletRequest request) throws JsonParseException, JsonMappingException, IOException {
+	private HttpHeaders startEditing(HttpServletRequest request) throws JsonParseException, JsonMappingException, IOException {
 		HttpHeaders headers = new HttpHeadersImpl("create");
 		
-		ObjectMapper mapper = new ObjectMapper();
-		log.log(Level.INFO, "Parameters: " + request.getParameterMap());
-		String listingString = request.getParameter("listing");
-		if (!StringUtils.isEmpty(listingString)) {
-			ListingVO listing = mapper.readValue(listingString, ListingVO.class);
-			log.log(Level.INFO, "Creating listing: " + listing);
-			listing = ListingFacade.instance().createListing(getLoggedInUser(), listing);
-			if (listing == null) {
-				log.log(Level.WARNING, "Listing not created!");
-				headers.setStatus(500);
-			}
-			model = listing;
-		} else {
-			log.log(Level.WARNING, "Parameter 'listing' is empty!");
+		ListingVO listing = ListingFacade.instance().createListing(getLoggedInUser());
+		if (listing == null) {
+			log.log(Level.WARNING, "Listing not created!");
 			headers.setStatus(500);
 		}
+		model = listing;
 
 		return headers;
 	}

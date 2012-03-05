@@ -18,6 +18,7 @@ public class UserBasicVO extends BaseVO {
 	@JsonProperty("name") private String name;
 	@JsonProperty("email") private String email;
 	@JsonProperty("investor") private boolean accreditedInvestor;
+	@JsonProperty("edited_listing") private String editedListing;
 	@JsonProperty("num_notifications") private long numberOfNotifications;
 	@JsonProperty("votable") private boolean votable;
 	@JsonProperty("mockData") private boolean mockData;
@@ -29,6 +30,7 @@ public class UserBasicVO extends BaseVO {
 		this.name = user.getName();
 		this.email = user.getEmail();
 		this.accreditedInvestor = user.isAccreditedInvestor();
+		this.editedListing = user.getEditedListing();
 		this.numberOfNotifications = user.getNumberOfNotifications();
 		this.votable = user.isVotable();
 		this.mockData = user.isMockData();
@@ -81,12 +83,18 @@ public class UserBasicVO extends BaseVO {
 	public void setMockData(boolean mockData) {
 		this.mockData = mockData;
 	}
+	public String getEditedListing() {
+		return editedListing;
+	}
+	public void setEditedListing(String editedListing) {
+		this.editedListing = editedListing;
+	}
 	@Override
 	public String toString() {
 		return "UserBasicVO [id=" + id + ", nickname=" + nickname + ", name="
 				+ name + ", email=" + email + ", accreditedInvestor="
-				+ accreditedInvestor + ", numberOfNotifications="
-				+ numberOfNotifications + ", votable=" + votable
-				+ ", mockData=" + mockData + "]";
+				+ accreditedInvestor + ", editedListing=" + editedListing
+				+ ", numberOfNotifications=" + numberOfNotifications
+				+ ", votable=" + votable + ", mockData=" + mockData + "]";
 	}
 }

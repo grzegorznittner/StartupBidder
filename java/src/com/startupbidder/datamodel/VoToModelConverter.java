@@ -68,6 +68,7 @@ public class VoToModelConverter {
 			listing.id = new Key<Listing>(listingVO.getId()).getId();
 		}
 		listing.mockData = listingVO.isMockData();
+		listing.created = listingVO.getCreated();
 		listing.closingOn = listingVO.getClosingOn();
 		listing.listedOn = listingVO.getListedOn();
 		listing.posted = listingVO.getPostedOn();
@@ -147,6 +148,7 @@ public class VoToModelConverter {
 		user.notifyEnabled = userVO.isNotifyEnabled();
 		user.phone = userVO.getPhone();
 		user.location = userVO.getLocation();
+		user.editedListing = stringToKey(userVO.getEditedListing());
 		if (!StringUtils.isEmpty(userVO.getStatus())) {
 			user.status = SBUser.Status.valueOf(StringUtils.upperCase(userVO.getStatus()));
 		}

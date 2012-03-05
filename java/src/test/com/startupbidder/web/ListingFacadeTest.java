@@ -63,90 +63,37 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 	
 	@Test
 	public void testCreateListing() {
-		ListingVO listing = new ListingVO();
-		listing.setName("New listing");
-		listing.setSuggestedAmount(30000);
-		listing.setSuggestedPercentage(35);
-		
-		ListingVO newListing = ListingFacade.instance().createListing(googleUserVO, listing);
+		ListingVO newListing = ListingFacade.instance().createListing(googleUserVO);
 		assertNotNull("Listing not created", newListing);
-		assertEquals("Name not stored", "New listing", newListing.getName());
+		assertNull("Name should be empty", newListing.getName());
 		assertNull("Summary should be null", newListing.getSummary());
 		assertEquals("Proper owner set", googleUserVO.getId(), newListing.getOwner());
 		assertEquals("State is not NEW", Listing.State.NEW.toString(), newListing.getState());
-		assertEquals("Suggested amount not stored properly", 30000, newListing.getSuggestedAmount());
-		assertEquals("Suggested percentage not stored properly", 35, newListing.getSuggestedPercentage());
-		assertEquals("Suggested valuation not calculated properly", 30000 * 100 / 35, newListing.getSuggestedValuation());
+		assertNotNull("Created date should be set", newListing.getCreated());
 		//assertNotNull("Modified date should be set", newListing.getModified());
+		assertEquals("Edited listing for logged in user should be set", newListing.getId(), googleUserVO.getEditedListing());
 		
-		listing = new ListingVO();
-		listing.setName("New listing");
-		listing.setSummary("Summary");
-		listing.setSuggestedAmount(30000);
-		listing.setSuggestedPercentage(35);
-		listing.setSuggestedValuation(5);
-		
-		// overwriting valuation if provided
-		newListing = ListingFacade.instance().createListing(googleUserVO, listing);
+		ListingVO newListing2 = ListingFacade.instance().createListing(googleUserVO);
 		assertNotNull("Listing not created", newListing);
-		assertEquals("Name not stored", "New listing", newListing.getName());
-		assertEquals("Summary should be set", "Summary", newListing.getSummary());
-		assertEquals("State is not NEW", Listing.State.NEW.toString(), newListing.getState());
-		assertEquals("Proper owner set", googleUserVO.getId(), newListing.getOwner());
-		assertEquals("Suggested amount not stored properly", 30000, newListing.getSuggestedAmount());
-		assertEquals("Suggested percentage not stored properly", 35, newListing.getSuggestedPercentage());
-		assertEquals("Suggested valuation not calculated properly", 30000 * 100 / 35, newListing.getSuggestedValuation());
+		assertEquals("Only one edited listing allowed", newListing.getId(), newListing2.getId());
+		
+		ListingVO newListingForAdmin = ListingFacade.instance().createListing(admin);
+		assertNotNull("Listing not created", newListingForAdmin);
+		assertNull("Name should be empty", newListingForAdmin.getName());
+		assertNull("Summary should be null", newListingForAdmin.getSummary());
+		assertEquals("Proper owner set", admin.getId(), newListingForAdmin.getOwner());
+		assertEquals("State is not NEW", Listing.State.NEW.toString(), newListingForAdmin.getState());
+		assertNotNull("Created date should be set", newListingForAdmin.getCreated());
 		//assertNotNull("Modified date should be set", newListing.getModified());
+		assertEquals("Edited listing for logged in user should be set", newListingForAdmin.getId(), admin.getEditedListing());
 		
-		listing = new ListingVO();
-		// empty listing
-		newListing = ListingFacade.instance().createListing(googleUserVO, listing);
-		assertNotNull("Listing not created", newListing);
-		assertNull("Name not provided", newListing.getName());
-		assertNull("Summary not provided", newListing.getSummary());
-		assertEquals("State is not NEW", Listing.State.NEW.toString(), newListing.getState());
-		assertEquals("Proper owner set", googleUserVO.getId(), newListing.getOwner());
-		assertEquals("Suggested amount should be 0", 0, newListing.getSuggestedAmount());
-		assertEquals("Suggested percentage should be 0", 0, newListing.getSuggestedPercentage());
-		assertEquals("Suggested valuation should be 0", 0, newListing.getSuggestedValuation());
-		//assertNotNull("Modified date should be set", newListing.getModified());
-
-		// we allow for creating listing with wrong values, we verify everything before activation
-		listing = new ListingVO();
-		listing.setSuggestedAmount(10);
-		newListing = ListingFacade.instance().createListing(googleUserVO, listing);
-		assertNotNull("Suggested valuation too low but listing should be created", newListing);
-
-		listing = new ListingVO();
-		listing.setSuggestedPercentage(-10);
-		newListing = ListingFacade.instance().createListing(googleUserVO, listing);
-		assertNotNull("Suggested percentage wrong but listing should be created", newListing);
-		
-		listing = new ListingVO();
-		listing.setSuggestedValuation(-30);
-		newListing = ListingFacade.instance().createListing(googleUserVO, listing);
-		assertNotNull("Suggested percentage wrong but listing should be created", newListing);
-	}
-	
-	@Test
-	public void testLongStringForNewListing() {
-		ListingVO listing = new ListingVO();
-		String name = RandomStringUtils.randomAlphabetic(512);
-		listing.setName(name);
-		ListingVO newListing = ListingFacade.instance().createListing(googleUserVO, listing);
-		assertEquals("Long name stored", name, newListing.getName());
-		
-		listing = new ListingVO();
-		String summary = RandomStringUtils.randomAlphabetic(8196);
-		listing.setSummary(summary);
-		newListing = ListingFacade.instance().createListing(googleUserVO, listing);
-		assertEquals("Long summary stored", summary, newListing.getSummary());
+		assertNotSame("New listing for admin should be different", newListing.getId(), newListingForAdmin.getId());
 	}
 	
 	@Test
 	public void testCreateNotValidListing() {
 		ListingVO listing = new ListingVO();
-		ListingVO newListing = ListingFacade.instance().createListing(null, listing);
+		ListingVO newListing = ListingFacade.instance().createListing(null);
 		assertNull("Listing with empty owner", newListing);
 	}
 	

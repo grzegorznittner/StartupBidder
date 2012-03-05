@@ -19,72 +19,38 @@ import com.startupbidder.util.LowecaseSerializer;
 		fieldVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE)
 @JsonIgnoreProperties(ignoreUnknown=true)
 public class ListingVO extends BaseVO {
-	@JsonProperty("num")
-	private int orderNumber;
-	@JsonProperty("listing_id")
-	private String id;
-	@JsonProperty("title")
-	private String name;
-	@JsonProperty("suggested_amt")
-	private int suggestedAmount;
-	@JsonProperty("suggested_pct")
-	private int suggestedPercentage;
-	@JsonProperty("suggested_val")
-	private int suggestedValuation;
-	@JsonProperty("previous_val")
-	private int previousValuation;
-	@JsonProperty("valuation")
-	private int   valuation;
-	@JsonProperty("median_valuation")
-	private int   medianValuation;
-	@JsonProperty("score")
-	private int   score;
-	@JsonProperty("posted_date")
-	@JsonSerialize(using=DateSerializer.class)
-	private Date  postedOn;
-	@JsonProperty("listing_date")
-	@JsonSerialize(using=DateSerializer.class)
-	private Date  listedOn;
-	@JsonProperty("closing_date")
-	@JsonSerialize(using=DateSerializer.class)
-	private Date  closingOn;
-	@JsonProperty("status")
-	@JsonSerialize(using=LowecaseSerializer.class)
-	private String state;
-	@JsonProperty("mantra")
-	private String mantra;
-	@JsonProperty("summary")
-	private String summary;
-	@JsonProperty("website")
-	private String website;
-	@JsonProperty("category")
-	private String category;
-	@JsonProperty("profile_id")
-	private String owner;
-	@JsonProperty("profile_username")
-	private String ownerName;
-	@JsonProperty("address")
-	private String address;
-	@JsonProperty("num_comments")
-	private long numberOfComments;
-	@JsonProperty("num_bids")
-	private long numberOfBids;
-	@JsonProperty("num_votes")
-	private long numberOfVotes;
-	@JsonProperty("votable")
-	private boolean votable;
-	@JsonProperty("days_ago")
-	private int daysAgo;
-	@JsonProperty("days_left")
-	private int daysLeft;
-	@JsonProperty("mockData")
-	private boolean mockData;
-	@JsonProperty("business_plan_id")
-	private String buinessPlanId;
-	@JsonProperty("presentation_id")
-	private String presentationId;
-	@JsonProperty("financials_id")
-	private String financialsId;
+	@JsonProperty("num") private int orderNumber;
+	@JsonProperty("listing_id")	private String id;
+	@JsonProperty("title") private String name;
+	@JsonProperty("suggested_amt") private int suggestedAmount;
+	@JsonProperty("suggested_pct") private int suggestedPercentage;
+	@JsonProperty("suggested_val") private int suggestedValuation;
+	@JsonProperty("previous_val") private int previousValuation;
+	@JsonProperty("valuation") private int   valuation;
+	@JsonProperty("median_valuation") private int   medianValuation;
+	@JsonProperty("score") private int   score;
+	@JsonProperty("created_date") @JsonSerialize(using=DateSerializer.class) private Date  created;
+	@JsonProperty("posted_date") @JsonSerialize(using=DateSerializer.class) private Date  postedOn;
+	@JsonProperty("listing_date") @JsonSerialize(using=DateSerializer.class) private Date  listedOn;
+	@JsonProperty("closing_date") @JsonSerialize(using=DateSerializer.class) private Date  closingOn;
+	@JsonProperty("status")	@JsonSerialize(using=LowecaseSerializer.class) private String state;
+	@JsonProperty("mantra")	private String mantra;
+	@JsonProperty("summary") private String summary;
+	@JsonProperty("website") private String website;
+	@JsonProperty("category") private String category;
+	@JsonProperty("profile_id") private String owner;
+	@JsonProperty("profile_username") private String ownerName;
+	@JsonProperty("address") private String address;
+	@JsonProperty("num_comments") private long numberOfComments;
+	@JsonProperty("num_bids") private long numberOfBids;
+	@JsonProperty("num_votes") private long numberOfVotes;
+	@JsonProperty("votable") private boolean votable;
+	@JsonProperty("days_ago") private int daysAgo;
+	@JsonProperty("days_left") private int daysLeft;
+	@JsonProperty("mockData") private boolean mockData;
+	@JsonProperty("business_plan_id") private String buinessPlanId;
+	@JsonProperty("presentation_id") private String presentationId;
+	@JsonProperty("financials_id") private String financialsId;
 	
 	public ListingVO() {
 	}
@@ -295,6 +261,14 @@ public class ListingVO extends BaseVO {
 
 	public void setScore(int score) {
 		this.score = score;
+	}
+
+	public Date getCreated() {
+		return created;
+	}
+
+	public void setCreated(Date created) {
+		this.created = created;
 	}
 
 	public Date getPostedOn() {

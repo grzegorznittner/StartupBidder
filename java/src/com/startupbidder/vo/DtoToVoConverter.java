@@ -62,6 +62,7 @@ public class DtoToVoConverter {
 		ListingVO listing = new ListingVO();
 		listing.setId(new Key<Listing>(Listing.class, listingDTO.id).getString());
 		listing.setMockData(listingDTO.mockData);
+		listing.setCreated(listingDTO.created);
 		listing.setClosingOn(listingDTO.closingOn);
 		listing.setListedOn(listingDTO.listedOn);
 		listing.setPostedOn(listingDTO.posted);
@@ -142,6 +143,7 @@ public class DtoToVoConverter {
 		user.setLocation(userDTO.location);
 		user.setStatus(userDTO.status.toString());
 		user.setNotifyEnabled(userDTO.notifyEnabled);
+		user.setEditedListing(keyToString(userDTO.editedListing));
 		//user.set(userDTO.notifyEnabled);
 		return user;
 	}

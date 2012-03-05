@@ -77,16 +77,18 @@ public class ListingFacade {
 	 * Sets loggedin user as the owner of the listing.
 	 * Sets listing's state to NEW.
 	 */
-	public ListingVO createListing(UserVO loggedInUser, ListingVO listingVO) {
+	public ListingVO createListing(UserVO loggedInUser) {
 		if (loggedInUser == null) {
-			log.warning("Only logged in user can create listing");
+			log.log(Level.WARNING, "Only logged in user can create listing", new Exception("Not logged in"));
 			return null;
 		}
-		Listing l = VoToModelConverter.convert(listingVO);
+		Listing l = new Listing();
 		l.state = Listing.State.NEW;
 		l.owner = new Key<SBUser>(loggedInUser.getId());
-		
+		l.created = new Date();
 		ListingVO newListing = DtoToVoConverter.convert(getDAO().createListing(l));
+		loggedInUser.setEditedListing(newListing.getId());
+		
 		// at that stage listing is not yet active so there is no point of updating statistics
 		applyListingData(loggedInUser, newListing);
 		return newListing;

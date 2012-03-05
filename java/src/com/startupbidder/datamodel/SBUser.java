@@ -40,6 +40,8 @@ public class SBUser extends BaseObject implements Monitor.Monitored {
 	@Indexed public boolean investor;
 	@Indexed public Status status;
 	
+	public Key<Listing> editedListing;
+	
 	public String openId;
 
 	public String name;
