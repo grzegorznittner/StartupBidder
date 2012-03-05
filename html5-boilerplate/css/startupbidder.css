@@ -160,7 +160,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .inputlabel, .widelabel, .formlabel, .smallformlabel, .inputcaptcha, .inputlink, .inputimgbutton, .formcol1, .formcol1fourth, .formimg, .medialabel
     { margin-right: 10px; }
 .inputfield { float: left; margin-right: 10px; }
-.inputmap { float: left; margin-right: 10px; width: 420px; height: 315px; }
+.inputmap { float: left; margin-right: 10px; width: 431px; height: 315px; }
 .fulllabel { margin-left: 5px; color: #49515a; }
 .inputlabel, .formlabel, .smallformlabel { text-align: right; width: 106px; color: #49515a; }
 .bidformlabel { float: left; margin-right: 10px; width: 146px; color: #49515a; }

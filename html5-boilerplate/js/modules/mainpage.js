@@ -23,16 +23,15 @@ pl.implement(ListClass, {
 
 function CategoryListClass() {}
 pl.implement(CategoryListClass, {
+    load: function() {
+        var ajax = new AjaxClass('/listing/categories', 'categoriesmsg', this.storeList);
+        ajax.call();
+    },
     storeList: function(json) {
-        var categories, lc;
-        categories = json && json.categories && json.categories.length > 0
-            ? json.categories
-            : ['biotech','chemical','electronics','energy','environmental','financial','hardware','healthcare','industrial',
-                'internet','manufacturing','media','medical','pharma','retail','software','telecom','other'];
-        if (!categories) {
-            pl('#categorydivcol1').html('<li class="notice">No categories found</li>');
-            pl('#categorydivcol2').html('');
-            return;
+        var categories = [], k, v;
+        for (k in json) {
+            v = json[k];
+            categories.push(v);
         }
         categories.sort();
         lc = new ListClass();
@@ -62,20 +61,19 @@ pl.implement(LocationListClass, {
 function MainPageClass() {};
 pl.implement(MainPageClass,{
     loadPage: function() {
-        var completeFunc, basePage;
-        completeFunc = function(json) {
+        var completeFunc = function(json) {
             var header, companyList, categoryList, locationList;
             header = new HeaderClass();
             companyList = new CompanyListClass();
-            categoryList = new CategoryListClass();
             locationList = new LocationListClass();
             header.setLogin(json);
             companyList.storeList(json,4);
-            categoryList.storeList(json);
             locationList.storeList(json);
-        };
-        basePage = new BaseCompanyListPageClass();
+        },
+        basePage = new BaseCompanyListPageClass(),
+        categoryList = new CategoryListClass();
         basePage.loadPage(completeFunc);
+        categoryList.load();
     }
 });
 
