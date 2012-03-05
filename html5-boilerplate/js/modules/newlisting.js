@@ -20,24 +20,55 @@ function NewListingClass() {
             suggested_amt: 0,
             suggested_pct: 0,
             suggested_val: 0,
-            summary: 'Elevator pitch here.', // FIXME
+            summary: 'Elevator pitch here.',
             business_plan_url: '',
             presentation_url: '',
-            // FIXME: new props
             category: '',
-            mantra: '',
+            mantra: '', // FIXME: missing
             website: '',
             address: ''
         },
         editableprops = ['title', 'suggested_amt', 'suggested_pct', 'summary', 'business_plan_url', 'presentation_url',
             'category', 'mantra', 'website', 'address'],
         companyTile = new CompanyTileClass({preview: true}),
+        categoryCompleteFunc = function(json) {
+            var makeOptions = function(json) {
+                    var options = [],
+                        sorter = function(a, b) {
+                            return a[0] - b[0];
+                        },
+                        cat,
+                        catid;
+                    for (catid in json) {
+                        cat = json[catid];
+                        options.push([cat, catid]);
+                    }
+                    return options.sort(sorter);
+                },
+                options = makeOptions(json),
+                makeHtml = function(options) {
+                    var i, option, cat, catid,
+                        html = '<option value="0">Select...</option>\n';
+                    for (i = 0; i < options.length; i++) {
+                        option = options[i];
+                        cat = option[0];
+                        catid = option[1];
+                        html += '<option value="' + catid + '">' + cat + '</option>\n';
+                    }
+                    return html;
+                },
+                optionsHtml = makeHtml(options);
+                companyTile.setCategories(json);
+            pl('#category').html(optionsHtml);
+        },
+        ajax = new AjaxClass('/listing/categories', 'newlistingmsg', categoryCompleteFunc);
         header = new HeaderClass();
     this.listing = listing;
     this.editableprops = editableprops;
     this.companyTile = companyTile;
     this.profile = virtualProfile.loggedin_profile;
     header.setLogin(virtualProfile);
+    ajax.call();
 };
 pl.implement(NewListingClass, {
     load: function() {
@@ -63,6 +94,16 @@ pl.implement(NewListingClass, {
         this.displayPctComplete();
         this.displaySummaryPreview();
     },
+    genDisplayCalculatedIfValid: function(field) {
+        var self = this;
+        return function(result, val) {
+            var id = field.fieldBase.id;
+            if (result === 0) {
+                self.listing[id] = val;
+                self.displayCalculated();
+            }
+        };
+    },
     displayPctComplete: function() {
         var numprops = this.editableprops.length,
             filledprops = 0,
@@ -75,10 +116,8 @@ pl.implement(NewListingClass, {
                 filledprops++
             }
         } 
-        console.log('filled,num',filledprops,numprops);
         pctcomplete = Math.floor(100 * filledprops / numprops);
         pctwidth = Math.floor(626 * pctcomplete / 100) + 'px';
-        console.log(pctwidth);
         pl('#boxsteppct').text(pctcomplete);
         pl('#boxstepn').css({width: pctwidth});
     },
@@ -139,7 +178,13 @@ pl.implement(NewListingClass, {
             if (id === 'address') {
                 field.fieldBase.setDisplayName('LOCATION');
             }
-            field.fieldBase.addValidator(field.fieldBase.validator.isNotEmpty);
+            if (id === 'category') {
+                field.fieldBase.addValidator(field.fieldBase.validator.isSelected);
+            }
+            else {
+                field.fieldBase.addValidator(field.fieldBase.validator.isNotEmpty);
+            }
+            field.fieldBase.validator.postValidator = self.genDisplayCalculatedIfValid(field);
             field.bindEvents();
             this.fields.push(field);
         } 
@@ -188,7 +233,6 @@ pl.implement(NewListingClass, {
                 }
                 ajax = new AjaxClass('/listing/update', '', null, pctSuccessFunc, loadFunc, errorFunc),
                 newval = newdata ? newdata.changeKey : undefined;
-            console.log('newdata',newdata);
             if (newdata) {
                 data.listing[fieldName] = newdata.changeKey;
             }

@@ -69,15 +69,12 @@ pl.implement(ListingClass, {
         }
     },
     displayInfobox: function() {
-        var legalTypes, url;
-        legalTypes = [ 'C Corp', 'S Corp', 'LLC', 'Proprietorship', 'Partnership', 'Limited', 'PLC', 'GmbH', 'SA', 'SRL', 'KK' ];
+        var url;
         this.category = this.category || (Math.floor(Math.random()*2) ? 'INTERNET' : 'SOFTWARE'); // FIXME
-        this.legaltype = this.legaltype || legalTypes[Math.floor(Math.random() * legalTypes.length)];
         this.websiteurl = this.websiteurl || 'http://wave.google.com'; // FIXME
         url = new URLClass(this.websiteurl);
         this.domainname = url.getHostname();
         pl('#category').html(this.category);
-        pl('#legaltype').html(this.legaltype);
         pl('#listing_date').html(this.listing_date ? this.dateobj.format(this.listing_date) : 'not posted');
         pl('#websitelink').attr({href: this.websiteurl});
         pl('#domainname').html(this.domainname);

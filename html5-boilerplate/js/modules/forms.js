@@ -64,7 +64,7 @@ pl.implement(EmailCheckClass, {
 
 function ValidatorClass() {
     this.tests = [];
-    this.postValidator = function(result) {};
+    this.postValidator = function(result, val) {};
 }
 pl.implement(ValidatorClass, {
     isNotEmpty: function(str) {
@@ -74,6 +74,15 @@ pl.implement(ValidatorClass, {
         }
         else {
             return "Value cannot be empty.";
+        }
+    },
+    isSelected: function(val) {
+        var str = '' + val;
+        if (str !== '0') {
+            return 0;
+        }
+        else {
+            return "Selection must be made.";
         }
     },
     isEmail: function(str) {
@@ -157,18 +166,21 @@ pl.implement(ValidatorClass, {
         this.tests.push(test);
     },
     validate: function(str) {
-        var i, result;
-        result = 0;
+        var i,
+            result = 0,
+            val = str;
         if (this.preValidateTransform) {
-            str = this.preValidateTransform(str);
+            val = this.preValidateTransform(val);
         }
         for (i = 0; i < this.tests.length; i++) {
-            result = this.tests[i](str);
+            result = this.tests[i](val);
             if (result !== 0) {
                 break;
             }
         }
-        this.postValidator(result);
+        if (this.postValidator) {
+            this.postValidator(result, val);
+        }
         return result;
     }
 });
