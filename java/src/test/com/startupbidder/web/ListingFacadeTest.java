@@ -70,7 +70,7 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 		assertEquals("Proper owner set", googleUserVO.getId(), newListing.getOwner());
 		assertEquals("State is not NEW", Listing.State.NEW.toString(), newListing.getState());
 		assertNotNull("Created date should be set", newListing.getCreated());
-		//assertNotNull("Modified date should be set", newListing.getModified());
+		assertNotNull("Modified date should be set", newListing.getModified());
 		assertEquals("Edited listing for logged in user should be set", newListing.getId(), googleUserVO.getEditedListing());
 		
 		ListingVO newListing2 = ListingFacade.instance().createListing(googleUserVO);
@@ -84,7 +84,7 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 		assertEquals("Proper owner set", admin.getId(), newListingForAdmin.getOwner());
 		assertEquals("State is not NEW", Listing.State.NEW.toString(), newListingForAdmin.getState());
 		assertNotNull("Created date should be set", newListingForAdmin.getCreated());
-		//assertNotNull("Modified date should be set", newListing.getModified());
+		assertNotNull("Modified date should be set", newListing.getModified());
 		assertEquals("Edited listing for logged in user should be set", newListingForAdmin.getId(), admin.getEditedListing());
 		
 		assertNotSame("New listing for admin should be different", newListing.getId(), newListingForAdmin.getId());

@@ -79,6 +79,18 @@ public class Listing extends BaseObject implements Monitor.Monitored {
 	public Key<ListingDoc> presentationId;
 	public Key<ListingDoc> financialsId;
 	
+	/** Answers for standard questions */
+	public String answer1;
+	public String answer2;
+	public String answer3;
+	public String answer4;
+	public String answer5;
+	public String answer6;
+	public String answer7;
+	public String answer8;
+	public String answer9;
+	public String answer10;
+	
 	public String getWebKey() {
 		return new Key<Listing>(Listing.class, id).getString();
 	}

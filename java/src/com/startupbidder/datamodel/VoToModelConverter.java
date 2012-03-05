@@ -68,6 +68,7 @@ public class VoToModelConverter {
 			listing.id = new Key<Listing>(listingVO.getId()).getId();
 		}
 		listing.mockData = listingVO.isMockData();
+		listing.modified = listingVO.getModified();
 		listing.created = listingVO.getCreated();
 		listing.closingOn = listingVO.getClosingOn();
 		listing.listedOn = listingVO.getListedOn();
@@ -88,6 +89,17 @@ public class VoToModelConverter {
 		listing.website = listingVO.getWebsite();
 		listing.category = listingVO.getCategory();
 		listing.address = listingVO.getAddress();
+		
+		listing.answer1 = listingVO.getAnswer1();
+		listing.answer2 = listingVO.getAnswer2();
+		listing.answer3 = listingVO.getAnswer3();
+		listing.answer4 = listingVO.getAnswer4();
+		listing.answer5 = listingVO.getAnswer5();
+		listing.answer6 = listingVO.getAnswer6();
+		listing.answer7 = listingVO.getAnswer7();
+		listing.answer8 = listingVO.getAnswer8();
+		listing.answer9 = listingVO.getAnswer9();
+		listing.answer10 = listingVO.getAnswer10();
 		return listing;
 	}
 

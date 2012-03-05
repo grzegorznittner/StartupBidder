@@ -62,6 +62,7 @@ public class DtoToVoConverter {
 		ListingVO listing = new ListingVO();
 		listing.setId(new Key<Listing>(Listing.class, listingDTO.id).getString());
 		listing.setMockData(listingDTO.mockData);
+		listing.setModified(listingDTO.modified);
 		listing.setCreated(listingDTO.created);
 		listing.setClosingOn(listingDTO.closingOn);
 		listing.setListedOn(listingDTO.listedOn);
@@ -80,6 +81,17 @@ public class DtoToVoConverter {
 		listing.setAddress(listingDTO.address);
 		listing.setWebsite(listingDTO.website);
 		listing.setCategory(listingDTO.category);
+		
+		listing.setAnswer1(listingDTO.answer1);
+		listing.setAnswer2(listingDTO.answer2);
+		listing.setAnswer3(listingDTO.answer3);
+		listing.setAnswer4(listingDTO.answer4);
+		listing.setAnswer5(listingDTO.answer5);
+		listing.setAnswer6(listingDTO.answer6);
+		listing.setAnswer7(listingDTO.answer7);
+		listing.setAnswer8(listingDTO.answer8);
+		listing.setAnswer9(listingDTO.answer9);
+		listing.setAnswer10(listingDTO.answer10);
 		return listing;
 	}
 	
