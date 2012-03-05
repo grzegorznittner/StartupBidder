@@ -94,6 +94,16 @@ pl.implement(NewListingClass, {
         this.displayPctComplete();
         this.displaySummaryPreview();
     },
+    genDisplayCalculatedIfValid: function(field) {
+        var self = this;
+        return function(result, val) {
+            var id = field.fieldBase.id;
+            if (result === 0) {
+                self.listing[id] = val;
+                self.displayCalculated();
+            }
+        };
+    },
     displayPctComplete: function() {
         var numprops = this.editableprops.length,
             filledprops = 0,
@@ -106,10 +116,8 @@ pl.implement(NewListingClass, {
                 filledprops++
             }
         } 
-        console.log('filled,num',filledprops,numprops);
         pctcomplete = Math.floor(100 * filledprops / numprops);
         pctwidth = Math.floor(626 * pctcomplete / 100) + 'px';
-        console.log(pctwidth);
         pl('#boxsteppct').text(pctcomplete);
         pl('#boxstepn').css({width: pctwidth});
     },
@@ -176,6 +184,7 @@ pl.implement(NewListingClass, {
             else {
                 field.fieldBase.addValidator(field.fieldBase.validator.isNotEmpty);
             }
+            field.fieldBase.validator.postValidator = self.genDisplayCalculatedIfValid(field);
             field.bindEvents();
             this.fields.push(field);
         } 
@@ -224,7 +233,6 @@ pl.implement(NewListingClass, {
                 }
                 ajax = new AjaxClass('/listing/update', '', null, pctSuccessFunc, loadFunc, errorFunc),
                 newval = newdata ? newdata.changeKey : undefined;
-            console.log('newdata',newdata);
             if (newdata) {
                 data.listing[fieldName] = newdata.changeKey;
             }

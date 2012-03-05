@@ -8,7 +8,7 @@ pl.implement(CompanyTileClass, {
             category = this.options.preview ? (json.category || '') : (json.category || Math.floor(Math.random()*2) ? 'INTERNET' : 'SOFTWARE'); // FIXME
         this.imgClass = this.options.preview ? 'noimage' : testimages[Math.floor(Math.random()*testimages.length)];
         this.daysText = json.days_left ? (json.days_left === 0 ? 'closing today!' : (json.days_left < 0 ? 'bidding closed' : json.days_left + ' days left')) : 'closed for bidding';
-        this.categoryText = this.categories && this.categories[category] ? this.categories[category] : '';
+        this.categoryText = this.categories && this.categories[category] ? this.categories[category].toUpperCase() : '';
         this.votes = json.num_votes || 1;
         this.posted = listingdate;
         this.name = this.options.preview ? json.title : (json.title || 'Listed Company');
@@ -17,7 +17,6 @@ pl.implement(CompanyTileClass, {
         this.url = '/company-page.html?id=' + json.listing_id;
     },
     makeHtml: function(lastClass) {
-        console.log('category', this.category);
         var openAnchor = !this.options.preview ? '<a href="' + this.url + '">' : '',
             closeAnchor = !this.options.preview ? '</a>' : '',
             html = '\
