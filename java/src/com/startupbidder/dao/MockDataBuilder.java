@@ -434,6 +434,8 @@ public class MockDataBuilder {
 		DateMidnight midnight = new DateMidnight(bp.listedOn.getTime());
 		bp.closingOn = midnight.plus(Days.days(30)).toDate();
 		bp.summary = "Executive summary for <b>MisLead</b>";
+		bp.mantra = "Misleading is our mantra";
+		bp.address = "Lohstr. 53, 49074 Osnabrück, Deutschland";
 		listings.add(bp);
 	
 		bp = new Listing();
@@ -457,6 +459,8 @@ public class MockDataBuilder {
 				"training needs, from beginner to advanced. Once again, this is the kind of children's" +
 				" business that can be operated as an independent business venture or operated in" +
 				" conjunction with a community program or community center.";
+		bp.mantra = "We'll train even lammers";
+		bp.address = "Fellenoord 310, 5611 ZD Eindhoven, Nederland";
 		listings.add(bp);
 		johnsListing = bp;
 
@@ -486,6 +490,8 @@ public class MockDataBuilder {
 				" is the best way to keep operating overheads minimized and potentially increases the" +
 				" size of the target market by expanding the service area, due to the fact the business" +
 				" operates on a mobile format.";
+		bp.mantra = "If it could be upgraded we'll do that";
+		bp.address = "10 Rue de Passy, 75016 Paris, France";
 		listings.add(bp);
 		gregsListing = bp;
 
@@ -506,6 +512,8 @@ public class MockDataBuilder {
 				"Yet, startups still spring up hoping to disrupt the incumbents. " +
 				"Cuil flopped. Wolfram Alpha is irrelevant. Powerset, which was a semantic" + 
 				" search engine was bailed out by Microsoft, which acquired it.";
+		bp.mantra = "Search is our life";
+		bp.address = "Calle del Pintor Cabrera, 29, 03003 Alicante, España";
 		listings.add(bp);
 
 		bp = new Listing();
@@ -526,6 +534,8 @@ public class MockDataBuilder {
 				"the information. It doesn't work. The latest to try is Hunch and Get Glue." +
 				"Hunch is pivoting towards non-consumer-facing white label business. " +
 				"Get Glue has had some success of late, but it's hardly a breakout business.";
+		bp.mantra = "Don't try that at home";
+		bp.address = "Via Amerigo Vespucci, 10, 80142 Napoli, Italia";
 		listings.add(bp);
 
 		bp = new Listing();
@@ -546,6 +556,8 @@ public class MockDataBuilder {
 				" idea. You build a community, there's a baked in advertising group with local " +
 				"businesses, and classifieds. But, it appears to be too niche to scale into a big" +
 				" business.";
+		bp.mantra = "Better than free newspaper";
+		bp.address = "45 L Street Southwest, Washington D.C., DC 20024";
 		listings.add(bp);
 
 		bp = new Listing();
@@ -565,6 +577,8 @@ public class MockDataBuilder {
 				"story it would only cost a nickel! Or on Tumblr, if you want to tip a blogger" +
 				" or pay for a small design you could with ease. So far, these micropayment" +
 				" plans have not worked.";
+		bp.mantra = "We can trasfer even a penny";
+		bp.address = "671 John F Kennedy Boulevard West, Bayonne, NJ 07002";
 		listings.add(bp);
 
 		bp = new Listing();
@@ -584,6 +598,8 @@ public class MockDataBuilder {
 				"not much of a business. The latest high profile flop in this arena is " +
 				"Google Wave. It was supposed to change email forever. It was going to " +
 				"displace email. Didn't happen.";
+		bp.mantra = "Is it possible?";
+		bp.address = "273 High Street, Perth Amboy, NJ 08861";
 		listings.add(bp);
 
 		bp = new Listing();
@@ -604,6 +620,8 @@ public class MockDataBuilder {
 				"against it. But, Tesla has sold fewer than 2,000 cars since it was founded in 2003. " +
 				"It's far from certain it will succeed. Even when its next car comes out, Nissan " +
 				"could be making a luxury electric car that competes with Tesla.";
+		bp.mantra = "We always do better";
+		bp.address = "1501 East 22nd Street, Los Angeles, CA 90011";
 		listings.add(bp);
 		
 		return listings;

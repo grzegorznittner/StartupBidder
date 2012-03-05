@@ -51,8 +51,8 @@ public class ListingVO extends BaseVO {
 	@JsonProperty("status")
 	@JsonSerialize(using=LowecaseSerializer.class)
 	private String state;
-	@JsonProperty("description")
-	private String description;
+	@JsonProperty("mantra")
+	private String mantra;
 	@JsonProperty("summary")
 	private String summary;
 	@JsonProperty("website")
@@ -313,12 +313,12 @@ public class ListingVO extends BaseVO {
 		this.address = address;
 	}
 
-	public String getDescription() {
-		return description;
+	public String getMantra() {
+		return mantra;
 	}
 
-	public void setDescription(String description) {
-		this.description = description;
+	public void setMantra(String mantra) {
+		this.mantra = mantra;
 	}
 
 	public String getWebsite() {

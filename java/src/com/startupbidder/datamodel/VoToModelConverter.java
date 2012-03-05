@@ -83,9 +83,9 @@ public class VoToModelConverter {
 		listing.businessPlanId = listingVO.getBuinessPlanId() != null ? stringToKey(listingVO.getBuinessPlanId()) : null;
 		listing.financialsId = listingVO.getFinancialsId() != null ? stringToKey(listingVO.getFinancialsId()) : null;
 		listing.summary = listingVO.getSummary();
-		listing.description = listingVO.getDescription();
+		listing.mantra = listingVO.getMantra();
 		listing.website = listingVO.getWebsite();
-		listing.category = listingVO.getCategory() != null ? stringToKey(listingVO.getCategory()) : null;
+		listing.category = listingVO.getCategory();
 		listing.address = listingVO.getAddress();
 		return listing;
 	}

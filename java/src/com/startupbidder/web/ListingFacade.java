@@ -613,7 +613,7 @@ public class ListingFacade {
 		
 		Map<String, String> result = new LinkedHashMap<String, String>();
 		for (Category cat : categories) {
-			result.put(cat.id.toString(), cat.name);
+			result.put(cat.name, cat.name);
 		}
 		return result;
 	}
