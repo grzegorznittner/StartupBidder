@@ -177,6 +177,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .inputselect, .inputmedselect, .inputcheckbox, .narrowinputtext, .inputwidewithvalidate, .inputmedtext
     { font-size: 14px !important; }
 .inputwidetext { width: 420px !important; }
+.categoryselect { padding: 5px; width: 432px !important; }
 .inputmedtext { width: 230px !important; }
 .inputmedselect { width: 242px !important; }
 .messagetextarea { color: white !important; background: #49515a !important; font-weight: normal; height: 60px; width: 540px !important; }
@@ -248,7 +249,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 /*.companylistingbox { height: 180px; overflow: visible; } */
 .addcommentmsg { height: 20px; margin-left: 5px; }
 .addmessagemsg { height: 20px; margin-left: 5px; }
-.newlistingbasicsmsg { float: left; margin-right; 10px; padding-left: 116px; width: 420px; height: 60px; }
+.newlistingbasicsmsg { float: left; margin-right; 10px; padding-left: 116px; width: 420px; height: 85px; }
 .companylistingstats { position: absolute; bottom: 0; }
 .boxpanel p { margin: 5px 10px 10px 10px; text-indent: 0px; }
 .boxpanel dl dt { margin-left: 0; padding: 5px 10px 5px 10px; color: #333333; }

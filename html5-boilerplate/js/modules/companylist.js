@@ -4,10 +4,11 @@ function CompanyTileClass(options) {
 pl.implement(CompanyTileClass, {
     setValues: function(json) {
         var testimages = ['einstein','wave','upgrades','telecom','socialrec','gkleen'], // FIXME
-            listingdate = json.listing_date ? DateClass.prototype.format(json.listing_date) : 'not posted';
+            listingdate = json.listing_date ? DateClass.prototype.format(json.listing_date) : 'not posted',
+            category = this.options.preview ? (json.category || '') : (json.category || Math.floor(Math.random()*2) ? 'INTERNET' : 'SOFTWARE'); // FIXME
         this.imgClass = this.options.preview ? 'noimage' : testimages[Math.floor(Math.random()*testimages.length)];
         this.daysText = json.days_left ? (json.days_left === 0 ? 'closing today!' : (json.days_left < 0 ? 'bidding closed' : json.days_left + ' days left')) : 'closed for bidding';
-        this.category = this.options.preview ? json.category : (json.category || Math.floor(Math.random()*2) ? 'INTERNET' : 'SOFTWARE'); // FIXME
+        this.categoryText = this.categories && this.categories[category] ? this.categories[category] : '';
         this.votes = json.num_votes || 1;
         this.posted = listingdate;
         this.name = this.options.preview ? json.title : (json.title || 'Listed Company');
@@ -16,6 +17,7 @@ pl.implement(CompanyTileClass, {
         this.url = '/company-page.html?id=' + json.listing_id;
     },
     makeHtml: function(lastClass) {
+        console.log('category', this.category);
         var openAnchor = !this.options.preview ? '<a href="' + this.url + '">' : '',
             closeAnchor = !this.options.preview ? '</a>' : '',
             html = '\
@@ -27,7 +29,7 @@ pl.implement(CompanyTileClass, {
 <div class="tiledays"></div>\
 <div class="tiledaystext">' + this.daysText + '</div>\
 <div class="tiletype"></div>\
-<div class="tiletypetext">' + this.category + '</div>\
+<div class="tiletypetext">' + this.categoryText + '</div>\
 <div class="tilepoints"></div>\
 <div class="tilepointstext">\
     <div class="tilevotes">' + this.votes + '</div>\
@@ -49,6 +51,9 @@ pl.implement(CompanyTileClass, {
     display: function(listing, divid) {
         this.setValues(listing);
         pl('#'+divid).html(this.makeHtml('last'));
+    },
+    setCategories: function(json) { // FIXME
+        this.categories = json;
     }
 });
 

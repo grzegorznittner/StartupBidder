@@ -76,6 +76,18 @@ pl.implement(ValidatorClass, {
             return "Value cannot be empty.";
         }
     },
+    isSelected: function(val) {
+        var str = '' + val;
+        console.log('val',str);
+        if (str !== '0') {
+            console.log('good');
+            return 0;
+        }
+        else {
+            console.log('bad');
+            return "Selection must be made.";
+        }
+    },
     isEmail: function(str) {
         var checker = new EmailCheckClass();
         return checker.emailCheck(str);
@@ -168,7 +180,9 @@ pl.implement(ValidatorClass, {
                 break;
             }
         }
-        this.postValidator(result);
+        if (this.postValidator) {
+            this.postValidator(result);
+        }
         return result;
     }
 });
