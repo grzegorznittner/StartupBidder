@@ -7,7 +7,7 @@ pl.implement(CompanyTileClass, {
             listingdate = json.listing_date ? DateClass.prototype.format(json.listing_date) : 'not posted',
             category = this.options.preview ? (json.category || '') : (json.category || Math.floor(Math.random()*2) ? 'INTERNET' : 'SOFTWARE'); // FIXME
         this.imgClass = this.options.preview ? 'noimage' : testimages[Math.floor(Math.random()*testimages.length)];
-        this.daysText = json.days_left ? (json.days_left === 0 ? 'closing today!' : (json.days_left < 0 ? 'bidding closed' : json.days_left + ' days left')) : 'closed for bidding';
+        this.daysText = json.days_left ? (json.days_left === 0 ? 'closing today!' : (json.days_left < 0 ? 'bidding closed' : json.days_left + ' days left')) : 'not taking bids';
         this.categoryText = this.categories && this.categories[category] ? this.categories[category].toUpperCase() : '';
         this.votes = json.num_votes || 1;
         this.posted = listingdate;

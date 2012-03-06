@@ -3,31 +3,11 @@ function NewListingClass() {
         virtualProfile = { // FIXME
             loggedin_profile: {
                 profile_id: queryString.vars.profile_id,
-                username: queryString.vars.username
+                username: queryString.vars.username,
+                edited_listing: queryString.vars.listing_id
             }
         },
-        listing = {
-            title: '',
-            median_valuation: 0,
-            num_votes: 0,
-            num_bids: 0,
-            num_comments: 0,
-            profile_id: queryString.vars.profile_id,
-            profile_username: queryString.vars.username,
-            listing_date: DateClass.prototype.today(),
-            closing_date: DateClass.prototype.todayPlus(30),
-            status: 'new',
-            suggested_amt: 0,
-            suggested_pct: 0,
-            suggested_val: 0,
-            summary: 'Elevator pitch here.',
-            business_plan_url: '',
-            presentation_url: '',
-            category: '',
-            mantra: '', // FIXME: missing
-            website: '',
-            address: ''
-        },
+        listing = {},
         editableprops = ['title', 'suggested_amt', 'suggested_pct', 'summary', 'business_plan_url', 'presentation_url',
             'category', 'mantra', 'website', 'address'],
         companyTile = new CompanyTileClass({preview: true}),
@@ -72,16 +52,31 @@ function NewListingClass() {
 };
 pl.implement(NewListingClass, {
     load: function() {
-        var self = this,
-            completeFunc = function(json) {
-                //var header = new HeaderClass();
-                // header.setLogin(json); // FIXME
-                self.store(json);
-                self.display();
-            },
-            ajax = new AjaxClass('/listings/create', 'newlistingmsg', completeFunc);
-        ajax.setPostData({listing: this.listing});
+        if (this.profile.edited_listing) {
+            this.loadExisting();
+        }
+        else {
+            this.create();
+        }
+    },
+    create: function() {
+        var ajax = new AjaxClass('/listings/create', 'newlistingmsg', this.loadComplete);
+        ajax.setPost();
         ajax.call();
+    },
+    loadExisting: function() {
+        var url = '/listings/get/' + this.profile.edited_listing,
+            ajax = new AjaxClass(url, 'newlistingmsg', this.makeLoadComplete());
+        ajax.call();
+    },
+    makeLoadComplete: function() {
+        var self = this;
+        return function(json) {
+            //var header = new HeaderClass();
+            // header.setLogin(json); // FIXME
+            self.store(json);
+            self.display();
+        };
     },
     store: function(json) {
         var self = this;
@@ -165,7 +160,6 @@ pl.implement(NewListingClass, {
         });
     },
     bindEvents: function() {
-        // FIXME: add fields: category, mantra, address, website
         var self = this,
             textFields = ['title', 'category', 'mantra', 'address', 'website'],
             msgid = 'infomsg',

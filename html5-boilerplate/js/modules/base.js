@@ -175,37 +175,41 @@ pl.implement(AjaxClass, {
 function HeaderClass() {}
 pl.implement(HeaderClass, {
     setLogin: function(json) {
-        var profile, username, newlistingurl;
-        if (json) {
-            if (json.loggedin_profile) {
-                profile = json.loggedin_profile;
-            }
-            else if (json.profile_id) {
-                profile = json;
-            }
-            else {
-                profile = null;
-            }
+        var profile = null;
+        if (json && json.loggedin_profile) {
+            profile = json.loggedin_profile;
         }
-        else {
-            profile = null;
+        else if (json && json.profile_id) {
+            profile = json;
         }
+        this.setHeader(profile);
+    },
+    setHeader: function(profile) {
         if (profile) {
-            username = profile.username || 'You';
-            newlistingurl = 'new-listing-basics-page.html?profile_id=' + profile.profile_id + '&username=' + username;
-            pl('#postlink').attr('href', newlistingurl);
-            pl('#posttext').html('Post');
-            pl('#loginlink').attr('href', 'profile-page.html');
-            pl('#logintext').html(username);
-            pl('#logout').show();
+            this.setLoggedIn(profile);
         }
         else {
-            pl('#postlink').attr('href', 'login-page.html');
-            pl('#posttext').html('Login to Post');
-            pl('#loginlink').attr('href', 'login-page.html');
-            pl('#logintext').html('Login or Sign Up');
-            pl('#logout').hide();
+            this.setLoggedOut();
         }
+    },
+    setLoggedIn: function(profile) {
+        var username = profile.username || 'You',
+            listing_id = profile.edited_listing,
+            listing_param = listing_id ? '&listing_id=' + listing_id : '',
+            posttext = listing_id ? 'Review Submission' : 'Submit New',
+            newlistingurl = 'new-listing-basics-page.html?profile_id=' + profile.profile_id + '&username=' + username + listing_param;
+        pl('#postlink').attr('href', newlistingurl);
+        pl('#posttext').html(posttext);
+        pl('#loginlink').attr('href', 'profile-page.html');
+        pl('#logintext').html(username);
+        pl('#logout').show();
+    },
+    setLoggedOut: function() {
+        pl('#postlink').attr('href', 'login-page.html');
+        pl('#posttext').html('Submit New');
+        pl('#loginlink').attr('href', 'login-page.html');
+        pl('#logintext').html('Login or Sign Up');
+        pl('#logout').hide();
     }
 });
 
