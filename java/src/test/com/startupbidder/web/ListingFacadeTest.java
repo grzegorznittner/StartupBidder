@@ -63,37 +63,37 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 	
 	@Test
 	public void testCreateListing() {
-		ListingVO newListing = ListingFacade.instance().createListing(googleUserVO);
-		assertNotNull("Listing not created", newListing);
-		assertNull("Name should be empty", newListing.getName());
-		assertNull("Summary should be null", newListing.getSummary());
-		assertEquals("Proper owner set", googleUserVO.getId(), newListing.getOwner());
-		assertEquals("State is not NEW", Listing.State.NEW.toString(), newListing.getState());
-		assertNotNull("Created date should be set", newListing.getCreated());
-		assertNotNull("Modified date should be set", newListing.getModified());
-		assertEquals("Edited listing for logged in user should be set", newListing.getId(), googleUserVO.getEditedListing());
+		ListingAndUserVO newListing = ListingFacade.instance().createListing(googleUserVO);
+		assertNotNull("Listing not created", newListing.getListing());
+		assertNull("Name should be empty", newListing.getListing().getName());
+		assertNull("Summary should be null", newListing.getListing().getSummary());
+		assertEquals("Proper owner set", googleUserVO.getId(), newListing.getListing().getOwner());
+		assertEquals("State is not NEW", Listing.State.NEW.toString(), newListing.getListing().getState());
+		assertNotNull("Created date should be set", newListing.getListing().getCreated());
+		assertNotNull("Modified date should be set", newListing.getListing().getModified());
+		assertEquals("Edited listing for logged in user should be set", newListing.getListing().getId(), googleUserVO.getEditedListing());
 		
-		ListingVO newListing2 = ListingFacade.instance().createListing(googleUserVO);
-		assertNotNull("Listing not created", newListing);
-		assertEquals("Only one edited listing allowed", newListing.getId(), newListing2.getId());
+		ListingAndUserVO newListing2 = ListingFacade.instance().createListing(googleUserVO);
+		assertNotNull("Listing not created", newListing2.getListing());
+		assertEquals("Only one edited listing allowed", newListing.getListing().getId(), newListing2.getListing().getId());
 		
-		ListingVO newListingForAdmin = ListingFacade.instance().createListing(admin);
-		assertNotNull("Listing not created", newListingForAdmin);
-		assertNull("Name should be empty", newListingForAdmin.getName());
-		assertNull("Summary should be null", newListingForAdmin.getSummary());
-		assertEquals("Proper owner set", admin.getId(), newListingForAdmin.getOwner());
-		assertEquals("State is not NEW", Listing.State.NEW.toString(), newListingForAdmin.getState());
-		assertNotNull("Created date should be set", newListingForAdmin.getCreated());
-		assertNotNull("Modified date should be set", newListing.getModified());
-		assertEquals("Edited listing for logged in user should be set", newListingForAdmin.getId(), admin.getEditedListing());
+		ListingAndUserVO newListingForAdmin = ListingFacade.instance().createListing(admin);
+		assertNotNull("Listing not created", newListingForAdmin.getListing());
+		assertNull("Name should be empty", newListingForAdmin.getListing().getName());
+		assertNull("Summary should be null", newListingForAdmin.getListing().getSummary());
+		assertEquals("Proper owner set", admin.getId(), newListingForAdmin.getListing().getOwner());
+		assertEquals("State is not NEW", Listing.State.NEW.toString(), newListingForAdmin.getListing().getState());
+		assertNotNull("Created date should be set", newListingForAdmin.getListing().getCreated());
+		assertNotNull("Modified date should be set", newListing.getListing().getModified());
+		assertEquals("Edited listing for logged in user should be set", newListingForAdmin.getListing().getId(), admin.getEditedListing());
 		
-		assertNotSame("New listing for admin should be different", newListing.getId(), newListingForAdmin.getId());
+		assertNotSame("New listing for admin should be different",
+				newListing.getListing().getId(), newListingForAdmin.getListing().getId());
 	}
 	
 	@Test
 	public void testCreateNotValidListing() {
-		ListingVO listing = new ListingVO();
-		ListingVO newListing = ListingFacade.instance().createListing(null);
+		ListingAndUserVO newListing = ListingFacade.instance().createListing(null);
 		assertNull("Listing with empty owner", newListing);
 	}
 	

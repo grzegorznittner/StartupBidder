@@ -12,6 +12,7 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import com.startupbidder.vo.ListPropertiesVO;
+import com.startupbidder.vo.ListingAndUserVO;
 import com.startupbidder.vo.ListingVO;
 import com.startupbidder.web.HttpHeaders;
 import com.startupbidder.web.HttpHeadersImpl;
@@ -91,7 +92,7 @@ public class ListingController extends ModelDrivenController {
 	private HttpHeaders startEditing(HttpServletRequest request) throws JsonParseException, JsonMappingException, IOException {
 		HttpHeaders headers = new HttpHeadersImpl("create");
 		
-		ListingVO listing = ListingFacade.instance().createListing(getLoggedInUser());
+		ListingAndUserVO listing = ListingFacade.instance().createListing(getLoggedInUser());
 		if (listing == null) {
 			log.log(Level.WARNING, "Listing not created!");
 			headers.setStatus(500);

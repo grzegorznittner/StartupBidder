@@ -77,7 +77,7 @@ public class ListingFacade {
 	 * Sets loggedin user as the owner of the listing.
 	 * Sets listing's state to NEW.
 	 */
-	public ListingVO createListing(UserVO loggedInUser) {
+	public ListingAndUserVO createListing(UserVO loggedInUser) {
 		if (loggedInUser == null) {
 			log.log(Level.WARNING, "Only logged in user can create listing", new Exception("Not logged in"));
 			return null;
@@ -91,7 +91,10 @@ public class ListingFacade {
 		
 		// at that stage listing is not yet active so there is no point of updating statistics
 		applyListingData(loggedInUser, newListing);
-		return newListing;
+		
+		ListingAndUserVO result = new ListingAndUserVO();
+		result.setListing(newListing);
+		return result;
 	}
 
 	public ListingAndUserVO getListing(UserVO loggedInUser, String listingId) {
