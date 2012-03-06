@@ -1,6 +1,21 @@
+function URLCheckClass() {}
+pl.implement(URLCheckClass, {
+    check: function(str) {
+        var expression = /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi;
+        var regex = new RegExp(expression);
+        if (!str) {
+            return "Must not be empty.";
+        }
+        if (!str.match(regex)) {
+            return "Must be a valid URL.";
+        }
+        return 0;
+    }
+});
+
 function EmailCheckClass() {}
 pl.implement(EmailCheckClass, {
-    emailCheck: function(emailStr) {
+    check: function(emailStr) {
         var checkTLD=1;
         var knownDomsPat=/^(com|net|org|edu|int|mil|gov|arpa|biz|aero|name|coop|info|pro|museum)$/;
         var emailPat=/^(.+)@(.+)$/;
@@ -85,9 +100,27 @@ pl.implement(ValidatorClass, {
             return "Selection must be made.";
         }
     },
+    makeLengthChecker: function(m, n) {
+        var min = m,
+            max = n;
+        return function(str) {
+            if (min > 0 && (!str || str.length === 0)) {
+                return "Cannot be empty.";
+            }
+            if (min > 0 && str.length < min) {
+                return "Must be at least " + min + " characters.";
+            }
+            if (max > 0 && str.length > max) {
+                return "Must be no mare than " + max + " characters.";
+            }
+            return 0;
+        }
+    },
     isEmail: function(str) {
-        var checker = new EmailCheckClass();
-        return checker.emailCheck(str);
+        return EmailCheckClass.prototype.check(str);
+    },
+    isURL: function(str) {
+        return URLCheckClass.prototype.check(str);
     },
     makePasswordChecker: function(options) {
         return function(pw) {

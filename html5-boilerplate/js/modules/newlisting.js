@@ -163,6 +163,13 @@ pl.implement(NewListingClass, {
     bindEvents: function() {
         var self = this,
             textFields = ['title', 'category', 'mantra', 'address', 'website'],
+            validators = {
+                title: ValidatorClass.prototype.isNotEmpty,
+                category: ValidatorClass.prototype.isSelected,
+                mantra: ValidatorClass.prototype.makeLengthChecker(5, 140),
+                website: ValidatorClass.prototype.isURL,
+                address: ValidatorClass.prototype.isNotEmpty
+            },
             msgid = 'infomsg',
             id,
             field;
@@ -173,12 +180,7 @@ pl.implement(NewListingClass, {
             if (id === 'address') {
                 field.fieldBase.setDisplayName('LOCATION');
             }
-            if (id === 'category') {
-                field.fieldBase.addValidator(field.fieldBase.validator.isSelected);
-            }
-            else {
-                field.fieldBase.addValidator(field.fieldBase.validator.isNotEmpty);
-            }
+            field.fieldBase.addValidator(validators[id]);
             field.fieldBase.validator.postValidator = self.genDisplayCalculatedIfValid(field);
             field.bindEvents();
             this.fields.push(field);
