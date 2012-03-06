@@ -6,8 +6,7 @@ pl.implement(CompanyTileClass, {
         var testimages = ['einstein','wave','upgrades','telecom','socialrec','gkleen']; // FIXME
         this.imgClass = this.options.preview ? 'noimage' : testimages[Math.floor(Math.random()*testimages.length)];
         this.daysText = json.days_left ? (json.days_left === 0 ? 'closing today!' : (json.days_left < 0 ? 'bidding closed' : json.days_left + ' days left')) : 'not taking bids';
-        this.category = json.category;
-        this.categoryText = this.categories && this.category && this.categories[this.category] ? this.categories[this.category].toUpperCase() : '';
+        this.category = json.category ? json.category.toUpperCase() : '';
         this.votes = json.num_votes || 1;
         this.posted = json.listing_date ? DateClass.prototype.format(json.listing_date) : 'not posted';
         this.name = json.title || '';
@@ -27,7 +26,7 @@ pl.implement(CompanyTileClass, {
 <div class="tiledays"></div>\
 <div class="tiledaystext">' + this.daysText + '</div>\
 <div class="tiletype"></div>\
-<div class="tiletypetext">' + this.categoryText + '</div>\
+<div class="tiletypetext">' + this.category + '</div>\
 <div class="tilepoints"></div>\
 <div class="tilepointstext">\
     <div class="tilevotes">' + this.votes + '</div>\
@@ -49,9 +48,6 @@ pl.implement(CompanyTileClass, {
     display: function(listing, divid) {
         this.setValues(listing);
         pl('#'+divid).html(this.makeHtml('last'));
-    },
-    setCategories: function(json) { // FIXME
-        this.categories = json;
     }
 });
 

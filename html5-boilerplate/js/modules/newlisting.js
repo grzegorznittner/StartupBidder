@@ -29,7 +29,6 @@ function NewListingClass() {
                     return html;
                 },
                 optionsHtml = makeHtml(options);
-                companyTile.setCategories(json);
             pl('#category').html(optionsHtml);
         },
         ajax = new AjaxClass('/listing/categories', 'newlistingmsg', categoryCompleteFunc);

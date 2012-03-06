@@ -206,7 +206,7 @@ pl.implement(HeaderClass, {
         pl('#postlink').attr('href', 'login-page.html');
         pl('#posttext').html('Submit New');
         pl('#loginlink').attr('href', 'login-page.html');
-        pl('#logintext').html('Login or Sign Up');
+        pl('#logintext').html('Sign Up or Login');
         pl('#logout').hide();
     }
 });
