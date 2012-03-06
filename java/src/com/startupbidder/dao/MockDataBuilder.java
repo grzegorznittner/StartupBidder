@@ -436,6 +436,7 @@ public class MockDataBuilder {
 		bp.summary = "Executive summary for <b>MisLead</b>";
 		bp.mantra = "Misleading is our mantra";
 		bp.address = "Lohstr. 53, 49074 Osnabrück, Deutschland";
+		bp.category = "Industrial";
 		listings.add(bp);
 	
 		bp = new Listing();
@@ -461,6 +462,7 @@ public class MockDataBuilder {
 				" conjunction with a community program or community center.";
 		bp.mantra = "We'll train even lammers";
 		bp.address = "Fellenoord 310, 5611 ZD Eindhoven, Nederland";
+		bp.category = "Other";
 		listings.add(bp);
 		johnsListing = bp;
 
@@ -492,6 +494,7 @@ public class MockDataBuilder {
 				" operates on a mobile format.";
 		bp.mantra = "If it could be upgraded we'll do that";
 		bp.address = "10 Rue de Passy, 75016 Paris, France";
+		bp.category = "Hardware";
 		listings.add(bp);
 		gregsListing = bp;
 
@@ -514,6 +517,7 @@ public class MockDataBuilder {
 				" search engine was bailed out by Microsoft, which acquired it.";
 		bp.mantra = "Search is our life";
 		bp.address = "Calle del Pintor Cabrera, 29, 03003 Alicante, España";
+		bp.category = "Software";
 		listings.add(bp);
 
 		bp = new Listing();
@@ -536,6 +540,7 @@ public class MockDataBuilder {
 				"Get Glue has had some success of late, but it's hardly a breakout business.";
 		bp.mantra = "Don't try that at home";
 		bp.address = "Via Amerigo Vespucci, 10, 80142 Napoli, Italia";
+		bp.category = "Software";
 		listings.add(bp);
 
 		bp = new Listing();
@@ -558,6 +563,7 @@ public class MockDataBuilder {
 				" business.";
 		bp.mantra = "Better than free newspaper";
 		bp.address = "45 L Street Southwest, Washington D.C., DC 20024";
+		bp.category = "Media";
 		listings.add(bp);
 
 		bp = new Listing();
@@ -579,6 +585,7 @@ public class MockDataBuilder {
 				" plans have not worked.";
 		bp.mantra = "We can trasfer even a penny";
 		bp.address = "671 John F Kennedy Boulevard West, Bayonne, NJ 07002";
+		bp.category = "Financial";
 		listings.add(bp);
 
 		bp = new Listing();
@@ -600,6 +607,7 @@ public class MockDataBuilder {
 				"displace email. Didn't happen.";
 		bp.mantra = "Is it possible?";
 		bp.address = "273 High Street, Perth Amboy, NJ 08861";
+		bp.category = "Software";
 		listings.add(bp);
 
 		bp = new Listing();
@@ -622,6 +630,7 @@ public class MockDataBuilder {
 				"could be making a luxury electric car that competes with Tesla.";
 		bp.mantra = "We always do better";
 		bp.address = "1501 East 22nd Street, Los Angeles, CA 90011";
+		bp.category = "Manufacturing";
 		listings.add(bp);
 		
 		return listings;
