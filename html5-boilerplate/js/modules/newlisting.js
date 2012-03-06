@@ -72,9 +72,10 @@ pl.implement(NewListingClass, {
     makeLoadComplete: function() {
         var self = this;
         return function(json) {
+            var listing = json && json.listing ? json.listing : json;
             //var header = new HeaderClass();
             // header.setLogin(json); // FIXME
-            self.store(json);
+            self.store(listing);
             self.display();
         };
     },

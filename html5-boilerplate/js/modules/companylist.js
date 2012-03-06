@@ -3,17 +3,16 @@ function CompanyTileClass(options) {
 }
 pl.implement(CompanyTileClass, {
     setValues: function(json) {
-        var testimages = ['einstein','wave','upgrades','telecom','socialrec','gkleen'], // FIXME
-            listingdate = json.listing_date ? DateClass.prototype.format(json.listing_date) : 'not posted',
-            category = this.options.preview ? (json.category || '') : (json.category || Math.floor(Math.random()*2) ? 'INTERNET' : 'SOFTWARE'); // FIXME
+        var testimages = ['einstein','wave','upgrades','telecom','socialrec','gkleen']; // FIXME
         this.imgClass = this.options.preview ? 'noimage' : testimages[Math.floor(Math.random()*testimages.length)];
         this.daysText = json.days_left ? (json.days_left === 0 ? 'closing today!' : (json.days_left < 0 ? 'bidding closed' : json.days_left + ' days left')) : 'not taking bids';
-        this.categoryText = this.categories && this.categories[category] ? this.categories[category].toUpperCase() : '';
+        this.category = json.category;
+        this.categoryText = this.categories && this.category && this.categories[this.category] ? this.categories[this.category].toUpperCase() : '';
         this.votes = json.num_votes || 1;
-        this.posted = listingdate;
-        this.name = this.options.preview ? json.title : (json.title || 'Listed Company');
-        this.address = this.options.preview ? json.address : Math.floor(Math.random()*2) ? 'London, UK' : 'San Jose, CA, USA'; // FIXME
-        this.details = this.options.preview ? json.mantra : (json.summary || 'Company details not provided');
+        this.posted = json.listing_date ? DateClass.prototype.format(json.listing_date) : 'not posted';
+        this.name = json.title || '';
+        this.address = json.address || '';
+        this.mantra = json.mantra || '';
         this.url = '/company-page.html?id=' + json.listing_id;
     },
     makeHtml: function(lastClass) {
@@ -39,7 +38,7 @@ pl.implement(CompanyTileClass, {
 <p class="tiledesc">\
     <span class="tilecompany">' + this.name + '</span><br/>\
     <span class="tileloc">' + this.address + '</span><br/>\
-    <span class="tiledetails">' + this.details + '</span>\
+    <span class="tiledetails">' + this.mantra + '</span>\
 </p>\
 ' + closeAnchor + '\
 </div>\
