@@ -1,14 +1,5 @@
 function NewListingClass() {
-    var queryString = new QueryStringClass(),
-        virtualProfile = { // FIXME
-            loggedin_profile: {
-                profile_id: queryString.vars.profile_id,
-                username: queryString.vars.username,
-                edited_listing: queryString.vars.listing_id
-            }
-        },
-        listing = {},
-        editableprops = ['title', 'suggested_amt', 'suggested_pct', 'summary', 'business_plan_url', 'presentation_url',
+    var editableprops = ['title', 'suggested_amt', 'suggested_pct', 'summary', 'business_plan_url', 'presentation_url',
             'category', 'mantra', 'website', 'address'],
         companyTile = new CompanyTileClass({preview: true}),
         categoryCompleteFunc = function(json) {
@@ -42,42 +33,25 @@ function NewListingClass() {
             pl('#category').html(optionsHtml);
         },
         ajax = new AjaxClass('/listing/categories', 'newlistingmsg', categoryCompleteFunc);
-        header = new HeaderClass();
-    this.listing = listing;
     this.editableprops = editableprops;
     this.companyTile = companyTile;
-    this.profile = virtualProfile.loggedin_profile;
-    header.setLogin(virtualProfile);
+    this.listing = {};
+    this.profile = {};
     ajax.call();
 };
 pl.implement(NewListingClass, {
     load: function() {
-        if (this.profile.edited_listing) {
-            this.loadExisting();
-        }
-        else {
-            this.create();
-        }
-    },
-    create: function() {
-        var ajax = new AjaxClass('/listings/create', 'newlistingmsg', this.loadComplete);
+        var self = this,
+            completeFunc = function(json) {
+                var listing = json && json.listing ? json.listing : {},
+                    header = new HeaderClass();
+                header.setLogin(json);
+                self.store(listing);
+                self.display();
+            };
+        ajax = new AjaxClass('/listings/create', 'newlistingmsg', completeFunc);
         ajax.setPost();
         ajax.call();
-    },
-    loadExisting: function() {
-        var url = '/listings/get/' + this.profile.edited_listing,
-            ajax = new AjaxClass(url, 'newlistingmsg', this.makeLoadComplete());
-        ajax.call();
-    },
-    makeLoadComplete: function() {
-        var self = this;
-        return function(json) {
-            var listing = json && json.listing ? json.listing : json;
-            //var header = new HeaderClass();
-            // header.setLogin(json); // FIXME
-            self.store(listing);
-            self.display();
-        };
     },
     store: function(json) {
         var self = this;
@@ -211,11 +185,7 @@ pl.implement(NewListingClass, {
         pl('#'+msgid).html('&nbsp;');
     },
     loadNextPage: function() {
-        var lid = this.listing.listing_id,
-            pid = this.profile.profile_id,
-            usr = this.profile.username,
-            url = '/new-listing-qa-page.html?listing_id=' + lid + '&profile_id=' + pid + '&username=' + usr;
-        document.location = url;
+        document.location = '/new-listing-qa-page.html';
     },
     displaySummaryPreview: function() {
         this.companyTile.display(this.listing, 'summarypreview');

@@ -194,10 +194,8 @@ pl.implement(HeaderClass, {
     },
     setLoggedIn: function(profile) {
         var username = profile.username || 'You',
-            listing_id = profile.edited_listing,
-            listing_param = listing_id ? '&listing_id=' + listing_id : '',
-            posttext = listing_id ? 'Review Submission' : 'Submit New',
-            newlistingurl = 'new-listing-basics-page.html?profile_id=' + profile.profile_id + '&username=' + username + listing_param;
+            posttext = profile.edited_listing ? 'Review Submission' : 'Submit New',
+            newlistingurl = 'new-listing-basics-page.html';
         pl('#postlink').attr('href', newlistingurl);
         pl('#posttext').html(posttext);
         pl('#loginlink').attr('href', 'profile-page.html');
