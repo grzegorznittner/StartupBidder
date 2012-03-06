@@ -22,4 +22,5 @@ war/WEB-INF/appengine-generated
 war/WEB-INF/appengine-web.xml
 war/WEB-INF/classes
 war/WEB-INF/web.xml
+war/WEB-INF/lib/appengine*
 mockup/*.html
