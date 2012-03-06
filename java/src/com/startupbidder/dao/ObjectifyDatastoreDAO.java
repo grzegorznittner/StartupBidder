@@ -586,6 +586,19 @@ public class ObjectifyDatastoreDAO {
 		}
 	}
 
+	public Listing deleteUsersNewListing(long userId) {
+		Listing listing = getOfy().query(Listing.class)
+				.filter("owner =", new Key<SBUser>(SBUser.class, userId))
+				.filter("state =", Listing.State.NEW).get();
+		if (listing != null) {
+			getOfy().delete(listing);
+			SBUser user = getOfy().get(listing.owner);
+			user.editedListing = null;
+			getOfy().put(user);
+		}
+		return listing;
+	}
+
 	public List<Listing> getAllListings() {
 		QueryResultIterable<Key<Listing>> listingsIt = getOfy().query(Listing.class)
 				.order("-listedOn").prefetchSize(20).fetchKeys();

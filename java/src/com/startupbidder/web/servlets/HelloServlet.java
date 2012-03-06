@@ -116,6 +116,8 @@ public class HelloServlet extends HttpServlet {
 			out.println("<a href=\"/listings/get/" + topListing.getWebKey() + "/.json\">Top listing data</a><br/>");
 			out.println("<form method=\"POST\" action=\"/listing/up/" + topListing.getWebKey() + "/.json\"><input type=\"submit\" value=\"Logged in user votes for top listing (works only once per user)\"/></form>");
 			out.println("<form method=\"POST\" action=\"/listing/up/.json\"><input type=\"hidden\" name=\"id\" value=\"" + topListing.getWebKey() + "\"/><input type=\"submit\" value=\"Logged in user votes for top listing (works only once per user), 2nd form\"/></form>");
+			out.println("<form method=\"POST\" action=\"/listing/create/.json\"><input type=\"submit\" value=\"Creates NEW listing\"/></form>");
+			out.println("<form method=\"POST\" action=\"/listing/delete/.json\"><input type=\"submit\" value=\"Deletes edited (NEW) listing\"/></form>");
 			out.println("<form method=\"POST\" action=\"/listing/activate/" + topListing.getWebKey() + "/.json\"><input type=\"submit\" value=\"Activate top listing\"/></form>");
 			out.println("<form method=\"POST\" action=\"/listing/withdraw/" + topListing.getWebKey() + "/.json\"><input type=\"submit\" value=\"Withdraw top listing\"/></form>");
 			out.println("<a href=\"/listings/categories/.json\">All categories</a><br/>");
@@ -126,9 +128,10 @@ public class HelloServlet extends HttpServlet {
 			out.println("<a href=\"/listings/latest/.json?max_results=6\">Latest listings</a><br/>");
 			out.println("<a href=\"/listings/closing/.json?max_results=6\">Closing listings</a><br/>");
 			out.println("<a href=\"/listings/user/" + topInvestor.getWebKey() + "/.json?max_results=6\">Top investor's listings</a><br/>");
-			out.println("<form method=\"POST\" action=\"/listing/create/.json\"><textarea name=\"listing\" rows=\"5\" cols=\"100\">"
+/*			out.println("<form method=\"POST\" action=\"/listing/create/.json\"><textarea name=\"listing\" rows=\"5\" cols=\"100\">"
 					+ "{\"title\":\"Listing title\",\"median_valuation\":\"0\",\"num_votes\":\"0\",\"num_bids\":\"0\",\"num_comments\":\"0\",\"profile_id\":\"ag1zdGFydHVwYmlkZGVych4LEgRVc2VyIhQxODU4MDQ3NjQyMjAxMzkxMjQxMQw\",\"profile_username\":\"test@example.com\",\"listing_date\":\"20110802\",\"closing_date\":\"2011-08-01\",\"status\":\"new\",\"suggested_amt\":\"10000\",\"suggested_pct\":\"10\",\"suggested_val\":100000,\"summary\":\"Enter listing summary here.\",\"business_plan_url\":\"\",\"presentation_url\":\"\"}"
 					+ "</textarea><input type=\"submit\" value=\"Create a listing\"/></form>");
+					*/
 			out.println("<form method=\"GET\" action=\"/listing/keyword/.json\"><input name=\"text\" type=\"text\" value=\"business\"/>"
 					+ "<input type=\"submit\" value=\"Keyword search\"/></form>");
 

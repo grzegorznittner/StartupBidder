@@ -34,6 +34,7 @@ import com.startupbidder.datamodel.SBUser;
 import com.startupbidder.datamodel.VoToModelConverter;
 import com.startupbidder.vo.BaseVO;
 import com.startupbidder.vo.DtoToVoConverter;
+import com.startupbidder.vo.ErrorCodes;
 import com.startupbidder.vo.ListPropertiesVO;
 import com.startupbidder.vo.ListingAndUserVO;
 import com.startupbidder.vo.ListingDocumentVO;
@@ -98,21 +99,25 @@ public class ListingFacade {
 	}
 
 	public ListingAndUserVO getListing(UserVO loggedInUser, String listingId) {
+		ListingAndUserVO listingAndUser = new ListingAndUserVO();
 		long id = 0;
 		try {
 			id = BaseVO.toKeyId(listingId);
+			ListingVO listing = DtoToVoConverter.convert(getDAO().getListing(id));
+			
+			if (listing != null) {
+				applyListingData(loggedInUser, listing);
+				listingAndUser.setListing(listing);
+			} else {
+				listingAndUser.setErrorCode(ErrorCodes.DATASTORE_ERROR);
+				listingAndUser.setErrorMessage("Listing has not been found");
+			}
 		} catch (Exception e) {
-			log.warning("Invalid key passed");
-			return null;
+			log.warning("Invalid key passed '" + listingId + "'");
+			listingAndUser.setErrorCode(ErrorCodes.ENTITY_VALIDATION);
+			listingAndUser.setErrorMessage("Invalid key passed");
 		}
-		ListingVO listing = DtoToVoConverter.convert(getDAO().getListing(id));
-		if (listing != null) {
-			applyListingData(loggedInUser, listing);
-			ListingAndUserVO listingAndUser = new ListingAndUserVO();
-			listingAndUser.setListing(listing);
-			return listingAndUser;
-		}
-		return null;
+		return listingAndUser;
 	}
 
 	public ListingVO updateListing(UserVO loggedInUser, ListingVO listing) {
@@ -299,6 +304,22 @@ public class ListingFacade {
 		ListingVO toReturn = DtoToVoConverter.convert(updatedListing);
 		applyListingData(loggedInUser, toReturn);
 		return toReturn;
+	}
+
+	/**
+	 * Deletes exising user's NEW listing.
+	 */
+	public ListingAndUserVO deleteNewListing(UserVO loggedInUser) {
+		ListingAndUserVO result = new ListingAndUserVO();
+		Listing deletedListing = getDAO().deleteUsersNewListing(UserVO.toKeyId(loggedInUser.getId()));
+		if (deletedListing != null) {
+			loggedInUser.setEditedListing(null);
+			result.setListing(null);
+		} else {
+			result.setErrorCode(ErrorCodes.DATASTORE_ERROR);
+			result.setErrorMessage("Deletion not successful, user probaly doesn't have new listing");
+		}
+		return result;
 	}
 
 	public ListingListVO getClosingActiveListings(UserVO loggedInUser, ListPropertiesVO listingProperties) {

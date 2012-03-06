@@ -37,6 +37,7 @@ import com.startupbidder.datamodel.SystemProperty;
 import com.startupbidder.datamodel.UserStats;
 import com.startupbidder.datamodel.Vote;
 import com.startupbidder.vo.DtoToVoConverter;
+import com.startupbidder.vo.ErrorCodes;
 import com.startupbidder.vo.ListPropertiesVO;
 import com.startupbidder.vo.ListingAndUserVO;
 import com.startupbidder.vo.ListingListVO;
@@ -95,6 +96,40 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 	public void testCreateNotValidListing() {
 		ListingAndUserVO newListing = ListingFacade.instance().createListing(null);
 		assertNull("Listing with empty owner", newListing);
+	}
+	
+	@Test
+	public void testDeleteUserNewListing() {
+		// googleuser has a NEW listing, so we can't use that user
+		ListingAndUserVO newListing = ListingFacade.instance().createListing(admin);
+		assertEquals("We should get OK", ErrorCodes.OK, newListing.getErrorCode());
+		assertNotNull("Listing not created", newListing.getListing());
+		assertEquals("Proper owner set", admin.getId(), newListing.getListing().getOwner());
+		assertEquals("State is not NEW", Listing.State.NEW.toString(), newListing.getListing().getState());
+		assertNotNull("Created date should be set", newListing.getListing().getCreated());
+		assertNotNull("Modified date should be set", newListing.getListing().getModified());
+		assertEquals("Edited listing for logged in user should be set", newListing.getListing().getId(), admin.getEditedListing());
+
+		ListingAndUserVO listing = ListingFacade.instance().getListing(admin, newListing.getListing().getId());
+		assertEquals("We should get OK", ErrorCodes.OK, newListing.getErrorCode());
+		assertNotNull("List should exist", listing.getListing());
+		assertEquals("State should be NEW", Listing.State.NEW.toString(), listing.getListing().getState());
+
+		ListingAndUserVO deletedListing = ListingFacade.instance().deleteNewListing(admin);
+		assertEquals("We should get OK", ErrorCodes.OK, newListing.getErrorCode());
+		assertNull("Listing should be deleted", deletedListing.getListing());
+		assertNull("Edited listing field should be set to null", admin.getEditedListing());
+		
+		listing = ListingFacade.instance().getListing(admin, newListing.getListing().getId());
+		assertNull("List should not exist, but we got " + listing.getListing(), listing.getListing());
+		assertNotSame("We should get failure", ErrorCodes.OK, listing.getErrorCode());
+	}
+	
+	@Test
+	public void testDeleteUserNewListingWhenItDoesntExist() {
+		ListingAndUserVO deletedListing = ListingFacade.instance().deleteNewListing(admin);
+		assertNotSame("We should get an error", ErrorCodes.OK, deletedListing.getErrorCode());
+		assertNull("Edited listing field should be null anyway", googleUserVO.getEditedListing());
 	}
 	
 	@Test
@@ -164,10 +199,10 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 	@Test
 	public void testGetNonValidListing() {
 		ListingAndUserVO returned = ListingFacade.instance().getListing(googleUserVO, "fakekey"); //new Key<Listing>(Listing.class, 1000).getString());
-		assertNull("Key was fake so listing should be null", returned);
+		assertNull("Key was fake so listing should be null", returned.getListing());
 
 		returned = ListingFacade.instance().getListing(googleUserVO, null);
-		assertNull("Key was null so listing should be null", returned);
+		assertNull("Key was null so listing should be null", returned.getListing());
 	}
 	
 	@Test

@@ -83,7 +83,14 @@ public class ListingController extends ModelDrivenController {
 	// DELETE /listing/
     private HttpHeaders delete(HttpServletRequest request) {
     	HttpHeaders headers = new HttpHeadersImpl("delete");
-		headers.setStatus(501);
+		
+    	ListingAndUserVO listing = ListingFacade.instance().deleteNewListing(getLoggedInUser());
+		if (listing == null) {
+			log.log(Level.WARNING, "Listing not deleted, probably didn't exist!");
+			headers.setStatus(500);
+		}
+		model = listing;
+
 		return headers;
 	}
 
