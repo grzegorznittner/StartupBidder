@@ -102,7 +102,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .followtextit { font-style: italic; }
 .pull-15px { left: -15px; position: relative; }
 .push-15px { left: 15px; position: relative; }
-.welcometext { font-size: 14px; font-weight: normal; }
+.welcometext { font-size: 14px; font-weight: bold; }
 /* .welcometext a { font-weight: bold; } */
 
 /* icons */
@@ -330,11 +330,11 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .tiledays, .tiledaystext { top: 0px; }
 .tiletype, .tiletypetext { top: 116px; }
 .tilepoints, .tilepointstext { top: 266px; }
-.tiledesc { width: 142px; height: 116px; position: absolute; top: 146px; padding: 0 2px 2px 2px; margin:0; overflow: hidden; }
+.tiledesc { width: 142px; height: 116px; position: absolute; top: 146px; padding: 0 2px 2px 2px; margin:0; overflow: hidden; font-weight: bold; }
 .tilecompany { font-size: 14px; line-height: 19px; color: #333333; font-weight: bold; }
 .tileloc { color: #333333; font-weight: bold; }
 .tileloc, .tiledetails, .tileposted, .tiledesc { font-size: 12px; line-height: 16px; }
-.tiledetails, .tileposted { font-weight: normal; }
+/* .tiledetails, .tileposted { font-weight: normal; } */
 .tilevotes, .tilevoteimg, .tileposted { position: absolute; }
 .tilevotes { left: 30px; }
 .tileposted { top: 6px; right: 12px; text-align: right; font-weight: bold; }
