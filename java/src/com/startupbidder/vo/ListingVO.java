@@ -21,7 +21,7 @@ import com.startupbidder.util.LowecaseSerializer;
 public class ListingVO extends BaseVO {
 	public static final String[] UPDATABLE_PROPERTIES = {"title", "mantra", "summary", "website", "category",
 			"address", "suggested_amt", "suggested_pct", "answer1", "answer2", "answer3",
-			"answer4", "answer5", "answer6", "answer7", "answer8", "answer9", "answer10"};
+			"answer4", "answer5", "answer6", "answer7", "answer8", "answer9", "answer10", "answer11"};
 	
 	@JsonProperty("num") private int orderNumber;
 	@JsonProperty("listing_id")	private String id;
@@ -66,6 +66,7 @@ public class ListingVO extends BaseVO {
 	@JsonProperty("answer8") private String answer8;
 	@JsonProperty("answer9") private String answer9;
 	@JsonProperty("answer10") private String answer10;
+	@JsonProperty("answer11") private String answer11;
 	
 	public ListingVO() {
 	}
@@ -412,5 +413,13 @@ public class ListingVO extends BaseVO {
 
 	public void setAnswer10(String answer10) {
 		this.answer10 = answer10;
+	}
+
+    public String getAnswer11() {
+		return answer11;
+	}
+
+	public void setAnswer11(String answer11) {
+		this.answer11 = answer11;
 	}
 }

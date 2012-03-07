@@ -1,0 +1,367 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <!-- Use the .htaccess and remove these lines to avoid edge case issues.
+       More info: h5bp.com/b/378 -->
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+  <title>Startupbidder Listing</title>
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <!-- Mobile viewport optimized: j.mp/bplateviewport -->
+  <!-- <meta name="viewport" content="width=device-width,initial-scale=1"> -->
+  <!-- <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0"> -->
+
+  <meta name="description" content="Startupbidder - list, bid, comment and vote on startup businesses worldwide"/>
+  <meta name="keywords" content="startupbidder startup company auction bid business plan"/>
+  <!-- Place favicon.ico and apple-touch-icon.png in the root directory: mathiasbynens.be/notes/touch-icons -->
+
+  <!-- CSS: implied media=all -->
+  <!-- CSS concatenated and minified via ant build script-->
+  <link rel="stylesheet" href="css/style.css" type="text/css" />
+  <!-- end CSS-->
+
+  <link rel="canonical" href="http://startupbidder.appspot.com"/>
+</head>
+
+<body class="new-listing-basics-page">
+<div id="wrap">
+<div id="newlistingmain">
+
+<div class="header">
+  <div class="container">
+    <div class="span-5">
+      <a href="main-page.html"><span class="logotextblue">startup</span><span class="logotextgrey">bidder</span></a>
+    </div>
+    <div class="span-11">
+      <a href="main-page.html?type=top"><span class="headerlink">Top</span></a>
+      <span class="headertext">&nbsp;&nbsp;|&nbsp;&nbsp;</span>
+      <a href="main-page.html?type=latest"><span class="headerlink">Latest</span></a>
+      <span class="headertext">&nbsp;&nbsp;|&nbsp;&nbsp;</span>
+      <a href="main-page.html?type=closing"><span class="headerlink">Closing</span></a>
+      <span class="headertext">&nbsp;&nbsp;|&nbsp;&nbsp;</span>
+      <a id="postlink" href="login-page.html"><span class="headerlink" id="posttext"></span></a>
+    </div>
+    <div class="span-8 last loginspan">
+      <div><a id="loginlink" href="login-page.html"><span class="headerlink" id="logintext"></span></a></div>
+      <div id="logout" class="logout"><a href="/_ah/logout?continue=%2F">logout</a></div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- begin banner -->
+<div class="bannersmall">
+    <span class="bannertextsmall span-16">NEW COMPANY WIZARD</span>
+</div>
+
+<div class="boxstep">
+    <span class="boxstepn" id="boxstepn"></span>
+    <span class="boxsteptitle">YOU HAVE FILLED <span id="boxsteppct">0</span>% OF YOUR COMPANY PROFILE</span>
+</div>
+<!-- end banner -->
+
+<!-- left column -->
+<div class="span-16">
+
+    <div class="boxtitle">INSTRUCTIONS</div>
+    <div class="boxpanel">
+    <p>Answer these series of questions and answers to show investors and the startup community what your business is all about. </p>
+    </div>
+
+    <div class="boxtitle">QUESTIONS &amp; ANSWERS</div>
+
+    <div class="boxpanel">
+        <div class="formitem clear">
+            <span class="qalabel">ELEVATOR PITCH - WHAT IS YOUR BUSINESS?</span>
+        </div>
+        <div class="formitem clear">
+            <span class="inputfield">
+                <textarea class="inputtextareaeightline inputwidewithvalidate" cols="20" rows="5" name="summary" id="summary">You have just stepped on the elevator with one of the leading Silicon Valley Venture Capitalists and you have 30 seconds to either get them interested enough to consider your idea, or step off and go back to sipping their latte.  What do you say?
+</textarea>
+            </span>
+            <span class="topinputicon">
+                <div id="summaryicon"></div>
+            </span>
+        </div>
+    </div>
+
+
+    <div class="boxpanel">
+        <div class="formitem clear">
+            <span class="qalabel">CUSTOMER - WHO IS THE TARGET CUSTOMER?</span>
+        </div>
+        <div class="formitem clear">
+            <span class="inputfield">
+                <textarea class="inputtextareaeightline inputwidewithvalidate" cols="20" rows="5" name="answer1" id="answer1">Our target customer is...</textarea>
+            </span>
+            <span class="topinputicon">
+                <div id="answer1icon"></div>
+            </span>
+        </div>
+    </div>
+
+
+    <div class="boxpanel">
+        <div class="formitem clear">
+            <span class="qalabel">PROBLEM - WHAT IS THE PROBLEM THEY HAVE NOW?</span>
+        </div>
+        <div class="formitem clear">
+            <span class="inputfield">
+                <textarea class="inputtextareaeightline inputwidewithvalidate" cols="20" rows="5" name="answer2" id="answer2">The problem of our customer is...</textarea>
+            </span>
+            <span class="topinputicon">
+                <div id="answer2icon"></div>
+            </span>
+        </div>
+    </div>
+
+
+    <div class="boxpanel">
+        <div class="formitem clear">
+            <span class="qalabel">SOLUTION - WHAT IS THE SOLUTION TO THEIR PROBLEM?</span>
+        </div>
+        <div class="formitem clear">
+            <span class="inputfield">
+                <textarea class="inputtextareaeightline inputwidewithvalidate" cols="20" rows="5" name="answer3" id="answer3">Our solution is...</textarea>
+            </span>
+            <span class="topinputicon">
+                <div id="answer3icon"></div>
+            </span>
+        </div>
+    </div>
+
+
+    <div class="boxpanel">
+        <div class="formitem clear">
+            <span class="qalabel">PAYMENT - HOW MUCH WILL THEY PAY FOR YOUR SOLUTION?</span>
+        </div>
+        <div class="formitem clear">
+            <span class="inputfield">
+                <textarea class="inputtextareaeightline inputwidewithvalidate" cols="20" rows="5" name="answer4" id="answer4">Customers will pay...</textarea>
+            </span>
+            <span class="topinputicon">
+                <div id="answer4icon"></div>
+            </span>
+        </div>
+    </div>
+
+
+    <div class="boxpanel">
+        <div class="formitem clear">
+            <span class="qalabel">MARKETING - HOW WILL YOU REACH THEM?</span>
+        </div>
+        <div class="formitem clear">
+            <span class="inputfield">
+                <textarea class="inputtextareaeightline inputwidewithvalidate" cols="20" rows="5" name="answer5" id="answer5">We will reach our customers by...</textarea>
+            </span>
+            <span class="topinputicon">
+                <div id="answer5icon"></div>
+            </span>
+        </div>
+    </div>
+
+
+    <div class="boxpanel">
+        <div class="formitem clear">
+            <span class="qalabel">TEAM - WHO IS YOUR TEAM?</span>
+        </div>
+        <div class="formitem clear">
+            <span class="inputfield">
+                <textarea class="inputtextareaeightline inputwidewithvalidate" cols="20" rows="5" name="answer6" id="answer6">Our team is...</textarea>
+            </span>
+            <span class="topinputicon">
+                <div id="answer6icon"></div>
+            </span>
+        </div>
+    </div>
+
+
+    <div class="boxpanel">
+        <div class="formitem clear">
+            <span class="qalabel">COMPETITORS - WHO ARE YOU COMPETING WITH?</span>
+        </div>
+        <div class="formitem clear">
+            <span class="inputfield">
+                <textarea class="inputtextareaeightline inputwidewithvalidate" cols="20" rows="5" name="answer7" id="answer7">We our competing with...</textarea>
+            </span>
+            <span class="topinputicon">
+                <div id="answer7icon"></div>
+            </span>
+        </div>
+    </div>
+
+
+    <div class="boxpanel">
+        <div class="formitem clear">
+            <span class="qalabel">RELOCATION - WHERE ARE YOU WILLING TO RELOCATE TO?</span>
+        </div>
+        <div class="formitem clear">
+            <span class="inputfield">
+                <textarea class="inputtextareaeightline inputwidewithvalidate" cols="20" rows="5" name="answer8" id="answer8">We are willing to relocate anywhere...</textarea>
+            </span>
+            <span class="topinputicon">
+                <div id="answer8icon"></div>
+            </span>
+        </div>
+    </div>
+
+
+    <div class="boxpanel">
+        <div class="formitem clear">
+            <span class="qalabel">INVESTMENT - WHAT ARE YOU GOING TO DO WITH THE MONEY?</span>
+        </div>
+        <div class="formitem clear">
+            <span class="inputfield">
+                <textarea class="inputtextareaeightline inputwidewithvalidate" cols="20" rows="5" name="answer9" id="answer9">What are you going to do with any future investment money, either obtained from outside investors, inside investors, or retained earnings?...</textarea>
+            </span>
+            <span class="topinputicon">
+                <div id="answer9icon"></div>
+            </span>
+        </div>
+    </div>
+
+
+    <div class="boxpanel">
+        <div class="formitem clear">
+            <span class="qalabel">SOURCING - HOW DID YOU GET THE IDEA?</span>
+        </div>
+        <div class="formitem clear">
+            <span class="inputfield">
+                <textarea class="inputtextareaeightline inputwidewithvalidate" cols="20" rows="5" name="answer10" id="answer10">We got the idea from...</textarea>
+            </span>
+            <span class="topinputicon">
+                <div id="answer10icon"></div>
+            </span>
+        </div>
+    </div>
+
+
+    <div class="boxpanel">
+        <div class="formitem clear">
+            <span class="qalabel">PROPERTY - WHAT INTELLECTUAL PROPERTY DO YOU HAVE?</span>
+        </div>
+        <div class="formitem clear">
+            <span class="inputfield">
+                <textarea class="inputtextareaeightline inputwidewithvalidate" cols="20" rows="5" name="answer11" id="answer11">We have patents, trademarks, and copyrights on...</textarea>
+            </span>
+            <span class="topinputicon">
+                <div id="answer11icon"></div>
+            </span>
+        </div>
+    </div>
+
+    <div class="formitem clear">
+        <span class="newlistingmsg" id="newlistingmsg">&nbsp;</span>
+    </div>
+
+    <div>
+        <div class="formitem clear">
+            <a href="new-listing-basics-page.html">
+                <span class="span-3 inputbutton" id="prevbutton">
+                    PREV
+                </span>
+            </a>
+            <a href="new-listing-financials-page.html">
+                <span class="push-10 span-3 inputbutton" id="nextbutton">
+                    NEXT
+                </span>
+            </a>
+        </div>
+    </div>
+
+</div> <!-- end left column -->
+
+<!-- right column -->
+<div class="span-8 last">
+
+    <div class="boxtitle">SUMMARY PREVIEW</div>
+    <div id="summarypreview"></div>
+
+    <div class="boxtitle clear">TIPS</div>
+    <div class="sidebox">
+<p>
+CUSTOMER - who is the customer?  It is not everybody, it is not all
+mobile phone developers.  It is Alfredo.  He is 28 years old and works in the
+development group of a large telecommunications company.  He has an iPhone,
+an iMac, and a MacBook.  In his spare time he plays in a band and self-publishes
+his own music on the side.  Twice a year he visits his family in Bilbao.
+Make your customer specific and bring them to life.
+</p>
+    </div>
+
+    <div class="boxtitle">WITHDRAW SUBMISSION</div>
+    <div class="newwithdrawmsg attention" id="newwithdrawmsg">Are you sure? This cannot be undone.</div>
+    <a href="#" id="newwithdrawbtn"><div class="sideboxbutton">WITHTDRAW</div></a>
+    <a href="#" class="newwithdrawcancelbtn" id="newwithdrawcancelbtn"><div class="sideboxbutton">CANCEL</div></a>
+
+</div>
+<!-- end right column -->
+
+</div> <!-- end container -->
+</div> <!-- end main -->
+</div> <!-- end wrap -->
+
+<div id="newlistingfootertop">
+  <div class="container">
+    <div class="boxstep last">
+        <span class="boxstep1 boxstepcomplete"><div class="boxsteptext">BASICS</div></span>
+        <span class="boxstep2 boxstepcomplete"><div class="boxsteptext">Q &amp; A</div></span>
+        <span class="boxstep3 "><div class="boxsteptext">FINANCIALS</div></span>
+        <span class="boxstep4 "><div class="boxsteptext">MEDIA</div></span>
+        <span class="boxstep5 "><div class="boxsteptext">SUBMIT</div></span>
+    </div>
+</div>
+
+<div id="newlistingfooterbottom" class="darkgreybg">
+  <div class="container">
+    <div class="prepend-2 span-14">
+      <span class="footertext lightgrey">
+        <a href="help-page.html"><span class="footerlink">Help</span></a>
+        &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+        <a href="terms-page.html"><span class="footerlink">Terms&nbsp;&amp;&nbsp;Conditions</span></a>
+        &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+        <a href="contact-page.html"><span class="footerlink">Contact</span></a>
+        &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+        <a href="about-page.html"><span class="footerlink">About</span></a>
+      </span>
+    </div>
+    <div class="span-4 last copyrightspan">
+      <span class="copyrighttext lightgrey">Copyright &copy;2012 Startupbidder</span>
+    </div>
+  </div>
+</div>
+
+  <!-- JavaScript at the bottom for fast page loading -->
+  <script src="http://maps.googleapis.com/maps/api/js?libraries=places&sensor=true"></script>
+  <script src="js/libs/prevel.min.js"></script>
+  <script src="js/modules/base.js"></script>
+  <script src="js/modules/companylist.js"></script>
+  <script src="js/modules/forms.js"></script>
+  <script src="js/modules/newlistingbase.js"></script>
+  <script src="js/modules/newlistingqapage.js"></script>
+
+  <!-- Change UA-XXXXX-X to be your site's ID -->
+  <script>
+  window._gaq = [['_setAccount','UA-23942052-1'],['_trackPageview'],['_trackPageLoadTime']];
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+  </script>
+
+  <!-- Prompt IE 6 users to install Chrome Frame. Remove this if you want to support IE 6.
+       chromium.org/developers/how-tos/chrome-frame-getting-started -->
+  <!--[if lt IE 7 ]>
+    <script src="//ajax.googleapis.com/ajax/libs/chrome-frame/1.0.3/CFInstall.min.js"></script>
+    <script>window.attachEvent('onload',function(){CFInstall.check({mode:'overlay'})})</script>
+  <![endif]-->
+
+</body>
+</html>
