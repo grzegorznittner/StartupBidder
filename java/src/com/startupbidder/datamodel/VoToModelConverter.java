@@ -3,6 +3,7 @@ package com.startupbidder.datamodel;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 
@@ -77,6 +78,7 @@ public class VoToModelConverter {
 		listing.posted = listingVO.getPostedOn();
 		listing.name = listingVO.getName();
 		listing.owner = (Key<SBUser>)stringToKey(listingVO.getOwner());
+		listing.askedForFunding = listingVO.isAskedForFunding();
 		listing.suggestedValuation = listingVO.getSuggestedValuation();
 		listing.suggestedPercentage = listingVO.getSuggestedPercentage();
 		listing.suggestedAmount = listingVO.getSuggestedAmount();
@@ -120,6 +122,8 @@ public class VoToModelConverter {
 			listing.category = property.getPropertyValue();
 		} else if (name.equalsIgnoreCase("address")) {
 			listing.address = property.getPropertyValue();
+		} else if (name.equalsIgnoreCase("asked_fund")) {
+			listing.askedForFunding = BooleanUtils.toBoolean(property.getPropertyValue());
 		} else if (name.equalsIgnoreCase("suggested_amt")) {
 			listing.suggestedAmount = NumberUtils.toInt(property.getPropertyValue(), 0);
 		} else if (name.equalsIgnoreCase("suggested_pct")) {

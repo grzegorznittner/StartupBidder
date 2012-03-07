@@ -69,6 +69,7 @@ public class DtoToVoConverter {
 		listing.setPostedOn(listingDTO.posted);
 		listing.setName(listingDTO.name);
 		listing.setOwner(keyToString(listingDTO.owner));
+		listing.setAskedForFunding(listingDTO.askedForFunding);
 		listing.setSuggestedValuation(listingDTO.suggestedValuation);
 		listing.setSuggestedAmount(listingDTO.suggestedAmount);
 		listing.setSuggestedPercentage(listingDTO.suggestedPercentage);

@@ -8,8 +8,6 @@ import java.util.Date;
 import javax.persistence.Id;
 import javax.persistence.PrePersist;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.annotation.Cached;
 import com.googlecode.objectify.annotation.Entity;
@@ -44,7 +42,7 @@ public class Listing extends BaseObject implements Monitor.Monitored {
 		this.modified = new Date();
 	}
 	@PrePersist void updateSuggestedValuation() {
-		if (suggestedPercentage == 0) {
+		if (suggestedPercentage == 0 || !askedForFunding) {
 			this.suggestedValuation = 0;
 		} else {
 			this.suggestedValuation = suggestedAmount * 100 / suggestedPercentage;
@@ -74,6 +72,7 @@ public class Listing extends BaseObject implements Monitor.Monitored {
 	@Indexed public String city;
 	public String address;
 	
+	public boolean askedForFunding;
 	public int   suggestedValuation;
 	public int   suggestedPercentage;
 	public int   suggestedAmount;
