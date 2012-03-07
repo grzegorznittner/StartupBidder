@@ -30,9 +30,9 @@ public class ListingVO extends BaseVO {
 	@JsonProperty("suggested_pct") private int suggestedPercentage;
 	@JsonProperty("suggested_val") private int suggestedValuation;
 	@JsonProperty("previous_val") private int previousValuation;
-	@JsonProperty("valuation") private int   valuation;
-	@JsonProperty("median_valuation") private int   medianValuation;
-	@JsonProperty("score") private int   score;
+	@JsonProperty("valuation") private int valuation;
+	@JsonProperty("median_valuation") private int medianValuation;
+	@JsonProperty("score") private int score;
 	@JsonProperty("modified_date") @JsonSerialize(using=DateSerializer.class) private Date  modified;
 	@JsonProperty("created_date") @JsonSerialize(using=DateSerializer.class) private Date  created;
 	@JsonProperty("posted_date") @JsonSerialize(using=DateSerializer.class) private Date  postedOn;

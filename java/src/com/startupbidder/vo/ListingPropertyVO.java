@@ -13,11 +13,11 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
 		fieldVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE)
 public class ListingPropertyVO {
 	@JsonProperty("listing_id")	@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL) private String listing;
-	@JsonProperty("name") private String propertyName;
-	@JsonProperty("value") private String propertyValue;
+	@JsonProperty("name") @JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL) private String propertyName;
+	@JsonProperty("value") @JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL) private String propertyValue;
 	
 	@JsonProperty("error_code") private int errorCode = ErrorCodes.OK;
-	@JsonProperty("error_msg")@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL) private String errorMessage;
+	@JsonProperty("error_msg") @JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL) private String errorMessage;
 	
 	public ListingPropertyVO() {
 	}

@@ -124,19 +124,19 @@ public class HelloServlet extends HttpServlet {
 			ListingAndUserVO editedListing = ListingFacade.instance().createListing(currentUser);
 			if (editedListing.getListing() != null) {
 				out.println("<form method=\"POST\" action=\"/listing/update_field/.json\"><textarea name=\"listing\" rows=\"1\" cols=\"100\">"
-						+ "{\"name\":\"title\",\"value\":\"" + editedListing.getListing().getName() + "\"}"
+						+ "{\"title\":\"" + editedListing.getListing().getName() + "\"}"
 						+ "</textarea><input type=\"submit\" value=\"Update title\"/></form>");
 				out.println("<form method=\"POST\" action=\"/listing/update_field/.json\"><textarea name=\"listing\" rows=\"1\" cols=\"100\">"
-						+ "{\"name\":\"mantra\",\"value\":\"" + editedListing.getListing().getMantra() + "\"}"
+						+ "{\"mantra\":\"" + editedListing.getListing().getMantra() + "\"}"
 						+ "</textarea><input type=\"submit\" value=\"Update mantra\"/></form>");
 				out.println("<form method=\"POST\" action=\"/listing/update_field/.json\"><textarea name=\"listing\" rows=\"1\" cols=\"100\">"
-						+ "{\"name\":\"summary\",\"value\":\"" + editedListing.getListing().getSummary() + "\"}"
+						+ "{\"summary\":\"" + editedListing.getListing().getSummary() + "\"}"
 						+ "</textarea><input type=\"submit\" value=\"Update summary\"/></form>");
 				out.println("<form method=\"POST\" action=\"/listing/update_field/.json\"><textarea name=\"listing\" rows=\"1\" cols=\"100\">"
-						+ "{\"name\":\"suggested_amt\",\"value\":\"" + editedListing.getListing().getSuggestedAmount() + "\"}"
+						+ "{\"suggested_amt\":\"" + editedListing.getListing().getSuggestedAmount() + "\"}"
 						+ "</textarea><input type=\"submit\" value=\"Update suggested amount\"/></form>");
 				out.println("<form method=\"POST\" action=\"/listing/update_field/.json\"><textarea name=\"listing\" rows=\"1\" cols=\"100\">"
-						+ "{\"name\":\"suggested_pct\",\"value\":\"" + editedListing.getListing().getSuggestedPercentage() + "\"}"
+						+ "{\"suggested_pct\":" + editedListing.getListing().getSuggestedPercentage() + "}"
 						+ "</textarea><input type=\"submit\" value=\"Update suggested percentage\"/></form>");
 			} else {
 				out.println("<div><b>Listing doesn't exist.</b> Be aware that this page is calling automatically create method, so edited listing should be always available.</div>");

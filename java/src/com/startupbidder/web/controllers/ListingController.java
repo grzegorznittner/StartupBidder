@@ -1,12 +1,14 @@
 package com.startupbidder.web.controllers;
 
 import java.io.IOException;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
+import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -150,7 +152,9 @@ public class ListingController extends ModelDrivenController {
 		log.log(Level.INFO, "Parameters: " + request.getParameterMap());
 		String listingString = request.getParameter("listing");
 		if (!StringUtils.isEmpty(listingString)) {
-			ListingPropertyVO property = mapper.readValue(listingString, ListingPropertyVO.class);
+			JsonNode rootNode = mapper.readValue(listingString, JsonNode.class);
+			Entry<String, JsonNode> node = rootNode.getFields().next();
+			ListingPropertyVO property = new ListingPropertyVO(node.getKey(), node.getValue().getValueAsText());
 			log.log(Level.INFO, "Updating listing: " + property);
 			property = ListingFacade.instance().updateListingProperty(getLoggedInUser(), property);
 			model = property;
