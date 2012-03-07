@@ -143,13 +143,12 @@ pl.implement(NewListingClass, {
                 website: ValidatorClass.prototype.isURL,
                 address: ValidatorClass.prototype.isNotEmpty
             },
-            msgid = 'infomsg',
             id,
             field;
         this.fields = [];
         for (i = 0; i < textFields.length; i++) {
             id = textFields[i];
-            field = new TextFieldClass(id, this.listing[id], this.getUpdater(id), msgid);
+            field = new TextFieldClass(id, this.listing[id], this.getUpdater(id), 'infomsg');
             if (id === 'address') {
                 field.fieldBase.setDisplayName('LOCATION');
             }
@@ -159,6 +158,11 @@ pl.implement(NewListingClass, {
             this.fields.push(field);
         } 
         this.addMap();
+        this.bindNextButton();
+        this.bindWithdrawButton();
+    },
+    bindNextButton: function() {
+        var self = this;
         pl('#nextbuttonlink').bind({
             click: function() {
                 var validmsg = 0,
@@ -173,7 +177,7 @@ pl.implement(NewListingClass, {
                     }
                 }
                 if (validmsgs.length > 0) {
-                    pl('#'+msgid).addClass('errorcolor').html('Please correct: ' + validmsgs.join(' '));
+                    pl('#infomsg').addClass('errorcolor').html('Please correct: ' + validmsgs.join(' '));
                 }
                 else {
                     self.loadNextPage();
@@ -181,7 +185,31 @@ pl.implement(NewListingClass, {
                 return false;
             }
         });
-        pl('#'+msgid).html('&nbsp;');
+    },
+    bindWithdrawButton: function() {
+        pl('#newwithdrawbtn').bind({
+            click: function() {
+                var completeFunc = function() {
+                        pl('#newwithdrawmsg, #newwithdrawcancelbtn').hide();
+                        document.location = '/';
+                    },
+                    ajax = new AjaxClass('/listing/delete', 'newwithdrawmsg', completeFunc);
+                if (pl('#newwithdrawcancelbtn').css('display') === 'none') { // first call
+                    pl('#newwithdrawmsg, #newwithdrawcancelbtn').show();
+                }
+                else {
+                    ajax.setPost();
+                    ajax.call();
+                }
+                return false;
+            }
+        });
+        pl('#newwithdrawcancelbtn').bind({
+            click: function() {
+                pl('#newwithdrawmsg, #newwithdrawcancelbtn').hide();
+                return false;
+            }
+        });
     },
     loadNextPage: function() {
         document.location = '/new-listing-qa-page.html';

@@ -320,6 +320,8 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .bidclosedtitle { display: none; }
 .bidclosedbox { display: none; }
 .bidsummary { font-size: 10px; }
+.newwithdrawmsg { display: none; }
+.newwithdrawcancelbtn { display: none; margin-top: 10px; }
 
 /* tiles */
 .tile { width: 146px; height: 296px; border: 2px solid #999999; border-radius: 5px; overflow: hidden; margin-bottom: 10px; position: relative; background: #e3e3e3; }
