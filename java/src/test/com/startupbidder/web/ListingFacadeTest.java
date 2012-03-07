@@ -41,6 +41,7 @@ import com.startupbidder.vo.ErrorCodes;
 import com.startupbidder.vo.ListPropertiesVO;
 import com.startupbidder.vo.ListingAndUserVO;
 import com.startupbidder.vo.ListingListVO;
+import com.startupbidder.vo.ListingPropertyVO;
 import com.startupbidder.vo.ListingVO;
 import com.startupbidder.vo.UserVO;
 import com.startupbidder.web.ListingFacade;
@@ -63,8 +64,42 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 	}
 	
 	@Test
+	public void testUpdateListingPropertyForCreatedListing() {
+		ListingAndUserVO userListing = ListingFacade.instance().createListing(googleUserVO);
+		assertEquals("We should get OK", ErrorCodes.OK, userListing.getErrorCode());
+		ListingVO listing = userListing.getListing();
+		
+		// set non empty name
+		ListingPropertyVO property = new ListingPropertyVO("name", "New name");
+		ListingPropertyVO update = ListingFacade.instance().updateListingProperty(googleUserVO, property);
+		assertEquals("We should get OK", ErrorCodes.OK, update.getErrorCode());
+		assertEquals("name", update.getPropertyName());
+		assertEquals("New name", update.getPropertyValue());
+
+		ListingAndUserVO updatedListing = ListingFacade.instance().createListing(googleUserVO);
+		assertEquals("We should get OK", ErrorCodes.OK, update.getErrorCode());
+		assertEquals("Edited listing should be updated", listing.getId(), updatedListing.getListing().getId());
+		assertEquals("New name", updatedListing.getListing().getName());
+		
+		// set an empty name
+		property = new ListingPropertyVO("name", "");
+		update = ListingFacade.instance().updateListingProperty(googleUserVO, property);
+		assertEquals("We should get failure", ErrorCodes.ENTITY_VALIDATION, update.getErrorCode());
+		assertEquals("name", update.getPropertyName());
+		assertEquals("Even validation failed value should be updated", "", update.getPropertyValue());
+		
+		// set short name
+		property = new ListingPropertyVO("name", "Abey");
+		update = ListingFacade.instance().updateListingProperty(googleUserVO, property);
+		assertEquals("We should get failure", ErrorCodes.ENTITY_VALIDATION, update.getErrorCode());
+		assertEquals("name", update.getPropertyName());
+		assertEquals("Even validation failed value should be updated", "Abey", update.getPropertyValue());
+	}
+	
+	@Test
 	public void testCreateListing() {
 		ListingAndUserVO newListing = ListingFacade.instance().createListing(googleUserVO);
+		assertEquals("We should get OK", ErrorCodes.OK, newListing.getErrorCode());
 		assertNotNull("Listing not created", newListing.getListing());
 		assertNull("Name should be empty", newListing.getListing().getName());
 		assertNull("Summary should be null", newListing.getListing().getSummary());
@@ -75,10 +110,12 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 		assertEquals("Edited listing for logged in user should be set", newListing.getListing().getId(), googleUserVO.getEditedListing());
 		
 		ListingAndUserVO newListing2 = ListingFacade.instance().createListing(googleUserVO);
+		assertEquals("We should get OK", ErrorCodes.OK, newListing.getErrorCode());
 		assertNotNull("Listing not created", newListing2.getListing());
 		assertEquals("Only one edited listing allowed", newListing.getListing().getId(), newListing2.getListing().getId());
 		
 		ListingAndUserVO newListingForAdmin = ListingFacade.instance().createListing(admin);
+		assertEquals("We should get OK", ErrorCodes.OK, newListing.getErrorCode());
 		assertNotNull("Listing not created", newListingForAdmin.getListing());
 		assertNull("Name should be empty", newListingForAdmin.getListing().getName());
 		assertNull("Summary should be null", newListingForAdmin.getListing().getSummary());
@@ -95,6 +132,7 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 	@Test
 	public void testCreateNotValidListing() {
 		ListingAndUserVO newListing = ListingFacade.instance().createListing(null);
+		assertEquals("We should get failure", ErrorCodes.NOT_LOGGED_IN, newListing.getErrorCode());
 		assertNull("Listing with empty owner", newListing);
 	}
 	
@@ -207,7 +245,7 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 	
 	@Test
 	public void testUpdateFailedListing() {
-		assertFalse("Logged in user should not be an admin", UserServiceFactory.getUserService().isUserAdmin());
+		assertFalse("Logged in user should not be an admin", googleUserVO.isAdmin());
 		
 		ListingVO listing = new ListingVO();
 		listing.setId(new Key<Listing>(Listing.class, 999).getString());

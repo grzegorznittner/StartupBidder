@@ -19,6 +19,10 @@ import com.startupbidder.util.LowecaseSerializer;
 		fieldVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE)
 @JsonIgnoreProperties(ignoreUnknown=true)
 public class ListingVO extends BaseVO {
+	public static final String[] UPDATABLE_PROPERTIES = {"title", "mantra", "summary", "website", "category",
+			"address", "suggested_amt", "suggested_pct", "answer1", "answer2", "answer3",
+			"answer4", "answer5", "answer6", "answer7", "answer8", "answer9", "answer10"};
+	
 	@JsonProperty("num") private int orderNumber;
 	@JsonProperty("listing_id")	private String id;
 	@JsonProperty("title") private String name;

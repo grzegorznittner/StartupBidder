@@ -4,12 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 
 import com.googlecode.objectify.Key;
 import com.startupbidder.datamodel.Monitor.Monitored;
 import com.startupbidder.vo.BidVO;
 import com.startupbidder.vo.CommentVO;
 import com.startupbidder.vo.ListingDocumentVO;
+import com.startupbidder.vo.ListingPropertyVO;
 import com.startupbidder.vo.ListingVO;
 import com.startupbidder.vo.MonitorVO;
 import com.startupbidder.vo.NotificationVO;
@@ -101,6 +103,47 @@ public class VoToModelConverter {
 		listing.answer9 = listingVO.getAnswer9();
 		listing.answer10 = listingVO.getAnswer10();
 		return listing;
+	}
+	
+	public static void updateListingProperty(Listing listing, ListingPropertyVO property) {
+		String name = property.getPropertyName();
+		if (name.equalsIgnoreCase("title")) {
+			listing.name = property.getPropertyValue();
+		} else if (name.equalsIgnoreCase("mantra")) {
+			listing.mantra = property.getPropertyValue();
+		} else if (name.equalsIgnoreCase("summary")) {
+			listing.summary = property.getPropertyValue();
+		} else if (name.equalsIgnoreCase("website")) {
+			listing.website = property.getPropertyValue();
+		} else if (name.equalsIgnoreCase("category")) {
+			listing.category = property.getPropertyValue();
+		} else if (name.equalsIgnoreCase("address")) {
+			listing.address = property.getPropertyValue();
+		} else if (name.equalsIgnoreCase("suggested_amt")) {
+			listing.suggestedAmount = NumberUtils.toInt(property.getPropertyValue(), 0);
+		} else if (name.equalsIgnoreCase("suggested_pct")) {
+			listing.suggestedPercentage = NumberUtils.toInt(property.getPropertyValue(), 0);
+		} else if (name.equalsIgnoreCase("answer1")) {
+			listing.answer1 = property.getPropertyValue();
+		} else if (name.equalsIgnoreCase("answer2")) {
+			listing.answer2 = property.getPropertyValue();
+		} else if (name.equalsIgnoreCase("answer3")) {
+			listing.answer3 = property.getPropertyValue();
+		} else if (name.equalsIgnoreCase("answer4")) {
+			listing.answer4 = property.getPropertyValue();
+		} else if (name.equalsIgnoreCase("answer5")) {
+			listing.answer5 = property.getPropertyValue();
+		} else if (name.equalsIgnoreCase("answer6")) {
+			listing.answer6 = property.getPropertyValue();
+		} else if (name.equalsIgnoreCase("answer7")) {
+			listing.answer7 = property.getPropertyValue();
+		} else if (name.equalsIgnoreCase("answer8")) {
+			listing.answer8 = property.getPropertyValue();
+		} else if (name.equalsIgnoreCase("answer9")) {
+			listing.answer9 = property.getPropertyValue();
+		} else if (name.equalsIgnoreCase("answer10")) {
+			listing.answer10 = property.getPropertyValue();
+		}
 	}
 
 	public static Comment convert(CommentVO commentVO) {

@@ -13,6 +13,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 
 import com.startupbidder.vo.ListPropertiesVO;
 import com.startupbidder.vo.ListingAndUserVO;
+import com.startupbidder.vo.ListingPropertyVO;
 import com.startupbidder.vo.ListingVO;
 import com.startupbidder.web.HttpHeaders;
 import com.startupbidder.web.HttpHeadersImpl;
@@ -64,8 +65,10 @@ public class ListingController extends ModelDrivenController {
 		} else if ("POST".equalsIgnoreCase(request.getMethod())) {
 			if ("create".equalsIgnoreCase(getCommand(1))) {
 				return startEditing(request);
-			}else if ("update".equalsIgnoreCase(getCommand(1))) {
+			} else if ("update".equalsIgnoreCase(getCommand(1))) {
 				return update(request);
+			} else if ("update_field".equalsIgnoreCase(getCommand(1))) {
+				return updateField(request);
 			} else if("up".equalsIgnoreCase(getCommand(1))) {
 				return up(request);
 			}  else if("activate".equalsIgnoreCase(getCommand(1))) {
@@ -130,6 +133,27 @@ public class ListingController extends ModelDrivenController {
 				}
 			}
 			model = listing;
+		} else {
+			log.log(Level.WARNING, "Parameter 'listing' is empty!");
+			headers.setStatus(500);
+		}
+
+		return headers;
+	}
+	
+    // PUT /listing/update_field
+    // POST /listing/update_field
+	private HttpHeaders updateField(HttpServletRequest request) throws JsonParseException, JsonMappingException, IOException {
+		HttpHeaders headers = new HttpHeadersImpl("update_field");
+		
+		ObjectMapper mapper = new ObjectMapper();
+		log.log(Level.INFO, "Parameters: " + request.getParameterMap());
+		String listingString = request.getParameter("listing");
+		if (!StringUtils.isEmpty(listingString)) {
+			ListingPropertyVO property = mapper.readValue(listingString, ListingPropertyVO.class);
+			log.log(Level.INFO, "Updating listing: " + property);
+			property = ListingFacade.instance().updateListingProperty(getLoggedInUser(), property);
+			model = property;
 		} else {
 			log.log(Level.WARNING, "Parameter 'listing' is empty!");
 			headers.setStatus(500);

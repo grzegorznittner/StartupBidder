@@ -8,6 +8,8 @@ import java.util.Date;
 import javax.persistence.Id;
 import javax.persistence.PrePersist;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.annotation.Cached;
 import com.googlecode.objectify.annotation.Entity;
@@ -94,4 +96,5 @@ public class Listing extends BaseObject implements Monitor.Monitored {
 	public String getWebKey() {
 		return new Key<Listing>(Listing.class, id).getString();
 	}
+	
 }

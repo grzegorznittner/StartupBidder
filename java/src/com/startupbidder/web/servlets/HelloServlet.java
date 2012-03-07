@@ -26,6 +26,7 @@ import com.startupbidder.datamodel.Monitor;
 import com.startupbidder.datamodel.Notification;
 import com.startupbidder.datamodel.SBUser;
 import com.startupbidder.vo.ListPropertiesVO;
+import com.startupbidder.vo.ListingAndUserVO;
 import com.startupbidder.vo.ListingDocumentVO;
 import com.startupbidder.vo.UserListVO;
 import com.startupbidder.vo.UserVO;
@@ -118,6 +119,29 @@ public class HelloServlet extends HttpServlet {
 			out.println("<form method=\"POST\" action=\"/listing/up/.json\"><input type=\"hidden\" name=\"id\" value=\"" + topListing.getWebKey() + "\"/><input type=\"submit\" value=\"Logged in user votes for top listing (works only once per user), 2nd form\"/></form>");
 			out.println("<form method=\"POST\" action=\"/listing/create/.json\"><input type=\"submit\" value=\"Creates NEW listing\"/></form>");
 			out.println("<form method=\"POST\" action=\"/listing/delete/.json\"><input type=\"submit\" value=\"Deletes edited (NEW) listing\"/></form>");
+			
+			out.println("<p>Editing new listing. Update methods:</p>");
+			ListingAndUserVO editedListing = ListingFacade.instance().createListing(currentUser);
+			if (editedListing.getListing() != null) {
+				out.println("<form method=\"POST\" action=\"/listing/update_field/.json\"><textarea name=\"listing\" rows=\"1\" cols=\"100\">"
+						+ "{\"name\":\"title\",\"value\":\"" + editedListing.getListing().getName() + "\"}"
+						+ "</textarea><input type=\"submit\" value=\"Update title\"/></form>");
+				out.println("<form method=\"POST\" action=\"/listing/update_field/.json\"><textarea name=\"listing\" rows=\"1\" cols=\"100\">"
+						+ "{\"name\":\"mantra\",\"value\":\"" + editedListing.getListing().getMantra() + "\"}"
+						+ "</textarea><input type=\"submit\" value=\"Update mantra\"/></form>");
+				out.println("<form method=\"POST\" action=\"/listing/update_field/.json\"><textarea name=\"listing\" rows=\"1\" cols=\"100\">"
+						+ "{\"name\":\"summary\",\"value\":\"" + editedListing.getListing().getSummary() + "\"}"
+						+ "</textarea><input type=\"submit\" value=\"Update summary\"/></form>");
+				out.println("<form method=\"POST\" action=\"/listing/update_field/.json\"><textarea name=\"listing\" rows=\"1\" cols=\"100\">"
+						+ "{\"name\":\"suggested_amt\",\"value\":\"" + editedListing.getListing().getSuggestedAmount() + "\"}"
+						+ "</textarea><input type=\"submit\" value=\"Update suggested amount\"/></form>");
+				out.println("<form method=\"POST\" action=\"/listing/update_field/.json\"><textarea name=\"listing\" rows=\"1\" cols=\"100\">"
+						+ "{\"name\":\"suggested_pct\",\"value\":\"" + editedListing.getListing().getSuggestedPercentage() + "\"}"
+						+ "</textarea><input type=\"submit\" value=\"Update suggested percentage\"/></form>");
+			} else {
+				out.println("<div><b>Listing doesn't exist.</b> Be aware that this page is calling automatically create method, so edited listing should be always available.</div>");
+			}
+			
 			out.println("<form method=\"POST\" action=\"/listing/activate/" + topListing.getWebKey() + "/.json\"><input type=\"submit\" value=\"Activate top listing\"/></form>");
 			out.println("<form method=\"POST\" action=\"/listing/withdraw/" + topListing.getWebKey() + "/.json\"><input type=\"submit\" value=\"Withdraw top listing\"/></form>");
 			out.println("<a href=\"/listings/categories/.json\">All categories</a><br/>");

@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.datanucleus.util.StringUtils;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
@@ -39,6 +40,7 @@ import com.startupbidder.vo.ListPropertiesVO;
 import com.startupbidder.vo.ListingAndUserVO;
 import com.startupbidder.vo.ListingDocumentVO;
 import com.startupbidder.vo.ListingListVO;
+import com.startupbidder.vo.ListingPropertyVO;
 import com.startupbidder.vo.ListingVO;
 import com.startupbidder.vo.UserBasicVO;
 import com.startupbidder.vo.UserVO;
@@ -79,22 +81,23 @@ public class ListingFacade {
 	 * Sets listing's state to NEW.
 	 */
 	public ListingAndUserVO createListing(UserVO loggedInUser) {
+		ListingAndUserVO result = new ListingAndUserVO();
 		if (loggedInUser == null) {
 			log.log(Level.WARNING, "Only logged in user can create listing", new Exception("Not logged in"));
-			return null;
+			result.setErrorCode(ErrorCodes.NOT_LOGGED_IN);
+			result.setErrorMessage("Only logged in user can create listing");
+		} else {
+			Listing l = new Listing();
+			l.state = Listing.State.NEW;
+			l.owner = new Key<SBUser>(loggedInUser.getId());
+			l.created = new Date();
+			ListingVO newListing = DtoToVoConverter.convert(getDAO().createListing(l));
+			loggedInUser.setEditedListing(newListing.getId());
+			
+			// at that stage listing is not yet active so there is no point of updating statistics
+			applyListingData(loggedInUser, newListing);			
+			result.setListing(newListing);
 		}
-		Listing l = new Listing();
-		l.state = Listing.State.NEW;
-		l.owner = new Key<SBUser>(loggedInUser.getId());
-		l.created = new Date();
-		ListingVO newListing = DtoToVoConverter.convert(getDAO().createListing(l));
-		loggedInUser.setEditedListing(newListing.getId());
-		
-		// at that stage listing is not yet active so there is no point of updating statistics
-		applyListingData(loggedInUser, newListing);
-		
-		ListingAndUserVO result = new ListingAndUserVO();
-		result.setListing(newListing);
 		return result;
 	}
 
@@ -118,6 +121,39 @@ public class ListingFacade {
 			listingAndUser.setErrorMessage("Invalid key passed");
 		}
 		return listingAndUser;
+	}
+	
+	public ListingPropertyVO updateListingProperty(UserVO loggedInUser, ListingPropertyVO property) {
+		ListingPropertyVO result = new ListingPropertyVO();
+		if (StringUtils.isEmpty(property.getPropertyName())) {
+			result.setErrorCode(ErrorCodes.OPERATION_NOT_ALLOWED);
+			result.setErrorMessage("'" + property.getPropertyName() + "' is not a valid listing's property");
+			return result;
+		}
+		// checking if user can update field
+		boolean canUpdate = false;
+		for(String field : ListingVO.UPDATABLE_PROPERTIES) {
+			if (field.equalsIgnoreCase(property.getPropertyName())) {
+				canUpdate = true;
+			}
+		}
+		if (!canUpdate) {
+			result.setErrorMessage("Property '" + property.getPropertyName() + "' is not updatable");
+			result.setErrorCode(ErrorCodes.ENTITY_VALIDATION);
+			return result;
+		}
+		// retrieving edited listing
+		Listing listing = getDAO().getListing(BaseVO.toKeyId(loggedInUser.getEditedListing()));
+		if (listing == null) {
+			result.setErrorCode(ErrorCodes.OPERATION_NOT_ALLOWED);
+			result.setErrorMessage("User is not editing any listing");
+			return result;
+		}
+		VoToModelConverter.updateListingProperty(listing, property);
+		log.info("Updating listing: " + listing);
+		getDAO().storeListing(listing);
+		
+		return result;
 	}
 
 	public ListingVO updateListing(UserVO loggedInUser, ListingVO listing) {

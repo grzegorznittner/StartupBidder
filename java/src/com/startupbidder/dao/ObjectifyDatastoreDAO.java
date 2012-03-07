@@ -576,6 +576,11 @@ public class ObjectifyDatastoreDAO {
 			return null;
 		}
 	}
+	
+	public Listing storeListing(Listing newListing) {
+		getOfy().put(newListing);
+		return newListing;
+	}
 
 	public Listing getListing(long listingId) {
 		try {
