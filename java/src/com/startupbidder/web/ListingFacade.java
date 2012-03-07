@@ -29,6 +29,7 @@ import com.startupbidder.dao.ObjectifyDatastoreDAO;
 import com.startupbidder.datamodel.Category;
 import com.startupbidder.datamodel.Listing;
 import com.startupbidder.datamodel.ListingDoc;
+import com.startupbidder.datamodel.ListingDoc.Type;
 import com.startupbidder.datamodel.ListingStats;
 import com.startupbidder.datamodel.Notification;
 import com.startupbidder.datamodel.SBUser;
@@ -147,6 +148,11 @@ public class ListingFacade {
 		if (listing == null) {
 			result.setErrorCode(ErrorCodes.OPERATION_NOT_ALLOWED);
 			result.setErrorMessage("User is not editing any listing");
+			return result;
+		}
+		if (listing.state != Listing.State.NEW) {
+			result.setErrorCode(ErrorCodes.OPERATION_NOT_ALLOWED);
+			result.setErrorMessage("Listing is not in NEW state");
 			return result;
 		}
 		VoToModelConverter.updateListingProperty(listing, property);
@@ -643,15 +649,44 @@ public class ListingFacade {
 	}
 
 	public ListingDocumentVO createListingDocument(UserVO loggedInUser, ListingDocumentVO doc) {
-		if (SystemProperty.environment.value() == SystemProperty.Environment.Value.Production
-				&& loggedInUser == null) {
+		if (SystemProperty.environment.value() == SystemProperty.Environment.Value.Production && loggedInUser == null) {
 			BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
 			blobstoreService.delete(doc.getBlob());
-			return null;
+			doc.setErrorCode(ErrorCodes.NOT_LOGGED_IN);
+			doc.setErrorMessage("Only logged in users can upload documents");
+			return doc;
+		}
+		if (loggedInUser != null && loggedInUser.getEditedListing() == null) {
+			BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
+			blobstoreService.delete(doc.getBlob());
+			doc.setErrorCode(ErrorCodes.OPERATION_NOT_ALLOWED);
+			doc.setErrorMessage("User is not editing listing");
+			return doc;
 		}
 		ListingDoc docDTO = VoToModelConverter.convert(doc);
 		docDTO.created = new Date();
-		return DtoToVoConverter.convert(getDAO().createListingDocument(docDTO));
+		docDTO = getDAO().createListingDocument(docDTO);
+		doc = DtoToVoConverter.convert(docDTO);
+		
+		Listing listing = getDAO().getListing(BaseVO.toKeyId(loggedInUser.getEditedListing()));
+		switch(docDTO.type) {
+		case BUSINESS_PLAN:
+			listing.businessPlanId = new Key<ListingDoc>(ListingDoc.class, docDTO.id);
+			break;
+		case FINANCIALS:
+			listing.financialsId = new Key<ListingDoc>(ListingDoc.class, docDTO.id);
+			break;
+		case PRESENTATION:
+			listing.presentationId = new Key<ListingDoc>(ListingDoc.class, docDTO.id);
+			break;
+		case LOGO:
+			listing.logoId = new Key<ListingDoc>(ListingDoc.class, docDTO.id);
+			// we need to set url data for logo in listing
+			break;
+		}
+		getDAO().storeListing(listing);
+		
+		return doc;
 	}
 
 	public List<ListingDocumentVO> getAllListingDocuments(UserVO loggedInUser) {

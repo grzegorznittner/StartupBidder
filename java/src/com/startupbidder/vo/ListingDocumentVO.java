@@ -14,7 +14,7 @@ import com.google.appengine.api.blobstore.BlobKey;
  */
 @JsonAutoDetect(getterVisibility=Visibility.NONE, setterVisibility=Visibility.NONE,
 		fieldVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE)
-public class ListingDocumentVO {
+public class ListingDocumentVO extends BaseResultVO {
 	@JsonProperty("id")
 	private String id;
 	private String listing;

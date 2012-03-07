@@ -23,7 +23,7 @@ import com.googlecode.objectify.annotation.Unindexed;
 @Entity
 @Cached(expirationSeconds=60*10)
 public class ListingDoc extends BaseObject {
-	public enum Type {BUSINESS_PLAN, PRESENTATION, FINANCIALS};
+	public static enum Type {BUSINESS_PLAN, PRESENTATION, FINANCIALS, LOGO};
 
 	@Id public Long id;
 	

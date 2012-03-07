@@ -578,6 +578,7 @@ public class ObjectifyDatastoreDAO {
 	}
 	
 	public Listing storeListing(Listing newListing) {
+		log.info("Storing " + newListing);
 		getOfy().put(newListing);
 		return newListing;
 	}
@@ -1165,8 +1166,7 @@ public class ObjectifyDatastoreDAO {
 	}
 
 	public List<ListingDoc> getAllListingDocuments() {
-		QueryResultIterable<Key<ListingDoc>> docsIt = getOfy().query(ListingDoc.class)
-				.order("+name").fetchKeys();
+		QueryResultIterable<Key<ListingDoc>> docsIt = getOfy().query(ListingDoc.class).fetchKeys();
 		List<ListingDoc> docs = new ArrayList<ListingDoc>(getOfy().get(docsIt).values());
 		return docs;
 	}
