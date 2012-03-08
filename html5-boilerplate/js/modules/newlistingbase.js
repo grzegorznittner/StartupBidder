@@ -1,6 +1,10 @@
 function NewListingBaseClass() {
-    var editableprops = ['title', 'suggested_amt', 'suggested_pct', 'summary', 'business_plan_url', 'presentation_url',
-            'category', 'mantra', 'website', 'address'],
+    var editableprops = [
+            'title', 'category', 'mantra', 'website', 'address',
+            'suggested_amt', 'suggested_pct',
+            'summary', 'answer1', 'answer2', 'answer3', 'answer4', 'answer5', 'answer6', 'answer7', 'answer8', 'answer9', 'answer10', 'answer11', 
+            'business_plan_url', 'presentation_url'
+        ],
         companyTile = new CompanyTileClass({preview: true});
     this.editableprops = editableprops;
     this.companyTile = companyTile;
@@ -122,16 +126,14 @@ pl.implement(NewListingBaseClass, {
     getUpdater: function(fieldName) {
         var self = this;
         return function(newdata, loadFunc, errorFunc, successFunc) {
-            var data = { listing: self.listing },
+            var data = { listing: {} },
+                newval = (newdata ? newdata.changeKey : undefined),
                 pctSuccessFunc = function(json) {
                     successFunc(json);
                     self.displayCalculated();
                 }
-                ajax = new AjaxClass('/listing/update', '', null, pctSuccessFunc, loadFunc, errorFunc),
-                newval = newdata ? newdata.changeKey : undefined;
-            if (newdata) {
-                data.listing[fieldName] = newdata.changeKey;
-            }
+                ajax = new AjaxClass('/listing/update_field', '', null, pctSuccessFunc, loadFunc, errorFunc);
+            data.listing[fieldName] = newval;
             ajax.setPostData(data);
             ajax.call();
         };

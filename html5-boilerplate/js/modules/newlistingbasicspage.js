@@ -1,39 +1,8 @@
 function NewListingBasicsClass() {
-    var base = new NewListingBaseClass(),
-        categoryCompleteFunc = function(json) {
-            var makeOptions = function(json) {
-                    var options = [],
-                        sorter = function(a, b) {
-                            return a[0] - b[0];
-                        },
-                        cat,
-                        catid;
-                    for (catid in json) {
-                        cat = json[catid];
-                        options.push([cat, catid]);
-                    }
-                    return options.sort(sorter);
-                },
-                options = makeOptions(json),
-                makeHtml = function(options) {
-                    var i, option, cat, catid,
-                        html = '<option value="0">Select...</option>\n';
-                    for (i = 0; i < options.length; i++) {
-                        option = options[i];
-                        cat = option[0];
-                        catid = option[1];
-                        html += '<option value="' + catid + '">' + cat + '</option>\n';
-                    }
-                    return html;
-                },
-                optionsHtml = makeHtml(options);
-            pl('#category').html(optionsHtml);
-        },
-        ajax = new AjaxClass('/listing/categories', 'newlistingmsg', categoryCompleteFunc);
+    var base = new NewListingBaseClass();
     base.prevPage = '',
     base.nextPage = '/new-listing-qa-page.html';
     this.base = base;
-    ajax.call();
 }
 pl.implement(NewListingBasicsClass, {
     load: function() {
@@ -47,6 +16,25 @@ pl.implement(NewListingBasicsClass, {
             };
         ajax = new AjaxClass('/listings/create', 'newlistingmsg', completeFunc);
         ajax.setPost();
+        ajax.call();
+    },
+    loadCategories: function() {
+        var self = this,
+            categoryCompleteFunc = function(json) {
+                var makeOptions = function(json) {
+                        var options = [],
+                            cat,
+                            catid;
+                        for (catid in json) {
+                            cat = json[catid];
+                            options.push(cat);
+                        }
+                        return options.sort();
+                    },
+                    options = makeOptions(json);
+                self.base.fieldMap['category'].setOptions(options);
+            },
+            ajax = new AjaxClass('/listing/categories', 'newlistingmsg', categoryCompleteFunc);
         ajax.call();
     },
     display: function() {
@@ -64,12 +52,20 @@ pl.implement(NewListingBasicsClass, {
                 website: ValidatorClass.prototype.isURL,
                 address: ValidatorClass.prototype.isNotEmpty
             },
+            classes = {
+                title: TextFieldClass,
+                category: SelectFieldClass,
+                mantra: TextFieldClass,
+                website: TextFieldClass,
+                address: TextFieldClass
+            },
             id,
             field;
         this.base.fields = [];
+        this.base.fieldMap = {};
         for (i = 0; i < textFields.length; i++) {
             id = textFields[i];
-            field = new TextFieldClass(id, this.base.listing[id], this.base.getUpdater(id), 'newlistingmsg');
+            field = new (classes[id])(id, this.base.listing[id], this.base.getUpdater(id), 'newlistingmsg');
             if (id === 'address') {
                 field.fieldBase.setDisplayName('LOCATION');
             }
@@ -77,7 +73,9 @@ pl.implement(NewListingBasicsClass, {
             field.fieldBase.validator.postValidator = this.base.genDisplayCalculatedIfValid(field);
             field.bindEvents();
             this.base.fields.push(field);
+            this.base.fieldMap[id] = field;
         } 
+        this.loadCategories();
         this.addMap();
         this.base.bindNavButtons();
     },

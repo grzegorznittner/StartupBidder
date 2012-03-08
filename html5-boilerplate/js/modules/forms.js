@@ -93,7 +93,7 @@ pl.implement(ValidatorClass, {
     },
     isSelected: function(val) {
         var str = '' + val;
-        if (str !== '0') {
+        if (str !== 'Select...') {
             return 0;
         }
         else {
@@ -321,13 +321,96 @@ pl.implement(CheckboxFieldClass, {
             }
         };
     },
+    validate: function() {
+        var value = pl(this.fieldBase.sel).attr('checked');
+        return this.fieldBase.validator.validate(value);
+    },
     bindEvents: function() {
         var self, onchange;
         self = this;
         onchange = function() {
             var newval, changeKey;
-            changeKey = self.fieldBaseid;
+            changeKey = self.fieldBase.id;
             newval = pl(self.fieldBase.sel).attr('checked');
+            self.fieldBase.updateFunction({ changeKey: newval }, self.fieldBase.getLoadFunc(), self.fieldBase.getErrorFunc(self.getDisplayFunc()), self.fieldBase.getSuccessFunc());
+        }
+        pl(self.fieldBase.sel).bind({
+            change: onchange
+        });
+    }
+});
+
+function SelectFieldClass(id, value, updateFunction, msgId) {
+    this.fieldBase = new FieldBaseClass(id, value, updateFunction, msgId);
+    this.getDisplayFunc()();
+}
+pl.implement(SelectFieldClass, {
+    setOptions: function(options) {
+        var self = this,
+            field = pl(self.fieldBase.sel).get(0),
+            opts = options || [],
+            val = self.fieldBase.value,
+            i,
+            optval;
+        field.options.length = 0;
+        field.options[0] = new Option('Select...', 'Select...', true, false);
+        for (i = 0; i < opts.length; i++) {
+            optval = opts[i];
+            field.options[i+1] = new Option(optval, optval, false, (val === optval ? true : false));
+        }
+    },
+    getDisplayFunc: function() {
+        var self = this;
+        return function() {
+            if (self.fieldBase.value) {
+                self.selectValue(self.fieldBase.value);
+            }
+        };
+    },
+    selectValue: function(value) {
+        var self = this,
+            field = pl(self.fieldBase.sel).get(0),
+            options = field.options || [],
+            i;
+        for (i = 0; i < options.length; i++) {
+            if (options[i] === value) {
+                field.selectedIndex = i;
+                field.text = value;
+                break;
+            }
+        }
+    },
+    getValue: function() {
+        var self = this,
+            field = pl(self.fieldBase.sel).get(0),
+            options = field.options || [],
+            selectedIndex = field.selectedIndex || 0,
+            value = options && options[selectedIndex] ? options[selectedIndex].value : self.fieldBase.value;
+        return value;
+    },
+    validate: function() {
+        var value = this.getValue();
+        return this.fieldBase.validator.validate(value);
+    },
+    bindEvents: function() {
+        var self, onchange;
+        self = this;
+        onchange = function() {
+            var icon = new ValidIconClass(self.fieldBase.id + 'icon'),
+                changeKey = self.fieldBase.id,
+                newval = self.getValue(),
+                validMsg = self.fieldBase.validator.validate(newval);
+            if (validMsg !== 0) {
+                self.fieldBase.msg.show('attention', validMsg);
+                icon.showInvalid();
+                return;
+            }
+            if (!self.fieldBase.msg.isClear) {
+                self.fieldBase.msg.clear();
+            }
+            if (!icon.isValid) {
+                icon.showValid();
+            }
             self.fieldBase.updateFunction({ changeKey: newval }, self.fieldBase.getLoadFunc(), self.fieldBase.getErrorFunc(self.getDisplayFunc()), self.fieldBase.getSuccessFunc());
         }
         pl(self.fieldBase.sel).bind({
