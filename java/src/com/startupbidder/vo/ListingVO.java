@@ -21,7 +21,7 @@ import com.startupbidder.util.LowecaseSerializer;
 public class ListingVO extends BaseVO {
 	public static final String[] UPDATABLE_PROPERTIES = {"title", "mantra", "summary", "website", "category",
 			"address", "asked_fund", "suggested_amt", "suggested_pct", "answer1", "answer2", "answer3",
-			"answer4", "answer5", "answer6", "answer7", "answer8", "answer9", "answer10", "answer11"};
+			"answer4", "answer5", "answer6", "answer7", "answer8", "answer9", "answer10", "answer11", "answer12", "answer13"};
 	
 	@JsonProperty("num") private int orderNumber;
 	@JsonProperty("listing_id")	private String id;
@@ -68,6 +68,8 @@ public class ListingVO extends BaseVO {
 	@JsonProperty("answer9") private String answer9;
 	@JsonProperty("answer10") private String answer10;
 	@JsonProperty("answer11") private String answer11;
+	@JsonProperty("answer12") private String answer12;
+	@JsonProperty("answer13") private String answer13;
 	
 	public ListingVO() {
 	}
@@ -424,11 +426,26 @@ public class ListingVO extends BaseVO {
 		this.answer11 = answer11;
 	}
 
+    public String getAnswer12() {
+		return answer12;
+	}
+
+	public void setAnswer12(String answer12) {
+		this.answer12 = answer12;
+	}
+
+    public String getAnswer13() {
+		return answer13;
+	}
+
+	public void setAnswer13(String answer13) {
+		this.answer13 = answer13;
+	}
+
 	public boolean isAskedForFunding() {
 		return askedForFunding;
 	}
 
-	public void setAskedForFunding(boolean askedForFunding) {
-		this.askedForFunding = askedForFunding;
+	public void setAskedForFunding(boolean askedForFunding) { this.askedForFunding = askedForFunding;
 	}
 }

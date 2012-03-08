@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <!-- Use the .htaccess and remove these lines to avoid edge case issues.
+       More info: h5bp.com/b/378 -->
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+  <title>Startupbidder Listing</title>
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <!-- Mobile viewport optimized: j.mp/bplateviewport -->
+  <!-- <meta name="viewport" content="width=device-width,initial-scale=1"> -->
+  <!-- <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0"> -->
+
+  <meta name="description" content="Startupbidder - list, bid, comment and vote on startup businesses worldwide"/>
+  <meta name="keywords" content="startupbidder startup company auction bid business plan"/>
+  <!-- Place favicon.ico and apple-touch-icon.png in the root directory: mathiasbynens.be/notes/touch-icons -->
+
+  <!-- CSS: implied media=all -->
+  <!-- CSS concatenated and minified via ant build script-->
+  <link rel="stylesheet" href="css/style.css" type="text/css" />
+  <!-- end CSS-->
+
+  <link rel="canonical" href="http://startupbidder.appspot.com"/>
+</head>
+
+<body class="new-listing-basics-page">
+<div id="wrap">
+<div id="newlistingmain">
+
+<div class="header">
+  <div class="container">
+    <div class="span-5">
+      <a href="main-page.html"><span class="logotextblue">startup</span><span class="logotextgrey">bidder</span></a>
+    </div>
+    <div class="span-11">
+      <a href="main-page.html?type=top"><span class="headerlink">Top</span></a>
+      <span class="headertext">&nbsp;&nbsp;|&nbsp;&nbsp;</span>
+      <a href="main-page.html?type=latest"><span class="headerlink">Latest</span></a>
+      <span class="headertext">&nbsp;&nbsp;|&nbsp;&nbsp;</span>
+      <a href="main-page.html?type=closing"><span class="headerlink">Closing</span></a>
+      <span class="headertext">&nbsp;&nbsp;|&nbsp;&nbsp;</span>
+      <a id="postlink" href="login-page.html"><span class="headerlink" id="posttext"></span></a>
+    </div>
+    <div class="span-8 last loginspan">
+      <div><a id="loginlink" href="login-page.html"><span class="headerlink" id="logintext"></span></a></div>
+      <div id="logout" class="logout"><a href="/_ah/logout?continue=%2F">logout</a></div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- begin banner -->
+<div class="bannersmall">
+    <span class="bannertextsmall span-16">NEW COMPANY WIZARD</span>
+</div>
+
+<div class="boxstep">
+    <span class="boxstepn" id="boxstepn"></span>
+    <span class="boxsteptitle">YOU HAVE FILLED <span id="boxsteppct">0</span>% OF YOUR COMPANY PROFILE</span>
+</div>
+<!-- end banner -->
+
+<!-- left column -->
+<div class="span-16">
+
+    <div class="boxtitle">INSTRUCTIONS</div>
+    <div class="boxpanel">
+    <p>
+You can either list your company asking for investment, or not ask for investment.
+If you ask for investment, then investors from around the world can bid on your
+company.  Only investors accredited in their jurisdiction are allowed to legally
+invest, so you will only receive bids from accredited investors.
+    </p>
+    <p>
+Upload your business plan, a short investor-oriented presentation, and your
+latest financial statements.  These need not be audited, and you can exclude
+any information which is of a private or trade secret nature.  As most
+professional investors review a large number of companies each day, be brief
+and concise in your documents.
+    </p>
+    <p>
+Note that if you are asking for money, you are subject to anti-fraud provisions.
+Speficially, you must be honest and not withold any material information concerning
+your business to investors.  Failure to do so could subject you to legal consequences,
+up to and including criminal charges and imprisonment.  Startupbidder will report
+suspected fraudulent behavior to the relevant authorities and will fully cooperate in
+any investigations that may result.
+    </p>
+    </div>
+
+    <div class="boxtitle">ASKING FOR INVESTMENT?</div>
+    <div class="boxpanel">
+        <div class="formitem clear">
+            <span class="inputlabel">ALLOW BIDS</span>
+            <span class="inputfield">
+                <input class="checkbox inputcheckbox" type="checkbox" checked="checked" value="true" name="bidsallowed" id="bidsallowed"></input>
+            </span>
+            <span class="inputhelp">Your company will be open for bidding after activation</span>
+        </div>
+    </div>
+
+    <div class="boxtitle">THE OFFER</div>
+    <div class="boxpanel">
+        <div class="formitem">
+            <span class="inputlabel">ASKING</span>
+            <span class="inputfield">
+                <input class="text inputmedtext" type="text" name="offeramt" id="offeramt" value="$20,000" maxlength="8"></input>
+            </span>
+            <span class="inputicon">
+                <div class="checkboxgreenicon"></div>
+            </span>
+        </div>
+        <div class="formitem clear">
+            <span class="inputlabel">FOR</span>
+            <span class="inputfield">
+                <input class="text inputmedtext" type="text" name="offerpct" id="offerpct" value="5%" maxlength="3"></input>
+            </span>
+            <span class="inputicon">
+                <div class="checkboxgreenicon"></div>
+            </span>
+        </div>
+        <div class="formitem clear">
+            <span class="inputlabel">AS</span>
+            <span class="inputfield">
+                 <select class="inputmedselect" id="offertype" name="offertype">
+                     <option value="convertible">CONVERTIBLE NOTE</option>
+                     <option value="common">COMMON STOCK</option>
+                     <option value="preferred">PREFERRED STOCK</option>
+                 </select>
+            </span>
+            <span class="inputicon">
+                <div class="checkboxgreenicon"></div>
+            </span>
+        </div>
+        <div class="formitem clear">
+            <span class="inputlabel">AT</span>
+            <span class="inputfield">
+                <input class="text inputmedtext" type="text" name="offerrate" id="offerrate" value="8%"></input>
+            </span>
+            <span class="inputicon">
+                <div class="checkboxgreenicon"></div>
+            </span>
+        </div>
+        <div class="formitem clear">
+            <span class="inputlabel">BY</span>
+            <span class="inputfield">
+                <input class="text inputmedtext" type="text" name="offerdate" id="offerdate" value="22 December 2012"></input>
+            </span>
+            <span class="inputicon">
+                <div class="checkboxgreenicon"></div>
+            </span>
+        </div>
+    </div>
+
+    <div class="boxtitle">DOCUMENTS</div>
+    <div class="boxpanel">
+        <div class="formitem">
+            <span class="inputlabel">PLAN</span>
+            <span class="inputfield">
+                <span class="span-3 inputbutton" id="planuploadbutton">
+                    UPLOAD
+                </span>
+                <span class="span-3 inputbutton" id="planviewbutton">
+                    VIEW
+                </span>
+            </span>
+            <span class="inputicon">
+                <div class="checkboxgreenicon"></div>
+            </span>
+        </div>
+        <div class="formitem clear">
+            <span class="inputlabel">SLIDE DECK</span>
+            <span class="inputfield">
+                <span class="span-3 inputbutton" id="presentationuploadbutton">
+                    UPLOAD
+                </span>
+                <span class="span-3 inputbutton" id="presentationviewbutton">
+                    VIEW
+                </span>
+            </span>
+            <span class="inputicon">
+                <div class="checkboxgreenicon"></div>
+            </span>
+        </div>
+        <div class="formitem clear">
+            <span class="inputlabel">FINANCIALS</span>
+            <span class="inputfield">
+                <span class="span-3 inputbutton" id="financialsuploadbutton">
+                    UPLOAD
+                </span>
+                <span class="span-3 inputbutton" id="financialsviewbutton">
+                    VIEW
+                </span>
+            </span>
+            <span class="inputicon">
+                <div class="checkboxgreenicon"></div>
+            </span>
+        </div>
+    </div>
+
+    <div class="formitem clear">
+        <span class="newlistingmsg" id="newlistingmsg">&nbsp;</span>
+    </div>
+
+    <div>
+        <div class="formitem clear">
+            <a href="new-listing-qa-page.html">
+                <span class="span-3 inputbutton" id="prevbutton">
+                    PREV
+                </span>
+            </a>
+            <a href="new-listing-media-page.html">
+                <span class="push-10 span-3 inputbutton" id="nextbutton">
+                    NEXT
+                </span>
+            </a>
+        </div>
+    </div>
+
+</div> <!-- end left column -->
+
+<!-- right column -->
+<div class="span-8 last">
+
+    <div class="boxtitle">SUMMARY PREVIEW</div>
+    <div id="summarypreview"></div>
+
+    <div class="boxtitle clear">TIPS</div>
+    <div class="sidebox">
+<p>ASKING - amount of money you want for investment, between $5,000 and $500,000 USD</p>
+<p>FOR - what percentage of common equity you are selling in exchange for the investment, between 5% and 50%</p>
+<p>AS - what kind of investment do you prefer: pure common equity, convertible note, or preferred stock?</p>
+<p>AT - what interest rate you want to pay on your liability, only applies to convertible note or preferred stock</p>
+<p>BY - end date for your bidding between 30 and 90 days in the future</p>
+<p>PLAN - your business plan, a Word or PDF document that describes your business in detail</p>
+<p>SLIDE DECK - your presentation to investors, a Powerpoint or PDF document, keep it short</p>
+<p>FINANCIALS - your most current financial statements, if you have no operating history, then list current capital and runway</p>
+    </div>
+
+    <div class="boxtitle">WITHDRAW SUBMISSION</div>
+    <div class="newwithdrawmsg attention" id="newwithdrawmsg">Are you sure? This cannot be undone.</div>
+    <a href="#" id="newwithdrawbtn"><div class="sideboxbutton">WITHTDRAW</div></a>
+    <a href="#" class="newwithdrawcancelbtn" id="newwithdrawcancelbtn"><div class="sideboxbutton">CANCEL</div></a>
+
+</div>
+<!-- end right column -->
+
+</div> <!-- end container -->
+</div> <!-- end main -->
+</div> <!-- end wrap -->
+
+<div id="newlistingfootertop">
+  <div class="container">
+    <div class="boxstep last">
+        <span class="boxstep1 boxstepcomplete"><div class="boxsteptext">BASICS</div></span>
+        <span class="boxstep2 boxstepcomplete"><div class="boxsteptext">Q &amp; A</div></span>
+        <span class="boxstep3 boxstepcomplete"><div class="boxsteptext">FINANCIALS</div></span>
+        <span class="boxstep4 "><div class="boxsteptext">MEDIA</div></span>
+        <span class="boxstep5 "><div class="boxsteptext">SUBMIT</div></span>
+    </div>
+</div>
+
+<div id="newlistingfooterbottom" class="darkgreybg">
+  <div class="container">
+    <div class="prepend-2 span-14">
+      <span class="footertext lightgrey">
+        <a href="help-page.html"><span class="footerlink">Help</span></a>
+        &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+        <a href="terms-page.html"><span class="footerlink">Terms&nbsp;&amp;&nbsp;Conditions</span></a>
+        &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+        <a href="contact-page.html"><span class="footerlink">Contact</span></a>
+        &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+        <a href="about-page.html"><span class="footerlink">About</span></a>
+      </span>
+    </div>
+    <div class="span-4 last copyrightspan">
+      <span class="copyrighttext lightgrey">Copyright &copy;2012 Startupbidder</span>
+    </div>
+  </div>
+</div>
+
+  <!-- JavaScript at the bottom for fast page loading -->
+  <script src="js/libs/prevel.min.js"></script>
+  <script src="js/modules/base.js"></script>
+  <script src="js/modules/companylist.js"></script>
+  <script src="js/modules/forms.js"></script>
+  <script src="js/modules/newlistingbase.js"></script>
+  <script src="js/modules/newlistingfinancialspage.js"></script>
+
+  <!-- Change UA-XXXXX-X to be your site's ID -->
+  <script>
+  window._gaq = [['_setAccount','UA-23942052-1'],['_trackPageview'],['_trackPageLoadTime']];
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+  </script>
+
+  <!-- Prompt IE 6 users to install Chrome Frame. Remove this if you want to support IE 6.
+       chromium.org/developers/how-tos/chrome-frame-getting-started -->
+  <!--[if lt IE 7 ]>
+    <script src="//ajax.googleapis.com/ajax/libs/chrome-frame/1.0.3/CFInstall.min.js"></script>
+    <script>window.attachEvent('onload',function(){CFInstall.check({mode:'overlay'})})</script>
+  <![endif]-->
+
+</body>
+</html> 

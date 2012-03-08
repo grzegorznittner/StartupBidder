@@ -2,7 +2,7 @@ function NewListingBaseClass() {
     var editableprops = [
             'title', 'category', 'mantra', 'website', 'address',
             'suggested_amt', 'suggested_pct',
-            'summary', 'answer1', 'answer2', 'answer3', 'answer4', 'answer5', 'answer6', 'answer7', 'answer8', 'answer9', 'answer10', 'answer11', 
+            'summary', 'answer1', 'answer2', 'answer3', 'answer4', 'answer5', 'answer6', 'answer7', 'answer8', 'answer9', 'answer10', 'answer11', 'answer12', 'answer13',
             'business_plan_url', 'presentation_url'
         ],
         companyTile = new CompanyTileClass({preview: true});

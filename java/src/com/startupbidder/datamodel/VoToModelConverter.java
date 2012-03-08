@@ -105,6 +105,8 @@ public class VoToModelConverter {
 		listing.answer9 = listingVO.getAnswer9();
 		listing.answer10 = listingVO.getAnswer10();
 		listing.answer11 = listingVO.getAnswer11();
+		listing.answer12 = listingVO.getAnswer12();
+		listing.answer13 = listingVO.getAnswer13();
 		return listing;
 	}
 	
@@ -150,6 +152,10 @@ public class VoToModelConverter {
 			listing.answer10 = property.getPropertyValue();
 		} else if (name.equalsIgnoreCase("answer11")) {
 			listing.answer11 = property.getPropertyValue();
+		} else if (name.equalsIgnoreCase("answer12")) {
+			listing.answer12 = property.getPropertyValue();
+		} else if (name.equalsIgnoreCase("answer13")) {
+			listing.answer13 = property.getPropertyValue();
 		}
 	}
 

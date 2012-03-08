@@ -94,6 +94,8 @@ public class DtoToVoConverter {
 		listing.setAnswer9(listingDTO.answer9);
 		listing.setAnswer10(listingDTO.answer10);
 		listing.setAnswer11(listingDTO.answer11);
+		listing.setAnswer12(listingDTO.answer12);
+		listing.setAnswer13(listingDTO.answer13);
 		return listing;
 	}
 	

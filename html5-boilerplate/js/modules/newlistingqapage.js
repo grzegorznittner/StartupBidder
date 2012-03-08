@@ -25,7 +25,7 @@ pl.implement(NewListingQAClass, {
         }
     },
     bindEvents: function() {
-        var textFields = ['summary', 'answer1', 'answer2', 'answer3', 'answer4', 'answer5', 'answer6', 'answer7', 'answer8', 'answer9', 'answer10', 'answer11'],
+        var textFields = ['summary', 'answer1', 'answer2', 'answer3', 'answer4', 'answer5', 'answer6', 'answer7', 'answer8', 'answer9', 'answer10', 'answer11', 'answer12', 'answer13'],
             displayName = {
                 'summary': 'elevator pitch',
                 'answer1': 'customer',
@@ -33,12 +33,14 @@ pl.implement(NewListingQAClass, {
                 'answer3': 'solution',
                 'answer4': 'payment',
                 'answer5': 'marketing',
-                'answer6': 'team',
-                'answer7': 'competitors',
-                'answer8': 'relocation',
-                'answer9': 'investment',
-                'answer10': 'sourcing',
-                'answer11': 'property'
+                'answer6': 'advertising',
+                'answer7': 'team',
+                'answer8': 'competitors',
+                'answer9': 'relocation',
+                'answer10': 'investment',
+                'answer11': 'sourcing',
+                'answer12': 'property',
+                'answer13': 'methodology'
             },
             id,
             field;

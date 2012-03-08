@@ -259,7 +259,7 @@ pl.implement(ValidIconClass, {
 
 function FieldBaseClass(id, value, updateFunction, msgId) {
     this.id = id;
-    this.value = value !== null ? value : '';
+    this.value = value;
     this.updateFunction = updateFunction;
     this.sel = '#' + id;
     this.validator = new ValidatorClass();
@@ -370,7 +370,7 @@ pl.implement(SelectFieldClass, {
     selectValue: function(value) {
         var self = this,
             field = pl(self.fieldBase.sel).get(0),
-            options = field.options || [],
+            options = field.options || [ value ],
             i;
         for (i = 0; i < options.length; i++) {
             if (options[i] === value) {
@@ -427,7 +427,11 @@ pl.implement(TextFieldClass, {
     getDisplayFunc: function() {
         var self = this;
         return function() {
-            pl(self.fieldBase.sel).attr({value: self.fieldBase.value});
+            var val = self.fieldBase.value,
+                sel = self.fieldBase.sel;
+            if (val !== null) {
+                pl(sel).attr({value: val});
+            }
         };
     },
     validate: function() {
@@ -438,9 +442,10 @@ pl.implement(TextFieldClass, {
         var self = this,
             icon = new ValidIconClass(self.fieldBase.id + 'icon'),
             safeStr = new SafeStringClass(),
+            sel = self.fieldBase.sel;
             onchange = function() {
                 var newval, validMsg;
-                newval = safeStr.htmlEntities(pl(self.fieldBase.sel).attr('value'));
+                newval = safeStr.htmlEntities(pl(sel).attr('value'));
                 validMsg = self.fieldBase.validator.validate(newval);
                 if (validMsg !== 0) {
                     self.fieldBase.msg.show('attention', validMsg);
@@ -455,15 +460,28 @@ pl.implement(TextFieldClass, {
                 }
             },
             onfocus = function() {
-                self.value = pl(self.fieldBase.sel).attr('value'); // save the value
+                var domval = pl(sel).attr('value');
+                if (domval === pl(sel).get(0).defaultValue) { // blank out on edit
+                    pl(sel).attr({value: ''});
+                    self.value = null;
+                }
+                else {
+                    self.value = pl(sel).attr('value'); // save the value
+                }
             },
             onblur = function(event) { // push to server
-                var changeKey, newval, validMsg;
-                changeKey = self.fieldBase.id;
-                newval = safeStr.htmlEntities(pl(self.fieldBase.sel).attr('value'));
-                validMsg = self.fieldBase.validator.validate(newval);
+                var changeKey = self.fieldBase.id,
+                    domval = pl(sel).attr('value'),
+                    newval = safeStr.htmlEntities(domval),
+                    defval = pl(sel).get(0).defaultValue,
+                    validMsg = self.fieldBase.validator.validate(newval);
                 if (validMsg !== 0) {
-                    pl(self.fieldBase.sel).attr('value', self.value); // restore old name
+                    if (!self.value && defval) {
+                        pl(sel).attr({'value': defval}); // restore default
+                    }
+                    else {
+                        pl(sel).attr('value', self.value); // restore previous
+                    }
                     self.fieldBase.msg.clear();
                     icon.clear();
                     return;
@@ -476,7 +494,7 @@ pl.implement(TextFieldClass, {
                 self.fieldBase.updateFunction({ changeKey: newval },
                     self.fieldBase.getLoadFunc(), self.fieldBase.getErrorFunc(self.getDisplayFunc()), self.fieldBase.getSuccessFunc());
             };
-        pl(self.fieldBase.sel).bind({
+        pl(sel).bind({
             blur: onblur,
             focus: onfocus,
             change: onchange,

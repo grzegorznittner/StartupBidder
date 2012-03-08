@@ -188,13 +188,13 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 /* .inputselect { margin-top: 0px; height: 29px; }  */
 .inputhelp { padding-top: 10px; height: 33px; }
 .inputmsg { font-weight: bold; }
-.bidmsg { height: 20px; }
+.bidmsg { height: 20px; font-weight: bold; }
 .formlabelvalue { width: 180px; }
 .inputicon { padding-top: 6px; }
 .inputlink { padding-top: 10px; height: 33px; }
 .inputimgbutton { margin-top: 5px; }
 .inputbutton, .smallinputbutton { text-align: center; margin-top: 5px; font-weight: bold; } 
-.doclinkmsg { text-align: center; margin-top: 5px; font-weight: bold; font-size: 14px; height: 26px; padding-top: 2px; margin-bottom: 5px; } 
+.doclinkmsg { text-align: center; margin-top: 5px; font-weight: bold; font-size: 14px; height: 26px; padding-top: 2px; margin-bottom: 5px; font-weight: bold; } 
 .inputbutton { font-size: 18px; height: 33px; padding-top: 4px; margin-bottom: 10px; } 
 .smallinputbutton { font-size: 14px; height: 26px; padding-top: 2px; margin-bottom: 5px; } 
 .formtitle { font-size: 24px; padding-left: 5px; }
@@ -231,8 +231,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .bidinputtextpct  { font-weight: bold; color: white !important; background: #49515a !important; font-size: 22px !important; width: 45px !important; margin: 0 0 0 0 !important; }
 .mediainputlink  { margin-left: 3px !important; font-weight: bold; color: white !important; background: #49515a !important; font-size: 14px !important; width: 383px !important; }
 .pctwide { width: 49px !important; }
-.inputtextareatwoline { height: 35px; overflow: hidden; overflow-x: hidden; overflow-y: hidden; }
-.inputtextareaeightline { height: 140px; overflow: hidden; overflow-x: hidden; overflow-y: hidden; }
+.inputtextareatwoline { height: 35px; overflow: hidden; overflow-x: hidden; overflow-y: auto; }
 .inputgooglesignin { float: left; margin-right: 10px; }
 .aboutlabel { float: left; margin-right: 10px; text-align: right; width: 106px; color: #49515a; font-weight: bold; }
 .doclabel { float: left; margin-right: 10px; text-align: right; width: 106px; color: #49515a; font-weight: bold; margin-top: 10px; }
@@ -241,15 +240,17 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .bidformitem { float: left; }
 .bidspacer { border: 2px solid #49515A; height: 20px; right: 5px; background: #efefef; font-weight: bold; clear: both; text-align: center; }
 .messagetextarea { color: white !important; background: #49515a !important; font-weight: normal; height: 60px; width: 580px !important; }
+.qatextarea { height: 65px; overflow: hidden; overflow-x: hidden; overflow-y: auto; font-weight: bold; color: white !important;
+                background: #49515a !important; font-size: 14px !important; margin: 0px 5px 5px 5px; width: 540px !important; }
 
 /* box styles */
 .boxtitle { margin-top: 10px; color: #333333; font-weight: bold; }
 .boxpanel, .boxstep { border: 2px solid #999999; padding: 2px; overflow: auto; background: #e3e3e3; margin-bottom: 10px; }
 .boxpanel { width: 622px; overflow: auto; position: relative; }
 /*.companylistingbox { height: 180px; overflow: visible; } */
-.addcommentmsg { height: 20px; margin-left: 5px; }
-.addmessagemsg { height: 20px; margin-left: 5px; }
-.newlistingmsg { float: left; margin-right; 10px; padding-left: 116px; width: 420px; height: 85px; }
+.addcommentmsg { height: 20px; margin-left: 5px; font-weight: bold; }
+.addmessagemsg { height: 20px; margin-left: 5px; font-weight: bold; }
+.newlistingmsg { float: left; margin-right; 10px; padding-left: 116px; width: 420px; height: 85px; font-weight: bold; }
 .companylistingstats { position: absolute; bottom: 0; }
 .boxpanel p { margin: 5px 10px 10px 10px; text-indent: 0px; font-weight: bold; }
 .boxpanel dl dt { margin-left: 0; padding: 5px 10px 5px 10px; color: #333333; }
@@ -310,7 +311,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .bidbox { display: none; }
 .bidboxstatus { display: none; }
 .bidboxinfo { display: none; }
-.suggestedmsg { display: none; }
+.suggestedmsg { display: none; font-weight: bold; }
 .suggestedinfo { display: none; }
 .makebidboxtitle { display: none; }
 .makebidbox { display: none; }
@@ -320,7 +321,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .bidclosedtitle { display: none; }
 .bidclosedbox { display: none; }
 .bidsummary { font-size: 10px; }
-.newwithdrawmsg { display: none; }
+.newwithdrawmsg { display: none; font-weight: bold; }
 .newwithdrawcancelbtn { display: none; margin-top: 10px; }
 
 /* tiles */

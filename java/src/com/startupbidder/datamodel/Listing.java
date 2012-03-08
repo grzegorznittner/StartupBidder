@@ -93,6 +93,8 @@ public class Listing extends BaseObject implements Monitor.Monitored {
 	public String answer9;
 	public String answer10;
 	public String answer11;
+	public String answer12;
+	public String answer13;
 	
 	public String getWebKey() {
 		return new Key<Listing>(Listing.class, id).getString();
