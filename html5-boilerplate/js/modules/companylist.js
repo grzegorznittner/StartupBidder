@@ -3,12 +3,13 @@ function CompanyTileClass(options) {
 }
 pl.implement(CompanyTileClass, {
     setValues: function(json) {
-        var testimages = ['einstein','wave','upgrades','telecom','socialrec','gkleen']; // FIXME
+        var date = json.listing_date || json.created_date,
+            testimages = ['einstein','wave','upgrades','telecom','socialrec','gkleen']; // FIXME
         this.imgClass = this.options.preview ? 'noimage' : testimages[Math.floor(Math.random()*testimages.length)];
         this.daysText = json.days_left ? (json.days_left === 0 ? 'closing today!' : (json.days_left < 0 ? 'bidding closed' : json.days_left + ' days left')) : 'not taking bids';
         this.category = json.category ? json.category.toUpperCase() : '';
         this.votes = json.num_votes || 1;
-        this.posted = json.listing_date ? DateClass.prototype.format(json.listing_date) : 'not posted';
+        this.posted = date ? DateClass.prototype.format(date) : 'not posted';
         this.name = json.title || '';
         this.address = json.address || '';
         this.mantra = json.mantra || '';

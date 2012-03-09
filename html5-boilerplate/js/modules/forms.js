@@ -82,6 +82,17 @@ function ValidatorClass() {
     this.postValidator = function(result, val) {};
 }
 pl.implement(ValidatorClass, {
+    isCheckedVal: function(bool) {
+        if (bool === true) {
+            return 0;
+        }
+        else if (bool === false) {
+            return 0;
+        }
+        else {
+            return 'Must be checked or unchecked';
+        }
+    },
     isNotEmpty: function(str) {
         var trimmedStr = str ? str.replace(/^\s\s*/, '').replace(/\s\s*$/, '') : '';
         if (trimmedStr !== null && trimmedStr.length > 0) {
@@ -121,6 +132,31 @@ pl.implement(ValidatorClass, {
     },
     isURL: function(str) {
         return URLCheckClass.prototype.check(str);
+    },
+    isCurrency: function(str) {
+        var match = str ? str.match(/^[$]?[0-9]{1,3}(,?[0-9]{3})*$/) : false;
+        return (match ? 0 : 'Please enter a currency value');
+    },
+    isPercent: function(str) {
+        var match = str ? str.match(/^[1-9]?[0-9]$/) : false;
+        return (match ? 0 : 'Please enter a percent value between 0 and 100');
+    },
+    genIsNumberBetween: function(min, max) {
+        return function(n) {
+            if (!ValidatorClass.prototype.isNumber(n)) {
+                return 'Please enter a number';
+            }
+            if (n < min) {
+                return 'You must enter at least ' + min;
+            }
+            if (n > max) {
+                return 'You must enter at most ' + max;
+            }
+            return 0;
+        }
+    },
+    isNumber: function(n) {
+        return !isNaN(parseFloat(n)) && isFinite(n);
     },
     makePasswordChecker: function(options) {
         return function(pw) {
@@ -329,10 +365,15 @@ pl.implement(CheckboxFieldClass, {
         var self, onchange;
         self = this;
         onchange = function() {
-            var newval, changeKey;
-            changeKey = self.fieldBase.id;
-            newval = pl(self.fieldBase.sel).attr('checked');
-            self.fieldBase.updateFunction({ changeKey: newval }, self.fieldBase.getLoadFunc(), self.fieldBase.getErrorFunc(self.getDisplayFunc()), self.fieldBase.getSuccessFunc());
+            var changeKey = self.fieldBase.id,
+                newval = pl(self.fieldBase.sel).attr('checked'),
+                msg = self.fieldBase.validator.validate(newval);
+            if (msg === 0) {
+                self.fieldBase.updateFunction({ changeKey: newval }, self.fieldBase.getLoadFunc(), self.fieldBase.getErrorFunc(self.getDisplayFunc()), self.fieldBase.getSuccessFunc());
+            }
+            else {
+                self.msg.show('attention', msg);
+            }
         }
         pl(self.fieldBase.sel).bind({
             change: onchange

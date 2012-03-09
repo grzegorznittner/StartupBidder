@@ -171,20 +171,21 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .inputcaptcha { margin-top: 10px; margin-bottom: 10px; }
 .inputtext, .narrowinputtitle, .bidinputtitle, .narrowinputtext, .inputtextpct, .inputwidetext, .inputfullwidetextshort,
 .sideinputtext, .sideinputtitle, .sideinputtextarea,
-.inputselect, .inputmedselect, .inputcheckbox, .inputwidewithvalidate, .inputmedtext
+.inputselect, .inputmedselect, .inputwidewithvalidate
     { font-weight: bold; color: white !important; background: #49515a !important; }
 .inputtext, .inputtextpct, .inputwidetext, .inputfullwidetextshort, .sideinputtext, .sideinputtextarea,
-.inputselect, .inputmedselect, .inputcheckbox, .narrowinputtext, .inputwidewithvalidate, .inputmedtext
+.inputselect, .inputmedselect, .narrowinputtext, .inputwidewithvalidate
     { font-size: 14px !important; }
+.inputcheckbox { font-weight: bold; color: white !important; background: #49515a !important; font-size: 14px !important; margin-top: 14px; height: 33px; }
 .inputwidetext { width: 420px !important; }
 .categoryselect { padding: 5px; width: 432px !important; }
-.inputmedtext { width: 230px !important; }
+.inputmedtext { font-weight: bold; color: white !important; background: #49515a !important; font-size: 14px !important; width: 230px !important; }
+.medtext { font-weight: bold; font-size: 14px; width; 230px; height: 21px; padding-top: 10px; margin-right: 10px; }
 .inputmedselect { width: 242px !important; }
 .messagetextarea { color: white !important; background: #49515a !important; font-weight: normal; height: 60px; width: 540px !important; }
 .inputfullwidetextshort, .inputwidewithvalidate { margin: 0px 5px 5px 5px; height: 60px; }
 .inputfullwidetextshort { width: 600px !important; }
 .inputwidewithvalidate { width: 540px !important; }
-.inputcheckbox { margin-top: 4px; height: 33px; }
 /* .inputselect { margin-top: 0px; height: 29px; }  */
 .inputhelp { padding-top: 10px; height: 33px; }
 .inputmsg { font-weight: bold; }
@@ -251,6 +252,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcd8db', end
 .addcommentmsg { height: 20px; margin-left: 5px; font-weight: bold; }
 .addmessagemsg { height: 20px; margin-left: 5px; font-weight: bold; }
 .newlistingmsg { float: left; margin-right; 10px; padding-left: 116px; width: 420px; height: 85px; font-weight: bold; }
+.newlistingmsgsmall { float: left; margin-right; 10px; padding-left: 116px; width: 420px; height: 25px; font-weight: bold; }
 .companylistingstats { position: absolute; bottom: 0; }
 .boxpanel p { margin: 5px 10px 10px 10px; text-indent: 0px; font-weight: bold; }
 .boxpanel dl dt { margin-left: 0; padding: 5px 10px 5px 10px; color: #333333; }

@@ -72,25 +72,16 @@
     <div class="boxtitle">INSTRUCTIONS</div>
     <div class="boxpanel">
     <p>
-You can either list your company asking for investment, or not ask for investment.
-If you ask for investment, then investors from around the world can bid on your
-company.  Only investors accredited in their jurisdiction are allowed to legally
-invest, so you will only receive bids from accredited investors.
+Tell investors how much money you want to raise and how much of the company you
+want to offer for it.  Once your listing is approved, interested investors will
+contact you to make an offer.  Alternatively, at your option, you may post your
+listing without asking for any money.
     </p>
     <p>
-Upload your business plan, a short investor-oriented presentation, and your
-latest financial statements.  These need not be audited, and you can exclude
-any information which is of a private or trade secret nature.  As most
-professional investors review a large number of companies each day, be brief
-and concise in your documents.
-    </p>
-    <p>
-Note that if you are asking for money, you are subject to anti-fraud provisions.
-Speficially, you must be honest and not withold any material information concerning
-your business to investors.  Failure to do so could subject you to legal consequences,
-up to and including criminal charges and imprisonment.  Startupbidder will report
-suspected fraudulent behavior to the relevant authorities and will fully cooperate in
-any investigations that may result.
+BY ASKING FOR MONEY, YOU ARE SUBJECT TO ANTI-FRAUD PROVISIONS.  YOU MUST NOT
+WITHOLD ANY MATERIAL INFORMATION CONCERNING YOUR BUSINESS TO INVESTORS.
+FAILURE TO DO SO COULD SUBJECT YOU TO LEGAL CONSEQUENCES, UP TO AND INCLUDING
+CRIMINAL CHARGES AND IMPRISONMENT.
     </p>
     </div>
 
@@ -99,74 +90,65 @@ any investigations that may result.
         <div class="formitem clear">
             <span class="inputlabel">ALLOW BIDS</span>
             <span class="inputfield">
-                <input class="checkbox inputcheckbox" type="checkbox" checked="checked" value="true" name="bidsallowed" id="bidsallowed"></input>
+                <input class="checkbox inputcheckbox" type="checkbox" checked="checked" value="true" name="asked_fund" id="asked_fund"></input>
             </span>
-            <span class="inputhelp">Your company will be open for bidding after activation</span>
+            <span class="inputhelp">Your company will be open for bidding after approval</span>
+            <span class="inputicon">
+                <div id="asked_fundicon"></div>
+            </span>
         </div>
     </div>
 
     <div class="boxtitle">THE OFFER</div>
-    <div class="boxpanel">
+    <div class="boxpanel" id="offerpanel">
         <div class="formitem">
             <span class="inputlabel">ASKING</span>
             <span class="inputfield">
-                <input class="text inputmedtext" type="text" name="offeramt" id="offeramt" value="$20,000" maxlength="8"></input>
+                <input class="text inputmedtext" type="text" name="suggested_amt" id="suggested_amt" maxlength="8"></input>
             </span>
             <span class="inputicon">
-                <div class="checkboxgreenicon"></div>
+                <div id="suggested_amticon"></div>
             </span>
         </div>
         <div class="formitem clear">
             <span class="inputlabel">FOR</span>
             <span class="inputfield">
-                <input class="text inputmedtext" type="text" name="offerpct" id="offerpct" value="5%" maxlength="3"></input>
+                <input class="text inputmedtext" type="text" name="suggested_pct" id="suggested_pct" maxlength="3"></input>
             </span>
             <span class="inputicon">
-                <div class="checkboxgreenicon"></div>
-            </span>
-        </div>
-        <div class="formitem clear">
-            <span class="inputlabel">AS</span>
-            <span class="inputfield">
-                 <select class="inputmedselect" id="offertype" name="offertype">
-                     <option value="convertible">CONVERTIBLE NOTE</option>
-                     <option value="common">COMMON STOCK</option>
-                     <option value="preferred">PREFERRED STOCK</option>
-                 </select>
-            </span>
-            <span class="inputicon">
-                <div class="checkboxgreenicon"></div>
-            </span>
-        </div>
-        <div class="formitem clear">
-            <span class="inputlabel">AT</span>
-            <span class="inputfield">
-                <input class="text inputmedtext" type="text" name="offerrate" id="offerrate" value="8%"></input>
-            </span>
-            <span class="inputicon">
-                <div class="checkboxgreenicon"></div>
+                <div id="suggested_pcticon"></div>
             </span>
         </div>
         <div class="formitem clear">
             <span class="inputlabel">BY</span>
             <span class="inputfield">
-                <input class="text inputmedtext" type="text" name="offerdate" id="offerdate" value="22 December 2012"></input>
+                <input class="text inputmedtext" type="text" name="closing_date" id="closing_date"></input>
             </span>
             <span class="inputicon">
-                <div class="checkboxgreenicon"></div>
+                <div id="closing_dateicon"></div>
             </span>
+        </div>
+        <div class="formitem clear">
+            <span class="inputlabel">IMPLIED VAL</span>
+            <span class="inputfield">
+                <div class="medtext successful" id="suggested_val"></div>
+            </span>
+        </div>
+        <div class="formitem clear">
+            <span class="newlistingmsgsmall" id="newlistingmsg">&nbsp;</span>
         </div>
     </div>
 
+
     <div class="boxtitle">DOCUMENTS</div>
     <div class="boxpanel">
-        <div class="formitem">
-            <span class="inputlabel">PLAN</span>
+        <div class="formitem clear">
+            <span class="inputlabel">SLIDE DECK</span>
             <span class="inputfield">
-                <span class="span-3 inputbutton" id="planuploadbutton">
+                <span class="span-3 inputbutton" id="presentationuploadbutton">
                     UPLOAD
                 </span>
-                <span class="span-3 inputbutton" id="planviewbutton">
+                <span class="span-3 inputbutton" id="presentationviewbutton">
                     VIEW
                 </span>
             </span>
@@ -175,12 +157,12 @@ any investigations that may result.
             </span>
         </div>
         <div class="formitem clear">
-            <span class="inputlabel">SLIDE DECK</span>
+            <span class="inputlabel">PLAN</span>
             <span class="inputfield">
-                <span class="span-3 inputbutton" id="presentationuploadbutton">
+                <span class="span-3 inputbutton" id="planuploadbutton">
                     UPLOAD
                 </span>
-                <span class="span-3 inputbutton" id="presentationviewbutton">
+                <span class="span-3 inputbutton" id="planviewbutton">
                     VIEW
                 </span>
             </span>
@@ -202,10 +184,6 @@ any investigations that may result.
                 <div class="checkboxgreenicon"></div>
             </span>
         </div>
-    </div>
-
-    <div class="formitem clear">
-        <span class="newlistingmsg" id="newlistingmsg">&nbsp;</span>
     </div>
 
     <div>
@@ -235,11 +213,9 @@ any investigations that may result.
     <div class="sidebox">
 <p>ASKING - amount of money you want for investment, between $5,000 and $500,000 USD</p>
 <p>FOR - what percentage of common equity you are selling in exchange for the investment, between 5% and 50%</p>
-<p>AS - what kind of investment do you prefer: pure common equity, convertible note, or preferred stock?</p>
-<p>AT - what interest rate you want to pay on your liability, only applies to convertible note or preferred stock</p>
 <p>BY - end date for your bidding between 30 and 90 days in the future</p>
-<p>PLAN - your business plan, a Word or PDF document that describes your business in detail</p>
 <p>SLIDE DECK - your presentation to investors, a Powerpoint or PDF document, keep it short</p>
+<p>PLAN - your business plan, a Word or PDF document that describes your business in detail</p>
 <p>FINANCIALS - your most current financial statements, if you have no operating history, then list current capital and runway</p>
     </div>
 

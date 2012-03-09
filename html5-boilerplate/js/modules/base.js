@@ -70,7 +70,7 @@ pl.implement(CurrencyClass, {
         if (!num) {
             return '';
         }
-	    var nStr = num + '';
+	    var nStr = CurrencyClass.prototype.clean(num);
 		var x = nStr.split('.');
 		var x1 = x[0];
 		var x2 = x.length > 1 ? '.' + x[1] : '';
@@ -78,13 +78,14 @@ pl.implement(CurrencyClass, {
 		while (rgx.test(x1)) {
 			x1 = x1.replace(rgx, '$1' + ',' + '$2');
 		}
+        this.symbol = this.symbol ? this.symbol : '$';
 		return this.symbol + x1 + x2;
     },
-    clean: function(str) {
-        if (!str) {
-            return '';
-        }
-        return str.replace(/[^0-9]/g, '');
+    clean: function(num) {
+        var str = '' + num;
+            numstr = str.replace(/[^0-9]*/g, ''),
+            noleadzerostr = numstr.replace(/^0*/, '');
+        return noleadzerostr;
     },
     isCurrency: function(str) {
         var match = str ? str.match(/^[$]?[0-9]{1,3}(,?[0-9]{3})*$/) : false;

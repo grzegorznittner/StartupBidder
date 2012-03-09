@@ -1,9 +1,8 @@
 function NewListingBaseClass() {
     var editableprops = [
             'title', 'category', 'mantra', 'website', 'address',
-            'suggested_amt', 'suggested_pct',
             'summary', 'answer1', 'answer2', 'answer3', 'answer4', 'answer5', 'answer6', 'answer7', 'answer8', 'answer9', 'answer10', 'answer11', 'answer12', 'answer13',
-            'business_plan_url', 'presentation_url'
+            'suggested_amt', 'suggested_pct', 'closing_date', 'presentation_id', 'business_plan_id', 'financials_id'
         ],
         companyTile = new CompanyTileClass({preview: true});
     this.editableprops = editableprops;
