@@ -153,11 +153,13 @@ public class FileController extends ModelDrivenController {
 		if (doc != null) {
 			log.log(Level.INFO, "Storing document: " + doc);
 			doc = ListingFacade.instance().createListingDocument(getLoggedInUser(), doc);
-			headers.setRedirectUrl("/file/return-document/" + doc.getId());
-		} else {
-			log.log(Level.INFO, "No docs to store!");
-			headers.setStatus(500);
+			if (doc != null) {
+				headers.setRedirectUrl("/listing/edited/");
+				return headers;
+			}
 		}
+		log.log(Level.INFO, "No docs to store!");
+		headers.setStatus(500);
 
 		return headers;
 	}

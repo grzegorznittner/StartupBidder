@@ -2,6 +2,7 @@ package test.com.startupbidder.web;
 
 import static org.junit.Assert.*;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
@@ -66,34 +67,89 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 	@Test
 	public void testUpdateListingPropertyForCreatedListing() {
 		ListingAndUserVO userListing = ListingFacade.instance().createListing(googleUserVO);
-		assertEquals("We should get OK", ErrorCodes.OK, userListing.getErrorCode());
+		assertEquals("We should get OK, we got " + userListing.getErrorMessage(), ErrorCodes.OK, userListing.getErrorCode());
+		assertEquals(userListing.getListing().getId(), googleUserVO.getEditedListing());
 		ListingVO listing = userListing.getListing();
 		
 		// set non empty name
-		ListingPropertyVO property = new ListingPropertyVO("name", "New name");
-		ListingPropertyVO update = ListingFacade.instance().updateListingProperty(googleUserVO, property);
-		assertEquals("We should get OK", ErrorCodes.OK, update.getErrorCode());
-		assertEquals("name", update.getPropertyName());
-		assertEquals("New name", update.getPropertyValue());
+		List<ListingPropertyVO> props = new ArrayList<ListingPropertyVO>();
+		props.add(new ListingPropertyVO("title", "New name"));
+		ListingAndUserVO update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
+		assertEquals("We should get OK, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
+		assertEquals("New name", update.getListing().getName());
+		assertEquals(listing.getId(), update.getListing().getId());
+		assertEquals(listing.getMantra(), update.getListing().getMantra());
+		assertEquals(listing.getSummary(), update.getListing().getSummary());
+		assertEquals(listing.getAddress(), update.getListing().getAddress());
+		assertEquals(listing.getBuinessPlanId(), update.getListing().getBuinessPlanId());
+		assertEquals(listing.getPresentationId(), update.getListing().getPresentationId());
+		assertEquals(listing.getFinancialsId(), update.getListing().getFinancialsId());
+		assertEquals(listing.getWebsite(), update.getListing().getWebsite());
+		assertEquals(listing.getState(), update.getListing().getState());
 
 		ListingAndUserVO updatedListing = ListingFacade.instance().createListing(googleUserVO);
-		assertEquals("We should get OK", ErrorCodes.OK, update.getErrorCode());
+		assertEquals("We should get OK, we got " + updatedListing.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
 		assertEquals("Edited listing should be updated", listing.getId(), updatedListing.getListing().getId());
 		assertEquals("New name", updatedListing.getListing().getName());
 		
 		// set an empty name
-		property = new ListingPropertyVO("name", "");
-		update = ListingFacade.instance().updateListingProperty(googleUserVO, property);
-		assertEquals("We should get failure", ErrorCodes.ENTITY_VALIDATION, update.getErrorCode());
-		assertEquals("name", update.getPropertyName());
-		assertEquals("Even validation failed value should be updated", "", update.getPropertyValue());
+		props = new ArrayList<ListingPropertyVO>();
+		props.add(new ListingPropertyVO("title", ""));
+		update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
+		assertEquals("We should get OK, we got " + updatedListing.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
+		assertEquals("", update.getListing().getName());
+		assertEquals(listing.getId(), update.getListing().getId());
+		assertEquals(listing.getMantra(), update.getListing().getMantra());
+		assertEquals(listing.getSummary(), update.getListing().getSummary());
+		assertEquals(listing.getAddress(), update.getListing().getAddress());
+		assertEquals(listing.getBuinessPlanId(), update.getListing().getBuinessPlanId());
+		assertEquals(listing.getPresentationId(), update.getListing().getPresentationId());
+		assertEquals(listing.getFinancialsId(), update.getListing().getFinancialsId());
+		assertEquals(listing.getWebsite(), update.getListing().getWebsite());
+		assertEquals(listing.getState(), update.getListing().getState());
 		
-		// set short name
-		property = new ListingPropertyVO("name", "Abey");
-		update = ListingFacade.instance().updateListingProperty(googleUserVO, property);
-		assertEquals("We should get failure", ErrorCodes.ENTITY_VALIDATION, update.getErrorCode());
-		assertEquals("name", update.getPropertyName());
-		assertEquals("Even validation failed value should be updated", "Abey", update.getPropertyValue());
+		// set name, mantra and summary
+		props = new ArrayList<ListingPropertyVO>();
+		props.add(new ListingPropertyVO("title", "Name"));
+		props.add(new ListingPropertyVO("mantra", "Mantra"));
+		props.add(new ListingPropertyVO("summary", "Summary"));
+		update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
+		assertEquals("We should get OK, we got " + updatedListing.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
+		assertEquals("Name", update.getListing().getName());
+		assertEquals(listing.getId(), update.getListing().getId());
+		assertEquals("Mantra", update.getListing().getMantra());
+		assertEquals("Summary", update.getListing().getSummary());
+		assertEquals(listing.getAddress(), update.getListing().getAddress());
+		assertEquals(listing.getBuinessPlanId(), update.getListing().getBuinessPlanId());
+		assertEquals(listing.getPresentationId(), update.getListing().getPresentationId());
+		assertEquals(listing.getFinancialsId(), update.getListing().getFinancialsId());
+		assertEquals(listing.getWebsite(), update.getListing().getWebsite());
+		assertEquals(listing.getState(), update.getListing().getState());
+
+		// set name, mantra and summary, update for state should not be applied
+		props = new ArrayList<ListingPropertyVO>();
+		props.add(new ListingPropertyVO("title", "Name2"));
+		props.add(new ListingPropertyVO("mantra", "Mantra2"));
+		props.add(new ListingPropertyVO("summary", "Summary2"));
+		props.add(new ListingPropertyVO("state", "ACTIVE"));
+		update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
+		assertEquals("We should get OK, we got " + updatedListing.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
+		assertEquals("Name2", update.getListing().getName());
+		assertEquals(listing.getId(), update.getListing().getId());
+		assertEquals("Mantra2", update.getListing().getMantra());
+		assertEquals("Summary2", update.getListing().getSummary());
+		assertEquals(listing.getAddress(), update.getListing().getAddress());
+		assertEquals(listing.getBuinessPlanId(), update.getListing().getBuinessPlanId());
+		assertEquals(listing.getPresentationId(), update.getListing().getPresentationId());
+		assertEquals(listing.getFinancialsId(), update.getListing().getFinancialsId());
+		assertEquals(listing.getWebsite(), update.getListing().getWebsite());
+		assertEquals(listing.getState(), update.getListing().getState());
+
+		// set name, mantra and summary, update for state should not work
+		props = new ArrayList<ListingPropertyVO>();
+		props.add(new ListingPropertyVO("state", "ACTIVE"));
+		update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
+		assertNotSame("We should get failure, we got " + updatedListing.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
 	}
 	
 	@Test
@@ -133,7 +189,9 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 	public void testCreateNotValidListing() {
 		ListingAndUserVO newListing = ListingFacade.instance().createListing(null);
 		assertEquals("We should get failure", ErrorCodes.NOT_LOGGED_IN, newListing.getErrorCode());
-		assertNull("Listing with empty owner", newListing);
+		assertNotNull("Result should not be empty", newListing);
+		assertNull("Listing for that result should be empty", newListing.getListing());
+		assertNotSame("We should get failure", ErrorCodes.OK, newListing.getErrorCode());
 	}
 	
 	@Test

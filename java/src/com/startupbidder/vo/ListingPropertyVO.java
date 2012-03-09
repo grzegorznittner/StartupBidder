@@ -16,9 +16,6 @@ public class ListingPropertyVO {
 	@JsonProperty("name") @JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL) private String propertyName;
 	@JsonProperty("value") @JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL) private String propertyValue;
 	
-	@JsonProperty("error_code") private int errorCode = ErrorCodes.OK;
-	@JsonProperty("error_msg") @JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL) private String errorMessage;
-	
 	public ListingPropertyVO() {
 	}
 	
@@ -51,27 +48,10 @@ public class ListingPropertyVO {
 		this.propertyValue = propertyValue;
 	}
 
-	public int getErrorCode() {
-		return errorCode;
-	}
-
-	public void setErrorCode(int errorCode) {
-		this.errorCode = errorCode;
-	}
-
-	public String getErrorMessage() {
-		return errorMessage;
-	}
-
-	public void setErrorMessage(String errorMessage) {
-		this.errorMessage = errorMessage;
-	}
-
 	@Override
 	public String toString() {
 		return "ListingPropertyVO [listing=" + listing + ", propertyName="
-				+ propertyName + ", propertyValue=" + propertyValue
-				+ ", errorCode=" + errorCode + ", errorMessage=" + errorMessage
-				+ "]";
+				+ propertyName + ", propertyValue=" + propertyValue + "]";
 	}
+
 }

@@ -1,6 +1,7 @@
 package com.startupbidder.web;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -10,7 +11,6 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.datanucleus.util.StringUtils;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
@@ -29,7 +29,6 @@ import com.startupbidder.dao.ObjectifyDatastoreDAO;
 import com.startupbidder.datamodel.Category;
 import com.startupbidder.datamodel.Listing;
 import com.startupbidder.datamodel.ListingDoc;
-import com.startupbidder.datamodel.ListingDoc.Type;
 import com.startupbidder.datamodel.ListingStats;
 import com.startupbidder.datamodel.Notification;
 import com.startupbidder.datamodel.SBUser;
@@ -124,23 +123,12 @@ public class ListingFacade {
 		return listingAndUser;
 	}
 	
-	public ListingPropertyVO updateListingProperty(UserVO loggedInUser, ListingPropertyVO property) {
-		ListingPropertyVO result = new ListingPropertyVO();
-		if (StringUtils.isEmpty(property.getPropertyName())) {
+	public ListingAndUserVO updateListingProperties(UserVO loggedInUser, List<ListingPropertyVO> properties) {
+		ListingAndUserVO result = new ListingAndUserVO();
+
+		if (loggedInUser == null || loggedInUser.getEditedListing() == null) {
 			result.setErrorCode(ErrorCodes.OPERATION_NOT_ALLOWED);
-			result.setErrorMessage("'" + property.getPropertyName() + "' is not a valid listing's property");
-			return result;
-		}
-		// checking if user can update field
-		boolean canUpdate = false;
-		for(String field : ListingVO.UPDATABLE_PROPERTIES) {
-			if (field.equalsIgnoreCase(property.getPropertyName())) {
-				canUpdate = true;
-			}
-		}
-		if (!canUpdate) {
-			result.setErrorMessage("Property '" + property.getPropertyName() + "' is not updatable");
-			result.setErrorCode(ErrorCodes.ENTITY_VALIDATION);
+			result.setErrorMessage("User is not logged in or is not editing any listing");
 			return result;
 		}
 		// retrieving edited listing
@@ -155,9 +143,29 @@ public class ListingFacade {
 			result.setErrorMessage("Listing is not in NEW state");
 			return result;
 		}
-		VoToModelConverter.updateListingProperty(listing, property);
+		StringBuffer warnings = new StringBuffer();
+		// removing non updatable fields
+		List<ListingPropertyVO> propsToUpdate = new ArrayList<ListingPropertyVO>();
+		List<String> updatableProps = Arrays.asList(ListingVO.UPDATABLE_PROPERTIES);
+		for (ListingPropertyVO prop : properties) {
+			if (updatableProps.contains(prop.getPropertyName().toLowerCase())) {
+				propsToUpdate.add(prop);
+			} else {
+				warnings.append("Removed field '" + prop.getPropertyName() + "'. ");
+			}
+		}
+		if (propsToUpdate.isEmpty()) {
+			result.setErrorCode(ErrorCodes.ENTITY_VALIDATION);
+			result.setErrorMessage("Nothing to update. " + warnings.toString());
+			return result;
+		}
+		
+		for (ListingPropertyVO prop : propsToUpdate) {
+			VoToModelConverter.updateListingProperty(listing, prop);
+		}
 		log.info("Updating listing: " + listing);
 		getDAO().storeListing(listing);
+		result.setListing(DtoToVoConverter.convert(listing));
 		
 		return result;
 	}
@@ -684,7 +692,7 @@ public class ListingFacade {
 			// we need to set url data for logo in listing
 			break;
 		}
-		getDAO().storeListing(listing);
+		listing = getDAO().storeListing(listing);
 		
 		return doc;
 	}

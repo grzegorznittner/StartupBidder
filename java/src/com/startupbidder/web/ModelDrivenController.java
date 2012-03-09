@@ -21,6 +21,7 @@ import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.appengine.api.utils.SystemProperty;
 import com.startupbidder.vo.BaseResultVO;
+import com.startupbidder.vo.ErrorCodes;
 import com.startupbidder.vo.ListPropertiesVO;
 import com.startupbidder.vo.UserVO;
 
@@ -70,24 +71,26 @@ public abstract class ModelDrivenController {
 			if (headers == null) {
 				log.log(Level.INFO, request.getMethod() + " " + getCommand(1) + " is not supported!");
 			}
+			Object model = getModel();
+			if (model instanceof BaseResultVO) {
+				String appHost = SystemProperty.environment.value() == SystemProperty.Environment.Value.Development ?
+						"http://localhost:" + request.getLocalPort() : "http://www.startupbidder.com";
+				if (loggedInUser != null) {
+					((BaseResultVO) model).setLoggedUser(loggedInUser);
+					((BaseResultVO) model).setLogoutUrl(userService.createLogoutURL(appHost));
+				} else {
+					((BaseResultVO) model).setLoginUrl(userService.createLoginURL(appHost, "startupbidder.com"));
+				}
+				if (((BaseResultVO) model).getErrorCode() != ErrorCodes.OK) {
+					headers.setStatus(500);
+				}
+			}
 		} catch (Exception e) {
 			headers = new HttpHeadersImpl();
 			headers.setStatus(501);
 			log.log(Level.SEVERE, "Error handling request", e);
 		}
-		
-		Object model = getModel();
-		if (model instanceof BaseResultVO) {
-			String appHost = SystemProperty.environment.value() == SystemProperty.Environment.Value.Development ?
-					"http://localhost:" + request.getLocalPort() : "http://www.startupbidder.com";
-			if (loggedInUser != null) {
-				((BaseResultVO) model).setLoggedUser(loggedInUser);
-				((BaseResultVO) model).setLogoutUrl(userService.createLogoutURL(appHost));
-			} else {
-				((BaseResultVO) model).setLoginUrl(userService.createLoginURL(appHost, "startupbidder.com"));
-			}
-		}
-		
+				
 		return headers;
 	}
 

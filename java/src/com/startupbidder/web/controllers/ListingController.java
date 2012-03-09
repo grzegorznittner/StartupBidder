@@ -1,6 +1,9 @@
 package com.startupbidder.web.controllers;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -36,7 +39,9 @@ public class ListingController extends ModelDrivenController {
 		if ("GET".equalsIgnoreCase(request.getMethod())) {
 			// GET method handler
 			
-			if("top".equalsIgnoreCase(getCommand(1))) {
+			if("edited".equalsIgnoreCase(getCommand(1))) {
+				return startEditing(request);
+			} else if("top".equalsIgnoreCase(getCommand(1))) {
 				return top(request);
 			} else if("active".equalsIgnoreCase(getCommand(1))) {
 				return active(request);
@@ -153,11 +158,15 @@ public class ListingController extends ModelDrivenController {
 		String listingString = request.getParameter("listing");
 		if (!StringUtils.isEmpty(listingString)) {
 			JsonNode rootNode = mapper.readValue(listingString, JsonNode.class);
-			Entry<String, JsonNode> node = rootNode.getFields().next();
-			ListingPropertyVO property = new ListingPropertyVO(node.getKey(), node.getValue().getValueAsText());
-			log.log(Level.INFO, "Updating listing: " + property);
-			property = ListingFacade.instance().updateListingProperty(getLoggedInUser(), property);
-			model = property;
+			List<ListingPropertyVO> properties = new ArrayList<ListingPropertyVO>();
+			
+			Iterator<Entry<String, JsonNode>> fields = rootNode.getFields();
+			for (Entry<String, JsonNode> node; fields.hasNext();) {
+				node = fields.next();
+				properties.add(new ListingPropertyVO(node.getKey(), node.getValue().getValueAsText()));
+			}
+			log.log(Level.INFO, "Updating listing: " + properties);
+			model = ListingFacade.instance().updateListingProperties(getLoggedInUser(), properties);
 		} else {
 			log.log(Level.WARNING, "Parameter 'listing' is empty!");
 			headers.setStatus(500);
