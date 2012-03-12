@@ -142,6 +142,13 @@ public class FileController extends ModelDrivenController {
 			doc.setType(ListingDoc.Type.FINANCIALS.toString());
 			
 			blobs.remove(ListingDoc.Type.FINANCIALS.toString());
+		} else if (blobs.containsKey(ListingDoc.Type.LOGO.toString())) {
+			BlobKey blobKey = blobs.get(ListingDoc.Type.LOGO.toString());
+			doc = new ListingDocumentVO();
+			doc.setBlob(blobKey);
+			doc.setType(ListingDoc.Type.LOGO.toString());
+			
+			blobs.remove(ListingDoc.Type.LOGO.toString());
 		}
 
 		// delete unwanted attachements

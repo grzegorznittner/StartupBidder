@@ -11,6 +11,10 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.taglibs.standard.lang.jstl.ArraySuffix;
 import org.datanucleus.util.StringUtils;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
@@ -18,6 +22,8 @@ import org.joda.time.Days;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import com.google.appengine.api.blobstore.BlobInfo;
+import com.google.appengine.api.blobstore.BlobInfoFactory;
 import com.google.appengine.api.blobstore.BlobstoreService;
 import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
 import com.google.appengine.api.taskqueue.Queue;
@@ -143,7 +149,7 @@ public class ListingFacade {
 			result.setErrorMessage("Listing is not in NEW state");
 			return result;
 		}
-		StringBuffer warnings = new StringBuffer();
+		StringBuffer infos = new StringBuffer();
 		// removing non updatable fields
 		List<ListingPropertyVO> propsToUpdate = new ArrayList<ListingPropertyVO>();
 		List<String> updatableProps = Arrays.asList(ListingVO.UPDATABLE_PROPERTIES);
@@ -151,12 +157,13 @@ public class ListingFacade {
 			if (updatableProps.contains(prop.getPropertyName().toLowerCase())) {
 				propsToUpdate.add(prop);
 			} else {
-				warnings.append("Removed field '" + prop.getPropertyName() + "'. ");
+				infos.append("Removed field '" + prop.getPropertyName() + "'. ");
 			}
 		}
+		log.log(Level.INFO, infos.toString(), new Exception("Listing update verification"));
 		if (propsToUpdate.isEmpty()) {
 			result.setErrorCode(ErrorCodes.ENTITY_VALIDATION);
-			result.setErrorMessage("Nothing to update. " + warnings.toString());
+			result.setErrorMessage("Nothing to update. " + infos.toString());
 			return result;
 		}
 		
@@ -657,15 +664,14 @@ public class ListingFacade {
 	}
 
 	public ListingDocumentVO createListingDocument(UserVO loggedInUser, ListingDocumentVO doc) {
+		BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
 		if (SystemProperty.environment.value() == SystemProperty.Environment.Value.Production && loggedInUser == null) {
-			BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
 			blobstoreService.delete(doc.getBlob());
 			doc.setErrorCode(ErrorCodes.NOT_LOGGED_IN);
 			doc.setErrorMessage("Only logged in users can upload documents");
 			return doc;
 		}
 		if (loggedInUser != null && loggedInUser.getEditedListing() == null) {
-			BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
 			blobstoreService.delete(doc.getBlob());
 			doc.setErrorCode(ErrorCodes.OPERATION_NOT_ALLOWED);
 			doc.setErrorMessage("User is not editing listing");
@@ -689,12 +695,36 @@ public class ListingFacade {
 			break;
 		case LOGO:
 			listing.logoId = new Key<ListingDoc>(ListingDoc.class, docDTO.id);
-			// we need to set url data for logo in listing
+			BlobInfo logoInfo = new BlobInfoFactory().loadBlobInfo(doc.getBlob());
+			byte logo[] = blobstoreService.fetchData(doc.getBlob(), 0, logoInfo.getSize() - 1);
+			// @FIXME: I need to verify magic number for the image (gif, png, jpg).
+			listing.logoBase64 = convertLogoToBase64(logo);
 			break;
 		}
 		listing = getDAO().storeListing(listing);
 		
 		return doc;
+	}
+	
+	public String convertLogoToBase64(byte[] logo) {
+		final byte[] JPEG = {(byte)0xff, (byte)0xd8, (byte)0xff, (byte)0xe0};
+		final byte[] GIF = {0x47, 0x49, 0x46, 0x38};
+		final byte[] PNG = {(byte)0x89, 0x50, 0x4e, 0x47};
+		
+		byte[] magicNumber = ArrayUtils.subarray(logo, 0, 4);
+		String format = "";
+		if (ArrayUtils.isEquals(magicNumber, JPEG)) {
+			format = "image/jpeg";
+		} else if (ArrayUtils.isEquals(magicNumber, GIF)) {
+			format = "image/gif";
+		} else if (ArrayUtils.isEquals(magicNumber, PNG)) {
+			format = "image/png";
+		} else {
+			log.warning("Image not recognized as JPG, GIF or PNG. Magic number was: " + ToStringBuilder.reflectionToString(magicNumber));
+			return null;
+		}
+		String logo64 = Base64.encodeBase64String(logo);
+		return format + ";base64," + logo64;
 	}
 
 	public List<ListingDocumentVO> getAllListingDocuments(UserVO loggedInUser) {

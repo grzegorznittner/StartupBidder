@@ -80,6 +80,7 @@ public class Listing extends BaseObject implements Monitor.Monitored {
 	public Key<ListingDoc> presentationId;
 	public Key<ListingDoc> financialsId;
 	public Key<ListingDoc> logoId;
+	public String logoBase64;
 	
 	/** Answers for standard questions */
 	public String answer1;

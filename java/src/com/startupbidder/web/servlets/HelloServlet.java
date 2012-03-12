@@ -9,9 +9,14 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.codec.binary.Base64;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import com.google.appengine.api.blobstore.BlobInfo;
+import com.google.appengine.api.blobstore.BlobInfoFactory;
+import com.google.appengine.api.blobstore.BlobstoreService;
+import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.users.User;
@@ -221,7 +226,7 @@ public class HelloServlet extends HttpServlet {
 			
 			out.println("<p>File API:</p>");
 			out.println("<a href=\"/file/get-upload-url/2/.json\">Get upload URL(s)</a><br/>");
-			String[] urls = service.createUploadUrls(currentUser, "/file/upload", 3);
+			String[] urls = service.createUploadUrls(currentUser, "/file/upload", 4);
 			out.println("<form action=\"" + urls[0] + "\" method=\"post\" enctype=\"multipart/form-data\">"
 					+ "<input type=\"file\" name=\"" + ListingDoc.Type.BUSINESS_PLAN.toString() + "\"/>"
 					+ "<input type=\"submit\" value=\"Upload business plan\"/></form>");
@@ -231,13 +236,26 @@ public class HelloServlet extends HttpServlet {
 			out.println("<form action=\"" + urls[2] + "\" method=\"post\" enctype=\"multipart/form-data\">"
 					+ "<input type=\"file\" name=\"" + ListingDoc.Type.FINANCIALS.toString() + "\"/>"
 					+ "<input type=\"submit\" value=\"Upload financials\"/></form>");
+			out.println("<form action=\"" + urls[3] + "\" method=\"post\" enctype=\"multipart/form-data\">"
+					+ "<input type=\"file\" name=\"" + ListingDoc.Type.LOGO.toString() + "\"/>"
+					+ "<input type=\"submit\" value=\"Upload logo\"/></form>");
 			List<ListingDocumentVO> docs = ListingFacade.instance().getAllListingDocuments(currentUser);
 			DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy/MM/dd HH:mm");
 			if (docs != null && !docs.isEmpty()) {
+				BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
+				
 				out.println("<table border=\"1\"><tr><td colspan=\"2\">Uploaded documents</td></tr>");
 				for (ListingDocumentVO doc : docs) {
 					out.println("<tr>");
-					out.println("<td><a href=\"/file/download/" + doc.getId() + ".json\">Download "
+					out.println("<td>");
+					if (ListingDoc.Type.LOGO.toString().equalsIgnoreCase(doc.getType())) {
+						BlobInfo logoInfo = new BlobInfoFactory().loadBlobInfo(doc.getBlob());
+						if (logoInfo != null) {
+							byte logo[] = blobstoreService.fetchData(doc.getBlob(), 0, logoInfo.getSize() - 1);
+							out.println("<img src=\"data:" + ListingFacade.instance().convertLogoToBase64(logo) + "\"/>");
+						}
+					}
+					out.println("<a href=\"/file/download/" + doc.getId() + ".json\">Download "
 							+ doc.getType() + " uploaded " + fmt.print(doc.getCreated().getTime()) + ", type: " + doc.getType() + "</a></td>");
 					out.println("<td><form method=\"POST\" action=\"/file/delete/.json?doc=" + doc.getId() + "\"><input type=\"submit\" value=\"Delete file\"/></form></td>");
 					out.println("</tr>");

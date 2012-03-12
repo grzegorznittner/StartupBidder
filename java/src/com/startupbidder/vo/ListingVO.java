@@ -57,6 +57,7 @@ public class ListingVO extends BaseVO {
 	@JsonProperty("business_plan_id") private String buinessPlanId;
 	@JsonProperty("presentation_id") private String presentationId;
 	@JsonProperty("financials_id") private String financialsId;
+	@JsonProperty("logo") private String logo;
 	@JsonProperty("answer1") private String answer1;
 	@JsonProperty("answer2") private String answer2;
 	@JsonProperty("answer3") private String answer3;
@@ -446,6 +447,15 @@ public class ListingVO extends BaseVO {
 		return askedForFunding;
 	}
 
-	public void setAskedForFunding(boolean askedForFunding) { this.askedForFunding = askedForFunding;
+	public void setAskedForFunding(boolean askedForFunding) {
+		this.askedForFunding = askedForFunding;
+	}
+
+	public String getLogo() {
+		return logo;
+	}
+
+	public void setLogo(String logo) {
+		this.logo = logo;
 	}
 }
