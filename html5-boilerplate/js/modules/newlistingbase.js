@@ -71,25 +71,30 @@ pl.implement(NewListingBaseClass, {
         this.bindWithdrawButton();
     },
     bindPrevButton: function() {
-        if (this.prevPage) {
-            this.bindPageButton('#prevbuttonlink', this.prevPage);
+        var self = this;
+        if (!self.prevPage) {
+            return;
         }
+        pl('#prevbuttonlink').bind({
+            click: function() {
+                document.location = self.prevPage;
+                return false;
+            }
+        });
     },
     bindNextButton: function() {
-        if (this.nextPage) {
-            this.bindPageButton('#nextbuttonlink', this.nextPage);
-        }
-    },
-    bindPageButton: function(btnsel, pageurl) {
         var self = this;
-        pl(btnsel).bind({
+        if (!self.nextPage) {
+            return;
+        }
+        pl('#nextbuttonlink').bind({
             click: function() {
                 var validmsgs = self.validate();
                 if (validmsgs.length > 0) {
                     pl('#newlistingmsg').addClass('errorcolor').html('Please correct: ' + validmsgs.join(' '));
                 }
                 else {
-                    document.location = pageurl;
+                    document.location = self.nextPage;
                 }
                 return false;
             }

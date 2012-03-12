@@ -1,10 +1,10 @@
-function NewListingFinancialsClass() {
+function NewListingMediaClass() {
     var base = new NewListingBaseClass();
-    base.prevPage = '/new-listing-qa-page.html';
-    base.nextPage = '/new-listing-media-page.html';
+    base.prevPage = '/new-listing-financials-page.html';
+    base.nextPage = '/new-listing-submit-page.html';
     this.base = base;
 }
-pl.implement(NewListingFinancialsClass, {
+pl.implement(NewListingMediaClass, {
     load: function() {
         var self = this,
             completeFunc = function(json) {
@@ -25,7 +25,8 @@ pl.implement(NewListingFinancialsClass, {
         }
     },
     bindEvents: function() {
-        var textFields = ['asked_fund', 'suggested_amt', 'suggested_pct'],
+/*
+        var textFields = ['logo_url', 'suggested_amt', 'suggested_pct'],
             msgids = {
                 asked_fund: 'newlistingmsg',
                 suggested_amt: 'newlistingoffermsg',
@@ -77,76 +78,15 @@ pl.implement(NewListingFinancialsClass, {
             this.base.fields.push(field);
             this.base.fieldMap[id] = field;
         } 
-        this.base.fieldMap['suggested_amt'].validate();
-        this.base.fieldMap['suggested_pct'].validate();
-        this.displayCalculatedIfValid();
-        this.displayAskedEffects();
+*/
         this.base.bindNavButtons();
-    },
-    genDisplayAskedEffects: function(field) {
-        var f1 = this.base.genDisplayCalculatedIfValid(field);
-        var self = this;
-        return function(result) {
-            f1();
-            self.displayAskedEffects();
-        }
-    },
-    displayAskedEffects: function() {
-        var fnd = pl('#asked_fund').attr('checked') ? true : false;
-        if (fnd) {
-            pl('#suggested_amt, #suggested_pct').removeAttr('disabled');
-            pl('#offerbox').css({opacity: 1});
-        }
-        else {
-            pl('#suggested_amt, #suggested_pct').attr({disabled: true});
-            pl('#offerbox').css({opacity: 0.5});
-        }
-    },
-    genDisplayCalculatedIfValidAmt: function(field) {
-        var self = this;
-            f1 = this.base.genDisplayCalculatedIfValid(field);
-        return function(result, val) {
-            self.displayIfValidAmt(result, val);
-            f1();
-            self.displayCalculatedIfValid();
-        }
-    },
-    genDisplayCalculatedIfValidPct: function(field) {
-        var self = this;
-            f1 = this.base.genDisplayCalculatedIfValid(field);
-        return function(result, val) {
-            self.displayIfValidPct(result, val);
-            f1();
-            self.displayCalculatedIfValid();
-        }
-    },
-    displayIfValidAmt: function(result, val) {
-        var fmt = CurrencyClass.prototype.format(val);
-        if (result === 0) {
-            pl('#suggested_amt').attr({value: fmt});
-        }
-    },
-    displayIfValidPct: function(result, val) {
-        var fmt = PercentClass.prototype.format(val);
-        if (result === 0) {
-            pl('#suggested_pct').attr({value: fmt});
-        }
-    },
-    displayCalculatedIfValid: function() {
-        var fnd = pl('#asked_fund').attr('checked') ? true : false,
-            amt = CurrencyClass.prototype.clean(pl('#suggested_amt').attr('value')) || 0,
-            pct = PercentClass.prototype.clean(pl('#suggested_pct').attr('value')) || 0,
-            val = pct ? Math.floor(Math.floor(100 * amt / pct)) : 0,
-            cur = CurrencyClass.prototype.format(CurrencyClass.prototype.clean(val)),
-            dis = fnd && cur ? cur : '';
-        pl('#suggested_val').text(dis);
     }
 });
 
 function NewListingPageClass() {};
 pl.implement(NewListingPageClass, {
     loadPage: function() {
-        var newlisting = new NewListingFinancialsClass();
+        var newlisting = new NewListingMediaClass();
         newlisting.load();
     }
 });

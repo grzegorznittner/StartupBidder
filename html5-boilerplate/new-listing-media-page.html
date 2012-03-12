@@ -72,103 +72,63 @@
     <div class="boxtitle">INSTRUCTIONS</div>
     <div class="boxpanel">
     <p>
-Tell investors how much money you want to raise and how much of the company you
-want to offer for it.  Once your listing is approved, interested investors will
-contact you to make an offer.  Alternatively, at your option, you may post your
-listing without asking for any money.
+Your logo and presentation video are your first and best way of capturing investor interest.
+Make sure they are professional and eye-catching.  If you do not have the budget or expertise
+for a professional logo, just make something simple with text, or use a picture of yourself, 
+the product, or a screenshot of your website.  Likewise if you do not have a video ready, just
+record a voiceover of a quick run through your slide deck.
     </p>
     </div>
 
-    <div class="boxtitle">ASKING FOR INVESTMENT?</div>
+    <div class="boxtitle">LOGO</div>
     <div class="boxpanel">
-        <div class="formitem clear">
-            <span class="inputlabel">ALLOW BIDS</span>
-            <span class="inputfield">
-                <input class="checkbox inputcheckbox" type="checkbox" checked="checked" value="true" name="asked_fund" id="asked_fund"></input>
-            </span>
-            <span class="inputhelp inputmsg">Investors can place bids <span id="newlistingmsg">&nbsp;</span></span>
+        <div class="mediacol1 clear">
+            <div class="formitem">
+                <span class="inputfield">
+                    <input class="text mediainputlink" type="text" maxlength="255" name="logourl" id="logourl" value=""></input> </span>
+                <span class="inputicon">
+                    <div class="checkboxredicon"></div>
+                </span>
+            </div>
+            <div class="formitem clear">
+                <span class="medialabel">
+                    PNG file, 146px wide, 146px high, resized if not this size
+                </span>
+                <span class="span-3 inputbutton" id="logouploadbutton">
+                    UPLOAD
+                </span>
+            </div>
+        </div>
+        <div class="mediacol2">
+            <div class="tileimg wave"></div>
         </div>
     </div>
 
-    <div class="boxtitle">THE OFFER</div>
-    <div class="boxpanel" id="offerpanel">
+    <div class="boxtitle">VIDEO</div>
+    <div class="boxpanel">
         <div class="formitem">
-            <span class="inputlabel">ASKING</span>
             <span class="inputfield">
-                <input class="text inputmedtext" type="text" name="suggested_amt" id="suggested_amt" maxlength="8"></input>
+                <input class="text mediainputlink" type="text" maxlength="255" name="logourl" id="logourl" value=""></input>
             </span>
             <span class="inputicon">
-                <div id="suggested_amticon"></div>
+                <div class="checkboxredicon"></div>
             </span>
         </div>
         <div class="formitem clear">
-            <span class="inputlabel">FOR</span>
-            <span class="inputfield">
-                <input class="text inputmedtext" type="text" name="suggested_pct" id="suggested_pct" maxlength="3"></input>
+            <span class="medialabel">
+                Link to video on youtube, vimeo, or elsewhere allowing embedded urls
             </span>
-            <span class="inputicon">
-                <div id="suggested_pcticon"></div>
-            </span>
-        </div>
-        <div class="formitem clear">
-            <span class="inputlabel">IMPLIED VAL</span>
-            <span class="inputfield">
-                <div class="medtext successful" id="suggested_val"></div>
+            <span class="span-3 inputbutton" id="videouploadbutton">
+                UPDATE
             </span>
         </div>
-        <div class="formitem clear">
-            <span class="newlistingmsgsmall" id="newlistingoffermsg">&nbsp;</span>
-        </div>
+	    <div class="videocontainer">
+      	    <iframe width="622" height="452" src="http://www.youtube.com/embed/tQlsXFfSuZU" frameborder="0" allowfullscreen></iframe> 
+	    </div>
     </div>
 
-
-    <div class="boxtitle">DOCUMENTS</div>
-    <div class="boxpanel">
-        <div class="formitem clear">
-            <span class="inputlabel">SLIDE DECK</span>
-            <span class="inputfield">
-                <span class="span-3 inputbutton" id="presentationuploadbutton">
-                    UPLOAD
-                </span>
-                <span class="span-3 inputbutton" id="presentationviewbutton">
-                    VIEW
-                </span>
-            </span>
-            <span class="inputicon">
-                <div class="checkboxgreenicon"></div>
-            </span>
-        </div>
-        <div class="formitem clear">
-            <span class="inputlabel">PLAN</span>
-            <span class="inputfield">
-                <span class="span-3 inputbutton" id="planuploadbutton">
-                    UPLOAD
-                </span>
-                <span class="span-3 inputbutton" id="planviewbutton">
-                    VIEW
-                </span>
-            </span>
-            <span class="inputicon">
-                <div class="checkboxgreenicon"></div>
-            </span>
-        </div>
-        <div class="formitem clear">
-            <span class="inputlabel">FINANCIALS</span>
-            <span class="inputfield">
-                <span class="span-3 inputbutton" id="financialsuploadbutton">
-                    UPLOAD
-                </span>
-                <span class="span-3 inputbutton" id="financialsviewbutton">
-                    VIEW
-                </span>
-            </span>
-            <span class="inputicon">
-                <div class="checkboxgreenicon"></div>
-            </span>
-        </div>
-        <div class="formitem clear">
-            <span class="newlistingmsgsmall" id="newlistingdocmsg">&nbsp;</span>
-        </div>
+    <div class="formitem clear">
+        <span class="newlistingmsgsmall" id="newlistingdocmsg">&nbsp;</span>
     </div>
 
     <div>
@@ -196,11 +156,8 @@ listing without asking for any money.
 
     <div class="boxtitle clear">TIPS</div>
     <div class="sidebox">
-<p>ASKING - amount of money you want for investment, between $5,000 and $500,000 USD, closing 90 days in the future</p>
-<p>FOR - what percentage of common equity you are selling in exchange for the investment, between 5% and 50%</p>
-<p>SLIDE DECK - your presentation to investors, a Powerpoint or PDF document, keep it short</p>
-<p>PLAN - your business plan, a Word or PDF document that describes your business in detail</p>
-<p>FINANCIALS - your most current financial statements, if you have no operating history, then list current capital and runway</p>
+        <p>LOGO - image displayed on the listing summary, can be your company logo or a product picture</p>
+        <p>VIDEO - public presentation of the company available on youtube, can be a live action blackboard talk, a product demonstration, or a powerpoint with voiceover</p>
     </div>
 
     <div class="boxtitle">WITHDRAW SUBMISSION</div>
@@ -221,7 +178,7 @@ listing without asking for any money.
         <span class="boxstep1 boxstepcomplete"><div class="boxsteptext">BASICS</div></span>
         <span class="boxstep2 boxstepcomplete"><div class="boxsteptext">Q &amp; A</div></span>
         <span class="boxstep3 boxstepcomplete"><div class="boxsteptext">FINANCIALS</div></span>
-        <span class="boxstep4 "><div class="boxsteptext">MEDIA</div></span>
+        <span class="boxstep4 boxstepcomplete"><div class="boxsteptext">MEDIA</div></span>
         <span class="boxstep5 "><div class="boxsteptext">SUBMIT</div></span>
     </div>
 </div>
@@ -251,7 +208,7 @@ listing without asking for any money.
   <script src="js/modules/companylist.js"></script>
   <script src="js/modules/forms.js"></script>
   <script src="js/modules/newlistingbase.js"></script>
-  <script src="js/modules/newlistingfinancialspage.js"></script>
+  <script src="js/modules/newlistingmediapage.js"></script>
 
   <!-- Change UA-XXXXX-X to be your site's ID -->
   <script>
@@ -271,4 +228,4 @@ listing without asking for any money.
   <![endif]-->
 
 </body>
-</html> 
+</html>
