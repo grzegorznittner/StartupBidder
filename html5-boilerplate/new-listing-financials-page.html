@@ -77,12 +77,6 @@ want to offer for it.  Once your listing is approved, interested investors will
 contact you to make an offer.  Alternatively, at your option, you may post your
 listing without asking for any money.
     </p>
-    <p>
-BY ASKING FOR MONEY, YOU ARE SUBJECT TO ANTI-FRAUD PROVISIONS.  YOU MUST NOT
-WITHOLD ANY MATERIAL INFORMATION CONCERNING YOUR BUSINESS TO INVESTORS.
-FAILURE TO DO SO COULD SUBJECT YOU TO LEGAL CONSEQUENCES, UP TO AND INCLUDING
-CRIMINAL CHARGES AND IMPRISONMENT.
-    </p>
     </div>
 
     <div class="boxtitle">ASKING FOR INVESTMENT?</div>
@@ -92,10 +86,7 @@ CRIMINAL CHARGES AND IMPRISONMENT.
             <span class="inputfield">
                 <input class="checkbox inputcheckbox" type="checkbox" checked="checked" value="true" name="asked_fund" id="asked_fund"></input>
             </span>
-            <span class="inputhelp">Your company will be open for bidding after approval</span>
-            <span class="inputicon">
-                <div id="asked_fundicon"></div>
-            </span>
+            <span class="inputhelp inputmsg">Investors can place bids <span id="newlistingmsg">&nbsp;</span></span>
         </div>
     </div>
 
@@ -120,22 +111,13 @@ CRIMINAL CHARGES AND IMPRISONMENT.
             </span>
         </div>
         <div class="formitem clear">
-            <span class="inputlabel">BY</span>
-            <span class="inputfield">
-                <input class="text inputmedtext" type="text" name="closing_date" id="closing_date"></input>
-            </span>
-            <span class="inputicon">
-                <div id="closing_dateicon"></div>
-            </span>
-        </div>
-        <div class="formitem clear">
             <span class="inputlabel">IMPLIED VAL</span>
             <span class="inputfield">
                 <div class="medtext successful" id="suggested_val"></div>
             </span>
         </div>
         <div class="formitem clear">
-            <span class="newlistingmsgsmall" id="newlistingmsg">&nbsp;</span>
+            <span class="newlistingmsgsmall" id="newlistingoffermsg">&nbsp;</span>
         </div>
     </div>
 
@@ -184,6 +166,9 @@ CRIMINAL CHARGES AND IMPRISONMENT.
                 <div class="checkboxgreenicon"></div>
             </span>
         </div>
+        <div class="formitem clear">
+            <span class="newlistingmsgsmall" id="newlistingdocmsg">&nbsp;</span>
+        </div>
     </div>
 
     <div>
@@ -211,9 +196,8 @@ CRIMINAL CHARGES AND IMPRISONMENT.
 
     <div class="boxtitle clear">TIPS</div>
     <div class="sidebox">
-<p>ASKING - amount of money you want for investment, between $5,000 and $500,000 USD</p>
+<p>ASKING - amount of money you want for investment, between $5,000 and $500,000 USD, closing 90 days in the future</p>
 <p>FOR - what percentage of common equity you are selling in exchange for the investment, between 5% and 50%</p>
-<p>BY - end date for your bidding between 30 and 90 days in the future</p>
 <p>SLIDE DECK - your presentation to investors, a Powerpoint or PDF document, keep it short</p>
 <p>PLAN - your business plan, a Word or PDF document that describes your business in detail</p>
 <p>FINANCIALS - your most current financial statements, if you have no operating history, then list current capital and runway</p>

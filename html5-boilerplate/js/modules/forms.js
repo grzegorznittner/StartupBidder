@@ -138,8 +138,8 @@ pl.implement(ValidatorClass, {
         return (match ? 0 : 'Please enter a currency value');
     },
     isPercent: function(str) {
-        var match = str ? str.match(/^[1-9]?[0-9]$/) : false;
-        return (match ? 0 : 'Please enter a percent value between 0 and 100');
+        var match = str ? str.match(/^[1-9]?[0-9][%]?$/) : false;
+        return (match ? 0 : 'Please enter a percent value');
     },
     genIsNumberBetween: function(min, max) {
         return function(n) {

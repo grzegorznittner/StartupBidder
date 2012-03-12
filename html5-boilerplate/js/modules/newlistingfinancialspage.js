@@ -25,42 +25,40 @@ pl.implement(NewListingFinancialsClass, {
         }
     },
     bindEvents: function() {
-        var textFields = ['asked_fund', 'suggested_amt', 'suggested_pct', 'closing_date'],
+        var textFields = ['asked_fund', 'suggested_amt', 'suggested_pct'],
+            msgids = {
+                asked_fund: 'newlistingmsg',
+                suggested_amt: 'newlistingoffermsg',
+                suggested_pct: 'newlistingoffermsg'
+            },
             validators = {
                 asked_fund: ValidatorClass.prototype.isCheckedVal,
                 suggested_amt: ValidatorClass.prototype.genIsNumberBetween(5000, 500000),
-                suggested_pct: ValidatorClass.prototype.genIsNumberBetween(5, 50),
-                closing_date: ValidatorClass.prototype.isNotEmpty
+                suggested_pct: ValidatorClass.prototype.genIsNumberBetween(5, 50)
             },
             classes = {
                 asked_fund: CheckboxFieldClass,
                 suggested_amt: TextFieldClass,
-                suggested_pct: TextFieldClass,
-                closing_date: TextFieldClass
+                suggested_pct: TextFieldClass
             },
             names = {
                 asked_fund: 'ALLOW BIDS',
                 suggested_amt: 'ASKING',
-                suggested_pct: 'PERCENT',
-                closing_date: 'CLOSING'
-            },
-            postValidators = {
-                asked_fund: NewListingFinancialsClass.prototype.genDisplayAskedEffects,
-                suggested_amt: NewListingFinancialsClass.prototype.genDisplayCalculatedIfValidAmt,
-                suggested_pct: NewListingFinancialsClass.prototype.genDisplayCalculatedIfValid,
-                closing_date: NewListingBaseClass.prototype.genDisplayCalculatedIfValid
+                suggested_pct: 'PERCENT'
             },
             preValidators = {
                 suggested_amt: CurrencyClass.prototype.clean,
-                suggested_pct: CurrencyClass.prototype.clean
+                suggested_pct: PercentClass.prototype.clean
             },
             id,
+            cleaner,
             field;
         this.base.fields = [];
         this.base.fieldMap = {};
         for (i = 0; i < textFields.length; i++) {
             id = textFields[i];
-            field = new (classes[id])(id, this.base.listing[id], this.base.getUpdater(id), 'newlistingmsg');
+            cleaner = preValidators[id];
+            field = new (classes[id])(id, this.base.listing[id], this.base.getUpdater(id, cleaner), msgids[id]);
             field.fieldBase.setDisplayName(names[id]);
             field.fieldBase.addValidator(validators[id]);
             if (preValidators[id]) {
@@ -73,12 +71,14 @@ pl.implement(NewListingFinancialsClass, {
                 field.fieldBase.validator.postValidator = this.genDisplayCalculatedIfValidAmt(field);
             }
             else {
-                field.fieldBase.validator.postValidator = this.genDisplayCalculatedIfValid(field);
+                field.fieldBase.validator.postValidator = this.genDisplayCalculatedIfValidPct(field);
             }
             field.bindEvents();
             this.base.fields.push(field);
             this.base.fieldMap[id] = field;
         } 
+        this.base.fieldMap['suggested_amt'].validate();
+        this.base.fieldMap['suggested_pct'].validate();
         this.displayCalculatedIfValid();
         this.displayAskedEffects();
         this.base.bindNavButtons();
@@ -94,11 +94,11 @@ pl.implement(NewListingFinancialsClass, {
     displayAskedEffects: function() {
         var fnd = pl('#asked_fund').attr('checked') ? true : false;
         if (fnd) {
-            pl('#suggested_amt, #suggested_pct, #closing_date').removeAttr('disabled');
+            pl('#suggested_amt, #suggested_pct').removeAttr('disabled');
             pl('#offerbox').css({opacity: 1});
         }
         else {
-            pl('#suggested_amt, #suggested_pct, #closing_date').attr({disabled: true});
+            pl('#suggested_amt, #suggested_pct').attr({disabled: true});
             pl('#offerbox').css({opacity: 0.5});
         }
     },
@@ -106,26 +106,36 @@ pl.implement(NewListingFinancialsClass, {
         var self = this;
             f1 = this.base.genDisplayCalculatedIfValid(field);
         return function(result, val) {
-            var fmt = CurrencyClass.prototype.format(val);
-            if (result === 0) {
-                pl('#suggested_amt').attr({value: fmt});
-            }
+            self.displayIfValidAmt(result, val);
             f1();
             self.displayCalculatedIfValid();
         }
     },
-    genDisplayCalculatedIfValid: function(field) {
+    genDisplayCalculatedIfValidPct: function(field) {
         var self = this;
             f1 = this.base.genDisplayCalculatedIfValid(field);
-        return function() {
+        return function(result, val) {
+            self.displayIfValidPct(result, val);
             f1();
             self.displayCalculatedIfValid();
+        }
+    },
+    displayIfValidAmt: function(result, val) {
+        var fmt = CurrencyClass.prototype.format(val);
+        if (result === 0) {
+            pl('#suggested_amt').attr({value: fmt});
+        }
+    },
+    displayIfValidPct: function(result, val) {
+        var fmt = PercentClass.prototype.format(val);
+        if (result === 0) {
+            pl('#suggested_pct').attr({value: fmt});
         }
     },
     displayCalculatedIfValid: function() {
         var fnd = pl('#asked_fund').attr('checked') ? true : false,
             amt = CurrencyClass.prototype.clean(pl('#suggested_amt').attr('value')) || 0,
-            pct = CurrencyClass.prototype.clean(pl('#suggested_pct').attr('value')) || 0,
+            pct = PercentClass.prototype.clean(pl('#suggested_pct').attr('value')) || 0,
             val = pct ? Math.floor(Math.floor(100 * amt / pct)) : 0,
             cur = CurrencyClass.prototype.format(CurrencyClass.prototype.clean(val)),
             dis = fnd && cur ? cur : '';

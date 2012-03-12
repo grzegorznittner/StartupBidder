@@ -50,36 +50,28 @@ pl.implement(DateClass, {
 
 function NumberClass() {}
 pl.implement(NumberClass, {
-    format: function(num) {
-        return num ? num.replace(/[^0-9]*/g, '') : '';
-    },
-    clean: function(str) {
-        return NumberClass.prototype.format(str);
-    },
-    isNumber: function(str) {
-        var match = str ? str.match(/^[0-9]*$/) : false;
-        return (match ? 0 : 'Please enter a numeric value');
-    }
-});
-
-function CurrencyClass(symbol) {
-    this.symbol = symbol || '$';
-}
-pl.implement(CurrencyClass, {
-    format: function(num) {
+    formatText: function(num, _prefix, _postfix, _thousandsep, _decimalpoint) {
+        var prefix = _prefix || '',
+            postfix = _postfix || '',
+            thousandsep = _thousandsep || ',',
+            decimalpoint = _decimalpoint || '.',
+            nStr, x, x1, x2, rgx, text;
         if (!num) {
             return '';
         }
-	    var nStr = CurrencyClass.prototype.clean(num);
-		var x = nStr.split('.');
-		var x1 = x[0];
-		var x2 = x.length > 1 ? '.' + x[1] : '';
-		var rgx = /(\d+)(\d{3})/;
+	    nStr = NumberClass.prototype.clean(num);
+		x = nStr.split(decimalpoint);
+		x1 = x[0];
+		x2 = x.length > 1 ? decimalpoint + x[1] : '';
+		rgx = /(\d+)(\d{3})/;
 		while (rgx.test(x1)) {
-			x1 = x1.replace(rgx, '$1' + ',' + '$2');
+			x1 = x1.replace(rgx, '$1' + thousandsep + '$2');
 		}
-        this.symbol = this.symbol ? this.symbol : '$';
-		return this.symbol + x1 + x2;
+        text = prefix + x1 + x2 + postfix;
+		return text;
+    }, 
+    format: function(num) {
+        return NumberClass.prototype.clean(num);
     },
     clean: function(num) {
         var str = '' + num;
@@ -87,9 +79,37 @@ pl.implement(CurrencyClass, {
             noleadzerostr = numstr.replace(/^0*/, '');
         return noleadzerostr;
     },
+    isNumber: function(str) {
+        var match = str ? str.match(/^[0-9]*$/) : false;
+        return (match ? 0 : 'Please enter a numeric value');
+    }
+});
+
+function CurrencyClass() {}
+pl.implement(CurrencyClass, {
+    format: function(num) {
+        return NumberClass.prototype.formatText(num, '$');
+    },
+    clean: function(num) {
+        return NumberClass.prototype.clean(num);
+    },
     isCurrency: function(str) {
         var match = str ? str.match(/^[$]?[0-9]{1,3}(,?[0-9]{3})*$/) : false;
         return (match ? 0 : 'Please enter a currency value');
+    }
+});
+
+function PercentClass() {}
+pl.implement(PercentClass, {
+    format: function(num) {
+        return NumberClass.prototype.formatText(num, '', '%');
+    },
+    clean: function(num) {
+        return NumberClass.prototype.clean(num);
+    },
+    isPercent: function(str) {
+        var match = str ? str.match(/^[1-9]?[0-9][%]?$/) : false;
+        return (match ? 0 : 'Please enter a percent value');
     }
 });
 

@@ -2,7 +2,7 @@ function NewListingBaseClass() {
     var editableprops = [
             'title', 'category', 'mantra', 'website', 'address',
             'summary', 'answer1', 'answer2', 'answer3', 'answer4', 'answer5', 'answer6', 'answer7', 'answer8', 'answer9', 'answer10', 'answer11', 'answer12', 'answer13',
-            'suggested_amt', 'suggested_pct', 'closing_date', 'presentation_id', 'business_plan_id', 'financials_id'
+            'suggested_amt', 'suggested_pct', 'presentation_id', 'business_plan_id', 'financials_id'
         ],
         companyTile = new CompanyTileClass({preview: true});
     this.editableprops = editableprops;
@@ -122,11 +122,11 @@ pl.implement(NewListingBaseClass, {
     displaySummaryPreview: function() {
         this.companyTile.display(this.listing, 'summarypreview');
     },
-    getUpdater: function(fieldName) {
+    getUpdater: function(fieldName, cleaner) {
         var self = this;
         return function(newdata, loadFunc, errorFunc, successFunc) {
             var data = { listing: {} },
-                newval = (newdata ? newdata.changeKey : undefined),
+                newval = (newdata ? (cleaner ? cleaner(newdata.changeKey) : newdata.changeKey) : undefined),
                 pctSuccessFunc = function(json) {
                     successFunc(json);
                     self.displayCalculated();
