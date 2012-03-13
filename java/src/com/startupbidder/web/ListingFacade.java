@@ -682,18 +682,23 @@ public class ListingFacade {
 		docDTO = getDAO().createListingDocument(docDTO);
 		doc = DtoToVoConverter.convert(docDTO);
 		
+		Key<ListingDoc> replacedDocId = null;
 		Listing listing = getDAO().getListing(BaseVO.toKeyId(loggedInUser.getEditedListing()));
 		switch(docDTO.type) {
 		case BUSINESS_PLAN:
+			replacedDocId = listing.businessPlanId;
 			listing.businessPlanId = new Key<ListingDoc>(ListingDoc.class, docDTO.id);
 			break;
 		case FINANCIALS:
+			replacedDocId = listing.financialsId;
 			listing.financialsId = new Key<ListingDoc>(ListingDoc.class, docDTO.id);
 			break;
 		case PRESENTATION:
+			replacedDocId = listing.presentationId;
 			listing.presentationId = new Key<ListingDoc>(ListingDoc.class, docDTO.id);
 			break;
 		case LOGO:
+			replacedDocId = listing.logoId;
 			listing.logoId = new Key<ListingDoc>(ListingDoc.class, docDTO.id);
 			BlobInfo logoInfo = new BlobInfoFactory().loadBlobInfo(doc.getBlob());
 			byte logo[] = blobstoreService.fetchData(doc.getBlob(), 0, logoInfo.getSize() - 1);
@@ -702,6 +707,17 @@ public class ListingFacade {
 			break;
 		}
 		listing = getDAO().storeListing(listing);
+		
+		if (replacedDocId != null) {
+			try {
+				log.info("Deleting doc previously associated with listing " + replacedDocId);
+				ListingDoc docToDelete = getDAO().getListingDocument(replacedDocId.getId());
+				blobstoreService.delete(docToDelete.blob);
+				getDAO().deleteDocument(replacedDocId.getId());
+			} catch (Exception e) {
+				log.log(Level.WARNING, "Error while deleting old document " + replacedDocId + " of listing " + listing.id, e);
+			}
+		}
 		
 		return doc;
 	}

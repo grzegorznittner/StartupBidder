@@ -113,6 +113,28 @@ public class ListingController extends ModelDrivenController {
 		if (listing == null) {
 			log.log(Level.WARNING, "Listing not created!");
 			headers.setStatus(500);
+		} else {
+			// setting upload urls for documents not yet uploaded
+			int numOfUrls = 0;
+			ListingVO l = listing.getListing();
+			numOfUrls += l.getBuinessPlanId() == null ? 1 : 0;
+			numOfUrls += l.getPresentationId() == null ? 1 : 0;
+			numOfUrls += l.getFinancialsId() == null ? 1 : 0;
+			numOfUrls += l.getLogo() == null ? 1 : 0;
+			String[] url = ServiceFacade.instance().createUploadUrls(getLoggedInUser(), "/file/upload", numOfUrls);
+			
+			if (l.getBuinessPlanId() == null) {
+				l.setBuinessPlanId(url[--numOfUrls]);
+			}
+			if (l.getPresentationId() == null) {
+				l.setPresentationId(url[--numOfUrls]);
+			}
+			if (l.getFinancialsId() == null) {
+				l.setFinancialsId(url[--numOfUrls]);
+			}
+			if (l.getLogo() == null) {
+				l.setLogo(url[--numOfUrls]);
+			}
 		}
 		model = listing;
 
