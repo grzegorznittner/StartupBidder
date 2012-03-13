@@ -65,9 +65,9 @@ pl.implement(NewListingBaseClass, {
         }
         return validmsgs;
     },
-    bindNavButtons: function() {
+    bindNavButtons: function(nextValidator) {
         this.bindPrevButton();
-        this.bindNextButton();
+        this.bindNextButton(nextValidator);
         this.bindWithdrawButton();
     },
     bindPrevButton: function() {
@@ -82,14 +82,14 @@ pl.implement(NewListingBaseClass, {
             }
         });
     },
-    bindNextButton: function() {
+    bindNextButton: function(nextValidator) {
         var self = this;
         if (!self.nextPage) {
             return;
         }
         pl('#nextbuttonlink').bind({
             click: function() {
-                var validmsgs = self.validate();
+                var validmsgs = nextValidator ? nextValidator() : self.validate();
                 if (validmsgs.length > 0) {
                     pl('#newlistingmsg').addClass('errorcolor').html('Please correct: ' + validmsgs.join(' '));
                 }

@@ -84,23 +84,38 @@ record a voiceover of a quick run through your slide deck.
     <div class="boxpanel">
         <div class="mediacol1 clear">
             <div class="formitem">
-                <span class="inputfield">
+                <!-- <span class="inputfield">
                     <input class="text mediainputlink" type="text" maxlength="255" name="logourl" id="logourl" value=""></input> </span>
-                <span class="inputicon">
-                    <div class="checkboxredicon"></div>
+                -->
+                <span class="inputfield">
+                    <form id="logouploadform" method="post" enctype="multipart/form-data" target="logouploadiframe" action="#">
+                        <input class="span-3 text mediainputlink inputbutton" id="LOGO" name="LOGO" size="0" type="file"></input>
+                        <iframe id="logouploadiframe" name="logouploadiframe" src="" class="logouploadiframe"></iframe>
+                    </form>
                 </span>
+                <span class="inputicon">
+                    <!-- <div class="checkboxredicon"></div> -->
+                </span>
+
             </div>
             <div class="formitem clear">
-                <span class="medialabel">
-                    PNG file, 146px wide, 146px high, resized if not this size
-                </span>
+
+<!--
                 <span class="span-3 inputbutton" id="logouploadbutton">
                     UPLOAD
                 </span>
+-->
+
+                <span class="medialabel">
+                    PNG file 146 by 146 px, center cropped and resized if necessary
+                </span>
+
             </div>
         </div>
         <div class="mediacol2">
-            <div class="tileimg wave"></div>
+            <div class="tileimg" id="logoimgwrapper">
+                <img class="tileimg" id="logoimg" src=""></img>
+            </div>
         </div>
     </div>
 

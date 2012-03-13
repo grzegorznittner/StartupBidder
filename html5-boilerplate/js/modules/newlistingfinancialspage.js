@@ -27,7 +27,7 @@ pl.implement(NewListingFinancialsClass, {
     bindEvents: function() {
         var textFields = ['asked_fund', 'suggested_amt', 'suggested_pct'],
             msgids = {
-                asked_fund: 'newlistingmsg',
+                asked_fund: 'newlistingaskmsg',
                 suggested_amt: 'newlistingoffermsg',
                 suggested_pct: 'newlistingoffermsg'
             },
@@ -81,7 +81,21 @@ pl.implement(NewListingFinancialsClass, {
         this.base.fieldMap['suggested_pct'].validate();
         this.displayCalculatedIfValid();
         this.displayAskedEffects();
-        this.base.bindNavButtons();
+        this.base.bindNavButtons(this.genNextValidator());
+    },
+    genNextValidator: function() {
+        var self = this;
+        console.log('foo');
+        return function() {
+            var asked_fund = pl('#asked_fund').attr('checked') ? true : false;
+            console.log('asked_fund?',asked_fund);
+            if (asked_fund) {
+                return self.base.validate();
+            }
+            else {
+                return []; // FIXME: check uploaded documents
+            }
+        };
     },
     genDisplayAskedEffects: function(field) {
         var f1 = this.base.genDisplayCalculatedIfValid(field);
