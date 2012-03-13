@@ -58,6 +58,10 @@ public class ListingVO extends BaseVO {
 	@JsonProperty("presentation_id") private String presentationId;
 	@JsonProperty("financials_id") private String financialsId;
 	@JsonProperty("logo") private String logo;
+	@JsonProperty("business_plan_upload") private String buinessPlanUpload;
+	@JsonProperty("presentation_upload") private String presentationUpload;
+	@JsonProperty("financials_upload") private String financialsUpload;
+	@JsonProperty("logo_upload") private String logoUpload;
 	@JsonProperty("answer1") private String answer1;
 	@JsonProperty("answer2") private String answer2;
 	@JsonProperty("answer3") private String answer3;
@@ -457,5 +461,37 @@ public class ListingVO extends BaseVO {
 
 	public void setLogo(String logo) {
 		this.logo = logo;
+	}
+
+	public String getBuinessPlanUpload() {
+		return buinessPlanUpload;
+	}
+
+	public void setBuinessPlanUpload(String buinessPlanUpload) {
+		this.buinessPlanUpload = buinessPlanUpload;
+	}
+
+	public String getPresentationUpload() {
+		return presentationUpload;
+	}
+
+	public void setPresentationUpload(String presentationUpload) {
+		this.presentationUpload = presentationUpload;
+	}
+
+	public String getFinancialsUpload() {
+		return financialsUpload;
+	}
+
+	public void setFinancialsUpload(String financialsUpload) {
+		this.financialsUpload = financialsUpload;
+	}
+
+	public String getLogoUpload() {
+		return logoUpload;
+	}
+
+	public void setLogoUpload(String logoUpload) {
+		this.logoUpload = logoUpload;
 	}
 }

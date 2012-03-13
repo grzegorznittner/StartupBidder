@@ -26,6 +26,10 @@ import com.google.appengine.api.blobstore.BlobInfo;
 import com.google.appengine.api.blobstore.BlobInfoFactory;
 import com.google.appengine.api.blobstore.BlobstoreService;
 import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
+import com.google.appengine.api.images.Image;
+import com.google.appengine.api.images.ImagesService;
+import com.google.appengine.api.images.ImagesServiceFactory;
+import com.google.appengine.api.images.Transform;
 import com.google.appengine.api.taskqueue.Queue;
 import com.google.appengine.api.taskqueue.QueueFactory;
 import com.google.appengine.api.taskqueue.TaskOptions;
@@ -739,7 +743,33 @@ public class ListingFacade {
 			log.warning("Image not recognized as JPG, GIF or PNG. Magic number was: " + ToStringBuilder.reflectionToString(magicNumber));
 			return null;
 		}
-		String logo64 = Base64.encodeBase64String(logo);
+		ImagesService imagesService = ImagesServiceFactory.getImagesService();
+        Image originalImage = ImagesServiceFactory.makeImage(logo);
+		log.info("Original image: " + originalImage.getWidth() + " x " + originalImage.getHeight());
+        Image newImage = null;
+        if (originalImage.getWidth() != originalImage.getHeight()) {
+        	Transform crop = null;
+        	if (originalImage.getWidth() > originalImage.getHeight()) {
+        		double percentCrop = (originalImage.getWidth() - originalImage.getHeight()) / (2.0 * originalImage.getWidth());
+        		crop = ImagesServiceFactory.makeCrop(percentCrop, 0.0, 1.0 - percentCrop, 1.0);
+        	} else {
+        		double percentCrop = (originalImage.getHeight() - originalImage.getWidth()) / (2.0 * originalImage.getHeight());
+        		crop = ImagesServiceFactory.makeCrop(0.0, percentCrop, 1.0, 1.0 - percentCrop);
+        	}
+    		log.info("Center cropping image");
+        	newImage = imagesService.applyTransform(crop, originalImage);
+    		log.info("Cropped image: " + newImage.getWidth() + " x " + newImage.getHeight());
+        } else {
+        	newImage = originalImage;
+        }
+        if (newImage.getWidth() != 144) {
+        	Transform resize = ImagesServiceFactory.makeResize(144, 144);
+        	newImage = imagesService.applyTransform(resize, newImage);
+    		log.info("Resized image: " + newImage.getWidth() + " x " + newImage.getHeight());
+        }
+        byte[] newImageData = newImage.getImageData();
+		
+		String logo64 = Base64.encodeBase64String(newImageData);
 		return format + ";base64," + logo64;
 	}
 
