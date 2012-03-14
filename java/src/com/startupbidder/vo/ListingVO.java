@@ -21,7 +21,7 @@ import com.startupbidder.util.LowecaseSerializer;
 		fieldVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE)
 @JsonIgnoreProperties(ignoreUnknown=true)
 public class ListingVO extends BaseVO {
-	public static final List<String> UPDATABLE_PROPERTIES = Arrays.asList(new String[] {"title", "mantra", "summary", 
+	public static final List<String> UPDATABLE_PROPERTIES = Arrays.asList(new String[] {"title", "mantra", "summary", "contact_email",
 			"website", "category", "address", "asked_fund", "suggested_amt", "suggested_pct", "answer1", "answer2", "answer3",
 			"answer4", "answer5", "answer6", "answer7", "answer8", "answer9", "answer10", "answer11", "answer12", "answer13"});
 	public static final List<String> FETCHED_PROPERTIES = Arrays.asList(new String[] {"business_plan_url", 
@@ -50,6 +50,7 @@ public class ListingVO extends BaseVO {
 	@JsonProperty("category") private String category;
 	@JsonProperty("profile_id") private String owner;
 	@JsonProperty("profile_username") private String ownerName;
+	@JsonProperty("contact_email") private String contactEmail;
 	@JsonProperty("address") private String address;
 	@JsonProperty("num_comments") private long numberOfComments;
 	@JsonProperty("num_bids") private long numberOfBids;
@@ -497,5 +498,13 @@ public class ListingVO extends BaseVO {
 
 	public void setLogoUpload(String logoUpload) {
 		this.logoUpload = logoUpload;
+	}
+
+	public String getContactEmail() {
+		return contactEmail;
+	}
+
+	public void setContactEmail(String contactEmail) {
+		this.contactEmail = contactEmail;
 	}
 }

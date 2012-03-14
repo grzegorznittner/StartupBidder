@@ -78,6 +78,7 @@ public class VoToModelConverter {
 		listing.posted = listingVO.getPostedOn();
 		listing.name = listingVO.getName();
 		listing.owner = (Key<SBUser>)stringToKey(listingVO.getOwner());
+		listing.contactEmail = listingVO.getContactEmail();
 		listing.askedForFunding = listingVO.isAskedForFunding();
 		listing.suggestedValuation = listingVO.getSuggestedValuation();
 		listing.suggestedPercentage = listingVO.getSuggestedPercentage();
@@ -158,6 +159,8 @@ public class VoToModelConverter {
 			listing.answer13 = property.getPropertyValue();
 		} else if (name.equalsIgnoreCase("logoBase64")) {
 			listing.logoBase64 = property.getPropertyValue();
+		} else if (name.equalsIgnoreCase("contact_email")) {
+			listing.contactEmail = property.getPropertyValue();
 		}
 	}
 

@@ -50,6 +50,7 @@ public class Listing extends BaseObject implements Monitor.Monitored {
 	}
 	
 	@Indexed public Key<SBUser> owner;
+	public String contactEmail;
 	
 	public String name;
 	public String mantra;
