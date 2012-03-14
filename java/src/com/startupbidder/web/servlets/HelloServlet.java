@@ -252,7 +252,7 @@ public class HelloServlet extends HttpServlet {
 						BlobInfo logoInfo = new BlobInfoFactory().loadBlobInfo(doc.getBlob());
 						if (logoInfo != null) {
 							byte logo[] = blobstoreService.fetchData(doc.getBlob(), 0, logoInfo.getSize() - 1);
-							out.println("<img src=\"data:" + ListingFacade.instance().convertLogoToBase64(logo) + "\"/>");
+							out.println("<img src=\"" + ListingFacade.instance().convertLogoToBase64(logo) + "\"/>");
 						}
 					}
 					out.println("<a href=\"/file/download/" + doc.getId() + ".json\">Download "

@@ -16,6 +16,7 @@ import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 
+import com.startupbidder.datamodel.ListingDoc;
 import com.startupbidder.vo.ListPropertiesVO;
 import com.startupbidder.vo.ListingAndUserVO;
 import com.startupbidder.vo.ListingPropertyVO;
@@ -40,7 +41,11 @@ public class ListingController extends ModelDrivenController {
 			// GET method handler
 			
 			if("edited".equalsIgnoreCase(getCommand(1))) {
-				return startEditing(request);
+				if (getCommand(2) != null) {
+					return getEditedListingDoc(request, getCommand(2));
+				} else {
+					return startEditing(request);
+				}
 			} else if("top".equalsIgnoreCase(getCommand(1))) {
 				return top(request);
 			} else if("active".equalsIgnoreCase(getCommand(1))) {
@@ -127,6 +132,39 @@ public class ListingController extends ModelDrivenController {
 
 		return headers;
 	}
+	
+    // POST /listing/edited
+	private HttpHeaders getEditedListingDoc(HttpServletRequest request, String docType) throws JsonParseException, JsonMappingException, IOException {
+		HttpHeaders headers = new HttpHeadersImpl("edited");
+		
+		ListingAndUserVO listing = ListingFacade.instance().createListing(getLoggedInUser());
+		if (listing == null) {
+			log.log(Level.WARNING, "Listing not created!");
+			headers.setStatus(500);
+		} else {
+			ListingVO l = listing.getListing();
+			String[] url = ServiceFacade.instance().createUploadUrls(getLoggedInUser(), "/file/upload", 1);
+			String returnValue = "<upload_url>" + url[0] + "</upload_url><value>";
+			ListingDoc.Type type = ListingDoc.Type.valueOf(docType);
+			switch (type) {
+			case BUSINESS_PLAN:
+				returnValue += l.getBuinessPlanId();
+				break;
+			case FINANCIALS:
+				returnValue += l.getFinancialsId();
+				break;
+			case PRESENTATION:
+				returnValue += l.getPresentationId();
+				break;
+			case LOGO:
+				returnValue += l.getLogo();
+				break;
+			}
+			returnValue += "</value>";
+			model = returnValue;
+		}
+		return headers;
+	}	
 
     // PUT /listing/update
     // POST /listing/update

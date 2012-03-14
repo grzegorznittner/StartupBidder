@@ -161,7 +161,7 @@ public class FileController extends ModelDrivenController {
 			log.log(Level.INFO, "Storing document: " + doc);
 			doc = ListingFacade.instance().createListingDocument(getLoggedInUser(), doc);
 			if (doc != null) {
-				headers.setRedirectUrl("/listing/edited/");
+				headers.setRedirectUrl("/listing/edited/" + doc.getType() + "/");
 				return headers;
 			}
 		}

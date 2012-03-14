@@ -706,7 +706,6 @@ public class ListingFacade {
 			listing.logoId = new Key<ListingDoc>(ListingDoc.class, docDTO.id);
 			BlobInfo logoInfo = new BlobInfoFactory().loadBlobInfo(doc.getBlob());
 			byte logo[] = blobstoreService.fetchData(doc.getBlob(), 0, logoInfo.getSize() - 1);
-			// @FIXME: I need to verify magic number for the image (gif, png, jpg).
 			listing.logoBase64 = convertLogoToBase64(logo);
 			break;
 		}
@@ -756,7 +755,7 @@ public class ListingFacade {
         		double percentCrop = (originalImage.getHeight() - originalImage.getWidth()) / (2.0 * originalImage.getHeight());
         		crop = ImagesServiceFactory.makeCrop(0.0, percentCrop, 1.0, 1.0 - percentCrop);
         	}
-    		log.info("Center cropping image");
+    		log.info("Center cropping image ...");
         	newImage = imagesService.applyTransform(crop, originalImage);
     		log.info("Cropped image: " + newImage.getWidth() + " x " + newImage.getHeight());
         } else {
@@ -770,7 +769,7 @@ public class ListingFacade {
         byte[] newImageData = newImage.getImageData();
 		
 		String logo64 = Base64.encodeBase64String(newImageData);
-		return format + ";base64," + logo64;
+		return "data:" + format + ";base64," + logo64;
 	}
 
 	public List<ListingDocumentVO> getAllListingDocuments(UserVO loggedInUser) {
