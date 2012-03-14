@@ -24,7 +24,38 @@ pl.implement(NewListingMediaClass, {
             this.bound = true;
         }
     },
+    displayLogo: function(imgurl) {
+        var 
+            isimg = imgurl ? true : false,
+            dataurl = isimg ? (imgurl.indexOf('data:') === 0 ? imgurl : 'data:' + imgurl) : null;
+        if (isimg) {
+            pl('#logoimg').attr({src: dataurl});
+        }
+        else {
+            pl('#logoimgwrapper').addClass('noimage');
+        }
+    },
     bindEvents: function() {
+        var self = this,
+            uploadurl = this.base.listing.logo_upload,
+            imgurl = this.base.listing.logo;
+        pl('#logouploadform').attr({action: uploadurl});
+        this.displayLogo(imgurl);
+        pl('#logouploadiframe').bind({
+            load: function() {
+                var matches = pl('#logouploadiframe').get(0).contentDocument.body.innerHTML.match(/logo<.*"((data:)?image\/[^"]*)"/);
+                    url = (matches && matches.length >= 2) ? matches[1] : null;
+                if (url) {
+                    self.displayLogo(url);
+                }
+            }
+        });
+        pl('#LOGO').bind({
+            change: function() {
+                pl('#logouploadform').get(0).submit();
+            }
+        });
+        
 /*
         var textFields = ['logo_url', 'suggested_amt', 'suggested_pct'],
             msgids = {
