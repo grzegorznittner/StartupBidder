@@ -156,6 +156,8 @@ public class VoToModelConverter {
 			listing.answer12 = property.getPropertyValue();
 		} else if (name.equalsIgnoreCase("answer13")) {
 			listing.answer13 = property.getPropertyValue();
+		} else if (name.equalsIgnoreCase("logoBase64")) {
+			listing.logoBase64 = property.getPropertyValue();
 		}
 	}
 

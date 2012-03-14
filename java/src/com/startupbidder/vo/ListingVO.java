@@ -1,6 +1,8 @@
 package com.startupbidder.vo;
 
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import org.codehaus.jackson.annotate.JsonAutoDetect;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
@@ -19,9 +21,11 @@ import com.startupbidder.util.LowecaseSerializer;
 		fieldVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE)
 @JsonIgnoreProperties(ignoreUnknown=true)
 public class ListingVO extends BaseVO {
-	public static final String[] UPDATABLE_PROPERTIES = {"title", "mantra", "summary", "website", "category",
-			"address", "asked_fund", "suggested_amt", "suggested_pct", "answer1", "answer2", "answer3",
-			"answer4", "answer5", "answer6", "answer7", "answer8", "answer9", "answer10", "answer11", "answer12", "answer13"};
+	public static final List<String> UPDATABLE_PROPERTIES = Arrays.asList(new String[] {"title", "mantra", "summary", 
+			"website", "category", "address", "asked_fund", "suggested_amt", "suggested_pct", "answer1", "answer2", "answer3",
+			"answer4", "answer5", "answer6", "answer7", "answer8", "answer9", "answer10", "answer11", "answer12", "answer13"});
+	public static final List<String> FETCHED_PROPERTIES = Arrays.asList(new String[] {"business_plan_url", 
+			"presentation_url", "financials_url", "logo_url"});
 	
 	@JsonProperty("num") private int orderNumber;
 	@JsonProperty("listing_id")	private String id;

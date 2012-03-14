@@ -185,6 +185,11 @@ public class ListingController extends ModelDrivenController {
 					log.log(Level.WARNING, "Listing not found!");
 					headers.setStatus(500);
 				}
+				String[] url = ServiceFacade.instance().createUploadUrls(getLoggedInUser(), "/file/upload", 4);
+				listing.setBuinessPlanUpload(url[0]);
+				listing.setFinancialsUpload(url[1]);
+				listing.setPresentationUpload(url[2]);
+				listing.setLogoUpload(url[3]);
 			}
 			model = listing;
 		} else {
@@ -213,7 +218,13 @@ public class ListingController extends ModelDrivenController {
 				properties.add(new ListingPropertyVO(node.getKey(), node.getValue().getValueAsText()));
 			}
 			log.log(Level.INFO, "Updating listing: " + properties);
-			model = ListingFacade.instance().updateListingProperties(getLoggedInUser(), properties);
+			ListingAndUserVO listing = ListingFacade.instance().updateListingProperties(getLoggedInUser(), properties);
+			String[] url = ServiceFacade.instance().createUploadUrls(getLoggedInUser(), "/file/upload", 4);
+			listing.getListing().setBuinessPlanUpload(url[0]);
+			listing.getListing().setFinancialsUpload(url[1]);
+			listing.getListing().setPresentationUpload(url[2]);
+			listing.getListing().setLogoUpload(url[3]);
+			model = listing;
 		} else {
 			log.log(Level.WARNING, "Parameter 'listing' is empty!");
 			headers.setStatus(500);

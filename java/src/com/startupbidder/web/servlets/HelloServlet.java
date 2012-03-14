@@ -33,6 +33,7 @@ import com.startupbidder.datamodel.SBUser;
 import com.startupbidder.vo.ListPropertiesVO;
 import com.startupbidder.vo.ListingAndUserVO;
 import com.startupbidder.vo.ListingDocumentVO;
+import com.startupbidder.vo.ListingVO;
 import com.startupbidder.vo.UserListVO;
 import com.startupbidder.vo.UserVO;
 import com.startupbidder.web.FrontController;
@@ -141,8 +142,10 @@ public class HelloServlet extends HttpServlet {
 						+ "{\"suggested_amt\":\"" + editedListing.getListing().getSuggestedAmount() + "\"}"
 						+ "</textarea><input type=\"submit\" value=\"Update suggested amount\"/></form>");
 				out.println("<form method=\"POST\" action=\"/listing/update_field/.json\"><textarea name=\"listing\" rows=\"1\" cols=\"100\">"
-						+ "{\"suggested_pct\":" + editedListing.getListing().getSuggestedPercentage() + "}"
-						+ "</textarea><input type=\"submit\" value=\"Update suggested percentage\"/></form>");
+						+ "{\"logo_url\":\"http://mcsearcher.files.wordpress.com/2008/12/sexy-girl-7.jpg\"}"
+						+ "</textarea><input type=\"submit\" value=\"Update logo from URL\"/></form>");
+				out.println("<p>Updatable field names: " + ListingVO.UPDATABLE_PROPERTIES + "</p>");
+				out.println("<p>Fields which can be fetched via URL: " + ListingVO.FETCHED_PROPERTIES + "</p>");
 			} else {
 				out.println("<div><b>Listing doesn't exist.</b> Be aware that this page is calling automatically create method, so edited listing should be always available.</div>");
 			}

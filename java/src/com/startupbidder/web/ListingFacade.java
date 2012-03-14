@@ -1,5 +1,8 @@
 package com.startupbidder.web;
 
+import java.net.URL;
+import java.net.URLConnection;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -12,6 +15,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.taglibs.standard.lang.jstl.ArraySuffix;
@@ -24,8 +28,13 @@ import org.joda.time.format.DateTimeFormatter;
 
 import com.google.appengine.api.blobstore.BlobInfo;
 import com.google.appengine.api.blobstore.BlobInfoFactory;
+import com.google.appengine.api.blobstore.BlobKey;
 import com.google.appengine.api.blobstore.BlobstoreService;
 import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
+import com.google.appengine.api.files.AppEngineFile;
+import com.google.appengine.api.files.FileService;
+import com.google.appengine.api.files.FileServiceFactory;
+import com.google.appengine.api.files.FileWriteChannel;
 import com.google.appengine.api.images.Image;
 import com.google.appengine.api.images.ImagesService;
 import com.google.appengine.api.images.ImagesServiceFactory;
@@ -39,6 +48,7 @@ import com.startupbidder.dao.ObjectifyDatastoreDAO;
 import com.startupbidder.datamodel.Category;
 import com.startupbidder.datamodel.Listing;
 import com.startupbidder.datamodel.ListingDoc;
+import com.startupbidder.datamodel.ListingDoc.Type;
 import com.startupbidder.datamodel.ListingStats;
 import com.startupbidder.datamodel.Notification;
 import com.startupbidder.datamodel.SBUser;
@@ -153,32 +163,91 @@ public class ListingFacade {
 			result.setErrorMessage("Listing is not in NEW state");
 			return result;
 		}
+		boolean fetchedDoc = false;
 		StringBuffer infos = new StringBuffer();
-		// removing non updatable fields
+		// removing non updatable fields and handling fetched fields
 		List<ListingPropertyVO> propsToUpdate = new ArrayList<ListingPropertyVO>();
-		List<String> updatableProps = Arrays.asList(ListingVO.UPDATABLE_PROPERTIES);
 		for (ListingPropertyVO prop : properties) {
-			if (updatableProps.contains(prop.getPropertyName().toLowerCase())) {
+			String propertyName = prop.getPropertyName().toLowerCase();
+			if (ListingVO.UPDATABLE_PROPERTIES.contains(propertyName)) {
 				propsToUpdate.add(prop);
+			} else if (ListingVO.FETCHED_PROPERTIES.contains(propertyName)) {
+				ListingDoc doc = fetchAndUpdateListingDoc(prop);
+				if (doc != null) {
+					listing = updateListingDoc(loggedInUser, doc);
+					fetchedDoc = true;
+				}
 			} else {
-				infos.append("Removed field '" + prop.getPropertyName() + "'. ");
+				infos.append("Removed field '" + propertyName + "' as it's not updatable. ");
 			}
 		}
 		log.log(Level.INFO, infos.toString(), new Exception("Listing update verification"));
-		if (propsToUpdate.isEmpty()) {
+		if (propsToUpdate.isEmpty() && !fetchedDoc) {
 			result.setErrorCode(ErrorCodes.ENTITY_VALIDATION);
 			result.setErrorMessage("Nothing to update. " + infos.toString());
 			return result;
 		}
 		
-		for (ListingPropertyVO prop : propsToUpdate) {
-			VoToModelConverter.updateListingProperty(listing, prop);
+		if (!propsToUpdate.isEmpty()) {
+			for (ListingPropertyVO prop : propsToUpdate) {
+				VoToModelConverter.updateListingProperty(listing, prop);
+			}
+			log.info("Updating listing: " + listing);
+			getDAO().storeListing(listing);
 		}
-		log.info("Updating listing: " + listing);
-		getDAO().storeListing(listing);
 		result.setListing(DtoToVoConverter.convert(listing));
 		
 		return result;
+	}
+	
+	private ListingDoc fetchAndUpdateListingDoc(ListingPropertyVO prop) {
+		byte[] docBytes = null;
+		String mimeType = null;
+		try {
+			URLConnection con = new URL(prop.getPropertyValue()).openConnection();
+			docBytes = IOUtils.toByteArray(con.getInputStream());
+			mimeType = con.getContentType();
+			log.info("Fetched " + docBytes.length + " bytes, content type '" + mimeType
+					+ "', from '" + prop.getPropertyValue() + "'");
+		} catch (Exception e) {
+			log.log(Level.WARNING, "Error while fetching document from " + prop.getPropertyValue(), e);
+			return null;
+		}
+
+		try {
+			FileService fileService = FileServiceFactory.getFileService();
+			AppEngineFile file = fileService.createNewBlobFile(mimeType);
+			FileWriteChannel writeChannel = fileService.openWriteChannel(file, true);
+			writeChannel.write(ByteBuffer.wrap(docBytes));
+			writeChannel.closeFinally();
+
+			ListingDoc doc = new ListingDoc();
+			doc.blob = fileService.getBlobKey(file);
+			if (doc.blob == null) {
+				log.warning("Blob not created for file " + file);
+				return null;
+			}
+			doc.type = getListingDocTypeFromPropertyName(prop.getPropertyName());
+			getDAO().createListingDocument(doc);
+			return doc;
+		} catch (Exception e) {
+			log.log(Level.WARNING, "Error storing doc as blob", e);
+			return null;
+		}
+	}
+
+	private Type getListingDocTypeFromPropertyName(String propertyName) {
+		if (propertyName.equalsIgnoreCase("business_plan_url")) {
+			return ListingDoc.Type.BUSINESS_PLAN;
+		} else if (propertyName.equalsIgnoreCase("presentation_url")) {
+			return ListingDoc.Type.PRESENTATION;
+		} else if (propertyName.equalsIgnoreCase("financials_url")) {
+			return ListingDoc.Type.FINANCIALS;
+		} else if (propertyName.equalsIgnoreCase("logo_url")) {
+			return ListingDoc.Type.LOGO;
+		}
+		log.warning("Not recognized property '" + propertyName + "', defaulting to LOGO");
+		return ListingDoc.Type.LOGO;
 	}
 
 	public ListingVO updateListing(UserVO loggedInUser, ListingVO listing) {
@@ -686,6 +755,15 @@ public class ListingFacade {
 		docDTO = getDAO().createListingDocument(docDTO);
 		doc = DtoToVoConverter.convert(docDTO);
 		
+		updateListingDoc(loggedInUser, docDTO);
+		
+		return doc;
+	}
+
+	private Listing updateListingDoc(UserVO loggedInUser, ListingDoc docDTO) {
+		BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
+		
+		log.info("Updating listing document " + docDTO);
 		Key<ListingDoc> replacedDocId = null;
 		Listing listing = getDAO().getListing(BaseVO.toKeyId(loggedInUser.getEditedListing()));
 		switch(docDTO.type) {
@@ -704,8 +782,8 @@ public class ListingFacade {
 		case LOGO:
 			replacedDocId = listing.logoId;
 			listing.logoId = new Key<ListingDoc>(ListingDoc.class, docDTO.id);
-			BlobInfo logoInfo = new BlobInfoFactory().loadBlobInfo(doc.getBlob());
-			byte logo[] = blobstoreService.fetchData(doc.getBlob(), 0, logoInfo.getSize() - 1);
+			BlobInfo logoInfo = new BlobInfoFactory().loadBlobInfo(docDTO.blob);
+			byte logo[] = blobstoreService.fetchData(docDTO.blob, 0, logoInfo.getSize() - 1);
 			listing.logoBase64 = convertLogoToBase64(logo);
 			break;
 		}
@@ -721,8 +799,7 @@ public class ListingFacade {
 				log.log(Level.WARNING, "Error while deleting old document " + replacedDocId + " of listing " + listing.id, e);
 			}
 		}
-		
-		return doc;
+		return listing;
 	}
 	
 	public String convertLogoToBase64(byte[] logo) {
