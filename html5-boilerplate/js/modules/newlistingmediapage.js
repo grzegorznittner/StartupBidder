@@ -24,29 +24,36 @@ pl.implement(NewListingMediaClass, {
             this.bound = true;
         }
     },
-    displayLogo: function(imgurl) {
-        var 
-            isimg = imgurl ? true : false,
-            dataurl = isimg ? (imgurl.indexOf('data:') === 0 ? imgurl : 'data:' + imgurl) : null;
-        if (isimg) {
-            pl('#logoimg').attr({src: dataurl});
+    displayLogo: function(dataurl) {
+        var url = dataurl && dataurl.indexOf('data:') === 0 ? dataurl : null;
+        if (url) {
+            pl('#logoimg').attr({src: url});
         }
         else {
             pl('#logoimgwrapper').addClass('noimage');
         }
     },
+    setUploadUrl: function(uploadurl) {
+        pl('#logouploadform').attr({action: uploadurl});
+    },
     bindEvents: function() {
         var self = this,
-            uploadurl = this.base.listing.logo_upload,
-            imgurl = this.base.listing.logo;
-        pl('#logouploadform').attr({action: uploadurl});
-        this.displayLogo(imgurl);
+            uploadurl = self.base.listing.logo_upload,
+            imgurl = self.base.listing.logo;
+        self.setUploadUrl(uploadurl);
+        self.displayLogo(imgurl);
         pl('#logouploadiframe').bind({
             load: function() {
-                var matches = pl('#logouploadiframe').get(0).contentDocument.body.innerHTML.match(/logo<.*"((data:)?image\/[^"]*)"/);
-                    url = (matches && matches.length >= 2) ? matches[1] : null;
-                if (url) {
-                    self.displayLogo(url);
+                var iframe = pl('#logouploadiframe').get(0).contentDocument.body.innerHTML,
+                    uploadurlmatch = iframe.match(/upload_url.*(https?:\/\/.*\/upload\/[A-Za-z0-9]*).*upload_url/),
+                    dataurimatch = iframe.match(/value.*(data:image\/[a-z]*;base64,[A-Za-z0-9+\/]*=*).*value/),
+                    uploadurl = uploadurlmatch && uploadurlmatch.length === 2 ? uploadurlmatch[1] : null,
+                    datauri = dataurimatch && dataurimatch.length === 2 ? dataurimatch[1] : null;
+                if (uploadurl) {
+                    self.setUploadUrl(uploadurl);
+                }
+                if (datauri) {
+                    self.displayLogo(datauri);
                 }
             }
         });
