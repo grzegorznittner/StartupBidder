@@ -219,11 +219,13 @@ public class ListingController extends ModelDrivenController {
 			}
 			log.log(Level.INFO, "Updating listing: " + properties);
 			ListingAndUserVO listing = ListingFacade.instance().updateListingProperties(getLoggedInUser(), properties);
-			String[] url = ServiceFacade.instance().createUploadUrls(getLoggedInUser(), "/file/upload", 4);
-			listing.getListing().setBuinessPlanUpload(url[0]);
-			listing.getListing().setFinancialsUpload(url[1]);
-			listing.getListing().setPresentationUpload(url[2]);
-			listing.getListing().setLogoUpload(url[3]);
+			if (listing != null && listing.getListing() != null) {
+				String[] url = ServiceFacade.instance().createUploadUrls(getLoggedInUser(), "/file/upload", 4);
+				listing.getListing().setBuinessPlanUpload(url[0]);
+				listing.getListing().setFinancialsUpload(url[1]);
+				listing.getListing().setPresentationUpload(url[2]);
+				listing.getListing().setLogoUpload(url[3]);
+			}
 			model = listing;
 		} else {
 			log.log(Level.WARNING, "Parameter 'listing' is empty!");

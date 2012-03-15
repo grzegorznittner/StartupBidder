@@ -89,6 +89,7 @@ public class VoToModelConverter {
 		listing.presentationId = listingVO.getPresentationId() != null ? stringToKey(listingVO.getPresentationId()) : null;
 		listing.businessPlanId = listingVO.getBuinessPlanId() != null ? stringToKey(listingVO.getBuinessPlanId()) : null;
 		listing.financialsId = listingVO.getFinancialsId() != null ? stringToKey(listingVO.getFinancialsId()) : null;
+		listing.videoUrl = listingVO.getVideo();
 		listing.summary = listingVO.getSummary();
 		listing.mantra = listingVO.getMantra();
 		listing.website = listingVO.getWebsite();
@@ -161,6 +162,8 @@ public class VoToModelConverter {
 			listing.logoBase64 = property.getPropertyValue();
 		} else if (name.equalsIgnoreCase("contact_email")) {
 			listing.contactEmail = property.getPropertyValue();
+		} else if (name.equalsIgnoreCase("video")) {
+			listing.videoUrl = property.getPropertyValue();
 		}
 	}
 

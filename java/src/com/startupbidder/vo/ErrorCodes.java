@@ -15,4 +15,5 @@ public interface ErrorCodes {
 	
 	// general errors
 	int DATASTORE_ERROR = 300;
+	int APPLICATION_ERROR = 301;
 }

@@ -22,7 +22,7 @@ import com.startupbidder.util.LowecaseSerializer;
 @JsonIgnoreProperties(ignoreUnknown=true)
 public class ListingVO extends BaseVO {
 	public static final List<String> UPDATABLE_PROPERTIES = Arrays.asList(new String[] {"title", "mantra", "summary", "contact_email",
-			"website", "category", "address", "asked_fund", "suggested_amt", "suggested_pct", "answer1", "answer2", "answer3",
+			"website", "category", "address", "asked_fund", "suggested_amt", "suggested_pct", "video", "answer1", "answer2", "answer3",
 			"answer4", "answer5", "answer6", "answer7", "answer8", "answer9", "answer10", "answer11", "answer12", "answer13"});
 	public static final List<String> FETCHED_PROPERTIES = Arrays.asList(new String[] {"business_plan_url", 
 			"presentation_url", "financials_url", "logo_url"});
@@ -63,6 +63,7 @@ public class ListingVO extends BaseVO {
 	@JsonProperty("presentation_id") private String presentationId;
 	@JsonProperty("financials_id") private String financialsId;
 	@JsonProperty("logo") private String logo;
+	@JsonProperty("video")	private String video;
 	@JsonProperty("business_plan_upload") private String buinessPlanUpload;
 	@JsonProperty("presentation_upload") private String presentationUpload;
 	@JsonProperty("financials_upload") private String financialsUpload;
@@ -506,5 +507,13 @@ public class ListingVO extends BaseVO {
 
 	public void setContactEmail(String contactEmail) {
 		this.contactEmail = contactEmail;
+	}
+
+	public String getVideo() {
+		return video;
+	}
+
+	public void setVideo(String video) {
+		this.video = video;
 	}
 }

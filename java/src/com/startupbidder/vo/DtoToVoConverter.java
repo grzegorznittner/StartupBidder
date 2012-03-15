@@ -79,6 +79,7 @@ public class DtoToVoConverter {
 		listing.setBuinessPlanId(keyToString(listingDTO.businessPlanId));
 		listing.setFinancialsId(keyToString(listingDTO.financialsId));
 		listing.setLogo(listingDTO.logoBase64);
+		listing.setVideo(listingDTO.videoUrl);
 		listing.setSummary(listingDTO.summary);
 		listing.setMantra(listingDTO.mantra);
 		listing.setAddress(listingDTO.address);

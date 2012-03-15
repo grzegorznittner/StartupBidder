@@ -4,7 +4,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -18,7 +17,6 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.taglibs.standard.lang.jstl.ArraySuffix;
 import org.datanucleus.util.StringUtils;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
@@ -28,7 +26,6 @@ import org.joda.time.format.DateTimeFormatter;
 
 import com.google.appengine.api.blobstore.BlobInfo;
 import com.google.appengine.api.blobstore.BlobInfoFactory;
-import com.google.appengine.api.blobstore.BlobKey;
 import com.google.appengine.api.blobstore.BlobstoreService;
 import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
 import com.google.appengine.api.files.AppEngineFile;
@@ -164,6 +161,7 @@ public class ListingFacade {
 			return result;
 		}
 		boolean fetchedDoc = false;
+		boolean fetchError = false;
 		StringBuffer infos = new StringBuffer();
 		// removing non updatable fields and handling fetched fields
 		List<ListingPropertyVO> propsToUpdate = new ArrayList<ListingPropertyVO>();
@@ -174,15 +172,29 @@ public class ListingFacade {
 			} else if (ListingVO.FETCHED_PROPERTIES.contains(propertyName)) {
 				ListingDoc doc = fetchAndUpdateListingDoc(prop);
 				if (doc != null) {
-					listing = updateListingDoc(loggedInUser, doc);
-					fetchedDoc = true;
+					Listing updatedlisting = updateListingDoc(loggedInUser, doc);
+					if (updatedlisting != null) {
+						listing = updatedlisting;
+						fetchedDoc = true;
+					} else {
+						fetchError = true;
+					}
+				} else {
+					fetchError = true;
 				}
 			} else {
 				infos.append("Removed field '" + propertyName + "' as it's not updatable. ");
 			}
 		}
+		if (fetchError) {
+			result.setListing(DtoToVoConverter.convert(listing));
+			result.setErrorCode(ErrorCodes.APPLICATION_ERROR);
+			result.setErrorMessage("Error while fetching external resource. " + infos.toString());
+			return result;
+		}
 		log.log(Level.INFO, infos.toString(), new Exception("Listing update verification"));
 		if (propsToUpdate.isEmpty() && !fetchedDoc) {
+			result.setListing(DtoToVoConverter.convert(listing));
 			result.setErrorCode(ErrorCodes.ENTITY_VALIDATION);
 			result.setErrorMessage("Nothing to update. " + infos.toString());
 			return result;
