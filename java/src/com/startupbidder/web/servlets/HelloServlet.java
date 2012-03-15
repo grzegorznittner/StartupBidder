@@ -145,7 +145,7 @@ public class HelloServlet extends HttpServlet {
 						+ "{\"logo_url\":\"http://mcsearcher.files.wordpress.com/2008/12/sexy-girl-7.jpg\"}"
 						+ "</textarea><input type=\"submit\" value=\"Update logo from URL\"/></form>");
 				out.println("<p>Updatable field names: " + ListingVO.UPDATABLE_PROPERTIES + "</p>");
-				out.println("<p>Fields which can be fetched via URL: " + ListingVO.FETCHED_PROPERTIES + "</p>");
+				out.println("<p>Fields which can be set by fetching external resource: " + ListingVO.FETCHED_PROPERTIES + "</p>");
 			} else {
 				out.println("<div><b>Listing doesn't exist.</b> Be aware that this page is calling automatically create method, so edited listing should be always available.</div>");
 			}

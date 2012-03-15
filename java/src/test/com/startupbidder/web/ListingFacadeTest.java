@@ -153,6 +153,175 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 	}
 	
 	@Test
+	public void testUpdateLogoUrlListingProperty() {
+		ListingAndUserVO userListing = ListingFacade.instance().createListing(googleUserVO);
+		assertEquals("We should get OK, we got " + userListing.getErrorMessage(), ErrorCodes.OK, userListing.getErrorCode());
+		assertEquals(userListing.getListing().getId(), googleUserVO.getEditedListing());
+		ListingVO listing = userListing.getListing();
+		
+		// set logo url with non image url
+		List<ListingPropertyVO> props = new ArrayList<ListingPropertyVO>();
+		props.add(new ListingPropertyVO("logo_url", "http://localhost:1081/vodafonelive/us/dev/lite/cre_lite/appserver/idserver-domain/applications/test.war/img/mid_info.wav"));
+		ListingAndUserVO update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
+		assertNotSame("We should get failure", ErrorCodes.OK, update.getErrorCode());
+		assertNotNull("Even for failure we should get listing", update.getListing());
+		assertNull("base64logo should be empty", update.getListing().getLogo());
+
+		// set logo url with invalid url
+		props = new ArrayList<ListingPropertyVO>();
+		props.add(new ListingPropertyVO("logo_url", "This is not url"));
+		update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
+		assertNotSame("We should get failure", ErrorCodes.OK, update.getErrorCode());
+		assertNotNull("Even for failure we should get listing", update.getListing());
+		assertNull("base64logo should be empty", update.getListing().getLogo());
+		
+		// set logo url
+		props = new ArrayList<ListingPropertyVO>();
+		props.add(new ListingPropertyVO("logo_url", "http://localhost:1081/vodafonelive/us/dev/lite/cre_lite/appserver/idserver-domain/applications/test.war/img/heidi1.jpg"));
+		update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
+		assertEquals("We should get OK, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
+		assertNotNull("base64logo should be set", update.getListing().getLogo());
+		assertTrue("JPEG uploaded so data uri should have image/jpeg", update.getListing().getLogo().startsWith("data:image/jpeg;base64,"));
+		//assertTrue("Data uri should be less than 64k", update.getListing().getLogo().length() < 64 * 1024);
+		assertEquals(listing.getName(), update.getListing().getName());
+		assertEquals(listing.getId(), update.getListing().getId());
+		assertEquals(listing.getMantra(), update.getListing().getMantra());
+		assertEquals(listing.getSummary(), update.getListing().getSummary());
+		assertEquals(listing.getAddress(), update.getListing().getAddress());
+		assertEquals(listing.getBuinessPlanId(), update.getListing().getBuinessPlanId());
+		assertEquals(listing.getPresentationId(), update.getListing().getPresentationId());
+		assertEquals(listing.getFinancialsId(), update.getListing().getFinancialsId());
+		assertEquals(listing.getWebsite(), update.getListing().getWebsite());
+		assertEquals(listing.getState(), update.getListing().getState());
+
+		// set logo url as gif
+		props = new ArrayList<ListingPropertyVO>();
+		props.add(new ListingPropertyVO("logo_url", "http://localhost:1081/vodafonelive/us/dev/lite/cre_lite/appserver/idserver-domain/applications/test.war/img/heidi1.gif"));
+		update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
+		assertEquals("We should get OK, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
+		assertNotNull("base64logo should be set", update.getListing().getLogo());
+		assertTrue("GIF uploaded so data uri should have image/jpeg", update.getListing().getLogo().startsWith("data:image/gif;base64,"));
+		//assertTrue("Data uri should be less than 32k", update.getListing().getLogo().length() < 32 * 1024);
+
+		// set logo url as png
+		props = new ArrayList<ListingPropertyVO>();
+		props.add(new ListingPropertyVO("logo_url", "http://localhost:1081/vodafonelive/us/dev/lite/cre_lite/appserver/idserver-domain/applications/test.war/img/heidi1.png"));
+		update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
+		assertEquals("We should get OK, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
+		assertNotNull("base64logo should be set", update.getListing().getLogo());
+		assertTrue("PNG uploaded so data uri should have image/jpeg", update.getListing().getLogo().startsWith("data:image/png;base64,"));
+		//assertTrue("Data uri should be less than 32k", update.getListing().getLogo().length() < 32 * 1024);
+
+		// set logo url with invalid url
+		String previousLogo = update.getListing().getLogo();
+		props = new ArrayList<ListingPropertyVO>();
+		props.add(new ListingPropertyVO("logo_url", "This is not url"));
+		update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
+		assertNotSame("We should get failure", ErrorCodes.OK, update.getErrorCode());
+		assertNotNull("Even for failure we should get listing", update.getListing());
+		assertEquals("base64logo should be the same as previously", previousLogo, update.getListing().getLogo());		
+	}
+
+	@Test
+	public void testUpdateBusinessPlanUrlListingProperty() {
+		ListingAndUserVO userListing = ListingFacade.instance().createListing(googleUserVO);
+		assertEquals("We should get OK, we got " + userListing.getErrorMessage(), ErrorCodes.OK, userListing.getErrorCode());
+		assertEquals(userListing.getListing().getId(), googleUserVO.getEditedListing());
+		ListingVO listing = userListing.getListing();
+		
+		// set business plan with wrong url
+		List<ListingPropertyVO> props = new ArrayList<ListingPropertyVO>();
+		props.add(new ListingPropertyVO("business_plan_url", "invalid url"));
+		ListingAndUserVO update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
+		assertNotSame("We should get failure", ErrorCodes.OK, update.getErrorCode());
+		assertNotNull("Even for failure we should get listing", update.getListing());
+		assertNull("Business plan id should be empty", update.getListing().getBuinessPlanId());
+
+		// set business plan with valid url
+		props = new ArrayList<ListingPropertyVO>();
+		props.add(new ListingPropertyVO("business_plan_url", "http://localhost:1081/vodafonelive/us/dev/lite/cre_lite/appserver/idserver-domain/applications/test.war/img/heidi1.jpg"));
+		update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
+		assertEquals("We should get OK, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
+		assertNotNull("Business plan should be set", update.getListing().getBuinessPlanId());
+		assertEquals(listing.getName(), update.getListing().getName());
+		assertEquals(listing.getId(), update.getListing().getId());
+		assertEquals(listing.getMantra(), update.getListing().getMantra());
+		assertEquals(listing.getSummary(), update.getListing().getSummary());
+		assertEquals(listing.getAddress(), update.getListing().getAddress());
+		assertEquals(listing.getLogo(), update.getListing().getLogo());
+		assertEquals(listing.getPresentationId(), update.getListing().getPresentationId());
+		assertEquals(listing.getFinancialsId(), update.getListing().getFinancialsId());
+		assertEquals(listing.getWebsite(), update.getListing().getWebsite());
+		assertEquals(listing.getState(), update.getListing().getState());
+	}
+
+	@Test
+	public void testUpdatePresentationUrlListingProperty() {
+		ListingAndUserVO userListing = ListingFacade.instance().createListing(googleUserVO);
+		assertEquals("We should get OK, we got " + userListing.getErrorMessage(), ErrorCodes.OK, userListing.getErrorCode());
+		assertEquals(userListing.getListing().getId(), googleUserVO.getEditedListing());
+		ListingVO listing = userListing.getListing();
+		
+		// set business plan with wrong url
+		List<ListingPropertyVO> props = new ArrayList<ListingPropertyVO>();
+		props.add(new ListingPropertyVO("presentation_url", "invalid url"));
+		ListingAndUserVO update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
+		assertNotSame("We should get failure", ErrorCodes.OK, update.getErrorCode());
+		assertNotNull("Even for failure we should get listing", update.getListing());
+		assertNull("Presentation id should be empty", update.getListing().getPresentationId());
+
+		// set business plan with valid url
+		props = new ArrayList<ListingPropertyVO>();
+		props.add(new ListingPropertyVO("presentation_url", "http://localhost:1081/vodafonelive/us/dev/lite/cre_lite/appserver/idserver-domain/applications/test.war/img/heidi1.jpg"));
+		update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
+		assertEquals("We should get OK, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
+		assertNotNull("Presentation should be set", update.getListing().getPresentationId());
+		assertEquals(listing.getName(), update.getListing().getName());
+		assertEquals(listing.getId(), update.getListing().getId());
+		assertEquals(listing.getMantra(), update.getListing().getMantra());
+		assertEquals(listing.getSummary(), update.getListing().getSummary());
+		assertEquals(listing.getAddress(), update.getListing().getAddress());
+		assertEquals(listing.getLogo(), update.getListing().getLogo());
+		assertEquals(listing.getBuinessPlanId(), update.getListing().getBuinessPlanId());
+		assertEquals(listing.getFinancialsId(), update.getListing().getFinancialsId());
+		assertEquals(listing.getWebsite(), update.getListing().getWebsite());
+		assertEquals(listing.getState(), update.getListing().getState());
+	}
+
+	@Test
+	public void testUpdateFinancialsUrlListingProperty() {
+		ListingAndUserVO userListing = ListingFacade.instance().createListing(googleUserVO);
+		assertEquals("We should get OK, we got " + userListing.getErrorMessage(), ErrorCodes.OK, userListing.getErrorCode());
+		assertEquals(userListing.getListing().getId(), googleUserVO.getEditedListing());
+		ListingVO listing = userListing.getListing();
+		
+		// set financials with wrong url
+		List<ListingPropertyVO> props = new ArrayList<ListingPropertyVO>();
+		props.add(new ListingPropertyVO("financials_url", "invalid url"));
+		ListingAndUserVO update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
+		assertNotSame("We should get failure", ErrorCodes.OK, update.getErrorCode());
+		assertNotNull("Even for failure we should get listing", update.getListing());
+		assertNull("Financials id should be empty", update.getListing().getFinancialsId());
+
+		// set financials with valid url
+		props = new ArrayList<ListingPropertyVO>();
+		props.add(new ListingPropertyVO("financials_url", "http://localhost:1081/vodafonelive/us/dev/lite/cre_lite/appserver/idserver-domain/applications/test.war/img/heidi1.jpg"));
+		update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
+		assertEquals("We should get OK, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
+		assertNotNull("Financials should be set", update.getListing().getFinancialsId());
+		assertEquals(listing.getName(), update.getListing().getName());
+		assertEquals(listing.getId(), update.getListing().getId());
+		assertEquals(listing.getMantra(), update.getListing().getMantra());
+		assertEquals(listing.getSummary(), update.getListing().getSummary());
+		assertEquals(listing.getAddress(), update.getListing().getAddress());
+		assertEquals(listing.getLogo(), update.getListing().getLogo());
+		assertEquals(listing.getBuinessPlanId(), update.getListing().getBuinessPlanId());
+		assertEquals(listing.getPresentationId(), update.getListing().getPresentationId());
+		assertEquals(listing.getWebsite(), update.getListing().getWebsite());
+		assertEquals(listing.getState(), update.getListing().getState());
+	}
+
+	@Test
 	public void testCreateListing() {
 		ListingAndUserVO newListing = ListingFacade.instance().createListing(googleUserVO);
 		assertEquals("We should get OK", ErrorCodes.OK, newListing.getErrorCode());

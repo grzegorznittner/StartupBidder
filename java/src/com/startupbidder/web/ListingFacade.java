@@ -170,17 +170,23 @@ public class ListingFacade {
 			if (ListingVO.UPDATABLE_PROPERTIES.contains(propertyName)) {
 				propsToUpdate.add(prop);
 			} else if (ListingVO.FETCHED_PROPERTIES.contains(propertyName)) {
-				ListingDoc doc = fetchAndUpdateListingDoc(prop);
+				ListingDoc doc = fetchAndUpdateListingDoc(listing, prop);
 				if (doc != null) {
-					Listing updatedlisting = updateListingDoc(loggedInUser, doc);
+					Listing updatedlisting = updateListingDoc(loggedInUser, listing, doc);
 					if (updatedlisting != null) {
 						listing = updatedlisting;
 						fetchedDoc = true;
 					} else {
+						result.setErrorCode(ErrorCodes.DATASTORE_ERROR);
+						result.setErrorMessage("Error updating listing. " + infos.toString());
 						fetchError = true;
+						break;
 					}
 				} else {
+					result.setErrorCode(ErrorCodes.APPLICATION_ERROR);
+					result.setErrorMessage("Error while fetching/converting external resource. " + infos.toString());
 					fetchError = true;
+					break;
 				}
 			} else {
 				infos.append("Removed field '" + propertyName + "' as it's not updatable. ");
@@ -188,8 +194,6 @@ public class ListingFacade {
 		}
 		if (fetchError) {
 			result.setListing(DtoToVoConverter.convert(listing));
-			result.setErrorCode(ErrorCodes.APPLICATION_ERROR);
-			result.setErrorMessage("Error while fetching external resource. " + infos.toString());
 			return result;
 		}
 		log.log(Level.INFO, infos.toString(), new Exception("Listing update verification"));
@@ -212,7 +216,7 @@ public class ListingFacade {
 		return result;
 	}
 	
-	private ListingDoc fetchAndUpdateListingDoc(ListingPropertyVO prop) {
+	private ListingDoc fetchAndUpdateListingDoc(Listing listing, ListingPropertyVO prop) {
 		byte[] docBytes = null;
 		String mimeType = null;
 		try {
@@ -223,6 +227,10 @@ public class ListingFacade {
 					+ "', from '" + prop.getPropertyValue() + "'");
 		} catch (Exception e) {
 			log.log(Level.WARNING, "Error while fetching document from " + prop.getPropertyValue(), e);
+			return null;
+		}
+		if (prop.getPropertyName().equalsIgnoreCase("logo_url") && setLogoBase64(listing, docBytes) == null) {
+			log.log(Level.WARNING, "Image conversion error");
 			return null;
 		}
 
@@ -349,6 +357,12 @@ public class ListingFacade {
 			return null;
 		}
 		
+		String logs = verifyListingsMandatoryFields(dbListing);
+		if (logs != null) {
+			log.log(Level.WARNING, "Listing validation error. " + logs, new Exception("Listing verification error"));
+			return null;
+		}
+		
 		// only NEW listings can be posted
 		if (dbListing.state == Listing.State.NEW) {
 			ListingVO forUpdate = DtoToVoConverter.convert(dbListing);
@@ -366,6 +380,25 @@ public class ListingFacade {
 		}
 		log.log(Level.WARNING, "Only NEW listing can be marked as POSTED (state is " + dbListing.state + ")", new Exception("Not valid state"));
 		return null;
+	}
+
+	private String verifyListingsMandatoryFields(Listing listing) {
+		StringBuffer logs = new StringBuffer();
+		if (StringUtils.isEmpty(listing.name)) {
+			logs.append("Name is empty. ");
+		}
+		if (!StringUtils.isEmpty(listing.name) && listing.name.length() < 5) {
+			logs.append("Name is too short, has only " + listing.name.length() + " characters. ");
+		}
+		if (!StringUtils.isEmpty(listing.name) && listing.name.length() > 50) {
+			logs.append("Name is too long, has " + listing.name.length() + " characters. ");
+		}
+
+		if (!StringUtils.isEmpty(listing.mantra)) {
+			logs.append("Mantra is empty. ");
+		}
+
+		return logs.toString();
 	}
 
 	/**
@@ -762,22 +795,28 @@ public class ListingFacade {
 			doc.setErrorMessage("User is not editing listing");
 			return doc;
 		}
+		Listing listing = getDAO().getListing(BaseVO.toKeyId(loggedInUser.getEditedListing()));
+		BlobInfo logoInfo = new BlobInfoFactory().loadBlobInfo(doc.getBlob());
+		byte logo[] = blobstoreService.fetchData(doc.getBlob(), 0, logoInfo.getSize() - 1);
+		if (setLogoBase64(listing, logo) == null) {
+			blobstoreService.delete(doc.getBlob());
+			doc.setErrorCode(ErrorCodes.ENTITY_VALIDATION);
+			doc.setErrorMessage("Image conversion error.");
+			return doc;
+		}
 		ListingDoc docDTO = VoToModelConverter.convert(doc);
 		docDTO.created = new Date();
 		docDTO = getDAO().createListingDocument(docDTO);
 		doc = DtoToVoConverter.convert(docDTO);
 		
-		updateListingDoc(loggedInUser, docDTO);
+		updateListingDoc(loggedInUser, listing, docDTO);
 		
 		return doc;
 	}
 
-	private Listing updateListingDoc(UserVO loggedInUser, ListingDoc docDTO) {
-		BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
-		
+	private Listing updateListingDoc(UserVO loggedInUser, Listing listing, ListingDoc docDTO) {		
 		log.info("Updating listing document " + docDTO);
 		Key<ListingDoc> replacedDocId = null;
-		Listing listing = getDAO().getListing(BaseVO.toKeyId(loggedInUser.getEditedListing()));
 		switch(docDTO.type) {
 		case BUSINESS_PLAN:
 			replacedDocId = listing.businessPlanId;
@@ -794,9 +833,6 @@ public class ListingFacade {
 		case LOGO:
 			replacedDocId = listing.logoId;
 			listing.logoId = new Key<ListingDoc>(ListingDoc.class, docDTO.id);
-			BlobInfo logoInfo = new BlobInfoFactory().loadBlobInfo(docDTO.blob);
-			byte logo[] = blobstoreService.fetchData(docDTO.blob, 0, logoInfo.getSize() - 1);
-			listing.logoBase64 = convertLogoToBase64(logo);
 			break;
 		}
 		listing = getDAO().storeListing(listing);
@@ -805,6 +841,7 @@ public class ListingFacade {
 			try {
 				log.info("Deleting doc previously associated with listing " + replacedDocId);
 				ListingDoc docToDelete = getDAO().getListingDocument(replacedDocId.getId());
+				BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
 				blobstoreService.delete(docToDelete.blob);
 				getDAO().deleteDocument(replacedDocId.getId());
 			} catch (Exception e) {
@@ -812,6 +849,16 @@ public class ListingFacade {
 			}
 		}
 		return listing;
+	}
+	
+	private Listing setLogoBase64(Listing listing, byte[] logo) {
+		String logoBase64 = convertLogoToBase64(logo);
+		if (logoBase64 != null) {
+			listing.logoBase64 = convertLogoToBase64(logo);
+			return listing;
+		} else {
+			return null;
+		}
 	}
 	
 	public String convertLogoToBase64(byte[] logo) {
@@ -858,6 +905,7 @@ public class ListingFacade {
         byte[] newImageData = newImage.getImageData();
 		
 		String logo64 = Base64.encodeBase64String(newImageData);
+		log.info("Data uri for logo has " + logo64.length() + " bytes");
 		return "data:" + format + ";base64," + logo64;
 	}
 
