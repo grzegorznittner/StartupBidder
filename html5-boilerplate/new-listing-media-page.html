@@ -82,39 +82,34 @@ record a voiceover of a quick run through your slide deck.
 
     <div class="boxtitle">LOGO</div>
     <div class="boxpanel">
-        <div class="mediacol1 clear">
-            <div class="formitem">
-                <!-- <span class="inputfield">
-                    <input class="text mediainputlink" type="text" maxlength="255" name="logourl" id="logourl" value=""></input> </span>
-                -->
-                <span class="inputfield">
-                    <form id="logouploadform" method="post" enctype="multipart/form-data" target="logouploadiframe" action="#">
-                        <input class="span-3 text mediainputlink inputbutton" id="LOGO" name="LOGO" size="0" type="file"></input>
-                        <iframe id="logouploadiframe" name="logouploadiframe" src="" class="logouploadiframe"></iframe>
-                    </form>
-                </span>
-                <span class="inputicon">
-                    <!-- <div class="checkboxredicon"></div> -->
-                </span>
-
-            </div>
-            <div class="formitem clear">
-
-<!--
-                <span class="span-3 inputbutton" id="logouploadbutton">
-                    UPLOAD
-                </span>
--->
-
-                <span class="medialabel">
-                    PNG file 146 by 146 px, center cropped and resized if necessary
-                </span>
-
+        <div class="mediacol1">
+            <div class="tileimg" id="logoimgwrapper">
+                <img class="tileimg" id="logoimg" src=""></img>
             </div>
         </div>
         <div class="mediacol2">
-            <div class="tileimg" id="logoimgwrapper">
-                <img class="tileimg" id="logoimg" src=""></img>
+            <div class="formitem">
+                <span class="logoinfo">Enter an image URL or upload from your computer.</span>
+            </div>
+            <div class="formitem clear">
+                <span class="inputfield">
+                    <input class="text mediainputlink" type="text" maxlength="255" name="logo_url" id="logo_url" value=""></input>
+                </span>
+                <span class="inputicon">
+                    <div id="logo_urlicon"></div>
+                </span>
+            </div>
+            <div class="formitem">
+                <span class="inputfield">
+                    <form id="logouploadform" method="post" enctype="multipart/form-data" target="logouploadiframe" action="#">
+                        <span class="span-3 inputbutton logoloadurlbutton" id="logoloadurlbutton">LOAD URL</span>
+                        <input class="text logoinputbutton" id="LOGO" name="LOGO" size="18" type="file"></input>
+                        <iframe id="logouploadiframe" name="logouploadiframe" src="" class="logouploadiframe"></iframe>
+                    </form>
+                </span>
+            </div>
+            <div class="formitem clear">
+                <span class="logoinfo" id="logomsg">146x146 PNG, JPG, or GIF, cropped and resized</span>
             </div>
         </div>
     </div>
@@ -123,7 +118,7 @@ record a voiceover of a quick run through your slide deck.
     <div class="boxpanel">
         <div class="formitem">
             <span class="inputfield">
-                <input class="text mediainputlink" type="text" maxlength="255" name="logourl" id="logourl" value=""></input>
+                <input class="text mediainputlink" type="text" maxlength="255" name="videourl" id="videourl" value=""></input>
             </span>
             <span class="inputicon">
                 <div class="checkboxredicon"></div>
@@ -143,7 +138,7 @@ record a voiceover of a quick run through your slide deck.
     </div>
 
     <div class="formitem clear">
-        <span class="newlistingmsgsmall" id="newlistingdocmsg">&nbsp;</span>
+        <span class="newlistingmsgsmall" id="newlistingmsg">&nbsp;</span>
     </div>
 
     <div>
