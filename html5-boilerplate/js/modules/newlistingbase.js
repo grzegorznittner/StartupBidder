@@ -127,7 +127,7 @@ pl.implement(NewListingBaseClass, {
     displaySummaryPreview: function() {
         this.companyTile.display(this.listing, 'summarypreview');
     },
-    getUpdater: function(fieldName, cleaner) {
+    getUpdater: function(fieldName, cleaner, postSuccessFunc) {
         var self = this;
         return function(newdata, loadFunc, errorFunc, successFunc) {
             var data = { listing: {} },
@@ -135,6 +135,9 @@ pl.implement(NewListingBaseClass, {
                 pctSuccessFunc = function(json) {
                     successFunc(json);
                     self.displayCalculated();
+                    if (postSuccessFunc) {
+                        postSuccessFunc(json);
+                    }
                 }
                 ajax = new AjaxClass('/listing/update_field', '', null, pctSuccessFunc, loadFunc, errorFunc);
             data.listing[fieldName] = newval;

@@ -479,7 +479,7 @@ pl.implement(TextFieldClass, {
         var value = pl(this.fieldBase.sel).attr('value');
         return this.fieldBase.validator.validate(value);
     },
-    bindEvents: function() {
+    bindEvents: function(options) {
         var self = this,
             icon = new ValidIconClass(self.fieldBase.id + 'icon'),
             safeStr = new SafeStringClass(),
@@ -510,30 +510,10 @@ pl.implement(TextFieldClass, {
                     self.value = pl(sel).attr('value'); // save the value
                 }
             },
-            onblur = function(event) { // push to server
-                var changeKey = self.fieldBase.id,
-                    domval = pl(sel).attr('value'),
-                    newval = safeStr.htmlEntities(domval),
-                    defval = pl(sel).get(0).defaultValue,
-                    validMsg = self.fieldBase.validator.validate(newval);
-                if (validMsg !== 0) {
-                    if (!self.value && defval) {
-                        pl(sel).attr({'value': defval}); // restore default
-                    }
-                    else {
-                        pl(sel).attr('value', self.value); // restore previous
-                    }
-                    self.fieldBase.msg.clear();
-                    icon.clear();
-                    return;
+            onblur = function() { // push to server
+                if (!options.noAutoUpdate) {
+                    self.update();
                 }
-                icon.clear();
-                if (self.value === newval) {
-                    //self.fieldBase.msg.clear();
-                    return;
-                }
-                self.fieldBase.updateFunction({ changeKey: newval },
-                    self.fieldBase.getLoadFunc(), self.fieldBase.getErrorFunc(self.getDisplayFunc()), self.fieldBase.getSuccessFunc());
             };
         pl(sel).bind({
             blur: onblur,
@@ -541,5 +521,34 @@ pl.implement(TextFieldClass, {
             change: onchange,
             keyup: onchange
         });
+    },
+    update: function() {
+        var self = this,
+            icon = new ValidIconClass(self.fieldBase.id + 'icon'),
+            safeStr = new SafeStringClass(),
+            sel = self.fieldBase.sel;
+            changeKey = self.fieldBase.id,
+            domval = pl(sel).attr('value'),
+            newval = safeStr.htmlEntities(domval),
+            defval = pl(sel).get(0).defaultValue,
+            validMsg = self.fieldBase.validator.validate(newval);
+        if (validMsg !== 0) {
+            if (!self.value && defval) {
+                pl(sel).attr({'value': defval}); // restore default
+            }
+            else {
+                pl(sel).attr('value', self.value); // restore previous
+            }
+            self.fieldBase.msg.clear();
+            icon.clear();
+            return;
+        }
+        icon.clear();
+        if (self.value === newval) {
+            //self.fieldBase.msg.clear();
+            return;
+        }
+        self.fieldBase.updateFunction({ changeKey: newval },
+            self.fieldBase.getLoadFunc(), self.fieldBase.getErrorFunc(self.getDisplayFunc()), self.fieldBase.getSuccessFunc());
     }
 });
