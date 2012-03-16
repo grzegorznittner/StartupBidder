@@ -85,10 +85,8 @@ pl.implement(NewListingFinancialsClass, {
     },
     genNextValidator: function() {
         var self = this;
-        console.log('foo');
         return function() {
             var asked_fund = pl('#asked_fund').attr('checked') ? true : false;
-            console.log('asked_fund?',asked_fund);
             if (asked_fund) {
                 return self.base.validate();
             }

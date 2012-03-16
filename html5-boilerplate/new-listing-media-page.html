@@ -95,7 +95,7 @@ record a voiceover of a quick run through your slide deck.
                 <span class="inputfield">
                     <input class="text mediainputlink" type="text" maxlength="255" name="logo_url" id="logo_url" value=""></input>
                 </span>
-                <span class="inputicon">
+                <span class="logoinputicon">
                     <div id="logo_urlicon"></div>
                 </span>
             </div>
@@ -118,22 +118,22 @@ record a voiceover of a quick run through your slide deck.
     <div class="boxpanel">
         <div class="formitem">
             <span class="inputfield">
-                <input class="text mediainputlink" type="text" maxlength="255" name="videourl" id="videourl" value=""></input>
+                <input class="text mediainputlink videourl" type="text" maxlength="255" name="video" id="video" value=""></input>
             </span>
-            <span class="inputicon">
-                <div class="checkboxredicon"></div>
+            <span class="videoinputicon">
+                <div id="videoicon"></div>
             </span>
-        </div>
-        <div class="formitem clear">
-            <span class="medialabel">
-                Link to video on youtube, vimeo, or elsewhere allowing embedded urls
-            </span>
-            <span class="span-3 inputbutton" id="videouploadbutton">
+            <span class="span-3 inputbutton" id="videobutton">
                 UPDATE
             </span>
         </div>
+        <div class="formitem clear">
+            <span class="logoinfo" id="videomsg">
+                The url to link to your video presentation on youtube, vimeo, or dailymotion.
+            </span>
+        </div>
 	    <div class="videocontainer">
-      	    <iframe width="622" height="452" src="http://www.youtube.com/embed/tQlsXFfSuZU" frameborder="0" allowfullscreen></iframe> 
+      	    <iframe width="622" height="452" id="videoiframe" src="" frameborder="0" allowfullscreen></iframe> 
 	    </div>
     </div>
 
