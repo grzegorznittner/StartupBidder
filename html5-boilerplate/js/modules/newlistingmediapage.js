@@ -33,6 +33,14 @@ pl.implement(NewListingMediaClass, {
             pl('#logoimgwrapper').addClass('noimage');
         }
     },
+    displayVideo: function(url) {
+        if (url) {
+            pl('#videoiframe').attr({src: url});
+        }
+        else {
+            pl('#videoiframe').addClass('noimage');
+        }
+    },
     setUploadUrl: function(uploadurl) {
         pl('#logouploadform').attr({action: uploadurl});
     },
@@ -40,6 +48,7 @@ pl.implement(NewListingMediaClass, {
         var self = this,
             uploadurl = self.base.listing.logo_upload,
             datauri = self.base.listing.logo,
+            videourl = self.base.listing.video,
             postLogo = function(json) {
                 var datauri = json && json.listing && json.listing.logo ? json.listing.logo : null;
                 if (datauri) {
@@ -47,10 +56,20 @@ pl.implement(NewListingMediaClass, {
                     self.displayLogo(datauri);    
                 }
             },
+            postVideo = function(json) {
+                var url = json && json.listing && json.listing.video ? json.listing.video : null;
+                if (url) {
+                    self.base.listing.video = url;
+                    self.displayVideo(url);
+                }
+            },
             logoUpdater = this.base.getUpdater('logo_url', null, postLogo),
-            logoURLField = new TextFieldClass('logo_url', this.base.listing.logo_url, logoUpdater, 'logomsg');
+            videoUpdater = this.base.getUpdater('video', VideoCheckClass.prototype.preformat, postVideo),
+            logoURLField = new TextFieldClass('logo_url', this.base.listing.logo_url, logoUpdater, 'logomsg'),
+            videoURLField = new TextFieldClass('video', this.base.listing.video, videoUpdater, 'videomsg');
         self.setUploadUrl(uploadurl);
         self.displayLogo(datauri);
+        self.displayVideo(videourl);
         pl('#logouploadiframe').bind({
             load: function() {
                 var iframe = pl('#logouploadiframe').get(0).contentDocument.body.innerHTML,
@@ -73,14 +92,52 @@ pl.implement(NewListingMediaClass, {
         });
         pl('#logoloadurlbutton').bind({
             click: function() {
-                logoURLField.update();
+                var msg = logoURLField.validate();
+                if (msg === 0) {
+                    logoURLField.update();
+                }
+                else {
+                    pl('#logomsg').text(msg);
+                }
+            }
+        });
+        pl('#videobutton').bind({
+            click: function() {
+                var msg = videoURLField.validate();
+                if (msg === 0) {
+                    videoURLField.update();
+                }
+                else {
+                    pl('#videomsg').text(msg);
+                }
             }
         });
         logoURLField.fieldBase.setDisplayName('LOGO UPLOAD URL');
         logoURLField.fieldBase.addValidator(ValidatorClass.prototype.isURL);
         logoURLField.bindEvents({noAutoUpdate: true});
-        this.base.bindNavButtons();
-    }
+        this.base.fields.push(logoURLField);
+        this.base.fieldMap.logo = logoURLField;
+        videoURLField.fieldBase.validator.preValidateTransform = VideoCheckClass.prototype.preformat;
+        videoURLField.fieldBase.setDisplayName('VIDEO URL');
+        videoURLField.fieldBase.addValidator(ValidatorClass.prototype.isVideoURL);
+        videoURLField.bindEvents({noAutoUpdate: false});
+        this.base.fields.push(videoURLField);
+        this.base.fieldMap.video = videoURLField;
+        this.base.bindNavButtons(this.genNextValidator());
+    },
+    genNextValidator: function() {
+        var self = this;
+        return function() {
+            var msgs = [];
+            if (!self.base.listing.logo) {
+                msgs.push("LOGO: you must have a logo image.");
+            }
+            if (!self.base.listing.video) {
+                msgs.push("VIDEO: you must have a video presentation.");
+            }
+            return msgs;
+        };
+    },
 });
 
 function NewListingPageClass() {};

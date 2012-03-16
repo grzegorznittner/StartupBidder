@@ -4,9 +4,11 @@ function CompanyTileClass(options) {
 pl.implement(CompanyTileClass, {
     setValues: function(json) {
         var date = json.listing_date || json.created_date,
-            testimages = ['einstein','wave','upgrades','telecom','socialrec','gkleen']; // FIXME
-        this.imgClass = this.options.preview ? 'noimage' : testimages[Math.floor(Math.random()*testimages.length)];
-        this.daysText = json.days_left ? (json.days_left === 0 ? 'closing today!' : (json.days_left < 0 ? 'bidding closed' : json.days_left + ' days left')) : 'not taking bids';
+            closingText = json.days_left === 0 ? 'closing today!' : (json.days_left < 0 ? 'bidding closed' : json.days_left + ' days left'),
+            listingText = json.asked_fund ? closingText : (json.days_ago ? 'listed ' + json.days_ago + ' days ago' : 'listed today');
+        this.daysText = listingText;
+        this.imgClass = json.logo ? '' : 'noimage';
+        this.imgSrc = json.logo || '';
         this.category = json.category ? json.category.toUpperCase() : '';
         this.votes = json.num_votes || 1;
         this.posted = date ? DateClass.prototype.format(date) : 'not posted';
@@ -22,7 +24,7 @@ pl.implement(CompanyTileClass, {
 <span class="span-4 '+ (lastClass?lastClass:'') +'">\
 <div class="tile">\
 ' + openAnchor + '\
-<div class="tileimg ' + this.imgClass + '"></div>\
+<div class="tileimg ' + this.imgClass + '"><img class="tileimg" src="' + this.imgSrc + '"></img></div>\
 ' + closeAnchor + '\
 <div class="tiledays"></div>\
 <div class="tiledaystext">' + this.daysText + '</div>\

@@ -1,18 +1,62 @@
 function URLCheckClass() {}
 pl.implement(URLCheckClass, {
-    check: function(str) {
-        var expression = /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi;
-        var regex = new RegExp(expression);
+    check: function(str, emptymsg) {
+        var regex = /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi;
         if (!str) {
-            return "Must not be empty.";
+            return 'Must not be empty.';
         }
         if (!str.match(regex)) {
-            return "Must be a valid URL.";
+            return 'Must be a valid URL.';
         }
         return 0;
     }
 });
 
+function VideoCheckClass() {}
+pl.implement(VideoCheckClass, {
+    preformat: function(str) {
+        var matcher = {
+                yahoo: {
+                    regex: /(https?:\/\/)?[^\/]*youtube.com\/(embed\/|.*v=)([^\/&]*)/,
+                    prefix: 'http://www.youtube.com/embed/',
+                    postfix: ''
+                },
+                vimeo: {
+                    regex: /(https?:\/\/)?[^\/]*vimeo.com\/(video\/)?([^\/&]*)/,
+                    prefix: 'http://player.vimeo.com/video/',
+                    postfix: '?title=0&byline=0&portrait=0'
+                },
+                dailymotion: {
+                    regex: /(https?:\/\/)?[^\/]*dailymotion.com\/(.*#)?video[\/=]([^\/&]*)/,
+                    prefix: 'http://www.dailymotion.com/embed/video/',
+                    postfix: ''
+                }
+            },
+            service,
+            serviceopts,
+            matches,
+            videoid,
+            url = '';
+        for (service in matcher) {
+            serviceopts = matcher[service];
+            matches = str ? str.match(serviceopts.regex) : [];
+            if (matches && matches.length === 4) {
+                videoid = matches[3];
+                url = serviceopts.prefix + videoid + serviceopts.postfix;
+                break;
+            }
+        }
+        return url;
+    },
+    check: function(str) {
+        var url = VideoCheckClass.prototype.preformat(str);
+        if (!url) {
+            return 'Must be a valid youtube, vimeo, or dailymotion URL.';
+        }
+        return 0;
+    }
+});
+ 
 function EmailCheckClass() {}
 pl.implement(EmailCheckClass, {
     check: function(emailStr) {
@@ -132,6 +176,9 @@ pl.implement(ValidatorClass, {
     },
     isURL: function(str) {
         return URLCheckClass.prototype.check(str);
+    },
+    isVideoURL: function(str) {
+        return VideoCheckClass.prototype.check(str);
     },
     isCurrency: function(str) {
         var match = str ? str.match(/^[$]?[0-9]{1,3}(,?[0-9]{3})*$/) : false;

@@ -357,6 +357,9 @@ background: linear-gradient(top, #dcd8db 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .missingimg { background: url(http://www.minimus.biz/img/Your%20Logo%20Here%20Black%202.jpg) -65px -55px; border-radius: 3px; height: 146px; width: 146px; }
 .logouploadiframe { width: 0; height: 0; border: 0 solid #fff; }
 .logouploadbtn { display: 0 }
+.logoinputicon { float: left; padding-top: 6px; height: 32px; width: 32px; }
+.videoinputicon { float: left; padding-top: 7px; height: 32px; width: 32px; margin-right: 10px; }
+.videourl { padding-top: 8px !important; }
 
 input[disabled] { color: #999 !important; }
 textarea[disabled] { color: #999 !important; }
