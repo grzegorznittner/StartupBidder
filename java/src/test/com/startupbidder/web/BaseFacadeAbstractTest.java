@@ -26,6 +26,7 @@ import com.google.appengine.tools.development.testing.LocalUserServiceTestConfig
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.Objectify;
 import com.googlecode.objectify.ObjectifyService;
+import com.startupbidder.dao.MockDataBuilder;
 import com.startupbidder.datamodel.Bid;
 import com.startupbidder.datamodel.Category;
 import com.startupbidder.datamodel.Comment;
@@ -158,6 +159,10 @@ public abstract class BaseFacadeAbstractTest {
 	
 	protected void setupListings() {
 		assertNotNull("execute setupUsers() first", googleUserVO);
+
+		List<Category> categories = new MockDataBuilder().createCategories();
+		Objectify ofy = ObjectifyService.begin();
+		ofy.put(categories);
 		
 		createTestListings();
 	}
@@ -273,13 +278,32 @@ public abstract class BaseFacadeAbstractTest {
 		
 		listing = new Listing();
 		listing.name = "L8-new";
+		listing.mantra = RandomStringUtils.randomAlphabetic(16);
 		listing.summary = RandomStringUtils.randomAlphabetic(64);
 		listing.owner = userKey;
 		listing.state = Listing.State.NEW;
+		listing.askedForFunding = true;
 		listing.suggestedAmount = 80000;
 		listing.suggestedPercentage = 40;
 		listing.listedOn = null;
 		listing.closingOn = null;
+		listing.category = "Healthcare";
+		listing.videoUrl = "http://youtube.com/video";
+		listing.website = "http://www.google.com";
+		listing.logoBase64 = "This is not valid datauri";
+		listing.answer1 = RandomStringUtils.randomAlphabetic(64);
+		listing.answer2 = RandomStringUtils.randomAlphabetic(64);
+		listing.answer3 = RandomStringUtils.randomAlphabetic(64);
+		listing.answer4 = RandomStringUtils.randomAlphabetic(64);
+		listing.answer5 = RandomStringUtils.randomAlphabetic(64);
+		listing.answer6 = RandomStringUtils.randomAlphabetic(64);
+		listing.answer7 = RandomStringUtils.randomAlphabetic(64);
+		listing.answer8 = RandomStringUtils.randomAlphabetic(64);
+		listing.answer9 = RandomStringUtils.randomAlphabetic(64);
+		listing.answer10 = RandomStringUtils.randomAlphabetic(64);
+		listing.answer11 = RandomStringUtils.randomAlphabetic(64);
+		listing.answer12 = RandomStringUtils.randomAlphabetic(64);
+		listing.answer13 = RandomStringUtils.randomAlphabetic(64);
 		listingList.add(listing); // index=7
 		
 		listing = new Listing();

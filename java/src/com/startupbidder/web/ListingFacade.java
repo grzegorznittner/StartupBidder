@@ -356,15 +356,15 @@ public class ListingFacade {
 			log.log(Level.WARNING, "User '" + loggedInUser + "' is not an owner of listing " + dbListing, new Exception("Not listing owner"));
 			return null;
 		}
-		
-		String logs = verifyListingsMandatoryFields(dbListing);
-		if (logs != null) {
-			log.log(Level.WARNING, "Listing validation error. " + logs, new Exception("Listing verification error"));
-			return null;
-		}
-		
+				
 		// only NEW listings can be posted
 		if (dbListing.state == Listing.State.NEW) {
+			String logs = verifyListingsMandatoryFields(dbListing);
+			if (!StringUtils.isEmpty(logs)) {
+				log.log(Level.WARNING, "Listing validation error. " + logs, new Exception("Listing verification error"));
+				return null;
+			}
+			
 			ListingVO forUpdate = DtoToVoConverter.convert(dbListing);
 
 			forUpdate.setPostedOn(new Date());
@@ -384,21 +384,75 @@ public class ListingFacade {
 
 	private String verifyListingsMandatoryFields(Listing listing) {
 		StringBuffer logs = new StringBuffer();
-		if (StringUtils.isEmpty(listing.name)) {
-			logs.append("Name is empty. ");
+		checkMandatoryStringField(logs, "Name", listing.name, 5, 64);
+		checkMandatoryStringField(logs, "Mantra", listing.mantra, 5, 128);
+		checkMandatoryStringField(logs, "Summary", listing.summary, 5, 512);
+
+		if (!StringUtils.isEmpty(listing.website)) {
+			try {
+				new URL(listing.website);
+			} catch (Exception e) {
+				logs.append("Website is not a valid URL. ");
+			}
 		}
-		if (!StringUtils.isEmpty(listing.name) && listing.name.length() < 5) {
-			logs.append("Name is too short, has only " + listing.name.length() + " characters. ");
-		}
-		if (!StringUtils.isEmpty(listing.name) && listing.name.length() > 50) {
-			logs.append("Name is too long, has " + listing.name.length() + " characters. ");
+		
+		if (listing.category == null || !getCategories().values().contains(listing.category)) {
+			logs.append("Category is not set or contains not valid category. ");			
 		}
 
-		if (!StringUtils.isEmpty(listing.mantra)) {
-			logs.append("Mantra is empty. ");
+		if (listing.askedForFunding) {
+			if (listing.suggestedAmount < 1000) {
+				logs.append("Suggested amount is less than 1000. ");
+			}
+			if (listing.suggestedPercentage < 1 || listing.suggestedPercentage > 75) {
+				logs.append("Suggested percentage is not valid. ");
+			}
 		}
+		
+//		if (listing.businessPlanId == null) {
+//			logs.append("Business plan document not provided. ");
+//		}
+//		if (listing.presentationId == null) {
+//			logs.append("Presentation document not provided. ");
+//		}
+//		if (listing.financialsId == null) {
+//			logs.append("Financial document not provided. ");
+//		}
+		if (listing.logoBase64 == null) {
+			logs.append("Logo image not provided. ");
+		}
+		if (listing.videoUrl == null) {
+			logs.append("Video not provided. ");
+		}
+
+		checkMandatoryStringField(logs, "Answer1", listing.answer1, 16, 512);
+		checkMandatoryStringField(logs, "Answer2", listing.answer2, 16, 512);
+		checkMandatoryStringField(logs, "Answer3", listing.answer3, 16, 512);
+		checkMandatoryStringField(logs, "Answer4", listing.answer4, 16, 512);
+		checkMandatoryStringField(logs, "Answer5", listing.answer5, 16, 512);
+		checkMandatoryStringField(logs, "Answer6", listing.answer6, 16, 512);
+		checkMandatoryStringField(logs, "Answer7", listing.answer7, 16, 512);
+		checkMandatoryStringField(logs, "Answer8", listing.answer8, 16, 512);
+		checkMandatoryStringField(logs, "Answer9", listing.answer9, 16, 512);
+		checkMandatoryStringField(logs, "Answer10", listing.answer10, 16, 512);
+		checkMandatoryStringField(logs, "Answer11", listing.answer11, 16, 512);
+		checkMandatoryStringField(logs, "Answer12", listing.answer12, 16, 512);
+		checkMandatoryStringField(logs, "Answer13", listing.answer13, 16, 512);
 
 		return logs.toString();
+	}
+
+	private void checkMandatoryStringField(StringBuffer logs, String fieldName, String field, int minLength, int maxLength) {
+		if (StringUtils.isEmpty(field)) {
+			logs.append(fieldName + " is empty. ");
+		} else {
+			if (field.length() < minLength) {
+				logs.append(fieldName + " is too short, has only " + field.length() + " characters. ");
+			}
+			if (field.length() > maxLength) {
+				logs.append(fieldName + " is too long, has " + field.length() + " characters. ");
+			}
+		}
 	}
 
 	/**
