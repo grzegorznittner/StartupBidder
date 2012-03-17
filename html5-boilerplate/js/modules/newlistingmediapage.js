@@ -41,9 +41,6 @@ pl.implement(NewListingMediaClass, {
             pl('#videoiframe').addClass('noimage');
         }
     },
-    setUploadUrl: function(uploadurl) {
-        pl('#logouploadform').attr({action: uploadurl});
-    },
     bindEvents: function() {
         var self = this,
             uploadurl = self.base.listing.logo_upload,
@@ -54,6 +51,7 @@ pl.implement(NewListingMediaClass, {
                 if (datauri) {
                     self.base.listing.logo = datauri;
                     self.displayLogo(datauri);    
+                    self.base.displayCalculated();
                 }
             },
             postVideo = function(json) {
@@ -61,15 +59,13 @@ pl.implement(NewListingMediaClass, {
                 if (url) {
                     self.base.listing.video = url;
                     self.displayVideo(url);
+                    self.base.displayCalculated();
                 }
             },
             logoUpdater = this.base.getUpdater('logo_url', null, postLogo),
             videoUpdater = this.base.getUpdater('video', VideoCheckClass.prototype.preformat, postVideo),
-            logoURLField = new TextFieldClass('logo_url', this.base.listing.logo_url, logoUpdater, 'logomsg'),
+            logoURLField = new TextFieldClass('logo_url', null, logoUpdater, 'logomsg'),
             videoURLField = new TextFieldClass('video', this.base.listing.video, videoUpdater, 'videomsg');
-        self.setUploadUrl(uploadurl);
-        self.displayLogo(datauri);
-        self.displayVideo(videourl);
         pl('#logouploadiframe').bind({
             load: function() {
                 var iframe = pl('#logouploadiframe').get(0).contentDocument.body.innerHTML,
@@ -78,10 +74,13 @@ pl.implement(NewListingMediaClass, {
                     uploadurl = uploadurlmatch && uploadurlmatch.length === 2 ? uploadurlmatch[1] : null,
                     datauri = dataurimatch && dataurimatch.length === 2 ? dataurimatch[1] : null;
                 if (uploadurl) {
-                    self.setUploadUrl(uploadurl);
+                    self.base.listing.logo_upload = uploadurl;
+                    pl('#logouploadform').attr({action: uploadurl});
                 }
                 if (datauri) {
+                    self.base.listing.logo = datauri;
                     self.displayLogo(datauri);
+                    self.base.displayCalculated();
                 }
             }
         });
@@ -112,17 +111,17 @@ pl.implement(NewListingMediaClass, {
                 }
             }
         });
+        pl('#logouploadform').attr({action: uploadurl});
         logoURLField.fieldBase.setDisplayName('LOGO UPLOAD URL');
         logoURLField.fieldBase.addValidator(ValidatorClass.prototype.isURL);
         logoURLField.bindEvents({noAutoUpdate: true});
-        this.base.fields.push(logoURLField);
-        this.base.fieldMap.logo = logoURLField;
         videoURLField.fieldBase.validator.preValidateTransform = VideoCheckClass.prototype.preformat;
         videoURLField.fieldBase.setDisplayName('VIDEO URL');
         videoURLField.fieldBase.addValidator(ValidatorClass.prototype.isVideoURL);
         videoURLField.bindEvents({noAutoUpdate: false});
-        this.base.fields.push(videoURLField);
-        this.base.fieldMap.video = videoURLField;
+        self.displayLogo(datauri);
+        self.displayVideo(videourl);
+        this.base.displayCalculated();
         this.base.bindNavButtons(this.genNextValidator());
     },
     genNextValidator: function() {
@@ -137,7 +136,7 @@ pl.implement(NewListingMediaClass, {
             }
             return msgs;
         };
-    },
+    }
 });
 
 function NewListingPageClass() {};

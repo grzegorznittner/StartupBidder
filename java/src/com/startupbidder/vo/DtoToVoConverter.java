@@ -99,6 +99,19 @@ public class DtoToVoConverter {
 		listing.setAnswer11(listingDTO.answer11);
 		listing.setAnswer12(listingDTO.answer12);
 		listing.setAnswer13(listingDTO.answer13);
+		listing.setAnswer14(listingDTO.answer14);
+		listing.setAnswer15(listingDTO.answer15);
+		listing.setAnswer16(listingDTO.answer16);
+		listing.setAnswer17(listingDTO.answer17);
+		listing.setAnswer18(listingDTO.answer18);
+		listing.setAnswer19(listingDTO.answer19);
+		listing.setAnswer20(listingDTO.answer20);
+		listing.setAnswer21(listingDTO.answer21);
+		listing.setAnswer22(listingDTO.answer22);
+		listing.setAnswer23(listingDTO.answer23);
+		listing.setAnswer24(listingDTO.answer24);
+		listing.setAnswer25(listingDTO.answer25);
+		listing.setAnswer26(listingDTO.answer26);
 		return listing;
 	}
 	

@@ -8,7 +8,7 @@ pl.implement(CompanyTileClass, {
             listingText = json.asked_fund ? closingText : (json.days_ago ? 'listed ' + json.days_ago + ' days ago' : 'listed today');
         this.daysText = listingText;
         this.imgClass = json.logo ? '' : 'noimage';
-        this.imgSrc = json.logo || '';
+        this.imgStyle = json.logo ? 'background: url(' + json.logo + ') no-repeat scroll left top' : '';
         this.category = json.category ? json.category.toUpperCase() : '';
         this.votes = json.num_votes || 1;
         this.posted = date ? DateClass.prototype.format(date) : 'not posted';
@@ -18,13 +18,14 @@ pl.implement(CompanyTileClass, {
         this.url = '/company-page.html?id=' + json.listing_id;
     },
     makeHtml: function(lastClass) {
-        var openAnchor = !this.options.preview ? '<a href="' + this.url + '">' : '',
-            closeAnchor = !this.options.preview ? '</a>' : '',
+        var options = this.options || {},
+            openAnchor = options.preview ? '' : '<a href="' + this.url + '">',
+            closeAnchor = options.preview ? '' : '</a>',
             html = '\
 <span class="span-4 '+ (lastClass?lastClass:'') +'">\
 <div class="tile">\
 ' + openAnchor + '\
-<div class="tileimg ' + this.imgClass + '"><img class="tileimg" src="' + this.imgSrc + '"></img></div>\
+<div class="tileimg ' + this.imgClass + '" style="' + this.imgStyle + '"></div>\
 ' + closeAnchor + '\
 <div class="tiledays"></div>\
 <div class="tiledaystext">' + this.daysText + '</div>\

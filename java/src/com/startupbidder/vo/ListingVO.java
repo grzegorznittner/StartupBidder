@@ -23,7 +23,10 @@ import com.startupbidder.util.LowecaseSerializer;
 public class ListingVO extends BaseVO {
 	public static final List<String> UPDATABLE_PROPERTIES = Arrays.asList(new String[] {"title", "mantra", "summary", "contact_email",
 			"website", "category", "address", "asked_fund", "suggested_amt", "suggested_pct", "video", "answer1", "answer2", "answer3",
-			"answer4", "answer5", "answer6", "answer7", "answer8", "answer9", "answer10", "answer11", "answer12", "answer13"});
+			"answer4", "answer5", "answer6", "answer7", "answer8", "answer9", "answer10", "answer11", "answer12", "answer13",
+			"answer14", "answer15", "answer16", "answer17", "answer18", "answer19", "answer20", "answer21", "answer22", "answer23",
+            "answer24", "answer25", "answer26"
+    });
 	public static final List<String> FETCHED_PROPERTIES = Arrays.asList(new String[] {"business_plan_url", 
 			"presentation_url", "financials_url", "logo_url"});
 	
@@ -81,6 +84,19 @@ public class ListingVO extends BaseVO {
 	@JsonProperty("answer11") private String answer11;
 	@JsonProperty("answer12") private String answer12;
 	@JsonProperty("answer13") private String answer13;
+	@JsonProperty("answer14") private String answer14;
+	@JsonProperty("answer15") private String answer15;
+	@JsonProperty("answer16") private String answer16;
+	@JsonProperty("answer17") private String answer17;
+	@JsonProperty("answer18") private String answer18;
+	@JsonProperty("answer19") private String answer19;
+	@JsonProperty("answer20") private String answer20;
+	@JsonProperty("answer21") private String answer21;
+	@JsonProperty("answer22") private String answer22;
+	@JsonProperty("answer23") private String answer23;
+	@JsonProperty("answer24") private String answer24;
+	@JsonProperty("answer25") private String answer25;
+	@JsonProperty("answer26") private String answer26;
 	
 	public ListingVO() {
 	}
@@ -451,6 +467,110 @@ public class ListingVO extends BaseVO {
 
 	public void setAnswer13(String answer13) {
 		this.answer13 = answer13;
+	}
+
+	public String getAnswer14() {
+		return answer14;
+	}
+
+	public void setAnswer14(String answer14) {
+		this.answer14 = answer14;
+	}
+
+	public String getAnswer15() {
+		return answer15;
+	}
+
+	public void setAnswer15(String answer15) {
+		this.answer15 = answer15;
+	}
+
+	public String getAnswer16() {
+		return answer16;
+	}
+
+	public void setAnswer16(String answer16) {
+		this.answer16 = answer16;
+	}
+
+	public String getAnswer17() {
+		return answer17;
+	}
+
+	public void setAnswer17(String answer17) {
+		this.answer17 = answer17;
+	}
+
+	public String getAnswer18() {
+		return answer18;
+	}
+
+	public void setAnswer18(String answer18) {
+		this.answer18 = answer18;
+	}
+
+	public String getAnswer19() {
+		return answer19;
+	}
+
+	public void setAnswer19(String answer19) {
+		this.answer19 = answer19;
+	}
+
+	public String getAnswer20() {
+		return answer20;
+	}
+
+	public void setAnswer20(String answer20) {
+		this.answer20 = answer20;
+	}
+
+	public String getAnswer21() {
+		return answer21;
+	}
+
+	public void setAnswer21(String answer21) {
+		this.answer21 = answer21;
+	}
+
+	public String getAnswer22() {
+		return answer22;
+	}
+
+	public void setAnswer22(String answer22) {
+		this.answer22 = answer22;
+	}
+
+	public String getAnswer23() {
+		return answer23;
+	}
+
+	public void setAnswer23(String answer23) {
+		this.answer23 = answer23;
+	}
+
+	public String getAnswer24() {
+		return answer24;
+	}
+
+	public void setAnswer24(String answer24) {
+		this.answer24 = answer24;
+	}
+
+	public String getAnswer25() {
+		return answer25;
+	}
+
+	public void setAnswer25(String answer25) {
+		this.answer25 = answer25;
+	}
+
+	public String getAnswer26() {
+		return answer26;
+	}
+
+	public void setAnswer26(String answer26) {
+		this.answer26 = answer26;
 	}
 
 	public boolean isAskedForFunding() {

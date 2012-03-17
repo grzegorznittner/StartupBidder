@@ -438,6 +438,19 @@ public class ListingFacade {
 		checkMandatoryStringField(logs, "Answer11", listing.answer11, 16, 512);
 		checkMandatoryStringField(logs, "Answer12", listing.answer12, 16, 512);
 		checkMandatoryStringField(logs, "Answer13", listing.answer13, 16, 512);
+		checkMandatoryStringField(logs, "Answer14", listing.answer14, 16, 512);
+		checkMandatoryStringField(logs, "Answer15", listing.answer15, 16, 512);
+		checkMandatoryStringField(logs, "Answer16", listing.answer16, 16, 512);
+		checkMandatoryStringField(logs, "Answer17", listing.answer17, 16, 512);
+		checkMandatoryStringField(logs, "Answer18", listing.answer18, 16, 512);
+		checkMandatoryStringField(logs, "Answer19", listing.answer19, 16, 512);
+		checkMandatoryStringField(logs, "Answer20", listing.answer20, 16, 512);
+		checkMandatoryStringField(logs, "Answer21", listing.answer21, 16, 512);
+		checkMandatoryStringField(logs, "Answer22", listing.answer22, 16, 512);
+		checkMandatoryStringField(logs, "Answer23", listing.answer23, 16, 512);
+		checkMandatoryStringField(logs, "Answer24", listing.answer24, 16, 512);
+		checkMandatoryStringField(logs, "Answer25", listing.answer25, 16, 512);
+		checkMandatoryStringField(logs, "Answer26", listing.answer26, 16, 512);
 
 		return logs.toString();
 	}

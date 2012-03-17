@@ -526,8 +526,9 @@ pl.implement(TextFieldClass, {
         var value = pl(this.fieldBase.sel).attr('value');
         return this.fieldBase.validator.validate(value);
     },
-    bindEvents: function(options) {
+    bindEvents: function(optionsparam) {
         var self = this,
+            options = optionsparam || {},
             icon = new ValidIconClass(self.fieldBase.id + 'icon'),
             safeStr = new SafeStringClass(),
             sel = self.fieldBase.sel;

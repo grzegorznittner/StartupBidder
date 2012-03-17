@@ -121,53 +121,114 @@ listing without asking for any money.
         </div>
     </div>
 
-
-    <div class="boxtitle">DOCUMENTS</div>
+    <div class="boxtitle">PRESENTATION</div>
     <div class="boxpanel">
-        <div class="formitem clear">
-            <span class="inputlabel">SLIDE DECK</span>
-            <span class="inputfield">
-                <span class="span-3 inputbutton" id="presentationuploadbutton">
-                    UPLOAD
-                </span>
-                <span class="span-3 inputbutton" id="presentationviewbutton">
-                    VIEW
-                </span>
-            </span>
-            <span class="inputicon">
-                <div class="checkboxgreenicon"></div>
-            </span>
+        <div class="mediacol1">
+            <a href="#" id="presentationlink">
+                <div class="tileimg noimage" id="presentationimg">
+                    <div class="tiletype initialhidden" id="presentationdownloadbg"></div>
+                    <div class="tiletypetext initialhidden" id="presentationdownloadtext">DOWNLOAD</div>
+                </div>
+            </a>
         </div>
-        <div class="formitem clear">
-            <span class="inputlabel">PLAN</span>
-            <span class="inputfield">
-                <span class="span-3 inputbutton" id="planuploadbutton">
-                    UPLOAD
+        <div class="mediacol2">
+            <div class="formitem">
+                <span class="uploadinfo">Enter a URL or upload from your computer.</span>
+            </div>
+            <div class="formitem clear">
+                <span class="inputfield">
+                    <input class="text mediainputlink" type="text" maxlength="255" name="presentation_url" id="presentation_url" value=""></input>
                 </span>
-                <span class="span-3 inputbutton" id="planviewbutton">
-                    VIEW
+                <span class="uploadinputicon">
+                    <div id="presentation_urlicon"></div>
                 </span>
-            </span>
-            <span class="inputicon">
-                <div class="checkboxgreenicon"></div>
-            </span>
+            </div>
+            <div class="formitem">
+                <span class="inputfield">
+                    <form id="presentationuploadform" method="post" enctype="multipart/form-data" target="presentationuploadiframe" action="#">
+                        <span class="span-3 inputbutton uploadurlbutton" id="presentationloadurlbutton">LOAD URL</span>
+                        <input class="text uploadinputbutton" id="PRESENTATION" name="PRESENTATION" size="18" type="file"></input>
+                        <iframe id="presentationuploadiframe" name="presentationuploadiframe" src="" class="uploadiframe"></iframe>
+                    </form>
+                </span>
+            </div>
+            <div class="formitem clear">
+                <span class="uploadinfo" id="presentationmsg">Powerpoint or PDF presentation, 10-30 slides</span>
+            </div>
         </div>
-        <div class="formitem clear">
-            <span class="inputlabel">FINANCIALS</span>
-            <span class="inputfield">
-                <span class="span-3 inputbutton" id="financialsuploadbutton">
-                    UPLOAD
-                </span>
-                <span class="span-3 inputbutton" id="financialsviewbutton">
-                    VIEW
-                </span>
-            </span>
-            <span class="inputicon">
-                <div class="checkboxgreenicon"></div>
-            </span>
+    </div>
+
+    <div class="boxtitle">BUSINESS PLAN</div>
+    <div class="boxpanel">
+        <div class="mediacol1">
+            <a href="#" id="business_planlink">
+                <div class="tileimg noimage" id="business_planimg">
+                    <div class="tiletype initialhidden" id="business_plandownloadbg"></div>
+                    <div class="tiletypetext initialhidden" id="business_plandownloadtext">DOWNLOAD</div>
+                </div>
+            </a>
         </div>
-        <div class="formitem clear">
-            <span class="newlistingmsgsmall" id="newlistingdocmsg">&nbsp;</span>
+        <div class="mediacol2">
+            <div class="formitem">
+                <span class="uploadinfo">Enter a URL or upload from your computer.</span>
+            </div>
+            <div class="formitem clear">
+                <span class="inputfield">
+                    <input class="text mediainputlink" type="text" maxlength="255" name="business_plan_url" id="business_plan_url" value=""></input>
+                </span>
+                <span class="uploadinputicon">
+                    <div id="business_plan_urlicon"></div>
+                </span>
+            </div>
+            <div class="formitem">
+                <span class="inputfield">
+                    <form id="business_planuploadform" method="post" enctype="multipart/form-data" target="business_planuploadiframe" action="#">
+                        <span class="span-3 inputbutton uploadurlbutton" id="business_planloadurlbutton">LOAD URL</span>
+                        <input class="text uploadinputbutton" id="BUSINESS_PLAN" name="BUSINESS_PLAN" size="18" type="file"></input>
+                        <iframe id="business_planuploadiframe" name="business_planuploadiframe" src="" class="uploadiframe"></iframe>
+                    </form>
+                </span>
+            </div>
+            <div class="formitem clear">
+                <span class="uploadinfo" id="business_planmsg">Word document or PDF of business plan</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="boxtitle">FINANCIALS</div>
+    <div class="boxpanel">
+        <div class="mediacol1">
+            <a href="#" id="financialslink">
+                <div class="tileimg noimage" id="financialsimg">
+                    <div class="tiletype initialhidden" id="financialsdownloadbg"></div>
+                    <div class="tiletypetext initialhidden" id="financialsdownloadtext">DOWNLOAD</div>
+                </div>
+            </a>
+        </div>
+        <div class="mediacol2">
+            <div class="formitem">
+                <span class="uploadinfo">Enter a URL or upload from your computer.</span>
+            </div>
+            <div class="formitem clear">
+                <span class="inputfield">
+                    <input class="text mediainputlink" type="text" maxlength="255" name="financials_url" id="financials_url" value=""></input>
+                </span>
+                <span class="uploadinputicon">
+                    <div id="financials_urlicon"></div>
+                </span>
+            </div>
+            <div class="formitem">
+                <span class="inputfield">
+                    <form id="financialsuploadform" method="post" enctype="multipart/form-data" target="financialsuploadiframe" action="#">
+                        <span class="span-3 inputbutton uploadurlbutton" id="financialsloadurlbutton">LOAD URL</span>
+                        <input class="text uploadinputbutton" id="FINANCIALS" name="FINANCIALS" size="18" type="file"></input>
+                        <iframe id="financialsuploadiframe" name="financialsuploadiframe" src="" class="uploadiframe"></iframe>
+                    </form>
+                </span>
+            </div>
+            <div class="formitem clear">
+                <span class="uploadinfo" id="financialsmsg">Spreadsheet or PDF of financials, can be unaudited</span>
+            </div>
         </div>
     </div>
 
@@ -201,8 +262,8 @@ listing without asking for any money.
     <div class="sidebox">
 <p>ASKING - amount of money you want for investment, between $5,000 and $500,000 USD, closing 90 days in the future</p>
 <p>FOR - what percentage of common equity you are selling in exchange for the investment, between 5% and 50%</p>
-<p>SLIDE DECK - your presentation to investors, a Powerpoint or PDF document, keep it short</p>
-<p>PLAN - your business plan, a Word or PDF document that describes your business in detail</p>
+<p>PRESENTATION - your slide deck presentation to investors, a Powerpoint or PDF document, keep it short</p>
+<p>BUSINESS PLAN - your business plan, a Word or PDF document that describes your business in detail</p>
 <p>FINANCIALS - your most current financial statements, if you have no operating history, then list current capital and runway</p>
     </div>
 

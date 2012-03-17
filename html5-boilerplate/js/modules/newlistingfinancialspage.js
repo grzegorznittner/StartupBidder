@@ -24,8 +24,108 @@ pl.implement(NewListingFinancialsClass, {
             this.bound = true;
         }
     },
+    displayUpload: function(id) {
+        var fieldname = id + '_id',
+            val = this.base.listing[fieldname],
+            imgclass = id + 'img',
+            imgsel = '#' + imgclass,
+            formsel = '#' + id + 'uploadform',
+            linksel = '#' + id + 'link',
+            downloadsel = '#' + id + 'downloadbg, #' + id + 'downloadtext',
+            uploadfield = id + '_upload',
+            uploadurl = this.base.listing[uploadfield],
+            calcclass = val ? imgclass : 'noimage',
+            classes = 'tileimg ' + calcclass,
+            linkurl = val ? '/file/download/' + val : '#';
+        pl(imgsel).attr({'class': classes});
+        pl(linksel).attr({href: linkurl});
+        if (val) {
+            pl(downloadsel).show();
+        }
+        if (uploadurl) {
+            pl(formsel).attr({action: uploadurl});
+        }
+    },
+    bindUploadField: function(id) {
+        var self = this,
+            uploadfield = id + '_upload',
+            iframesel = '#' + id + 'uploadiframe',
+            browsesel = '#' + id.toUpperCase(),
+            buttonsel = '#' + id + 'loadurlbutton',
+            displayname = id.toUpperCase().replace('_',' ') + ' UPLOAD URL',
+            urlid = id + '_url',
+            msgid = id + 'msg',
+            genPostUpload = function(id) {
+                var fieldname = id + '_id',
+                    uploadId = id;
+                return function(json) {
+                    var val = json && json.listing && json.listing[fieldname] ? json.listing[fieldname] : null;
+                    if (val) {
+                        self.base.listing[fieldname] = val;
+                        self.displayUpload(uploadId);
+                        self.base.displayCalculated();
+                    }
+                };
+            },
+            updater = this.base.getUpdater(urlid, null, genPostUpload(id)),
+            field = new TextFieldClass(urlid, null, updater, msgid),
+            genIframeLoad = function(id) {
+                var iframesel = '#' + id + 'uploadiframe',
+                    formsel = '#' + id + 'uploadform',
+                    fieldname = id + '_id',
+                    uploadfield = id + '_url';
+                return function() {
+                    var iframe = pl(iframesel).get(0).contentDocument.body.innerHTML,
+                        uploadurlmatch = iframe.match(/upload_url.*(https?:\/\/.*\/upload\/[A-Za-z0-9]*).*upload_url/),
+                        valmatch = iframe.match(/value&gt;(.*)&lt;value/),
+                        uploadurl = uploadurlmatch && uploadurlmatch.length === 2 ? uploadurlmatch[1] : null,
+                        val = valmatch && valmatch.length === 2 ? valmatch[1] : null;
+                    if (uploadurl) {
+                        self.base.listing[uploadfield] = uploadurl;
+                        pl(formsel).attr({action: uploadurl});
+                    }
+                    if (val) {
+                        self.base.listing[fieldname] = val;
+                        self.displayUpload(id);
+                        self.base.displayCalculated();
+                    }
+                };
+            },
+            genBrowseChange = function(id) {
+                var formsel = '#' + id + 'uploadform';
+                return function() {
+                    pl(formsel).get(0).submit();
+                };
+            },
+            genURLUpload = function(id, field) {
+                var msgsel = '#' + id + 'msg';
+                return function() {
+                    var msg = field.validate();
+                    if (msg === 0) {
+                        field.update();
+                    }   
+                    else {
+                        pl(msgsel).text(msg);
+                    }
+                };
+            };
+        pl(iframesel).bind({
+            load: genIframeLoad(id)
+        });
+        pl(browsesel).bind({
+            change: genBrowseChange(id)
+        });
+        pl(buttonsel).bind({
+            click: genURLUpload(id, field)
+        });
+        field.fieldBase.setDisplayName(displayname);
+        field.fieldBase.addValidator(ValidatorClass.prototype.isURL);
+        field.bindEvents({noAutoUpdate: true});
+        self.displayUpload(id);
+    },
     bindEvents: function() {
-        var textFields = ['asked_fund', 'suggested_amt', 'suggested_pct'],
+        var self = this,
+            textFields = ['asked_fund', 'suggested_amt', 'suggested_pct'],
             msgids = {
                 asked_fund: 'newlistingaskmsg',
                 suggested_amt: 'newlistingoffermsg',
@@ -50,11 +150,12 @@ pl.implement(NewListingFinancialsClass, {
                 suggested_amt: CurrencyClass.prototype.clean,
                 suggested_pct: PercentClass.prototype.clean
             },
+            uploadFields = ['presentation', 'business_plan', 'financials'],
             id,
             cleaner,
             field;
-        this.base.fields = [];
-        this.base.fieldMap = {};
+        self.base.fields = [];
+        self.base.fieldMap = {};
         for (i = 0; i < textFields.length; i++) {
             id = textFields[i];
             cleaner = preValidators[id];
@@ -77,6 +178,10 @@ pl.implement(NewListingFinancialsClass, {
             this.base.fields.push(field);
             this.base.fieldMap[id] = field;
         } 
+        for (i = 0; i < uploadFields.length; i++) {
+            id = uploadFields[i];
+            this.bindUploadField(id);
+        }
         this.base.fieldMap['suggested_amt'].validate();
         this.base.fieldMap['suggested_pct'].validate();
         this.displayCalculatedIfValid();
@@ -86,13 +191,18 @@ pl.implement(NewListingFinancialsClass, {
     genNextValidator: function() {
         var self = this;
         return function() {
-            var asked_fund = pl('#asked_fund').attr('checked') ? true : false;
-            if (asked_fund) {
-                return self.base.validate();
+            var asked_fund = pl('#asked_fund').attr('checked') ? true : false,
+                msgs = asked_fund ? self.base.validate() : [];
+            if (!self.base.listing.presentation_id) {
+                msgs.push("SLIDE DECK: you must have a presentation.");
             }
-            else {
-                return []; // FIXME: check uploaded documents
+            if (!self.base.listing.business_plan_id) {
+                msgs.push("BUSINESS PLAN: you must have a business plan.");
             }
+            if (!self.base.listing.presentation_id) {
+                msgs.push("FINANCIALS: you must have a financial document.");
+            }
+            return msgs;
         };
     },
     genDisplayAskedEffects: function(field) {

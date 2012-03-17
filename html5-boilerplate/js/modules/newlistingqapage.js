@@ -25,31 +25,54 @@ pl.implement(NewListingQAClass, {
         }
     },
     bindEvents: function() {
-        var textFields = ['summary', 'answer1', 'answer2', 'answer3', 'answer4', 'answer5', 'answer6', 'answer7', 'answer8', 'answer9', 'answer10', 'answer11', 'answer12', 'answer13'],
-            displayName = {
-                'summary': 'elevator pitch',
-                'answer1': 'customer',
-                'answer2': 'problem',
-                'answer3': 'solution',
-                'answer4': 'payment',
-                'answer5': 'marketing',
-                'answer6': 'advertising',
-                'answer7': 'team',
-                'answer8': 'competitors',
-                'answer9': 'relocation',
-                'answer10': 'investment',
-                'answer11': 'sourcing',
-                'answer12': 'property',
-                'answer13': 'methodology'
-            },
+        var textFields = ['summary'],
+            displayName = { summary: 'ELEVATOR PITCH' },
+            answerFields = [
+'CUSTOMER',
+'PROBLEM',
+'SOLUTION',
+'INNOVATION',
+'PAYMENT',
+'EXPENSES',
+'STICKINESS',
+'MARKETING',
+'ADVERTISING',
+'AFFILIATES',
+'VENDORS',
+'COMPETITORS',
+'COMPETITIVE COMPARISON',
+'INTELLECTUAL PROPERTY',
+'STATUS',
+'PLAN OF ATTACK',
+'KEY ACTIVITIES',
+'GOVERNMENT',
+'TEAM',
+'TEAM RELOCATION',
+'TEAM VALUES',
+'FINANCIAL PROJECTIONS',
+'CURRENT FINANCIALS',
+'OWNERS',
+'INVESTMENT',
+'TIMELINE AND WRAPUP'
+            ],
             id,
+            i,
+            idx,
             field;
         this.base.fields = [];
+        for (i = 0; i < answerFields.length; i++) {
+            idx = 1 + i;
+            id = 'answer' + idx;
+            console.log('id',id,i,answerFields[i]);
+            textFields.push(id);
+            displayName[id] = answerFields[i];
+        }
         for (i = 0; i < textFields.length; i++) {
             id = textFields[i];
             field = new TextFieldClass(id, this.base.listing[id], this.base.getUpdater(id), 'newlistingmsg');
+            console.log('field',i,id,displayName[id]);
             field.fieldBase.setDisplayName(displayName[id].toUpperCase());
-            field.fieldBase.addValidator(ValidatorClass.prototype.makeLengthChecker(5, 2000));
+            field.fieldBase.addValidator(ValidatorClass.prototype.makeLengthChecker(5, 1000));
             field.fieldBase.validator.postValidator = this.base.genDisplayCalculatedIfValid(field);
             field.bindEvents();
             this.base.fields.push(field);

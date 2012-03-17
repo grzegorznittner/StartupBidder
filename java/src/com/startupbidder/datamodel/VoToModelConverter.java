@@ -109,6 +109,19 @@ public class VoToModelConverter {
 		listing.answer11 = listingVO.getAnswer11();
 		listing.answer12 = listingVO.getAnswer12();
 		listing.answer13 = listingVO.getAnswer13();
+		listing.answer14 = listingVO.getAnswer14();
+		listing.answer15 = listingVO.getAnswer15();
+		listing.answer16 = listingVO.getAnswer16();
+		listing.answer17 = listingVO.getAnswer17();
+		listing.answer18 = listingVO.getAnswer18();
+		listing.answer19 = listingVO.getAnswer19();
+		listing.answer20 = listingVO.getAnswer20();
+		listing.answer21 = listingVO.getAnswer21();
+		listing.answer22 = listingVO.getAnswer22();
+		listing.answer23 = listingVO.getAnswer23();
+		listing.answer24 = listingVO.getAnswer24();
+		listing.answer25 = listingVO.getAnswer25();
+		listing.answer26 = listingVO.getAnswer26();
 		return listing;
 	}
 	
@@ -158,6 +171,32 @@ public class VoToModelConverter {
 			listing.answer12 = property.getPropertyValue();
 		} else if (name.equalsIgnoreCase("answer13")) {
 			listing.answer13 = property.getPropertyValue();
+		} else if (name.equalsIgnoreCase("answer14")) {
+			listing.answer14 = property.getPropertyValue();
+		} else if (name.equalsIgnoreCase("answer15")) {
+			listing.answer15 = property.getPropertyValue();
+		} else if (name.equalsIgnoreCase("answer16")) {
+			listing.answer16 = property.getPropertyValue();
+		} else if (name.equalsIgnoreCase("answer17")) {
+			listing.answer17 = property.getPropertyValue();
+		} else if (name.equalsIgnoreCase("answer18")) {
+			listing.answer18 = property.getPropertyValue();
+		} else if (name.equalsIgnoreCase("answer19")) {
+			listing.answer19 = property.getPropertyValue();
+		} else if (name.equalsIgnoreCase("answer20")) {
+			listing.answer20 = property.getPropertyValue();
+		} else if (name.equalsIgnoreCase("answer21")) {
+			listing.answer21 = property.getPropertyValue();
+		} else if (name.equalsIgnoreCase("answer22")) {
+			listing.answer22 = property.getPropertyValue();
+		} else if (name.equalsIgnoreCase("answer23")) {
+			listing.answer23 = property.getPropertyValue();
+		} else if (name.equalsIgnoreCase("answer24")) {
+			listing.answer24 = property.getPropertyValue();
+		} else if (name.equalsIgnoreCase("answer25")) {
+			listing.answer25 = property.getPropertyValue();
+		} else if (name.equalsIgnoreCase("answer26")) {
+			listing.answer26 = property.getPropertyValue();
 		} else if (name.equalsIgnoreCase("logoBase64")) {
 			listing.logoBase64 = property.getPropertyValue();
 		} else if (name.equalsIgnoreCase("contact_email")) {

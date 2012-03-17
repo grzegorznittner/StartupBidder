@@ -304,6 +304,19 @@ public abstract class BaseFacadeAbstractTest {
 		listing.answer11 = RandomStringUtils.randomAlphabetic(64);
 		listing.answer12 = RandomStringUtils.randomAlphabetic(64);
 		listing.answer13 = RandomStringUtils.randomAlphabetic(64);
+		listing.answer14 = RandomStringUtils.randomAlphabetic(64);
+		listing.answer15 = RandomStringUtils.randomAlphabetic(64);
+		listing.answer16 = RandomStringUtils.randomAlphabetic(64);
+		listing.answer17 = RandomStringUtils.randomAlphabetic(64);
+		listing.answer18 = RandomStringUtils.randomAlphabetic(64);
+		listing.answer19 = RandomStringUtils.randomAlphabetic(64);
+		listing.answer20 = RandomStringUtils.randomAlphabetic(64);
+		listing.answer21 = RandomStringUtils.randomAlphabetic(64);
+		listing.answer22 = RandomStringUtils.randomAlphabetic(64);
+		listing.answer23 = RandomStringUtils.randomAlphabetic(64);
+		listing.answer24 = RandomStringUtils.randomAlphabetic(64);
+		listing.answer25 = RandomStringUtils.randomAlphabetic(64);
+		listing.answer26 = RandomStringUtils.randomAlphabetic(64);
 		listingList.add(listing); // index=7
 		
 		listing = new Listing();

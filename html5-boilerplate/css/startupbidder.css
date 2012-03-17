@@ -242,11 +242,12 @@ background: linear-gradient(top, #dcd8db 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 /* box styles */
 .boxtitle { margin-top: 10px; color: #333333; font-weight: bold; }
 .boxpanel, .boxstep { border: 2px solid #999999; padding: 2px; overflow: auto; background: #e3e3e3; margin-bottom: 10px; }
-.boxpanel { width: 622px; overflow: auto; position: relative; }
+/* .boxpanel { width: 622px; overflow: auto; position: relative; } */
+.boxpanel { width: 622px; overflow: hidden; position: relative; }
 /*.companylistingbox { height: 180px; overflow: visible; } */
 .addcommentmsg { height: 20px; margin-left: 5px; font-weight: bold; }
 .addmessagemsg { height: 20px; margin-left: 5px; font-weight: bold; }
-.newlistingmsg { float: left; margin-right; 10px; padding-left: 116px; width: 420px; height: 85px; font-weight: bold; }
+.newlistingmsg { float: left; margin-right; 10px; padding-left: 116px; width: 420px; height: 85px; font-weight: bold; overflow: auto; }
 .newlistingmsgsmall { float: left; margin-right; 10px; padding-left: 116px; width: 420px; height: 25px; font-weight: bold; }
 .companylistingstats { position: absolute; bottom: 0; }
 .boxpanel p { margin: 5px 10px 10px 10px; text-indent: 0px; font-weight: bold; }
@@ -322,10 +323,11 @@ background: linear-gradient(top, #dcd8db 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .newwithdrawcancelbtn { display: none; margin-top: 10px; }
 
 /* upload */
-.logoinputbutton { font-weight: bold; color: white !important; background: #49515a !important; font-size: 14px !important; height: 33px !important; margin-left: 4px !important; }
-/*  width: 230px !important; } */
-.logoinfo { font-weight: bold; margin-left: 4px; }
-.logoloadurlbutton { margin-left: 4px; }
+.uploadiframe { width: 0; height: 0; border: 0 solid #fff; }
+.uploadinputicon { float: left; padding-top: 6px; height: 32px; width: 32px; }
+.uploadinfo { font-weight: bold; margin-left: 4px; }
+.uploadurlbutton { margin-left: 4px; }
+.uploadinputbutton { font-weight: bold; color: white !important; background: #49515a !important; font-size: 14px !important; height: 33px !important; margin-left: 4px !important; }
 
 /* tiles */
 .tile { width: 146px; height: 296px; border: 2px solid #999999; border-radius: 5px; overflow: hidden; margin-bottom: 10px; position: relative; background: #e3e3e3; }
@@ -355,14 +357,16 @@ background: linear-gradient(top, #dcd8db 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .socialrec { background: url(../img/socialrec.jpg); border-radius: 3px; }
 .gkleen { background: url(../img/gkleen.jpg); border-radius: 3px; }
 .missingimg { background: url(http://www.minimus.biz/img/Your%20Logo%20Here%20Black%202.jpg) -65px -55px; border-radius: 3px; height: 146px; width: 146px; }
-.logouploadiframe { width: 0; height: 0; border: 0 solid #fff; }
-.logouploadbtn { display: 0 }
-.logoinputicon { float: left; padding-top: 6px; height: 32px; width: 32px; }
+.presentationimg { background: url(../img/icons/presentation.png) no-repeat 1px 1px; border-radius: 3px; }
+.business_planimg { background: url(../img/icons/business_plan.png) no-repeat 0px 0px; border-radius: 3px; }
+.financialsimg { background: url(../img/icons/financials.png) no-repeat 0px 0px; border-radius: 3px; }
 .videoinputicon { float: left; padding-top: 7px; height: 32px; width: 32px; margin-right: 10px; }
 .videourl { padding-top: 8px !important; }
 
 input[disabled] { color: #999 !important; }
 textarea[disabled] { color: #999 !important; }
+
+.initialhidden { display: none; }
 
 /* hover effect */
 /*
