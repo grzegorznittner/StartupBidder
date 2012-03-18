@@ -47,7 +47,7 @@ pl.implement(NewListingFinancialsClass, {
         }
     },
     bindUploadField: function(id) {
-        var self = this,
+        var self = this;
             uploadfield = id + '_upload',
             iframesel = '#' + id + 'uploadiframe',
             browsesel = '#' + id.toUpperCase(),
@@ -67,7 +67,7 @@ pl.implement(NewListingFinancialsClass, {
                     }
                 };
             },
-            updater = this.base.getUpdater(urlid, null, genPostUpload(id)),
+            updater = self.base.getUpdater(urlid, null, genPostUpload(id)),
             field = new TextFieldClass(urlid, null, updater, msgid),
             genIframeLoad = function(id) {
                 var iframesel = '#' + id + 'uploadiframe',

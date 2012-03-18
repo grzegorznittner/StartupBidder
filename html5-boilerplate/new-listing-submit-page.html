@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <!-- Use the .htaccess and remove these lines to avoid edge case issues.
+       More info: h5bp.com/b/378 -->
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+  <title>Startupbidder Listing</title>
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <!-- Mobile viewport optimized: j.mp/bplateviewport -->
+  <!-- <meta name="viewport" content="width=device-width,initial-scale=1"> -->
+  <!-- <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0"> -->
+
+  <meta name="description" content="Startupbidder - list, bid, comment and vote on startup businesses worldwide"/>
+  <meta name="keywords" content="startupbidder startup company auction bid business plan"/>
+  <!-- Place favicon.ico and apple-touch-icon.png in the root directory: mathiasbynens.be/notes/touch-icons -->
+
+  <!-- CSS: implied media=all -->
+  <!-- CSS concatenated and minified via ant build script-->
+  <link rel="stylesheet" href="css/style.css" type="text/css" />
+  <!-- end CSS-->
+
+  <link rel="canonical" href="http://startupbidder.appspot.com"/>
+</head>
+
+<body class="new-listing-submit-page">
+<div id="wrap">
+<div id="newlistingmain">
+
+<div class="header">
+  <div class="container">
+    <div class="span-5">
+      <a href="main-page.html"><span class="logotextblue">startup</span><span class="logotextgrey">bidder</span></a>
+    </div>
+    <div class="span-11">
+      <a href="main-page.html?type=top"><span class="headerlink">Top</span></a>
+      <span class="headertext">&nbsp;&nbsp;|&nbsp;&nbsp;</span>
+      <a href="main-page.html?type=latest"><span class="headerlink">Latest</span></a>
+      <span class="headertext">&nbsp;&nbsp;|&nbsp;&nbsp;</span>
+      <a href="main-page.html?type=closing"><span class="headerlink">Closing</span></a>
+      <span class="headertext">&nbsp;&nbsp;|&nbsp;&nbsp;</span>
+      <a id="postlink" href="login-page.html"><span class="headerlink" id="posttext"></span></a>
+    </div>
+    <div class="span-8 last loginspan">
+      <div><a id="loginlink" href="login-page.html"><span class="headerlink" id="logintext"></span></a></div>
+      <div id="logout" class="logout"><a href="/_ah/logout?continue=%2F">logout</a></div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- begin banner -->
+<div class="bannersmall">
+    <span class="bannertextsmall span-16">NEW COMPANY WIZARD</span>
+</div>
+
+<div class="boxstep">
+    <span class="boxstepn" id="boxstepn"></span>
+    <span class="boxsteptitle">YOU HAVE FILLED <span id="boxsteppct">0</span>% OF YOUR COMPANY PROFILE</span>
+</div>
+<!-- end banner -->
+
+<!-- left column -->
+<div class="span-16">
+
+    <div class="boxtitle">FINAL SUBMISSION</div>
+    <div class="boxpanel">
+    <p>
+You are about to submit your company listing in startupbidder.  Please review and check that
+all information is accurate.  Below you will see displayed a preview of how your listing will
+appear on the site.  This is exactly how it will appear to users of the site.  On the right
+side is the company summary card which will appear in search results and on the top listing page.
+Once submission is made, you will not be able to modify the submitted listing.  You may still withdraw
+it if you wish at any time.
+    </p>
+    <p>
+In order to provide the highest level of service, the startupbidder team will review your listing
+before placing it live on the site.  You will receive an email notification when your listing
+has been approved.  If we have questions or corrections we would like you to make, we will inform you
+regarding this.  Upon approval, the listing will be the first listing on the top and latest search
+results on the front page.  It will then stay there depending on the level of votes and activity for
+the listing.
+    </p>
+    <p>
+After reviewing the preview, click <b>SUBMIT</b> to send us your listing!
+    </p>
+    </div>
+
+    <div>
+        <div class="formitem clear">
+            <span class="newlistingmsgsmall" id="newlistingmsg">&nbsp;</span>
+        </div>
+        <div class="formitem clear">
+            <a href="#" id="prevbuttonlink">
+                <span class="span-3 inputbutton" id="prevbutton">
+                    PREV
+                </span>
+            </a>
+            <span class="span-9 attention" id="newlistingmsg">
+                Some data must be corrected before submitting your company listing: please add a video on the media page.
+            </span>
+            <a href="#" id="nextbuttonlink">
+                <span class="push-1 span-3 inputbutton" id="nextbutton">
+                    SUBMIT
+                </span>
+            </a>
+        </div>
+    </div>
+
+    <div class="boxstep last">
+        <span class="boxstep1 boxstepcomplete"><div class="boxsteptext">BASICS</div></span>
+        <span class="boxstep2 boxstepcomplete"><div class="boxsteptext">Q &amp; A</div></span>
+        <span class="boxstep3 boxstepcomplete"><div class="boxsteptext">FINANCIALS</div></span>
+        <span class="boxstep4 boxstepcomplete"><div class="boxsteptext">MEDIA</div></span>
+        <span class="boxstep5 boxstepcomplete"><div class="boxsteptext">SUBMIT</div></span>
+    </div>
+
+</div>
+<!-- end left column -->
+
+<!-- right column -->
+<div class="span-8 last">
+
+    <div class="boxtitle clear">SUMMARY PREVIEW</div>
+    <div id="summarypreview"></div>
+
+    <div class="boxtitle clear">WITHDRAW SUBMISSION</div>
+    <div class="newwithdrawmsg attention" id="newwithdrawmsg">Are you sure? This cannot be undone.</div>
+    <a href="#" id="newwithdrawbtn"><div class="sideboxbutton">WITHTDRAW</div></a>
+    <a href="#" class="newwithdrawcancelbtn" id="newwithdrawcancelbtn"><div class="sideboxbutton">CANCEL</div></a>
+
+</div>
+<!-- end right column -->
+
+</div> <!-- end container -->
+</div> <!-- end main -->
+</div> <!-- end wrap -->
+
+<!-- preview overlay text -->
+<div class="previewtext">PREVIEW</div>
+<div class="previewtext previewtext2">PREVIEW</div>
+<div class="previewtext previewtext3">PREVIEW</div>
+<div class="previewtext previewtext4">PREVIEW</div>
+
+<!-- preview overlay click disabler -->
+<div class="previewoverlay"></div>
+
+<!-- iframe preview -->
+<iframe class="previewiframe" id="previewiframe" allowtransparency="true" frameborder="0" sandbox="allow-same-origin allow-forms allow-scripts" scrolling="auto" src="company-page.html?id=ag1zdGFydHVwYmlkZGVycg4LEgdMaXN0aW5nGNQIDA&preview=true"> 
+</iframe> 
+
+<!--
+<div id="newlistingfooterbottom" class="darkgreybg">
+  <div class="container">
+    <div class="prepend-2 span-14">
+      <span class="footertext lightgrey">
+        <a href="help-page.html"><span class="footerlink">Help</span></a>
+        &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+        <a href="terms-page.html"><span class="footerlink">Terms&nbsp;&amp;&nbsp;Conditions</span></a>
+        &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+        <a href="contact-page.html"><span class="footerlink">Contact</span></a>
+        &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+        <a href="about-page.html"><span class="footerlink">About</span></a>
+      </span>
+    </div>
+    <div class="span-4 last copyrightspan">
+      <span class="copyrighttext lightgrey">Copyright &copy;2012 Startupbidder</span>
+    </div>
+  </div>
+</div>
+-->
+  <!-- JavaScript at the bottom for fast page loading -->
+  <script src="js/libs/prevel.min.js"></script>
+  <script src="js/modules/base.js"></script>
+  <script src="js/modules/companylist.js"></script>
+  <script src="js/modules/forms.js"></script>
+  <script src="js/modules/newlistingbase.js"></script>
+  <script src="js/modules/newlistingsubmitpage.js"></script>
+
+  <!-- Change UA-XXXXX-X to be your site's ID -->
+  <script>
+  window._gaq = [['_setAccount','UA-23942052-1'],['_trackPageview'],['_trackPageLoadTime']];
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+  </script>
+
+  <!-- Prompt IE 6 users to install Chrome Frame. Remove this if you want to support IE 6.
+       chromium.org/developers/how-tos/chrome-frame-getting-started -->
+  <!--[if lt IE 7 ]>
+    <script src="//ajax.googleapis.com/ajax/libs/chrome-frame/1.0.3/CFInstall.min.js"></script>
+    <script>window.attachEvent('onload',function(){CFInstall.check({mode:'overlay'})})</script>
+  <![endif]-->
+
+</body>
+</html>

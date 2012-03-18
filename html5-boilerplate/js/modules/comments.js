@@ -81,7 +81,7 @@ pl.implement(CommentsClass, {
         var html, deletableComments, i, comment, deletable, commentDeleteSel;
         if (this.comments.length === 0) {
             pl('#commentlist').hide();
-            pl('#commentsmsg').html('No comments').show();
+            pl('#commentsmsg').html('<p>No comments</p>').show();
             return;
         }
         html = '';

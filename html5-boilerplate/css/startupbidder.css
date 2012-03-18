@@ -21,10 +21,6 @@ body > #wrap { height: auto; min-height: 100%; }
 .successful { color: #009900; }
 .notice { position: relative; top: 15px; }
 .emptyattention { color: #8A1F11; position: relative; top: 15px; }
-.previewtext { z-index: 1000; position: absolute; background: rgba(0,0,0,0.6); top: 560px; left: 400px; font-size: 72px; color: white; font-weight: bold; padding: 20px; padding-left: 40px; padding-right: 40px; border-radius: 25px; }
-.previewtext2 { top: 1280px; }
-.previewtext3 { top: 2000px; }
-.previewtext4 { top: 3100px; }
 
 /* general styles */
 /* body { font-size: 14px; font-weight: bold; color: #4083a9; background: #f2f2f2; } */
@@ -130,7 +126,7 @@ background: linear-gradient(top, #dcd8db 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .checkboxgreenicon { width: 32px; height: 32px; background: url(../img/icons/checkbox_green_32x32.png); background-position: 0px 0px; }
 .checkboxredicon { width: 32px; height: 32px; background: url(../img/icons/checkbox_red_32x32.png); background-position: 0px 0px; }
 .documenticon { width: 16px; height: 16px; background: url(../img/icons/document.png); }
-.presentationicon { width: 16px; height: 16px; background: url(../img/icons/presentation.png); }
+.presentationicon { width: 16px; height: 16px; background: url(../img/icons/presentation_small.png); }
 .spreadsheeticon { width: 16px; height: 16px; background: url(../img/icons/spreadsheet.png); }
 .linkicon { width: 16px; height: 16px; background: url(../img/icons/jump.png); }
 .mapicon { width: 16px; height: 16px; background: url(../img/icons/map.png); }
@@ -346,6 +342,14 @@ background: linear-gradient(top, #dcd8db 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .tilevotes, .tilevoteimg, .tileposted { position: absolute; }
 .tilevotes { left: 30px; }
 .tileposted { top: 6px; right: 12px; text-align: right; font-weight: bold; }
+
+/* submit page preview classes */
+.previewtext { z-index: 1000; position: absolute; background: rgba(0,0,0,0.6); top: 660px; left: 500px; font-size: 52px; color: white; font-weight: bold; padding: 10px 20px 10px 20px; border-radius: 25px; }
+.previewtext2 { top: 1260px; }
+.previewtext3 { top: 1860px; }
+.previewtext4 { top: 2460px; }
+.previewiframe { width: 100%; height: 3000px; }
+.previewoverlay { position: absolute; width: 100%; height: 3000px; top: 660px; z-index: 1000; }
 
 /* img */
 .companylogo { border-radius: 3px; height: 146px; width: 146px; }

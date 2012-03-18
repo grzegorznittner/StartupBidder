@@ -1,11 +1,15 @@
-function ListingClass(id) {
+function ListingClass(id, preview) {
     var self = this;
     this.id = id;
+    this.preview = preview;
     this.url = '/listings/get/' + this.id;
     this.statusId = 'listingstatus';
     this.completeFunc = function(json) {
-        var header = new HeaderClass();
-        header.setLogin(json);
+        var header;
+        if (!this.preview) {
+            header = new HeaderClass();
+            header.setLogin(json);
+        }
         self.store(json);
         self.display();
     };

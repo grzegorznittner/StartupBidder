@@ -477,32 +477,34 @@ pl.implement(SelectFieldClass, {
         return value;
     },
     validate: function() {
-        var value = this.getValue();
-        return this.fieldBase.validator.validate(value);
+        var self = this,
+            value = self.getValue();
+        return self.fieldBase.validator.validate(value);
     },
     bindEvents: function() {
-        var self, onchange;
-        self = this;
-        onchange = function() {
-            var icon = new ValidIconClass(self.fieldBase.id + 'icon'),
-                changeKey = self.fieldBase.id,
-                newval = self.getValue(),
-                validMsg = self.fieldBase.validator.validate(newval);
-            if (validMsg !== 0) {
-                self.fieldBase.msg.show('attention', validMsg);
-                icon.showInvalid();
-                return;
-            }
-            if (!self.fieldBase.msg.isClear) {
-                self.fieldBase.msg.clear();
-            }
-            if (!icon.isValid) {
-                icon.showValid();
-            }
-            self.fieldBase.updateFunction({ changeKey: newval }, self.fieldBase.getLoadFunc(), self.fieldBase.getErrorFunc(self.getDisplayFunc()), self.fieldBase.getSuccessFunc());
-        }
+        var self = this,
+            genonchange = function() {
+                return function() {
+                var icon = new ValidIconClass(self.fieldBase.id + 'icon'),
+                    changeKey = self.fieldBase.id,
+                    newval = self.getValue(),
+                    validMsg = self.fieldBase.validator.validate(newval);
+                if (validMsg !== 0) {
+                    self.fieldBase.msg.show('attention', validMsg);
+                    icon.showInvalid();
+                    return;
+                }
+                if (!self.fieldBase.msg.isClear) {
+                    self.fieldBase.msg.clear();
+                }
+                if (!icon.isValid) {
+                    icon.showValid();
+                }
+                self.fieldBase.updateFunction({ changeKey: newval }, self.fieldBase.getLoadFunc(), self.fieldBase.getErrorFunc(self.getDisplayFunc()), self.fieldBase.getSuccessFunc());
+                };
+            };
         pl(self.fieldBase.sel).bind({
-            change: onchange
+            change: genonchange()
         });
     }
 });
@@ -523,8 +525,9 @@ pl.implement(TextFieldClass, {
         };
     },
     validate: function() {
-        var value = pl(this.fieldBase.sel).attr('value');
-        return this.fieldBase.validator.validate(value);
+        var self = this,
+            value = pl(self.fieldBase.sel).attr('value');
+        return self.fieldBase.validator.validate(value);
     },
     bindEvents: function(optionsparam) {
         var self = this,
