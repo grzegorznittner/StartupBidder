@@ -1,6 +1,7 @@
 function NewListingSubmitClass() {
     var base = new NewListingBaseClass();
     base.prevPage = '/new-listing-media-page.html';
+    base.nextPage = '/new-listing-submitted-page.html';
     this.base = base;
 }
 pl.implement(NewListingSubmitClass, {
@@ -24,7 +25,18 @@ pl.implement(NewListingSubmitClass, {
         }
     },
     bindEvents: function() {
-        this.base.bindNavButtons();
+        var self = this,
+            submitValidator = function() {
+                var msgs = [],
+                    pctcomplete = self.base.pctComplete();
+                if (pctcomplete !== 100) {
+                    msgs.push('You must complete all fields before submitting.');
+                }
+                return msgs;
+            },
+            previewurl = '/company-page.html?id=' + self.base.listing.listing_id + '&preview=true';
+        pl('#previewiframe').attr({src: previewurl});
+        this.base.bindNavButtons(submitValidator);
     }
 });
 

@@ -1,7 +1,7 @@
 function NewListingBaseClass() {
     var editableprops = [
             'title', 'category', 'mantra', 'website', 'address',
-            'summary', 'answer1', 'answer2', 'answer3', 'answer4', 'answer5', 'answer6', 'answer7', 'answer8', 'answer9', 'answer10', 'answer11', 'answer12', 'answer13',
+            'summary', 'answer1', 'answer2', 'answer3', 'answer4', 'answer5', 'answer6', 'answer7', 'answer8', 'answer9', 'answer10', 'answer11', 'answer12', 'answer13', 'answer14', 'answer15', 'answer16', 'answer17', 'answer18', 'answer19', 'answer20', 'answer21', 'answer22', 'answer23', 'answer24', 'answer25', 'answer26',
             'suggested_amt', 'suggested_pct', 'presentation_id', 'business_plan_id', 'financials_id',
             'logo', 'video'
         ],
@@ -37,7 +37,7 @@ pl.implement(NewListingBaseClass, {
             }
         };
     },
-    displayPctComplete: function() {
+    pctComplete: function() {
         var numprops = this.editableprops.length,
             filledprops = 0,
             pctcomplete,
@@ -50,7 +50,11 @@ pl.implement(NewListingBaseClass, {
             }
         } 
         pctcomplete = Math.floor(100 * filledprops / numprops);
-        pctwidth = Math.floor(626 * pctcomplete / 100) + 'px';
+        return pctcomplete;
+    },
+    displayPctComplete: function() {
+        var pctcomplete = this.pctComplete(),
+            pctwidth = Math.floor(626 * pctcomplete / 100) + 'px';
         pl('#boxsteppct').text(pctcomplete);
         pl('#boxstepn').css({width: pctwidth});
     },
@@ -94,7 +98,10 @@ pl.implement(NewListingBaseClass, {
             click: function() {
                 var validmsgs = nextValidator ? nextValidator() : self.validate();
                 if (validmsgs.length > 0) {
-                    pl('#newlistingmsg').addClass('errorcolor').html('Please correct: ' + validmsgs.join(' '));
+                    if (!pl('#newlistingmsg').hasClass('errorcolor')) {
+                        pl('#newlistingmsg').addClass('errorcolor');
+                    }
+                    pl('#newlistingmsg').html('Please correct: ' + validmsgs.join(' '));
                 }
                 else {
                     document.location = self.nextPage;

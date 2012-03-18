@@ -158,7 +158,7 @@ function AjaxClass(url, statusId, completeFunc, successFunc, loadFunc, errorFunc
             pl('#listingstatus').html('<span class="attention">Error: null response from server</span>');
             return;
         }
-        pl(self.statusSel).html('');
+        pl(self.statusSel).html('&nbsp;');
         self.completeFunc(json);
     };
     this.loadFunc = loadFunc || function() { pl(self.statusSel).html('<span class="inprogress">Loading...</span>'); };
