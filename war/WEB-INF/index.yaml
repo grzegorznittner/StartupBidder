@@ -176,6 +176,13 @@ indexes:
     - name: closingOn
       direction: desc
 
+- kind: Listing
+  ancestor: no
+  properties:
+    - name: state
+    - name: posted
+      direction: desc
+
 - kind: ListingStat
   ancestor: no
   properties:

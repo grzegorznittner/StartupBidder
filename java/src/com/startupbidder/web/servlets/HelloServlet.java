@@ -151,11 +151,12 @@ public class HelloServlet extends HttpServlet {
 			}
 			
 			out.println("<form method=\"POST\" action=\"/listing/post/.json\"><input type=\"submit\" value=\"Submits edited listing (sets POST status)\"/></form>");
+			out.println("<a href=\"/listings/posted/.json?max_results=6\">Posted listings (admins only)</a><br/>");
 			out.println("<form method=\"POST\" action=\"/listing/activate/" + topListing.getWebKey() + "/.json\"><input type=\"submit\" value=\"Activate top listing\"/></form>");
+			out.println("<a href=\"/listings/active/.json?max_results=6\">Active listings</a><br/>");
 			out.println("<form method=\"POST\" action=\"/listing/withdraw/" + topListing.getWebKey() + "/.json\"><input type=\"submit\" value=\"Withdraw top listing\"/></form>");
 			out.println("<a href=\"/listings/categories/.json\">All categories</a><br/>");
 			out.println("<a href=\"/listings/top/.json?max_results=6\">Top listings</a><br/>");
-			out.println("<a href=\"/listings/active/.json?max_results=6\">Active listings</a><br/>");
 			out.println("<a href=\"/listings/valuation/.json?max_results=6\">Top valued listings</a><br/>");
 			out.println("<a href=\"/listings/popular/.json?max_results=6\">Most popular listings</a><br/>");
 			out.println("<a href=\"/listings/latest/.json?max_results=6\">Latest listings</a><br/>");

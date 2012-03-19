@@ -36,7 +36,9 @@ import com.startupbidder.datamodel.UserStats;
 import com.startupbidder.datamodel.Vote;
 import com.startupbidder.vo.DtoToVoConverter;
 import com.startupbidder.vo.ErrorCodes;
+import com.startupbidder.vo.ListPropertiesVO;
 import com.startupbidder.vo.ListingAndUserVO;
+import com.startupbidder.vo.ListingListVO;
 import com.startupbidder.vo.ListingVO;
 import com.startupbidder.vo.UserVO;
 import com.startupbidder.web.ListingFacade;
@@ -304,6 +306,29 @@ public class AdminListingFacadeTest extends AdminFacadeAbstractTest {
 	}
 
 	@Test
+	public void testGetPostedListings() {
+		// logged in user
+		ListPropertiesVO listProps = new ListPropertiesVO();
+		ListingListVO list = ListingFacade.instance().getPostedListings(admin, listProps);
+		assertNotNull("Result should not be empty", list);
+		assertNotNull("Logged in user is admin, so list should not be empty", list.getListings());
+		assertSame("We should get failure", ErrorCodes.OK, list.getErrorCode());
+		List<ListingVO> listings = list.getListings();
+		checkListingsReturned(listings, listingList.get(8), listingList.get(9), listingList.get(10), listingList.get(14));
+		checkListingsNotReturned(listings, listingList.get(0), listingList.get(1), listingList.get(2), listingList.get(3),
+				listingList.get(4), listingList.get(5), listingList.get(6), listingList.get(7), listingList.get(11)
+				, listingList.get(12), listingList.get(13));
+		assertEquals("Number of result properly set", listings.size(), list.getListingsProperties().getNumberOfResults());
+		//assertEquals("Total result properly set", list.getListings().size(), list.getListingsProperties().getTotalResults());
+		assertTrue("Sorted by posted on property", listings.get(0).getPostedOn().getTime() >= listings.get(1).getPostedOn().getTime());
+		assertTrue("Sorted by posted on property", listings.get(1).getPostedOn().getTime() >= listings.get(2).getPostedOn().getTime());
+		assertTrue("Listing should be in POSTED state", Listing.State.POSTED.toString().equalsIgnoreCase(listings.get(0).getState()));
+		assertTrue("Listing should be in POSTED state", Listing.State.POSTED.toString().equalsIgnoreCase(listings.get(1).getState()));
+		assertTrue("Listing should be in POSTED state", Listing.State.POSTED.toString().equalsIgnoreCase(listings.get(2).getState()));
+		assertTrue("Listing should be in POSTED state", Listing.State.POSTED.toString().equalsIgnoreCase(listings.get(3).getState()));		
+	}
+	
+	@Test
 	public void testWithdrawListing() {
 		ListingVO listing = DtoToVoConverter.convert(super.listingList.get(11));
 		ListingVO withdrawnListing = ListingFacade.instance().withdrawListing(admin, listing.getId());
@@ -445,21 +470,4 @@ public class AdminListingFacadeTest extends AdminFacadeAbstractTest {
 		assertEquals(listing.getFinancialsId(), postedListing.getFinancialsId());
 	}
 	
-	@Test
-	public void testCreateListingDocument() {
-		fail("Not implemented");
-	}
-
-	@Test
-	public void testGetListingDocument() {
-		fail("Not implemented");
-	}
-	
-	@Test
-	public void testGetAllListingDocuments() {
-		// getAllListingDocuments should work only for admins
-		fail("Not implemented");
-	}
-
-
 }

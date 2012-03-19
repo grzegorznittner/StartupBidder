@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 import java.net.ServerSocket;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Handler;
@@ -354,6 +355,7 @@ public abstract class BaseFacadeAbstractTest {
 		listing.summary = RandomStringUtils.randomAlphabetic(64);
 		listing.owner = userKey;
 		listing.state = Listing.State.POSTED;
+		listing.posted = new Date();
 		listing.suggestedAmount = 400000;
 		listing.suggestedPercentage = 50;
 		listing.posted = now.minus(Days.days(1)).toDate();
@@ -364,6 +366,7 @@ public abstract class BaseFacadeAbstractTest {
 		listing.summary = RandomStringUtils.randomAlphabetic(64);
 		listing.owner = userKey;
 		listing.state = Listing.State.POSTED;
+		listing.posted = new Date();
 		listing.suggestedAmount = 400000;
 		listing.suggestedPercentage = 50;
 		listing.posted = now.minus(Days.days(3)).toDate();
@@ -374,6 +377,7 @@ public abstract class BaseFacadeAbstractTest {
 		listing.summary = RandomStringUtils.randomAlphabetic(64);
 		listing.owner = userKey;
 		listing.state = Listing.State.POSTED;
+		listing.posted = new Date();
 		listing.suggestedAmount = 400000;
 		listing.suggestedPercentage = 50;
 		listing.posted = now.minus(Days.days(5)).toDate();
@@ -417,6 +421,7 @@ public abstract class BaseFacadeAbstractTest {
 		listing.summary = RandomStringUtils.randomAlphabetic(64);
 		listing.owner = userKey2;
 		listing.state = Listing.State.POSTED;
+		listing.posted = new Date();
 		listing.suggestedAmount = 400000;
 		listing.suggestedPercentage = 50;
 		listing.posted = now.minus(Days.days(1)).toDate();

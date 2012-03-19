@@ -713,6 +713,25 @@ public class ListingFacade {
 	
 		return list;
 	}
+	
+	public ListingListVO getPostedListings(UserVO loggedInUser, ListPropertiesVO listingProperties) {
+		ListingListVO list = new ListingListVO();
+		if (loggedInUser == null || !loggedInUser.isAdmin()) {
+			list.setErrorCode(ErrorCodes.NOT_AN_ADMIN);
+			list.setErrorMessage("Only admins can see posted listings");
+			return list;
+		}
+		List<ListingVO> listings = DtoToVoConverter.convertListings(getDAO().getPostedListings(listingProperties));
+		int index = listingProperties.getStartIndex() > 0 ? listingProperties.getStartIndex() : 1;
+		for (ListingVO listing : listings) {
+			applyListingData(loggedInUser, listing);
+			listing.setOrderNumber(index++);
+		}
+		list.setListings(listings);		
+		list.setListingsProperties(listingProperties);
+	
+		return list;
+	}
 
 	/**
 	 * Returns active listings created by logged in user, sorted by listed on date

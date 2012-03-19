@@ -888,35 +888,22 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 	}
 	
 	@Test
-	public void testGetMostDiscussedActiveListings() {
-		fail("Not implemented");
+	public void testGetPostedListings() {
+		// logged in user
+		ListPropertiesVO listProps = new ListPropertiesVO();
+		ListingListVO list = ListingFacade.instance().getPostedListings(googleUserVO, listProps);
+		assertNotNull("Result should not be empty", list);
+		assertNull("Logged in user is not an admin, so list should be empty", list.getListings());
+		assertNotSame("We should get failure", ErrorCodes.OK, list.getErrorCode());
+		
+		// logged in user null, but this should not affect returned list
+		listProps = new ListPropertiesVO();
+		list = ListingFacade.instance().getPostedListings(null, listProps);
+		assertNotNull("Result should not be empty", list);
+		assertNull("Logged in user null, returned list should be null", list.getListings());
+		assertNotSame("We should get failure", ErrorCodes.OK, list.getErrorCode());
 	}
 	
-	@Test
-	public void testGetMostPopularActiveListings() {
-		fail("Not implemented");
-	}
-	
-	@Test
-	public void testGetMostValuedActiveListings() {
-		fail("Not implemented");
-	}
-
-	@Test
-	public void testGetTopActiveListings() {
-		fail("Not implemented");
-	}
-	
-	@Test
-	public void testLatestActiveListings() {
-		fail("Not implemented");
-	}
-	
-	@Test
-	public void testListingKeywordSearch() {
-		fail("Not implemented");
-	}
-
 	@Test
 	public void testCalculateListingStatisticsWithEmptyBidsCommentsAndVotes() {
 		DateTime beforeTest = new DateTime();
@@ -968,11 +955,6 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 	}
 
 	@Test
-	public void testCalculateListingStatisticsWithData() {
-		fail("Needs to be done");
-	}
-
-	@Test
 	public void testGetListingStatistics() {
 		DateTime beforeTest = new DateTime();
 		ListingStats stats = ListingFacade.instance().getListingStatistics(listingList.get(0).id);
@@ -1009,34 +991,4 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 		assertNull("We should get null for non existing listing", stats);
 	}
 
-	@Test
-	public void testUpdateAllListingStatistics() {
-		fail("Not implemented");
-	}
-
-	@Test
-	public void testCreateListingDocument() {
-		fail("Not implemented");
-	}
-
-	@Test
-	public void testGetListingDocument() {
-		fail("Not implemented");
-	}
-	
-	@Test
-	public void testGetAllListingDocuments() {
-		// getAllListingDocuments should work only for admins
-		fail("Not implemented");
-	}
-
-	@Test
-	public void testValueUpListing() {
-		fail("Not implemented");
-	}
-	
-	@Test
-	public void testPartialUpdateListing() {
-		fail("Not implemented");
-	}
 }

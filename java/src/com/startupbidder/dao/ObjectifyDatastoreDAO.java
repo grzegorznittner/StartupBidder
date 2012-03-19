@@ -645,6 +645,15 @@ public class ObjectifyDatastoreDAO {
 		listingProperties.setNumberOfResults(listings.size());
 		return listings;
 	}
+	
+	public List<Listing> getPostedListings(ListPropertiesVO listingProperties) {
+		QueryResultIterable<Key<Listing>> listingsIt = getOfy().query(Listing.class)
+				.filter("state =", Listing.State.POSTED)
+				.order("-posted").prefetchSize(listingProperties.getMaxResults()).fetchKeys();
+		List<Listing> listings = new ArrayList<Listing>(getOfy().get(listingsIt).values());
+		listingProperties.setNumberOfResults(listings.size());
+		return listings;
+	}
 
 	public List<Listing> getActiveListings(ListPropertiesVO listingProperties) {
 		QueryResultIterable<Key<Listing>> listingsIt = getOfy().query(Listing.class)
