@@ -639,44 +639,44 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 	@Test
 	public void testPostListing() {
 		ListingVO listing = DtoToVoConverter.convert(super.listingList.get(11));
-		ListingVO postedListing = ListingFacade.instance().postListing(googleUserVO, listing.getId());
-		assertNull("Withdrawn listing cannot be posted", postedListing);
+		ListingAndUserVO postedListing = ListingFacade.instance().postListing(googleUserVO, listing.getId());
+		assertNull("Withdrawn listing cannot be posted", postedListing.getListing());
 		
 		listing = DtoToVoConverter.convert(super.listingList.get(8));
 		postedListing = ListingFacade.instance().postListing(googleUserVO, listing.getId());
-		assertNull("Already posted listing cannot be posted", postedListing);
+		assertNull("Already posted listing cannot be posted", postedListing.getListing());
 
 		listing = DtoToVoConverter.convert(super.listingList.get(12));
 		postedListing = ListingFacade.instance().postListing(googleUserVO, listing.getId());
-		assertNull("Closed listing cannot be posted", postedListing);
+		assertNull("Closed listing cannot be posted", postedListing.getListing());
 
 		listing = DtoToVoConverter.convert(super.listingList.get(7));
 		postedListing = ListingFacade.instance().postListing(DtoToVoConverter.convert(userList.get(BIDDER1)), listing.getId());
-		assertNull("New listing, but user is not an owner", postedListing);
+		assertNull("New listing, but user is not an owner", postedListing.getListing());
 
 		listing = DtoToVoConverter.convert(super.listingList.get(7));
 		postedListing = ListingFacade.instance().postListing(googleUserVO, listing.getId());
-		assertNotNull("New listing can be posted", postedListing);
-		assertFalse("Activated listing should be a new instance of the object", listing == postedListing);
-		assertEquals("State should be POSTED", Listing.State.POSTED.toString(), postedListing.getState());
-		assertNotNull("Posted date should be set", postedListing.getPostedOn());
-		assertEquals(listing.getName(), postedListing.getName());
-		assertEquals(listing.getSummary(), postedListing.getSummary());
-		assertEquals(listing.getOwner(), postedListing.getOwner());
-		assertEquals(listing.getClosingOn(), postedListing.getClosingOn());
-		assertEquals(listing.getSuggestedAmount(), postedListing.getSuggestedAmount());
-		assertEquals(listing.getSuggestedPercentage(), postedListing.getSuggestedPercentage());
-		assertEquals(listing.getPresentationId(), postedListing.getPresentationId());
-		assertEquals(listing.getBuinessPlanId(), postedListing.getBuinessPlanId());
-		assertEquals(listing.getFinancialsId(), postedListing.getFinancialsId());
+		assertNotNull("New listing can be posted", postedListing.getListing());
+		assertFalse("Activated listing should be a new instance of the object", listing == postedListing.getListing());
+		assertEquals("State should be POSTED", Listing.State.POSTED.toString(), postedListing.getListing().getState());
+		assertNotNull("Posted date should be set", postedListing.getListing().getPostedOn());
+		assertEquals(listing.getName(), postedListing.getListing().getName());
+		assertEquals(listing.getSummary(), postedListing.getListing().getSummary());
+		assertEquals(listing.getOwner(), postedListing.getListing().getOwner());
+		assertEquals(listing.getClosingOn(), postedListing.getListing().getClosingOn());
+		assertEquals(listing.getSuggestedAmount(), postedListing.getListing().getSuggestedAmount());
+		assertEquals(listing.getSuggestedPercentage(), postedListing.getListing().getSuggestedPercentage());
+		assertEquals(listing.getPresentationId(), postedListing.getListing().getPresentationId());
+		assertEquals(listing.getBuinessPlanId(), postedListing.getListing().getBuinessPlanId());
+		assertEquals(listing.getFinancialsId(), postedListing.getListing().getFinancialsId());
 
 		listing = DtoToVoConverter.convert(super.listingList.get(4));
 		postedListing = ListingFacade.instance().postListing(googleUserVO, listing.getId());
-		assertNull("Active listing cannot be posted", postedListing);
+		assertNull("Active listing cannot be posted", postedListing.getListing());
 
 		listing = DtoToVoConverter.convert(super.listingList.get(5));
 		postedListing = ListingFacade.instance().postListing(googleUserVO, listing.getId());
-		assertNull("Active listing cannot be posted, additionally user is not an owner of the listing", postedListing);
+		assertNull("Active listing cannot be posted, additionally user is not an owner of the listing", postedListing.getListing());
 	}
 
 	@Test

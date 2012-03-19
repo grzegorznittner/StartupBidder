@@ -346,15 +346,21 @@ public class ListingFacade {
 	 * Action can be done only by listing owner.
 	 * Makes listing ready to be published on StartupBidder website, but t
 	 */
-	public ListingVO postListing(UserVO loggedInUser, String listingId) {
+	public ListingAndUserVO postListing(UserVO loggedInUser, String listingId) {
+		ListingAndUserVO returnValue = new ListingAndUserVO();
+		
 		Listing dbListing = getDAO().getListing(BaseVO.toKeyId(listingId));
 		if (loggedInUser == null || dbListing == null) {
 			log.log(Level.WARNING, "User " + loggedInUser + " is logged in or listing doesn't exist", new Exception("Not logged in"));
-			return null;
+			returnValue.setErrorMessage("User not logged in");
+			returnValue.setErrorCode(ErrorCodes.NOT_LOGGED_IN);
+			return returnValue;
 		}
 		if (!StringUtils.areStringsEqual(loggedInUser.getId(), dbListing.owner.getString())) {
 			log.log(Level.WARNING, "User '" + loggedInUser + "' is not an owner of listing " + dbListing, new Exception("Not listing owner"));
-			return null;
+			returnValue.setErrorMessage("User is not an owner of the listing");
+			returnValue.setErrorCode(ErrorCodes.NOT_AN_OWNER);
+			return returnValue;
 		}
 				
 		// only NEW listings can be posted
@@ -362,7 +368,9 @@ public class ListingFacade {
 			String logs = verifyListingsMandatoryFields(dbListing);
 			if (!StringUtils.isEmpty(logs)) {
 				log.log(Level.WARNING, "Listing validation error. " + logs, new Exception("Listing verification error"));
-				return null;
+				returnValue.setErrorMessage("Listing cannot be posted. " + logs);
+				returnValue.setErrorCode(ErrorCodes.ENTITY_VALIDATION);
+				return returnValue;
 			}
 			
 			ListingVO forUpdate = DtoToVoConverter.convert(dbListing);
@@ -376,10 +384,13 @@ public class ListingFacade {
 			}
 			ListingVO toReturn = DtoToVoConverter.convert(updatedListing);
 			applyListingData(loggedInUser, toReturn);
-			return toReturn;
+			returnValue.setListing(toReturn);
+			return returnValue;
 		}
 		log.log(Level.WARNING, "Only NEW listing can be marked as POSTED (state is " + dbListing.state + ")", new Exception("Not valid state"));
-		return null;
+		returnValue.setErrorMessage("Listing is not in NEW state.");
+		returnValue.setErrorCode(ErrorCodes.ENTITY_VALIDATION);
+		return returnValue;
 	}
 
 	private String verifyListingsMandatoryFields(Listing listing) {
@@ -863,16 +874,17 @@ public class ListingFacade {
 			return doc;
 		}
 		Listing listing = getDAO().getListing(BaseVO.toKeyId(loggedInUser.getEditedListing()));
-		BlobInfo logoInfo = new BlobInfoFactory().loadBlobInfo(doc.getBlob());
-		byte logo[] = blobstoreService.fetchData(doc.getBlob(), 0, logoInfo.getSize() - 1);
-		if (setLogoBase64(listing, logo) == null) {
-			blobstoreService.delete(doc.getBlob());
-			doc.setErrorCode(ErrorCodes.ENTITY_VALIDATION);
-			doc.setErrorMessage("Image conversion error.");
-			return doc;
+		if (ListingDoc.Type.valueOf(doc.getType()) == ListingDoc.Type.LOGO) {
+			BlobInfo logoInfo = new BlobInfoFactory().loadBlobInfo(doc.getBlob());
+			byte logo[] = blobstoreService.fetchData(doc.getBlob(), 0, logoInfo.getSize() - 1);
+			if (setLogoBase64(listing, logo) == null) {
+				blobstoreService.delete(doc.getBlob());
+				doc.setErrorCode(ErrorCodes.ENTITY_VALIDATION);
+				doc.setErrorMessage("Image conversion error.");
+				return doc;
+			}
 		}
 		ListingDoc docDTO = VoToModelConverter.convert(doc);
-		docDTO.created = new Date();
 		docDTO = getDAO().createListingDocument(docDTO);
 		doc = DtoToVoConverter.convert(docDTO);
 		

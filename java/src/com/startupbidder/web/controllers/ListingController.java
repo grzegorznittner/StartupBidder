@@ -83,7 +83,9 @@ public class ListingController extends ModelDrivenController {
 				return updateField(request);
 			} else if("up".equalsIgnoreCase(getCommand(1))) {
 				return up(request);
-			}  else if("activate".equalsIgnoreCase(getCommand(1))) {
+			} else if("post".equalsIgnoreCase(getCommand(1))) {
+				return post(request);
+			} else if("activate".equalsIgnoreCase(getCommand(1))) {
 				return activate(request);
 			} else if("withdraw".equalsIgnoreCase(getCommand(1))) {
 				return withdraw(request);
@@ -310,9 +312,16 @@ public class ListingController extends ModelDrivenController {
 
     // GET /listings/activate
     private HttpHeaders activate(HttpServletRequest request) {
-    	String listingId = getCommandOrParameter(request, 2, "id");
-    	model = ListingFacade.instance().activateListing(getLoggedInUser(), listingId);
+    	//String listingId = getCommandOrParameter(request, 2, "id");
+    	model = ListingFacade.instance().activateListing(getLoggedInUser(), getLoggedInUser().getEditedListing());
         return new HttpHeadersImpl("activate").disableCaching();
+    }
+
+    // GET /listings/activate
+    private HttpHeaders post(HttpServletRequest request) {
+    	//String listingId = getCommandOrParameter(request, 2, "id");
+    	model = ListingFacade.instance().postListing(getLoggedInUser(), getLoggedInUser().getEditedListing());
+        return new HttpHeadersImpl("post").disableCaching();
     }
 
     // GET /listings/withdrawn

@@ -35,6 +35,7 @@ import com.startupbidder.datamodel.SystemProperty;
 import com.startupbidder.datamodel.UserStats;
 import com.startupbidder.datamodel.Vote;
 import com.startupbidder.vo.DtoToVoConverter;
+import com.startupbidder.vo.ErrorCodes;
 import com.startupbidder.vo.ListingAndUserVO;
 import com.startupbidder.vo.ListingVO;
 import com.startupbidder.vo.UserVO;
@@ -266,28 +267,40 @@ public class AdminListingFacadeTest extends AdminFacadeAbstractTest {
 	@Test
 	public void testPostListing() {
 		ListingVO listing = DtoToVoConverter.convert(super.listingList.get(11));
-		ListingVO postedListing = ListingFacade.instance().postListing(admin, listing.getId());
-		assertNull("Withdrawn listing cannot not be posted", postedListing);
+		ListingAndUserVO postedListing = ListingFacade.instance().postListing(admin, listing.getId());
+		assertNotNull(postedListing);
+		assertNotSame("We should get failure", ErrorCodes.OK, postedListing.getErrorCode());
+		assertNull("Withdrawn listing cannot not be posted", postedListing.getListing());
 		
 		listing = DtoToVoConverter.convert(super.listingList.get(8));
 		postedListing = ListingFacade.instance().postListing(admin, listing.getId());
-		assertNull("Already posted listing cannot be posted", postedListing);
+		assertNotNull(postedListing);
+		assertNotSame("We should get failure", ErrorCodes.OK, postedListing.getErrorCode());
+		assertNull("Already posted listing cannot be posted", postedListing.getListing());
 
 		listing = DtoToVoConverter.convert(super.listingList.get(12));
 		postedListing = ListingFacade.instance().postListing(admin, listing.getId());
-		assertNull("Closed listing cannot be posted", postedListing);
+		assertNotNull(postedListing);
+		assertNotSame("We should get failure", ErrorCodes.OK, postedListing.getErrorCode());
+		assertNull("Closed listing cannot be posted", postedListing.getListing());
 
 		listing = DtoToVoConverter.convert(super.listingList.get(7));
 		postedListing = ListingFacade.instance().postListing(admin, listing.getId());
-		assertNull("New listing, but user is not an owner", postedListing);
+		assertNotNull(postedListing);
+		assertNotSame("We should get failure", ErrorCodes.OK, postedListing.getErrorCode());
+		assertNull("New listing, but user is not an owner", postedListing.getListing());
 
 		listing = DtoToVoConverter.convert(super.listingList.get(5));
 		postedListing = ListingFacade.instance().postListing(admin, listing.getId());
-		assertNull("Active listings cannot be posted", postedListing);
+		assertNotNull(postedListing);
+		assertNotSame("We should get failure", ErrorCodes.OK, postedListing.getErrorCode());
+		assertNull("Active listings cannot be posted", postedListing.getListing());
 
 		listing = DtoToVoConverter.convert(super.listingList.get(6));
 		postedListing = ListingFacade.instance().postListing(admin, listing.getId());
-		assertNull("Active listing cannot be posted", postedListing);
+		assertNotNull(postedListing);
+		assertNotSame("We should get failure", ErrorCodes.OK, postedListing.getErrorCode());
+		assertNull("Active listing cannot be posted", postedListing.getListing());
 	}
 
 	@Test
