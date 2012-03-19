@@ -77,7 +77,7 @@ pl.implement(NewListingFinancialsClass, {
                 return function() {
                     var iframe = pl(iframesel).get(0).contentDocument.body.innerHTML,
                         uploadurlmatch = iframe.match(/upload_url.*(https?:\/\/.*\/upload\/[A-Za-z0-9]*).*upload_url/),
-                        valmatch = iframe.match(/value&gt;(.*)&lt;value/),
+                        valmatch = iframe.match(/value&gt;(.*)&lt;\/value/),
                         uploadurl = uploadurlmatch && uploadurlmatch.length === 2 ? uploadurlmatch[1] : null,
                         val = valmatch && valmatch.length === 2 ? valmatch[1] : null;
                     if (uploadurl) {
