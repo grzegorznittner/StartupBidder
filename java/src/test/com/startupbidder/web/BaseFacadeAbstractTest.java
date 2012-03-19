@@ -2,7 +2,10 @@ package test.com.startupbidder.web;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
+import java.io.File;
+import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.ConsoleHandler;
@@ -48,11 +51,38 @@ import com.startupbidder.vo.UserVO;
 import com.startupbidder.web.UserMgmtFacade;
 
 public abstract class BaseFacadeAbstractTest {
+	private static final Logger log = Logger.getLogger(BaseFacadeAbstractTest.class.getName());
+	
 	protected LocalServiceTestHelper helper = new LocalServiceTestHelper(new LocalTaskQueueTestConfig(),
 			new LocalUserServiceTestConfig(),
 			new LocalDatastoreServiceTestConfig().setNoStorage(true))
 				.setEnvIsAdmin(false).setEnvIsLoggedIn(true)
 				.setEnvEmail("user@startupbidder.com").setEnvAuthDomain("google.com");
+	
+	private int nanoHttpdPort = 0;
+	private NanoHTTPD nanoHttpd;
+	
+	void setupNanoHttpd() {
+		try {
+			File docs = new File("tests/test-docs/calc.xls");
+			log.log(Level.INFO, "Doc file: " + docs.getAbsoluteFile());
+			log.log(Level.INFO, "Doc folder: " + docs.getParentFile().getAbsolutePath() + ", is dir: " + docs.getParentFile().isDirectory());
+			nanoHttpd = new NanoHTTPD(nanoHttpdPort, docs.getParentFile());
+			nanoHttpdPort = nanoHttpd.getLocalPort();
+			log.log(Level.INFO, "NanoHTTPD is running on port " + nanoHttpdPort);
+		} catch (Exception e) {
+			log.log(Level.SEVERE, "Error while starting NanoHTTPD", e);
+			assertTrue("NanoHTTPD cannot be started!", false);
+		}
+	}
+	
+	void tearDownNanoHttpd() {
+		nanoHttpd.stop();
+	}
+
+	String getTestDocUrl(String resource) {
+		return "http://127.0.0.1:" + nanoHttpdPort + "/" + resource; 
+	}
 	
 	protected User googleUser = null;
 	protected List<SBUser> userList = null;

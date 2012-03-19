@@ -2,9 +2,12 @@ package test.com.startupbidder.web;
 
 import static org.junit.Assert.*;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.commons.lang.RandomStringUtils;
@@ -13,7 +16,9 @@ import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExternalResource;
 
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
@@ -57,10 +62,12 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 		
 		setupUsers();
 		setupListings();
+		setupNanoHttpd();
 	}
 	
 	@After
 	public void tearDown() {
+		tearDownNanoHttpd();
 		helper.tearDown();
 	}
 	
@@ -153,6 +160,40 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 	}
 	
 	@Test
+	public void testUpdateLargeLogoUrlListingProperty() {
+		ListingAndUserVO userListing = ListingFacade.instance().createListing(googleUserVO);
+		assertEquals("We should get OK, we got " + userListing.getErrorMessage(), ErrorCodes.OK, userListing.getErrorCode());
+		assertEquals(userListing.getListing().getId(), googleUserVO.getEditedListing());
+
+		// set large logo url as jpg
+		List<ListingPropertyVO> props = new ArrayList<ListingPropertyVO>();
+		props.add(new ListingPropertyVO("logo_url", getTestDocUrl("300x300.jpg")));
+		ListingAndUserVO update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
+		assertEquals("We should get OK, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
+		assertNotNull("base64logo should be set", update.getListing().getLogo());
+		assertTrue("JPG uploaded so data uri should have image/jpeg", update.getListing().getLogo().startsWith("data:image/jpeg;base64,"));
+		assertTrue("Data uri should be less than 32k", update.getListing().getLogo().length() < 32 * 1024);
+
+		// set large logo url as gif
+		props = new ArrayList<ListingPropertyVO>();
+		props.add(new ListingPropertyVO("logo_url", getTestDocUrl("300x300.gif")));
+		update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
+		assertEquals("We should get OK, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
+		assertNotNull("base64logo should be set", update.getListing().getLogo());
+		assertTrue("GIF uploaded so data uri should have image/jpeg", update.getListing().getLogo().startsWith("data:image/gif;base64,"));
+		assertTrue("Data uri should be less than 32k", update.getListing().getLogo().length() < 32 * 1024);
+
+		// set large logo url as png
+		props = new ArrayList<ListingPropertyVO>();
+		props.add(new ListingPropertyVO("logo_url", getTestDocUrl("300x300.png")));
+		update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
+		assertEquals("We should get OK, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
+		assertNotNull("base64logo should be set", update.getListing().getLogo());
+		assertTrue("PNG uploaded so data uri should have image/jpeg", update.getListing().getLogo().startsWith("data:image/png;base64,"));
+		assertTrue("Data uri should be less than 32k", update.getListing().getLogo().length() < 32 * 1024);
+	}
+	
+	@Test
 	public void testUpdateLogoUrlListingProperty() {
 		ListingAndUserVO userListing = ListingFacade.instance().createListing(googleUserVO);
 		assertEquals("We should get OK, we got " + userListing.getErrorMessage(), ErrorCodes.OK, userListing.getErrorCode());
@@ -161,7 +202,7 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 		
 		// set logo url with non image url
 		List<ListingPropertyVO> props = new ArrayList<ListingPropertyVO>();
-		props.add(new ListingPropertyVO("logo_url", "http://localhost:1081/vodafonelive/us/dev/lite/cre_lite/appserver/idserver-domain/applications/test.war/img/mid_info.wav"));
+		props.add(new ListingPropertyVO("logo_url", getTestDocUrl("business_plan.ppt")));
 		ListingAndUserVO update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
 		assertNotSame("We should get failure", ErrorCodes.OK, update.getErrorCode());
 		assertNotNull("Even for failure we should get listing", update.getListing());
@@ -177,12 +218,12 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 		
 		// set logo url
 		props = new ArrayList<ListingPropertyVO>();
-		props.add(new ListingPropertyVO("logo_url", "http://localhost:1081/vodafonelive/us/dev/lite/cre_lite/appserver/idserver-domain/applications/test.war/img/heidi1.jpg"));
+		props.add(new ListingPropertyVO("logo_url", getTestDocUrl("80x50.jpg")));
 		update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
 		assertEquals("We should get OK, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
 		assertNotNull("base64logo should be set", update.getListing().getLogo());
 		assertTrue("JPEG uploaded so data uri should have image/jpeg", update.getListing().getLogo().startsWith("data:image/jpeg;base64,"));
-		//assertTrue("Data uri should be less than 64k", update.getListing().getLogo().length() < 64 * 1024);
+		assertTrue("Data uri should be less than 64k", update.getListing().getLogo().length() < 32 * 1024);
 		assertEquals(listing.getName(), update.getListing().getName());
 		assertEquals(listing.getId(), update.getListing().getId());
 		assertEquals(listing.getMantra(), update.getListing().getMantra());
@@ -196,21 +237,21 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 
 		// set logo url as gif
 		props = new ArrayList<ListingPropertyVO>();
-		props.add(new ListingPropertyVO("logo_url", "http://localhost:1081/vodafonelive/us/dev/lite/cre_lite/appserver/idserver-domain/applications/test.war/img/heidi1.gif"));
+		props.add(new ListingPropertyVO("logo_url", getTestDocUrl("80x50.gif")));
 		update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
 		assertEquals("We should get OK, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
 		assertNotNull("base64logo should be set", update.getListing().getLogo());
 		assertTrue("GIF uploaded so data uri should have image/jpeg", update.getListing().getLogo().startsWith("data:image/gif;base64,"));
-		//assertTrue("Data uri should be less than 32k", update.getListing().getLogo().length() < 32 * 1024);
+		assertTrue("Data uri should be less than 32k", update.getListing().getLogo().length() < 32 * 1024);
 
 		// set logo url as png
 		props = new ArrayList<ListingPropertyVO>();
-		props.add(new ListingPropertyVO("logo_url", "http://localhost:1081/vodafonelive/us/dev/lite/cre_lite/appserver/idserver-domain/applications/test.war/img/heidi1.png"));
+		props.add(new ListingPropertyVO("logo_url", getTestDocUrl("80x50.png")));
 		update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
 		assertEquals("We should get OK, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
 		assertNotNull("base64logo should be set", update.getListing().getLogo());
-		assertTrue("PNG uploaded so data uri should have image/jpeg", update.getListing().getLogo().startsWith("data:image/png;base64,"));
-		//assertTrue("Data uri should be less than 32k", update.getListing().getLogo().length() < 32 * 1024);
+		assertTrue("PNG uploaded so data uri should have image/png", update.getListing().getLogo().startsWith("data:image/png;base64,"));
+		assertTrue("Data uri should be less than 32k", update.getListing().getLogo().length() < 32 * 1024);
 
 		// set logo url with invalid url
 		String previousLogo = update.getListing().getLogo();
@@ -239,7 +280,7 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 
 		// set business plan with valid url
 		props = new ArrayList<ListingPropertyVO>();
-		props.add(new ListingPropertyVO("business_plan_url", "http://localhost:1081/vodafonelive/us/dev/lite/cre_lite/appserver/idserver-domain/applications/test.war/img/heidi1.jpg"));
+		props.add(new ListingPropertyVO("business_plan_url", getTestDocUrl("resume.doc")));
 		update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
 		assertEquals("We should get OK, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
 		assertNotNull("Business plan should be set", update.getListing().getBuinessPlanId());
@@ -272,7 +313,7 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 
 		// set business plan with valid url
 		props = new ArrayList<ListingPropertyVO>();
-		props.add(new ListingPropertyVO("presentation_url", "http://localhost:1081/vodafonelive/us/dev/lite/cre_lite/appserver/idserver-domain/applications/test.war/img/heidi1.jpg"));
+		props.add(new ListingPropertyVO("presentation_url", getTestDocUrl("business_plan.ppt")));
 		update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
 		assertEquals("We should get OK, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
 		assertNotNull("Presentation should be set", update.getListing().getPresentationId());
@@ -305,7 +346,7 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 
 		// set financials with valid url
 		props = new ArrayList<ListingPropertyVO>();
-		props.add(new ListingPropertyVO("financials_url", "http://localhost:1081/vodafonelive/us/dev/lite/cre_lite/appserver/idserver-domain/applications/test.war/img/heidi1.jpg"));
+		props.add(new ListingPropertyVO("financials_url", getTestDocUrl("calc.xls")));
 		update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
 		assertEquals("We should get OK, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
 		assertNotNull("Financials should be set", update.getListing().getFinancialsId());

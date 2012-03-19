@@ -10,6 +10,7 @@
   <property name="java-src" value="java/src"/>
   <property name="test-classes" value="tests/classes"/>
   <property name="test-reports" value="tests/reports"/>
+  <property name="test-docs" value="tests/test-docs"/>
 
   <target name="check-appengine-home" unless="env.APPENGINE_HOME">
   	<echo message="Set \'APPENGINE_HOME\' environment variable to folder where you installed AppEngine SDK."/> 
@@ -112,6 +113,7 @@
 	    <junit printsummary="withOutAndErr" fork="yes" >
 	    	<classpath refid="project.classpath" />
 	    	<classpath path="${test-classes}"/>
+	    	<classpath path="${test-docs}"/>
 	        <batchtest todir="${test-reports}">
 	        	<formatter type="xml"/>
 	            <fileset dir="${test-classes}">
@@ -135,6 +137,7 @@
 	    <junit printsummary="withOutAndErr" fork="yes">
 	        <classpath refid="project.classpath" />
 	    	<classpath path="${test-classes}"/>
+	    	<classpath path="${test-docs}"/>
 	        <batchtest todir="${test-reports}">
 	        	<formatter type="xml"/>
 	            <fileset dir="${test-classes}">

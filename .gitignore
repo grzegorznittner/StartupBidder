@@ -9,7 +9,9 @@ old
 myoldlibs
 html5-boilerplate/intermediate
 html5-boilerplate/publish
-tests
+tests/classes
+tests/reports
+tests/local_db.bin
 war/.settings
 war/css
 war/js
