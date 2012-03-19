@@ -13,8 +13,8 @@ pl.implement(NewListingSubmitClass, {
                 header.setLogin(json);
                 self.base.store(listing);
                 self.display();
-            };
-        ajax = new AjaxClass('/listings/create', 'newlistingmsg', completeFunc);
+            },
+            ajax = new AjaxClass('/listings/create', 'newlistingmsg', completeFunc);
         ajax.setPost();
         ajax.call();
     },
@@ -24,6 +24,16 @@ pl.implement(NewListingSubmitClass, {
             this.bound = true;
         }
     },
+    postListing: function() {
+        var self = this,
+            completeFunc = function(json) {
+                document.location = self.base.nextPage;
+            },
+            // FIXME - add error class to handle error_msg field
+            ajax = new AjaxClass('/listing/post', 'newlistingmsg', completeFunc);
+        ajax.setPost();
+        ajax.call();
+    },
     bindEvents: function() {
         var self = this,
             submitValidator = function() {
@@ -31,6 +41,10 @@ pl.implement(NewListingSubmitClass, {
                     pctcomplete = self.base.pctComplete();
                 if (pctcomplete !== 100) {
                     msgs.push('You must complete all fields before submitting.');
+                }
+                else {
+                    msgs.push('Submitting listing...');
+                    self.postListing();
                 }
                 return msgs;
             },
