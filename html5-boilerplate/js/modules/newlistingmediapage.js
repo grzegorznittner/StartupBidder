@@ -87,6 +87,7 @@ pl.implement(NewListingMediaClass, {
         pl('#LOGO').bind({
             change: function() {
                 pl('#logouploadform').get(0).submit();
+                return false;
             }
         });
         pl('#logoloadurlbutton').bind({

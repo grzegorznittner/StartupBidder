@@ -5,7 +5,6 @@ function ListingPageClass() {
 };
 pl.implement(ListingPageClass,{
     loadPage: function() {
-        console.log('preview',this.preview);
         if (this.preview) {
             this.loadPreview();
         }

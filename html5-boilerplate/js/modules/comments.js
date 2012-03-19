@@ -39,6 +39,7 @@ pl.implement(CommentsClass, {
                     pl('#addcommenttext').addClass('edited');
                     pl('#addcommentmsg').html('&nbsp;');
                 }
+                return false;
             },
             blur: function() {
                 if (!pl('#addcommenttext').hasClass('edited')) {

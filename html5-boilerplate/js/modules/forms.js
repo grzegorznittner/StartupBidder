@@ -361,14 +361,14 @@ pl.implement(FieldBaseClass, {
     getLoadFunc: function() {
         var self = this;
         return function() {
-            self.msg.show('inprogress', 'Saving changes to server...');
+            self.msg.show('inprogress', 'Saving changes...');
         };
     },
     getErrorFunc: function(displayFunc) {
         var self = this;
         return function(errorNum) {
             displayFunc();
-            self.msg.show('attention', 'Error saving changes to server: ' + errorNum);
+            self.msg.show('attention', 'Error saving changes: ' + errorNum);
         };
     },
     getSuccessFunc: function() {
@@ -376,7 +376,7 @@ pl.implement(FieldBaseClass, {
         self = this;
         newval = self.value;
         return function() {
-            self.msg.show('successful', 'Saved changes to server');
+            self.msg.show('successful', 'Saved changes');
             self.value = newval;
         };
     },
@@ -414,6 +414,7 @@ pl.implement(CheckboxFieldClass, {
         onchange = function() {
             var changeKey = self.fieldBase.id,
                 newval = pl(self.fieldBase.sel).attr('checked'),
+                msg;
                 msg = self.fieldBase.validator.validate(newval);
             if (msg === 0) {
                 self.fieldBase.updateFunction({ changeKey: newval }, self.fieldBase.getLoadFunc(), self.fieldBase.getErrorFunc(self.getDisplayFunc()), self.fieldBase.getSuccessFunc());
@@ -421,6 +422,7 @@ pl.implement(CheckboxFieldClass, {
             else {
                 self.msg.show('attention', msg);
             }
+            return false;
         }
         pl(self.fieldBase.sel).bind({
             change: onchange
@@ -483,8 +485,7 @@ pl.implement(SelectFieldClass, {
     },
     bindEvents: function() {
         var self = this,
-            genonchange = function() {
-                return function() {
+            onchange = function() {
                 var icon = new ValidIconClass(self.fieldBase.id + 'icon'),
                     changeKey = self.fieldBase.id,
                     newval = self.getValue(),
@@ -501,10 +502,10 @@ pl.implement(SelectFieldClass, {
                     icon.showValid();
                 }
                 self.fieldBase.updateFunction({ changeKey: newval }, self.fieldBase.getLoadFunc(), self.fieldBase.getErrorFunc(self.getDisplayFunc()), self.fieldBase.getSuccessFunc());
-                };
+                return false;
             };
         pl(self.fieldBase.sel).bind({
-            change: genonchange()
+            change: onchange
         });
     }
 });
@@ -535,21 +536,23 @@ pl.implement(TextFieldClass, {
             icon = new ValidIconClass(self.fieldBase.id + 'icon'),
             safeStr = new SafeStringClass(),
             sel = self.fieldBase.sel;
-            onchange = function() {
+            onchange = function(event) {
                 var newval, validMsg;
                 newval = safeStr.htmlEntities(pl(sel).attr('value'));
                 validMsg = self.fieldBase.validator.validate(newval);
                 if (validMsg !== 0) {
                     self.fieldBase.msg.show('attention', validMsg);
                     icon.showInvalid();
-                    return;
                 }
-                if (!self.fieldBase.msg.isClear) {
-                    self.fieldBase.msg.clear();
+                else {
+                    if (!self.fieldBase.msg.isClear) {
+                        self.fieldBase.msg.clear();
+                    }
+                    if (!icon.isValid) {
+                        icon.showValid();
+                    }
                 }
-                if (!icon.isValid) {
-                    icon.showValid();
-                }
+                return false;
             },
             onfocus = function() {
                 var domval = pl(sel).attr('value');

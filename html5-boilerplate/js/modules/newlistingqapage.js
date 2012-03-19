@@ -63,14 +63,12 @@ pl.implement(NewListingQAClass, {
         for (i = 0; i < answerFields.length; i++) {
             idx = 1 + i;
             id = 'answer' + idx;
-            console.log('id',id,i,answerFields[i]);
             textFields.push(id);
             displayName[id] = answerFields[i];
         }
         for (i = 0; i < textFields.length; i++) {
             id = textFields[i];
             field = new TextFieldClass(id, this.base.listing[id], this.base.getUpdater(id), 'newlistingmsg');
-            console.log('field',i,id,displayName[id]);
             field.fieldBase.setDisplayName(displayName[id].toUpperCase());
             field.fieldBase.addValidator(ValidatorClass.prototype.makeLengthChecker(5, 1000));
             field.fieldBase.validator.postValidator = this.base.genDisplayCalculatedIfValid(field);

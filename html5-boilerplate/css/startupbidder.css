@@ -244,6 +244,7 @@ background: linear-gradient(top, #dcd8db 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .addcommentmsg { height: 20px; margin-left: 5px; font-weight: bold; }
 .addmessagemsg { height: 20px; margin-left: 5px; font-weight: bold; }
 .newlistingmsg { float: left; margin-right; 10px; padding-left: 116px; width: 420px; height: 85px; font-weight: bold; overflow: auto; }
+.newlistingaskmsg { margin-left: 10px; }
 .newlistingmsgsmall { float: left; margin-right; 10px; padding-left: 116px; width: 420px; height: 25px; font-weight: bold; }
 .companylistingstats { position: absolute; bottom: 0; }
 .boxpanel p { margin: 5px 10px 10px 10px; text-indent: 0px; font-weight: bold; }

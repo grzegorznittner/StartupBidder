@@ -95,6 +95,7 @@ pl.implement(NewListingFinancialsClass, {
                 var formsel = '#' + id + 'uploadform';
                 return function() {
                     pl(formsel).get(0).submit();
+                    return false;
                 };
             },
             genURLUpload = function(id, field) {

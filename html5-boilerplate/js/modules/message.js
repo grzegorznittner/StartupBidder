@@ -16,7 +16,8 @@ function MessageClass(listing_id, loggedin_profile_id) {
             if (!pl('#addmessagetext').hasClass('edited')) {
                 pl('#addmessagetext').addClass('edited');
                 pl('#addmessagemsg').html('&nbsp;');
-        }
+            }
+            return false;
         },
         blur: function() {
             if (!pl('#addmessagetext').hasClass('edited')) {
