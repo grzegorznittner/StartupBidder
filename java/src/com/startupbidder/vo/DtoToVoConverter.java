@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.datanucleus.util.StringUtils;
+
 import com.googlecode.objectify.Key;
 import com.startupbidder.datamodel.Bid;
 import com.startupbidder.datamodel.Comment;
@@ -82,11 +84,23 @@ public class DtoToVoConverter {
 		listing.setVideo(listingDTO.videoUrl);
 		listing.setSummary(listingDTO.summary);
 		listing.setMantra(listingDTO.mantra);
+		listing.setWebsite(listingDTO.website);
+		listing.setCategory(listingDTO.category);
+
 		listing.setAddress(listingDTO.address);
 		listing.setLatitude(listingDTO.latitude);
 		listing.setLongitude(listingDTO.longitude);
-		listing.setWebsite(listingDTO.website);
-		listing.setCategory(listingDTO.category);
+		String briefAddress = "";
+		if (!StringUtils.isEmpty(listingDTO.country)) {
+			briefAddress = listingDTO.country;
+		}
+		if (!StringUtils.isEmpty(listingDTO.usState)) {
+			briefAddress = listingDTO.usState + ", " + briefAddress;
+		}
+		if (!StringUtils.isEmpty(listingDTO.city)) {
+			briefAddress = listingDTO.city + ", " + briefAddress;
+		}
+		listing.setBriefAddress(briefAddress);
 		
 		listing.setAnswer1(listingDTO.answer1);
 		listing.setAnswer2(listingDTO.answer2);

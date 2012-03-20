@@ -57,6 +57,7 @@ public class ListingVO extends BaseVO {
 	@JsonProperty("profile_username") private String ownerName;
 	@JsonProperty("contact_email") private String contactEmail;
 	@JsonProperty("address") private String address;
+	@JsonProperty("brief_address") private String briefAddress;
 	@JsonProperty("latitude") private Double latitude;
 	@JsonProperty("longitude") private Double longitude;
 	@JsonProperty("num_comments") private long numberOfComments;
@@ -655,5 +656,13 @@ public class ListingVO extends BaseVO {
 
 	public void setLongitude(Double longitude) {
 		this.longitude = longitude;
+	}
+
+	public String getBriefAddress() {
+		return briefAddress;
+	}
+
+	public void setBriefAddress(String briefAddress) {
+		this.briefAddress = briefAddress;
 	}
 }
