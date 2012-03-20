@@ -95,6 +95,8 @@ public class VoToModelConverter {
 		listing.website = listingVO.getWebsite();
 		listing.category = listingVO.getCategory();
 		listing.address = listingVO.getAddress();
+		listing.latitude = listingVO.getLatitude();
+		listing.longitude = listingVO.getLongitude();
 		
 		listing.answer1 = listingVO.getAnswer1();
 		listing.answer2 = listingVO.getAnswer2();
@@ -139,6 +141,16 @@ public class VoToModelConverter {
 			listing.category = property.getPropertyValue();
 		} else if (name.equalsIgnoreCase("address")) {
 			listing.address = property.getPropertyValue();
+		} else if (name.equalsIgnoreCase("latitude")) {
+			listing.latitude = NumberUtils.toDouble(property.getPropertyValue());
+		} else if (name.equalsIgnoreCase("longitude")) {
+			listing.longitude = NumberUtils.toDouble(property.getPropertyValue());
+		} else if (name.equalsIgnoreCase("country")) {
+			listing.country = property.getPropertyValue();
+		} else if (name.equalsIgnoreCase("state")) {
+			listing.usState = property.getPropertyValue();
+		} else if (name.equalsIgnoreCase("city")) {
+			listing.city = property.getPropertyValue();
 		} else if (name.equalsIgnoreCase("asked_fund")) {
 			listing.askedForFunding = BooleanUtils.toBoolean(property.getPropertyValue());
 		} else if (name.equalsIgnoreCase("suggested_amt")) {

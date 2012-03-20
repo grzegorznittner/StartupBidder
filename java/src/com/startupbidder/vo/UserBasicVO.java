@@ -4,6 +4,9 @@ import org.codehaus.jackson.annotate.JsonAutoDetect;
 import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+
+import com.startupbidder.util.LowecaseSerializer;
 
 /**
  * 
@@ -19,6 +22,7 @@ public class UserBasicVO extends BaseVO {
 	@JsonProperty("email") private String email;
 	@JsonProperty("investor") private boolean accreditedInvestor;
 	@JsonProperty("edited_listing") private String editedListing;
+	@JsonProperty("edited_status")	@JsonSerialize(using=LowecaseSerializer.class) private String editedStatus;
 	@JsonProperty("num_notifications") private long numberOfNotifications;
 	@JsonProperty("votable") private boolean votable;
 	@JsonProperty("mockData") private boolean mockData;
@@ -89,12 +93,10 @@ public class UserBasicVO extends BaseVO {
 	public void setEditedListing(String editedListing) {
 		this.editedListing = editedListing;
 	}
-	@Override
-	public String toString() {
-		return "UserBasicVO [id=" + id + ", nickname=" + nickname + ", name="
-				+ name + ", email=" + email + ", accreditedInvestor="
-				+ accreditedInvestor + ", editedListing=" + editedListing
-				+ ", numberOfNotifications=" + numberOfNotifications
-				+ ", votable=" + votable + ", mockData=" + mockData + "]";
+	public String getEditedStatus() {
+		return editedStatus;
+	}
+	public void setEditedStatus(String editedStatus) {
+		this.editedStatus = editedStatus;
 	}
 }

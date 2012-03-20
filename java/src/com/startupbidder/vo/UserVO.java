@@ -32,6 +32,7 @@ public class UserVO extends BaseVO {
 	@JsonProperty("investor") private boolean accreditedInvestor;
 	@JsonProperty("notify_enabled") private boolean notifyEnabled;
 	@JsonProperty("edited_listing") private String editedListing;
+	@JsonProperty("edited_status")	@JsonSerialize(using=LowecaseSerializer.class) private String editedStatus;
 	@JsonProperty("joined_date")
 	@JsonSerialize(using=DateSerializer.class) private Date   joined;
 	@JsonProperty("last_login")
@@ -208,22 +209,10 @@ public class UserVO extends BaseVO {
 	public void setEditedListing(String editedListing) {
 		this.editedListing = editedListing;
 	}
-	@Override
-	public String toString() {
-		return "UserVO [orderNumber=" + orderNumber + ", id=" + id
-				+ ", nickname=" + nickname + ", name=" + name + ", email="
-				+ email + ", location=" + location + ", phone=" + phone
-				+ ", accreditedInvestor=" + accreditedInvestor
-				+ ", notifyEnabled=" + notifyEnabled + ", editedListing="
-				+ editedListing + ", joined=" + joined + ", lastLoggedIn="
-				+ lastLoggedIn + ", modified=" + modified
-				+ ", numberOfListings=" + numberOfListings + ", numberOfBids="
-				+ numberOfBids + ", numberOfAcceptedBids="
-				+ numberOfAcceptedBids + ", numberOfFundedBids="
-				+ numberOfFundedBids + ", numberOfComments=" + numberOfComments
-				+ ", numberOfVotes=" + numberOfVotes
-				+ ", numberOfNotifications=" + numberOfNotifications
-				+ ", status=" + status + ", votable=" + votable + ", mockData="
-				+ mockData + ", admin=" + admin + "]";
+	public String getEditedStatus() {
+		return editedStatus;
+	}
+	public void setEditedStatus(String editedStatus) {
+		this.editedStatus = editedStatus;
 	}
 }

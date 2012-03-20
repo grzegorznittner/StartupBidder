@@ -154,9 +154,34 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 
 		// set name, mantra and summary, update for state should not work
 		props = new ArrayList<ListingPropertyVO>();
-		props.add(new ListingPropertyVO("state", "ACTIVE"));
+		props.add(new ListingPropertyVO("status", "ACTIVE"));
 		update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
 		assertNotSame("We should get failure, we got " + updatedListing.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
+	}
+	
+	@Test
+	public void testUpdateListingProperties2() {
+		ListingAndUserVO userListing = ListingFacade.instance().createListing(googleUserVO);
+		assertEquals("We should get OK, we got " + userListing.getErrorMessage(), ErrorCodes.OK, userListing.getErrorCode());
+		assertEquals(userListing.getListing().getId(), googleUserVO.getEditedListing());
+		ListingVO listing = userListing.getListing();
+		
+		// set non empty name
+		List<ListingPropertyVO> props = new ArrayList<ListingPropertyVO>();
+		props.add(new ListingPropertyVO("title", "New name"));
+		ListingAndUserVO update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
+		assertEquals("We should get OK, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
+		assertEquals("New name", update.getListing().getName());
+		assertEquals(listing.getId(), update.getListing().getId());
+		assertEquals(listing.getMantra(), update.getListing().getMantra());
+		assertEquals(listing.getSummary(), update.getListing().getSummary());
+		assertEquals(listing.getAddress(), update.getListing().getAddress());
+		assertEquals(listing.getBuinessPlanId(), update.getListing().getBuinessPlanId());
+		assertEquals(listing.getPresentationId(), update.getListing().getPresentationId());
+		assertEquals(listing.getFinancialsId(), update.getListing().getFinancialsId());
+		assertEquals(listing.getWebsite(), update.getListing().getWebsite());
+		assertEquals(listing.getState(), update.getListing().getState());
+
 	}
 	
 	@Test

@@ -72,6 +72,8 @@ public class Listing extends BaseObject implements Monitor.Monitored {
 	@Indexed(IfNotNull.class) public String usCounty;
 	@Indexed public String city;
 	public String address;
+	public Double latitude;
+	public Double longitude;
 	
 	public boolean askedForFunding;
 	public int   suggestedValuation;

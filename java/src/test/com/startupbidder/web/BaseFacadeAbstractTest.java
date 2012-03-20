@@ -322,6 +322,11 @@ public abstract class BaseFacadeAbstractTest {
 		listing.videoUrl = "http://youtube.com/video";
 		listing.website = "http://www.google.com";
 		listing.logoBase64 = "This is not valid datauri";
+		listing.address = "Malinowa 47, Rybnik, Poland";
+		listing.country = "Poland";
+		listing.city = "Rybnik";
+		listing.latitude = 50.092856;
+		listing.longitude = 18.497610;
 		listing.answer1 = RandomStringUtils.randomAlphabetic(64);
 		listing.answer2 = RandomStringUtils.randomAlphabetic(64);
 		listing.answer3 = RandomStringUtils.randomAlphabetic(64);

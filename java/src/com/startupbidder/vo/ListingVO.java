@@ -21,8 +21,10 @@ import com.startupbidder.util.LowecaseSerializer;
 		fieldVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE)
 @JsonIgnoreProperties(ignoreUnknown=true)
 public class ListingVO extends BaseVO {
-	public static final List<String> UPDATABLE_PROPERTIES = Arrays.asList(new String[] {"title", "mantra", "summary", "contact_email",
-			"website", "category", "address", "asked_fund", "suggested_amt", "suggested_pct", "video", "answer1", "answer2", "answer3",
+	public static final List<String> UPDATABLE_PROPERTIES = Arrays.asList(new String[] {
+			"title", "mantra", "summary", "contact_email",
+			"website", "category", "address", "city", "state", "country", "latitude", "longitude",
+			"asked_fund", "suggested_amt", "suggested_pct", "video", "answer1", "answer2", "answer3",
 			"answer4", "answer5", "answer6", "answer7", "answer8", "answer9", "answer10", "answer11", "answer12", "answer13",
 			"answer14", "answer15", "answer16", "answer17", "answer18", "answer19", "answer20", "answer21", "answer22", "answer23",
             "answer24", "answer25", "answer26"
@@ -55,6 +57,8 @@ public class ListingVO extends BaseVO {
 	@JsonProperty("profile_username") private String ownerName;
 	@JsonProperty("contact_email") private String contactEmail;
 	@JsonProperty("address") private String address;
+	@JsonProperty("latitude") private Double latitude;
+	@JsonProperty("longitude") private Double longitude;
 	@JsonProperty("num_comments") private long numberOfComments;
 	@JsonProperty("num_bids") private long numberOfBids;
 	@JsonProperty("num_votes") private long numberOfVotes;
@@ -635,5 +639,21 @@ public class ListingVO extends BaseVO {
 
 	public void setVideo(String video) {
 		this.video = video;
+	}
+
+	public Double getLatitude() {
+		return latitude;
+	}
+
+	public void setLatitude(Double latitude) {
+		this.latitude = latitude;
+	}
+
+	public Double getLongitude() {
+		return longitude;
+	}
+
+	public void setLongitude(Double longitude) {
+		this.longitude = longitude;
 	}
 }

@@ -83,6 +83,8 @@ public class DtoToVoConverter {
 		listing.setSummary(listingDTO.summary);
 		listing.setMantra(listingDTO.mantra);
 		listing.setAddress(listingDTO.address);
+		listing.setLatitude(listingDTO.latitude);
+		listing.setLongitude(listingDTO.longitude);
 		listing.setWebsite(listingDTO.website);
 		listing.setCategory(listingDTO.category);
 		
