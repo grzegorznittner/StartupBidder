@@ -19,6 +19,9 @@ pl.implement(NewListingMediaClass, {
         ajax.call();
     },
     display: function() {
+        if (this.base.listing.status !== 'new') {
+            document.location = 'new-listing-submitted-page.html';
+        }
         if (!this.bound) {
             this.bindEvents();
             this.bound = true;

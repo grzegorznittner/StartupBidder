@@ -1,8 +1,8 @@
 function NewListingBaseClass() {
     var editableprops = [
-            'title', 'category', 'mantra', 'website', 'address',
+            'title', 'category', 'mantra', 'website', 'contact_email', 'address',
             'summary', 'answer1', 'answer2', 'answer3', 'answer4', 'answer5', 'answer6', 'answer7', 'answer8', 'answer9', 'answer10', 'answer11', 'answer12', 'answer13', 'answer14', 'answer15', 'answer16', 'answer17', 'answer18', 'answer19', 'answer20', 'answer21', 'answer22', 'answer23', 'answer24', 'answer25', 'answer26',
-            'suggested_amt', 'suggested_pct', 'presentation_id', 'business_plan_id', 'financials_id',
+            'presentation_id', 'business_plan_id', 'financials_id',
             'logo', 'video'
         ],
         companyTile = new CompanyTileClass({preview: true});
@@ -38,8 +38,10 @@ pl.implement(NewListingBaseClass, {
         };
     },
     pctComplete: function() {
-        var numprops = this.editableprops.length,
+        var self = this,
+            numprops = this.editableprops.length,
             filledprops = 0,
+            missingprops = [],
             pctcomplete,
             i,
             k;
@@ -48,7 +50,11 @@ pl.implement(NewListingBaseClass, {
             if (this.listing[k]) {
                 filledprops++
             }
+            else {
+                missingprops.push(k);
+            }
         } 
+        self.missingprops = missingprops;
         pctcomplete = Math.floor(100 * filledprops / numprops);
         return pctcomplete;
     },

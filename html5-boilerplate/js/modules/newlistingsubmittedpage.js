@@ -17,6 +17,9 @@ pl.implement(NewListingSubmittedClass, {
         ajax.call();
     },
     display: function() {
+        if (this.base.listing.status === 'new') {
+            document.location = 'new-listing-submit-page.html';
+        }
     }
 });
 
