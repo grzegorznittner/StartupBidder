@@ -19,6 +19,9 @@ pl.implement(NewListingSubmitClass, {
         ajax.call();
     },
     display: function() {
+        if (this.base.listing.status !== 'new') {
+            document.location = 'new-listing-submitted-page.html';
+        }
         if (!this.bound) {
             this.bindEvents();
             this.bound = true;
@@ -40,7 +43,7 @@ pl.implement(NewListingSubmitClass, {
                 var msgs = [],
                     pctcomplete = self.base.pctComplete();
                 if (pctcomplete !== 100) {
-                    msgs.push('You must complete all fields before submitting.');
+                    msgs.push('You must complete all fields before submitting, missing fields: ' + self.base.missingprops.join(', '));
                 }
                 else {
                     msgs.push('Submitting listing...');

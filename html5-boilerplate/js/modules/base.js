@@ -215,8 +215,8 @@ pl.implement(HeaderClass, {
     },
     setLoggedIn: function(profile) {
         var username = profile.username || 'You',
-            posttext = profile.edited_listing ? 'Review Submission' : 'Submit New',
-            newlistingurl = 'new-listing-basics-page.html';
+            posttext = profile.edited_listing ? (profile.edited_status === 'posted' ? 'Awaiting Approval' : 'Review Submission'): 'Submit New',
+            newlistingurl = profile.edited_status === 'posted' ? 'new-listing-submitted-page.html' : 'new-listing-basics-page.html';
         pl('#postlink').attr('href', newlistingurl);
         pl('#posttext').html(posttext);
         pl('#loginlink').attr('href', 'profile-page.html');
