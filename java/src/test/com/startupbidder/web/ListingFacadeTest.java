@@ -11,6 +11,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
@@ -160,18 +161,45 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 	}
 	
 	@Test
-	public void testUpdateListingProperties2() {
+	public void testUpdateListingAddressProperties() {
 		ListingAndUserVO userListing = ListingFacade.instance().createListing(googleUserVO);
 		assertEquals("We should get OK, we got " + userListing.getErrorMessage(), ErrorCodes.OK, userListing.getErrorCode());
 		assertEquals(userListing.getListing().getId(), googleUserVO.getEditedListing());
 		ListingVO listing = userListing.getListing();
 		
-		// set non empty name
+		// setting address without state name
 		List<ListingPropertyVO> props = new ArrayList<ListingPropertyVO>();
-		props.add(new ListingPropertyVO("title", "New name"));
+		props.add(new ListingPropertyVO("address", "Full address, with street and country"));
+		props.add(new ListingPropertyVO("country", "Poland"));
+		props.add(new ListingPropertyVO("city", "Rybnik"));
+		props.add(new ListingPropertyVO("latitude", "21.9342"));
+		props.add(new ListingPropertyVO("longitude", "56.9765"));
 		ListingAndUserVO update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
 		assertEquals("We should get OK, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
-		assertEquals("New name", update.getListing().getName());
+		assertEquals("Full address, with street and country", update.getListing().getAddress());
+		assertEquals("Rybnik, Poland", update.getListing().getBriefAddress());
+		assertEquals(NumberUtils.toDouble("21.9342"), update.getListing().getLatitude(), 0.0001);
+		assertEquals(NumberUtils.toDouble("56.9765"), update.getListing().getLongitude(), 0.0001);
+		assertEquals(listing.getId(), update.getListing().getId());
+		assertEquals(listing.getMantra(), update.getListing().getMantra());
+		assertEquals(listing.getSummary(), update.getListing().getSummary());
+		assertEquals(listing.getBuinessPlanId(), update.getListing().getBuinessPlanId());
+		assertEquals(listing.getPresentationId(), update.getListing().getPresentationId());
+		assertEquals(listing.getFinancialsId(), update.getListing().getFinancialsId());
+		assertEquals(listing.getWebsite(), update.getListing().getWebsite());
+		assertEquals(listing.getState(), update.getListing().getState());
+
+		// updating address compounds
+		listing = update.getListing();
+		props = new ArrayList<ListingPropertyVO>();
+		props.add(new ListingPropertyVO("country", "US"));
+		props.add(new ListingPropertyVO("state", "TX"));
+		props.add(new ListingPropertyVO("city", "Austin"));
+		update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
+		assertEquals("We should get OK, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
+		assertEquals("Austin, TX, US", update.getListing().getBriefAddress());
+		assertEquals(listing.getLatitude(), update.getListing().getLatitude(), 0.0001);
+		assertEquals(listing.getLongitude(), update.getListing().getLongitude(), 0.0001);
 		assertEquals(listing.getId(), update.getListing().getId());
 		assertEquals(listing.getMantra(), update.getListing().getMantra());
 		assertEquals(listing.getSummary(), update.getListing().getSummary());
@@ -182,6 +210,47 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 		assertEquals(listing.getWebsite(), update.getListing().getWebsite());
 		assertEquals(listing.getState(), update.getListing().getState());
 
+		// setting only city
+		listing = update.getListing();
+		props = new ArrayList<ListingPropertyVO>();
+		props.add(new ListingPropertyVO("country", ""));
+		props.add(new ListingPropertyVO("state", ""));
+		props.add(new ListingPropertyVO("city", "Austin"));
+		update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
+		assertEquals("We should get OK, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
+		assertEquals("Austin", update.getListing().getBriefAddress());
+		assertEquals(listing.getLatitude(), update.getListing().getLatitude(), 0.0001);
+		assertEquals(listing.getLongitude(), update.getListing().getLongitude(), 0.0001);
+		assertEquals(listing.getId(), update.getListing().getId());
+		assertEquals(listing.getMantra(), update.getListing().getMantra());
+		assertEquals(listing.getSummary(), update.getListing().getSummary());
+		assertEquals(listing.getAddress(), update.getListing().getAddress());
+		assertEquals(listing.getBuinessPlanId(), update.getListing().getBuinessPlanId());
+		assertEquals(listing.getPresentationId(), update.getListing().getPresentationId());
+		assertEquals(listing.getFinancialsId(), update.getListing().getFinancialsId());
+		assertEquals(listing.getWebsite(), update.getListing().getWebsite());
+		assertEquals(listing.getState(), update.getListing().getState());
+
+		// clearing address compounds
+		listing = update.getListing();
+		props = new ArrayList<ListingPropertyVO>();
+		props.add(new ListingPropertyVO("country", ""));
+		props.add(new ListingPropertyVO("state", ""));
+		props.add(new ListingPropertyVO("city", ""));
+		update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
+		assertEquals("We should get OK, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
+		assertEquals("", update.getListing().getBriefAddress());
+		assertEquals(listing.getLatitude(), update.getListing().getLatitude(), 0.0001);
+		assertEquals(listing.getLongitude(), update.getListing().getLongitude(), 0.0001);
+		assertEquals(listing.getId(), update.getListing().getId());
+		assertEquals(listing.getMantra(), update.getListing().getMantra());
+		assertEquals(listing.getSummary(), update.getListing().getSummary());
+		assertEquals(listing.getAddress(), update.getListing().getAddress());
+		assertEquals(listing.getBuinessPlanId(), update.getListing().getBuinessPlanId());
+		assertEquals(listing.getPresentationId(), update.getListing().getPresentationId());
+		assertEquals(listing.getFinancialsId(), update.getListing().getFinancialsId());
+		assertEquals(listing.getWebsite(), update.getListing().getWebsite());
+		assertEquals(listing.getState(), update.getListing().getState());
 	}
 	
 	@Test

@@ -6,6 +6,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.datanucleus.util.StringUtils;
+import org.joda.time.DateMidnight;
+import org.joda.time.DateTime;
+import org.joda.time.Days;
+import org.joda.time.Interval;
 
 import com.googlecode.objectify.Key;
 import com.startupbidder.datamodel.Bid;
@@ -90,17 +94,40 @@ public class DtoToVoConverter {
 		listing.setAddress(listingDTO.address);
 		listing.setLatitude(listingDTO.latitude);
 		listing.setLongitude(listingDTO.longitude);
+		// preparing brief address used for listing's tile
 		String briefAddress = "";
 		if (!StringUtils.isEmpty(listingDTO.country)) {
 			briefAddress = listingDTO.country;
 		}
 		if (!StringUtils.isEmpty(listingDTO.usState)) {
-			briefAddress = listingDTO.usState + ", " + briefAddress;
+			briefAddress = listingDTO.usState + (briefAddress.length() > 0 ? ", " : "") + briefAddress;
 		}
 		if (!StringUtils.isEmpty(listingDTO.city)) {
-			briefAddress = listingDTO.city + ", " + briefAddress;
+			briefAddress = listingDTO.city + (briefAddress.length() > 0 ? ", " : "") + briefAddress;
 		}
 		listing.setBriefAddress(briefAddress);
+		
+		// calculating days left and days ago
+		if (listingDTO.listedOn != null) {
+			DateMidnight listed = new DateMidnight(listingDTO.listedOn.getTime());
+			if (listed.isAfterNow()) {
+				listing.setDaysAgo(-new Interval(new DateTime(), listed).toPeriod().getDays());
+			} else {
+				listing.setDaysAgo(new Interval(listed, new DateTime()).toPeriod().getDays());
+			}
+		} else {
+			listing.setDaysAgo(0);
+		}
+		if (listingDTO.closingOn != null) {
+			DateMidnight closing = new DateMidnight(listingDTO.closingOn.getTime()).plusDays(1);
+			if (closing.isAfterNow()) {
+				listing.setDaysLeft(new Interval(new DateTime(), closing).toPeriod().getDays());
+			} else {
+				listing.setDaysLeft(-new Interval(closing, new DateTime()).toPeriod().getDays());
+			}
+		} else {
+			listing.setDaysLeft(0);
+		}
 		
 		listing.setAnswer1(listingDTO.answer1);
 		listing.setAnswer2(listingDTO.answer2);
