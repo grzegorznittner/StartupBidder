@@ -15,6 +15,7 @@ import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.datanucleus.util.StringUtils;
 
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
@@ -23,6 +24,7 @@ import com.google.appengine.api.utils.SystemProperty;
 import com.startupbidder.vo.BaseResultVO;
 import com.startupbidder.vo.ErrorCodes;
 import com.startupbidder.vo.ListPropertiesVO;
+import com.startupbidder.vo.ListingVO;
 import com.startupbidder.vo.UserVO;
 
 /**
@@ -57,6 +59,13 @@ public abstract class ModelDrivenController {
 			if (loggedInUser == null) {
 				// first time logged in
 				loggedInUser = UserMgmtFacade.instance().createUser(user);
+			}
+			if (loggedInUser != null) {
+				loggedInUser.setAdmin(userService.isUserAdmin());
+				if (!StringUtils.isEmpty(loggedInUser.getEditedListing())) {
+					ListingVO listing = ListingFacade.instance().editedListing(loggedInUser);
+					loggedInUser.setEditedStatus(listing.getState());
+				}
 			}
 		} else {
 			// not logged in

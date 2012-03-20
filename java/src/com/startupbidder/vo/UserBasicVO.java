@@ -26,6 +26,7 @@ public class UserBasicVO extends BaseVO {
 	@JsonProperty("num_notifications") private long numberOfNotifications;
 	@JsonProperty("votable") private boolean votable;
 	@JsonProperty("mockData") private boolean mockData;
+	@JsonProperty("admin") private boolean admin;
 	public UserBasicVO() {
 	}
 	public UserBasicVO(UserVO user) {
@@ -35,8 +36,10 @@ public class UserBasicVO extends BaseVO {
 		this.email = user.getEmail();
 		this.accreditedInvestor = user.isAccreditedInvestor();
 		this.editedListing = user.getEditedListing();
+		this.editedStatus = user.getEditedStatus();
 		this.numberOfNotifications = user.getNumberOfNotifications();
 		this.votable = user.isVotable();
+		this.admin = user.isAdmin();
 		this.mockData = user.isMockData();
 	}
 	public String getId() {
@@ -98,5 +101,11 @@ public class UserBasicVO extends BaseVO {
 	}
 	public void setEditedStatus(String editedStatus) {
 		this.editedStatus = editedStatus;
+	}
+	public boolean isAdmin() {
+		return admin;
+	}
+	public void setAdmin(boolean admin) {
+		this.admin = admin;
 	}
 }

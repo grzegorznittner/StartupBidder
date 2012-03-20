@@ -118,6 +118,19 @@ public class ListingFacade {
 		return result;
 	}
 
+	/**
+	 * Returns edited/posted listing.
+	 */
+	public ListingVO editedListing(UserVO loggedInUser) {
+		if (loggedInUser == null) {
+			log.log(Level.WARNING, "Only logged in user can have edited listing", new Exception("Not logged in"));
+			return null;
+		} else {
+			ListingVO listing = DtoToVoConverter.convert(getDAO().getListing(ListingVO.toKeyId(loggedInUser.getEditedListing())));
+			return listing;
+		}
+	}
+	
 	public ListingAndUserVO getListing(UserVO loggedInUser, String listingId) {
 		ListingAndUserVO listingAndUser = new ListingAndUserVO();
 		long id = 0;
