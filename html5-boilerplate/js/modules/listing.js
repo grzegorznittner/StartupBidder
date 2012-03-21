@@ -44,15 +44,15 @@ pl.implement(ListingClass, {
         this.displayFunding();
         this.displaySocial();
         this.displayWithdraw();
+        this.displayApprove();
     },
     displayBasics: function() {
-        this.mantra = this.mantra || this.testcompany.mantra; // FIXME
-        this.videourl = this.videourl || this.testcompany.videourl || 'http://www.youtube.com/embed/QoAOzMTLP5s'; // FIXME
-        this.logourl = this.logourl || '/img/einstein.jpg';
-        pl('#companylogo').attr({src: this.logourl});
+        var logostyle = this.logo ? 'background: url(' + this.logo + ') no-repeat scroll left top' : 'noimage';
+        console.log('logostyle',logostyle);
+        pl('#companylogo').removeClass('noimage').attr({style: logostyle});
         pl('#title').html(this.title);
         pl('title').html('Startupbidder Listing: ' + this.title);
-        pl('#profile_username').html(this.profile_username);
+        pl('#profile_username').html(this.profile_username || (this.loggedin_profile ? 'You' : 'Anonymous'));
         pl('#mantra').html(this.mantra);
         pl('#companystatus').html('Listing is ' + this.status);
         if (this.status === 'withdrawn') {
@@ -60,7 +60,7 @@ pl.implement(ListingClass, {
         }
         pl('#num_votes').html(this.num_votes);
         pl('#num_comments').html(this.num_comments);
-        pl('#videopresentation').attr({src: this.videourl});
+        pl('#videopresentation').attr({src: this.video});
         pl('#summary').html(this.summary);
         pl('#listingdata').show();
     },
@@ -73,15 +73,13 @@ pl.implement(ListingClass, {
         }
     },
     displayInfobox: function() {
-        var url;
-        this.category = this.category || (Math.floor(Math.random()*2) ? 'INTERNET' : 'SOFTWARE'); // FIXME
-        this.websiteurl = this.websiteurl || 'http://wave.google.com'; // FIXME
-        url = new URLClass(this.websiteurl);
-        this.domainname = url.getHostname();
-        pl('#category').html(this.category);
-        pl('#listing_date').html(this.listing_date ? this.dateobj.format(this.listing_date) : 'not posted');
-        pl('#websitelink').attr({href: this.websiteurl});
-        pl('#domainname').html(this.domainname);
+        var url = this.website ? new URLClass(this.website) : null;
+        pl('#category').html(this.category || 'Other');
+        pl('#listing_date').html(this.listing_date ? this.dateobj.format(this.listing_date) : 'Unknown');
+        pl('#websitelink').attr({href: this.website});
+        if (url) {
+            pl('#domainname').html(url.getHostname());
+        }
     },
     displayMap: function() {
         this.address = this.address || Math.floor(Math.random()*2) ? '221B Baker St, London, UK' : '170W Tasman Dr, San Jose, CA, USA'; // FIXME
@@ -168,7 +166,7 @@ pl.implement(ListingClass, {
             'og:title': this.title,
             'og:type': 'company',
             'og:url': 'http://starutpbidder.com/company_page.html?id=' + this.id,
-            'og:image': 'http://startupbidder.com' + this.logourl,
+            //'og:image': 'http://startupbidder.com' + this.logourl, // FIXME
             'og:site_name': 'startupbidder',
             'fb:app_id': '3063944677997'
         };
@@ -196,51 +194,74 @@ pl.implement(ListingClass, {
             }
         }(document,"script","twitter-wjs");
     },
-    shouldDisplayWithdraw: function() {
-        return (this.status === 'active' && this.profile_id === this.loggedin_profile.profile_id);
-    },
     displayWithdraw: function() {
-        var self;
-        self = this;
-        if (!this.shouldDisplayWithdraw()) {
-            return;
+        var withdrawable = (this.status === 'active' && this.profile_id === this.loggedin_profile.profile_id);
+        if (withdrawable) {
+            this.bindWithdrawButton();
         }
+    },
+    bindWithdrawButton: function() {
+        pl('#withdrawbox').show();
         pl('#withdrawbtn').bind({
             click: function() {
-                if (pl('#withdrawmsg').html() !== '&nbsp;') {
-                    self.withdraw();
+                var completeFunc = function() {
+                        self.status = 'withdrawn';
+                        pl('#withdrawmsg').addClass('successful').html('LISTING WITHDRAWN');
+                        pl('#withdrawbtn, #withdrawcancelbtn').hide();
+                        pl('#companystatus').html('Listing is ' + self.status).addClass('attention');
+                        window.location.reload();
+                    },
+                    url = '/listing/withdraw/' + this.listing_id;
+                    ajax = new AjaxClass(url, 'withdrawmsg', completeFunc);
+                if (pl('#withdrawcancelbtn').css('display') === 'none') { // first call
+                    pl('#withdrawmsg, #withdrawcancelbtn').show();
                 }
                 else {
-                    pl('#withdrawmsg').html('ARE YOU SURE?');
-                    pl('#withdrawbtn').html('YES, WITHDRAW');
+                    ajax.setPost();
+                    ajax.call();
                 }
+                return false;
             }
         });
-        pl('#withdrawbox').bind({
-            mouseout: function() {
-                if (pl('#withdrawmsg').html() !== '&nbsp;' && self.status !== 'withdrawn') {
-                    pl('#withdrawmsg').html('&nbsp;');
-                    pl('#withdrawbtn').html('WITHDRAW LISTING');
-                }
+        pl('#withdrawcancelbtn').bind({
+            click: function() {
+                pl('#withdrawmsg, #withdrawcancelbtn').hide();
+                return false;
             }
         });
-        pl('#withdrawtitle').show();
-        pl('#withdrawbox').show();
     },
-    withdraw: function() {
-        var self, url, completeFunc, ajax;
-        self = this;
-        url = '/listing/withdraw/' + this.listing_id;
-        completeFunc = function() {
-            pl('#withdrawmsg').addClass('successful').html('LISTING WITHDRAWN');
-            pl('#withdrawbtn').hide();
-            self.status = 'withdrawn';
-            pl('#companystatus').html('Listing is ' + self.status).addClass('attention');
-             
-        };
-        ajax = new AjaxClass(url, 'withdrawmsg', completeFunc);
-        ajax.setPost();
-        ajax.call();
+    displayApprove: function() {
+        console.log('status', this.status);
+        var approvable = (this.status === 'posted' && this.loggedin_profile.admin);
+        if (approvable) {
+            this.bindApproveButton();
+        }
+    },
+    bindApproveButton: function() {
+        pl('#approvebox').show();
+        pl('#approvebtn').bind({
+            click: function() {
+                var completeFunc = function() {
+                        window.location.reload();
+                    },
+                    url = '/listing/activate/' + this.listing_id;
+                    ajax = new AjaxClass(url, 'approvemsg', completeFunc);
+                if (pl('#approvecancelbtn').css('display') === 'none') { // first call
+                    pl('#approvemsg, #approvecancelbtn').show();
+                }
+                else {
+                    ajax.setPost();
+                    ajax.call();
+                }
+                return false;
+            }
+        });
+        pl('#approvecancelbtn').bind({
+            click: function() {
+                pl('#approvemsg, #approvecancelbtn').hide();
+                return false;
+            }
+        });
     }
 });
 
