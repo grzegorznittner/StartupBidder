@@ -299,14 +299,6 @@ public class ListingFacade {
 		// only NEW or ACTIVE listings can be updated
 		if (dbListing.state == Listing.State.NEW || dbListing.state == Listing.State.ACTIVE) {
 			ListingVO forUpdate = DtoToVoConverter.convert(dbListing);
-			forUpdate.setId(listing.getId());
-			forUpdate.setName(listing.getName());
-			forUpdate.setSummary(listing.getSummary());
-			forUpdate.setSuggestedAmount(listing.getSuggestedAmount());
-			forUpdate.setSuggestedPercentage(listing.getSuggestedPercentage());
-			forUpdate.setPresentationId(listing.getPresentationId());
-			forUpdate.setBuinessPlanId(listing.getBuinessPlanId());
-			forUpdate.setFinancialsId(listing.getFinancialsId());
 			
 			Listing updatedListing = getDAO().updateListing(VoToModelConverter.convert(forUpdate));
 			if (updatedListing != null && updatedListing.state == Listing.State.ACTIVE) {
@@ -338,14 +330,16 @@ public class ListingFacade {
 			log.log(Level.WARNING, "User " + loggedInUser + " is not an admin. Only admin can activate listings.", new Exception("Not an admin"));
 			return null;
 		}
+		// activation also could be done for FROZEN listings
 		if (dbListing.state == Listing.State.POSTED) {
-			DateMidnight midnight = new DateMidnight();
+			dbListing.listedOn = new Date();
+			DateMidnight midnight = new DateMidnight().plusDays(1);
 			dbListing.closingOn = midnight.plusDays(LISTING_DEFAULT_CLOSING_ON_DAYS).toDate();
 		}
-		ListingVO forUpdate = DtoToVoConverter.convert(dbListing);
-
-		forUpdate.setState(Listing.State.ACTIVE.toString());
+		log.info("Activating listing: " + dbListing);
+		dbListing.state = Listing.State.ACTIVE;
 		
+		ListingVO forUpdate = DtoToVoConverter.convert(dbListing);		
 		Listing updatedListing = getDAO().updateListing(VoToModelConverter.convert(forUpdate));
 		if (updatedListing != null) {
 			scheduleUpdateOfListingStatistics(updatedListing.getWebKey(), UpdateReason.NONE);
@@ -575,9 +569,14 @@ public class ListingFacade {
 	/**
 	 * Deletes exising user's NEW listing.
 	 */
-	public ListingAndUserVO deleteNewListing(UserVO loggedInUser) {
+	public ListingAndUserVO deleteEditedListing(UserVO loggedInUser) {
 		ListingAndUserVO result = new ListingAndUserVO();
-		Listing deletedListing = getDAO().deleteUsersNewListing(UserVO.toKeyId(loggedInUser.getId()));
+		if (StringUtils.isEmpty(loggedInUser.getEditedListing())) {
+			result.setErrorCode(ErrorCodes.ENTITY_VALIDATION);
+			result.setErrorMessage("Deletion not successful, user doesn't have edited listing");
+			return result;
+		}
+		Listing deletedListing = getDAO().deleteEditedListing(ListingVO.toKeyId(loggedInUser.getEditedListing()));
 		if (deletedListing != null) {
 			loggedInUser.setEditedListing(null);
 			result.setListing(null);

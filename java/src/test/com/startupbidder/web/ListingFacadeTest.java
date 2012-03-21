@@ -501,35 +501,35 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 	@Test
 	public void testDeleteUserNewListing() {
 		// googleuser has a NEW listing, so we can't use that user
-		ListingAndUserVO newListing = ListingFacade.instance().createListing(admin);
+		ListingAndUserVO newListing = ListingFacade.instance().createListing(anotherUserVO);
 		assertEquals("We should get OK", ErrorCodes.OK, newListing.getErrorCode());
 		assertNotNull("Listing not created", newListing.getListing());
-		assertEquals("Proper owner set", admin.getId(), newListing.getListing().getOwner());
+		assertEquals("Proper owner set", anotherUserVO.getId(), newListing.getListing().getOwner());
 		assertEquals("State is not NEW", Listing.State.NEW.toString(), newListing.getListing().getState());
 		assertNotNull("Created date should be set", newListing.getListing().getCreated());
 		assertNotNull("Modified date should be set", newListing.getListing().getModified());
-		assertEquals("Edited listing for logged in user should be set", newListing.getListing().getId(), admin.getEditedListing());
+		assertEquals("Edited listing for logged in user should be set", newListing.getListing().getId(), anotherUserVO.getEditedListing());
 
-		ListingAndUserVO listing = ListingFacade.instance().getListing(admin, newListing.getListing().getId());
+		ListingAndUserVO listing = ListingFacade.instance().getListing(anotherUserVO, newListing.getListing().getId());
 		assertEquals("We should get OK", ErrorCodes.OK, newListing.getErrorCode());
 		assertNotNull("List should exist", listing.getListing());
 		assertEquals("State should be NEW", Listing.State.NEW.toString(), listing.getListing().getState());
 
-		ListingAndUserVO deletedListing = ListingFacade.instance().deleteNewListing(admin);
+		ListingAndUserVO deletedListing = ListingFacade.instance().deleteEditedListing(anotherUserVO);
 		assertEquals("We should get OK", ErrorCodes.OK, newListing.getErrorCode());
 		assertNull("Listing should be deleted", deletedListing.getListing());
-		assertNull("Edited listing field should be set to null", admin.getEditedListing());
+		assertNull("Edited listing field should be set to null", anotherUserVO.getEditedListing());
 		
-		listing = ListingFacade.instance().getListing(admin, newListing.getListing().getId());
+		listing = ListingFacade.instance().getListing(anotherUserVO, newListing.getListing().getId());
 		assertNull("List should not exist, but we got " + listing.getListing(), listing.getListing());
 		assertNotSame("We should get failure", ErrorCodes.OK, listing.getErrorCode());
 	}
 	
 	@Test
 	public void testDeleteUserNewListingWhenItDoesntExist() {
-		ListingAndUserVO deletedListing = ListingFacade.instance().deleteNewListing(admin);
+		ListingAndUserVO deletedListing = ListingFacade.instance().deleteEditedListing(anotherUserVO);
 		assertNotSame("We should get an error", ErrorCodes.OK, deletedListing.getErrorCode());
-		assertNull("Edited listing field should be null anyway", googleUserVO.getEditedListing());
+		assertNull("Edited listing field should be null anyway", anotherUserVO.getEditedListing());
 	}
 	
 	@Test
@@ -605,137 +605,6 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 		assertNull("Key was null so listing should be null", returned.getListing());
 	}
 	
-	@Test
-	public void testUpdateFailedListing() {
-		assertFalse("Logged in user should not be an admin", googleUserVO.isAdmin());
-		
-		ListingVO listing = new ListingVO();
-		listing.setId(new Key<Listing>(Listing.class, 999).getString());
-		listing.setName("fakename");
-		listing.setOwner(super.userList.get(1).getWebKey());
-		ListingVO updatedListing = ListingFacade.instance().updateListing(googleUserVO, listing);
-		assertNull("Listing with given id should not be present", updatedListing);
-		
-		listing = DtoToVoConverter.convert(super.listingList.get(6));
-		// setting owner here should not be taken into account
-		listing.setOwner(googleUserVO.getId());
-		updatedListing = ListingFacade.instance().updateListing(googleUserVO, listing);
-		assertNull("Logged in user is not owner of the listing", updatedListing);
-
-		listing = DtoToVoConverter.convert(super.listingList.get(1));
-		updatedListing = ListingFacade.instance().updateListing(DtoToVoConverter.convert(super.userList.get(0)), listing);
-		assertNull("Logged in user is not owner of the listing", updatedListing);
-	}
-	
-	@Test
-	public void testUpdateExistingListing() {
-		assertTrue("Test data should have at least 12 listings: " + super.listingList, super.listingList.size() > 12);
-		
-		ListingVO listing = DtoToVoConverter.convert(super.listingList.get(1));
-		listing.setName("Updated name");
-		ListingVO updatedListing = ListingFacade.instance().updateListing(googleUserVO, listing);
-		assertNotNull("Listing should be returned", updatedListing);
-		assertEquals(listing.getName(), updatedListing.getName());
-		assertEquals(listing.getSummary(), updatedListing.getSummary());
-		assertEquals(listing.getOwner(), updatedListing.getOwner());
-		assertEquals(listing.getState(), updatedListing.getState());
-		assertEquals(listing.getSuggestedAmount(), updatedListing.getSuggestedAmount());
-		assertEquals(listing.getSuggestedPercentage(), updatedListing.getSuggestedPercentage());
-		assertEquals(listing.getPresentationId(), updatedListing.getPresentationId());
-		assertEquals(listing.getBuinessPlanId(), updatedListing.getBuinessPlanId());
-		assertEquals(listing.getFinancialsId(), updatedListing.getFinancialsId());
-		//assertTrue("Modified date should be updated", listing.get);
-
-		// we should be able to update name of active listing
-		listing = DtoToVoConverter.convert(super.listingList.get(2));
-		listing.setName("Updated name");
-		listing.setSummary(RandomStringUtils.randomAlphabetic(64));
-		listing.setOwner(super.userList.get(1).getWebKey());
-		listing.setState(Listing.State.POSTED.toString());
-		listing.setSuggestedAmount(5000);
-		listing.setSuggestedPercentage(44);
-		listing.setPresentationId(new Key<ListingDoc>(ListingDoc.class, 1001).getString());
-		listing.setBuinessPlanId(new Key<ListingDoc>(ListingDoc.class, 1002).getString());
-		listing.setFinancialsId(new Key<ListingDoc>(ListingDoc.class, 1003).getString());
-		updatedListing = ListingFacade.instance().updateListing(googleUserVO, listing);
-		assertNotNull("Listing should be updated", updatedListing);
-		assertEquals(listing.getName(), updatedListing.getName());
-		assertEquals(listing.getSummary(), updatedListing.getSummary());
-		assertNotSame(listing.getOwner(), updatedListing.getOwner());
-		assertNotSame(listing.getState(), updatedListing.getState());
-		assertEquals(listing.getSuggestedAmount(), updatedListing.getSuggestedAmount());
-		assertEquals(listing.getSuggestedPercentage(), updatedListing.getSuggestedPercentage());
-		assertEquals(listing.getPresentationId(), updatedListing.getPresentationId());
-		assertEquals(listing.getBuinessPlanId(), updatedListing.getBuinessPlanId());
-		assertEquals(listing.getFinancialsId(), updatedListing.getFinancialsId());
-
-		// we should be able to update new listing
-		listing = DtoToVoConverter.convert(super.listingList.get(7));
-		listing.setName("Updated name");
-		listing.setSummary(RandomStringUtils.randomAlphabetic(64));
-		listing.setOwner(super.userList.get(1).getWebKey());
-		listing.setState(Listing.State.ACTIVE.toString());
-		listing.setSuggestedAmount(5000);
-		listing.setSuggestedPercentage(44);
-		listing.setPresentationId(new Key<ListingDoc>(ListingDoc.class, 1001).getString());
-		listing.setBuinessPlanId(new Key<ListingDoc>(ListingDoc.class, 1002).getString());
-		listing.setFinancialsId(new Key<ListingDoc>(ListingDoc.class, 1003).getString());
-		updatedListing = ListingFacade.instance().updateListing(googleUserVO, listing);
-		assertNotNull("Listing should be updated", updatedListing);
-		assertEquals(listing.getName(), updatedListing.getName());
-		assertEquals(listing.getSummary(), updatedListing.getSummary());
-		assertNotSame(listing.getOwner(), updatedListing.getOwner());
-		assertNotSame(listing.getState(), updatedListing.getState());
-		assertEquals(listing.getSuggestedAmount(), updatedListing.getSuggestedAmount());
-		assertEquals(listing.getSuggestedPercentage(), updatedListing.getSuggestedPercentage());
-		assertEquals(listing.getPresentationId(), updatedListing.getPresentationId());
-		assertEquals(listing.getBuinessPlanId(), updatedListing.getBuinessPlanId());
-		assertEquals(listing.getFinancialsId(), updatedListing.getFinancialsId());
-
-		// we should not be able to update closed listing
-		listing = DtoToVoConverter.convert(super.listingList.get(12));
-		listing.setName("Updated name");
-		listing.setSummary(RandomStringUtils.randomAlphabetic(64));
-		listing.setOwner(super.userList.get(1).getWebKey());
-		listing.setState(Listing.State.ACTIVE.toString());
-		listing.setSuggestedAmount(5000);
-		listing.setSuggestedPercentage(44);
-		listing.setPresentationId(new Key<ListingDoc>(ListingDoc.class, 1001).getString());
-		listing.setBuinessPlanId(new Key<ListingDoc>(ListingDoc.class, 1002).getString());
-		listing.setFinancialsId(new Key<ListingDoc>(ListingDoc.class, 1003).getString());
-		updatedListing = ListingFacade.instance().updateListing(googleUserVO, listing);
-		assertNull("Closed listing should not be updated", updatedListing);
-
-		// we should not be able to update name of posted listing
-		listing = DtoToVoConverter.convert(super.listingList.get(10));
-		listing.setName("Updated name");
-		listing.setSummary(RandomStringUtils.randomAlphabetic(64));
-		listing.setOwner(super.userList.get(1).getWebKey());
-		listing.setState(Listing.State.ACTIVE.toString());
-		listing.setSuggestedAmount(5000);
-		listing.setSuggestedPercentage(44);
-		listing.setPresentationId(new Key<ListingDoc>(ListingDoc.class, 1001).getString());
-		listing.setBuinessPlanId(new Key<ListingDoc>(ListingDoc.class, 1002).getString());
-		listing.setFinancialsId(new Key<ListingDoc>(ListingDoc.class, 1003).getString());
-		updatedListing = ListingFacade.instance().updateListing(googleUserVO, listing);
-		assertNull("Posted listing should not be updated", updatedListing);
-		
-		// we should not be able to update name of withdrawn listing
-		listing = DtoToVoConverter.convert(super.listingList.get(11));
-		listing.setName("Updated name");
-		listing.setSummary(RandomStringUtils.randomAlphabetic(64));
-		listing.setOwner(super.userList.get(1).getWebKey());
-		listing.setState(Listing.State.ACTIVE.toString());
-		listing.setSuggestedAmount(5000);
-		listing.setSuggestedPercentage(44);
-		listing.setPresentationId(new Key<ListingDoc>(ListingDoc.class, 1001).getString());
-		listing.setBuinessPlanId(new Key<ListingDoc>(ListingDoc.class, 1002).getString());
-		listing.setFinancialsId(new Key<ListingDoc>(ListingDoc.class, 1003).getString());
-		updatedListing = ListingFacade.instance().updateListing(googleUserVO, listing);
-		assertNull("Withdrawn listing should not be updated", updatedListing);
-		
-	}
-
 	@Test
 	public void testActivateListing() {
 		ListingVO listing = DtoToVoConverter.convert(super.listingList.get(11));

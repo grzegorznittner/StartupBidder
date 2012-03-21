@@ -79,8 +79,6 @@ public class ListingController extends ModelDrivenController {
 		} else if ("POST".equalsIgnoreCase(request.getMethod())) {
 			if ("create".equalsIgnoreCase(getCommand(1))) {
 				return startEditing(request);
-			} else if ("update".equalsIgnoreCase(getCommand(1))) {
-				return update(request);
 			} else if ("update_field".equalsIgnoreCase(getCommand(1))) {
 				return updateField(request);
 			} else if("up".equalsIgnoreCase(getCommand(1))) {
@@ -103,7 +101,7 @@ public class ListingController extends ModelDrivenController {
     private HttpHeaders delete(HttpServletRequest request) {
     	HttpHeaders headers = new HttpHeadersImpl("delete");
 		
-    	ListingAndUserVO listing = ListingFacade.instance().deleteNewListing(getLoggedInUser());
+    	ListingAndUserVO listing = ListingFacade.instance().deleteEditedListing(getLoggedInUser());
 		if (listing == null) {
 			log.log(Level.WARNING, "Listing not deleted, probably didn't exist!");
 			headers.setStatus(500);
@@ -170,40 +168,6 @@ public class ListingController extends ModelDrivenController {
 		return headers;
 	}	
 
-    // PUT /listing/update
-    // POST /listing/update
-	private HttpHeaders update(HttpServletRequest request) throws JsonParseException, JsonMappingException, IOException {
-		HttpHeaders headers = new HttpHeadersImpl("update");
-		
-		ObjectMapper mapper = new ObjectMapper();
-		log.log(Level.INFO, "Parameters: " + request.getParameterMap());
-		String listingString = request.getParameter("listing");
-		if (!StringUtils.isEmpty(listingString)) {
-			ListingVO listing = mapper.readValue(listingString, ListingVO.class);
-			log.log(Level.INFO, "Updating listing: " + listing);
-			if (listing.getId() == null) {
-				log.log(Level.WARNING, "Listing id is not provided!");
-			} else {
-				listing = ListingFacade.instance().updateListing(getLoggedInUser(), listing);
-				if (listing == null) {
-					log.log(Level.WARNING, "Listing not found!");
-					headers.setStatus(500);
-				}
-				String[] url = ServiceFacade.instance().createUploadUrls(getLoggedInUser(), "/file/upload", 4);
-				listing.setBuinessPlanUpload(url[0]);
-				listing.setFinancialsUpload(url[1]);
-				listing.setPresentationUpload(url[2]);
-				listing.setLogoUpload(url[3]);
-			}
-			model = listing;
-		} else {
-			log.log(Level.WARNING, "Parameter 'listing' is empty!");
-			headers.setStatus(500);
-		}
-
-		return headers;
-	}
-	
     // PUT /listing/update_field
     // POST /listing/update_field
 	private HttpHeaders updateField(HttpServletRequest request) throws JsonParseException, JsonMappingException, IOException {
