@@ -5,7 +5,7 @@ pl.implement(CompanyTileClass, {
     setValues: function(json) {
         var date = json.listing_date || json.created_date,
             closingText = json.days_left === 0 ? 'closing today!' : (json.days_left < 0 ? 'bidding closed' : json.days_left + ' days left'),
-            listingText = json.asked_fund ? closingText : (json.days_ago ? 'listed ' + json.days_ago + ' days ago' : 'listed today');
+            listingText = json.asked_fund ? closingText : (json.days_ago ? json.days_ago + ' days ago' : 'listed today');
         this.daysText = listingText;
         this.imgClass = json.logo ? '' : 'noimage';
         this.imgStyle = json.logo ? 'background: url(' + json.logo + ') no-repeat scroll left top' : '';

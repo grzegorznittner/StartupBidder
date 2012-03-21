@@ -203,17 +203,17 @@ pl.implement(HeaderClass, {
         else if (json && json.profile_id) {
             profile = json;
         }
-        this.setHeader(profile);
+        this.setHeader(profile, json.login_url, json.logout_url);
     },
-    setHeader: function(profile) {
+    setHeader: function(profile, login_url, logout_url) {
         if (profile) {
-            this.setLoggedIn(profile);
+            this.setLoggedIn(profile, logout_url);
         }
         else {
-            this.setLoggedOut();
+            this.setLoggedOut(login_url);
         }
     },
-    setLoggedIn: function(profile) {
+    setLoggedIn: function(profile, logout_url) {
         var username = profile.username || 'You',
             posttext = profile.edited_listing ? (profile.edited_status === 'posted' ? 'Pending Approval' : 'Review Posted'): 'Post New',
             newlistingurl = profile.edited_status === 'posted' ? 'new-listing-submitted-page.html' : 'new-listing-basics-page.html';
@@ -227,8 +227,14 @@ pl.implement(HeaderClass, {
         pl('#loginlink').attr('href', 'profile-page.html');
         pl('#logintext').html(username);
         pl('#logout').show();
+        if (logout_url) {
+            pl('#logout>a').attr({href: logout_url});
+        }
     },
-    setLoggedOut: function() {
+    setLoggedOut: function(login_url) {
+        if (login_url) {
+            pl('#googleloginlink').attr({href: login_url});
+        }
         pl('#postlink').attr('href', 'login-page.html');
         pl('#posttext').html('Submit New');
         pl('#loginlink').attr('href', 'login-page.html');

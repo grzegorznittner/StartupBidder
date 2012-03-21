@@ -47,9 +47,10 @@ pl.implement(ListingClass, {
         this.displayApprove();
     },
     displayBasics: function() {
-        var logostyle = this.logo ? 'background: url(' + this.logo + ') no-repeat scroll left top' : 'noimage';
-        console.log('logostyle',logostyle);
-        pl('#companylogo').removeClass('noimage').attr({style: logostyle});
+        var logobg = this.logo ? 'url(' + this.logo + ') no-repeat scroll left top' : null;
+        if (logobg) {
+            pl('#companylogo').removeClass('noimage').css({background: logobg});
+        }
         pl('#title').html(this.title);
         pl('title').html('Startupbidder Listing: ' + this.title);
         pl('#profile_username').html(this.profile_username || (this.loggedin_profile ? 'You' : 'Anonymous'));
@@ -82,13 +83,16 @@ pl.implement(ListingClass, {
         }
     },
     displayMap: function() {
-        this.address = this.address || Math.floor(Math.random()*2) ? '221B Baker St, London, UK' : '170W Tasman Dr, San Jose, CA, USA'; // FIXME
+        this.address = this.brief_address || 'Unknown Address';
         //this.addressurl = this.addressurl || 'http://nominatim.openstreetmap.org/search?q=' + encodeURIComponent(this.address);
         this.addressurl = 'http://maps.google.com/maps?q=' + encodeURI(this.title) + ',' + encodeURI(this.address);
         this.latitude = this.latitude || '51.499117116569'; // FIXME
         this.longitude = this.longitude || '-0.12359619140625'; // FIXME
         //this.mapurl = 'http://ojw.dev.openstreetmap.org/StaticMap/?lat=' + this.latitude + '&lon=' + this.longitude + '&z=5&show=1&fmt=png&w=302&h=302&att=none';
-        this.mapurl = 'http://maps.googleapis.com/maps/api/staticmap?center=' + encodeURI(this.address) + '&zoom=10&size=302x298&maptype=roadmap&markers=color:blue%7Clabel:' + encodeURI(this.title) + '%7C' + encodeURI(this.address) + '&sensor=false';
+        this.mapurl = 'http://maps.googleapis.com/maps/api/staticmap?center=' + this.latitude + ',' + this.longitude + '&zoom=7&size=302x298&maptype=roadmap&markers=color:blue%7Clabel:' + encodeURI(this.title) + '%7C' + encodeURI(this.address) + '&sensor=false';
+        console.log('address',this.address);
+        console.log('latitude',this.latitude);
+        console.log('longitude',this.longitude);
         pl('#address').html(this.address);
         pl('#addresslink').attr({href: this.addressurl});
         pl('#mapimg').attr({src: this.mapurl});
@@ -195,7 +199,7 @@ pl.implement(ListingClass, {
         }(document,"script","twitter-wjs");
     },
     displayWithdraw: function() {
-        var withdrawable = (this.status === 'active' && this.profile_id === this.loggedin_profile.profile_id);
+        var withdrawable = (this.status === 'active' && (this.loggedin_profile && this.loggedin_profile.profile_id === this.profile_id));
         if (withdrawable) {
             this.bindWithdrawButton();
         }
