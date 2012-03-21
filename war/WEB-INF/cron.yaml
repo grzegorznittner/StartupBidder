@@ -1,6 +1,6 @@
 cron:
   - description: daily listings stats update job
     url: /cron/update-listing-stats
-    schedule: every 24 hours 02:00
+    schedule: every day 02:00
     timezone: Europe/Berlin
     
