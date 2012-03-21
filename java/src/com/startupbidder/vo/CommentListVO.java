@@ -46,10 +46,4 @@ public class CommentListVO extends BaseResultVO {
 	public UserBasicVO getUser() {
 		return user;
 	}
-	@Override
-	public String toString() {
-		return "CommentListVO [comments=" + comments + ", commentsProperties="
-				+ commentsProperties + ", listing=" + listing + ", user="
-				+ user + super.toString() + "]";
-	}
 }

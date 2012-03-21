@@ -1,5 +1,7 @@
 package com.startupbidder.vo;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 import com.googlecode.objectify.Key;
 
 public abstract class BaseVO {
@@ -11,5 +13,9 @@ public abstract class BaseVO {
 
 	public static long toKeyId(String id) {
 		return Key.create(id).getId();
+	}
+	
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this);
 	}
 }

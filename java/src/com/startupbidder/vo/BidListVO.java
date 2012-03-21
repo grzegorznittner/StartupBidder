@@ -46,9 +46,4 @@ public class BidListVO extends BaseResultVO {
 	public UserBasicVO getUser() {
 		return user;
 	}
-	@Override
-	public String toString() {
-		return "BidListVO [bids=" + bids + ", bidsProperties=" + bidsProperties
-				+ ", listing=" + listing + ", user=" + user + super.toString() + "]";
-	}
 }

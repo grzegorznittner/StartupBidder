@@ -41,6 +41,7 @@ import com.startupbidder.vo.ListPropertiesVO;
 import com.startupbidder.vo.ListingAndUserVO;
 import com.startupbidder.vo.ListingListVO;
 import com.startupbidder.vo.ListingVO;
+import com.startupbidder.vo.UserAndUserVO;
 import com.startupbidder.vo.UserVO;
 import com.startupbidder.web.ListingFacade;
 import com.startupbidder.web.UserMgmtFacade;
@@ -122,6 +123,10 @@ public class AdminListingFacadeTest extends AdminFacadeAbstractTest {
 		assertEquals(listing.getPresentationId(), activatedListing.getPresentationId());
 		assertEquals(listing.getBuinessPlanId(), activatedListing.getBuinessPlanId());
 		assertEquals(listing.getFinancialsId(), activatedListing.getFinancialsId());
+		
+		UserAndUserVO owner = UserMgmtFacade.instance().getUser(admin, listing.getOwner());
+		assertNotNull("Owner user should exist", owner.getUser());
+		assertNull("After activation owner should have empty edited listing", owner.getUser().getEditedListing());
 
 		listing = DtoToVoConverter.convert(super.listingList.get(14));
 		activatedListing = ListingFacade.instance().activateListing(admin, listing.getId());
@@ -145,6 +150,10 @@ public class AdminListingFacadeTest extends AdminFacadeAbstractTest {
 		assertEquals(listing.getPresentationId(), activatedListing.getPresentationId());
 		assertEquals(listing.getBuinessPlanId(), activatedListing.getBuinessPlanId());
 		assertEquals(listing.getFinancialsId(), activatedListing.getFinancialsId());
+		
+		owner = UserMgmtFacade.instance().getUser(admin, listing.getOwner());
+		assertNotNull("Owner user should exist", owner.getUser());
+		assertNull("After activation owner should have empty edited listing", owner.getUser().getEditedListing());
 	}
 	
 	@Test

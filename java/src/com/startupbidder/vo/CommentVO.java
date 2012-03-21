@@ -109,14 +109,4 @@ public class CommentVO extends BaseVO {
 	public void setMockData(boolean mockData) {
 		this.mockData = mockData;
 	}
-
-	@Override
-	public String toString() {
-		return "CommentVO [orderNumber=" + orderNumber + ", id=" + id
-				+ ", listing=" + listing + ", listingName=" + listingName
-				+ ", user=" + user + ", userName=" + userName + ", comment="
-				+ comment + ", commentedOn=" + commentedOn + ", mockData="
-				+ mockData + "]";
-	}
-
 }

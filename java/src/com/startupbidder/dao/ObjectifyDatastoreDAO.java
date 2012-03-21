@@ -550,19 +550,27 @@ public class ObjectifyDatastoreDAO {
 			return listing;
 		} else {
 			return getOfy().get(owner.editedListing);
-		}		
+		}
 	}
 
-	public Listing updateListing(Listing newListing) {
+	public Listing updateListingStateAndDates(Listing newListing) {
 		try {
 			Listing listing = getOfy().get(new Key<Listing>(Listing.class, newListing.id));
+			Listing.State oldState = listing.state;
 			listing.state = newListing.state;
 			listing.closingOn = newListing.closingOn;
 			listing.listedOn = newListing.listedOn;
 			listing.created = newListing.created;
 			listing.posted = newListing.posted;
-
 			getOfy().put(listing);
+			
+			// listing activation should allow for editing new listing by the owner
+			if (oldState == Listing.State.POSTED && newListing.state == Listing.State.ACTIVE) {
+				SBUser owner = getOfy().get(listing.owner);
+				owner.editedListing = null;
+				getOfy().put(owner);
+			}
+			
 			return listing;
 		} catch (Exception e) {
 			log.log(Level.WARNING, "Listing entity name '" + newListing.name

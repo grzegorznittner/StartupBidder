@@ -300,7 +300,7 @@ public class ListingFacade {
 		if (dbListing.state == Listing.State.NEW || dbListing.state == Listing.State.ACTIVE) {
 			ListingVO forUpdate = DtoToVoConverter.convert(dbListing);
 			
-			Listing updatedListing = getDAO().updateListing(VoToModelConverter.convert(forUpdate));
+			Listing updatedListing = getDAO().updateListingStateAndDates(VoToModelConverter.convert(forUpdate));
 			if (updatedListing != null && updatedListing.state == Listing.State.ACTIVE) {
 				scheduleUpdateOfListingStatistics(updatedListing.getWebKey(), UpdateReason.NONE);
 			}
@@ -339,8 +339,8 @@ public class ListingFacade {
 		log.info("Activating listing: " + dbListing);
 		dbListing.state = Listing.State.ACTIVE;
 		
-		ListingVO forUpdate = DtoToVoConverter.convert(dbListing);		
-		Listing updatedListing = getDAO().updateListing(VoToModelConverter.convert(forUpdate));
+		ListingVO forUpdate = DtoToVoConverter.convert(dbListing);
+		Listing updatedListing = getDAO().updateListingStateAndDates(VoToModelConverter.convert(forUpdate));
 		if (updatedListing != null) {
 			scheduleUpdateOfListingStatistics(updatedListing.getWebKey(), UpdateReason.NONE);
 		}
@@ -385,7 +385,7 @@ public class ListingFacade {
 			forUpdate.setPostedOn(new Date());
 			forUpdate.setState(Listing.State.POSTED.toString());
 			
-			Listing updatedListing = getDAO().updateListing(VoToModelConverter.convert(forUpdate));
+			Listing updatedListing = getDAO().updateListingStateAndDates(VoToModelConverter.convert(forUpdate));
 			if (updatedListing != null) {
 				scheduleUpdateOfListingStatistics(updatedListing.getWebKey(), UpdateReason.NONE);
 			}
@@ -506,7 +506,7 @@ public class ListingFacade {
 
 			forUpdate.setState(Listing.State.WITHDRAWN.toString());
 			
-			Listing updatedListing = getDAO().updateListing(VoToModelConverter.convert(forUpdate));
+			Listing updatedListing = getDAO().updateListingStateAndDates(VoToModelConverter.convert(forUpdate));
 			if (updatedListing != null) {
 				scheduleUpdateOfListingStatistics(updatedListing.getWebKey(), UpdateReason.NONE);
 			}
@@ -534,7 +534,7 @@ public class ListingFacade {
 
 			forUpdate.setState(Listing.State.NEW.toString());
 			
-			Listing updatedListing = getDAO().updateListing(VoToModelConverter.convert(forUpdate));
+			Listing updatedListing = getDAO().updateListingStateAndDates(VoToModelConverter.convert(forUpdate));
 			
 			ListingVO toReturn = DtoToVoConverter.convert(updatedListing);
 			applyListingData(loggedInUser, toReturn);
@@ -559,7 +559,7 @@ public class ListingFacade {
 
 		forUpdate.setState(Listing.State.FROZEN.toString());
 		
-		Listing updatedListing = getDAO().updateListing(VoToModelConverter.convert(forUpdate));
+		Listing updatedListing = getDAO().updateListingStateAndDates(VoToModelConverter.convert(forUpdate));
 		
 		ListingVO toReturn = DtoToVoConverter.convert(updatedListing);
 		applyListingData(loggedInUser, toReturn);
@@ -579,6 +579,7 @@ public class ListingFacade {
 		Listing deletedListing = getDAO().deleteEditedListing(ListingVO.toKeyId(loggedInUser.getEditedListing()));
 		if (deletedListing != null) {
 			loggedInUser.setEditedListing(null);
+			loggedInUser.setEditedStatus(null);
 			result.setListing(null);
 		} else {
 			result.setErrorCode(ErrorCodes.DATASTORE_ERROR);

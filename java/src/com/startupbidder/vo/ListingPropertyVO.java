@@ -47,11 +47,4 @@ public class ListingPropertyVO {
 	public void setPropertyValue(String propertyValue) {
 		this.propertyValue = propertyValue;
 	}
-
-	@Override
-	public String toString() {
-		return "ListingPropertyVO [listing=" + listing + ", propertyName="
-				+ propertyName + ", propertyValue=" + propertyValue + "]";
-	}
-
 }

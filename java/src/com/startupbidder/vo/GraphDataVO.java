@@ -73,10 +73,4 @@ public class GraphDataVO implements Serializable {
 	public void setCreated(Date created) {
 		this.created = created;
 	}
-	@Override
-	public String toString() {
-		return "GraphDataVO [type=" + type + ", label=" + label + ", xAxis="
-				+ xAxis + ", yAxis=" + yAxis + ", values="
-				+ Arrays.toString(values) + ", created=" + created + "]";
-	}
 }

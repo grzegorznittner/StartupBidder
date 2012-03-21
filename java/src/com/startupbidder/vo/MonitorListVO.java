@@ -36,9 +36,4 @@ public class MonitorListVO extends BaseResultVO {
 	public void setUser(UserVO user) {
 		this.user = user;
 	}
-	@Override
-	public String toString() {
-		return "MonitorListVO [monitors=" + monitors + ", monitorsProperties="
-				+ monitorsProperties + ", user=" + user + "]";
-	}
 }

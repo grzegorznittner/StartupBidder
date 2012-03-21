@@ -38,9 +38,4 @@ public class ListingListVO extends BaseResultVO {
 	public UserBasicVO getUser() {
 		return user;
 	}
-	@Override
-	public String toString() {
-		return "ListingListVO [listings=" + listings + ", listingsProperties="
-				+ listingsProperties + ", user=" + user + super.toString() + "]";
-	}
 }

@@ -22,8 +22,4 @@ public class ListingAndUserVO extends BaseResultVO {
 	public void setListing(ListingVO listing) {
 		this.listing = listing;
 	}
-	@Override
-	public String toString() {
-		return "ListingAndUserVO [listing=" + listing + super.toString() + "]";
-	}
 }

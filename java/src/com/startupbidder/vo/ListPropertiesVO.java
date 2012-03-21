@@ -62,12 +62,4 @@ public class ListPropertiesVO {
 	public void setMaxResults(int maxResults) {
 		this.maxResults = maxResults;
 	}
-	
-	@Override
-	public String toString() {
-		return "ListPropertiesVO [startIndex=" + startIndex + ", maxResults="
-				+ maxResults + ", totalResults=" + totalResults
-				+ ", numberOfResults=" + numberOfResults + ", prevCursor="
-				+ prevCursor + ", nextCursor=" + nextCursor + "]";
-	}
 }

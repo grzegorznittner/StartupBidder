@@ -41,12 +41,6 @@ public class TickerDataVO {
 		return items;
 	}
 
-	@Override
-	public String toString() {
-		return "TickerDataVO [type=" + type + ", created=" + created
-				+ ", items=" + items + "]";
-	}
-
 	@JsonAutoDetect(getterVisibility=Visibility.NONE, setterVisibility=Visibility.NONE,
 			fieldVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE)
 	public static class TickerDataItemVO {

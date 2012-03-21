@@ -28,8 +28,4 @@ public class BidAndUserVO extends BaseResultVO {
 	public void setUser(UserBasicVO user) {
 		this.user = user;
 	}
-	@Override
-	public String toString() {
-		return "BidAndUserVO [bid=" + bid + ", user=" + user + ", " + super.toString() + "]";
-	}
 }

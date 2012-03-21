@@ -61,11 +61,4 @@ public class SystemPropertyVO {
 	public void setModified(Date modified) {
 		this.modified = modified;
 	}
-
-	@Override
-	public String toString() {
-		return "SystemPropertyVO [name=" + name + ", value=" + value
-				+ ", created=" + created + ", author=" + author + ", modified="
-				+ modified + "]";
-	}
 }

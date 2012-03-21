@@ -1,5 +1,6 @@
 package com.startupbidder.vo;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.codehaus.jackson.annotate.JsonAutoDetect;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
@@ -52,10 +53,7 @@ public class BaseResultVO {
 	public void setErrorMessage(String errorMessage) {
 		this.errorMessage = errorMessage;
 	}
-	@Override
 	public String toString() {
-		return "BaseResultVO [loginUrl=" + loginUrl + ", logoutUrl="
-				+ logoutUrl + ", loggedUser=" + loggedUser + ", errorCode="
-				+ errorCode + ", errorMessage=" + errorMessage + "]";
+		return ToStringBuilder.reflectionToString(this);
 	}
 }

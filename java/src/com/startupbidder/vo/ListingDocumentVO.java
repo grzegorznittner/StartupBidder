@@ -70,10 +70,4 @@ public class ListingDocumentVO extends BaseResultVO {
 	public void setMockData(boolean mockData) {
 		this.mockData = mockData;
 	}
-	@Override
-	public String toString() {
-		return "ListingDocumentVO [id=" + id + ", listing=" + listing
-				+ ", blob=" + blob + ", created=" + created + ", type=" + type
-				+ ", state=" + state + ", mockData=" + mockData + "]";
-	}
 }

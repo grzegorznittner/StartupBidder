@@ -82,12 +82,4 @@ public class VoteVO extends BaseVO {
 	public void setMockData(boolean mockData) {
 		this.mockData = mockData;
 	}
-
-	@Override
-	public String toString() {
-		return "VoteVO [id=" + id + ", listing=" + listing + ", listingName="
-				+ listingName + ", user=" + user + ", userName=" + userName
-				+ ", value=" + value + ", mockData=" + mockData + "]";
-	}
-
 }

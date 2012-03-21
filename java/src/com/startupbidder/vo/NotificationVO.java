@@ -137,12 +137,4 @@ public class NotificationVO extends BaseVO {
 		}
 		return link;
 	}
-	@Override
-	public String toString() {
-		return "NotificationVO [id=" + id + ", mockData=" + mockData
-				+ ", user=" + user + ", userName=" + userName + ", type="
-				+ type + ", object=" + object + ", message="
-				+ message + ", created=" + created + ", emailDate=" + emailDate
-				+ ", acknowledged=" + acknowledged + "]";
-	}
 }

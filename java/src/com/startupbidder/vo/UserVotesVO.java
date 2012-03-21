@@ -30,8 +30,4 @@ public class UserVotesVO extends BaseResultVO {
 	public void setUser(UserVO user) {
 		this.user = user;
 	}
-	@Override
-	public String toString() {
-		return "UserVotesVO [votes=" + votes + ", user=" + user + super.toString() + "]";
-	}
 }

@@ -36,10 +36,4 @@ public class NotificationListVO extends BaseResultVO {
 	public void setUser(UserBasicVO user) {
 		this.user = user;
 	}
-	@Override
-	public String toString() {
-		return "NotificationListVO [notifications=" + notifications
-				+ ", notificationsProperties=" + notificationsProperties
-				+ ", user=" + user + ", " + super.toString() + "]";
-	}
 }

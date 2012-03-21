@@ -102,12 +102,4 @@ public class MonitorVO extends BaseVO {
 	public void setUser(String user) {
 		this.user = user;
 	}
-	@Override
-	public String toString() {
-		return "MonitorVO [orderNumber=" + orderNumber + ", id=" + id
-				+ ", objectId=" + objectId + ", type=" + type + ", user="
-				+ user + ", userName=" + userName + ", created=" + created
-				+ ", deactivated=" + deactivated + ", mockData=" + mockData
-				+ ", active=" + active + "]";
-	}
 }
