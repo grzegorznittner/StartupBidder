@@ -126,8 +126,14 @@ public class ListingFacade {
 			log.log(Level.WARNING, "Only logged in user can have edited listing", new Exception("Not logged in"));
 			return null;
 		} else {
-			ListingVO listing = DtoToVoConverter.convert(getDAO().getListing(ListingVO.toKeyId(loggedInUser.getEditedListing())));
-			return listing;
+			Listing listing = getDAO().getListing(ListingVO.toKeyId(loggedInUser.getEditedListing()));
+			if (listing.state != Listing.State.NEW && listing.state != Listing.State.POSTED) {
+				loggedInUser.setEditedListing(null);
+				loggedInUser.setEditedStatus(null);
+				return null;
+			}
+			ListingVO listingVO = DtoToVoConverter.convert(listing);
+			return listingVO;
 		}
 	}
 	
