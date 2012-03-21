@@ -387,6 +387,10 @@ public class ListingFacade {
 			
 			Listing updatedListing = getDAO().updateListingStateAndDates(VoToModelConverter.convert(forUpdate));
 			if (updatedListing != null) {
+				if (StringUtils.areStringsEqual(updatedListing.owner.getString(), loggedInUser.getId())) {
+					loggedInUser.setEditedListing(null);
+					loggedInUser.setEditedStatus(null);
+				}
 				scheduleUpdateOfListingStatistics(updatedListing.getWebKey(), UpdateReason.NONE);
 			}
 			ListingVO toReturn = DtoToVoConverter.convert(updatedListing);
