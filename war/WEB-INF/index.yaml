@@ -1,11 +1,5 @@
 indexes:
 
-- kind: SBUser
-  ancestor: no
-  properties:
-    - name: email
-      direction: asc
-
 - kind: UserStats
   ancestor: no
   properties:
@@ -183,28 +177,28 @@ indexes:
     - name: posted
       direction: desc
 
-- kind: ListingStat
+- kind: ListingStats
   ancestor: no
   properties:
-    - name: status
-    - name: numberOfVotes
+    - name: state
+    - name: score
       direction: desc
 
-- kind: ListingStat
+- kind: ListingStats
   ancestor: no
   properties:
     - name: status
     - name: numberOfBids
       direction: desc
 
-- kind: ListingStat
+- kind: ListingStats
   ancestor: no
   properties:
     - name: status
     - name: numberOfComments
       direction: desc
 
-- kind: ListingStat
+- kind: ListingStats
   ancestor: no
   properties:
     - name: status
@@ -229,6 +223,12 @@ indexes:
     - name: user
     - name: created
       direction: desc
+
+- kind: Notification
+  ancestor: no
+  properties:
+    - name: user
+    - name: acknowledged
 
 - kind: Notification
   ancestor: no
