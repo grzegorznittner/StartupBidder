@@ -220,8 +220,8 @@ pl.implement(HeaderClass, {
         pl('#postlink').attr('href', newlistingurl);
         pl('#posttext').html(posttext);
         if (profile.admin) {
-            pl('#main>div.header>div.container>div.span-8').attr({'class': 'span-6 last loginspan'});
-            pl('#main>div.header>div.container>div.span-11').attr({'class': 'span-13'});
+            pl('#main>div.header>div.container>div.span-8,#newlistingmain>div.header>div.container>div.span-8').attr({'class': 'span-6 last loginspan'});
+            pl('#main>div.header>div.container>div.span-11,#newlistingmain>div.header>div.container>div.span-11').attr({'class': 'span-13'});
             pl('#postlink').before('<a href="main-page.html?type=posted"><span class="headerlink">Posted</span></a><span class="headertext">&nbsp;&nbsp;|&nbsp;&nbsp;</span>');
         }
         pl('#loginlink').attr('href', 'profile-page.html');
