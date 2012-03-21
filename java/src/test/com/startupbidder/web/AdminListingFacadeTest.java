@@ -2,6 +2,7 @@ package test.com.startupbidder.web;
 
 import static org.junit.Assert.*;
 
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -67,138 +68,7 @@ public class AdminListingFacadeTest extends AdminFacadeAbstractTest {
 
 		returned = ListingFacade.instance().getListing(admin, null);
 		assertNull("Key was null so listing should be null", returned.getListing());
-	}
-	
-	@Test
-	public void testUpdateFailedListing() {
-		assertTrue("Logged in user should be an admin", UserServiceFactory.getUserService().isUserAdmin());
-		
-		ListingVO listing = new ListingVO();
-		listing.setId(new Key<Listing>(Listing.class, 999).getString());
-		listing.setName("fakename");
-		listing.setOwner(super.userList.get(1).getWebKey());
-		ListingVO updatedListing = ListingFacade.instance().updateListing(admin, listing);
-		assertNull("Listing with given id should not be present", updatedListing);
-		
-		listing = DtoToVoConverter.convert(super.listingList.get(6));
-		// setting owner here should not be taken into account
-		listing.setOwner(admin.getId());
-		updatedListing = ListingFacade.instance().updateListing(admin, listing);
-		assertNotNull("Logged in user is not owner but is an admin", updatedListing);
-
-		listing = DtoToVoConverter.convert(super.listingList.get(1));
-		updatedListing = ListingFacade.instance().updateListing(admin, listing);
-		assertNotNull("Logged in user is not owner but is an admin", updatedListing);
-	}
-	
-	@Test
-	public void testUpdateExistingListing() {
-		assertTrue("Test data should have at least 12 listings: " + super.listingList, super.listingList.size() > 12);
-		
-		ListingVO listing = DtoToVoConverter.convert(super.listingList.get(5));
-		listing.setName("Updated name");
-		ListingVO updatedListing = ListingFacade.instance().updateListing(admin, listing);
-		assertNotNull("Listing should be returned", updatedListing);
-		assertEquals(listing.getName(), updatedListing.getName());
-		assertEquals(listing.getSummary(), updatedListing.getSummary());
-		assertEquals(listing.getOwner(), updatedListing.getOwner());
-		assertEquals(listing.getState(), updatedListing.getState());
-		assertEquals(listing.getSuggestedAmount(), updatedListing.getSuggestedAmount());
-		assertEquals(listing.getSuggestedPercentage(), updatedListing.getSuggestedPercentage());
-		assertEquals(listing.getPresentationId(), updatedListing.getPresentationId());
-		assertEquals(listing.getBuinessPlanId(), updatedListing.getBuinessPlanId());
-		assertEquals(listing.getFinancialsId(), updatedListing.getFinancialsId());
-		//assertTrue("Modified date should be updated", listing.get);
-
-		// we should be able to update name of active listing
-		listing = DtoToVoConverter.convert(super.listingList.get(6));
-		listing.setName("Updated name");
-		listing.setSummary(RandomStringUtils.randomAlphabetic(64));
-		listing.setOwner(super.userList.get(1).getWebKey());
-		listing.setState(Listing.State.POSTED.toString());
-		listing.setSuggestedAmount(5000);
-		listing.setSuggestedPercentage(44);
-		listing.setPresentationId(new Key<ListingDoc>(ListingDoc.class, 1001).getString());
-		listing.setBuinessPlanId(new Key<ListingDoc>(ListingDoc.class, 1002).getString());
-		listing.setFinancialsId(new Key<ListingDoc>(ListingDoc.class, 1003).getString());
-		updatedListing = ListingFacade.instance().updateListing(admin, listing);
-		assertNotNull("Listing should be updated", updatedListing);
-		assertEquals(listing.getName(), updatedListing.getName());
-		assertEquals(listing.getSummary(), updatedListing.getSummary());
-		assertNotSame(listing.getOwner(), updatedListing.getOwner());
-		assertNotSame(listing.getState(), updatedListing.getState());
-		assertEquals(listing.getSuggestedAmount(), updatedListing.getSuggestedAmount());
-		assertEquals(listing.getSuggestedPercentage(), updatedListing.getSuggestedPercentage());
-		assertEquals(listing.getPresentationId(), updatedListing.getPresentationId());
-		assertEquals(listing.getBuinessPlanId(), updatedListing.getBuinessPlanId());
-		assertEquals(listing.getFinancialsId(), updatedListing.getFinancialsId());
-
-		// we should be able to update new listing
-		listing = DtoToVoConverter.convert(super.listingList.get(7));
-		listing.setName("Updated name");
-		listing.setSummary(RandomStringUtils.randomAlphabetic(64));
-		listing.setOwner(super.userList.get(1).getWebKey());
-		listing.setState(Listing.State.ACTIVE.toString());
-		listing.setSuggestedAmount(5000);
-		listing.setSuggestedPercentage(44);
-		listing.setPresentationId(new Key<ListingDoc>(ListingDoc.class, 1001).getString());
-		listing.setBuinessPlanId(new Key<ListingDoc>(ListingDoc.class, 1002).getString());
-		listing.setFinancialsId(new Key<ListingDoc>(ListingDoc.class, 1003).getString());
-		updatedListing = ListingFacade.instance().updateListing(admin, listing);
-		assertNotNull("Listing should be updated", updatedListing);
-		assertEquals(listing.getName(), updatedListing.getName());
-		assertEquals(listing.getSummary(), updatedListing.getSummary());
-		assertNotSame(listing.getOwner(), updatedListing.getOwner());
-		assertNotSame(listing.getState(), updatedListing.getState());
-		assertEquals(listing.getSuggestedAmount(), updatedListing.getSuggestedAmount());
-		assertEquals(listing.getSuggestedPercentage(), updatedListing.getSuggestedPercentage());
-		assertEquals(listing.getPresentationId(), updatedListing.getPresentationId());
-		assertEquals(listing.getBuinessPlanId(), updatedListing.getBuinessPlanId());
-		assertEquals(listing.getFinancialsId(), updatedListing.getFinancialsId());
-
-		// we should not be able to update closed listing
-		listing = DtoToVoConverter.convert(super.listingList.get(12));
-		listing.setName("Updated name");
-		listing.setSummary(RandomStringUtils.randomAlphabetic(64));
-		listing.setOwner(super.userList.get(1).getWebKey());
-		listing.setState(Listing.State.ACTIVE.toString());
-		listing.setSuggestedAmount(5000);
-		listing.setSuggestedPercentage(44);
-		listing.setPresentationId(new Key<ListingDoc>(ListingDoc.class, 1001).getString());
-		listing.setBuinessPlanId(new Key<ListingDoc>(ListingDoc.class, 1002).getString());
-		listing.setFinancialsId(new Key<ListingDoc>(ListingDoc.class, 1003).getString());
-		updatedListing = ListingFacade.instance().updateListing(admin, listing);
-		assertNull("Closed listing should not be updated", updatedListing);
-
-		// we should not be able to update name of posted listing
-		listing = DtoToVoConverter.convert(super.listingList.get(10));
-		listing.setName("Updated name");
-		listing.setSummary(RandomStringUtils.randomAlphabetic(64));
-		listing.setOwner(super.userList.get(1).getWebKey());
-		listing.setState(Listing.State.ACTIVE.toString());
-		listing.setSuggestedAmount(5000);
-		listing.setSuggestedPercentage(44);
-		listing.setPresentationId(new Key<ListingDoc>(ListingDoc.class, 1001).getString());
-		listing.setBuinessPlanId(new Key<ListingDoc>(ListingDoc.class, 1002).getString());
-		listing.setFinancialsId(new Key<ListingDoc>(ListingDoc.class, 1003).getString());
-		updatedListing = ListingFacade.instance().updateListing(admin, listing);
-		assertNull("Posted listing should not be updated", updatedListing);
-		
-		// we should not be able to update name of withdrawn listing
-		listing = DtoToVoConverter.convert(super.listingList.get(11));
-		listing.setName("Updated name");
-		listing.setSummary(RandomStringUtils.randomAlphabetic(64));
-		listing.setOwner(super.userList.get(1).getWebKey());
-		listing.setState(Listing.State.ACTIVE.toString());
-		listing.setSuggestedAmount(5000);
-		listing.setSuggestedPercentage(44);
-		listing.setPresentationId(new Key<ListingDoc>(ListingDoc.class, 1001).getString());
-		listing.setBuinessPlanId(new Key<ListingDoc>(ListingDoc.class, 1002).getString());
-		listing.setFinancialsId(new Key<ListingDoc>(ListingDoc.class, 1003).getString());
-		updatedListing = ListingFacade.instance().updateListing(admin, listing);
-		assertNull("Withdrawn listing should not be updated", updatedListing);
-		
-	}
+	}	
 
 	@Test
 	public void testActivateListing() {
@@ -236,9 +106,14 @@ public class AdminListingFacadeTest extends AdminFacadeAbstractTest {
 		assertFalse("Activated listing should be a new instance of the object", listing == activatedListing);
 		assertEquals("State should be POSTED", Listing.State.ACTIVE.toString(), activatedListing.getState());
 		assertNotNull("Posted on date should be set", activatedListing.getPostedOn());
+		assertNotNull("Listed date should be set", activatedListing.getListedOn());
+		assertTrue("Listed date must be between posted date and now",
+				activatedListing.getPostedOn().getTime() < activatedListing.getListedOn().getTime() && activatedListing.getListedOn().getTime() < new Date().getTime());
 		assertNotNull("Closing date should be set", activatedListing.getClosingOn());
 		DateMidnight midnight = new DateMidnight();
 		assertTrue("Closing date should be set 30 days ahead", midnight.plus(Days.days(29)).toDate().getTime() < activatedListing.getClosingOn().getTime());
+		assertEquals("Listing was just activated", 0, activatedListing.getDaysAgo());
+		assertEquals("Listing was just activated and closing should be 30 days ahead", 30, activatedListing.getDaysLeft());
 		assertEquals(listing.getName(), activatedListing.getName());
 		assertEquals(listing.getSummary(), activatedListing.getSummary());
 		assertEquals(listing.getOwner(), activatedListing.getOwner());
@@ -252,10 +127,16 @@ public class AdminListingFacadeTest extends AdminFacadeAbstractTest {
 		activatedListing = ListingFacade.instance().activateListing(admin, listing.getId());
 		assertNotNull("Admin can activate posted listing.", activatedListing);
 		assertFalse("Activated listing should be a new instance of the object", listing == activatedListing);
-		assertEquals("State should be POSTED", Listing.State.ACTIVE.toString(), activatedListing.getState());
-		//assertNotNull("Posted on date should be set", updatedListing.getPostedOn());
+		assertEquals("State should be ACTIVE", Listing.State.ACTIVE.toString(), activatedListing.getState());
+		assertNotNull("Posted on date should be set", activatedListing.getPostedOn());
+		assertNotNull("Listed date should be set", activatedListing.getListedOn());
+		assertTrue("Listed date must be between posted date and now",
+				activatedListing.getPostedOn().getTime() < activatedListing.getListedOn().getTime() && activatedListing.getListedOn().getTime() < new Date().getTime());
 		assertNotNull("Closing date should be set", activatedListing.getClosingOn());
+		midnight = new DateMidnight();
 		assertTrue("Closing date should be set 30 days ahead", midnight.plus(Days.days(29)).toDate().getTime() < activatedListing.getClosingOn().getTime());
+		assertEquals("Listing was just activated", 0, activatedListing.getDaysAgo());
+		assertEquals("Listing was just activated and closing should be 30 days ahead", 30, activatedListing.getDaysLeft());
 		assertEquals(listing.getName(), activatedListing.getName());
 		assertEquals(listing.getSummary(), activatedListing.getSummary());
 		assertEquals(listing.getOwner(), activatedListing.getOwner());

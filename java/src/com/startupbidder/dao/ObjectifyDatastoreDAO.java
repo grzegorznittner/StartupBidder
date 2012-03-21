@@ -556,15 +556,9 @@ public class ObjectifyDatastoreDAO {
 	public Listing updateListing(Listing newListing) {
 		try {
 			Listing listing = getOfy().get(new Key<Listing>(Listing.class, newListing.id));
-			listing.name = newListing.name;
-			listing.summary = newListing.summary;
-			listing.suggestedAmount = newListing.suggestedAmount;
-			listing.suggestedPercentage = newListing.suggestedPercentage;
-			listing.businessPlanId = newListing.businessPlanId;
-			listing.presentationId = newListing.presentationId;
-			listing.financialsId = newListing.financialsId;
 			listing.state = newListing.state;
 			listing.closingOn = newListing.closingOn;
+			listing.listedOn = newListing.listedOn;
 			listing.created = newListing.created;
 			listing.posted = newListing.posted;
 
@@ -592,11 +586,9 @@ public class ObjectifyDatastoreDAO {
 		}
 	}
 
-	public Listing deleteUsersNewListing(long userId) {
-		Listing listing = getOfy().query(Listing.class)
-				.filter("owner =", new Key<SBUser>(SBUser.class, userId))
-				.filter("state =", Listing.State.NEW).get();
-		if (listing != null) {
+	public Listing deleteEditedListing(long listingId) {
+		Listing listing = getOfy().get(new Key<Listing>(Listing.class, listingId));
+		if (listing != null && listing.state == Listing.State.NEW) {
 			getOfy().delete(listing);
 			SBUser user = getOfy().get(listing.owner);
 			user.editedListing = null;

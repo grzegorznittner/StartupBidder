@@ -89,6 +89,7 @@ public abstract class BaseFacadeAbstractTest {
 	protected List<SBUser> userList = null;
 	protected SBUser googleSBUser = null;
 	protected UserVO googleUserVO = null;
+	protected UserVO anotherUserVO = null;
 	protected UserVO admin = null;
 	
 	protected List<Listing> listingList = null;
@@ -126,6 +127,12 @@ public abstract class BaseFacadeAbstractTest {
 		assertEquals("Email address should be used", googleUser.getEmail(), googleUserVO.getEmail());
 		assertEquals("User should be ACTIVE", SBUser.Status.ACTIVE.toString(), googleUserVO.getStatus());
 		assertEquals("User was present and it should be returned", userList.get(GOOGLEUSER).name, googleUserVO.getName());
+		
+		anotherUserVO = UserMgmtFacade.instance().getUser(admin, userList.get(1).getWebKey()).getUser();
+		assertNotNull("Logged in user not stored in datastore", anotherUserVO);
+		assertNotNull("Email address should be used", anotherUserVO.getEmail());
+		assertEquals("User should be ACTIVE", SBUser.Status.ACTIVE.toString(), anotherUserVO.getStatus());
+		assertNotNull("User was present and it should be returned", anotherUserVO.getName());
 	}
 
 	static int GOOGLEUSER = 3;
