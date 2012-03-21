@@ -117,7 +117,7 @@ public class BidFacadeTest extends BaseFacadeAbstractTest {
 
 		// freezing listing
 		ListingVO listing = DtoToVoConverter.convert(super.listingList.get(LISTING1_OWNER1));
-		ListingVO freezedListing = ListingFacade.instance().freezeListing(admin, listing.getId());
+		ListingVO freezedListing = ListingFacade.instance().freezeListing(admin, listing.getId()).getListing();
 		assertNotNull("Listing freezed", freezedListing);
 		assertEquals(Listing.State.FROZEN.toString(), freezedListing.getState());
 		
@@ -134,7 +134,7 @@ public class BidFacadeTest extends BaseFacadeAbstractTest {
 		assertTrue("Cancel for frozen listing, should be rejected", bids != null && bids.getErrorCode() == ErrorCodes.OPERATION_NOT_ALLOWED);
 
 		// reactivating listing
-		freezedListing = ListingFacade.instance().activateListing(admin, listing.getId());
+		freezedListing = ListingFacade.instance().activateListing(admin, listing.getId()).getListing();
 		assertNotNull("Listing reactivated", freezedListing);
 		assertEquals(Listing.State.ACTIVE.toString(), freezedListing.getState());
 		
@@ -144,7 +144,7 @@ public class BidFacadeTest extends BaseFacadeAbstractTest {
 		printBids("After counter from bidder2.", bids);
 
 		// withdrawing listing
-		freezedListing = ListingFacade.instance().withdrawListing(owner1, listing.getId());
+		freezedListing = ListingFacade.instance().withdrawListing(owner1, listing.getId()).getListing();
 		assertNotNull("Listing withdrawn", freezedListing);
 		assertEquals(Listing.State.WITHDRAWN.toString(), freezedListing.getState());
 

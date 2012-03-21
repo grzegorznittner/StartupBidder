@@ -321,20 +321,28 @@ public class ListingFacade {
 	 * Marks listing as prepared for posting on statupbidder.
 	 * Only owner of the listing can do that
 	 */
-	public ListingVO activateListing(UserVO loggedInUser, String listingId) {
-		Listing dbListing = getDAO().getListing(BaseVO.toKeyId(listingId));
-		if (dbListing.state != Listing.State.POSTED && dbListing.state != Listing.State.FROZEN) {
-			log.log(Level.WARNING, "Only posted and frozen listings can be activated. This listing is " + dbListing.state, new Exception("Not valid state"));
-			return null;
-		}
+	public ListingAndUserVO activateListing(UserVO loggedInUser, String listingId) {
+		ListingAndUserVO returnValue = new ListingAndUserVO();
 		if (loggedInUser == null) {
 			log.log(Level.WARNING, "User is not logged in!", new Exception("Not logged in user"));
-			return null;
+			returnValue.setErrorCode(ErrorCodes.NOT_LOGGED_IN);
+			returnValue.setErrorMessage("User is not logged in!");
+			return returnValue;
 		}
 		// Only admins can do activation
 		if (!loggedInUser.isAdmin()) {
 			log.log(Level.WARNING, "User " + loggedInUser + " is not an admin. Only admin can activate listings.", new Exception("Not an admin"));
-			return null;
+			returnValue.setErrorCode(ErrorCodes.NOT_AN_ADMIN);
+			returnValue.setErrorMessage("User " + loggedInUser + " is not an admin. Only admin can activate listings.");
+			return returnValue;
+		}
+
+		Listing dbListing = getDAO().getListing(BaseVO.toKeyId(listingId));
+		if (dbListing.state != Listing.State.POSTED && dbListing.state != Listing.State.FROZEN) {
+			log.log(Level.WARNING, "Only posted and frozen listings can be activated. This listing is " + dbListing.state, new Exception("Not valid state"));
+			returnValue.setErrorCode(ErrorCodes.ENTITY_VALIDATION);
+			returnValue.setErrorMessage("Only posted and frozen listings can be activated. This listing is " + dbListing.state);
+			return returnValue;
 		}
 		// activation also could be done for FROZEN listings
 		if (dbListing.state == Listing.State.POSTED) {
@@ -352,7 +360,8 @@ public class ListingFacade {
 		}
 		ListingVO toReturn = DtoToVoConverter.convert(updatedListing);
 		applyListingData(loggedInUser, toReturn);
-		return toReturn;
+		returnValue.setListing(toReturn);
+		return returnValue;
 	}
 
 	/**
@@ -499,15 +508,27 @@ public class ListingFacade {
 	/**
 	 * Withdraws listing so it's not available for bidding anymore.
 	 */
-	public ListingVO withdrawListing(UserVO loggedInUser, String listingId) {
+	public ListingAndUserVO withdrawListing(UserVO loggedInUser, String listingId) {
+		ListingAndUserVO returnValue = new ListingAndUserVO();
+		
+		if (loggedInUser == null) {
+			log.log(Level.WARNING, "User not logged in");
+			returnValue.setErrorMessage("User not logged in");
+			returnValue.setErrorCode(ErrorCodes.NOT_LOGGED_IN);
+			return returnValue;
+		}
 		Listing dbListing = getDAO().getListing(BaseVO.toKeyId(listingId));
-		if (loggedInUser == null || dbListing == null) {
-			log.log(Level.WARNING, "Listing doesn't exist or user not logged in", new Exception("Listing doesn't exist"));
-			return null;
+		if (dbListing == null) {
+			log.log(Level.WARNING, "Listing doesn't exist", new Exception("Listing doesn't exist"));
+			returnValue.setErrorMessage("Listing doesn't exist");
+			returnValue.setErrorCode(ErrorCodes.ENTITY_VALIDATION);
+			return returnValue;
 		}
 		if (!StringUtils.areStringsEqual(loggedInUser.getId(), dbListing.owner.getString())) {
 			log.log(Level.WARNING, "User must be an owner of the listing", new Exception("Not an owner"));
-			return null;
+			returnValue.setErrorMessage("User must be an owner of the listing");
+			returnValue.setErrorCode(ErrorCodes.ENTITY_VALIDATION);
+			return returnValue;
 		}
 		
 		// only ACTIVE and POSTED listings can be WITHDRAWN
@@ -519,61 +540,96 @@ public class ListingFacade {
 			Listing updatedListing = getDAO().updateListingStateAndDates(VoToModelConverter.convert(forUpdate));
 			if (updatedListing != null) {
 				scheduleUpdateOfListingStatistics(updatedListing.getWebKey(), UpdateReason.NONE);
+			} else {
+				returnValue.setErrorMessage("Listing not updated");
+				returnValue.setErrorCode(ErrorCodes.DATASTORE_ERROR);
 			}
 			ListingVO toReturn = DtoToVoConverter.convert(updatedListing);
 			applyListingData(loggedInUser, toReturn);
-			return toReturn;
+			returnValue.setListing(toReturn);
+			return returnValue;
 		}
 		log.log(Level.WARNING, "CLOSED or WITHDRAWN listings cannot be withdrawn (state was " + dbListing.state + ")", new Exception("Not valid state"));
-		return null;
+		returnValue.setErrorMessage("CLOSED or WITHDRAWN listings cannot be withdrawn (state was " + dbListing.state + ")");
+		returnValue.setErrorCode(ErrorCodes.ENTITY_VALIDATION);
+		return returnValue;
 	}
 
 	/**
 	 * Sends back listing for update to the owner as it is not ready for posting on startupbidder site
 	 */
-	public ListingVO sendBackListingToOwner(UserVO loggedInUser, String listingId) {
+	public ListingAndUserVO sendBackListingToOwner(UserVO loggedInUser, String listingId) {
+		ListingAndUserVO returnValue = new ListingAndUserVO();
+		
 		Listing dbListing = getDAO().getListing(BaseVO.toKeyId(listingId));
 		if (loggedInUser == null || dbListing == null || !loggedInUser.isAdmin()) {
 			log.warning("User " + loggedInUser + " is not admin");
-			return null;
+			returnValue.setErrorMessage("User " + loggedInUser + " is not admin");
+			returnValue.setErrorCode(ErrorCodes.NOT_AN_ADMIN);
+			return returnValue;
 		}
 		
-		// only available for ACTIVE listings
-		if (dbListing.state == Listing.State.ACTIVE) {
+		// only available for POSTED listings
+		if (dbListing.state == Listing.State.POSTED) {
 			ListingVO forUpdate = DtoToVoConverter.convert(dbListing);
 
 			forUpdate.setState(Listing.State.NEW.toString());
 			
 			Listing updatedListing = getDAO().updateListingStateAndDates(VoToModelConverter.convert(forUpdate));
-			
+			if (updatedListing == null) {
+				returnValue.setErrorMessage("Listing not updated");
+				returnValue.setErrorCode(ErrorCodes.DATASTORE_ERROR);
+			}
 			ListingVO toReturn = DtoToVoConverter.convert(updatedListing);
 			applyListingData(loggedInUser, toReturn);
-			return toReturn;
+			returnValue.setListing(toReturn);
+			return returnValue;
 		}
-		log.warning("Only ACTIVE listings can be send back for update to owner");
-		return null;
+		returnValue.setErrorMessage("Only ACTIVE listings can be send back for update to owner");
+		returnValue.setErrorCode(ErrorCodes.ENTITY_VALIDATION);
+		return returnValue;
 	}
 
 	/**
 	 * Freeze listing so it cannot be bid or modified. It's an administrative action.
 	 */
-	public ListingVO freezeListing(UserVO loggedInUser, String listingId) {
-		Listing dbListing = getDAO().getListing(BaseVO.toKeyId(listingId));
-		if (loggedInUser == null || dbListing == null || !loggedInUser.isAdmin()) {
-			log.warning("User " + loggedInUser + " is not admin");
-			return null;
+	public ListingAndUserVO freezeListing(UserVO loggedInUser, String listingId) {
+		ListingAndUserVO returnValue = new ListingAndUserVO();
+		if (loggedInUser == null || !loggedInUser.isAdmin()) {
+			log.warning("User not logged in or '" + loggedInUser + "' is not an admin");
+			returnValue.setErrorMessage("User not logged in or '" + loggedInUser + "' is not an admin");
+			returnValue.setErrorCode(ErrorCodes.NOT_AN_ADMIN);
+			return returnValue;
 		}
 		
-		// admins can always freeze listing
-		ListingVO forUpdate = DtoToVoConverter.convert(dbListing);
-
-		forUpdate.setState(Listing.State.FROZEN.toString());
+		Listing dbListing = getDAO().getListing(BaseVO.toKeyId(listingId));
+		if (dbListing == null || dbListing.state == Listing.State.NEW || dbListing.state == Listing.State.POSTED) {
+			log.warning("Listing not exists or is not yet activated. Listing: " + dbListing);
+			returnValue.setErrorMessage("Listing not exists or is not yet activated");
+			returnValue.setErrorCode(ErrorCodes.ENTITY_VALIDATION);
+			return returnValue;
+		}
 		
-		Listing updatedListing = getDAO().updateListingStateAndDates(VoToModelConverter.convert(forUpdate));
-		
-		ListingVO toReturn = DtoToVoConverter.convert(updatedListing);
-		applyListingData(loggedInUser, toReturn);
-		return toReturn;
+		if (dbListing.state != Listing.State.NEW && dbListing.state != Listing.State.POSTED) {
+			// admins can always freeze listing
+			ListingVO forUpdate = DtoToVoConverter.convert(dbListing);
+	
+			forUpdate.setState(Listing.State.FROZEN.toString());
+			
+			Listing updatedListing = getDAO().updateListingStateAndDates(VoToModelConverter.convert(forUpdate));
+			if (updatedListing == null) {
+				returnValue.setErrorMessage("Listing not updated");
+				returnValue.setErrorCode(ErrorCodes.DATASTORE_ERROR);
+			}
+			
+			ListingVO toReturn = DtoToVoConverter.convert(updatedListing);
+			applyListingData(loggedInUser, toReturn);
+			returnValue.setListing(toReturn);
+			return returnValue;
+		}
+		returnValue.setErrorMessage("NEW or POSTED listings cannot be send back for update to owner");
+		returnValue.setErrorCode(ErrorCodes.ENTITY_VALIDATION);
+		return returnValue;
 	}
 
 	/**

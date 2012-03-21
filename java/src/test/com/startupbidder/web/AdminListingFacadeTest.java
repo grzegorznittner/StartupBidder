@@ -73,56 +73,31 @@ public class AdminListingFacadeTest extends AdminFacadeAbstractTest {
 
 	@Test
 	public void testActivateListing() {
-		ListingVO listing = DtoToVoConverter.convert(super.listingList.get(11));
-		ListingVO activatedListing = ListingFacade.instance().activateListing(admin, listing.getId());
-		assertNull("Withdrawn listing cannot be activated", activatedListing);
-		
-		listing = DtoToVoConverter.convert(super.listingList.get(5));
-		activatedListing = ListingFacade.instance().activateListing(admin, listing.getId());
-		assertNull("Already active listing cannot be activated", activatedListing);
-
-		listing = DtoToVoConverter.convert(super.listingList.get(12));
-		activatedListing = ListingFacade.instance().activateListing(admin, listing.getId());
-		assertNull("Closed listing cannot be activated", activatedListing);
-
-		listing = DtoToVoConverter.convert(super.listingList.get(3));
-		activatedListing = ListingFacade.instance().activateListing(admin, listing.getId());
-		assertNull("Active listing cannot be activated", activatedListing);
-
-		listing = DtoToVoConverter.convert(super.listingList.get(6));
-		activatedListing = ListingFacade.instance().activateListing(admin, listing.getId());
-		assertNull("Active listing cannot be activated", activatedListing);
-		
-		listing = DtoToVoConverter.convert(super.listingList.get(13));
-		activatedListing = ListingFacade.instance().activateListing(admin, listing.getId());
-		assertNull("New listing cannot be activated", activatedListing);
-
-		listing = DtoToVoConverter.convert(super.listingList.get(8));
-		activatedListing = ListingFacade.instance().activateListing(null, listing.getId());
-		assertNull("Posted listing but logged in is null", activatedListing);
-
-		listing = DtoToVoConverter.convert(super.listingList.get(8));
-		activatedListing = ListingFacade.instance().activateListing(admin, listing.getId());
-		assertNotNull("Admin can activate posted listing.", activatedListing);
-		assertFalse("Activated listing should be a new instance of the object", listing == activatedListing);
-		assertEquals("State should be POSTED", Listing.State.ACTIVE.toString(), activatedListing.getState());
-		assertNotNull("Posted on date should be set", activatedListing.getPostedOn());
-		assertNotNull("Listed date should be set", activatedListing.getListedOn());
+		ListingVO listing = DtoToVoConverter.convert(super.listingList.get(8));
+		ListingAndUserVO activatedListing = ListingFacade.instance().activateListing(admin, listing.getId());
+		assertNotNull(activatedListing);
+		assertNotNull(activatedListing.getListing());
+		assertEquals(ErrorCodes.OK, activatedListing.getErrorCode());
+		assertFalse("Activated listing should be a new instance of the object", listing == activatedListing.getListing());
+		assertEquals("State should be ACTIVE", Listing.State.ACTIVE.toString(), activatedListing.getListing().getState());
+		assertNotNull("Posted on date should be set", activatedListing.getListing().getPostedOn());
+		assertNotNull("Listed date should be set", activatedListing.getListing().getListedOn());
 		assertTrue("Listed date must be between posted date and now",
-				activatedListing.getPostedOn().getTime() < activatedListing.getListedOn().getTime() && activatedListing.getListedOn().getTime() < new Date().getTime());
-		assertNotNull("Closing date should be set", activatedListing.getClosingOn());
+				activatedListing.getListing().getPostedOn().getTime() < activatedListing.getListing().getListedOn().getTime()
+				&& activatedListing.getListing().getListedOn().getTime() < new Date().getTime());
+		assertNotNull("Closing date should be set", activatedListing.getListing().getClosingOn());
 		DateMidnight midnight = new DateMidnight();
-		assertTrue("Closing date should be set 30 days ahead", midnight.plus(Days.days(29)).toDate().getTime() < activatedListing.getClosingOn().getTime());
-		assertEquals("Listing was just activated", 0, activatedListing.getDaysAgo());
-		assertEquals("Listing was just activated and closing should be 30 days ahead", 30, activatedListing.getDaysLeft());
-		assertEquals(listing.getName(), activatedListing.getName());
-		assertEquals(listing.getSummary(), activatedListing.getSummary());
-		assertEquals(listing.getOwner(), activatedListing.getOwner());
-		assertEquals(listing.getSuggestedAmount(), activatedListing.getSuggestedAmount());
-		assertEquals(listing.getSuggestedPercentage(), activatedListing.getSuggestedPercentage());
-		assertEquals(listing.getPresentationId(), activatedListing.getPresentationId());
-		assertEquals(listing.getBuinessPlanId(), activatedListing.getBuinessPlanId());
-		assertEquals(listing.getFinancialsId(), activatedListing.getFinancialsId());
+		assertTrue("Closing date should be set 30 days ahead", midnight.plus(Days.days(29)).toDate().getTime() < activatedListing.getListing().getClosingOn().getTime());
+		assertEquals("Listing was just activated", 0, activatedListing.getListing().getDaysAgo());
+		assertEquals("Listing was just activated and closing should be 30 days ahead", 30, activatedListing.getListing().getDaysLeft());
+		assertEquals(listing.getName(), activatedListing.getListing().getName());
+		assertEquals(listing.getSummary(), activatedListing.getListing().getSummary());
+		assertEquals(listing.getOwner(), activatedListing.getListing().getOwner());
+		assertEquals(listing.getSuggestedAmount(), activatedListing.getListing().getSuggestedAmount());
+		assertEquals(listing.getSuggestedPercentage(), activatedListing.getListing().getSuggestedPercentage());
+		assertEquals(listing.getPresentationId(), activatedListing.getListing().getPresentationId());
+		assertEquals(listing.getBuinessPlanId(), activatedListing.getListing().getBuinessPlanId());
+		assertEquals(listing.getFinancialsId(), activatedListing.getListing().getFinancialsId());
 		
 		UserAndUserVO owner = UserMgmtFacade.instance().getUser(admin, listing.getOwner());
 		assertNotNull("Owner user should exist", owner.getUser());
@@ -130,30 +105,78 @@ public class AdminListingFacadeTest extends AdminFacadeAbstractTest {
 
 		listing = DtoToVoConverter.convert(super.listingList.get(14));
 		activatedListing = ListingFacade.instance().activateListing(admin, listing.getId());
-		assertNotNull("Admin can activate posted listing.", activatedListing);
-		assertFalse("Activated listing should be a new instance of the object", listing == activatedListing);
-		assertEquals("State should be ACTIVE", Listing.State.ACTIVE.toString(), activatedListing.getState());
-		assertNotNull("Posted on date should be set", activatedListing.getPostedOn());
-		assertNotNull("Listed date should be set", activatedListing.getListedOn());
+		assertNotNull(activatedListing);
+		assertNotNull(activatedListing.getListing());
+		assertEquals(ErrorCodes.OK, activatedListing.getErrorCode());
+		assertFalse("Activated listing should be a new instance of the object", listing == activatedListing.getListing());
+		assertEquals("State should be ACTIVE", Listing.State.ACTIVE.toString(), activatedListing.getListing().getState());
+		assertNotNull("Posted on date should be set", activatedListing.getListing().getPostedOn());
+		assertNotNull("Listed date should be set", activatedListing.getListing().getListedOn());
 		assertTrue("Listed date must be between posted date and now",
-				activatedListing.getPostedOn().getTime() < activatedListing.getListedOn().getTime() && activatedListing.getListedOn().getTime() < new Date().getTime());
-		assertNotNull("Closing date should be set", activatedListing.getClosingOn());
+				activatedListing.getListing().getPostedOn().getTime() < activatedListing.getListing().getListedOn().getTime()
+				&& activatedListing.getListing().getListedOn().getTime() < new Date().getTime());
+		assertNotNull("Closing date should be set", activatedListing.getListing().getClosingOn());
 		midnight = new DateMidnight();
-		assertTrue("Closing date should be set 30 days ahead", midnight.plus(Days.days(29)).toDate().getTime() < activatedListing.getClosingOn().getTime());
-		assertEquals("Listing was just activated", 0, activatedListing.getDaysAgo());
-		assertEquals("Listing was just activated and closing should be 30 days ahead", 30, activatedListing.getDaysLeft());
-		assertEquals(listing.getName(), activatedListing.getName());
-		assertEquals(listing.getSummary(), activatedListing.getSummary());
-		assertEquals(listing.getOwner(), activatedListing.getOwner());
-		assertEquals(listing.getSuggestedAmount(), activatedListing.getSuggestedAmount());
-		assertEquals(listing.getSuggestedPercentage(), activatedListing.getSuggestedPercentage());
-		assertEquals(listing.getPresentationId(), activatedListing.getPresentationId());
-		assertEquals(listing.getBuinessPlanId(), activatedListing.getBuinessPlanId());
-		assertEquals(listing.getFinancialsId(), activatedListing.getFinancialsId());
+		assertTrue("Closing date should be set 30 days ahead", midnight.plus(Days.days(29)).toDate().getTime() < activatedListing.getListing().getClosingOn().getTime());
+		assertEquals("Listing was just activated", 0, activatedListing.getListing().getDaysAgo());
+		assertEquals("Listing was just activated and closing should be 30 days ahead", 30, activatedListing.getListing().getDaysLeft());
+		assertEquals(listing.getName(), activatedListing.getListing().getName());
+		assertEquals(listing.getSummary(), activatedListing.getListing().getSummary());
+		assertEquals(listing.getOwner(), activatedListing.getListing().getOwner());
+		assertEquals(listing.getSuggestedAmount(), activatedListing.getListing().getSuggestedAmount());
+		assertEquals(listing.getSuggestedPercentage(), activatedListing.getListing().getSuggestedPercentage());
+		assertEquals(listing.getPresentationId(), activatedListing.getListing().getPresentationId());
+		assertEquals(listing.getBuinessPlanId(), activatedListing.getListing().getBuinessPlanId());
+		assertEquals(listing.getFinancialsId(), activatedListing.getListing().getFinancialsId());
 		
 		owner = UserMgmtFacade.instance().getUser(admin, listing.getOwner());
 		assertNotNull("Owner user should exist", owner.getUser());
 		assertNull("After activation owner should have empty edited listing", owner.getUser().getEditedListing());
+	}
+	
+	@Test
+	public void testFailedActivateListing() {
+		ListingVO listing = DtoToVoConverter.convert(super.listingList.get(11));
+		ListingAndUserVO activatedListing = ListingFacade.instance().activateListing(admin, listing.getId());
+		assertNotNull(activatedListing);
+		assertNull(activatedListing.getListing());
+		assertNotSame("Withdrawn listing cannot be activated", ErrorCodes.OK, activatedListing.getErrorCode());
+		
+		listing = DtoToVoConverter.convert(super.listingList.get(5));
+		activatedListing = ListingFacade.instance().activateListing(admin, listing.getId());
+		assertNotNull(activatedListing);
+		assertNull(activatedListing.getListing());
+		assertNotSame("Already active listing cannot be activated", ErrorCodes.OK, activatedListing.getErrorCode());
+
+		listing = DtoToVoConverter.convert(super.listingList.get(12));
+		activatedListing = ListingFacade.instance().activateListing(admin, listing.getId());
+		assertNotNull(activatedListing);
+		assertNull(activatedListing.getListing());
+		assertNotSame("Closed listing cannot be activated", ErrorCodes.OK, activatedListing.getErrorCode());
+
+		listing = DtoToVoConverter.convert(super.listingList.get(3));
+		activatedListing = ListingFacade.instance().activateListing(admin, listing.getId());
+		assertNotNull(activatedListing);
+		assertNull(activatedListing.getListing());
+		assertNotSame("Active listing cannot be activated", ErrorCodes.OK, activatedListing.getErrorCode());
+
+		listing = DtoToVoConverter.convert(super.listingList.get(6));
+		activatedListing = ListingFacade.instance().activateListing(admin, listing.getId());
+		assertNotNull(activatedListing);
+		assertNull(activatedListing.getListing());
+		assertNotSame("Active listing cannot be activated", ErrorCodes.OK, activatedListing.getErrorCode());
+		
+		listing = DtoToVoConverter.convert(super.listingList.get(13));
+		activatedListing = ListingFacade.instance().activateListing(admin, listing.getId());
+		assertNotNull(activatedListing);
+		assertNull(activatedListing.getListing());
+		assertNotSame("New listing cannot be activated", ErrorCodes.OK, activatedListing.getErrorCode());
+
+		listing = DtoToVoConverter.convert(super.listingList.get(8));
+		activatedListing = ListingFacade.instance().activateListing(null, listing.getId());
+		assertNotNull(activatedListing);
+		assertNull(activatedListing.getListing());
+		assertNotSame("Posted listing but logged in is null", ErrorCodes.OK, activatedListing.getErrorCode());
 	}
 	
 	@Test
@@ -221,143 +244,182 @@ public class AdminListingFacadeTest extends AdminFacadeAbstractTest {
 	@Test
 	public void testWithdrawListing() {
 		ListingVO listing = DtoToVoConverter.convert(super.listingList.get(11));
-		ListingVO withdrawnListing = ListingFacade.instance().withdrawListing(admin, listing.getId());
-		assertNull("Withdrawn listing cannot be withdrawn", withdrawnListing);
+		ListingAndUserVO withdrawnListing = ListingFacade.instance().withdrawListing(admin, listing.getId());
+		assertNotNull(withdrawnListing);
+		assertNotSame("We should get failure", ErrorCodes.OK, withdrawnListing.getErrorCode());
+		assertNull("Withdrawn listing cannot be withdrawn", withdrawnListing.getListing());
 		
 		listing = DtoToVoConverter.convert(super.listingList.get(7));
 		withdrawnListing = ListingFacade.instance().withdrawListing(admin, listing.getId());
-		assertNull("New listing cannot be withdrawn", withdrawnListing);
+		assertNotNull(withdrawnListing);
+		assertNotSame("We should get failure", ErrorCodes.OK, withdrawnListing.getErrorCode());
+		assertNull("New listing cannot be withdrawn", withdrawnListing.getListing());
 
 		listing = DtoToVoConverter.convert(super.listingList.get(12));
 		withdrawnListing = ListingFacade.instance().withdrawListing(admin, listing.getId());
-		assertNull("Closed listing cannot be withdrawn", withdrawnListing);
+		assertNotNull(withdrawnListing);
+		assertNotSame("We should get failure", ErrorCodes.OK, withdrawnListing.getErrorCode());
+		assertNull("Closed listing cannot be withdrawn", withdrawnListing.getListing());
 
 		listing = DtoToVoConverter.convert(super.listingList.get(5));
 		withdrawnListing = ListingFacade.instance().withdrawListing(admin, listing.getId());
-		assertNull("Active listing cannot be withdrawn", withdrawnListing);
+		assertNotNull(withdrawnListing);
+		assertNotSame("We should get failure", ErrorCodes.OK, withdrawnListing.getErrorCode());
+		assertNull("Active listing cannot be withdrawn", withdrawnListing.getListing());
 
 		listing = DtoToVoConverter.convert(super.listingList.get(6));
 		withdrawnListing = ListingFacade.instance().withdrawListing(admin, listing.getId());
-		assertNull("Active listing cannot be withdrawn", withdrawnListing);
+		assertNotNull(withdrawnListing);
+		assertNotSame("We should get failure", ErrorCodes.OK, withdrawnListing.getErrorCode());
+		assertNull("Active listing cannot be withdrawn", withdrawnListing.getListing());
 		
 		listing = DtoToVoConverter.convert(super.listingList.get(14));
 		withdrawnListing = ListingFacade.instance().withdrawListing(admin, listing.getId());
-		assertNull("Posted listing but logged in user is not an owner", withdrawnListing);
+		assertNotNull(withdrawnListing);
+		assertNotSame("We should get failure", ErrorCodes.OK, withdrawnListing.getErrorCode());
+		assertNull("Posted listing but logged in user is not an owner", withdrawnListing.getListing());
 
 		listing = DtoToVoConverter.convert(super.listingList.get(10));
 		withdrawnListing = ListingFacade.instance().withdrawListing(null, listing.getId());
-		assertNull("Posted listing but logged in is null", withdrawnListing);
+		assertNotNull(withdrawnListing);
+		assertNotSame("We should get failure", ErrorCodes.OK, withdrawnListing.getErrorCode());
+		assertNull("Posted listing but logged in is null", withdrawnListing.getListing());
 
 		listing = DtoToVoConverter.convert(super.listingList.get(10));
 		withdrawnListing = ListingFacade.instance().withdrawListing(admin, listing.getId());
-		assertNull("Admin, but not an owner of the listing. Only owner can withdraw listing.", withdrawnListing);
+		assertNotNull(withdrawnListing);
+		assertNotSame("We should get failure", ErrorCodes.OK, withdrawnListing.getErrorCode());
+		assertNull("Admin, but not an owner of the listing. Only owner can withdraw listing.", withdrawnListing.getListing());
 	}
 	
 	@Test
 	public void testFreezeListing() {
 		ListingVO listing = DtoToVoConverter.convert(super.listingList.get(11));
-		ListingVO freezedListing = ListingFacade.instance().freezeListing(admin, listing.getId());
-		assertNotNull("Withdrawn listing can be freezed by admin", freezedListing);
-		assertFalse("Frozen listing should be a new instance of the object", listing == freezedListing);
-		assertEquals("State should be FROZEN", Listing.State.FROZEN.toString(), freezedListing.getState());
+		ListingAndUserVO freezedListing = ListingFacade.instance().freezeListing(admin, listing.getId());
+		assertNotNull(freezedListing);
+		assertEquals(ErrorCodes.OK, freezedListing.getErrorCode());
+		assertNotNull("Withdrawn listing can be freezed by admin", freezedListing.getListing());
+		assertFalse("Frozen listing should be a new instance of the object", listing == freezedListing.getListing());
+		assertEquals("State should be FROZEN", Listing.State.FROZEN.toString(), freezedListing.getListing().getState());
 		
 		listing = DtoToVoConverter.convert(super.listingList.get(7));
 		freezedListing = ListingFacade.instance().freezeListing(admin, listing.getId());
-		assertNotNull("New listing can be freezed by admin", freezedListing);
-		assertFalse("Frozen listing should be a new instance of the object", listing == freezedListing);
-		assertEquals("State should be FROZEN", Listing.State.FROZEN.toString(), freezedListing.getState());
+		assertNotNull(freezedListing);
+		assertNotSame(ErrorCodes.OK, freezedListing.getErrorCode());
+		assertNull("New listing cannot be freezed by admin", freezedListing.getListing());
 
 		listing = DtoToVoConverter.convert(super.listingList.get(12));
 		freezedListing = ListingFacade.instance().freezeListing(admin, listing.getId());
-		assertNotNull("Closed listing can be freezed by admin", freezedListing);
-		assertFalse("Frozen listing should be a new instance of the object", listing == freezedListing);
-		assertEquals("State should be FROZEN", Listing.State.FROZEN.toString(), freezedListing.getState());
+		assertNotNull(freezedListing);
+		assertEquals(ErrorCodes.OK, freezedListing.getErrorCode());
+		assertNotNull("Closed listing can be freezed by admin", freezedListing.getListing());
+		assertFalse("Frozen listing should be a new instance of the object", listing == freezedListing.getListing());
+		assertEquals("State should be FROZEN", Listing.State.FROZEN.toString(), freezedListing.getListing().getState());
 
 		listing = DtoToVoConverter.convert(super.listingList.get(5));
 		freezedListing = ListingFacade.instance().freezeListing(admin, listing.getId());
-		assertNotNull("Active listing can be freezed by admin", freezedListing);
-		assertFalse("Frozen listing should be a new instance of the object", listing == freezedListing);
-		assertEquals("State should be FROZEN", Listing.State.FROZEN.toString(), freezedListing.getState());
+		assertNotNull(freezedListing);
+		assertEquals(ErrorCodes.OK, freezedListing.getErrorCode());
+		assertNotNull("Active listing can be freezed by admin", freezedListing.getListing());
+		assertFalse("Frozen listing should be a new instance of the object", listing == freezedListing.getListing());
+		assertEquals("State should be FROZEN", Listing.State.FROZEN.toString(), freezedListing.getListing().getState());
 
 		listing = DtoToVoConverter.convert(super.listingList.get(6));
 		freezedListing = ListingFacade.instance().freezeListing(admin, listing.getId());
-		assertNotNull("Active listing can be freezed by admin", freezedListing);
-		assertFalse("Frozen listing should be a new instance of the object", listing == freezedListing);
-		assertEquals("State should be FROZEN", Listing.State.FROZEN.toString(), freezedListing.getState());
+		assertNotNull(freezedListing);
+		assertEquals(ErrorCodes.OK, freezedListing.getErrorCode());
+		assertNotNull("Active listing can be freezed by admin", freezedListing.getListing());
+		assertFalse("Frozen listing should be a new instance of the object", listing == freezedListing.getListing());
+		assertEquals("State should be FROZEN", Listing.State.FROZEN.toString(), freezedListing.getListing().getState());
 		
 		listing = DtoToVoConverter.convert(super.listingList.get(14));
 		freezedListing = ListingFacade.instance().freezeListing(admin, listing.getId());
-		assertNotNull("Posted listing can be freezed by admin", freezedListing);
-		assertFalse("Frozen listing should be a new instance of the object", listing == freezedListing);
-		assertEquals("State should be FROZEN", Listing.State.FROZEN.toString(), freezedListing.getState());
+		assertNotNull(freezedListing);
+		assertNotSame(ErrorCodes.OK, freezedListing.getErrorCode());
+		assertNull("Posted listing can be freezed by admin", freezedListing.getListing());
 
 		listing = DtoToVoConverter.convert(super.listingList.get(10));
 		freezedListing = ListingFacade.instance().freezeListing(null, listing.getId());
-		assertNull("Passed empty logged in user", freezedListing);
+		assertNotNull(freezedListing);
+		assertNotSame(ErrorCodes.OK, freezedListing.getErrorCode());
+		assertNull("Passed empty logged in user", freezedListing.getListing());
 
-		listing = DtoToVoConverter.convert(super.listingList.get(10));
+		listing = DtoToVoConverter.convert(super.listingList.get(4));
 		freezedListing = ListingFacade.instance().freezeListing(admin, listing.getId());
-		assertNotNull("Listing posted can be freezed by admin", freezedListing);
-		assertFalse("Frozen listing should be a new instance of the object", listing == freezedListing);
-		assertEquals("State should be FROZEN", Listing.State.FROZEN.toString(), freezedListing.getState());
-		assertEquals(listing.getName(), freezedListing.getName());
-		assertEquals(listing.getSummary(), freezedListing.getSummary());
-		assertEquals(listing.getOwner(), freezedListing.getOwner());
-		assertEquals(listing.getClosingOn(), freezedListing.getClosingOn());
-		assertEquals(listing.getSuggestedAmount(), freezedListing.getSuggestedAmount());
-		assertEquals(listing.getSuggestedPercentage(), freezedListing.getSuggestedPercentage());
-		assertEquals(listing.getPresentationId(), freezedListing.getPresentationId());
-		assertEquals(listing.getBuinessPlanId(), freezedListing.getBuinessPlanId());
-		assertEquals(listing.getFinancialsId(), freezedListing.getFinancialsId());
+		assertNotNull(freezedListing);
+		assertEquals(ErrorCodes.OK, freezedListing.getErrorCode());
+		assertNotNull("Active listing can be freezed by admin", freezedListing.getListing());
+		assertFalse("Frozen listing should be a new instance of the object", listing == freezedListing.getListing());
+		assertEquals("State should be FROZEN", Listing.State.FROZEN.toString(), freezedListing.getListing().getState());
+		assertEquals(listing.getName(), freezedListing.getListing().getName());
+		assertEquals(listing.getSummary(), freezedListing.getListing().getSummary());
+		assertEquals(listing.getOwner(), freezedListing.getListing().getOwner());
+		assertEquals(listing.getClosingOn(), freezedListing.getListing().getClosingOn());
+		assertEquals(listing.getSuggestedAmount(), freezedListing.getListing().getSuggestedAmount());
+		assertEquals(listing.getSuggestedPercentage(), freezedListing.getListing().getSuggestedPercentage());
+		assertEquals(listing.getPresentationId(), freezedListing.getListing().getPresentationId());
+		assertEquals(listing.getBuinessPlanId(), freezedListing.getListing().getBuinessPlanId());
+		assertEquals(listing.getFinancialsId(), freezedListing.getListing().getFinancialsId());
 	}
 	
 	@Test
 	public void testSendBackListingToOwner() {
 		ListingVO listing = DtoToVoConverter.convert(super.listingList.get(11));
-		ListingVO postedListing = ListingFacade.instance().sendBackListingToOwner(admin, listing.getId());
-		assertNull("Withdrawn listing should not be sent back", postedListing);
+		ListingAndUserVO postedListing = ListingFacade.instance().sendBackListingToOwner(admin, listing.getId());
+		assertNotNull(postedListing);
+		assertNotSame(ErrorCodes.OK, postedListing.getErrorCode());
+		assertNull("Withdrawn listing should not be sent back", postedListing.getListing());
 		
-		listing = DtoToVoConverter.convert(super.listingList.get(8));
+		listing = DtoToVoConverter.convert(super.listingList.get(1));
 		postedListing = ListingFacade.instance().sendBackListingToOwner(admin, listing.getId());
-		assertNull("Already posted listing cannot be sent back", postedListing);
+		assertNotNull(postedListing);
+		assertNotSame(ErrorCodes.OK, postedListing.getErrorCode());
+		assertNull("Already active listing cannot be sent back", postedListing.getListing());
 
 		listing = DtoToVoConverter.convert(super.listingList.get(12));
 		postedListing = ListingFacade.instance().sendBackListingToOwner(admin, listing.getId());
-		assertNull("Closed listing cannot be sent back", postedListing);
+		assertNotNull(postedListing);
+		assertNotSame(ErrorCodes.OK, postedListing.getErrorCode());
+		assertNull("Closed listing cannot be sent back", postedListing.getListing());
 
 		listing = DtoToVoConverter.convert(super.listingList.get(7));
 		postedListing = ListingFacade.instance().sendBackListingToOwner(admin, listing.getId());
-		assertNull("New listing cannot be sent back", postedListing);
+		assertNotNull(postedListing);
+		assertNotSame(ErrorCodes.OK, postedListing.getErrorCode());
+		assertNull("New listing cannot be sent back", postedListing.getListing());
 
-		listing = DtoToVoConverter.convert(super.listingList.get(5));
+		listing = DtoToVoConverter.convert(super.listingList.get(8));
 		postedListing = ListingFacade.instance().sendBackListingToOwner(admin, listing.getId());
-		assertNotNull("Sending back listing should work", postedListing);
-		assertFalse("Send back listing should be a new instance of the object", listing == postedListing);
-		assertEquals("State should be NEW", Listing.State.NEW.toString(), postedListing.getState());
-		assertEquals(listing.getName(), postedListing.getName());
-		assertEquals(listing.getSummary(), postedListing.getSummary());
-		assertEquals(listing.getOwner(), postedListing.getOwner());
-		assertEquals(listing.getClosingOn(), postedListing.getClosingOn());
-		assertEquals(listing.getSuggestedAmount(), postedListing.getSuggestedAmount());
-		assertEquals(listing.getSuggestedPercentage(), postedListing.getSuggestedPercentage());
-		assertEquals(listing.getPresentationId(), postedListing.getPresentationId());
-		assertEquals(listing.getBuinessPlanId(), postedListing.getBuinessPlanId());
-		assertEquals(listing.getFinancialsId(), postedListing.getFinancialsId());
+		assertNotNull(postedListing);
+		assertEquals(ErrorCodes.OK, postedListing.getErrorCode());
+		assertNotNull("Sending back listing should work", postedListing.getListing());
+		assertFalse("Send back listing should be a new instance of the object", listing == postedListing.getListing());
+		assertEquals("State should be NEW", Listing.State.NEW.toString(), postedListing.getListing().getState());
+		assertEquals(listing.getName(), postedListing.getListing().getName());
+		assertEquals(listing.getSummary(), postedListing.getListing().getSummary());
+		assertEquals(listing.getOwner(), postedListing.getListing().getOwner());
+		assertEquals(listing.getClosingOn(), postedListing.getListing().getClosingOn());
+		assertEquals(listing.getSuggestedAmount(), postedListing.getListing().getSuggestedAmount());
+		assertEquals(listing.getSuggestedPercentage(), postedListing.getListing().getSuggestedPercentage());
+		assertEquals(listing.getPresentationId(), postedListing.getListing().getPresentationId());
+		assertEquals(listing.getBuinessPlanId(), postedListing.getListing().getBuinessPlanId());
+		assertEquals(listing.getFinancialsId(), postedListing.getListing().getFinancialsId());
 
-		listing = DtoToVoConverter.convert(super.listingList.get(6));
+		listing = DtoToVoConverter.convert(super.listingList.get(9));
 		postedListing = ListingFacade.instance().sendBackListingToOwner(admin, listing.getId());
-		assertNotNull("Sending back listing should work", postedListing);
-		assertFalse("Send back listing should be a new instance of the object", listing == postedListing);
-		assertEquals("State should be NEW", Listing.State.NEW.toString(), postedListing.getState());
-		assertEquals(listing.getName(), postedListing.getName());
-		assertEquals(listing.getSummary(), postedListing.getSummary());
-		assertEquals(listing.getOwner(), postedListing.getOwner());
-		assertEquals(listing.getClosingOn(), postedListing.getClosingOn());
-		assertEquals(listing.getSuggestedAmount(), postedListing.getSuggestedAmount());
-		assertEquals(listing.getSuggestedPercentage(), postedListing.getSuggestedPercentage());
-		assertEquals(listing.getPresentationId(), postedListing.getPresentationId());
-		assertEquals(listing.getBuinessPlanId(), postedListing.getBuinessPlanId());
-		assertEquals(listing.getFinancialsId(), postedListing.getFinancialsId());
-	}
-	
+		assertNotNull(postedListing);
+		assertEquals(ErrorCodes.OK, postedListing.getErrorCode());
+		assertNotNull("Sending back listing should work", postedListing.getListing());
+		assertFalse("Send back listing should be a new instance of the object", listing == postedListing.getListing());
+		assertEquals("State should be NEW", Listing.State.NEW.toString(), postedListing.getListing().getState());
+		assertEquals(listing.getName(), postedListing.getListing().getName());
+		assertEquals(listing.getSummary(), postedListing.getListing().getSummary());
+		assertEquals(listing.getOwner(), postedListing.getListing().getOwner());
+		assertEquals(listing.getClosingOn(), postedListing.getListing().getClosingOn());
+		assertEquals(listing.getSuggestedAmount(), postedListing.getListing().getSuggestedAmount());
+		assertEquals(listing.getSuggestedPercentage(), postedListing.getListing().getSuggestedPercentage());
+		assertEquals(listing.getPresentationId(), postedListing.getListing().getPresentationId());
+		assertEquals(listing.getBuinessPlanId(), postedListing.getListing().getBuinessPlanId());
+		assertEquals(listing.getFinancialsId(), postedListing.getListing().getFinancialsId());
+	}	
 }
