@@ -318,6 +318,13 @@ background: linear-gradient(top, #dcd8db 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .bidsummary { font-size: 10px; }
 .newwithdrawmsg { display: none; font-weight: bold; }
 .newwithdrawcancelbtn { display: none; margin-top: 10px; }
+.withdrawbox { display: none; }
+.withdrawmsg { display: none; font-weight: bold; }
+.withdrawcancelbtn { display: none; margin-top: 10px; }
+.approvebox { display: none; }
+.approvemsg { display: none; font-weight: bold; }
+.approvecancelbtn { display: none; margin-top: 10px; }
+
 
 /* upload */
 .uploadiframe { width: 0; height: 0; border: 0 solid #fff; }
@@ -328,7 +335,7 @@ background: linear-gradient(top, #dcd8db 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 
 /* tiles */
 .tile { width: 146px; height: 296px; border: 2px solid #999999; border-radius: 5px; overflow: hidden; margin-bottom: 10px; position: relative; background: #e3e3e3; }
-.tileimg { width: 146px; height: 146px; overflow: hidden; }
+.tileimg { width: 146px; height: 146px; overflow: hidden; border-radius: 3px; }
 .tiledays, .tiledaystext, .tiletype, .tiletypetext, .tilepoints, .tilepointstext { width: 146px; height: 30px; position: absolute; }
 .tiledays, .tiletype, .tilepoints { opacity: 0.6; background-color: #000000; }
 .tiledaystext, .tiletypetext, .tilepointstext { padding: 4px; color: white; font-weight: bold; }
@@ -353,7 +360,6 @@ background: linear-gradient(top, #dcd8db 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .previewoverlay { position: absolute; width: 100%; height: 3000px; top: 660px; z-index: 1000; }
 
 /* img */
-.companylogo { border-radius: 3px; height: 146px; width: 146px; }
 .noimage { background: url(../img/noimage_146x146.jpg); border-radius: 3px; }
 .einstein { background: url(../img/einstein.jpg); border-radius: 3px; }
 .wave { background: url(../img/wave.jpg); border-radius: 3px; height: 146px; width: 146px; }

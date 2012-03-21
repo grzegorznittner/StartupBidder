@@ -20,6 +20,10 @@ pl.implement(NewListingSubmittedClass, {
         if (this.base.listing.status === 'new') {
             document.location = 'new-listing-submit-page.html';
         }
+        if (!this.bound) {
+            this.base.bindWithdrawButton();
+            this.bound = true;
+        }
     }
 });
 

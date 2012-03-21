@@ -13,7 +13,7 @@ pl.implement(CompanyTileClass, {
         this.votes = json.num_votes || 1;
         this.posted = date ? DateClass.prototype.format(date) : 'not posted';
         this.name = json.title || '';
-        this.address = json.address || '';
+        this.address = json.brief_address || json.address || '';
         this.mantra = json.mantra || '';
         this.url = '/company-page.html?id=' + json.listing_id;
     },
@@ -25,7 +25,7 @@ pl.implement(CompanyTileClass, {
 <span class="span-4 '+ (lastClass?lastClass:'') +'">\
 <div class="tile">\
 ' + openAnchor + '\
-<div class="tileimg ' + this.imgClass + '" style="' + this.imgStyle + '"></div>\
+<div class="tileimg" style="' + this.imgStyle + '"></div>\
 ' + closeAnchor + '\
 <div class="tiledays"></div>\
 <div class="tiledaystext">' + this.daysText + '</div>\

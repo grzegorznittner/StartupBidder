@@ -63,7 +63,7 @@
         <div id="listingstatus"></div>
         <div class="listingbox" id="listingdata">
             <div class="formcol1fourth">
-                <img class="formimg companylogo" id="companylogo" src=""></img>
+                <div class="tileimg noimage" id="companylogo"></div>
             </div>
             <div class="formcol2fourth">
                 <span class="formtitlefourth uneditabletext companytitle" id="title"></span><br/>
@@ -144,17 +144,6 @@
         <dl id="commentlist"></dl>
 	</div>
 
-    <div class="boxtitle withdrawtitle" id="withdrawtitle">WITHDRAW LISTING</div>
-    <div class="boxpanel commentpanel withdrawbox" id="withdrawbox">
-        <p>
-            <span class="attention inputmsg">NO BIDS MAY BE RECEIVED AFTER THE LISTING IS WITHDRAWN.  THIS OPERATION CANNOT BE UNDONE.</span>
-        </p>
-        <p>
-            <span class="span-9 attention inputmsg" id="withdrawmsg">&nbsp;</span>
-            <span class="span-6 inputbutton" id="withdrawbtn">WITHDRAW LISTING</span>
-        </p>
-    </div>
-
 </div> <!-- end left column -->
 
 <!-- right column -->
@@ -162,13 +151,13 @@
     <div class="boxtitle">ABOUT</div>
     <div class="sidebox">
         <span class="aboutlabel">CATEGORY</span>
-        <span class="formlabelvalue" id="category"></span>
+        <span class="formlabelvalue inputmsg" id="category"></span>
         <span class="aboutlabel clear">POSTED</span>
-        <span class="formlabelvalue" id="listing_date"></span>
+        <span class="formlabelvalue inputmsg" id="listing_date"></span>
         <span class="aboutlabel clear">WEBSITE</span>
         <span class="formlabelvalue formlink">
             <a href="#" target="_blank" id="websitelink">
-                <div class="span-1 linkicon"></div><span id="domainname"></span>
+                <div class="span-1 linkicon"></div><span class="inputmsg" id="domainname"></span>
             </a>
         </span>
     </div>
@@ -232,6 +221,20 @@
         <span class="span-11" style="overflow:visible;">
             <div class="fb-like" data-send="true" data-width="290" data-show-faces="true" data-font="arial"></div> <!-- FIXME: add opengraph meta tags -->
         </span>
+    </div>
+
+    <div id="withdrawbox" class="withdrawbox">
+    <div class="boxtitle">WITHDRAW LISTING</div>
+    <div class="withdrawmsg attention" id="withdrawmsg">Are you sure? This cannot be undone.</div>
+    <a href="#" id="withdrawbtn"><div class="sideboxbutton">WITHDRAW</div></a>
+    <a href="#" class="withdrawcancelbtn" id="withdrawcancelbtn"><div class="sideboxbutton">CANCEL</div></a>
+    </div>
+
+    <div id="approvebox" class="approvebox">
+    <div class="boxtitle">APPROVE LISTING</div>
+    <div class="approvemsg attention" id="approvemsg">Are you sure? This cannot be undone.</div>
+    <a href="#" id="approvebtn"><div class="sideboxbutton">APPROVE</div></a>
+    <a href="#" class="approvecancelbtn" id="approvecancelbtn"><div class="sideboxbutton">CANCEL</div></a>
     </div>
 
     <div class="boxtitle" id="listingstitle"></div>
