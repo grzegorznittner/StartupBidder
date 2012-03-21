@@ -568,9 +568,15 @@ pl.implement(TextFieldClass, {
                 if (!options.noAutoUpdate) {
                     self.update();
                 }
+            },
+            onpaste = function() { // push to server
+                if (!options.noAutoUpdate) {
+                    self.update();
+                }
             };
         pl(sel).bind({
             blur: onblur,
+            paste: onpaste,
             focus: onfocus,
             change: onchange,
             keyup: onchange
