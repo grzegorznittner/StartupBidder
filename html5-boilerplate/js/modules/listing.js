@@ -205,6 +205,7 @@ pl.implement(ListingClass, {
         }
     },
     bindWithdrawButton: function() {
+        var self = this;
         pl('#withdrawbox').show();
         pl('#withdrawbtn').bind({
             click: function() {
@@ -215,7 +216,7 @@ pl.implement(ListingClass, {
                         pl('#companystatus').html('Listing is ' + self.status).addClass('attention');
                         window.location.reload();
                     },
-                    url = '/listing/withdraw/' + this.listing_id;
+                    url = '/listing/withdraw/' + self.listing_id,
                     ajax = new AjaxClass(url, 'withdrawmsg', completeFunc);
                 if (pl('#withdrawcancelbtn').css('display') === 'none') { // first call
                     pl('#withdrawmsg, #withdrawcancelbtn').show();
@@ -242,13 +243,14 @@ pl.implement(ListingClass, {
         }
     },
     bindApproveButton: function() {
+        var self = this;
         pl('#approvebox').show();
         pl('#approvebtn').bind({
             click: function() {
                 var completeFunc = function() {
                         window.location.reload();
                     },
-                    url = '/listing/activate/' + this.listing_id;
+                    url = '/listing/activate/' + self.listing_id;
                     ajax = new AjaxClass(url, 'approvemsg', completeFunc);
                 if (pl('#approvecancelbtn').css('display') === 'none') { // first call
                     pl('#approvemsg, #approvecancelbtn').show();
