@@ -407,7 +407,12 @@ public class ObjectifyDatastoreDAO {
 	}
 
 	public ListingStats updateListingStatistics(long listingId) {
-		Listing listing = getOfy().find(new Key<Listing>(Listing.class, listingId));
+		Listing listing = null;
+		try {
+			listing = getOfy().find(new Key<Listing>(Listing.class, listingId));
+		} catch (Exception e) {
+			log.log(Level.WARNING, "Wrong listing key", e);
+		}
 		if (listing == null) {
 			log.severe("Listing with id '" + listingId + "' doesn't exist!");
 			return null;
