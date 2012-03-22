@@ -83,7 +83,7 @@ public class TaskController extends ModelDrivenController {
 		HttpHeaders headers = new HttpHeadersImpl("calculate-listing-stats");
 		
 		String listingId = getCommandOrParameter(request, 2, "id");
-		ListingFacade.instance().calculateListingStatistics(NumberUtils.toLong(listingId));
+		ListingFacade.instance().calculateListingStatistics(ListingVO.toKeyId(listingId));
 		ListingVO listing = ListingFacade.instance().getListing(null, listingId).getListing();
 		DocService.instance().updateListingData(listing);
 		
