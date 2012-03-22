@@ -87,6 +87,8 @@ public class ListingController extends ModelDrivenController {
 				return post(request);
 			} else if("activate".equalsIgnoreCase(getCommand(1))) {
 				return activate(request);
+			} else if("freeze".equalsIgnoreCase(getCommand(1))) {
+				return freeze(request);
 			} else if("withdraw".equalsIgnoreCase(getCommand(1))) {
 				return withdraw(request);
 			}  else if("delete".equalsIgnoreCase(getCommand(1))) {
@@ -287,6 +289,13 @@ public class ListingController extends ModelDrivenController {
     private HttpHeaders activate(HttpServletRequest request) {
     	//String listingId = getCommandOrParameter(request, 2, "id");
     	model = ListingFacade.instance().activateListing(getLoggedInUser(), getLoggedInUser().getEditedListing());
+        return new HttpHeadersImpl("activate").disableCaching();
+    }
+
+    // GET /listings/freeze
+    private HttpHeaders freeze(HttpServletRequest request) {
+    	String listingId = getCommandOrParameter(request, 2, "id");
+    	model = ListingFacade.instance().freezeListing(getLoggedInUser(), listingId);
         return new HttpHeadersImpl("activate").disableCaching();
     }
 

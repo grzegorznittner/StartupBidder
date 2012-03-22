@@ -608,58 +608,78 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 	@Test
 	public void testActivateListing() {
 		ListingVO listing = DtoToVoConverter.convert(super.listingList.get(11));
-		ListingVO activatedListing = ListingFacade.instance().activateListing(googleUserVO, listing.getId());
-		assertNull("Withdrawn listing cannot be activated", activatedListing);
+		ListingAndUserVO activatedListing = ListingFacade.instance().activateListing(googleUserVO, listing.getId());
+		assertNotNull(activatedListing);
+		assertNull(activatedListing.getListing());
+		assertNotSame("Withdrawn listing cannot be activated", ErrorCodes.OK, activatedListing.getErrorCode());
 		
-		listing = DtoToVoConverter.convert(super.listingList.get(7));
+		listing = DtoToVoConverter.convert(super.listingList.get(5));
 		activatedListing = ListingFacade.instance().activateListing(googleUserVO, listing.getId());
-		assertNull("New listing cannot be activated", activatedListing);
+		assertNotNull(activatedListing);
+		assertNull(activatedListing.getListing());
+		assertNotSame("Already active listing cannot be activated", ErrorCodes.OK, activatedListing.getErrorCode());
 
 		listing = DtoToVoConverter.convert(super.listingList.get(12));
 		activatedListing = ListingFacade.instance().activateListing(googleUserVO, listing.getId());
-		assertNull("Closed listing cannot be activated", activatedListing);
+		assertNotNull(activatedListing);
+		assertNull(activatedListing.getListing());
+		assertNotSame("Closed listing cannot be activated", ErrorCodes.OK, activatedListing.getErrorCode());
 
-		listing = DtoToVoConverter.convert(super.listingList.get(5));
+		listing = DtoToVoConverter.convert(super.listingList.get(3));
 		activatedListing = ListingFacade.instance().activateListing(googleUserVO, listing.getId());
-		assertNull("Active listing cannot be activated", activatedListing);
+		assertNotNull(activatedListing);
+		assertNull(activatedListing.getListing());
+		assertNotSame("Active listing cannot be activated", ErrorCodes.OK, activatedListing.getErrorCode());
 
 		listing = DtoToVoConverter.convert(super.listingList.get(6));
 		activatedListing = ListingFacade.instance().activateListing(googleUserVO, listing.getId());
-		assertNull("Active listing cannot be activated", activatedListing);
+		assertNotNull(activatedListing);
+		assertNull(activatedListing.getListing());
+		assertNotSame("Active listing cannot be activated", ErrorCodes.OK, activatedListing.getErrorCode());
 		
 		listing = DtoToVoConverter.convert(super.listingList.get(13));
 		activatedListing = ListingFacade.instance().activateListing(googleUserVO, listing.getId());
-		assertNull("New listing but logged in user is not an owner", activatedListing);
-
-		listing = DtoToVoConverter.convert(super.listingList.get(13));
-		activatedListing = ListingFacade.instance().activateListing(null, listing.getId());
-		assertNull("New listing but logged in is null", activatedListing);
+		assertNotNull(activatedListing);
+		assertNull(activatedListing.getListing());
+		assertNotSame("New listing cannot be activated", ErrorCodes.OK, activatedListing.getErrorCode());
 
 		listing = DtoToVoConverter.convert(super.listingList.get(8));
-		activatedListing = ListingFacade.instance().activateListing(googleUserVO, listing.getId());
-		assertNull("Posted listing, but logged in user is an admin", activatedListing);
+		activatedListing = ListingFacade.instance().activateListing(null, listing.getId());
+		assertNotNull(activatedListing);
+		assertNull(activatedListing.getListing());
+		assertNotSame("Posted listing but logged in is null", ErrorCodes.OK, activatedListing.getErrorCode());
 	}
 	
 	@Test
 	public void testPostListing() {
 		ListingVO listing = DtoToVoConverter.convert(super.listingList.get(11));
 		ListingAndUserVO postedListing = ListingFacade.instance().postListing(googleUserVO, listing.getId());
+		assertNotNull(postedListing);
+		assertNotSame(ErrorCodes.OK, postedListing.getErrorCode());
 		assertNull("Withdrawn listing cannot be posted", postedListing.getListing());
 		
 		listing = DtoToVoConverter.convert(super.listingList.get(8));
 		postedListing = ListingFacade.instance().postListing(googleUserVO, listing.getId());
+		assertNotNull(postedListing);
+		assertNotSame(ErrorCodes.OK, postedListing.getErrorCode());
 		assertNull("Already posted listing cannot be posted", postedListing.getListing());
 
 		listing = DtoToVoConverter.convert(super.listingList.get(12));
 		postedListing = ListingFacade.instance().postListing(googleUserVO, listing.getId());
+		assertNotNull(postedListing);
+		assertNotSame(ErrorCodes.OK, postedListing.getErrorCode());
 		assertNull("Closed listing cannot be posted", postedListing.getListing());
 
 		listing = DtoToVoConverter.convert(super.listingList.get(7));
 		postedListing = ListingFacade.instance().postListing(DtoToVoConverter.convert(userList.get(BIDDER1)), listing.getId());
+		assertNotNull(postedListing);
+		assertNotSame(ErrorCodes.OK, postedListing.getErrorCode());
 		assertNull("New listing, but user is not an owner", postedListing.getListing());
 
 		listing = DtoToVoConverter.convert(super.listingList.get(7));
 		postedListing = ListingFacade.instance().postListing(googleUserVO, listing.getId());
+		assertNotNull(postedListing);
+		assertEquals(ErrorCodes.OK, postedListing.getErrorCode());
 		assertNotNull("New listing can be posted", postedListing.getListing());
 		assertFalse("Activated listing should be a new instance of the object", listing == postedListing.getListing());
 		assertEquals("State should be POSTED", Listing.State.POSTED.toString(), postedListing.getListing().getState());
@@ -676,73 +696,105 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 
 		listing = DtoToVoConverter.convert(super.listingList.get(4));
 		postedListing = ListingFacade.instance().postListing(googleUserVO, listing.getId());
+		assertNotNull(postedListing);
+		assertNotSame(ErrorCodes.OK, postedListing.getErrorCode());
 		assertNull("Active listing cannot be posted", postedListing.getListing());
 
 		listing = DtoToVoConverter.convert(super.listingList.get(5));
 		postedListing = ListingFacade.instance().postListing(googleUserVO, listing.getId());
+		assertNotNull(postedListing);
+		assertNotSame(ErrorCodes.OK, postedListing.getErrorCode());
 		assertNull("Active listing cannot be posted, additionally user is not an owner of the listing", postedListing.getListing());
 	}
 
 	@Test
 	public void testFreezeListing() {
 		ListingVO listing = DtoToVoConverter.convert(super.listingList.get(11));
-		ListingVO freezedListing = ListingFacade.instance().freezeListing(googleUserVO, listing.getId());
-		assertNull("Only admin can freeze listing", freezedListing);
+		ListingAndUserVO freezedListing = ListingFacade.instance().freezeListing(googleUserVO, listing.getId());
+		assertNotNull(freezedListing);
+		assertNotSame(ErrorCodes.OK, freezedListing.getErrorCode());
+		assertNull("Only admin can freeze listing", freezedListing.getListing());
 		
 		listing = DtoToVoConverter.convert(super.listingList.get(7));
 		freezedListing = ListingFacade.instance().freezeListing(googleUserVO, listing.getId());
-		assertNull("Only admin can freeze listing", freezedListing);
+		assertNotNull(freezedListing);
+		assertNotSame(ErrorCodes.OK, freezedListing.getErrorCode());
+		assertNull("Only admin can freeze listing", freezedListing.getListing());
 
 		listing = DtoToVoConverter.convert(super.listingList.get(12));
 		freezedListing = ListingFacade.instance().freezeListing(googleUserVO, listing.getId());
-		assertNull("Only admin can freeze listing", freezedListing);
+		assertNotNull(freezedListing);
+		assertNotSame(ErrorCodes.OK, freezedListing.getErrorCode());
+		assertNull("Only admin can freeze listing", freezedListing.getListing());
 
 		listing = DtoToVoConverter.convert(super.listingList.get(5));
 		freezedListing = ListingFacade.instance().freezeListing(googleUserVO, listing.getId());
-		assertNull("Only admin can freeze listing", freezedListing);
+		assertNotNull(freezedListing);
+		assertNotSame(ErrorCodes.OK, freezedListing.getErrorCode());
+		assertNull("Only admin can freeze listing", freezedListing.getListing());
 
 		listing = DtoToVoConverter.convert(super.listingList.get(6));
 		freezedListing = ListingFacade.instance().freezeListing(googleUserVO, listing.getId());
-		assertNull("Only admin can freeze listing", freezedListing);
+		assertNotNull(freezedListing);
+		assertNotSame(ErrorCodes.OK, freezedListing.getErrorCode());
+		assertNull("Only admin can freeze listing", freezedListing.getListing());
 		
 		listing = DtoToVoConverter.convert(super.listingList.get(14));
 		freezedListing = ListingFacade.instance().freezeListing(googleUserVO, listing.getId());
-		assertNull("Only admin can freeze listing", freezedListing);
+		assertNotNull(freezedListing);
+		assertNotSame(ErrorCodes.OK, freezedListing.getErrorCode());
+		assertNull("Only admin can freeze listing", freezedListing.getListing());
 
 		listing = DtoToVoConverter.convert(super.listingList.get(10));
 		freezedListing = ListingFacade.instance().freezeListing(null, listing.getId());
-		assertNull("Only admin can freeze listing", freezedListing);
+		assertNotNull(freezedListing);
+		assertNotSame(ErrorCodes.OK, freezedListing.getErrorCode());
+		assertNull("Only admin can freeze listing", freezedListing.getListing());
 
 		listing = DtoToVoConverter.convert(super.listingList.get(10));
 		freezedListing = ListingFacade.instance().freezeListing(googleUserVO, listing.getId());
-		assertNull("Only admin can freeze listing", freezedListing);
+		assertNotNull(freezedListing);
+		assertNotSame(ErrorCodes.OK, freezedListing.getErrorCode());
+		assertNull("Only admin can freeze listing", freezedListing.getListing());
 	}
 	
 	@Test
 	public void testSendBackListingToOwner() {
 		ListingVO listing = DtoToVoConverter.convert(super.listingList.get(11));
-		ListingVO postedListing = ListingFacade.instance().sendBackListingToOwner(googleUserVO, listing.getId());
-		assertNull("Withdrawn listing cannot be send back to owner", postedListing);
+		ListingAndUserVO sentBackListing = ListingFacade.instance().sendBackListingToOwner(googleUserVO, listing.getId());
+		assertNotNull(sentBackListing);
+		assertNotSame(ErrorCodes.OK, sentBackListing.getErrorCode());
+		assertNull("Withdrawn listing cannot be send back to owner", sentBackListing.getListing());
 		
 		listing = DtoToVoConverter.convert(super.listingList.get(8));
-		postedListing = ListingFacade.instance().sendBackListingToOwner(googleUserVO, listing.getId());
-		assertNull("Already posted listing cannot be send back to owner", postedListing);
+		sentBackListing = ListingFacade.instance().sendBackListingToOwner(googleUserVO, listing.getId());
+		assertNotNull(sentBackListing);
+		assertNotSame(ErrorCodes.OK, sentBackListing.getErrorCode());
+		assertNull("Already posted listing cannot be send back to owner", sentBackListing.getListing());
 
 		listing = DtoToVoConverter.convert(super.listingList.get(12));
-		postedListing = ListingFacade.instance().sendBackListingToOwner(googleUserVO, listing.getId());
-		assertNull("Closed listing cannot be send back to owner", postedListing);
+		sentBackListing = ListingFacade.instance().sendBackListingToOwner(googleUserVO, listing.getId());
+		assertNotNull(sentBackListing);
+		assertNotSame(ErrorCodes.OK, sentBackListing.getErrorCode());
+		assertNull("Closed listing cannot be send back to owner", sentBackListing.getListing());
 
 		listing = DtoToVoConverter.convert(super.listingList.get(7));
-		postedListing = ListingFacade.instance().sendBackListingToOwner(googleUserVO, listing.getId());
-		assertNull("New listing cannot be send back to owner", postedListing);
+		sentBackListing = ListingFacade.instance().sendBackListingToOwner(googleUserVO, listing.getId());
+		assertNotNull(sentBackListing);
+		assertNotSame(ErrorCodes.OK, sentBackListing.getErrorCode());
+		assertNull("New listing cannot be send back to owner", sentBackListing.getListing());
 
 		listing = DtoToVoConverter.convert(super.listingList.get(5));
-		postedListing = ListingFacade.instance().sendBackListingToOwner(googleUserVO, listing.getId());
-		assertNull("Active listing cannot be send back by non admin", postedListing);
+		sentBackListing = ListingFacade.instance().sendBackListingToOwner(googleUserVO, listing.getId());
+		assertNotNull(sentBackListing);
+		assertNotSame(ErrorCodes.OK, sentBackListing.getErrorCode());
+		assertNull("Active listing cannot be send back by non admin", sentBackListing.getListing());
 
 		listing = DtoToVoConverter.convert(super.listingList.get(6));
-		postedListing = ListingFacade.instance().sendBackListingToOwner(googleUserVO, listing.getId());
-		assertNull("Active listing cannot be send back by non admin", postedListing);
+		sentBackListing = ListingFacade.instance().sendBackListingToOwner(googleUserVO, listing.getId());
+		assertNotNull(sentBackListing);
+		assertNotSame(ErrorCodes.OK, sentBackListing.getErrorCode());
+		assertNull("Active listing cannot be send back by non admin", sentBackListing.getListing());
 	}
 	
 	@Test

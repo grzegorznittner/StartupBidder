@@ -12,7 +12,10 @@ import org.junit.Test;
 
 import com.google.appengine.api.blobstore.BlobKey;
 import com.google.appengine.api.datastore.EntityNotFoundException;
+import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
+import com.google.appengine.tools.development.testing.LocalTaskQueueTestConfig;
+import com.google.appengine.tools.development.testing.LocalUserServiceTestConfig;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.Objectify;
 import com.googlecode.objectify.ObjectifyService;
@@ -30,8 +33,11 @@ import com.startupbidder.datamodel.Vote;
  * @author "Grzegorz Nittner" <grzegorz.nittner@gmail.com>
  */
 public class EntityConverterTest {
-	private final LocalServiceTestHelper helper = new LocalServiceTestHelper();
-	private Objectify ofy = null;
+	protected LocalServiceTestHelper helper = new LocalServiceTestHelper(new LocalTaskQueueTestConfig(),
+			new LocalUserServiceTestConfig(),
+			new LocalDatastoreServiceTestConfig().setNoStorage(true))
+				.setEnvIsAdmin(false).setEnvIsLoggedIn(true)
+				.setEnvEmail("user@startupbidder.com").setEnvAuthDomain("google.com");
 	
 	@BeforeClass
 	public static void registerOfyClasses() {
@@ -48,12 +54,16 @@ public class EntityConverterTest {
 	@Before
 	public void setUp() {
 		helper.setUp();
-		ofy = ObjectifyService.begin();
 	}
 	
 	@After
 	public void tearDown() {
 		helper.tearDown();
+	}
+
+	private Objectify getOfy() {
+		Objectify ofy = ObjectifyService.begin();
+		return ofy;
 	}
 
 	@Test
@@ -74,8 +84,8 @@ public class EntityConverterTest {
 		
 		System.out.println("Original: " + bid);
 		
-		ofy.put(bid);
-		Bid newBid = ofy.get(Bid.class, bid.id);
+		getOfy().put(bid);
+		Bid newBid = getOfy().get(Bid.class, bid.id);
 
 		System.out.println("Recreated: " + newBid);
 		
@@ -92,8 +102,8 @@ public class EntityConverterTest {
 		
 		System.out.println("Original: " + comment);
 		
-		ofy.put(comment);
-		Comment newComment = ofy.get(Comment.class, comment.id);
+		getOfy().put(comment);
+		Comment newComment = getOfy().get(Comment.class, comment.id);
 
 		System.out.println("Recreated: " + newComment);
 		
@@ -115,8 +125,8 @@ public class EntityConverterTest {
 		
 		System.out.println("Original: " + listing);
 		
-		ofy.put(listing);
-		Listing newListing = ofy.get(Listing.class, listing.id);
+		getOfy().put(listing);
+		Listing newListing = getOfy().get(Listing.class, listing.id);
 
 		System.out.println("Recreated: " + newListing);
 		
@@ -143,9 +153,9 @@ public class EntityConverterTest {
 //		user.setNotifications(notifications);
 		
 		System.out.println("Original: " + user);
-		ofy.put(user);
+		getOfy().put(user);
 		
-		SBUser newUser = ofy.get(SBUser.class, user.id);
+		SBUser newUser = getOfy().get(SBUser.class, user.id);
 
 		System.out.println("Recreated: " + newUser);
 		
@@ -162,8 +172,8 @@ public class EntityConverterTest {
 		
 		System.out.println("Original: " + vote);
 		
-		ofy.put(vote);
-		Vote newVote = ofy.get(Vote.class, vote.id);
+		getOfy().put(vote);
+		Vote newVote = getOfy().get(Vote.class, vote.id);
 
 		System.out.println("Recreated: " + newVote);
 		
@@ -180,8 +190,8 @@ public class EntityConverterTest {
 		
 		System.out.println("Original: " + rank);
 		
-		ofy.put(rank);
-		Rank newRank = ofy.get(Rank.class, rank.id);
+		getOfy().put(rank);
+		Rank newRank = getOfy().get(Rank.class, rank.id);
 
 		System.out.println("Recreated: " + newRank);
 		
@@ -197,8 +207,8 @@ public class EntityConverterTest {
 		
 		System.out.println("Original: " + doc);
 		
-		ofy.put(doc);
-		ListingDoc newDoc = ofy.get(ListingDoc.class, doc.id);
+		getOfy().put(doc);
+		ListingDoc newDoc = getOfy().get(ListingDoc.class, doc.id);
 
 		System.out.println("Recreated: " + newDoc);
 		
