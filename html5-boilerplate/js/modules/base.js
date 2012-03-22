@@ -118,11 +118,11 @@ function URLClass(url) {
 }
 pl.implement(URLClass, {
     getHostname: function() {
-        if (!this.url) {
-            return '';
-        }
-        var re = new RegExp('^(?:f|ht)tp(?:s)?\://([^/]+)', 'im');
-        return this.url.match(re)[1].toString();
+        var re = new RegExp('^(?:f|ht)tp(?:s)?\://([^/]+)', 'im'),
+            url = this.url || '',
+            matches = url.match(re),
+            hostname = matches && matches.length >= 1 && matches[1] ? matches[1].toString() : '';
+        return hostname;
     }
 });
 
