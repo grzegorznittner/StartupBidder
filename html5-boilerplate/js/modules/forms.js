@@ -372,12 +372,10 @@ pl.implement(FieldBaseClass, {
         };
     },
     getSuccessFunc: function() {
-        var self, newval;
-        self = this;
-        newval = self.value;
+        var self = this;
         return function() {
             self.msg.show('successful', 'Saved changes');
-            self.value = newval;
+            self.value = self.newval;
         };
     },
     disable: function() {
@@ -536,6 +534,7 @@ pl.implement(TextFieldClass, {
             icon = new ValidIconClass(self.fieldBase.id + 'icon'),
             safeStr = new SafeStringClass(),
             sel = self.fieldBase.sel;
+            self.options = options;
             onchange = function(event) {
                 var newval, validMsg;
                 newval = safeStr.htmlEntities(pl(sel).attr('value'));
@@ -551,6 +550,10 @@ pl.implement(TextFieldClass, {
                     if (!icon.isValid) {
                         icon.showValid();
                     }
+                    if (self.inpaste) {
+                        self.inpaste = false;
+                        self.update();
+                    }
                 }
                 return false;
             },
@@ -563,23 +566,34 @@ pl.implement(TextFieldClass, {
                 else {
                     self.value = pl(sel).attr('value'); // save the value
                 }
+                return false;
             },
             onblur = function() { // push to server
-                if (!options.noAutoUpdate) {
+                if (!self.options.noAutoUpdate) {
                     self.update();
                 }
+                return false;
             },
-            onpaste = function() { // push to server
-                if (!options.noAutoUpdate) {
-                    self.update();
+            onpaste = function(e) { // push to server
+                var newval = pl(sel).attr('value');
+                if (!self.options.noAutoUpdate) {
+                    self.inpaste = true;
                 }
+                return true;
+            },
+            onkeyup = function(e) {
+                if (e.keyCode === 13) {
+                    self.update();
+                    return false;
+                }
+                return true;
             };
         pl(sel).bind({
             blur: onblur,
             paste: onpaste,
             focus: onfocus,
             change: onchange,
-            keyup: onchange
+            keyup: onkeyup
         });
     },
     update: function() {
@@ -591,7 +605,9 @@ pl.implement(TextFieldClass, {
             domval = pl(sel).attr('value'),
             newval = safeStr.htmlEntities(domval),
             defval = pl(sel).get(0).defaultValue,
-            validMsg = self.fieldBase.validator.validate(newval);
+            validMsg = self.fieldBase.validator.validate(newval),
+            successfunc = function() {
+            };
         if (validMsg !== 0) {
             if (!self.value && defval) {
                 pl(sel).attr({'value': defval}); // restore default
@@ -608,6 +624,7 @@ pl.implement(TextFieldClass, {
             //self.fieldBase.msg.clear();
             return;
         }
+        self.fieldBase.newval = newval;
         self.fieldBase.updateFunction({ changeKey: newval },
             self.fieldBase.getLoadFunc(), self.fieldBase.getErrorFunc(self.getDisplayFunc()), self.fieldBase.getSuccessFunc());
     }

@@ -93,36 +93,14 @@ pl.implement(NewListingMediaClass, {
                 return false;
             }
         });
-        pl('#logoloadurlbutton').bind({
-            click: function() {
-                var msg = logoURLField.validate();
-                if (msg === 0) {
-                    logoURLField.update();
-                }
-                else {
-                    pl('#logomsg').text(msg);
-                }
-            }
-        });
-        pl('#videobutton').bind({
-            click: function() {
-                var msg = videoURLField.validate();
-                if (msg === 0) {
-                    videoURLField.update();
-                }
-                else {
-                    pl('#videomsg').text(msg);
-                }
-            }
-        });
         pl('#logouploadform').attr({action: uploadurl});
-        logoURLField.fieldBase.setDisplayName('LOGO UPLOAD URL');
+        logoURLField.fieldBase.setDisplayName('LOGO URL');
         logoURLField.fieldBase.addValidator(ValidatorClass.prototype.isURL);
-        logoURLField.bindEvents({noAutoUpdate: true});
+        logoURLField.bindEvents();
         videoURLField.fieldBase.validator.preValidateTransform = VideoCheckClass.prototype.preformat;
         videoURLField.fieldBase.setDisplayName('VIDEO URL');
         videoURLField.fieldBase.addValidator(ValidatorClass.prototype.isVideoURL);
-        videoURLField.bindEvents({noAutoUpdate: false});
+        videoURLField.bindEvents();
         self.displayLogo(datauri);
         self.displayVideo(videourl);
         this.base.displayCalculated();

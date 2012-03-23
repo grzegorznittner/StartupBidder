@@ -73,7 +73,7 @@ pl.implement(NewListingQAClass, {
             id = textFields[i];
             field = new TextFieldClass(id, this.base.listing[id], this.base.getUpdater(id), 'newlistingmsg');
             field.fieldBase.setDisplayName(displayName[id].toUpperCase());
-            field.fieldBase.addValidator(ValidatorClass.prototype.makeLengthChecker(5, 1000));
+            field.fieldBase.addValidator(ValidatorClass.prototype.makeLengthChecker(16, 1000));
             field.fieldBase.validator.postValidator = this.base.genDisplayCalculatedIfValid(field);
             field.bindEvents();
             this.base.fields.push(field);

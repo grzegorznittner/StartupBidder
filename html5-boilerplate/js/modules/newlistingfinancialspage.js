@@ -54,7 +54,6 @@ pl.implement(NewListingFinancialsClass, {
             uploadfield = id + '_upload',
             iframesel = '#' + id + 'uploadiframe',
             browsesel = '#' + id.toUpperCase(),
-            buttonsel = '#' + id + 'loadurlbutton',
             displayname = id.toUpperCase().replace('_',' ') + ' UPLOAD URL',
             urlid = id + '_url',
             msgid = id + 'msg',
@@ -100,18 +99,6 @@ pl.implement(NewListingFinancialsClass, {
                     pl(formsel).get(0).submit();
                     return false;
                 };
-            },
-            genURLUpload = function(id, field) {
-                var msgsel = '#' + id + 'msg';
-                return function() {
-                    var msg = field.validate();
-                    if (msg === 0) {
-                        field.update();
-                    }   
-                    else {
-                        pl(msgsel).text(msg);
-                    }
-                };
             };
         pl(iframesel).bind({
             load: genIframeLoad(id)
@@ -119,12 +106,9 @@ pl.implement(NewListingFinancialsClass, {
         pl(browsesel).bind({
             change: genBrowseChange(id)
         });
-        pl(buttonsel).bind({
-            click: genURLUpload(id, field)
-        });
         field.fieldBase.setDisplayName(displayname);
         field.fieldBase.addValidator(ValidatorClass.prototype.isURL);
-        field.bindEvents({noAutoUpdate: true});
+        field.bindEvents();
         self.displayUpload(id);
     },
     bindEvents: function() {

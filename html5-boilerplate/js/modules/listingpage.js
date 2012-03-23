@@ -15,6 +15,7 @@ pl.implement(ListingPageClass,{
     loadPreview: function() {
         var listing = new ListingClass(this.id, this.preview);
         pl('#company-header').hide();
+        pl('#footer').hide();
         listing.load();
     },
     loadRegular: function() {

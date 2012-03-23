@@ -76,7 +76,7 @@ pl.implement(ListingClass, {
     displayInfobox: function() {
         var url = this.website ? new URLClass(this.website) : null;
         pl('#category').html(this.category || 'Other');
-        pl('#listing_date').html(this.listing_date ? this.dateobj.format(this.listing_date) : 'Unknown');
+        pl('#listing_date').html(this.listing_date ? this.dateobj.format(this.listing_date) : 'Not yet listed');
         pl('#websitelink').attr({href: this.website});
         if (url) {
             pl('#domainname').html(url.getHostname());
@@ -90,9 +90,6 @@ pl.implement(ListingClass, {
         this.longitude = this.longitude || '-0.12359619140625'; // FIXME
         //this.mapurl = 'http://ojw.dev.openstreetmap.org/StaticMap/?lat=' + this.latitude + '&lon=' + this.longitude + '&z=5&show=1&fmt=png&w=302&h=302&att=none';
         this.mapurl = 'http://maps.googleapis.com/maps/api/staticmap?center=' + this.latitude + ',' + this.longitude + '&zoom=7&size=302x298&maptype=roadmap&markers=color:blue%7Clabel:' + encodeURI(this.title) + '%7C' + encodeURI(this.address) + '&sensor=false';
-        console.log('address',this.address);
-        console.log('latitude',this.latitude);
-        console.log('longitude',this.longitude);
         pl('#address').html(this.address);
         pl('#addresslink').attr({href: this.addressurl});
         pl('#mapimg').attr({src: this.mapurl});
@@ -236,7 +233,6 @@ pl.implement(ListingClass, {
         });
     },
     displayApprove: function() {
-        console.log('status', this.status);
         var approvable = (this.status === 'posted' && this.loggedin_profile.admin);
         if (approvable) {
             this.bindApproveButton();
