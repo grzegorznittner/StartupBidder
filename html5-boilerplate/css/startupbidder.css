@@ -237,6 +237,7 @@ background: linear-gradient(top, #dcd8db 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 
 /* box styles */
 .boxtitle { margin-top: 10px; color: #333333; font-weight: bold; }
+.boxtitlegap { margin-top: 20px; margin-bottom: 5px; color: #333333; font-weight: bold; }
 .boxpanel, .boxstep { border: 2px solid #999999; padding: 2px; overflow: auto; background: #e3e3e3; margin-bottom: 10px; }
 /* .boxpanel { width: 622px; overflow: auto; position: relative; } */
 .boxpanel { width: 622px; overflow: hidden; position: relative; }
@@ -253,14 +254,15 @@ background: linear-gradient(top, #dcd8db 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .boxstep { width: 626px; padding: 0px; height: 30px; position: relative; }
 .boxsteptitle, .boxsteptext { padding-top: 5px; font-weight: bold; color: #333333; left: 0; text-align: center; position: absolute; }
 .boxsteptitle { padding-left: 5px; width: 617px; }
-.boxsteptext { width: 123px; } 
+.boxsteptext { width: 104px; } 
 .boxstepn { left: 0; position: absolute; height: 30px; width: 0px; background-color: #999999; }
-.boxstep1, .boxstep2, .boxstep3, .boxstep4, .boxstep5 { left: 0; position: absolute; height: 30px; width: 125px }
+.boxstep1, .boxstep2, .boxstep3, .boxstep4, .boxstep5, .boxstep6 { left: 0; position: absolute; height: 30px; width: 104px }
 .boxstep1 { left: 0; }
-.boxstep2 { left: 125px; }
-.boxstep3 { left: 250px; }
-.boxstep4 { left: 375px; }
-.boxstep5 { left: 500px; width: 126px; }
+.boxstep2 { left: 104px; }
+.boxstep3 { left: 208px; }
+.boxstep4 { left: 312px; }
+.boxstep5 { left: 416px; }
+.boxstep6 { left: 520px; width: 106px; }
 .boxstepcomplete { background-color: #999999; }
 .commentpanel dl dt { font-size: 12px; height: 32px; padding: 0 0 0 10px; }
 .commentdttitle { position: relative; height: 32px; }
@@ -279,9 +281,9 @@ background: linear-gradient(top, #dcd8db 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .sideboxcol1 { width: 146px; float: left; margin-right: 10px; }
 .sideboxcol2 { width: 146px; float: left; }
 .sideboxlist { list-style: none; list-style-position: inside; margin-left: 0; padding-left: 0; }
-.sideboxbutton, .sideboxbuttoninterior { height: 50px; font-size: 34px; font-weight: bold; text-align: center; }
-.sideboxbutton { width: 310px; }
-.sideboxbuttoninterior { width: 292px; margin: 0 5px 5px 5px; }
+.sideboxbutton { width: 310px; height: 50px; font-size: 34px; font-weight: bold; text-align: center; }
+.sideboxbuttonsmall { width: 150px; height: 30px; font-size: 20px; }
+.sideboxbuttoninterior { width: 292px; height: 50px; font-size: 34px; font-weight: bold; text-align: center; margin: 0 5px 5px 5px; }
 .sideboxcompanylink { width: 298px; float: left; margin-left: 2px; }
 .sideboxcompanylink:hover { background: #f2f2f2; }
 .sideboxtitle { float: left; font-size: 24px; text-align: right; margin-left: 10px; margin-right: 10px; height: 43px; font-weight: bold; }
@@ -324,6 +326,9 @@ background: linear-gradient(top, #dcd8db 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .approvebox { display: none; }
 .approvemsg { display: none; font-weight: bold; }
 .approvecancelbtn { display: none; margin-top: 10px; }
+.freezebox { display: none; }
+.freezemsg { display: none; font-weight: bold; }
+.freezecancelbtn { display: none; margin-top: 10px; }
 
 
 /* upload */

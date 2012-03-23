@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <!-- Use the .htaccess and remove these lines to avoid edge case issues.
+       More info: h5bp.com/b/378 -->
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+  <title>Startupbidder Listing</title>
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <!-- Mobile viewport optimized: j.mp/bplateviewport -->
+  <!-- <meta name="viewport" content="width=device-width,initial-scale=1"> -->
+  <!-- <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0"> -->
+
+  <meta name="description" content="Startupbidder - list, bid, comment and vote on startup businesses worldwide"/>
+  <meta name="keywords" content="startupbidder startup company auction bid business plan"/>
+  <!-- Place favicon.ico and apple-touch-icon.png in the root directory: mathiasbynens.be/notes/touch-icons -->
+
+  <!-- CSS: implied media=all -->
+  <!-- CSS concatenated and minified via ant build script-->
+  <link rel="stylesheet" href="css/style.css" type="text/css" />
+  <!-- end CSS-->
+
+  <link rel="canonical" href="http://startupbidder.appspot.com"/>
+</head>
+
+<body class="new-listing-basics-page">
+<div id="wrap">
+<div id="newlistingmain">
+
+<div class="header">
+  <div class="container">
+    <div class="span-5">
+      <a href="main-page.html"><span class="logotextblue">startup</span><span class="logotextgrey">bidder</span></a>
+    </div>
+    <div class="span-11">
+      <a href="main-page.html?type=top"><span class="headerlink">Top</span></a>
+      <span class="headertext">&nbsp;&nbsp;|&nbsp;&nbsp;</span>
+      <a href="main-page.html?type=latest"><span class="headerlink">Latest</span></a>
+      <span class="headertext">&nbsp;&nbsp;|&nbsp;&nbsp;</span>
+      <a href="main-page.html?type=closing"><span class="headerlink">Closing</span></a>
+      <span class="headertext">&nbsp;&nbsp;|&nbsp;&nbsp;</span>
+      <a id="postlink" href="login-page.html"><span class="headerlink" id="posttext"></span></a>
+    </div>
+    <div class="span-8 last loginspan">
+      <div><a id="loginlink" href="login-page.html"><span class="headerlink" id="logintext"></span></a></div>
+      <div id="logout" class="logout"><a href="/_ah/logout?continue=%2F">logout</a></div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- begin banner -->
+<div class="bannersmall">
+    <span class="bannertextsmall span-16">NEW COMPANY WIZARD - BUSINESS MODEL CANVAS</span>
+</div>
+
+<div class="boxstep">
+    <span class="boxstepn" id="boxstepn"></span>
+    <span class="boxsteptitle">YOU HAVE FILLED <span id="boxsteppct">0</span>% OF YOUR COMPANY PROFILE</span>
+</div>
+<!-- end banner -->
+
+<!-- left column -->
+<div class="span-16">
+
+    <div class="boxtitle">INSTRUCTIONS</div>
+    <div class="boxpanel">
+    <p>Building a Business Model Canvas gives a one-page snapshot view of your business model.  Answering these questions automatically builds the model for you.</p>
+    </div>
+
+    <div class="boxtitlegap">INFRASTRUCTURE</div>
+
+    <div class="boxpanel" title="How do you provide this solution? What are the key activities of your business?  How do you accomplish what needs to be done to fulfil the value propositions?  What are the steps you go through to provide the product?  How do you spend your time?">
+        <div class="formitem clear">
+            <span class="qalabel">KEY ACTIVITIES - WHAT DOES YOUR BUSINESS DO?</span>
+        </div>
+        <div class="formitem clear">
+            <span class="inputfield">
+                <textarea class="qatextarea" cols="20" rows="5" name="answer1" id="answer1"></textarea>
+            </span>
+            <span class="topinputicon">
+                <div id="answer1icon"></div>
+            </span>
+        </div>
+    </div>
+
+    <div class="boxpanel" title="How are you going to protect your idea?  Do you have any copyrighted material such as software, logos, artistic works, documents?  Do you have trademarks that are known in the industry and recognized by your market?  Do you have patents protecting the embodiment of your innovation?  Which countries do you have these in?  Are there trade secrets which only you and Aunt Nellie know?  What's your plan to get more intellectual property in the future?">
+        <div class="formitem clear">
+            <span class="qalabel">KEY RESOURCES - WHAT ASSETS AND IP DISTINGUISH YOU?</span>
+        </div>
+        <div class="formitem clear">
+            <span class="inputfield">
+                <textarea class="qatextarea" cols="20" rows="5" name="answer2" id="answer2"></textarea>
+            </span>
+            <span class="topinputicon">
+                <div id="answer2icon"></div>
+            </span>
+        </div>
+    </div>
+
+    <div class="boxpanel" title="Who are you buying products and services from?  Who will you use in the future?  Do you have a line of credit with them?  What sort of quantities are you committed to?  What sort of quantites can they ramp up to?  Do you plan to change suppliers?  Do you have a broad group of suppliers to chose from or is there only one for the particular input you need?">
+        <div class="formitem clear">
+            <span class="qalabel">KEY PARTNERS - WHO ARE YOUR VENDORS?</span>
+        </div>
+        <div class="formitem clear">
+            <span class="inputfield">
+                <textarea class="qatextarea" cols="20" rows="5" name="answer3" id="answer3"></textarea>
+            </span>
+            <span class="topinputicon">
+                <div id="answer3icon"></div>
+            </span>
+        </div>
+    </div>
+
+    <div class="boxtitlegap">OFFERING</div>
+
+    <div class="boxpanel" title="What's the solution?  What did they do before your product came along and how is your solution different?  What makes this solution so much better than the current ones?  What about this solution is worth the money and makes people come back for more?  How is it going to change their life?  What features does it have, what benefits do these features provide?">
+        <div class="formitem clear">
+            <span class="qalabel"> VALUE PROPOSITIONS - WHAT'S YOUR SOLUTION TO THE PROBLEM?</span>
+        </div>
+        <div class="formitem clear">
+            <span class="inputfield">
+                <textarea class="qatextarea" cols="20" rows="5" name="answer4" id="answer4"></textarea>
+            </span>
+            <span class="topinputicon">
+                <div id="answer4icon"></div>
+            </span>
+        </div>
+    </div>
+
+    <div class="boxtitlegap">CUSTOMERS</div>
+
+    <div class="boxpanel" title="Who is the customer?  It is not everybody, it is not all mobile phone developers.  It is Alfredo.  He is 28 years old and works in the development group of a large telecommunications company.  He has an iPhone, an iMac, and a MacBook.  In his spare time he plays in a band and self-publishes his own music on the side.  Twice a year he visits his family in Bilbao.  Make your customer specific and bring them to life.">
+        <div class="formitem clear">
+            <span class="qalabel">CUSTOMER SEGMENTS - WHO IS THE TARGET CUSTOMER?</span>
+        </div>
+        <div class="formitem clear">
+            <span class="inputfield">
+                <textarea class="qatextarea" cols="20" rows="5" name="answer5" id="answer5"></textarea>
+            </span>
+            <span class="topinputicon">
+                <div id="answer5icon"></div>
+            </span>
+        </div>
+    </div>
+
+    <div class="boxpanel" title="No business is a vacuum.  Who is going to help you reach out to the customer?  Find new customers?  What affiliates will help market and deliver your product?  Are there agents involved in the relationship?  What trade organizations, trade shows, societies, groups do you consider your key partners?">
+        <div class="formitem clear">
+            <span class="qalabel">CHANNELS - HOW DO YOU REACH THE CUSTOMER?</span>
+        </div>
+        <div class="formitem clear">
+            <span class="inputfield">
+                <textarea class="qatextarea" cols="20" rows="5" name="answer6" id="answer6"></textarea>
+            </span>
+            <span class="topinputicon">
+                <div id="answer6icon"></div>
+            </span>
+        </div>
+    </div>
+
+    <div class="boxpanel" title="Is the customer tied in to your solution?  Can they easily take their business somewhere else?  What will make them not only use your product but continue to use it, year after year?  What kind of relationship are you building with the customer?">
+        <div class="formitem clear">
+            <span class="qalabel">CUSTOMER RELATIONSHIPS - WHAT KEEPS THEM COMING BACK?</span>
+        </div>
+        <div class="formitem clear">
+            <span class="inputfield">
+                <textarea class="qatextarea" cols="20" rows="5" name="answer7" id="answer7"></textarea>
+            </span>
+            <span class="topinputicon">
+                <div id="answer7icon"></div>
+            </span>
+        </div>
+    </div>
+
+    <div class="boxtitlegap">FINANCES</div>
+
+    <div class="boxpanel" title="What goes into providing the product?  How much does it cost you?  How much is fixed overhead and how much is variable?  Are there expenses such as building and equipment leases on a long-term schedule?  Are costs stable or subject to large fluctuations such as food or fuel expenses?">
+        <div class="formitem clear">
+            <span class="qalabel">COST STRUCTURE - WHAT ARE YOUR EXPENSES?</span>
+        </div>
+        <div class="formitem clear">
+            <span class="inputfield">
+                <textarea class="qatextarea" cols="20" rows="5" name="answer8" id="answer8"></textarea>
+            </span>
+            <span class="topinputicon">
+                <div id="answer8icon"></div>
+            </span>
+        </div>
+    </div>
+
+    <div class="boxpanel" title="What will they pay for your product?  How will he pay?  Is this paypal, google checkout, credit card, mobile payment, cash, check, credit, a loan?  Does he pay on the web, on his phone, at a store, in a cab, on a plane?  Does he pay once for each item, does he pay for a package, does he get a discount?  Can he subscribe, and if so, does he subscribe monthly, quarterly, yearly?">
+        <div class="formitem clear">
+            <span class="qalabel">REVENUE STREAMS - WHAT WILL THEY PAY FOR YOUR SOLUTION?</span>
+        </div>
+        <div class="formitem clear">
+            <span class="inputfield">
+                <textarea class="qatextarea" cols="20" rows="5" name="answer9" id="answer9"></textarea>
+            </span>
+            <span class="topinputicon">
+                <div id="answer9icon"></div>
+            </span>
+        </div>
+    </div>
+
+    <div class="formitem clear">
+        <span class="newlistingmsg" id="newlistingmsg">&nbsp;</span>
+    </div>
+
+    <div>
+        <div class="formitem clear">
+            <a href="#" id="prevbuttonlink">
+                <span class="span-3 inputbutton" id="prevbutton">
+                    PREV
+                </span>
+            </a>
+            <a href="#" id="nextbuttonlink">
+                <span class="push-10 span-3 inputbutton" id="nextbutton">
+                    NEXT
+                </span>
+            </a>
+        </div>
+    </div>
+
+</div> <!-- end left column -->
+
+<!-- right column -->
+<div class="span-8 last">
+
+    <div class="boxtitle">SUMMARY PREVIEW</div>
+    <div id="summarypreview"></div>
+
+    <div class="boxtitle clear">TIPS</div>
+    <div class="sidebox">
+<p>
+Your goal here is to present specific relevant detail that can help someone to evaluate your idea.  Picture the life of a typical junior analyst at a venture firm.  They receive dozens, if not hundreds of these startup applications each week.  They have only a short time to glance over each one and see if it merits further investigation.  You want to show that you have a vision, with a definite plan, and the right team to execute it.  Avoid platitudes.  Avoid generalizations.  Talk about your market, your product, your price, your strategy, and just for kicks, how you're going to change the world.
+</p>
+    </div>
+
+    <div class="boxtitle">WITHDRAW POST</div>
+    <div class="newwithdrawmsg attention" id="newwithdrawmsg">Are you sure?<br/>This cannot be undone.</div>
+    <a href="#" id="newwithdrawbtn"><div class="sideboxbutton sideboxbuttonsmall">WITHDRAW</div></a>
+    <a href="#" class="newwithdrawcancelbtn" id="newwithdrawcancelbtn"><div class="sideboxbutton sideboxbuttonsmall">CANCEL</div></a>
+
+</div>
+<!-- end right column -->
+
+</div> <!-- end container -->
+</div> <!-- end main -->
+</div> <!-- end wrap -->
+
+<div id="newlistingfootertop">
+  <div class="container">
+    <div class="boxstep last">
+        <a href="new-listing-basics-page.html"><span class="boxstep1"><div class="boxsteptext">BASICS</div></span></a>
+        <span class="boxstep2 boxstepcomplete"><div class="boxsteptext">BMC</div></span>
+        <a href="new-listing-qa-page.html"><span class="boxstep3"><div class="boxsteptext">Q &amp; A</div></span></a>
+        <a href="new-listing-financials-page.html"><span class="boxstep4"><div class="boxsteptext">FINANCIALS</div></span></a>
+        <a href="new-listing-media-page.html"><span class="boxstep5"><div class="boxsteptext">MEDIA</div></span></a>
+        <a href="new-listing-submit-page.html"><span class="boxstep6"><div class="boxsteptext">SUBMIT</div></span></a>
+    </div>
+  </div>
+</div>
+
+<div id="newlistingfooterbottom" class="darkgreybg">
+  <div class="container">
+    <div class="prepend-2 span-14">
+      <span class="footertext lightgrey">
+        <a href="help-page.html"><span class="footerlink">Help</span></a>
+        &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+        <a href="terms-page.html"><span class="footerlink">Terms&nbsp;&amp;&nbsp;Conditions</span></a>
+        &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+        <a href="contact-page.html"><span class="footerlink">Contact</span></a>
+        &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+        <a href="about-page.html"><span class="footerlink">About</span></a>
+      </span>
+    </div>
+    <div class="span-4 last copyrightspan">
+      <span class="copyrighttext lightgrey">Copyright &copy;2012 Startupbidder</span>
+    </div>
+  </div>
+</div>
+
+  <!-- JavaScript at the bottom for fast page loading -->
+  <script src="js/libs/prevel.min.js"></script>
+  <script src="js/modules/base.js"></script>
+  <script src="js/modules/companylist.js"></script>
+  <script src="js/modules/forms.js"></script>
+  <script src="js/modules/newlistingbase.js"></script>
+  <script src="js/modules/newlistingbmcpage.js"></script>
+
+  <!-- Change UA-XXXXX-X to be your site's ID -->
+  <script>
+  window._gaq = [['_setAccount','UA-23942052-1'],['_trackPageview'],['_trackPageLoadTime']];
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+  </script>
+
+  <!-- Prompt IE 6 users to install Chrome Frame. Remove this if you want to support IE 6.
+       chromium.org/developers/how-tos/chrome-frame-getting-started -->
+  <!--[if lt IE 7 ]>
+    <script src="//ajax.googleapis.com/ajax/libs/chrome-frame/1.0.3/CFInstall.min.js"></script>
+    <script>window.attachEvent('onload',function(){CFInstall.check({mode:'overlay'})})</script>
+  <![endif]-->
+
+</body>
+</html>

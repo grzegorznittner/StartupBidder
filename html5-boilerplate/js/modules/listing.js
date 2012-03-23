@@ -45,6 +45,7 @@ pl.implement(ListingClass, {
         this.displaySocial();
         this.displayWithdraw();
         this.displayApprove();
+        this.displayFreeze();
     },
     displayBasics: function() {
         var logobg = this.logo ? 'url(' + this.logo + ') no-repeat scroll left top' : null;
@@ -261,6 +262,39 @@ pl.implement(ListingClass, {
         pl('#approvecancelbtn').bind({
             click: function() {
                 pl('#approvemsg, #approvecancelbtn').hide();
+                return false;
+            }
+        });
+    },
+    displayFreeze: function() {
+        var freezable = (this.status === 'active' && this.loggedin_profile.admin);
+        if (freezable) {
+            this.bindFreezeButton();
+        }
+    },
+    bindFreezeButton: function() {
+        var self = this;
+        pl('#freezebox').show();
+        pl('#freezebtn').bind({
+            click: function() {
+                var completeFunc = function() {
+                        window.location.reload();
+                    },
+                    url = '/listing/freeze/' + self.listing_id;
+                    ajax = new AjaxClass(url, 'freezemsg', completeFunc);
+                if (pl('#freezecancelbtn').css('display') === 'none') { // first call
+                    pl('#freezemsg, #freezecancelbtn').show();
+                }
+                else {
+                    ajax.setPost();
+                    ajax.call();
+                }
+                return false;
+            }
+        });
+        pl('#freezecancelbtn').bind({
+            click: function() {
+                pl('#freezemsg, #freezecancelbtn').hide();
                 return false;
             }
         });

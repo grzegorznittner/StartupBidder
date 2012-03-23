@@ -1,10 +1,10 @@
-function NewListingQAClass() {
+function NewListingBMCClass() {
     var base = new NewListingBaseClass();
-    base.prevPage = '/new-listing-bmc-page.html';
-    base.nextPage = '/new-listing-financials-page.html';
+    base.prevPage = '/new-listing-basics-page.html';
+    base.nextPage = '/new-listing-qa-page.html';
     this.base = base;
 }
-pl.implement(NewListingQAClass, {
+pl.implement(NewListingBMCClass, {
     load: function() {
         var self = this,
             completeFunc = function(json) {
@@ -28,26 +28,18 @@ pl.implement(NewListingQAClass, {
         }
     },
     bindEvents: function() {
-        var textFields = ['summary'],
-            displayName = { summary: 'ELEVATOR PITCH' },
+        var textFields = [],
+            displayName = {},
             answerFields = [
-'PROBLEM',
-'INNOVATION',
-'MARKETING',
-'ADVERTISING',
-'COMPETITORS',
-'COMPETITIVE COMPARISON',
-'STATUS',
-'PLAN OF ATTACK',
-'GOVERNMENT',
-'TEAM',
-'TEAM RELOCATION',
-'TEAM VALUES',
-'FINANCIAL PROJECTIONS',
-'CURRENT FINANCIALS',
-'OWNERS',
-'INVESTMENT',
-'TIMELINE AND WRAPUP'
+                'KEY ACTIVITIES',
+                'KEY RESOURCES',
+                'KEY PARTNERS',
+                'VALUE PROPOSITIONS',
+                'CUSTOMER SEGMENTS',
+                'CHANNELS',
+                'CUSTOMER RELATIONSHIPS',
+                'COST STRUCTURE',
+                'REVENUE STREAMS'
             ],
             id,
             i,
@@ -55,7 +47,7 @@ pl.implement(NewListingQAClass, {
             field;
         this.base.fields = [];
         for (i = 0; i < answerFields.length; i++) {
-            idx = 10 + i;
+            idx = 1 + i;
             id = 'answer' + idx;
             textFields.push(id);
             displayName[id] = answerFields[i];
@@ -64,7 +56,7 @@ pl.implement(NewListingQAClass, {
             id = textFields[i];
             field = new TextFieldClass(id, this.base.listing[id], this.base.getUpdater(id), 'newlistingmsg');
             field.fieldBase.setDisplayName(displayName[id].toUpperCase());
-            field.fieldBase.addValidator(ValidatorClass.prototype.makeLengthChecker(16, 1000));
+            field.fieldBase.addValidator(ValidatorClass.prototype.makeLengthChecker(5, 1000));
             field.fieldBase.validator.postValidator = this.base.genDisplayCalculatedIfValid(field);
             field.bindEvents();
             this.base.fields.push(field);
@@ -76,7 +68,7 @@ pl.implement(NewListingQAClass, {
 function NewListingPageClass() {};
 pl.implement(NewListingPageClass, {
     loadPage: function() {
-        var newlisting = new NewListingQAClass();
+        var newlisting = new NewListingBMCClass();
         newlisting.load();
     }
 });

@@ -1,7 +1,7 @@
 function NewListingBasicsClass() {
     var base = new NewListingBaseClass();
     base.prevPage = '',
-    base.nextPage = '/new-listing-qa-page.html';
+    base.nextPage = '/new-listing-bmc-page.html';
     this.base = base;
 }
 pl.implement(NewListingBasicsClass, {
