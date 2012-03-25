@@ -57,24 +57,36 @@
 
 <!-- begin banner -->
 <div class="bannersmall">
-    <span class="bannertextsmall span-16">NEW COMPANY WIZARD - BUSINESS MODEL CANVAS</span>
+    <div class="boxstep last">
+        <a href="new-listing-basics-page.html"><span class="boxstep1"><div class="boxsteptext">BASICS</div></span></a>
+        <span class="boxstep2 boxstepcomplete"><div class="boxsteptext">BMC</div></span>
+        <a href="new-listing-qa-page.html"><span class="boxstep3"><div class="boxsteptext">Q &amp; A</div></span></a>
+        <a href="new-listing-financials-page.html"><span class="boxstep4"><div class="boxsteptext">FINANCIALS</div></span></a>
+        <a href="new-listing-media-page.html"><span class="boxstep5"><div class="boxsteptext">MEDIA</div></span></a>
+        <a href="new-listing-submit-page.html"><span class="boxstep6"><div class="boxsteptext">SUBMIT</div></span></a>
+    </div>
 </div>
 
-<div class="boxstep">
-    <span class="boxstepn" id="boxstepn"></span>
-    <span class="boxsteptitle">YOU HAVE FILLED <span id="boxsteppct">0</span>% OF YOUR COMPANY PROFILE</span>
-</div>
 <!-- end banner -->
 
 <!-- left column -->
 <div class="span-16">
+    <span class="bannertextsmall span-16">NEW COMPANY WIZARD - BUSINESS MODEL CANVAS</span>
 
-    <div class="boxtitle">INSTRUCTIONS</div>
-    <div class="boxpanel">
-    <p>Building a Business Model Canvas gives a one-page snapshot view of your business model.  Answering these questions automatically builds the model for you.</p>
+    <div class="boxstep">
+        <span class="boxstepn" id="boxstepn"></span>
+        <span class="boxsteptitle">YOU HAVE FILLED <span id="boxsteppct">0</span>% OF YOUR COMPANY PROFILE</span>
     </div>
 
-    <div class="boxtitlegap">INFRASTRUCTURE</div>
+    <div class="boxtitle">INSTRUCTIONS</div>
+
+    <div class="boxpanel">
+    <p>Building a Business Model Canvas gives a one-page snapshot view of your business model.  Answer the questions below and the overview is automatically constructed at the bottom of the page.</p>
+    </div>
+
+    <div class="boxtitlegap">INFRASTRUCTURE
+        <span class="newlistingtitlemsg" id="infrastructuremsg"></span>
+    </div>
 
     <div class="boxpanel" title="How do you provide this solution? What are the key activities of your business?  How do you accomplish what needs to be done to fulfil the value propositions?  What are the steps you go through to provide the product?  How do you spend your time?">
         <div class="formitem clear">
@@ -118,7 +130,9 @@
         </div>
     </div>
 
-    <div class="boxtitlegap">OFFERING</div>
+    <div class="boxtitlegap">OFFERING
+        <span class="newlistingtitlemsg" id="offeringmsg"></span>
+    </div>
 
     <div class="boxpanel" title="What's the solution?  What did they do before your product came along and how is your solution different?  What makes this solution so much better than the current ones?  What about this solution is worth the money and makes people come back for more?  How is it going to change their life?  What features does it have, what benefits do these features provide?">
         <div class="formitem clear">
@@ -134,7 +148,9 @@
         </div>
     </div>
 
-    <div class="boxtitlegap">CUSTOMERS</div>
+    <div class="boxtitlegap">CUSTOMERS
+        <span class="newlistingtitlemsg" id="customersmsg"></span>
+    </div>
 
     <div class="boxpanel" title="Who is the customer?  It is not everybody, it is not all mobile phone developers.  It is Alfredo.  He is 28 years old and works in the development group of a large telecommunications company.  He has an iPhone, an iMac, and a MacBook.  In his spare time he plays in a band and self-publishes his own music on the side.  Twice a year he visits his family in Bilbao.  Make your customer specific and bring them to life.">
         <div class="formitem clear">
@@ -178,7 +194,9 @@
         </div>
     </div>
 
-    <div class="boxtitlegap">FINANCES</div>
+    <div class="boxtitlegap">FINANCES
+        <span class="newlistingtitlemsg" id="financesmsg"></span>
+    </div>
 
     <div class="boxpanel" title="What goes into providing the product?  How much does it cost you?  How much is fixed overhead and how much is variable?  Are there expenses such as building and equipment leases on a long-term schedule?  Are costs stable or subject to large fluctuations such as food or fuel expenses?">
         <div class="formitem clear">
@@ -250,22 +268,122 @@ Your goal here is to present specific relevant detail that can help someone to e
 </div>
 <!-- end right column -->
 
+<!-- begin bmc -->
+<div class="span-24">
+<div class="bannertextsmall">Business Model Canvas</div>
+<div class="bmcborder">
+
+<div class="bmctallcolumnonedge">
+<div class="bmccell">
+<div class="bmcicon" style="background: url(img/icons/bmc_kp_48.png);"></div>
+<span class="bmcsection">Key Partners</span>
+<br/>
+<span id="answer1bmc"></span>
+</div>
+</div>
+
+<div class="bmcverticalbar" style="background-color: olivedrab;"></div>
+
+<div class="bmctallcolumn">
+<div class="bmcshortcolumn">
+<div class="bmccell">
+<div class="bmcicon" style="background: url(img/icons/bmc_ka_48.png);"></div>
+<span class="bmcsection">Key Activities</span>
+<br/>
+<span id="answer2bmc"></span>
+</div>
+</div>
+
+<div class="bmchorizontalbarshort" style="background-color: olivedrab;"></div>
+
+<div class="bmcshortcolumn">
+<div class="bmccell">
+<div class="bmcicon" style="background: url(img/icons/bmc_kr_48.png);"></div>
+<span class="bmcsection">Key Resources</span>
+<br/>
+<span id="answer3bmc"></span>
+</div>
+</div>
+
+</div>
+
+<div class="bmcverticalbar" style="background-color: gold;"></div>
+
+<div class="bmctallcolumn">
+<div class="bmccell">
+<div class="bmcicon" style="background: url(img/icons/bmc_vp_48.png);"></div>
+<span class="bmcsection">Value Propositions</span>
+<br/>
+<span id="answer4bmc"></span>
+</div>
+</div>
+
+<div class="bmcverticalbar" style="background-color: dodgerblue;"></div>
+
+<div class="bmctallcolumn">
+<div class="bmcshortcolumn">
+<div class="bmccell">
+<div class="bmcicon" style="background: url(img/icons/bmc_cr_48.png);"></div>
+<span class="bmcsection">Customer Relationships</span>
+<br/>
+<span id="answer7bmc"></span>
+</div>
+</div>
+
+<div class="bmchorizontalbarshort" style="background-color: dodgerblue;"></div>
+
+<div class="bmcshortcolumn">
+<div class="bmccell">
+<div class="bmcicon" style="background: url(img/icons/bmc_ch_48.png);"></div>
+<span class="bmcsection">Channels</span>
+<br/>
+<span id="answer6bmc"></span>
+</div>
+</div>
+
+</div>
+
+<div class="bmcverticalbar" style="background-color: black;"></div>
+
+<div class="bmctallcolumnonedge">
+<div class="bmccell">
+<div class="bmcicon" style="background: url(img/icons/bmc_cs_48.png);"></div>
+<span class="bmcsection">Customer Segments</span>
+<br/>
+<span id="answer5bmc"></span>
+</div>
+</div>
+
+<div class="bmchorizontalbar" style="background-color: gold;"></div>
+<div class="bmchorizontalbarextra" style="background-color: crimson;"></div>
+
+<div class="bmcwidecolumn" style="clear: both;">
+<div class="bmccell">
+<div class="bmcicon" style="background: url(img/icons/bmc_co_48.png);"></div>
+<span class="bmcsection">Cost Structure</span>
+<br/>
+<span id="answer8bmc"></span>
+</div>
+</div>
+
+<div class="bmcverticalbarshort" style="background-color: crimson;"></div>
+
+<div class="bmcwidecolumn">
+<div class="bmccell">
+<div class="bmcicon" style="background: url(img/icons/bmc_rs_48.png);"></div>
+<span class="bmcsection">Revenue Streams</span>
+<br/>
+<span id="answer9bmc"></span>
+</div>
+</div>
+
+</div>
+</div>
+<!-- end bmc -->
+
 </div> <!-- end container -->
 </div> <!-- end main -->
 </div> <!-- end wrap -->
-
-<div id="newlistingfootertop">
-  <div class="container">
-    <div class="boxstep last">
-        <a href="new-listing-basics-page.html"><span class="boxstep1"><div class="boxsteptext">BASICS</div></span></a>
-        <span class="boxstep2 boxstepcomplete"><div class="boxsteptext">BMC</div></span>
-        <a href="new-listing-qa-page.html"><span class="boxstep3"><div class="boxsteptext">Q &amp; A</div></span></a>
-        <a href="new-listing-financials-page.html"><span class="boxstep4"><div class="boxsteptext">FINANCIALS</div></span></a>
-        <a href="new-listing-media-page.html"><span class="boxstep5"><div class="boxsteptext">MEDIA</div></span></a>
-        <a href="new-listing-submit-page.html"><span class="boxstep6"><div class="boxsteptext">SUBMIT</div></span></a>
-    </div>
-  </div>
-</div>
 
 <div id="newlistingfooterbottom" class="darkgreybg">
   <div class="container">

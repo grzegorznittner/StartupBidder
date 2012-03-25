@@ -407,23 +407,21 @@ pl.implement(CheckboxFieldClass, {
         return this.fieldBase.validator.validate(value);
     },
     bindEvents: function() {
-        var self, onchange;
-        self = this;
-        onchange = function() {
-            var changeKey = self.fieldBase.id,
-                newval = pl(self.fieldBase.sel).attr('checked'),
-                msg;
-                msg = self.fieldBase.validator.validate(newval);
-            if (msg === 0) {
-                self.fieldBase.updateFunction({ changeKey: newval }, self.fieldBase.getLoadFunc(), self.fieldBase.getErrorFunc(self.getDisplayFunc()), self.fieldBase.getSuccessFunc());
-            }
-            else {
-                self.msg.show('attention', msg);
-            }
-            return false;
-        }
+        var self = this;
         pl(self.fieldBase.sel).bind({
-            change: onchange
+            change: function() {
+                var changeKey = self.fieldBase.id,
+                    newval = pl(self.fieldBase.sel).attr('checked'),
+                    msg;
+                    msg = self.fieldBase.validator.validate(newval);
+                if (msg === 0) {
+                    self.fieldBase.updateFunction({ changeKey: newval }, self.fieldBase.getLoadFunc(), self.fieldBase.getErrorFunc(self.getDisplayFunc()), self.fieldBase.getSuccessFunc());
+                }
+                else {
+                    self.msg.show('attention', msg);
+                }
+                return false;
+            }
         });
     }
 });
@@ -482,8 +480,9 @@ pl.implement(SelectFieldClass, {
         return self.fieldBase.validator.validate(value);
     },
     bindEvents: function() {
-        var self = this,
-            onchange = function() {
+        var self = this;
+        pl(self.fieldBase.sel).bind({
+            change: function() {
                 var icon = new ValidIconClass(self.fieldBase.id + 'icon'),
                     changeKey = self.fieldBase.id,
                     newval = self.getValue(),
@@ -501,9 +500,7 @@ pl.implement(SelectFieldClass, {
                 }
                 self.fieldBase.updateFunction({ changeKey: newval }, self.fieldBase.getLoadFunc(), self.fieldBase.getErrorFunc(self.getDisplayFunc()), self.fieldBase.getSuccessFunc());
                 return false;
-            };
-        pl(self.fieldBase.sel).bind({
-            change: onchange
+            }
         });
     }
 });
@@ -530,15 +527,39 @@ pl.implement(TextFieldClass, {
     },
     bindEvents: function(optionsparam) {
         var self = this,
-            options = optionsparam || {},
             icon = new ValidIconClass(self.fieldBase.id + 'icon'),
             safeStr = new SafeStringClass(),
             sel = self.fieldBase.sel;
-            self.options = options;
-            onchange = function(event) {
-                var newval, validMsg;
-                newval = safeStr.htmlEntities(pl(sel).attr('value'));
-                validMsg = self.fieldBase.validator.validate(newval);
+            self.options = optionsparam || {};
+        pl(sel).bind({
+            paste: function() {
+                var newval = pl(sel).attr('value');
+                if (!self.options.noAutoUpdate) {
+                    self.inpaste = true;
+                }
+                return true;
+            },
+            focus: function() {
+                var domval = pl(sel).attr('value');
+                if (domval === pl(sel).get(0).defaultValue) { // blank out on edit
+                    pl(sel).attr({value: ''});
+                    self.value = null;
+                }
+                else {
+                    self.value = pl(sel).attr('value'); // save the value
+                }
+                return false;
+            },
+            blur: function() { // push to server
+                if (!self.options.noAutoUpdate) {
+                    self.update();
+                }
+                return false;
+            },
+            change: function() {
+                var newval = safeStr.htmlEntities(pl(sel).attr('value')),
+                    validMsg = self.fieldBase.validator.validate(newval);
+                console.log('field=',self.fieldBase.id,' icon.isValid=', icon.isValid, ' validmsg=', validMsg);
                 if (validMsg !== 0) {
                     self.fieldBase.msg.show('attention', validMsg);
                     icon.showInvalid();
@@ -557,43 +578,34 @@ pl.implement(TextFieldClass, {
                 }
                 return false;
             },
-            onfocus = function() {
-                var domval = pl(sel).attr('value');
-                if (domval === pl(sel).get(0).defaultValue) { // blank out on edit
-                    pl(sel).attr({value: ''});
-                    self.value = null;
-                }
-                else {
-                    self.value = pl(sel).attr('value'); // save the value
-                }
-                return false;
-            },
-            onblur = function() { // push to server
-                if (!self.options.noAutoUpdate) {
-                    self.update();
-                }
-                return false;
-            },
-            onpaste = function(e) { // push to server
-                var newval = pl(sel).attr('value');
-                if (!self.options.noAutoUpdate) {
-                    self.inpaste = true;
-                }
-                return true;
-            },
-            onkeyup = function(e) {
+            keyup: function(e) {
                 if (e.keyCode === 13) {
                     self.update();
                     return false;
                 }
+                else {
+                    var newval = safeStr.htmlEntities(pl(sel).attr('value')),
+                        validMsg = self.fieldBase.validator.validate(newval);
+                    console.log('field=',self.fieldBase.id,' icon.isValid=', icon.isValid, ' validmsg=', validMsg);
+                    if (validMsg !== 0) {
+                        self.fieldBase.msg.show('attention', validMsg);
+                        icon.showInvalid();
+                    }
+                    else {
+                        if (!self.fieldBase.msg.isClear) {
+                            self.fieldBase.msg.clear();
+                        }
+                        if (!icon.isValid) {
+                            icon.showValid();
+                        }
+                        if (self.inpaste) {
+                            self.inpaste = false;
+                            self.update();
+                        }
+                    }
+                }
                 return true;
-            };
-        pl(sel).bind({
-            blur: onblur,
-            paste: onpaste,
-            focus: onfocus,
-            change: onchange,
-            keyup: onkeyup
+            }
         });
     },
     update: function() {
@@ -605,10 +617,11 @@ pl.implement(TextFieldClass, {
             domval = pl(sel).attr('value'),
             newval = safeStr.htmlEntities(domval),
             defval = pl(sel).get(0).defaultValue,
-            validMsg = self.fieldBase.validator.validate(newval),
-            successfunc = function() {
-            };
+            validMsg = self.fieldBase.validator.validate(newval);
         if (validMsg !== 0) {
+            self.fieldBase.msg.show('attention', validMsg);
+            icon.showInvalid();
+/*
             if (!self.value && defval) {
                 pl(sel).attr({'value': defval}); // restore default
             }
@@ -617,6 +630,7 @@ pl.implement(TextFieldClass, {
             }
             self.fieldBase.msg.clear();
             icon.clear();
+*/
             return;
         }
         icon.clear();

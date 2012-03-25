@@ -4,10 +4,9 @@ html, body, #wrap { height: 100%; }
 body { margin: 0; }
 body > #wrap { height: auto; min-height: 100%; }
 #main { padding-bottom: 35px; }
-#newlistingmain { padding-bottom: 80px; }
+#newlistingmain { padding-bottom: 35px; }
 #footer { position: relative; margin-top: -35px; height: 35px; clear: both; width: 100%; }
 #newlistingfooterbottom { position: relative; margin-top: 1px; height: 35px; clear: both; width: 100%; }
-#newlistingfootertop { position: relative; margin-top: -80px; height: 40px; clear: both; width: 100%; }
 .clearfix:after { content: "."; display: block; height: 0; clear: both; visibility: hidden; }
 .clearfix { display: inline-block; }
 * html .clearfix { height: 1%; }
@@ -25,7 +24,7 @@ body > #wrap { height: auto; min-height: 100%; }
 /* general styles */
 /* body { font-size: 14px; font-weight: bold; color: #4083a9; background: #f2f2f2; } */
 body { font-size: 14px; font-weight: normal; color: #4083a9; background: #f2f2f2; }
-.curvedborder, .sidebox, .sideboxbutton, .sideboxbuttoninterior, .tile, .boxpanel, .boxstep, .boxselected, .inputbutton, .smallinputbutton, .sideboxselected, .banner {
+.curvedborder, .sidebox, .sideboxbutton, .sideboxbuttoninterior, .tile, .boxpanel, .boxstep, .boxselected, .inputbutton, .smallinputbutton, .sideboxselected, .banner, .bmcborder {
   -moz-border-radius: 5px; -webkit-border-radius: 5px; border-radius: 5px;
   -moz-box-shadow: 3px 3px 3px rgba(0,0,0,0.5); -webkit-box-shadow: 3px 3px 3px rgba(0,0,0,0.5); box-shadow: 3px 3px 3px rgba(0,0,0,0.5);
   zoom: 1;
@@ -237,7 +236,7 @@ background: linear-gradient(top, #dcd8db 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 
 /* box styles */
 .boxtitle { margin-top: 10px; color: #333333; font-weight: bold; }
-.boxtitlegap { margin-top: 20px; margin-bottom: 5px; color: #333333; font-weight: bold; }
+.boxtitlegap { margin-top: 20px; margin-bottom: 5px; color: #333333; font-weight: bold; position: relative; }
 .boxpanel, .boxstep { border: 2px solid #999999; padding: 2px; overflow: auto; background: #e3e3e3; margin-bottom: 10px; }
 /* .boxpanel { width: 622px; overflow: auto; position: relative; } */
 .boxpanel { width: 622px; overflow: hidden; position: relative; }
@@ -245,6 +244,7 @@ background: linear-gradient(top, #dcd8db 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .addcommentmsg { height: 20px; margin-left: 5px; font-weight: bold; }
 .addmessagemsg { height: 20px; margin-left: 5px; font-weight: bold; }
 .newlistingmsg { float: left; margin-right; 10px; padding-left: 116px; width: 420px; height: 85px; font-weight: bold; overflow: auto; }
+.newlistingtitlemsg { position: absolute; margin-right: 5px; right: 0; }
 .newlistingaskmsg { margin-left: 10px; }
 .newlistingmsgsmall { float: left; margin-right; 10px; padding-left: 116px; width: 420px; height: 25px; font-weight: bold; }
 .companylistingstats { position: absolute; bottom: 0; }
@@ -378,6 +378,21 @@ background: linear-gradient(top, #dcd8db 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .financialsimg { background: url(../img/icons/financials.png) no-repeat 0px 0px; border-radius: 3px; }
 .videoinputicon { float: left; padding-top: 7px; height: 32px; width: 32px; margin-right: 10px; }
 .videourl { padding-top: 8px !important; }
+
+/* BMC */
+.bmcborder { width:960px; height: 640px; border: 6px solid #999999; border-radius: 6px; }
+.bmccell { padding: 5px; overflow: hidden; }
+.bmcsection { font-size: 18px; font-weight: bold; color: black; }
+.bmcicon { float: right; width: 48px; height: 48px; }
+.bmcverticalbar { float: left; width: 4px; height: 480px; }
+.bmctallcolumn { float: left; width: 188px; height: 480px; }
+.bmctallcolumnonedge { float: left; width: 190px; height: 480px; }
+.bmcshortcolumn { width: 188px; height: 238px; }
+.bmcwidecolumn { width: 478px; height: 156px; float: left; }
+.bmchorizontalbarshort { width: 188px; height: 4px; }
+.bmcverticalbarshort { float: left; width: 4px; height: 156px; }
+.bmchorizontalbar { float: left; width: 478px; height: 4px; }
+.bmchorizontalbarextra { float: left; width: 482px; height: 4px; }
 
 input[disabled] { color: #999 !important; }
 textarea[disabled] { color: #999 !important; }
