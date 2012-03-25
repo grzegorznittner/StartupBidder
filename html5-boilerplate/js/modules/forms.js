@@ -1,6 +1,6 @@
 function URLCheckClass() {}
 pl.implement(URLCheckClass, {
-    check: function(str, emptymsg) {
+    check: function(str) {
         var regex = /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi;
         if (!str) {
             return 'Must not be empty.';
@@ -9,6 +9,14 @@ pl.implement(URLCheckClass, {
             return 'Must be a valid URL.';
         }
         return 0;
+    },
+    checkEmptyOk: function(str) {
+        if (!str) {
+            return 0;
+        }
+        else {
+            return URLCheckClass.prototype.check(str);
+        }
     }
 });
 
@@ -176,6 +184,9 @@ pl.implement(ValidatorClass, {
     },
     isURL: function(str) {
         return URLCheckClass.prototype.check(str);
+    },
+    isURLEmptyOk: function(str) {
+        return URLCheckClass.prototype.checkEmptyOk(str);
     },
     isVideoURL: function(str) {
         return VideoCheckClass.prototype.check(str);
@@ -559,7 +570,6 @@ pl.implement(TextFieldClass, {
             change: function() {
                 var newval = safeStr.htmlEntities(pl(sel).attr('value')),
                     validMsg = self.fieldBase.validator.validate(newval);
-                console.log('field=',self.fieldBase.id,' icon.isValid=', icon.isValid, ' validmsg=', validMsg);
                 if (validMsg !== 0) {
                     self.fieldBase.msg.show('attention', validMsg);
                     icon.showInvalid();
@@ -579,14 +589,13 @@ pl.implement(TextFieldClass, {
                 return false;
             },
             keyup: function(e) {
-                if (e.keyCode === 13) {
+                if (e.keyCode === 13 && !self.options.noEnterKeySubmit) {
                     self.update();
                     return false;
                 }
                 else {
                     var newval = safeStr.htmlEntities(pl(sel).attr('value')),
                         validMsg = self.fieldBase.validator.validate(newval);
-                    console.log('field=',self.fieldBase.id,' icon.isValid=', icon.isValid, ' validmsg=', validMsg);
                     if (validMsg !== 0) {
                         self.fieldBase.msg.show('attention', validMsg);
                         icon.showInvalid();

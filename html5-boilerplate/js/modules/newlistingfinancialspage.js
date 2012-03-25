@@ -107,7 +107,7 @@ pl.implement(NewListingFinancialsClass, {
             change: genBrowseChange(id)
         });
         field.fieldBase.setDisplayName(displayname);
-        field.fieldBase.addValidator(ValidatorClass.prototype.isURL);
+        field.fieldBase.addValidator(ValidatorClass.prototype.isURLEmptyOk);
         field.bindEvents();
         self.displayUpload(id);
     },

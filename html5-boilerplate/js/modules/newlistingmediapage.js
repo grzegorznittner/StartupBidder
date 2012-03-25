@@ -95,7 +95,7 @@ pl.implement(NewListingMediaClass, {
         });
         pl('#logouploadform').attr({action: uploadurl});
         logoURLField.fieldBase.setDisplayName('LOGO URL');
-        logoURLField.fieldBase.addValidator(ValidatorClass.prototype.isURL);
+        logoURLField.fieldBase.addValidator(ValidatorClass.prototype.isURLEmptyOk);
         logoURLField.bindEvents();
         videoURLField.fieldBase.validator.preValidateTransform = VideoCheckClass.prototype.preformat;
         videoURLField.fieldBase.setDisplayName('VIDEO URL');

@@ -60,7 +60,7 @@ pl.implement(NewListingBMCClass, {
                 var bmcsel = '#' + id + 'bmc',
                     newval = json && json.listing && (json.listing[id] !== null) ? json.listing[id] : null;
                 if (newval !== null) {
-                    pl(bmcsel).text(newval);
+                    pl(bmcsel).html(newval.replace(/\n/g, '<br/>'));
                 }
             },
             baseUpdater = this.base.getUpdater(id, cleaner, updateBMC);
@@ -108,7 +108,7 @@ pl.implement(NewListingBMCClass, {
             field.fieldBase.setDisplayName(displayName[id].toUpperCase());
             field.fieldBase.addValidator(ValidatorClass.prototype.makeLengthChecker(16, 1000));
             field.fieldBase.validator.postValidator = this.genDisplayBMC(field);
-            field.bindEvents();
+            field.bindEvents({noEnterKeySubmit: true});
             this.base.fields.push(field);
         } 
         this.base.bindNavButtons();
