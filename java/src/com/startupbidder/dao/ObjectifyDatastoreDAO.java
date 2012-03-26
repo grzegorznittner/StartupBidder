@@ -55,204 +55,6 @@ public class ObjectifyDatastoreDAO {
 	private ObjectifyDatastoreDAO() {
 	}
 	
-	public String clearDatastore() {
-		return iterateThroughDatastore(true, new ArrayList<Object>());
-	}
-	
-	public String printDatastoreContents() {
-		return iterateThroughDatastore(false, new ArrayList<Object>());
-	}
-	
-	public List<Object> exportDatastoreContents() {
-		List<Object> dtoList = new ArrayList<Object>();
-		iterateThroughDatastore(false, dtoList);
-		return dtoList;
-	}
-	
-	public String createMockDatastore(long loggedInUserId) {
-		// delete logged in user as he will be recreated
-		if (loggedInUserId != 0 && getOfy().get(new Key<SBUser>(SBUser.class, loggedInUserId)) != null) {
-			getOfy().delete(SBUser.class, loggedInUserId);
-		}
-		
-		initMocks();
-		return iterateThroughDatastore(false, new ArrayList<Object>());
-	}
-	
-	public String iterateThroughDatastore(boolean delete, List<Object> dtoList) {
-		StringBuffer outputBuffer = new StringBuffer();
-		outputBuffer.append("<a href=\"/setup\">Setup page</a>");
-		if (delete) {
-			outputBuffer.append("<p>Deleted objects:</p>");
-		} else {
-			outputBuffer.append("<p>Datastore objects:</p>");
-		}
-		
-		List<Key<SBUser>> userKeys = new ArrayList<Key<SBUser>>();
-		CollectionUtils.addAll(userKeys, getOfy().query(SBUser.class).fetchKeys().iterator());
-		outputBuffer.append("<p>Users (" + userKeys.size() + "):</p>");
-		for (SBUser obj : getOfy().get(userKeys).values()) {
-			outputBuffer.append(obj).append("<br/>");
-		}
-		if (delete) {
-			getOfy().delete(userKeys);
-		}
-		
-		List<Key<UserStats>> userStatKeys = new ArrayList<Key<UserStats>>();
-		CollectionUtils.addAll(userStatKeys, getOfy().query(UserStats.class).fetchKeys().iterator());
-		outputBuffer.append("<p>User stats (" + userStatKeys.size() + "):</p>");
-		for (UserStats obj : getOfy().get(userStatKeys).values()) {
-			outputBuffer.append(obj).append("<br/>");
-		}
-		if (delete) {
-			getOfy().delete(userStatKeys);
-		}
-		
-		List<Key<Category>> catKeys = new ArrayList<Key<Category>>();
-		CollectionUtils.addAll(catKeys, getOfy().query(Category.class).fetchKeys().iterator());
-		outputBuffer.append("<p>Categories (" + catKeys.size() + "):</p>");
-		if (catKeys.size() > 0) {
-			//for (Bid obj : getOfy().get(bidKeys).values()) {
-			for (Key<Category> key : catKeys) {
-				Category obj = getOfy().get(key);
-				outputBuffer.append(obj).append("<br/>");
-			}
-			if (delete) {
-				getOfy().delete(catKeys);
-			}
-		}
-		
-		List<Key<Bid>> bidKeys = new ArrayList<Key<Bid>>();
-		CollectionUtils.addAll(bidKeys, getOfy().query(Bid.class).fetchKeys().iterator());
-		outputBuffer.append("<p>Bids (" + bidKeys.size() + "):</p>");
-		if (bidKeys.size() > 0) {
-			//for (Bid obj : getOfy().get(bidKeys).values()) {
-			for (Key<Bid> key : bidKeys) {
-				Bid obj = getOfy().get(key);
-				outputBuffer.append(obj).append("<br/>");
-			}
-			if (delete) {
-				getOfy().delete(bidKeys);
-			}
-		}
-		
-		List<Key<PaidBid>> paidBidKeys = new ArrayList<Key<PaidBid>>();
-		CollectionUtils.addAll(paidBidKeys, getOfy().query(PaidBid.class).fetchKeys().iterator());
-		outputBuffer.append("<p>Paid bids (" + paidBidKeys.size() + "):</p>");
-		if (paidBidKeys.size() > 0) {
-			for (PaidBid obj : getOfy().get(paidBidKeys).values()) {
-				outputBuffer.append(obj).append("<br/>");
-			}
-			if (delete) {
-				getOfy().delete(paidBidKeys);
-			}
-		}
-		
-		List<Key<Comment>> comKeys = new ArrayList<Key<Comment>>();
-		CollectionUtils.addAll(comKeys, getOfy().query(Comment.class).fetchKeys().iterator());
-		outputBuffer.append("<p>Comments (" + comKeys.size() + "):</p>");
-		if (comKeys.size() > 0) {
-			for (Comment obj : getOfy().get(comKeys).values()) {
-				outputBuffer.append(obj).append("<br/>");
-			}
-			if (delete) {
-				getOfy().delete(comKeys);
-			}
-		}
-
-		List<Key<Listing>> listingKeys = new ArrayList<Key<Listing>>();
-		CollectionUtils.addAll(listingKeys, getOfy().query(Listing.class).fetchKeys().iterator());
-		outputBuffer.append("<p>Listings (" + listingKeys.size() + "):</p>");
-		if (listingKeys.size() > 0) {
-//			for (Listing obj : getOfy().get(listingKeys).values()) {
-//				outputBuffer.append(obj).append("<br/>");
-//			}
-			if (delete) {
-				getOfy().delete(listingKeys);
-			}
-		}
-
-		List<Key<ListingDoc>> listingDocKeys = new ArrayList<Key<ListingDoc>>();
-		CollectionUtils.addAll(listingDocKeys, getOfy().query(ListingDoc.class).fetchKeys().iterator());
-		outputBuffer.append("<p>Listing docs (" + listingDocKeys.size() + "):</p>");
-		if (listingDocKeys.size() > 0) {
-//			for (ListingDoc obj : getOfy().get(listingDocKeys).values()) {
-//				outputBuffer.append(obj).append("<br/>");
-//			}
-			if (delete) {
-				getOfy().delete(listingDocKeys);
-			}
-		}
-		
-		List<Key<ListingStats>> listingStatKeys = new ArrayList<Key<ListingStats>>();
-		CollectionUtils.addAll(listingStatKeys, getOfy().query(ListingStats.class).fetchKeys().iterator());
-//		outputBuffer.append("<p>Listing stats (" + listingStatKeys.size() + "):</p>");
-//		for (ListingStats obj : getOfy().get(listingStatKeys).values()) {
-//			outputBuffer.append(obj).append("<br/>");
-//		}
-		if (delete) {
-			getOfy().delete(listingStatKeys);
-		}
-		
-		List<Key<Rank>> rankKeys = new ArrayList<Key<Rank>>();
-		CollectionUtils.addAll(rankKeys, getOfy().query(Rank.class).fetchKeys().iterator());
-//		outputBuffer.append("<p>Listing stats (" + rankKeys.size() + "):</p>");
-//		for (Rank obj : getOfy().get(rankKeys).values()) {
-//			outputBuffer.append(obj).append("<br/>");
-//		}
-		if (delete) {
-			getOfy().delete(rankKeys);
-		}
-
-		List<Key<SystemProperty>> propKeys = new ArrayList<Key<SystemProperty>>();
-		CollectionUtils.addAll(propKeys, getOfy().query(SystemProperty.class).fetchKeys().iterator());
-//		outputBuffer.append("<p>System properties (" + propKeys.size() + "):</p>");
-//		for (SystemProperty obj : getOfy().get(propKeys).values()) {
-//			outputBuffer.append(obj).append("<br/>");
-//		}
-		if (delete) {
-			getOfy().delete(propKeys);
-		}
-
-		List<Key<Vote>> voteKeys = new ArrayList<Key<Vote>>();
-		CollectionUtils.addAll(voteKeys, getOfy().query(Vote.class).fetchKeys().iterator());
-//		outputBuffer.append("<p>Votes (" + voteKeys.size() + "):</p>");
-//		for (Vote obj : getOfy().get(voteKeys).values()) {
-//			outputBuffer.append(obj).append("<br/>");
-//		}
-		if (delete) {
-			getOfy().delete(voteKeys);
-		}
-		
-		outputBuffer.append("<p><a href=\"/setup\">Setup page</a></p>");
-		return outputBuffer.toString();
-	}
-	
-	private void initMocks() {
-		MockDataBuilder mockBuilder = new MockDataBuilder();
-		
-		List<SBUser> users = mockBuilder.createMockUsers();
-		getOfy().put(users);
-		
-		getOfy().put(mockBuilder.createCategories());
-		
-		List<Listing> listings = mockBuilder.createMockListings(users);
-		getOfy().put(listings);
-		
-		getOfy().put(mockBuilder.createMockVotes(users, listings));
-		getOfy().put(mockBuilder.generateComments(users, listings));
-		getOfy().put(mockBuilder.generateBids(users, listings));
-
-		// updating user stats
-		for (SBUser user : users) {
-			updateUserStatistics(user.id);
-		}
-		// update listing stats
-		for (Listing listing : listings) {
-			updateListingStatistics(listing.id);
-		}
-	}
-	
 	private Objectify getOfy() {
 		Objectify ofy = ObjectifyService.begin();
 		return ofy;
@@ -418,9 +220,10 @@ public class ObjectifyDatastoreDAO {
 			return null;
 		}
 
-		ListingStats listingStats = getOfy().find(new Key<ListingStats>(ListingStats.class, listingId));		
+		ListingStats listingStats = getOfy().find(new Key<ListingStats>(ListingStats.class, listingId));
 		if (listingStats != null) {
-			DateMidnight lastStatMidnight = new DateMidnight(listingStats.previousValuationDate.getTime());
+			DateMidnight lastStatMidnight = new DateMidnight(
+					listingStats.previousValuationDate != null ? listingStats.previousValuationDate.getTime() : 0);
 			DateMidnight midnight = new DateMidnight();
 			if (lastStatMidnight.isBefore(midnight)) {
 				listingStats.previousValuation = listingStats.valuation;
@@ -575,7 +378,7 @@ public class ObjectifyDatastoreDAO {
 				owner.editedListing = null;
 				getOfy().put(owner);
 			}
-			
+			log.info("Updated listing: " + listing);
 			return listing;
 		} catch (Exception e) {
 			log.log(Level.WARNING, "Listing entity name '" + newListing.name
@@ -601,7 +404,7 @@ public class ObjectifyDatastoreDAO {
 
 	public Listing deleteEditedListing(long listingId) {
 		Listing listing = getOfy().get(new Key<Listing>(Listing.class, listingId));
-		if (listing != null && listing.state == Listing.State.NEW) {
+		if (listing != null && (listing.state == Listing.State.NEW || listing.state == Listing.State.POSTED)) {
 			getOfy().delete(listing);
 			SBUser user = getOfy().get(listing.owner);
 			user.editedListing = null;

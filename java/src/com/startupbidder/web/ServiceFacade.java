@@ -67,18 +67,6 @@ public class ServiceFacade {
 		return ObjectifyDatastoreDAO.getInstance();
 	}
 	
-	public String clearDatastore(UserVO loggedInUser) {
-		return getDAO().clearDatastore();
-	}
-
-	public String printDatastoreContents(UserVO loggedInUser) {
-		return getDAO().printDatastoreContents();
-	}
-	
-	public List<Object> exportDatastoreContents(UserVO loggedInUser) {
-		return getDAO().exportDatastoreContents();
-	}
-	
 	/**
 	 * Returns list of listing's comments
 	 * 

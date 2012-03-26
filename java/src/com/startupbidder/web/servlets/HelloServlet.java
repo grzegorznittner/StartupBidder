@@ -30,9 +30,11 @@ import com.startupbidder.datamodel.ListingDoc;
 import com.startupbidder.datamodel.Monitor;
 import com.startupbidder.datamodel.Notification;
 import com.startupbidder.datamodel.SBUser;
+import com.startupbidder.vo.ErrorCodes;
 import com.startupbidder.vo.ListPropertiesVO;
 import com.startupbidder.vo.ListingAndUserVO;
 import com.startupbidder.vo.ListingDocumentVO;
+import com.startupbidder.vo.ListingListVO;
 import com.startupbidder.vo.ListingVO;
 import com.startupbidder.vo.UserListVO;
 import com.startupbidder.vo.UserVO;
@@ -83,6 +85,8 @@ public class HelloServlet extends HttpServlet {
 			if (currentUser == null) {
 				currentUser = UserMgmtFacade.instance().createUser(user);
 			}
+			currentUser.setAdmin(userService.isUserAdmin());
+			
 			ListPropertiesVO listProperties = new ListPropertiesVO();
 			listProperties.setMaxResults(1);
 			List<Listing> listings = datastore.getAllListings();
@@ -152,7 +156,20 @@ public class HelloServlet extends HttpServlet {
 			
 			out.println("<form method=\"POST\" action=\"/listing/post/.json\"><input type=\"submit\" value=\"Submits edited listing (sets POST status)\"/></form>");
 			out.println("<a href=\"/listings/posted/.json?max_results=6\">Posted listings (admins only)</a><br/>");
-			out.println("<form method=\"POST\" action=\"/listing/activate/" + topListing.getWebKey() + "/.json\"><input type=\"submit\" value=\"Activate top listing\"/></form>");
+			ListingListVO postedListings = ListingFacade.instance().getPostedListings(currentUser, listProperties);
+			if (postedListings != null && postedListings.getErrorCode() == ErrorCodes.OK) {
+				out.println("<table width=\"100%\">");
+				for (ListingVO listing : postedListings.getListings()) {
+					out.println("<tr><td>" + listing.getName() + " posted by " + listing.getOwnerName() + "</td>");
+					out.println("<td><form method=\"POST\" action=\"/listing/activate/" + listing.getId() + "/.json\"><input type=\"submit\" value=\"Activate\"/></form></td>");
+					out.println("<td><form method=\"POST\" action=\"/listing/send_back/" + listing.getId() + "/.json\"><input type=\"submit\" value=\"Send back\"/></form></td>");
+					out.println("<td><a href=\"/listing/get/" + listing.getId() + ".json?\">View</a></td>");
+					out.println("</tr>");
+				}
+				out.println("</table>");
+			} else {
+				out.println("<p>No posted listings or user is not admin!.<br><small>" + postedListings + "</small></p>");
+			}
 			out.println("<a href=\"/listings/active/.json?max_results=6\">Active listings</a><br/>");
 			out.println("<form method=\"POST\" action=\"/listing/withdraw/" + topListing.getWebKey() + "/.json\"><input type=\"submit\" value=\"Withdraw top listing\"/></form>");
 			out.println("<a href=\"/listings/categories/.json\">All categories</a><br/>");

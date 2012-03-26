@@ -18,6 +18,7 @@ import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gdata.client.docs.DocsService;
 import com.google.gdata.util.AuthenticationException;
+import com.startupbidder.dao.MockDataBuilder;
 import com.startupbidder.dao.ObjectifyDatastoreDAO;
 import com.startupbidder.datamodel.SystemProperty;
 import com.startupbidder.vo.SystemPropertyVO;
@@ -96,7 +97,7 @@ public class SystemController extends ModelDrivenController {
 		User user = userService.getCurrentUser();
 		if (user != null) {
 			UserVO loggedInUser = UserMgmtFacade.instance().getLoggedInUserData(user);
-			String deletedObjects = ServiceFacade.instance().clearDatastore(loggedInUser);
+			String deletedObjects = new MockDataBuilder().clearDatastore(loggedInUser);
 			model = deletedObjects;
 		} else {
 			headers.setStatus(500);
@@ -111,7 +112,7 @@ public class SystemController extends ModelDrivenController {
 		User user = userService.getCurrentUser();
 		if (user != null) {
 			UserVO loggedInUser = UserMgmtFacade.instance().getLoggedInUserData(user);
-			model = ObjectifyDatastoreDAO.getInstance().createMockDatastore(loggedInUser != null ? loggedInUser.toKeyId() : 0);
+			model = new MockDataBuilder().createMockDatastore(loggedInUser != null ? loggedInUser.toKeyId() : 0);
 		} else {
 			headers.setStatus(500);
 		}
@@ -125,7 +126,7 @@ public class SystemController extends ModelDrivenController {
 		User user = userService.getCurrentUser();
 		UserVO loggedInUser = UserMgmtFacade.instance().getLoggedInUserData(user);
 		if (loggedInUser != null && loggedInUser.isAdmin()) {
-			String printedObjects = ServiceFacade.instance().printDatastoreContents(loggedInUser);
+			String printedObjects = new MockDataBuilder().printDatastoreContents(loggedInUser);
 			model = printedObjects;
 		} else {
 			headers.setStatus(500);
@@ -139,7 +140,7 @@ public class SystemController extends ModelDrivenController {
 		UserService userService = UserServiceFactory.getUserService();
 		UserVO loggedInUser = UserMgmtFacade.instance().getLoggedInUserData(userService.getCurrentUser());
 		if (loggedInUser != null && loggedInUser.isAdmin()) {
-			model = ServiceFacade.instance().exportDatastoreContents(loggedInUser);
+			model = new MockDataBuilder().exportDatastoreContents(loggedInUser);
 		
 			DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyyMMdd_HHmm_ss");
 			headers.addHeader("Content-Disposition", "attachment; filename=export" + fmt.print(new Date().getTime()) + ".json");
