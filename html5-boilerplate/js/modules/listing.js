@@ -45,6 +45,7 @@ pl.implement(ListingClass, {
         this.displaySocial();
         this.displayWithdraw();
         this.displayApprove();
+        this.displaySendback();
         this.displayFreeze();
     },
     displayBasics: function() {
@@ -87,8 +88,8 @@ pl.implement(ListingClass, {
         this.address = this.brief_address || 'Unknown Address';
         //this.addressurl = this.addressurl || 'http://nominatim.openstreetmap.org/search?q=' + encodeURIComponent(this.address);
         this.addressurl = 'http://maps.google.com/maps?q=' + encodeURI(this.title) + ',' + encodeURI(this.address);
-        this.latitude = this.latitude || '51.499117116569'; // FIXME
-        this.longitude = this.longitude || '-0.12359619140625'; // FIXME
+        this.latitude = this.latitude || '51.499117116569';
+        this.longitude = this.longitude || '-0.12359619140625';
         //this.mapurl = 'http://ojw.dev.openstreetmap.org/StaticMap/?lat=' + this.latitude + '&lon=' + this.longitude + '&z=5&show=1&fmt=png&w=302&h=302&att=none';
         this.mapurl = 'http://maps.googleapis.com/maps/api/staticmap?center=' + this.latitude + ',' + this.longitude + '&zoom=7&size=302x298&maptype=roadmap&markers=color:blue%7Clabel:' + encodeURI(this.title) + '%7C' + encodeURI(this.address) + '&sensor=false';
         pl('#address').html(this.address);
@@ -262,6 +263,39 @@ pl.implement(ListingClass, {
         pl('#approvecancelbtn').bind({
             click: function() {
                 pl('#approvemsg, #approvecancelbtn').hide();
+                return false;
+            }
+        });
+    },
+    displaySendback: function() {
+        var sendbackable = ((this.status === 'posted' || this.status === 'frozen') && this.loggedin_profile.admin);
+        if (sendbackable) {
+            this.bindSendbackButton();
+        }
+    },
+    bindSendbackButton: function() {
+        var self = this;
+        pl('#sendbackbox').show();
+        pl('#sendbackbtn').bind({
+            click: function() {
+                var completeFunc = function() {
+                        window.location.reload();
+                    },
+                    url = '/listing/send_back/' + self.listing_id;
+                    ajax = new AjaxClass(url, 'sendbackmsg', completeFunc);
+                if (pl('#sendbackcancelbtn').css('display') === 'none') { // first call
+                    pl('#sendbackmsg, #sendbackcancelbtn').show();
+                }
+                else {
+                    ajax.setPost();
+                    ajax.call();
+                }
+                return false;
+            }
+        });
+        pl('#sendbackcancelbtn').bind({
+            click: function() {
+                pl('#sendbackmsg, #sendbackcancelbtn').hide();
                 return false;
             }
         });
