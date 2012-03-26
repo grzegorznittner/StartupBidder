@@ -99,7 +99,7 @@ pl.implement(NewListingBasicsClass, {
                         city: place.vicinity,
                         state: '',
                         country: '',
-                        latitute: place.geometry.location.Ua,
+                        latitude: place.geometry.location.Ua,
                         longitude: place.geometry.location.Va
                     } },
             ajax = new AjaxClass('/listing/update_field', 'newlistingmsg', completeFunc),

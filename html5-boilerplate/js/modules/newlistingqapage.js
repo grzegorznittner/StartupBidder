@@ -4,7 +4,7 @@ function NewListingQAClass() {
     base.nextPage = '/new-listing-financials-page.html';
     this.base = base;
     this.page = 1;
-    this.pagetotal = 12;
+    this.pagetotal = 20;
 }
 pl.implement(NewListingQAClass, {
     load: function() {
@@ -42,28 +42,47 @@ pl.implement(NewListingQAClass, {
     },
     displayPresentation: function() {
         var self = this,
-            logo = 'url(' + (self.base.listing.logo || 'img/noimage_146x146.jpg') + ')',
-            corp = self.base.listing.title || 'Company Name Here',
-            date = self.base.listing.created_date ? DateClass.prototype.format(self.base.listing.created_date) : DateClass.prototype.today(),
+            listing = self.base.listing,
+            logo = 'url(' + (listing.logo || 'img/noimage_146x146.jpg') + ')',
+            corp = listing.title || 'Company name here',
+            date = listing.created_date ? DateClass.prototype.format(listing.created_date) : DateClass.prototype.today(),
+            mantra = listing.mantra || 'Company mantra here',
+            name = self.base.loggedin_profile ? (self.base.loggedin_profile.name || self.base.loggedin_profile.username) : 'Lister name here', // FIXME: should come from listing
+            contact_email = listing.contact_email || 'Email address here',
+            contact_emaillink = contact_email ? 'mailto:' + contact_email :'',
+            brief_address = listing.brief_address || 'Postal address here',
+            website = listing.website || 'Website here',
+            asking = listing.asked_funds ? 'Asking ' + CurrencyClass.prototype.format(suggested_amt) + ' for ' + PercentClass.prototype.format(suggested_pct) : 'Not asking for funds at this time.',
             m = 10,
             n = 26,
             i,
             field,
             val,
             sel;
+        pl('#mantraip').text(mantra);
+        pl('#nameip,#name2ip').text(name);
+        pl('#contact_emailip,#contact_email2ip').text(contact_email);
+        pl('#contact_emaillinkip,#contact_email2linkip').text(contact_emaillink);
+        pl('#brief_addressip,#brief_address2ip').text(brief_address);
+        pl('#websiteip,#website2ip').text(website);
+        pl('#websitelinkip,#website2linkip').attr({href: website});
+        pl('#created_dateip').text(date);
+        pl('#askingip').text(asking);
+        pl('#ipcorp').text(corp);
+        pl('#ipdate,#ipdate2').text(date);
+        pl('#ippagetotal').text(self.pagetotal);
+        pl('#ippage').text(self.page);
+        pl('#iptitle1').text(corp);
+        pl('#summaryip').html(self.stylize(listing.summary));
         for (i = m; i <= n; i++) {
             field = 'answer' + i;
             sel = '#' + field + 'ip';
-            val = self.base.listing[field];
+            val = listing[field];
             pl(sel).html(self.stylize(val));
         }
-        pl('#iplogo').css({background: logo});
-        pl('#ipcorp').text(corp);
-        pl('#ipdate').text(date);
-        pl('#ippagetotal').text(self.pagetotal);
-        pl('#ippage').text(self.page);
-        if (self.page === 1) {
-            pl('#iptitle').text(corp);
+        for (i = 1; i <= self.pagetotal; i++) {
+            sel = '#iplogo' + i;
+            pl(sel).css({background: logo});
         }
     },
     getUpdater: function(id) {
@@ -91,14 +110,19 @@ pl.implement(NewListingQAClass, {
     pageRight: function() {
         var self = this,
             newpage = self.page >= self.pagetotal ? self.pagetotal : self.page + 1;
-        self.page = newpage;
-        pl('#ippage').text(self.page);
+        self.setPage(newpage);
     },
     pageLeft: function() {
         var self = this,
             newpage = self.page <= 1 ? 1 : self.page - 1;
+        self.setPage(newpage);
+    },
+    setPage: function(newpage) {
+        var self = this,
+            left = (960 * (1 - newpage)) + 'px';
         self.page = newpage;
-        pl('#ippage').text(self.page);
+        pl('#ipslideset').css({left: left})
+        pl('#ippage').text(newpage);
     },
     bindPresentationButtons: function() {
         var self = this;
@@ -121,18 +145,18 @@ pl.implement(NewListingQAClass, {
             answerFields = [
                 'PROBLEM',
                 'SOLUTION',
-                'MARKETING',
-                'ADVERTISING',
+                'FEATURES AND BENEFITS',
+                'COMPANY STATUS',
+                'MARKET',
+                'CUSTOMER',
                 'COMPETITORS',
                 'COMPETITIVE COMPARISON',
-                'STATUS',
-                'PLAN OF ATTACK',
-                'GOVERNMENT',
+                'BUSINESS MODEL',
+                'MARKETING PLAN',
                 'TEAM',
-                'TEAM RELOCATION',
                 'TEAM VALUES',
-                'FINANCIAL PROJECTIONS',
                 'CURRENT FINANCIALS',
+                'FINANCIAL PROJECTIONS',
                 'OWNERS',
                 'INVESTMENT',
                 'TIMELINE AND WRAPUP'
@@ -141,14 +165,14 @@ pl.implement(NewListingQAClass, {
                 'introductionmsg',
                 'problemmsg',
                 'problemmsg',
+                'problemmsg',
+                'problemmsg',
                 'marketmsg',
                 'marketmsg',
                 'competitionmsg',
                 'competitionmsg',
                 'businessmodelmsg',
                 'businessmodelmsg',
-                'businessmodelmsg',
-                'teammsg',
                 'teammsg',
                 'teammsg',
                 'financialmsg',

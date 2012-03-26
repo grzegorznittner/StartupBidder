@@ -9,7 +9,6 @@ function NewListingBaseClass() {
     this.editableprops = editableprops;
     this.companyTile = companyTile;
     this.listing = {};
-    this.profile = {};
     this.fields = [];
     this.fieldMap = {};
     this.prevPage = '';
@@ -20,6 +19,7 @@ pl.implement(NewListingBaseClass, {
         var self = this;
         if (json) {
             CollectionsClass.prototype.merge(this.listing, json);
+            this.loggedin_profile = json.loggedin_profile;
             this.displayCalculated();
         }
     },
