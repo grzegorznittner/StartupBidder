@@ -107,6 +107,7 @@ public class ListingFacade {
 			Listing l = new Listing();
 			l.state = Listing.State.NEW;
 			l.owner = new Key<SBUser>(loggedInUser.getId());
+			l.contactEmail = loggedInUser.getEmail();
 			l.created = new Date();
 			ListingVO newListing = DtoToVoConverter.convert(getDAO().createListing(l));
 			loggedInUser.setEditedListing(newListing.getId());
