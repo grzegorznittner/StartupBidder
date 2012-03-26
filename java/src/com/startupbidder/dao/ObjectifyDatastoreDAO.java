@@ -472,6 +472,15 @@ public class ObjectifyDatastoreDAO {
 		return listings;
 	}
 
+	public List<Listing> getFrozenListings(ListPropertiesVO listingProperties) {
+		QueryResultIterable<Key<Listing>> listingsIt = getOfy().query(Listing.class)
+				.filter("state =", Listing.State.FROZEN)
+				.order("-listedOn").prefetchSize(listingProperties.getMaxResults()).fetchKeys();
+		List<Listing> listings = new ArrayList<Listing>(getOfy().get(listingsIt).values());
+		listingProperties.setNumberOfResults(listings.size());
+		return listings;
+	}
+
 	public List<Listing> getMostValuedListings(ListPropertiesVO listingProperties) {
 		QueryResultIterable<Key<ListingStats>> topListingsStat = getOfy().query(ListingStats.class)
 				.filter("state =", Listing.State.ACTIVE)

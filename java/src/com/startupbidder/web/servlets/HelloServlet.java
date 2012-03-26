@@ -2,6 +2,7 @@ package com.startupbidder.web.servlets;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -10,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.codec.binary.Base64;
+import org.datanucleus.util.StringUtils;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
@@ -111,7 +113,7 @@ public class HelloServlet extends HttpServlet {
 			List<Comment> comments = datastore.getCommentsForListing(datastore.getMostDiscussedListings(listProperties).get(0).id);
 			
 			//testMockDatastore(user, datastore, out);
-			out.println("<p>User API:</p>");
+			out.println("<p style=\"background: none repeat scroll 0% 0% rgb(187, 187, 187);\">User API:</p>");
 			out.println("<a href=\"/user/topinvestor/.json\">Top investor data</a><br/>");
 			out.println("<a href=\"/user/loggedin/.json\">Direct link to logged in user data</a><br/>");
 			out.println("<a href=\"/user/get/" + currentUser.getId() + "/.json\">Logged in user data via /users/get/ </a><br/>");
@@ -123,14 +125,15 @@ public class HelloServlet extends HttpServlet {
 			out.println("<form method=\"GET\" action=\"/user/check-user-name/.json\"><input name=\"name\" type=\"text\" value=\"greg\"/>"
 					+ "<input type=\"submit\" value=\"Check user name\"/></form>");
 			
-			out.println("<p>Listings API:</p>");
+			out.println("<p style=\"background: none repeat scroll 0% 0% rgb(187, 187, 187);\">Listings API:</p>");
 			out.println("<a href=\"/listings/get/" + topListing.getWebKey() + "/.json\">Top listing data</a><br/>");
 			out.println("<form method=\"POST\" action=\"/listing/up/" + topListing.getWebKey() + "/.json\"><input type=\"submit\" value=\"Logged in user votes for top listing (works only once per user)\"/></form>");
 			out.println("<form method=\"POST\" action=\"/listing/up/.json\"><input type=\"hidden\" name=\"id\" value=\"" + topListing.getWebKey() + "\"/><input type=\"submit\" value=\"Logged in user votes for top listing (works only once per user), 2nd form\"/></form>");
+			out.println("<a href=\"/listings/categories/.json\">All categories</a><br/>");
 			out.println("<form method=\"POST\" action=\"/listing/create/.json\"><input type=\"submit\" value=\"Creates NEW listing\"/></form>");
 			out.println("<form method=\"POST\" action=\"/listing/delete/.json\"><input type=\"submit\" value=\"Deletes edited (NEW) listing\"/></form>");
 			
-			out.println("<p>Editing new listing. Update methods:</p>");
+			out.println("<p style=\"background: none repeat scroll 0% 0% rgb(187, 187, 187);\">Editing new listing. Update methods:</p>");
 			ListingAndUserVO editedListing = ListingFacade.instance().createListing(currentUser);
 			if (editedListing.getListing() != null) {
 				out.println("<form method=\"POST\" action=\"/listing/update_field/.json\"><textarea name=\"listing\" rows=\"1\" cols=\"100\">"
@@ -150,43 +153,49 @@ public class HelloServlet extends HttpServlet {
 						+ "</textarea><input type=\"submit\" value=\"Update logo from URL\"/></form>");
 				out.println("<p>Updatable field names: " + ListingVO.UPDATABLE_PROPERTIES + "</p>");
 				out.println("<p>Fields which can be set by fetching external resource: " + ListingVO.FETCHED_PROPERTIES + "</p>");
+
+				String[] urls = service.createUploadUrls(currentUser, "/file/upload", 4);
+				out.println("<form action=\"" + urls[0] + "\" method=\"post\" enctype=\"multipart/form-data\">"
+						+ "<input type=\"file\" name=\"" + ListingDoc.Type.BUSINESS_PLAN.toString() + "\"/>"
+						+ "<input type=\"submit\" value=\"Upload business plan\"/></form>");
+				out.println("<form action=\"" + urls[1] + "\" method=\"post\" enctype=\"multipart/form-data\">"
+						+ "<input type=\"file\" name=\"" + ListingDoc.Type.PRESENTATION.toString() + "\"/>"
+						+ "<input type=\"submit\" value=\"Upload presentation\"/></form>");
+				out.println("<form action=\"" + urls[2] + "\" method=\"post\" enctype=\"multipart/form-data\">"
+						+ "<input type=\"file\" name=\"" + ListingDoc.Type.FINANCIALS.toString() + "\"/>"
+						+ "<input type=\"submit\" value=\"Upload financials\"/></form>");
+				out.println("<form action=\"" + urls[3] + "\" method=\"post\" enctype=\"multipart/form-data\">"
+						+ "<input type=\"file\" name=\"" + ListingDoc.Type.LOGO.toString() + "\"/>"
+						+ "<input type=\"submit\" value=\"Upload logo\"/></form>");
 			} else {
 				out.println("<div><b>Listing doesn't exist.</b> Be aware that this page is calling automatically create method, so edited listing should be always available.</div>");
 			}
+
+			out.println("<p style=\"background: none repeat scroll 0% 0% rgb(187, 187, 187);\">Listings by categories</p>");
 			
 			out.println("<form method=\"POST\" action=\"/listing/post/.json\"><input type=\"submit\" value=\"Submits edited listing (sets POST status)\"/></form>");
-			out.println("<a href=\"/listings/posted/.json?max_results=6\">Posted listings (admins only)</a><br/>");
+			out.println("<br/><a href=\"/listings/posted/.json?max_results=6\">Posted listings (admins only)</a><br/>");
 			ListingListVO postedListings = ListingFacade.instance().getPostedListings(currentUser, listProperties);
-			if (postedListings != null && postedListings.getErrorCode() == ErrorCodes.OK) {
-				out.println("<table width=\"100%\">");
-				for (ListingVO listing : postedListings.getListings()) {
-					out.println("<tr><td>" + listing.getName() + " posted by " + listing.getOwnerName() + "</td>");
-					out.println("<td><form method=\"POST\" action=\"/listing/activate/" + listing.getId() + "/.json\"><input type=\"submit\" value=\"Activate\"/></form></td>");
-					out.println("<td><form method=\"POST\" action=\"/listing/send_back/" + listing.getId() + "/.json\"><input type=\"submit\" value=\"Send back\"/></form></td>");
-					out.println("<td><a href=\"/listing/get/" + listing.getId() + ".json?\">View</a></td>");
-					out.println("</tr>");
-				}
-				out.println("</table>");
-			} else {
-				out.println("<p>No posted listings or user is not admin!.<br><small>" + postedListings + "</small></p>");
-			}
-			out.println("<a href=\"/listings/active/.json?max_results=6\">Active listings</a><br/>");
-			out.println("<form method=\"POST\" action=\"/listing/withdraw/" + topListing.getWebKey() + "/.json\"><input type=\"submit\" value=\"Withdraw top listing\"/></form>");
-			out.println("<a href=\"/listings/categories/.json\">All categories</a><br/>");
+			printPostedListings(out, currentUser, postedListings);
+			
+			out.println("<br/><a href=\"/listings/active/.json?max_results=6\">Active listings</a><br/>");
+			ListingListVO activeListings = ListingFacade.instance().getClosingActiveListings(currentUser, listProperties);
+			printActiveListings(out, currentUser, activeListings);
+			
+			out.println("<br/><a href=\"/listings/frozen/.json?max_results=6\">Frozen listings</a><br/>");
+			ListingListVO frozenListings = ListingFacade.instance().getFrozenListings(currentUser, listProperties);
+			printFrozenListings(out, currentUser, frozenListings);
+			
 			out.println("<a href=\"/listings/top/.json?max_results=6\">Top listings</a><br/>");
 			out.println("<a href=\"/listings/valuation/.json?max_results=6\">Top valued listings</a><br/>");
 			out.println("<a href=\"/listings/popular/.json?max_results=6\">Most popular listings</a><br/>");
 			out.println("<a href=\"/listings/latest/.json?max_results=6\">Latest listings</a><br/>");
 			out.println("<a href=\"/listings/closing/.json?max_results=6\">Closing listings</a><br/>");
 			out.println("<a href=\"/listings/user/" + topInvestor.getWebKey() + "/.json?max_results=6\">Top investor's listings</a><br/>");
-/*			out.println("<form method=\"POST\" action=\"/listing/create/.json\"><textarea name=\"listing\" rows=\"5\" cols=\"100\">"
-					+ "{\"title\":\"Listing title\",\"median_valuation\":\"0\",\"num_votes\":\"0\",\"num_bids\":\"0\",\"num_comments\":\"0\",\"profile_id\":\"ag1zdGFydHVwYmlkZGVych4LEgRVc2VyIhQxODU4MDQ3NjQyMjAxMzkxMjQxMQw\",\"profile_username\":\"test@example.com\",\"listing_date\":\"20110802\",\"closing_date\":\"2011-08-01\",\"status\":\"new\",\"suggested_amt\":\"10000\",\"suggested_pct\":\"10\",\"suggested_val\":100000,\"summary\":\"Enter listing summary here.\",\"business_plan_url\":\"\",\"presentation_url\":\"\"}"
-					+ "</textarea><input type=\"submit\" value=\"Create a listing\"/></form>");
-					*/
 			out.println("<form method=\"GET\" action=\"/listing/keyword/.json\"><input name=\"text\" type=\"text\" value=\"business\"/>"
 					+ "<input type=\"submit\" value=\"Keyword search\"/></form>");
 
-			out.println("<p>Bids API:</p>");
+			/* out.println("<p style=\"background: none repeat scroll 0% 0% rgb(187, 187, 187);\">Bids API:</p>");
 			log.info("Selected bid: " + bids.get(0).toString());
 			out.println("<a href=\"/bids/listing/" + topListing.getWebKey() + "/.json?max_results=6\">Bids for top listing</a><br/>");
 			out.println("<a href=\"/bids/user/" + topInvestor.getWebKey() + "/.json?max_results=6\">Bids for top investor</a><br/>");
@@ -208,7 +217,7 @@ public class HelloServlet extends HttpServlet {
 			out.println("<a href=\"/bids/bid-day-volume/.json\">Get bid day volume</a><br/>");
 			out.println("<a href=\"/bids/bid-day-valuation/.json\">Get bid day valuation</a><br/>");
 			
-			out.println("<p>Comments API:</p>");
+			out.println("<p style=\"background: none repeat scroll 0% 0% rgb(187, 187, 187);\">Comments API:</p>");
 			out.println("<a href=\"/comments/listing/" + topListing.getWebKey() + "/.json?max_results=6\">Comments for top listing</a><br/>");
 			out.println("<a href=\"/comments/user/" + topInvestor.getWebKey() + "/.json?max_results=6\">Comments for top investor</a><br/>");
 			out.println("<a href=\"/comments/get/" + comments.get(0).getWebKey() + "/.json\">Get comment id '" + comments.get(0).getWebKey() + "'</a><br/>");
@@ -218,7 +227,7 @@ public class HelloServlet extends HttpServlet {
 			out.println("<form method=\"POST\" action=\"/comment/delete/.json?id=" + comments.get(0).getWebKey() + "\"><input type=\"submit\" value=\"Deletes comment id '" + comments.get(0).getWebKey() + "'\"/></form>");
 			out.println("<br/>");
 			
-			out.println("<p>Notification API:</p>");
+			out.println("<p style=\"background: none repeat scroll 0% 0% rgb(187, 187, 187);\">Notification API:</p>");
 			out.println("<a href=\"/notification/user/" + currentUser.getId() + "/.json?max_results=6\">Notifications for current user</a><br/>");
 			List<Notification> notifications = datastore.getUserNotification(currentUser.toKeyId(), new ListPropertiesVO());
 			if (!notifications.isEmpty()) {
@@ -233,7 +242,7 @@ public class HelloServlet extends HttpServlet {
 						+ "</textarea><input type=\"submit\" value=\"Create a notification\"/></form>");
 			out.println("<br/>");
 			
-			out.println("<p>Monitor API:</p>");
+			out.println("<p style=\"background: none repeat scroll 0% 0% rgb(187, 187, 187);\">Monitor API:</p>");
 			out.println("<a href=\"/monitors/active-for-user/.json?type=Listing\">All active monitors for logged in user</a><br/>");
 			out.println("<a href=\"/monitors/active-for-user/.json?\">Active listing monitors for logged in user</a><br/>");
 			out.println("<a href=\"/monitors/active-for-object/?type=Listing&id=" + topListing.getWebKey() + "\">Monitors for top listing</a><br/>");
@@ -246,21 +255,10 @@ public class HelloServlet extends HttpServlet {
 					+ "<input type=\"submit\" value=\"Deactivate monitor "
 					+ (monitors.isEmpty() ? "(no monitors)" : (monitors.get(0).type + " " + monitors.get(0).object)) + "\"/></form>");
 			
-			out.println("<p>File API:</p>");
+			*/
+			
+			out.println("<p style=\"background: none repeat scroll 0% 0% rgb(187, 187, 187);\">File API:</p>");
 			out.println("<a href=\"/file/get-upload-url/2/.json\">Get upload URL(s)</a><br/>");
-			String[] urls = service.createUploadUrls(currentUser, "/file/upload", 4);
-			out.println("<form action=\"" + urls[0] + "\" method=\"post\" enctype=\"multipart/form-data\">"
-					+ "<input type=\"file\" name=\"" + ListingDoc.Type.BUSINESS_PLAN.toString() + "\"/>"
-					+ "<input type=\"submit\" value=\"Upload business plan\"/></form>");
-			out.println("<form action=\"" + urls[1] + "\" method=\"post\" enctype=\"multipart/form-data\">"
-					+ "<input type=\"file\" name=\"" + ListingDoc.Type.PRESENTATION.toString() + "\"/>"
-					+ "<input type=\"submit\" value=\"Upload presentation\"/></form>");
-			out.println("<form action=\"" + urls[2] + "\" method=\"post\" enctype=\"multipart/form-data\">"
-					+ "<input type=\"file\" name=\"" + ListingDoc.Type.FINANCIALS.toString() + "\"/>"
-					+ "<input type=\"submit\" value=\"Upload financials\"/></form>");
-			out.println("<form action=\"" + urls[3] + "\" method=\"post\" enctype=\"multipart/form-data\">"
-					+ "<input type=\"file\" name=\"" + ListingDoc.Type.LOGO.toString() + "\"/>"
-					+ "<input type=\"submit\" value=\"Upload logo\"/></form>");
 			List<ListingDocumentVO> docs = ListingFacade.instance().getAllListingDocuments(currentUser);
 			DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy/MM/dd HH:mm");
 			if (docs != null && !docs.isEmpty()) {
@@ -292,6 +290,172 @@ public class HelloServlet extends HttpServlet {
 		} finally {
 			out.println("</body></html>");
 		}
+	}
+
+	private void printPostedListings(PrintWriter out, UserVO currentUser, ListingListVO postedListings) {
+		DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy/MM/dd HH:mm");
+		out.println("<table border=\"1\" width=\"100%\">");
+		out.println("<tr><td colspan=\"3\"><b>Posted listings</b></td></tr>");
+
+		if (postedListings == null || postedListings.getListings() == null || postedListings.getListings().size() == 0
+				|| postedListings.getErrorCode() != ErrorCodes.OK) {
+			out.println("<tr><td colspan=\"3\"><b>No posted listings or user is not admin!.<b><small>" + postedListings + "</small></td></tr>");
+			out.println("</table>");
+			return;
+		}
+
+		for (ListingVO listing : postedListings.getListings()) {
+			out.println("<tr><td>" + listing.getName() + " posted by " + listing.getOwnerName() + "</td>");
+			out.println("<td><form method=\"POST\" action=\"/listing/activate/" + listing.getId() + "/.json\"><input type=\"submit\" value=\"Activate\"/></form>");
+			out.println("<form method=\"POST\" action=\"/listing/send_back/" + listing.getId() + "/.json\"><input type=\"submit\" value=\"Send back\"/></form>");
+			out.println("<a href=\"/listing/get/" + listing.getId() + ".json?\">View</a></td>");
+			out.println("<td>");
+			List<ListingDocumentVO> docs = getListingDocs(currentUser, listing);
+			if (docs != null && !docs.isEmpty()) {
+				BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
+				
+				out.println("<table border=\"1\"><tr><td colspan=\"2\"><center>Uploaded documents</center></td></tr>");
+				for (ListingDocumentVO doc : docs) {
+					out.println("<tr>");
+					out.println("<td>");
+					if (ListingDoc.Type.LOGO.toString().equalsIgnoreCase(doc.getType())) {
+						BlobInfo logoInfo = new BlobInfoFactory().loadBlobInfo(doc.getBlob());
+						if (logoInfo != null) {
+							byte logo[] = blobstoreService.fetchData(doc.getBlob(), 0, logoInfo.getSize() - 1);
+							out.println("<img src=\"" + ListingFacade.instance().convertLogoToBase64(logo) + "\"/>");
+						}
+					}
+					out.println("<a href=\"/file/download/" + doc.getId() + ".json\">Download "
+							+ doc.getType() + " uploaded " + fmt.print(doc.getCreated().getTime()) + ", type: " + doc.getType() + "</a></td>");
+					out.println("<td><form method=\"POST\" action=\"/listing/delete_file/.json?id="
+							+ listing.getId() + "&type=" + doc.getType() + "\"><input type=\"submit\" value=\"Delete\"/></form>");
+					out.println("</td></tr>");
+				}
+				out.println("</table>");
+			} else {
+				out.println("No documents uploaded");
+			}
+			out.println("<td>");
+			out.println("</tr>");
+		}
+		out.println("</table>");
+	}
+
+	private void printActiveListings(PrintWriter out, UserVO currentUser, ListingListVO activeListings) {
+		DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy/MM/dd HH:mm");
+		out.println("<table border=\"1\" width=\"100%\">");
+		out.println("<tr><td colspan=\"3\"><b>Active listings</b></td>");
+		
+		if (activeListings == null || activeListings.getListings() == null || activeListings.getListings().size() == 0
+				|| activeListings.getErrorCode() != ErrorCodes.OK) {
+			out.println("<tr><td colspan=\"3\"><b>No active listings.<b><small>" + activeListings + "</small></td></tr>");
+			out.println("</table>");
+			return;
+		}
+
+		for (ListingVO listing : activeListings.getListings()) {
+			out.println("<tr><td>" + listing.getName() + " posted by " + listing.getOwnerName() + "</td>");
+			out.println("<td><form method=\"POST\" action=\"/listing/withdraw/" + listing.getId() + "/.json\"><input type=\"submit\" value=\"Withdraw\"/></form>");
+			out.println("<form method=\"POST\" action=\"/listing/freeze/" + listing.getId() + "/.json\"><input type=\"submit\" value=\"Freeze\"/></form>");
+			out.println("<a href=\"/listing/get/" + listing.getId() + ".json?\">View</a></td>");
+			out.println("<td>");
+			List<ListingDocumentVO> docs = getListingDocs(currentUser, listing);
+			if (docs != null && !docs.isEmpty()) {
+				BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
+				
+				out.println("<table border=\"1\"><tr><td colspan=\"2\">Uploaded documents</td></tr>");
+				for (ListingDocumentVO doc : docs) {
+					out.println("<tr>");
+					out.println("<td>");
+					if (ListingDoc.Type.LOGO.toString().equalsIgnoreCase(doc.getType())) {
+						BlobInfo logoInfo = new BlobInfoFactory().loadBlobInfo(doc.getBlob());
+						if (logoInfo != null) {
+							byte logo[] = blobstoreService.fetchData(doc.getBlob(), 0, logoInfo.getSize() - 1);
+							out.println("<img src=\"" + ListingFacade.instance().convertLogoToBase64(logo) + "\"/>");
+						}
+					}
+					out.println("<a href=\"/file/download/" + doc.getId() + ".json\">Download "
+							+ doc.getType() + " uploaded " + fmt.print(doc.getCreated().getTime()) + ", type: " + doc.getType() + "</a></td>");
+					out.println("<td><form method=\"POST\" action=\"/listing/delete_file/.json?id="
+							+ listing.getId() + "&type=" + doc.getType() + "\"><input type=\"submit\" value=\"Delete\"/></form>");
+					out.println("</td></tr>");
+				}
+				out.println("</table>");
+			} else {
+				out.println("No documents uploaded");
+			}
+			out.println("<td>");
+			out.println("</tr>");
+		}
+		out.println("</table>");
+	}
+
+	private void printFrozenListings(PrintWriter out, UserVO currentUser, ListingListVO frozenListings) {
+		DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy/MM/dd HH:mm");
+		out.println("<table border=\"1\" width=\"100%\">");
+		out.println("<tr><td colspan=\"3\"><b>Frozen listings</b></td>");
+		
+		if (frozenListings == null || frozenListings.getListings() == null || frozenListings.getListings().size() == 0
+				|| frozenListings.getErrorCode() != ErrorCodes.OK) {
+			out.println("<tr><td colspan=\"3\"><b>No frozen listings or user is not admin!.<b><small>" + frozenListings + "</small></td></tr>");
+			out.println("</table>");
+			return;
+		}
+
+		for (ListingVO listing : frozenListings.getListings()) {
+			out.println("<tr><td>" + listing.getName() + " posted by " + listing.getOwnerName() + "</td>");
+			out.println("<td><form method=\"POST\" action=\"/listing/activate/" + listing.getId() + "/.json\"><input type=\"submit\" value=\"Activate\"/></form>");
+			out.println("<form method=\"POST\" action=\"/listing/send_back/" + listing.getId() + "/.json\"><input type=\"submit\" value=\"Send back\"/></form>");
+			out.println("<a href=\"/listing/get/" + listing.getId() + ".json?\">View</a></td>");
+			out.println("<td>");
+			List<ListingDocumentVO> docs = getListingDocs(currentUser, listing);
+			if (docs != null && !docs.isEmpty()) {
+				BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
+				
+				out.println("<table border=\"1\"><tr><td colspan=\"2\">Uploaded documents</td></tr>");
+				for (ListingDocumentVO doc : docs) {
+					out.println("<tr>");
+					out.println("<td>");
+					if (ListingDoc.Type.LOGO.toString().equalsIgnoreCase(doc.getType())) {
+						BlobInfo logoInfo = new BlobInfoFactory().loadBlobInfo(doc.getBlob());
+						if (logoInfo != null) {
+							byte logo[] = blobstoreService.fetchData(doc.getBlob(), 0, logoInfo.getSize() - 1);
+							out.println("<img src=\"" + ListingFacade.instance().convertLogoToBase64(logo) + "\"/>");
+						}
+					}
+					out.println("<a href=\"/file/download/" + doc.getId() + ".json\">Download "
+							+ doc.getType() + " uploaded " + fmt.print(doc.getCreated().getTime()) + ", type: " + doc.getType() + "</a></td>");
+					out.println("<td><form method=\"POST\" action=\"/listing/delete_file/.json?id="
+							+ listing.getId() + "&type=" + doc.getType() + "\"><input type=\"submit\" value=\"Delete\"/></form>");
+					out.println("</td></tr>");
+				}
+				out.println("</table>");
+			} else {
+				out.println("No documents uploaded");
+			}
+			out.println("<td>");
+			out.println("</tr>");
+		}
+		out.println("</table>");
+	}
+
+	private List<ListingDocumentVO> getListingDocs(UserVO loggedInUser, ListingVO listingVO) {
+		List<ListingDocumentVO> list = new ArrayList<ListingDocumentVO>();
+		Listing listing = ObjectifyDatastoreDAO.getInstance().getListing(ListingVO.toKeyId(listingVO.getId()));
+		
+		if (listing.businessPlanId != null) {
+			list.add(ListingFacade.instance().getListingDocument(loggedInUser, listing.businessPlanId.getString()));
+		}
+		if (listing.presentationId != null) {
+			list.add(ListingFacade.instance().getListingDocument(loggedInUser, listing.presentationId.getString()));
+		}
+		if (listing.financialsId != null) {
+			list.add(ListingFacade.instance().getListingDocument(loggedInUser, listing.financialsId.getString()));
+		}
+		if (listing.logoId != null) {
+			list.add(ListingFacade.instance().getListingDocument(loggedInUser, listing.logoId.getString()));
+		}
+		return list;
 	}
 
 	private void printAcceptBid(ObjectifyDatastoreDAO datastore, PrintWriter out,

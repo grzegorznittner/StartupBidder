@@ -44,8 +44,6 @@ public class FileController extends ModelDrivenController {
 		} else if ("POST".equalsIgnoreCase(request.getMethod())) {
 			if("upload".equalsIgnoreCase(getCommand(1))) {
 				return upload(request);
-			} else if("delete".equalsIgnoreCase(getCommand(1))) {
-				return delete(request);
 			}
 		}
 		return null;

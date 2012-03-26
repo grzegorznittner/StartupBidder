@@ -571,8 +571,7 @@ public class ListingFacade {
 			return returnValue;
 		}
 		
-		// only available for POSTED listings
-		if (dbListing.state == Listing.State.POSTED) {
+		if (dbListing.state == Listing.State.POSTED || dbListing.state == Listing.State.FROZEN) {
 			ListingVO forUpdate = DtoToVoConverter.convert(dbListing);
 
 			forUpdate.setState(Listing.State.NEW.toString());
@@ -587,7 +586,7 @@ public class ListingFacade {
 			returnValue.setListing(toReturn);
 			return returnValue;
 		}
-		returnValue.setErrorMessage("Only ACTIVE listings can be send back for update to owner");
+		returnValue.setErrorMessage("Only active listings can be send back for update to owner");
 		returnValue.setErrorCode(ErrorCodes.ENTITY_VALIDATION);
 		return returnValue;
 	}
@@ -599,7 +598,7 @@ public class ListingFacade {
 		ListingAndUserVO returnValue = new ListingAndUserVO();
 		if (loggedInUser == null || !loggedInUser.isAdmin()) {
 			log.warning("User not logged in or '" + loggedInUser + "' is not an admin");
-			returnValue.setErrorMessage("User not logged in or '" + loggedInUser + "' is not an admin");
+			returnValue.setErrorMessage("Only admins can freeze listings.");
 			returnValue.setErrorCode(ErrorCodes.NOT_AN_ADMIN);
 			return returnValue;
 		}
@@ -815,7 +814,7 @@ public class ListingFacade {
 	}
 
 	/**
-	 * Returns active listings created by logged in user, sorted by listed on date
+	 * Returns active listings, sorted by listed on date
 	 */
 	public ListingListVO getLatestActiveListings(UserVO loggedInUser, ListPropertiesVO listingProperties) {
 		List<ListingVO> listings = DtoToVoConverter.convertListings(getDAO().getActiveListings(listingProperties));
@@ -825,6 +824,28 @@ public class ListingFacade {
 			listing.setOrderNumber(index++);
 		}
 		ListingListVO list = new ListingListVO();
+		list.setListings(listings);		
+		list.setListingsProperties(listingProperties);
+	
+		return list;
+	}
+
+	/**
+	 * Returns frozen listings
+	 */
+	public ListingListVO getFrozenListings(UserVO loggedInUser, ListPropertiesVO listingProperties) {
+		ListingListVO list = new ListingListVO();
+		if (loggedInUser == null || !loggedInUser.isAdmin()) {
+			list.setErrorCode(ErrorCodes.NOT_AN_ADMIN);
+			list.setErrorMessage("Only admins can see posted listings");
+			return list;
+		}
+		List<ListingVO> listings = DtoToVoConverter.convertListings(getDAO().getFrozenListings(listingProperties));
+		int index = listingProperties.getStartIndex() > 0 ? listingProperties.getStartIndex() : 1;
+		for (ListingVO listing : listings) {
+			applyListingData(loggedInUser, listing);
+			listing.setOrderNumber(index++);
+		}
 		list.setListings(listings);		
 		list.setListingsProperties(listingProperties);
 	
@@ -1088,6 +1109,65 @@ public class ListingFacade {
 		return "data:" + format + ";base64," + logo64;
 	}
 
+	public ListingAndUserVO deleteListingFile(UserVO loggedInUser, String listingId, ListingDoc.Type docType) {
+		ListingAndUserVO result = new ListingAndUserVO();
+		
+		Listing listing = getDAO().getListing(BaseVO.toKeyId(listingId));
+		if (!loggedInUser.isAdmin() && !StringUtils.areStringsEqual(listing.owner.getString(), loggedInUser.getId())) {
+			result.setErrorCode(ErrorCodes.NOT_AN_OWNER);
+			result.setErrorMessage("User '" + loggedInUser.getName() + "' is not an owner of listing.");
+			return result;
+		}
+		if (!loggedInUser.isAdmin() && (listing.state == Listing.State.ACTIVE
+				|| listing.state == Listing.State.FROZEN || listing.state == Listing.State.POSTED)) {
+			result.setErrorCode(ErrorCodes.NOT_AN_ADMIN);
+			result.setErrorMessage("User '" + loggedInUser.getName() + "' cannot modify this listing.");
+			return result;
+		}
+		if (listing.state == Listing.State.CLOSED || listing.state == Listing.State.WITHDRAWN) {
+			result.setErrorCode(ErrorCodes.OPERATION_NOT_ALLOWED);
+			result.setErrorMessage("Listing in state " + listing.state + " cannot be edited.");
+			return result;
+		}
+		
+		Key<ListingDoc> docToDelete = null;
+		switch(docType) {
+		case BUSINESS_PLAN:
+			docToDelete = listing.businessPlanId;
+			listing.businessPlanId = null;
+			break;
+		case FINANCIALS:
+			docToDelete = listing.financialsId;
+			listing.financialsId = null;
+			break;
+		case PRESENTATION:
+			docToDelete = listing.presentationId;
+			listing.presentationId = null;
+			break;
+		case LOGO:
+			docToDelete = listing.logoId;
+			listing.logoId = null;
+			listing.logoBase64 = null;
+			break;
+		}
+		// we need to update listing just in case logoBase64 is filled but logoId not
+		listing = getDAO().storeListing(listing);
+		if (docToDelete != null) {
+			try {
+				ListingDoc doc = ObjectifyDatastoreDAO.getInstance().getListingDocument(docToDelete.getId());
+				ObjectifyDatastoreDAO.getInstance().deleteDocument(docToDelete.getId());
+				
+				BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
+				blobstoreService.delete(doc.blob);
+			} catch (Exception e) {
+				log.log(Level.WARNING, "Document object cannot be deleted from datastore.", e);
+			}
+		}
+		result.setListing(DtoToVoConverter.convert(listing));
+
+		return result;
+	}
+	
 	public List<ListingDocumentVO> getAllListingDocuments(UserVO loggedInUser) {
 		if (loggedInUser == null) {
 			return null;

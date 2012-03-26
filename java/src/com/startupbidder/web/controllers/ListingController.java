@@ -52,6 +52,8 @@ public class ListingController extends ModelDrivenController {
 				return posted(request);
 			} else if("active".equalsIgnoreCase(getCommand(1))) {
 				return active(request);
+			} else if("frozen".equalsIgnoreCase(getCommand(1))) {
+				return frozen(request);
 			} else if("valuation".equalsIgnoreCase(getCommand(1))) {
 				return valuation(request);
 			} else if("popular".equalsIgnoreCase(getCommand(1))) {
@@ -93,19 +95,49 @@ public class ListingController extends ModelDrivenController {
 				return freeze(request);
 			} else if("withdraw".equalsIgnoreCase(getCommand(1))) {
 				return withdraw(request);
-			}  else if("delete".equalsIgnoreCase(getCommand(1))) {
+			} else if("delete".equalsIgnoreCase(getCommand(1))) {
 				return delete(request);
+			} else if("delete_file".equalsIgnoreCase(getCommand(1))) {
+				return deleteFile(request);
 			}
 		}
 
 		return null;
 	}
 	
-	// DELETE /listing/
+	// POST /listing/delete
     private HttpHeaders delete(HttpServletRequest request) {
     	HttpHeaders headers = new HttpHeadersImpl("delete");
 		
     	ListingAndUserVO listing = ListingFacade.instance().deleteEditedListing(getLoggedInUser());
+		if (listing == null) {
+			log.log(Level.WARNING, "Listing not deleted, probably didn't exist!");
+			headers.setStatus(500);
+		}
+		model = listing;
+
+		return headers;
+	}
+    
+    // POST /listing/delete_file
+    private HttpHeaders deleteFile(HttpServletRequest request) {
+    	HttpHeaders headers = new HttpHeadersImpl("delete_file");
+		
+    	String listingId = getCommandOrParameter(request, 2, "id");
+    	String typeStr = getCommandOrParameter(request, 3, "type");
+    	ListingDoc.Type type = null;
+    	try {
+    		type = ListingDoc.Type.valueOf(typeStr);
+    	} catch (Exception e) {
+    		log.log(Level.WARNING, "Wrong document type!", e);
+    		headers.setStatus(500);
+    		return headers;
+    	}
+    	
+		if (StringUtils.isEmpty(listingId)) {
+			listingId = getLoggedInUser().getEditedListing();
+		}
+    	ListingAndUserVO listing = ListingFacade.instance().deleteListingFile(getLoggedInUser(), listingId, type);
 		if (listing == null) {
 			log.log(Level.WARNING, "Listing not deleted, probably didn't exist!");
 			headers.setStatus(500);
@@ -262,6 +294,13 @@ public class ListingController extends ModelDrivenController {
 		ListPropertiesVO listingProperties = getListProperties(request);
     	model = ListingFacade.instance().getLatestActiveListings(getLoggedInUser(), listingProperties);
         return new HttpHeadersImpl("active").disableCaching();
+    }
+
+    // GET /listings/frozen
+    private HttpHeaders frozen(HttpServletRequest request) {
+		ListPropertiesVO listingProperties = getListProperties(request);
+    	model = ListingFacade.instance().getFrozenListings(getLoggedInUser(), listingProperties);
+        return new HttpHeadersImpl("frozen").disableCaching();
     }
 
     // GET /listings/posted
