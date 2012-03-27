@@ -43,6 +43,7 @@ pl.implement(NewListingSubmitClass, {
                 var msgs = [],
                     pctcomplete = self.base.pctComplete();
                 if (pctcomplete !== 100) {
+                    console.log('missing:', self.base.missingprops);
                     msgs.push('You must complete all fields before submitting, missing fields: ' + self.base.missingprops.join(', '));
                 }
                 else {
