@@ -123,7 +123,7 @@ pl.implement(EmailCheckClass, {
                 return "The address must end in a well-known domain or two letter country.";
         }
         if (len<2) {
-                return "This address is missing a hostname.";
+                return "This address does not have a hostname.";
         }
         return 0;
     }

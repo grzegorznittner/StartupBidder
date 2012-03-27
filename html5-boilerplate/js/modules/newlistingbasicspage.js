@@ -53,6 +53,7 @@ pl.implement(NewListingBasicsClass, {
                 category: ValidatorClass.prototype.isSelected,
                 mantra: ValidatorClass.prototype.makeLengthChecker(5, 140),
                 website: ValidatorClass.prototype.isURL,
+                founders: ValidatorClass.prototype.makeLengthChecker(5, 256),
                 contact_email: ValidatorClass.prototype.isEmail,
                 address: ValidatorClass.prototype.isNotEmpty
             },
@@ -61,6 +62,7 @@ pl.implement(NewListingBasicsClass, {
                 category: SelectFieldClass,
                 mantra: TextFieldClass,
                 website: TextFieldClass,
+                founders: TextFieldClass,
                 contact_email: TextFieldClass,
                 address: TextFieldClass
             },
