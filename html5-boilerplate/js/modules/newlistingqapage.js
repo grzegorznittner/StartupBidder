@@ -47,7 +47,7 @@ pl.implement(NewListingQAClass, {
             corp = listing.title || 'Company name here',
             date = listing.created_date ? DateClass.prototype.format(listing.created_date) : DateClass.prototype.today(),
             mantra = listing.mantra || 'Company mantra here',
-            name = self.base.loggedin_profile ? (self.base.loggedin_profile.name || self.base.loggedin_profile.username) : 'Lister name here', // FIXME: should come from listing
+            name = listing.founders || 'Founders here',
             contact_email = listing.contact_email || 'Email address here',
             contact_emaillink = contact_email ? 'mailto:' + contact_email :'',
             brief_address = listing.brief_address || 'Postal address here',
@@ -62,7 +62,7 @@ pl.implement(NewListingQAClass, {
         pl('#mantraip').text(mantra);
         pl('#nameip,#name2ip').text(name);
         pl('#contact_emailip,#contact_email2ip').text(contact_email);
-        pl('#contact_emaillinkip,#contact_email2linkip').text(contact_emaillink);
+        pl('#contact_emaillinkip,#contact_email2linkip').attr({href: contact_emaillink});
         pl('#brief_addressip,#brief_address2ip').text(brief_address);
         pl('#websiteip,#website2ip').text(website);
         pl('#websitelinkip,#website2linkip').attr({href: website});
