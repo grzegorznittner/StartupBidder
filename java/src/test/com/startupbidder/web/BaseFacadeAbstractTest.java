@@ -224,6 +224,8 @@ public abstract class BaseFacadeAbstractTest {
 		   L12 -> C-GU
 		   L13 -> N-U1
 		   L14 -> P-U1
+		   L15 -> F-U1
+		   L16 -> F-U2
 		*/
 
 		listingList = new ArrayList<Listing>();
@@ -231,8 +233,9 @@ public abstract class BaseFacadeAbstractTest {
 		// Tests rely on order of the objects
 		// Add new objects to the end of the list.
 		
-		Key<SBUser> userKey = new Key<SBUser>(SBUser.class, googleSBUser.id);
-		Key<SBUser> userKey2 = new Key<SBUser>(SBUser.class, userList.get(1).id);
+		Key<SBUser> guKey = new Key<SBUser>(SBUser.class, googleSBUser.id);
+		Key<SBUser> u1Key = new Key<SBUser>(SBUser.class, userList.get(1).id);
+		Key<SBUser> u2Key = new Key<SBUser>(SBUser.class, userList.get(2).id);
 		DateMidnight midnight = new DateMidnight();
 		DateTime now = new DateTime();
 		// prepare data
@@ -240,7 +243,7 @@ public abstract class BaseFacadeAbstractTest {
 		Listing listing = new Listing();
 		listing.name = "L1";
 		listing.summary = RandomStringUtils.randomAlphabetic(64);
-		listing.owner = userKey;
+		listing.owner = guKey;
 		listing.state = Listing.State.ACTIVE;
 		listing.suggestedAmount = 100000;
 		listing.suggestedPercentage = 25;
@@ -251,7 +254,7 @@ public abstract class BaseFacadeAbstractTest {
 		listing = new Listing();
 		listing.name = "L2";
 		listing.summary = RandomStringUtils.randomAlphabetic(64);
-		listing.owner = userKey;
+		listing.owner = guKey;
 		listing.state = Listing.State.ACTIVE;
 		listing.suggestedAmount = 120000;
 		listing.suggestedPercentage = 30;
@@ -262,7 +265,7 @@ public abstract class BaseFacadeAbstractTest {
 		listing = new Listing();
 		listing.name = "L3";
 		listing.summary = RandomStringUtils.randomAlphabetic(64);
-		listing.owner = userKey;
+		listing.owner = guKey;
 		listing.state = Listing.State.ACTIVE;
 		listing.suggestedAmount = 80000;
 		listing.suggestedPercentage = 40;
@@ -273,7 +276,7 @@ public abstract class BaseFacadeAbstractTest {
 		listing = new Listing();
 		listing.name = "L4";
 		listing.summary = RandomStringUtils.randomAlphabetic(64);
-		listing.owner = userKey;
+		listing.owner = guKey;
 		listing.state = Listing.State.ACTIVE;
 		listing.suggestedAmount = 30000;
 		listing.suggestedPercentage = 10;
@@ -284,7 +287,7 @@ public abstract class BaseFacadeAbstractTest {
 		listing = new Listing();
 		listing.name = "L5";
 		listing.summary = RandomStringUtils.randomAlphabetic(64);
-		listing.owner = userKey;
+		listing.owner = guKey;
 		listing.state = Listing.State.ACTIVE;
 		listing.suggestedAmount = 20000;
 		listing.suggestedPercentage = 15;
@@ -295,7 +298,7 @@ public abstract class BaseFacadeAbstractTest {
 		listing = new Listing();
 		listing.name = "L6";
 		listing.summary = RandomStringUtils.randomAlphabetic(64);
-		listing.owner = userKey2;
+		listing.owner = u1Key;
 		listing.state = Listing.State.ACTIVE;
 		listing.suggestedAmount = 10000;
 		listing.suggestedPercentage = 22;
@@ -306,7 +309,7 @@ public abstract class BaseFacadeAbstractTest {
 		listing = new Listing();
 		listing.name = "L7";
 		listing.summary = RandomStringUtils.randomAlphabetic(64);
-		listing.owner = userKey2;
+		listing.owner = u1Key;
 		listing.state = Listing.State.ACTIVE;
 		listing.suggestedAmount = 15000;
 		listing.suggestedPercentage = 27;
@@ -318,7 +321,7 @@ public abstract class BaseFacadeAbstractTest {
 		listing.name = "L8-new";
 		listing.mantra = RandomStringUtils.randomAlphabetic(16);
 		listing.summary = RandomStringUtils.randomAlphabetic(64);
-		listing.owner = userKey;
+		listing.owner = guKey;
 		listing.state = Listing.State.NEW;
 		listing.askedForFunding = true;
 		listing.suggestedAmount = 80000;
@@ -365,7 +368,7 @@ public abstract class BaseFacadeAbstractTest {
 		listing = new Listing();
 		listing.name = "L9-posted";
 		listing.summary = RandomStringUtils.randomAlphabetic(64);
-		listing.owner = userKey;
+		listing.owner = guKey;
 		listing.state = Listing.State.POSTED;
 		listing.posted = new Date();
 		listing.suggestedAmount = 400000;
@@ -376,7 +379,7 @@ public abstract class BaseFacadeAbstractTest {
 		listing = new Listing();
 		listing.name = "L10-posted";
 		listing.summary = RandomStringUtils.randomAlphabetic(64);
-		listing.owner = userKey;
+		listing.owner = guKey;
 		listing.state = Listing.State.POSTED;
 		listing.posted = new Date();
 		listing.suggestedAmount = 400000;
@@ -387,7 +390,7 @@ public abstract class BaseFacadeAbstractTest {
 		listing = new Listing();
 		listing.name = "L11-posted";
 		listing.summary = RandomStringUtils.randomAlphabetic(64);
-		listing.owner = userKey;
+		listing.owner = guKey;
 		listing.state = Listing.State.POSTED;
 		listing.posted = new Date();
 		listing.suggestedAmount = 400000;
@@ -398,7 +401,7 @@ public abstract class BaseFacadeAbstractTest {
 		listing = new Listing();
 		listing.name = "L12-withdrawn";
 		listing.summary = RandomStringUtils.randomAlphabetic(64);
-		listing.owner = userKey;
+		listing.owner = guKey;
 		listing.state = Listing.State.WITHDRAWN;
 		listing.suggestedAmount = 400000;
 		listing.suggestedPercentage = 50;
@@ -410,7 +413,7 @@ public abstract class BaseFacadeAbstractTest {
 		listing = new Listing();
 		listing.name = "L13-closed";
 		listing.summary = RandomStringUtils.randomAlphabetic(64);
-		listing.owner = userKey;
+		listing.owner = guKey;
 		listing.state = Listing.State.CLOSED;
 		listing.suggestedAmount = 30000;
 		listing.suggestedPercentage = 40;
@@ -422,7 +425,7 @@ public abstract class BaseFacadeAbstractTest {
 		listing = new Listing();
 		listing.name = "L14-new";
 		listing.summary = RandomStringUtils.randomAlphabetic(64);
-		listing.owner = userKey2;
+		listing.owner = u1Key;
 		listing.state = Listing.State.NEW;
 		listing.suggestedAmount = 85000;
 		listing.suggestedPercentage = 42;
@@ -431,13 +434,42 @@ public abstract class BaseFacadeAbstractTest {
 		listing = new Listing();
 		listing.name = "L15-posted";
 		listing.summary = RandomStringUtils.randomAlphabetic(64);
-		listing.owner = userKey2;
+		listing.owner = u1Key;
 		listing.state = Listing.State.POSTED;
-		listing.posted = new Date();
 		listing.suggestedAmount = 400000;
 		listing.suggestedPercentage = 50;
-		listing.posted = now.minus(Days.days(1)).toDate();
+		listing.created = now.minus(Days.days(3)).toDate();;
+		listing.posted = now.minus(Days.days(2)).toDate();
+		listing.listedOn = now.minus(Days.days(2)).toDate();
 		listingList.add(listing); // index=14
+		
+		listing = new Listing();
+		listing.name = "L16-posted";
+		listing.summary = RandomStringUtils.randomAlphabetic(64);
+		listing.owner = u1Key;
+		listing.state = Listing.State.FROZEN;
+		listing.posted = new Date();
+		listing.suggestedAmount = 50000;
+		listing.suggestedPercentage = 30;
+		listing.created = now.minus(Days.days(5)).toDate();;
+		listing.posted = now.minus(Days.days(4)).toDate();
+		listing.listedOn = now.minus(Days.days(3)).toDate();
+		listing.closingOn = now.plus(Days.days(27)).toDate();
+		listingList.add(listing); // index=15
+		
+		listing = new Listing();
+		listing.name = "L17-posted";
+		listing.summary = RandomStringUtils.randomAlphabetic(64);
+		listing.owner = u2Key;
+		listing.state = Listing.State.FROZEN;
+		listing.posted = new Date();
+		listing.suggestedAmount = 45000;
+		listing.suggestedPercentage = 13;
+		listing.created = now.minus(Days.days(10)).toDate();;
+		listing.posted = now.minus(Days.days(8)).toDate();
+		listing.listedOn = now.minus(Days.days(5)).toDate();
+		listing.closingOn = now.plus(Days.days(25)).toDate();
+		listingList.add(listing); // index=16
 		
 		Objectify ofy = ObjectifyService.begin();
 		ofy.put(listingList);

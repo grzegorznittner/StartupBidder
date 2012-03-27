@@ -388,7 +388,8 @@ public class AdminListingFacadeTest extends AdminFacadeAbstractTest {
 		assertNotSame(ErrorCodes.OK, postedListing.getErrorCode());
 		assertNull("New listing cannot be sent back", postedListing.getListing());
 
-		listing = DtoToVoConverter.convert(super.listingList.get(8));
+		// owner of listing 16 doesn't have NEW/POSTED listing
+		listing = DtoToVoConverter.convert(super.listingList.get(16));
 		postedListing = ListingFacade.instance().sendBackListingToOwner(admin, listing.getId());
 		assertNotNull(postedListing);
 		assertEquals(ErrorCodes.OK, postedListing.getErrorCode());
@@ -404,22 +405,15 @@ public class AdminListingFacadeTest extends AdminFacadeAbstractTest {
 		assertEquals(listing.getPresentationId(), postedListing.getListing().getPresentationId());
 		assertEquals(listing.getBuinessPlanId(), postedListing.getListing().getBuinessPlanId());
 		assertEquals(listing.getFinancialsId(), postedListing.getListing().getFinancialsId());
+	}
 
-		listing = DtoToVoConverter.convert(super.listingList.get(9));
-		postedListing = ListingFacade.instance().sendBackListingToOwner(admin, listing.getId());
+	@Test
+	public void testSendBackFrozenListing() {
+		// owner of listing 15 has already NEW/POSTED listing
+		ListingVO listing = DtoToVoConverter.convert(super.listingList.get(15));
+		ListingAndUserVO postedListing = ListingFacade.instance().sendBackListingToOwner(admin, listing.getId());
 		assertNotNull(postedListing);
-		assertEquals(ErrorCodes.OK, postedListing.getErrorCode());
-		assertNotNull("Sending back listing should work", postedListing.getListing());
-		assertFalse("Send back listing should be a new instance of the object", listing == postedListing.getListing());
-		assertEquals("State should be NEW", Listing.State.NEW.toString(), postedListing.getListing().getState());
-		assertEquals(listing.getName(), postedListing.getListing().getName());
-		assertEquals(listing.getSummary(), postedListing.getListing().getSummary());
-		assertEquals(listing.getOwner(), postedListing.getListing().getOwner());
-		assertEquals(listing.getClosingOn(), postedListing.getListing().getClosingOn());
-		assertEquals(listing.getSuggestedAmount(), postedListing.getListing().getSuggestedAmount());
-		assertEquals(listing.getSuggestedPercentage(), postedListing.getListing().getSuggestedPercentage());
-		assertEquals(listing.getPresentationId(), postedListing.getListing().getPresentationId());
-		assertEquals(listing.getBuinessPlanId(), postedListing.getListing().getBuinessPlanId());
-		assertEquals(listing.getFinancialsId(), postedListing.getListing().getFinancialsId());
+		assertNotSame("This user has already NEW/POSTED listing", ErrorCodes.OK, postedListing.getErrorCode());
+		assertNull("Sending back listing should work", postedListing.getListing());
 	}	
 }

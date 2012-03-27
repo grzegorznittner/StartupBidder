@@ -420,6 +420,22 @@ public class ObjectifyDatastoreDAO {
 		return listings;
 	}
 
+	public List<Listing> getUserNewOrPostedListings(long userId) {
+		QueryResultIterable<Key<Listing>> listingsIt = getOfy().query(Listing.class)
+				.filter("owner =", new Key<SBUser>(SBUser.class, userId))
+				.filter("state =", Listing.State.NEW)
+				.order("-listedOn").fetchKeys();
+		List<Listing> listings = new ArrayList<Listing>(getOfy().get(listingsIt).values());
+
+		listingsIt = getOfy().query(Listing.class)
+				.filter("owner =", new Key<SBUser>(SBUser.class, userId))
+				.filter("state =", Listing.State.POSTED)
+				.order("-listedOn").fetchKeys();
+		listings.addAll(new ArrayList<Listing>(getOfy().get(listingsIt).values()));
+
+		return listings;
+	}
+
 	public List<Listing> getUserActiveListings(long userId, ListPropertiesVO listingProperties) {
 		QueryResultIterable<Key<Listing>> listingsIt = getOfy().query(Listing.class)
 				.filter("owner =", new Key<SBUser>(SBUser.class, userId))

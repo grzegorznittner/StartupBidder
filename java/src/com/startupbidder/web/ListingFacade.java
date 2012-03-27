@@ -61,6 +61,7 @@ import com.startupbidder.vo.ListingPropertyVO;
 import com.startupbidder.vo.ListingVO;
 import com.startupbidder.vo.UserBasicVO;
 import com.startupbidder.vo.UserVO;
+import com.sun.corba.se.spi.legacy.connection.GetEndPointInfoAgainException;
 
 public class ListingFacade {
 	private static final Logger log = Logger.getLogger(ListingFacade.class.getName());
@@ -573,8 +574,15 @@ public class ListingFacade {
 		}
 		
 		if (dbListing.state == Listing.State.POSTED || dbListing.state == Listing.State.FROZEN) {
+			List<Listing> newOrPosted = getDAO().getUserNewOrPostedListings(dbListing.owner.getId());
+			if (newOrPosted != null && newOrPosted.size() > 0) {
+				log.warning("Listing owner '" + loggedInUser + "' has already have NEW/POSTED listing");
+				returnValue.setErrorMessage("Listing owner '" + loggedInUser + "' has already have NEW/POSTED listing");
+				returnValue.setErrorCode(ErrorCodes.OPERATION_NOT_ALLOWED);
+				return returnValue;
+			}
+			
 			ListingVO forUpdate = DtoToVoConverter.convert(dbListing);
-
 			forUpdate.setState(Listing.State.NEW.toString());
 			
 			Listing updatedListing = getDAO().updateListingStateAndDates(VoToModelConverter.convert(forUpdate));
