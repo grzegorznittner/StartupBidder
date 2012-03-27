@@ -35,7 +35,7 @@ pl.implement(CategoryListClass, {
         }
         categories.sort();
         lc = new ListClass();
-        lc.spreadOverTwoCols(categories, '#categorydivcol1', '#categorydivcol2');
+        lc.spreadOverTwoCols(categories, '#categorydivcol1', '#categorydivcol2'); // FIXME: not dividing columns correctly
     }
 });
 
@@ -46,7 +46,7 @@ pl.implement(LocationListClass, {
         locations = json && json.locations && json.locations.length > 0
             ? json.locations
             : ['Austin, USA', 'Bangalore, India', 'Beijing, China', 'Berlin, Germany', 'Cambridge, USA', 'Dusseldorf, Germany', 'Herzliya, Israel',
-                'Katowice, Poland', 'London, UK', 'Menlo Park, USA', 'Mountain View, CA', 'New York City, USA', 'Seattle, WA', 'Cambridge, UK'];
+                'Katowice, Poland', 'London, UK', 'Menlo Park, USA', 'Mountain View, CA', 'New York City, USA', 'Seattle, WA', 'Cambridge, UK']; // FIXME
         if (!locations) {
             pl('#locationdivcol1').html('<li class="notice">No locations found</li>');
             pl('#locationdivcol2').html('');
