@@ -61,7 +61,6 @@ import com.startupbidder.vo.ListingPropertyVO;
 import com.startupbidder.vo.ListingVO;
 import com.startupbidder.vo.UserBasicVO;
 import com.startupbidder.vo.UserVO;
-import com.sun.corba.se.spi.legacy.connection.GetEndPointInfoAgainException;
 
 public class ListingFacade {
 	private static final Logger log = Logger.getLogger(ListingFacade.class.getName());
@@ -360,6 +359,8 @@ public class ListingFacade {
 		ListingVO forUpdate = DtoToVoConverter.convert(dbListing);
 		Listing updatedListing = getDAO().updateListingStateAndDates(VoToModelConverter.convert(forUpdate));
 		if (updatedListing != null) {
+			loggedInUser.setEditedListing(null);
+			loggedInUser.setEditedStatus(null);
 			scheduleUpdateOfListingStatistics(updatedListing.getWebKey(), UpdateReason.NONE);
 		}
 		ListingVO toReturn = DtoToVoConverter.convert(updatedListing);
@@ -391,13 +392,13 @@ public class ListingFacade {
 				
 		// only NEW listings can be posted
 		if (dbListing.state == Listing.State.NEW) {
-			String logs = verifyListingsMandatoryFields(dbListing);
-			if (!StringUtils.isEmpty(logs)) {
-				log.log(Level.WARNING, "Listing validation error. " + logs, new Exception("Listing verification error"));
-				returnValue.setErrorMessage("Listing cannot be posted. " + logs);
-				returnValue.setErrorCode(ErrorCodes.ENTITY_VALIDATION);
-				return returnValue;
-			}
+//			String logs = verifyListingsMandatoryFields(dbListing);
+//			if (!StringUtils.isEmpty(logs)) {
+//				log.log(Level.WARNING, "Listing validation error. " + logs, new Exception("Listing verification error"));
+//				returnValue.setErrorMessage("Listing cannot be posted. " + logs);
+//				returnValue.setErrorCode(ErrorCodes.ENTITY_VALIDATION);
+//				return returnValue;
+//			}
 			
 			ListingVO forUpdate = DtoToVoConverter.convert(dbListing);
 
