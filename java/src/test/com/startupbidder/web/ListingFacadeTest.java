@@ -457,6 +457,139 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 	}
 
 	@Test
+	public void testDeleteFileFromEditedListing() {
+		ListingAndUserVO userListing = ListingFacade.instance().createListing(googleUserVO);
+		assertEquals("We should get OK, we got " + userListing.getErrorMessage(), ErrorCodes.OK, userListing.getErrorCode());
+		assertEquals(userListing.getListing().getId(), googleUserVO.getEditedListing());
+		ListingVO listing = userListing.getListing();
+		
+		// set logo url with non image url
+		List<ListingPropertyVO> props = new ArrayList<ListingPropertyVO>();
+		props.add(new ListingPropertyVO("logo_url", getTestDocUrl("300x300.jpg")));
+		ListingAndUserVO update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
+		assertEquals("We should get OK, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
+		assertNotNull("base64logo should be set", update.getListing().getLogo());
+		// set financials with valid url
+		props = new ArrayList<ListingPropertyVO>();
+		props.add(new ListingPropertyVO("financials_url", getTestDocUrl("calc.xls")));
+		update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
+		assertEquals("We should get OK, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
+		assertNotNull("Financials should be set", update.getListing().getFinancialsId());
+		// set business plan with valid url
+		props = new ArrayList<ListingPropertyVO>();
+		props.add(new ListingPropertyVO("business_plan_url", getTestDocUrl("resume.doc")));
+		update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
+		assertEquals("We should get OK, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
+		assertNotNull("Business plan should be set", update.getListing().getBuinessPlanId());
+		// set business plan with valid url
+		props = new ArrayList<ListingPropertyVO>();
+		props.add(new ListingPropertyVO("presentation_url", getTestDocUrl("business_plan.ppt")));
+		update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
+		assertEquals("We should get OK, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
+		assertNotNull("Presentation should be set", update.getListing().getPresentationId());
+		
+		// now we delete each of this file
+		update = ListingFacade.instance().deleteListingFile(googleUserVO, listing.getId(), ListingDoc.Type.LOGO);
+		assertEquals("We should get OK, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
+		assertNotNull(update.getListing());
+		assertNull("Logo was deleted so it should be null", update.getListing().getLogo());
+
+		update = ListingFacade.instance().deleteListingFile(googleUserVO, listing.getId(), ListingDoc.Type.BUSINESS_PLAN);
+		assertEquals("We should get OK, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
+		assertNotNull(update.getListing());
+		assertNull("Business plan was deleted so it should be null", update.getListing().getBuinessPlanId());
+
+		update = ListingFacade.instance().deleteListingFile(googleUserVO, listing.getId(), ListingDoc.Type.FINANCIALS);
+		assertEquals("We should get OK, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
+		assertNotNull(update.getListing());
+		assertNull("Financials was deleted so it should be null", update.getListing().getFinancialsId());
+
+		update = ListingFacade.instance().deleteListingFile(googleUserVO, listing.getId(), ListingDoc.Type.PRESENTATION);
+		assertEquals("We should get OK, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
+		assertNotNull(update.getListing());
+		assertNull("Presentation was deleted so it should be null", update.getListing().getPresentationId());
+
+		// and again we try to upload all those files
+		props = new ArrayList<ListingPropertyVO>();
+		props.add(new ListingPropertyVO("logo_url", getTestDocUrl("300x300.jpg")));
+		update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
+		assertEquals("We should get OK, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
+		assertNotNull("base64logo should be set", update.getListing().getLogo());
+		// set financials with valid url
+		props = new ArrayList<ListingPropertyVO>();
+		props.add(new ListingPropertyVO("financials_url", getTestDocUrl("calc.xls")));
+		update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
+		assertEquals("We should get OK, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
+		assertNotNull("Financials should be set", update.getListing().getFinancialsId());
+		// set business plan with valid url
+		props = new ArrayList<ListingPropertyVO>();
+		props.add(new ListingPropertyVO("business_plan_url", getTestDocUrl("resume.doc")));
+		update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
+		assertEquals("We should get OK, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
+		assertNotNull("Business plan should be set", update.getListing().getBuinessPlanId());
+		// set business plan with valid url
+		props = new ArrayList<ListingPropertyVO>();
+		props.add(new ListingPropertyVO("presentation_url", getTestDocUrl("business_plan.ppt")));
+		update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
+		assertEquals("We should get OK, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
+		assertNotNull("Presentation should be set", update.getListing().getPresentationId());
+	}
+	
+	@Test
+	public void testDeleteNotExistingFileFromEditedListing() {
+		ListingAndUserVO userListing = ListingFacade.instance().createListing(googleUserVO);
+		assertEquals("We should get OK, we got " + userListing.getErrorMessage(), ErrorCodes.OK, userListing.getErrorCode());
+		assertEquals(userListing.getListing().getId(), googleUserVO.getEditedListing());
+		ListingVO listing = userListing.getListing();
+		
+		// we try to delete not existing files, should be permitted
+		ListingAndUserVO update = ListingFacade.instance().deleteListingFile(googleUserVO, listing.getId(), ListingDoc.Type.LOGO);
+		assertEquals("We should get OK, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
+		assertNotNull(update.getListing());
+		assertNull("Logo was deleted so it should be null", update.getListing().getLogo());
+
+		update = ListingFacade.instance().deleteListingFile(googleUserVO, listing.getId(), ListingDoc.Type.BUSINESS_PLAN);
+		assertEquals("We should get OK, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
+		assertNotNull(update.getListing());
+		assertNull("Business plan was deleted so it should be null", update.getListing().getBuinessPlanId());
+
+		update = ListingFacade.instance().deleteListingFile(googleUserVO, listing.getId(), ListingDoc.Type.FINANCIALS);
+		assertEquals("We should get OK, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
+		assertNotNull(update.getListing());
+		assertNull("Financials was deleted so it should be null", update.getListing().getFinancialsId());
+
+		update = ListingFacade.instance().deleteListingFile(googleUserVO, listing.getId(), ListingDoc.Type.PRESENTATION);
+		assertEquals("We should get OK, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
+		assertNotNull(update.getListing());
+		assertNull("Presentation was deleted so it should be null", update.getListing().getPresentationId());
+
+		// and then we try to upload all those files
+		List<ListingPropertyVO> props = new ArrayList<ListingPropertyVO>();
+		props.add(new ListingPropertyVO("logo_url", getTestDocUrl("300x300.jpg")));
+		update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
+		assertEquals("We should get OK, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
+		assertNotNull("base64logo should be set", update.getListing().getLogo());
+		// set financials with valid url
+		props = new ArrayList<ListingPropertyVO>();
+		props.add(new ListingPropertyVO("financials_url", getTestDocUrl("calc.xls")));
+		update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
+		assertEquals("We should get OK, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
+		assertNotNull("Financials should be set", update.getListing().getFinancialsId());
+		// set business plan with valid url
+		props = new ArrayList<ListingPropertyVO>();
+		props.add(new ListingPropertyVO("business_plan_url", getTestDocUrl("resume.doc")));
+		update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
+		assertEquals("We should get OK, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
+		assertNotNull("Business plan should be set", update.getListing().getBuinessPlanId());
+		// set business plan with valid url
+		props = new ArrayList<ListingPropertyVO>();
+		props.add(new ListingPropertyVO("presentation_url", getTestDocUrl("business_plan.ppt")));
+		update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
+		assertEquals("We should get OK, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
+		assertNotNull("Presentation should be set", update.getListing().getPresentationId());
+	}
+	
+	@Test
 	public void testCreateListing() {
 		ListingAndUserVO newListing = ListingFacade.instance().createListing(googleUserVO);
 		assertEquals("We should get OK", ErrorCodes.OK, newListing.getErrorCode());
