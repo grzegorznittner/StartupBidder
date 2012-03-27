@@ -22,7 +22,7 @@ import com.startupbidder.util.LowecaseSerializer;
 @JsonIgnoreProperties(ignoreUnknown=true)
 public class ListingVO extends BaseVO {
 	public static final List<String> UPDATABLE_PROPERTIES = Arrays.asList(new String[] {
-			"title", "mantra", "summary", "contact_email",
+			"title", "mantra", "summary", "contact_email", "founders",
 			"website", "category", "address", "city", "state", "country", "latitude", "longitude",
 			"asked_fund", "suggested_amt", "suggested_pct", "video", "answer1", "answer2", "answer3",
 			"answer4", "answer5", "answer6", "answer7", "answer8", "answer9", "answer10", "answer11", "answer12", "answer13",
@@ -55,6 +55,7 @@ public class ListingVO extends BaseVO {
 	@JsonProperty("category") private String category;
 	@JsonProperty("profile_id") private String owner;
 	@JsonProperty("profile_username") private String ownerName;
+	@JsonProperty("founders") private String founders;
 	@JsonProperty("contact_email") private String contactEmail;
 	@JsonProperty("address") private String address;
 	@JsonProperty("brief_address") private String briefAddress;
@@ -664,5 +665,13 @@ public class ListingVO extends BaseVO {
 
 	public void setBriefAddress(String briefAddress) {
 		this.briefAddress = briefAddress;
+	}
+
+	public String getFounders() {
+		return founders;
+	}
+
+	public void setFounders(String founders) {
+		this.founders = founders;
 	}
 }

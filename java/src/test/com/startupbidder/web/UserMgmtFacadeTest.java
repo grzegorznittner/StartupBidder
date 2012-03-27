@@ -203,7 +203,7 @@ public class UserMgmtFacadeTest extends BaseFacadeAbstractTest {
 		assertEquals("Phone should not be touched", previousUser.getPhone(), user.getPhone());
 		assertEquals("Investor flag should not be touched", previousUser.isAccreditedInvestor(), user.isAccreditedInvestor());
 		assertEquals("NotifyEnabled flag should not be touched", previousUser.isNotifyEnabled(), user.isNotifyEnabled());
-		assertTrue("Update should change modification date", previousUser.getModified().getTime() < user.getModified().getTime());
+		assertTrue("Update should change modification date", previousUser.getModified().getTime() <= user.getModified().getTime());
 
 		previousUser = user;
 		user = UserMgmtFacade.instance().updateUser(googleUserVO, "Brand New Name", null, null, null, null, null);
@@ -214,7 +214,7 @@ public class UserMgmtFacadeTest extends BaseFacadeAbstractTest {
 		assertEquals("Phone should not be touched", previousUser.getPhone(), user.getPhone());
 		assertEquals("Investor flag should not be touched", previousUser.isAccreditedInvestor(), user.isAccreditedInvestor());
 		assertEquals("NotifyEnabled flag should not be touched", previousUser.isNotifyEnabled(), user.isNotifyEnabled());
-		assertTrue("Update should change modification date", previousUser.getModified().getTime() < user.getModified().getTime());
+		assertTrue("Update should change modification date", previousUser.getModified().getTime() <= user.getModified().getTime());
 
 		previousUser = user;
 		user = UserMgmtFacade.instance().updateUser(googleUserVO, null, null, "Des Moines, IO, US", null, null, null);
@@ -225,7 +225,7 @@ public class UserMgmtFacadeTest extends BaseFacadeAbstractTest {
 		assertEquals("Phone should not be updated", previousUser.getPhone(), user.getPhone());
 		assertEquals("Investor flag should not be touched", previousUser.isAccreditedInvestor(), user.isAccreditedInvestor());
 		assertEquals("NotifyEnabled flag should not be touched", previousUser.isNotifyEnabled(), user.isNotifyEnabled());
-		assertTrue("Update should change modification date", previousUser.getModified().getTime() < user.getModified().getTime());
+		assertTrue("Update should change modification date", previousUser.getModified().getTime() <= user.getModified().getTime());
 
 		previousUser = user;
 		user = UserMgmtFacade.instance().updateUser(googleUserVO, null, null, null, "1234567890", null, null);
@@ -236,7 +236,7 @@ public class UserMgmtFacadeTest extends BaseFacadeAbstractTest {
 		assertEquals("Phone should be updated", "1234567890", user.getPhone());
 		assertEquals("Investor flag should not be touched", previousUser.isAccreditedInvestor(), user.isAccreditedInvestor());
 		assertEquals("NotifyEnabled flag should not be touched", previousUser.isNotifyEnabled(), user.isNotifyEnabled());
-		assertTrue("Update should change modification date", previousUser.getModified().getTime() < user.getModified().getTime());
+		assertTrue("Update should change modification date", previousUser.getModified().getTime() <= user.getModified().getTime());
 
 		previousUser = user;
 		user = UserMgmtFacade.instance().updateUser(googleUserVO, null, null, null, null, !previousUser.isAccreditedInvestor(), null);
@@ -247,7 +247,7 @@ public class UserMgmtFacadeTest extends BaseFacadeAbstractTest {
 		assertEquals("Phone should not be touched", previousUser.getPhone(), user.getPhone());
 		assertEquals("Investor flag should be updated", !previousUser.isAccreditedInvestor(), user.isAccreditedInvestor());
 		assertEquals("NotifyEnabled flag should not be touched", previousUser.isNotifyEnabled(), user.isNotifyEnabled());
-		assertTrue("Update should change modification date", previousUser.getModified().getTime() < user.getModified().getTime());
+		assertTrue("Update should change modification date", previousUser.getModified().getTime() <= user.getModified().getTime());
 
 		previousUser = user;
 		user = UserMgmtFacade.instance().updateUser(googleUserVO, null, null, null, null, null, !previousUser.isNotifyEnabled());
@@ -258,7 +258,7 @@ public class UserMgmtFacadeTest extends BaseFacadeAbstractTest {
 		assertEquals("Phone should not be touched", previousUser.getPhone(), user.getPhone());
 		assertEquals("Investor flag should not be updated", previousUser.isAccreditedInvestor(), user.isAccreditedInvestor());
 		assertEquals("NotifyEnabled flag should be updated", !previousUser.isNotifyEnabled(), user.isNotifyEnabled());
-		assertTrue("Update should change modification date", previousUser.getModified().getTime() < user.getModified().getTime());
+		assertTrue("Update should change modification date", previousUser.getModified().getTime() <= user.getModified().getTime());
 	}
 
 	@Test

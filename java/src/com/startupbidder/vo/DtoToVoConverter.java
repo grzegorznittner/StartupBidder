@@ -8,7 +8,6 @@ import java.util.Map;
 import org.datanucleus.util.StringUtils;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
-import org.joda.time.Days;
 import org.joda.time.Interval;
 
 import com.googlecode.objectify.Key;
@@ -76,6 +75,7 @@ public class DtoToVoConverter {
 		listing.setName(listingDTO.name);
 		listing.setOwner(keyToString(listingDTO.owner));
 		listing.setContactEmail(listingDTO.contactEmail);
+		listing.setFounders(listingDTO.founders);
 		listing.setAskedForFunding(listingDTO.askedForFunding);
 		listing.setSuggestedValuation(listingDTO.suggestedValuation);
 		listing.setSuggestedAmount(listingDTO.suggestedAmount);

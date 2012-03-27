@@ -158,6 +158,13 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 		props.add(new ListingPropertyVO("status", "ACTIVE"));
 		update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
 		assertNotSame("We should get failure, we got " + updatedListing.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
+
+		// set founder property
+		props = new ArrayList<ListingPropertyVO>();
+		props.add(new ListingPropertyVO("founders", "Greg Nittner, John A. Burns"));
+		update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
+		assertEquals("We should get OK, we got " + updatedListing.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
+		assertEquals("Greg Nittner, John A. Burns", update.getListing().getFounders());
 	}
 	
 	@Test
@@ -597,6 +604,8 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 		assertNull("Name should be empty", newListing.getListing().getName());
 		assertNull("Summary should be null", newListing.getListing().getSummary());
 		assertEquals("Proper owner set", googleUserVO.getId(), newListing.getListing().getOwner());
+		assertNotNull("Contact email should be set", newListing.getListing().getContactEmail());
+		assertNotNull("Founders should be set", newListing.getListing().getFounders());
 		assertEquals("State is not NEW", Listing.State.NEW.toString(), newListing.getListing().getState());
 		assertNotNull("Created date should be set", newListing.getListing().getCreated());
 		assertNotNull("Modified date should be set", newListing.getListing().getModified());
@@ -613,6 +622,8 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 		assertNull("Name should be empty", newListingForAdmin.getListing().getName());
 		assertNull("Summary should be null", newListingForAdmin.getListing().getSummary());
 		assertEquals("Proper owner set", admin.getId(), newListingForAdmin.getListing().getOwner());
+		assertNotNull("Contact email should be set", newListing.getListing().getContactEmail());
+		assertNotNull("Founders should be set", newListing.getListing().getFounders());
 		assertEquals("State is not NEW", Listing.State.NEW.toString(), newListingForAdmin.getListing().getState());
 		assertNotNull("Created date should be set", newListingForAdmin.getListing().getCreated());
 		assertNotNull("Modified date should be set", newListing.getListing().getModified());
