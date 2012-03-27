@@ -1,12 +1,93 @@
 function NewListingBaseClass() {
-    var editableprops = [
+    var pages = [ 'basics', 'bmc', 'qa', 'financials', 'media', 'submit' ],
+        editableprops = [
             'title', 'category', 'mantra', 'website', 'founders', 'contact_email', 'address',
-            'summary', 'answer1', 'answer2', 'answer3', 'answer4', 'answer5', 'answer6', 'answer7', 'answer8', 'answer9', 'answer10', 'answer11', 'answer12', 'answer13', 'answer14', 'answer15', 'answer16', 'answer17', 'answer18', 'answer19', 'answer20', 'answer21', 'answer22', 'answer23', 'answer24', 'answer25', 'answer26',
+            'answer1', 'answer2', 'answer3', 'answer4', 'answer5', 'answer6', 'answer7', 'answer8', 'answer9', 'answer10',
+            'summary', 'answer11', 'answer12', 'answer13', 'answer14', 'answer15', 'answer16', 'answer17', 'answer18',
+            'answer19', 'answer20', 'answer21', 'answer22', 'answer23', 'answer24', 'answer25', 'answer26',
             'presentation_id', 'business_plan_id', 'financials_id',
             'logo', 'video'
         ],
+        proppage = {
+            title: 'basics',
+            category: 'basics',
+            mantra: 'basics',
+			website: 'basics',
+			founders: 'basics',
+			contact_email: 'basics',
+			address: 'basics',
+            answer1: 'bmc',
+			answer2: 'bmc',
+			answer3: 'bmc',
+			answer4: 'bmc',
+			answer5: 'bmc',
+			answer6: 'bmc',
+			answer7: 'bmc',
+			answer8: 'bmc',
+			answer9: 'bmc',
+			answer10: 'bmc',
+            summary: 'qa',
+			answer11: 'qa',
+			answer12: 'qa',
+			answer13: 'qa',
+			answer14: 'qa',
+			answer15: 'qa',
+			answer16: 'qa',
+			answer17: 'qa',
+			answer18: 'qa',
+            answer19: 'qa',
+			answer20: 'qa',
+			answer21: 'qa',
+			answer22: 'qa',
+			answer23: 'qa',
+			answer24: 'qa',
+			answer25: 'qa',
+			answer26: 'qa',
+            presentation_id: 'financials',
+			business_plan_id: 'financials',
+			financials_id: 'financials',
+            logo: 'media',
+			video: 'media'
+        },
+        displayNameOverrides = {
+            address: 'LOCATION',
+            contact_email: 'EMAIL',
+            summary: 'ELEVATOR PITCH',
+            answer1: 'KEY ACTIVITIES',
+            answer2: 'KEY RESOURCES',
+            answer3: 'KEY PARTNERS',
+            answer4: 'VALUE PROPOSITIONS',
+            answer5: 'CUSTOMER SEGMENTS',
+            answer6: 'CHANNELS',
+            answer7: 'CUSTOMER RELATIONSHIPS',
+            answer8: 'COST STRUCTURE',
+            answer9: 'REVENUE STREAMS',
+            answer10: 'PROBLEM',
+            answer11: 'SOLUTION',
+            answer12: 'FEATURES AND BENEFITS',
+            answer13: 'COMPANY STATUS',
+            answer14: 'MARKET',
+            answer15: 'CUSTOMER',
+            answer16: 'COMPETITORS',
+            answer17: 'COMPETITIVE COMPARISON',
+            answer18: 'BUSINESS MODEL',
+            answer19: 'MARKETING PLAN',
+            answer20: 'TEAM',
+            answer21: 'TEAM VALUES',
+            answer22: 'CURRENT FINANCIALS',
+            answer23: 'FINANCIAL PROJECTIONS',
+            answer24: 'OWNERS',
+            answer25: 'INVESTMENT',
+            answer26: 'TIMELINE AND WRAPUP',
+            presentation_id: 'PRESENTATION',
+            business_plan_id: 'BUSINESS_PLAN',
+            financials: 'FINANCIALS'
+        },
         companyTile = new CompanyTileClass({preview: true});
+    this.pages = pages;
     this.editableprops = editableprops;
+    this.proppage = proppage;
+    this.displayNameOverrides = displayNameOverrides;
     this.companyTile = companyTile;
     this.listing = {};
     this.fields = [];
@@ -154,7 +235,7 @@ pl.implement(NewListingBaseClass, {
                     if (postSuccessFunc) {
                         postSuccessFunc(json);
                     }
-                }
+                };
                 ajax = new AjaxClass('/listing/update_field', '', null, pctSuccessFunc, loadFunc, errorFunc);
             data.listing[fieldName] = newval;
             ajax.setPostData(data);

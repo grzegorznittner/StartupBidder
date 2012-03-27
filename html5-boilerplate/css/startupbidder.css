@@ -255,6 +255,8 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .boxstep5 { left: 416px; }
 .boxstep6 { left: 520px; width: 106px; }
 .boxstepcomplete { background-color: #999999; }
+.boxsteperror { background-color: red; }
+.boxsteperror div { color: white; }
 .commentpanel dl dt { font-size: 12px; height: 32px; padding: 0 0 0 10px; }
 .commentdttitle { position: relative; height: 32px; }
 .commentdttitleline { padding-top: 7px; }
@@ -331,6 +333,8 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .uploadinfo { font-weight: bold; margin-left: 4px; }
 .uploadurlbutton { margin-left: 4px; }
 .uploadinputbutton { font-weight: bold; color: white !important; background: #49515a !important; font-size: 14px !important; height: 33px !important; margin-left: 4px !important; }
+.uploaddelete { position: absolute; top: 43px; right: 0px; display: none; }
+.uploaditem { position: relative; }
 
 /* tiles */
 .tile { width: 146px; height: 296px; border: 2px solid #999999; border-radius: 5px; overflow: hidden; margin-bottom: 10px; position: relative; background: #e3e3e3; }

@@ -1,7 +1,7 @@
 function NewListingFinancialsClass() {
     var base = new NewListingBaseClass();
     base.prevPage = '/new-listing-qa-page.html';
-    base.nextPage = '/new-listing-media-page.html';
+    base.nextPage = '/new-listing-submit-page.html';
     this.base = base;
 }
 pl.implement(NewListingFinancialsClass, {
@@ -28,40 +28,85 @@ pl.implement(NewListingFinancialsClass, {
         }
     },
     displayUpload: function(id) {
-        var fieldname = id + '_id',
+        var self = this,
+            fieldname = id + '_id',
             val = this.base.listing[fieldname],
             imgclass = id + 'img',
             imgsel = '#' + imgclass,
             formsel = '#' + id + 'uploadform',
             linksel = '#' + id + 'link',
             downloadsel = '#' + id + 'downloadbg, #' + id + 'downloadtext',
+            deletesel = '#' + id + 'deletelink span',
             uploadfield = id + '_upload',
             uploadurl = this.base.listing[uploadfield],
-            calcclass = val ? imgclass : 'noimage',
-            classes = 'tileimg ' + calcclass,
-            linkurl = val ? '/file/download/' + val : '#';
-        pl(imgsel).attr({'class': classes});
-        pl(linksel).attr({href: linkurl});
+            linkurl = val ? '/file/download/' + val : '';
         if (val) {
             pl(downloadsel).show();
+            pl(deletesel).show();
+            pl(imgsel).attr({'class': 'tileimg ' + imgclass});
+            pl(linksel).unbind().attr({href: linkurl});
+            self.bindDelete(id, val);
+        }
+        else {
+            pl(downloadsel).hide();
+            pl(deletesel).hide();
+            pl(imgsel).attr({'class': 'tileimg noimage'});
+            pl(linksel).unbind().attr({href: ''}).bind({
+                click: function() {
+                    return false;
+                }
+            });
         }
         if (uploadurl) {
             pl(formsel).attr({action: uploadurl});
         }
+    },
+    bindDelete: function(id, val) {
+        var self = this,
+            deletesel = '#' + id + 'deletelink';
+        pl(deletesel).unbind('click').bind({
+            click: function() {
+                var completeFunc = function() {
+                    var fieldname = id + '_id',
+                        imgclass = id + 'img',
+                        imgsel = '#' + imgclass,
+                        linksel = '#' + id + 'link',
+                        deletesel = '#' + id + 'deletelink span',
+                        downloadsel = '#' + id + 'downloadbg, #' + id + 'downloadtext';
+                    self.base.listing[fieldname] = null;
+                    pl(downloadsel).hide();
+                    pl(deletesel).hide();
+                    pl(imgsel).attr({'class': 'tileimg noimage'});
+                    pl(linksel).unbind().attr({href: ''}).bind({
+                        click: function() {
+                            return false;
+                        }
+                    });
+                };
+                ajax = new AjaxClass('/listings/delete_file/?type='+id.toUpperCase(), 'newlistingmsg', completeFunc);
+                ajax.setPost();
+                ajax.call();
+                return false;
+            }
+        });
     },
     bindUploadField: function(id) {
         var self = this;
             uploadfield = id + '_upload',
             iframesel = '#' + id + 'uploadiframe',
             browsesel = '#' + id.toUpperCase(),
-            displayname = id.toUpperCase().replace('_',' ') + ' UPLOAD URL',
+            displayname = id.toUpperCase().replace('_',' ') + ' URL',
             urlid = id + '_url',
             msgid = id + 'msg',
             genPostUpload = function(id) {
                 var fieldname = id + '_id',
                     uploadId = id;
                 return function(json) {
-                    var val = json && json.listing && json.listing[fieldname] ? json.listing[fieldname] : null;
+                    var val = json && json.listing && json.listing[fieldname] ? json.listing[fieldname] : null,
+                        uploadval = json && json.listing && json.listing[uploadfield] ? json.listing[uploadfield] : null;
+                    if (uploadval) {
+                        self.base.listing[uploadfield] = uploadval;
+                    }
                     if (val) {
                         self.base.listing[fieldname] = val;
                         self.displayUpload(uploadId);

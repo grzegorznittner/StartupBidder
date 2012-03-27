@@ -56,27 +56,25 @@
 <div class="container">
 
 <!-- begin banner -->
-<div class="bannersmall">
+    <div class="bannertextsmall">NEW COMPANY WIZARD - FINANCIALS</div>
+
     <div class="boxstep last">
         <a href="new-listing-basics-page.html"><span class="boxstep1"><div class="boxsteptext">BASICS</div></span></a>
-        <a href="new-listing-bmc-page.html"><span class="boxstep2"><div class="boxsteptext">BMC</div></span></a>
-        <a href="new-listing-qa-page.html"><span class="boxstep3"><div class="boxsteptext">Q &amp; A</div></span></a>
-        <span class="boxstep4 boxstepcomplete"><div class="boxsteptext">FINANCIALS</div></span>
-        <a href="new-listing-media-page.html"><span class="boxstep5"><div class="boxsteptext">MEDIA</div></span></a>
+        <a href="new-listing-media-page.html"><span class="boxstep2"><div class="boxsteptext">MEDIA</div></span></a>
+        <a href="new-listing-bmc-page.html"><span class="boxstep3"><div class="boxsteptext">BMC</div></span></a>
+        <a href="new-listing-qa-page.html"><span class="boxstep4"><div class="boxsteptext">Q &amp; A</div></span></a>
+        <span class="boxstep5 boxstepcomplete"><div class="boxsteptext">FINANCIALS</div></span>
         <a href="new-listing-submit-page.html"><span class="boxstep6"><div class="boxsteptext">SUBMIT</div></span></a>
     </div>
-</div>
+
+    <div class="boxstep last">
+        <span class="boxstepn" id="boxstepn"></span>
+        <span class="boxsteptitle">YOU HAVE FILLED <span id="boxsteppct">0</span>% OF YOUR COMPANY PROFILE</span>
+    </div>
 <!-- end banner -->
 
 <!-- left column -->
 <div class="span-16">
-
-    <span class="bannertextsmall span-16">NEW COMPANY WIZARD - FINANCIALS</span>
-
-    <div class="boxstep">
-        <span class="boxstepn" id="boxstepn"></span>
-        <span class="boxsteptitle">YOU HAVE FILLED <span id="boxsteppct">0</span>% OF YOUR COMPANY PROFILE</span>
-    </div>
 
     <div class="boxtitle">INSTRUCTIONS</div>
     <div class="boxpanel">
@@ -152,13 +150,16 @@ listing without asking for any money.
                     <div id="presentation_urlicon"></div>
                 </span>
             </div>
-            <div class="formitem">
+            <div class="formitem uploaditem">
                 <span class="inputfield">
                     <form id="presentationuploadform" method="post" enctype="multipart/form-data" target="presentationuploadiframe" action="#">
                         <input class="text uploadinputbutton" id="PRESENTATION" name="PRESENTATION" size="18" type="file"></input>
                         <iframe id="presentationuploadiframe" name="presentationuploadiframe" src="" class="uploadiframe"></iframe>
                     </form>
                 </span>
+                <a href="" id="presentationdeletelink">
+                    <span class="span-3 inputbutton uploaddelete">DELETE</span>
+                </a>
             </div>
             <div class="formitem clear">
                 <span class="uploadinfo" id="presentationmsg">Powerpoint or PDF presentation, 10-30 slides</span>
@@ -188,13 +189,16 @@ listing without asking for any money.
                     <div id="business_plan_urlicon"></div>
                 </span>
             </div>
-            <div class="formitem">
+            <div class="formitem uploaditem">
                 <span class="inputfield">
                     <form id="business_planuploadform" method="post" enctype="multipart/form-data" target="business_planuploadiframe" action="#">
                         <input class="text uploadinputbutton" id="BUSINESS_PLAN" name="BUSINESS_PLAN" size="18" type="file"></input>
                         <iframe id="business_planuploadiframe" name="business_planuploadiframe" src="" class="uploadiframe"></iframe>
                     </form>
                 </span>
+                <a href="" id="business_plandeletelink">
+                    <span class="span-3 inputbutton uploaddelete">DELETE</span>
+                </a>
             </div>
             <div class="formitem clear">
                 <span class="uploadinfo" id="business_planmsg">Word document or PDF of business plan</span>
@@ -224,13 +228,16 @@ listing without asking for any money.
                     <div id="financials_urlicon"></div>
                 </span>
             </div>
-            <div class="formitem">
+            <div class="formitem uploaditem">
                 <span class="inputfield">
                     <form id="financialsuploadform" method="post" enctype="multipart/form-data" target="financialsuploadiframe" action="#">
                         <input class="text uploadinputbutton" id="FINANCIALS" name="FINANCIALS" size="18" type="file"></input>
                         <iframe id="financialsuploadiframe" name="financialsuploadiframe" src="" class="uploadiframe"></iframe>
                     </form>
                 </span>
+                <a href="" id="financialsdeletelink">
+                    <span class="span-3 inputbutton uploaddelete">DELETE</span>
+                </a>
             </div>
             <div class="formitem clear">
                 <span class="uploadinfo" id="financialsmsg">Spreadsheet or PDF of financials, can be unaudited</span>
