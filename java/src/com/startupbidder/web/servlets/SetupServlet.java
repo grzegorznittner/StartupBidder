@@ -1,7 +1,9 @@
 package com.startupbidder.web.servlets;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -10,6 +12,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.FileUtils;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
@@ -19,6 +22,7 @@ import com.google.appengine.api.datastore.Index.IndexState;
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
+import com.startupbidder.dao.MockDataBuilder;
 import com.startupbidder.vo.SystemPropertyVO;
 import com.startupbidder.vo.UserVO;
 import com.startupbidder.web.FrontController;
@@ -62,6 +66,8 @@ public class SetupServlet extends HttpServlet {
 			//	out.println("<p>You're not authorized to use setup page! Only Admin users can access this page! </p>");
 			//	return;
 			//}
+			
+			out.println("Mock data files will be fetched from: " + new MockDataBuilder().getTestDataPath() + "</br>");
 			
 			out.println("<form method=\"POST\" action=\"/system/create-mock-datastore/.html\">"
 					+ "<input type=\"submit\" value=\"Recreate mock datastore\"/></form>");

@@ -155,6 +155,10 @@
 	</target>
 	
   <target name="runserver" description="Starts the development server.">
+	<mkdir dir="war/test-docs"/>
+    <copy todir="war/test-docs">
+      <fileset dir="tests/test-docs"/>
+    </copy>
   	<extract_host_and_port proxy="${env.http_proxy}" host_property="http_proxy_host" port_property="http_proxy_port"/>
   	<extract_host_and_port proxy="${env.https_proxy}" host_property="https_proxy_host" port_property="https_proxy_port"/>
   	<dev_appserver war="war" port="7777" >

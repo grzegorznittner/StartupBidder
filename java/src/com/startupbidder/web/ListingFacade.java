@@ -1,5 +1,6 @@
 package com.startupbidder.web;
 
+import java.io.File;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.ByteBuffer;
@@ -14,6 +15,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -243,9 +245,29 @@ public class ListingFacade {
 		byte[] docBytes = null;
 		String mimeType = null;
 		try {
-			URLConnection con = new URL(prop.getPropertyValue()).openConnection();
-			docBytes = IOUtils.toByteArray(con.getInputStream());
-			mimeType = con.getContentType();
+			if(com.google.appengine.api.utils.SystemProperty.environment.value() == com.google.appengine.api.utils.SystemProperty.Environment.Value.Development
+					&& new File("./test-docs").exists()) {
+				docBytes = FileUtils.readFileToByteArray(new File(prop.getPropertyValue()));
+				if (prop.getPropertyValue().endsWith(".gif")) {
+					mimeType = "image/gif";
+				} else if (prop.getPropertyValue().endsWith(".jpg")) {
+					mimeType = "image/jpeg";
+				} else if (prop.getPropertyValue().endsWith(".png")) {
+					mimeType = "image/png";
+				} else if (prop.getPropertyValue().endsWith(".doc")) {
+					mimeType = "application/msword";
+				} else if (prop.getPropertyValue().endsWith(".ppt")) {
+					mimeType = "application/vnd.ms-powerpoint";
+				} else if (prop.getPropertyValue().endsWith(".xls")) {
+					mimeType = "application/vnd.ms-excel";
+				} else if (prop.getPropertyValue().endsWith(".pdf")) {
+					mimeType = "application/pdf";
+				}
+			} else {
+				URLConnection con = new URL(prop.getPropertyValue()).openConnection();
+				docBytes = IOUtils.toByteArray(con.getInputStream());
+				mimeType = con.getContentType();
+			}
 			log.info("Fetched " + docBytes.length + " bytes, content type '" + mimeType
 					+ "', from '" + prop.getPropertyValue() + "'");
 		} catch (Exception e) {

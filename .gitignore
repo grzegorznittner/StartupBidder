@@ -16,6 +16,7 @@ war/.settings
 war/css
 war/js
 war/img
+war/test-docs
 war/*.png
 war/*.html
 war/*.txt
@@ -25,5 +26,6 @@ war/WEB-INF/appengine-web.xml
 war/WEB-INF/classes
 war/WEB-INF/web.xml
 war/WEB-INF/lib/appengine*
+war/WEB-INF/lib/datanucleus*
 mockup/*.html
 WEB-INF

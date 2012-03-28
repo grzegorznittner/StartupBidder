@@ -1,6 +1,7 @@
 package com.startupbidder.dao;
 
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -141,6 +142,11 @@ public class MockDataBuilder {
 //		output.append("Scheduled user statistics update.</br>");
 		// update listing stats
 		for (Listing listing : listings) {
+			if (listing.state == Listing.State.NEW || listing.state == Listing.State.POSTED) {
+				SBUser owner = getOfy().find(listing.owner);
+				owner.editedListing = new Key<Listing>(Listing.class, listing.id);
+				getOfy().put(owner);
+			}
 			ObjectifyDatastoreDAO.getInstance().updateListingStatistics(listing.id);
 			
 			String taskName = new Date().getTime() + "_mock_listing_file_update_" + listing.getWebKey();
@@ -973,20 +979,20 @@ public class MockDataBuilder {
 	}
 	
 	private String[] videos = {
-			"http://www.youtube.com/watch?v=ufTtT1rKUAk",
-			"http://www.youtube.com/watch?v=qRO38UQGH7A",
-			"http://www.youtube.com/watch?v=1vnDOzPrxxw",
-			"http://www.youtube.com/watch?v=dMkp40_Dr0E",
-			"http://www.youtube.com/watch?v=GVNPbvdW9uA",
-			"http://www.youtube.com/watch?v=08qGjZwj914",
-			"http://www.youtube.com/watch?v=x_hIqmjOwAM",
-			"http://www.youtube.com/watch?v=3WXdxlMwUvk"
-//			"http://vimeo.com/36258512",
-//			"http://vimeo.com/27973852",
-//			"http://vimeo.com/14866982",
-//			"http://vimeo.com/20250134",
-//			"http://vimeo.com/15060334",
-//			"http://vimeo.com/16544905",
+			"http://www.youtube.com/embed/ufTtT1rKUAk",
+			"http://www.youtube.com/embed/qRO38UQGH7A",
+			"http://www.youtube.com/embed/1vnDOzPrxxw",
+			"http://www.youtube.com/embed/dMkp40_Dr0E",
+			"http://www.youtube.com/embed/GVNPbvdW9uA",
+			"http://www.youtube.com/embed/08qGjZwj914",
+			"http://www.youtube.com/embed/x_hIqmjOwAM",
+			"http://www.youtube.com/embed/3WXdxlMwUvk",
+			"http://player.vimeo.com/video/36258512?title=0&byline=0&portrait=0",
+			"http://player.vimeo.com/video/27973852?title=0&byline=0&portrait=0",
+			"http://player.vimeo.com/video/14866982?title=0&byline=0&portrait=0",
+			"http://player.vimeo.com/video/20250134?title=0&byline=0&portrait=0",
+			"http://player.vimeo.com/video/15060334?title=0&byline=0&portrait=0",
+			"http://player.vimeo.com/video/16544905?title=0&byline=0&portrait=0"
 //			"http://www.dailymotion.com/video/xe99rh_women-in-the-business-world_lifestyle",
 //			"http://www.dailymotion.com/video/xe98f2_small-business-stories-armchair-adv_lifestyle",
 //			"http://www.dailymotion.com/video/xe965l_how-to-become-a-financially-indepen_lifestyle",
@@ -1141,7 +1147,12 @@ public class MockDataBuilder {
 			"I tend to live in the past because most of my life is there."
 	};
 
-	private String getTestDataPath() {
-		return "https://github.com/grzegorznittner/StartupBidder/raw/master/tests/test-docs/";
+	public String getTestDataPath() {
+		if(com.google.appengine.api.utils.SystemProperty.environment.value() == com.google.appengine.api.utils.SystemProperty.Environment.Value.Development
+				&& new File("./test-docs").exists()) {
+			return "./test-docs/";
+		} else {
+			return "https://github.com/grzegorznittner/StartupBidder/raw/master/tests/test-docs/";
+		}
 	}
 }

@@ -47,4 +47,8 @@ public class ListingPropertyVO {
 	public void setPropertyValue(String propertyValue) {
 		this.propertyValue = propertyValue;
 	}
+	
+	public String toString() {
+		return "ListingProperty(name='" + propertyName + "', value='" + propertyValue + "')";
+	}
 }
