@@ -63,17 +63,8 @@ public class SetupServlet extends HttpServlet {
 			//	return;
 			//}
 			
-			out.println("<form method=\"POST\" action=\"/system/print-datastore/.html\">"
-					+ "<input type=\"submit\" value=\"Print datastore\"/></form>");
-
-			//out.println("<form method=\"POST\" action=\"/system/export-datastore/.json\">"
-			//		+ "<input type=\"submit\" value=\"Export datastore\"/></form>");
-
-			out.println("<form method=\"POST\" action=\"/system/clear-datastore/.html\">"
-					+ "<input type=\"submit\" value=\"Clear datastore\"/></form>");
-
 			out.println("<form method=\"POST\" action=\"/system/create-mock-datastore/.html\">"
-					+ "<input type=\"submit\" value=\"Create mock datastore\"/></form>");
+					+ "<input type=\"submit\" value=\"Recreate mock datastore\"/></form>");
 
 			out.println("<form method=\"GET\" action=\"/cron/update-listing-stats/.html\">"
 					+ "<input type=\"submit\" value=\"Update all listings stats\"/></form>");

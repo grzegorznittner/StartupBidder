@@ -60,8 +60,8 @@ public class TaskController extends ModelDrivenController {
 			return calculateUserStats(request);
 		} else if("calculate-listing-stats".equalsIgnoreCase(getCommand(1))) {
 			return calculateListingStats(request);
-		} else if("set-datastore".equalsIgnoreCase(getCommand(1))) {
-			return setDatastore(request);
+		}  else if("update-mock-listing-images".equalsIgnoreCase(getCommand(1))) {
+			return updateMockListingImages(request);
 		} else if("send-accepted-bid-notification".equalsIgnoreCase(getCommand(1))) {
 			return sendAcceptedBidNotification(request);
 		} else if("send-notification".equalsIgnoreCase(getCommand(1))) {
@@ -86,6 +86,15 @@ public class TaskController extends ModelDrivenController {
 		ListingFacade.instance().calculateListingStatistics(ListingVO.toKeyId(listingId));
 		ListingVO listing = ListingFacade.instance().getListing(null, listingId).getListing();
 		DocService.instance().updateListingData(listing);
+		
+		return headers;
+	}
+
+	private HttpHeaders updateMockListingImages(HttpServletRequest request) {
+		HttpHeaders headers = new HttpHeadersImpl("update-mock-listing-images");
+		
+		String listingId = getCommandOrParameter(request, 2, "id");
+		ListingFacade.instance().updateMockListingImages(ListingVO.toKeyId(listingId));
 		
 		return headers;
 	}
@@ -269,12 +278,6 @@ public class TaskController extends ModelDrivenController {
 			return ListingFacade.instance().getListing(null, notification.getObject()).getListing();
 		}
 		return null;
-	}
-
-	private HttpHeaders setDatastore(HttpServletRequest request) {
-		HttpHeaders headers = new HttpHeadersImpl("set-datastore");
-
-		return headers;
 	}
 
 	@Override

@@ -41,6 +41,7 @@ import com.google.appengine.api.taskqueue.QueueFactory;
 import com.google.appengine.api.taskqueue.TaskOptions;
 import com.google.appengine.api.utils.SystemProperty;
 import com.googlecode.objectify.Key;
+import com.startupbidder.dao.MockDataBuilder;
 import com.startupbidder.dao.ObjectifyDatastoreDAO;
 import com.startupbidder.datamodel.Category;
 import com.startupbidder.datamodel.Listing;
@@ -194,7 +195,7 @@ public class ListingFacade {
 			} else if (ListingVO.FETCHED_PROPERTIES.contains(propertyName)) {
 				ListingDoc doc = fetchAndUpdateListingDoc(listing, prop);
 				if (doc != null) {
-					Listing updatedlisting = updateListingDoc(loggedInUser, listing, doc);
+					Listing updatedlisting = updateListingDoc(listing, doc);
 					if (updatedlisting != null) {
 						listing = updatedlisting;
 						fetchedDoc = true;
@@ -962,7 +963,7 @@ public class ListingFacade {
 		log.log(Level.INFO, "Calculated listing stats for '" + listingId + "' : " + listingStats);
 		return listingStats;
 	}
-
+	
 	public void scheduleUpdateOfListingStatistics(String listingWebKey, UpdateReason reason) {
 		log.log(Level.INFO, "Scheduling listing stats update for '" + listingWebKey + "', reason: " + reason);
 		ListingStats listingStats = getDAO().getListingStatistics(VoToModelConverter.stringToKey(listingWebKey).getId());
@@ -1004,7 +1005,8 @@ public class ListingFacade {
 			doc.setErrorMessage("User is not editing listing");
 			return doc;
 		}
-		Listing listing = getDAO().getListing(BaseVO.toKeyId(loggedInUser.getEditedListing()));
+		long editedListingId = BaseVO.toKeyId(loggedInUser.getEditedListing());
+		Listing listing = getDAO().getListing(editedListingId);
 		if (ListingDoc.Type.valueOf(doc.getType()) == ListingDoc.Type.LOGO) {
 			BlobInfo logoInfo = new BlobInfoFactory().loadBlobInfo(doc.getBlob());
 			byte logo[] = blobstoreService.fetchData(doc.getBlob(), 0, logoInfo.getSize() - 1);
@@ -1019,12 +1021,12 @@ public class ListingFacade {
 		docDTO = getDAO().createListingDocument(docDTO);
 		doc = DtoToVoConverter.convert(docDTO);
 		
-		updateListingDoc(loggedInUser, listing, docDTO);
+		updateListingDoc(listing, docDTO);
 		
 		return doc;
 	}
 
-	private Listing updateListingDoc(UserVO loggedInUser, Listing listing, ListingDoc docDTO) {		
+	private Listing updateListingDoc(Listing listing, ListingDoc docDTO) {
 		log.info("Updating listing document " + docDTO);
 		Key<ListingDoc> replacedDocId = null;
 		switch(docDTO.type) {
@@ -1203,4 +1205,34 @@ public class ListingFacade {
 		}
 		return result;
 	}
+
+	public void updateMockListingImages(long listingId) {
+		MockDataBuilder mock = new MockDataBuilder();
+		
+		List<ListingPropertyVO> props = new ArrayList<ListingPropertyVO>();
+		props.add(new ListingPropertyVO("business_plan_url", mock.getBusinessPlan()));
+		props.add(new ListingPropertyVO("presentation_url", mock.getPresentation()));
+		props.add(new ListingPropertyVO("financials_url", mock.getFinancials()));
+		props.add(new ListingPropertyVO("logo_url", mock.getLogo()));
+		
+		Listing listing = getDAO().getListing(listingId);
+		for (ListingPropertyVO prop : props) {
+			if (prop.getPropertyValue() == null) {
+				continue;
+			}
+			ListingDoc doc = fetchAndUpdateListingDoc(listing, prop);
+			if (doc != null) {
+				Listing updatedlisting = updateListingDoc(listing, doc);
+				if (updatedlisting != null) {
+					listing = updatedlisting;
+				} else {
+					log.warning("Error updating listing. " + listing);
+				}
+			} else {
+				log.warning("Error while fetching/converting external resource. " + prop);
+			}
+		}
+		getDAO().storeListing(listing);		
+	}
+	
 }

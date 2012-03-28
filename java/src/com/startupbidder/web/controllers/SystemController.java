@@ -59,32 +59,37 @@ public class SystemController extends ModelDrivenController {
 	private HttpHeaders setProperty(HttpServletRequest request) {
 		HttpHeaders headers = new HttpHeadersImpl("set-property");
 		
-		String name = request.getParameter("name");
-		String value = request.getParameter("value");
-		
-		SystemPropertyVO property = new SystemPropertyVO();
-		property.setName(name);
-		property.setValue(value);
-		model = ServiceFacade.instance().setSystemProperty(getLoggedInUser(), property);
-
-		String name1 = request.getParameter("name.1");
-		if (!StringUtils.isEmpty(name)) {
-			String value1 = request.getParameter("value.1");
-			property = new SystemPropertyVO();
-			property.setName(name1);
-			property.setValue(value1);
-			ServiceFacade.instance().setSystemProperty(getLoggedInUser(), property);
+		UserVO loggedInUser = getLoggedInUser();
+		if (loggedInUser != null && loggedInUser.isAdmin()) {
+			String name = request.getParameter("name");
+			String value = request.getParameter("value");
 			
-			if (SystemProperty.GOOGLEDOC_USER.equals(name) && SystemProperty.GOOGLEDOC_PASSWORD.equals(name1)) {
-				DocsService client = new DocsService("www-startupbidder-v1");
-				try {
-					client.setUserCredentials(value, value1);
-					model = "Google Doc user/password verified!";
-				} catch (AuthenticationException e) {
-					model = "Google Doc user/password verification error!";
-					log.log(Level.SEVERE, "Error while logging to GoogleDoc!", e);
+			SystemPropertyVO property = new SystemPropertyVO();
+			property.setName(name);
+			property.setValue(value);
+			model = ServiceFacade.instance().setSystemProperty(getLoggedInUser(), property);
+	
+			String name1 = request.getParameter("name.1");
+			if (!StringUtils.isEmpty(name)) {
+				String value1 = request.getParameter("value.1");
+				property = new SystemPropertyVO();
+				property.setName(name1);
+				property.setValue(value1);
+				ServiceFacade.instance().setSystemProperty(getLoggedInUser(), property);
+				
+				if (SystemProperty.GOOGLEDOC_USER.equals(name) && SystemProperty.GOOGLEDOC_PASSWORD.equals(name1)) {
+					DocsService client = new DocsService("www-startupbidder-v1");
+					try {
+						client.setUserCredentials(value, value1);
+						model = "Google Doc user/password verified!";
+					} catch (AuthenticationException e) {
+						model = "Google Doc user/password verification error!";
+						log.log(Level.SEVERE, "Error while logging to GoogleDoc!", e);
+					}
 				}
 			}
+		} else {
+			headers.setStatus(500);
 		}
 
 		return headers;
@@ -93,10 +98,8 @@ public class SystemController extends ModelDrivenController {
 	private HttpHeaders clearDatastore(HttpServletRequest request) {
 		HttpHeaders headers = new HttpHeadersImpl("clear-datastore");
 		
-		UserService userService = UserServiceFactory.getUserService();
-		User user = userService.getCurrentUser();
-		if (user != null) {
-			UserVO loggedInUser = UserMgmtFacade.instance().getLoggedInUserData(user);
+		UserVO loggedInUser = getLoggedInUser();
+		if (loggedInUser != null && loggedInUser.isAdmin()) {
 			String deletedObjects = new MockDataBuilder().clearDatastore(loggedInUser);
 			model = deletedObjects;
 		} else {
@@ -106,13 +109,12 @@ public class SystemController extends ModelDrivenController {
 	}
 	
 	private HttpHeaders createMockDatastore(HttpServletRequest request) {
-		HttpHeaders headers = new HttpHeadersImpl("create-mock-datastore");
+		HttpHeaders headers = new HttpHeadersImpl("recreate-mock-datastore");
 		
-		UserService userService = UserServiceFactory.getUserService();
-		User user = userService.getCurrentUser();
-		if (user != null) {
-			UserVO loggedInUser = UserMgmtFacade.instance().getLoggedInUserData(user);
-			model = new MockDataBuilder().createMockDatastore(loggedInUser != null ? loggedInUser.toKeyId() : 0);
+		UserVO loggedInUser = getLoggedInUser();
+		if (loggedInUser != null && loggedInUser.isAdmin()) {
+			String deletedObjects = new MockDataBuilder().clearDatastore(loggedInUser);
+			model = deletedObjects + new MockDataBuilder().createMockDatastore();
 		} else {
 			headers.setStatus(500);
 		}
@@ -122,9 +124,7 @@ public class SystemController extends ModelDrivenController {
 	private HttpHeaders printDatastoreContents(HttpServletRequest request) {
 		HttpHeaders headers = new HttpHeadersImpl("print-datastore");
 		
-		UserService userService = UserServiceFactory.getUserService();
-		User user = userService.getCurrentUser();
-		UserVO loggedInUser = UserMgmtFacade.instance().getLoggedInUserData(user);
+		UserVO loggedInUser = getLoggedInUser();
 		if (loggedInUser != null && loggedInUser.isAdmin()) {
 			String printedObjects = new MockDataBuilder().printDatastoreContents(loggedInUser);
 			model = printedObjects;
@@ -137,8 +137,7 @@ public class SystemController extends ModelDrivenController {
 	private HttpHeaders exportDatastore(HttpServletRequest request) {
 		HttpHeaders headers = new HttpHeadersImpl("export-datastore");
 		
-		UserService userService = UserServiceFactory.getUserService();
-		UserVO loggedInUser = UserMgmtFacade.instance().getLoggedInUserData(userService.getCurrentUser());
+		UserVO loggedInUser = getLoggedInUser();
 		if (loggedInUser != null && loggedInUser.isAdmin()) {
 			model = new MockDataBuilder().exportDatastoreContents(loggedInUser);
 		

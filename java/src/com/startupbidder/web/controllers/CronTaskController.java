@@ -46,7 +46,7 @@ public class CronTaskController extends ModelDrivenController {
 
 		return headers;
 	}
-
+	
 	private HttpHeaders updateUserStats(HttpServletRequest request) {
 		HttpHeaders headers = new HttpHeadersImpl("update-user-stats");
 		

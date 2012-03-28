@@ -102,7 +102,7 @@ public class DocService {
 				newDocument.setWritersCanInvite(false);
 				client.insert(new URL("https://docs.google.com/feeds/default/private/full/" + summaryId + "/contents"), newDocument);
 			}
-			byte[] bytes = (listing.getOwnerName() + " " + listing.getName() + " " + listing.getSummary()).getBytes();
+			byte[] bytes = listing.dataForSearch().getBytes();
 			newDocument.setEtag("*");
 			newDocument.setMediaSource(new MediaByteArraySource(bytes,
 					DocumentListEntry.MediaType.TXT.getMimeType()));

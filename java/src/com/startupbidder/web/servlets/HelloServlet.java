@@ -95,20 +95,7 @@ public class HelloServlet extends HttpServlet {
 			Listing topListing = listings != null ? listings.get(0) : new Listing();
 
 			List<SBUser> users = datastore.getAllUsers();
-			SBUser topInvestor = null;
-			int maxBids = 0;
-			for (SBUser userItem : users) {
-				List<Bid> bids = datastore.getBidsForUser(userItem.id);
-				if (bids.size() > maxBids) {
-					maxBids = bids.size();
-					topInvestor = userItem;
-				}
-			}
-			if (topInvestor == null) {
-				out.println("<p>Method getBidsForUser returned empty results for all users!</p>");
-			}
 
-			List<Bid> bids = datastore.getBidsForUser(topInvestor.id);
 			List<Listing> usersListings = datastore.getUserActiveListings(currentUser.toKeyId(), listProperties);
 			List<Comment> comments = datastore.getCommentsForListing(datastore.getMostDiscussedListings(listProperties).get(0).id);
 			
@@ -120,7 +107,6 @@ public class HelloServlet extends HttpServlet {
 			out.println("<a href=\"/user/all/.json\">All users</a><br/>");
 			out.println("<form method=\"POST\" action=\"/user/activate/" + currentUser.getId() + "/.json\"><input type=\"submit\" value=\"Activates logged in user\"/></form>");
 			out.println("<form method=\"POST\" action=\"/user/deactivate/" + currentUser.getId() + "/.json\"><input type=\"submit\" value=\"Deactivates logged in user\"/></form>");
-			out.println("<form method=\"POST\" action=\"/user/up/" + topInvestor.getWebKey() + "/.json\"><input type=\"submit\" value=\"Logged in user votes for top investor\"/></form>");
 			out.println("<a href=\"/user/votes/" + currentUser.getId() + "/.json\">Logged in user votes</a><br/>");
 			out.println("<form method=\"GET\" action=\"/user/check-user-name/.json\"><input name=\"name\" type=\"text\" value=\"greg\"/>"
 					+ "<input type=\"submit\" value=\"Check user name\"/></form>");
@@ -191,7 +177,6 @@ public class HelloServlet extends HttpServlet {
 			out.println("<a href=\"/listings/popular/.json?max_results=6\">Most popular listings</a><br/>");
 			out.println("<a href=\"/listings/latest/.json?max_results=6\">Latest listings</a><br/>");
 			out.println("<a href=\"/listings/closing/.json?max_results=6\">Closing listings</a><br/>");
-			out.println("<a href=\"/listings/user/" + topInvestor.getWebKey() + "/.json?max_results=6\">Top investor's listings</a><br/>");
 			out.println("<form method=\"GET\" action=\"/listing/keyword/.json\"><input name=\"text\" type=\"text\" value=\"business\"/>"
 					+ "<input type=\"submit\" value=\"Keyword search\"/></form>");
 

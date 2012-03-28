@@ -21,11 +21,9 @@ import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.appengine.api.utils.SystemProperty;
-import com.startupbidder.datamodel.Listing;
 import com.startupbidder.vo.BaseResultVO;
 import com.startupbidder.vo.ErrorCodes;
 import com.startupbidder.vo.ListPropertiesVO;
-import com.startupbidder.vo.ListingVO;
 import com.startupbidder.vo.UserVO;
 
 /**

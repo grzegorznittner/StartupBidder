@@ -106,6 +106,51 @@ public class ListingVO extends BaseVO {
 	
 	public ListingVO() {
 	}
+	
+	public String dataForSearch() {
+		StringBuffer buf = new StringBuffer();
+		appendText(buf, name);
+		appendText(buf, mantra);
+		appendText(buf, summary);
+		appendText(buf, website);
+		appendText(buf, ownerName);
+		appendText(buf, founders);
+		appendText(buf, contactEmail);
+		appendText(buf, briefAddress);
+		appendText(buf, answer1);
+		appendText(buf, answer2);
+		appendText(buf, answer3);
+		appendText(buf, answer4);
+		appendText(buf, answer5);
+		appendText(buf, answer6);
+		appendText(buf, answer7);
+		appendText(buf, answer8);
+		appendText(buf, answer9);
+		appendText(buf, answer10);
+		appendText(buf, answer11);
+		appendText(buf, answer12);
+		appendText(buf, answer13);
+		appendText(buf, answer14);
+		appendText(buf, answer15);
+		appendText(buf, answer16);
+		appendText(buf, answer17);
+		appendText(buf, answer18);
+		appendText(buf, answer19);
+		appendText(buf, answer20);
+		appendText(buf, answer21);
+		appendText(buf, answer22);
+		appendText(buf, answer23);
+		appendText(buf, answer24);
+		appendText(buf, answer25);
+		appendText(buf, answer26);
+		return buf.toString();
+	}
+	
+	private void appendText(StringBuffer buf, String value) {
+		if (value != null) {
+			buf.append(value).append("\n");
+		}
+	}
 
 	public int getOrderNumber() {
 		return orderNumber;
