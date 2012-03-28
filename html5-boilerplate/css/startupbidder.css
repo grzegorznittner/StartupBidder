@@ -325,7 +325,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .freezebox { display: none; }
 .freezemsg { display: none; font-weight: bold; }
 .freezecancelbtn { display: none; margin-top: 10px; }
-
+.mapaddresstext { font-weight: bold; }
 
 /* upload */
 .uploadiframe { width: 0; height: 0; border: 0 solid #fff; }

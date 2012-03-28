@@ -80,13 +80,40 @@ pl.implement(NewListingBasicsClass, {
             }
             field.fieldBase.addValidator(validators[id]);
             field.fieldBase.validator.postValidator = this.base.genDisplayCalculatedIfValid(field);
-            field.bindEvents(id === 'address' ? {noAutoUpdate:true} : {});
+            if (id !== 'address') {
+                field.bindEvents();
+            }
             this.base.fields.push(field);
             this.base.fieldMap[id] = field;
         } 
         this.loadCategories();
         this.addMap(this.placeUpdater);
+        this.bindAddressEnterSubmit();
         this.base.bindNavButtons();
+    },
+    bindAddressEnterSubmit: function() {
+        var self = this;
+        pl('#address').bind({
+            keyup: function(e) {
+                var input, geocoder;
+                if (e.keyCode === 13) {
+                    address = pl('#address').attr('value'),
+                    geocoder = new google.maps.Geocoder();
+                    geocoder.geocode({address: address}, function(results, status) {
+                        if (status == google.maps.GeocoderStatus.OK) {
+                            self.placeUpdater(results[0]);
+                        }
+                        else {
+                            pl('#newlistingmsg').html('<span class="attention">Could not geocode results: ' + status + '</span>');
+                        }
+                    });
+                    return false;
+                }
+                else {
+                    return true;
+                }
+            }
+         });
     },
     placeUpdater: function(place) {
         var self = this,
@@ -95,30 +122,9 @@ pl.implement(NewListingBasicsClass, {
                 pl('#address').attr({value: val});
             },
             data = { listing: {
-                        address: place.formatted_address,
-                        city: place.vicinity,
-                        state: '',
-                        country: '',
-                        latitude: place.geometry.location.Ua,
-                        longitude: place.geometry.location.Va
+                        update_address: place
                     } },
-            ajax = new AjaxClass('/listing/update_field', 'newlistingmsg', completeFunc),
-            addrcomp,
-            type,
-            i,
-            j;
-            for (i = 0; i < place.address_components.length; i++) {
-                addrcomp = place.address_components[i];
-                for (j = 0; j < addrcomp.types.length; j++) {
-                    type = addrcomp.types[j];
-                    if (type === 'country') {
-                        data.listing.country = addrcomp.long_name;
-                    }
-                    else if (type === 'administrative_area_level_1') {
-                        data.listing.state = addrcomp.long_name;
-                    }
-                }
-            }
+            ajax = new AjaxClass('/listing/update_field', 'newlistingmsg', completeFunc);
         ajax.setPostData(data);
         ajax.call();
     },

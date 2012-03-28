@@ -87,7 +87,7 @@ pl.implement(ListingClass, {
     displayMap: function() {
         this.address = this.brief_address || 'Unknown Address';
         //this.addressurl = this.addressurl || 'http://nominatim.openstreetmap.org/search?q=' + encodeURIComponent(this.address);
-        this.addressurl = 'http://maps.google.com/maps?q=' + encodeURI(this.title) + ',' + encodeURI(this.address);
+        this.addressurl = 'http://maps.google.com/maps?output=embed&q=' + encodeURI(this.title) + ',' + encodeURI(this.address);
         this.latitude = this.latitude || '51.499117116569';
         this.longitude = this.longitude || '-0.12359619140625';
         //this.mapurl = 'http://ojw.dev.openstreetmap.org/StaticMap/?lat=' + this.latitude + '&lon=' + this.longitude + '&z=5&show=1&fmt=png&w=302&h=302&att=none';
