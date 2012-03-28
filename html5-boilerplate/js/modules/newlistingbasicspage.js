@@ -1,7 +1,7 @@
 function NewListingBasicsClass() {
     var base = new NewListingBaseClass();
     base.prevPage = '',
-    base.nextPage = '/new-listing-bmc-page.html';
+    base.nextPage = '/new-listing-media-page.html';
     this.base = base;
 }
 pl.implement(NewListingBasicsClass, {
@@ -47,7 +47,7 @@ pl.implement(NewListingBasicsClass, {
         }
     },
     bindEvents: function() {
-        var textFields = ['title', 'category', 'mantra', 'address', 'website', 'contact_email'],
+        var textFields = ['title', 'category', 'mantra', 'website', 'founders', 'contact_email', 'address'],
             validators = {
                 title: ValidatorClass.prototype.isNotEmpty,
                 category: ValidatorClass.prototype.isSelected,
@@ -66,6 +66,7 @@ pl.implement(NewListingBasicsClass, {
                 contact_email: TextFieldClass,
                 address: TextFieldClass
             },
+            i,
             id,
             field,
             addr;
@@ -74,11 +75,8 @@ pl.implement(NewListingBasicsClass, {
         for (i = 0; i < textFields.length; i++) {
             id = textFields[i];
             field = new (classes[id])(id, this.base.listing[id], this.base.getUpdater(id), 'newlistingmsg');
-            if (id === 'address') {
-                field.fieldBase.setDisplayName('LOCATION');
-            }
-            if (id === 'contact_email') {
-                field.fieldBase.setDisplayName('EMAIL');
+            if (this.base.displayNameOverrides[id]) {
+                field.fieldBase.setDisplayName(this.base.displayNameOverrides[id]);
             }
             field.fieldBase.addValidator(validators[id]);
             field.fieldBase.validator.postValidator = this.base.genDisplayCalculatedIfValid(field);

@@ -1,6 +1,6 @@
 function NewListingSubmitClass() {
     var base = new NewListingBaseClass();
-    base.prevPage = '/new-listing-media-page.html';
+    base.prevPage = '/new-listing-financials-page.html';
     base.nextPage = '/new-listing-submitted-page.html';
     this.base = base;
 }
@@ -32,19 +32,56 @@ pl.implement(NewListingSubmitClass, {
             completeFunc = function(json) {
                 document.location = self.base.nextPage;
             },
-            // FIXME - add error class to handle error_msg field
             ajax = new AjaxClass('/listing/post', 'newlistingmsg', completeFunc);
         ajax.setPost();
         ajax.call();
     },
+    highlightMissing: function() {
+        var self = this,
+            msg = '',
+            msgs = [],
+            errorpages = {},
+            missing,
+            displayName,
+            page,
+            i;
+        for (i = 0; i < self.base.missingprops.length; i++) {
+            missing = self.base.missingprops[i];
+            page = self.base.proppage[missing];
+            if (!errorpages[page]) {
+                errorpages[page] = [];
+            }
+            displayName = self.base.displayNameOverrides[missing] || missing.toUpperCase();
+            errorpages[page].push(displayName);
+        }
+        for (i = 0; i < self.base.pages.length; i++ ) {
+            page = self.base.pages[i];
+            self.highlightPage(page, errorpages[page]);
+        }
+        for (page in errorpages) {
+            msg = page.toUpperCase() + ' page: ' + errorpages[page].join(', ');
+            msgs.push(msg);
+        }
+        return msgs.join('; ');
+    },
+    highlightPage: function(page, iserror) {
+        var boxsel = '#' + page + 'boxstep';
+        if (iserror && !pl(boxsel).hasClass('boxsteperror')) {
+            pl(boxsel).addClass('boxsteperror');
+        }
+        else if (!iserror && pl(boxsel).hasClass('boxsteperror')) {
+            pl(boxsel).removeClass('boxsteperror');
+        }
+    },
     bindEvents: function() {
         var self = this,
             submitValidator = function() {
-                var msgs = [],
+                var msg,
+                    msgs = [],
                     pctcomplete = self.base.pctComplete();
                 if (pctcomplete !== 100) {
-                    console.log('missing:', self.base.missingprops);
-                    msgs.push('You must complete all fields before submitting, missing fields: ' + self.base.missingprops.join(', '));
+                    msg = self.highlightMissing();
+                    msgs.push('Missing info: ' + msg);
                 }
                 else {
                     msgs.push('Submitting listing...');

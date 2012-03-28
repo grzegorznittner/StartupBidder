@@ -141,26 +141,6 @@ pl.implement(NewListingQAClass, {
     },
     bindEvents: function() {
         var textFields = ['summary'],
-            displayName = { summary: 'ELEVATOR PITCH' },
-            answerFields = [
-                'PROBLEM',
-                'SOLUTION',
-                'FEATURES AND BENEFITS',
-                'COMPANY STATUS',
-                'MARKET',
-                'CUSTOMER',
-                'COMPETITORS',
-                'COMPETITIVE COMPARISON',
-                'BUSINESS MODEL',
-                'MARKETING PLAN',
-                'TEAM',
-                'TEAM VALUES',
-                'CURRENT FINANCIALS',
-                'FINANCIAL PROJECTIONS',
-                'OWNERS',
-                'INVESTMENT',
-                'TIMELINE AND WRAPUP'
-            ],
             msgFields = [
                 'introductionmsg',
                 'problemmsg',
@@ -181,21 +161,22 @@ pl.implement(NewListingQAClass, {
                 'financialmsg',
                 'timelinemsg'
             ],
-            id,
+            m = 10,
+            n = 26,
             i,
-            idx,
+            id,
             field;
         this.base.fields = [];
-        for (i = 0; i < answerFields.length; i++) {
-            idx = 10 + i;
-            id = 'answer' + idx;
+        for (i = m; i <= n; i++) {
+            id = 'answer' + i;
             textFields.push(id);
-            displayName[id] = answerFields[i];
         }
         for (i = 0; i < textFields.length; i++) {
             id = textFields[i];
             field = new TextFieldClass(id, this.base.listing[id], this.getUpdater(id), msgFields[i]);
-            field.fieldBase.setDisplayName(displayName[id].toUpperCase());
+            if (this.base.displayNameOverrides[id]) {
+                field.fieldBase.setDisplayName(this.base.displayNameOverrides[id]);
+            }
             field.fieldBase.addValidator(ValidatorClass.prototype.makeLengthChecker(16, 1000));
             field.fieldBase.validator.postValidator = this.genDisplayPresentation(field);
             field.bindEvents({noEnterKeySubmit: true});

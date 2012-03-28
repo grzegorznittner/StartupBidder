@@ -1,6 +1,6 @@
 function NewListingBMCClass() {
     var base = new NewListingBaseClass();
-    base.prevPage = '/new-listing-basics-page.html';
+    base.prevPage = '/new-listing-media-page.html';
     base.nextPage = '/new-listing-qa-page.html';
     this.base = base;
 }
@@ -68,18 +68,6 @@ pl.implement(NewListingBMCClass, {
     },
     bindEvents: function() {
         var textFields = [],
-            displayName = {},
-            answerFields = [
-                'KEY ACTIVITIES',
-                'KEY RESOURCES',
-                'KEY PARTNERS',
-                'VALUE PROPOSITIONS',
-                'CUSTOMER SEGMENTS',
-                'CHANNELS',
-                'CUSTOMER RELATIONSHIPS',
-                'COST STRUCTURE',
-                'REVENUE STREAMS'
-            ],
             msgFields = [
                 'infrastructuremsg',
                 'infrastructuremsg',
@@ -91,21 +79,22 @@ pl.implement(NewListingBMCClass, {
                 'financesmsg',
                 'financesmsg'
             ],
-            id,
+            m = 1,
+            n = 9,
             i,
-            idx,
+            id,
             field;
         this.base.fields = [];
-        for (i = 0; i < answerFields.length; i++) {
-            idx = 1 + i;
-            id = 'answer' + idx;
+        for (i = m; i <= n; i++) {
+            id = 'answer' + i;
             textFields.push(id);
-            displayName[id] = answerFields[i];
         }
         for (i = 0; i < textFields.length; i++) {
             id = textFields[i];
             field = new TextFieldClass(id, this.base.listing[id], this.getUpdater(id), msgFields[i]);
-            field.fieldBase.setDisplayName(displayName[id].toUpperCase());
+            if (this.base.displayNameOverrides[id]) {
+                field.fieldBase.setDisplayName(this.base.displayNameOverrides[id]);
+            }
             field.fieldBase.addValidator(ValidatorClass.prototype.makeLengthChecker(16, 1000));
             field.fieldBase.validator.postValidator = this.genDisplayBMC(field);
             field.bindEvents({noEnterKeySubmit: true});

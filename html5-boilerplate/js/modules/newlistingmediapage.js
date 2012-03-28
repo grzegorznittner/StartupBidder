@@ -1,7 +1,7 @@
 function NewListingMediaClass() {
     var base = new NewListingBaseClass();
-    base.prevPage = '/new-listing-financials-page.html';
-    base.nextPage = '/new-listing-submit-page.html';
+    base.prevPage = '/new-listing-basics-page.html';
+    base.nextPage = '/new-listing-bmc-page.html';
     this.base = base;
 }
 pl.implement(NewListingMediaClass, {
