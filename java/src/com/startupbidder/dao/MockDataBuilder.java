@@ -47,9 +47,16 @@ public class MockDataBuilder {
 	private static final Logger log = Logger.getLogger(MockDataBuilder.class.getName());
 	static ObjectifyDatastoreDAO instance;
 
-	private SBUser greg;
+	private SBUser GREG;
+	private SBUser JOHN;
+	private SBUser AHMED;
+	private SBUser JACOB;
+	private SBUser INSIDER;
+	private SBUser MADMAX;
+	private SBUser THEONE;
+	private SBUser DRAGON;
+
 	private Listing gregsListing;
-	private SBUser john;
 	private Listing johnsListing;
 	
 	private long id = 2000L;
@@ -449,8 +456,8 @@ public class MockDataBuilder {
 				users.add(user);
 			}
 		}
-		users.remove(greg);
-		users.remove(john);
+		users.remove(GREG);
+		users.remove(JOHN);
 		
 		for (Listing listing : listings) {
 			int bidNum = 4;
@@ -501,8 +508,8 @@ public class MockDataBuilder {
 		listings.remove(johnsListing);
 				
 		List<SBUser> users = new ArrayList<SBUser>();
-		users.add(greg);
-		users.add(john);
+		users.add(GREG);
+		users.add(JOHN);
 		
 		Random fundTypeRandom = new Random();
 		
@@ -609,42 +616,46 @@ public class MockDataBuilder {
 		user.joined = new Date(System.currentTimeMillis() - 22 * 24 * 60 * 60 * 1000);
 		user.status = SBUser.Status.ACTIVE;
 		user.lastLoggedIn = new Date();
+		AHMED = user;
 		users.add(user); // 0
 
 		user = new SBUser();
 		user.id = id();
 		user.mockData = true;
 		user.nickname = "fowler";
-		user.name = "Jackob";
+		user.name = "Jacob";
 		user.email = "jpfowler@startupbidder.com";
 		user.openId = user.email;
 		user.joined = new Date(System.currentTimeMillis() - 23 * 24 * 60 * 60 * 1000);
 		user.status = SBUser.Status.ACTIVE;
 		user.lastLoggedIn = new Date();
+		JACOB = user;
 		users.add(user); // 1
 
 		user = new SBUser();
 		user.id = id();
 		user.mockData = true;
-		user.nickname = "Insider";
-		user.name = "The";
+		user.nickname = "The Insider";
+		user.name = "Insider";
 		user.email = "insider@startupbidder.com";
 		user.openId = user.email;
 		user.joined = new Date(System.currentTimeMillis() - 31 * 24 * 60 * 60 * 1000);
 		user.status = SBUser.Status.ACTIVE;
+		INSIDER = user;
 		users.add(user); // 2
 
 		user = new SBUser();
 		user.id = id();
 		user.mockData = true;
 		user.nickname = "The Dragon";
-		user.name = "Mark";
+		user.name = "Dragon";
 		user.email = "dragon@startupbidder.com";
 		user.openId = user.email;
 		user.joined = new Date(System.currentTimeMillis() - 26 * 24 * 60 * 60 * 1000);
 		user.status = SBUser.Status.ACTIVE;
 		user.lastLoggedIn = new Date();
 		user.investor = true;
+		DRAGON = user;
 		users.add(user); // 3
 
 		user = new SBUser();
@@ -658,19 +669,21 @@ public class MockDataBuilder {
 		user.status = SBUser.Status.ACTIVE;
 		user.investor = true;
 		user.lastLoggedIn = new Date();
+		MADMAX = user;
 		users.add(user); // 4
 
 		user = new SBUser();
 		user.id = id();
 		user.mockData = true;
-		user.nickname = "The One";
-		user.name = "Bruce";
+		user.nickname = "Bruce";
+		user.name = "The One";
 		user.email = "bruce@startupbidder.com";
 		user.openId = user.email;
 		user.joined = new Date(System.currentTimeMillis() - 30 * 24 * 60 * 60 * 1000);
 		user.status = SBUser.Status.DEACTIVATED;
 		user.investor = true;
 		user.lastLoggedIn = new Date();
+		THEONE = user;
 		users.add(user); // 5
 		
 		user = new SBUser();
@@ -686,7 +699,7 @@ public class MockDataBuilder {
 		user.investor = true;
 		user.lastLoggedIn = new Date();
 		users.add(user);
-		john = user; // 6
+		JOHN = user; // 6
 		
 		user = new SBUser();
 		user.id = id();
@@ -701,7 +714,7 @@ public class MockDataBuilder {
 		user.investor = true;
 		user.lastLoggedIn = new Date();
 		users.add(user); // 7
-		greg = user;
+		GREG = user;
 		
 		return users;
 	}
@@ -710,156 +723,94 @@ public class MockDataBuilder {
 	 * Generates mock listings
 	 */
 	public List<Listing> createMockListings(List<SBUser> users) {
+		/**
+		 * Users: GREG, JOHN, AHMED, JACOB, INSIDER, MADMAX, THEONE, DRAGON;
+		 */
 		List<Listing> listings = new ArrayList<Listing>();
+
+		Listing bp = prepareListing(INSIDER, " Indian courier service", Listing.State.NEW, "Other", 35000, 20,
+				"Our couriers are the best", "India has one of the largest deaf populations in the world, but social stigmas have eliminated many job opportunities for the roughly 6 percent of the population that is affected. Aiming to empower this isolated group economically while tapping into a growth market, Mirakle Couriers is a messenger service that hires only deaf workers. The company puts a heavy emphasis on the training of employees — right down to the finer points of personal grooming.");
+		listings.add(bp); // 0
 		
-		Listing bp = prepareListing(users.get(0), "MisLead", Listing.State.ACTIVE, "Industrial", 20000, 25,
-				"Misleading is our mantra",
-				"Executive summary for <b>MisLead</b>");
-		listings.add(bp);
+		bp = prepareListing(JACOB, "Web Video", Listing.State.NEW, "Media", 50000, 40,
+				"It'll be your tube", "The success of several videos on YouTube has led to marketers thinking of online videos as a social media marketing tool.  Businesses, however, lack the skills and capabilities of producing quality videos.  If you are great at making videos, this is one service that you can offer to companies today!");
+		listings.add(bp); // 1
+		
+		bp = prepareListing(AHMED, "Pack your fluids", Listing.State.NEW, "Medical", 48000, 35,
+				"Targeting travellers, beauty retailer finds a niche in 3 fluid ounces", "Ever since authorities placed rigorous limits on liquids allowed on flights, travellers have had to figure out how to both pack their favourite toiletries and comply with those regulations. Helping consumers avoid bag-check charges or confiscation of their toiletries and cosmetics, 3floz sells beauty and grooming products in TSA-approved sizes only.");
+		listings.add(bp); // 2
+		
+		bp = prepareListing(JOHN, "Eyewear for $99", Listing.State.NEW, "Medical", 48000, 35,
+				"Buy-one-give-one indie eyewear sells for $99 per pair", "The market for prescription eyewear has traditionally been dominated by high prices, little innovation and a few large competitors. That’s why we’ve seen online discounters emerge, and it’s also why Warby Parker has set its sights on the industry - so to speak - with a paradigm-busting model that aims to combine independent design, \"buy one, give one\" generosity and some long-overdue pricing transparency.");
+		listings.add(bp); // 3
+		
+		bp = prepareListing(THEONE, "Panty by Post", Listing.State.POSTED, "Other", 35000, 20,
+				"Luxury women’s panties by curated subscription", "Panty by Post is a Canadian venture that offers a selection of women’s underwear by monthly subscription. Customers can order panties individually, or they can sign up for subscriptions lasting two, three, six or 12 months. A different panty is then sent every month, each wrapped in an attractive mailing package. It’s a great example of subscription-based retail, offering curation alongside convenience. One to apply to a category you’re passionate about.");
+		listings.add(bp); // 4
+		
+		bp = prepareListing(MADMAX, "Computer Upgrading Service", Listing.State.POSTED, "Hardware", 35000, 33,
+				"If it could be upgraded we'll do that", "Starting a business that specializes in upgrading existing computer systems with new internal and external equipment is a terrific homebased business to initiate that has great potential to earn an outstanding income for the operator of the business. A computer upgrading service is a very easy business to get rolling, providing you have the skills and equipment necessary to complete upgrading tasks, such as installing more memory into the hard drive, replacing a hard drive, or adding a new disk drive to the computer system. Ideally, to secure the most profitable segment of the potential market, the service should specialize in upgrading business computers as there are many reasons why a business would upgrade a computer system as opposed to replacing the computer system. Additionally, managing the business from a homebased location while providing clients with a mobile service is the best way to keep operating overheads minimized and potentially increases the size of the target market by expanding the service area, due to the fact the business operates on a mobile format.");
+		listings.add(bp); // 5
+		
+		bp = prepareListing(DRAGON, "MisLead", Listing.State.ACTIVE, "Industrial", 20000, 25,
+				"Misleading is our mantra", "Executive summary for <b>MisLead</b>");
+		listings.add(bp); // 6
 	
-		bp = prepareListing(users.get(1), "Panty by Post", Listing.State.POSTED, "Other", 35000, 20,
-				"Luxury women’s panties by curated subscription",
-				"Panty by Post is a Canadian venture that offers a selection of women’s underwear by monthly subscription. Customers can order panties individually, or they can sign up for subscriptions lasting two, three, six or 12 months. A different panty is then sent every month, each wrapped in an attractive mailing package. It’s a great example of subscription-based retail, offering curation alongside convenience. One to apply to a category you’re passionate about.");
-		listings.add(bp);
-		
-		bp = prepareListing(users.get(1), "Computer Training Camp", Listing.State.ACTIVE, "Other", 15000, 45,
-				"We'll train even lammers",
-				"Starting a computer training camp for children is a terrific new business " +
-				"venture to set in motion. In spite of the fact that many children now receive " +
-				"computer training in school, attending computer camps ensures parents and" +
-				" children a better and more complete understanding of the course material. " +
-				"The computer camps can be operated on a year-round basis or in the summer only. " +
-				"Typically, these camps are one or two days in length and available for various " +
-				"training needs, from beginner to advanced. Once again, this is the kind of children's" +
-				" business that can be operated as an independent business venture or operated in" +
-				" conjunction with a community program or community center.");
-		listings.add(bp);
+		bp = prepareListing(THEONE, "Computer Training Camp", Listing.State.ACTIVE, "Other", 15000, 45,
+				"We'll train even lammers", "Starting a computer training camp for children is a terrific new business venture to set in motion. In spite of the fact that many children now receive computer training in school, attending computer camps ensures parents and children a better and more complete understanding of the course material. The computer camps can be operated on a year-round basis or in the summer only. Typically, these camps are one or two days in length and available for various training needs, from beginner to advanced. Once again, this is the kind of children's business that can be operated as an independent business venture or operated in conjunction with a community program or community center.");
+		listings.add(bp); // 7
 
-		bp = prepareListing(users.get(2), "Computer Upgrading Service", Listing.State.POSTED, "Hardware", 35000, 33,
-				"If it could be upgraded we'll do that",
-				"Starting a business that specializes in upgrading existing computer systems" +
-				" with new internal and external equipment is a terrific homebased business to " +
-				"initiate that has great potential to earn an outstanding income for the operator" +
-				" of the business. A computer upgrading service is a very easy business to get" +
-				" rolling, providing you have the skills and equipment necessary to complete upgrading" +
-				" tasks, such as installing more memory into the hard drive, replacing a hard drive," +
-				" or adding a new disk drive to the computer system. Ideally, to secure the most " +
-				"profitable segment of the potential market, the service should specialize in " +
-				"upgrading business computers as there are many reasons why a business would upgrade" +
-				" a computer system as opposed to replacing the computer system. Additionally, managing" +
-				" the business from a homebased location while providing clients with a mobile service" +
-				" is the best way to keep operating overheads minimized and potentially increases the" +
-				" size of the target market by expanding the service area, due to the fact the business" +
-				" operates on a mobile format.");
-		listings.add(bp);
-		
-		bp = prepareListing(users.get(2), "Energy Consultant", Listing.State.FROZEN, "Environmental", 35000, 20,
-				"We'll help you to save money",
-				"With the increased focus on energy conservation, people have started thinking about how much energy they are using and how it can be used efficiently.  Since energy conservation and efficient usage also bring in savings in monthly expenditure, both businesses as well as households are now more interested than ever in hiring a consultant to audit their energy requirements and suggest changes for increasing energy efficiency.");
-		listings.add(bp);
-		
-		bp = prepareListing(users.get(2), "Acupuncture", Listing.State.CLOSED, "Healthcare", 10000, 40,
-				"You'll feel better and more relaxed",
-				"Acupuncture is one of the alternative treatment methodologies that have become popular as a solution to several health problem.  One needs to have a license to practice as an Acupuncturist.  A licensed Acupuncturist can start own practice or get associated with fitness centers which offer Acupuncture as one of their services.");
-		listings.add(bp);
-		
-		bp = prepareListing(users.get(2), " Indian courier service", Listing.State.NEW, "Other", 35000, 20,
-				"Our couriers are the best",
-				"India has one of the largest deaf populations in the world, but social stigmas have eliminated many job opportunities for the roughly 6 percent of the population that is affected. Aiming to empower this isolated group economically while tapping into a growth market, Mirakle Couriers is a messenger service that hires only deaf workers. The company puts a heavy emphasis on the training of employees — right down to the finer points of personal grooming.");
-		listings.add(bp);
-		
-		bp = prepareListing(users.get(3), "Semantic Search", Listing.State.ACTIVE, "Software", 40000, 12,
-				"Search is our life",
-				"The fact of the matter is Google, and to a much lesser extent Bing, " + 
-				"own the search market. Ask Barry Diller, if you don't believe us." +
-				"Yet, startups still spring up hoping to disrupt the incumbents. " +
-				"Cuil flopped. Wolfram Alpha is irrelevant. Powerset, which was a semantic" + 
-				" search engine was bailed out by Microsoft, which acquired it.");
-		listings.add(bp);
+		bp = prepareListing(INSIDER, "Semantic Search", Listing.State.ACTIVE, "Software", 40000, 12,
+				"Search is our life", "The fact of the matter is Google, and to a much lesser extent Bing, own the search market. Ask Barry Diller, if you don't believe us. Yet, startups still spring up hoping to disrupt the incumbents. Cuil flopped. Wolfram Alpha is irrelevant. Powerset, which was a semantic search engine was bailed out by Microsoft, which acquired it.");
+		listings.add(bp); // 8
 
-		bp = prepareListing(users.get(3), "Social recommendations", Listing.State.ACTIVE, "Software", 100000, 8,
-				"Learn from other people's mistakes",
-				"It's a very tempting idea. Collect data from people about their tastes" +
-				" and preferences. Then use that data to create recommendations for others. " +
-				"Or, use that data to create recommendations for the people that filled in " +
-				"the information. It doesn't work. The latest to try is Hunch and Get Glue." +
-				"Hunch is pivoting towards non-consumer-facing white label business. " +
-				"Get Glue has had some success of late, but it's hardly a breakout business.");
-		listings.add(bp);
+		bp = prepareListing(INSIDER, "Social recommendations", Listing.State.ACTIVE, "Software", 100000, 8,
+				"Learn from other people's mistakes", "It's a very tempting idea. Collect data from people about their tastes and preferences. Then use that data to create recommendations for others. Or, use that data to create recommendations for the people that filled in the information. It doesn't work. The latest to try is Hunch and Get Glue. Hunch is pivoting towards non-consumer-facing white label business. Get Glue has had some success of late, but it's hardly a breakout business.");
+		listings.add(bp); // 9
 
-		bp = prepareListing(users.get(4), "Local news sites", Listing.State.ACTIVE, "Media", 49000, 20,
-				"Better than free newspaper",
-				"Maybe Tim Armstrong, AOL, and Patch will prove it wrong, but to this point" +
-				" nobody has been able to crack the local news market and make a sustainable business." +
-				"In theory creating a network of local news sites that people care about is a good" +
-				" idea. You build a community, there's a baked in advertising group with local " +
-				"businesses, and classifieds. But, it appears to be too niche to scale into a big" +
-				" business.");
-		listings.add(bp);
+		bp = prepareListing(INSIDER, "Local news sites", Listing.State.ACTIVE, "Media", 49000, 20,
+				"Better than free newspaper", "Maybe Tim Armstrong, AOL, and Patch will prove it wrong, but to this point nobody has been able to crack the local news market and make a sustainable business. In theory creating a network of local news sites that people care about is a good idea. You build a community, there's a baked in advertising group with local businesses, and classifieds. But, it appears to be too niche to scale into a big business.");
+		listings.add(bp); // 10
 
-		bp = prepareListing(users.get(4), "Web Video", Listing.State.NEW, "Media", 50000, 40,
-				"It'll be your tube",
-				"The success of several videos on YouTube has led to marketers thinking of online videos as a social media marketing tool.  Businesses, however, lack the skills and capabilities of producing quality videos.  If you are great at making videos, this is one service that you can offer to companies today!");
-		listings.add(bp);
-		
-		bp = prepareListing(users.get(5), "Pack your fluids", Listing.State.NEW, "Medical", 48000, 35,
-				"Targeting travellers, beauty retailer finds a niche in 3 fluid ounces",
-				"Ever since authorities placed rigorous limits on liquids allowed on flights, travellers have had to figure out how to both pack their favourite toiletries and comply with those regulations. Helping consumers avoid bag-check charges or confiscation of their toiletries and cosmetics, 3floz sells beauty and grooming products in TSA-approved sizes only.");
-		listings.add(bp);
-		
-		bp = prepareListing(users.get(5), "Micropayments", Listing.State.ACTIVE, "Financial", 5000, 49,
-				"We can trasfer even a penny",
-				"Micropayments are one idea that's tossed around to solve the problem" +
-				" of paying for content on the Web. If you want to read a New York Times " +
-				"story it would only cost a nickel! Or on Tumblr, if you want to tip a blogger" +
-				" or pay for a small design you could with ease. So far, these micropayment" +
-				" plans have not worked.");
-		listings.add(bp);
+		bp = prepareListing(AHMED, "Micropayments", Listing.State.ACTIVE, "Financial", 5000, 49,
+				"We can trasfer even a penny", "Micropayments are one idea that's tossed around to solve the problem of paying for content on the Web. If you want to read a New York Times story it would only cost a nickel! Or on Tumblr, if you want to tip a blogger or pay for a small design you could with ease. So far, these micropayment plans have not worked.");
+		listings.add(bp); // 11
 
-		bp = prepareListing(users.get(5), "De Vegetarische Slager", Listing.State.ACTIVE, "Chemical", 5000, 49,
-				"Substitution is our answer",
-				"De Vegetarische Slager — the vegetarian butcher — opened a store in The Hague that’s dedicated to meat substitutes in the same way a butcher is dedicated to meat. The company’s main innovation is its own line of lupin-based, protein-rich products, developed by a Dutch team of scientists and chefs. De Vegetarische Slager is targeting the higher end of the market — consumers willing to pay as much for a meat substitute as they would for the real thing. As more people opt for meatless Mondays or cut out meat altogether, we wouldn’t be surprised to see vegetarian butchers pop up on main streets around the world.");
-		listings.add(bp);
+		bp = prepareListing(AHMED, "De Vegetarische Slager", Listing.State.ACTIVE, "Chemical", 5000, 49,
+				"Substitution is our answer", "De Vegetarische Slager — the vegetarian butcher — opened a store in The Hague that’s dedicated to meat substitutes in the same way a butcher is dedicated to meat. The company’s main innovation is its own line of lupin-based, protein-rich products, developed by a Dutch team of scientists and chefs. De Vegetarische Slager is targeting the higher end of the market — consumers willing to pay as much for a meat substitute as they would for the real thing. As more people opt for meatless Mondays or cut out meat altogether, we wouldn’t be surprised to see vegetarian butchers pop up on main streets around the world.");
+		listings.add(bp); // 12
 		
-		bp = prepareListing(users.get(5), "Flight twitter", Listing.State.ACTIVE, "Software", 40000, 50,
-				"Twitt a flight",
-				"DJs, promoters, label reps and ‘professional party people’ from the Netherlands have persuaded Dutch airline KLM to add an extra flight to its roster. In a new twist on crowd-buying, the initiators of Fly2Miami made a bet with KLM on Twitter to organize a non-stop flight from Amsterdam to Miami. Crowd clout and group buying — turbo-charged by social media — provide companies across industries with new opportunities to empower consumers while improving their bottom line or, at the very least, their brand image.");
-		listings.add(bp);
+		bp = prepareListing(GREG, "Flight twitter", Listing.State.ACTIVE, "Software", 40000, 50,
+				"Twitt a flight", "DJs, promoters, label reps and ‘professional party people’ from the Netherlands have persuaded Dutch airline KLM to add an extra flight to its roster. In a new twist on crowd-buying, the initiators of Fly2Miami made a bet with KLM on Twitter to organize a non-stop flight from Amsterdam to Miami. Crowd clout and group buying — turbo-charged by social media — provide companies across industries with new opportunities to empower consumers while improving their bottom line or, at the very least, their brand image.");
+		listings.add(bp); // 13
 		
-		bp = prepareListing(users.get(5), "Village rainwater", Listing.State.ACTIVE, "Environmental", 20000, 10,
-				"Village rainwater harvesting system stores enough for a year",
-				"Akash Ganga, or River from the Sky, is a sustainable system that channels rooftop rainwater from every house in a village through gutters, and then pipes it to a network of multitier, underground reservoirs. Currently implemented in six drought-prone villages in the Churu District of Rajasthan, the system captures enough rainwater to meet the drinking needs of an entire village for 12 months. Akash Ganga currently supplies some 10,000 people with fresh water.");
-		listings.add(bp);
+		bp = prepareListing(GREG, "Village rainwater", Listing.State.ACTIVE, "Environmental", 20000, 10,
+				"Village rainwater harvesting system stores enough for a year", "Akash Ganga, or River from the Sky, is a sustainable system that channels rooftop rainwater from every house in a village through gutters, and then pipes it to a network of multitier, underground reservoirs. Currently implemented in six drought-prone villages in the Churu District of Rajasthan, the system captures enough rainwater to meet the drinking needs of an entire village for 12 months. Akash Ganga currently supplies some 10,000 people with fresh water.");
+		listings.add(bp); // 14
 
-		bp = prepareListing(users.get(6), "Eyewear for $99", Listing.State.NEW, "Medical", 48000, 35,
-				"Buy-one-give-one indie eyewear sells for $99 per pair",
-				"The market for prescription eyewear has traditionally been dominated by high prices, little innovation and a few large competitors. That’s why we’ve seen online discounters emerge, and it’s also why Warby Parker has set its sights on the industry - so to speak - with a paradigm-busting model that aims to combine independent design, \"buy one, give one\" generosity and some long-overdue pricing transparency.");
-		listings.add(bp);
-		
-		bp = prepareListing(users.get(6), "Better company car", Listing.State.ACTIVE, "Manufacturing", 250000, 30,
-				"We always do better",
-				"Considering how frustrated people are with car companies, you'd think " +
-				"launching a new one would be perfect for a startup. So far, that's not the case. " +
-				"You can point to Tesla as a success, and considering it IPO'd it's hard to argue " +
-				"against it. But, Tesla has sold fewer than 2,000 cars since it was founded in 2003. " +
-				"It's far from certain it will succeed. Even when its next car comes out, Nissan " +
-				"could be making a luxury electric car that competes with Tesla.");
-		listings.add(bp);
+		bp = prepareListing(JOHN, "Better company car", Listing.State.ACTIVE, "Manufacturing", 250000, 30,
+				"We always do better", "Considering how frustrated people are with car companies, you'd think launching a new one would be perfect for a startup. So far, that's not the case. You can point to Tesla as a success, and considering it IPO'd it's hard to argue against it. But, Tesla has sold fewer than 2,000 cars since it was founded in 2003. It's far from certain it will succeed. Even when its next car comes out, Nissan could be making a luxury electric car that competes with Tesla.");
+		listings.add(bp); // 15
 
-		bp = prepareListing(users.get(6), "On-the-fly conference", Listing.State.ACTIVE, "Other", 35000, 20,
-				"Mobile app for group texting and on-the-fly conference calls",
-				"Available for both iPhone and Android, GroupMe is a free tool from New York-based Mindless Dribble that gives groups of friends private text messaging and instant conference calls. As many as 25 people can be included in a group at any one time, but users can create as many groups as they want — one for their basketball team, one for coordinating a surprise party, one for the PTA, one for updating family members while travelling, etc.");
-		listings.add(bp);
+		bp = prepareListing(JOHN, "On-the-fly conference", Listing.State.ACTIVE, "Other", 35000, 20,
+				"Mobile app for group texting and on-the-fly conference calls", "Available for both iPhone and Android, GroupMe is a free tool from New York-based Mindless Dribble that gives groups of friends private text messaging and instant conference calls. As many as 25 people can be included in a group at any one time, but users can create as many groups as they want — one for their basketball team, one for coordinating a surprise party, one for the PTA, one for updating family members while travelling, etc.");
+		listings.add(bp); // 16
 		
-		bp = prepareListing(users.get(6), "Mobile garage", Listing.State.WITHDRAWN, "Manufacturing", 35000, 20,
-				"Mobile garage makes any car greener",
-				"Colorado-based Green Garage specializes in \"green-tuning\" cars to run cleaner, greener and cheaper through sustainable, energy-saving automotive maintenance and repair products. The full-service company begins by bringing the garage to the customer’s front door with a valet service whereby it picks up the car, green-tunes it and then drops it off again. Given where the automotive industry began on the sustainability spectrum, it seems safe to say there’s plenty of room for improvement, and that’s just what we’re beginning to see.");
-		listings.add(bp);
+		bp = prepareListing(MADMAX, "Energy Consultant", Listing.State.FROZEN, "Environmental", 35000, 20,
+				"We'll help you to save money", "With the increased focus on energy conservation, people have started thinking about how much energy they are using and how it can be used efficiently.  Since energy conservation and efficient usage also bring in savings in monthly expenditure, both businesses as well as households are now more interested than ever in hiring a consultant to audit their energy requirements and suggest changes for increasing energy efficiency.");
+		listings.add(bp); // 17
 		
-		bp = prepareListing(users.get(6), "Plan Retirement", Listing.State.CLOSED, "Financial", 35000, 20,
-				"We'll plan your retirement",
-				"People who retire need advice in terms of managing their finances, savings and contingency planning.  With lots of people retiring, a Retirement Planning business can be an ideal opportunity for someone who is good at managing personal finances.");
-		listings.add(bp);
+		bp = prepareListing(JOHN, "Mobile garage", Listing.State.WITHDRAWN, "Manufacturing", 35000, 20,
+				"Mobile garage makes any car greener", "Colorado-based Green Garage specializes in \"green-tuning\" cars to run cleaner, greener and cheaper through sustainable, energy-saving automotive maintenance and repair products. The full-service company begins by bringing the garage to the customer’s front door with a valet service whereby it picks up the car, green-tunes it and then drops it off again. Given where the automotive industry began on the sustainability spectrum, it seems safe to say there’s plenty of room for improvement, and that’s just what we’re beginning to see.");
+		listings.add(bp); // 18
+		
+		bp = prepareListing(JOHN, "Plan Retirement", Listing.State.CLOSED, "Financial", 35000, 20,
+				"We'll plan your retirement", "People who retire need advice in terms of managing their finances, savings and contingency planning.  With lots of people retiring, a Retirement Planning business can be an ideal opportunity for someone who is good at managing personal finances.");
+		listings.add(bp); // 19
+
+		bp = prepareListing(MADMAX, "Acupuncture", Listing.State.CLOSED, "Healthcare", 10000, 40,
+				"You'll feel better and more relaxed", "Acupuncture is one of the alternative treatment methodologies that have become popular as a solution to several health problem.  One needs to have a license to practice as an Acupuncturist.  A licensed Acupuncturist can start own practice or get associated with fitness centers which offer Acupuncture as one of their services.");
+		listings.add(bp); // 20		
 
 		return listings;
 	}
@@ -1045,8 +996,11 @@ public class MockDataBuilder {
 		}
 	}
 	
+	private static int logoId = -1;
+	
 	public String getLogo() {
-		return getTestDataPath() + logos[RandomUtils.nextInt(logos.length)];
+		logoId = (logoId + 1) % logos.length;
+		return getTestDataPath() + logos[logoId];
 	}
 	
 	private String[] logos = {
@@ -1062,7 +1016,14 @@ public class MockDataBuilder {
 			"logo10.jpg",
 			"logo11.jpg",
 			"logo12.jpg",
-			"logo13.jpg"
+			"logo13.jpg",
+			"logo14.jpg",
+			"logo15.jpg",
+			"logo16.jpg",
+			"logo17.jpg",
+			"logo18.gif",
+			"logo19.gif",
+			"logo20.jpg"
 	};
 	
 	private String getFounders(String name) {

@@ -235,6 +235,7 @@
      	<include name="js/**" />
       </fileset>
     </delete>
+    <delete includeEmptyDirs="true" failonerror="false" dir="war/test-docs"/>
   </target>
 
   <target name="clean-java" depends="check-appengine-home" description="Cleans Java artefacts">
