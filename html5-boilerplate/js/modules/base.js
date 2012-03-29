@@ -1,4 +1,3 @@
-
 function SafeStringClass() {}
 pl.implement(SafeStringClass, {
     trim: function(str) {
@@ -146,6 +145,23 @@ pl.implement(CollectionsClass, {
     }
 });
 
+function HTMLMarkup() {}
+pl.implement(HTMLMarkup, {
+    stylize: function(text, styleprefix) {
+        var stylized = text ? '' + text : '',
+            spacerclass = styleprefix ? styleprefix + 'spacer' : '',
+            listclass = styleprefix ? styleprefix + 'list' : '';
+        if (stylized) {
+            stylized = SafeStringClass.prototype.htmlEntities(stylized);
+            stylized = stylized.replace(/^[ \t]*[*][ \t]*([^\n]*)/g, '<ul class="' + listclass + '"><li>$1</li></ul>');
+            stylized = stylized.replace(/\n[ \t]*[*][ \t]*([^\n]*)/g, '\n<ul class="' + listclass + '"><li>$1</li></ul>');
+            stylized = stylized.replace(/(<\/ul>)\n/g, '$1');
+            stylized = stylized.replace(/\n/g, '<br/>');
+        }
+        return stylized;
+    }
+});
+
 function AjaxClass(url, statusId, completeFunc, successFunc, loadFunc, errorFunc) {
     var self;
     self = this;
@@ -220,8 +236,8 @@ pl.implement(HeaderClass, {
         pl('#postlink').attr('href', newlistingurl);
         pl('#posttext').html(posttext);
         if (profile.admin) {
-            pl('#main>div.header>div.container>div.span-8,#newlistingmain>div.header>div.container>div.span-8').attr({'class': 'span-6 last loginspan'});
-            pl('#main>div.header>div.container>div.span-11,#newlistingmain>div.header>div.container>div.span-11').attr({'class': 'span-13'});
+            pl('#main>div.header>div.container>div.span-8,#newlistingmain>div.header>div.container>div.span-8').attr({'class': 'span-5 last loginspan'});
+            pl('#main>div.header>div.container>div.span-11,#newlistingmain>div.header>div.container>div.span-11').attr({'class': 'span-14'});
             pl('#postlink').before('\
                 <a href="main-page.html?type=posted"><span class="headerlink">Posted</span></a><span class="headertext">&nbsp;&nbsp;|&nbsp;&nbsp;</span>\
                 <a href="main-page.html?type=frozen"><span class="headerlink">Frozen</span></a><span class="headertext">&nbsp;&nbsp;|&nbsp;&nbsp;</span>\

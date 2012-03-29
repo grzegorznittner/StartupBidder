@@ -272,8 +272,8 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .sidebox p { margin: 5px 10px 10px 10px; text-indent: 0px; font-weight: normal; font-weight: bold; }
 .socialsidebox { height: 130px; overflow: visible; }
 .sideboxcol1 { width: 146px; float: left; margin-right: 10px; }
-.sideboxcol2 { width: 146px; float: left; }
-.sideboxlist { list-style: none; list-style-position: inside; margin-left: 0; padding-left: 0; }
+.sideboxcol2 { width: 142px; float: left; }
+.sideboxlist { list-style: none; list-style-position: inside; margin-left: 0; padding-left: 0; font-weight: bold; }
 .sideboxbutton { width: 310px; height: 50px; font-size: 34px; font-weight: bold; text-align: center; }
 .sideboxbuttonsmall { width: 150px; height: 30px; font-size: 20px; }
 .sideboxbuttoninterior { width: 292px; height: 50px; font-size: 34px; font-weight: bold; text-align: center; margin: 0 5px 5px 5px; }
@@ -364,12 +364,6 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 
 /* img */
 .noimage { background: url(../img/noimage_146x146.jpg); border-radius: 3px; }
-.einstein { background: url(../img/einstein.jpg); border-radius: 3px; }
-.wave { background: url(../img/wave.jpg); border-radius: 3px; height: 146px; width: 146px; }
-.upgrades { background: url(../img/upgrades.jpg); border-radius: 3px; }
-.telecom { background: url(../img/telecom.jpg); border-radius: 3px; }
-.socialrec { background: url(../img/socialrec.jpg); border-radius: 3px; }
-.gkleen { background: url(../img/gkleen.jpg); border-radius: 3px; }
 .missingimg { background: url(http://www.minimus.biz/img/Your%20Logo%20Here%20Black%202.jpg) -65px -55px; border-radius: 3px; height: 146px; width: 146px; }
 .presentationimg { background: url(../img/icons/presentation.png) no-repeat 1px 1px; border-radius: 3px; }
 .business_planimg { background: url(../img/icons/business_plan.png) no-repeat 0px 0px; border-radius: 3px; }
@@ -391,8 +385,83 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .bmcverticalbarshort { float: left; width: 4px; height: 156px; }
 .bmchorizontalbar { float: left; width: 478px; height: 4px; }
 .bmchorizontalbarextra { float: left; width: 482px; height: 4px; }
+.bmclist { margin-bottom: 0px; }
+.bmcspacer { height: 21px; }
 
 /* IP */
+.ipmain {
+    position: relative; color: white; width: 960px; height: 640px; font-size: 24px; overflow: hidden;
+    background: #222222;
+    -moz-linear-gradient(left top , #222222 0%, #888888 100%) repeat scroll 0 0 transparent;
+    -webkit-linear-gradient(left top , #222222 0%, #888888 100%) repeat scroll 0 0 transparent;
+    -o-linear-gradient(left top , #222222 0%, #888888 100%) repeat scroll 0 0 transparent;
+    -ms-linear-gradient(left top , #222222 0%, #888888 100%) repeat scroll 0 0 transparent;
+    linear-gradient(left top , #222222 0%, #888888 100%) repeat scroll 0 0 transparent;
+}
+.ipslideset {
+    position: absolute;
+    -moz-transition: left 500ms;
+    -webkit-transition: left 500ms;
+    -o-transition: left 500ms;
+    -ms-transition: left 500ms;
+    transition: left 500ms;
+}
+.ipslide { width: 960px; height: 640px; position: absolute; }
+.ipslide1 { left: 0; }
+.ipslide2 { left: 960px; }
+.ipslide3 { left: 1920px; }
+.ipslide4 { left: 2880px; }
+.ipslide5 { left: 3840px; }
+.ipslide6 { left: 4800px; }
+.ipslide7 { left: 5760px; }
+.ipslide8 { left: 6720px; }
+.ipslide9 { left: 7680px; }
+.ipslide10 { left: 8640px; }
+.ipslide11 { left: 9600px; }
+.ipslide12 { left: 10560px; }
+.ipslide13 { left: 11520px; }
+.ipslide14 { left: 12480px; }
+.ipslide15 { left: 13440px; }
+.ipslide16 { left: 14400px; }
+.ipslide17 { left: 15360px; }
+.ipslide18 { left: 16320px; }
+.ipslide19 { left: 17280px; }
+.ipslide20 { left: 18240px; }
+ 
+.ipheader { height: 145px; margin: 15px; }
+.iplogo { float: left; height: 146px; width: 146px; background-image: url(../img/noimage_146x146.jpg); margin-right: 15px; }
+.iptitle { float: left; font-size: 48px; font-weight: bold; width: 769px; margin-top: 93px; height: 68px; width: 769px; color: #32aff6; overflow:hidden; }
+.ipline {
+    margin: 0 15px 0 15px; height: 4px;
+    background: #e2e2e2;
+    background: -moz-linear-gradient(left, #e2e2e2 0%, #707070 100%);
+    background: -webkit-linear-gradient(left, #e2e2e2 0%, #707070 100%);
+    background: -o-linear-gradient(left, #e2e2e2 0%, #707070 100%);
+    background: -ms-linear-gradient(left, #e2e2e2 0%, #707070 100%);
+    background: linear-gradient(left, #e2e2e2 0%, #707070 100%);
+}
+.ipcontent { margin: 36px 100px; height: 388px; color: white; overflow: hidden; }
+.ipcentered { text-align: center; }
+.iplist { margin-bottom: 0px; }
+.ipspacer { height: 36px; }
+
+.ipnav {
+    width: 100%; height: 100%; opacity: 0; position: absolute; top: 0;
+    -moz-transition: opacity 300ms;
+    -webkit-transition: opacity 300ms;
+    -o-transition: opacity 300ms;
+    -ms-transition: opacity 300ms;
+    transition: opacity 300ms;
+}
+.ipnav:hover { opacity: 1.0; }
+.iparrow { position: absolute; width: 64px; height: 64px; }
+.ipleft { top: 288px; left: 15px; background-image: url(../img/icons/ip_leftarrow_64.png); }
+.ipright { top: 288px; right: 15px; background-image: url(../img/icons/ip_rightarrow_64.png); }
+.ipfooter { position: absolute; font-size: 14px; height: 30px; bottom: 0px; }
+.ipdata { left: 15px; }
+.ipcorp { margin-right: 20px; }
+.ippage { right: 15px; }
+
 
 
 input[disabled] { color: #999 !important; }

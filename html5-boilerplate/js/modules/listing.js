@@ -13,6 +13,8 @@ function ListingClass(id, preview) {
         self.store(json);
         self.display();
     };
+    this.bmc = new BMCClass();
+    this.ip = new IPClass();
     this.ajax = new AjaxClass(this.url, this.statusId, this.completeFunc);
 };
 pl.implement(ListingClass, {
@@ -28,15 +30,15 @@ pl.implement(ListingClass, {
         }
         this.dateobj = new DateClass();
         this.currency = new CurrencyClass();
-        this.testcompanies = new TestCompaniesClass();
-        this.testcompany = this.testcompanies.allCompanies[0]; // FIXME
     },
     load: function() {
         this.ajax.call();
     },
     display: function() {
         this.displayBasics();
-        this.displayQA();
+        this.bmc.display(this);
+        this.ip.display(this);
+        this.ip.bindButtons();
         this.displayMessage();
         this.displayInfobox();
         this.displayMap();
@@ -67,8 +69,6 @@ pl.implement(ListingClass, {
         pl('#summary').html(this.summary);
         pl('#listingdata').show();
     },
-    displayQA: function() { // FIXME
-    },
     displayMessage: function() {
         if (this.loggedin_profile) {
             message = new MessageClass(this.id, this.loggedin_profile.profile_id);
@@ -98,9 +98,6 @@ pl.implement(ListingClass, {
     },
     displayDocumentLink: function(linkId, btnId, docId) {
         var url;
-        if (!docId && Math.random() > 0.5) { // FIXME: simulation
-            docId = 'ag1zdGFydHVwYmlkZGVych4LEgpMaXN0aW5nRG9jIg5Eb2MtMjExMzY3MzkxOAw';
-        }
         if (docId) {
             url = '/file/download/' + docId;
             pl('#'+btnId).addClass('span-3 smallinputbutton').html('DOWNLOAD');

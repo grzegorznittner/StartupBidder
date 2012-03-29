@@ -57,26 +57,29 @@ pl.implement(CompanyTileClass, {
 
 function CompanyListClass() {}
 pl.implement(CompanyListClass, {
-    storeList: function(json, colsPerRow, companydiv, companykey) {
-        var companysel, companies, html;
-        colsPerRow = colsPerRow || 4;
-        companydiv = companydiv || 'companydiv';
-        companykey = companykey || 'listings';
-        companysel = '#' + companydiv;
-        companies = json && json[companykey] && json[companykey].length > 0 ? json[companykey] : null;
-        html = "";
+    storeList: function(json, _colsPerRow, _companydiv, _companykey) {
+        var i, company, tile, last, reali,
+            colsPerRow = _colsPerRow || 4,
+            companydiv = _companydiv || 'companydiv',
+            companykey = _companykey || 'listings',
+            companysel = '#' + companydiv,
+            companies = json && json[companykey] && json[companykey].length > 0 ? json[companykey] : null,
+            profile = json && json.loggedin_profile ? json.loggedin_profile : null,
+            postnowlink = profile ? 'new-listing-basics-page.html' : 'login-page.html',
+            html = "";
+        pl('#postnowtextlink,#postnowbtnlink').attr({href: postnowlink});
         if (!companies) {
             pl(companysel).html('<span class="attention">No companies found</span>');
             return;
         }
-        pl.each(companies, function(i, company) {
-            var tile, last, reali;
+        for (i = 0; i < companies.length; i++) {
+            company = companies[i];
             tile  = new CompanyTileClass();
             tile.setValues(company);
             reali = companies.length - (i+1);
             last = (reali+1)%colsPerRow === 0 ? 'last' : '';
             html += tile.makeHtml(last);
-        });
+        }
         pl(companysel).html(html);
     }
 });
@@ -84,22 +87,33 @@ pl.implement(CompanyListClass, {
 function BaseCompanyListPageClass() {
     this.queryString = new QueryStringClass();
     this.type = this.queryString.vars.type || 'top';
+    this.url = '/listings/top';
+    this.data = { max_results: 20 };
 };
 pl.implement(BaseCompanyListPageClass,{
-    getListingsUrl: function() {
-        var type = this.type;
+    setListingSearch: function() {
         if (this.type === 'related') { // FIXME: related unimplemented
             // type = 'related?id='+this.listing_id
-            type = 'top';
+            this.type = 'top';
+            this.data.max_results = 4;
         }
-        var url = '/listings/' + type;
-        return url;
+        else {
+            this.data.max_results = 20;
+        }
+        this.url = '/listings/' + this.type;
     },
     loadPage: function(completeFunc) {
-        var url = this.getListingsUrl(),
-            title = this.type.toUpperCase() + ' COMPANIES',
-            ajax = new AjaxClass(url, 'companydiv', completeFunc);
+        var title = this.type.toUpperCase() + ' COMPANIES',
+            ajax;
+        this.setListingSearch();
+        ajax = new AjaxClass(this.url, 'companydiv', completeFunc);
         pl('#listingstitle').html(title);
+        if (this.type === 'closing') {
+            pl('#welcometitle').html('Invest in a startup today!');
+            pl('#welcometext').html('The companies below are ready for investment and open for bidding');
+            pl('#investbox').hide();
+        }
+        ajax.ajaxOpts.data = this.data;
         ajax.call();
     }
 });

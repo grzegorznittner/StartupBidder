@@ -412,81 +412,6 @@ Your goal here is to present specific relevant detail that can help someone to e
 
 <!-- begin presentation -->
 <div class="span-24">
-<style>
-.ipmain {
-    position: relative; color: white; width: 960px; height: 640px; font-size: 24px; overflow: hidden;
-    background: #222222;
-    -moz-linear-gradient(left top , #222222 0%, #888888 100%) repeat scroll 0 0 transparent;
-    -webkit-linear-gradient(left top , #222222 0%, #888888 100%) repeat scroll 0 0 transparent;
-    -o-linear-gradient(left top , #222222 0%, #888888 100%) repeat scroll 0 0 transparent;
-    -ms-linear-gradient(left top , #222222 0%, #888888 100%) repeat scroll 0 0 transparent;
-    linear-gradient(left top , #222222 0%, #888888 100%) repeat scroll 0 0 transparent;
-}
-.ipslideset {
-    position: absolute;
-    -moz-transition: left 500ms;
-    -webkit-transition: left 500ms;
-    -o-transition: left 500ms;
-    -ms-transition: left 500ms;
-    transition: left 500ms;
-}
-.ipslide { width: 960px; height: 640px; position: absolute; }
-.ipslide1 { left: 0; }
-.ipslide2 { left: 960px; }
-.ipslide3 { left: 1920px; }
-.ipslide4 { left: 2880px; }
-.ipslide5 { left: 3840px; }
-.ipslide6 { left: 4800px; }
-.ipslide7 { left: 5760px; }
-.ipslide8 { left: 6720px; }
-.ipslide9 { left: 7680px; }
-.ipslide10 { left: 8640px; }
-.ipslide11 { left: 9600px; }
-.ipslide12 { left: 10560px; }
-.ipslide13 { left: 11520px; }
-.ipslide14 { left: 12480px; }
-.ipslide15 { left: 13440px; }
-.ipslide16 { left: 14400px; }
-.ipslide17 { left: 15360px; }
-.ipslide18 { left: 16320px; }
-.ipslide19 { left: 17280px; }
-.ipslide20 { left: 18240px; }
- 
-.ipheader { height: 145px; margin: 15px; }
-.iplogo { float: left; height: 146px; width: 146px; background-image: url(img/noimage_146x146.jpg); margin-right: 15px; }
-.iptitle { float: left; font-size: 48px; font-weight: bold; width: 769px; margin-top: 93px; height: 68px; width: 769px; color: #32aff6; overflow:hidden; }
-.ipline {
-    margin: 0 15px 0 15px; height: 4px;
-    background: #e2e2e2;
-    background: -moz-linear-gradient(left, #e2e2e2 0%, #707070 100%);
-    background: -webkit-linear-gradient(left, #e2e2e2 0%, #707070 100%);
-    background: -o-linear-gradient(left, #e2e2e2 0%, #707070 100%);
-    background: -ms-linear-gradient(left, #e2e2e2 0%, #707070 100%);
-    background: linear-gradient(left, #e2e2e2 0%, #707070 100%);
-}
-.ipcontent { margin: 36px 100px; height: 388px; color: white; overflow: hidden; }
-.ipcentered { text-align: center; }
-.iplist { margin-bottom: 0px; }
-.ipspacer { height: 36px; }
-
-.ipnav {
-    width: 100%; height: 100%; opacity: 0; position: absolute; top: 0;
-    -moz-transition: opacity 300ms;
-    -webkit-transition: opacity 300ms;
-    -o-transition: opacity 300ms;
-    -ms-transition: opacity 300ms;
-    transition: opacity 300ms;
-}
-.ipnav:hover { opacity: 1.0; }
-.iparrow { position: absolute; width: 64px; height: 64px; }
-.ipleft { top: 288px; left: 15px; background-image: url(img/icons/ip_leftarrow_64.png); }
-.ipright { top: 288px; right: 15px; background-image: url(img/icons/ip_rightarrow_64.png); }
-.ipfooter { position: absolute; font-size: 14px; height: 30px; bottom: 0px; }
-.ipdata { left: 15px; }
-.ipcorp { margin-right: 20px; }
-.ippage { right: 15px; }
-</style>
-
     <div class="bannertextsmall">Investor Presentation</div>
 
     <div class="bmcborder ipmain">
@@ -503,7 +428,9 @@ Your goal here is to present specific relevant detail that can help someone to e
                     <div class="ipcentered" id="mantraip"></div>
                     <div class="ipspacer"></div>
                     <div class="ipcentered">by <span id="nameip"></div>
+                    <!-- anti-spam
                     <div class="ipcentered"><a href="" id="contact_emaillinkip"><span id="contact_emailip"></span></a></div>
+                    -->
                     <div class="ipcentered"><a href="" id="websitelinkip"><span id="websiteip"></span></a></div>
                     <div class="ipcentered" id="brief_addressip"></div>
                     <div class="ipspacer"></div>
@@ -733,6 +660,7 @@ Your goal here is to present specific relevant detail that can help someone to e
   <script src="js/modules/base.js"></script>
   <script src="js/modules/companylist.js"></script>
   <script src="js/modules/forms.js"></script>
+  <script src="js/modules/ip.js"></script>
   <script src="js/modules/newlistingbase.js"></script>
   <script src="js/modules/newlistingqapage.js"></script>
 
