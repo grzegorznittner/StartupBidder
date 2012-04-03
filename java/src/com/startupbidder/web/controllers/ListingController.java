@@ -2,8 +2,10 @@ package com.startupbidder.web.controllers;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -11,10 +13,12 @@ import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.node.ArrayNode;
 
 import com.startupbidder.datamodel.ListingDoc;
 import com.startupbidder.vo.ListPropertiesVO;
@@ -83,6 +87,8 @@ public class ListingController extends ModelDrivenController {
 				return startEditing(request);
 			} else if ("update_field".equalsIgnoreCase(getCommand(1))) {
 				return updateField(request);
+			} else if ("update_address".equalsIgnoreCase(getCommand(1))) {
+				return updateAddress(request);
 			} else if("up".equalsIgnoreCase(getCommand(1))) {
 				return up(request);
 			} else if("post".equalsIgnoreCase(getCommand(1))) {
@@ -214,6 +220,9 @@ public class ListingController extends ModelDrivenController {
 		String listingString = request.getParameter("listing");
 		if (!StringUtils.isEmpty(listingString)) {
 			JsonNode rootNode = mapper.readValue(listingString, JsonNode.class);
+			if (rootNode.get("update_address") != null) {
+				return updateAddress(request);
+			}
 			List<ListingPropertyVO> properties = new ArrayList<ListingPropertyVO>();
 			
 			Iterator<Entry<String, JsonNode>> fields = rootNode.getFields();
@@ -237,6 +246,99 @@ public class ListingController extends ModelDrivenController {
 		}
 
 		return headers;
+	}
+	
+    // PUT /listing/update_address
+    // POST /listing/update_address
+	private HttpHeaders updateAddress(HttpServletRequest request) throws JsonParseException, JsonMappingException, IOException {
+		HttpHeaders headers = new HttpHeadersImpl("update_address");
+		
+		ObjectMapper mapper = new ObjectMapper();
+		log.log(Level.INFO, "Parameters: " + request.getParameterMap());
+		String addressString = request.getParameter("listing");
+		if (!StringUtils.isEmpty(addressString)) {
+			JsonNode rootNode = mapper.readValue(addressString, JsonNode.class);
+			Map<String, String> properties = new HashMap<String, String>();
+			
+			if (rootNode.get("update_address") == null) {
+				log.log(Level.WARNING, "JSON element 'update_address' is not available!");
+				headers.setStatus(500);
+				return headers;
+			}
+			JsonNode addressComponents = rootNode.get("update_address").get("address_components");
+			if (addressComponents != null) {
+				Iterator<JsonNode> elements = addressComponents.getElements();
+				for (; elements.hasNext(); ) {
+					String[] comp = getAddressComponents(elements.next());
+					if (comp != null) {
+						// using type and short_name
+						properties.put("SHORT_" + comp[0], comp[1]);
+						// using type and long_name
+						properties.put("LONG_" + comp[0], comp[2]);
+					}
+				}
+			} else {
+				log.log(Level.WARNING, "JSON element 'address_components' is not available!");
+				headers.setStatus(500);
+				return headers;
+			}
+			JsonNode formattedAddress = rootNode.get("update_address").get("formatted_address");
+			if (formattedAddress != null) {
+				properties.put("formatted_address", formattedAddress.getValueAsText());
+			}
+			JsonNode geometry = rootNode.get("update_address").get("geometry");
+			if (geometry != null && geometry.get("location") != null) {
+				Iterator<JsonNode> locationIt = geometry.get("location").getElements();
+				String ta = locationIt.next().getValueAsText();
+				String ua = locationIt.next().getValueAsText();
+				
+				properties.put("latitude", ta);
+				properties.put("longitude", ua);
+			} else {
+				log.log(Level.WARNING, "JSON element 'geometry/location/Ta|Ua' is not available!");
+				headers.setStatus(500);
+				return headers;
+			}
+			
+			log.log(Level.INFO, "Updating listing address: " + properties);
+			ListingAndUserVO listing = ListingFacade.instance().updateListingAddressProperties(getLoggedInUser(), properties);
+			if (listing != null && listing.getListing() != null) {
+				String[] url = ServiceFacade.instance().createUploadUrls(getLoggedInUser(), "/file/upload", 4);
+				listing.getListing().setBuinessPlanUpload(url[0]);
+				listing.getListing().setFinancialsUpload(url[1]);
+				listing.getListing().setPresentationUpload(url[2]);
+				listing.getListing().setLogoUpload(url[3]);
+			}
+			model = listing;
+		} else {
+			log.log(Level.WARNING, "Parameter 'listing' is empty!");
+			headers.setStatus(500);
+		}
+
+		return headers;
+	}
+	
+	private String[] getAddressComponents(JsonNode element) {
+		String[] address = null;
+		
+		JsonNode types = element.get("types");
+		if (types != null && types instanceof ArrayNode) {
+			String type1 = types.get(0) != null ? types.get(0).getValueAsText() : null;
+			String type2 = types.get(1) != null ? types.get(1).getValueAsText() : null;
+			
+			if (!StringUtils.equals("political", type2)) {
+				return null;
+			}
+			address = new String[3];
+			address[0] = type1;
+			if (element.get("short_name") != null) {
+				address[1] = element.get("short_name").getValueAsText();
+			}
+			if (element.get("long_name") != null) {
+				address[2] = element.get("long_name").getValueAsText();
+			}
+		}
+		return address;
 	}
 	
     // GET /listings/keyword

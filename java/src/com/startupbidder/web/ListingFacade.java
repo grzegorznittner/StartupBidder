@@ -240,7 +240,77 @@ public class ListingFacade {
 		
 		return result;
 	}
+
+	public ListingAndUserVO updateListingAddressProperties(UserVO loggedInUser, Map<String, String> properties) {
+		ListingAndUserVO result = new ListingAndUserVO();
+
+		if (loggedInUser == null || loggedInUser.getEditedListing() == null) {
+			result.setErrorCode(ErrorCodes.OPERATION_NOT_ALLOWED);
+			result.setErrorMessage("User is not logged in or is not editing any listing");
+			return result;
+		}
+		// retrieving edited listing
+		Listing listing = getDAO().getListing(BaseVO.toKeyId(loggedInUser.getEditedListing()));
+		if (listing == null) {
+			result.setErrorCode(ErrorCodes.OPERATION_NOT_ALLOWED);
+			result.setErrorMessage("User is not editing any listing");
+			return result;
+		}
+		if (listing.state != Listing.State.NEW) {
+			result.setErrorCode(ErrorCodes.OPERATION_NOT_ALLOWED);
+			result.setErrorMessage("Listing is not in NEW state");
+			return result;
+		}
+		StringBuffer infos = new StringBuffer();
+		// removing non updatable fields and handling fetched fields
+		List<ListingPropertyVO> propsToUpdate = new ArrayList<ListingPropertyVO>();
+		createMandatoryProperty(propsToUpdate, infos, properties, "latitude", "latitude");
+		createMandatoryProperty(propsToUpdate, infos, properties, "longitude", "longitude");
+		createMandatoryProperty(propsToUpdate, infos, properties, "SHORT_country", "country");
+		createMandatoryProperty(propsToUpdate, infos, properties, "SHORT_administrative_area_level_1", "state");
+		createMandatoryProperty(propsToUpdate, infos, properties, "LONG_locality", "city");
+		createMandatoryProperty(propsToUpdate, infos, properties, "formatted_address", "address");
+		
+		if (infos.length() > 0 ) {
+			log.warning("Missing mandatory address field(s): " + infos.toString());
+			result.setErrorCode(ErrorCodes.ENTITY_VALIDATION);
+			result.setErrorMessage("Missing mandatory address field(s).");
+			return result;
+		}
+		
+		if (!propsToUpdate.isEmpty()) {
+			for (ListingPropertyVO prop : propsToUpdate) {
+				VoToModelConverter.updateListingProperty(listing, prop);
+			}
+			log.info("Updating listing: " + listing);
+			getDAO().storeListing(listing);
+		}
+		result.setListing(DtoToVoConverter.convert(listing));
+		
+		return result;
+	}
+
+	private ListingPropertyVO createMandatoryProperty(List<ListingPropertyVO> propsToUpdate, StringBuffer infos, 
+			Map<String, String> properties, String name, String propertyName) {
+		String value = properties.get(name);
+		if (value != null) {
+			ListingPropertyVO prop = new ListingPropertyVO(propertyName, value);
+			propsToUpdate.add(prop);
+			return prop;
+		} else {
+			infos.append("'" + name + "' ");
+			return null;
+		}
+	}
 	
+	private ListingPropertyVO createProperty(Map<String, String> properties, String name) {
+		String value = properties.get(name);
+		if (value != null) {
+			return new ListingPropertyVO(name, value);
+		}
+		return null;
+	}
+
 	private ListingDoc fetchAndUpdateListingDoc(Listing listing, ListingPropertyVO prop) {
 		byte[] docBytes = null;
 		String mimeType = null;
