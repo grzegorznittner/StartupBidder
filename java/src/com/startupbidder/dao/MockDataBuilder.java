@@ -756,7 +756,7 @@ public class MockDataBuilder {
 				"Misleading is our mantra", "Executive summary for <b>MisLead</b>");
 		listings.add(bp); // 6
 	
-		bp = prepareListing(THEONE, "Computer Training Camp", Listing.State.ACTIVE, "Other", 15000, 45,
+		bp = prepareListing(THEONE, "Computer Training Camp", Listing.State.ACTIVE, "Other", 0, 0,
 				"We'll train even lammers", "Starting a computer training camp for children is a terrific new business venture to set in motion. In spite of the fact that many children now receive computer training in school, attending computer camps ensures parents and children a better and more complete understanding of the course material. The computer camps can be operated on a year-round basis or in the summer only. Typically, these camps are one or two days in length and available for various training needs, from beginner to advanced. Once again, this is the kind of children's business that can be operated as an independent business venture or operated in conjunction with a community program or community center.");
 		listings.add(bp); // 7
 
@@ -764,7 +764,7 @@ public class MockDataBuilder {
 				"Search is our life", "The fact of the matter is Google, and to a much lesser extent Bing, own the search market. Ask Barry Diller, if you don't believe us. Yet, startups still spring up hoping to disrupt the incumbents. Cuil flopped. Wolfram Alpha is irrelevant. Powerset, which was a semantic search engine was bailed out by Microsoft, which acquired it.");
 		listings.add(bp); // 8
 
-		bp = prepareListing(INSIDER, "Social recommendations", Listing.State.ACTIVE, "Software", 100000, 8,
+		bp = prepareListing(INSIDER, "Social recommendations", Listing.State.ACTIVE, "Software", 0, 0,
 				"Learn from other people's mistakes", "It's a very tempting idea. Collect data from people about their tastes and preferences. Then use that data to create recommendations for others. Or, use that data to create recommendations for the people that filled in the information. It doesn't work. The latest to try is Hunch and Get Glue. Hunch is pivoting towards non-consumer-facing white label business. Get Glue has had some success of late, but it's hardly a breakout business.");
 		listings.add(bp); // 9
 
@@ -776,7 +776,7 @@ public class MockDataBuilder {
 				"We can trasfer even a penny", "Micropayments are one idea that's tossed around to solve the problem of paying for content on the Web. If you want to read a New York Times story it would only cost a nickel! Or on Tumblr, if you want to tip a blogger or pay for a small design you could with ease. So far, these micropayment plans have not worked.");
 		listings.add(bp); // 11
 
-		bp = prepareListing(AHMED, "De Vegetarische Slager", Listing.State.ACTIVE, "Chemical", 5000, 49,
+		bp = prepareListing(AHMED, "De Vegetarische Slager", Listing.State.ACTIVE, "Chemical", 0, 0,
 				"Substitution is our answer", "De Vegetarische Slager — the vegetarian butcher — opened a store in The Hague that’s dedicated to meat substitutes in the same way a butcher is dedicated to meat. The company’s main innovation is its own line of lupin-based, protein-rich products, developed by a Dutch team of scientists and chefs. De Vegetarische Slager is targeting the higher end of the market — consumers willing to pay as much for a meat substitute as they would for the real thing. As more people opt for meatless Mondays or cut out meat altogether, we wouldn’t be surprised to see vegetarian butchers pop up on main streets around the world.");
 		listings.add(bp); // 12
 		
@@ -784,7 +784,7 @@ public class MockDataBuilder {
 				"Twitt a flight", "DJs, promoters, label reps and ‘professional party people’ from the Netherlands have persuaded Dutch airline KLM to add an extra flight to its roster. In a new twist on crowd-buying, the initiators of Fly2Miami made a bet with KLM on Twitter to organize a non-stop flight from Amsterdam to Miami. Crowd clout and group buying — turbo-charged by social media — provide companies across industries with new opportunities to empower consumers while improving their bottom line or, at the very least, their brand image.");
 		listings.add(bp); // 13
 		
-		bp = prepareListing(GREG, "Village rainwater", Listing.State.ACTIVE, "Environmental", 20000, 10,
+		bp = prepareListing(GREG, "Village rainwater", Listing.State.ACTIVE, "Environmental", 0, 0,
 				"Village rainwater harvesting system stores enough for a year", "Akash Ganga, or River from the Sky, is a sustainable system that channels rooftop rainwater from every house in a village through gutters, and then pipes it to a network of multitier, underground reservoirs. Currently implemented in six drought-prone villages in the Churu District of Rajasthan, the system captures enough rainwater to meet the drinking needs of an entire village for 12 months. Akash Ganga currently supplies some 10,000 people with fresh water.");
 		listings.add(bp); // 14
 
@@ -810,7 +810,7 @@ public class MockDataBuilder {
 
 		bp = prepareListing(MADMAX, "Acupuncture", Listing.State.CLOSED, "Healthcare", 10000, 40,
 				"You'll feel better and more relaxed", "Acupuncture is one of the alternative treatment methodologies that have become popular as a solution to several health problem.  One needs to have a license to practice as an Acupuncturist.  A licensed Acupuncturist can start own practice or get associated with fitness centers which offer Acupuncture as one of their services.");
-		listings.add(bp); // 20		
+		listings.add(bp); // 20
 
 		return listings;
 	}
@@ -847,7 +847,9 @@ public class MockDataBuilder {
 		case FROZEN:
 			bp.posted = createdTime.plusHours(hours * 7 / 10).toDate();
 			bp.listedOn = createdTime.plusHours(hours * 4 / 10).toDate();
-			bp.closingOn = createdTime.plusHours(hours * 4 / 10).plusDays(30).toDate();
+			if (bp.askedForFunding) {
+				bp.closingOn = createdTime.plusHours(hours * 4 / 10).plusDays(30).toDate();
+			}
 			break;
 		case WITHDRAWN:
 			bp.posted = createdTime.plusHours(hours * 8 / 10).toDate();
