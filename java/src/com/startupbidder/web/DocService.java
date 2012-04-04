@@ -28,6 +28,7 @@ import com.google.gdata.data.media.MediaByteArraySource;
 import com.google.gdata.util.AuthenticationException;
 import com.startupbidder.datamodel.Listing;
 import com.startupbidder.datamodel.SystemProperty;
+import com.startupbidder.vo.DtoToVoConverter;
 import com.startupbidder.vo.ListingDocumentVO;
 import com.startupbidder.vo.ListingVO;
 import com.startupbidder.vo.UserListVO;
@@ -125,12 +126,7 @@ public class DocService {
 			log.severe("Cannot get folder " + Folder.SUMMARY);
 			return 0;
 		}
-		UserListVO userList = UserMgmtFacade.instance().getAllUsers(null);
-		Map<String, UserVO> users = new HashMap<String, UserVO>();
-		for (UserVO user : userList.getUsers()) {
-			users.put(user.getId(), user);
-		}
-		
+
 		int updatedDocs = 0;
 		for (Listing listing : listings) {
 			try {
@@ -140,8 +136,7 @@ public class DocService {
 				newDocument.setWritersCanInvite(false);
 				newDocument = client.insert(new URL("https://docs.google.com/feeds/default/private/full/" + summaryId + "/contents"), newDocument);
 
-				UserVO user = users.get(listing.owner);
-				byte[] bytes = (user.getName() + " " + listing.name + " " + listing.summary).getBytes();
+				byte[] bytes = DtoToVoConverter.convert(listing).dataForSearch().getBytes();
 				newDocument.setEtag("*");
 				newDocument.setMediaSource(new MediaByteArraySource(bytes,
 						DocumentListEntry.MediaType.TXT.getMimeType()));

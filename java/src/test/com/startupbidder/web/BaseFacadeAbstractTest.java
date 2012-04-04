@@ -438,6 +438,7 @@ public abstract class BaseFacadeAbstractTest {
 		listing.state = Listing.State.POSTED;
 		listing.suggestedAmount = 400000;
 		listing.suggestedPercentage = 50;
+		listing.askedForFunding = true;
 		listing.created = now.minus(Days.days(3)).toDate();;
 		listing.posted = now.minus(Days.days(2)).toDate();
 		listing.listedOn = now.minus(Days.days(2)).toDate();

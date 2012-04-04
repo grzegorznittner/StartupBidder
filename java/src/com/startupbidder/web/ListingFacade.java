@@ -448,8 +448,11 @@ public class ListingFacade {
 		// activation also could be done for FROZEN listings
 		if (dbListing.state == Listing.State.POSTED) {
 			dbListing.listedOn = new Date();
-			DateMidnight midnight = new DateMidnight().plusDays(1);
-			dbListing.closingOn = midnight.plusDays(LISTING_DEFAULT_CLOSING_ON_DAYS).toDate();
+			// only listings which ask for funding have closing date set
+			if (dbListing.askedForFunding) {
+				DateMidnight midnight = new DateMidnight().plusDays(1);
+				dbListing.closingOn = midnight.plusDays(LISTING_DEFAULT_CLOSING_ON_DAYS).toDate();
+			}
 		}
 		log.info("Activating listing: " + dbListing);
 		dbListing.state = Listing.State.ACTIVE;

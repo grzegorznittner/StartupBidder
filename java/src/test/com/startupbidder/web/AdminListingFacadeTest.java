@@ -85,11 +85,15 @@ public class AdminListingFacadeTest extends AdminFacadeAbstractTest {
 		assertTrue("Listed date must be between posted date and now",
 				activatedListing.getListing().getPostedOn().getTime() < activatedListing.getListing().getListedOn().getTime()
 				&& activatedListing.getListing().getListedOn().getTime() < new Date().getTime());
-		assertNotNull("Closing date should be set", activatedListing.getListing().getClosingOn());
-		DateMidnight midnight = new DateMidnight();
-		assertTrue("Closing date should be set 30 days ahead", midnight.plus(Days.days(29)).toDate().getTime() < activatedListing.getListing().getClosingOn().getTime());
 		assertEquals("Listing was just activated", 0, activatedListing.getListing().getDaysAgo());
-		assertEquals("Listing was just activated and closing should be 30 days ahead", 30, activatedListing.getListing().getDaysLeft());
+		if (listing.isAskedForFunding()) {
+			assertNotNull("Closing date should be set as listing is asking for funds", activatedListing.getListing().getClosingOn());
+			DateMidnight midnight = new DateMidnight();
+			assertTrue("Closing date should be set 30 days ahead", midnight.plus(Days.days(29)).toDate().getTime() < activatedListing.getListing().getClosingOn().getTime());
+			assertEquals("Listing was just activated and closing should be 30 days ahead", 30, activatedListing.getListing().getDaysLeft());
+		} else {
+			assertNull("Closing date should not be set as listing is not asking for funds", activatedListing.getListing().getClosingOn());
+		}
 		assertEquals(listing.getName(), activatedListing.getListing().getName());
 		assertEquals(listing.getSummary(), activatedListing.getListing().getSummary());
 		assertEquals(listing.getOwner(), activatedListing.getListing().getOwner());
@@ -115,11 +119,15 @@ public class AdminListingFacadeTest extends AdminFacadeAbstractTest {
 		assertTrue("Listed date must be between posted date and now",
 				activatedListing.getListing().getPostedOn().getTime() < activatedListing.getListing().getListedOn().getTime()
 				&& activatedListing.getListing().getListedOn().getTime() < new Date().getTime());
-		assertNotNull("Closing date should be set", activatedListing.getListing().getClosingOn());
-		midnight = new DateMidnight();
-		assertTrue("Closing date should be set 30 days ahead", midnight.plus(Days.days(29)).toDate().getTime() < activatedListing.getListing().getClosingOn().getTime());
 		assertEquals("Listing was just activated", 0, activatedListing.getListing().getDaysAgo());
-		assertEquals("Listing was just activated and closing should be 30 days ahead", 30, activatedListing.getListing().getDaysLeft());
+		if (listing.isAskedForFunding()) {
+			assertNotNull("Closing date should be set as listing is asking for funds", activatedListing.getListing().getClosingOn());
+			DateMidnight midnight = new DateMidnight();
+			assertTrue("Closing date should be set 30 days ahead", midnight.plus(Days.days(29)).toDate().getTime() < activatedListing.getListing().getClosingOn().getTime());
+			assertEquals("Listing was just activated and closing should be 30 days ahead", 30, activatedListing.getListing().getDaysLeft());
+		} else {
+			assertNull("Closing date should not be set as listing is not asking for funds", activatedListing.getListing().getClosingOn());
+		}
 		assertEquals(listing.getName(), activatedListing.getListing().getName());
 		assertEquals(listing.getSummary(), activatedListing.getListing().getSummary());
 		assertEquals(listing.getOwner(), activatedListing.getListing().getOwner());

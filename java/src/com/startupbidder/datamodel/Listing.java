@@ -64,7 +64,7 @@ public class Listing extends BaseObject implements Monitor.Monitored {
 	@Indexed public Date  created;
 	@Indexed public Date  posted;
 	@Indexed public Date  listedOn;
-	@Indexed public Date  closingOn;
+	@Indexed(IfNotNull.class) public Date  closingOn;
 	@Indexed public State state = State.NEW;
 	
 	// address parts

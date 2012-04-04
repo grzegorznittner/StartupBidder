@@ -1201,4 +1201,7 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 		assertNull("We should get null for non existing listing", stats);
 	}
 
+	@Test
+	public void testTopLocations() {
+	}
 }
