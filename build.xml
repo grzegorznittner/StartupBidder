@@ -96,7 +96,7 @@
   	<echo message="Updating app.yaml and main-page.html with build timestamp ${DSTAMP}${TSTAMP}"/>
   	<replaceregexp file="war/WEB-INF/app.yaml" byline="true"
   	               match="version.*"
-  	               replace="version ${DSTAMP}${TSTAMP}"
+  	               replace="version: ${DSTAMP}${TSTAMP}"
   	/>
   	<replaceregexp file="war/main-page.html" byline="true"
   	               match="Copyright &amp;copy;.*Startupbidder"
