@@ -6,7 +6,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -175,13 +177,13 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 		ListingVO listing = userListing.getListing();
 		
 		// setting address without state name
-		List<ListingPropertyVO> props = new ArrayList<ListingPropertyVO>();
-		props.add(new ListingPropertyVO("address", "Full address, with street and country"));
-		props.add(new ListingPropertyVO("country", "Poland"));
-		props.add(new ListingPropertyVO("city", "Rybnik"));
-		props.add(new ListingPropertyVO("latitude", "21.9342"));
-		props.add(new ListingPropertyVO("longitude", "56.9765"));
-		ListingAndUserVO update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
+		Map<String, String> props = new HashMap<String, String>();
+		props.put("formatted_address", "Full address, with street and country");
+		props.put("SHORT_country", "Poland");
+		props.put("LONG_locality", "Rybnik");
+		props.put("latitude", "21.9342");
+		props.put("longitude", "56.9765");
+		ListingAndUserVO update = ListingFacade.instance().updateListingAddressProperties(googleUserVO, props);
 		assertEquals("We should get OK, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
 		assertEquals("Full address, with street and country", update.getListing().getAddress());
 		assertEquals("Rybnik, Poland", update.getListing().getBriefAddress());
@@ -198,36 +200,18 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 
 		// updating address compounds
 		listing = update.getListing();
-		props = new ArrayList<ListingPropertyVO>();
-		props.add(new ListingPropertyVO("country", "US"));
-		props.add(new ListingPropertyVO("state", "TX"));
-		props.add(new ListingPropertyVO("city", "Austin"));
-		update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
+		props = new HashMap<String, String>();
+		props.put("formatted_address", "Full address, with street and country");
+		props.put("SHORT_country", "US");
+		props.put("SHORT_administrative_area_level_1", "TX");
+		props.put("LONG_locality", "Austin");
+		props.put("latitude", "15.8545464078");
+		props.put("longitude", "-20.45634");
+		update = ListingFacade.instance().updateListingAddressProperties(googleUserVO, props);
 		assertEquals("We should get OK, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
 		assertEquals("Austin, TX, US", update.getListing().getBriefAddress());
-		assertEquals(listing.getLatitude(), update.getListing().getLatitude(), 0.0001);
-		assertEquals(listing.getLongitude(), update.getListing().getLongitude(), 0.0001);
-		assertEquals(listing.getId(), update.getListing().getId());
-		assertEquals(listing.getMantra(), update.getListing().getMantra());
-		assertEquals(listing.getSummary(), update.getListing().getSummary());
-		assertEquals(listing.getAddress(), update.getListing().getAddress());
-		assertEquals(listing.getBuinessPlanId(), update.getListing().getBuinessPlanId());
-		assertEquals(listing.getPresentationId(), update.getListing().getPresentationId());
-		assertEquals(listing.getFinancialsId(), update.getListing().getFinancialsId());
-		assertEquals(listing.getWebsite(), update.getListing().getWebsite());
-		assertEquals(listing.getState(), update.getListing().getState());
-
-		// setting only city
-		listing = update.getListing();
-		props = new ArrayList<ListingPropertyVO>();
-		props.add(new ListingPropertyVO("country", ""));
-		props.add(new ListingPropertyVO("state", ""));
-		props.add(new ListingPropertyVO("city", "Austin"));
-		update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
-		assertEquals("We should get OK, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
-		assertEquals("Austin", update.getListing().getBriefAddress());
-		assertEquals(listing.getLatitude(), update.getListing().getLatitude(), 0.0001);
-		assertEquals(listing.getLongitude(), update.getListing().getLongitude(), 0.0001);
+		assertEquals(NumberUtils.toDouble("15.8545464078"), update.getListing().getLatitude(), 0.0001);
+		assertEquals(NumberUtils.toDouble("-20.45634"), update.getListing().getLongitude(), 0.0001);
 		assertEquals(listing.getId(), update.getListing().getId());
 		assertEquals(listing.getMantra(), update.getListing().getMantra());
 		assertEquals(listing.getSummary(), update.getListing().getSummary());
@@ -240,24 +224,91 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 
 		// clearing address compounds
 		listing = update.getListing();
-		props = new ArrayList<ListingPropertyVO>();
-		props.add(new ListingPropertyVO("country", ""));
-		props.add(new ListingPropertyVO("state", ""));
-		props.add(new ListingPropertyVO("city", ""));
-		update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
+		props = new HashMap<String, String>();
+		props.put("formatted_address", "");
+		props.put("SHORT_country", "");
+		props.put("SHORT_administrative_area_level_1", "");
+		props.put("LONG_locality", "");
+		props.put("latitude", "");
+		props.put("longitude", "");
+		update = ListingFacade.instance().updateListingAddressProperties(googleUserVO, props);
 		assertEquals("We should get OK, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
 		assertEquals("", update.getListing().getBriefAddress());
-		assertEquals(listing.getLatitude(), update.getListing().getLatitude(), 0.0001);
-		assertEquals(listing.getLongitude(), update.getListing().getLongitude(), 0.0001);
+		assertEquals("", update.getListing().getAddress());
+		assertEquals(NumberUtils.toDouble("0.0"), update.getListing().getLatitude(), 0.0001);
+		assertEquals(NumberUtils.toDouble("0.0"), update.getListing().getLongitude(), 0.0001);
 		assertEquals(listing.getId(), update.getListing().getId());
 		assertEquals(listing.getMantra(), update.getListing().getMantra());
 		assertEquals(listing.getSummary(), update.getListing().getSummary());
-		assertEquals(listing.getAddress(), update.getListing().getAddress());
 		assertEquals(listing.getBuinessPlanId(), update.getListing().getBuinessPlanId());
 		assertEquals(listing.getPresentationId(), update.getListing().getPresentationId());
 		assertEquals(listing.getFinancialsId(), update.getListing().getFinancialsId());
 		assertEquals(listing.getWebsite(), update.getListing().getWebsite());
 		assertEquals(listing.getState(), update.getListing().getState());
+
+		// updating address compounds but formatted_address is missing
+		listing = update.getListing();
+		props = new HashMap<String, String>();
+		props.put("SHORT_country", "US");
+		props.put("LONG_locality", "Austin");
+		props.put("latitude", "21.9342");
+		props.put("longitude", "56.9765");
+		update = ListingFacade.instance().updateListingAddressProperties(googleUserVO, props);
+		assertNotSame("We should get failure, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
+
+		// updating address compounds but city is missing
+		listing = update.getListing();
+		props = new HashMap<String, String>();
+		props.put("SHORT_country", "FR");
+		props.put("latitude", "21.9342");
+		props.put("longitude", "56.9765");
+		update = ListingFacade.instance().updateListingAddressProperties(googleUserVO, props);
+		assertNotSame("We should get failure, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
+	}
+	
+	@Test
+	public void testUpdateListingAddressUsingWrongAPI() {
+		ListingAndUserVO userListing = ListingFacade.instance().createListing(googleUserVO);
+		assertEquals("We should get OK, we got " + userListing.getErrorMessage(), ErrorCodes.OK, userListing.getErrorCode());
+		assertEquals(userListing.getListing().getId(), googleUserVO.getEditedListing());
+		ListingVO listing = userListing.getListing();
+		
+		// setting address without state name
+		List<ListingPropertyVO> props = new ArrayList<ListingPropertyVO>();
+		props.add(new ListingPropertyVO("address", "Full address, with street and country"));
+		props.add(new ListingPropertyVO("country", "Poland"));
+		props.add(new ListingPropertyVO("city", "Rybnik"));
+		props.add(new ListingPropertyVO("latitude", "21.9342"));
+		props.add(new ListingPropertyVO("longitude", "56.9765"));
+		ListingAndUserVO update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
+		assertNotSame("We should get failure, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
+
+		// updating address compounds
+		listing = update.getListing();
+		props = new ArrayList<ListingPropertyVO>();
+		props.add(new ListingPropertyVO("country", "US"));
+		props.add(new ListingPropertyVO("state", "TX"));
+		props.add(new ListingPropertyVO("city", "Austin"));
+		update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
+		assertNotSame("We should get failure, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
+
+		// setting only city
+		listing = update.getListing();
+		props = new ArrayList<ListingPropertyVO>();
+		props.add(new ListingPropertyVO("country", ""));
+		props.add(new ListingPropertyVO("state", ""));
+		props.add(new ListingPropertyVO("city", "Austin"));
+		update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
+		assertNotSame("We should get failure, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
+
+		// clearing address compounds
+		listing = update.getListing();
+		props = new ArrayList<ListingPropertyVO>();
+		props.add(new ListingPropertyVO("country", ""));
+		props.add(new ListingPropertyVO("state", ""));
+		props.add(new ListingPropertyVO("city", ""));
+		update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
+		assertNotSame("We should get failure, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
 	}
 	
 	@Test

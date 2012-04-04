@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,6 +51,7 @@ import com.startupbidder.datamodel.Listing;
 import com.startupbidder.datamodel.ListingDoc;
 import com.startupbidder.datamodel.ListingDoc.Type;
 import com.startupbidder.datamodel.ListingStats;
+import com.startupbidder.datamodel.Location;
 import com.startupbidder.datamodel.Notification;
 import com.startupbidder.datamodel.SBUser;
 import com.startupbidder.datamodel.VoToModelConverter;
@@ -267,9 +269,12 @@ public class ListingFacade {
 		createMandatoryProperty(propsToUpdate, infos, properties, "latitude", "latitude");
 		createMandatoryProperty(propsToUpdate, infos, properties, "longitude", "longitude");
 		createMandatoryProperty(propsToUpdate, infos, properties, "SHORT_country", "country");
-		createMandatoryProperty(propsToUpdate, infos, properties, "SHORT_administrative_area_level_1", "state");
 		createMandatoryProperty(propsToUpdate, infos, properties, "LONG_locality", "city");
 		createMandatoryProperty(propsToUpdate, infos, properties, "formatted_address", "address");
+		ListingPropertyVO state = createProperty(properties, "SHORT_administrative_area_level_1", "state");
+		if (state != null) {
+			propsToUpdate.add(state);
+		}
 		
 		if (infos.length() > 0 ) {
 			log.warning("Missing mandatory address field(s): " + infos.toString());
@@ -303,10 +308,10 @@ public class ListingFacade {
 		}
 	}
 	
-	private ListingPropertyVO createProperty(Map<String, String> properties, String name) {
+	private ListingPropertyVO createProperty(Map<String, String> properties, String name, String propertyName) {
 		String value = properties.get(name);
 		if (value != null) {
-			return new ListingPropertyVO(name, value);
+			return new ListingPropertyVO(propertyName, value);
 		}
 		return null;
 	}
@@ -983,11 +988,21 @@ public class ListingFacade {
 
 	public List<ListingStats> updateAllListingStatistics() {
 		List<ListingStats> list = new ArrayList<ListingStats>();
+		Map<String, Location> locations = new HashMap<String, Location>();
 	
 		List<Listing> listings = getDAO().getAllListings();
 		for (Listing listing : listings) {
-			list.add(calculateListingStatistics(listing.id));
+			ListingStats stats = calculateListingStatistics(listing.id);
+			Location loc = locations.get(stats.briefAddress);
+			if (loc != null) {
+				loc.value++;
+			} else {
+				locations.put(stats.briefAddress, new Location(stats.briefAddress));
+			}
+			list.add(stats);
 		}
+		getDAO().storeLocations(new ArrayList<Location>(locations.values()));
+		
 		log.log(Level.INFO, "Updated stats for " + list.size() + " listings: " + list);
 		int updatedDocs = DocService.instance().updateListingData(listings);
 		log.log(Level.INFO, "Updated docs for " + updatedDocs + " listings.");
@@ -1294,6 +1309,16 @@ public class ListingFacade {
 		Map<String, String> result = new LinkedHashMap<String, String>();
 		for (Category cat : categories) {
 			result.put(cat.name, cat.name);
+		}
+		return result;
+	}
+	
+	public Map<String, Integer> getTopLocations() {
+		List<Location> locations = getDAO().getTopLocations();
+		
+		Map<String, Integer> result = new LinkedHashMap<String, Integer>();
+		for (Location loc : locations) {
+			result.put(loc.briefAddress, loc.value);
 		}
 		return result;
 	}

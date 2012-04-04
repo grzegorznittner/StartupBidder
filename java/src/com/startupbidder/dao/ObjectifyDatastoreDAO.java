@@ -26,6 +26,7 @@ import com.startupbidder.datamodel.Comment;
 import com.startupbidder.datamodel.Listing;
 import com.startupbidder.datamodel.ListingDoc;
 import com.startupbidder.datamodel.ListingStats;
+import com.startupbidder.datamodel.Location;
 import com.startupbidder.datamodel.Monitor;
 import com.startupbidder.datamodel.Notification;
 import com.startupbidder.datamodel.PaidBid;
@@ -34,6 +35,7 @@ import com.startupbidder.datamodel.SBUser;
 import com.startupbidder.datamodel.SystemProperty;
 import com.startupbidder.datamodel.UserStats;
 import com.startupbidder.datamodel.Vote;
+import com.startupbidder.vo.DtoToVoConverter;
 import com.startupbidder.vo.ListPropertiesVO;
 
 /**
@@ -252,7 +254,7 @@ public class ObjectifyDatastoreDAO {
 		listingStats.numberOfVotes = CollectionUtils.size(votesIt.iterator());
 
 		// calculate valuation for listing (max accepted bid or suggested valuation)
-		Bid mostValuedBid = null;		
+		Bid mostValuedBid = null;
 		// calculate median for bids and set total number of bids
 		List<Integer> values = new ArrayList<Integer>();
 		for (Bid bid : getBidsForListing(listingId)) {
@@ -288,6 +290,7 @@ public class ObjectifyDatastoreDAO {
 		log.info("listing: " + listingId + ", statistics: " + listingStats);
 		getOfy().put(listingStats);
 		
+		listingStats.briefAddress = DtoToVoConverter.createBriefAddress(listing);
 		return listingStats;
 	}
 	
@@ -1138,5 +1141,19 @@ public class ObjectifyDatastoreDAO {
 		return categories;
 	}
 
-
+	public void storeLocations(List<Location> locations) {
+		Collections.sort(locations, new Location.TopComparator());
+		List<Location> topLocations = locations.subList(0, locations.size() > 20 ? 20 : locations.size() - 1);
+		
+		QueryResultIterable<Key<Location>> locIt = getOfy().query(Location.class).fetchKeys();
+		getOfy().delete(locIt);
+		getOfy().put(topLocations);
+	}
+	
+	public List<Location> getTopLocations() {
+		QueryResultIterable<Key<Location>> locIt = getOfy().query(Location.class)
+				.order("-value").fetchKeys();
+		List<Location> locations = new ArrayList<Location>(getOfy().get(locIt).values());
+		return locations;
+	}
 }

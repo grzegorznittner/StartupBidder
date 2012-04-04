@@ -8,6 +8,7 @@ import java.util.Date;
 
 import javax.persistence.Id;
 import javax.persistence.PrePersist;
+import javax.persistence.Transient;
 
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.annotation.Cached;
@@ -45,6 +46,8 @@ public class ListingStats extends BaseObject {
 	public long numberOfBids;
 	public long numberOfVotes;
 	public double score;
+
+	@Transient public String briefAddress;
 	
 	public String getWebKey() {
 		return new Key<ListingStats>(ListingStats.class, id).getString();

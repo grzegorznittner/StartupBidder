@@ -94,18 +94,8 @@ public class DtoToVoConverter {
 		listing.setAddress(listingDTO.address);
 		listing.setLatitude(listingDTO.latitude);
 		listing.setLongitude(listingDTO.longitude);
-		// preparing brief address used for listing's tile
-		String briefAddress = "";
-		if (!StringUtils.isEmpty(listingDTO.country)) {
-			briefAddress = listingDTO.country;
-		}
-		if (!StringUtils.isEmpty(listingDTO.usState)) {
-			briefAddress = listingDTO.usState + (briefAddress.length() > 0 ? ", " : "") + briefAddress;
-		}
-		if (!StringUtils.isEmpty(listingDTO.city)) {
-			briefAddress = listingDTO.city + (briefAddress.length() > 0 ? ", " : "") + briefAddress;
-		}
-		listing.setBriefAddress(briefAddress);
+
+		listing.setBriefAddress(createBriefAddress(listingDTO));
 		
 		// calculating days left and days ago
 		if (listingDTO.listedOn != null) {
@@ -156,6 +146,20 @@ public class DtoToVoConverter {
 		listing.setAnswer25(listingDTO.answer25);
 		listing.setAnswer26(listingDTO.answer26);
 		return listing;
+	}
+
+	public static String createBriefAddress(Listing listingDTO) {
+		String briefAddress = "";
+		if (!StringUtils.isEmpty(listingDTO.country)) {
+			briefAddress = listingDTO.country;
+		}
+		if (!StringUtils.isEmpty(listingDTO.usState)) {
+			briefAddress = listingDTO.usState + (briefAddress.length() > 0 ? ", " : "") + briefAddress;
+		}
+		if (!StringUtils.isEmpty(listingDTO.city)) {
+			briefAddress = listingDTO.city + (briefAddress.length() > 0 ? ", " : "") + briefAddress;
+		}
+		return briefAddress;
 	}
 	
 	public static CommentVO convert(Comment commentDTO) {
