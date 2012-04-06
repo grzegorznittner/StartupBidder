@@ -1,6 +1,7 @@
 function IPClass() {
     this.page = 1;
     this.pagetotal = 20;
+    this.pagewidth = 948;
     this.bound = false;
 }
 pl.implement(IPClass, {
@@ -62,7 +63,7 @@ pl.implement(IPClass, {
     },
     setPage: function(newpage) {
         var self = this,
-            left = (960 * (1 - newpage)) + 'px';
+            left = (self.pagewidth * (1 - newpage)) + 'px';
         self.page = newpage;
         pl('#ipslideset').css({left: left})
         pl('#ippage').text(newpage);

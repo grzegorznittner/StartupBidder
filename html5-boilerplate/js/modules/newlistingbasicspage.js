@@ -69,12 +69,14 @@ pl.implement(NewListingBasicsClass, {
             i,
             id,
             field,
-            addr;
+            addr,
+            updater;
         this.base.fields = [];
         this.base.fieldMap = {};
         for (i = 0; i < textFields.length; i++) {
             id = textFields[i];
-            field = new (classes[id])(id, this.base.listing[id], this.base.getUpdater(id), 'newlistingmsg');
+            updater = this.base.getUpdater(id);
+            field = new (classes[id])(id, this.base.listing[id], updater, 'newlistingmsg');
             if (this.base.displayNameOverrides[id]) {
                 field.fieldBase.setDisplayName(this.base.displayNameOverrides[id]);
             }
@@ -124,7 +126,7 @@ pl.implement(NewListingBasicsClass, {
             data = { listing: {
                         update_address: place
                     } },
-            ajax = new AjaxClass('/listing/update_field', 'newlistingmsg', completeFunc);
+            ajax = new AjaxClass('/listing/update_address', 'newlistingmsg', completeFunc);
         ajax.setPostData(data);
         ajax.call();
     },
@@ -138,7 +140,10 @@ pl.implement(NewListingBasicsClass, {
             mapOptions = {
                 center: new google.maps.LatLng(lat, lng),
                 zoom: this.base.listing.address ? 13 : 7,
-                mapTypeId: google.maps.MapTypeId.ROADMAP
+                mapTypeId: google.maps.MapTypeId.ROADMAP,
+                draggable: false,
+                scrollwheel: false,
+                disableDoubleClickZoom: true
             }, 
             addressAuto = new google.maps.places.Autocomplete(autoField, autoOptions),
             addressMap = new google.maps.Map(mapField, mapOptions),
