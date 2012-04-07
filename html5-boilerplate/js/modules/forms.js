@@ -358,6 +358,7 @@ function FieldBaseClass(id, value, updateFunction, msgId) {
     this.sel = '#' + id;
     this.validator = new ValidatorClass();
     this.msg = new UserMessageClass(msgId);
+    this.isEmptyNoUpdate = false; // for url check classes
 }
 pl.implement(FieldBaseClass, {
     setDisplayName: function(name) {
@@ -641,6 +642,9 @@ pl.implement(TextFieldClass, {
             self.fieldBase.msg.clear();
             icon.clear();
 */
+            return;
+        }
+        if (!newval && self.fieldBase.isEmptyNoUpdate) {
             return;
         }
         icon.clear();
