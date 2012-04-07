@@ -114,6 +114,9 @@ public class ListingFacade {
 			l.owner = new Key<SBUser>(loggedInUser.getId());
 			l.contactEmail = loggedInUser.getEmail();
 			l.founders = StringUtils.notEmpty(loggedInUser.getName()) ? loggedInUser.getName() : loggedInUser.getNickname();
+			l.askedForFunding = true;
+			l.suggestedAmount = 20000;
+			l.suggestedPercentage = 5;
 			l.created = new Date();
 			ListingVO newListing = DtoToVoConverter.convert(getDAO().createListing(l));
 			loggedInUser.setEditedListing(newListing.getId());
@@ -320,8 +323,9 @@ public class ListingFacade {
 		byte[] docBytes = null;
 		String mimeType = null;
 		try {
-			if(com.google.appengine.api.utils.SystemProperty.environment.value() == com.google.appengine.api.utils.SystemProperty.Environment.Value.Development
-					&& new File("./test-docs").exists()) {
+			boolean isDevEnvironment = com.google.appengine.api.utils.SystemProperty.environment.value() == com.google.appengine.api.utils.SystemProperty.Environment.Value.Development;
+			String url = prop.getPropertyValue();
+			if(!url.startsWith("http") && isDevEnvironment && new File("./test-docs").exists()) {
 				docBytes = FileUtils.readFileToByteArray(new File(prop.getPropertyValue()));
 				if (prop.getPropertyValue().endsWith(".gif")) {
 					mimeType = "image/gif";
@@ -339,7 +343,7 @@ public class ListingFacade {
 					mimeType = "application/pdf";
 				}
 			} else {
-				URLConnection con = new URL(prop.getPropertyValue()).openConnection();
+				URLConnection con = new URL(url).openConnection();
 				docBytes = IOUtils.toByteArray(con.getInputStream());
 				mimeType = con.getContentType();
 			}
@@ -1219,8 +1223,8 @@ public class ListingFacade {
         } else {
         	newImage = originalImage;
         }
-        if (newImage.getWidth() != 144) {
-        	Transform resize = ImagesServiceFactory.makeResize(144, 144);
+        if (newImage.getWidth() != 146) {
+        	Transform resize = ImagesServiceFactory.makeResize(146, 146);
         	newImage = imagesService.applyTransform(resize, newImage);
     		log.info("Resized image: " + newImage.getWidth() + " x " + newImage.getHeight());
         }
