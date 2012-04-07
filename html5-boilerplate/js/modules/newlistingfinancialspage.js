@@ -236,6 +236,7 @@ pl.implement(NewListingFinancialsClass, {
         return function() {
             var asked_fund = pl('#asked_fund').attr('checked') ? true : false,
                 msgs = asked_fund ? self.base.validate() : [];
+            /*
             if (!self.base.listing.presentation_id) {
                 msgs.push("SLIDE DECK: you must have a presentation.");
             }
@@ -245,6 +246,7 @@ pl.implement(NewListingFinancialsClass, {
             if (!self.base.listing.presentation_id) {
                 msgs.push("FINANCIALS: you must have a financial document.");
             }
+            */
             return msgs;
         };
     },
@@ -257,15 +259,15 @@ pl.implement(NewListingFinancialsClass, {
         }
     },
     displayAskedEffects: function() {
-        var fnd = pl('#asked_fund').attr('checked') ? true : false;
-        if (fnd) {
-            pl('#suggested_amt, #suggested_pct').removeAttr('disabled');
-            pl('#offerbox').css({opacity: 1});
+        var self = this,
+            fnd = pl('#asked_fund').attr('checked') ? true : false;
+        if (fnd && !pl('#offerwrapper').hasClass('offerwrapperdisplay')) {
+            pl('#offerwrapper').addClass('offerwrapperdisplay');
         }
-        else {
-            pl('#suggested_amt, #suggested_pct').attr({disabled: true});
-            pl('#offerbox').css({opacity: 0.5});
+        if (!fnd && pl('#offerwrapper').hasClass('offerwrapperdisplay')) {
+            pl('#offerwrapper').removeClass('offerwrapperdisplay');
         }
+        self.displayCalculatedIfValid();
     },
     genDisplayCalculatedIfValidAmt: function(field) {
         var self = this;

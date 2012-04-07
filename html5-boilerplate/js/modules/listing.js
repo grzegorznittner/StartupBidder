@@ -55,8 +55,8 @@ pl.implement(ListingClass, {
         if (logobg) {
             pl('#companylogo').removeClass('noimage').css({background: logobg});
         }
-        pl('#title').html(this.title);
-        pl('title').html('Startupbidder Listing: ' + this.title);
+        pl('#title').html(this.title || 'Company Name Here');
+        pl('title').html('Startupbidder Listing: ' + (this.title || 'Company Name Here'));
         pl('#profile_username').html(this.profile_username || (this.loggedin_profile ? 'You' : 'Anonymous'));
         pl('#mantra').html(this.mantra);
         pl('#companystatus').html('Listing is ' + this.status);
@@ -66,7 +66,7 @@ pl.implement(ListingClass, {
         pl('#num_votes').html(this.num_votes);
         pl('#num_comments').html(this.num_comments);
         pl('#videopresentation').attr({src: this.video});
-        pl('#summary').html(this.summary);
+        pl('#summary').html(this.summary || 'Listing summary goes here');
         pl('#listingdata').show();
     },
     displayMessage: function() {
@@ -116,8 +116,7 @@ pl.implement(ListingClass, {
         pl('#documentbox').show();
     },
     displayFunding: function() {
-        this.askingFunding = this.askingFunding || (this.suggested_amt > 0 ? true : false);
-        if (this.askingFunding) {
+        if (this.asked_fund) {
             pl('#suggested_amt').html(this.currency.format(this.suggested_amt));
             pl('#suggested_pct').html(this.suggested_pct);
             pl('#suggested_val').html(this.currency.format(this.suggested_val));
@@ -146,8 +145,10 @@ pl.implement(ListingClass, {
         }
     },
     displaySocial: function() {
-        this.displayFacebook();
-        this.displayGooglePlus();
+        if (!this.preview) { // their iframe usage busts during preview
+            this.displayFacebook();
+            this.displayGooglePlus();
+        }
         this.displayTwitter();
     },
     displayFacebook: function() {
