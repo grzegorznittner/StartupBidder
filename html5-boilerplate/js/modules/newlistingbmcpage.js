@@ -63,6 +63,7 @@ pl.implement(NewListingBMCClass, {
             field.bindEvents({noEnterKeySubmit: true});
             this.base.fields.push(field);
         } 
+        this.base.bindInfoButtons();
         this.base.bindNavButtons();
     }
 });

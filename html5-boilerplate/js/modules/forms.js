@@ -589,7 +589,8 @@ pl.implement(TextFieldClass, {
                 return false;
             },
             keyup: function(e) {
-                if (e.keyCode === 13 && !self.options.noEnterKeySubmit) {
+                var evt = new EventClass(e);
+                if (evt.keyCode() === 13 && !self.options.noEnterKeySubmit) {
                     self.update();
                     return false;
                 }

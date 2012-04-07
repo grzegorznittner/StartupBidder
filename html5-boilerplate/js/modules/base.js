@@ -17,6 +17,60 @@ pl.implement(SafeStringClass, {
     }
 });
 
+function EventClass(e) {
+    this.e = e || window.event;
+}
+pl.implement(EventClass, {
+    target: function() {
+        var targ;
+        if (this.e.target) {
+            targ = this.e.target;
+        }
+        else if (e.srcElement) {
+            targ = this.e.srcElement;
+        }
+        if (targ.nodeType == 3) { // defeat Safari bug
+            targ = targ.parentNode;
+        }
+        return targ;
+    },
+    keyCode: function() {
+        var code;
+        if (this.e.keyCode) {
+            code = this.e.keyCode;
+        }
+        else if (this.e.which) {
+            code = this.e.which;
+        }
+        return code;
+    },
+    rightClick: function() {
+        var rightclick;
+        if (this.e.which) {
+            rightclick = (this.e.which == 3);
+        }
+        else if (this.e.button) {
+            rightclick = (e.button == 2);
+        }
+        return rightclick;
+    },
+    mousePos: function() {
+        var posx = 0;
+        var posy = 0;
+        if (this.e.pageX || this.e.pageY) {
+            posx = this.e.pageX;
+            posy = this.e.pageY;
+        }
+        else if (this.e.clientX || this.e.clientY) {
+            posx = this.e.clientX + document.body.scrollLeft
+                + document.documentElement.scrollLeft;
+            posy = this.e.clientY + document.body.scrollTop
+                + document.documentElement.scrollTop;
+        }
+        return [ posx, posy ];
+    }
+});
+
 function DateClass() {}
 pl.implement(DateClass, {
     format: function(yyyymmdd) {

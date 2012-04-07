@@ -1,7 +1,7 @@
 function IPClass() {
     this.page = 1;
     this.pagetotal = 20;
-    this.pagewidth = 948;
+    this.pagewidth = 938;
     this.bound = false;
 }
 pl.implement(IPClass, {

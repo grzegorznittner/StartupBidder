@@ -97,8 +97,10 @@ pl.implement(NewListingBasicsClass, {
         var self = this;
         pl('#address').bind({
             keyup: function(e) {
-                var input, geocoder;
-                if (e.keyCode === 13) {
+                var evt = new EventClass(e),
+                    input,
+                    geocoder;
+                if (evt.keyCode() === 13) {
                     address = pl('#address').attr('value'),
                     geocoder = new google.maps.Geocoder();
                     geocoder.geocode({address: address}, function(results, status) {
