@@ -114,6 +114,9 @@ public class ListingFacade {
 			l.owner = new Key<SBUser>(loggedInUser.getId());
 			l.contactEmail = loggedInUser.getEmail();
 			l.founders = StringUtils.notEmpty(loggedInUser.getName()) ? loggedInUser.getName() : loggedInUser.getNickname();
+			l.askedForFunding = true;
+			l.suggestedAmount = 20000;
+			l.suggestedPercentage = 5;
 			l.created = new Date();
 			ListingVO newListing = DtoToVoConverter.convert(getDAO().createListing(l));
 			loggedInUser.setEditedListing(newListing.getId());
