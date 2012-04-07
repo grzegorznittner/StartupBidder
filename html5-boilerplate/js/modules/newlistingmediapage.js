@@ -28,12 +28,17 @@ pl.implement(NewListingMediaClass, {
         }
     },
     displayLogo: function(dataurl) {
-        var url = dataurl && dataurl.indexOf('data:') === 0 ? dataurl : null;
+        var self = this,
+            url = dataurl && dataurl.indexOf('data:') === 0 ? dataurl : null,
+            uploadurl = self.base.listing.logo_upload;
         if (url) {
             pl('#logoimg').attr({src: url});
         }
         else {
             pl('#logoimgwrapper').addClass('noimage');
+        }
+        if (uploadurl) {
+            pl('#logouploadform').attr({action: uploadurl});
         }
     },
     displayVideo: function(url) {
@@ -50,11 +55,18 @@ pl.implement(NewListingMediaClass, {
             datauri = self.base.listing.logo,
             videourl = self.base.listing.video,
             postLogo = function(json) {
-                var datauri = json && json.listing && json.listing.logo ? json.listing.logo : null;
+                console.log('inpostlogo');
+                var datauri = json && json.listing && json.listing.logo ? json.listing.logo : null,
+                    uploadurl = json && json.listing && json.listing.logo_upload ? json.listing.logo_upload : null;
+                if (uploadurl) {
+                    self.base.listing.logo_upload = uploadurl;
+                }
                 if (datauri) {
                     self.base.listing.logo = datauri;
                     self.displayLogo(datauri);    
                     self.base.displayCalculated();
+                    console.log('setlogomsg');
+                    pl('#logomsg').removeClass('successful').addClass('successful').text('Logo uploaded');
                 }
             },
             postVideo = function(json) {
@@ -71,31 +83,39 @@ pl.implement(NewListingMediaClass, {
             videoURLField = new TextFieldClass('video', this.base.listing.video, videoUpdater, 'videomsg');
         pl('#logouploadiframe').bind({
             load: function() {
+                console.log('loaded');
                 var iframe = pl('#logouploadiframe').get(0).contentDocument.body.innerHTML,
-                    uploadurlmatch = iframe.match(/upload_url.*(https?:\/\/.*\/upload\/[A-Za-z0-9]*).*upload_url/),
-                    dataurimatch = iframe.match(/value.*(data:image\/[a-z]*;base64,[A-Za-z0-9+\/]*=*).*value/),
+                    uploadurlmatch = iframe.match(/upload_url&gt;(.*)&lt;\/upload_url/),
                     uploadurl = uploadurlmatch && uploadurlmatch.length === 2 ? uploadurlmatch[1] : null,
+                    dataurimatch = iframe.match(/value&gt;(.*)&lt;\/value/),
                     datauri = dataurimatch && dataurimatch.length === 2 ? dataurimatch[1] : null;
                 if (uploadurl) {
                     self.base.listing.logo_upload = uploadurl;
-                    pl('#logouploadform').attr({action: uploadurl});
                 }
                 if (datauri) {
+                    console.log('uri:',datauri);
                     self.base.listing.logo = datauri;
                     self.displayLogo(datauri);
                     self.base.displayCalculated();
+                    pl('#logomsg').removeClass('successful').addClass('successful').text('Logo uploaded');
+                }
+                else {
+                    //self.base.listing.logo = null;
+                    console.log('no uri');
+                    pl('#logomsg').removeClass('errorcolor').addClass('errorcolor').text('Unable to upload logo');
                 }
             }
         });
         pl('#LOGO').bind({
             change: function() {
+                pl('#logomsg').removeClass('inprogress').addClass('inprogress').text('Uploading...');
                 pl('#logouploadform').get(0).submit();
                 return false;
             }
         });
-        pl('#logouploadform').attr({action: uploadurl});
         logoURLField.fieldBase.setDisplayName('LOGO URL');
         logoURLField.fieldBase.addValidator(ValidatorClass.prototype.isURLEmptyOk);
+        logoURLField.fieldBase.isEmptyNoUpdate = true;
         logoURLField.bindEvents();
         videoURLField.fieldBase.validator.preValidateTransform = VideoCheckClass.prototype.preformat;
         videoURLField.fieldBase.setDisplayName('VIDEO URL');

@@ -149,6 +149,7 @@ pl.implement(NewListingFinancialsClass, {
             genBrowseChange = function(id) {
                 var formsel = '#' + id + 'uploadform';
                 return function() {
+                    pl('#' + id + 'msg').removeClass('inprogress').addClass('inprogress').text('Uploading...');
                     pl(formsel).get(0).submit();
                     return false;
                 };
