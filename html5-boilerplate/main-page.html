@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" itemscope itemtype="http://schema.org/Organization">
 <head>
   <meta charset="utf-8">
 
@@ -20,6 +20,19 @@
   <meta name="keywords" content="startupbidder startup company auction bid business plan"/>
   <!-- Place favicon.ico and apple-touch-icon.png in the root directory: mathiasbynens.be/notes/touch-icons -->
 
+  <!-- for facebook -->
+  <meta property="og:title" content="startupbidder" />
+  <meta property="og:type" content="company" />
+  <meta property="og:url" content="http://www.startupbidder.com" />
+  <meta property="og:image" content="https://fbcdn-profile-a.akamaihd.net/hprofile-ak-snc4/41604_200032480112098_936268874_n.jpg" />
+  <meta property="og:site_name" content="startupbidder" />
+  <meta property="fb:admins" content="1244884534" />
+
+  <!-- for google plus -->
+  <meta itemprop="name" content="startupbidder">
+  <meta itemprop="description" content="We're two guys who wanted to bring more visibility to the otherwise opaque world of startup business plan valuation. We've run startups, worked for startups, invested in startups, received investment for startups, and we felt there had to be a better way. So this is our shot at trying to improve the startup community, specifically the early-stage exposure and funding.">
+  <meta itemprop="image" content="https://fbcdn-profile-a.akamaihd.net/hprofile-ak-snc4/41604_200032480112098_936268874_n.jpg">
+
   <!-- CSS: implied media=all -->
   <!-- CSS concatenated and minified via ant build script-->
   <link rel="stylesheet" href="css/style.css" type="text/css" />
@@ -29,9 +42,9 @@
 </head>
 
 <body class="main-page">
+<div id="fb-root"></div> <!-- for fb like button -->
 <div id="wrap">
 <div id="main">
-
 
 <div class="header">
   <div class="container">
@@ -58,26 +71,20 @@
 
 <div class="banner crystalbluebg pull-15px">
     <span class="bannertext span-16 push-15px">
-        <div id="welcometitle">Welcome to Startupbidder!</div>
+        <div id="welcometitle">Welcome to startupbidder!</div>
         <div class="welcometext" id="welcometext">
             Explore our <a href="latest-companies.html">latest</a> listings,
             <a href="#" id="postnowtextlink">post</a> your own company,
             and <a href="main-page?type=closing">invest</a> in startups worldwide
         </div>
     </span>
-    <div class="span-4 push-15px follow">
-        <div class="followtext">follow us</div>
-    </div>
-    <span class="span-1 push-15px pull-2">
-        <div class="spritebg facebook followimg"></div>
+    <span class="span-8 push-15px">
+        <div style="margin-top:3px;">
+          <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://www.startupbidder.com" data-text="startupbidder" data-via="startupbidder" data-related="startupbidder" data-hashtags="startupbidder">Tweet</a>
+        </div>    
+        <div style="margin-top:-3px; margin-bottom: 1px;" class="fb-like" data-href="http://www.startupbidder.com" data-send="false" data-width="310" data-show-faces="false" data-font="arial"></div>
+        <div class="g-plusone" data-annotation="inline" data-width="310" data-href="http://www.startupbidder.com"></div>
     </span>
-    <span class="span-1 push-15px pull-1">
-        <div class="spritebg twitter followimg"></div>
-    </span>
-    <span class="span-2 last push-15px">
-        <div class="spritebg googleplus followimg"></div>
-    </span>
-    <div class="span-8 push-15px followpromo followtext">bid for companies worldwide</div>
 </div> <!-- end banner -->
 
 <!-- searchbar -->
@@ -159,7 +166,7 @@
         <a href="about-page.html"><span class="footerlink">About</span></a>
       </span>
     </div>
-    <div class="span-4 last copyrightspan">
+    <div class="span-8 last copyrightspan">
       <span class="copyrighttext lightgrey">Copyright &copy;2012 Startupbidder</span>
     </div>
   </div>
@@ -178,6 +185,27 @@
     var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
     ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
     var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+  </script>
+
+  <!-- twitter stuff -->
+  <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+
+  <!-- facebook stuff -->
+  <script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+  }(document, 'script', 'facebook-jssdk'));</script>
+
+  <!-- google plus stuff -->
+  <script type="text/javascript">
+  (function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = 'https://apis.google.com/js/plusone.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
   })();
   </script>
 
