@@ -31,13 +31,11 @@ pl.implement(ListClass, {
 });
 
 function BaseListClass(url, id, over) {
-    console.log(url, id);
     this.url = url;
     this.msgid = id + 'msg';
     this.col1id = id + 'divcol1';
     this.col2id = id + 'divcol2';
     this.over = over ? over : 1;
-    console.log( this.url, this.msgid, this.col1id, this.col2id);
 }
 pl.implement(BaseListClass, {
     load: function() {
@@ -77,7 +75,7 @@ pl.implement(MainPageClass,{
             },
             basePage = new BaseCompanyListPageClass(),
             categoryList = new BaseListClass('/listings/categories', 'category', 2),
-            locationList = new BaseListClass('/listings/locations', 'location');
+            locationList = new BaseListClass('/listings/locations', 'location', 2);
         basePage.loadPage(completeFunc);
         categoryList.load();
         locationList.load();

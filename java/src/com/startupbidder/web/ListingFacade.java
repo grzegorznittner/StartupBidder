@@ -271,7 +271,7 @@ public class ListingFacade {
 		List<ListingPropertyVO> propsToUpdate = new ArrayList<ListingPropertyVO>();
 		createMandatoryProperty(propsToUpdate, infos, properties, "latitude", "latitude");
 		createMandatoryProperty(propsToUpdate, infos, properties, "longitude", "longitude");
-		createMandatoryProperty(propsToUpdate, infos, properties, "SHORT_country", "country");
+		createMandatoryProperty(propsToUpdate, infos, properties, "LONG_country", "country");
 		createMandatoryProperty(propsToUpdate, infos, properties, "LONG_locality", "city");
 		createMandatoryProperty(propsToUpdate, infos, properties, "formatted_address", "address");
 		ListingPropertyVO state = createProperty(properties, "SHORT_administrative_area_level_1", "state");

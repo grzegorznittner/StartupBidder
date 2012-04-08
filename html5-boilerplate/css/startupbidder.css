@@ -294,7 +294,8 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .socialsidebox { min-height: 90px; }
 .sideboxcol1 { width: 146px; float: left; margin-right: 10px; }
 .sideboxcol2 { width: 142px; float: left; }
-.sideboxlist { list-style: none; list-style-position: inside; margin-left: 0; padding-left: 0; font-weight: bold; }
+.sideboxlist { list-style: none; list-style-position: inside; margin: 0; padding: 0; font-weight: bold; }
+.sideboxlist li { margin-left: 10px; text-indent: -10px; }
 .sideboxbutton { width: 310px; height: 50px; font-size: 34px; font-weight: bold; text-align: center; }
 .sideboxbuttonsmall { width: 150px; height: 30px; font-size: 20px; }
 .sideboxbuttoninterior { width: 292px; height: 50px; font-size: 34px; font-weight: bold; text-align: center; margin: 0 5px 5px 5px; }

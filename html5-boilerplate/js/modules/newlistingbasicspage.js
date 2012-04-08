@@ -89,7 +89,7 @@ pl.implement(NewListingBasicsClass, {
             this.base.fieldMap[id] = field;
         } 
         this.loadCategories();
-        this.addMap(this.placeUpdater);
+        this.addMap(this.genPlaceUpdater());
         this.bindAddressEnterSubmit();
         this.base.bindNavButtons();
     },
@@ -105,7 +105,7 @@ pl.implement(NewListingBasicsClass, {
                     geocoder = new google.maps.Geocoder();
                     geocoder.geocode({address: address}, function(results, status) {
                         if (status == google.maps.GeocoderStatus.OK) {
-                            self.placeUpdater(results[0]);
+                            self.genPlaceUpdater()(results[0]);
                         }
                         else {
                             pl('#newlistingmsg').html('<span class="attention">Could not geocode results: ' + status + '</span>');
@@ -119,18 +119,27 @@ pl.implement(NewListingBasicsClass, {
             }
          });
     },
-    placeUpdater: function(place) {
-        var self = this,
-            completeFunc = function(json) {
-                var val = json.formatted_address;
-                pl('#address').attr({value: val});
-            },
-            data = { listing: {
+    genPlaceUpdater: function() {
+        var self = this;
+        return function(place) {
+            var completeFunc = function(json) {
+                    if (!json.listing) {
+                        return;
+                    }
+                    self.base.listing.address = json.listing.address;
+                    self.base.listing.brief_address = json.listing.brief_address;
+                    self.base.listing.latitude = json.listing.latitude;
+                    self.base.listing.longitude = json.listing.longitude;
+                    pl('#address').attr({value: json.listing.address});
+                    self.base.displayCalculated();
+                },
+                data = { listing: {
                         update_address: place
-                    } },
-            ajax = new AjaxClass('/listing/update_address', 'newlistingmsg', completeFunc);
-        ajax.setPostData(data);
-        ajax.call();
+                       } },
+                ajax = new AjaxClass('/listing/update_address', 'newlistingmsg', completeFunc);
+            ajax.setPostData(data);
+            ajax.call();
+        };
     },
     addMap: function(placeUpdater) {
         var self = this,

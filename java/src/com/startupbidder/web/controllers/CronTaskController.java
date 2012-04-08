@@ -33,8 +33,6 @@ public class CronTaskController extends ModelDrivenController {
 		
 		if("update-listing-stats".equalsIgnoreCase(getCommand(1))) {
 			return updateListingStats(request);
-		} else if("update-user-stats".equalsIgnoreCase(getCommand(1))) {
-			return updateUserStats(request);
 		}
 		return null;
 	}
@@ -47,14 +45,6 @@ public class CronTaskController extends ModelDrivenController {
 		return headers;
 	}
 	
-	private HttpHeaders updateUserStats(HttpServletRequest request) {
-		HttpHeaders headers = new HttpHeadersImpl("update-user-stats");
-		
-		model = UserMgmtFacade.instance().updateAllUserStatistics();
-
-		return headers;
-	}
-
 	@Override
 	public Object getModel() {
 		return model;

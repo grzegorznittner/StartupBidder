@@ -258,7 +258,6 @@ pl.implement(NewListingBaseClass, {
                 if (infoel.nodeType !== 1) {
                     infoel = infoel.nextSibling;
                 }
-                console.log(infoel);
                 classes = infoel.getAttribute('class');
                 if (!classes.match('qainfodisplay')) {
                     infoel.setAttribute('class', classes + ' qainfodisplay');

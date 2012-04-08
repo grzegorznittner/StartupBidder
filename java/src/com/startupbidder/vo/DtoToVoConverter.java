@@ -151,9 +151,14 @@ public class DtoToVoConverter {
 	public static String createBriefAddress(Listing listingDTO) {
 		String briefAddress = "";
 		if (!StringUtils.isEmpty(listingDTO.country)) {
-			briefAddress = listingDTO.country;
+            if (listingDTO.country.equals("United States")) {
+			    briefAddress = "USA";
+            }
+            else {
+			    briefAddress = listingDTO.country;
+            }
 		}
-		if (!StringUtils.isEmpty(listingDTO.usState)) {
+		if (!StringUtils.isEmpty(listingDTO.usState) && briefAddress.equals("USA")) {
 			briefAddress = listingDTO.usState + (briefAddress.length() > 0 ? ", " : "") + briefAddress;
 		}
 		if (!StringUtils.isEmpty(listingDTO.city)) {

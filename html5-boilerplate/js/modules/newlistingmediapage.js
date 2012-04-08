@@ -55,7 +55,6 @@ pl.implement(NewListingMediaClass, {
             datauri = self.base.listing.logo,
             videourl = self.base.listing.video,
             postLogo = function(json) {
-                console.log('inpostlogo');
                 var datauri = json && json.listing && json.listing.logo ? json.listing.logo : null,
                     uploadurl = json && json.listing && json.listing.logo_upload ? json.listing.logo_upload : null;
                 if (uploadurl) {
@@ -65,7 +64,6 @@ pl.implement(NewListingMediaClass, {
                     self.base.listing.logo = datauri;
                     self.displayLogo(datauri);    
                     self.base.displayCalculated();
-                    console.log('setlogomsg');
                     pl('#logomsg').removeClass('successful').addClass('successful').text('Logo uploaded');
                 }
             },
@@ -83,7 +81,6 @@ pl.implement(NewListingMediaClass, {
             videoURLField = new TextFieldClass('video', this.base.listing.video, videoUpdater, 'videomsg');
         pl('#logouploadiframe').bind({
             load: function() {
-                console.log('loaded');
                 var iframe = pl('#logouploadiframe').get(0).contentDocument.body.innerHTML,
                     uploadurlmatch = iframe.match(/upload_url&gt;(.*)&lt;\/upload_url/),
                     uploadurl = uploadurlmatch && uploadurlmatch.length === 2 ? uploadurlmatch[1] : null,
@@ -93,7 +90,6 @@ pl.implement(NewListingMediaClass, {
                     self.base.listing.logo_upload = uploadurl;
                 }
                 if (datauri) {
-                    console.log('uri:',datauri);
                     self.base.listing.logo = datauri;
                     self.displayLogo(datauri);
                     self.base.displayCalculated();
@@ -101,7 +97,6 @@ pl.implement(NewListingMediaClass, {
                 }
                 else {
                     //self.base.listing.logo = null;
-                    console.log('no uri');
                     pl('#logomsg').removeClass('errorcolor').addClass('errorcolor').text('Unable to upload logo');
                 }
             }

@@ -74,8 +74,6 @@ public class SetupServlet extends HttpServlet {
 
 			out.println("<form method=\"GET\" action=\"/cron/update-listing-stats/.html\">"
 					+ "<input type=\"submit\" value=\"Update all listings stats\"/></form>");
-			out.println("<form method=\"GET\" action=\"/cron/update-user-stats/.html\">"
-					+ "<input type=\"submit\" value=\"Update all users stats\"/></form>");
 
 			out.println("<p>Google Doc credentials:</p>");
 			out.println("<form method=\"POST\" action=\"/system/set-property/.html\">"

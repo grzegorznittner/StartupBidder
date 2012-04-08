@@ -911,20 +911,20 @@ public class MockDataBuilder {
 	}
 	
 	private Object[][] locations = {
-			{"Lohstraße 53, 49074 Osnabrück, Germany","Innenstadt","Niedersachsen","Germany", 52.27913570, 8.041329399999995},
-			{"Fellenoord 310, 5611 Centrum, The Netherlands","Fellenoord","Noord-Brabant","The Netherlands", 51.44266050, 5.472869100000025},
-			{"10 Rue de Passy, 75016 Paris, France","16th arrondissement of Paris","Île-de-France","France", 48.85842180, 2.283493599999929},
+			{"Lohstraße 53, 49074 Osnabr\u00FCck, Germany","Osnabr\u00FCck","NDS","Germany", 52.27913570, 8.041329399999995},
+			{"Fellenoord 310, 5611 Centrum, The Netherlands","Eindhoven","NB","The Netherlands", 51.44266050, 5.472869100000025},
+			{"10 Rue de Passy, 75016 Paris, France","Paris","IdF","France", 48.85842180, 2.283493599999929},
 			{"Calle del Pintor Cabrera, 29, 03003 Alicante, Spain","Alicante","Valencia","Spain", 38.34388360, -0.49293009999996684},
-			{"Via Amerigo Vespucci, 10, 80142 Naples, Italy","Naples","Campania","Italy", 40.84653330, 14.270270100000062},
-			{"45 L St SW, Washington, DC 20024, USA","Washington","District of Columbia","United States", 38.8779990, -77.01035999999999},
-			{"671 John F Kennedy Blvd W, Bayonne, NJ 07002, USA","Bayonne","New Jersey","United States", 40.66865079999999, -74.12083719999998},
-			{"273 High St, Perth Amboy, NJ 08861, USA","Perth Amboy","New Jersey","United States", 40.50690090, -74.26577320000001},
-			{"1501 E 22nd St, Los Angeles, CA 90011, USA","Los Angeles","California","United States", 34.01871330, -118.2481563},
-			{"CST Rd, Mumbai, Maharashtra, India","Mumbai","Maharashtra","India", 19.07141140, 72.86405230000003},
-			{"585 Lingling Rd, Xuhui, Shanghai, China, 200030","Xuhui","Shanghai","China", 31.1882940, 121.447633},
-			{"Denenchofu, Ota, Tokyo, Japan","Denenchofu","Tokyo","Japan", 35.58862750, 139.6735731},
-			{"86-108 Castlereagh St, Sydney NSW 2000, Australia","Sydney","New South Wales","Australia", -33.870950, 151.2117541},
-			{"R. Santos Lima, 86 - São Cristóvão, Rio de Janeiro, 20940-210, Brazil","São Cristóvão","Rio de Janeiro","Brazil", -22.89713230, -43.217189899999994}
+			{"Via Amerigo Vespucci 10, 80142 Naples, Italy","Naples","Campania","Italy", 40.84653330, 14.270270100000062},
+			{"45 L St SW, Washington, DC 20024, USA","Washington","DC","United States", 38.8779990, -77.01035999999999},
+			{"671 John F Kennedy Blvd W, Bayonne, NJ 07002, USA","Bayonne","NJ","United States", 40.66865079999999, -74.12083719999998},
+			{"273 High St, Perth Amboy, NJ 08861, USA","Perth Amboy","NJ","United States", 40.50690090, -74.26577320000001},
+			{"1501 E 22nd St, Los Angeles, CA 90011, USA","Los Angeles","CA","United States", 34.01871330, -118.2481563},
+			{"CST Rd, Mumbai, Maharashtra, India","Mumbai","MH","India", 19.07141140, 72.86405230000003},
+			{"585\u53F7 Lingling Rd, Xuhui, Shanghai, China, 200030","Shanghai","Shanghai","China", 31.1882940, 121.447633},
+			{"Denenchofu, Ota, Tokyo, Japan","Ota","Tokyo","Japan", 35.58862750, 139.6735731},
+			{"86-108 Castlereagh St, Sydney NSW 2000, Australia","Sydney","NSW","Australia", -33.870950, 151.2117541},
+			{"R. Santos Lima, 86 - S\u00E3o Crist\u00F3v\u00E3o, Rio de Janeiro, 20940-210, Brazil","Rio de Janeiro","RJ","Brazil", -22.89713230, -43.217189899999994}
 	};
 	
 	private String getVideo() {
