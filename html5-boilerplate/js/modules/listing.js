@@ -266,7 +266,7 @@ pl.implement(ListingClass, {
         });
     },
     displaySendback: function() {
-        var sendbackable = ((this.status === 'posted' || this.status === 'frozen') && this.loggedin_profile.admin);
+        var sendbackable = ((this.status === 'posted' || this.status === 'frozen') && this.loggedin_profile && this.loggedin_profile.admin);
         if (sendbackable) {
             this.bindSendbackButton();
         }
@@ -299,7 +299,7 @@ pl.implement(ListingClass, {
         });
     },
     displayFreeze: function() {
-        var freezable = (this.status === 'active' && this.loggedin_profile.admin);
+        var freezable = (this.status === 'active' && this.loggedin_profile && this.loggedin_profile.admin);
         if (freezable) {
             this.bindFreezeButton();
         }
