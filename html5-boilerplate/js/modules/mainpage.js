@@ -3,6 +3,15 @@ pl.implement(ListClass, {
     ucFirst: function(str) {
         return str.length > 1 ? str.substr(0,1).toUpperCase() + str.substr(1) : str.toUpperCase();
     },
+    spreadOverOneCol: function(list, divcol1) {
+        var htmlCol1, i, item;
+        htmlCol1 = '';
+        for (i = 0; i < list.length; i++) {
+            item = this.ucFirst(list[i]);
+            htmlCol1 += '<li>'+item+'</li>';
+        }
+        pl(divcol1).html(htmlCol1);
+    },
     spreadOverTwoCols: function(list, divcol1, divcol2) {
         var htmlCol1, htmlCol2, mid, i, item;
         mid = Math.floor(list.length / 2);
@@ -21,40 +30,39 @@ pl.implement(ListClass, {
     }
 });
 
-function CategoryListClass() {}
-pl.implement(CategoryListClass, {
+function BaseListClass(url, id, over) {
+    console.log(url, id);
+    this.url = url;
+    this.msgid = id + 'msg';
+    this.col1id = id + 'divcol1';
+    this.col2id = id + 'divcol2';
+    this.over = over ? over : 1;
+    console.log( this.url, this.msgid, this.col1id, this.col2id);
+}
+pl.implement(BaseListClass, {
     load: function() {
-        var ajax = new AjaxClass('/listing/categories', 'categoriesmsg', this.storeList);
+        var ajax = new AjaxClass(this.url, this.msgid, this.genStore());
         ajax.call();
     },
-    storeList: function(json) {
-        var categories = [], k, v;
-        for (k in json) {
-            v = json[k];
-            categories.push(v);
+    genStore: function() {
+        var self = this;
+        return function(json) {
+            var list = [], 
+                lc = new ListClass(),
+                k,
+                v;
+            for (k in json) {
+                v = json[k];
+                list.push(k); // ignore v for now
+            }
+            list.sort();
+            if (self.over === 2) {
+                lc.spreadOverTwoCols(list, '#'+self.col1id, '#'+self.col2id);
+            }
+            else {
+                lc.spreadOverOneCol(list, '#'+self.col1id);
+            }
         }
-        categories.sort();
-        lc = new ListClass();
-        lc.spreadOverTwoCols(categories, '#categorydivcol1', '#categorydivcol2'); // FIXME: not dividing columns correctly
-    }
-});
-
-function LocationListClass() {}
-pl.implement(LocationListClass, {
-    storeList: function(json) {
-        var locations, lc;
-        locations = json && json.locations && json.locations.length > 0
-            ? json.locations
-            : ['Austin, USA', 'Bangalore, India', 'Beijing, China', 'Berlin, Germany', 'Cambridge, USA', 'Dusseldorf, Germany', 'Herzliya, Israel',
-                'Katowice, Poland', 'London, UK', 'Menlo Park, USA', 'Mountain View, CA', 'New York City, USA', 'Seattle, WA', 'Cambridge, UK']; // FIXME
-        if (!locations) {
-            pl('#locationdivcol1').html('<li class="notice">No locations found</li>');
-            pl('#locationdivcol2').html('');
-            return;
-        }
-        locations.sort();
-        lc = new ListClass();
-        lc.spreadOverTwoCols(locations, '#locationdivcol1', '#locationdivcol2');
     }
 });
 
@@ -62,18 +70,17 @@ function MainPageClass() {};
 pl.implement(MainPageClass,{
     loadPage: function() {
         var completeFunc = function(json) {
-            var header, companyList, categoryList, locationList;
-            header = new HeaderClass();
-            companyList = new CompanyListClass();
-            locationList = new LocationListClass();
-            header.setLogin(json);
-            companyList.storeList(json,4);
-            locationList.storeList(json);
-        },
-        basePage = new BaseCompanyListPageClass(),
-        categoryList = new CategoryListClass();
+                var header = new HeaderClass(),
+                    companyList = new CompanyListClass();
+                header.setLogin(json);
+                companyList.storeList(json,4);
+            },
+            basePage = new BaseCompanyListPageClass(),
+            categoryList = new BaseListClass('/listings/categories', 'category', 2),
+            locationList = new BaseListClass('/listings/locations', 'location');
         basePage.loadPage(completeFunc);
         categoryList.load();
+        locationList.load();
     }
 });
 
