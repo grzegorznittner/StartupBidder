@@ -30,6 +30,8 @@ pl.implement(ListingClass, {
         }
         this.dateobj = new DateClass();
         this.currency = new CurrencyClass();
+        this.listing_url = window.location.protocol + '//' + window.location.hostname + ':' + window.location.port + '/company_page.html?id=' + this.id;
+        this.listing_public_title = 'Startupbidder Listing: ' + this.title;
     },
     load: function() {
         this.ajax.call();
@@ -114,7 +116,7 @@ pl.implement(ListingClass, {
         this.displayDocumentLink('presentationlink', 'presentationbtn', this.presentation_id);
         this.displayDocumentLink('businessplanlink', 'businessplanbtn', this.business_plan_id);
         this.displayDocumentLink('financialslink', 'financialsbtn', this.financials_id);
-        pl('#documentbox').show();
+        pl('#documentwrapper').show();
     },
     displayFunding: function() {
         if (this.asked_fund) {
@@ -146,55 +148,58 @@ pl.implement(ListingClass, {
         }
     },
     displaySocial: function() {
-        if (!this.preview) { // their iframe usage busts during preview
+        if (this.preview) { // their iframe usage busts during preview
+            pl('#socialsidewrapper').html('<p>Twitter, Facebook, and Google Plus buttons will be displayed here</p>');
+        }
+        else {
+            this.displayTwitter();
             this.displayFacebook();
             this.displayGooglePlus();
         }
-        this.displayTwitter();
+        pl('#socialsidewrapper').show();
+    },
+    displayTwitter: function() {
+        pl('#twitterbanner').html('<a href="https://twitter.com/share" class="twitter-share-button" data-url="' + this.listing_url + '" data-text="' + this.listing_public_title + '" data-via="startupbidder" data-related="startupbidder" data-hashtags="startupbidder">Tweet</a>');
+        !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");
     },
     displayFacebook: function() {
-        this.addFacebookMetaTags();
-        (function(d, s, id) {
-        var js, fjs = d.getElementsByTagName(s)[0];
-        if (d.getElementById(id)) return;
-        js = d.createElement(s); js.id = id;
-        js.src = "//connect.facebook.net/en_US/all.js#xfbml=1";
-        fjs.parentNode.insertBefore(js, fjs);
-        }(document, 'script', 'facebook-jssdk'));
-    },
-    addFacebookMetaTags: function() {
-        var metas, prop, content, metatag;
-        metas = {
-            'og:title': this.title,
+        this.addMetaTags('property', {
+            'og:title': this.listing_public_title,
             'og:type': 'company',
-            'og:url': 'http://starutpbidder.com/company_page.html?id=' + this.id,
-            //'og:image': 'http://startupbidder.com' + this.logourl, // FIXME
+            'og:url': this.listing_url,
+            'og:image': 'https://fbcdn-profile-a.akamaihd.net/hprofile-ak-snc4/41604_200032480112098_936268874_n.jpg', // FIXME
             'og:site_name': 'startupbidder',
             'fb:app_id': '3063944677997'
-        };
-        for (prop in metas) {
-            content = metas[prop];
-            metatag = '<meta property="' + prop + '" content="' + content + '"/>';
-            pl('head').append(metatag);
-        }
+        });
+        pl('#facebookbanner').html('<div class="fb-like" data-href="' + this.listing_url + '" data-send="false" data-width="290" data-show-faces="false" data-font="arial"></div>');
+  (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+  }(document, 'script', 'facebook-jssdk'));
     },
     displayGooglePlus: function() {
-        (function() {
-          var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
-          po.src = 'https://apis.google.com/js/plusone.js';
-          var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
-        })();
-    } ,
-    displayTwitter: function() {
-        !function(d,s,id){
-            var js,fjs=d.getElementsByTagName(s)[0];
-            if(!d.getElementById(id)){
-                js=d.createElement(s);
-                js.id=id;
-                js.src="//platform.twitter.com/widgets.js";
-                fjs.parentNode.insertBefore(js,fjs);
-            }
-        }(document,"script","twitter-wjs");
+        this.addMetaTags('itemprop', {
+            'name': this.listing_public_title,
+            'description': this.summary,
+            'image': 'https://fbcdn-profile-a.akamaihd.net/hprofile-ak-snc4/41604_200032480112098_936268874_n.jpg'
+        });
+        pl('#gplusbanner').html('<g:plusone size="medium" annotation="inline" width="290" href="' + this.listing_url + '"></g:plusone>');
+  (function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = 'https://apis.google.com/js/plusone.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+  })();
+    },
+    addMetaTags: function(attributeName, metas) {
+        var prop, content, metatag;
+        for (prop in metas) {
+            content = metas[prop];
+            metatag = '<meta ' + attributeName + '="' + prop + '" content="' + content + '"/>';
+            pl('head').append(metatag);
+        }
     },
     displayWithdraw: function() {
         var withdrawable = (this.status === 'active' && (this.loggedin_profile && this.loggedin_profile.profile_id === this.profile_id));

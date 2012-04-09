@@ -128,27 +128,29 @@
 
     <div class="boxtitle">DOCUMENTS</div>
     <div class="sidebox documentbox" id="documentbox">
-        <span class="doclabel clear">Presentation</span>
-        <span class="formlabelvalue formlink">
-            <div class="span-1 smallinputicon presentationicon"></div>
-            <a href="#" id="presentationlink">
-                <span id="presentationbtn"></span>
-            </a>
-        </span>
-        <span class="doclabel">Business Plan</span>
-        <span class="formlabelvalue formlink">
-            <div class="span-1 smallinputicon documenticon"></div>
-            <a href="#" id="businessplanlink">
-                <span id="businessplanbtn"></span>
-            </a>
-        </span>
-        <span class="doclabel clear">Financials</span>
-        <span class="formlabelvalue formlink">
-            <div class="span-1 smallinputicon spreadsheeticon"></div>
-            <a href="#" id="financialslink">
-                <span id="financialsbtn"></span>
-            </a>
-        </span>
+        <div class="documentwrapper" id="documentwrapper">
+            <span class="doclabel clear">Presentation</span>
+            <span class="formlabelvalue formlink">
+                <div class="span-1 smallinputicon presentationicon"></div>
+                <a href="#" id="presentationlink">
+                    <span id="presentationbtn"></span>
+                </a>
+            </span>
+            <span class="doclabel">Business Plan</span>
+            <span class="formlabelvalue formlink">
+                <div class="span-1 smallinputicon documenticon"></div>
+                <a href="#" id="businessplanlink">
+                    <span id="businessplanbtn"></span>
+                </a>
+            </span>
+            <span class="doclabel clear">Financials</span>
+            <span class="formlabelvalue formlink">
+                <div class="span-1 smallinputicon spreadsheeticon"></div>
+                <a href="#" id="financialslink">
+                    <span id="financialsbtn"></span>
+                </a>
+            </span>
+        </div>
     </div>
 
     <div class="boxtitle">ASKING</div>
@@ -164,15 +166,11 @@
 
     <div class="boxtitle">SHARE</div>
     <div class="sidebox socialsidebox">
-        <span class="span-11">
-            <a href="https://twitter.com/share" class="twitter-share-button" data-size="large" data-via="startupbidder" data-related="startupbidder" data-hashtags="startupbidder"></a><br/>
-        </span><br/>
-        <span class="span-11">
-            <g:plusone annotation="inline" width="290"></g:plusone>
-        </span><br/>
-        <span class="span-11" style="overflow:visible;">
-            <div class="fb-like" data-send="false" data-width="290" data-show-faces="false" data-font="arial"></div>
-        </span>
+        <div class="socialsidewrapper" id="socialsidewrapper">
+            <div class="twitterbanner" id="twitterbanner"></div>    
+            <div class="facebookbanner" id="facebookbanner"></div>
+            <div class="gplusbanner" id="gplusbanner"></div>
+        </div>
     </div>
 
     <div id="withdrawbox" class="withdrawbox">
