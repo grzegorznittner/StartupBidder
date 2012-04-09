@@ -59,7 +59,6 @@ pl.implement(ListingClass, {
         }
         pl('#title').html(this.title || 'Company Name Here');
         pl('title').text('Startupbidder Listing: ' + (this.title || 'Company Name Here'));
-        pl('#profile_username').html(this.profile_username || (this.loggedin_profile ? 'You' : 'Anonymous'));
         pl('#mantra').html(this.mantra);
         pl('#founders').html(this.founders);
         pl('#companystatus').html('Listing is ' + this.status);

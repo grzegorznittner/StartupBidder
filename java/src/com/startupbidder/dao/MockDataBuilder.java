@@ -729,7 +729,7 @@ public class MockDataBuilder {
 		List<Listing> listings = new ArrayList<Listing>();
 
 		Listing bp = prepareListing(INSIDER, " Indian courier service", Listing.State.NEW, "Other", 35000, 20,
-				"Our couriers are the best", "India has one of the largest deaf populations in the world, but social stigmas have eliminated many job opportunities for the roughly 6 percent of the population that is affected. Aiming to empower this isolated group economically while tapping into a growth market, Mirakle Couriers is a messenger service that hires only deaf workers. The company puts a heavy emphasis on the training of employees — right down to the finer points of personal grooming.");
+				"Our couriers are the best", "India has one of the largest deaf populations in the world, but social stigmas have eliminated many job opportunities for the roughly 6 percent of the population that is affected. Aiming to empower this isolated group economically while tapping into a growth market, Mirakle Couriers is a messenger service that hires only deaf workers. The company puts a heavy emphasis on the training of employees - right down to the finer points of personal grooming.");
 		listings.add(bp); // 0
 		
 		bp = prepareListing(JACOB, "Web Video", Listing.State.NEW, "Media", 50000, 40,
@@ -741,11 +741,11 @@ public class MockDataBuilder {
 		listings.add(bp); // 2
 		
 		bp = prepareListing(JOHN, "Eyewear for $99", Listing.State.NEW, "Medical", 48000, 35,
-				"Buy-one-give-one indie eyewear sells for $99 per pair", "The market for prescription eyewear has traditionally been dominated by high prices, little innovation and a few large competitors. That’s why we’ve seen online discounters emerge, and it’s also why Warby Parker has set its sights on the industry - so to speak - with a paradigm-busting model that aims to combine independent design, \"buy one, give one\" generosity and some long-overdue pricing transparency.");
+				"Buy-one-give-one indie eyewear sells for $99 per pair", "The market for prescription eyewear has traditionally been dominated by high prices, little innovation and a few large competitors. That's why we've seen online discounters emerge, and it's also why Warby Parker has set its sights on the industry - so to speak - with a paradigm-busting model that aims to combine independent design, \"buy one, give one\" generosity and some long-overdue pricing transparency.");
 		listings.add(bp); // 3
 		
 		bp = prepareListing(THEONE, "Panty by Post", Listing.State.POSTED, "Other", 35000, 20,
-				"Luxury women’s panties by curated subscription", "Panty by Post is a Canadian venture that offers a selection of women’s underwear by monthly subscription. Customers can order panties individually, or they can sign up for subscriptions lasting two, three, six or 12 months. A different panty is then sent every month, each wrapped in an attractive mailing package. It’s a great example of subscription-based retail, offering curation alongside convenience. One to apply to a category you’re passionate about.");
+				"Luxury women's panties by curated subscription", "Panty by Post is a Canadian venture that offers a selection of women's underwear by monthly subscription. Customers can order panties individually, or they can sign up for subscriptions lasting two, three, six or 12 months. A different panty is then sent every month, each wrapped in an attractive mailing package. It's a great example of subscription-based retail, offering curation alongside convenience. One to apply to a category you're passionate about.");
 		listings.add(bp); // 4
 		
 		bp = prepareListing(MADMAX, "Computer Upgrading Service", Listing.State.POSTED, "Hardware", 35000, 33,
@@ -777,11 +777,11 @@ public class MockDataBuilder {
 		listings.add(bp); // 11
 
 		bp = prepareListing(AHMED, "De Vegetarische Slager", Listing.State.ACTIVE, "Chemical", 0, 0,
-				"Substitution is our answer", "De Vegetarische Slager — the vegetarian butcher — opened a store in The Hague that’s dedicated to meat substitutes in the same way a butcher is dedicated to meat. The company’s main innovation is its own line of lupin-based, protein-rich products, developed by a Dutch team of scientists and chefs. De Vegetarische Slager is targeting the higher end of the market — consumers willing to pay as much for a meat substitute as they would for the real thing. As more people opt for meatless Mondays or cut out meat altogether, we wouldn’t be surprised to see vegetarian butchers pop up on main streets around the world.");
+				"Substitution is our answer", "De Vegetarische Slager - the vegetarian butcher - opened a store in The Hague that's dedicated to meat substitutes in the same way a butcher is dedicated to meat. The company's main innovation is its own line of lupin-based, protein-rich products, developed by a Dutch team of scientists and chefs. De Vegetarische Slager is targeting the higher end of the market - consumers willing to pay as much for a meat substitute as they would for the real thing. As more people opt for meatless Mondays or cut out meat altogether, we wouldn't be surprised to see vegetarian butchers pop up on main streets around the world.");
 		listings.add(bp); // 12
 		
 		bp = prepareListing(GREG, "Flight twitter", Listing.State.ACTIVE, "Software", 40000, 50,
-				"Twitt a flight", "DJs, promoters, label reps and ‘professional party people’ from the Netherlands have persuaded Dutch airline KLM to add an extra flight to its roster. In a new twist on crowd-buying, the initiators of Fly2Miami made a bet with KLM on Twitter to organize a non-stop flight from Amsterdam to Miami. Crowd clout and group buying — turbo-charged by social media — provide companies across industries with new opportunities to empower consumers while improving their bottom line or, at the very least, their brand image.");
+				"Twitt a flight", "DJs, promoters, label reps and ‘professional party people' from the Netherlands have persuaded Dutch airline KLM to add an extra flight to its roster. In a new twist on crowd-buying, the initiators of Fly2Miami made a bet with KLM on Twitter to organize a non-stop flight from Amsterdam to Miami. Crowd clout and group buying - turbo-charged by social media - provide companies across industries with new opportunities to empower consumers while improving their bottom line or, at the very least, their brand image.");
 		listings.add(bp); // 13
 		
 		bp = prepareListing(GREG, "Village rainwater", Listing.State.ACTIVE, "Environmental", 0, 0,
@@ -793,7 +793,7 @@ public class MockDataBuilder {
 		listings.add(bp); // 15
 
 		bp = prepareListing(JOHN, "On-the-fly conference", Listing.State.ACTIVE, "Other", 35000, 20,
-				"Mobile app for group texting and on-the-fly conference calls", "Available for both iPhone and Android, GroupMe is a free tool from New York-based Mindless Dribble that gives groups of friends private text messaging and instant conference calls. As many as 25 people can be included in a group at any one time, but users can create as many groups as they want — one for their basketball team, one for coordinating a surprise party, one for the PTA, one for updating family members while travelling, etc.");
+				"Mobile app for group texting and on-the-fly conference calls", "Available for both iPhone and Android, GroupMe is a free tool from New York-based Mindless Dribble that gives groups of friends private text messaging and instant conference calls. As many as 25 people can be included in a group at any one time, but users can create as many groups as they want - one for their basketball team, one for coordinating a surprise party, one for the PTA, one for updating family members while travelling, etc.");
 		listings.add(bp); // 16
 		
 		bp = prepareListing(MADMAX, "Energy Consultant", Listing.State.FROZEN, "Environmental", 35000, 20,
@@ -801,7 +801,7 @@ public class MockDataBuilder {
 		listings.add(bp); // 17
 		
 		bp = prepareListing(JOHN, "Mobile garage", Listing.State.WITHDRAWN, "Manufacturing", 35000, 20,
-				"Mobile garage makes any car greener", "Colorado-based Green Garage specializes in \"green-tuning\" cars to run cleaner, greener and cheaper through sustainable, energy-saving automotive maintenance and repair products. The full-service company begins by bringing the garage to the customer’s front door with a valet service whereby it picks up the car, green-tunes it and then drops it off again. Given where the automotive industry began on the sustainability spectrum, it seems safe to say there’s plenty of room for improvement, and that’s just what we’re beginning to see.");
+				"Mobile garage makes any car greener", "Colorado-based Green Garage specializes in \"green-tuning\" cars to run cleaner, greener and cheaper through sustainable, energy-saving automotive maintenance and repair products. The full-service company begins by bringing the garage to the customer's front door with a valet service whereby it picks up the car, green-tunes it and then drops it off again. Given where the automotive industry began on the sustainability spectrum, it seems safe to say there's plenty of room for improvement, and that's just what we're beginning to see.");
 		listings.add(bp); // 18
 		
 		bp = prepareListing(JOHN, "Plan Retirement", Listing.State.CLOSED, "Financial", 35000, 20,
@@ -1069,7 +1069,7 @@ public class MockDataBuilder {
 			"A runners creed: I will win; if I cannot win, I shall be second; if I cannot be second, I shall be third; if I cannot place at all, I shall still do my best.",
 			"Frequency of a tragedy does not diminish the wound when it is your own.",
 			"For all their strength, men were sometimes like little children.",
-			"The more I know about business, the more I’m convinced that it is conducted in homes and churches far more than in office buildings.",
+			"The more I know about business, the more I'm convinced that it is conducted in homes and churches far more than in office buildings.",
 			"Have you ever observed that we pay much more attention to a wise passage when it is quoted than when we read it in the original author?",
 			"Arranging a bowl of flowers in the morning can give a sense of quiet in a crowded day - like writing a poem, or saying a prayer.",
 			"Rules are just helpful guidelines for stupid people who can't make up their own minds.",
