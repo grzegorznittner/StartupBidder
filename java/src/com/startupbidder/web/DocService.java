@@ -2,6 +2,7 @@ package com.startupbidder.web;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -165,7 +166,8 @@ public class DocService {
 			for (DocumentListEntry entry : feed.getEntries()) {
 				list.add(entry.getTitle().getPlainText());
 			}
-			log.info("Full text search for term '" + searchText + "' returned " + list.size() + " items.");
+			log.info("Full text search for term '" + searchText + "' returned " + list.size()
+					+ " items. Items: " + Arrays.toString(list.toArray()));
 		} catch (Exception e) {
 			log.log(Level.WARNING, "Error while searching docs", e);
 		}

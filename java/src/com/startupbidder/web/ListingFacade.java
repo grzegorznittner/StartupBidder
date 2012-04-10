@@ -20,6 +20,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.math.NumberUtils;
 import org.datanucleus.util.StringUtils;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
@@ -967,15 +968,15 @@ public class ListingFacade {
 		return list;
 	}
 
-	public ListingListVO listingKeywordSearch(UserVO loggedInUser, String text,
-			ListPropertiesVO listingProperties) {
+	public ListingListVO listingKeywordSearch(UserVO loggedInUser, String text, ListPropertiesVO listingProperties) {
 		ListingListVO listingsList = new ListingListVO();
 		List<ListingVO> listings = new ArrayList<ListingVO>();
 		List<String> ids = DocService.instance().fullTextSearch(text);
 		for (String id : ids) {
-			ListingAndUserVO listingUser = getListing(loggedInUser, id);
-			if (listingUser != null) {
-				ListingVO listing = listingUser.getListing();
+			long listingId = NumberUtils.toLong(id);
+			Listing listingDAO = getDAO().getListing(listingId);
+			if (listingDAO != null) {
+				ListingVO listing = DtoToVoConverter.convert(listingDAO);
 				listing.setOrderNumber(listings.size() + 1);
 				if (Listing.State.ACTIVE.toString().equalsIgnoreCase(listing.getState())) {
 					log.info("Active listing added to keyword search results " + listing);
@@ -983,8 +984,12 @@ public class ListingFacade {
 				} else if (loggedInUser.getId().equals(listing.getOwner())) {
 					log.info("Owned listing added to keyword search results " + listing);
 					listings.add(listing);
+				} else {
+					log.info("Listing not added to results, listing: " + listing);
 				}
-				listingsList.setUser(listingUser.getLoggedUser());
+				listingsList.setUser(new UserBasicVO(loggedInUser));
+			} else {
+				log.info("Keyword search returned listing with long id " + listingId + " but it was not found in datastore");
 			}
 		}
 		listingsList.setListings(listings);
