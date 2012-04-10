@@ -11,6 +11,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.math.RandomUtils;
 import org.joda.time.DateTime;
 
@@ -37,7 +38,9 @@ import com.startupbidder.datamodel.SBUser;
 import com.startupbidder.datamodel.SystemProperty;
 import com.startupbidder.datamodel.UserStats;
 import com.startupbidder.datamodel.Vote;
+import com.startupbidder.vo.DtoToVoConverter;
 import com.startupbidder.vo.UserVO;
+import com.startupbidder.web.ListingFacade;
 
 /**
  * Generates mock data.
@@ -47,15 +50,19 @@ public class MockDataBuilder {
 	private static final Logger log = Logger.getLogger(MockDataBuilder.class.getName());
 	static ObjectifyDatastoreDAO instance;
 
-	private SBUser GREG;
-	private SBUser JOHN;
-	private SBUser AHMED;
-	private SBUser JACOB;
-	private SBUser INSIDER;
-	private SBUser MADMAX;
-	private SBUser THEONE;
-	private SBUser DRAGON;
+	public UserVO GREG;
+	public UserVO JOHN;
+	public UserVO AHMED;
+	public UserVO JACOB;
+	public UserVO INSIDER;
+	public UserVO MADMAX;
+	public UserVO THEONE;
+	public UserVO DRAGON;
+	public UserVO NOT_ACTIVATED;
 
+	public List<SBUser> users;
+	public List<Listing> listings;
+	
 	private Listing gregsListing;
 	private Listing johnsListing;
 	
@@ -129,7 +136,7 @@ public class MockDataBuilder {
 		return output.toString();
 	}
 	
-	public String createMockDatastore() {
+	public String createMockDatastore(boolean initializeNow) {
 		StringBuffer output = new StringBuffer();
 		
 		List<SBUser> users = createMockUsers();
@@ -156,10 +163,14 @@ public class MockDataBuilder {
 			}
 			ObjectifyDatastoreDAO.getInstance().updateListingStatistics(listing.id);
 			
-			String taskName = new Date().getTime() + "_mock_listing_file_update_" + listing.getWebKey();
-			Queue queue = QueueFactory.getDefaultQueue();
-			queue.add(TaskOptions.Builder.withUrl("/task/update-mock-listing-images").param("id", listing.getWebKey())
-					.taskName(taskName).countdownMillis(500));
+			if (initializeNow) {
+				ListingFacade.instance().updateMockListingImages(listing.id);
+			} else {
+				String taskName = new Date().getTime() + "_mock_listing_file_update_" + listing.getWebKey();
+				Queue queue = QueueFactory.getDefaultQueue();
+				queue.add(TaskOptions.Builder.withUrl("/task/update-mock-listing-images").param("id", listing.getWebKey())
+						.taskName(taskName).countdownMillis(500));
+			}
 		}
 		output.append("Listing statistics update and file update scheduled.</br>");
 		
@@ -387,169 +398,6 @@ public class MockDataBuilder {
 		return comments;
 	}	
 
-	/**
-	 * Generates random bids for listings
-	 */
-	public List<Bid> generateBids(Collection<SBUser> usersList, Collection<Listing> listings) {
-		List<Bid> bids = new ArrayList<Bid>();
-		
-		List<SBUser> users = new ArrayList<SBUser>();
-		for (SBUser user : usersList) {
-			if (user.investor) {
-				users.add(user);
-			}
-		}
-		
-		for (Listing listing : listings) {
-			int bidNum = new Random().nextInt(15);
-			long bidTimeSpan = (System.currentTimeMillis() - listing.listedOn.getTime()) / (bidNum + 1);
-			Random fundTypeRandom = new Random();
-			while (--bidNum > 0) {
-				Bid bid = new Bid();
-				bid.id = id();
-				bid.mockData = true;
-				
-				Key<SBUser> userId = new Key<SBUser>(SBUser.class, users.get(new Random().nextInt(users.size())).id);
-				if (!listing.owner.equals(userId)) {
-					bid.bidder = userId;
-					bid.listing = new Key<Listing>(Listing.class, listing.id);
-					switch (fundTypeRandom.nextInt(3)) {
-						case 0: bid.fundType = Bid.FundType.COMMON;
-						break;
-						case 1: bid.fundType = Bid.FundType.NOTE;
-						break;
-						case 2: bid.fundType = Bid.FundType.PREFERRED;
-						break;
-					}
-					bid.percentOfCompany = new Random().nextInt(50) + 10;
-					bid.placed = new Date(listing.listedOn.getTime() + bidNum * bidTimeSpan);
-					bid.value = new Random().nextInt(50) * 1000 + listing.suggestedValuation;
-					bid.listingOwner = listing.owner;
-					bid.action = Bid.Action.ACTIVATE;
-					bid.actor = Bid.Actor.BIDDER;
-					
-					bids.add(bid);
-				}
-			}
-		}
-		
-		bids.addAll(generateBidsForAdminListing(usersList));
-		bids.addAll(generateBidsByAdmins(listings));
-		
-		return bids;
-	}
-	
-	/**
-	 * Generates random bids for admin listings (john and greg)
-	 */
-	private List<Bid> generateBidsForAdminListing(Collection<SBUser> usersList) {
-		List<Bid> bids = new ArrayList<Bid>();
-		Bid.Action statuses[] = Bid.Action.values();
-
-		Collection<Listing> listings = new ArrayList<Listing>();
-		listings.add(gregsListing);
-		listings.add(johnsListing);
-				
-		List<SBUser> users = new ArrayList<SBUser>();
-		for (SBUser user : usersList) {
-			if (user.investor) {
-				users.add(user);
-			}
-		}
-		users.remove(GREG);
-		users.remove(JOHN);
-		
-		for (Listing listing : listings) {
-			int bidNum = 4;
-			long bidTimeSpan = (System.currentTimeMillis() - listing.listedOn.getTime()) / (bidNum + 1);
-			Random fundTypeRandom = new Random();
-			while (--bidNum > 0) {
-				Bid bid = new Bid();
-				bid.id = id();
-				Key<SBUser> userId = new Key<SBUser>(SBUser.class, users.get(new Random().nextInt(users.size())).id);
-
-				bid.mockData = true;
-				
-				if (!listing.owner.equals(userId)) {
-					bid.bidder = userId;
-					bid.listing = new Key<Listing>(Listing.class, listing.id);
-					switch (fundTypeRandom.nextInt(3)) {
-						case 0: bid.fundType = Bid.FundType.COMMON;
-						break;
-						case 1: bid.fundType = Bid.FundType.NOTE;
-						break;
-						case 2: bid.fundType = Bid.FundType.PREFERRED;
-						break;
-					}
-					bid.percentOfCompany = new Random().nextInt(50) + 10;
-					bid.placed = new Date(listing.listedOn.getTime() + bidNum * bidTimeSpan);
-					bid.value = new Random().nextInt(50) * 1000 + listing.suggestedValuation;
-					bid.listingOwner = listing.owner;
-					// calculate valuation
-					bid.valuation = bid.value * 100 / bid.percentOfCompany;
-					bid.action = statuses[bidNum];
-					
-					bids.add(bid);
-				}
-			}
-		}
-		return bids;
-	}
-	
-	/**
-	 * Generates random bids for admin listings (john and greg)
-	 */
-	private List<Bid> generateBidsByAdmins(Collection<Listing> listingList) {
-		List<Listing> listings = new ArrayList<Listing>(listingList);
-		List<Bid> bids = new ArrayList<Bid>();
-		Bid.Action statuses[] = Bid.Action.values();
-
-		listings.remove(gregsListing);
-		listings.remove(johnsListing);
-				
-		List<SBUser> users = new ArrayList<SBUser>();
-		users.add(GREG);
-		users.add(JOHN);
-		
-		Random fundTypeRandom = new Random();
-		
-		for (SBUser user : users) {
-			int bidNum = 4;
-			while (--bidNum > 0) {
-				Bid bid = new Bid();
-				bid.id = id();
-				Key<SBUser> userId = new Key<SBUser>(SBUser.class, user.id);
-				Listing listing = listings.get(new Random().nextInt(listings.size()));
-
-				bid.mockData = true;
-				
-				long bidTimeSpan = (System.currentTimeMillis() - listing.listedOn.getTime()) / (bidNum + 1);
-				if (!listing.owner.equals(userId)) {
-					bid.bidder = userId;
-					bid.listing = new Key<Listing>(Listing.class, listing.id);
-					switch (fundTypeRandom.nextInt(3)) {
-						case 0: bid.fundType = Bid.FundType.COMMON;
-						break;
-						case 1: bid.fundType = Bid.FundType.NOTE;
-						break;
-						case 2: bid.fundType = Bid.FundType.PREFERRED;
-						break;
-					}
-					bid.percentOfCompany = new Random().nextInt(50) + 10;
-					bid.placed = new Date(listing.listedOn.getTime() + bidNum * bidTimeSpan);
-					bid.value = new Random().nextInt(50) * 1000 + listing.suggestedValuation;
-					bid.listingOwner = listing.owner;
-					// calculate valuation
-					bid.valuation = bid.value * 100 / bid.percentOfCompany;
-					bid.action = statuses[bidNum];
-					
-					bids.add(bid);
-				}
-			}
-		}
-		return bids;
-	}
-	
 	public List<Vote> createMockVotes(Collection<SBUser> usersList, Collection<Listing> listings) {
 		List<Vote> votes = new ArrayList<Vote>();
 		
@@ -614,9 +462,9 @@ public class MockDataBuilder {
 		user.email = "deadahmed@startupbidder.com";
 		user.openId = user.email;
 		user.joined = new Date(System.currentTimeMillis() - 22 * 24 * 60 * 60 * 1000);
-		user.status = SBUser.Status.ACTIVE;
+		user.status = SBUser.Status.DEACTIVATED;
 		user.lastLoggedIn = new Date();
-		AHMED = user;
+		AHMED = DtoToVoConverter.convert(user);
 		users.add(user); // 0
 
 		user = new SBUser();
@@ -629,7 +477,7 @@ public class MockDataBuilder {
 		user.joined = new Date(System.currentTimeMillis() - 23 * 24 * 60 * 60 * 1000);
 		user.status = SBUser.Status.ACTIVE;
 		user.lastLoggedIn = new Date();
-		JACOB = user;
+		JACOB = DtoToVoConverter.convert(user);
 		users.add(user); // 1
 
 		user = new SBUser();
@@ -641,7 +489,7 @@ public class MockDataBuilder {
 		user.openId = user.email;
 		user.joined = new Date(System.currentTimeMillis() - 31 * 24 * 60 * 60 * 1000);
 		user.status = SBUser.Status.ACTIVE;
-		INSIDER = user;
+		INSIDER = DtoToVoConverter.convert(user);
 		users.add(user); // 2
 
 		user = new SBUser();
@@ -655,7 +503,7 @@ public class MockDataBuilder {
 		user.status = SBUser.Status.ACTIVE;
 		user.lastLoggedIn = new Date();
 		user.investor = true;
-		DRAGON = user;
+		DRAGON = DtoToVoConverter.convert(user);
 		users.add(user); // 3
 
 		user = new SBUser();
@@ -669,7 +517,7 @@ public class MockDataBuilder {
 		user.status = SBUser.Status.ACTIVE;
 		user.investor = true;
 		user.lastLoggedIn = new Date();
-		MADMAX = user;
+		MADMAX = DtoToVoConverter.convert(user);
 		users.add(user); // 4
 
 		user = new SBUser();
@@ -683,7 +531,7 @@ public class MockDataBuilder {
 		user.status = SBUser.Status.DEACTIVATED;
 		user.investor = true;
 		user.lastLoggedIn = new Date();
-		THEONE = user;
+		THEONE = DtoToVoConverter.convert(user);
 		users.add(user); // 5
 		
 		user = new SBUser();
@@ -699,7 +547,7 @@ public class MockDataBuilder {
 		user.investor = true;
 		user.lastLoggedIn = new Date();
 		users.add(user);
-		JOHN = user; // 6
+		JOHN = DtoToVoConverter.convert(user); // 6
 		
 		user = new SBUser();
 		user.id = id();
@@ -714,7 +562,22 @@ public class MockDataBuilder {
 		user.investor = true;
 		user.lastLoggedIn = new Date();
 		users.add(user); // 7
-		GREG = user;
+		GREG = DtoToVoConverter.convert(user);
+		
+		user = new SBUser();
+		user.id = id();
+		user.mockData = true;
+		user.admin = true;
+		user.nickname = "NonActive";
+		user.name = "Non Active";
+		user.email = "nonactive@startupbidder.com";
+		user.activationCode = RandomStringUtils.randomAlphanumeric(64);
+		user.joined = new Date();
+		user.status = SBUser.Status.CREATED;
+		user.investor = false;
+		user.lastLoggedIn = null;
+		users.add(user); // 8
+		NOT_ACTIVATED = DtoToVoConverter.convert(user);
 		
 		return users;
 	}
@@ -815,16 +678,16 @@ public class MockDataBuilder {
 		return listings;
 	}
 	
-	private Listing prepareListing(SBUser owner, String name, Listing.State state, String category, int amount, int percentage,
+	private Listing prepareListing(UserVO owner, String name, Listing.State state, String category, int amount, int percentage,
 			String mantra, String summary) {
 		Listing bp = new Listing();
 		bp.id = id();
 		bp.name = name;
 		bp.summary = summary;
 		bp.mantra = mantra;
-		bp.owner = new Key<SBUser>(SBUser.class, owner.id);
-		bp.contactEmail = owner.email;
-		bp.founders = getFounders(owner.name);
+		bp.owner = new Key<SBUser>(SBUser.class, owner.toKeyId());
+		bp.contactEmail = owner.getEmail();
+		bp.founders = getFounders(owner.getName());
 
 		bp.askedForFunding = amount > 0;
 		bp.suggestedAmount = amount;
@@ -858,7 +721,7 @@ public class MockDataBuilder {
 			break;
 		case CLOSED:
 			hours = RandomUtils.nextInt(500) + 33 * 24;
-			createdTime = new DateTime().minusHours(hours);			
+			createdTime = new DateTime().minusHours(hours);
 			bp.created = createdTime.toDate();
 			bp.posted = createdTime.plusHours(24).toDate();
 			bp.listedOn = createdTime.plusHours(48).toDate();

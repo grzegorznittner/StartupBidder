@@ -114,7 +114,7 @@ public class SystemController extends ModelDrivenController {
 		UserVO loggedInUser = getLoggedInUser();
 		if (loggedInUser != null && loggedInUser.isAdmin()) {
 			String deletedObjects = new MockDataBuilder().clearDatastore(loggedInUser);
-			model = deletedObjects + new MockDataBuilder().createMockDatastore();
+			model = deletedObjects + new MockDataBuilder().createMockDatastore(false);
 		} else {
 			headers.setStatus(500);
 		}

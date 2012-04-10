@@ -59,8 +59,9 @@ public class BidFacadeTest extends BaseFacadeAbstractTest {
 	public void setUp() {
 		helper.setUp();
 		
-		setupUsers();
-		setupListings();
+//		setupUsers();
+//		setupListings();
+		setupDatastore();
 		setupBids();
 	}
 	
@@ -88,9 +89,9 @@ public class BidFacadeTest extends BaseFacadeAbstractTest {
 		// offer B (fail), update B, counter O, counter O (fail), update O, FREEZE LISTING, counter B (fail), accept O (fail), cancel O (fail)
 		//    DEFREEZE LISTING, counter B, WITHDRAW LISTING, accept O (fail), cancel O (fail), counter B (fail)
 		
-		UserVO owner1 = DtoToVoConverter.convert(userList.get(OWNER1));
-		UserVO bidder1 = DtoToVoConverter.convert(userList.get(BIDDER1));
-		UserVO bidder2 = DtoToVoConverter.convert(userList.get(BIDDER2));
+		UserVO owner1 = mocks.GREG;
+		UserVO bidder1 = mocks.INSIDER;
+		UserVO bidder2 = mocks.DRAGON;
 		
 		BidVO bid = DtoToVoConverter.convert(prepareBid(LISTING1_OWNER1, OWNER1, BIDDER2, Bid.Actor.BIDDER, Bid.Action.ACTIVATE, 0, 3, 20000, 30));
 		BidsForListingVO bids = BidFacade.instance().makeBid(bidder2, bid);
@@ -117,7 +118,7 @@ public class BidFacadeTest extends BaseFacadeAbstractTest {
 
 		// freezing listing
 		ListingVO listing = DtoToVoConverter.convert(super.listingList.get(LISTING1_OWNER1));
-		ListingVO freezedListing = ListingFacade.instance().freezeListing(admin, listing.getId()).getListing();
+		ListingVO freezedListing = ListingFacade.instance().freezeListing(mocks.JOHN, listing.getId()).getListing();
 		assertNotNull("Listing freezed", freezedListing);
 		assertEquals(Listing.State.FROZEN.toString(), freezedListing.getState());
 		
@@ -134,7 +135,7 @@ public class BidFacadeTest extends BaseFacadeAbstractTest {
 		assertTrue("Cancel for frozen listing, should be rejected", bids != null && bids.getErrorCode() == ErrorCodes.OPERATION_NOT_ALLOWED);
 
 		// reactivating listing
-		freezedListing = ListingFacade.instance().activateListing(admin, listing.getId()).getListing();
+		freezedListing = ListingFacade.instance().activateListing(mocks.JOHN, listing.getId()).getListing();
 		assertNotNull("Listing reactivated", freezedListing);
 		assertEquals(Listing.State.ACTIVE.toString(), freezedListing.getState());
 		
@@ -166,9 +167,9 @@ public class BidFacadeTest extends BaseFacadeAbstractTest {
 		// scenario for LISTING1_OWNER1 and BIDDER1
 		// offer B, offer B (fail), counter O, counter O (fail), counter B, accept O, counter O (fail), accept O (fail), cancel O (fail), cancel B (fail), offer B2 (fail)
 		
-		UserVO owner1 = DtoToVoConverter.convert(userList.get(OWNER1));
-		UserVO bidder1 = DtoToVoConverter.convert(userList.get(BIDDER1));
-		UserVO bidder2 = DtoToVoConverter.convert(userList.get(BIDDER2));
+		UserVO owner1 = mocks.GREG;
+		UserVO bidder1 = mocks.INSIDER;
+		UserVO bidder2 = mocks.DRAGON;
 		
 		BidVO bid = DtoToVoConverter.convert(prepareBid(LISTING1_OWNER1, OWNER1, BIDDER1, Bid.Actor.BIDDER, Bid.Action.ACTIVATE, 0, 3, 30000, 30));
 		BidsForListingVO bids = BidFacade.instance().makeBid(bidder1, bid);
@@ -220,9 +221,9 @@ public class BidFacadeTest extends BaseFacadeAbstractTest {
 	
 	@Test
 	public void testGetAllBids() {
-		UserVO owner1 = DtoToVoConverter.convert(userList.get(OWNER1));
-		UserVO bidder1 = DtoToVoConverter.convert(userList.get(BIDDER1));
-		UserVO bidder2 = DtoToVoConverter.convert(userList.get(BIDDER2));
+		UserVO owner1 = mocks.GREG;
+		UserVO bidder1 = mocks.INSIDER;
+		UserVO bidder2 = mocks.DRAGON;
 		
 		BidListVO bidList = BidFacade.instance().getBidsForListing(owner1, listingList.get(LISTING1_OWNER1).getWebKey(), new ListPropertiesVO());
 		assertNotNull(bidList);

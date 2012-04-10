@@ -200,7 +200,7 @@ public class UserController extends ModelDrivenController {
     		userId = getLoggedInUser().getId();
     	}
     	String activationCode = getCommandOrParameter(request, 3, "code");
-    	model = UserMgmtFacade.instance().activateUser(getLoggedInUser(), userId, activationCode);
+    	model = UserMgmtFacade.instance().activateUser(userId, activationCode);
 
     	HttpHeaders headers = new HttpHeadersImpl("activate");
 		return headers;

@@ -322,7 +322,7 @@ public class UserMgmtFacade {
 	}
 	*/
 
-	public UserVO activateUser(UserVO loggedInUser, String userId, String activationCode) {
+	public UserVO activateUser(String userId, String activationCode) {
 		UserVO user = DtoToVoConverter.convert(getDAO().activateUser(BaseVO.toKeyId(userId), activationCode));
 		if (user != null) {
 			//applyUserStatistics(loggedInUser, user);

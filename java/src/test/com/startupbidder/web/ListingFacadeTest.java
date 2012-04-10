@@ -63,8 +63,9 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 	public void setUp() {
 		helper.setUp();
 		
-		setupUsers();
-		setupListings();
+//		setupUsers();
+//		setupListings();
+		setupDatastore();
 		setupNanoHttpd();
 	}
 	
@@ -76,15 +77,15 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 	
 	@Test
 	public void testUpdateListingPropertyForCreatedListing() {
-		ListingAndUserVO userListing = ListingFacade.instance().createListing(googleUserVO);
+		ListingAndUserVO userListing = ListingFacade.instance().createListing(mocks.INSIDER);
 		assertEquals("We should get OK, we got " + userListing.getErrorMessage(), ErrorCodes.OK, userListing.getErrorCode());
-		assertEquals(userListing.getListing().getId(), googleUserVO.getEditedListing());
+		assertEquals(userListing.getListing().getId(), mocks.INSIDER.getEditedListing());
 		ListingVO listing = userListing.getListing();
 		
 		// set non empty name
 		List<ListingPropertyVO> props = new ArrayList<ListingPropertyVO>();
 		props.add(new ListingPropertyVO("title", "New name"));
-		ListingAndUserVO update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
+		ListingAndUserVO update = ListingFacade.instance().updateListingProperties(mocks.INSIDER, props);
 		assertEquals("We should get OK, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
 		assertEquals("New name", update.getListing().getName());
 		assertEquals(listing.getId(), update.getListing().getId());
@@ -97,7 +98,7 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 		assertEquals(listing.getWebsite(), update.getListing().getWebsite());
 		assertEquals(listing.getState(), update.getListing().getState());
 
-		ListingAndUserVO updatedListing = ListingFacade.instance().createListing(googleUserVO);
+		ListingAndUserVO updatedListing = ListingFacade.instance().createListing(mocks.INSIDER);
 		assertEquals("We should get OK, we got " + updatedListing.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
 		assertEquals("Edited listing should be updated", listing.getId(), updatedListing.getListing().getId());
 		assertEquals("New name", updatedListing.getListing().getName());
@@ -105,7 +106,7 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 		// set an empty name
 		props = new ArrayList<ListingPropertyVO>();
 		props.add(new ListingPropertyVO("title", ""));
-		update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
+		update = ListingFacade.instance().updateListingProperties(mocks.INSIDER, props);
 		assertEquals("We should get OK, we got " + updatedListing.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
 		assertEquals("", update.getListing().getName());
 		assertEquals(listing.getId(), update.getListing().getId());
@@ -123,7 +124,7 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 		props.add(new ListingPropertyVO("title", "Name"));
 		props.add(new ListingPropertyVO("mantra", "Mantra"));
 		props.add(new ListingPropertyVO("summary", "Summary"));
-		update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
+		update = ListingFacade.instance().updateListingProperties(mocks.INSIDER, props);
 		assertEquals("We should get OK, we got " + updatedListing.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
 		assertEquals("Name", update.getListing().getName());
 		assertEquals(listing.getId(), update.getListing().getId());
@@ -142,7 +143,7 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 		props.add(new ListingPropertyVO("mantra", "Mantra2"));
 		props.add(new ListingPropertyVO("summary", "Summary2"));
 		props.add(new ListingPropertyVO("state", "ACTIVE"));
-		update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
+		update = ListingFacade.instance().updateListingProperties(mocks.INSIDER, props);
 		assertEquals("We should get OK, we got " + updatedListing.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
 		assertEquals("Name2", update.getListing().getName());
 		assertEquals(listing.getId(), update.getListing().getId());
@@ -158,22 +159,22 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 		// set name, mantra and summary, update for state should not work
 		props = new ArrayList<ListingPropertyVO>();
 		props.add(new ListingPropertyVO("status", "ACTIVE"));
-		update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
+		update = ListingFacade.instance().updateListingProperties(mocks.INSIDER, props);
 		assertNotSame("We should get failure, we got " + updatedListing.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
 
 		// set founder property
 		props = new ArrayList<ListingPropertyVO>();
 		props.add(new ListingPropertyVO("founders", "Greg Nittner, John A. Burns"));
-		update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
+		update = ListingFacade.instance().updateListingProperties(mocks.INSIDER, props);
 		assertEquals("We should get OK, we got " + updatedListing.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
 		assertEquals("Greg Nittner, John A. Burns", update.getListing().getFounders());
 	}
 	
 	@Test
 	public void testUpdateListingAddressProperties() {
-		ListingAndUserVO userListing = ListingFacade.instance().createListing(googleUserVO);
+		ListingAndUserVO userListing = ListingFacade.instance().createListing(mocks.INSIDER);
 		assertEquals("We should get OK, we got " + userListing.getErrorMessage(), ErrorCodes.OK, userListing.getErrorCode());
-		assertEquals(userListing.getListing().getId(), googleUserVO.getEditedListing());
+		assertEquals(userListing.getListing().getId(), mocks.INSIDER.getEditedListing());
 		ListingVO listing = userListing.getListing();
 		
 		// setting address without state name
@@ -183,7 +184,7 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 		props.put("LONG_locality", "Rybnik");
 		props.put("latitude", "21.9342");
 		props.put("longitude", "56.9765");
-		ListingAndUserVO update = ListingFacade.instance().updateListingAddressProperties(googleUserVO, props);
+		ListingAndUserVO update = ListingFacade.instance().updateListingAddressProperties(mocks.INSIDER, props);
 		assertEquals("We should get OK, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
 		assertEquals("Full address, with street and country", update.getListing().getAddress());
 		assertEquals("Rybnik, Poland", update.getListing().getBriefAddress());
@@ -207,7 +208,7 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 		props.put("LONG_locality", "Austin");
 		props.put("latitude", "15.8545464078");
 		props.put("longitude", "-20.45634");
-		update = ListingFacade.instance().updateListingAddressProperties(googleUserVO, props);
+		update = ListingFacade.instance().updateListingAddressProperties(mocks.INSIDER, props);
 		assertEquals("We should get OK, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
 		assertEquals("Austin, TX, US", update.getListing().getBriefAddress());
 		assertEquals(NumberUtils.toDouble("15.8545464078"), update.getListing().getLatitude(), 0.0001);
@@ -231,7 +232,7 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 		props.put("LONG_locality", "");
 		props.put("latitude", "");
 		props.put("longitude", "");
-		update = ListingFacade.instance().updateListingAddressProperties(googleUserVO, props);
+		update = ListingFacade.instance().updateListingAddressProperties(mocks.INSIDER, props);
 		assertEquals("We should get OK, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
 		assertEquals("", update.getListing().getBriefAddress());
 		assertEquals("", update.getListing().getAddress());
@@ -253,7 +254,7 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 		props.put("LONG_locality", "Austin");
 		props.put("latitude", "21.9342");
 		props.put("longitude", "56.9765");
-		update = ListingFacade.instance().updateListingAddressProperties(googleUserVO, props);
+		update = ListingFacade.instance().updateListingAddressProperties(mocks.INSIDER, props);
 		assertNotSame("We should get failure, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
 
 		// updating address compounds but city is missing
@@ -262,15 +263,15 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 		props.put("SHORT_country", "FR");
 		props.put("latitude", "21.9342");
 		props.put("longitude", "56.9765");
-		update = ListingFacade.instance().updateListingAddressProperties(googleUserVO, props);
+		update = ListingFacade.instance().updateListingAddressProperties(mocks.INSIDER, props);
 		assertNotSame("We should get failure, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
 	}
 	
 	@Test
 	public void testUpdateListingAddressUsingWrongAPI() {
-		ListingAndUserVO userListing = ListingFacade.instance().createListing(googleUserVO);
+		ListingAndUserVO userListing = ListingFacade.instance().createListing(mocks.INSIDER);
 		assertEquals("We should get OK, we got " + userListing.getErrorMessage(), ErrorCodes.OK, userListing.getErrorCode());
-		assertEquals(userListing.getListing().getId(), googleUserVO.getEditedListing());
+		assertEquals(userListing.getListing().getId(), mocks.INSIDER.getEditedListing());
 		ListingVO listing = userListing.getListing();
 		
 		// setting address without state name
@@ -280,7 +281,7 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 		props.add(new ListingPropertyVO("city", "Rybnik"));
 		props.add(new ListingPropertyVO("latitude", "21.9342"));
 		props.add(new ListingPropertyVO("longitude", "56.9765"));
-		ListingAndUserVO update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
+		ListingAndUserVO update = ListingFacade.instance().updateListingProperties(mocks.INSIDER, props);
 		assertNotSame("We should get failure, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
 
 		// updating address compounds
@@ -289,7 +290,7 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 		props.add(new ListingPropertyVO("country", "US"));
 		props.add(new ListingPropertyVO("state", "TX"));
 		props.add(new ListingPropertyVO("city", "Austin"));
-		update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
+		update = ListingFacade.instance().updateListingProperties(mocks.INSIDER, props);
 		assertNotSame("We should get failure, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
 
 		// setting only city
@@ -298,7 +299,7 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 		props.add(new ListingPropertyVO("country", ""));
 		props.add(new ListingPropertyVO("state", ""));
 		props.add(new ListingPropertyVO("city", "Austin"));
-		update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
+		update = ListingFacade.instance().updateListingProperties(mocks.INSIDER, props);
 		assertNotSame("We should get failure, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
 
 		// clearing address compounds
@@ -307,20 +308,20 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 		props.add(new ListingPropertyVO("country", ""));
 		props.add(new ListingPropertyVO("state", ""));
 		props.add(new ListingPropertyVO("city", ""));
-		update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
+		update = ListingFacade.instance().updateListingProperties(mocks.INSIDER, props);
 		assertNotSame("We should get failure, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
 	}
 	
 	@Test
 	public void testUpdateLargeLogoUrlListingProperty() {
-		ListingAndUserVO userListing = ListingFacade.instance().createListing(googleUserVO);
+		ListingAndUserVO userListing = ListingFacade.instance().createListing(mocks.INSIDER);
 		assertEquals("We should get OK, we got " + userListing.getErrorMessage(), ErrorCodes.OK, userListing.getErrorCode());
-		assertEquals(userListing.getListing().getId(), googleUserVO.getEditedListing());
+		assertEquals(userListing.getListing().getId(), mocks.INSIDER.getEditedListing());
 
 		// set large logo url as jpg
 		List<ListingPropertyVO> props = new ArrayList<ListingPropertyVO>();
 		props.add(new ListingPropertyVO("logo_url", getTestDocUrl("300x300.jpg")));
-		ListingAndUserVO update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
+		ListingAndUserVO update = ListingFacade.instance().updateListingProperties(mocks.INSIDER, props);
 		assertEquals("We should get OK, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
 		assertNotNull("base64logo should be set", update.getListing().getLogo());
 		assertTrue("JPG uploaded so data uri should have image/jpeg", update.getListing().getLogo().startsWith("data:image/jpeg;base64,"));
@@ -329,7 +330,7 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 		// set large logo url as gif
 		props = new ArrayList<ListingPropertyVO>();
 		props.add(new ListingPropertyVO("logo_url", getTestDocUrl("300x300.gif")));
-		update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
+		update = ListingFacade.instance().updateListingProperties(mocks.INSIDER, props);
 		assertEquals("We should get OK, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
 		assertNotNull("base64logo should be set", update.getListing().getLogo());
 		assertTrue("GIF uploaded so data uri should have image/jpeg", update.getListing().getLogo().startsWith("data:image/gif;base64,"));
@@ -338,7 +339,7 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 		// set large logo url as png
 		props = new ArrayList<ListingPropertyVO>();
 		props.add(new ListingPropertyVO("logo_url", getTestDocUrl("300x300.png")));
-		update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
+		update = ListingFacade.instance().updateListingProperties(mocks.INSIDER, props);
 		assertEquals("We should get OK, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
 		assertNotNull("base64logo should be set", update.getListing().getLogo());
 		assertTrue("PNG uploaded so data uri should have image/jpeg", update.getListing().getLogo().startsWith("data:image/png;base64,"));
@@ -347,15 +348,15 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 	
 	@Test
 	public void testUpdateLogoUrlListingProperty() {
-		ListingAndUserVO userListing = ListingFacade.instance().createListing(googleUserVO);
+		ListingAndUserVO userListing = ListingFacade.instance().createListing(mocks.INSIDER);
 		assertEquals("We should get OK, we got " + userListing.getErrorMessage(), ErrorCodes.OK, userListing.getErrorCode());
-		assertEquals(userListing.getListing().getId(), googleUserVO.getEditedListing());
+		assertEquals(userListing.getListing().getId(), mocks.INSIDER.getEditedListing());
 		ListingVO listing = userListing.getListing();
 		
 		// set logo url with non image url
 		List<ListingPropertyVO> props = new ArrayList<ListingPropertyVO>();
 		props.add(new ListingPropertyVO("logo_url", getTestDocUrl("business_plan.ppt")));
-		ListingAndUserVO update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
+		ListingAndUserVO update = ListingFacade.instance().updateListingProperties(mocks.INSIDER, props);
 		assertNotSame("We should get failure", ErrorCodes.OK, update.getErrorCode());
 		assertNotNull("Even for failure we should get listing", update.getListing());
 		assertNull("base64logo should be empty", update.getListing().getLogo());
@@ -363,7 +364,7 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 		// set logo url with invalid url
 		props = new ArrayList<ListingPropertyVO>();
 		props.add(new ListingPropertyVO("logo_url", "This is not url"));
-		update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
+		update = ListingFacade.instance().updateListingProperties(mocks.INSIDER, props);
 		assertNotSame("We should get failure", ErrorCodes.OK, update.getErrorCode());
 		assertNotNull("Even for failure we should get listing", update.getListing());
 		assertNull("base64logo should be empty", update.getListing().getLogo());
@@ -371,7 +372,7 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 		// set logo url
 		props = new ArrayList<ListingPropertyVO>();
 		props.add(new ListingPropertyVO("logo_url", getTestDocUrl("80x50.jpg")));
-		update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
+		update = ListingFacade.instance().updateListingProperties(mocks.INSIDER, props);
 		assertEquals("We should get OK, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
 		assertNotNull("base64logo should be set", update.getListing().getLogo());
 		assertTrue("JPEG uploaded so data uri should have image/jpeg", update.getListing().getLogo().startsWith("data:image/jpeg;base64,"));
@@ -390,7 +391,7 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 		// set logo url as gif
 		props = new ArrayList<ListingPropertyVO>();
 		props.add(new ListingPropertyVO("logo_url", getTestDocUrl("80x50.gif")));
-		update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
+		update = ListingFacade.instance().updateListingProperties(mocks.INSIDER, props);
 		assertEquals("We should get OK, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
 		assertNotNull("base64logo should be set", update.getListing().getLogo());
 		assertTrue("GIF uploaded so data uri should have image/jpeg", update.getListing().getLogo().startsWith("data:image/gif;base64,"));
@@ -399,7 +400,7 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 		// set logo url as png
 		props = new ArrayList<ListingPropertyVO>();
 		props.add(new ListingPropertyVO("logo_url", getTestDocUrl("80x50.png")));
-		update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
+		update = ListingFacade.instance().updateListingProperties(mocks.INSIDER, props);
 		assertEquals("We should get OK, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
 		assertNotNull("base64logo should be set", update.getListing().getLogo());
 		assertTrue("PNG uploaded so data uri should have image/png", update.getListing().getLogo().startsWith("data:image/png;base64,"));
@@ -409,7 +410,7 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 		String previousLogo = update.getListing().getLogo();
 		props = new ArrayList<ListingPropertyVO>();
 		props.add(new ListingPropertyVO("logo_url", "This is not url"));
-		update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
+		update = ListingFacade.instance().updateListingProperties(mocks.INSIDER, props);
 		assertNotSame("We should get failure", ErrorCodes.OK, update.getErrorCode());
 		assertNotNull("Even for failure we should get listing", update.getListing());
 		assertEquals("base64logo should be the same as previously", previousLogo, update.getListing().getLogo());		
@@ -417,15 +418,15 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 
 	@Test
 	public void testUpdateBusinessPlanUrlListingProperty() {
-		ListingAndUserVO userListing = ListingFacade.instance().createListing(googleUserVO);
+		ListingAndUserVO userListing = ListingFacade.instance().createListing(mocks.INSIDER);
 		assertEquals("We should get OK, we got " + userListing.getErrorMessage(), ErrorCodes.OK, userListing.getErrorCode());
-		assertEquals(userListing.getListing().getId(), googleUserVO.getEditedListing());
+		assertEquals(userListing.getListing().getId(), mocks.INSIDER.getEditedListing());
 		ListingVO listing = userListing.getListing();
 		
 		// set business plan with wrong url
 		List<ListingPropertyVO> props = new ArrayList<ListingPropertyVO>();
 		props.add(new ListingPropertyVO("business_plan_url", "invalid url"));
-		ListingAndUserVO update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
+		ListingAndUserVO update = ListingFacade.instance().updateListingProperties(mocks.INSIDER, props);
 		assertNotSame("We should get failure", ErrorCodes.OK, update.getErrorCode());
 		assertNotNull("Even for failure we should get listing", update.getListing());
 		assertNull("Business plan id should be empty", update.getListing().getBuinessPlanId());
@@ -433,7 +434,7 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 		// set business plan with valid url
 		props = new ArrayList<ListingPropertyVO>();
 		props.add(new ListingPropertyVO("business_plan_url", getTestDocUrl("resume.doc")));
-		update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
+		update = ListingFacade.instance().updateListingProperties(mocks.INSIDER, props);
 		assertEquals("We should get OK, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
 		assertNotNull("Business plan should be set", update.getListing().getBuinessPlanId());
 		assertEquals(listing.getName(), update.getListing().getName());
@@ -450,15 +451,15 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 
 	@Test
 	public void testUpdatePresentationUrlListingProperty() {
-		ListingAndUserVO userListing = ListingFacade.instance().createListing(googleUserVO);
+		ListingAndUserVO userListing = ListingFacade.instance().createListing(mocks.INSIDER);
 		assertEquals("We should get OK, we got " + userListing.getErrorMessage(), ErrorCodes.OK, userListing.getErrorCode());
-		assertEquals(userListing.getListing().getId(), googleUserVO.getEditedListing());
+		assertEquals(userListing.getListing().getId(), mocks.INSIDER.getEditedListing());
 		ListingVO listing = userListing.getListing();
 		
 		// set business plan with wrong url
 		List<ListingPropertyVO> props = new ArrayList<ListingPropertyVO>();
 		props.add(new ListingPropertyVO("presentation_url", "invalid url"));
-		ListingAndUserVO update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
+		ListingAndUserVO update = ListingFacade.instance().updateListingProperties(mocks.INSIDER, props);
 		assertNotSame("We should get failure", ErrorCodes.OK, update.getErrorCode());
 		assertNotNull("Even for failure we should get listing", update.getListing());
 		assertNull("Presentation id should be empty", update.getListing().getPresentationId());
@@ -466,7 +467,7 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 		// set business plan with valid url
 		props = new ArrayList<ListingPropertyVO>();
 		props.add(new ListingPropertyVO("presentation_url", getTestDocUrl("business_plan.ppt")));
-		update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
+		update = ListingFacade.instance().updateListingProperties(mocks.INSIDER, props);
 		assertEquals("We should get OK, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
 		assertNotNull("Presentation should be set", update.getListing().getPresentationId());
 		assertEquals(listing.getName(), update.getListing().getName());
@@ -483,15 +484,15 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 
 	@Test
 	public void testUpdateFinancialsUrlListingProperty() {
-		ListingAndUserVO userListing = ListingFacade.instance().createListing(googleUserVO);
+		ListingAndUserVO userListing = ListingFacade.instance().createListing(mocks.INSIDER);
 		assertEquals("We should get OK, we got " + userListing.getErrorMessage(), ErrorCodes.OK, userListing.getErrorCode());
-		assertEquals(userListing.getListing().getId(), googleUserVO.getEditedListing());
+		assertEquals(userListing.getListing().getId(), mocks.INSIDER.getEditedListing());
 		ListingVO listing = userListing.getListing();
 		
 		// set financials with wrong url
 		List<ListingPropertyVO> props = new ArrayList<ListingPropertyVO>();
 		props.add(new ListingPropertyVO("financials_url", "invalid url"));
-		ListingAndUserVO update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
+		ListingAndUserVO update = ListingFacade.instance().updateListingProperties(mocks.INSIDER, props);
 		assertNotSame("We should get failure", ErrorCodes.OK, update.getErrorCode());
 		assertNotNull("Even for failure we should get listing", update.getListing());
 		assertNull("Financials id should be empty", update.getListing().getFinancialsId());
@@ -499,7 +500,7 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 		// set financials with valid url
 		props = new ArrayList<ListingPropertyVO>();
 		props.add(new ListingPropertyVO("financials_url", getTestDocUrl("calc.xls")));
-		update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
+		update = ListingFacade.instance().updateListingProperties(mocks.INSIDER, props);
 		assertEquals("We should get OK, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
 		assertNotNull("Financials should be set", update.getListing().getFinancialsId());
 		assertEquals(listing.getName(), update.getListing().getName());
@@ -516,53 +517,53 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 
 	@Test
 	public void testDeleteFileFromEditedListing() {
-		ListingAndUserVO userListing = ListingFacade.instance().createListing(googleUserVO);
+		ListingAndUserVO userListing = ListingFacade.instance().createListing(mocks.INSIDER);
 		assertEquals("We should get OK, we got " + userListing.getErrorMessage(), ErrorCodes.OK, userListing.getErrorCode());
-		assertEquals(userListing.getListing().getId(), googleUserVO.getEditedListing());
+		assertEquals(userListing.getListing().getId(), mocks.INSIDER.getEditedListing());
 		ListingVO listing = userListing.getListing();
 		
 		// set logo url with non image url
 		List<ListingPropertyVO> props = new ArrayList<ListingPropertyVO>();
 		props.add(new ListingPropertyVO("logo_url", getTestDocUrl("300x300.jpg")));
-		ListingAndUserVO update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
+		ListingAndUserVO update = ListingFacade.instance().updateListingProperties(mocks.INSIDER, props);
 		assertEquals("We should get OK, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
 		assertNotNull("base64logo should be set", update.getListing().getLogo());
 		// set financials with valid url
 		props = new ArrayList<ListingPropertyVO>();
 		props.add(new ListingPropertyVO("financials_url", getTestDocUrl("calc.xls")));
-		update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
+		update = ListingFacade.instance().updateListingProperties(mocks.INSIDER, props);
 		assertEquals("We should get OK, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
 		assertNotNull("Financials should be set", update.getListing().getFinancialsId());
 		// set business plan with valid url
 		props = new ArrayList<ListingPropertyVO>();
 		props.add(new ListingPropertyVO("business_plan_url", getTestDocUrl("resume.doc")));
-		update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
+		update = ListingFacade.instance().updateListingProperties(mocks.INSIDER, props);
 		assertEquals("We should get OK, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
 		assertNotNull("Business plan should be set", update.getListing().getBuinessPlanId());
 		// set business plan with valid url
 		props = new ArrayList<ListingPropertyVO>();
 		props.add(new ListingPropertyVO("presentation_url", getTestDocUrl("business_plan.ppt")));
-		update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
+		update = ListingFacade.instance().updateListingProperties(mocks.INSIDER, props);
 		assertEquals("We should get OK, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
 		assertNotNull("Presentation should be set", update.getListing().getPresentationId());
 		
 		// now we delete each of this file
-		update = ListingFacade.instance().deleteListingFile(googleUserVO, listing.getId(), ListingDoc.Type.LOGO);
+		update = ListingFacade.instance().deleteListingFile(mocks.INSIDER, listing.getId(), ListingDoc.Type.LOGO);
 		assertEquals("We should get OK, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
 		assertNotNull(update.getListing());
 		assertNull("Logo was deleted so it should be null", update.getListing().getLogo());
 
-		update = ListingFacade.instance().deleteListingFile(googleUserVO, listing.getId(), ListingDoc.Type.BUSINESS_PLAN);
+		update = ListingFacade.instance().deleteListingFile(mocks.INSIDER, listing.getId(), ListingDoc.Type.BUSINESS_PLAN);
 		assertEquals("We should get OK, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
 		assertNotNull(update.getListing());
 		assertNull("Business plan was deleted so it should be null", update.getListing().getBuinessPlanId());
 
-		update = ListingFacade.instance().deleteListingFile(googleUserVO, listing.getId(), ListingDoc.Type.FINANCIALS);
+		update = ListingFacade.instance().deleteListingFile(mocks.INSIDER, listing.getId(), ListingDoc.Type.FINANCIALS);
 		assertEquals("We should get OK, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
 		assertNotNull(update.getListing());
 		assertNull("Financials was deleted so it should be null", update.getListing().getFinancialsId());
 
-		update = ListingFacade.instance().deleteListingFile(googleUserVO, listing.getId(), ListingDoc.Type.PRESENTATION);
+		update = ListingFacade.instance().deleteListingFile(mocks.INSIDER, listing.getId(), ListingDoc.Type.PRESENTATION);
 		assertEquals("We should get OK, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
 		assertNotNull(update.getListing());
 		assertNull("Presentation was deleted so it should be null", update.getListing().getPresentationId());
@@ -570,53 +571,53 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 		// and again we try to upload all those files
 		props = new ArrayList<ListingPropertyVO>();
 		props.add(new ListingPropertyVO("logo_url", getTestDocUrl("300x300.jpg")));
-		update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
+		update = ListingFacade.instance().updateListingProperties(mocks.INSIDER, props);
 		assertEquals("We should get OK, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
 		assertNotNull("base64logo should be set", update.getListing().getLogo());
 		// set financials with valid url
 		props = new ArrayList<ListingPropertyVO>();
 		props.add(new ListingPropertyVO("financials_url", getTestDocUrl("calc.xls")));
-		update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
+		update = ListingFacade.instance().updateListingProperties(mocks.INSIDER, props);
 		assertEquals("We should get OK, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
 		assertNotNull("Financials should be set", update.getListing().getFinancialsId());
 		// set business plan with valid url
 		props = new ArrayList<ListingPropertyVO>();
 		props.add(new ListingPropertyVO("business_plan_url", getTestDocUrl("resume.doc")));
-		update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
+		update = ListingFacade.instance().updateListingProperties(mocks.INSIDER, props);
 		assertEquals("We should get OK, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
 		assertNotNull("Business plan should be set", update.getListing().getBuinessPlanId());
 		// set business plan with valid url
 		props = new ArrayList<ListingPropertyVO>();
 		props.add(new ListingPropertyVO("presentation_url", getTestDocUrl("business_plan.ppt")));
-		update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
+		update = ListingFacade.instance().updateListingProperties(mocks.INSIDER, props);
 		assertEquals("We should get OK, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
 		assertNotNull("Presentation should be set", update.getListing().getPresentationId());
 	}
 	
 	@Test
 	public void testDeleteNotExistingFileFromEditedListing() {
-		ListingAndUserVO userListing = ListingFacade.instance().createListing(googleUserVO);
+		ListingAndUserVO userListing = ListingFacade.instance().createListing(mocks.INSIDER);
 		assertEquals("We should get OK, we got " + userListing.getErrorMessage(), ErrorCodes.OK, userListing.getErrorCode());
-		assertEquals(userListing.getListing().getId(), googleUserVO.getEditedListing());
+		assertEquals(userListing.getListing().getId(), mocks.INSIDER.getEditedListing());
 		ListingVO listing = userListing.getListing();
 		
 		// we try to delete not existing files, should be permitted
-		ListingAndUserVO update = ListingFacade.instance().deleteListingFile(googleUserVO, listing.getId(), ListingDoc.Type.LOGO);
+		ListingAndUserVO update = ListingFacade.instance().deleteListingFile(mocks.INSIDER, listing.getId(), ListingDoc.Type.LOGO);
 		assertEquals("We should get OK, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
 		assertNotNull(update.getListing());
 		assertNull("Logo was deleted so it should be null", update.getListing().getLogo());
 
-		update = ListingFacade.instance().deleteListingFile(googleUserVO, listing.getId(), ListingDoc.Type.BUSINESS_PLAN);
+		update = ListingFacade.instance().deleteListingFile(mocks.INSIDER, listing.getId(), ListingDoc.Type.BUSINESS_PLAN);
 		assertEquals("We should get OK, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
 		assertNotNull(update.getListing());
 		assertNull("Business plan was deleted so it should be null", update.getListing().getBuinessPlanId());
 
-		update = ListingFacade.instance().deleteListingFile(googleUserVO, listing.getId(), ListingDoc.Type.FINANCIALS);
+		update = ListingFacade.instance().deleteListingFile(mocks.INSIDER, listing.getId(), ListingDoc.Type.FINANCIALS);
 		assertEquals("We should get OK, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
 		assertNotNull(update.getListing());
 		assertNull("Financials was deleted so it should be null", update.getListing().getFinancialsId());
 
-		update = ListingFacade.instance().deleteListingFile(googleUserVO, listing.getId(), ListingDoc.Type.PRESENTATION);
+		update = ListingFacade.instance().deleteListingFile(mocks.INSIDER, listing.getId(), ListingDoc.Type.PRESENTATION);
 		assertEquals("We should get OK, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
 		assertNotNull(update.getListing());
 		assertNull("Presentation was deleted so it should be null", update.getListing().getPresentationId());
@@ -624,61 +625,61 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 		// and then we try to upload all those files
 		List<ListingPropertyVO> props = new ArrayList<ListingPropertyVO>();
 		props.add(new ListingPropertyVO("logo_url", getTestDocUrl("300x300.jpg")));
-		update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
+		update = ListingFacade.instance().updateListingProperties(mocks.INSIDER, props);
 		assertEquals("We should get OK, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
 		assertNotNull("base64logo should be set", update.getListing().getLogo());
 		// set financials with valid url
 		props = new ArrayList<ListingPropertyVO>();
 		props.add(new ListingPropertyVO("financials_url", getTestDocUrl("calc.xls")));
-		update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
+		update = ListingFacade.instance().updateListingProperties(mocks.INSIDER, props);
 		assertEquals("We should get OK, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
 		assertNotNull("Financials should be set", update.getListing().getFinancialsId());
 		// set business plan with valid url
 		props = new ArrayList<ListingPropertyVO>();
 		props.add(new ListingPropertyVO("business_plan_url", getTestDocUrl("resume.doc")));
-		update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
+		update = ListingFacade.instance().updateListingProperties(mocks.INSIDER, props);
 		assertEquals("We should get OK, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
 		assertNotNull("Business plan should be set", update.getListing().getBuinessPlanId());
 		// set business plan with valid url
 		props = new ArrayList<ListingPropertyVO>();
 		props.add(new ListingPropertyVO("presentation_url", getTestDocUrl("business_plan.ppt")));
-		update = ListingFacade.instance().updateListingProperties(googleUserVO, props);
+		update = ListingFacade.instance().updateListingProperties(mocks.INSIDER, props);
 		assertEquals("We should get OK, we got " + update.getErrorMessage(), ErrorCodes.OK, update.getErrorCode());
 		assertNotNull("Presentation should be set", update.getListing().getPresentationId());
 	}
 	
 	@Test
 	public void testCreateListing() {
-		ListingAndUserVO newListing = ListingFacade.instance().createListing(googleUserVO);
+		ListingAndUserVO newListing = ListingFacade.instance().createListing(mocks.INSIDER);
 		assertEquals("We should get OK", ErrorCodes.OK, newListing.getErrorCode());
 		assertNotNull("Listing not created", newListing.getListing());
 		assertNull("Name should be empty", newListing.getListing().getName());
 		assertNull("Summary should be null", newListing.getListing().getSummary());
-		assertEquals("Proper owner set", googleUserVO.getId(), newListing.getListing().getOwner());
+		assertEquals("Proper owner set", mocks.INSIDER.getId(), newListing.getListing().getOwner());
 		assertNotNull("Contact email should be set", newListing.getListing().getContactEmail());
 		assertNotNull("Founders should be set", newListing.getListing().getFounders());
 		assertEquals("State is not NEW", Listing.State.NEW.toString(), newListing.getListing().getState());
 		assertNotNull("Created date should be set", newListing.getListing().getCreated());
 		assertNotNull("Modified date should be set", newListing.getListing().getModified());
-		assertEquals("Edited listing for logged in user should be set", newListing.getListing().getId(), googleUserVO.getEditedListing());
+		assertEquals("Edited listing for logged in user should be set", newListing.getListing().getId(), mocks.INSIDER.getEditedListing());
 		
-		ListingAndUserVO newListing2 = ListingFacade.instance().createListing(googleUserVO);
+		ListingAndUserVO newListing2 = ListingFacade.instance().createListing(mocks.INSIDER);
 		assertEquals("We should get OK", ErrorCodes.OK, newListing.getErrorCode());
 		assertNotNull("Listing not created", newListing2.getListing());
 		assertEquals("Only one edited listing allowed", newListing.getListing().getId(), newListing2.getListing().getId());
 		
-		ListingAndUserVO newListingForAdmin = ListingFacade.instance().createListing(admin);
+		ListingAndUserVO newListingForAdmin = ListingFacade.instance().createListing(mocks.GREG);
 		assertEquals("We should get OK", ErrorCodes.OK, newListing.getErrorCode());
 		assertNotNull("Listing not created", newListingForAdmin.getListing());
 		assertNull("Name should be empty", newListingForAdmin.getListing().getName());
 		assertNull("Summary should be null", newListingForAdmin.getListing().getSummary());
-		assertEquals("Proper owner set", admin.getId(), newListingForAdmin.getListing().getOwner());
+		assertEquals("Proper owner set", mocks.GREG.getId(), newListingForAdmin.getListing().getOwner());
 		assertNotNull("Contact email should be set", newListing.getListing().getContactEmail());
 		assertNotNull("Founders should be set", newListing.getListing().getFounders());
 		assertEquals("State is not NEW", Listing.State.NEW.toString(), newListingForAdmin.getListing().getState());
 		assertNotNull("Created date should be set", newListingForAdmin.getListing().getCreated());
 		assertNotNull("Modified date should be set", newListing.getListing().getModified());
-		assertEquals("Edited listing for logged in user should be set", newListingForAdmin.getListing().getId(), admin.getEditedListing());
+		assertEquals("Edited listing for logged in user should be set", newListingForAdmin.getListing().getId(), mocks.GREG.getEditedListing());
 		
 		assertNotSame("New listing for admin should be different",
 				newListing.getListing().getId(), newListingForAdmin.getListing().getId());
@@ -696,41 +697,41 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 	@Test
 	public void testDeleteUserNewListing() {
 		// googleuser has a NEW listing, so we can't use that user
-		ListingAndUserVO newListing = ListingFacade.instance().createListing(anotherUserVO);
+		ListingAndUserVO newListing = ListingFacade.instance().createListing(mocks.DRAGON);
 		assertEquals("We should get OK", ErrorCodes.OK, newListing.getErrorCode());
 		assertNotNull("Listing not created", newListing.getListing());
-		assertEquals("Proper owner set", anotherUserVO.getId(), newListing.getListing().getOwner());
+		assertEquals("Proper owner set", mocks.DRAGON.getId(), newListing.getListing().getOwner());
 		assertEquals("State is not NEW", Listing.State.NEW.toString(), newListing.getListing().getState());
 		assertNotNull("Created date should be set", newListing.getListing().getCreated());
 		assertNotNull("Modified date should be set", newListing.getListing().getModified());
-		assertEquals("Edited listing for logged in user should be set", newListing.getListing().getId(), anotherUserVO.getEditedListing());
+		assertEquals("Edited listing for logged in user should be set", newListing.getListing().getId(), mocks.DRAGON.getEditedListing());
 
-		ListingAndUserVO listing = ListingFacade.instance().getListing(anotherUserVO, newListing.getListing().getId());
+		ListingAndUserVO listing = ListingFacade.instance().getListing(mocks.DRAGON, newListing.getListing().getId());
 		assertEquals("We should get OK", ErrorCodes.OK, newListing.getErrorCode());
 		assertNotNull("List should exist", listing.getListing());
 		assertEquals("State should be NEW", Listing.State.NEW.toString(), listing.getListing().getState());
 
-		ListingAndUserVO deletedListing = ListingFacade.instance().deleteEditedListing(anotherUserVO);
+		ListingAndUserVO deletedListing = ListingFacade.instance().deleteEditedListing(mocks.DRAGON);
 		assertEquals("We should get OK", ErrorCodes.OK, newListing.getErrorCode());
 		assertNull("Listing should be deleted", deletedListing.getListing());
-		assertNull("Edited listing field should be set to null", anotherUserVO.getEditedListing());
+		assertNull("Edited listing field should be set to null", mocks.DRAGON.getEditedListing());
 		
-		listing = ListingFacade.instance().getListing(anotherUserVO, newListing.getListing().getId());
+		listing = ListingFacade.instance().getListing(mocks.DRAGON, newListing.getListing().getId());
 		assertNull("List should not exist, but we got " + listing.getListing(), listing.getListing());
 		assertNotSame("We should get failure", ErrorCodes.OK, listing.getErrorCode());
 	}
 	
 	@Test
 	public void testDeleteUserNewListingWhenItDoesntExist() {
-		ListingAndUserVO deletedListing = ListingFacade.instance().deleteEditedListing(anotherUserVO);
+		ListingAndUserVO deletedListing = ListingFacade.instance().deleteEditedListing(mocks.DRAGON);
 		assertNotSame("We should get an error", ErrorCodes.OK, deletedListing.getErrorCode());
-		assertNull("Edited listing field should be null anyway", anotherUserVO.getEditedListing());
+		assertNull("Edited listing field should be null anyway", mocks.DRAGON.getEditedListing());
 	}
 	
 	@Test
 	public void testGetListing() {
 		Listing expected = super.listingList.get(0);
-		ListingAndUserVO returned = ListingFacade.instance().getListing(googleUserVO, expected.getWebKey());
+		ListingAndUserVO returned = ListingFacade.instance().getListing(mocks.INSIDER, expected.getWebKey());
 		assertNotNull("Listing is a test one, should exist", returned);
 		assertEquals(expected.name, returned.getListing().getName());
 		assertEquals(expected.summary, returned.getListing().getSummary());
@@ -740,7 +741,7 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 		assertEquals(expected.suggestedPercentage, returned.getListing().getSuggestedPercentage());
 
 		expected = super.listingList.get(5);
-		returned = ListingFacade.instance().getListing(googleUserVO, expected.getWebKey());
+		returned = ListingFacade.instance().getListing(mocks.INSIDER, expected.getWebKey());
 		assertNotNull("Listing is a test one, should exist", returned);
 		assertEquals(expected.name, returned.getListing().getName());
 		assertEquals(expected.summary, returned.getListing().getSummary());
@@ -750,7 +751,7 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 		assertEquals(expected.suggestedPercentage, returned.getListing().getSuggestedPercentage());
 
 		expected = super.listingList.get(7);
-		returned = ListingFacade.instance().getListing(googleUserVO, expected.getWebKey());
+		returned = ListingFacade.instance().getListing(mocks.INSIDER, expected.getWebKey());
 		assertNotNull("Listing is a test one, should exist", returned);
 		assertEquals(expected.name, returned.getListing().getName());
 		assertEquals(expected.summary, returned.getListing().getSummary());
@@ -760,7 +761,7 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 		assertEquals(expected.suggestedPercentage, returned.getListing().getSuggestedPercentage());
 		
 		expected = super.listingList.get(8);
-		returned = ListingFacade.instance().getListing(googleUserVO, expected.getWebKey());
+		returned = ListingFacade.instance().getListing(mocks.INSIDER, expected.getWebKey());
 		assertNotNull("Listing is a test one, should exist", returned);
 		assertEquals(expected.name, returned.getListing().getName());
 		assertEquals(expected.summary, returned.getListing().getSummary());
@@ -770,7 +771,7 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 		assertEquals(expected.suggestedPercentage, returned.getListing().getSuggestedPercentage());
 
 		expected = super.listingList.get(9);
-		returned = ListingFacade.instance().getListing(googleUserVO, expected.getWebKey());
+		returned = ListingFacade.instance().getListing(mocks.INSIDER, expected.getWebKey());
 		assertNotNull("Listing is a test one, should exist", returned);
 		assertEquals(expected.name, returned.getListing().getName());
 		assertEquals(expected.summary, returned.getListing().getSummary());
@@ -780,7 +781,7 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 		assertEquals(expected.suggestedPercentage, returned.getListing().getSuggestedPercentage());
 
 		expected = super.listingList.get(10);
-		returned = ListingFacade.instance().getListing(googleUserVO, expected.getWebKey());
+		returned = ListingFacade.instance().getListing(mocks.INSIDER, expected.getWebKey());
 		assertNotNull("Listing is a test one, should exist", returned);
 		assertEquals(expected.name, returned.getListing().getName());
 		assertEquals(expected.summary, returned.getListing().getSummary());
@@ -793,47 +794,47 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 	
 	@Test
 	public void testGetNonValidListing() {
-		ListingAndUserVO returned = ListingFacade.instance().getListing(googleUserVO, "fakekey"); //new Key<Listing>(Listing.class, 1000).getString());
+		ListingAndUserVO returned = ListingFacade.instance().getListing(mocks.INSIDER, "fakekey"); //new Key<Listing>(Listing.class, 1000).getString());
 		assertNull("Key was fake so listing should be null", returned.getListing());
 
-		returned = ListingFacade.instance().getListing(googleUserVO, null);
+		returned = ListingFacade.instance().getListing(mocks.INSIDER, null);
 		assertNull("Key was null so listing should be null", returned.getListing());
 	}
 	
 	@Test
 	public void testActivateListing() {
 		ListingVO listing = DtoToVoConverter.convert(super.listingList.get(11));
-		ListingAndUserVO activatedListing = ListingFacade.instance().activateListing(googleUserVO, listing.getId());
+		ListingAndUserVO activatedListing = ListingFacade.instance().activateListing(mocks.INSIDER, listing.getId());
 		assertNotNull(activatedListing);
 		assertNull(activatedListing.getListing());
 		assertNotSame("Withdrawn listing cannot be activated", ErrorCodes.OK, activatedListing.getErrorCode());
 		
 		listing = DtoToVoConverter.convert(super.listingList.get(5));
-		activatedListing = ListingFacade.instance().activateListing(googleUserVO, listing.getId());
+		activatedListing = ListingFacade.instance().activateListing(mocks.INSIDER, listing.getId());
 		assertNotNull(activatedListing);
 		assertNull(activatedListing.getListing());
 		assertNotSame("Already active listing cannot be activated", ErrorCodes.OK, activatedListing.getErrorCode());
 
 		listing = DtoToVoConverter.convert(super.listingList.get(12));
-		activatedListing = ListingFacade.instance().activateListing(googleUserVO, listing.getId());
+		activatedListing = ListingFacade.instance().activateListing(mocks.INSIDER, listing.getId());
 		assertNotNull(activatedListing);
 		assertNull(activatedListing.getListing());
 		assertNotSame("Closed listing cannot be activated", ErrorCodes.OK, activatedListing.getErrorCode());
 
 		listing = DtoToVoConverter.convert(super.listingList.get(3));
-		activatedListing = ListingFacade.instance().activateListing(googleUserVO, listing.getId());
+		activatedListing = ListingFacade.instance().activateListing(mocks.INSIDER, listing.getId());
 		assertNotNull(activatedListing);
 		assertNull(activatedListing.getListing());
 		assertNotSame("Active listing cannot be activated", ErrorCodes.OK, activatedListing.getErrorCode());
 
 		listing = DtoToVoConverter.convert(super.listingList.get(6));
-		activatedListing = ListingFacade.instance().activateListing(googleUserVO, listing.getId());
+		activatedListing = ListingFacade.instance().activateListing(mocks.INSIDER, listing.getId());
 		assertNotNull(activatedListing);
 		assertNull(activatedListing.getListing());
 		assertNotSame("Active listing cannot be activated", ErrorCodes.OK, activatedListing.getErrorCode());
 		
 		listing = DtoToVoConverter.convert(super.listingList.get(13));
-		activatedListing = ListingFacade.instance().activateListing(googleUserVO, listing.getId());
+		activatedListing = ListingFacade.instance().activateListing(mocks.INSIDER, listing.getId());
 		assertNotNull(activatedListing);
 		assertNull(activatedListing.getListing());
 		assertNotSame("New listing cannot be activated", ErrorCodes.OK, activatedListing.getErrorCode());
@@ -848,31 +849,31 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 	@Test
 	public void testPostListing() {
 		ListingVO listing = DtoToVoConverter.convert(super.listingList.get(11));
-		ListingAndUserVO postedListing = ListingFacade.instance().postListing(googleUserVO, listing.getId());
+		ListingAndUserVO postedListing = ListingFacade.instance().postListing(mocks.INSIDER, listing.getId());
 		assertNotNull(postedListing);
 		assertNotSame(ErrorCodes.OK, postedListing.getErrorCode());
 		assertNull("Withdrawn listing cannot be posted", postedListing.getListing());
 		
 		listing = DtoToVoConverter.convert(super.listingList.get(8));
-		postedListing = ListingFacade.instance().postListing(googleUserVO, listing.getId());
+		postedListing = ListingFacade.instance().postListing(mocks.INSIDER, listing.getId());
 		assertNotNull(postedListing);
 		assertNotSame(ErrorCodes.OK, postedListing.getErrorCode());
 		assertNull("Already posted listing cannot be posted", postedListing.getListing());
 
 		listing = DtoToVoConverter.convert(super.listingList.get(12));
-		postedListing = ListingFacade.instance().postListing(googleUserVO, listing.getId());
+		postedListing = ListingFacade.instance().postListing(mocks.INSIDER, listing.getId());
 		assertNotNull(postedListing);
 		assertNotSame(ErrorCodes.OK, postedListing.getErrorCode());
 		assertNull("Closed listing cannot be posted", postedListing.getListing());
 
 		listing = DtoToVoConverter.convert(super.listingList.get(7));
-		postedListing = ListingFacade.instance().postListing(DtoToVoConverter.convert(userList.get(BIDDER1)), listing.getId());
+		postedListing = ListingFacade.instance().postListing(mocks.JACOB, listing.getId());
 		assertNotNull(postedListing);
 		assertNotSame(ErrorCodes.OK, postedListing.getErrorCode());
 		assertNull("New listing, but user is not an owner", postedListing.getListing());
 
 		listing = DtoToVoConverter.convert(super.listingList.get(7));
-		postedListing = ListingFacade.instance().postListing(googleUserVO, listing.getId());
+		postedListing = ListingFacade.instance().postListing(mocks.INSIDER, listing.getId());
 		assertNotNull(postedListing);
 		assertEquals(ErrorCodes.OK, postedListing.getErrorCode());
 		assertNotNull("New listing can be posted", postedListing.getListing());
@@ -890,13 +891,13 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 		assertEquals(listing.getFinancialsId(), postedListing.getListing().getFinancialsId());
 
 		listing = DtoToVoConverter.convert(super.listingList.get(4));
-		postedListing = ListingFacade.instance().postListing(googleUserVO, listing.getId());
+		postedListing = ListingFacade.instance().postListing(mocks.INSIDER, listing.getId());
 		assertNotNull(postedListing);
 		assertNotSame(ErrorCodes.OK, postedListing.getErrorCode());
 		assertNull("Active listing cannot be posted", postedListing.getListing());
 
 		listing = DtoToVoConverter.convert(super.listingList.get(5));
-		postedListing = ListingFacade.instance().postListing(googleUserVO, listing.getId());
+		postedListing = ListingFacade.instance().postListing(mocks.INSIDER, listing.getId());
 		assertNotNull(postedListing);
 		assertNotSame(ErrorCodes.OK, postedListing.getErrorCode());
 		assertNull("Active listing cannot be posted, additionally user is not an owner of the listing", postedListing.getListing());
@@ -905,37 +906,37 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 	@Test
 	public void testFreezeListing() {
 		ListingVO listing = DtoToVoConverter.convert(super.listingList.get(11));
-		ListingAndUserVO freezedListing = ListingFacade.instance().freezeListing(googleUserVO, listing.getId());
+		ListingAndUserVO freezedListing = ListingFacade.instance().freezeListing(mocks.INSIDER, listing.getId());
 		assertNotNull(freezedListing);
 		assertNotSame(ErrorCodes.OK, freezedListing.getErrorCode());
 		assertNull("Only admin can freeze listing", freezedListing.getListing());
 		
 		listing = DtoToVoConverter.convert(super.listingList.get(7));
-		freezedListing = ListingFacade.instance().freezeListing(googleUserVO, listing.getId());
+		freezedListing = ListingFacade.instance().freezeListing(mocks.INSIDER, listing.getId());
 		assertNotNull(freezedListing);
 		assertNotSame(ErrorCodes.OK, freezedListing.getErrorCode());
 		assertNull("Only admin can freeze listing", freezedListing.getListing());
 
 		listing = DtoToVoConverter.convert(super.listingList.get(12));
-		freezedListing = ListingFacade.instance().freezeListing(googleUserVO, listing.getId());
+		freezedListing = ListingFacade.instance().freezeListing(mocks.INSIDER, listing.getId());
 		assertNotNull(freezedListing);
 		assertNotSame(ErrorCodes.OK, freezedListing.getErrorCode());
 		assertNull("Only admin can freeze listing", freezedListing.getListing());
 
 		listing = DtoToVoConverter.convert(super.listingList.get(5));
-		freezedListing = ListingFacade.instance().freezeListing(googleUserVO, listing.getId());
+		freezedListing = ListingFacade.instance().freezeListing(mocks.INSIDER, listing.getId());
 		assertNotNull(freezedListing);
 		assertNotSame(ErrorCodes.OK, freezedListing.getErrorCode());
 		assertNull("Only admin can freeze listing", freezedListing.getListing());
 
 		listing = DtoToVoConverter.convert(super.listingList.get(6));
-		freezedListing = ListingFacade.instance().freezeListing(googleUserVO, listing.getId());
+		freezedListing = ListingFacade.instance().freezeListing(mocks.INSIDER, listing.getId());
 		assertNotNull(freezedListing);
 		assertNotSame(ErrorCodes.OK, freezedListing.getErrorCode());
 		assertNull("Only admin can freeze listing", freezedListing.getListing());
 		
 		listing = DtoToVoConverter.convert(super.listingList.get(14));
-		freezedListing = ListingFacade.instance().freezeListing(googleUserVO, listing.getId());
+		freezedListing = ListingFacade.instance().freezeListing(mocks.INSIDER, listing.getId());
 		assertNotNull(freezedListing);
 		assertNotSame(ErrorCodes.OK, freezedListing.getErrorCode());
 		assertNull("Only admin can freeze listing", freezedListing.getListing());
@@ -947,7 +948,7 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 		assertNull("Only admin can freeze listing", freezedListing.getListing());
 
 		listing = DtoToVoConverter.convert(super.listingList.get(10));
-		freezedListing = ListingFacade.instance().freezeListing(googleUserVO, listing.getId());
+		freezedListing = ListingFacade.instance().freezeListing(mocks.INSIDER, listing.getId());
 		assertNotNull(freezedListing);
 		assertNotSame(ErrorCodes.OK, freezedListing.getErrorCode());
 		assertNull("Only admin can freeze listing", freezedListing.getListing());
@@ -956,37 +957,37 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 	@Test
 	public void testSendBackListingToOwner() {
 		ListingVO listing = DtoToVoConverter.convert(super.listingList.get(11));
-		ListingAndUserVO sentBackListing = ListingFacade.instance().sendBackListingToOwner(googleUserVO, listing.getId());
+		ListingAndUserVO sentBackListing = ListingFacade.instance().sendBackListingToOwner(mocks.INSIDER, listing.getId());
 		assertNotNull(sentBackListing);
 		assertNotSame(ErrorCodes.OK, sentBackListing.getErrorCode());
 		assertNull("Withdrawn listing cannot be send back to owner", sentBackListing.getListing());
 		
 		listing = DtoToVoConverter.convert(super.listingList.get(8));
-		sentBackListing = ListingFacade.instance().sendBackListingToOwner(googleUserVO, listing.getId());
+		sentBackListing = ListingFacade.instance().sendBackListingToOwner(mocks.INSIDER, listing.getId());
 		assertNotNull(sentBackListing);
 		assertNotSame(ErrorCodes.OK, sentBackListing.getErrorCode());
 		assertNull("Already posted listing cannot be send back to owner", sentBackListing.getListing());
 
 		listing = DtoToVoConverter.convert(super.listingList.get(12));
-		sentBackListing = ListingFacade.instance().sendBackListingToOwner(googleUserVO, listing.getId());
+		sentBackListing = ListingFacade.instance().sendBackListingToOwner(mocks.INSIDER, listing.getId());
 		assertNotNull(sentBackListing);
 		assertNotSame(ErrorCodes.OK, sentBackListing.getErrorCode());
 		assertNull("Closed listing cannot be send back to owner", sentBackListing.getListing());
 
 		listing = DtoToVoConverter.convert(super.listingList.get(7));
-		sentBackListing = ListingFacade.instance().sendBackListingToOwner(googleUserVO, listing.getId());
+		sentBackListing = ListingFacade.instance().sendBackListingToOwner(mocks.INSIDER, listing.getId());
 		assertNotNull(sentBackListing);
 		assertNotSame(ErrorCodes.OK, sentBackListing.getErrorCode());
 		assertNull("New listing cannot be send back to owner", sentBackListing.getListing());
 
 		listing = DtoToVoConverter.convert(super.listingList.get(5));
-		sentBackListing = ListingFacade.instance().sendBackListingToOwner(googleUserVO, listing.getId());
+		sentBackListing = ListingFacade.instance().sendBackListingToOwner(mocks.INSIDER, listing.getId());
 		assertNotNull(sentBackListing);
 		assertNotSame(ErrorCodes.OK, sentBackListing.getErrorCode());
 		assertNull("Active listing cannot be send back by non admin", sentBackListing.getListing());
 
 		listing = DtoToVoConverter.convert(super.listingList.get(6));
-		sentBackListing = ListingFacade.instance().sendBackListingToOwner(googleUserVO, listing.getId());
+		sentBackListing = ListingFacade.instance().sendBackListingToOwner(mocks.INSIDER, listing.getId());
 		assertNotNull(sentBackListing);
 		assertNotSame(ErrorCodes.OK, sentBackListing.getErrorCode());
 		assertNull("Active listing cannot be send back by non admin", sentBackListing.getListing());
@@ -996,7 +997,7 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 	public void testGetUserListings() {
 		// logged in user the same as the one in query
 		ListPropertiesVO listProps = new ListPropertiesVO();
-		ListingListVO list = ListingFacade.instance().getUserListings(googleUserVO, googleUserVO.getId(), listProps);
+		ListingListVO list = ListingFacade.instance().getUserListings(mocks.INSIDER, mocks.INSIDER.getId(), listProps);
 		assertNotNull("Logged in user, so list should not be empty", list);
 		checkListingsReturned(list.getListings(), listingList.get(0), listingList.get(1), listingList.get(2), listingList.get(3),
 				listingList.get(4), listingList.get(7), listingList.get(8), listingList.get(9), listingList.get(10),
@@ -1007,7 +1008,7 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 
 		// logged in user different to user in query, but listings exist
 		listProps = new ListPropertiesVO();
-		list = ListingFacade.instance().getUserListings(googleUserVO, super.userList.get(1).getWebKey(), listProps);
+		list = ListingFacade.instance().getUserListings(mocks.INSIDER, mocks.DRAGON.getId(), listProps);
 		assertNotNull("Logged in user, so list should not be empty", list);
 		checkListingsReturned(list.getListings(), listingList.get(5), listingList.get(6));
 		checkListingsNotReturned(list.getListings(), listingList.get(14)); // 14 is POSTED listing
@@ -1016,7 +1017,7 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 
 		// logged in user null, but listings for user exist
 		listProps = new ListPropertiesVO();
-		list = ListingFacade.instance().getUserListings(null, super.userList.get(1).getWebKey(), listProps);
+		list = ListingFacade.instance().getUserListings(null, mocks.JACOB.getId(), listProps);
 		assertNotNull("Logged in user, so list should not be empty", list);
 		checkListingsReturned(list.getListings(), listingList.get(5), listingList.get(6));
 		checkListingsNotReturned(list.getListings(), listingList.get(0), listingList.get(1), listingList.get(2),
@@ -1028,7 +1029,7 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 
 		// logged in user different to user in query, listings doesn't exist
 		listProps = new ListPropertiesVO();
-		list = ListingFacade.instance().getUserListings(googleUserVO, super.userList.get(0).getWebKey(), listProps);
+		list = ListingFacade.instance().getUserListings(mocks.INSIDER, mocks.NOT_ACTIVATED.getId(), listProps);
 		assertNotNull("Logged in user, so list should not be empty", list);
 		assertEquals("We don't have any listings for that user in test data!", 0, list.getListings().size());
 		assertEquals("Number of result properly set", list.getListings().size(), list.getListingsProperties().getNumberOfResults());
@@ -1039,7 +1040,7 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 	public void testGetActiveListings() {
 		// logged in user
 		ListPropertiesVO listProps = new ListPropertiesVO();
-		ListingListVO list = ListingFacade.instance().getLatestActiveListings(googleUserVO, listProps);
+		ListingListVO list = ListingFacade.instance().getLatestActiveListings(mocks.INSIDER, listProps);
 		assertNotNull("Logged in user, so list should not be empty", list);
 		List<ListingVO> listings = list.getListings();
 		checkListingsReturned(listings, listingList.get(0), listingList.get(1), listingList.get(2), listingList.get(3),
@@ -1070,7 +1071,7 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 	public void testGetClosingListings() {
 		// logged in user
 		ListPropertiesVO listProps = new ListPropertiesVO();
-		ListingListVO list = ListingFacade.instance().getClosingActiveListings(googleUserVO, listProps);
+		ListingListVO list = ListingFacade.instance().getClosingActiveListings(mocks.INSIDER, listProps);
 		assertNotNull("Logged in user, so list should not be empty", list);
 		List<ListingVO> listings = list.getListings();
 		checkListingsReturned(listings, listingList.get(0), listingList.get(1), listingList.get(2), listingList.get(3),
@@ -1101,7 +1102,7 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 	public void testGetPostedListings() {
 		// logged in user
 		ListPropertiesVO listProps = new ListPropertiesVO();
-		ListingListVO list = ListingFacade.instance().getPostedListings(googleUserVO, listProps);
+		ListingListVO list = ListingFacade.instance().getPostedListings(mocks.INSIDER, listProps);
 		assertNotNull("Result should not be empty", list);
 		assertNull("Logged in user is not an admin, so list should be empty", list.getListings());
 		assertNotSame("We should get failure", ErrorCodes.OK, list.getErrorCode());
