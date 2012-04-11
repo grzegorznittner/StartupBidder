@@ -41,7 +41,7 @@
   <link rel="canonical" href="http://startupbidder.appspot.com"/>
 </head>
 
-<body class="main-page">
+<body class="nearby-page">
 <div id="fb-root"></div> <!-- for fb like button -->
 <div id="wrap">
 <div id="main">
@@ -107,51 +107,13 @@
 -->
 <!-- end searchbar -->
 
-<!-- left column -->
-<div class="span-16">
+<div class="span-24">
     <div class="boxtitle smokegrey" id="listingstitle"></div>
 
-    <!-- companydiv -->
-    <div id="companydiv">
-        loading...
+    <div id="mappanel" class="boxpanel nearbypanel">
+        <div id="map" class="nearbymap"></div>
     </div>
-    <!-- end companydiv -->
-
 </div>
-<!-- end left column -->
-
-<!-- right column -->
-<div class="span-8 last">
-    <div class="boxtitle">ADD YOUR STARTUP</div>
-    <a href="#" id="postnowbtnlink"><div class="sideboxbutton">POST NOW</div></a>
-
-    <div id="investbox">
-        <div class="boxtitle">FUND A STARTUP</div>
-        <a href="main-page.html?type=closing"><div class="sideboxbutton">INVEST NOW</div></a>
-    </div>
-
-    <div class="boxtitle">INDUSTRIES</div>
-    <div class="sidebox">
-        <span class="attention" id="categorymsg"></span>
-        <span class="sideboxcol1 clear">
-            <ul class="sideboxlist" id="categorydivcol1"></ul>
-        </span>
-        <span class="sideboxcol2">
-            <ul class="sideboxlist" id="categorydivcol2"></ul>
-        </span>
-    </div>
-     
-    <div class="boxtitle">LOCATIONS</div>
-    <div class="sidebox">
-        <span class="attention" id="locationmsg"></span>
-        <span class="sideboxcol1 clear">
-            <ul class="sideboxlist" id="locationdivcol1"></ul>
-        </span>
-        <span class="sideboxcol2">
-            <ul class="sideboxlist" id="locationdivcol2"></ul>
-        </span>
-    </div>
-</div> <!-- end right column -->
 
 </div> <!-- end container -->
 </div> <!-- end main -->
@@ -176,11 +138,22 @@
   </div>
 </div>
 
+<!-- begin maps -->
+    <script src="http://maps.googleapis.com/maps/api/js?libraries=maps&sensor=true&language=en-GB"></script>
+    <!-- <script src="http://maps.gstatic.com/intl/en_us/mapfiles/api-3/8/7/main.js"></script> -->
+    <script src="http://google-maps-utility-library-v3.googlecode.com/svn/trunk/markerclusterer/src/markerclusterer.js"></script>
+<!--
+    <script type="text/javascript" charset="UTF-8" src="http://maps.gstatic.com/cat_js/intl/en_us/mapfiles/api-3/8/7/%7Bcommon,map,util,marker,overlay%7D.js"></script>
+    <script type="text/javascript" charset="UTF-8" src="http://maps.gstatic.com/cat_js/intl/en_us/mapfiles/api-3/8/7/%7Bonion%7D.js"></script>
+    <script type="text/javascript" charset="UTF-8" src="http://maps.gstatic.com/cat_js/intl/en_us/mapfiles/api-3/8/7/%7Bcontrols,stats%7D.js"></script>
+-->
+<!-- end maps -->
+
   <!-- JavaScript at the bottom for fast page loading -->
   <script src="js/libs/prevel.min.js"></script>
   <script src="js/modules/base.js"></script>
   <script src="js/modules/companylist.js"></script>
-  <script src="js/modules/mainpage.js"></script>
+  <script src="js/modules/nearbypage.js"></script>
 
   <!-- Change UA-XXXXX-X to be your site's ID -->
   <script>

@@ -17,6 +17,9 @@ pl.implement(CompanyTileClass, {
         this.mantra = json.mantra || '';
         this.url = '/company-page.html?id=' + json.listing_id;
     },
+    store: function(json) {
+        this.setValues(json);
+    },
     makeHtml: function(lastClass) {
         var options = this.options || {},
             openAnchor = options.preview ? '' : '<a href="' + this.url + '">',

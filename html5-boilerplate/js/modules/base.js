@@ -309,7 +309,7 @@ pl.implement(HeaderClass, {
             pl('#googleloginlink').attr({href: login_url});
         }
         pl('#postlink').attr('href', 'login-page.html');
-        pl('#posttext').html('Submit New');
+        pl('#posttext').html('Submit');
         pl('#loginlink').attr('href', 'login-page.html');
         pl('#logintext').html('Sign In');
         pl('#logout').hide();
