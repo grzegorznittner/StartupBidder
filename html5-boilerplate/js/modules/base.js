@@ -186,7 +186,7 @@ function QueryStringClass() {
     this.vars = {};
     for (i in pairs) {
         keyval = pairs[ i ].split( "=" );
-        this.vars[ keyval[0] ] = keyval[1];
+        this.vars[ keyval[0] ] = decodeURIComponent(keyval[1]);
     }
 }
 
@@ -285,13 +285,13 @@ pl.implement(HeaderClass, {
     },
     setLoggedIn: function(profile, logout_url) {
         var username = profile.username || 'You',
-            posttext = profile.edited_listing ? 'Your Post': 'Post New',
+            posttext = profile.edited_listing ? 'Post': 'Post',
             newlistingurl = profile.edited_status === 'posted' ? 'new-listing-submitted-page.html' : 'new-listing-basics-page.html';
         pl('#postlink').attr('href', newlistingurl);
         pl('#posttext').html(posttext);
         if (profile.admin) {
-            pl('#main>div.header>div.container>div.span-8,#newlistingmain>div.header>div.container>div.span-8').attr({'class': 'span-5 last loginspan'});
-            pl('#main>div.header>div.container>div.span-11,#newlistingmain>div.header>div.container>div.span-11').attr({'class': 'span-14'});
+            pl('#main>div.header>div.container>div.span-8,#newlistingmain>div.header>div.container>div.span-8').attr({'class': 'span-4 last loginspan'});
+            pl('#main>div.header>div.container>div.span-11,#newlistingmain>div.header>div.container>div.span-11').attr({'class': 'span-15'});
             pl('#postlink').before('\
                 <a href="main-page.html?type=posted"><span class="headerlink">Posted</span></a><span class="headertext">&nbsp;&nbsp;|&nbsp;&nbsp;</span>\
                 <a href="main-page.html?type=frozen"><span class="headerlink">Frozen</span></a><span class="headertext">&nbsp;&nbsp;|&nbsp;&nbsp;</span>\
@@ -309,7 +309,7 @@ pl.implement(HeaderClass, {
             pl('#googleloginlink').attr({href: login_url});
         }
         pl('#postlink').attr('href', 'login-page.html');
-        pl('#posttext').html('Submit');
+        pl('#posttext').html('Post');
         pl('#loginlink').attr('href', 'login-page.html');
         pl('#logintext').html('Sign In');
         pl('#logout').hide();

@@ -49,7 +49,7 @@
 <div class="header">
   <div class="container">
     <div class="span-5">
-      <a href="main-page.html"><span class="logotextblue">startup</span><span class="logotextgrey">bidder</span></a>
+      <a href="main-page.html" style="height: 27px;"><span class="logotextblue">startup</span><span class="logotextgrey">bidder</span></a>
     </div>
     <div class="span-11">
       <a href="main-page.html?type=top"><span class="headerlink">Top</span></a>
@@ -95,10 +95,13 @@
 
 <!-- searchbar -->
   <div class="searchbar span-15 searchbox">
-    <input type="text" class="text inputtext" name="searchbox" id="searchbox" value="Search"></input>
+    <form id="searchform" action="/main-page.html">
+        <input type="hidden" name="type" id="type" value="keyword"></input>
+        <input type="text" class="text inputtext searchtext" name="searchtext" id="searchtext" value=""></input>
+    </form>
   </div>
   <div class="searchbar span-1 searchbutton">
-    <a href="main-page.html"><div class="spritebg searchimg"></div></a> <!-- FIXME: no search results -->
+    <div class="spritebg searchimg" id="searchbutton"></div> <!-- FIXME: no search results -->
   </div>
 <!--
   <div class="searchbar searchtext span-8 last">

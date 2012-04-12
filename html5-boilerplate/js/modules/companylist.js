@@ -122,23 +122,39 @@ pl.implement(CompanyListClass, {
 function BaseCompanyListPageClass() {
     this.queryString = new QueryStringClass();
     this.type = this.queryString.vars.type || 'top';
-    this.url = '/listings/top';
+    this.val = this.queryString.vars.val || '';
+    this.searchtext = this.queryString.vars.searchtext || '';
     this.data = { max_results: 20 };
+    this.setListingSearch();
 };
 pl.implement(BaseCompanyListPageClass,{
     setListingSearch: function() {
+        var searchtype = 'top';
         if (this.type === 'related') { // FIXME: related unimplemented
             // type = 'related?id='+this.listing_id
-            this.type = 'top';
+            searchtype = 'top';
             this.data.max_results = 4;
         }
-        else {
-            this.data.max_results = 20;
+        else if (this.type === 'category') {
+            searchtype = 'keyword';
+            this.data.text = 'category:' + this.val;
         }
-        this.url = '/listings/' + this.type;
+        else if (this.type === 'location') {
+            searchtype = 'keyword';
+            this.data.text = 'location:' + this.val;
+        }
+        else if (this.type === 'keyword') {
+            searchtype = 'keyword';
+            this.data.text = this.searchtext;
+        }
+        else {
+            searchtype = this.type;
+        }
+        this.url = '/listings/' + searchtype;
     },
     loadPage: function(completeFunc) {
-        var title = this.type.toUpperCase() + ' COMPANIES',
+        var titleroot = (this.type === 'category' || this.type === 'location') ? this.val.toUpperCase() : this.type.toUpperCase(),
+            title = this.type === 'keyword' ? 'SEARCH RESULTS' : ((this.type === 'location') ? 'COMPANIES IN ' + titleroot : titleroot + ' COMPANIES'),
             ajax;
         this.setListingSearch();
         ajax = new AjaxClass(this.url, 'companydiv', completeFunc);
@@ -146,6 +162,16 @@ pl.implement(BaseCompanyListPageClass,{
         if (this.type === 'closing') {
             pl('#welcometitle').html('Invest in a startup today!');
             pl('#welcometext').html('The companies below are ready for investment and open for bidding');
+            pl('#investbox').hide();
+        }
+        if (this.type === 'category') {
+            pl('#welcometitle').html('Find companies in your industry!');
+            pl('#welcometext').html('Below are the top companies in the ' + this.val + ' industry');
+            pl('#investbox').hide();
+        }
+        if (this.type === 'location') {
+            pl('#welcometitle').html('Find companies in your area!');
+            pl('#welcometext').html('Below are the top companies in ' + this.val);
             pl('#investbox').hide();
         }
         ajax.ajaxOpts.data = this.data;
