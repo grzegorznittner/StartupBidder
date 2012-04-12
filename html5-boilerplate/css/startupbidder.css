@@ -138,6 +138,12 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 #searchbox { width: 580px; }
 .searchbutton { height: 20px; padding-top: 8px; }
 
+/* infowindow */
+.infowindow { color: #333333; font-weight: bold; font-size: 12px; line-height: 16px; }
+.infotitle { font-size: 20px; line-height: 20px; }
+.infomantra { color: #4083a9; }
+.infolabel { font-weight: normal; }
+
 /* form styles */
 .formitem { }
 .inputlabel, .widelabel, .formlabel, .smallformlabel, .inputcaptcha, .inputhelp,
@@ -317,8 +323,8 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .sideboxdate { font-size: 10px; }
 .sideboxmap { width: 302px; height: 302px; }
 .bidpanel { padding-top: 5px; }
-.nearbypanel { width: 946px; height: 710px; }
-.nearbymap { width: 946px; height: 710px; }
+.nearbypanel { width: 946px; height: 500px; }
+.nearbymap { width: 946px; height: 500px; }
 .addcommenttitle { display: none; }
 .addcommentbox { display: none; }
 .addmessagetitle { display: none; }

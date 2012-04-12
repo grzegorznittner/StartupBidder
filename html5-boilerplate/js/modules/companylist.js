@@ -1,5 +1,8 @@
 function CompanyTileClass(options) {
     this.options = options || {};
+    if (this.options.json) {
+        this.setValues(this.options.json);
+    }
 }
 pl.implement(CompanyTileClass, {
     setValues: function(json) {
@@ -10,11 +13,16 @@ pl.implement(CompanyTileClass, {
         this.imgClass = json.logo ? '' : 'noimage';
         this.imgStyle = json.logo ? 'background: url(' + json.logo + ') no-repeat scroll left top' : '';
         this.category = json.category ? json.category.toUpperCase() : '';
+        this.categoryUC = json.category ? json.category.toUpperCase() : '';
         this.votes = json.num_votes || 1;
         this.posted = date ? DateClass.prototype.format(date) : 'not posted';
         this.name = json.title || '';
-        this.address = json.brief_address || json.address || '';
+        this.brief_address = json.brief_address || '';
+        this.address = json.address || '';
+        this.suggested_amt = json.asked_fund && json.suggested_amt ? CurrencyClass.prototype.format(json.suggested_amt) : '';
+        this.suggested_text = this.suggested_amt || 'Not asking for funds';
         this.mantra = json.mantra || '';
+        this.founders = json.founders || '';
         this.url = '/company-page.html?id=' + json.listing_id;
     },
     store: function(json) {
@@ -33,17 +41,17 @@ pl.implement(CompanyTileClass, {
 <div class="tiledays"></div>\
 <div class="tiledaystext">' + this.daysText + '</div>\
 <div class="tiletype"></div>\
-<div class="tiletypetext">' + this.category + '</div>\
+<div class="tiletypetext">' + this.categoryUC + '</div>\
 <div class="tilepoints"></div>\
 <div class="tilepointstext">\
     <div class="tilevotes">' + this.votes + '</div>\
     <div class="thumbup tilevoteimg"></div>\
-    <div class="tileposted">' + this.posted + '</div>\
+    <div class="tileposted">' + this.suggested_amt + '</div>\
 </div>\
 ' + openAnchor + '\
 <p class="tiledesc">\
     <span class="tilecompany">' + this.name + '</span><br/>\
-    <span class="tileloc">' + this.address + '</span><br/>\
+    <span class="tileloc">' + this.brief_address + '</span><br/>\
     <span class="tiledetails">' + this.mantra + '</span>\
 </p>\
 ' + closeAnchor + '\
@@ -51,6 +59,30 @@ pl.implement(CompanyTileClass, {
 </span>\
 ';
         return html;
+    },
+    makeInfoWindowHtml: function() {
+        var options = this.options || {},
+            openAnchor = options.preview ? '' : '<a href="' + this.url + '">',
+            closeAnchor = options.preview ? '' : '</a>';
+        return '\
+<div class="infowindow">\
+' + openAnchor + '\
+<div class="tileimg" style="' + this.imgStyle + '"></div>\
+' + closeAnchor + '\
+<p>\
+    ' + openAnchor + '\
+    <div class="infotitle">' + this.name + '</div>\
+    ' + closeAnchor + '\
+    <div>' + this.address + '</div>\
+    <div class="infomantra">' + this.mantra + '</div>\
+    <div><span class="infolabel">Asking:</span> ' + this.suggested_text + '</div>\
+    <div><span class="infolabel">Bidding:</span> ' + this.daysText + '</div>\
+    <div><span class="infolabel">Industry:</span> ' + this.category + '</div>\
+    <div><span class="infolabel">Founders:</span> ' + this.founders + '</div>\
+    <div><span class="infolabel">Votes:</span> ' + this.votes + '</div>\
+</p>\
+</div>\
+';
     },
     display: function(listing, divid) {
         this.setValues(listing);

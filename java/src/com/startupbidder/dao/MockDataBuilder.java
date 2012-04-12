@@ -774,7 +774,7 @@ public class MockDataBuilder {
 	}
 	
 	private Object[][] locations = {
-			{"Lohstraße 53, 49074 Osnabr\u00FCck, Germany","Osnabr\u00FCck","NDS","Germany", 52.27913570, 8.041329399999995},
+			{"Lohstra\u00DFe 53, 49074 Osnabr\u00FCck, Germany","Osnabr\u00FCck","NDS","Germany", 52.27913570, 8.041329399999995},
 			{"Fellenoord 310, 5611 Centrum, The Netherlands","Eindhoven","NB","The Netherlands", 51.44266050, 5.472869100000025},
 			{"10 Rue de Passy, 75016 Paris, France","Paris","IdF","France", 48.85842180, 2.283493599999929},
 			{"Calle del Pintor Cabrera, 29, 03003 Alicante, Spain","Alicante","Valencia","Spain", 38.34388360, -0.49293009999996684},

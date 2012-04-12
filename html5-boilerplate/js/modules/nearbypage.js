@@ -17,29 +17,26 @@ pl.implement(MapPageClass,{
     },
     display: function() {
         var self = this,
-            defaultCenter = new google.maps.LatLng(51.47777, 0),
+            defaultCenter = new google.maps.LatLng(20, 0),
             defaultZoom = 2;
+        this.displayMap(defaultCenter, defaultZoom);
         if (navigator && navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
                 function(position) {
-                    console.log('noerror');
                     var coords = position.coords,
                         center = new google.maps.LatLng(coords.latitude, coords.longitude);
-                    self.displayMap(center, 6);
+                    self.map.setZoom(6);
+                    self.map.panTo(center);
                 },
                 function() {
-                    console.log('error');
-                    self.displayMap(defaultCenter, defaultZoom);
                 },
-                { maximumAge: 600000 }
+                {
+                    maximumAge: 6000000
+                }
             );
-        }
-        else {
-            this.displayMap(defaultCenter, defaultZoom);
         }
     },
     displayMap: function(center, zoom) {
-        console.log('display map');
         var map = new google.maps.Map(pl('#map').get(0), {
                 center: center,
                 zoom: zoom,
@@ -51,17 +48,16 @@ pl.implement(MapPageClass,{
             marker,
             markers = [],
             markerCluster,
-            genInfoDisplay = function(listing, marker) {
-                var tile = new CompanyTileClass(),
-                    info;
-                tile.store(listing);
-                info = new google.maps.InfoWindow({
-                    content: pl('<div>').html(tile.makeHtml()).get(0)
-                });
+            infowindow = new google.maps.InfoWindow(),
+            genInfoDisplay = function(listing, marker, infowindow) {
+                var tile = new CompanyTileClass({json: listing}),
+                    el = pl('<div>').html(tile.makeInfoWindowHtml()).get(0);
                 return function() {
-                    info.open(map, marker);
+                    infowindow.setContent(el);
+                    infowindow.open(map, marker);
                 }
             };
+        this.map = map;
         for (i = 0; i < this.listings.length; i++) {
             listing = this.listings[i];
             latLng = new google.maps.LatLng(listing.latitude, listing.longitude);
@@ -71,7 +67,7 @@ pl.implement(MapPageClass,{
                 raiseOnDrag: false,
                 title: listing.title
             });
-            google.maps.event.addListener(marker, 'click', genInfoDisplay(listing, marker));
+            google.maps.event.addListener(marker, 'click', genInfoDisplay(listing, marker, infowindow));
             markers.push(marker);
         }
         markerCluster = new MarkerClusterer(map, markers, { maxZoom: 15 });
@@ -81,7 +77,6 @@ pl.implement(MapPageClass,{
 function NearbyPageClass() {}
 pl.implement(NearbyPageClass,{
     loadPage: function() {
-        console.log('here');
         var mapPage = new MapPageClass(),
             completeFunc = function(json) {
                 var header = new HeaderClass();
