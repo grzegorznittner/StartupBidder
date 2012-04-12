@@ -1,50 +1,28 @@
 package test.com.startupbidder.web;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.math.NumberUtils;
-import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
-import org.joda.time.Days;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExternalResource;
 
-import com.google.appengine.api.users.User;
-import com.google.appengine.api.users.UserService;
-import com.google.appengine.api.users.UserServiceFactory;
-import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
-import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
-import com.google.appengine.tools.development.testing.LocalTaskQueueTestConfig;
-import com.google.appengine.tools.development.testing.LocalUserServiceTestConfig;
-import com.googlecode.objectify.Key;
-import com.googlecode.objectify.ObjectifyService;
-import com.startupbidder.datamodel.Bid;
-import com.startupbidder.datamodel.Comment;
 import com.startupbidder.datamodel.Listing;
 import com.startupbidder.datamodel.ListingDoc;
 import com.startupbidder.datamodel.ListingStats;
-import com.startupbidder.datamodel.Monitor;
-import com.startupbidder.datamodel.Notification;
-import com.startupbidder.datamodel.PaidBid;
-import com.startupbidder.datamodel.Rank;
-import com.startupbidder.datamodel.SBUser;
-import com.startupbidder.datamodel.SystemProperty;
-import com.startupbidder.datamodel.UserStats;
-import com.startupbidder.datamodel.Vote;
 import com.startupbidder.vo.DtoToVoConverter;
 import com.startupbidder.vo.ErrorCodes;
 import com.startupbidder.vo.ListPropertiesVO;
@@ -52,9 +30,7 @@ import com.startupbidder.vo.ListingAndUserVO;
 import com.startupbidder.vo.ListingListVO;
 import com.startupbidder.vo.ListingPropertyVO;
 import com.startupbidder.vo.ListingVO;
-import com.startupbidder.vo.UserVO;
 import com.startupbidder.web.ListingFacade;
-import com.startupbidder.web.UserMgmtFacade;
 
 public class ListingFacadeTest extends BaseFacadeAbstractTest {
 	private static final Logger log = Logger.getLogger(ListingFacadeTest.class.getName());
@@ -1203,6 +1179,47 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 	}
 
 	@Test
-	public void testTopLocations() {
+	public void testSplitSearchKeywords() {
+		String[] result = ListingFacade.instance().splitSearchKeywords("");
+		assertEquals(3, result.length);
+		assertEquals("", result[0]);
+		assertEquals("", result[1]);
+		assertEquals("", result[2]);
+
+		result = ListingFacade.instance().splitSearchKeywords("full text search");
+		assertEquals(3, result.length);
+		assertEquals("full text search", result[0]);
+		assertEquals("", result[1]);
+		assertEquals("", result[2]);
+
+		result = ListingFacade.instance().splitSearchKeywords("full text search category:Energy");
+		assertEquals(3, result.length);
+		assertEquals("full text search", result[0]);
+		assertEquals("Energy", result[1]);
+		assertEquals("", result[2]);
+
+		result = ListingFacade.instance().splitSearchKeywords("category:Environment");
+		assertEquals(3, result.length);
+		assertEquals("", result[0]);
+		assertEquals("Environment", result[1]);
+		assertEquals("", result[2]);
+
+		result = ListingFacade.instance().splitSearchKeywords("location:USA");
+		assertEquals(3, result.length);
+		assertEquals("", result[0]);
+		assertEquals("", result[1]);
+		assertEquals("USA", result[2]);
+
+		result = ListingFacade.instance().splitSearchKeywords("full text search location:USA");
+		assertEquals(3, result.length);
+		assertEquals("full text search", result[0]);
+		assertEquals("", result[1]);
+		assertEquals("USA", result[2]);
+
+		result = ListingFacade.instance().splitSearchKeywords("full text search location:Austin, TX, USA");
+		assertEquals(3, result.length);
+		assertEquals("full text search", result[0]);
+		assertEquals("", result[1]);
+		assertEquals("Austin, TX, USA", result[2]);
 	}
 }

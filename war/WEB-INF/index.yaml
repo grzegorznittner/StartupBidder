@@ -177,6 +177,67 @@ indexes:
     - name: posted
       direction: desc
 
+- kind: Listing
+  ancestor: no
+  properties:
+    - name: category
+    - name: listedOn
+      direction: desc
+
+- kind: Listing
+  ancestor: no
+  properties:
+    - name: country
+    - name: listedOn
+      direction: desc
+
+- kind: Listing
+  ancestor: no
+  properties:
+    - name: usState
+    - name: listedOn
+      direction: desc
+
+- kind: Listing
+  ancestor: no
+  properties:
+    - name: city
+    - name: listedOn
+      direction: desc
+
+- kind: Listing
+  ancestor: no
+  properties:
+    - name: country
+    - name: usState
+    - name: listedOn
+      direction: desc
+
+- kind: Listing
+  ancestor: no
+  properties:
+    - name: country
+    - name: city
+    - name: listedOn
+      direction: desc
+
+- kind: Listing
+  ancestor: no
+  properties:
+    - name: usState
+    - name: city
+    - name: listedOn
+      direction: desc
+
+- kind: Listing
+  ancestor: no
+  properties:
+    - name: country
+    - name: usState
+    - name: city
+    - name: listedOn
+      direction: desc
+
 - kind: ListingStats
   ancestor: no
   properties:
