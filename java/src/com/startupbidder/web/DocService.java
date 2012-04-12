@@ -17,6 +17,8 @@ import net.sf.jsr107cache.CacheFactory;
 import net.sf.jsr107cache.CacheManager;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.math.NumberUtils;
+import org.datanucleus.util.StringUtils;
 
 import com.google.gdata.client.DocumentQuery;
 import com.google.gdata.client.docs.DocsService;
@@ -150,9 +152,12 @@ public class DocService {
 		return updatedDocs;
 	}
 	
-	public List<String> fullTextSearch(String searchText) {
-		List<String> list = new ArrayList<String>();
+	public List<Long> fullTextSearch(String searchText) {
+		List<Long> list = new ArrayList<Long>();
 		
+		if (StringUtils.isEmpty(searchText)) {
+			return list;
+		}
 		DocsService client = getDocsService();
 		if (client == null) {
 			return list;
@@ -164,7 +169,11 @@ public class DocService {
 			query.setFullTextQuery(searchText);
 			DocumentListFeed feed = client.getFeed(query, DocumentListFeed.class);
 			for (DocumentListEntry entry : feed.getEntries()) {
-				list.add(entry.getTitle().getPlainText());
+				String title = entry.getTitle().getPlainText();
+				long listingId = NumberUtils.toLong(title);
+				if (listingId != 0) {
+					list.add(listingId);
+				}
 			}
 			log.info("Full text search for term '" + searchText + "' returned " + list.size()
 					+ " items. Items: " + Arrays.toString(list.toArray()));

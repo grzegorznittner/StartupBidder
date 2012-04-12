@@ -59,7 +59,7 @@ public class Listing extends BaseObject implements Monitor.Monitored {
 	public String website;
 	
 	/** Category of the listing */
-	public String category;
+	@Indexed public String category;
 	
 	@Indexed public Date  created;
 	@Indexed public Date  posted;

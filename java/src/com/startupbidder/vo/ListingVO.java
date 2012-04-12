@@ -115,7 +115,8 @@ public class ListingVO extends BaseVO {
 		appendText(buf, ownerName);
 		appendText(buf, founders);
 		appendText(buf, contactEmail);
-		appendText(buf, briefAddress);
+		appendText(buf, address);
+		appendText(buf, category);
 		appendText(buf, answer1);
 		appendText(buf, answer2);
 		appendText(buf, answer3);

@@ -20,6 +20,7 @@ import com.google.appengine.api.datastore.QueryResultIterable;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.Objectify;
 import com.googlecode.objectify.ObjectifyService;
+import com.googlecode.objectify.Query;
 import com.startupbidder.datamodel.Bid;
 import com.startupbidder.datamodel.Category;
 import com.startupbidder.datamodel.Comment;
@@ -400,7 +401,21 @@ public class ObjectifyDatastoreDAO {
 		try {
 			return getOfy().get(new Key<Listing>(Listing.class, listingId));
 		} catch (Exception e) {
-			log.log(Level.WARNING, "Listing entity '" + listingId + "'not found", e);
+			log.log(Level.WARNING, "Listing entity '" + listingId + "' not found", e);
+			return null;
+		}
+	}
+
+	public List<Listing> getListings(List<Long> listingIds) {
+		List<Key<Listing>> keys = new ArrayList<Key<Listing>>();
+		for (Long id : listingIds) {
+			keys.add(new Key<Listing>(Listing.class, id));
+		}
+		
+		try {
+			return new ArrayList<Listing>(getOfy().get(keys).values());
+		} catch (Exception e) {
+			log.log(Level.WARNING, "Error fetching list of listings by keys '" + keys + "'.", e);
 			return null;
 		}
 	}
@@ -437,6 +452,36 @@ public class ObjectifyDatastoreDAO {
 		listings.addAll(new ArrayList<Listing>(getOfy().get(listingsIt).values()));
 
 		return listings;
+	}
+
+	public List<Long> getListingsIdsForCategory(String category) {
+		QueryResultIterable<Key<Listing>> listingsIt = getOfy().query(Listing.class)
+				.filter("category =", category)
+				.order("-listedOn").fetchKeys();
+		List<Long> listingsIds = new ArrayList<Long>();
+		for (Key<Listing> key : listingsIt) {
+			listingsIds.add(key.getId());
+		}
+		return listingsIds;
+	}
+
+	public List<Long> getListingsIdsForLocation(String country, String state, String city) {
+		Query<Listing> query = getOfy().query(Listing.class);
+		if (country != null) {
+			query = query.filter("country =", country);
+		}
+		if (state != null) {
+			query = query.filter("usState =", state);
+		}
+		if (city != null) {
+			query = query.filter("city =", city);
+		}
+		QueryResultIterable<Key<Listing>> listingsIt = query.order("-listedOn").fetchKeys();		
+		List<Long> listingsIds = new ArrayList<Long>();
+		for (Key<Listing> key : listingsIt) {
+			listingsIds.add(key.getId());
+		}
+		return listingsIds;
 	}
 
 	public List<Listing> getUserActiveListings(long userId, ListPropertiesVO listingProperties) {

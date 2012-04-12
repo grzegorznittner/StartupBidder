@@ -96,7 +96,7 @@ public abstract class BaseFacadeAbstractTest {
 	String getTestDocUrl(String resource) {
 		return "http://127.0.0.1:" + nanoHttpdPort + "/" + resource; 
 	}
-		
+	
 	protected List<Listing> listingList = null;
 	protected List<Bid> bidList = null;
 

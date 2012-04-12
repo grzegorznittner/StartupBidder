@@ -5,6 +5,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -12,6 +13,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -971,31 +973,116 @@ public class ListingFacade {
 	public ListingListVO listingKeywordSearch(UserVO loggedInUser, String text, ListPropertiesVO listingProperties) {
 		ListingListVO listingsList = new ListingListVO();
 		List<ListingVO> listings = new ArrayList<ListingVO>();
-		List<String> ids = DocService.instance().fullTextSearch(text);
-		for (String id : ids) {
-			long listingId = NumberUtils.toLong(id);
-			Listing listingDAO = getDAO().getListing(listingId);
-			if (listingDAO != null) {
-				ListingVO listing = DtoToVoConverter.convert(listingDAO);
-				listing.setOrderNumber(listings.size() + 1);
-				if (Listing.State.ACTIVE.toString().equalsIgnoreCase(listing.getState())) {
-					log.info("Active listing added to keyword search results " + listing);
-					listings.add(listing);
-				} else if (loggedInUser.getId().equals(listing.getOwner())) {
-					log.info("Owned listing added to keyword search results " + listing);
-					listings.add(listing);
-				} else {
-					log.info("Listing not added to results, listing: " + listing);
-				}
-				listingsList.setUser(new UserBasicVO(loggedInUser));
+		String[] keywords = splitSearchKeywords(text);
+		
+		List<Long> results = null;
+		if (StringUtils.notEmpty(keywords[0])) {
+			results = DocService.instance().fullTextSearch(keywords[0]);
+		}
+		if (StringUtils.notEmpty(keywords[1])) {
+			List<Long> categoryResults = getDAO().getListingsIdsForCategory(keywords[1]);
+			log.info("Category search for '" + keywords[1] + "' returned " + categoryResults.size()
+					+ " items. Items: " + Arrays.toString(categoryResults.toArray()));
+			if (results != null) {
+				results.retainAll(categoryResults);
 			} else {
-				log.info("Keyword search returned listing with long id " + listingId + " but it was not found in datastore");
+				results = categoryResults;
 			}
+		}
+		if (StringUtils.notEmpty(keywords[2])) {
+			String[] location = splitLocationString(keywords[2]);
+			List<Long> locationResults = getDAO().getListingsIdsForLocation(location[2], location[1], location[0]);
+			log.info("Location search for '" + Arrays.toString(location) + "' returned " + locationResults.size()
+					+ " items. Items: " + Arrays.toString(locationResults.toArray()));
+			if (results != null) {
+				results.retainAll(locationResults);
+			} else {
+				results = locationResults;
+			}
+		}
+		log.info("Combined results contains " + results.size() + " items. Items: " + Arrays.toString(results.toArray()));
+		
+		List<Listing> listingList = getDAO().getListings(results);
+		for (Listing listingDAO : listingList) {
+			ListingVO listing = DtoToVoConverter.convert(listingDAO);
+			listing.setOrderNumber(listings.size() + 1);
+			if (Listing.State.ACTIVE.toString().equalsIgnoreCase(listing.getState())) {
+				log.info("Active listing added to keyword search results " + listing);
+				listings.add(listing);
+			} else if (loggedInUser.getId().equals(listing.getOwner())) {
+				log.info("Owned listing added to keyword search results " + listing);
+				listings.add(listing);
+			} else {
+				log.info("Listing not added to results, listing: " + listing);
+			}
+			listingsList.setUser(new UserBasicVO(loggedInUser));
 		}
 		listingsList.setListings(listings);
 		listingProperties.setNumberOfResults(listings.size());
 		listingsList.setListingsProperties(listingProperties);
 		return listingsList;
+	}
+
+	private String[] splitLocationString(String location) {
+		String[] result = new String[3];
+		StringTokenizer tokenizer = new StringTokenizer(location, ",");
+		int locationParts = tokenizer.countTokens();
+		String[] tokens = new String[locationParts];
+		int tokenNr = 0;
+		while(tokenizer.hasMoreTokens()) {
+			tokens[tokenNr++] = tokenizer.nextToken().trim();
+		}
+		if (locationParts >= 3) {
+			// city first, eg. Austin, TX, USA
+			result[0] = tokens[0];
+			result[1] = tokens[1];
+			result[2] = tokens[2];
+		} else if (locationParts == 2) {
+			if (tokens[0].length() == 2) {
+				// state and country provided, eg. CA, USA
+				result[1] = tokens[0];
+				// assuming that next token is country
+				result[2] = tokens[1];
+			} else {
+				// city and coutry provided, eg. Rybnik, Poland
+				result[0] = tokens[0];
+				// assuming that first token is country
+				result[2] = tokens[1];
+			}
+		} else if (locationParts == 1) {
+			// only country was provided, eg. The Nederlands
+			result[2] = tokens[0];
+		}
+		return result;
+	}
+
+	/**
+	 * Returns search text split by type.
+	 * 0 is full text search, 1 is category, 2 is location.
+	 */
+	public String[] splitSearchKeywords(String searchText) {
+		String[] result = new String[] {"", "", ""};
+		StringTokenizer tokenizer = new StringTokenizer(searchText);
+		int lastType = -1;
+		while(tokenizer.hasMoreTokens()) {
+			String token = tokenizer.nextToken();
+			if (token.startsWith("location:")) {
+				result[2] = token.substring("location:".length());
+				lastType = 2;
+			} else if (token.startsWith("category:")) {
+				result[1] = token.substring("category:".length());
+				lastType = 1;
+			} else if(lastType > 0) {
+				result[lastType] += " " + token;
+			} else {
+				result[0] += token + " ";
+				lastType = 0;
+			}
+		}
+		result[0] = result[0].trim();
+		result[1] = result[1].trim();
+		result[2] = result[2].trim();
+		return result;
 	}
 
 	public List<ListingStats> updateAllListingStatistics() {
