@@ -6,7 +6,6 @@ body > #wrap { height: auto; min-height: 100%; }
 #main { padding-bottom: 35px; }
 #newlistingmain { padding-bottom: 35px; }
 #footer { position: relative; margin-top: -35px; height: 35px; clear: both; width: 100%; }
-#newlistingfooterbottom { position: relative; margin-top: 1px; height: 35px; clear: both; width: 100%; }
 .clearfix:after { content: "."; display: block; height: 0; clear: both; visibility: hidden; }
 .clearfix { display: inline-block; }
 * html .clearfix { height: 1%; }
@@ -33,6 +32,8 @@ body { font-size: 14px; font-weight: normal; color: #4083a9; background: #f2f2f2
 /* link styles */
 a:link, a:visited { text-decoration: none; color: #4083a9; }
 a:hover { opacity: 0.7; cursor: pointer; }
+.headerrow a:hover { opacity: 1.0; }
+.hoverlink:hover { opacity: 0.7; cursor: pointer }
 .inputbutton:hover { opacity: 0.7; cursor: pointer }
 .nohover:hover { opacity: 1.0; cursor: default; }
 
@@ -63,6 +64,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 
 /* header styles */
 .header { width: 100%; height: 55px; background: #49515a; }
+.headerrow { height: 55px; }
 .headertext, .headerlink { position: relative; font-weight: bold; font-size: 18px; top: 14px; color: #dcd8db; }
 .logotextblue { position: relative; font-weight: bold; font-size: 24px; top: 8px; color: #32aff6; }
 .logotextgrey { position: relative; font-weight: bold; font-size: 24px; top: 8px; color: #dcd8db; }
@@ -400,7 +402,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .previewtext3 { top: 2060px; }
 .previewtext4 { top: 2660px; }
 .previewiframe { width: 100%; height: 3000px; }
-.previewoverlay { position: absolute; width: 100%; height: 2950px; top: 660px; z-index: 1000; }
+.previewoverlay { position: absolute; width: 100%; height: 2920px; top: 660px; z-index: 1000; }
 
 /* img */
 .noimage { background: url(../img/noimage_146x146.jpg); border-radius: 3px; }
@@ -492,14 +494,14 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 }
 .ipslide { width: 938px; height: 625px; position: absolute; }
 .ipslide1 { left: 0; }
-.ipslide2 { left: 948px; }
+.ipslide2 { left: 938px; }
 .ipslide3 { left: 1876px; }
 .ipslide4 { left: 2814px; }
 .ipslide5 { left: 3752px; }
 .ipslide6 { left: 4690px; }
 .ipslide7 { left: 5628px; }
 .ipslide8 { left: 6566px; }
-.ipslide9 { left: 7504px; }
+.ipslide9 { left: 8504px; }
 .ipslide10 { left: 8442px; }
 .ipslide11 { left: 9380px; }
 .ipslide12 { left: 10318px; }

@@ -186,7 +186,7 @@ function QueryStringClass() {
     this.vars = {};
     for (i in pairs) {
         keyval = pairs[ i ].split( "=" );
-        this.vars[ keyval[0] ] = decodeURIComponent(keyval[1]);
+        this.vars[ keyval[0] ] = keyval[1];
     }
 }
 
