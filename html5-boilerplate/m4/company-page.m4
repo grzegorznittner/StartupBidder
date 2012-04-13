@@ -508,7 +508,7 @@ include(header.m4)
         <p>
             <textarea class="textarea messagetextarea" id="addcommenttext" name="addcommenttext" cols="20" rows="5">Put your comment here...</textarea>
             <span class="span-12 inputmsg successful" id="addcommentmsg">&nbsp;</span>
-            <span class="span-3 inputbutton" id="addcommentbtn">POST</span>
+            <span class="span-3 inputbutton addcommentbtn" id="addcommentbtn">POST</span>
         </p>
     </div>
 

@@ -29,34 +29,49 @@ pl.implement(CommentsClass, {
         var self = this;
         pl('#addcommenttext').bind({
             focus: function() {
+                console.log('focus');
                 if (!pl('#addcommenttext').hasClass('edited')) {
                     pl('#addcommenttext').attr({value: ''});
                     pl('#addcommentmsg').html('&nbsp;');
                 }
             },
-            change: function() {
+            keyup: function() {
+                console.log('change');
                 if (!pl('#addcommenttext').hasClass('edited')) {
                     pl('#addcommenttext').addClass('edited');
                     pl('#addcommentmsg').html('&nbsp;');
                 }
+                else if (pl('#addcommenttext').attr('value').length >= 5 && !pl('#addcommentbtn').hasClass('addcommentenabled')) {
+                    pl('#addcommentbtn').addClass('addcommentenabled');
+                }
+                else if (pl('#addcommenttext').attr('value').length < 5 && pl('#addcommentbtn').hasClass('addcommentenabled')) {
+                    pl('#addcommentbtn').removeClass('addcommentenabled');
+                }
                 return false;
             },
             blur: function() {
+                console.log('blur');
                 if (!pl('#addcommenttext').hasClass('edited')) {
                     pl('#addcommenttext').attr({value: 'Put your comment here...'});
+                    pl('#addcommentbtn').removeClass('addcommentenabled');
                 }
             }
         });
         pl('#addcommentbtn').bind({
             click: function(event) {
-                var completeFunc = function() {
-                        pl('#addcommenttext').removeClass('edited').get(0).blur();
-                        pl('#addcommentmsg').html('Comment posted');
-                        self.ajax.call();
-                    },
-                    safeStr = new SafeStringClass(),
-                    commentText = safeStr.clean(pl('#addcommenttext').attr('value')),
-                    ajax = new AjaxClass('/comment/create', 'addcommentmsg', completeFunc);
+                console.log('click');
+                var completeFunc, commentText, ajax;
+                if (!pl('#addcommentbtn').hasClass('addcommentenabled')) {
+                    return false;
+                }
+                completeFunc = function() {
+                    pl('#addcommenttext').removeClass('edited').attr({value: 'Put your comment here...'});
+                    pl('#addcommentbtn').removeClass('addcommentenabled');
+                    pl('#addcommentmsg').html('Comment posted');
+                    self.ajax.call();
+                };
+                commentText = SafeStringClass.prototype.clean(pl('#addcommenttext').attr('value'));
+                ajax = new AjaxClass('/comment/create', 'addcommentmsg', completeFunc);
                 ajax.setPostData({
                     comment: {
                         listing_id: self.listing_id,
@@ -81,8 +96,7 @@ pl.implement(CommentsClass, {
     displayComments: function() {
         var html, deletableComments, i, comment, deletable, commentDeleteSel;
         if (this.comments.length === 0) {
-            pl('#commentlist').hide();
-            pl('#commentsmsg').html('<p>No comments</p>').show();
+            pl('#commentsmsg').html('<p>Be the first to comment!</p>').show();
             return;
         }
         html = '';
@@ -96,30 +110,25 @@ pl.implement(CommentsClass, {
             }
             html += this.makeComment(comment, deletable);
         }
-        pl('#commentmsg').hide();
         pl('#commentlist').html(html).show();
         for (i = 0; i < deletableComments.length; i++) {
             comment = this.comments[i];
             commentDeleteSel = '#comment_delete_' + comment.comment_id;
-            pl(commentDeleteSel).bind({click: this.deleteCommentGenerator(comment)});
+            pl(commentDeleteSel).bind({click: this.deleteCommentGenerator(comment.comment_id)});
         }
     },
-    deleteCommentGenerator: function(comment) {
-        var commentId = comment.comment_id;
+    deleteCommentGenerator: function(commentId) {
+        console.log('commentid', commentId);
         return function() {
-            var commentmsgId, commentDelUrl, completedFunc, ajax;
-            commentmsgId = 'comment_delete_msg_' + commentId;
-            commentDelUrl = '/comment/delete/' + commentId;
-            completedFuncGenerator = function(commentId) {
-                var commentSel, commentddSel;
-                commentSel = '#comment_' + commentId;
-                commentddSel = '#comment_dd_' + commentId;
-                return function() {
-                    pl(commentSel).remove();
-                    pl(commentddSel).remove();
-                };
-            };
-            ajax = new AjaxClass(commentDelUrl, commentmsgId, completedFuncGenerator(commentId));
+            var successFunc = function(json) {
+                    console.log('completed');
+                    pl('#comment_'+commentId).remove();
+                    pl('#comment_dd_'+commentId).remove();
+                    if (!pl('#commentlist').get(0).hasChildNodes()) {
+                        pl('#commentsmsg').html('<p>Be the first to comment!</p>');
+                    }
+                },
+                ajax = new AjaxClass('/comment/delete?id='+commentId, 'comment_delete_msg_'+commentId, null, successFunc);
             ajax.setPost();
             ajax.call();
         };

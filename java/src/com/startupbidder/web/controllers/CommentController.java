@@ -67,11 +67,8 @@ public class CommentController extends ModelDrivenController {
 		String commentId = "DELETE".equalsIgnoreCase(request.getMethod())
 				? getCommandOrParameter(request, 1, "id") : getCommandOrParameter(request, 2, "id");
 		if (!StringUtils.isEmpty(commentId)) {
-			model = ServiceFacade.instance().deleteComment(getLoggedInUser(), commentId);
-			if (model == null) {
-				log.log(Level.WARNING, "Comment not found!");
-				headers.setStatus(500);
-			}
+            // this always returns null
+			ServiceFacade.instance().deleteComment(getLoggedInUser(), commentId);
 		} else {
 			log.log(Level.WARNING, "Parameter 'id' is not provided!");
 			headers.setStatus(500);
