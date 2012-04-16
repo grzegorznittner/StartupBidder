@@ -274,13 +274,17 @@ public class ListingFacade {
 		List<ListingPropertyVO> propsToUpdate = new ArrayList<ListingPropertyVO>();
 		createMandatoryProperty(propsToUpdate, infos, properties, "latitude", "latitude");
 		createMandatoryProperty(propsToUpdate, infos, properties, "longitude", "longitude");
-		createMandatoryProperty(propsToUpdate, infos, properties, "LONG_country", "country");
+		if ("US".equals(properties.get("SHORT_country"))) {
+			propsToUpdate.add(new ListingPropertyVO("country", "USA"));
+			ListingPropertyVO state = createProperty(properties, "SHORT_administrative_area_level_1", "state");
+			if (state != null) {
+				propsToUpdate.add(state);
+			}
+		} else {
+			createMandatoryProperty(propsToUpdate, infos, properties, "LONG_country", "country");
+		}
 		createMandatoryProperty(propsToUpdate, infos, properties, "LONG_locality", "city");
 		createMandatoryProperty(propsToUpdate, infos, properties, "formatted_address", "address");
-		ListingPropertyVO state = createProperty(properties, "SHORT_administrative_area_level_1", "state");
-		if (state != null) {
-			propsToUpdate.add(state);
-		}
 		
 		if (infos.length() > 0 ) {
 			log.warning("Missing mandatory address field(s): " + infos.toString());

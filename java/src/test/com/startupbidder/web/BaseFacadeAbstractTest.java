@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.Date;
@@ -14,6 +15,8 @@ import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.RandomStringUtils;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
@@ -31,6 +34,7 @@ import com.googlecode.objectify.Key;
 import com.googlecode.objectify.Objectify;
 import com.googlecode.objectify.ObjectifyService;
 import com.startupbidder.dao.MockDataBuilder;
+import com.startupbidder.dao.ObjectifyDatastoreDAO;
 import com.startupbidder.datamodel.Bid;
 import com.startupbidder.datamodel.Category;
 import com.startupbidder.datamodel.Comment;
@@ -55,9 +59,9 @@ import com.startupbidder.web.UserMgmtFacade;
 public abstract class BaseFacadeAbstractTest {
 	private static final Logger log = Logger.getLogger(BaseFacadeAbstractTest.class.getName());
 	
-	protected LocalServiceTestHelper helper = new LocalServiceTestHelper(new LocalTaskQueueTestConfig(),
+	private LocalServiceTestHelper helper = new LocalServiceTestHelper(new LocalTaskQueueTestConfig(),
 			new LocalUserServiceTestConfig(),
-			new LocalDatastoreServiceTestConfig().setNoStorage(true))
+			new LocalDatastoreServiceTestConfig().setNoStorage(false).setBackingStoreLocation("tests/temp_test_data.bin"))
 				.setEnvIsAdmin(false).setEnvIsLoggedIn(true)
 				.setEnvEmail("jpfowler@startupbidder.com").setEnvAuthDomain("google.com");
 	
@@ -85,12 +89,35 @@ public abstract class BaseFacadeAbstractTest {
 	}
 	
 	void setupDatastore() {
+		log.info("Copying datastore test file.");
+		File testDataDBFile = new File("tests/test-docs/test_data_db.bin");
+		try {
+			FileUtils.copyFile(testDataDBFile, new File("tests/temp_test_data.bin"));
+		} catch (IOException e) {
+			assertTrue("Error copying test_data_db.bin file!", false);
+		}
+		helper.setUp();
+		log.info("Initilizing datastore.");
+		
+		Objectify ofy = ObjectifyService.begin();
+		log.info("Checking users.");
+		List<SBUser> users = ofy.query(SBUser.class).list();
+		log.info("Users checked, users:" + users.size());
+		assertTrue("Test users should be available!", users.size() > 0);
+		List<Listing> listings = ofy.query(Listing.class).list();
+		assertTrue("Test listings should be available!", listings.size() > 0);
+		
 		mocks = new MockDataBuilder();
-		mocks.createMockDatastore(true);
+		mocks.createMockDatastore(false, false);
 		
 		UserService userService = UserServiceFactory.getUserService();
 		googleUser = userService.getCurrentUser();
 		assertNotNull("User service returned null user", googleUser);
+	}
+	
+	void tearDownDatastore() {
+		helper.tearDown();
+		FileUtils.deleteQuietly(new File("tests/temp_test_data.bin"));
 	}
 
 	String getTestDocUrl(String resource) {

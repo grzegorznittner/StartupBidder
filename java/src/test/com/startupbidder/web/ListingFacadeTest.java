@@ -37,10 +37,6 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 	
 	@Before
 	public void setUp() {
-		helper.setUp();
-		
-//		setupUsers();
-//		setupListings();
 		setupDatastore();
 		setupNanoHttpd();
 	}
@@ -48,7 +44,7 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 	@After
 	public void tearDown() {
 		tearDownNanoHttpd();
-		helper.tearDown();
+		tearDownDatastore();
 	}
 	
 	@Test

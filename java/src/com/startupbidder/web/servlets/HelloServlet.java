@@ -203,16 +203,18 @@ public class HelloServlet extends HttpServlet {
 			out.println("<a href=\"/bids/bid-day-volume/.json\">Get bid day volume</a><br/>");
 			out.println("<a href=\"/bids/bid-day-valuation/.json\">Get bid day valuation</a><br/>");
 			
+			*/
 			out.println("<p style=\"background: none repeat scroll 0% 0% rgb(187, 187, 187);\">Comments API:</p>");
 			out.println("<a href=\"/comments/listing/" + topListing.getWebKey() + "/.json?max_results=6\">Comments for top listing</a><br/>");
-			out.println("<a href=\"/comments/user/" + topInvestor.getWebKey() + "/.json?max_results=6\">Comments for top investor</a><br/>");
+			out.println("<a href=\"/comments/user/" + currentUser.getId() + "/.json?max_results=6\">Comments for current user</a><br/>");
 			out.println("<a href=\"/comments/get/" + comments.get(0).getWebKey() + "/.json\">Get comment id '" + comments.get(0).getWebKey() + "'</a><br/>");
 			out.println("<form method=\"POST\" action=\"/comment/create/.json\"><textarea name=\"comment\" rows=\"5\" cols=\"100\">"
-						+ "{ \"listing_id\":\"" + topListing.getWebKey() + "\", \"profile_id\":\"" + topInvestor.getWebKey() + "\", \"text\":\"comment test\" }"
-						+ "</textarea><input type=\"submit\" value=\"Create a comment\"/></form>");
+						+ "{ \"listing_id\":\"" + topListing.getWebKey() + "\", \"profile_id\":\"" + currentUser.getId() + "\", \"text\":\"comment test\" }"
+						+ "</textarea><input type=\"submit\" value=\"Create a comment (for top listing)\"/></form>");
 			out.println("<form method=\"POST\" action=\"/comment/delete/.json?id=" + comments.get(0).getWebKey() + "\"><input type=\"submit\" value=\"Deletes comment id '" + comments.get(0).getWebKey() + "'\"/></form>");
 			out.println("<br/>");
 			
+			/*
 			out.println("<p style=\"background: none repeat scroll 0% 0% rgb(187, 187, 187);\">Notification API:</p>");
 			out.println("<a href=\"/notification/user/" + currentUser.getId() + "/.json?max_results=6\">Notifications for current user</a><br/>");
 			List<Notification> notifications = datastore.getUserNotification(currentUser.toKeyId(), new ListPropertiesVO());

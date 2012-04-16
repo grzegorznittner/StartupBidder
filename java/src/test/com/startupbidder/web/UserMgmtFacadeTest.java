@@ -35,15 +35,12 @@ public class UserMgmtFacadeTest extends BaseFacadeAbstractTest {
 	
 	@Before
 	public void setUp() {
-		helper.setUp();
-		
-		//setupUsers();
 		setupDatastore();
 	}
 	
 	@After
 	public void tearDown() {
-		helper.tearDown();
+		tearDownDatastore();
 	}
 	
 	@Test

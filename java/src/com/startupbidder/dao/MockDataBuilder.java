@@ -136,43 +136,44 @@ public class MockDataBuilder {
 		return output.toString();
 	}
 	
-	public String createMockDatastore(boolean initializeNow) {
+	public String createMockDatastore(boolean storeData, boolean initializeNow) {
 		StringBuffer output = new StringBuffer();
 		
 		List<SBUser> users = createMockUsers();
-		getOfy().put(users);
-		output.append("Inserted " + users.size() + " users.</br>");
+		if (storeData) {
+			getOfy().put(users);
+			output.append("Inserted " + users.size() + " users.</br>");
 		
-		getOfy().put(createCategories());
+			getOfy().put(createCategories());
+		}
 		
 		List<Listing> listings = createMockListings(users);
-		getOfy().put(listings);
-		output.append("Inserted " + listings.size() + " listings.</br>");
 		
-		// updating user stats
-//		for (SBUser user : users) {
-//			ObjectifyDatastoreDAO.getInstance().updateUserStatistics(user.id);
-//		}
-//		output.append("Scheduled user statistics update.</br>");
-		// update listing stats
-		for (Listing listing : listings) {
-			if (listing.state == Listing.State.NEW || listing.state == Listing.State.POSTED) {
-				SBUser owner = getOfy().find(listing.owner);
-				owner.editedListing = new Key<Listing>(Listing.class, listing.id);
-				getOfy().put(owner);
-			}
-			ObjectifyDatastoreDAO.getInstance().updateListingStatistics(listing.id);
-			
-			if (initializeNow) {
-				ListingFacade.instance().updateMockListingImages(listing.id);
-			} else {
-				String taskName = new Date().getTime() + "_mock_listing_file_update_" + listing.getWebKey();
-				Queue queue = QueueFactory.getDefaultQueue();
-				queue.add(TaskOptions.Builder.withUrl("/task/update-mock-listing-images").param("id", listing.getWebKey())
-						.taskName(taskName).countdownMillis(500));
-			}
+		if (storeData) {
+			getOfy().put(listings);
+			output.append("Inserted " + listings.size() + " listings.</br>");
 		}
-		output.append("Listing statistics update and file update scheduled.</br>");
+		
+		if (storeData) {
+			for (Listing listing : listings) {
+				if (listing.state == Listing.State.NEW || listing.state == Listing.State.POSTED) {
+					SBUser owner = getOfy().find(listing.owner);
+					owner.editedListing = new Key<Listing>(Listing.class, listing.id);
+					getOfy().put(owner);
+				}
+				ObjectifyDatastoreDAO.getInstance().updateListingStatistics(listing.id);
+				
+				if (initializeNow) {
+					ListingFacade.instance().updateMockListingImages(listing.id);
+				} else {
+					String taskName = new Date().getTime() + "_mock_listing_file_update_" + listing.getWebKey();
+					Queue queue = QueueFactory.getDefaultQueue();
+					queue.add(TaskOptions.Builder.withUrl("/task/update-mock-listing-images").param("id", listing.getWebKey())
+							.taskName(taskName).countdownMillis(500));
+				}
+			}
+			output.append("Listing statistics update and file update scheduled.</br>");
+		}
 		
 		return output.toString();
 	}

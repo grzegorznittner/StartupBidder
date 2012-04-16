@@ -6,10 +6,5 @@ import com.google.appengine.tools.development.testing.LocalTaskQueueTestConfig;
 import com.google.appengine.tools.development.testing.LocalUserServiceTestConfig;
 
 public abstract class AdminFacadeAbstractTest extends BaseFacadeAbstractTest {
-	protected LocalServiceTestHelper helper = new LocalServiceTestHelper(new LocalTaskQueueTestConfig(),
-			new LocalUserServiceTestConfig(),
-			new LocalDatastoreServiceTestConfig().setNoStorage(true))
-				.setEnvIsAdmin(true).setEnvIsLoggedIn(true)
-				.setEnvEmail("admin@startupbidder.com").setEnvAuthDomain("google.com");
 
 }

@@ -57,17 +57,13 @@ public class BidFacadeTest extends BaseFacadeAbstractTest {
 	
 	@Before
 	public void setUp() {
-		helper.setUp();
-		
-//		setupUsers();
-//		setupListings();
 		setupDatastore();
 		setupBids();
 	}
 	
 	@After
 	public void tearDown() {
-		helper.tearDown();
+		tearDownDatastore();
 	}
 	
 	/**
