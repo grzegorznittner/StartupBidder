@@ -42,17 +42,21 @@ import com.google.appengine.api.images.Image;
 import com.google.appengine.api.images.ImagesService;
 import com.google.appengine.api.images.ImagesServiceFactory;
 import com.google.appengine.api.images.Transform;
+import com.google.appengine.api.memcache.MemcacheService;
+import com.google.appengine.api.memcache.MemcacheServiceFactory;
 import com.google.appengine.api.taskqueue.Queue;
 import com.google.appengine.api.taskqueue.QueueFactory;
 import com.google.appengine.api.taskqueue.TaskOptions;
 import com.google.appengine.api.utils.SystemProperty;
 import com.googlecode.objectify.Key;
+import com.googlecode.objectify.cache.CachingDatastoreServiceFactory;
 import com.startupbidder.dao.MockDataBuilder;
 import com.startupbidder.dao.ObjectifyDatastoreDAO;
 import com.startupbidder.datamodel.Category;
 import com.startupbidder.datamodel.Listing;
 import com.startupbidder.datamodel.ListingDoc;
 import com.startupbidder.datamodel.ListingDoc.Type;
+import com.startupbidder.datamodel.ListingLocation;
 import com.startupbidder.datamodel.ListingStats;
 import com.startupbidder.datamodel.Location;
 import com.startupbidder.datamodel.Notification;
@@ -74,6 +78,7 @@ public class ListingFacade {
 	private static final Logger log = Logger.getLogger(ListingFacade.class.getName());
 	
 	public static enum UpdateReason {NEW_BID, BID_UPDATE, NEW_COMMENT, NEW_VOTE, NONE};
+	public static final String MEMCACHE_ALL_LISTING_LOCATIONS = "AllListingLocations";
 	/**
 	 * Delay for listing stats task execution.
 	 */
@@ -297,6 +302,8 @@ public class ListingFacade {
 			for (ListingPropertyVO prop : propsToUpdate) {
 				VoToModelConverter.updateListingProperty(listing, prop);
 			}
+			// creates brief addres and makes city/state/country lowercase
+			DtoToVoConverter.updateBriefAddress(listing);
 			log.info("Updating listing: " + listing);
 			getDAO().storeListing(listing);
 		}
@@ -304,7 +311,7 @@ public class ListingFacade {
 		
 		return result;
 	}
-
+	
 	private ListingPropertyVO createMandatoryProperty(List<ListingPropertyVO> propsToUpdate, StringBuffer infos, 
 			Map<String, String> properties, String name, String propertyName) {
 		String value = properties.get(name);
@@ -1029,7 +1036,7 @@ public class ListingFacade {
 
 	private String[] splitLocationString(String location) {
 		String[] result = new String[3];
-		StringTokenizer tokenizer = new StringTokenizer(location, ",");
+		StringTokenizer tokenizer = new StringTokenizer(location.toLowerCase(), ",");
 		int locationParts = tokenizer.countTokens();
 		String[] tokens = new String[locationParts];
 		int tokenNr = 0;
@@ -1096,13 +1103,15 @@ public class ListingFacade {
 		List<Listing> listings = getDAO().getAllListings();
 		for (Listing listing : listings) {
 			ListingStats stats = calculateListingStatistics(listing.id);
-			Location loc = locations.get(stats.briefAddress);
-			if (loc != null) {
-				loc.value++;
-			} else {
-				locations.put(stats.briefAddress, new Location(stats.briefAddress));
+			if (listing.state == Listing.State.ACTIVE) {
+				Location loc = locations.get(listing.briefAddress);
+				if (loc != null) {
+					loc.value++;
+				} else {
+					locations.put(listing.briefAddress, new Location(listing.briefAddress));
+				}
+				list.add(stats);
 			}
-			list.add(stats);
 		}
 		getDAO().storeLocations(new ArrayList<Location>(locations.values()));
 		
@@ -1422,6 +1431,22 @@ public class ListingFacade {
 		Map<String, Integer> result = new LinkedHashMap<String, Integer>();
 		for (Location loc : locations) {
 			result.put(loc.briefAddress, loc.value);
+		}
+		return result;
+	}
+
+	public List<Object[]> getAllListingLocations() {
+		MemcacheService mem = MemcacheServiceFactory.getMemcacheService();
+		List<Object[]> result = (List<Object[]>)mem.get(MEMCACHE_ALL_LISTING_LOCATIONS);
+		if (result == null) {
+			List<ListingLocation> locations = getDAO().getAllListingLocations();
+			
+			result = new ArrayList<Object[]>();
+			for (ListingLocation loc : locations) {
+				result.add(new Object[] {loc.getWebKey(), loc.latitude, loc.longitude});
+			}
+			// all listing locations cache is also modified in method ObjectifyDatastoreDAO.updateListingStateAndDates
+			mem.put(MEMCACHE_ALL_LISTING_LOCATIONS, result);
 		}
 		return result;
 	}

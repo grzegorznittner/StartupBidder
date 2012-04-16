@@ -80,6 +80,8 @@ public class ListingController extends ModelDrivenController {
 				return getCategories(request);
 			} else if("locations".equalsIgnoreCase(getCommand(1))) {
 				return getLocations(request);
+			} else if("all-listing-locations".equalsIgnoreCase(getCommand(1))) {
+				return getAllListingLocations(request);
 			} else {
 				// default action
 				return index(request);
@@ -497,6 +499,12 @@ public class ListingController extends ModelDrivenController {
     private HttpHeaders getLocations(HttpServletRequest request) {
     	model = ListingFacade.instance().getTopLocations();
         return new HttpHeadersImpl("locations").disableCaching();
+    }
+
+    // GET /listings/all-listing-locations
+    private HttpHeaders getAllListingLocations(HttpServletRequest request) {
+    	model = ListingFacade.instance().getAllListingLocations();
+        return new HttpHeadersImpl("all-listing-locations").disableCaching();
     }
 
 	public Object getModel() {

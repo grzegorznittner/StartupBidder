@@ -46,8 +46,6 @@ public class ListingStats extends BaseObject {
 	public long numberOfBids;
 	public long numberOfVotes;
 	public double score;
-
-	@Transient public String briefAddress;
 	
 	public String getWebKey() {
 		return new Key<ListingStats>(ListingStats.class, id).getString();

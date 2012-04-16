@@ -40,6 +40,7 @@ import com.startupbidder.datamodel.Category;
 import com.startupbidder.datamodel.Comment;
 import com.startupbidder.datamodel.Listing;
 import com.startupbidder.datamodel.ListingDoc;
+import com.startupbidder.datamodel.ListingLocation;
 import com.startupbidder.datamodel.ListingStats;
 import com.startupbidder.datamodel.Location;
 import com.startupbidder.datamodel.Monitor;
@@ -147,6 +148,7 @@ public abstract class BaseFacadeAbstractTest {
 		ObjectifyService.register(Vote.class);
 		ObjectifyService.register(Category.class);
 		ObjectifyService.register(Location.class);
+		ObjectifyService.register(ListingLocation.class);
 	}
 	
 //	protected void setupUsers() {

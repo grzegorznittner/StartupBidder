@@ -29,6 +29,7 @@ import com.startupbidder.datamodel.Category;
 import com.startupbidder.datamodel.Comment;
 import com.startupbidder.datamodel.Listing;
 import com.startupbidder.datamodel.ListingDoc;
+import com.startupbidder.datamodel.ListingLocation;
 import com.startupbidder.datamodel.ListingStats;
 import com.startupbidder.datamodel.Monitor;
 import com.startupbidder.datamodel.Notification;
@@ -155,11 +156,14 @@ public class MockDataBuilder {
 		}
 		
 		if (storeData) {
+			List<ListingLocation> listingLocList = new ArrayList<ListingLocation>();
 			for (Listing listing : listings) {
 				if (listing.state == Listing.State.NEW || listing.state == Listing.State.POSTED) {
 					SBUser owner = getOfy().find(listing.owner);
 					owner.editedListing = new Key<Listing>(Listing.class, listing.id);
 					getOfy().put(owner);
+				} else if (listing.state == Listing.State.ACTIVE) {
+					listingLocList.add(new ListingLocation(listing));
 				}
 				ObjectifyDatastoreDAO.getInstance().updateListingStatistics(listing.id);
 				
@@ -172,7 +176,9 @@ public class MockDataBuilder {
 							.taskName(taskName).countdownMillis(500));
 				}
 			}
-			output.append("Listing statistics update and file update scheduled.</br>");
+			output.append("Listing statistics updated and file update scheduled.</br>");
+			getOfy().put(listingLocList);
+			output.append("Listing location data stored.</br>");
 		}
 		
 		return output.toString();
@@ -732,8 +738,9 @@ public class MockDataBuilder {
 		Object[] location = getLocation();
 		bp.address = (String)location[0];
 		bp.city = (String)location[1];
-		bp.usState = (String)location[2];
+		bp.usState = "USA".equals(location[3]) ? (String)location[2] : null;
 		bp.country = (String)location[3];
+		DtoToVoConverter.updateBriefAddress(bp);
 		bp.latitude = (Double)location[4];
 		bp.longitude = (Double)location[5];
 		
@@ -775,20 +782,29 @@ public class MockDataBuilder {
 	}
 	
 	private Object[][] locations = {
-			{"Lohstra\u00DFe 53, 49074 Osnabr\u00FCck, Germany","Osnabr\u00FCck","NDS","Germany", 52.27913570, 8.041329399999995},
-			{"Fellenoord 310, 5611 Centrum, The Netherlands","Eindhoven","NB","The Netherlands", 51.44266050, 5.472869100000025},
-			{"10 Rue de Passy, 75016 Paris, France","Paris","IdF","France", 48.85842180, 2.283493599999929},
-			{"Calle del Pintor Cabrera, 29, 03003 Alicante, Spain","Alicante","Valencia","Spain", 38.34388360, -0.49293009999996684},
-			{"Via Amerigo Vespucci 10, 80142 Naples, Italy","Naples","Campania","Italy", 40.84653330, 14.270270100000062},
-			{"45 L St SW, Washington, DC 20024, USA","Washington","DC","United States", 38.8779990, -77.01035999999999},
-			{"671 John F Kennedy Blvd W, Bayonne, NJ 07002, USA","Bayonne","NJ","United States", 40.66865079999999, -74.12083719999998},
-			{"273 High St, Perth Amboy, NJ 08861, USA","Perth Amboy","NJ","United States", 40.50690090, -74.26577320000001},
-			{"1501 E 22nd St, Los Angeles, CA 90011, USA","Los Angeles","CA","United States", 34.01871330, -118.2481563},
+			{"Lohstra\u00DFe 53, 49074 Osnabr\u00FCck, Germany","Osnabr\u00FCck",null,"Germany", 52.27913570, 8.041329399999995},
+			{"Fellenoord 310, 5611 Centrum, The Netherlands","Eindhoven",null,"The Netherlands", 51.44266050, 5.472869100000025},
+			{"10 Rue de Passy, 75016 Paris, France","Paris",null,"France", 48.85842180, 2.283493599999929},
+			{"Calle del Pintor Cabrera, 29, 03003 Alicante, Spain","Alicante",null,"Spain", 38.34388360, -0.49293009999996684},
+			{"Via Amerigo Vespucci 10, 80142 Naples, Italy","Naples",null,"Italy", 40.84653330, 14.270270100000062},
+			{"45 L St SW, Washington, DC 20024, USA","Washington","DC","USA", 38.8779990, -77.01035999999999},
+			{"671 John F Kennedy Blvd W, Bayonne, NJ 07002, USA","Bayonne","NJ","USA", 40.66865079999999, -74.12083719999998},
+			{"273 High St, Perth Amboy, NJ 08861, USA","Perth Amboy","NJ","USA", 40.50690090, -74.26577320000001},
+			{"1501 E 22nd St, Los Angeles, CA 90011, USA","Los Angeles","CA","USA", 34.01871330, -118.2481563},
 			{"CST Rd, Mumbai, Maharashtra, India","Mumbai","MH","India", 19.07141140, 72.86405230000003},
-			{"585\u53F7 Lingling Rd, Xuhui, Shanghai, China, 200030","Shanghai","Shanghai","China", 31.1882940, 121.447633},
-			{"Denenchofu, Ota, Tokyo, Japan","Ota","Tokyo","Japan", 35.58862750, 139.6735731},
-			{"86-108 Castlereagh St, Sydney NSW 2000, Australia","Sydney","NSW","Australia", -33.870950, 151.2117541},
-			{"R. Santos Lima, 86 - S\u00E3o Crist\u00F3v\u00E3o, Rio de Janeiro, 20940-210, Brazil","Rio de Janeiro","RJ","Brazil", -22.89713230, -43.217189899999994}
+			{"585\u53F7 Lingling Rd, Xuhui, Shanghai, China, 200030","Shanghai",null,"China", 31.1882940, 121.447633},
+			{"Denenchofu, Ota, Tokyo, Japan","Tokyo",null,"Japan", 35.58862750, 139.6735731},
+			{"86-108 Castlereagh St, Sydney NSW 2000, Australia","Sydney",null,"Australia", -33.870950, 151.2117541},
+			{"R. Santos Lima, 86 - S\u00E3o Crist\u00F3v\u00E3o, Rio de Janeiro, 20940-210, Brazil","Rio de Janeiro",null,"Brazil", -22.89713230, -43.217189899999994},
+			{"Paddington, City of Westminster, London W2, UK", "London", null,"United Kingdom",51.516516,-0.18091100000003735},
+			{"Dublin Ave, London Borough of Hackney, London E8 4TP, UK","London",null,"United Kingdom",51.5382553,-0.06351169999993544},
+			{"Suites, Gordon 39, Tel Aviv, Israel","Tel Aviv",null,"Israel",32.0818919,34.77371649999998},
+			{"Tel Aviv, Israel","Tel Aviv",null,"Israel",32.066157,34.7778210000000},
+			{"Toronto Division, ON, Canada","Toronto",null,"Canada",43.6689775,-79.2902133},
+			{"S Bridge Rd, Singapore","Singapore",null,"Singapore",1.2850154,103.84689030000004},
+			{"Red Square, Moscow, Russia","Moscow",null,"Russian Federation",55.75463449999999,37.62149550000004},
+			{"Berlin, Germany","Berlin",null,"Germany",52.519171,13.406091199999992},
+			{"Seattle Hill-Silver Firs, WA, USA","Seattle Hill-Silver Firs","WA","USA",47.8811111,-122.17861110000001}
 	};
 	
 	private String getVideo() {

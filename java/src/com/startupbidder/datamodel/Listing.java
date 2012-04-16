@@ -48,7 +48,7 @@ public class Listing extends BaseObject implements Monitor.Monitored {
 			this.suggestedValuation = suggestedAmount * 100 / suggestedPercentage;
 		}
 	}
-	
+
 	@Indexed public Key<SBUser> owner;
 	public String contactEmail;
 	public String founders;
@@ -72,6 +72,7 @@ public class Listing extends BaseObject implements Monitor.Monitored {
 	@Indexed(IfNotNull.class) public String usState;
 	@Indexed(IfNotNull.class) public String usCounty;
 	@Indexed public String city;
+	public String briefAddress;
 	public String address;
 	public Double latitude;
 	public Double longitude;

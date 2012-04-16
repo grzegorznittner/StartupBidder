@@ -95,7 +95,7 @@ public class DtoToVoConverter {
 		listing.setLatitude(listingDTO.latitude);
 		listing.setLongitude(listingDTO.longitude);
 
-		listing.setBriefAddress(createBriefAddress(listingDTO));
+		listing.setBriefAddress(listingDTO.briefAddress);
 		
 		// calculating days left and days ago
 		if (listingDTO.listedOn != null) {
@@ -148,25 +148,6 @@ public class DtoToVoConverter {
 		return listing;
 	}
 
-	public static String createBriefAddress(Listing listingDTO) {
-		String briefAddress = "";
-		if (!StringUtils.isEmpty(listingDTO.country)) {
-            if (listingDTO.country.equals("United States")) {
-			    briefAddress = "USA";
-            }
-            else {
-			    briefAddress = listingDTO.country;
-            }
-		}
-		if (!StringUtils.isEmpty(listingDTO.usState) && briefAddress.equals("USA")) {
-			briefAddress = listingDTO.usState + (briefAddress.length() > 0 ? ", " : "") + briefAddress;
-		}
-		if (!StringUtils.isEmpty(listingDTO.city)) {
-			briefAddress = listingDTO.city + (briefAddress.length() > 0 ? ", " : "") + briefAddress;
-		}
-		return briefAddress;
-	}
-	
 	public static CommentVO convert(Comment commentDTO) {
 		if (commentDTO == null) {
 			return null;
@@ -393,4 +374,22 @@ public class DtoToVoConverter {
 		}
 		return result;
 	}
+
+	public static void updateBriefAddress(Listing listingDTO) {
+		String briefAddress = "";
+		if (!StringUtils.isEmpty(listingDTO.country)) {
+			briefAddress = listingDTO.country;
+    		listingDTO.country = listingDTO.country.toLowerCase();
+		}
+		if (!StringUtils.isEmpty(listingDTO.usState) && briefAddress.equals("USA")) {
+			briefAddress = listingDTO.usState + (briefAddress.length() > 0 ? ", " : "") + briefAddress;
+    		listingDTO.usState = listingDTO.usState.toLowerCase();
+		}
+		if (!StringUtils.isEmpty(listingDTO.city)) {
+			briefAddress = listingDTO.city + (briefAddress.length() > 0 ? ", " : "") + briefAddress;
+    		listingDTO.city = listingDTO.city.toLowerCase();
+		}
+		listingDTO.briefAddress = briefAddress;
+	}
+
 }

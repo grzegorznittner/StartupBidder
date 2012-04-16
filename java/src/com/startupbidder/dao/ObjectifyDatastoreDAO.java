@@ -17,6 +17,8 @@ import org.joda.time.DateTime;
 import org.joda.time.Days;
 
 import com.google.appengine.api.datastore.QueryResultIterable;
+import com.google.appengine.api.memcache.MemcacheService;
+import com.google.appengine.api.memcache.MemcacheServiceFactory;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.Objectify;
 import com.googlecode.objectify.ObjectifyService;
@@ -26,6 +28,7 @@ import com.startupbidder.datamodel.Category;
 import com.startupbidder.datamodel.Comment;
 import com.startupbidder.datamodel.Listing;
 import com.startupbidder.datamodel.ListingDoc;
+import com.startupbidder.datamodel.ListingLocation;
 import com.startupbidder.datamodel.ListingStats;
 import com.startupbidder.datamodel.Location;
 import com.startupbidder.datamodel.Monitor;
@@ -38,6 +41,7 @@ import com.startupbidder.datamodel.UserStats;
 import com.startupbidder.datamodel.Vote;
 import com.startupbidder.vo.DtoToVoConverter;
 import com.startupbidder.vo.ListPropertiesVO;
+import com.startupbidder.web.ListingFacade;
 
 /**
  * Datastore implementation which uses Google's AppEngine Datastore through Objectify interfaces.
@@ -290,8 +294,7 @@ public class ObjectifyDatastoreDAO {
 		listingStats.created = new Date();
 		log.info("listing: " + listingId + ", statistics: " + listingStats);
 		getOfy().put(listingStats);
-		
-		listingStats.briefAddress = DtoToVoConverter.createBriefAddress(listing);
+
 		return listingStats;
 	}
 	
@@ -376,11 +379,26 @@ public class ObjectifyDatastoreDAO {
 			listing.posted = newListing.posted;
 			getOfy().put(listing);
 			
+			MemcacheService mem = MemcacheServiceFactory.getMemcacheService();
+			// all listing locations cache is also modified in method ListingFacade.getAllListingLocations
+
 			// listing activation should allow for editing new listing by the owner
 			if (oldState == Listing.State.POSTED && newListing.state == Listing.State.ACTIVE) {
 				SBUser owner = getOfy().get(listing.owner);
 				owner.editedListing = null;
 				getOfy().put(owner);
+				
+				// storing location data
+				ListingLocation loc = new ListingLocation(listing);
+				getOfy().put(loc);
+				List<Object[]> result = (List<Object[]>)mem.get(ListingFacade.MEMCACHE_ALL_LISTING_LOCATIONS);
+				if (result != null) {
+					result.add(new Object[]{loc.getWebKey(), loc.latitude, loc.longitude});
+				}
+			}
+			if (newListing.state == Listing.State.CLOSED || newListing.state == Listing.State.WITHDRAWN) {
+				getOfy().delete(new ListingLocation(listing));
+				mem.delete(ListingFacade.MEMCACHE_ALL_LISTING_LOCATIONS);
 			}
 			log.info("Updated listing: " + listing);
 			return listing;
@@ -1200,5 +1218,9 @@ public class ObjectifyDatastoreDAO {
 				.order("-value").fetchKeys();
 		List<Location> locations = new ArrayList<Location>(getOfy().get(locIt).values());
 		return locations;
+	}
+
+	public List<ListingLocation> getAllListingLocations() {
+		return getOfy().query(ListingLocation.class).list();
 	}
 }
