@@ -11,77 +11,70 @@ include(head.m4)
 '
 include(header.m4)
 `
-<div class="container">
-
-<!-- left column -->
-<div class="span-16">
-    <div class="boxtitle">COMPANY</div>
-    <div class="boxpanel companylistingbox">
-        <div class="listingbox" id="listingdata">
-            <div class="formcol1fourth">
-                <div class="tileimg noimage" id="companylogo"></div>
+<div class="companyheader">
+    <div class="container">
+        <div class="companybanner span-24">
+            <div class="companybannerlogo tileimg noimage" id="companylogo"></div>
+            <div class="companybannertitle" id="title"></div>
+            <div class="companybannertextgrey">
+                A <span id="category"></span> company in <span id="address"></span> by <span id="founders"></span>
+                <a class="companybannertextlink" href="#">send message</a>
             </div>
-            <div class="formcol2fourth">
-                <div>
-                    <span class="formtitlefourth uneditabletext companytitle" id="title"></span>
+            <div class="companybannertextgrey">
+                Posted on <span id="listing_date"></span> from
+                <a class="companybannertextlink" href="#" target="_blank" id="websitelink"><div class="span-1 linkicon"></div><span id="domainname"></span></a>
+            </div>
+            <div class="companybannermantra" id="mantra"></div>
+            <div class="companynavcontainer">
+                <div class="companynav companynavselected">
+                    BASICS
                 </div>
-                <div class="inputmsg" id="mantra"></div>
-                <div>
-                    Founded by <span class="inputmsg" id="founders"></span>
+                <div class="companynav">
+                    BMC
                 </div>
-                <div id="listingstatus"></div>
-                <div class="span-11 companylistingstats">
-                    <span class="span-1 formstatistic" id="num_votes"></span>
-                    <span class="span-1 formstatisticicon"><a href="upvote" class="formlink"><div class="thumbup"></div></a></span>
-                    <span class="span-1 formstatistic" id="num_comments"></span>
-                    <span class="span-1 formstatisticicon"><div class="commenticon"></div></span>
-                    <span class="span-6 formstatistictxt" id="companystatus"></span>
+                <div class="companynav">
+                    Q&amp;A
+                </div>
+                <div class="companynav">
+                    BIDS
+                </div>
+                <div class="companynav">
+                    COMMENTS
                 </div>
             </div>
         </div>
     </div>
+</div>
 
+<div class="container">
+
+<!-- left column -->
+<div class="span-16">
+    <div class="boxtitle">SUMMARY</div>
+    <div class="boxpanel summarypanel">
+        <p id="summary"></p>
+	</div>
     <div class="boxtitle">VIDEO</div>
     <div class="boxpanel">
 	    <div class="videocontainer">
       	    <iframe width="622" height="452" id="videopresentation" src="" frameborder="0" allowfullscreen></iframe> 
 	    </div>
     </div>
-
-    <div class="boxtitle">SUMMARY</div>
-    <div class="boxpanel summarypanel">
-        <p id="summary"></p>
-	</div>
 </div> <!-- end left column -->
 
 <!-- right column -->
 <div class="span-8 last">
-    <div class="boxtitle">ABOUT</div>
-    <div class="sidebox">
-        <span class="aboutlabel">CATEGORY</span>
-        <span class="formlabelvalue inputmsg" id="category"></span>
-        <span class="aboutlabel clear">POSTED</span>
-        <span class="formlabelvalue inputmsg" id="listing_date"></span>
-        <span class="aboutlabel clear">WEBSITE</span>
-        <span class="formlabelvalue formlink">
-            <a href="#" target="_blank" id="websitelink">
-                <div class="span-1 linkicon"></div><span class="inputmsg" id="domainname"></span>
-            </a>
-        </span>
+    <div class="boxtitle">ASKING</div>
+    <div class="sidebox uneditabletext askingbox">
+        <div class="sideboxdesc suggestedmsg" id="suggestedmsg"></div>
+        <div class="suggestedinfo" id="suggestedinfo">
+            <div class="sideboxtitlecompact" id="suggested_amt"></div>
+            <div class="sideboxdesc">FOR <span id="suggested_pct"></span>% EQUITY</div>
+            <div class="sideboxdesc">OWNER VALUATION IS <span id="suggested_val"></span></div>
+            <div class="sideboxdesc"><span id="closingmsg"></span></div>
+        </div>
     </div>
-
-    <div class="boxtitle">LOCATION</div>
-    <div class="sidebox">
-        <a href="#" class="formlink" target="_blank" id="addresslink">
-            <div>
-                <div class="span-1 mapicon"></div><span class="mapaddresstext" id="address"></span>
-            </div>
-            <div class="sideboxmap">
-                <img src="" id="mapimg"></img>
-            </div>
-        </a>
-    </div>
-
+ 
     <div class="boxtitle">DOCUMENTS</div>
     <div class="sidebox documentbox" id="documentbox">
         <div class="documentwrapper" id="documentwrapper">
@@ -109,25 +102,22 @@ include(header.m4)
         </div>
     </div>
 
-    <div class="boxtitle">ASKING</div>
-    <div class="sidebox uneditabletext askingbox">
-        <div class="sideboxdesc suggestedmsg" id="suggestedmsg"></div>
-        <div class="suggestedinfo" id="suggestedinfo">
-            <div class="sideboxtitlecompact" id="suggested_amt"></div>
-            <div class="sideboxdesc">FOR <span id="suggested_pct"></span>% EQUITY</div>
-            <div class="sideboxdesc">OWNER VALUATION IS <span id="suggested_val"></span></div>
-            <div class="sideboxdesc"><span id="closingmsg"></span></div>
-        </div>
+    <div class="boxtitle">LOCATION</div>
+    <div class="sidebox">
+        <a href="#" class="formlink" target="_blank" id="addresslink">
+            <div class="sideboxmap">
+                <img src="#" id="mapimg"></img>
+            </div>
+        </a>
     </div>
 
     <div class="boxtitle">SHARE</div>
     <div class="sidebox socialsidebox">
-        <div class="socialsidewrapper" id="socialsidewrapper">
-            <div class="twitterbanner" id="twitterbanner"></div>    
-            <div class="facebookbanner" id="facebookbanner"></div>
-            <div class="gplusbanner" id="gplusbanner"></div>
-        </div>
+        <div class="twitterbanner" id="twitterbanner"></div>    
+        <div class="facebookbanner" id="facebookbanner"></div>
+        <div class="gplusbanner" id="gplusbanner"></div>
     </div>
+
 
     <div id="withdrawbox" class="withdrawbox">
     <div class="boxtitle">WITHDRAW POST</div>

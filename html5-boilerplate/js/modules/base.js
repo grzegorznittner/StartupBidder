@@ -283,7 +283,7 @@ pl.implement(HeaderClass, {
         }
     },
     setLoggedIn: function(profile, logout_url) {
-        var username = profile.username || 'You',
+        var username = 'Your Listings',
             posttext = profile.edited_listing ? 'Post': 'Post',
             newlistingurl = profile.edited_status === 'posted' ? 'new-listing-submitted-page.html' : 'new-listing-basics-page.html';
         pl('#postlink').attr('href', newlistingurl);
@@ -304,6 +304,7 @@ pl.implement(HeaderClass, {
         }
     },
     setLoggedOut: function(login_url) {
+        pl('#topheader').show();
         if (login_url && pl('body').hasClass('login-page')) {
             pl('#googleloginlink').attr({href: login_url});
         }

@@ -63,6 +63,9 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 }
 
 /* header styles */
+.topheader { width: 100%; height: 26px; background: #32aff6; display: none; }
+.topheaderline { color: white; font-weight: normal; }
+.topheaderlink { color: white; font-weight: bold; }
 .header { width: 100%; height: 55px; background: #49515a; }
 .headerrow { height: 55px; }
 .headertext, .headerlink { position: relative; font-weight: bold; font-size: 18px; top: 14px; color: #dcd8db; }
@@ -87,13 +90,39 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .push-15px { left: 15px; position: relative; }
 .welcometext { font-size: 14px; font-weight: bold; }
 /* .welcometext a { font-weight: bold; } */
-.socialsidewrapper { display: none; }
 .socialsidebox { height: 80px; position: relative; }
 .socialbanner { height: 80px; position: relative; }
 .twitterbanner { height: 23px; top: 4px; position: absolute; }
 .facebookbanner { height: 25px; top: 29px; position: absolute; }
 .facebookbanner div span iframe { height: 25px !important; }
 .gplusbanner { height: 20px; top: 57px; position: absolute; }
+
+/* company banner styles */
+.companyheader { width: 100%; height: 150px; background:#efffff; border-bottom: 2px solid grey; }
+.companybanner { height: 150px; position: relative; }
+.companybannertitle { font-size: 30px; font-weight: bold; }
+.companybannertext { font-size: 14px; font-weight: bold; }
+.companybannertextlink { font-size: 14px; font-weight: bold; font-style:italic; margin-left: 4px; }
+.companybannertextgrey { font-size: 14px; font-weight: bold; color: grey; }
+.companybannerlogo { margin-top: 2px; width: 146px; height: 146px; margin-right: 10px; float: left; }
+.companybannermantra { position: absolute; font-size: 14px; font-weight: bold; font-style: italic; width: 380px; bottom:3px; left:154px; }
+.companynavcontainer { position: absolute; bottom:0; left:544px; height: 21px; }
+.companynav {
+    float: left; padding: 0px 10px; margin-right: 10px; text-align: center; height: 19px;
+    font-size: 14px; font-weight: bold; color: grey;
+    border-radius: 5px 5px 0 0;
+    border: 2px solid #efffff;
+    border-bottom: 0;
+}
+.companynavselected {
+    background: #f2f2f2;
+    border-radius: 5px 5px 0 0;
+    border: 2px solid grey;
+    border-bottom: 0;
+    color: black;
+    height: 21px;
+}
+.companynav:hover { color: black; }
 
 /* icons */
 .spritebg { width: 32px; height: 32px; background: url(../img/icons/spritebg.gif); }
