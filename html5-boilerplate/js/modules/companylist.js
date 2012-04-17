@@ -122,8 +122,8 @@ pl.implement(CompanyListClass, {
 function BaseCompanyListPageClass() {
     this.queryString = new QueryStringClass();
     this.type = this.queryString.vars.type || 'top';
-    this.val = this.queryString.vars.val || '';
-    this.searchtext = this.queryString.vars.searchtext || '';
+    this.val = this.queryString.vars.val ? decodeURIComponent(this.queryString.vars.val) : '';
+    this.searchtext = this.queryString.vars.searchtext ? decodeURIComponent(this.queryString.vars.val) : '';
     this.data = { max_results: 20 };
     this.setListingSearch();
 };

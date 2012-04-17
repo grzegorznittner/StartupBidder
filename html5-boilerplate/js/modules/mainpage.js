@@ -26,8 +26,8 @@ pl.implement(ListClass, {
     }
 });
 
-function BaseListClass(url, id, over, type) {
-    this.url = url;
+function BaseListClass(kvlist, id, over, type) {
+    this.kvlist = kvlist;
     this.msgid = id + 'msg';
     this.col1id = id + 'divcol1';
     this.col2id = id + 'divcol2';
@@ -35,28 +35,22 @@ function BaseListClass(url, id, over, type) {
     this.type = type;
 }
 pl.implement(BaseListClass, {
-    load: function() {
-        var ajax = new AjaxClass(this.url, this.msgid, this.genStore());
-        ajax.call();
-    },
-    genStore: function() {
-        var self = this;
-        return function(json) {
-            var list = [], 
-                lc = new ListClass({type: self.type}),
-                k,
-                v;
-            for (k in json) {
-                v = json[k];
-                list.push(k); // ignore v for now
-            }
-            list.sort();
-            if (self.over === 2) {
-                lc.spreadOverTwoCols(list, '#'+self.col1id, '#'+self.col2id);
-            }
-            else {
-                lc.spreadOverOneCol(list, '#'+self.col1id, type);
-            }
+    display: function() {
+        var self = this,
+            list = [], 
+            lc = new ListClass({type: self.type}),
+            k,
+            v;
+        for (k in self.kvlist) {
+            v = self.kvlist[k];
+            list.push(k); // ignore v for now
+        }
+        list.sort();
+        if (self.over === 2) {
+            lc.spreadOverTwoCols(list, '#'+self.col1id, '#'+self.col2id);
+        }
+        else {
+            lc.spreadOverOneCol(list, '#'+self.col1id, type);
         }
     }
 });
@@ -96,17 +90,19 @@ pl.implement(MainPageClass,{
         var completeFunc = function(json) {
                 var header = new HeaderClass(),
                     searchbox = new SearchBoxClass(),
-                    companyList = new CompanyListClass();
+                    companyList = new CompanyListClass(),
+                    categories = json.categories || {},
+                    locations = json.top_locations || {},
+                    categoryList = new BaseListClass(categories, 'category', 2, 'category'),
+                    locationList = new BaseListClass(locations, 'location', 2, 'location');
                 header.setLogin(json);
+                categoryList.display();
+                locationList.display();
                 searchbox.bindEvents();
                 companyList.storeList(json,4);
             },
-            basePage = new BaseCompanyListPageClass(),
-            categoryList = new BaseListClass('/listings/categories', 'category', 2, 'category'),
-            locationList = new BaseListClass('/listings/locations', 'location', 2, 'location');
+            basePage = new BaseCompanyListPageClass();
         basePage.loadPage(completeFunc);
-        categoryList.load();
-        locationList.load();
     }
 });
 

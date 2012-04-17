@@ -1,19 +1,15 @@
-function MapPageClass() {
-    this.url = '/listings/top';
-    this.data = { max_results: 20 };
-};
+function MapPageClass() {}
 pl.implement(MapPageClass,{
     load: function(completeFunc) {
         var title = 'NEARBY COMPANIES',
-            ajax = new AjaxClass(this.url, 'listingsmsg', completeFunc);
+            ajax = new AjaxClass('/listings/all-listing-locations/', 'listingsmsg', completeFunc);
         pl('#listingstitle').html(title);
         pl('#welcometitle').html('Find a startup near you!');
         pl('#welcometext').html('Browse the map below to see companies nearby you and around the world');
-        ajax.ajaxOpts.data = this.data;
         ajax.call();
     },
     store: function(json) {
-        this.listings = (json && json.listings) ? json.listings : [];
+        this.maplistings = (json && json.map_listings) ? json.map_listings : [];
     },
     display: function() {
         var self = this,
@@ -43,31 +39,46 @@ pl.implement(MapPageClass,{
                 mapTypeId: google.maps.MapTypeId.ROADMAP
             }),
             i,
-            listing,
+            maplisting,
+            listingid,
+            latitude,
+            longitude,
             latLng,
             marker,
             markers = [],
             markerCluster,
             infowindow = new google.maps.InfoWindow(),
-            genInfoDisplay = function(listing, marker, infowindow) {
-                var tile = new CompanyTileClass({json: listing}),
-                    el = pl('<div>').html(tile.makeInfoWindowHtml()).get(0);
+            genInfoDisplay = function(listingid, marker, infowindow) {
                 return function() {
+                    var completeFunc = function(json) {
+                            var listing, tile, el;
+                            if (json && json.listing) {
+                                listing = json.listing;
+                                tile = new CompanyTileClass({json: listing}),
+                                el = pl('<div>').addClass('infowindowwrapper').html(tile.makeInfoWindowHtml()).get(0);
+                                infowindow.setContent(el);
+                            }
+                        },
+                        ajax = new AjaxClass('/listings/get/' + listingid, 'infowindowmsg', completeFunc),
+                        el = pl('<div>').addClass('infowindowwrapper').html('<span class="inputmsg inprogress" id="infowindowmsg">Loading...</span>').get(0);
                     infowindow.setContent(el);
                     infowindow.open(map, marker);
+                    ajax.call();
                 }
             };
         this.map = map;
-        for (i = 0; i < this.listings.length; i++) {
-            listing = this.listings[i];
-            latLng = new google.maps.LatLng(listing.latitude, listing.longitude);
+        for (i = 0; i < this.maplistings.length; i++) {
+            maplisting = this.maplistings[i];
+            listingid = maplisting[0];
+            latitude = maplisting[1];
+            longitude = maplisting[2];
+            latLng = new google.maps.LatLng(latitude, longitude);
             marker = new google.maps.Marker({
                 cursor: 'pointer',
                 position: latLng,
-                raiseOnDrag: false,
-                title: listing.title
+                raiseOnDrag: false
             });
-            google.maps.event.addListener(marker, 'click', genInfoDisplay(listing, marker, infowindow));
+            google.maps.event.addListener(marker, 'click', genInfoDisplay(listingid, marker, infowindow));
             markers.push(marker);
         }
         markerCluster = new MarkerClusterer(map, markers, { maxZoom: 15 });

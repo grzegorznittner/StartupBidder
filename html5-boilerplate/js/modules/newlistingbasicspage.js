@@ -9,33 +9,31 @@ pl.implement(NewListingBasicsClass, {
         var self = this,
             completeFunc = function(json) {
                 var listing = json && json.listing ? json.listing : {},
+                    categories = json && json.categories ? json.categories : {},
                     header = new HeaderClass();
                 header.setLogin(json);
                 self.base.store(listing);
+                self.storeCategories(categories);
                 self.display();
             },
         ajax = new AjaxClass('/listings/create', 'newlistingmsg', completeFunc);
         ajax.setPost();
         ajax.call();
     },
-    loadCategories: function() {
+    storeCategories: function(categories) {
+        this.categories = categories;
+    },
+    displayCategories: function() {
         var self = this,
-            categoryCompleteFunc = function(json) {
-                var makeOptions = function(json) {
-                        var options = [],
-                            cat,
-                            catid;
-                        for (catid in json) {
-                            cat = json[catid];
-                            options.push(cat);
-                        }
-                        return options.sort();
-                    },
-                    options = makeOptions(json);
-                self.base.fieldMap['category'].setOptions(options);
-            },
-            ajax = new AjaxClass('/listing/categories', 'newlistingmsg', categoryCompleteFunc);
-        ajax.call();
+            options = [],
+            cat,
+            catid;
+        for (catid in self.categories) {
+            cat = self.categories[catid];
+            options.push(cat);
+        }
+        options.sort();
+        self.base.fieldMap['category'].setOptions(options);
     },
     display: function() {
         if (this.base.listing.status !== 'new') {
@@ -88,7 +86,7 @@ pl.implement(NewListingBasicsClass, {
             this.base.fields.push(field);
             this.base.fieldMap[id] = field;
         } 
-        this.loadCategories();
+        this.displayCategories();
         this.addMap(this.genPlaceUpdater());
         this.bindAddressEnterSubmit();
         this.base.bindNavButtons();

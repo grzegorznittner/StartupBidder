@@ -141,6 +141,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .searchbutton:hover { cursor: pointer; }
 
 /* infowindow */
+.infowindowwrapper { min-height: 288px; }
 .infowindow { color: #333333; font-weight: bold; font-size: 12px; line-height: 16px; }
 .infotitle { font-size: 20px; line-height: 20px; }
 .infomantra { color: #4083a9; }
@@ -313,7 +314,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .sideboxcol2 { width: 142px; float: left; }
 .sideboxlist { list-style: none; list-style-position: inside; margin: 0; padding: 0; font-weight: bold; }
 .sideboxlist li { margin-left: 10px; text-indent: -10px; }
-.sideboxlist li:hover { opacity: 0.7 }
+/* .sideboxlist li:hover { opacity: 0.7 } */
 .sideboxbutton { width: 310px; height: 50px; font-size: 34px; font-weight: bold; text-align: center; }
 .sideboxbuttonsmall { width: 150px; height: 30px; font-size: 20px; }
 .sideboxbuttoninterior { width: 292px; height: 50px; font-size: 34px; font-weight: bold; text-align: center; margin: 0 5px 5px 5px; }

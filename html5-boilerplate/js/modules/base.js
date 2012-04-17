@@ -217,8 +217,7 @@ pl.implement(HTMLMarkup, {
 });
 
 function AjaxClass(url, statusId, completeFunc, successFunc, loadFunc, errorFunc) {
-    var self;
-    self = this;
+    var self = this;
     this.url = url;
     this.statusId = statusId;
     this.statusSel = '#' + statusId;
