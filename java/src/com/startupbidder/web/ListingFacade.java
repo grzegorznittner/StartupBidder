@@ -69,6 +69,7 @@ import com.startupbidder.vo.ListPropertiesVO;
 import com.startupbidder.vo.ListingAndUserVO;
 import com.startupbidder.vo.ListingDocumentVO;
 import com.startupbidder.vo.ListingListVO;
+import com.startupbidder.vo.ListingLocationsVO;
 import com.startupbidder.vo.ListingPropertyVO;
 import com.startupbidder.vo.ListingVO;
 import com.startupbidder.vo.UserBasicVO;
@@ -132,6 +133,7 @@ public class ListingFacade {
 			// at that stage listing is not yet active so there is no point of updating statistics
 			applyListingData(loggedInUser, newListing);			
 			result.setListing(newListing);
+			result.setCategories(getCategories());
 		}
 		return result;
 	}
@@ -794,6 +796,8 @@ public class ListingFacade {
 		ListingListVO list = new ListingListVO();
 		list.setListings(listings);		
 		list.setListingsProperties(listingProperties);
+		list.setCategories(getCategories());
+		list.setTopLocations(getTopLocations());
 	
 		return list;
 	}
@@ -811,6 +815,8 @@ public class ListingFacade {
 		ListingListVO list = new ListingListVO();
 		list.setListings(listings);		
 		list.setListingsProperties(listingProperties);
+		list.setCategories(getCategories());
+		list.setTopLocations(getTopLocations());
 		
 		return list;
 	}
@@ -830,6 +836,8 @@ public class ListingFacade {
 		ListingListVO list = new ListingListVO();
 		list.setListings(listings);		
 		list.setListingsProperties(listingProperties);
+		list.setCategories(getCategories());
+		list.setTopLocations(getTopLocations());
 	
 		return list;
 	}
@@ -871,6 +879,8 @@ public class ListingFacade {
 		ListingListVO list = new ListingListVO();
 		list.setListings(listings);
 		list.setListingsProperties(listingProperties);
+		list.setCategories(getCategories());
+		list.setTopLocations(getTopLocations());
 	
 		return list;
 	}
@@ -891,6 +901,8 @@ public class ListingFacade {
 		ListingListVO list = new ListingListVO();
 		list.setListings(listings);
 		list.setListingsProperties(listingProperties);
+		list.setCategories(getCategories());
+		list.setTopLocations(getTopLocations());
 	
 		return list;
 	}
@@ -918,6 +930,8 @@ public class ListingFacade {
 		ListingListVO list = new ListingListVO();
 		list.setListings(listings);
 		list.setListingsProperties(listingProperties);
+		list.setCategories(getCategories());
+		list.setTopLocations(getTopLocations());
 		list.setUser(new UserBasicVO(UserMgmtFacade.instance().getUser(loggedInUser, userId).getUser()));
 	
 		return list;
@@ -938,6 +952,8 @@ public class ListingFacade {
 		}
 		list.setListings(listings);		
 		list.setListingsProperties(listingProperties);
+		list.setCategories(getCategories());
+		list.setTopLocations(getTopLocations());
 	
 		return list;
 	}
@@ -955,6 +971,8 @@ public class ListingFacade {
 		ListingListVO list = new ListingListVO();
 		list.setListings(listings);		
 		list.setListingsProperties(listingProperties);
+		list.setCategories(getCategories());
+		list.setTopLocations(getTopLocations());
 	
 		return list;
 	}
@@ -977,6 +995,8 @@ public class ListingFacade {
 		}
 		list.setListings(listings);		
 		list.setListingsProperties(listingProperties);
+		list.setCategories(getCategories());
+		list.setTopLocations(getTopLocations());
 	
 		return list;
 	}
@@ -1031,6 +1051,8 @@ public class ListingFacade {
 		listingsList.setListings(listings);
 		listingProperties.setNumberOfResults(listings.size());
 		listingsList.setListingsProperties(listingProperties);
+		listingsList.setCategories(getCategories());
+		listingsList.setTopLocations(getTopLocations());
 		return listingsList;
 	}
 
@@ -1435,19 +1457,28 @@ public class ListingFacade {
 		return result;
 	}
 
-	public List<Object[]> getAllListingLocations() {
+	public ListingLocationsVO getAllListingLocations() {
 		MemcacheService mem = MemcacheServiceFactory.getMemcacheService();
-		List<Object[]> result = (List<Object[]>)mem.get(MEMCACHE_ALL_LISTING_LOCATIONS);
-		if (result == null) {
+		List<Object[]> data = (List<Object[]>)mem.get(MEMCACHE_ALL_LISTING_LOCATIONS);
+		if (data == null) {
 			List<ListingLocation> locations = getDAO().getAllListingLocations();
 			
-			result = new ArrayList<Object[]>();
+			data = new ArrayList<Object[]>();
 			for (ListingLocation loc : locations) {
-				result.add(new Object[] {loc.getWebKey(), loc.latitude, loc.longitude});
+				data.add(new Object[] {loc.getWebKey(), loc.latitude, loc.longitude});
 			}
 			// all listing locations cache is also modified in method ObjectifyDatastoreDAO.updateListingStateAndDates
-			mem.put(MEMCACHE_ALL_LISTING_LOCATIONS, result);
+			mem.put(MEMCACHE_ALL_LISTING_LOCATIONS, data);
 		}
+		ListingLocationsVO result = new ListingLocationsVO();
+		result.setListings(data);
+
+		ListPropertiesVO props = new ListPropertiesVO();
+		props.setMaxResults(data.size());
+		props.setNumberOfResults(data.size());
+		props.setTotalResults(data.size());
+		result.setListingsProperties(props);
+		
 		return result;
 	}
 
