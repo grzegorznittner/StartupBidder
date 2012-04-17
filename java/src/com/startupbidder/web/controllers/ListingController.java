@@ -1,6 +1,8 @@
 package com.startupbidder.web.controllers;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -348,8 +350,13 @@ public class ListingController extends ModelDrivenController {
     // GET /listings/keyword
     private HttpHeaders keyword(HttpServletRequest request) {
 		ListPropertiesVO listingProperties = getListProperties(request);
-    	String text = getCommandOrParameter(request, 2, "text");
-    	model = ListingFacade.instance().listingKeywordSearch(getLoggedInUser(), text, listingProperties);
+    	String text;
+		try {
+			text = URLDecoder.decode(getCommandOrParameter(request, 2, "text"), "UTF-8");
+	    	model = ListingFacade.instance().listingKeywordSearch(getLoggedInUser(), text, listingProperties);
+		} catch (UnsupportedEncodingException e) {
+			log.log(Level.SEVERE, "Parameter decoding error", e);
+		}
         return new HttpHeadersImpl("keyword").disableCaching();
     }
 
