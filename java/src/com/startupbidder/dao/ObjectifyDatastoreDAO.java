@@ -386,7 +386,7 @@ public class ObjectifyDatastoreDAO {
 				getOfy().put(owner);
 			}
 			
-			updateListingLocations(listing, oldState);
+			updateListingLocationsAndCategories(listing, oldState);
 			log.info("Updated listing: " + listing);
 			return listing;
 		} catch (Exception e) {
@@ -396,7 +396,7 @@ public class ObjectifyDatastoreDAO {
 		}
 	}
 
-	private void updateListingLocations(Listing listing, Listing.State oldState) {
+	private void updateListingLocationsAndCategories(Listing listing, Listing.State oldState) {
 		MemcacheService mem = MemcacheServiceFactory.getMemcacheService();
 		// all listing locations cache is also modified in method ListingFacade.getAllListingLocations
 
@@ -409,6 +409,13 @@ public class ObjectifyDatastoreDAO {
 			if (result != null) {
 				result.add(new Object[]{loc.getWebKey(), loc.latitude, loc.longitude});
 			}
+			// updating category
+			for (Category cat : getCategories()) {
+				if (cat.name.equals(listing.category)) {
+					cat.count++;
+					getOfy().put(cat);
+				}
+			}
 		}
 		if (listing.state == Listing.State.CLOSED || listing.state == Listing.State.WITHDRAWN) {
 			getOfy().delete(new ListingLocation(listing));
@@ -419,6 +426,13 @@ public class ObjectifyDatastoreDAO {
 				if (listing.getWebKey().equals(array[0])) {
 					result.remove(i);
 					break;
+				}
+			}
+			// updating category
+			for (Category cat : getCategories()) {
+				if (cat.name.equals(listing.category)) {
+					cat.count--;
+					getOfy().put(cat);
 				}
 			}
 		}
@@ -1226,6 +1240,10 @@ public class ObjectifyDatastoreDAO {
 		QueryResultIterable<Key<Location>> locIt = getOfy().query(Location.class).fetchKeys();
 		getOfy().delete(locIt);
 		getOfy().put(topLocations);
+	}
+	
+	public void storeCategories(List<Category> categories) {
+		getOfy().put(categories);
 	}
 	
 	public List<Location> getTopLocations() {

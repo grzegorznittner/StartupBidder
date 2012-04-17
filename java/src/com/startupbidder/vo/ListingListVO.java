@@ -17,7 +17,7 @@ public class ListingListVO extends BaseResultVO {
 	@JsonProperty("listings") private List<ListingVO> listings;
 	@JsonProperty("listings_props")	private ListPropertiesVO listingsProperties;
 	@JsonProperty("profile") private UserBasicVO user;
-	@JsonProperty("categories") private Map<String, String> categories;
+	@JsonProperty("categories") private Map<String, Integer> categories;
 	@JsonProperty("top_locations") private Map<String, Integer> topLocations;
 
 	public List<ListingVO> getListings() {
@@ -38,10 +38,10 @@ public class ListingListVO extends BaseResultVO {
 	public UserBasicVO getUser() {
 		return user;
 	}
-	public Map<String, String> getCategories() {
+	public Map<String, Integer> getCategories() {
 		return categories;
 	}
-	public void setCategories(Map<String, String> categories) {
+	public void setCategories(Map<String, Integer> categories) {
 		this.categories = categories;
 	}
 	public Map<String, Integer> getTopLocations() {

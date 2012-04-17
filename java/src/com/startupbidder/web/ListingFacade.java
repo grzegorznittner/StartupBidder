@@ -794,9 +794,9 @@ public class ListingFacade {
 			listing.setOrderNumber(index++);
 		}
 		ListingListVO list = new ListingListVO();
-		list.setListings(listings);		
+		list.setListings(listings);
 		list.setListingsProperties(listingProperties);
-		list.setCategories(getCategories());
+		list.setCategories(getTopCategories());
 		list.setTopLocations(getTopLocations());
 	
 		return list;
@@ -815,7 +815,7 @@ public class ListingFacade {
 		ListingListVO list = new ListingListVO();
 		list.setListings(listings);		
 		list.setListingsProperties(listingProperties);
-		list.setCategories(getCategories());
+		list.setCategories(getTopCategories());
 		list.setTopLocations(getTopLocations());
 		
 		return list;
@@ -836,7 +836,7 @@ public class ListingFacade {
 		ListingListVO list = new ListingListVO();
 		list.setListings(listings);		
 		list.setListingsProperties(listingProperties);
-		list.setCategories(getCategories());
+		list.setCategories(getTopCategories());
 		list.setTopLocations(getTopLocations());
 	
 		return list;
@@ -879,7 +879,7 @@ public class ListingFacade {
 		ListingListVO list = new ListingListVO();
 		list.setListings(listings);
 		list.setListingsProperties(listingProperties);
-		list.setCategories(getCategories());
+		list.setCategories(getTopCategories());
 		list.setTopLocations(getTopLocations());
 	
 		return list;
@@ -901,7 +901,7 @@ public class ListingFacade {
 		ListingListVO list = new ListingListVO();
 		list.setListings(listings);
 		list.setListingsProperties(listingProperties);
-		list.setCategories(getCategories());
+		list.setCategories(getTopCategories());
 		list.setTopLocations(getTopLocations());
 	
 		return list;
@@ -930,7 +930,7 @@ public class ListingFacade {
 		ListingListVO list = new ListingListVO();
 		list.setListings(listings);
 		list.setListingsProperties(listingProperties);
-		list.setCategories(getCategories());
+		list.setCategories(getTopCategories());
 		list.setTopLocations(getTopLocations());
 		list.setUser(new UserBasicVO(UserMgmtFacade.instance().getUser(loggedInUser, userId).getUser()));
 	
@@ -952,7 +952,7 @@ public class ListingFacade {
 		}
 		list.setListings(listings);		
 		list.setListingsProperties(listingProperties);
-		list.setCategories(getCategories());
+		list.setCategories(getTopCategories());
 		list.setTopLocations(getTopLocations());
 	
 		return list;
@@ -971,7 +971,7 @@ public class ListingFacade {
 		ListingListVO list = new ListingListVO();
 		list.setListings(listings);		
 		list.setListingsProperties(listingProperties);
-		list.setCategories(getCategories());
+		list.setCategories(getTopCategories());
 		list.setTopLocations(getTopLocations());
 	
 		return list;
@@ -995,7 +995,7 @@ public class ListingFacade {
 		}
 		list.setListings(listings);		
 		list.setListingsProperties(listingProperties);
-		list.setCategories(getCategories());
+		list.setCategories(getTopCategories());
 		list.setTopLocations(getTopLocations());
 	
 		return list;
@@ -1051,7 +1051,7 @@ public class ListingFacade {
 		listingsList.setListings(listings);
 		listingProperties.setNumberOfResults(listings.size());
 		listingsList.setListingsProperties(listingProperties);
-		listingsList.setCategories(getCategories());
+		listingsList.setCategories(getTopCategories());
 		listingsList.setTopLocations(getTopLocations());
 		return listingsList;
 	}
@@ -1121,11 +1121,17 @@ public class ListingFacade {
 	public List<ListingStats> updateAllListingStatistics() {
 		List<ListingStats> list = new ArrayList<ListingStats>();
 		Map<String, Location> locations = new HashMap<String, Location>();
+		Map<String, Category> categories = new HashMap<String, Category>();
+		for(Category category : getDAO().getCategories()) {
+			category.count = 0;
+			categories.put(category.name, category);
+		}
 	
 		List<Listing> listings = getDAO().getAllListings();
 		for (Listing listing : listings) {
 			ListingStats stats = calculateListingStatistics(listing.id);
 			if (listing.state == Listing.State.ACTIVE) {
+				// updating top locations data
 				Location loc = locations.get(listing.briefAddress);
 				if (loc != null) {
 					loc.value++;
@@ -1133,9 +1139,15 @@ public class ListingFacade {
 					locations.put(listing.briefAddress, new Location(listing.briefAddress));
 				}
 				list.add(stats);
+				// updating top categories data
+				Category cat = categories.get(listing.category);
+				if (cat != null) {
+					cat.count++;
+				}
 			}
 		}
 		getDAO().storeLocations(new ArrayList<Location>(locations.values()));
+		getDAO().storeCategories(new ArrayList<Category>(categories.values()));
 		
 		log.log(Level.INFO, "Updated stats for " + list.size() + " listings: " + list);
 		int updatedDocs = DocService.instance().updateListingData(listings);
@@ -1443,6 +1455,18 @@ public class ListingFacade {
 		Map<String, String> result = new LinkedHashMap<String, String>();
 		for (Category cat : categories) {
 			result.put(cat.name, cat.name);
+		}
+		return result;
+	}
+	
+	public Map<String, Integer> getTopCategories() {
+		List<Category> categories = getDAO().getCategories();
+		
+		Map<String, Integer> result = new LinkedHashMap<String, Integer>();
+		for (Category cat : categories) {
+			if (cat.count > 0) {
+				result.put(cat.name, cat.count);
+			}
 		}
 		return result;
 	}

@@ -16,8 +16,9 @@ import com.googlecode.objectify.annotation.Indexed;
 public class Category {
 	@Id public Long id;
 	public String name;
+	public int count = 0;
 	
-	public Category(){
+	public Category() {
 	}
 	
 	public Category(long id, String name) {
@@ -26,6 +27,6 @@ public class Category {
 	}
 	
 	public String toString() {
-		return "Category(id=" + id + ", name=" + name + ")";
+		return "Category(id=" + id + ", name=" + name + ", count=" + count + ")";
 	}
 }
