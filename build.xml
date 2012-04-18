@@ -106,14 +106,27 @@
   
   <target name="compile-static-files" depends="check-appengine-home, copyjars"
       description="Runs html5-boilerplate for static files">
+  	
+  	<!-- Windows version of build.sh script. Runs m4 for each file separately. -->
+  	<apply executable="m4.exe" dir="html5-boilerplate/m4" osfamily="windows" verbose="true">
+  	  <!-- Collect the page.m4 -->
+  	  <fileset dir="html5-boilerplate/m4" includes="*page.m4"/>
+  	  <redirector>
+  	    <!-- redirect STDOUT to file in html5-boilerplate -->
+  	    <outputmapper id="out" type="glob" from="*page.m4" to="html5-boilerplate/*page.html"/>
+  	  </redirector>
+  	</apply>
+  	<!-- On Unix runs build.sh script. -->
+  	<exec executable="/bin/sh" dir="html5-boilerplate/m4" osfamily="unix">
+  	  <arg value="build.sh"/>
+  	</exec>
+  	
   	<ant dir="html5-boilerplate" antfile="build/build.xml">
-  	  <!-- target name="clean"/ -->
   	  <target name="build"/>
   	</ant>
-    <copy todir="war">
-      <fileset dir="html5-boilerplate/publish">
-      </fileset>
-    </copy>
+  	<copy todir="war">
+  	  <fileset dir="html5-boilerplate/publish"/>
+  	</copy>
   </target>
 
 	<target name="ensure-test-name" unless="test">
