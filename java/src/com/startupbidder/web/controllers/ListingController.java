@@ -15,7 +15,6 @@ import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
@@ -52,6 +51,8 @@ public class ListingController extends ModelDrivenController {
 				} else {
 					return startEditing(request);
 				}
+			} else if("discover".equalsIgnoreCase(getCommand(1))) {
+				return discover(request);
 			} else if("top".equalsIgnoreCase(getCommand(1))) {
 				return top(request);
 			} else if("posted".equalsIgnoreCase(getCommand(1))) {
@@ -360,6 +361,12 @@ public class ListingController extends ModelDrivenController {
         return new HttpHeadersImpl("keyword").disableCaching();
     }
 
+	// GET /listings/discover
+	private HttpHeaders discover(HttpServletRequest request) {
+    	model = ListingFacade.instance().getDiscoverListingList(getLoggedInUser());
+        return new HttpHeadersImpl("discover").disableCaching();
+	}
+
 	// GET /listings/closing
 	private HttpHeaders closing(HttpServletRequest request) {
 		ListPropertiesVO listingProperties = getListProperties(request);
@@ -371,7 +378,7 @@ public class ListingController extends ModelDrivenController {
 	private HttpHeaders latest(HttpServletRequest request) {
 		ListPropertiesVO listingProperties = getListProperties(request);
     	model = ListingFacade.instance().getLatestActiveListings(getLoggedInUser(), listingProperties);
-        return new HttpHeadersImpl("valued").disableCaching();
+        return new HttpHeadersImpl("latest").disableCaching();
 	}
 
 	// GET /listings/discussed

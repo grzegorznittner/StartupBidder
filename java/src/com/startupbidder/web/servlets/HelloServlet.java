@@ -112,6 +112,7 @@ public class HelloServlet extends HttpServlet {
 					+ "<input type=\"submit\" value=\"Check user name\"/></form>");
 			
 			out.println("<p style=\"background: none repeat scroll 0% 0% rgb(187, 187, 187);\">Listings API:</p>");
+			out.println("<a href=\"/listings/discover/.json\">Discover listings</a><br/>");
 			out.println("<a href=\"/listings/get/" + topListing.getWebKey() + "/.json\">Top listing data</a><br/>");
 			out.println("<form method=\"POST\" action=\"/listing/up/" + topListing.getWebKey() + "/.json\"><input type=\"submit\" value=\"Logged in user votes for top listing (works only once per user)\"/></form>");
 			out.println("<form method=\"POST\" action=\"/listing/up/.json\"><input type=\"hidden\" name=\"id\" value=\"" + topListing.getWebKey() + "\"/><input type=\"submit\" value=\"Logged in user votes for top listing (works only once per user), 2nd form\"/></form>");

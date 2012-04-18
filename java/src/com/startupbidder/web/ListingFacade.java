@@ -63,6 +63,7 @@ import com.startupbidder.datamodel.Notification;
 import com.startupbidder.datamodel.SBUser;
 import com.startupbidder.datamodel.VoToModelConverter;
 import com.startupbidder.vo.BaseVO;
+import com.startupbidder.vo.DiscoverListingsVO;
 import com.startupbidder.vo.DtoToVoConverter;
 import com.startupbidder.vo.ErrorCodes;
 import com.startupbidder.vo.ListPropertiesVO;
@@ -784,6 +785,58 @@ public class ListingFacade {
 			result.setErrorMessage("Deletion not successful, user probaly doesn't have new listing or it's already active.");
 		}
 		return result;
+	}
+	
+	public DiscoverListingsVO getDiscoverListingList(UserVO loggedInUser) {
+		DiscoverListingsVO result = new DiscoverListingsVO();
+		
+		ListPropertiesVO props = new ListPropertiesVO();
+		props.setMaxResults(4);
+		List<ListingVO> list = prepareListingList(loggedInUser, getDAO().getTopListings(props), 4);
+		result.setTopListings(list);
+
+		props = new ListPropertiesVO();
+		props.setMaxResults(4);
+		list = prepareListingList(loggedInUser, getDAO().getClosingListings(props), 4);
+		result.setClosingListings(list);
+
+		props = new ListPropertiesVO();
+		props.setMaxResults(4);
+		list = prepareListingList(loggedInUser, getDAO().getLatestListings(props), 4);
+		result.setLatestListings(list);
+		
+		if (loggedInUser != null) {
+			props = new ListPropertiesVO();
+			props.setMaxResults(4);
+			list = prepareListingList(loggedInUser, getDAO().getUserActiveListings(loggedInUser.toKeyId(), props), 4);
+			result.setUsersListings(list);
+			
+			if (loggedInUser.getEditedListing() != null) {
+				Listing editedListing = getDAO().getListing(BaseVO.toKeyId(loggedInUser.getEditedListing()));
+				result.setEditedListing(DtoToVoConverter.convert(editedListing));
+			}
+		}
+		
+		result.setCategories(getTopCategories());
+		result.setTopLocations(getTopLocations());
+
+		return result;
+	}
+
+	private List<ListingVO> prepareListingList(UserVO loggedInUser, List<Listing> listings, int maxResults) {
+		ListingVO listingVO;
+		int index = 1;
+		List<ListingVO> list = new ArrayList<ListingVO>();
+		for (Listing listing : listings) {
+			listingVO = DtoToVoConverter.convert(listing);
+			applyListingData(loggedInUser, listingVO);
+			listingVO.setOrderNumber(index++);
+			list.add(listingVO);
+			if (index > maxResults) {
+				break;
+			}
+		}
+		return list;
 	}
 
 	public ListingListVO getClosingActiveListings(UserVO loggedInUser, ListPropertiesVO listingProperties) {
