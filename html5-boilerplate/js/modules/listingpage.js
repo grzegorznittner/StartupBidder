@@ -19,12 +19,8 @@ pl.implement(ListingPageClass,{
         listing.load();
     },
     loadRegular: function() {
-        var listing = new ListingClass(this.id),
-            comments = new CommentsClass(this.id);
-            companies = new RelatedCompaniesClass(this.id);
+        var listing = new ListingClass(this.id);
         listing.load();
-        comments.load();
-        companies.load();
     }
 });
 

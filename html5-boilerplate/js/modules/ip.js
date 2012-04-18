@@ -61,12 +61,30 @@ pl.implement(IPClass, {
             newpage = self.page <= 1 ? 1 : self.page - 1;
         self.setPage(newpage);
     },
+    pageFirst: function() {
+        var self = this;
+        self.setPage(1);
+    },
     setPage: function(newpage) {
         var self = this,
             left = (self.pagewidth * (1 - newpage)) + 'px';
         self.page = newpage;
         pl('#ipslideset').css({left: left})
         pl('#ippage').text(newpage);
+        if (newpage > 1) {
+            pl('#ipleft').show();
+            pl('#ipfirst').show();
+        }
+        else {
+            pl('#ipleft').hide();
+            pl('#ipfirst').hide();
+        }
+        if (newpage < self.pagetotal) {
+            pl('#ipright').show();
+        }
+        else {
+            pl('#ipright').hide();
+        }
     },
     bindButtons: function() {
         var self = this;
@@ -82,6 +100,12 @@ pl.implement(IPClass, {
         pl('#ipright').bind({
             click: function() {
                 self.pageRight();
+                return false;
+            }
+        });
+        pl('#ipfirst').bind({
+            click: function() {
+                self.pageFirst();
                 return false;
             }
         });

@@ -51,6 +51,7 @@ pl.implement(ListingClass, {
         this.displayApprove();
         this.displaySendback();
         this.displayFreeze();
+        this.displayTabs();
     },
     displayBasics: function() {
         var logobg = this.logo ? 'url(' + this.logo + ') no-repeat scroll left top' : null;
@@ -333,6 +334,53 @@ pl.implement(ListingClass, {
             click: function() {
                 pl('#freezemsg, #freezecancelbtn').hide();
                 return false;
+            }
+        });
+    },
+    hideSelectedTabs: function() {
+        if (pl('#basicstab').hasClass('companynavselected')) {
+            pl('#basicstab').removeClass('companynavselected');
+            pl('#basicswrapper').hide();
+        }
+        if (pl('#bidstab').hasClass('companynavselected')) {
+            pl('#bidstab').removeClass('companynavselected');
+            pl('#bidswrapper').hide();
+        }
+        if (pl('#commentstab').hasClass('companynavselected')) {
+            pl('#commentstab').removeClass('companynavselected');
+            pl('#commentswrapper').hide();
+        }
+    },
+    displayTab: function(tab) {
+        var self = this,
+            tabid = tab + 'tab',
+            tabsel = '#' + tabid,
+            wrapperid = tab + 'wrapper',
+            wrappersel = '#' + wrapperid;
+        if (!pl(tabsel).hasClass('companynavselected')) {
+            self.hideSelectedTabs();
+            pl(tabsel).addClass('companynavselected');
+            pl(wrappersel).show();
+        }
+    },
+    displayTabs: function() {
+        var self = this;
+        pl('#basicstab').bind({
+            click: function() {
+                self.displayTab('basics');
+            }
+        });
+        pl('#commentstab').bind({
+            click: function() {
+                self.displayTab('comments');
+                comments = new CommentsClass(self.id);
+                comments.load();
+            }
+        });
+        pl('#bidstab').bind({
+            click: function() {
+                self.displayTab('bids');
+                pl('#bidsmsg').text('No bids');
             }
         });
     }

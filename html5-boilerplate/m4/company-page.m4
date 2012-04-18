@@ -26,19 +26,13 @@ include(header.m4)
             </div>
             <div class="companybannermantra" id="mantra"></div>
             <div class="companynavcontainer">
-                <div class="companynav companynavselected">
-                    BASICS
+                <div class="companynav companynavselected" id="basicstab">
+                    LISTING
                 </div>
-                <div class="companynav">
-                    BMC
-                </div>
-                <div class="companynav">
-                    Q&amp;A
-                </div>
-                <div class="companynav">
+                <div class="companynav" id="bidstab">
                     BIDS
                 </div>
-                <div class="companynav">
+                <div class="companynav" id="commentstab">
                     COMMENTS
                 </div>
             </div>
@@ -49,6 +43,7 @@ include(header.m4)
 <div class="container">
 
 <!-- left column -->
+<div class="basicswrapper" id="basicswrapper">
 <div class="span-16">
     <div class="boxtitle">SUMMARY</div>
     <div class="boxpanel summarypanel">
@@ -475,49 +470,60 @@ include(header.m4)
         <div class="ipnav">
             <div class="iparrow ipleft" id="ipleft"></div>
             <div class="iparrow ipright" id="ipright"></div>
+            <div class="iparrow ipfirst" id="ipfirst"></div>
             <div class="ipfooter ipdata"><span class="ipcorp" id="ipcorp"></span><span class="ipdate" id="ipdate"></span></div>
             <div class="ipfooter ippage"><span id="ippage"></span> of <span id="ippagetotal"></span></div>
         </div>
     </div>
 </div>
 <!-- end presentation -->
+</div>
 
 <!-- begin second row left column -->
-<div class="span-16">
-    <div class="boxtitle addmessagetitle" id="addmessagetitle">PRIVATE MESSAGE TO THE OWNER</div>
-    <div class="boxpanel messagepanel addmessagebox" id="addmessagebox">
-        <p>
-            <textarea class="textarea messagetextarea" id="addmessagetext" name="addmessagetext" cols="20" rows="5">Put your private message here...</textarea>
-            <span class="span-12 inputmsg successful" id="addmessagemsg">&nbsp;</span>
-            <span class="span-3 inputbutton" id="addmessagebtn">SEND</span>
-        </p>
+    <div class="span-16 sendmsgwrapper" id="sendmsgwrapper">
+        <div class="boxtitle addmessagetitle" id="addmessagetitle">PRIVATE MESSAGE TO THE OWNER</div>
+        <div class="boxpanel messagepanel addmessagebox" id="addmessagebox">
+            <p>
+                <textarea class="textarea messagetextarea" id="addmessagetext" name="addmessagetext" cols="20" rows="5">Put your private message here...</textarea>
+                <span class="span-12 inputmsg successful" id="addmessagemsg">&nbsp;</span>
+                <span class="span-3 inputbutton" id="addmessagebtn">SEND</span>
+            </p>
+        </div>
     </div>
 
-    <div class="boxtitle addcommenttitle" id="addcommenttitle">ADD COMMENT</div>
-    <div class="boxpanel commentpanel addcommentbox" id="addcommentbox">
-        <p>
-            <textarea class="textarea messagetextarea" id="addcommenttext" name="addcommenttext" cols="20" rows="5">Put your comment here...</textarea>
-            <span class="span-12 inputmsg successful" id="addcommentmsg">&nbsp;</span>
-            <span class="span-3 inputbutton addcommentbtn" id="addcommentbtn">POST</span>
-        </p>
+    <div class="span-16 commentswrapper" id="commentswrapper">
+        <div class="boxtitle addcommenttitle" id="addcommenttitle">ADD COMMENT</div>
+        <div class="boxpanel commentpanel addcommentbox" id="addcommentbox">
+            <p>
+                <textarea class="textarea messagetextarea" id="addcommenttext" name="addcommenttext" cols="20" rows="5">Put your comment here...</textarea>
+                <span class="span-12 inputmsg successful" id="addcommentmsg">&nbsp;</span>
+                <span class="span-3 inputbutton addcommentbtn" id="addcommentbtn">POST</span>
+            </p>
+        </div>
+        <div class="boxtitle">COMMENTS</div>
+        <div class="boxpanel commentpanel">
+            <div id="commentsmsg"></div>
+            <dl id="commentlist"></dl>
+    	</div>
     </div>
 
-    <div class="boxtitle">COMMENTS</div>
-    <div class="boxpanel commentpanel">
-        <div id="commentsmsg"></div>
-        <dl id="commentlist"></dl>
-	</div>
+    <div class="span-16 bidswrapper" id="bidswrapper">
+        <div class="boxtitle addcommenttitle" id="makebidtitle">MAKE BID</div>
+        <div class="boxpanel commentpanel addcommentbox" id="makebidbox">
+            <p>
+                <textarea class="textarea messagetextarea" id="makebidtext" name="makebidtext" cols="20" rows="5">Make your bid here...</textarea>
+                <span class="span-12 inputmsg successful" id="makebidmsg">&nbsp;</span>
+                <span class="span-3 inputbutton addcommentbtn" id="makebidbtn">POST</span>
+            </p>
+        </div>
+        <div class="boxtitle">BIDS</div>
+        <div class="boxpanel commentpanel">
+            <div id="bidsmsg"></div>
+            <dl id="bidslist"></dl>
+    	</div>
+    </div>
 
-</div>
 <!-- end second row left column -->
-
-<!-- begin second row right column -->
-<div class="span-8 last">
-    <!-- RELATED COMPANIES -->
-    <div class="boxtitle" id="listingstitle"></div>
-    <div id="companydiv"></div>
-</div> 
-<!-- end second row right column -->
 
 </div> <!-- end container -->
 </div> <!-- end main -->

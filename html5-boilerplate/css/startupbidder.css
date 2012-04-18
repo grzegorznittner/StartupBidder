@@ -98,20 +98,20 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .gplusbanner { height: 20px; top: 57px; position: absolute; }
 
 /* company banner styles */
-.companyheader { width: 100%; height: 150px; background:#efffff; border-bottom: 2px solid grey; }
+.companyheader { width: 100%; height: 150px; background:white; border-bottom: 2px solid grey; }
 .companybanner { height: 150px; position: relative; }
 .companybannertitle { font-size: 30px; font-weight: bold; }
 .companybannertext { font-size: 14px; font-weight: bold; }
 .companybannertextlink { font-size: 14px; font-weight: bold; font-style:italic; margin-left: 4px; }
 .companybannertextgrey { font-size: 14px; font-weight: bold; color: grey; }
 .companybannerlogo { margin-top: 2px; width: 146px; height: 146px; margin-right: 10px; float: left; }
-.companybannermantra { position: absolute; font-size: 14px; font-weight: bold; font-style: italic; width: 380px; bottom:3px; left:154px; }
+.companybannermantra { position: absolute; font-size: 14px; font-weight: bold; width: 380px; bottom:3px; left:154px; color: grey; }
 .companynavcontainer { position: absolute; bottom:0; left:544px; height: 21px; }
 .companynav {
     float: left; padding: 0px 10px; margin-right: 10px; text-align: center; height: 19px;
     font-size: 14px; font-weight: bold; color: grey;
     border-radius: 5px 5px 0 0;
-    border: 2px solid #efffff;
+    border: 2px solid white;
     border-bottom: 0;
 }
 .companynavselected {
@@ -326,6 +326,9 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .boxstepcomplete { background-color: #999999; }
 .boxsteperror { background-color: red; }
 .boxsteperror div { color: white; }
+.sendmsgwrapper { display: none; }
+.commentswrapper { display: none; }
+.bidswrapper { display: none; }
 .commentpanel dl dt { font-size: 12px; height: 32px; padding: 0 0 0 10px; }
 .commentdttitle { position: relative; height: 32px; }
 .commentdttitleline { padding-top: 7px; }
@@ -574,8 +577,9 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 }
 .iparrow { position: absolute; width: 64px; height: 64px; }
 .iparrow:hover { opacity: 0.8; }
-.ipleft { top: 288px; left: 15px; background-image: url(../img/icons/ip_leftarrow_64.png); }
+.ipleft { top: 288px; left: 15px; background-image: url(../img/icons/ip_leftarrow_64.png); display: none; }
 .ipright { top: 288px; right: 15px; background-image: url(../img/icons/ip_rightarrow_64.png); }
+.ipfirst { top: 528px; left: 15px; background-image: url(../img/icons/ip_returnarrow_64.png); display: none; }
 .ipfooter { position: absolute; font-size: 14px; height: 30px; bottom: 0px; }
 .ipdata { left: 15px; }
 .ipcorp { margin-right: 20px; }
