@@ -59,8 +59,6 @@ public class ListingController extends ModelDrivenController {
 				return top(request);
 			} else if("posted".equalsIgnoreCase(getCommand(1))) {
 				return posted(request);
-			} else if("active".equalsIgnoreCase(getCommand(1))) {
-				return active(request);
 			} else if("frozen".equalsIgnoreCase(getCommand(1))) {
 				return frozen(request);
 			} else if("valuation".equalsIgnoreCase(getCommand(1))) {
@@ -83,6 +81,8 @@ public class ListingController extends ModelDrivenController {
 				return getAllDocuments(request);
 			} else if("categories".equalsIgnoreCase(getCommand(1))) {
 				return getCategories(request);
+			} else if("used_categories".equalsIgnoreCase(getCommand(1))) {
+				return getUsedCategories(request);
 			} else if("locations".equalsIgnoreCase(getCommand(1))) {
 				return getLocations(request);
 			} else if("all-listing-locations".equalsIgnoreCase(getCommand(1))) {
@@ -411,13 +411,6 @@ public class ListingController extends ModelDrivenController {
         return new HttpHeadersImpl("top").disableCaching();
     }
 
-    // GET /listings/active
-    private HttpHeaders active(HttpServletRequest request) {
-		ListPropertiesVO listingProperties = getListProperties(request);
-    	model = ListingFacade.instance().getLatestActiveListings(getLoggedInUser(), listingProperties);
-        return new HttpHeadersImpl("active").disableCaching();
-    }
-
     // GET /listings/frozen
     private HttpHeaders frozen(HttpServletRequest request) {
 		ListPropertiesVO listingProperties = getListProperties(request);
@@ -512,9 +505,14 @@ public class ListingController extends ModelDrivenController {
 
     // GET /listings/categories
     private HttpHeaders getCategories(HttpServletRequest request) {
-    	//String listingId = getCommandOrParameter(request, 1, "get-all-documents");
     	model = ListingFacade.instance().getCategories();
         return new HttpHeadersImpl("categories").disableCaching();
+    }
+
+    // GET /listings/used_categories
+    private HttpHeaders getUsedCategories(HttpServletRequest request) {
+    	model = ListingFacade.instance().getTopCategories();
+        return new HttpHeadersImpl("used_categories").disableCaching();
     }
 
     // GET /listings/locations
