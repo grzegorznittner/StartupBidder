@@ -4,7 +4,7 @@
 '
 include(mainhead.m4)
 `
-<body class="main-page">
+<body class="discover-page">
 <div id="fb-root"></div> <!-- for fb like button -->
 <div id="wrap">
 <div id="main">
@@ -18,13 +18,24 @@ include(searchbox.m4)
 `
 <!-- left column -->
 <div class="span-16">
-    <div class="boxtitle smokegrey" id="listingstitle"></div>
-
-    <!-- companydiv -->
-    <div id="companydiv">
-        loading...
+    <div id="edited_listing_wrapper" class="initialhidden">
+        <div class="boxtitle smokegrey">YOUR IN-PROGRESS LISTING</div>
+        <div id="edited_listing"></div>
     </div>
-    <!-- end companydiv -->
+
+    <div id="users_listings_wrapper" class="initialhidden">
+        <div class="boxtitle smokegrey">YOUR ACTIVE LISTINGS</div>
+        <div id="users_listings"></div>
+    </div>
+
+    <div class="boxtitle smokegrey">TOP LISTINGS</div>
+    <div id="top_listings"></div>
+
+    <div class="boxtitle smokegrey">CLOSING SOON</div>
+    <div id="closing_listings"></div>
+
+    <div class="boxtitle smokegrey">JUST LISTED</div>
+    <div id="latest_listings"></div>
 
 </div>
 <!-- end left column -->
@@ -41,7 +52,7 @@ include(footer.m4)
   <script src="js/libs/prevel.min.js"></script>
   <script src="js/modules/base.js"></script>
   <script src="js/modules/companylist.js"></script>
-  <script src="js/modules/mainpage.js"></script>
+  <script src="js/modules/discoverpage.js"></script>
   <script src="js/modules/tracker.js"></script>
   <script src="js/modules/socialplugins.js"></script>
 '

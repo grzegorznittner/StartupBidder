@@ -295,6 +295,7 @@ pl.implement(HeaderClass, {
                 <a href="main-page.html?type=posted"><span class="headerlink">Posted</span></a><span class="headertext">&nbsp;&nbsp;|&nbsp;&nbsp;</span>\
                 <a href="main-page.html?type=frozen"><span class="headerlink">Frozen</span></a><span class="headertext">&nbsp;&nbsp;|&nbsp;&nbsp;</span>\
             ');
+            pl('#aboutlink').after('&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;<a href="/setup"><span class="footerlink">Setup</span></a>');
         }
         pl('#loginlink').attr('href', 'profile-page.html');
         pl('#logintext').html(username);

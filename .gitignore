@@ -16,6 +16,7 @@ war/.settings
 war/css
 war/js
 war/img
+war/m4
 war/test-docs
 war/*.png
 war/*.html

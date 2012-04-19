@@ -1,5 +1,5 @@
 application: startupbidder
-version: 201204041038
+version: 201204192347
 runtime: java
 
 static_files:
@@ -22,4 +22,4 @@ handlers:
     servlet: com.startupbidder.web.FrontController
 
 welcome_files:
-  - main-page.html
+  - discover-page.html

@@ -90,15 +90,18 @@ pl.implement(CompanyTileClass, {
     }
 });
 
-function CompanyListClass() {}
+function CompanyListClass(options) {
+    this.options = options || {};
+}
 pl.implement(CompanyListClass, {
     storeList: function(json, _colsPerRow, _companydiv, _companykey) {
         var i, company, tile, last, reali,
             colsPerRow = _colsPerRow || 4,
-            companydiv = _companydiv || 'companydiv',
-            companykey = _companykey || 'listings',
+            companydiv = _companydiv || this.options.listingsdiv || 'companydiv',
+            companykey = _companykey || this.options.propertykey || 'listings',
             companysel = '#' + companydiv,
-            companies = json && json[companykey] && json[companykey].length > 0 ? json[companykey] : null,
+            companies = this.options.propertyissingle ? (json && json[companykey] ? [ json[companykey] ] : null ) : (json && json[companykey] && json[companykey].length > 0 ? json[companykey] : null),
+            showmore = this.options.showmore && companies && (companies.length >= colsPerRow),
             profile = json && json.loggedin_profile ? json.loggedin_profile : null,
             postnowlink = profile ? 'new-listing-basics-page.html' : 'login-page.html',
             html = "";
@@ -114,6 +117,9 @@ pl.implement(CompanyListClass, {
             reali = companies.length - (i+1);
             last = (reali+1)%colsPerRow === 0 ? 'last' : '';
             html += tile.makeHtml(last);
+        }
+        if (showmore) {
+            html += '<div class="showmore"><a href="' + this.options.showmore + '">More...</a></div>\n';
         }
         pl(companysel).html(html);
     }
@@ -233,4 +239,91 @@ pl.implement(TestCompaniesClass, {
         return notifications;
     }
 });
+
+function ListClass(options) {
+    this.options = options || {};
+}
+pl.implement(ListClass, {
+    ucFirst: function(str) {
+        return str.length > 1 ? str.substr(0,1).toUpperCase() + str.substr(1) : str.toUpperCase();
+    },
+    spreadOverOneCol: function(list, divcol1) {
+        var htmlCol1 = '',
+            i,
+            item,
+            itemurl;
+        for (i = 0; i < list.length; i++) {
+            item = list[i];
+            itemurl = '/main-page.html?type=' + this.options.type + '&amp;val=' + encodeURIComponent(item);
+            htmlCol1 += '<a href="' + itemurl + '"><li>'+item+'</li></a>';
+        }
+        pl(divcol1).html(htmlCol1);
+    },
+    spreadOverTwoCols: function(list, divcol1, divcol2) {
+        var mid = Math.floor((list.length + 1) / 2);
+        this.spreadOverOneCol(list.slice(0, mid), divcol1);
+        if (list.length > 1) {
+            this.spreadOverOneCol(list.slice(mid, list.length), divcol2);
+        }
+    }
+});
+
+function BaseListClass(kvlist, id, over, type) {
+    this.kvlist = kvlist;
+    this.msgid = id + 'msg';
+    this.col1id = id + 'divcol1';
+    this.col2id = id + 'divcol2';
+    this.over = over ? over : 1;
+    this.type = type;
+}
+pl.implement(BaseListClass, {
+    display: function() {
+        var self = this,
+            list = [], 
+            lc = new ListClass({type: self.type}),
+            k,
+            v;
+        for (k in self.kvlist) {
+            v = self.kvlist[k];
+            list.push(k); // ignore v for now
+        }
+        list.sort();
+        if (self.over === 2) {
+            lc.spreadOverTwoCols(list, '#'+self.col1id, '#'+self.col2id);
+        }
+        else {
+            lc.spreadOverOneCol(list, '#'+self.col1id, type);
+        }
+    }
+});
+
+function SearchBoxClass() {}
+pl.implement(SearchBoxClass, {
+    bindEvents: function() {
+        var qs = new QueryStringClass(),
+            val = (qs && qs.vars && qs.vars.searchtext) ? qs.vars.searchtext : 'Search';
+        pl('#searchtext').attr({value: val});
+        pl('#searchtext').bind({
+            focus: function() {
+                if (pl('#searchtext').attr('value') === 'Search') {
+                    pl('#searchtext').attr({value: ''});
+                }
+            },
+            keyup: function(e) {
+                var evt = new EventClass(e);
+                if (evt.keyCode() === 13) {
+                    pl('#searchform').get(0).submit();
+                    return false;
+                }
+                return true;
+            }
+        });
+        pl('#searchbutton').bind({
+            click: function() {
+                pl('#searchform').get(0).submit();
+            }
+        });
+    }
+});
+
 
