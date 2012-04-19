@@ -19,6 +19,7 @@ import com.googlecode.objectify.Key;
 import com.startupbidder.dao.ObjectifyDatastoreDAO;
 import com.startupbidder.datamodel.BaseObject;
 import com.startupbidder.datamodel.Bid;
+import com.startupbidder.datamodel.Comment;
 import com.startupbidder.datamodel.Listing;
 import com.startupbidder.datamodel.Monitor;
 import com.startupbidder.datamodel.Notification;
@@ -31,6 +32,7 @@ import com.startupbidder.vo.BidVO;
 import com.startupbidder.vo.CommentListVO;
 import com.startupbidder.vo.CommentVO;
 import com.startupbidder.vo.DtoToVoConverter;
+import com.startupbidder.vo.ErrorCodes;
 import com.startupbidder.vo.ListPropertiesVO;
 import com.startupbidder.vo.ListingDocumentVO;
 import com.startupbidder.vo.ListingVO;
@@ -173,9 +175,23 @@ public class ServiceFacade {
 	}
 
 	public CommentVO createComment(UserVO loggedInUser, CommentVO comment) {
-		comment = DtoToVoConverter.convert(getDAO().createComment(VoToModelConverter.convert(comment)));
+		if (loggedInUser == null) {
+			log.warning("User not logged in.");
+			return null;
+		}
+		
+		Comment commentDTO = VoToModelConverter.convert(comment);
+		comment = DtoToVoConverter.convert(getDAO().createComment(commentDTO));
+
+		Monitor monitor = new Monitor();
+		monitor.object = new Key<Monitor.Monitored>(Listing.class, commentDTO.listing.getId());
+		monitor.type = Monitor.Type.LISTING;
+		monitor.user = new Key<SBUser>(SBUser.class, loggedInUser.toKeyId());
+		getDAO().setMonitor(monitor);
+		
 		UserMgmtFacade.instance().scheduleUpdateOfUserStatistics(loggedInUser.getId(), UserMgmtFacade.UpdateReason.NEW_COMMENT);
 		ListingFacade.instance().scheduleUpdateOfListingStatistics(comment.getListing(), UpdateReason.NEW_COMMENT);
+		
 		//createNotification(comment.get, comment.getId(), Type.NEW_COMMENT_FOR_YOUR_LISTING, "");
 		return comment;
 	}

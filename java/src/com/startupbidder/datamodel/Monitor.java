@@ -12,6 +12,7 @@ import javax.persistence.PrePersist;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.annotation.Cached;
 import com.googlecode.objectify.annotation.Entity;
+import com.googlecode.objectify.annotation.Indexed;
 import com.googlecode.objectify.annotation.Unindexed;
 
 /**
@@ -34,12 +35,12 @@ public class Monitor extends BaseObject {
 	
 	public static enum Type {LISTING, BID, USER};
 
-	public Key<SBUser> user;
-	public Type type;
-	public Key<Monitored> object;
+	@Indexed public Key<SBUser> user;
+	@Indexed public Type type;
+	@Indexed public Key<Monitored> object;
 	public Date   created;
 	public Date   deactivated;
-	public boolean active;
+	@Indexed public boolean active;
 
 	public String getWebKey() {
 		return new Key<Monitor>(Monitor.class, id).getString();

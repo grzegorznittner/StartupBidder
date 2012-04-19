@@ -59,6 +59,7 @@ import com.startupbidder.datamodel.ListingDoc.Type;
 import com.startupbidder.datamodel.ListingLocation;
 import com.startupbidder.datamodel.ListingStats;
 import com.startupbidder.datamodel.Location;
+import com.startupbidder.datamodel.Monitor;
 import com.startupbidder.datamodel.Notification;
 import com.startupbidder.datamodel.SBUser;
 import com.startupbidder.datamodel.VoToModelConverter;
@@ -74,6 +75,7 @@ import com.startupbidder.vo.ListingLocationsVO;
 import com.startupbidder.vo.ListingPropertyVO;
 import com.startupbidder.vo.ListingVO;
 import com.startupbidder.vo.UserBasicVO;
+import com.startupbidder.vo.UserListingsVO;
 import com.startupbidder.vo.UserVO;
 
 public class ListingFacade {
@@ -816,6 +818,77 @@ public class ListingFacade {
 				result.setEditedListing(DtoToVoConverter.convert(editedListing));
 			}
 		}
+		
+		result.setCategories(getTopCategories());
+		result.setTopLocations(getTopLocations());
+
+		return result;
+	}
+
+	public UserListingsVO getDiscoverUserListings(UserVO loggedInUser) {
+		UserListingsVO result = new UserListingsVO();
+
+		if (loggedInUser == null) {
+			log.warning("User not logged in.");
+			result.setErrorMessage("User need to be logged in.");
+			result.setErrorCode(ErrorCodes.NOT_LOGGED_IN);
+			return result;
+		}
+		
+		ListPropertiesVO props = new ListPropertiesVO();
+		props.setMaxResults(100);
+		List<ListingVO> list = prepareListingList(loggedInUser, getDAO().getUserListings(loggedInUser.toKeyId(), props), 100);
+		
+		List<ListingVO> activeListings = new ArrayList<ListingVO>();
+		List<ListingVO> withdrawnListings = new ArrayList<ListingVO>();
+		List<ListingVO> frozenListings = new ArrayList<ListingVO>();
+		List<ListingVO> closedListings = new ArrayList<ListingVO>();
+		for (ListingVO listing : list) {
+			Listing.State state = Listing.State.valueOf(listing.getState());
+			switch(state) {
+			case ACTIVE:
+				activeListings.add(listing);
+				break;
+			case WITHDRAWN:
+				withdrawnListings.add(listing);
+				break;
+			case FROZEN:
+				frozenListings.add(listing);
+				break;
+			case CLOSED:
+				closedListings.add(listing);
+				break;
+			}
+		}
+		if (activeListings.size() > 0) {
+			result.setActiveListings(activeListings);
+		}
+		if (withdrawnListings.size() > 0) {
+			result.setWithdrawnListings(withdrawnListings);
+		}
+		if (frozenListings.size() > 0) {
+			result.setFrozenListings(frozenListings);
+		}
+		if (closedListings.size() > 0) {
+			result.setClosedListings(closedListings);
+		}
+
+		if (loggedInUser.getEditedListing() != null) {
+			Listing editedListing = getDAO().getListing(BaseVO.toKeyId(loggedInUser.getEditedListing()));
+			result.setEditedListing(DtoToVoConverter.convert(editedListing));
+		}
+		
+		List<Key<Listing>> monitoredListingKeys = new ArrayList<Key<Listing>>();
+		List<Monitor> monitors = getDAO().getMonitorsForUser(loggedInUser.toKeyId(), Monitor.Type.LISTING);
+		for (Monitor monitor : monitors) {
+			if (monitor.type == Monitor.Type.LISTING) {
+				monitoredListingKeys.add(new Key<Listing>(Listing.class, monitor.object.getId()));
+			}
+		}
+		props = new ListPropertiesVO();
+		props.setMaxResults(4);
+		list = prepareListingList(loggedInUser, getDAO().getListingsByKeys(monitoredListingKeys), 4);
+		result.setCommentedListings(list);
 		
 		result.setCategories(getTopCategories());
 		result.setTopLocations(getTopLocations());

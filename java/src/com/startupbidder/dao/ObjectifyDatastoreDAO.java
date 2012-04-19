@@ -17,6 +17,7 @@ import org.joda.time.DateTime;
 import org.joda.time.Days;
 
 import com.google.appengine.api.datastore.QueryResultIterable;
+import com.google.appengine.api.datastore.QueryResultIterator;
 import com.google.appengine.api.memcache.MemcacheService;
 import com.google.appengine.api.memcache.MemcacheServiceFactory;
 import com.googlecode.objectify.Key;
@@ -459,10 +460,14 @@ public class ObjectifyDatastoreDAO {
 			keys.add(new Key<Listing>(Listing.class, id));
 		}
 		
+		return getListingsByKeys(keys);
+	}
+
+	public List<Listing> getListingsByKeys(List<Key<Listing>> listingKeys) {
 		try {
-			return new ArrayList<Listing>(getOfy().get(keys).values());
+			return new ArrayList<Listing>(getOfy().get(listingKeys).values());
 		} catch (Exception e) {
-			log.log(Level.WARNING, "Error fetching list of listings by keys '" + keys + "'.", e);
+			log.log(Level.WARNING, "Error fetching list of listings by keys '" + listingKeys + "'.", e);
 			return null;
 		}
 	}
@@ -1163,10 +1168,11 @@ public class ObjectifyDatastoreDAO {
 				.filter("object =", monitor.object)
 				.filter("type =", monitor.type)
 				.order("+created").fetchKeys();
-		Monitor existingMonitor = getOfy().find(notIt.iterator().next());
 
-		if (existingMonitor != null) {
+		QueryResultIterator<Key<Monitor>> it = notIt.iterator();
+		if (it.hasNext()) {
 			// monitor already exists
+			Monitor existingMonitor = getOfy().find(it.next());
 			existingMonitor.active = true;
 			existingMonitor.deactivated = null;
 			
