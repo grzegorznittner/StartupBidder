@@ -175,6 +175,8 @@ public class ServiceFacade {
 			return null;
 		}
 		
+		comment.setUser(loggedInUser.getId());
+		comment.setUserName(loggedInUser.getNickname());
 		Comment commentDTO = VoToModelConverter.convert(comment);
 		comment = DtoToVoConverter.convert(getDAO().createComment(commentDTO));
 
