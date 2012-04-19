@@ -23,11 +23,11 @@ pl.implement(DiscoverPageClass,{
                 }
                 if (json.users_listings && json.users_listings.length > 0) {
                     pl('#users_listings_wrapper').show();
-                    usersListings.storeList(json,4);
+                    usersListings.storeList(json);
                 }
-                topListings.storeList(json,4);
-                closingListings.storeList(json,4);
-                latestListings.storeList(json,4);
+                topListings.storeList(json);
+                closingListings.storeList(json);
+                latestListings.storeList(json);
             },
             ajax = new AjaxClass('/listings/discover/', 'top_listings', completeFunc);
         ajax.call();

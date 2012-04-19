@@ -95,7 +95,7 @@ function CompanyListClass(options) {
 }
 pl.implement(CompanyListClass, {
     storeList: function(json, _colsPerRow, _companydiv, _companykey) {
-        var i, company, tile, last, reali,
+        var i, company, tile, last,
             colsPerRow = _colsPerRow || 4,
             companydiv = _companydiv || this.options.listingsdiv || 'companydiv',
             companykey = _companykey || this.options.propertykey || 'listings',
@@ -114,8 +114,7 @@ pl.implement(CompanyListClass, {
             company = companies[i];
             tile  = new CompanyTileClass();
             tile.setValues(company);
-            reali = companies.length - (i+1);
-            last = (reali+1)%colsPerRow === 0 ? 'last' : '';
+            last = (i+1) % colsPerRow === 0 ? 'last' : '';
             html += tile.makeHtml(last);
         }
         if (showmore) {
