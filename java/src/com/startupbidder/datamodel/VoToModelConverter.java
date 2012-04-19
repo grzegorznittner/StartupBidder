@@ -8,7 +8,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 
 import com.googlecode.objectify.Key;
-import com.startupbidder.datamodel.Monitor.Monitored;
 import com.startupbidder.vo.BidVO;
 import com.startupbidder.vo.CommentVO;
 import com.startupbidder.vo.ListingDocumentVO;
@@ -320,7 +319,17 @@ public class VoToModelConverter {
 		monitor.created = monitorVO.getCreated();
 		monitor.deactivated = monitorVO.getDeactivated();
 		monitor.type = Monitor.Type.valueOf(monitorVO.getType().toUpperCase());
-		monitor.object = new Key<Monitored>(monitorVO.getObjectId());
+		switch (monitor.type) {
+		case LISTING:
+			monitor.monitoredListing = new Key<Listing>(monitorVO.getObjectId());
+			break;
+		case USER:
+			monitor.monitoredUser = new Key<SBUser>(monitorVO.getObjectId());
+			break;
+		case BID:
+			monitor.monitoredBid = new Key<Bid>(monitorVO.getObjectId());
+			break;			
+		}
 		monitor.user = new Key<SBUser>(monitorVO.getUser());
 		monitor.active = monitorVO.isActive();
 

@@ -22,7 +22,7 @@ import com.googlecode.objectify.condition.IfNotNull;
 @Unindexed
 @Entity
 @Cached(expirationSeconds=60*30)
-public class Listing extends BaseObject implements Monitor.Monitored {
+public class Listing extends BaseObject {
 	/**
 	 * NEW - just created, not submited by user
 	 * POSTED - submited by user, passed simple verfication, needs to be checked by Admins to be available on website

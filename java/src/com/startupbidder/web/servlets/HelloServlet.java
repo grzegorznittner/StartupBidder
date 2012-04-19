@@ -232,6 +232,7 @@ public class HelloServlet extends HttpServlet {
 						+ "  \"type\":\"new_listing\", \"message\":\"Sample message\" }"
 						+ "</textarea><input type=\"submit\" value=\"Create a notification\"/></form>");
 			out.println("<br/>");
+			*/
 			
 			out.println("<p style=\"background: none repeat scroll 0% 0% rgb(187, 187, 187);\">Monitor API:</p>");
 			out.println("<a href=\"/monitors/active-for-user/.json?type=Listing\">All active monitors for logged in user</a><br/>");
@@ -244,10 +245,8 @@ public class HelloServlet extends HttpServlet {
 			out.println("<form method=\"POST\" action=\"/monitor/deactivate/.json\"" + (monitors.isEmpty() ? " disabled=\"disabled\">" : ">")
 					+ "<input type=\"hidden\" name=\"id\" value=\"" + (monitors.isEmpty() ? "empty" : monitors.get(0).getWebKey()) + "\"/>"
 					+ "<input type=\"submit\" value=\"Deactivate monitor "
-					+ (monitors.isEmpty() ? "(no monitors)" : (monitors.get(0).type + " " + monitors.get(0).object)) + "\"/></form>");
-			
-			*/
-			
+					+ (monitors.isEmpty() ? "(no monitors)" : (monitors.get(0).user + " " + monitors.get(0).type)) + "\"/></form>");
+						
 			out.println("<p style=\"background: none repeat scroll 0% 0% rgb(187, 187, 187);\">File API:</p>");
 			out.println("<a href=\"/file/get-upload-url/2/.json\">Get upload URL(s)</a><br/>");
 			List<ListingDocumentVO> docs = ListingFacade.instance().getAllListingDocuments(currentUser);
@@ -348,6 +347,9 @@ public class HelloServlet extends HttpServlet {
 			out.println("<tr><td>" + listing.getName() + " posted by " + listing.getOwnerName() + "</td>");
 			out.println("<td><form method=\"POST\" action=\"/listing/withdraw/" + listing.getId() + "/.json\"><input type=\"submit\" value=\"Withdraw\"/></form>");
 			out.println("<form method=\"POST\" action=\"/listing/freeze/" + listing.getId() + "/.json\"><input type=\"submit\" value=\"Freeze\"/></form>");
+			out.println("<form method=\"POST\" action=\"/monitor/set/.json\"><textarea name=\"monitor\" rows=\"1\" cols=\"3\">"
+					+ "{ \"object_id\":\"" + listing.getId() + "\", \"profile_id\":\"" + currentUser.getId() + "\", \"type\":\"Listing\" }"
+					+ "</textarea><input type=\"submit\" value=\"Monitor\"/></form>");
 			out.println("<a href=\"/listing/get/" + listing.getId() + ".json?\">View</a></td>");
 			out.println("<td>");
 			List<ListingDocumentVO> docs = getListingDocs(currentUser, listing);

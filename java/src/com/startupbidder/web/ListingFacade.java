@@ -838,6 +838,7 @@ public class ListingFacade {
 		ListPropertiesVO props = new ListPropertiesVO();
 		props.setMaxResults(100);
 		List<ListingVO> list = prepareListingList(loggedInUser, getDAO().getUserListings(loggedInUser.toKeyId(), props), 100);
+		log.info("Fetched listings owned by user '" + loggedInUser.toKeyId() + "': " + list);
 		
 		List<ListingVO> activeListings = new ArrayList<ListingVO>();
 		List<ListingVO> withdrawnListings = new ArrayList<ListingVO>();
@@ -880,9 +881,10 @@ public class ListingFacade {
 		
 		List<Key<Listing>> monitoredListingKeys = new ArrayList<Key<Listing>>();
 		List<Monitor> monitors = getDAO().getMonitorsForUser(loggedInUser.toKeyId(), Monitor.Type.LISTING);
+		log.info("Fetched monitors for user '" + loggedInUser.toKeyId() + "': " + monitors);
 		for (Monitor monitor : monitors) {
 			if (monitor.type == Monitor.Type.LISTING) {
-				monitoredListingKeys.add(new Key<Listing>(Listing.class, monitor.object.getId()));
+				monitoredListingKeys.add(new Key<Listing>(Listing.class, monitor.monitoredListing.getId()));
 			}
 		}
 		props = new ListPropertiesVO();
@@ -1366,7 +1368,7 @@ public class ListingFacade {
 		}
 		String taskName = timeStampFormatter.print(new Date().getTime()) + "listing_stats_update_" + reason + "_" + listingWebKey;
 		Queue queue = QueueFactory.getDefaultQueue();
-		queue.add(TaskOptions.Builder.withUrl("/task/calculate-listing-stats").param("id", listingWebKey)
+		queue.add(TaskOptions.Builder.withUrl("/task/calculate-listing-stats").param("id", listingWebKey).param("update_type", reason.name())
 				.taskName(taskName).countdownMillis(LISTING_STATS_UPDATE_DELAY));
 	}
 

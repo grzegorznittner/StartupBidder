@@ -36,6 +36,7 @@ import com.startupbidder.vo.ListingDocumentVO;
 import com.startupbidder.vo.ListingVO;
 import com.startupbidder.vo.UserListVO;
 import com.startupbidder.vo.UserVO;
+import com.startupbidder.web.ListingFacade.UpdateReason;
 
 /**
  * 
@@ -87,7 +88,13 @@ public class DocService {
 		return client;
 	}
 	
-	public void updateListingData(ListingVO listing) {
+	public void updateListingData(ListingVO listing, UpdateReason reason) {
+		if (reason == UpdateReason.NEW_COMMENT || reason == UpdateReason.NEW_BID || reason == UpdateReason.NEW_VOTE
+				|| reason == UpdateReason.BID_UPDATE) {
+			log.info("GoogleDoc object doesn't have to be updated for reason: " + reason);
+			return;
+		}
+
 		DocsService client = getDocsService();
 		if (client == null) {
 			return;
@@ -106,7 +113,12 @@ public class DocService {
 				newDocument.setWritersCanInvite(false);
 				client.insert(new URL("https://docs.google.com/feeds/default/private/full/" + summaryId + "/contents"), newDocument);
 			}
-			byte[] bytes = listing.dataForSearch().getBytes();
+			byte[] bytes = " ".getBytes();
+			if (Listing.State.valueOf(listing.getState()) == Listing.State.ACTIVE) {
+				listing.dataForSearch().getBytes();
+			} else {
+				log.info("Listing is not active so GoogleDoc object will be emptied.");
+			}
 			newDocument.setEtag("*");
 			newDocument.setMediaSource(new MediaByteArraySource(bytes,
 					DocumentListEntry.MediaType.TXT.getMimeType()));

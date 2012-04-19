@@ -14,6 +14,7 @@ import com.googlecode.objectify.annotation.Cached;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Indexed;
 import com.googlecode.objectify.annotation.Unindexed;
+import com.googlecode.objectify.condition.IfNotNull;
 
 /**
  * @author "Grzegorz Nittner" <grzegorz.nittner@gmail.com>
@@ -31,14 +32,14 @@ public class Monitor extends BaseObject {
 		this.modified = new Date();
 	}
 	
-	public interface Monitored {};
-	
 	public static enum Type {LISTING, BID, USER};
 
 	@Indexed public Key<SBUser> user;
 	@Indexed public Type type;
-	@Indexed public Key<Monitored> object;
-	public Date   created;
+	@Indexed(IfNotNull.class) public Key<Listing> monitoredListing;
+	@Indexed(IfNotNull.class) public Key<SBUser> monitoredUser;
+	@Indexed(IfNotNull.class) public Key<Bid> monitoredBid;
+	@Indexed public Date   created;
 	public Date   deactivated;
 	@Indexed public boolean active;
 

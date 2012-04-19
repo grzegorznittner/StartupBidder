@@ -30,6 +30,7 @@ import com.startupbidder.web.ListingFacade;
 import com.startupbidder.web.ModelDrivenController;
 import com.startupbidder.web.ServiceFacade;
 import com.startupbidder.web.UserMgmtFacade;
+import com.startupbidder.web.ListingFacade.UpdateReason;
 
 /**
  * @author "Grzegorz Nittner" <grzegorz.nittner@gmail.com>
@@ -83,9 +84,12 @@ public class TaskController extends ModelDrivenController {
 		HttpHeaders headers = new HttpHeadersImpl("calculate-listing-stats");
 		
 		String listingId = getCommandOrParameter(request, 2, "id");
+		String updateType = getCommandOrParameter(request, 3, "update_type");
+		UpdateReason reason = UpdateReason.valueOf(updateType);
+		
 		ListingFacade.instance().calculateListingStatistics(ListingVO.toKeyId(listingId));
 		ListingVO listing = ListingFacade.instance().getListing(null, listingId).getListing();
-		DocService.instance().updateListingData(listing);
+		DocService.instance().updateListingData(listing, reason);
 		
 		return headers;
 	}

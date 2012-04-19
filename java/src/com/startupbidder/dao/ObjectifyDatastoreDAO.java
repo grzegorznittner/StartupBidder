@@ -1163,13 +1163,21 @@ public class ObjectifyDatastoreDAO {
 	}
 
 	public Monitor setMonitor(Monitor monitor) {
-		QueryResultIterable<Key<Monitor>> notIt = getOfy().query(Monitor.class)
-				.filter("user =", monitor.user)
-				.filter("object =", monitor.object)
-				.filter("type =", monitor.type)
-				.order("+created").fetchKeys();
-
-		QueryResultIterator<Key<Monitor>> it = notIt.iterator();
+		Query<Monitor> query = getOfy().query(Monitor.class).filter("user =", monitor.user);
+		switch (monitor.type) {
+		case LISTING:
+			query = query.filter("monitoredListing =", monitor.monitoredListing);
+			break;
+		case USER:
+			query = query.filter("monitoredUser =", monitor.monitoredUser);
+			break;
+		case BID:
+			query = query.filter("monitoredBid =", monitor.monitoredBid);
+			break;
+		}
+		
+		log.info("Getting monitors: " + query.toString());
+		QueryResultIterator<Key<Monitor>> it = query.fetchKeys().iterator();
 		if (it.hasNext()) {
 			// monitor already exists
 			Monitor existingMonitor = getOfy().find(it.next());
@@ -1177,6 +1185,7 @@ public class ObjectifyDatastoreDAO {
 			existingMonitor.deactivated = null;
 			
 			getOfy().put(existingMonitor);
+			log.info("Updated existing monitor: " + existingMonitor);
 			return existingMonitor;
 		} else {
 			// we need to create new monitor
@@ -1185,6 +1194,7 @@ public class ObjectifyDatastoreDAO {
 			monitor.active = true;
 
 			getOfy().put(monitor);
+			log.info("Set new monitor: " + monitor);
 			return monitor;
 		}
 	}
@@ -1203,32 +1213,43 @@ public class ObjectifyDatastoreDAO {
 	}
 
 	public List<Monitor> getMonitorsForObject(long objectId, Monitor.Type type) {
-		Key<Monitor.Monitored> objectKey = null;
-		switch(type) {
-		case BID:
-			objectKey = new Key<Monitor.Monitored>(Bid.class, objectId);
-			break;
+		Query<Monitor> query = getOfy().query(Monitor.class);
+		switch (type) {
 		case LISTING:
-			objectKey = new Key<Monitor.Monitored>(Listing.class, objectId);
+			query = query.filter("monitoredListing =", new Key<Listing>(Listing.class, objectId));
 			break;
 		case USER:
-			objectKey = new Key<Monitor.Monitored>(SBUser.class, objectId);
+			query = query.filter("monitoredUser =", new Key<SBUser>(SBUser.class, objectId));
+			break;
+		case BID:
+			query = query.filter("monitoredBid =", new Key<Bid>(Bid.class, objectId));
 			break;
 		}
-		QueryResultIterable<Key<Monitor>> monIt = getOfy().query(Monitor.class)
-				.filter("object =", objectKey)
-				.filter("type =", type)
-				.order("+created").fetchKeys();
+		QueryResultIterable<Key<Monitor>> monIt = query.fetchKeys();
 		List<Monitor> mons = new ArrayList<Monitor>(getOfy().get(monIt).values());
 		return mons;
 	}
 
 	public List<Monitor> getMonitorsForUser(long userId, Monitor.Type type) {
+		log.info("getMonitorsForUser: userId=" + userId + ", type=" + type);
+		
 		QueryResultIterable<Key<Monitor>> monIt = getOfy().query(Monitor.class)
 				.filter("user =", new Key<SBUser>(SBUser.class, userId))
-				.filter("type =", type)
-				.order("+created").fetchKeys();
+				.filter("type =", type).filter("active =", true).fetchKeys();
 		List<Monitor> mons = new ArrayList<Monitor>(getOfy().get(monIt).values());
+		
+//		monIt = getOfy().query(Monitor.class).filter("user =", new Key<SBUser>(SBUser.class, userId)).fetchKeys();
+//		log.info("Monitors for user '" + userId + "': " + getOfy().get(monIt).values());
+//		monIt = getOfy().query(Monitor.class).filter("type =", type).fetchKeys();
+//		log.info("Monitors for type '" + type + "': " + getOfy().get(monIt).values());
+//		monIt = getOfy().query(Monitor.class).filter("user =", new Key<SBUser>(SBUser.class, userId)).filter("type =", type).fetchKeys();
+//		log.info("Monitors for type and user: " + getOfy().get(monIt).values());
+//		monIt = getOfy().query(Monitor.class).filter("user =", new Key<SBUser>(SBUser.class, userId)).filter("type =", type)
+//				.filter("active =", true).fetchKeys();
+//		log.info("Monitors for type, user and active: " + getOfy().get(monIt).values());
+//		monIt = getOfy().query(Monitor.class).filter("user =", new Key<SBUser>(SBUser.class, userId)).filter("type =", type)
+//				.filter("active =", true).order("+created").fetchKeys();
+//		log.info("Monitors for type, user and active, ordered by created: " + getOfy().get(monIt).values());
 		return mons;
 	}
 

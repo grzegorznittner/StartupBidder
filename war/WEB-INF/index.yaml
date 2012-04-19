@@ -303,7 +303,19 @@ indexes:
   ancestor: no
   properties:
     - name: user
-    - name: active
+    - name: monitoredListing
+
+- kind: Monitor
+  ancestor: no
+  properties:
+    - name: user
+    - name: monitoredUser
+
+- kind: Monitor
+  ancestor: no
+  properties:
+    - name: user
+    - name: monitoredBid
 
 - kind: Monitor
   ancestor: no
@@ -311,17 +323,3 @@ indexes:
     - name: user
     - name: type
     - name: active
-
-- kind: Monitor
-  ancestor: no
-  properties:
-    - name: object
-    - name: type
-    - name: active
-
-- kind: Monitor
-  ancestor: no
-  properties:
-    - name: user
-    - name: object
-    - name: type

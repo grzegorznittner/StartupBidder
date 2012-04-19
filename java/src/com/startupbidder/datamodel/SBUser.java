@@ -23,7 +23,7 @@ import com.googlecode.objectify.condition.IfNotNull;
 @Unindexed
 @Entity
 @Cached(expirationSeconds=60*60*2)
-public class SBUser extends BaseObject implements Monitor.Monitored {
+public class SBUser extends BaseObject {
 	public enum Status {CREATED, ACTIVE, DEACTIVATED};
 	
 	@Id public Long id;

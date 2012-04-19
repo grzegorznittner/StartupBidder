@@ -22,7 +22,7 @@ import com.googlecode.objectify.annotation.Unindexed;
 @Unindexed
 @Entity
 @Cached(expirationSeconds=60*30)
-public class Bid extends BaseObject implements Monitor.Monitored {
+public class Bid extends BaseObject {
 	public enum FundType {SYNDICATE, SOLE_INVESTOR, COMMON, PREFERRED, NOTE};
 
 	public enum Action { ACTIVATE, UPDATE, CANCEL, ACCEPT};
