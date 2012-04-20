@@ -11,14 +11,12 @@
       <a href="discover-page.html"><span class="logotextblue">startup</span><span class="logotextgrey">bidder</span></a>
     </div>
     <div class="span-11 headerrow">
-      <a href="discover-page.html"><span class="headerlink hoverlink">Discover</span></a>
-      <span class="headertext">&nbsp;&nbsp;|&nbsp;&nbsp;</span>
+      <a href="discover-page.html"><span class="headerlink hoverlink headerlinknoborder">Discover</span></a>
       <a href="nearby-page.html"><span class="headerlink hoverlink">Nearby</span></a>
-      <span class="headertext">&nbsp;&nbsp;|&nbsp;&nbsp;</span>
       <a id="postlink" href="login-page.html"><span class="headerlink hoverlink" id="posttext"></span></a>
     </div>
     <div class="span-8 last loginspan headerrow">
-      <div><a id="loginlink" href="login-page.html"><span class="headerlink hoverlink" id="logintext"></span></a></div>
+      <div><a id="loginlink" href="login-page.html"><span class="headerlink hoverlink headerlinkright" id="logintext"></span></a></div>
       <div id="logout" class="logout hoverlink"><a href="/_ah/logout?continue=%2F">logout</a></div>
     </div>
   </div>
