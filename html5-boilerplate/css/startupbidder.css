@@ -373,8 +373,8 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .sideboxdate { font-size: 10px; }
 .sideboxmap { width: 302px; height: 302px; }
 .bidpanel { padding-top: 5px; }
-.nearbypanel { width: 946px; height: 500px; }
-.nearbymap { width: 946px; height: 500px; }
+.nearbypanel { width: 946px; height: 946px; }
+.nearbymap { width: 946px; height: 946px; }
 .addcommenttitle { display: none; }
 .addcommentbox { display: none; }
 .addmessagetitle { display: none; }
