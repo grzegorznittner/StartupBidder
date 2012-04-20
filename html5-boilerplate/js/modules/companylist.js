@@ -7,24 +7,28 @@ function CompanyTileClass(options) {
 pl.implement(CompanyTileClass, {
     setValues: function(json) {
         var date = json.listing_date || json.created_date,
-            closingText = json.days_left === 0 ? 'closing today!' : (json.days_left < 0 ? 'bidding closed' : json.days_left + ' days left'),
-            listingText = json.asked_fund ? closingText : (json.days_ago ? json.days_ago + ' days ago' : 'listed today');
+            closingText = json.status === 'new' ? 'Not submitted' : (json.days_left === 0 ? 'closing today!' : (json.days_left < 0 ? 'bidding closed' : json.days_left + ' days left')),
+            listingText = json.status === 'new' ? 'Not submitted' : (json.asked_fund ? closingText : (json.days_ago ? json.days_ago + ' days ago' : 'listed today'));
+            url = json.website ? new URLClass(json.website) : null;
+        this.status = json.status;
         this.daysText = listingText;
         this.imgClass = json.logo ? '' : 'noimage';
         this.imgStyle = json.logo ? 'background: url(' + json.logo + ') no-repeat scroll left top' : '';
-        this.category = json.category ? json.category.toUpperCase() : '';
-        this.categoryUC = json.category ? json.category.toUpperCase() : '';
+        this.category = json.category ? json.category.toUpperCase() : 'Other';
+        this.categoryUC = json.category ? json.category.toUpperCase() : 'OTHER';
         this.votes = json.num_votes || 1;
         this.posted = date ? DateClass.prototype.format(date) : 'not posted';
-        this.name = json.title || '';
-        this.brief_address = json.brief_address || '';
-        this.address = json.address || '';
+        this.name = json.title || 'No Company Name';
+        this.brief_address = json.brief_address || 'No Address';
+        this.address = json.address || 'No Address';
         this.suggested_amt = json.asked_fund && json.suggested_amt ? CurrencyClass.prototype.format(json.suggested_amt) : '';
         this.suggested_text = this.suggested_amt || 'Not asking for funds';
-        this.mantra = json.mantra || '';
-        this.founders = json.founders || '';
+        this.mantra = json.mantra || 'No Mantra';
+        this.founders = json.founders || 'No Founders';
         this.url = '/company-page.html?id=' + json.listing_id;
-    },
+        this.websitelink = json.website || '#';
+        this.websitedomain = url ? url.getHostname() : 'No Website';
+     },
     store: function(json) {
         this.setValues(json);
     },
@@ -84,6 +88,29 @@ pl.implement(CompanyTileClass, {
 </div>\
 ';
     },
+    makeFullWidthHtml: function() {
+        var options = this.options || {},
+            openAnchor = options.preview ? '' : '<a href="' + this.url + '">',
+            closeAnchor = options.preview ? '' : '</a>';
+        return '\
+<div class="companybannertile last">\
+' + openAnchor + '\
+    <div class="companybannerlogo tileimg noimage" style="' + this.imgStyle + '"></div>\
+' + closeAnchor + '\
+' + openAnchor + '\
+    <div class="companybannertitle">' + this.name + '</div>\
+' + closeAnchor + '\
+    <div class="companybannertextgrey">\
+        ' + (this.category==='Other' ? 'A' : (this.category.match(/^[AEIOU]/) ? 'An '+this.category : 'A '+this.category)) +  ' company in ' + this.brief_address + ' by ' + this.founders + '\
+    </div>\
+    <div class="companybannertextgrey">\
+        ' + (this.status === 'new' ? this.daysText : 'Posted on ' + this.daysText) + ' from\
+        <a class="companybannertextlink" href="' + this.websitelink + '" target="_blank"><div class="span-1 linkicon"></div>' + this.websitedomain + '</a>\
+    </div>\
+    <div class="companybannermantra">' + this.mantra + '</div>\
+</div>\
+';
+    },
     display: function(listing, divid) {
         this.setValues(listing);
         pl('#'+divid).html(this.makeHtml('last'));
@@ -115,7 +142,7 @@ pl.implement(CompanyListClass, {
             tile  = new CompanyTileClass();
             tile.setValues(company);
             last = (i+1) % colsPerRow === 0 ? 'last' : '';
-            html += tile.makeHtml(last);
+            html += this.options.fullWidth ? tile.makeFullWidthHtml() : tile.makeHtml(last);
         }
         if (showmore) {
             html += '<div class="showmore"><a href="' + this.options.showmore + '">More...</a></div>\n';

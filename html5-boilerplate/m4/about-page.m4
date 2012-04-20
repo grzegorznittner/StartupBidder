@@ -14,7 +14,7 @@ include(header.m4)
 
 <!-- left column -->
 <div class="span-16">
-    <div class="boxtitle">ABOUT STARTUPBIDDER</div>
+    <div class="boxtitle">WHAT WE DO</div>
     <div class="boxpanel">
     <p>
 The world of startup founding and investment is traditionally opaque and

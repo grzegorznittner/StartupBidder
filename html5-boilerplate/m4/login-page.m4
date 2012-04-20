@@ -18,7 +18,7 @@ include(header.m4)
     <div class="boxpanel">
         <div class="formitem">
             <span class="inputlabel"></span>
-            <span class="inputhelp">Use your google account to connect to startupbidder.</span>
+            <span class="inputhelp inputmsg">Use your google account to connect to startupbidder.</span>
         </div>
         <div class="formitem clear">
             <a href="/_ah/login?continue=%2F" id="googleloginlink">

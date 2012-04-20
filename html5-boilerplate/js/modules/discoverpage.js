@@ -4,7 +4,7 @@ pl.implement(DiscoverPageClass,{
         var completeFunc = function(json) {
                 var header = new HeaderClass(),
                     searchbox = new SearchBoxClass(),
-                    editedListing = new CompanyListClass({ propertykey: 'edited_listing', propertyissingle: true, listingsdiv: 'edited_listing' }),
+                    editedListing = new CompanyListClass({ propertykey: 'edited_listing', propertyissingle: true, listingsdiv: 'edited_listing', fullWidth: true }),
                     usersListings = new CompanyListClass({ propertykey: 'users_listings', listingsdiv: 'users_listings', showmore: '/main-page.html?type=useractive' }),
                     topListings = new CompanyListClass({ propertykey: 'top_listings', listingsdiv: 'top_listings', showmore: '/main-page.html?type=top' }),
                     closingListings = new CompanyListClass({ propertykey: 'closing_listings', listingsdiv: 'closing_listings', showmore: '/main-page.html?type=closing' }),
