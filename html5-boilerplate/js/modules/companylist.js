@@ -7,8 +7,8 @@ function CompanyTileClass(options) {
 pl.implement(CompanyTileClass, {
     setValues: function(json) {
         var date = json.listing_date || json.created_date,
-            closingText = json.status === 'new' ? 'Not submitted' : (json.days_left === 0 ? 'closing today!' : (json.days_left < 0 ? 'bidding closed' : json.days_left + ' days left')),
-            listingText = json.status === 'new' ? 'Not submitted' : (json.asked_fund ? closingText : (json.days_ago ? json.days_ago + ' days ago' : 'listed today'));
+            closingText = json.status === 'new' ? 'New listing' : (json.days_left === 0 ? 'closing today!' : (json.days_left < 0 ? 'bidding closed' : json.days_left + ' days left')),
+            listingText = json.status === 'new' ? 'New listing' : (json.asked_fund ? closingText : (json.days_ago ? json.days_ago + ' days ago' : 'listed today'));
             url = json.website ? new URLClass(json.website) : null;
         this.status = json.status;
         this.daysText = listingText;
@@ -22,26 +22,25 @@ pl.implement(CompanyTileClass, {
         this.brief_address = json.brief_address || 'No Address';
         this.address = json.address || 'No Address';
         this.suggested_amt = json.asked_fund && json.suggested_amt ? CurrencyClass.prototype.format(json.suggested_amt) : '';
-        this.suggested_text = this.suggested_amt || 'Not asking for funds';
+        this.suggested_text = this.suggested_amt || 'Not seeking funds';
         this.mantra = json.mantra || 'No Mantra';
         this.founders = json.founders || 'No Founders';
-        this.url = '/company-page.html?id=' + json.listing_id;
+        this.url = this.status === 'new' ? '/new-listing-submit-page.html' : (this.status === 'posted' ? '/new-listing-submitted-page.html' : '/company-page.html?id=' + json.listing_id);
         this.websitelink = json.website || '#';
         this.websitedomain = url ? url.getHostname() : 'No Website';
+        this.openanchor = this.options.preview ? '' : '<a href="' + this.url + '">';
+        this.closeanchor = this.options.preview ? '' : '</a>';
      },
     store: function(json) {
         this.setValues(json);
     },
     makeHtml: function(lastClass) {
-        var options = this.options || {},
-            openAnchor = options.preview ? '' : '<a href="' + this.url + '">',
-            closeAnchor = options.preview ? '' : '</a>',
             html = '\
 <span class="span-4 '+ (lastClass?lastClass:'') +'">\
 <div class="tile">\
-' + openAnchor + '\
+' + this.openanchor + '\
 <div class="tileimg" style="' + this.imgStyle + '"></div>\
-' + closeAnchor + '\
+' + this.closeanchor + '\
 <div class="tiledays"></div>\
 <div class="tiledaystext">' + this.daysText + '</div>\
 <div class="tiletype"></div>\
@@ -52,31 +51,28 @@ pl.implement(CompanyTileClass, {
     <div class="thumbup tilevoteimg"></div>\
     <div class="tileposted">' + this.suggested_amt + '</div>\
 </div>\
-' + openAnchor + '\
+' + this.openanchor + '\
 <p class="tiledesc">\
     <span class="tilecompany">' + this.name + '</span><br/>\
     <span class="tileloc">' + this.brief_address + '</span><br/>\
     <span class="tiledetails">' + this.mantra + '</span>\
 </p>\
-' + closeAnchor + '\
+' + this.closeanchor + '\
 </div>\
 </span>\
 ';
         return html;
     },
     makeInfoWindowHtml: function() {
-        var options = this.options || {},
-            openAnchor = options.preview ? '' : '<a href="' + this.url + '">',
-            closeAnchor = options.preview ? '' : '</a>';
         return '\
 <div class="infowindow">\
-' + openAnchor + '\
+' + this.openanchor + '\
 <div class="tileimg" style="' + this.imgStyle + '"></div>\
-' + closeAnchor + '\
+' + this.closeanchor + '\
 <p>\
-    ' + openAnchor + '\
+    ' + this.openanchor + '\
     <div class="infotitle">' + this.name + '</div>\
-    ' + closeAnchor + '\
+    ' + this.closeanchor + '\
     <div>' + this.address + '</div>\
     <div class="infomantra">' + this.mantra + '</div>\
     <div><span class="infolabel">Asking:</span> ' + this.suggested_text + '</div>\
@@ -89,17 +85,14 @@ pl.implement(CompanyTileClass, {
 ';
     },
     makeFullWidthHtml: function() {
-        var options = this.options || {},
-            openAnchor = options.preview ? '' : '<a href="' + this.url + '">',
-            closeAnchor = options.preview ? '' : '</a>';
         return '\
 <div class="companybannertile last">\
-' + openAnchor + '\
+' + this.openanchor + '\
     <div class="companybannerlogo tileimg noimage" style="' + this.imgStyle + '"></div>\
-' + closeAnchor + '\
-' + openAnchor + '\
+' + this.closeanchor + '\
+' + this.openanchor + '\
     <div class="companybannertitle">' + this.name + '</div>\
-' + closeAnchor + '\
+' + this.closeanchor + '\
     <div class="companybannertextgrey">\
         ' + (this.category==='Other' ? 'A' : (this.category.match(/^[AEIOU]/) ? 'An '+this.category : 'A '+this.category)) +  ' company in ' + this.brief_address + ' by ' + this.founders + '\
     </div>\

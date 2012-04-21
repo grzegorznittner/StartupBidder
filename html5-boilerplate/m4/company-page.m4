@@ -99,7 +99,8 @@ include(header.m4)
 
     <div class="boxtitle">LOCATION</div>
     <div class="sidebox">
-        <a href="#" class="formlink" target="_blank" id="addresslink">
+        <a href="#" class="formlink hoverlink" target="_blank" id="addresslink">
+            <div class="inputmsg" id="fulladdress"></div>
             <div class="sideboxmap">
                 <img src="#" id="mapimg"></img>
             </div>
