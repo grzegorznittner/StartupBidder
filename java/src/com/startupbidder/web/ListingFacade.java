@@ -828,8 +828,7 @@ public class ListingFacade {
 
 		if (loggedInUser == null) {
 			log.warning("User not logged in.");
-			result.setErrorMessage("User need to be logged in.");
-			result.setErrorCode(ErrorCodes.NOT_LOGGED_IN);
+			// on John's request we return 200 when user is not logged in
 			return result;
 		}
 		
