@@ -32,7 +32,7 @@ include(header.m4)
 Your company listing has now been submitted to startupbidder.  We will review the listing,
 suggest any changes needed if necessary, and then approve the listing.  Once approved,
 you will be immediately notified via email.  The listing will then appear as the first
-listing on the front page.  Users worldwide will be able to vote and comment on your listing.
+listing on the front page.  Users worldwide will be able to comment on your listing.
 If you've enabled bidding, investors will then be able to submit bids, of which you will
 be notified by email.
     </p>

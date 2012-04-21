@@ -53,7 +53,6 @@ pl.implement(ProfileClass, {
         pl('#notifyenabled').html(json.notifyenabled ? 'enabled' : 'disabled');
         pl('#mylistingscount').html(json.posted ? json.posted.length : 0);
         pl('#biddedoncount').html(json.bidon ? json.bidon.length : 0);
-        pl('#upvotedcount').html(json.upvoted ? json.upvoted.length : 0);
     }
 });
 

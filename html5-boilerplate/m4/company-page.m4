@@ -17,7 +17,7 @@ include(header.m4)
             <div class="companybannerlogo tileimg noimage" id="companylogo"></div>
             <div class="companybannertitle" id="title"></div>
             <div class="companybannertextgrey">
-                A <span id="category"></span> company in <span id="address"></span> by <span id="founders"></span>
+                <span id="categorytext"></span> company in <span id="address"></span> by <span id="founders"></span>
                 <a class="companybannertextlink" href="#">send message</a>
             </div>
             <div class="companybannertextgrey">

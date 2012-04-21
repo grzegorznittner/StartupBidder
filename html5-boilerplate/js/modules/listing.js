@@ -60,13 +60,13 @@ pl.implement(ListingClass, {
         }
         pl('#title').html(this.title || 'Company Name Here');
         pl('title').text('Startupbidder Listing: ' + (this.title || 'Company Name Here'));
+        pl('#address').html(this.brief_address);
         pl('#mantra').html(this.mantra);
         pl('#founders').html(this.founders);
         pl('#companystatus').html('Listing is ' + this.status);
         if (this.status === 'withdrawn') {
             pl('#companystatus').addClass('attention');
         }
-        pl('#num_votes').html(this.num_votes);
         pl('#num_comments').html(this.num_comments);
         pl('#videopresentation').attr({src: this.video});
         pl('#summary').html(this.summary || 'Listing summary goes here');
@@ -79,8 +79,9 @@ pl.implement(ListingClass, {
         }
     },
     displayInfobox: function() {
-        var url = this.website ? new URLClass(this.website) : null;
-        pl('#category').html(this.category || 'Other');
+        var url = this.website ? new URLClass(this.website) : null,
+            categorytext = this.category ? (this.category==='Other' ? 'A' : (this.category.match(/^[AEIOU]/) ? 'An '+this.category : 'A '+this.category)) : 'A';
+        pl('#categorytext').html(categorytext);
         pl('#listing_date').html(this.listing_date ? this.dateobj.format(this.listing_date) : 'Not yet listed');
         pl('#websitelink').attr({href: this.website});
         if (url) {

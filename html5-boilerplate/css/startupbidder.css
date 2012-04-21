@@ -25,7 +25,7 @@ body > #wrap { height: auto; min-height: 100%; }
 /* general styles */
 /* body { font-size: 14px; font-weight: bold; color: #4083a9; background: #f2f2f2; } */
 body { font-size: 14px; font-weight: normal; color: #4083a9; background: #f2f2f2; }
-.curvedborder, .sidebox, .sideboxbutton, .sideboxbuttoninterior, .tile, .companybannertile, .boxpanel, .boxstep, .boxselected, .inputbutton, .smallinputbutton, .sideboxselected, .banner, .bmcborder {
+.curvedborder, .sidebox, .sideboxbutton, .sideboxbuttoninterior, .tile, .companybannertile, .companyhalftile, .boxpanel, .boxstep, .boxselected, .inputbutton, .smallinputbutton, .sideboxselected, .banner, .bmcborder {
   -moz-border-radius: 5px; -webkit-border-radius: 5px; border-radius: 5px;
   -moz-box-shadow: 3px 3px 3px rgba(0,0,0,0.5); -webkit-box-shadow: 3px 3px 3px rgba(0,0,0,0.5); box-shadow: 3px 3px 3px rgba(0,0,0,0.5);
   zoom: 1;
@@ -109,7 +109,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .companybannertextlink { font-size: 14px; font-weight: bold; margin-left: 4px; }
 .companybannertextgrey { font-size: 14px; font-weight: bold; color: grey; }
 .companybannerlogo { margin-top: 2px; width: 146px; height: 146px; margin-right: 10px; margin-left: 2px; float: left; }
-.companybannermantra { position: absolute; font-size: 14px; font-weight: bold; width: 380px; bottom:3px; left:158px; color: grey; }
+.companybannermantra { position: absolute; font-size: 14px; font-weight: bold; width: 380px; bottom:3px; left:158px; }
 .companynavcontainer { position: absolute; bottom:0; left:544px; height: 21px; }
 .companynav {
     float: left; padding: 0px 10px; margin-right: 10px; text-align: center; height: 19px;
@@ -127,6 +127,21 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
     height: 21px;
 }
 .companynav:hover { color: black; }
+
+/* company half styles */
+.companyhalf { height: 150px; position: relative; }
+.companyhalftile { height: 150px; width: 306px; position: relative; border-radius: 5px; border: 2px solid #999999; overflow: hidden; margin-bottom: 10px; background: #e3e3e3; float: left; margin-right: 10px; }
+.companyhalftilelast { margin-right: 0px; }
+.companyhalftitle { font-size: 18px; font-weight: bold; line-height: 20px; margin-bottom: 3px; }
+.companyhalftext { font-size: 12px; font-weight: bold; color: grey; line-height: 14px; }
+.companyhalflogo { margin-top: 2px; width: 146px; height: 146px; margin-right: 10px; margin-left: 2px; float: left; }
+.companyhalfmantra { position: absolute; font-size: 12px; font-weight: bold; width: 145px; bottom:3px; left:158px; line-height: 14px; }
+.halftiledays, .halftiledaystext, .halftiletype, .halftiletypetext { left: 2px; width: 146px; height: 30px; position: absolute; }
+.halftiledays, .halftiletype { opacity: 0.6; background-color: #000000; }
+.halftiledaystext, .halftiletypetext { padding: 4px; color: white; font-weight: bold; }
+.halftiledays, .halftiledaystext { top: 2px; }
+.halftiletype, .halftiletypetext { top: 118px; }
+.halftiletypetext { font-size: 16px; }
 
 /* icons */
 .spritebg { width: 32px; height: 32px; background: url(../img/icons/spritebg.gif); }
@@ -437,11 +452,10 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .tiledesc { width: 142px; height: 116px; position: absolute; top: 146px; padding: 0 2px 2px 2px; margin:0; overflow: hidden; font-weight: bold; }
 .tilecompany { font-size: 14px; line-height: 19px; color: #333333; font-weight: bold; }
 .tileloc { color: #333333; font-weight: bold; }
-.tileloc, .tiledetails, .tileposted, .tiledesc { font-size: 12px; line-height: 16px; }
-/* .tiledetails, .tileposted { font-weight: normal; } */
-.tilevotes, .tilevoteimg, .tileposted { position: absolute; }
+.tileloc, .tiledetails, .tiledesc { font-size: 12px; line-height: 16px; }
+.tilevotes, .tilevoteimg, { position: absolute; }
 .tilevotes { left: 30px; }
-.tileposted { top: 6px; right: 12px; text-align: right; font-weight: bold; }
+.tileposted { font-size: 16px; line-height: 16px; position: absolute; top: 6px; font-weight: bold; }
 
 /* submit page preview classes */
 .previewtext { z-index: 1000; position: absolute; background: rgba(0,0,0,0.6); top: 860px; left: 600px; font-size: 52px; color: white; font-weight: bold; padding: 10px 20px 10px 20px; border-radius: 25px; }

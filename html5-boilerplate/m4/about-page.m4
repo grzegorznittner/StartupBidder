@@ -70,7 +70,7 @@ cannot be changed; if necessary you must withdraw and resubmit a new listing.
     <p>
 
 Once your listing is live, you will immediately be displayed on the top page
-and in the relevant search categories.  Members may comment and vote upon your
+and in the relevant search categories.  Members may comment and bid upon your
 listing which will be reflected in the search rankings.  If you&rsquo;ve chosen to
 ask for money, you will also be able to receive bids from investors worldwide
 up until the closing date.  If you receive a bid, you will be notified in your

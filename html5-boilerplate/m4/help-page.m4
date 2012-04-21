@@ -20,8 +20,7 @@ include(header.m4)
             <dt>What is Startupbidder?</dt>
             <dd>
                         A crowdsourced startup company listing and funding web application. On it you can place your business plan,
-                        comment on business plans, up or down vote a business plan, and if you&rsquo;re an investor,
-                        bid for a stake in the company!
+                        comment on business plans, and bid for a stake in the company!
             </dd>
 
             <dt>Who runs Startupbidder?</dt>
@@ -41,13 +40,15 @@ include(header.m4)
             <dd>
 Ranking is similar to the exponential time decay as used on many social-ranking sites.  Specifically, we calculate the listing score as follows:
 <pre>
-p = number of votes
+v = median valuation
+c = number of comments
+b = number of bids
 t = number of days ago listing was created
 s = score
 </pre>
 putting it together:
 <pre>
-s = p / (t + 2)^1.5
+s = (v/1000 + c/10 + b) / (t + 2)^1.5
 </pre>
 Reference:
 <a target="_blank" href="http://www.seomoz.org/blog/reddit-stumbleupon-delicious-and-hacker-news-algorithms-exposed">seomoz.org</a>

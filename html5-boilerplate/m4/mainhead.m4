@@ -15,7 +15,7 @@
   <!-- <meta name="viewport" content="width=device-width,initial-scale=1"> -->
   <!-- <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0"> -->
 
-  <meta name="description" content="Startupbidder - list, bid, comment and vote on startup businesses worldwide"/>
+  <meta name="description" content="Startupbidder - list, bid, and comment on startup businesses worldwide"/>
   <meta name="keywords" content="startupbidder startup company auction bid business plan"/>
   <!-- Place favicon.ico and apple-touch-icon.png in the root directory: mathiasbynens.be/notes/touch-icons -->
 
