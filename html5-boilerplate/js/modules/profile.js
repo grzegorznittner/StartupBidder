@@ -45,7 +45,7 @@ pl.implement(ProfileClass, {
         pl('#name').html(json.name || 'Anonymous');
         pl('#title').html(json.title);
         pl('#organization').html(json.organization);
-        pl('#email').html(json.email);
+        pl('#email').html(json.email || 'no email address');
         pl('#phone').html(json.phone || '');
         pl('#address').html(json.address || '');
         pl('#joineddate').html(joindate);

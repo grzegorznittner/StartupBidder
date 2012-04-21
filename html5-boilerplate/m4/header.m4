@@ -12,8 +12,8 @@
     </div>
     <div class="span-11 headerrow">
       <a href="discover-page.html"><span class="headerlink hoverlink headerlinknoborder">Discover</span></a>
-      <a href="nearby-page.html"><span class="headerlink hoverlink">Nearby</span></a>
-      <a id="postlink" href="login-page.html"><span class="headerlink hoverlink" id="posttext"></span></a>
+      <a href="nearby-page.html"><span class="headerlink"><span class="hoverlink">Nearby</span></span></a>
+      <a id="postlink" href="login-page.html"><span class="headerlink"><span class="hoverlink" id="posttext"></span></span></a>
     </div>
     <div class="span-8 last loginspan headerrow">
       <div><a id="loginlink" href="login-page.html"><span class="headerlink hoverlink headerlinkright" id="logintext"></span></a></div>

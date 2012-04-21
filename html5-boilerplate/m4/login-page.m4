@@ -21,15 +21,15 @@ include(header.m4)
             <span class="inputhelp inputmsg">Use your google account to connect to startupbidder.</span>
         </div>
         <div class="formitem clear">
-            <a href="/_ah/login?continue=%2F" id="googleloginlink">
 	            <span class="inputlabel">
 	            </span>
                 <span class="inputhelp span-9">
                     <div class="inputgooglesignin spritebg google"></div>
                     <span class="inputlink inputmsg">Link your account to startupbidder</span>
                 </span>
-                <span class="span-3 inputbutton">SIGN IN</span>
-            </a>
+                <a href="/_ah/login?continue=%2F" id="googleloginlink">
+                    <span class="span-3 inputbutton">SIGN IN</span>
+                </a>
         </div>
     </div>
 <!--

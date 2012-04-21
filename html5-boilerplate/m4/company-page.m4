@@ -21,7 +21,7 @@ include(header.m4)
                 <a class="companybannertextlink" href="#">send message</a>
             </div>
             <div class="companybannertextgrey">
-                Posted on <span id="listing_date"></span> from
+                <span style="float:left;">Posted on <span id="listing_date"></span> from</span>
                 <a class="companybannertextlink" href="#" target="_blank" id="websitelink"><div class="span-1 linkicon"></div><span id="domainname"></span></a>
             </div>
             <div class="companybannermantra" id="mantra"></div>

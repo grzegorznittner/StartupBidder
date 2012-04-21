@@ -7,14 +7,14 @@ function CompanyTileClass(options) {
 pl.implement(CompanyTileClass, {
     setValues: function(json) {
         var date = json.listing_date || json.created_date,
-            closingText = json.status === 'new' ? 'New listing' : (json.days_left === 0 ? 'closing today!' : (json.days_left < 0 ? 'bidding closed' : json.days_left + ' days left')),
-            listingText = json.status === 'new' ? 'New listing' : (json.asked_fund ? closingText : (json.days_ago ? json.days_ago + ' days ago' : 'listed today'));
+            closingText = json.status === 'new' ? 'New listing' : (json.days_left === 0 ? 'Closing today!' : (json.days_left < 0 ? 'Bidding closed' : json.days_left + ' days left')),
+            listingText = json.status === 'new' ? 'New listing' : (json.asked_fund ? closingText : (json.days_ago ? json.days_ago + ' days ago' : 'Listed today'));
             url = json.website ? new URLClass(json.website) : null;
         this.status = json.status;
         this.daysText = listingText;
         this.imgClass = json.logo ? '' : 'noimage';
         this.imgStyle = json.logo ? 'background: url(' + json.logo + ') no-repeat scroll left top' : '';
-        this.category = json.category ? json.category.toUpperCase() : 'Other';
+        this.category = json.category || 'Other';
         this.categoryUC = json.category ? json.category.toUpperCase() : 'OTHER';
         this.votes = json.num_votes || 1;
         this.posted = date ? DateClass.prototype.format(date) : 'not posted';
@@ -39,7 +39,7 @@ pl.implement(CompanyTileClass, {
 <span class="span-4 '+ (lastClass?lastClass:'') +'">\
 <div class="tile">\
 ' + this.openanchor + '\
-<div class="tileimg" style="' + this.imgStyle + '"></div>\
+<div class="tileimg hoverlink" style="' + this.imgStyle + '"></div>\
 ' + this.closeanchor + '\
 <div class="tiledays"></div>\
 <div class="tiledaystext">' + this.daysText + '</div>\
@@ -51,13 +51,13 @@ pl.implement(CompanyTileClass, {
     <div class="thumbup tilevoteimg"></div>\
     <div class="tileposted">' + this.suggested_amt + '</div>\
 </div>\
-' + this.openanchor + '\
 <p class="tiledesc">\
-    <span class="tilecompany">' + this.name + '</span><br/>\
+' + this.openanchor + '\
+    <span class="tilecompany hoverlink">' + this.name + '</span><br/>\
+' + this.closeanchor + '\
     <span class="tileloc">' + this.brief_address + '</span><br/>\
     <span class="tiledetails">' + this.mantra + '</span>\
 </p>\
-' + this.closeanchor + '\
 </div>\
 </span>\
 ';
@@ -67,11 +67,11 @@ pl.implement(CompanyTileClass, {
         return '\
 <div class="infowindow">\
 ' + this.openanchor + '\
-<div class="tileimg" style="' + this.imgStyle + '"></div>\
+<div class="tileimg hoverlink" style="' + this.imgStyle + '"></div>\
 ' + this.closeanchor + '\
 <p>\
     ' + this.openanchor + '\
-    <div class="infotitle">' + this.name + '</div>\
+    <div class="infotitle hoverlink">' + this.name + '</div>\
     ' + this.closeanchor + '\
     <div>' + this.address + '</div>\
     <div class="infomantra">' + this.mantra + '</div>\
@@ -88,18 +88,16 @@ pl.implement(CompanyTileClass, {
         return '\
 <div class="companybannertile last">\
 ' + this.openanchor + '\
-    <div class="companybannerlogo tileimg noimage" style="' + this.imgStyle + '"></div>\
+    <div class="companybannerlogo tileimg noimage hoverlink" style="' + this.imgStyle + '"></div>\
 ' + this.closeanchor + '\
 ' + this.openanchor + '\
-    <div class="companybannertitle">' + this.name + '</div>\
+    <div class="companybannertitle hoverlink">' + this.name + '</div>\
 ' + this.closeanchor + '\
     <div class="companybannertextgrey">\
-        ' + (this.category==='Other' ? 'A' : (this.category.match(/^[AEIOU]/) ? 'An '+this.category : 'A '+this.category)) +  ' company in ' + this.brief_address + ' by ' + this.founders + '\
+        ' + (this.category==='Other' ? 'A' : (this.category.match(/^[AEIOU]/) ? 'An '+this.category : 'A '+this.category)) +  ' company in ' + this.brief_address + '\
     </div>\
-    <div class="companybannertextgrey">\
-        ' + (this.status === 'new' ? this.daysText : 'Posted on ' + this.daysText) + ' from\
-        <a class="companybannertextlink" href="' + this.websitelink + '" target="_blank"><div class="span-1 linkicon"></div>' + this.websitedomain + '</a>\
-    </div>\
+    <div class="companybannertextgrey">Founded by ' + this.founders + '</div>\
+    <div class="companybannertextgrey">' + this.daysText + '</div>\
     <div class="companybannermantra">' + this.mantra + '</div>\
 </div>\
 ';
@@ -116,7 +114,7 @@ function CompanyListClass(options) {
 pl.implement(CompanyListClass, {
     storeList: function(json, _colsPerRow, _companydiv, _companykey) {
         var i, company, tile, last,
-            colsPerRow = _colsPerRow || 4,
+            colsPerRow = _colsPerRow ? _colsPerRow : ( this.options.fullWidth ? 1 : 4),
             companydiv = _companydiv || this.options.listingsdiv || 'companydiv',
             companykey = _companykey || this.options.propertykey || 'listings',
             companysel = '#' + companydiv,
@@ -135,7 +133,7 @@ pl.implement(CompanyListClass, {
             tile  = new CompanyTileClass();
             tile.setValues(company);
             last = (i+1) % colsPerRow === 0 ? 'last' : '';
-            html += this.options.fullWidth ? tile.makeFullWidthHtml() : tile.makeHtml(last);
+            html += (this.options.fullWidth || companies.length === 1) ? tile.makeFullWidthHtml() : tile.makeHtml(last);
         }
         if (showmore) {
             html += '<div class="showmore"><a href="' + this.options.showmore + '">More...</a></div>\n';

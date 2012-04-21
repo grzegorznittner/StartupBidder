@@ -29,4 +29,4 @@ war/WEB-INF/web.xml
 war/WEB-INF/lib/appengine*
 war/WEB-INF/lib/datanucleus*
 mockup/*.html
-WEB-INF
+WEB-INF/appengine-generated

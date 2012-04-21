@@ -33,7 +33,6 @@ body { font-size: 14px; font-weight: normal; color: #4083a9; background: #f2f2f2
 
 /* link styles */
 a:link, a:visited { text-decoration: none; color: #4083a9; }
-a:hover { opacity: 0.7; cursor: pointer; }
 .headerrow a:hover { opacity: 1.0; }
 .hoverlink:hover { opacity: 0.7; cursor: pointer }
 .inputbutton:hover { opacity: 0.7; cursor: pointer }
@@ -107,7 +106,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .companybannertile { height: 150px; width: 626px; position: relative; border-radius: 5px; border: 2px solid #999999; overflow: hidden; margin-bottom: 10px; background: #e3e3e3; }
 .companybannertitle { font-size: 30px; font-weight: bold; }
 .companybannertext { font-size: 14px; font-weight: bold; }
-.companybannertextlink { font-size: 14px; font-weight: bold; font-style:italic; margin-left: 4px; }
+.companybannertextlink { font-size: 14px; font-weight: bold; margin-left: 4px; }
 .companybannertextgrey { font-size: 14px; font-weight: bold; color: grey; }
 .companybannerlogo { margin-top: 2px; width: 146px; height: 146px; margin-right: 10px; margin-left: 2px; float: left; }
 .companybannermantra { position: absolute; font-size: 14px; font-weight: bold; width: 380px; bottom:3px; left:158px; color: grey; }
@@ -601,19 +600,6 @@ input[disabled] { color: #999 !important; }
 textarea[disabled] { color: #999 !important; }
 
 .initialhidden { display: none; }
-
-/* hover effect */
-/*
-.tileimg:hover, .tiledesc:hover, .tilevoteimg:hover,
-.boxoption:hover, .sideboxlist>li:hover, .sideboxbutton:hover, .sideboxbuttoninterior:hover,
-.sideboxcompanylink:hover, .sideboxlink:hover,
-.followimg:hover,
-.headerlink:hover, .logotext:hover, .headerprofilelink:hover,
-.footerlink:hover,
-.searchbutton:hover,
-.formlink:hover, .inputlink:hover, .inputimgbutton:hover, .inputbutton:hover, .smallinputbutton:hover
-{ opacity: 0.7; cursor: pointer; }
-*/
 
 /* debug styles */
 /* .container { background: url(../img/blueprint.jpg); background-position: -160px 0px; } */

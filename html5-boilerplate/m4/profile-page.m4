@@ -41,44 +41,54 @@ include(header.m4)
         </div>
     </div>
 
-    <div class="boxtitle clear"><a name="posted"></a>YOU POSTED</div>
-    <div id="posteddiv"></div>
+    <div id="no_listings_wrapper" class="initialhidden">
+        <div class="boxtitle smokegrey">YOUR LISTINGS</div>
+        <div class="boxpanel">
+            You currently have no listings.
+            <a href="/new-listing-basics-page.html" class="inputmsg hoverlink">Post</a> a new listing or
+            <a href="/main-page.html?type=closing" class="inputmsg hoverlink">invest</a> in one today!
+        </div>
+    </div>
 
-    <div class="boxtitle clear"><a name="bidon"></a>YOU BID ON</div>
-    <div id="bidondiv"></div>
+    <div id="edited_listing_wrapper" class="initialhidden">
+        <div class="boxtitle smokegrey">YOUR IN-PROGRESS LISTING</div>
+        <div id="edited_listing"></div>
+    </div>
 
-    <div class="boxtitle clear"><a name="upvoted"></a>YOU UPVOTED</div>
-    <div id="upvoteddiv"></div>
+    <div id="active_listings_wrapper" class="initialhidden">
+        <div class="boxtitle smokegrey">YOUR ACTIVE LISTINGS</div>
+        <div id="active_listings"></div>
+    </div>
+
+    <div id="monitored_listings_wrapper" class="initialhidden">
+        <div class="boxtitle smokegrey">YOUR MONITORED LISTINGS</div>
+        <div id="monitored_listings"></div>
+    </div>
+
+    <div id="closed_listings_wrapper" class="initialhidden">
+        <div class="boxtitle smokegrey">YOUR CLOSED LISTINGS</div>
+        <div id="closed_listings"></div>
+    </div>
+
+    <div id="withdrawn_listings_wrapper" class="initialhidden">
+        <div class="boxtitle smokegrey">YOUR WITHDRAWN LISTINGS</div>
+        <div id="withdrawn_listings"></div>
+    </div>
+
+    <div id="frozen_listings_wrapper" class="initialhidden">
+        <div class="boxtitle smokegrey">YOUR FROZEN LISTINGS</div>
+        <div id="frozen_listings"></div>
+    </div>
 
 </div> <!-- end left column -->
 
 <!-- right column -->
 <div class="span-8 last">
-    <div class="boxtitle">YOUR COMPANIES</div>
-    <div class="sidebox">
-        <a href="#posted">
-        <!-- <div class="sideboxcompanylink sideboxselected clear"> -->
-        <div class="sideboxcompanylink clear">
-            <span class="sideboxtitle" id="mylistingscount">0</span>
-            <span class="sideboxtitledetail">YOU POSTED</span>
-        </div>
-        </a>
-        <a href="#bidon">
-        <div class="sideboxcompanylink">
-            <span class="sideboxtitle" id="biddedoncount">0</span>
-            <span class="sideboxtitledetail">YOU BID ON</span>
-        </div>
-        </a>
-        <a href="#upvoted">
-        <div class="sideboxcompanylink">
-            <span class="sideboxtitle" id="upvotedcount">0</span>
-            <span class="sideboxtitledetail">YOU UPVOTED</span>
-        </div>
-        </a>
-    </div>
-    
+
+    <!--   
     <div class="boxtitle clear">YOUR NOTIFICATIONS</div>
     <div class="sidebox" id="notifylist"></div>
+    -->
 
 </div> <!-- end right column -->
 
