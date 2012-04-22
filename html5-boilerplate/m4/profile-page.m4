@@ -14,33 +14,6 @@ include(header.m4)
 
 <!-- left column -->
 <div class="span-16">
-    <div class="boxtitle">YOUR PROFILE</div>
-    <div class="boxpanel">
-        <div id="profilestatus"></div>
-        <div class="formfull">
-            <span class="formtitle" id="name"></span>
-        </div>
-        <div class="formcol1 clear">
-            <span id="title"></span><br/>
-            <span id="organization"></span><br/>
-            <br/>
-            <span id="email"></span><br/>
-            <span id="phone"></span><br/>
-            <span id="address"></span><br/>
-        </div>
-        <div class="formcol2">
-            Member since <span id="joineddate"></span><br/>
-            <span id="investor"></span><br/>
-            Email notifications <span id="notifyenabled"></span><br/>
-            <br/>
-            <a href="edit-profile-page.html">
-                <span class="push-4 span-3 inputbutton" id="editprofilebutton">
-                    EDIT
-                </span>
-            </a>
-        </div>
-    </div>
-
     <div id="no_listings_wrapper" class="initialhidden">
         <div class="boxtitle smokegrey">YOUR LISTINGS</div>
         <div class="boxpanel">
@@ -84,6 +57,26 @@ include(header.m4)
 
 <!-- right column -->
 <div class="span-8 last">
+
+    <div class="boxtitle">YOUR PROFILE</div>
+    <div class="sidebox profilebox">
+        <div id="profilemsg"></div>
+        <div class="formfull">
+            <span class="formtitle" id="username"></span>
+        </div>
+        <div class="formcol1 clear">
+            <div><span class="profiletext" id="email"></span></div>
+            <div><span class="profiletext" id="name"></span></div>
+            <div>
+                <span id="investor" class="span-4"></span>
+                <a href="edit-profile-page.html">
+                    <span class="span-3 inputbutton" id="editprofilebutton">
+                        EDIT
+                    </span>
+                </a>
+            </div>
+       </div>
+    </div>
 
     <!--   
     <div class="boxtitle clear">YOUR NOTIFICATIONS</div>

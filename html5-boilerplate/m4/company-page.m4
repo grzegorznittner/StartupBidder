@@ -114,7 +114,6 @@ include(header.m4)
         <div class="gplusbanner" id="gplusbanner"></div>
     </div>
 
-
     <div id="withdrawbox" class="withdrawbox">
     <div class="boxtitle">WITHDRAW POST</div>
     <div class="withdrawmsg attention" id="withdrawmsg">Are you sure?<br/>This cannot be undone.</div>

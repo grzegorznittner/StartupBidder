@@ -132,7 +132,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .companyhalf { height: 150px; position: relative; }
 .companyhalftile { height: 150px; width: 306px; position: relative; border-radius: 5px; border: 2px solid #999999; overflow: hidden; margin-bottom: 10px; background: #e3e3e3; float: left; margin-right: 10px; }
 .companyhalftilelast { margin-right: 0px; }
-.companyhalftitle { font-size: 18px; font-weight: bold; line-height: 20px; margin-bottom: 3px; }
+.companyhalftitle { font-size: 18px; font-weight: bold; line-height: 20px; margin-bottom: 3px; margin-top: 3px; }
 .companyhalftext { font-size: 12px; font-weight: bold; color: grey; line-height: 14px; }
 .companyhalflogo { margin-top: 2px; width: 146px; height: 146px; margin-right: 10px; margin-left: 2px; float: left; }
 .companyhalfmantra { position: absolute; font-size: 12px; font-weight: bold; width: 145px; bottom:3px; left:158px; line-height: 14px; }
@@ -245,8 +245,10 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .formtitle { font-size: 24px; padding-left: 5px; }
 .formtitlefourth { font-size: 24px; padding-left: 0; }
 .companytitle { margin-right: 10px; }
+.profilebox { height: 130px; }
+.profiletext { color: grey; }
 .formcol1 { width: 301px; padding-left: 5px; }
-.formcol2 { width: 306px; }
+.formcol2 { width: 306px; padding-top: 15px; }
 .formcol1fourth { float: left; width: 146px; padding-left: 0px; }
 .formcol2fourth { float: left; }
 .mediacol1 { width: 146px; float: left; margin-right: 10px; }
@@ -397,7 +399,6 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .documentbox { height: 114px; }
 .documentwrapper { display: none; }
 .withdrawtitle { display: none; }
-.withdrawbox { display: none; }
 .bidboxtitle { display: none; }
 .bidbox { display: none; }
 .bidboxstatus { display: none; }
@@ -426,6 +427,9 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .freezebox { display: none; }
 .freezemsg { display: none; font-weight: bold; }
 .freezecancelbtn { display: none; margin-top: 10px; }
+.deactivatebox { display: none; }
+.deactivatemsg { display: none; font-weight: bold; }
+.deactivatecancelbtn { display: none; margin-top: 10px; }
 .mapaddresstext { font-weight: bold; }
 .summarypanel { min-height: 130px; }
 .sidebox, .askingbox { min-height: 21px; }

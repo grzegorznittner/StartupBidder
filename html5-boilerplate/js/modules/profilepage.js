@@ -50,7 +50,7 @@ pl.implement(ProfilePageClass,{
                     pl('#no_listings_wrapper').show();
                 }
              },
-            ajax = new AjaxClass('/listings/discover_user/', 'profilestatus', completeFunc);
+            ajax = new AjaxClass('/listings/discover_user/', 'profilemsg', completeFunc);
         ajax.call();
     }
 });
