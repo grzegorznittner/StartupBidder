@@ -14,6 +14,8 @@ include(header.m4)
 
 <!-- left column -->
 <div class="span-16">
+    <div id="profilemsg"></div>
+
     <div id="no_listings_wrapper" class="initialhidden">
         <div class="boxtitle smokegrey">YOUR LISTINGS</div>
         <div class="boxpanel">
@@ -60,7 +62,6 @@ include(header.m4)
 
     <div class="boxtitle">YOUR PROFILE</div>
     <div class="sidebox profilebox">
-        <div id="profilemsg"></div>
         <div class="formfull">
             <span class="formtitle" id="username"></span>
         </div>
@@ -78,10 +79,8 @@ include(header.m4)
        </div>
     </div>
 
-    <!--   
     <div class="boxtitle clear">YOUR NOTIFICATIONS</div>
     <div class="sidebox" id="notifylist"></div>
-    -->
 
 </div> <!-- end right column -->
 
@@ -95,6 +94,7 @@ include(footer.m4)
   <script src="js/modules/base.js"></script>
   <script src="js/modules/companylist.js"></script>
   <script src="js/modules/profile.js"></script>
+  <script src="js/modules/notification.js"></script>
   <script src="js/modules/profilepage.js"></script>
   <script src="js/modules/tracker.js"></script>
 '

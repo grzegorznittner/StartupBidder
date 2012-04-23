@@ -17,7 +17,7 @@ include(header.m4)
 </div> <!-- end banner -->
 
 <!-- left column -->
-<div class="span-16" id="profilecolumn">
+<div class="span-16" id="personalcolumn">
     <div class="boxtitle">
         PERSONAL INFO
         <span class="newlistingtitlemsg" id="personalinfomsg"></span>

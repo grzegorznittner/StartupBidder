@@ -109,7 +109,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .companybannertextlink { font-size: 14px; font-weight: bold; margin-left: 4px; }
 .companybannertextgrey { font-size: 14px; font-weight: bold; color: grey; }
 .companybannerlogo { margin-top: 2px; width: 146px; height: 146px; margin-right: 10px; margin-left: 2px; float: left; }
-.companybannermantra { position: absolute; font-size: 14px; font-weight: bold; width: 380px; bottom:3px; left:158px; }
+.companybannermantra { position: absolute; font-size: 14px; font-weight: bold; width: 380px; bottom:3px; left:158px; color: grey; }
 .companynavcontainer { position: absolute; bottom:0; left:544px; height: 21px; }
 .companynav {
     float: left; padding: 0px 10px; margin-right: 10px; text-align: center; height: 19px;
@@ -135,7 +135,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .companyhalftitle { font-size: 18px; font-weight: bold; line-height: 20px; margin-bottom: 3px; margin-top: 3px; }
 .companyhalftext { font-size: 12px; font-weight: bold; color: grey; line-height: 14px; }
 .companyhalflogo { margin-top: 2px; width: 146px; height: 146px; margin-right: 10px; margin-left: 2px; float: left; }
-.companyhalfmantra { position: absolute; font-size: 12px; font-weight: bold; width: 145px; bottom:3px; left:158px; line-height: 14px; }
+.companyhalfmantra { position: absolute; font-size: 12px; font-weight: bold; width: 145px; bottom:3px; left:158px; line-height: 14px; color: grey; }
 .halftiledays, .halftiledaystext, .halftiletype, .halftiletypetext { left: 2px; width: 146px; height: 30px; position: absolute; }
 .halftiledays, .halftiletype { opacity: 0.6; background-color: #000000; }
 .halftiledaystext, .halftiletypetext { padding: 4px; color: white; font-weight: bold; }
@@ -192,7 +192,8 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .infowindowwrapper { min-height: 288px; }
 .infowindow { color: #333333; font-weight: bold; font-size: 12px; line-height: 16px; }
 .infotitle { font-size: 20px; line-height: 20px; }
-.infomantra { color: #4083a9; }
+/* .infomantra { color: #4083a9; } */
+.infomantra { color: grey; }
 .infolabel { font-weight: normal; }
 
 /* form styles */
@@ -386,7 +387,8 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .sideboxnotify { float: left; width: 302px; }
 .sideboxicon { width: 26px; margin-right: 10px; float: left; }
 .sideboxnotifytext { float: left; width: 266px; font-weight: normal; }
-.sideboxdate { font-size: 10px; }
+.sideboxdate { font-size: 10px; color: grey; }
+.sideboxlisting { font-size: 10px; }
 .sideboxmap { width: 302px; height: 302px; }
 .bidpanel { padding-top: 5px; }
 .nearbypanel { width: 946px; height: 946px; }

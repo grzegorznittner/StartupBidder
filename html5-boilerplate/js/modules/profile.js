@@ -1,39 +1,3 @@
-function NotifyListClass() {}
-pl.implement(NotifyListClass, {
-    storeList: function(json) {
-        var notifications, html, i, notification;
-        notifications = json && json.notifications && json.notifications.length > 0
-            ? json.notifications
-            : [];
-        if (notifications.length === 0) {
-            notification = {};
-            notification.url = null;
-            notification.type = 'comment';
-            notification.text = 'You currently have no notifications';
-            notification.date = '';
-            notifications[0] = notification;
-        }
-        html = '';
-        for (i = 0; i < notifications.length; i++) {
-            notification = notifications[i];
-            html += '\
-    '+(notification.url ? '<a href="' + notification.url + '">' : '') + '\
-        <div class="sideboxnotify sideboxlink">\
-            <span class="sideboxicon">\
-                <div class="'+notification.type+'icon"></div>\
-            </span>\
-            <span class="sideboxnotifytext">\
-                '+notification.text+'\
-                <br/>\
-                <span class="sideboxdate">'+notification.date+'</span>\
-            </span>\
-        </div>\
-    '+(notification.url ? '</a>' : '');
-        }
-        pl('#notifylist').html(html);
-    }
-});
-
 function ProfileClass() {}
 pl.implement(ProfileClass, {
     setProfile: function(json) {
@@ -130,37 +94,36 @@ pl.implement(EditProfileClass, {
         });
     },
     setProfile: function(json) {
-        var self, properties, updateUrl, i, property, textFields, textFieldId, textFieldObj,
-            investorCheckbox, notifyCheckbox, newPassword, passwordOptions, confirmPassword;
-        self = this;
         //properties = ['profile_id', 'status', 'name', 'username', 'open_id', 'profilestatus', 'title', 'organization', 'email', 'phone', 'address'];
-        properties = ['profile_id', 'username', 'email', 'name'];
-        textFields = ['username', 'email', 'name'];
-        this.profile_id = json.profile_id;
-        this.admin = json.admin;
-        this.updateUrl = '/user/update?id=' + this.profile_id;
+        var self = this,
+            properties = ['profile_id', 'username', 'email', 'name'],
+            textFields = ['username', 'email', 'name'],
+            i, property, textFields, textFieldId, textFieldObj, investorCheckbox; 
+        self.profile_id = json.profile_id;
+        self.admin = json.admin;
+        self.updateUrl = '/user/update?id=' + self.profile_id;
         for (i = 0; i < properties.length; i++) {
             property = properties[i];
-            this[property] = json[property];
+            self[property] = json[property];
         }
         for (i = 0; i < textFields.length; i++) {
             textFieldId = textFields[i];
-            textFieldObj = new TextFieldClass(textFieldId, json[textFieldId], this.getUpdater(), 'personalinfomsg');
+            textFieldObj = new TextFieldClass(textFieldId, json[textFieldId], self.getUpdater(), 'personalinfomsg');
             textFieldObj.fieldBase.addValidator(textFieldObj.fieldBase.validator.isNotEmpty);
             if (textFieldId === 'email') {
                 textFieldObj.fieldBase.addValidator(textFieldObj.fieldBase.validator.isEmail);
             }
             textFieldObj.bindEvents();
         }
-        investorCheckbox = new CheckboxFieldClass('investor', json.investor, this.getUpdater(), 'settingsmsg');
+        investorCheckbox = new CheckboxFieldClass('investor', json.investor, self.getUpdater(), 'settingsmsg');
         investorCheckbox.bindEvents();
 /*
-        notifyCheckbox = new CheckboxFieldClass('notifyenabled', json.notifyenabled, this.getUpdater(), 'settingsmsg');
+        notifyCheckbox = new CheckboxFieldClass('notifyenabled', json.notifyenabled, self.getUpdater(), 'settingsmsg');
         notifyCheckbox.bindEvents();
         newPassword = new TextFieldClass('newpassword', '', function(){}, 'passwordmsg');
         passwordOptions = {
             length: [8, 32],
-            badWords: ['password', this.name, this.username, this.email, (this.email&&this.email.indexOf('@')>0?this.email.split('@')[0]:'')],
+            badWords: ['password', self.name, self.username, self.email, (self.email&&self.email.indexOf('@')>0?self.email.split('@')[0]:'')],
             badSequenceLength: 3
         };
         newPassword.fieldBase.addValidator(newPassword.fieldBase.validator.makePasswordChecker(passwordOptions));
@@ -173,7 +136,7 @@ pl.implement(EditProfileClass, {
             }
         };
         newPassword.bindEvents();
-        confirmPassword = new TextFieldClass('confirmpassword', '', this.getUpdater(), 'passwordmsg');
+        confirmPassword = new TextFieldClass('confirmpassword', '', self.getUpdater(), 'passwordmsg');
         confirmPassword.fieldBase.addValidator(function(val) {
             if (pl('#newpassword').attr('value') === val) {
                 return 0;

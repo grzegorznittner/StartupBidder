@@ -24,22 +24,19 @@ pl.implement(ProfilePageClass,{
             completeFunc = function(json) {
                 var header = new HeaderClass(),
                     profile = new ProfileClass(),
+                    notifyList = new NotifyListClass(),
                     listprops = [ 'edited_listing', 'active_listings', 'monitored_listings', 'closed_listings', 'withdrawn_listings', 'frozen_listings' ],
                     options = { edited_listing: { propertyissingle: true, fullWidth: true} },
                     listingfound = false,
                     propertykey,
                     i;
-                    //notifyList = new NotifyListClass(),
-                //if (!json.notifications || !json.notifications.length > 0) {
-                //    json.notifications = testCompanies.testNotifications();
-                //}
-                //notifyList.storeList(json);
+                self.json = json;
                 header.setLogin(json);
                 if (!json.loggedin_profile) { // must be logged in for this page
                     window.location = '/';
                 }
                 profile.setProfile(json.loggedin_profile);
-                self.json = json;
+                notifyList.display(json);
                 for (i = 0; i < listprops.length; i++) {
                     propertykey = listprops[i];
                     if (self.storeListings(propertykey, options[propertykey])) {

@@ -7,28 +7,9 @@ include(head.m4)
 <body class="new-listing-media-page">
 <div id="wrap">
 <div id="newlistingmain">
-
-<div class="header">
-  <div class="container">
-    <div class="span-5">
-      <a href="main-page.html"><span class="logotextblue">startup</span><span class="logotextgrey">bidder</span></a>
-    </div>
-    <div class="span-11">
-      <a href="main-page.html?type=top"><span class="headerlink">Top</span></a>
-      <span class="headertext">&nbsp;&nbsp;|&nbsp;&nbsp;</span>
-      <a href="main-page.html?type=latest"><span class="headerlink">Latest</span></a>
-      <span class="headertext">&nbsp;&nbsp;|&nbsp;&nbsp;</span>
-      <a href="main-page.html?type=closing"><span class="headerlink">Closing</span></a>
-      <span class="headertext">&nbsp;&nbsp;|&nbsp;&nbsp;</span>
-      <a id="postlink" href="login-page.html"><span class="headerlink" id="posttext"></span></a>
-    </div>
-    <div class="span-8 last loginspan">
-      <div><a id="loginlink" href="login-page.html"><span class="headerlink" id="logintext"></span></a></div>
-      <div id="logout" class="logout"><a href="/_ah/logout?continue=%2F">logout</a></div>
-    </div>
-  </div>
-</div>
-
+'
+include(header.m4)
+`
 <div class="container">
 
 <!-- begin banner -->
