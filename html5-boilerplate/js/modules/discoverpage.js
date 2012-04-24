@@ -6,6 +6,7 @@ pl.implement(DiscoverPageClass,{
                     searchbox = new SearchBoxClass(),
                     editedListing = new CompanyListClass({ propertykey: 'edited_listing', propertyissingle: true, listingsdiv: 'edited_listing', fullWidth: true }),
                     usersListings = new CompanyListClass({ propertykey: 'users_listings', listingsdiv: 'users_listings', showmore: '/main-page.html?type=useractive' }),
+                    monitoredListings = new CompanyListClass({ propertykey: 'monitored_listings', listingsdiv: 'monitored_listings', showmore: '/main-page.html?type=monitored' }),
                     topListings = new CompanyListClass({ propertykey: 'top_listings', listingsdiv: 'top_listings', showmore: '/main-page.html?type=top' }),
                     closingListings = new CompanyListClass({ propertykey: 'closing_listings', listingsdiv: 'closing_listings', showmore: '/main-page.html?type=closing' }),
                     latestListings = new CompanyListClass({ propertykey: 'latest_listings', listingsdiv: 'latest_listings', showmore: '/main-page.html?type=latest' }),
@@ -24,6 +25,10 @@ pl.implement(DiscoverPageClass,{
                 if (json.users_listings && json.users_listings.length > 0) {
                     pl('#users_listings_wrapper').show();
                     usersListings.storeList(json);
+                }
+                if (json.monitored_listings && json.monitored_listings.length > 0) {
+                   pl('#monitored_listings_wrapper').show();
+                    monitoredListings.storeList(json);
                 }
                 topListings.storeList(json);
                 closingListings.storeList(json);

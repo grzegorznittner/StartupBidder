@@ -28,6 +28,11 @@ include(searchbox.m4)
         <div id="users_listings"></div>
     </div>
 
+    <div id="monitored_listings_wrapper" class="initialhidden">
+        <div class="boxtitle smokegrey">YOUR MONITORED LISTINGS</div>
+        <div id="monitored_listings"></div>
+    </div>
+
     <div class="boxtitle smokegrey">TOP LISTINGS</div>
     <div id="top_listings"></div>
 

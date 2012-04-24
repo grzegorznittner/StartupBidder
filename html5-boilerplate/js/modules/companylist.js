@@ -50,7 +50,7 @@ pl.implement(CompanyTileClass, {
 <div class="tiletypetext">' + this.categoryUC + '</div>\
 <div class="tilepoints"></div>\
 <div class="tilepointstext">\
-    <div class="tileposted">' + this.suggested_amt + '</div>\
+    <div class="tileposted">' + this.suggested_text + '</div>\
 </div>\
 <p class="tiledesc">\
 ' + this.openanchor + '\
@@ -110,7 +110,7 @@ pl.implement(CompanyTileClass, {
     <div class="halftiledays"></div>\
     <div class="halftiledaystext">' + this.daysText + '</div>\
     <div class="halftiletype"></div>\
-    <div class="halftiletypetext">' + this.suggested_amt + '</div>\
+    <div class="halftiletypetext">' + this.suggested_text + '</div>\
 ' + this.closeanchor + '\
 ' + this.openanchor + '\
     <div class="companyhalftitle hoverlink">' + this.name + '</div>\

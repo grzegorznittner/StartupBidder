@@ -307,7 +307,7 @@ pl.implement(HeaderClass, {
     setLoggedOut: function(login_url) {
         pl('#topheader').show();
         if (login_url && pl('body').hasClass('login-page')) {
-            pl('#googleloginlink').attr({href: login_url});
+            pl('#googleloginlink').attr({href: login_url}).show();
         }
         pl('#postlink').attr('href', 'login-page.html');
         pl('#posttext').html('Post');

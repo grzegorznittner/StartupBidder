@@ -29,14 +29,12 @@ pl.implement(CommentsClass, {
         var self = this;
         pl('#addcommenttext').bind({
             focus: function() {
-                console.log('focus');
                 if (!pl('#addcommenttext').hasClass('edited')) {
                     pl('#addcommenttext').attr({value: ''});
                     pl('#addcommentmsg').html('&nbsp;');
                 }
             },
             keyup: function() {
-                console.log('change');
                 if (!pl('#addcommenttext').hasClass('edited')) {
                     pl('#addcommenttext').addClass('edited');
                     pl('#addcommentmsg').html('&nbsp;');
@@ -50,7 +48,6 @@ pl.implement(CommentsClass, {
                 return false;
             },
             blur: function() {
-                console.log('blur');
                 if (!pl('#addcommenttext').hasClass('edited')) {
                     pl('#addcommenttext').attr({value: 'Put your comment here...'});
                     pl('#addcommentbtn').removeClass('addcommentenabled');
@@ -59,7 +56,6 @@ pl.implement(CommentsClass, {
         });
         pl('#addcommentbtn').bind({
             click: function(event) {
-                console.log('click');
                 var completeFunc, commentText, ajax;
                 if (!pl('#addcommentbtn').hasClass('addcommentenabled')) {
                     return false;
@@ -118,10 +114,8 @@ pl.implement(CommentsClass, {
         }
     },
     deleteCommentGenerator: function(commentId) {
-        console.log('commentid', commentId);
         return function() {
             var successFunc = function(json) {
-                    console.log('completed');
                     pl('#comment_'+commentId).remove();
                     pl('#comment_dd_'+commentId).remove();
                     if (!pl('#commentlist').get(0).hasChildNodes()) {
