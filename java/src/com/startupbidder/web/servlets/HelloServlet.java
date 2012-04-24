@@ -182,6 +182,7 @@ public class HelloServlet extends HttpServlet {
 			out.println("<a href=\"/listings/popular/.json?max_results=6\">Most popular listings</a><br/>");
 			out.println("<a href=\"/listings/latest/.json?max_results=6\">Latest listings</a><br/>");
 			out.println("<a href=\"/listings/closing/.json?max_results=6\">Closing listings</a><br/>");
+			out.println("<a href=\"/listings/monitored/.json?max_results=6\">Monitored listings (by logged in user)</a><br/>");
 			out.println("<form method=\"GET\" action=\"/listing/keyword/.json\"><input name=\"text\" type=\"text\" value=\"business\"/>"
 					+ "<input type=\"submit\" value=\"Keyword search\"/></form>");
 
@@ -218,7 +219,6 @@ public class HelloServlet extends HttpServlet {
 			out.println("<form method=\"POST\" action=\"/comment/delete/.json?id=" + comments.get(0).getWebKey() + "\"><input type=\"submit\" value=\"Deletes comment id '" + comments.get(0).getWebKey() + "'\"/></form>");
 			out.println("<br/>");
 			
-			/*
 			out.println("<p style=\"background: none repeat scroll 0% 0% rgb(187, 187, 187);\">Notification API:</p>");
 			out.println("<a href=\"/notification/user/" + currentUser.getId() + "/.json?max_results=6\">Notifications for current user</a><br/>");
 			List<Notification> notifications = datastore.getUserNotification(currentUser.toKeyId(), new ListPropertiesVO());
@@ -233,7 +233,6 @@ public class HelloServlet extends HttpServlet {
 						+ "  \"type\":\"new_listing\", \"message\":\"Sample message\" }"
 						+ "</textarea><input type=\"submit\" value=\"Create a notification\"/></form>");
 			out.println("<br/>");
-			*/
 			
 			out.println("<p style=\"background: none repeat scroll 0% 0% rgb(187, 187, 187);\">Monitor API:</p>");
 			out.println("<a href=\"/monitors/active-for-user/.json?type=Listing\">All active monitors for logged in user</a><br/>");

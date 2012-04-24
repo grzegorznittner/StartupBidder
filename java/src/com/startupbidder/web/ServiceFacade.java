@@ -237,25 +237,6 @@ public class ServiceFacade {
 		return urls;
 	}
 
-	public NotificationVO createNotification(UserVO loggedInUser, NotificationVO notification) {
-		try {
-			Notification.Type.valueOf(notification.getType().toUpperCase());
-		} catch (Exception e) {
-			log.log(Level.WARNING, "Notification cannot be created as type is empty or not recognized!", e);
-		}
-		if (StringUtils.isEmpty(notification.getUser())) {
-			log.warning("Notification cannot be created as user is empty!");
-		}
-		notification.setCreated(new Date());
-		notification.setRead(false);
-		notification.setSentDate(null);
-		notification = DtoToVoConverter.convert(getDAO().storeNotification(VoToModelConverter.convert(notification)));
-		if (notification != null) {
-			scheduleNotification(loggedInUser.getId(), notification);
-		}
-		return notification;
-	}
-	
 	public void createNotification(String userId, String listingId, Notification.Type type, String message) {
 		Notification notification = new Notification();
 		notification.user = new Key<SBUser>(SBUser.class, userId);
@@ -283,13 +264,13 @@ public class ServiceFacade {
 				.taskName(taskName));
 	}
 
-	public NotificationVO acknowledgeNotification(UserVO loggedInUser, String notifId) {
+	public NotificationVO markNotificationAsRead(UserVO loggedInUser, String listingId) {
 		NotificationVO notification = DtoToVoConverter.convert(
-				getDAO().acknowledgeNotification(BaseVO.toKeyId(notifId)));
+				getDAO().markNotificationAsRead(BaseVO.toKeyId(loggedInUser.getId()), BaseVO.toKeyId(listingId)));
 		if (notification == null) {
-			log.warning("Notification with id '" + notifId + "' not found!");
+			log.warning("Notification for user '" + loggedInUser.getNickname() + "' on listing id " + listingId + " not found!");
 		} else {
-			log.info("Notification with id '" + notifId + "' was acknowledged.");
+			log.info("Notification for user '" + loggedInUser.getNickname() + "' on listing id " + listingId + " was marked as read.");
 		}
 		return notification;
 	}
@@ -336,12 +317,14 @@ public class ServiceFacade {
 	}
 
 	public NotificationVO getNotification(UserVO loggedInUser, String notifId) {
-		NotificationVO notification = DtoToVoConverter.convert(
-				getDAO().getNotification(BaseVO.toKeyId(notifId)));
+		Notification notification = getDAO().getNotification(BaseVO.toKeyId(notifId));
 		if (notification == null) {
 			log.warning("Notification with id '" + notifId + "' not found!");
 		}
-		return notification;
+		notification.read = true;
+		getDAO().storeNotification(notification);
+		NotificationVO notificationVO = DtoToVoConverter.convert(notification);
+		return notificationVO;
 	}
 	
 	public MonitorVO setMonitor(UserVO loggedInUser, MonitorVO monitor) {

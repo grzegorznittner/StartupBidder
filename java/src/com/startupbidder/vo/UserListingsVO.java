@@ -22,6 +22,8 @@ public class UserListingsVO extends BaseResultVO {
 	@JsonProperty("edited_listing") private ListingVO editedListing;
 	@JsonProperty("categories") private Map<String, Integer> categories;
 	@JsonProperty("top_locations") private Map<String, Integer> topLocations;
+	@JsonProperty("admin_posted_listings") private List<ListingVO> adminPostedListings;
+	@JsonProperty("admin_frozen_listings") private List<ListingVO> adminFrozenListings;
 
 	public Map<String, Integer> getCategories() {
 		return categories;
@@ -70,5 +72,17 @@ public class UserListingsVO extends BaseResultVO {
 	}
 	public void setCommentedListings(List<ListingVO> commentedListings) {
 		this.commentedListings = commentedListings;
+	}
+	public List<ListingVO> getAdminPostedListings() {
+		return adminPostedListings;
+	}
+	public void setAdminPostedListings(List<ListingVO> adminPostedListings) {
+		this.adminPostedListings = adminPostedListings;
+	}
+	public List<ListingVO> getAdminFrozenListings() {
+		return adminFrozenListings;
+	}
+	public void setAdminFrozenListings(List<ListingVO> adminFrozenListings) {
+		this.adminFrozenListings = adminFrozenListings;
 	}
 }

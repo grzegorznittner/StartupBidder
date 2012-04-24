@@ -75,6 +75,8 @@ public class ListingController extends ModelDrivenController {
 				return latest(request);
 			} else if("closing".equalsIgnoreCase(getCommand(1))) {
 				return closing(request);
+			} else if("monitored".equalsIgnoreCase(getCommand(1))) {
+				return monitored(request);
 			} else if("user".equalsIgnoreCase(getCommand(1))) {
 				return user(request);
 			} else if("get".equalsIgnoreCase(getCommand(1))) {
@@ -430,6 +432,13 @@ public class ListingController extends ModelDrivenController {
     	model = ListingFacade.instance().getPostedListings(getLoggedInUser(), listingProperties);
         return new HttpHeadersImpl("posted").disableCaching();
     }
+
+	// GET /listings/monitored
+	private HttpHeaders monitored(HttpServletRequest request) {
+		ListPropertiesVO listingProperties = getListProperties(request);
+    	model = ListingFacade.instance().getMonitoredListings(getLoggedInUser(), listingProperties);
+        return new HttpHeadersImpl("monitored").disableCaching();
+	}
 
     // GET /listings/user
     private HttpHeaders user(HttpServletRequest request) {

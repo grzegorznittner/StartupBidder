@@ -1123,16 +1123,17 @@ public class ObjectifyDatastoreDAO {
 		return notification;
 	}
 
-	public Notification acknowledgeNotification(long notificationId) {
-		try {
-			Notification notification = getOfy().get(Notification.class, notificationId);
-			notification.read = true;
-			getOfy().put(notification);
-			return notification;
-		} catch (Exception e) {
-			log.log(Level.WARNING, "Notification with id '" + notificationId + "' not found!");
+	public Notification markNotificationAsRead(long userId, long listingId) {
+		Notification notification = getOfy().query(Notification.class)
+				.filter("user =", new Key<SBUser>(SBUser.class, userId))
+				.filter("listing =", new Key<Listing>(Listing.class, listingId))
+				.filter("read =", Boolean.FALSE).get();
+		if (notification == null) {
 			return null;
 		}
+		notification.read = true;
+		getOfy().put(notification);
+		return notification;
 	}
 
 	public List<Notification> getUserNotification(long userId, ListPropertiesVO notificationProperties) {

@@ -878,18 +878,23 @@ public class ListingFacade {
 			result.setEditedListing(DtoToVoConverter.convert(editedListing));
 		}
 		
-		List<Key<Listing>> monitoredListingKeys = new ArrayList<Key<Listing>>();
-		List<Monitor> monitors = getDAO().getMonitorsForUser(loggedInUser.toKeyId(), Monitor.Type.LISTING);
-		log.info("Fetched monitors for user '" + loggedInUser.toKeyId() + "': " + monitors);
-		for (Monitor monitor : monitors) {
-			if (monitor.type == Monitor.Type.LISTING) {
-				monitoredListingKeys.add(new Key<Listing>(Listing.class, monitor.monitoredListing.getId()));
-			}
-		}
-		props = new ListPropertiesVO();
-		props.setMaxResults(4);
-		list = prepareListingList(loggedInUser, getDAO().getListingsByKeys(monitoredListingKeys), 4);
+		List<Listing> monitoredListing = getMonitoredListings(loggedInUser, 4);
+		list = prepareListingList(loggedInUser, monitoredListing, 4);
 		result.setCommentedListings(list);
+		
+		if (loggedInUser.isAdmin()) {
+			props = new ListPropertiesVO();
+			props.setMaxResults(4);
+			List<Listing> adminFrozenListing = getDAO().getFrozenListings(props);
+			list = prepareListingList(loggedInUser, adminFrozenListing, 4);
+			result.setAdminFrozenListings(list);
+
+			props = new ListPropertiesVO();
+			props.setMaxResults(4);
+			List<Listing> adminPostedListing = getDAO().getPostedListings(props);
+			list = prepareListingList(loggedInUser, adminPostedListing, 4);
+			result.setAdminPostedListings(list);
+		}
 		
 		result.setCategories(getTopCategories());
 		result.setTopLocations(getTopLocations());
@@ -910,6 +915,38 @@ public class ListingFacade {
 				break;
 			}
 		}
+		return list;
+	}
+	
+	private List<Listing> getMonitoredListings(UserVO loggedInUser, int maxResults) {
+		List<Key<Listing>> monitoredListingKeys = new ArrayList<Key<Listing>>();
+		List<Monitor> monitors = getDAO().getMonitorsForUser(loggedInUser.toKeyId(), Monitor.Type.LISTING);
+		log.info("Fetched monitors for user '" + loggedInUser.toKeyId() + "': " + monitors);
+		for (Monitor monitor : monitors) {
+			if (monitor.type == Monitor.Type.LISTING) {
+				monitoredListingKeys.add(new Key<Listing>(Listing.class, monitor.monitoredListing.getId()));
+			}
+			if (monitoredListingKeys.size() > maxResults) {
+				break;
+			}
+		}
+		return getDAO().getListingsByKeys(monitoredListingKeys);
+	}
+
+	public ListingListVO getMonitoredListings(UserVO loggedInUser, ListPropertiesVO listingProperties) {
+		List<ListingVO> listings = DtoToVoConverter.convertListings(
+				getMonitoredListings(loggedInUser, listingProperties.getMaxResults()));
+		int index = listingProperties.getStartIndex() > 0 ? listingProperties.getStartIndex() : 1;
+		for (ListingVO listing : listings) {
+			applyListingData(loggedInUser, listing);
+			listing.setOrderNumber(index++);
+		}
+		ListingListVO list = new ListingListVO();
+		list.setListings(listings);
+		list.setListingsProperties(listingProperties);
+		list.setCategories(getTopCategories());
+		list.setTopLocations(getTopLocations());
+	
 		return list;
 	}
 

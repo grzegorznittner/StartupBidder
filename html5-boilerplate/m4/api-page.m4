@@ -79,6 +79,16 @@ include(api-banner.m4)
             </p>
         </dd>
 
+        <dt>GET /listings/monitored/ <i>OPTIONAL max_results=&lt;n&gt;</i>
+            <form method="GET" action="/listings/monitored/"><input type="submit" value="TEST"></input></form>
+        </dt>
+        <dd>
+            <p>
+            Returns listings on startupbidder monitored by logged in user.
+            The max_results parameter allows for limiting response size.
+            </p>
+        </dd>
+
         <dt>GET /listings/keyword?text=&lt;searchtext&gt; <i>OPTIONAL max_results=&lt;n&gt;</i>
             <form method="GET" action="/listings/keyword"><input type="text" name="text" value="&lt;searchtext&gt;"></input><input type="submit" value="TEST"></input></form>
         </dt>
@@ -307,6 +317,37 @@ include(api-banner.m4)
         <dd>
             <p>
             Deactivates monitoring of the provided listing by the currently logged in user.  This means the user no longer keeps of the listing.
+            </p>
+        </dd>
+    </div>
+
+    <div class="boxtitle">NOTIFICATION API</div>
+    <div class="boxpanel apipanel">
+        <dt>GET /notifications/get/&lt;id&gt;
+            <form method="GET" action="/notifications/get/"><input type="text" name="id" value="&lt;notification_id&gt;"></input><input type="submit" value="TEST"></input></form>
+        </dt>
+        <dd>
+            <p>
+            Returns an individual notification for the given comment id.
+            Calling this method automatically marks particular notification as read.
+            </p>
+        </dd>
+
+        <dt>GET /notifications/user/&lt;id&gt;
+            <form method="GET" action="/notifications/user/"><input type="submit" value="TEST"></input></form>
+        </dt>
+        <dd>
+            <p>
+            Returns all notifications for logged in user.
+            </p>
+        </dd>
+
+        <dt>GET /notifications/unread_user/&lt;id&gt;
+            <form method="GET" action="/notifications/unread_user/"><input type="submit" value="TEST"></input></form>
+        </dt>
+        <dd>
+            <p>
+            Returns unread notifications for logged in user.
             </p>
         </dd>
     </div>

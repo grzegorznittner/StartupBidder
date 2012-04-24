@@ -146,6 +146,13 @@ indexes:
   ancestor: no
   properties:
     - name: owner
+    - name: listedOn
+      direction: desc
+
+- kind: Listing
+  ancestor: no
+  properties:
+    - name: owner
     - name: state
     - name: listedOn
       direction: desc
@@ -289,13 +296,21 @@ indexes:
   ancestor: no
   properties:
     - name: user
-    - name: acknowledged
+    - name: listing
+    - name: read
 
 - kind: Notification
   ancestor: no
   properties:
     - name: user
-    - name: acknowledged
+    - name: created
+      direction: desc
+
+- kind: Notification
+  ancestor: no
+  properties:
+    - name: user
+    - name: read
     - name: created
       direction: desc
 
