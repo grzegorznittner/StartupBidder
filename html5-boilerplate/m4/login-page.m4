@@ -27,7 +27,7 @@ include(header.m4)
                     <div class="inputgooglesignin spritebg google"></div>
                     <span class="inputlink inputmsg">Link your account to startupbidder</span>
                 </span>
-                <a href="" id="googleloginlink">
+                <a href="" class="initialhidden" id="googleloginlink">
                     <span class="span-3 inputbutton">SIGN IN</span>
                 </a>
         </div>
