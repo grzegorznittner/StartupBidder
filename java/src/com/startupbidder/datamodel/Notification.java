@@ -25,8 +25,7 @@ import com.googlecode.objectify.annotation.Unindexed;
 public class Notification extends BaseObject {
 	public static enum Type {NEW_BID_FOR_YOUR_LISTING, YOUR_BID_WAS_REJECTED, YOUR_BID_WAS_COUNTERED,
 		YOUR_BID_WAS_ACCEPTED, YOU_ACCEPTED_BID, YOU_PAID_BID, BID_PAID_FOR_YOUR_LISTING, BID_WAS_WITHDRAWN,
-		NEW_VOTE_FOR_YOU, NEW_COMMENT_FOR_YOUR_LISTING, NEW_COMMENT_FOR_MONITORED_LISTING,
-		YOUR_PROFILE_WAS_MODIFIED, NEW_VOTE_FOR_YOUR_LISTING, NEW_LISTING};
+		NEW_COMMENT_FOR_YOUR_LISTING, NEW_COMMENT_FOR_MONITORED_LISTING, NEW_LISTING};
 
 	@Id public Long id;
 	
@@ -39,13 +38,43 @@ public class Notification extends BaseObject {
 		
 	@Indexed public Key<SBUser> user;
 	@Indexed public Type type;
-	public Key<BaseObject> object;
-	public String message;
+	public Key<Listing> listing;
+	public String title;
+	public String text;
 	public Date   created;
-	public Date   emailDate;
-	@Indexed public boolean acknowledged = false;
+	public Date   sentDate;
+	@Indexed public boolean read = false;
 
 	public String getWebKey() {
 		return new Key<Notification>(Notification.class, id).getString();
+	}
+
+	public String getTargetLink() {
+		String link = "";
+		switch (type) {
+		case BID_PAID_FOR_YOUR_LISTING:
+		case BID_WAS_WITHDRAWN:
+		case YOUR_BID_WAS_ACCEPTED:
+		case YOUR_BID_WAS_COUNTERED:
+		case YOUR_BID_WAS_REJECTED:
+		case NEW_BID_FOR_YOUR_LISTING:
+		case YOU_PAID_BID:
+		case YOU_ACCEPTED_BID:
+			// link to bid
+			link = "/company-page.html?page=bids&id=" + this.listing.getString();
+		break;
+		case NEW_COMMENT_FOR_YOUR_LISTING:
+		case NEW_COMMENT_FOR_MONITORED_LISTING:
+			// link to comment
+			link = "/company-page.html?page=comments&id=" + this.listing.getString();
+		break;
+		case NEW_LISTING:
+			// link to listing
+			link = "/company-page.html?id=" + this.listing.getString();
+		break;
+		default:
+			link = "not_recognized";
+		}
+		return link;
 	}
 }

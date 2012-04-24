@@ -21,9 +21,13 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ArrayNode;
 
+import com.startupbidder.dao.ObjectifyDatastoreDAO;
+import com.startupbidder.datamodel.Listing;
 import com.startupbidder.datamodel.ListingDoc;
+import com.startupbidder.vo.BaseVO;
 import com.startupbidder.vo.ListPropertiesVO;
 import com.startupbidder.vo.ListingAndUserVO;
+import com.startupbidder.vo.ListingDocumentVO;
 import com.startupbidder.vo.ListingPropertyVO;
 import com.startupbidder.vo.ListingVO;
 import com.startupbidder.web.HttpHeaders;
@@ -87,6 +91,8 @@ public class ListingController extends ModelDrivenController {
 				return getLocations(request);
 			} else if("all-listing-locations".equalsIgnoreCase(getCommand(1))) {
 				return getAllListingLocations(request);
+			} else if ("logo".equalsIgnoreCase(getCommand(1))) {
+				return logo(request);
 			} else {
 				// default action
 				return index(request);
@@ -527,6 +533,25 @@ public class ListingController extends ModelDrivenController {
         return new HttpHeadersImpl("all-listing-locations").disableCaching();
     }
 
+	private HttpHeaders logo(HttpServletRequest request) {
+		HttpHeaders headers = new HttpHeadersImpl("logo");
+		
+		String listingId = getCommandOrParameter(request, 2, "id");
+
+		Listing listing = ObjectifyDatastoreDAO.getInstance().getListing(BaseVO.toKeyId(listingId));
+		ListingDoc doc = ObjectifyDatastoreDAO.getInstance().getListingDocument(listing.logoId.getId());
+		log.log(Level.INFO, "Sending back logo: " + doc);
+		if (doc != null && doc.blob != null) {
+			//headers.addHeader("Expires", "");
+			headers.setBlobKey(doc.blob);
+		} else {
+			log.log(Level.INFO, "Document not found or blob not available!");
+			headers.setStatus(500);
+		}
+		
+		return headers;
+	}
+	
 	public Object getModel() {
     	return model;
     }

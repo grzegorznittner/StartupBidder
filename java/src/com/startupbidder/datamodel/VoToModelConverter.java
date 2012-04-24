@@ -298,14 +298,13 @@ public class VoToModelConverter {
 		if (!StringUtils.isEmpty(notificationVO.getId())) {
 			notification.id = new Key<Notification>(notificationVO.getId()).getId();
 		}
-		notification.mockData = notificationVO.isMockData();
 		notification.created = notificationVO.getCreated();
-		notification.emailDate = notificationVO.getEmailDate();
-		notification.message = notificationVO.getMessage();
+		notification.sentDate = notificationVO.getSentDate();
+		notification.title = notificationVO.getTitle();
+		notification.text = notificationVO.getText();
 		notification.type = Notification.Type.valueOf(notificationVO.getType().toUpperCase());
-		notification.object = new Key<BaseObject>(notificationVO.getObject());
-		notification.user = new Key<SBUser>(notificationVO.getUser());
-		notification.acknowledged = notificationVO.isAcknowledged();
+		notification.listing = new Key<Listing>(notificationVO.getListing());
+		notification.read = notificationVO.isRead();
 
 		return notification;
 	}

@@ -232,14 +232,13 @@ public class DtoToVoConverter {
 		}
 		NotificationVO notif = new NotificationVO();
 		notif.setId(new Key<Notification>(Notification.class, notifDTO.id).getString());
-		notif.setMockData(notifDTO.mockData);
 		notif.setCreated(notifDTO.created);
-		notif.setEmailDate(notifDTO.emailDate);
-		notif.setUser(keyToString(notifDTO.user));
-		notif.setMessage(notifDTO.message);
-		notif.setObject(keyToString(notifDTO.object));
+		notif.setSentDate(notifDTO.sentDate);
+		notif.setTitle(notifDTO.title);
+		notif.setText(notifDTO.text);
+		notif.setListing(notifDTO.listing.getString());
 		notif.setType(notifDTO.type.toString());
-		notif.setAcknowledged(notifDTO.acknowledged);
+		notif.setRead(notifDTO.read);
 		return notif;
 	}
 	

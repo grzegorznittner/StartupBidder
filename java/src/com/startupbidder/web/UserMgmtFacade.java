@@ -262,7 +262,7 @@ public class UserMgmtFacade {
 		UserVO user = DtoToVoConverter.convert(getDAO().updateUser(oldUser));
 		if (user != null) {
 			//applyUserStatistics(loggedInUser, user);
-			ServiceFacade.instance().createNotification(user.getId(), user.getId(), Notification.Type.YOUR_PROFILE_WAS_MODIFIED, "");
+			//ServiceFacade.instance().createNotification(user.getId(), user.getId(), Notification.Type.YOUR_PROFILE_WAS_MODIFIED, "");
 		}
 		return user;
 	}
@@ -427,8 +427,8 @@ public class UserMgmtFacade {
 		UserVO user =  DtoToVoConverter.convert(getDAO().valueUpUser(
 				BaseVO.toKeyId(userId), BaseVO.toKeyId(voter.getId())));
 		if (user != null) {
-			UserMgmtFacade.instance().scheduleUpdateOfUserStatistics(userId, UserMgmtFacade.UpdateReason.NEW_VOTE);
-			ServiceFacade.instance().createNotification(user.getId(), user.getId(), Notification.Type.NEW_VOTE_FOR_YOU, "");
+			//UserMgmtFacade.instance().scheduleUpdateOfUserStatistics(userId, UserMgmtFacade.UpdateReason.NEW_VOTE);
+			//ServiceFacade.instance().createNotification(user.getId(), user.getId(), Notification.Type.NEW_VOTE_FOR_YOU, "");
 			//UserMgmtFacade.instance().applyUserStatistics(voter, user);
 		}
 		return user;

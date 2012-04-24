@@ -18,46 +18,31 @@ import com.startupbidder.util.LowecaseSerializer;
 		fieldVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE)
 public class NotificationVO extends BaseVO {
 
-	@JsonProperty("notification_id")
+	@JsonProperty("notify_id")
 	private String id;
-	@JsonProperty("mockData")
-	private boolean mockData;
-	@JsonProperty("profile_id")
-	private String user;
-	@JsonProperty("profile_username")
-	private String userName;
-	@JsonProperty("type")
+	@JsonProperty("notify_type")
 	@JsonSerialize(using=LowecaseSerializer.class)
 	private String type;
-	@JsonProperty("object_id")
-	private String object;
-	@JsonProperty("message")
-	private String message;
+	@JsonProperty("listing_id")
+	private String listing;
+	@JsonProperty("title")
+	private String title;
+	@JsonProperty("text")
+	private String text;
 	@JsonProperty("create_date")
 	@JsonSerialize(using=DateSerializer.class)
 	private Date   created;
-	@JsonProperty("email_date")
+	@JsonProperty("sent_date")
 	@JsonSerialize(using=DateSerializer.class)
-	private Date   emailDate;
-	@JsonProperty("ackn")
-	private boolean acknowledged;
+	private Date   sentDate;
+	@JsonProperty("read")
+	private boolean read;
+	/* It's not sent as JSON */
+	private String user;
+	
+	@Override
 	public String getId() {
 		return id;
-	}
-	public void setId(String id) {
-		this.id = id;
-	}
-	public boolean isMockData() {
-		return mockData;
-	}
-	public void setMockData(boolean mockData) {
-		this.mockData = mockData;
-	}
-	public String getUser() {
-		return user;
-	}
-	public void setUser(String user) {
-		this.user = user;
 	}
 	public String getType() {
 		return type;
@@ -65,17 +50,23 @@ public class NotificationVO extends BaseVO {
 	public void setType(String type) {
 		this.type = type;
 	}
-	public String getObject() {
-		return object;
+	public String getListing() {
+		return listing;
 	}
-	public void setObject(String object) {
-		this.object = object;
+	public void setListing(String listing) {
+		this.listing = listing;
 	}
-	public String getMessage() {
-		return message;
+	public String getTitle() {
+		return title;
 	}
-	public void setMessage(String message) {
-		this.message = message;
+	public void setTitle(String title) {
+		this.title = title;
+	}
+	public String getText() {
+		return text;
+	}
+	public void setText(String text) {
+		this.text = text;
 	}
 	public Date getCreated() {
 		return created;
@@ -83,23 +74,26 @@ public class NotificationVO extends BaseVO {
 	public void setCreated(Date created) {
 		this.created = created;
 	}
-	public Date getEmailDate() {
-		return emailDate;
+	public Date getSentDate() {
+		return sentDate;
 	}
-	public void setEmailDate(Date emailDate) {
-		this.emailDate = emailDate;
+	public void setSentDate(Date sentDate) {
+		this.sentDate = sentDate;
 	}
-	public boolean isAcknowledged() {
-		return acknowledged;
+	public boolean isRead() {
+		return read;
 	}
-	public void setAcknowledged(boolean acknowledged) {
-		this.acknowledged = acknowledged;
+	public void setRead(boolean read) {
+		this.read = read;
 	}
-	public String getUserName() {
-		return userName;
+	public void setId(String id) {
+		this.id = id;
 	}
-	public void setUserName(String userName) {
-		this.userName = userName;
+	public String getUser() {
+		return user;
+	}
+	public void setUser(String user) {
+		this.user = user;
 	}
 	@JsonProperty("link")
 	public String getLink() {
@@ -115,22 +109,16 @@ public class NotificationVO extends BaseVO {
 		case YOU_PAID_BID:
 		case YOU_ACCEPTED_BID:
 			// link to bid
-			link = "/bid/get/?id=" + this.object;
+			link = "/company-page.html?page=bids&id=" + this.listing;
 		break;
 		case NEW_COMMENT_FOR_YOUR_LISTING:
 		case NEW_COMMENT_FOR_MONITORED_LISTING:
 			// link to comment
-			link = "/comment/get/?id=" + this.object;
+			link = "/company-page.html?page=comments&id=" + this.listing;
 		break;
-		case YOUR_PROFILE_WAS_MODIFIED:
-		case NEW_VOTE_FOR_YOU:
-			// link to profile
-			link = "/user/get/?id=" + this.object;
-		break;
-		case NEW_VOTE_FOR_YOUR_LISTING:
 		case NEW_LISTING:
 			// link to listing
-			link = "/listing/get/?id=" + this.object;
+			link = "/company-page.html?id=" + this.listing;
 		break;
 		default:
 			link = "not_recognized";

@@ -1118,8 +1118,7 @@ public class ObjectifyDatastoreDAO {
 		getOfy().delete(ListingDoc.class, docId);
 	}
 
-	public Notification createNotification(Notification notification) {
-		notification.created = new Date();
+	public Notification storeNotification(Notification notification) {
 		getOfy().put(notification);
 		return notification;
 	}
@@ -1127,7 +1126,7 @@ public class ObjectifyDatastoreDAO {
 	public Notification acknowledgeNotification(long notificationId) {
 		try {
 			Notification notification = getOfy().get(Notification.class, notificationId);
-			notification.acknowledged = true;
+			notification.read = true;
 			getOfy().put(notification);
 			return notification;
 		} catch (Exception e) {
@@ -1139,7 +1138,7 @@ public class ObjectifyDatastoreDAO {
 	public List<Notification> getUserNotification(long userId, ListPropertiesVO notificationProperties) {
 		QueryResultIterable<Key<Notification>> notIt = getOfy().query(Notification.class)
 				.filter("user =", new Key<SBUser>(SBUser.class, userId))
-				.filter("acknowledged =", Boolean.FALSE)
+				.filter("read =", Boolean.FALSE)
 				.order("+created").fetchKeys();
 		List<Notification> nots = new ArrayList<Notification>(getOfy().get(notIt).values());
 		return nots;

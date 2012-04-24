@@ -186,10 +186,13 @@ public class ServiceFacade {
 		monitor.user = new Key<SBUser>(SBUser.class, loggedInUser.toKeyId());
 		getDAO().setMonitor(monitor);
 		
+		Listing listing = getDAO().getListing(commentDTO.listing.getId());
+		
 		UserMgmtFacade.instance().scheduleUpdateOfUserStatistics(loggedInUser.getId(), UserMgmtFacade.UpdateReason.NEW_COMMENT);
 		ListingFacade.instance().scheduleUpdateOfListingStatistics(comment.getListing(), UpdateReason.NEW_COMMENT);
 		
-		//createNotification(comment.get, comment.getId(), Type.NEW_COMMENT_FOR_YOUR_LISTING, "");
+		createNotification(listing.owner.getString(), comment.getListing(), 
+				Notification.Type.NEW_COMMENT_FOR_YOUR_LISTING, "A new comment for listing by " + loggedInUser.getNickname());
 		return comment;
 	}
 
@@ -244,28 +247,29 @@ public class ServiceFacade {
 			log.warning("Notification cannot be created as user is empty!");
 		}
 		notification.setCreated(new Date());
-		notification.setAcknowledged(false);
-		notification.setEmailDate(null);
-		notification = DtoToVoConverter.convert(getDAO().createNotification(VoToModelConverter.convert(notification)));
+		notification.setRead(false);
+		notification.setSentDate(null);
+		notification = DtoToVoConverter.convert(getDAO().storeNotification(VoToModelConverter.convert(notification)));
 		if (notification != null) {
 			scheduleNotification(loggedInUser.getId(), notification);
 		}
 		return notification;
 	}
 	
-	public void createNotification(String userId, String objectId, Notification.Type type, String message) {
+	public void createNotification(String userId, String listingId, Notification.Type type, String message) {
 		Notification notification = new Notification();
 		notification.user = new Key<SBUser>(SBUser.class, userId);
-		notification.object = new Key<BaseObject>(objectId);
+		notification.listing = new Key<Listing>(listingId);
 		notification.type = type;
 		notification.created = new Date();
-		notification.acknowledged = false;
-		notification.emailDate = null;
-		notification = getDAO().createNotification(notification);
+		notification.read = false;
+		notification.sentDate = null;
+		notification.text = message;
+		notification = getDAO().storeNotification(notification);
 		if (notification != null) {
 			String taskName = timeStampFormatter.print(new Date().getTime()) + "send_notification_" + notification.type + "_" + notification.user.getId();
 			Queue queue = QueueFactory.getDefaultQueue();
-			queue.add(TaskOptions.Builder.withUrl("/task/send-notification").param("id", "" + notification.id)
+			queue.add(TaskOptions.Builder.withUrl("/task/send-notification").param("id", "" + notification.getWebKey())
 					.taskName(taskName));
 		} else {
 			log.warning("Can't schedule notification " + notification);
@@ -303,7 +307,6 @@ public class ServiceFacade {
 		notifications = DtoToVoConverter.convertNotifications(
 				getDAO().getUserNotification(BaseVO.toKeyId(userId), notifProperties));
 		notifProperties.setNumberOfResults(notifications.size());
-		prepareNotificationList(notifications, user);
 		list.setNotifications(notifications);
 		list.setNotificationsProperties(notifProperties);
 		list.setUser(new UserBasicVO(user));
@@ -325,18 +328,11 @@ public class ServiceFacade {
 		notifications = DtoToVoConverter.convertNotifications(
 				getDAO().getAllUserNotification(BaseVO.toKeyId(userId), notifProperties));
 		notifProperties.setTotalResults(notifications.size());
-		prepareNotificationList(notifications, loggedInUser);
 		list.setNotifications(notifications);
 		list.setNotificationsProperties(notifProperties);
 		list.setUser(new UserBasicVO(loggedInUser));
 		
 		return list;
-	}
-
-	private void prepareNotificationList(List<NotificationVO> notifications, UserVO user) {
-		for (NotificationVO notif : notifications) {
-			notif.setUserName(user.getName());
-		}
 	}
 
 	public NotificationVO getNotification(UserVO loggedInUser, String notifId) {

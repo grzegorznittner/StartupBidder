@@ -368,6 +368,7 @@ public class HelloServlet extends HttpServlet {
 							out.println("<img src=\"" + ListingFacade.instance().convertLogoToBase64(logo) + "\"/>");
 						}
 					}
+					out.println("<a href=\"/listing/logo/" + listing.getId() + ".json?\">View logo</a></td>");
 					out.println("<a href=\"/file/download/" + doc.getId() + ".json\">Download "
 							+ doc.getType() + " uploaded " + fmt.print(doc.getCreated().getTime()) + ", type: " + doc.getType() + "</a></td>");
 					out.println("<td><form method=\"POST\" action=\"/listing/delete_file/.json?id="

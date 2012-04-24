@@ -484,6 +484,8 @@ public class ListingFacade {
 			loggedInUser.setEditedListing(null);
 			loggedInUser.setEditedStatus(null);
 			scheduleUpdateOfListingStatistics(updatedListing.getWebKey(), UpdateReason.NONE);
+			ServiceFacade.instance().createNotification(updatedListing.owner.getString(), updatedListing.getWebKey(),
+					Notification.Type.NEW_LISTING, "A new listing by " + loggedInUser.getNickname());
 		}
 		ListingVO toReturn = DtoToVoConverter.convert(updatedListing);
 		applyListingData(loggedInUser, toReturn);
@@ -1292,7 +1294,7 @@ public class ListingFacade {
 		if (listing != null) {
 			scheduleUpdateOfListingStatistics(listing.getId(), UpdateReason.NEW_VOTE);
 			UserMgmtFacade.instance().scheduleUpdateOfUserStatistics(loggedInUser.getId(), UserMgmtFacade.UpdateReason.NEW_VOTE);
-			ServiceFacade.instance().createNotification(listing.getOwner(), listing.getId(), Notification.Type.NEW_VOTE_FOR_YOUR_LISTING, "");
+			//ServiceFacade.instance().createNotification(listing.getOwner(), listing.getId(), Notification.Type.NEW_VOTE_FOR_YOUR_LISTING, "");
 			applyListingData(loggedInUser, listing);
 		}
 		return listing;
