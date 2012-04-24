@@ -29,7 +29,7 @@ include(searchbox.m4)
     </div>
 
     <div id="monitored_listings_wrapper" class="initialhidden">
-        <div class="boxtitle smokegrey">YOUR MONITORED LISTINGS</div>
+        <div class="boxtitle smokegrey">YOUR WATCHED LISTINGS</div>
         <div id="monitored_listings"></div>
     </div>
 

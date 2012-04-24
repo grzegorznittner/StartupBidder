@@ -126,7 +126,6 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
     color: black;
     height: 21px;
 }
-.companynav:hover { color: black; }
 
 /* company half styles */
 .companyhalf { height: 150px; position: relative; }

@@ -39,6 +39,16 @@ include(api-banner.m4)
             </p>
         </dd>
 
+        <dt>GET /listings/monitored/ <i>OPTIONAL max_results=&lt;n&gt;</i>
+            <form method="GET" action="/listings/monitored/"><input type="submit" value="TEST"></input></form>
+        </dt>
+        <dd>
+            <p>
+            Returns listings the user is watching, ordered by posting date descending.
+            The max_results parameter allows for limiting response size.
+            </p>
+        </dd>
+
         <dt>GET /listings/top/ <i>OPTIONAL max_results=&lt;n&gt;</i>
             <form method="GET" action="/listings/top/"><input type="submit" value="TEST"></input></form>
         </dt>

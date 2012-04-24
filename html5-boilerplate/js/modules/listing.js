@@ -339,18 +339,27 @@ pl.implement(ListingClass, {
         });
     },
     hideSelectedTabs: function() {
+        var tabs = [],
+            wrappers = [],
+            tabsel = '',
+            wrappersel = '';
         if (pl('#basicstab').hasClass('companynavselected')) {
-            pl('#basicstab').removeClass('companynavselected');
-            pl('#basicswrapper').hide();
+            tabs.push('#basicstab');
+            wrappers.push('#basicswrapper1');
+            wrappers.push('#basicswrapper2');
         }
         if (pl('#bidstab').hasClass('companynavselected')) {
-            pl('#bidstab').removeClass('companynavselected');
-            pl('#bidswrapper').hide();
+            tabs.push('#bidstab');
+            wrappers.push('#bidswrapper');
         }
         if (pl('#commentstab').hasClass('companynavselected')) {
-            pl('#commentstab').removeClass('companynavselected');
-            pl('#commentswrapper').hide();
+            tabs.push('#commentstab');
+            wrappers.push('#commentswrapper');
         }
+        tabsel = tabs.join(', ');
+        wrappersel = wrappers.join(', ');
+        pl(tabsel).removeClass('companynavselected');
+        pl(wrappersel).hide();
     },
     displayTab: function(tab) {
         var self = this,
@@ -361,11 +370,18 @@ pl.implement(ListingClass, {
         if (!pl(tabsel).hasClass('companynavselected')) {
             self.hideSelectedTabs();
             pl(tabsel).addClass('companynavselected');
-            pl(wrappersel).show();
+            if (tab === 'basics') {
+                pl('#basicswrapper1, #basicswrapper2').show();
+            }
+            else {
+                pl(wrappersel).show();
+            }
         }
     },
     displayTabs: function() {
         var self = this;
+        pl('#num_comments').text(self.num_comments);
+        pl('#num_bids').text(self.num_bids);
         pl('#basicstab').bind({
             click: function() {
                 self.displayTab('basics');

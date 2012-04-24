@@ -35,8 +35,18 @@ include(header.m4)
         <div id="active_listings"></div>
     </div>
 
+    <div id="admin_posted_listings_wrapper" class="initialhidden">
+        <div class="boxtitle smokegrey">LISTINGS AWAITING REVIEW BY ADMIN</div>
+        <div id="admin_posted_listings"></div>
+    </div>
+
+    <div id="admin_frozen_listings_wrapper" class="initialhidden">
+        <div class="boxtitle smokegrey">LISTINGS FROZEN BY ADMIN</div>
+        <div id="admin_frozen_listings"></div>
+    </div>
+
     <div id="monitored_listings_wrapper" class="initialhidden">
-        <div class="boxtitle smokegrey">YOUR MONITORED LISTINGS</div>
+        <div class="boxtitle smokegrey">YOUR WATCHED LISTINGS</div>
         <div id="monitored_listings"></div>
     </div>
 

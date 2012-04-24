@@ -26,14 +26,14 @@ include(header.m4)
             </div>
             <div class="companybannermantra" id="mantra"></div>
             <div class="companynavcontainer">
-                <div class="companynav companynavselected" id="basicstab">
+                <div class="companynav hoverlink companynavselected" id="basicstab">
                     LISTING
                 </div>
-                <div class="companynav" id="bidstab">
-                    BIDS
+                <div class="companynav hoverlink" id="bidstab">
+                    BIDS <span id="num_bids"></span>
                 </div>
-                <div class="companynav" id="commentstab">
-                    COMMENTS
+                <div class="companynav hoverlink" id="commentstab">
+                    COMMENTS <span id="num_comments"></span>
                 </div>
             </div>
         </div>
@@ -43,7 +43,7 @@ include(header.m4)
 <div class="container">
 
 <!-- left column -->
-<div class="basicswrapper" id="basicswrapper">
+<div class="basicswrapper1" id="basicswrapper1">
 <div class="span-16">
     <div class="boxtitle">SUMMARY</div>
     <div class="boxpanel summarypanel">
@@ -55,7 +55,55 @@ include(header.m4)
       	    <iframe width="622" height="452" id="videopresentation" src="" frameborder="0" allowfullscreen></iframe> 
 	    </div>
     </div>
-</div> <!-- end left column -->
+</div>
+</div>
+<!-- end left column -->
+
+<!-- begin second row left column -->
+    <div class="span-16 sendmsgwrapper" id="sendmsgwrapper">
+        <div class="boxtitle addmessagetitle" id="addmessagetitle">PRIVATE MESSAGE TO THE OWNER</div>
+        <div class="boxpanel messagepanel addmessagebox" id="addmessagebox">
+            <p>
+                <textarea class="textarea messagetextarea" id="addmessagetext" name="addmessagetext" cols="20" rows="5">Put your private message here...</textarea>
+                <span class="span-12 inputmsg successful" id="addmessagemsg">&nbsp;</span>
+                <span class="span-3 inputbutton" id="addmessagebtn">SEND</span>
+            </p>
+        </div>
+    </div>
+
+    <div class="span-16 commentswrapper" id="commentswrapper">
+        <div class="boxtitle addcommenttitle" id="addcommenttitle">ADD COMMENT</div>
+        <div class="boxpanel commentpanel addcommentbox" id="addcommentbox">
+            <p>
+                <textarea class="textarea messagetextarea" id="addcommenttext" name="addcommenttext" cols="20" rows="5">Put your comment here...</textarea>
+                <span class="span-12 inputmsg successful" id="addcommentmsg">&nbsp;</span>
+                <span class="span-3 inputbutton addcommentbtn" id="addcommentbtn">POST</span>
+            </p>
+        </div>
+        <div class="boxtitle">COMMENTS</div>
+        <div class="boxpanel commentpanel">
+            <div id="commentsmsg"></div>
+            <dl id="commentlist"></dl>
+    	</div>
+    </div>
+
+    <div class="span-16 bidswrapper" id="bidswrapper">
+        <div class="boxtitle addcommenttitle" id="makebidtitle">MAKE BID</div>
+        <div class="boxpanel commentpanel addcommentbox" id="makebidbox">
+            <p>
+                <textarea class="textarea messagetextarea" id="makebidtext" name="makebidtext" cols="20" rows="5">Make your bid here...</textarea>
+                <span class="span-12 inputmsg successful" id="makebidmsg">&nbsp;</span>
+                <span class="span-3 inputbutton addcommentbtn" id="makebidbtn">POST</span>
+            </p>
+        </div>
+        <div class="boxtitle">BIDS</div>
+        <div class="boxpanel commentpanel">
+            <div id="bidsmsg"></div>
+            <dl id="bidslist"></dl>
+    	</div>
+    </div>
+
+<!-- end second row left column -->
 
 <!-- right column -->
 <div class="span-8 last">
@@ -77,21 +125,21 @@ include(header.m4)
             <span class="formlabelvalue formlink">
                 <div class="span-1 smallinputicon presentationicon"></div>
                 <a href="#" id="presentationlink">
-                    <span id="presentationbtn"></span>
+                    <span class="hoverlink" id="presentationbtn"></span>
                 </a>
             </span>
             <span class="doclabel">Business Plan</span>
             <span class="formlabelvalue formlink">
                 <div class="span-1 smallinputicon documenticon"></div>
                 <a href="#" id="businessplanlink">
-                    <span id="businessplanbtn"></span>
+                    <span class="hoverlink" id="businessplanbtn"></span>
                 </a>
             </span>
             <span class="doclabel clear">Financials</span>
             <span class="formlabelvalue formlink">
                 <div class="span-1 smallinputicon spreadsheeticon"></div>
                 <a href="#" id="financialslink">
-                    <span id="financialsbtn"></span>
+                    <span class="hoverlink" id="financialsbtn"></span>
                 </a>
             </span>
         </div>
@@ -99,12 +147,12 @@ include(header.m4)
 
     <div class="boxtitle">LOCATION</div>
     <div class="sidebox">
-        <a href="#" class="formlink hoverlink" target="_blank" id="addresslink">
-            <div class="inputmsg" id="fulladdress"></div>
-            <div class="sideboxmap">
+        <div class="inputmsg" id="fulladdress"></div>
+        <div class="sideboxmap">
+            <a href="#" class="formlink hoverlink" target="_blank" id="addresslink">
                 <img src="#" id="mapimg"></img>
-            </div>
-        </a>
+            </a>
+        </div>
     </div>
 
     <div class="boxtitle">SHARE</div>
@@ -117,32 +165,34 @@ include(header.m4)
     <div id="withdrawbox" class="withdrawbox">
     <div class="boxtitle">WITHDRAW POST</div>
     <div class="withdrawmsg attention" id="withdrawmsg">Are you sure?<br/>This cannot be undone.</div>
-    <a href="#" id="withdrawbtn"><div class="sideboxbutton sideboxbuttonsmall">WITHDRAW</div></a>
-    <a href="#" class="withdrawcancelbtn" id="withdrawcancelbtn"><div class="sideboxbutton sideboxbuttonsmall">CANCEL</div></a>
+    <a href="#" id="withdrawbtn"><div class="sideboxbutton sideboxbuttonsmall hoverlink">WITHDRAW</div></a>
+    <a href="#" class="withdrawcancelbtn" id="withdrawcancelbtn"><div class="sideboxbutton sideboxbuttonsmall hoverlink">CANCEL</div></a>
     </div>
 
     <div id="approvebox" class="approvebox">
     <div class="boxtitle">APPROVE POST</div>
     <div class="approvemsg attention" id="approvemsg">Are you sure?</div>
-    <a href="#" id="approvebtn"><div class="sideboxbutton sideboxbuttonsmall">APPROVE</div></a>
-    <a href="#" class="approvecancelbtn" id="approvecancelbtn"><div class="sideboxbutton sideboxbuttonsmall">CANCEL</div></a>
+    <a href="#" id="approvebtn"><div class="sideboxbutton sideboxbuttonsmall hoverlink">APPROVE</div></a>
+    <a href="#" class="approvecancelbtn" id="approvecancelbtn"><div class="sideboxbutton sideboxbuttonsmall hoverlink">CANCEL</div></a>
     </div>
 
     <div id="sendbackbox" class="sendbackbox">
     <div class="boxtitle">SEND BACK POST</div>
     <div class="sendbackmsg attention" id="sendbackmsg">Are you sure?</div>
-    <a href="#" id="sendbackbtn"><div class="sideboxbutton sideboxbuttonsmall">SEND BACK</div></a>
-    <a href="#" class="sendbackcancelbtn" id="sendbackcancelbtn"><div class="sideboxbutton sideboxbuttonsmall">CANCEL</div></a>
+    <a href="#" id="sendbackbtn"><div class="sideboxbutton sideboxbuttonsmall hoverlink">SEND BACK</div></a>
+    <a href="#" class="sendbackcancelbtn" id="sendbackcancelbtn"><div class="sideboxbutton sideboxbuttonsmall hoverlink">CANCEL</div></a>
     </div>
 
     <div id="freezebox" class="freezebox">
     <div class="boxtitle">FREEZE POST</div>
     <div class="freezemsg attention" id="freezemsg">Are you sure?</div>
-    <a href="#" id="freezebtn"><div class="sideboxbutton sideboxbuttonsmall">FREEZE</div></a>
-    <a href="#" class="freezecancelbtn" id="freezecancelbtn"><div class="sideboxbutton sideboxbuttonsmall">CANCEL</div></a>
+    <a href="#" id="freezebtn"><div class="sideboxbutton sideboxbuttonsmall hoverlink">FREEZE</div></a>
+    <a href="#" class="freezecancelbtn" id="freezecancelbtn"><div class="sideboxbutton sideboxbuttonsmall hoverlink">CANCEL</div></a>
     </div>
 
 </div> <!-- end right column -->
+
+<div class="basicswrapper2" id="basicswrapper2">
 
 <!-- begin bmc -->
 <div class="span-24 last">
@@ -478,52 +528,6 @@ include(header.m4)
 </div>
 <!-- end presentation -->
 </div>
-
-<!-- begin second row left column -->
-    <div class="span-16 sendmsgwrapper" id="sendmsgwrapper">
-        <div class="boxtitle addmessagetitle" id="addmessagetitle">PRIVATE MESSAGE TO THE OWNER</div>
-        <div class="boxpanel messagepanel addmessagebox" id="addmessagebox">
-            <p>
-                <textarea class="textarea messagetextarea" id="addmessagetext" name="addmessagetext" cols="20" rows="5">Put your private message here...</textarea>
-                <span class="span-12 inputmsg successful" id="addmessagemsg">&nbsp;</span>
-                <span class="span-3 inputbutton" id="addmessagebtn">SEND</span>
-            </p>
-        </div>
-    </div>
-
-    <div class="span-16 commentswrapper" id="commentswrapper">
-        <div class="boxtitle addcommenttitle" id="addcommenttitle">ADD COMMENT</div>
-        <div class="boxpanel commentpanel addcommentbox" id="addcommentbox">
-            <p>
-                <textarea class="textarea messagetextarea" id="addcommenttext" name="addcommenttext" cols="20" rows="5">Put your comment here...</textarea>
-                <span class="span-12 inputmsg successful" id="addcommentmsg">&nbsp;</span>
-                <span class="span-3 inputbutton addcommentbtn" id="addcommentbtn">POST</span>
-            </p>
-        </div>
-        <div class="boxtitle">COMMENTS</div>
-        <div class="boxpanel commentpanel">
-            <div id="commentsmsg"></div>
-            <dl id="commentlist"></dl>
-    	</div>
-    </div>
-
-    <div class="span-16 bidswrapper" id="bidswrapper">
-        <div class="boxtitle addcommenttitle" id="makebidtitle">MAKE BID</div>
-        <div class="boxpanel commentpanel addcommentbox" id="makebidbox">
-            <p>
-                <textarea class="textarea messagetextarea" id="makebidtext" name="makebidtext" cols="20" rows="5">Make your bid here...</textarea>
-                <span class="span-12 inputmsg successful" id="makebidmsg">&nbsp;</span>
-                <span class="span-3 inputbutton addcommentbtn" id="makebidbtn">POST</span>
-            </p>
-        </div>
-        <div class="boxtitle">BIDS</div>
-        <div class="boxpanel commentpanel">
-            <div id="bidsmsg"></div>
-            <dl id="bidslist"></dl>
-    	</div>
-    </div>
-
-<!-- end second row left column -->
 
 </div> <!-- end container -->
 </div> <!-- end main -->

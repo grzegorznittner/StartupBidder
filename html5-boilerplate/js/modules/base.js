@@ -289,20 +289,14 @@ pl.implement(HeaderClass, {
         pl('#postlink').attr('href', newlistingurl);
         pl('#posttext').html(posttext);
         if (profile.admin) {
-            pl('#main>div.header>div.container>div.span-8,#newlistingmain>div.header>div.container>div.span-8').attr({'class': 'span-4 last loginspan'});
-            pl('#main>div.header>div.container>div.span-11,#newlistingmain>div.header>div.container>div.span-11').attr({'class': 'span-15'});
-            pl('#postlink').before('\
-                <a href="main-page.html?type=posted"><span class="headerlink hoverlink">Posted</span></a>\
-                <a href="main-page.html?type=frozen"><span class="headerlink hoverlink">Frozen</span></a>\
-            ');
             pl('#aboutlink').after('<a href="/setup"><span class="footerlink">Setup</span></a>');
         }
         pl('#loginlink').attr('href', 'profile-page.html');
         pl('#logintext').html(username);
-        pl('#logout').show();
         if (logout_url) {
             pl('#logout>a').attr({href: logout_url});
         }
+        pl('#logout').show();
     },
     setLoggedOut: function(login_url) {
         pl('#topheader').show();

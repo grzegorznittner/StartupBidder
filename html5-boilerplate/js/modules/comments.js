@@ -91,6 +91,7 @@ pl.implement(CommentsClass, {
     },
     displayComments: function() {
         var html, deletableComments, i, comment, deletable, commentDeleteSel;
+        pl('#num_comments').text(this.comments.length);
         if (this.comments.length === 0) {
             pl('#commentsmsg').html('<p>Be the first to comment!</p>').show();
             return;
@@ -118,6 +119,7 @@ pl.implement(CommentsClass, {
             var successFunc = function(json) {
                     pl('#comment_'+commentId).remove();
                     pl('#comment_dd_'+commentId).remove();
+                    pl('#num_comments').text(pl('#commentlist').get(0).childNodes.length / 2);
                     if (!pl('#commentlist').get(0).hasChildNodes()) {
                         pl('#commentsmsg').html('<p>Be the first to comment!</p>');
                     }
