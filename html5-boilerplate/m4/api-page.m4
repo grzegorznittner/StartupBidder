@@ -128,6 +128,15 @@ include(api-banner.m4)
             </p>
         </dd>
 
+        <dt>GET /listings/logo/&lt;id&gt;
+            <form method="GET" action="/listings/logo"><input type="text" name="id" value="&lt;listing_id&gt;"></input><input type="submit" value="TEST"></input></form>
+        </dt>
+        <dd>
+            <p>
+            Return listing logo for a given listing id. Should be used as source for image tags if data uri cannot be used.
+            </p>
+        </dd>
+
         <dt>POST /listing/create/
             <form method="POST" action="/listings/create/"><input type="submit" value="TEST"></input></form>
         </dt>
@@ -164,7 +173,7 @@ include(api-banner.m4)
             Submits the user&rsquo;s new listing for approval by a startupbidder admin.  After approval, the current listing will become active and the user may then create a new additional listing.
             </p>
         </dd>
- 
+
         <dt>POST /listing/delete/
             <form method="POST" action="/listing/delete/"><input type="submit" value="TEST"></input></form>
         </dt>
@@ -379,7 +388,7 @@ include(api-banner.m4)
             </p>
         </dd>
     </div>
- 
+
 </div> <!-- end left column -->
 
 <!-- right column -->
@@ -402,7 +411,7 @@ include(api-banner.m4)
         </p>
         <p>
         The standard json response consists of the logged in user profile, the login url, the logout url, and one or more data fields.
-        With this approach, we attempt to aggregate all typically needed return information so that only a single json call is 
+        With this approach, we attempt to aggregate all typically needed return information so that only a single json call is
         needed for most pages and use cases.  Our extensive caching strategy makes this computationally fast and inexpensive.
         </p>
     </div>
@@ -436,7 +445,7 @@ include(footer.m4)
   <script src="js/modules/socialplugins.js"></script>
 '
 include(promptie.m4)
-`	
+`
 </body>
 </html>
 '
