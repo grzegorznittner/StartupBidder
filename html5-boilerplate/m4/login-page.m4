@@ -27,7 +27,7 @@ include(header.m4)
                     <div class="inputgooglesignin spritebg google"></div>
                     <span class="inputlink inputmsg">Link your account to startupbidder</span>
                 </span>
-                <a href="/_ah/login?continue=%2F" id="googleloginlink">
+                <a href="" id="googleloginlink">
                     <span class="span-3 inputbutton">SIGN IN</span>
                 </a>
         </div>
@@ -144,7 +144,7 @@ include(header.m4)
             </span>
         </div>
     </div>
---> 
+-->
 
 </div> <!-- end left column -->
 
@@ -156,7 +156,7 @@ include(header.m4)
 With Startupbidder, you&rsquo;re plugged into the pulse of the startup community.
 Keep up to date on all the latest startups.  Post your own startup as an
 entrepreneuer, getting feedback and exposure to investors worldwide.  As an
-accredited investor, you can bid for a piece of the action. 
+accredited investor, you can bid for a piece of the action.
         </p>
     </div>
 
