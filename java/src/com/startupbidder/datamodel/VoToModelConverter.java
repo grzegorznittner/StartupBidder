@@ -317,18 +317,7 @@ public class VoToModelConverter {
 		monitor.mockData = monitorVO.isMockData();
 		monitor.created = monitorVO.getCreated();
 		monitor.deactivated = monitorVO.getDeactivated();
-		monitor.type = Monitor.Type.valueOf(monitorVO.getType().toUpperCase());
-		switch (monitor.type) {
-		case LISTING:
-			monitor.monitoredListing = new Key<Listing>(monitorVO.getObjectId());
-			break;
-		case USER:
-			monitor.monitoredUser = new Key<SBUser>(monitorVO.getObjectId());
-			break;
-		case BID:
-			monitor.monitoredBid = new Key<Bid>(monitorVO.getObjectId());
-			break;			
-		}
+		monitor.monitoredListing = new Key<Listing>(monitorVO.getListingId());
 		monitor.user = new Key<SBUser>(monitorVO.getUser());
 		monitor.active = monitorVO.isActive();
 

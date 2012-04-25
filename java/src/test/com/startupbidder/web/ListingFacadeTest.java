@@ -1101,7 +1101,7 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 		assertEquals(listingList.get(0).suggestedValuation, stats.previousValuation, 0.0001);
 		assertEquals(0, stats.numberOfBids);
 		assertEquals(0, stats.numberOfComments);
-		assertEquals(0, stats.numberOfVotes);
+		assertEquals(0, stats.numberOfMonitors);
 		// no bids then suggested valuation should be used
 		assertEquals(listingList.get(0).suggestedValuation, stats.valuation, 0.0001);
 		// median is 0 when no bids
@@ -1125,7 +1125,7 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 		assertEquals(previousValuation, stats.previousValuation, 0.0001);
 		assertEquals(0, stats.numberOfBids);
 		assertEquals(0, stats.numberOfComments);
-		assertEquals(0, stats.numberOfVotes);
+		assertEquals(0, stats.numberOfMonitors);
 		// no bids then suggested valuation should be used
 		assertEquals(listingList.get(0).suggestedValuation, stats.valuation, 0.0001);
 		// median is 0 when no bids
@@ -1151,7 +1151,7 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 		assertEquals(listingList.get(0).suggestedValuation, stats.previousValuation, 0.0001);
 		assertEquals(0, stats.numberOfBids);
 		assertEquals(0, stats.numberOfComments);
-		assertEquals(0, stats.numberOfVotes);
+		assertEquals(0, stats.numberOfMonitors);
 		// no bids then suggested valuation should be used
 		assertEquals(listingList.get(0).suggestedValuation, stats.valuation, 0.0001);
 		// median is 0 when no bids

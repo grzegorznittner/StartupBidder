@@ -30,7 +30,7 @@ public class MonitorController extends ModelDrivenController {
 		if ("GET".equalsIgnoreCase(request.getMethod())) {
 			// GET method handler			
 			if("active-for-object".equalsIgnoreCase(getCommand(1))) {
-				return activeForObject(request);
+				return activeForOListing(request);
 			} else if("active-for-user".equalsIgnoreCase(getCommand(1))) {
 				return activeForUser(request);
 			}
@@ -91,8 +91,7 @@ public class MonitorController extends ModelDrivenController {
 	private HttpHeaders activeForUser(HttpServletRequest request) {
 		HttpHeaders headers = new HttpHeadersImpl("active-for-user");
 		
-		String type = getCommandOrParameter(request, 2, "type");
-		model = ServiceFacade.instance().getMonitorsForUser(getLoggedInUser(), null, type);
+		model = ServiceFacade.instance().getMonitorsForUser(getLoggedInUser());
 		
 		return headers;
 	}
@@ -101,12 +100,11 @@ public class MonitorController extends ModelDrivenController {
 	 * GET /monitor/active-for-object?id=<object id>&type=<type name>
 	 * type name := ()
 	 */
-	private HttpHeaders activeForObject(HttpServletRequest request) {
-		HttpHeaders headers = new HttpHeadersImpl("active-for-object");
+	private HttpHeaders activeForOListing(HttpServletRequest request) {
+		HttpHeaders headers = new HttpHeadersImpl("active-for-listing");
 		
-		String objectId = getCommandOrParameter(request, 2, "id");
-		String type = getCommandOrParameter(request, 3, "type");
-		model = ServiceFacade.instance().getMonitorsForObject(getLoggedInUser(), objectId, type);
+		String listingId = getCommandOrParameter(request, 2, "id");
+		model = ServiceFacade.instance().getMonitorsForObject(getLoggedInUser(), listingId);
 		
 		return headers;
 	}

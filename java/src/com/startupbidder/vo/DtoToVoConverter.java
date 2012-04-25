@@ -252,18 +252,7 @@ public class DtoToVoConverter {
 		monitor.setCreated(monitorDTO.created);
 		monitor.setDeactivated(monitorDTO.deactivated);
 		monitor.setUser(keyToString(monitorDTO.user));
-		monitor.setType(monitorDTO.type.toString());
-		switch (monitorDTO.type) {
-		case LISTING:
-			monitor.setObjectId(monitorDTO.monitoredListing.getString());
-			break;
-		case USER:
-			monitor.setObjectId(monitorDTO.monitoredUser.getString());
-			break;
-		case BID:
-			monitor.setObjectId(monitorDTO.monitoredBid.getString());
-			break;			
-		}
+		monitor.setListingId(monitorDTO.monitoredListing.getString());
 		monitor.setActive(monitorDTO.active);
 		return monitor;
 	}
