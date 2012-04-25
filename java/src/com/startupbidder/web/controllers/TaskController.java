@@ -17,6 +17,7 @@ import com.startupbidder.datamodel.Listing;
 import com.startupbidder.datamodel.Notification;
 import com.startupbidder.datamodel.SBUser;
 import com.startupbidder.vo.BaseVO;
+import com.startupbidder.vo.DtoToVoConverter;
 import com.startupbidder.vo.ListingVO;
 import com.startupbidder.web.DocService;
 import com.startupbidder.web.EmailService;
@@ -105,7 +106,7 @@ public class TaskController extends ModelDrivenController {
 		String notifId = getCommandOrParameter(request, 2, "id");
 		
 		Notification notification = ObjectifyDatastoreDAO.getInstance().getNotification(BaseVO.toKeyId(notifId));
-		model = notification;
+		model = DtoToVoConverter.convert(notification);
 
 		if (!notification.read) {
 			Listing listing = ObjectifyDatastoreDAO.getInstance().getListing(notification.listing.getId());

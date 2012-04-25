@@ -220,18 +220,14 @@ public class HelloServlet extends HttpServlet {
 			out.println("<br/>");
 			
 			out.println("<p style=\"background: none repeat scroll 0% 0% rgb(187, 187, 187);\">Notification API:</p>");
-			out.println("<a href=\"/notification/user/" + currentUser.getId() + "/.json?max_results=6\">Notifications for current user</a><br/>");
-			List<Notification> notifications = datastore.getUserNotification(currentUser.toKeyId(), new ListPropertiesVO());
+			out.println("<a href=\"/notification/user/.json?max_results=6\">Notifications for current user</a><br/>");
+			List<Notification> notifications = datastore.getAllUserNotification(currentUser.toKeyId(), new ListPropertiesVO());
 			if (!notifications.isEmpty()) {
 				out.println("<a href=\"/notification/get/" + notifications.get(0).getWebKey() + "/.json\">First notification for current user</a><br/>");
 				out.println("<a href=\"/notification/ack/" + notifications.get(0).getWebKey() + "/.json\">Acknowledging first notification for current user</a><br/>");
 			} else {
-				out.println("Current user doesn't have any notification, create one first</a><br/>");
+				out.println("Current user doesn't have any notification, create one first (eg. make a comment)<br/>");
 			}
-			out.println("<form method=\"POST\" action=\"/notification/create/.json\"><textarea name=\"notification\" rows=\"5\" cols=\"100\">"
-						+ "{ \"object_id\":\"" + topListing.getWebKey() + "\", \"profile_id\":\"" + currentUser.getId() + "\", "
-						+ "  \"type\":\"new_listing\", \"message\":\"Sample message\" }"
-						+ "</textarea><input type=\"submit\" value=\"Create a notification\"/></form>");
 			out.println("<br/>");
 			
 			out.println("<p style=\"background: none repeat scroll 0% 0% rgb(187, 187, 187);\">Monitor API:</p>");

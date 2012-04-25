@@ -7,6 +7,8 @@ import org.codehaus.jackson.annotate.JsonAutoDetect;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 
+import com.startupbidder.datamodel.Notification;
+
 /**
  * 
  * @author "Grzegorz Nittner" <grzegorz.nittner@gmail.com>
@@ -20,6 +22,7 @@ public class UserListingsVO extends BaseResultVO {
 	@JsonProperty("closed_listings") private List<ListingVO> closedListings;
 	@JsonProperty("monitored_listings") private List<ListingVO> commentedListings;
 	@JsonProperty("edited_listing") private ListingVO editedListing;
+	@JsonProperty("notifications") private List<NotificationVO> notifications;
 	@JsonProperty("categories") private Map<String, Integer> categories;
 	@JsonProperty("top_locations") private Map<String, Integer> topLocations;
 	@JsonProperty("admin_posted_listings") private List<ListingVO> adminPostedListings;
@@ -84,5 +87,11 @@ public class UserListingsVO extends BaseResultVO {
 	}
 	public void setAdminFrozenListings(List<ListingVO> adminFrozenListings) {
 		this.adminFrozenListings = adminFrozenListings;
+	}
+	public List<NotificationVO> getNotifications() {
+		return notifications;
+	}
+	public void setNotifications(List<NotificationVO> notifications) {
+		this.notifications = notifications;
 	}
 }

@@ -31,8 +31,8 @@ public class NotificationController extends ModelDrivenController {
 		if ("GET".equalsIgnoreCase(request.getMethod())) {
 			// GET method handler
 			
-			if("all".equalsIgnoreCase(getCommand(1))) {
-				return all(request);
+			if("unread".equalsIgnoreCase(getCommand(1))) {
+				return unread(request);
 			} else if("user".equalsIgnoreCase(getCommand(1))) {
 				return user(request);
 			} else if("get".equalsIgnoreCase(getCommand(1))) {
@@ -62,25 +62,23 @@ public class NotificationController extends ModelDrivenController {
 		return headers;
 	}
 
-	private HttpHeaders all(HttpServletRequest request) {
-		HttpHeaders headers = new HttpHeadersImpl("all");
+	private HttpHeaders unread(HttpServletRequest request) {
+		HttpHeaders headers = new HttpHeadersImpl("unread");
 		
 		ListPropertiesVO notifProperties = getListProperties(request);
-		String userId = getCommandOrParameter(request, 2, "id");
-		model = ServiceFacade.instance().getAllNotificationsForUser(getLoggedInUser(), userId, notifProperties);
+		model = ServiceFacade.instance().getUnreadNotificationsForUser(getLoggedInUser(), notifProperties);
 		
 		return headers;
 	}
 
 	/*
-	 *  /notifications/user/ag1zdGFydHVwYmlkZGVychILEgRVc2VyIghqcGZvd2xlcgw/.html
-	 *  /notifications/user/?id=ag1zdGFydHVwYmlkZGVychILEgRVc2VyIghqcGZvd2xlcgw.html
+	 *  /notifications/user/.html
 	 */
 	private HttpHeaders user(HttpServletRequest request) {
 		HttpHeaders headers = new HttpHeadersImpl("user");
 		
 		ListPropertiesVO notifProperties = getListProperties(request);
-		model = ServiceFacade.instance().getNotificationsForUser(getLoggedInUser(), null, notifProperties);
+		model = ServiceFacade.instance().getNotificationsForUser(getLoggedInUser(), notifProperties);
 		
 		return headers;
 	}

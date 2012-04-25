@@ -1136,11 +1136,20 @@ public class ObjectifyDatastoreDAO {
 		return notification;
 	}
 
+	public List<Notification> getUnreadNotifications(long userId, long listingId) {
+		QueryResultIterable<Key<Notification>> notIt = getOfy().query(Notification.class)
+				.filter("user =", new Key<SBUser>(SBUser.class, userId))
+				.filter("listing =", new Key<Listing>(Listing.class, listingId))
+				.filter("read =", Boolean.FALSE).fetchKeys();
+		List<Notification> nots = new ArrayList<Notification>(getOfy().get(notIt).values());
+		return nots;
+	}
+
 	public List<Notification> getUserNotification(long userId, ListPropertiesVO notificationProperties) {
 		QueryResultIterable<Key<Notification>> notIt = getOfy().query(Notification.class)
 				.filter("user =", new Key<SBUser>(SBUser.class, userId))
 				.filter("read =", Boolean.FALSE)
-				.order("+created").fetchKeys();
+				.order("-created").fetchKeys();
 		List<Notification> nots = new ArrayList<Notification>(getOfy().get(notIt).values());
 		return nots;
 	}
@@ -1148,7 +1157,7 @@ public class ObjectifyDatastoreDAO {
 	public List<Notification> getAllUserNotification(long userId, ListPropertiesVO notificationProperties) {
 		QueryResultIterable<Key<Notification>> notIt = getOfy().query(Notification.class)
 				.filter("user =", new Key<SBUser>(SBUser.class, userId))
-				.order("+created").fetchKeys();
+				.order("-created").limit(notificationProperties.getMaxResults()).fetchKeys();
 		List<Notification> nots = new ArrayList<Notification>(getOfy().get(notIt).values());
 		return nots;
 	}

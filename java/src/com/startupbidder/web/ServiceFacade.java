@@ -28,6 +28,7 @@ import com.startupbidder.vo.BaseVO;
 import com.startupbidder.vo.CommentListVO;
 import com.startupbidder.vo.CommentVO;
 import com.startupbidder.vo.DtoToVoConverter;
+import com.startupbidder.vo.ErrorCodes;
 import com.startupbidder.vo.ListPropertiesVO;
 import com.startupbidder.vo.ListingDocumentVO;
 import com.startupbidder.vo.ListingVO;
@@ -238,8 +239,19 @@ public class ServiceFacade {
 	}
 
 	public void createNotification(String userId, String listingId, Notification.Type type, String message) {
+		if (type == Notification.Type.NEW_COMMENT_FOR_MONITORED_LISTING || 
+				type == Notification.Type.NEW_COMMENT_FOR_YOUR_LISTING) {
+			List<Notification> notifications = getDAO().getUnreadNotifications(BaseVO.toKeyId(userId), BaseVO.toKeyId(listingId));
+			for (Notification not : notifications) {
+				if (not.type == Notification.Type.NEW_COMMENT_FOR_MONITORED_LISTING || 
+						not.type == Notification.Type.NEW_COMMENT_FOR_YOUR_LISTING) {
+					log.info("Notification won't be created as previous one for comment is still unread: " + not);
+					return;
+				}
+			}
+		}
 		Notification notification = new Notification();
-		notification.user = new Key<SBUser>(SBUser.class, userId);
+		notification.user = new Key<SBUser>(userId);
 		notification.listing = new Key<Listing>(listingId);
 		notification.type = type;
 		notification.created = new Date();
@@ -257,13 +269,6 @@ public class ServiceFacade {
 		}
 	}
 
-	private void scheduleNotification(String userId, NotificationVO notification) {
-		String taskName = timeStampFormatter.print(new Date().getTime()) + "send_notification_" + notification.getType() + "_" + userId;
-		Queue queue = QueueFactory.getDefaultQueue();
-		queue.add(TaskOptions.Builder.withUrl("/task/send-notification").param("id", notification.getId())
-				.taskName(taskName));
-	}
-
 	public NotificationVO markNotificationAsRead(UserVO loggedInUser, String listingId) {
 		NotificationVO notification = DtoToVoConverter.convert(
 				getDAO().markNotificationAsRead(BaseVO.toKeyId(loggedInUser.getId()), BaseVO.toKeyId(listingId)));
@@ -275,39 +280,36 @@ public class ServiceFacade {
 		return notification;
 	}
 
-	public NotificationListVO getAllNotificationsForUser(UserVO loggedInUser, String userId, ListPropertiesVO notifProperties) {
+	public NotificationListVO getUnreadNotificationsForUser(UserVO loggedInUser, ListPropertiesVO notifProperties) {
 		NotificationListVO list = new NotificationListVO();
-		List<NotificationVO> notifications = null;
-
-		UserVO user = UserMgmtFacade.instance().getUser(loggedInUser, userId).getUser();
-		if (user == null) {
-			log.log(Level.WARNING, "User '" + userId + "' not found");
-			return null;
+		if (loggedInUser == null) {
+			list.setErrorCode(ErrorCodes.NOT_LOGGED_IN);
+			list.setErrorMessage("User not logged in.");
+			log.log(Level.WARNING, "User not logged in!");
+			return list;
 		}
-
-		notifications = DtoToVoConverter.convertNotifications(
-				getDAO().getUserNotification(BaseVO.toKeyId(userId), notifProperties));
+		List<NotificationVO> notifications = DtoToVoConverter.convertNotifications(
+				getDAO().getUserNotification(loggedInUser.toKeyId(), notifProperties));
 		notifProperties.setNumberOfResults(notifications.size());
 		list.setNotifications(notifications);
 		list.setNotificationsProperties(notifProperties);
-		list.setUser(new UserBasicVO(user));
+		list.setUser(new UserBasicVO(loggedInUser));
 		
 		return list;
 	}
 
-	public NotificationListVO getNotificationsForUser(UserVO loggedInUser, String userId, ListPropertiesVO notifProperties) {
+	public NotificationListVO getNotificationsForUser(UserVO loggedInUser, ListPropertiesVO notifProperties) {
 		NotificationListVO list = new NotificationListVO();
+		if (loggedInUser == null) {
+			list.setErrorCode(ErrorCodes.NOT_LOGGED_IN);
+			list.setErrorMessage("User not logged in.");
+			log.log(Level.WARNING, "User not logged in!");
+			return list;
+		}
 		List<NotificationVO> notifications = null;
 
-		//UserVO user = getUser(loggedInUser, userId).getUser();
-		if (loggedInUser == null) {
-			log.log(Level.WARNING, "User not logged in!");
-			return null;
-		}
-		userId = loggedInUser.getId();
-
 		notifications = DtoToVoConverter.convertNotifications(
-				getDAO().getAllUserNotification(BaseVO.toKeyId(userId), notifProperties));
+				getDAO().getAllUserNotification(loggedInUser.toKeyId(), notifProperties));
 		notifProperties.setTotalResults(notifications.size());
 		list.setNotifications(notifications);
 		list.setNotificationsProperties(notifProperties);

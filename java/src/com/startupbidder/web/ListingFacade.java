@@ -72,6 +72,7 @@ import com.startupbidder.vo.ListingListVO;
 import com.startupbidder.vo.ListingLocationsVO;
 import com.startupbidder.vo.ListingPropertyVO;
 import com.startupbidder.vo.ListingVO;
+import com.startupbidder.vo.NotificationVO;
 import com.startupbidder.vo.UserBasicVO;
 import com.startupbidder.vo.UserListingsVO;
 import com.startupbidder.vo.UserVO;
@@ -881,6 +882,12 @@ public class ListingFacade {
 		List<Listing> monitoredListing = getMonitoredListings(loggedInUser, 4);
 		list = prepareListingList(loggedInUser, monitoredListing, 4);
 		result.setCommentedListings(list);
+		
+		props = new ListPropertiesVO();
+		props.setMaxResults(10);
+		List<NotificationVO> notifications = DtoToVoConverter.convertNotifications(
+				getDAO().getAllUserNotification(loggedInUser.toKeyId(), props));
+		result.setNotifications(notifications);
 		
 		if (loggedInUser.isAdmin()) {
 			props = new ListPropertiesVO();

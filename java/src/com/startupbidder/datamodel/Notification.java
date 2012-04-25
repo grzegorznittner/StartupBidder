@@ -38,10 +38,10 @@ public class Notification extends BaseObject {
 		
 	@Indexed public Key<SBUser> user;
 	@Indexed public Type type;
-	public Key<Listing> listing;
+	@Indexed public Key<Listing> listing;
 	public String title;
 	public String text;
-	public Date   created;
+	@Indexed public Date created;
 	public Date   sentDate;
 	@Indexed public boolean read = false;
 
