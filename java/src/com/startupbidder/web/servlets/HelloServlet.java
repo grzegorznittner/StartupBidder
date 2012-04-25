@@ -232,10 +232,9 @@ public class HelloServlet extends HttpServlet {
 			
 			out.println("<p style=\"background: none repeat scroll 0% 0% rgb(187, 187, 187);\">Monitor API:</p>");
 			out.println("Examples for setting and deactivating monitors you'll find in active listing section.<br/>");
-			out.println("<a href=\"/monitors/active-for-user/.json?type=Listing\">All active monitors for logged in user</a><br/>");
-			out.println("<a href=\"/monitors/active-for-user/.json?\">Active listing monitors for logged in user</a><br/>");
-			out.println("<a href=\"/monitors/active-for-object/?type=Listing&id=" + topListing.getWebKey() + "\">Monitors for top listing</a><br/>");
-						
+			out.println("<a href=\"/monitors/active-for-user/.json?\">Active monitors for logged in user</a><br/>");
+			out.println("<a href=\"/monitors/active-for-listing/?id=" + topListing.getWebKey() + "\">Monitors for top listing</a><br/>");
+			
 			out.println("<p style=\"background: none repeat scroll 0% 0% rgb(187, 187, 187);\">File API:</p>");
 			out.println("<a href=\"/file/get-upload-url/2/.json\">Get upload URL(s)</a><br/>");
 			List<ListingDocumentVO> docs = ListingFacade.instance().getAllListingDocuments(currentUser);

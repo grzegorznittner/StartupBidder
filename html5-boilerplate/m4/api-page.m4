@@ -313,6 +313,24 @@ include(api-banner.m4)
 
     <div class="boxtitle">MONITOR API</div>
     <div class="boxpanel apipanel">
+        <dt>GET /monitors/active-for-user/&lt;id&gt;
+            <form method="GET" action="/monitors/active-for-user/"><input type="submit" value="TEST"></input></form>
+        </dt>
+        <dd>
+            <p>
+            Returns list of active monitors for logged in user.
+            </p>
+        </dd>
+
+        <dt>GET /monitors/active-for-listing/&lt;id&gt;
+            <form method="GET" action="/monitors/active-for-listing/"><input type="text" name="id" value="&lt;listing_id&gt;"><input type="submit" value="TEST"></input></form>
+        </dt>
+        <dd>
+            <p>
+            Returns list of active monitors for given listing.
+            </p>
+        </dd>
+
         <dt>POST /monitor/set/&lt;id&gt;
             <form method="POST" action="/monitor/set/"><input type="text" name="id" value="&lt;listing_id&gt;"></input><input type="submit" value="TEST"></input></form>
         </dt>

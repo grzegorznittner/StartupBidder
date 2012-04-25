@@ -9,9 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
 
-import com.startupbidder.vo.MonitorVO;
 import com.startupbidder.web.HttpHeaders;
 import com.startupbidder.web.HttpHeadersImpl;
 import com.startupbidder.web.ModelDrivenController;
@@ -29,7 +27,7 @@ public class MonitorController extends ModelDrivenController {
 	protected HttpHeaders executeAction(HttpServletRequest request) throws JsonParseException, JsonMappingException, IOException {
 		if ("GET".equalsIgnoreCase(request.getMethod())) {
 			// GET method handler			
-			if("active-for-object".equalsIgnoreCase(getCommand(1))) {
+			if("active-for-listing".equalsIgnoreCase(getCommand(1))) {
 				return activeForOListing(request);
 			} else if("active-for-user".equalsIgnoreCase(getCommand(1))) {
 				return activeForUser(request);
