@@ -18,6 +18,7 @@ import com.startupbidder.dao.ObjectifyDatastoreDAO;
 import com.startupbidder.datamodel.Bid;
 import com.startupbidder.datamodel.Bid.Action;
 import com.startupbidder.datamodel.Listing;
+import com.startupbidder.datamodel.Monitor;
 import com.startupbidder.datamodel.Notification;
 import com.startupbidder.datamodel.SBUser;
 import com.startupbidder.datamodel.VoToModelConverter;
@@ -441,7 +442,8 @@ public class BidFacade {
 			bidProperties.setStartIndex(0);
 			bidProperties.setTotalResults(0);
 		} else {
-			ListingFacade.instance().applyListingData(loggedInUser, listing);
+			Monitor monitor = getDAO().getListingMonitor(loggedInUser.toKeyId(), listing.toKeyId());
+			ListingFacade.instance().applyListingData(loggedInUser, listing, monitor);
 			List<BidVO> bids = DtoToVoConverter.convertBids(
 					getDAO().getBidsForListing(BaseVO.toKeyId(listingId)));
 			int index = bidProperties.getStartIndex() > 0 ? bidProperties.getStartIndex() : 1;

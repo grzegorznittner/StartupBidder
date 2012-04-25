@@ -83,7 +83,8 @@ public class ServiceFacade {
 			commentProperties.setStartIndex(0);
 			commentProperties.setTotalResults(0);
 		} else {
-			ListingFacade.instance().applyListingData(loggedInUser, listing);
+			Monitor monitor = getDAO().getListingMonitor(loggedInUser.toKeyId(), listing.toKeyId());
+			ListingFacade.instance().applyListingData(loggedInUser, listing, monitor);
 			List<CommentVO> comments = DtoToVoConverter.convertComments(
 					getDAO().getCommentsForListing(BaseVO.toKeyId(listingId)));
 			int index = commentProperties.getStartIndex() > 0 ? commentProperties.getStartIndex() : 1;
@@ -314,6 +315,10 @@ public class ServiceFacade {
 		}
 		List<NotificationVO> notifications = DtoToVoConverter.convertNotifications(
 				getDAO().getUserNotification(loggedInUser.toKeyId(), notifProperties));
+		int num = notifProperties.getStartIndex() > 0 ? notifProperties.getStartIndex() : 1;
+		for (NotificationVO notification : notifications) {
+			notification.setOrderNumber(num++);
+		}
 		notifProperties.setNumberOfResults(notifications.size());
 		list.setNotifications(notifications);
 		list.setNotificationsProperties(notifProperties);
@@ -334,6 +339,10 @@ public class ServiceFacade {
 
 		notifications = DtoToVoConverter.convertNotifications(
 				getDAO().getAllUserNotification(loggedInUser.toKeyId(), notifProperties));
+		int num = notifProperties.getStartIndex() > 0 ? notifProperties.getStartIndex() : 1;
+		for (NotificationVO notification : notifications) {
+			notification.setOrderNumber(num++);
+		}
 		notifProperties.setTotalResults(notifications.size());
 		list.setNotifications(notifications);
 		list.setNotificationsProperties(notifProperties);
@@ -393,6 +402,10 @@ public class ServiceFacade {
 		}
 		monitors = DtoToVoConverter.convertMonitors(
 				getDAO().getMonitorsForListing(BaseVO.toKeyId(listingId)));
+		int num = 1;
+		for (MonitorVO monitor : monitors) {
+			monitor.setOrderNumber(num++);
+		}
 		list.setMonitors(monitors);
 		
 		return list;
@@ -408,6 +421,10 @@ public class ServiceFacade {
 
 		monitors = DtoToVoConverter.convertMonitors(
 				getDAO().getMonitorsForUser(loggedInUser.toKeyId()));
+		int num = 1;
+		for (MonitorVO monitor : monitors) {
+			monitor.setOrderNumber(num++);
+		}
 		list.setMonitors(monitors);
 		list.setUser(loggedInUser);
 		

@@ -1232,6 +1232,14 @@ public class ObjectifyDatastoreDAO {
 		return mons;
 	}
 
+	public Map<String, Monitor> getMonitorsMapForUser(long userId) {
+		Map<String, Monitor> result = new HashMap<String, Monitor>();
+		for (Monitor monitor : getMonitorsForUser(userId)) {
+			result.put(monitor.monitoredListing.getString(), monitor);
+		}
+		return result;
+	}
+
 	public List<Category> getCategories() {
 		QueryResultIterable<Key<Category>> catIt = getOfy().query(Category.class)
 				.order("name").fetchKeys();

@@ -18,6 +18,8 @@ import com.startupbidder.util.LowecaseSerializer;
 		fieldVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE)
 public class NotificationVO extends BaseVO {
 
+	@JsonProperty("num")
+	private int orderNumber;
 	@JsonProperty("notify_id")
 	private String id;
 	@JsonProperty("notify_type")
@@ -46,6 +48,12 @@ public class NotificationVO extends BaseVO {
 	}
 	public String getType() {
 		return type;
+	}
+	public int getOrderNumber() {
+		return orderNumber;
+	}
+	public void setOrderNumber(int orderNumber) {
+		this.orderNumber = orderNumber;
 	}
 	public void setType(String type) {
 		this.type = type;
