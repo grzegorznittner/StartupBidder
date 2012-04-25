@@ -222,6 +222,28 @@ include(api-banner.m4)
             This method can only be called by admins.
             </p>
         </dd>
+
+        <dt>POST /listing/activate/&lt;id&gt; <i>ADMIN ONLY</i>
+            <form method="POST" action="/listing/activate"><input type="text" name="id" value="&lt;listing_id&gt;"></input><input type="submit" value="TEST"></input></form>
+        </dt>
+        <dd>
+            <p>
+            Activates the listing with the given id.  This makes the listing live and active on the site.  If asking for funds, bidding is enabled at this point.
+            Commenting also becomes enabled for the listing.  This method can only be called if the listing is in posted or frozen state.
+            This method can only be called by admins.
+            </p>
+        </dd>
+
+        <dt>POST /listing/send_back/&lt;id&gt; <i>ADMIN ONLY</i>
+            <form method="POST" action="/listing/send_back"><input type="text" name="id" value="&lt;listing_id&gt;"></input><input type="submit" value="TEST"></input></form>
+        </dt>
+        <dd>
+            <p>
+            Sends the listing with the given id back to the user for further modification.  This suspends the listing pending further review,
+            which may be done if a listing is found to be inaccurate or in violation of any law or regulation.
+            This method can only be called by admins.
+            </p>
+        </dd>
     </div>
 
     <div class="boxtitle">LOCATIONS API</div>
