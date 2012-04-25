@@ -273,18 +273,6 @@ indexes:
     - name: valuation
       direction: desc
 
-- kind: Vote
-  ancestor: no
-  properties:
-    - name: voter
-    - name: user
-
-- kind: Vote
-  ancestor: no
-  properties:
-    - name: voter
-    - name: listing
-
 - kind: Notification
   ancestor: no
   properties:
@@ -313,6 +301,12 @@ indexes:
     - name: read
     - name: created
       direction: desc
+
+- kind: Monitor
+  ancestor: no
+  properties:
+    - name: monitoredListing
+    - name: active
 
 - kind: Monitor
   ancestor: no
@@ -324,17 +318,4 @@ indexes:
   ancestor: no
   properties:
     - name: user
-    - name: monitoredUser
-
-- kind: Monitor
-  ancestor: no
-  properties:
-    - name: user
-    - name: monitoredBid
-
-- kind: Monitor
-  ancestor: no
-  properties:
-    - name: user
-    - name: type
     - name: active

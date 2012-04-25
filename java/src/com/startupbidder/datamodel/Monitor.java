@@ -32,8 +32,6 @@ public class Monitor extends BaseObject {
 		this.modified = new Date();
 	}
 	
-	public static enum Type {LISTING, BID, USER};
-
 	@Indexed public Key<SBUser> user;
 	@Indexed(IfNotNull.class) public Key<Listing> monitoredListing;
 	@Indexed public Date   created;

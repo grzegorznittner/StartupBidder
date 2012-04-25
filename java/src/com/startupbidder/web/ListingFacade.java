@@ -80,7 +80,7 @@ import com.startupbidder.vo.UserVO;
 public class ListingFacade {
 	private static final Logger log = Logger.getLogger(ListingFacade.class.getName());
 	
-	public static enum UpdateReason {NEW_BID, BID_UPDATE, NEW_COMMENT, DELETE_COMMENT, NEW_VOTE, NONE};
+	public static enum UpdateReason {NEW_BID, BID_UPDATE, NEW_COMMENT, DELETE_COMMENT, NEW_MONITOR, DELETE_MONITOR, NONE};
 	public static final String MEMCACHE_ALL_LISTING_LOCATIONS = "AllListingLocations";
 	/**
 	 * Delay for listing stats task execution.
@@ -927,7 +927,7 @@ public class ListingFacade {
 	
 	private List<Listing> getMonitoredListings(UserVO loggedInUser, int maxResults) {
 		List<Key<Listing>> monitoredListingKeys = new ArrayList<Key<Listing>>();
-		List<Monitor> monitors = getDAO().getMonitorsForUser(loggedInUser.toKeyId(), Monitor.Type.LISTING);
+		List<Monitor> monitors = getDAO().getMonitorsForUser(loggedInUser.toKeyId());
 		log.info("Fetched monitors for user '" + loggedInUser.toKeyId() + "': " + monitors);
 		for (Monitor monitor : monitors) {
 			monitoredListingKeys.add(new Key<Listing>(Listing.class, monitor.monitoredListing.getId()));
@@ -1324,24 +1324,6 @@ public class ListingFacade {
 		return list;
 	}
 
-	/**
-	 * Value up listing
-	 */
-	public ListingVO valueUpListing(UserVO loggedInUser, String listingId) {
-		if (loggedInUser == null) {
-			return null;
-		}
-		ListingVO listing =  DtoToVoConverter.convert(getDAO().valueUpListing(
-				BaseVO.toKeyId(listingId), BaseVO.toKeyId(loggedInUser.getId())));
-		if (listing != null) {
-			scheduleUpdateOfListingStatistics(listing.getId(), UpdateReason.NEW_VOTE);
-			UserMgmtFacade.instance().scheduleUpdateOfUserStatistics(loggedInUser.getId(), UserMgmtFacade.UpdateReason.NEW_VOTE);
-			//ServiceFacade.instance().createNotification(listing.getOwner(), listing.getId(), Notification.Type.NEW_VOTE_FOR_YOUR_LISTING, "");
-			applyListingData(loggedInUser, listing);
-		}
-		return listing;
-	}
-
 	public void applyListingData(UserVO loggedInUser, ListingVO listing) {
 		// set user data
 		SBUser user = getDAO().getUser(listing.getOwner());
@@ -1350,7 +1332,6 @@ public class ListingFacade {
 		ListingStats listingStats = getListingStatistics(listing.toKeyId());
 		listing.setNumberOfBids(listingStats.numberOfBids);
 		listing.setNumberOfComments(listingStats.numberOfComments);
-		listing.setNumberOfVotes(listingStats.numberOfVotes);
 		listing.setValuation((int)listingStats.valuation);
 		listing.setMedianValuation((int)listingStats.medianValuation);
 		listing.setPreviousValuation((int)listingStats.previousValuation);
@@ -1361,13 +1342,7 @@ public class ListingFacade {
 		listing.setDaysAgo(daysAgo.getDays());
 	
 		Days daysLeft = Days.daysBetween(new DateTime(), new DateTime(listing.getClosingOn()));
-		listing.setDaysLeft(daysLeft.getDays());
-		
-		if (loggedInUser != null) {
-			listing.setVotable(getDAO().userCanVoteForListing(loggedInUser.toKeyId(), listing.toKeyId()));
-		} else {
-			listing.setVotable(false);
-		}
+		listing.setDaysLeft(daysLeft.getDays());		
 	}
 
 	public ListingStats getListingStatistics(long listingId) {
@@ -1400,8 +1375,11 @@ public class ListingFacade {
 			case DELETE_COMMENT:
 				listingStats.numberOfComments = listingStats.numberOfComments - 1;
 				break;
-			case NEW_VOTE:
-				listingStats.numberOfVotes = listingStats.numberOfVotes + 1;
+			case NEW_MONITOR:
+				listingStats.numberOfMonitors = listingStats.numberOfMonitors + 1;
+				break;
+			case DELETE_MONITOR:
+				listingStats.numberOfMonitors = listingStats.numberOfMonitors - 1;
 				break;
 			default:
 				// reason can be also null

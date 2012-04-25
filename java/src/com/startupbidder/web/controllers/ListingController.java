@@ -27,7 +27,6 @@ import com.startupbidder.datamodel.ListingDoc;
 import com.startupbidder.vo.BaseVO;
 import com.startupbidder.vo.ListPropertiesVO;
 import com.startupbidder.vo.ListingAndUserVO;
-import com.startupbidder.vo.ListingDocumentVO;
 import com.startupbidder.vo.ListingPropertyVO;
 import com.startupbidder.vo.ListingVO;
 import com.startupbidder.web.HttpHeaders;
@@ -106,8 +105,6 @@ public class ListingController extends ModelDrivenController {
 				return updateField(request);
 			} else if ("update_address".equalsIgnoreCase(getCommand(1))) {
 				return updateAddress(request);
-			} else if("up".equalsIgnoreCase(getCommand(1))) {
-				return up(request);
 			} else if("post".equalsIgnoreCase(getCommand(1))) {
 				return post(request);
 			} else if("activate".equalsIgnoreCase(getCommand(1))) {
@@ -453,13 +450,6 @@ public class ListingController extends ModelDrivenController {
     private HttpHeaders discoverUser(HttpServletRequest request) {
     	model = ListingFacade.instance().getDiscoverUserListings(getLoggedInUser());
         return new HttpHeadersImpl("discover_user").disableCaching();
-    }
-
-    // GET /listings/up
-    private HttpHeaders up(HttpServletRequest request) {
-    	String listingId = getCommandOrParameter(request, 2, "id");
-    	model = ListingFacade.instance().valueUpListing(getLoggedInUser(), listingId);
-        return new HttpHeadersImpl("up").disableCaching();
     }
 
     // GET /listings/activate

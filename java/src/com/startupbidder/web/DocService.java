@@ -5,9 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -34,8 +32,6 @@ import com.startupbidder.datamodel.SystemProperty;
 import com.startupbidder.vo.DtoToVoConverter;
 import com.startupbidder.vo.ListingDocumentVO;
 import com.startupbidder.vo.ListingVO;
-import com.startupbidder.vo.UserListVO;
-import com.startupbidder.vo.UserVO;
 import com.startupbidder.web.ListingFacade.UpdateReason;
 
 /**
@@ -89,8 +85,7 @@ public class DocService {
 	}
 	
 	public void updateListingData(ListingVO listing, UpdateReason reason) {
-		if (reason == UpdateReason.NEW_COMMENT || reason == UpdateReason.NEW_BID || reason == UpdateReason.NEW_VOTE
-				|| reason == UpdateReason.BID_UPDATE) {
+		if (reason != UpdateReason.NONE) {
 			log.info("GoogleDoc object doesn't have to be updated for reason: " + reason);
 			return;
 		}

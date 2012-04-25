@@ -366,14 +366,15 @@ public class ServiceFacade {
 		monitor.setUser(loggedInUser.getId());
 		monitor.setUserName(loggedInUser.getNickname());
 		monitor.setListingId(listingId);
-		monitor.setType(Monitor.Type.LISTING.toString());
 		monitor = DtoToVoConverter.convert(getDAO().setMonitor(VoToModelConverter.convert(monitor)));
+		ListingFacade.instance().scheduleUpdateOfListingStatistics(listingId, UpdateReason.NEW_MONITOR);
 		return monitor;
 	}
 
 	public MonitorVO deactivateListingMonitor(UserVO loggedInUser, String listingId) {
 		MonitorVO monitor = DtoToVoConverter.convert(
 				getDAO().deactivateListingMonitor(loggedInUser.toKeyId(), BaseVO.toKeyId(listingId)));
+		ListingFacade.instance().scheduleUpdateOfListingStatistics(listingId, UpdateReason.DELETE_MONITOR);
 		if (monitor == null) {
 			log.warning("Monitor for listing id '" + listingId + "' not found!");
 		} else {
@@ -382,48 +383,31 @@ public class ServiceFacade {
 		return monitor;
 	}
 
-	public MonitorListVO getMonitorsForObject(UserVO loggedInUser, String objectId, String type) {
+	public MonitorListVO getMonitorsForObject(UserVO loggedInUser, String listingId) {
 		MonitorListVO list = new MonitorListVO();
 		List<MonitorVO> monitors = null;
 
-		if (StringUtils.isEmpty(objectId)) {
-			log.warning("Parameter objectId not provided!");
+		if (StringUtils.isEmpty(listingId)) {
+			log.warning("Parameter listingId not provided!");
 			return null;
-		}
-		if (StringUtils.isEmpty(type)) {
-			log.warning("Parameter type not provided!");
-			return null;
-		}
-		Monitor.Type typeEnum = null;
-		try {
-			typeEnum = Monitor.Type.valueOf(type.toUpperCase());
-		} catch (Exception e) {
-			log.log(Level.WARNING, "Parameter type has wrong value", e);
 		}
 		monitors = DtoToVoConverter.convertMonitors(
-				getDAO().getMonitorsForObject(BaseVO.toKeyId(objectId), typeEnum));
+				getDAO().getMonitorsForListing(BaseVO.toKeyId(listingId)));
 		list.setMonitors(monitors);
 		
 		return list;
 	}
 
-	public MonitorListVO getMonitorsForUser(UserVO loggedInUser, String userId, String type) {
+	public MonitorListVO getMonitorsForUser(UserVO loggedInUser) {
 		MonitorListVO list = new MonitorListVO();
 		List<MonitorVO> monitors = null;
+		if (loggedInUser == null) {
+			log.log(Level.WARNING, "User not logged in!");
+			return null;
+		}
 
-		Monitor.Type typeEnum = null;
-		if (StringUtils.notEmpty(type)) {
-			try {
-				typeEnum = Monitor.Type.valueOf(type.toUpperCase());
-			} catch (Exception e) {
-				log.log(Level.WARNING, "Parameter type has wrong value", e);
-			}
-		}
-		if (StringUtils.isEmpty(userId) && loggedInUser != null) {
-			userId = loggedInUser.getId();
-		}
 		monitors = DtoToVoConverter.convertMonitors(
-				getDAO().getMonitorsForUser(BaseVO.toKeyId(userId), typeEnum));
+				getDAO().getMonitorsForUser(loggedInUser.toKeyId()));
 		list.setMonitors(monitors);
 		list.setUser(loggedInUser);
 		

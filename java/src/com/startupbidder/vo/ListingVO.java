@@ -62,11 +62,10 @@ public class ListingVO extends BaseVO {
 	@JsonProperty("longitude") private Double longitude;
 	@JsonProperty("num_comments") private long numberOfComments;
 	@JsonProperty("num_bids") private long numberOfBids;
-	@JsonProperty("num_votes") private long numberOfVotes;
-	@JsonProperty("votable") private boolean votable;
 	@JsonProperty("days_ago") private int daysAgo;
 	@JsonProperty("days_left") private int daysLeft;
 	@JsonProperty("mockData") private boolean mockData;
+	@JsonProperty("monitored") private boolean monitored;
 	@JsonProperty("business_plan_id") private String buinessPlanId;
 	@JsonProperty("presentation_id") private String presentationId;
 	@JsonProperty("financials_id") private String financialsId;
@@ -288,22 +287,6 @@ public class ListingVO extends BaseVO {
 		this.numberOfBids = numberOfBids;
 	}
 
-	public long getNumberOfVotes() {
-		return numberOfVotes;
-	}
-
-	public void setNumberOfVotes(long numberOfVotes) {
-		this.numberOfVotes = numberOfVotes;
-	}
-
-	public boolean isVotable() {
-		return votable;
-	}
-
-	public void setVotable(boolean votable) {
-		this.votable = votable;
-	}
-
 	public int getDaysAgo() {
 		return daysAgo;
 	}
@@ -414,6 +397,14 @@ public class ListingVO extends BaseVO {
 
 	public void setCategory(String category) {
 		this.category = category;
+	}
+
+	public boolean isMonitored() {
+		return monitored;
+	}
+
+	public void setMonitored(boolean monitored) {
+		this.monitored = monitored;
 	}
 
 	public String getAnswer1() {

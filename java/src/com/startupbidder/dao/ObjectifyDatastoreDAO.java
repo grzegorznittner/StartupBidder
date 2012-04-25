@@ -17,7 +17,6 @@ import org.joda.time.DateTime;
 import org.joda.time.Days;
 
 import com.google.appengine.api.datastore.QueryResultIterable;
-import com.google.appengine.api.datastore.QueryResultIterator;
 import com.google.appengine.api.memcache.MemcacheService;
 import com.google.appengine.api.memcache.MemcacheServiceFactory;
 import com.googlecode.objectify.Key;
@@ -35,12 +34,10 @@ import com.startupbidder.datamodel.Location;
 import com.startupbidder.datamodel.Monitor;
 import com.startupbidder.datamodel.Notification;
 import com.startupbidder.datamodel.PaidBid;
-import com.startupbidder.datamodel.Rank;
 import com.startupbidder.datamodel.SBUser;
 import com.startupbidder.datamodel.SystemProperty;
 import com.startupbidder.datamodel.UserStats;
 import com.startupbidder.datamodel.Vote;
-import com.startupbidder.vo.DtoToVoConverter;
 import com.startupbidder.vo.ListPropertiesVO;
 import com.startupbidder.web.ListingFacade;
 
@@ -255,9 +252,10 @@ public class ObjectifyDatastoreDAO {
 				.filter("listing =", listingStats.listing).fetchKeys();
 		listingStats.numberOfComments = CollectionUtils.size(commentsIt.iterator());
 
-		QueryResultIterable<Key<Vote>> votesIt = getOfy().query(Vote.class)
-				.filter("listing =", listingStats.listing).fetchKeys();
-		listingStats.numberOfVotes = CollectionUtils.size(votesIt.iterator());
+		QueryResultIterable<Key<Monitor>> monitorIt = getOfy().query(Monitor.class)
+				.filter("monitoredListing =", listingStats.listing)
+				.filter("active =", Boolean.TRUE).fetchKeys();
+		listingStats.numberOfMonitors = CollectionUtils.size(monitorIt.iterator());
 
 		// calculate valuation for listing (max accepted bid or suggested valuation)
 		Bid mostValuedBid = null;
@@ -289,7 +287,7 @@ public class ObjectifyDatastoreDAO {
 		listingStats.medianValuation = median;
 		
 		double timeFactor = Math.pow((double)(Days.daysBetween(new DateTime(listing.listedOn), new DateTime()).getDays() + 2), 1.5d);
-		double score = (listingStats.numberOfVotes + listingStats.numberOfComments + listingStats.numberOfBids + median) / timeFactor;
+		double score = (listingStats.numberOfMonitors + listingStats.numberOfComments + listingStats.numberOfBids + median) / timeFactor;
 		listingStats.score = score;
 		
 		listingStats.created = new Date();
@@ -1216,30 +1214,20 @@ public class ObjectifyDatastoreDAO {
 		}
 	}
 
-	public List<Monitor> getMonitorsForObject(long objectId, Monitor.Type type) {
-		Query<Monitor> query = getOfy().query(Monitor.class);
-		switch (type) {
-		case LISTING:
-			query = query.filter("monitoredListing =", new Key<Listing>(Listing.class, objectId));
-			break;
-		case USER:
-			query = query.filter("monitoredUser =", new Key<SBUser>(SBUser.class, objectId));
-			break;
-		case BID:
-			query = query.filter("monitoredBid =", new Key<Bid>(Bid.class, objectId));
-			break;
-		}
-		QueryResultIterable<Key<Monitor>> monIt = query.fetchKeys();
+	public List<Monitor> getMonitorsForListing(long objectId) {
+		QueryResultIterable<Key<Monitor>> monIt = getOfy().query(Monitor.class)
+				.filter("monitoredListing =", new Key<Listing>(Listing.class, objectId))
+				.filter("active =", true).fetchKeys();
 		List<Monitor> mons = new ArrayList<Monitor>(getOfy().get(monIt).values());
 		return mons;
 	}
 
-	public List<Monitor> getMonitorsForUser(long userId, Monitor.Type type) {
-		log.info("getMonitorsForUser: userId=" + userId + ", type=" + type);
+	public List<Monitor> getMonitorsForUser(long userId) {
+		log.info("getMonitorsForUser: userId=" + userId);
 		
 		QueryResultIterable<Key<Monitor>> monIt = getOfy().query(Monitor.class)
 				.filter("user =", new Key<SBUser>(SBUser.class, userId))
-				.filter("type =", type).filter("active =", true).fetchKeys();
+				.filter("active =", true).fetchKeys();
 		List<Monitor> mons = new ArrayList<Monitor>(getOfy().get(monIt).values());
 		return mons;
 	}
