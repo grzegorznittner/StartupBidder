@@ -169,7 +169,7 @@ public class HelloServlet extends HttpServlet {
 			ListingListVO postedListings = ListingFacade.instance().getPostedListings(currentUser, listProperties);
 			printPostedListings(out, currentUser, postedListings);
 			
-			out.println("<br/><a href=\"/listings/active/.json?max_results=6\">Active listings</a><br/>");
+			out.println("<br/><a href=\"/listings/closing/.json?max_results=6\">Closing listings</a><br/>");
 			ListingListVO activeListings = ListingFacade.instance().getClosingActiveListings(currentUser, listProperties);
 			printActiveListings(out, currentUser, activeListings);
 			
@@ -343,9 +343,14 @@ public class HelloServlet extends HttpServlet {
 			out.println("<tr><td>" + listing.getName() + " posted by " + listing.getOwnerName() + "</td>");
 			out.println("<td><form method=\"POST\" action=\"/listing/withdraw/" + listing.getId() + "/.json\"><input type=\"submit\" value=\"Withdraw\"/></form>");
 			out.println("<form method=\"POST\" action=\"/listing/freeze/" + listing.getId() + "/.json\"><input type=\"submit\" value=\"Freeze\"/></form>");
-			out.println("<form method=\"POST\" action=\"/monitor/set/.json\"><textarea name=\"monitor\" rows=\"1\" cols=\"3\">"
-					+ "{ \"object_id\":\"" + listing.getId() + "\", \"profile_id\":\"" + currentUser.getId() + "\", \"type\":\"Listing\" }"
-					+ "</textarea><input type=\"submit\" value=\"Monitor\"/></form>");
+			if (currentUser != null) {
+				Monitor monitor = ObjectifyDatastoreDAO.getInstance().getListingMonitor(currentUser.toKeyId(), listing.toKeyId());
+				if (monitor != null && monitor.active) {
+					out.println("<form method=\"POST\" action=\"/monitor/deactivate/" + listing.getId() + "/.json\"><input type=\"submit\" value=\"Deactivate monitor\"/></form>");
+				} else {
+					out.println("<form method=\"POST\" action=\"/monitor/set/" + listing.getId() + "/.json\"><input type=\"submit\" value=\"Set monitor\"/></form>");
+				}
+			}
 			out.println("<a href=\"/listing/get/" + listing.getId() + ".json?\">View</a></td>");
 			out.println("<td>");
 			List<ListingDocumentVO> docs = getListingDocs(currentUser, listing);

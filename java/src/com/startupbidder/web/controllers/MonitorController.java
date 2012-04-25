@@ -50,20 +50,14 @@ public class MonitorController extends ModelDrivenController {
 	private HttpHeaders set(HttpServletRequest request) throws JsonParseException, JsonMappingException, IOException {
 		HttpHeaders headers = new HttpHeadersImpl("create");
 		
-		ObjectMapper mapper = new ObjectMapper();
-		log.log(Level.INFO, "Parameters: " + request.getParameterMap());
-		String notifString = request.getParameter("monitor");
-		if (!StringUtils.isEmpty(notifString)) {
-			MonitorVO monitor = mapper.readValue(notifString, MonitorVO.class);
-			log.log(Level.INFO, "Creating monitor: " + monitor);
-			monitor = ServiceFacade.instance().setMonitor(getLoggedInUser(), monitor);
-			model = monitor;
-			if (monitor == null) {
-				log.log(Level.WARNING, "Monitor not created!");
+		String listingId = getCommandOrParameter(request, 2, "id");
+		if (!StringUtils.isEmpty(listingId)) {
+			model = ServiceFacade.instance().setListingMonitor(getLoggedInUser(), listingId);
+			if (model == null) {
 				headers.setStatus(500);
 			}
 		} else {
-			log.log(Level.WARNING, "Parameter 'monitor' is empty!");
+			log.log(Level.WARNING, "Parameter 'id' is not provided!");
 			headers.setStatus(500);
 		}
 
@@ -76,9 +70,9 @@ public class MonitorController extends ModelDrivenController {
 	private HttpHeaders deactivate(HttpServletRequest request) throws JsonParseException, JsonMappingException, IOException {
 		HttpHeaders headers = new HttpHeadersImpl("deactivate");
 		
-		String monitorId = getCommandOrParameter(request, 2, "id");
-		if (!StringUtils.isEmpty(monitorId)) {
-			model = ServiceFacade.instance().deactivateMonitor(getLoggedInUser(), monitorId);
+		String listingId = getCommandOrParameter(request, 2, "id");
+		if (!StringUtils.isEmpty(listingId)) {
+			model = ServiceFacade.instance().deactivateListingMonitor(getLoggedInUser(), listingId);
 			if (model == null) {
 				headers.setStatus(500);
 			}

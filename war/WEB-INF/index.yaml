@@ -175,7 +175,7 @@ indexes:
   properties:
     - name: state
     - name: closingOn
-      direction: desc
+      direction: asc
 
 - kind: Listing
   ancestor: no

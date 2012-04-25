@@ -654,7 +654,7 @@ public class ObjectifyDatastoreDAO {
 	public List<Listing> getClosingListings(ListPropertiesVO listingProperties) {
 		QueryResultIterable<Key<Listing>> listingsIt = getOfy().query(Listing.class)
 				.filter("state =", Listing.State.ACTIVE)
-				.order("-closingOn").prefetchSize(listingProperties.getMaxResults()).fetchKeys();
+				.order("closingOn").prefetchSize(listingProperties.getMaxResults()).fetchKeys();
 		List<Listing> listings = new ArrayList<Listing>(getOfy().get(listingsIt).values());
 		listingProperties.setNumberOfResults(listings.size());
 		return listings;
@@ -1170,26 +1170,21 @@ public class ObjectifyDatastoreDAO {
 			return null;
 		}
 	}
+	
+	public Monitor getListingMonitor(long userId, long listingId) {
+		return getListingMonitor(new Key<SBUser>(SBUser.class, userId), new Key<Listing>(Listing.class, listingId));
+	}
+	
+	private Monitor getListingMonitor(Key<SBUser> userKey, Key<Listing> listingKey) {
+		Query<Monitor> query = getOfy().query(Monitor.class).filter("user =", userKey)
+				.filter("monitoredListing =", listingKey);		
+		return query.get();
+	}
 
 	public Monitor setMonitor(Monitor monitor) {
-		Query<Monitor> query = getOfy().query(Monitor.class).filter("user =", monitor.user);
-		switch (monitor.type) {
-		case LISTING:
-			query = query.filter("monitoredListing =", monitor.monitoredListing);
-			break;
-		case USER:
-			query = query.filter("monitoredUser =", monitor.monitoredUser);
-			break;
-		case BID:
-			query = query.filter("monitoredBid =", monitor.monitoredBid);
-			break;
-		}
-		
-		log.info("Getting monitors: " + query.toString());
-		QueryResultIterator<Key<Monitor>> it = query.fetchKeys().iterator();
-		if (it.hasNext()) {
+		Monitor existingMonitor = getListingMonitor(monitor.user, monitor.monitoredListing);
+		if (existingMonitor != null) {
 			// monitor already exists
-			Monitor existingMonitor = getOfy().find(it.next());
 			existingMonitor.active = true;
 			existingMonitor.deactivated = null;
 			
@@ -1208,15 +1203,15 @@ public class ObjectifyDatastoreDAO {
 		}
 	}
 
-	public Monitor deactivateMonitor(long monitorId) {
+	public Monitor deactivateListingMonitor(long userId, long listingId) {
 		try {
-			Monitor monitor = getOfy().get(Monitor.class, monitorId);
+			Monitor monitor = getListingMonitor(userId, listingId);
 			monitor.active = false;
 			monitor.deactivated = new Date();
 			getOfy().put(monitor);
 			return monitor;
 		} catch (Exception e) {
-			log.log(Level.WARNING, "Notification with id '" + monitorId + "' not found!");
+			log.log(Level.WARNING, "Monitor for listing '" + listingId + "' by user '" + userId + "'not found!");
 			return null;
 		}
 	}
@@ -1246,19 +1241,6 @@ public class ObjectifyDatastoreDAO {
 				.filter("user =", new Key<SBUser>(SBUser.class, userId))
 				.filter("type =", type).filter("active =", true).fetchKeys();
 		List<Monitor> mons = new ArrayList<Monitor>(getOfy().get(monIt).values());
-		
-//		monIt = getOfy().query(Monitor.class).filter("user =", new Key<SBUser>(SBUser.class, userId)).fetchKeys();
-//		log.info("Monitors for user '" + userId + "': " + getOfy().get(monIt).values());
-//		monIt = getOfy().query(Monitor.class).filter("type =", type).fetchKeys();
-//		log.info("Monitors for type '" + type + "': " + getOfy().get(monIt).values());
-//		monIt = getOfy().query(Monitor.class).filter("user =", new Key<SBUser>(SBUser.class, userId)).filter("type =", type).fetchKeys();
-//		log.info("Monitors for type and user: " + getOfy().get(monIt).values());
-//		monIt = getOfy().query(Monitor.class).filter("user =", new Key<SBUser>(SBUser.class, userId)).filter("type =", type)
-//				.filter("active =", true).fetchKeys();
-//		log.info("Monitors for type, user and active: " + getOfy().get(monIt).values());
-//		monIt = getOfy().query(Monitor.class).filter("user =", new Key<SBUser>(SBUser.class, userId)).filter("type =", type)
-//				.filter("active =", true).order("+created").fetchKeys();
-//		log.info("Monitors for type, user and active, ordered by created: " + getOfy().get(monIt).values());
 		return mons;
 	}
 

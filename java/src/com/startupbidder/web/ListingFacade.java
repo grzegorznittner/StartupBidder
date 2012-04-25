@@ -80,7 +80,7 @@ import com.startupbidder.vo.UserVO;
 public class ListingFacade {
 	private static final Logger log = Logger.getLogger(ListingFacade.class.getName());
 	
-	public static enum UpdateReason {NEW_BID, BID_UPDATE, NEW_COMMENT, NEW_VOTE, NONE};
+	public static enum UpdateReason {NEW_BID, BID_UPDATE, NEW_COMMENT, DELETE_COMMENT, NEW_VOTE, NONE};
 	public static final String MEMCACHE_ALL_LISTING_LOCATIONS = "AllListingLocations";
 	/**
 	 * Delay for listing stats task execution.
@@ -1399,6 +1399,9 @@ public class ListingFacade {
 			case NEW_COMMENT:
 				listingStats.numberOfComments = listingStats.numberOfComments + 1;
 				break;
+			case DELETE_COMMENT:
+				listingStats.numberOfComments = listingStats.numberOfComments - 1;
+				break;
 			case NEW_VOTE:
 				listingStats.numberOfVotes = listingStats.numberOfVotes + 1;
 				break;
@@ -1407,12 +1410,15 @@ public class ListingFacade {
 				break;
 			}
 			// updates stats in datastore and memcache
+			log.info("Updating listing stats due to " + reason + ": " + listingStats);
 			getDAO().storeListingStatistics(listingStats);
 		}
-		String taskName = timeStampFormatter.print(new Date().getTime()) + "listing_stats_update_" + reason + "_" + listingWebKey;
-		Queue queue = QueueFactory.getDefaultQueue();
-		queue.add(TaskOptions.Builder.withUrl("/task/calculate-listing-stats").param("id", listingWebKey).param("update_type", reason.name())
+		if (reason == UpdateReason.NONE) {
+			String taskName = timeStampFormatter.print(new Date().getTime()) + "listing_stats_update_" + reason + "_" + listingWebKey;
+			Queue queue = QueueFactory.getDefaultQueue();
+			queue.add(TaskOptions.Builder.withUrl("/task/calculate-listing-stats").param("id", listingWebKey).param("update_type", reason.name())
 				.taskName(taskName).countdownMillis(LISTING_STATS_UPDATE_DELAY));
+		}
 	}
 
 	public ListingDocumentVO createListingDocument(UserVO loggedInUser, ListingDocumentVO doc) {
