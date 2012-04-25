@@ -30,6 +30,7 @@ import com.startupbidder.vo.CommentVO;
 import com.startupbidder.vo.DtoToVoConverter;
 import com.startupbidder.vo.ErrorCodes;
 import com.startupbidder.vo.ListPropertiesVO;
+import com.startupbidder.vo.ListingAndUserVO;
 import com.startupbidder.vo.ListingDocumentVO;
 import com.startupbidder.vo.ListingVO;
 import com.startupbidder.vo.MonitorListVO;
@@ -165,9 +166,33 @@ public class ServiceFacade {
 		return DtoToVoConverter.convert(getDAO().getComment(commentId));
 	}
 
-	public CommentVO deleteComment(UserVO loggedInUser, String commentId) {
+	public CommentListVO deleteComment(UserVO loggedInUser, String commentId) {
+		CommentListVO result = new CommentListVO();
+		if (loggedInUser == null) {
+			log.log(Level.WARNING, "User is not logged in!", new Exception("Not logged in user"));
+			result.setErrorCode(ErrorCodes.NOT_LOGGED_IN);
+			result.setErrorMessage("User is not logged in!");
+			return result;
+		}
+		CommentVO comment = getComment(loggedInUser, commentId);
+		if (loggedInUser.isAdmin()) {
+			log.info("Admin is going to delete comment: " + comment);
+		} else if (!StringUtils.areStringsEqual(comment.getUser(), loggedInUser.getId())) {
+			log.info("Comment author is going to delete comment: " + comment);
+		} else {
+			Listing listing = getDAO().getListing(BaseVO.toKeyId(comment.getListing()));
+			if (listing.id == loggedInUser.toKeyId()) {
+				log.info("Listing owner is going to delete comment: " + comment);
+			} else {
+				log.warning("User '" + loggedInUser.getNickname() + "' is not allowed to delete comment: " + comment);
+				result.setErrorCode(ErrorCodes.NOT_LOGGED_IN);
+				result.setErrorMessage("User is not allowed to delete this comment.");
+				return result;
+			}
+		}
+		ListingFacade.instance().scheduleUpdateOfListingStatistics(comment.getListing(), UpdateReason.DELETE_COMMENT);
 		getDAO().deleteComment(BaseVO.toKeyId(commentId));
-		return null;
+		return getCommentsForListing(loggedInUser, comment.getListing(), new ListPropertiesVO());
 	}
 
 	public CommentVO createComment(UserVO loggedInUser, CommentVO comment) {
@@ -329,29 +354,33 @@ public class ServiceFacade {
 		return notificationVO;
 	}
 	
-	public MonitorVO setMonitor(UserVO loggedInUser, MonitorVO monitor) {
-		if (StringUtils.isEmpty(monitor.getObjectId())) {
-			log.warning("Monitored object id is empty!");
+	public MonitorVO setListingMonitor(UserVO loggedInUser, String listingId) {
+		if (loggedInUser == null) {
+			log.log(Level.WARNING, "User not logged in!");
 			return null;
 		}
-		if (StringUtils.isEmpty(monitor.getType())) {
-			log.warning("Monitored object type is empty!");
+		if (StringUtils.isEmpty(listingId)) {
+			log.warning("Listing id is empty!");
 			return null;
 		}
-		monitor.setActive(true);
+		MonitorVO monitor = new MonitorVO();
+		monitor.setUser(loggedInUser.getId());
+		monitor.setUserName(loggedInUser.getNickname());
+		monitor.setObjectId(listingId);
+		monitor.setType(Monitor.Type.LISTING.toString());
 		monitor = DtoToVoConverter.convert(getDAO().setMonitor(VoToModelConverter.convert(monitor)));
 		return monitor;
 	}
 
-	public MonitorVO deactivateMonitor(UserVO loggedInUser, String monitorId) {
-		MonitorVO notification = DtoToVoConverter.convert(
-				getDAO().deactivateMonitor(BaseVO.toKeyId(monitorId)));
-		if (notification == null) {
-			log.warning("Monitor with id '" + monitorId + "' not found!");
+	public MonitorVO deactivateListingMonitor(UserVO loggedInUser, String listingId) {
+		MonitorVO monitor = DtoToVoConverter.convert(
+				getDAO().deactivateListingMonitor(loggedInUser.toKeyId(), BaseVO.toKeyId(listingId)));
+		if (monitor == null) {
+			log.warning("Monitor for listing id '" + listingId + "' not found!");
 		} else {
-			log.info("Monitor with id '" + monitorId + "' was deactivated.");
+			log.info("Monitor for listing id '" + listingId + "' was deactivated.");
 		}
-		return notification;
+		return monitor;
 	}
 
 	public MonitorListVO getMonitorsForObject(UserVO loggedInUser, String objectId, String type) {
