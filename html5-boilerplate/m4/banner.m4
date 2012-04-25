@@ -3,9 +3,9 @@
     <span class="bannertext span-16 push-15px">
         <div id="welcometitle">Welcome to startupbidder!</div>
         <div class="welcometext" id="welcometext">
-            Explore our <a href="latest-companies.html">latest</a> listings,
-            <a href="#" id="postnowtextlink">post</a> your own company,
-            and <a href="main-page?type=closing">invest</a> in startups worldwide
+            Explore our <a href="latest-companies.html" class="hoverlink">latest</a> listings,
+            <a href="#" id="postnowtextlink" class="hoverlink">post</a> your own company,
+            and <a href="main-page?type=closing" class="hoverlink">invest</a> in startups worldwide
         </div>
     </span>
     <span class="span-8 push-15px socialbanner">

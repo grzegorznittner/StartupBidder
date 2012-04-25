@@ -313,7 +313,7 @@ pl.implement(ListClass, {
         for (i = 0; i < list.length; i++) {
             item = list[i];
             itemurl = '/main-page.html?type=' + this.options.type + '&amp;val=' + encodeURIComponent(item);
-            htmlCol1 += '<a href="' + itemurl + '"><li>'+item+'</li></a>';
+            htmlCol1 += '<a href="' + itemurl + '" class="hoverlink"><li>'+item+'</li></a>';
         }
         pl(divcol1).html(htmlCol1);
     },

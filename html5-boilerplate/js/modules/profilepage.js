@@ -25,7 +25,7 @@ pl.implement(ProfilePageClass,{
                 var header = new HeaderClass(),
                     profile = new ProfileClass(),
                     notifyList = new NotifyListClass(),
-                    listprops = [ 'edited_listing', 'active_listings', 'monitored_listings', 'closed_listings', 'withdrawn_listings', 'frozen_listings' ],
+                    listprops = [ 'edited_listing', 'active_listings', 'admin_posted_listings', 'admin_frozen_listings', 'monitored_listings', 'closed_listings', 'withdrawn_listings', 'frozen_listings' ],
                     options = { edited_listing: { propertyissingle: true, fullWidth: true} },
                     listingfound = false,
                     propertykey,
