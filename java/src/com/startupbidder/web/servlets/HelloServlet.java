@@ -231,17 +231,10 @@ public class HelloServlet extends HttpServlet {
 			out.println("<br/>");
 			
 			out.println("<p style=\"background: none repeat scroll 0% 0% rgb(187, 187, 187);\">Monitor API:</p>");
+			out.println("Examples for setting and deactivating monitors you'll find in active listing section.<br/>");
 			out.println("<a href=\"/monitors/active-for-user/.json?type=Listing\">All active monitors for logged in user</a><br/>");
 			out.println("<a href=\"/monitors/active-for-user/.json?\">Active listing monitors for logged in user</a><br/>");
 			out.println("<a href=\"/monitors/active-for-object/?type=Listing&id=" + topListing.getWebKey() + "\">Monitors for top listing</a><br/>");
-			out.println("<form method=\"POST\" action=\"/monitor/set/.json\"><textarea name=\"monitor\" rows=\"5\" cols=\"100\">"
-					+ "{ \"object_id\":\"" + topListing.getWebKey() + "\", \"profile_id\":\"" + currentUser.getId() + "\", \"type\":\"Listing\" }"
-					+ "</textarea><input type=\"submit\" value=\"Create a monitor for top listing\"/></form>");
-			List<Monitor> monitors = datastore.getMonitorsForUser(currentUser.toKeyId(), null);
-			out.println("<form method=\"POST\" action=\"/monitor/deactivate/.json\"" + (monitors.isEmpty() ? " disabled=\"disabled\">" : ">")
-					+ "<input type=\"hidden\" name=\"id\" value=\"" + (monitors.isEmpty() ? "empty" : monitors.get(0).getWebKey()) + "\"/>"
-					+ "<input type=\"submit\" value=\"Deactivate monitor "
-					+ (monitors.isEmpty() ? "(no monitors)" : (monitors.get(0).user + " " + monitors.get(0).type)) + "\"/></form>");
 						
 			out.println("<p style=\"background: none repeat scroll 0% 0% rgb(187, 187, 187);\">File API:</p>");
 			out.println("<a href=\"/file/get-upload-url/2/.json\">Get upload URL(s)</a><br/>");

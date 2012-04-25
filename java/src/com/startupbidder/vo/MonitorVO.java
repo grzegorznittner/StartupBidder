@@ -21,8 +21,8 @@ public class MonitorVO extends BaseVO {
 	private int orderNumber;
 	@JsonProperty("monitor_id")
 	private String id;
-	@JsonProperty("object_id")
-	private String objectId;
+	@JsonProperty("listing_id")
+	private String listingId;
 	@JsonProperty("type")
 	@JsonSerialize(using=LowecaseSerializer.class)
 	private String type;
@@ -53,12 +53,6 @@ public class MonitorVO extends BaseVO {
 	}
 	public void setId(String id) {
 		this.id = id;
-	}
-	public String getObjectId() {
-		return objectId;
-	}
-	public void setObjectId(String objectId) {
-		this.objectId = objectId;
 	}
 	public String getType() {
 		return type;
@@ -101,5 +95,11 @@ public class MonitorVO extends BaseVO {
 	}
 	public void setUser(String user) {
 		this.user = user;
+	}
+	public String getListingId() {
+		return listingId;
+	}
+	public void setListingId(String listingId) {
+		this.listingId = listingId;
 	}
 }

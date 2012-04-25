@@ -930,9 +930,7 @@ public class ListingFacade {
 		List<Monitor> monitors = getDAO().getMonitorsForUser(loggedInUser.toKeyId(), Monitor.Type.LISTING);
 		log.info("Fetched monitors for user '" + loggedInUser.toKeyId() + "': " + monitors);
 		for (Monitor monitor : monitors) {
-			if (monitor.type == Monitor.Type.LISTING) {
-				monitoredListingKeys.add(new Key<Listing>(Listing.class, monitor.monitoredListing.getId()));
-			}
+			monitoredListingKeys.add(new Key<Listing>(Listing.class, monitor.monitoredListing.getId()));
 			if (monitoredListingKeys.size() > maxResults) {
 				break;
 			}

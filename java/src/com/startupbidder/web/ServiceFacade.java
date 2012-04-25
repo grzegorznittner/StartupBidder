@@ -208,7 +208,6 @@ public class ServiceFacade {
 
 		Monitor monitor = new Monitor();
 		monitor.monitoredListing = new Key<Listing>(Listing.class, commentDTO.listing.getId());
-		monitor.type = Monitor.Type.LISTING;
 		monitor.user = new Key<SBUser>(SBUser.class, loggedInUser.toKeyId());
 		getDAO().setMonitor(monitor);
 		
@@ -366,7 +365,7 @@ public class ServiceFacade {
 		MonitorVO monitor = new MonitorVO();
 		monitor.setUser(loggedInUser.getId());
 		monitor.setUserName(loggedInUser.getNickname());
-		monitor.setObjectId(listingId);
+		monitor.setListingId(listingId);
 		monitor.setType(Monitor.Type.LISTING.toString());
 		monitor = DtoToVoConverter.convert(getDAO().setMonitor(VoToModelConverter.convert(monitor)));
 		return monitor;
