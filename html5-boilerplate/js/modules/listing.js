@@ -93,7 +93,7 @@ pl.implement(ListingClass, {
                 self.monitored = false;
                 self.displayFollow();
             },
-            ajax = new AjaxClass('/monitor/set/' + self.listing_id, 'followmsg', completeFunc);
+            ajax = new AjaxClass('/monitor/deactivate/' + self.listing_id, 'followmsg', completeFunc);
         ajax.setPost();
         ajax.call();
     },
@@ -103,20 +103,22 @@ pl.implement(ListingClass, {
                 self.monitored = true;
                 self.displayFollow();
             },
-            ajax = new AjaxClass('/monitor/deactivate/' + self.listing_id, 'followmsg', completeFunc);
+            ajax = new AjaxClass('/monitor/set/' + self.listing_id, 'followmsg', completeFunc);
         ajax.setPost();
         ajax.call();
     },
     displayFollow: function() {
         var self = this,
             following = self.monitored;
-        if (following) {
-            self.displayFollowing();
+        if (self.loggedin_profile) {
+            if (following) {
+                self.displayFollowing();
+            }
+            else {
+                self.displayNotFollowing();
+            }
+            self.bindFollow();
         }
-        else {
-            self.displayNotFollowing();
-        }
-        self.bindFollow();
     },
     displayFollowing: function() {
             pl('#followbtn').text('UNFOLLOW');
@@ -257,7 +259,7 @@ pl.implement(ListingClass, {
         }
     },
     displayWithdraw: function() {
-        var withdrawable = (this.status === 'active' && (this.loggedin_profile && this.loggedin_profile.profile_id === this.profile_id));
+        var withdrawable = this.status === 'active' && (this.loggedin_profile && this.loggedin_profile.profile_id === this.profile_id);
         if (withdrawable) {
             this.bindWithdrawButton();
         }
@@ -294,7 +296,7 @@ pl.implement(ListingClass, {
         });
     },
     displayApprove: function() {
-        var approvable = this.loggedin_profile.admin && (this.status === 'posted' || this.status === 'frozen');
+        var approvable = this.loggedin_profile && this.loggedin_profile.admin && (this.status === 'posted' || this.status === 'frozen');
         if (approvable) {
             this.bindApproveButton();
         }
@@ -327,7 +329,7 @@ pl.implement(ListingClass, {
         });
     },
     displaySendback: function() {
-        var sendbackable = ((this.status === 'posted' || this.status === 'frozen') && this.loggedin_profile && this.loggedin_profile.admin);
+        var sendbackable = this.loggedin_profile && this.loggedin_profile.admin && (this.status === 'posted' || this.status === 'frozen');
         if (sendbackable) {
             this.bindSendbackButton();
         }
@@ -360,7 +362,7 @@ pl.implement(ListingClass, {
         });
     },
     displayFreeze: function() {
-        var freezable = (this.status === 'active' && this.loggedin_profile && this.loggedin_profile.admin);
+        var freezable = this.status === 'active' && this.loggedin_profile && this.loggedin_profile.admin;
         if (freezable) {
             this.bindFreezeButton();
         }
@@ -444,6 +446,7 @@ pl.implement(ListingClass, {
     displayTabs: function() {
         var self = this,
             qs = new QueryStringClass();
+        console.log('foo');
         pl('#num_comments').text(self.num_comments);
         pl('#num_bids').text(self.num_bids);
         pl('#basicstab').bind({
