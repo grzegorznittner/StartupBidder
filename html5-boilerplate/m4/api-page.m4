@@ -319,6 +319,8 @@ include(api-banner.m4)
         <dd>
             <p>
             Activates monitoring of the provided listing by the currently logged in user.  This allows the user to keep track of the listing.
+            <br/>
+            Monitor status is provided with listing objects.
             </p>
         </dd>
         <dt>POST /monitor/deactivate/&lt;id&gt;
