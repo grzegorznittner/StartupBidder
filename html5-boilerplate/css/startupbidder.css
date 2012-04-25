@@ -107,9 +107,12 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .companybannertitle { font-size: 30px; font-weight: bold; }
 .companybannertext { font-size: 14px; font-weight: bold; }
 .companybannertextlink { font-size: 14px; font-weight: bold; margin-left: 4px; }
+.companybannerlink { float: left; }
 .companybannertextgrey { font-size: 14px; font-weight: bold; color: grey; }
 .companybannerlogo { margin-top: 2px; width: 146px; height: 146px; margin-right: 10px; margin-left: 2px; float: left; }
 .companybannermantra { position: absolute; font-size: 14px; font-weight: bold; width: 380px; bottom:3px; left:158px; color: grey; }
+.companybannerfollow { position: absolute; top: 0; right: -10px; }
+.companybannerfollowbtn { clear: both; float: right; }
 .companynavcontainer { position: absolute; bottom:0; left:544px; height: 21px; }
 .companynav {
     float: left; padding: 0px 10px; margin-right: 10px; text-align: center; height: 19px;
@@ -199,7 +202,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .formitem { }
 .inputlabel, .widelabel, .formlabel, .smallformlabel, .inputcaptcha, .inputhelp,
 .inputicon, .topinputicon, .inputlink, .inputimgbutton,
-.formlabelvalue, .formfull, .formcol1, .formcol2, .formcol1fourth, .formcol2fourth,
+.formlabelvalue, .formcol1, .formcol2, .formcol1fourth, .formcol2fourth,
 .formimg, .formcolicon, .medialabel
     { float: left; }
 .inputlabel, .widelabel, .formlabel, .smallformlabel, .inputcaptcha, .inputlink, .inputimgbutton, .formcol1, .formcol1fourth, .formimg, .medialabel
@@ -245,9 +248,11 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .formtitle { font-size: 24px; padding-left: 5px; }
 .formtitlefourth { font-size: 24px; padding-left: 0; }
 .companytitle { margin-right: 10px; }
-.profilebox { height: 130px; }
+.profilebox { height: 146px; }
+.profileboxtitle { position: relative; }
 .profiletext { color: grey; }
-.formcol1 { width: 301px; padding-left: 5px; }
+.formfull { float: left; height: 36px; }
+.formcol1 { width: 301px; padding-left: 5px; height: 63px; }
 .formcol2 { width: 306px; padding-top: 15px; }
 .formcol1fourth { float: left; width: 146px; padding-left: 0px; }
 .formcol2fourth { float: left; }
@@ -374,7 +379,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .sideboxlist { list-style: none; list-style-position: inside; margin: 0; padding: 0; font-weight: bold; }
 .sideboxlist li { margin-left: 10px; text-indent: -10px; }
 /* .sideboxlist li:hover { opacity: 0.7 } */
-.sideboxbutton { width: 310px; height: 50px; font-size: 34px; font-weight: bold; text-align: center; }
+.sideboxbutton { width: 310px; height: 50px; font-size: 34px; font-weight: bold; text-align: center; margin-bottom: 10px; }
 .sideboxbuttonsmall { width: 150px; height: 30px; font-size: 20px; }
 .sideboxbuttoninterior { width: 292px; height: 50px; font-size: 34px; font-weight: bold; text-align: center; margin: 0 5px 5px 5px; }
 .sideboxcompanylink { width: 298px; float: left; margin-left: 2px; }

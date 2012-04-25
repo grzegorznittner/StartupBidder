@@ -17,7 +17,6 @@
     </div>
     <div class="span-8 last loginspan headerrow">
       <div><a id="loginlink" href="login-page.html"><span class="headerlink hoverlink headerlinkright" id="logintext"></span></a></div>
-      <div id="logout" class="logout hoverlink"><a href="/_ah/logout?continue=%2F">logout</a></div>
     </div>
   </div>
 </div>

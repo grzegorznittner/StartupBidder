@@ -5,12 +5,22 @@ pl.implement(NotificationClass, {
         for (k in json) {
             self[k] = json[k];
         }
-        self.openanchor = self.url ? '<a href="' + self.url + '" class="hoverlink">' : '';
-        self.closeanchor = self.url ? '</a>' : '';
-        self.createddate = self.date ? DateClass.prototype.format(self.date) : '';
+        self.createddate = self.create_date ? DateClass.prototype.format(self.create_date) : '';
         self.message = self.text ? SafeStringClass.prototype.htmlEntities(self.text) : '';
-        self.listingurl = self.listing && self.listing.listing_id ? '/company-page.html?id=' + self.listing.listing_id : '';
-        self.listingtext = self.listing && self.listing.title ? SafeStringClass.prototype.htmlEntities(self.listing.title) : '';
+        self.messageclass = self.read ? '' : ' inputmsg'; // unread
+        self.listingurl = self.listing && self.listing.listing_id ? '/company-page.html?id=' + self.listing.listing_id : ''; // FIXME
+        self.listingtext = self.listing && self.listing.title ? SafeStringClass.prototype.htmlEntities(self.listing.title) : ''; // FIXME
+        if (self.notify_type.match('comment')) {
+            self.type = 'comment';
+        }
+        else if (self.notify_type.match('bid')) {
+            self.type = 'bid';
+        }
+        else {
+            self.type = 'notification';
+        }
+        self.openanchor = self.link ? '<a href="' + self.link + '" class="hoverlink' + self.messageclass + '">' : '';
+        self.closeanchor = self.link ? '</a>' : '';
     },
     setTest: function() {
         var self = this,
@@ -38,7 +48,7 @@ pl.implement(NotificationClass, {
     },
     makeHtml: function() {
         var self = this,
-            listinghtml = self.listingurl && self.listingtext ? '<span class="sideboxlisting"><a href="'+self.listingurl+'" class="hoverlink">'+self.listingtext+'</a></span>' : '';
+            listinghtml = self.listingurl && self.listingtext ? '<span class="sideboxlisting"><a href="'+self.listingurl+'" class="hoverlink">'+self.listingtext+'</a></span>' : ''; // FIXME
         return '\
         <div class="sideboxnotify sideboxlink">\
             <span class="sideboxicon">\
@@ -50,7 +60,6 @@ pl.implement(NotificationClass, {
                 '+self.closeanchor+'\
                 <br/>\
                 <span class="sideboxdate">'+self.createddate+'</span>\
-                '+listinghtml+'\
             </span>\
         </div>\
         ';
@@ -61,22 +70,14 @@ function NotifyListClass() {}
 pl.implement(NotifyListClass, {
     store: function(json) {
         var self = this,
-            jsonlist = json && json.notifications && json.notifications.length > 0 ? json.notifications : [],
+            jsonlist = json && json.notifications ? json.notifications : [],
             notification,
             i;
         self.notifications = [];
-        if (jsonlist.length === 0) {
+        for (i = 0; i < jsonlist.length; i++) {
             notification = new NotificationClass();
-            //notification.setEmpty();
-            notification.setTest(); // FIXME test
+            notification.store(jsonlist[i]);
             self.notifications.push(notification);
-        }
-        else {
-            for (i = 0; i < jsonlist.length; i++) {
-                notification = new NotificationClass();
-                notification.store(jsonlist[i]);
-                self.notifications.push(notification);
-            }
         }
     },
     display: function(json) {

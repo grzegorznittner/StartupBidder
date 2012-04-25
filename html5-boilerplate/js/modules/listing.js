@@ -38,6 +38,7 @@ pl.implement(ListingClass, {
     },
     display: function() {
         this.displayBasics();
+        this.displayFollow();
         this.bmc.display(this);
         this.ip.display(this);
         this.ip.bindButtons();
@@ -71,6 +72,59 @@ pl.implement(ListingClass, {
         pl('#videopresentation').attr({src: this.video});
         pl('#summary').html(this.summary || 'Listing summary goes here');
         pl('#listingdata').show();
+    },
+    bindFollow: function() {
+        var self = this;
+        pl('#followbtn').bind({
+            click: function() {
+                var following = self.monitored;
+                if (following) {
+                    self.unfollow();
+                }
+                else {
+                    self.follow();
+                }
+            }
+        });
+    },
+    unfollow: function() {
+        var self = this,
+            completeFunc = function(json) {
+                self.monitored = false;
+                self.displayFollow();
+            },
+            ajax = new AjaxClass('/monitor/set/' + self.listing_id, 'followmsg', completeFunc);
+        ajax.setPost();
+        ajax.call();
+    },
+    follow: function() {
+        var self = this,
+            completeFunc = function(json) {
+                self.monitored = true;
+                self.displayFollow();
+            },
+            ajax = new AjaxClass('/monitor/deactivate/' + self.listing_id, 'followmsg', completeFunc);
+        ajax.setPost();
+        ajax.call();
+    },
+    displayFollow: function() {
+        var self = this,
+            following = self.monitored;
+        if (following) {
+            self.displayFollowing();
+        }
+        else {
+            self.displayNotFollowing();
+        }
+        self.bindFollow();
+    },
+    displayFollowing: function() {
+            pl('#followbtn').text('UNFOLLOW');
+            pl('#followtext, #followbtn').show();
+    },
+    displayNotFollowing: function() {
+            pl('#followtext').hide();
+            pl('#followbtn').text('FOLLOW').show();
     },
     displayMessage: function() {
         if (this.loggedin_profile) {
@@ -240,7 +294,7 @@ pl.implement(ListingClass, {
         });
     },
     displayApprove: function() {
-        var approvable = (this.status === 'posted' && this.loggedin_profile.admin);
+        var approvable = this.loggedin_profile.admin && (this.status === 'posted' || this.status === 'frozen');
         if (approvable) {
             this.bindApproveButton();
         }
@@ -373,13 +427,23 @@ pl.implement(ListingClass, {
             if (tab === 'basics') {
                 pl('#basicswrapper1, #basicswrapper2').show();
             }
+            else if (tab === 'comments') {
+                pl(wrappersel).show();
+                comments = new CommentsClass(self.id);
+                comments.load();
+            }
+            else if (tab === 'bids') {
+                pl(wrappersel).show();
+                pl('#bidsmsg').text('No bids');
+            }
             else {
                 pl(wrappersel).show();
             }
         }
     },
     displayTabs: function() {
-        var self = this;
+        var self = this,
+            qs = new QueryStringClass();
         pl('#num_comments').text(self.num_comments);
         pl('#num_bids').text(self.num_bids);
         pl('#basicstab').bind({
@@ -390,16 +454,19 @@ pl.implement(ListingClass, {
         pl('#commentstab').bind({
             click: function() {
                 self.displayTab('comments');
-                comments = new CommentsClass(self.id);
-                comments.load();
             }
         });
         pl('#bidstab').bind({
             click: function() {
                 self.displayTab('bids');
-                pl('#bidsmsg').text('No bids');
             }
         });
+        if (qs.vars.page === 'comments') {
+            self.displayTab('comments');
+        }
+        else if (qs.vars.page === 'bids') {
+            self.displayTab('bids');
+        }
     }
 });
 

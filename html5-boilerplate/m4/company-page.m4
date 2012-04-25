@@ -21,10 +21,18 @@ include(header.m4)
                 <a class="companybannertextlink" href="#">send message</a>
             </div>
             <div class="companybannertextgrey">
-                <span style="float:left;">Posted on <span id="listing_date"></span> from</span>
-                <a class="companybannertextlink" href="#" target="_blank" id="websitelink"><div class="span-1 linkicon"></div><span id="domainname"></span></a>
+                <span style="float:left;">Posted on <span id="listing_date"></span> from&nbsp;</span>
+                <a class="companybannertextlink" href="#" target="_blank" id="websitelink">
+                    <span id="domainname" class="companybannerlink"></span>
+                </a>
+                <div class="span-1 linkicon"></div>
             </div>
             <div class="companybannermantra" id="mantra"></div>
+            <div class="companybannerfollow">
+                <div class="inputmsg inputfield last initialhidden" id="followtext">You are following this listing</div>
+                <div class="companybannerfollowbtn smallinputbutton span-3 hoverlink initialhidden" id="followbtn"></div>
+                <div class="inputmsg inputfield last" id="followmsg"></div>
+            </div>
             <div class="companynavcontainer">
                 <div class="companynav hoverlink companynavselected" id="basicstab">
                     LISTING
@@ -170,9 +178,9 @@ include(header.m4)
     </div>
 
     <div id="approvebox" class="approvebox">
-    <div class="boxtitle">APPROVE POST</div>
+    <div class="boxtitle">ACTIVATE POST</div>
     <div class="approvemsg attention" id="approvemsg">Are you sure?</div>
-    <a href="#" id="approvebtn"><div class="sideboxbutton sideboxbuttonsmall hoverlink">APPROVE</div></a>
+    <a href="#" id="approvebtn"><div class="sideboxbutton sideboxbuttonsmall hoverlink">ACTIVATE</div></a>
     <a href="#" class="approvecancelbtn" id="approvecancelbtn"><div class="sideboxbutton sideboxbuttonsmall hoverlink">CANCEL</div></a>
     </div>
 

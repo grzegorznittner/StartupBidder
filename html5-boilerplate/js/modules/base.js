@@ -283,8 +283,8 @@ pl.implement(HeaderClass, {
         }
     },
     setLoggedIn: function(profile, logout_url) {
-        var username = 'You',
-            posttext = profile.edited_listing ? 'In Progress': 'Post',
+        var username = profile.username || 'You',
+            posttext = profile.edited_listing ? 'In-Progress': 'Post',
             newlistingurl = profile.edited_status === 'posted' ? 'new-listing-submitted-page.html' : 'new-listing-basics-page.html';
         pl('#postlink').attr('href', newlistingurl);
         pl('#posttext').html(posttext);
@@ -294,9 +294,9 @@ pl.implement(HeaderClass, {
         pl('#loginlink').attr('href', 'profile-page.html');
         pl('#logintext').html(username);
         if (logout_url) {
-            pl('#logout>a').attr({href: logout_url});
+            pl('#logoutlink').attr({href: logout_url});
+            pl('#logout').show();
         }
-        pl('#logout').show();
     },
     setLoggedOut: function(login_url) {
         pl('#topheader').show();
@@ -307,7 +307,6 @@ pl.implement(HeaderClass, {
         pl('#posttext').html('Post');
         pl('#loginlink').attr('href', 'login-page.html');
         pl('#logintext').html('Sign In');
-        pl('#logout').hide();
     }
 });
 
