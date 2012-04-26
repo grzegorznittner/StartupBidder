@@ -6,7 +6,7 @@ pl.implement(NotificationClass, {
             self[k] = json[k];
         }
         self.createddate = self.create_date ? DateClass.prototype.format(self.create_date) : '';
-        self.message = self.text ? SafeStringClass.prototype.htmlEntities(self.text) : '';
+        self.message = self.title ? SafeStringClass.prototype.htmlEntities(self.title) : '';
         self.messageclass = self.read ? '' : ' inputmsg'; // unread
         self.listingurl = self.listing && self.listing.listing_id ? '/company-page.html?id=' + self.listing.listing_id : ''; // FIXME
         self.listingtext = self.listing && self.listing.title ? SafeStringClass.prototype.htmlEntities(self.listing.title) : ''; // FIXME

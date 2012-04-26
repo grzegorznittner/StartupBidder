@@ -37,6 +37,7 @@ pl.implement(ListingClass, {
         this.ajax.call();
     },
     display: function() {
+        this.displayTabs();
         this.displayBasics();
         this.displayFollow();
         this.bmc.display(this);
@@ -52,7 +53,6 @@ pl.implement(ListingClass, {
         this.displayApprove();
         this.displaySendback();
         this.displayFreeze();
-        this.displayTabs();
     },
     displayBasics: function() {
         var logobg = this.logo ? 'url(' + this.logo + ') no-repeat scroll left top' : null;
@@ -68,7 +68,6 @@ pl.implement(ListingClass, {
         if (this.status === 'withdrawn') {
             pl('#companystatus').addClass('attention');
         }
-        pl('#num_comments').html(this.num_comments);
         pl('#videopresentation').attr({src: this.video});
         pl('#summary').html(this.summary || 'Listing summary goes here');
         pl('#listingdata').show();
@@ -412,6 +411,10 @@ pl.implement(ListingClass, {
             tabs.push('#commentstab');
             wrappers.push('#commentswrapper');
         }
+        if (pl('#messagestab').hasClass('companynavselected')) {
+            tabs.push('#messagestab');
+            wrappers.push('#messageswrapper');
+        }
         tabsel = tabs.join(', ');
         wrappersel = wrappers.join(', ');
         pl(tabsel).removeClass('companynavselected');
@@ -438,6 +441,10 @@ pl.implement(ListingClass, {
                 pl(wrappersel).show();
                 pl('#bidsmsg').text('No bids');
             }
+            else if (tab === 'messages') {
+                pl(wrappersel).show();
+                pl('#messagesmsg').text('No messages');
+            }
             else {
                 pl(wrappersel).show();
             }
@@ -446,9 +453,17 @@ pl.implement(ListingClass, {
     displayTabs: function() {
         var self = this,
             qs = new QueryStringClass();
-        console.log('foo');
-        pl('#num_comments').text(self.num_comments);
-        pl('#num_bids').text(self.num_bids);
+        pl('#num_comments').text(self.num_comments || 0);
+        pl('#num_bids').text(self.num_bids || 0);
+        pl('#num_messages').text(self.num_messages || 0);
+        if (this.loggedin_profile) {
+            pl('#sendmessagelink').bind({
+                click: function() {
+                    self.displayTab('messages');
+                }
+            }).show();
+            pl('#makebidtitle,#makebidbox,#addmessagetitle,#addmessagebox').show();
+        }
         pl('#basicstab').bind({
             click: function() {
                 self.displayTab('basics');
@@ -464,11 +479,19 @@ pl.implement(ListingClass, {
                 self.displayTab('bids');
             }
         });
+        pl('#messagestab').bind({
+            click: function() {
+                self.displayTab('messages');
+            }
+        });
         if (qs.vars.page === 'comments') {
             self.displayTab('comments');
         }
         else if (qs.vars.page === 'bids') {
             self.displayTab('bids');
+        }
+        else if (qs.vars.page === 'messages') {
+            self.displayTab('messages');
         }
     }
 });
