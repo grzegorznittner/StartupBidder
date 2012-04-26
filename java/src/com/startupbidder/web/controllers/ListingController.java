@@ -92,6 +92,8 @@ public class ListingController extends ModelDrivenController {
 				return getLocations(request);
 			} else if("all-listing-locations".equalsIgnoreCase(getCommand(1))) {
 				return getAllListingLocations(request);
+			} else if("messages".equalsIgnoreCase(getCommand(1))) {
+				return messages(request);
 			} else if ("logo".equalsIgnoreCase(getCommand(1))) {
 				return logo(request);
 			} else {
@@ -551,6 +553,14 @@ public class ListingController extends ModelDrivenController {
 		return headers;
 	}
 	
+    // GET /listings/messages
+    private HttpHeaders messages(HttpServletRequest request) {
+    	String listingId = getCommandOrParameter(request, 2, "id");
+    	ListPropertiesVO listingProperties = getListProperties(request);
+    	model = ListingFacade.instance().getListingNotifications(getLoggedInUser(), listingId, listingProperties);
+        return new HttpHeadersImpl("messages").disableCaching();
+    }
+
 	public Object getModel() {
     	return model;
     }

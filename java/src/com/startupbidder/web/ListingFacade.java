@@ -72,6 +72,7 @@ import com.startupbidder.vo.ListingListVO;
 import com.startupbidder.vo.ListingLocationsVO;
 import com.startupbidder.vo.ListingPropertyVO;
 import com.startupbidder.vo.ListingVO;
+import com.startupbidder.vo.NotificationListVO;
 import com.startupbidder.vo.NotificationVO;
 import com.startupbidder.vo.UserBasicVO;
 import com.startupbidder.vo.UserListingsVO;
@@ -1304,6 +1305,39 @@ public class ListingFacade {
 		result[1] = result[1].trim();
 		result[2] = result[2].trim();
 		return result;
+	}
+	
+	public NotificationListVO getListingNotifications(UserVO loggedInUser, String listingId, ListPropertiesVO notifProperties) {
+		NotificationListVO list = new NotificationListVO();
+		Listing listing = getDAO().getListing(BaseVO.toKeyId(listingId));
+		if (listing == null) {
+			list.setErrorCode(ErrorCodes.DATASTORE_ERROR);
+			list.setErrorMessage("Listing doesn't exist!");
+			log.log(Level.WARNING, "Listing '" + listingId + "' doesn't exist in datastore.");
+			return list;
+		}
+		List<Notification> notifications = getDAO().getAllListingNotifications(BaseVO.toKeyId(listingId), notifProperties);
+		
+		boolean isListingOwner = loggedInUser != null && loggedInUser.toKeyId() == listing.owner.getId();
+		List<NotificationVO> filteredNotif = new ArrayList<NotificationVO>();
+		int num = notifProperties.getStartIndex() > 0 ? notifProperties.getStartIndex() : 1;
+		for (Notification notification : notifications) {
+			boolean privateMessage = notification.type == Notification.Type.PRIVATE_MESSAGE 
+					|| notification.type == Notification.Type.ASK_LISTING_OWNER;
+			boolean author = loggedInUser != null && notification.fromUser != null 
+					&& notification.fromUser.getId() == loggedInUser.toKeyId();
+			if (isListingOwner || !privateMessage || author) {
+				NotificationVO notifVO = DtoToVoConverter.convert(notification);
+				notifVO.setOrderNumber(num++);
+				filteredNotif.add(notifVO);
+			}
+		}
+		notifProperties.setTotalResults(notifications.size());
+		list.setNotifications(filteredNotif);
+		list.setNotificationsProperties(notifProperties);
+		list.setUser(new UserBasicVO(loggedInUser));
+		
+		return list;
 	}
 
 	public List<ListingStats> updateAllListingStatistics() {

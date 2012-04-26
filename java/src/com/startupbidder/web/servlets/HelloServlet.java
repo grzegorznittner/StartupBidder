@@ -343,7 +343,8 @@ public class HelloServlet extends HttpServlet {
 					out.println("<form method=\"POST\" action=\"/monitor/set/" + listing.getId() + "/.json\"><input type=\"submit\" value=\"Set monitor\"/></form>");
 				}
 			}
-			out.println("<a href=\"/listing/get/" + listing.getId() + ".json?\">View</a></td>");
+			out.println("<a href=\"/listing/get/" + listing.getId() + ".json?\">View</a>");
+			out.println("<a href=\"/listing/messages/" + listing.getId() + ".json?\">Listing notifications</a></td>");
 			out.println("<td>");
 			List<ListingDocumentVO> docs = getListingDocs(currentUser, listing);
 			if (docs != null && !docs.isEmpty()) {

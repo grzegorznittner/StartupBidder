@@ -118,6 +118,15 @@ include(api-banner.m4)
             </p>
         </dd>
 
+        <dt>GET /listing/messages/&lt;id&gt;
+            <form method="GET" action="/listings/frozen/"><input type="text" name="id" value="&lt;listing_id&gt;"></input><input type="submit" value="TEST"></input></form>
+        </dt>
+        <dd>
+            <p>
+            Returns notifications and private messages for given listing. Only listing owner sees all private messages. Other users see only their messages.
+            </p>
+        </dd>
+
         <dt>GET /listings/posted/ <i>ADMIN ONLY</i>
             <form method="GET" action="/listings/posted/"><input type="submit" value="TEST"></input></form>
         </dt>

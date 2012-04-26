@@ -1160,6 +1160,14 @@ public class ObjectifyDatastoreDAO {
 		return nots;
 	}
 
+	public List<Notification> getAllListingNotifications(long listingId, ListPropertiesVO notificationProperties) {
+		QueryResultIterable<Key<Notification>> notIt = getOfy().query(Notification.class)
+				.filter("listing =", new Key<Listing>(Listing.class, listingId))
+				.order("-created").fetchKeys();
+		List<Notification> nots = new ArrayList<Notification>(getOfy().get(notIt).values());
+		return nots;
+	}
+
 	public Notification getNotification(long notifId) {
 		try {
 			return getOfy().get(Notification.class, notifId);

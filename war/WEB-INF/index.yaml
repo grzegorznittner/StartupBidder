@@ -297,6 +297,13 @@ indexes:
 - kind: Notification
   ancestor: no
   properties:
+    - name: listing
+    - name: created
+      direction: desc
+
+- kind: Notification
+  ancestor: no
+  properties:
     - name: user
     - name: read
     - name: created
