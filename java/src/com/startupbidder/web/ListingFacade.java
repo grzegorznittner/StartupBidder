@@ -488,8 +488,7 @@ public class ListingFacade {
 			loggedInUser.setEditedListing(null);
 			loggedInUser.setEditedStatus(null);
 			scheduleUpdateOfListingStatistics(updatedListing.getWebKey(), UpdateReason.NONE);
-			ServiceFacade.instance().createNotification(updatedListing.owner.getString(), updatedListing.getWebKey(),
-					Notification.Type.NEW_LISTING, "A new listing by " + loggedInUser.getNickname());
+			ServiceFacade.instance().createListingActivatedNotification(updatedListing, Notification.Type.NEW_LISTING);
 		}
 		ListingVO toReturn = DtoToVoConverter.convert(updatedListing);
 		Monitor monitor = getDAO().getListingMonitor(loggedInUser.toKeyId(), toReturn.toKeyId());

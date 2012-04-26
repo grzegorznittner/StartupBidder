@@ -541,7 +541,7 @@ public class ListingController extends ModelDrivenController {
 		ListingDoc doc = ObjectifyDatastoreDAO.getInstance().getListingDocument(listing.logoId.getId());
 		log.log(Level.INFO, "Sending back logo: " + doc);
 		if (doc != null && doc.blob != null) {
-			//headers.addHeader("Expires", "");
+			headers.addHeader("Cache-Control", "public, max-age=3600");
 			headers.setBlobKey(doc.blob);
 		} else {
 			log.log(Level.INFO, "Document not found or blob not available!");

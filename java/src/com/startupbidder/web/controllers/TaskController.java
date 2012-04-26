@@ -108,7 +108,7 @@ public class TaskController extends ModelDrivenController {
 		Notification notification = ObjectifyDatastoreDAO.getInstance().getNotification(BaseVO.toKeyId(notifId));
 		model = DtoToVoConverter.convert(notification);
 
-		if (!notification.read) {			
+		if (!notification.read) {
 			log.info("Sending notification: " + notification);
 			if (EmailService.instance().sendListingNotification(DtoToVoConverter.convert(notification))) {
 				notification.sentDate = new Date();

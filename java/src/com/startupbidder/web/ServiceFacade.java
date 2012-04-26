@@ -17,6 +17,7 @@ import com.google.appengine.api.taskqueue.TaskOptions;
 import com.google.appengine.api.users.User;
 import com.googlecode.objectify.Key;
 import com.startupbidder.dao.ObjectifyDatastoreDAO;
+import com.startupbidder.datamodel.Bid;
 import com.startupbidder.datamodel.Comment;
 import com.startupbidder.datamodel.Listing;
 import com.startupbidder.datamodel.Monitor;
@@ -210,13 +211,10 @@ public class ServiceFacade {
 		monitor.user = new Key<SBUser>(SBUser.class, loggedInUser.toKeyId());
 		getDAO().setMonitor(monitor);
 		
-		Listing listing = getDAO().getListing(commentDTO.listing.getId());
-		
 		UserMgmtFacade.instance().scheduleUpdateOfUserStatistics(loggedInUser.getId(), UserMgmtFacade.UpdateReason.NEW_COMMENT);
 		ListingFacade.instance().scheduleUpdateOfListingStatistics(comment.getListing(), UpdateReason.NEW_COMMENT);
 		
-		createNotification(listing.owner.getString(), comment.getListing(), 
-				Notification.Type.NEW_COMMENT_FOR_YOUR_LISTING, "A new comment for listing by " + loggedInUser.getNickname());
+		createCommentNotification(commentDTO, Notification.Type.NEW_COMMENT_FOR_YOUR_LISTING);
 		return comment;
 	}
 
@@ -261,26 +259,98 @@ public class ServiceFacade {
 		return urls;
 	}
 
-	public void createNotification(String userId, String listingId, Notification.Type type, String message) {
+	public void createCommentNotification(Comment comment, Notification.Type type) {
+		Listing listing = getDAO().getListing(comment.listing.getId());
+		if (listing.owner.getId() == comment.user.getId()) {
+			// we don't send notifications for our own comments
+			log.info("Notification for comment id " + comment.id + " won't be sent as it was listing owner's comment.");
+			return;
+		}
+		SBUser listingOwner = getDAO().getUser(listing.owner.getString());
+		SBUser toUser = type == Notification.Type.NEW_COMMENT_FOR_YOUR_LISTING ? listingOwner : getDAO().getUser(comment.user.getString());
+		
 		if (type == Notification.Type.NEW_COMMENT_FOR_MONITORED_LISTING || 
 				type == Notification.Type.NEW_COMMENT_FOR_YOUR_LISTING) {
-			List<Notification> notifications = getDAO().getUnreadNotifications(BaseVO.toKeyId(userId), BaseVO.toKeyId(listingId));
-			for (Notification not : notifications) {
-				if (not.type == Notification.Type.NEW_COMMENT_FOR_MONITORED_LISTING || 
-						not.type == Notification.Type.NEW_COMMENT_FOR_YOUR_LISTING) {
-					log.info("Notification won't be created as previous one for comment is still unread: " + not);
+			List<Notification> notifications = getDAO().getUnreadNotifications(toUser.id, listing.id);
+			for (Notification notif : notifications) {
+				if (notif.type == Notification.Type.NEW_COMMENT_FOR_MONITORED_LISTING || 
+						notif.type == Notification.Type.NEW_COMMENT_FOR_YOUR_LISTING) {
+					log.info("Notification won't be created as previous one for comment is still unread: " + notif);
 					return;
 				}
 			}
 		}
 		Notification notification = new Notification();
-		notification.user = new Key<SBUser>(userId);
-		notification.listing = new Key<Listing>(listingId);
+		notification.user = new Key<SBUser>(SBUser.class, toUser.id);
+		notification.userEmail = toUser.email;
+		notification.userNickname = StringUtils.isEmpty(toUser.nickname) ? toUser.email : toUser.nickname;
+		notification.listing = new Key<Listing>(Listing.class, listing.id);
+		notification.listingName = listing.name;
+		notification.listingOwner = listing.owner.getString();
+		notification.listingMantra = listing.mantra;
+		notification.listingBriefAddress = listing.briefAddress;
+		notification.listingCategory = listing.category;
 		notification.type = type;
 		notification.created = new Date();
 		notification.read = false;
 		notification.sentDate = null;
-		notification.message = message;
+		notification = getDAO().storeNotification(notification);
+		if (notification != null) {
+			String taskName = timeStampFormatter.print(new Date().getTime()) + "send_notification_" + notification.type + "_" + notification.user.getId();
+			Queue queue = QueueFactory.getDefaultQueue();
+			queue.add(TaskOptions.Builder.withUrl("/task/send-notification").param("id", "" + notification.getWebKey())
+					.taskName(taskName));
+		} else {
+			log.warning("Can't schedule notification " + notification);
+		}
+	}
+
+	public void createBidNotification(String toUserId, Bid bid, Notification.Type type) {
+		Listing listing = getDAO().getListing(bid.listing.getId());
+		SBUser toUser = getDAO().getUser(toUserId);
+		
+		Notification notification = new Notification();
+		notification.user = new Key<SBUser>(SBUser.class, toUser.id);
+		notification.userEmail = toUser.email;
+		notification.userNickname = StringUtils.isEmpty(toUser.nickname) ? toUser.email : toUser.nickname;
+		notification.listing = new Key<Listing>(Listing.class, listing.id);
+		notification.listingName = listing.name;
+		notification.listingOwner = listing.owner.getString();
+		notification.listingMantra = listing.mantra;
+		notification.listingBriefAddress = listing.briefAddress;
+		notification.listingCategory = listing.category;
+		notification.type = type;
+		notification.created = new Date();
+		notification.read = false;
+		notification.sentDate = null;
+		notification = getDAO().storeNotification(notification);
+		if (notification != null) {
+			String taskName = timeStampFormatter.print(new Date().getTime()) + "send_notification_" + notification.type + "_" + notification.user.getId();
+			Queue queue = QueueFactory.getDefaultQueue();
+			queue.add(TaskOptions.Builder.withUrl("/task/send-notification").param("id", "" + notification.getWebKey())
+					.taskName(taskName));
+		} else {
+			log.warning("Can't schedule notification " + notification);
+		}
+	}
+
+	public void createListingActivatedNotification(Listing listing, Notification.Type type) {
+		SBUser toUser = getDAO().getUser(listing.owner.getString());
+		
+		Notification notification = new Notification();
+		notification.user = new Key<SBUser>(SBUser.class, toUser.id);
+		notification.userEmail = toUser.email;
+		notification.userNickname = StringUtils.isEmpty(toUser.nickname) ? toUser.email : toUser.nickname;
+		notification.listing = new Key<Listing>(Listing.class, listing.id);
+		notification.listingName = listing.name;
+		notification.listingOwner = listing.owner.getString();
+		notification.listingMantra = listing.mantra;
+		notification.listingBriefAddress = listing.briefAddress;
+		notification.listingCategory = listing.category;
+		notification.type = type;
+		notification.created = new Date();
+		notification.read = false;
+		notification.sentDate = null;
 		notification = getDAO().storeNotification(notification);
 		if (notification != null) {
 			String taskName = timeStampFormatter.print(new Date().getTime()) + "send_notification_" + notification.type + "_" + notification.user.getId();
