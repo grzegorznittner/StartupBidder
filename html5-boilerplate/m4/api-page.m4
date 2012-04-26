@@ -119,7 +119,7 @@ include(api-banner.m4)
         </dd>
 
         <dt>GET /listing/messages/&lt;id&gt;
-            <form method="GET" action="/listings/frozen/"><input type="text" name="id" value="&lt;listing_id&gt;"></input><input type="submit" value="TEST"></input></form>
+            <form method="GET" action="/listings/messages/"><input type="text" name="id" value="&lt;listing_id&gt;"></input><input type="submit" value="TEST"></input></form>
         </dt>
         <dd>
             <p>
