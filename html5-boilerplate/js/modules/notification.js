@@ -10,7 +10,10 @@ pl.implement(NotificationClass, {
         self.messageclass = self.read ? '' : ' inputmsg'; // unread
         self.listingurl = self.listing && self.listing.listing_id ? '/company-page.html?id=' + self.listing.listing_id : ''; // FIXME
         self.listingtext = self.listing && self.listing.title ? SafeStringClass.prototype.htmlEntities(self.listing.title) : ''; // FIXME
-        if (self.notify_type.match('comment')) {
+        if (!self.notify_type) {
+            self.type = 'notification';
+        }
+        else if (self.notify_type.match('comment')) {
             self.type = 'comment';
         }
         else if (self.notify_type.match('bid')) {
@@ -39,10 +42,12 @@ pl.implement(NotificationClass, {
     setEmpty: function() {
         var self = this,
             emptyJson = {
-                url: null,
-                type: 'comment',
+                create_date: null,
                 text: 'You currently have no notifications.',
-                date: ''
+                read: true,
+                notify_type: 'notification',
+                link: null,
+                listing: null
             };
         self.store(emptyJson);
     },
@@ -51,8 +56,8 @@ pl.implement(NotificationClass, {
             listinghtml = self.listingurl && self.listingtext ? '<span class="sideboxlisting"><a href="'+self.listingurl+'" class="hoverlink">'+self.listingtext+'</a></span>' : ''; // FIXME
         return '\
         <div class="sideboxnotify sideboxlink">\
-            <span class="sideboxicon">\
-                <div class="'+self.type+'icon"></div>\
+            <span class="sideboxicon" style="overflow:visible;">\
+                <div class="'+self.type+'icon" style="overflow:visible;"></div>\
             </span>\
             <span class="sideboxnotifytext">\
                 '+self.openanchor+'\
@@ -74,9 +79,16 @@ pl.implement(NotifyListClass, {
             notification,
             i;
         self.notifications = [];
-        for (i = 0; i < jsonlist.length; i++) {
+        if (jsonlist.length) {
+            for (i = 0; i < jsonlist.length; i++) {
+                notification = new NotificationClass();
+                notification.store(jsonlist[i]);
+                self.notifications.push(notification);
+            }
+        }
+        else {
             notification = new NotificationClass();
-            notification.store(jsonlist[i]);
+            notification.setEmpty();
             self.notifications.push(notification);
         }
     },
