@@ -30,7 +30,7 @@ pl.implement(NotificationClass, {
             testJson = {
                 url: '/notification-page.html?id=fubar',
                 type: 'comment',
-                text: 'You received a comment on foo',
+                title: 'You received a comment on foo',
                 date: '201204121344',
                 listing: {
                     listing_id: 'ag1zdGFydHVwYmlkZGVycg4LEgdMaXN0aW5nGOAPDA',
@@ -43,7 +43,7 @@ pl.implement(NotificationClass, {
         var self = this,
             emptyJson = {
                 create_date: null,
-                text: 'You currently have no notifications.',
+                title: 'You currently have no notifications.',
                 read: true,
                 notify_type: 'notification',
                 link: null,

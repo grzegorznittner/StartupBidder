@@ -458,28 +458,33 @@ pl.implement(ListingClass, {
             pl('#sendmessagelink').bind({
                 click: function() {
                     self.displayTab('messages');
+                    return false;
                 }
-            }).show();
+            }).css({display: 'inline'});
             pl('#makebidtitle,#makebidbox,#addmessagetitle,#addmessagebox,#messagestab').show();
         }
         pl('#basicstab').bind({
             click: function() {
                 self.displayTab('basics');
+                return false;
             }
         });
         pl('#commentstab').bind({
             click: function() {
                 self.displayTab('comments');
+                return false;
             }
         });
         pl('#bidstab').bind({
             click: function() {
                 self.displayTab('bids');
+                return false;
             }
         });
         pl('#messagestab').bind({
             click: function() {
                 self.displayTab('messages');
+                return false;
             }
         });
         if (qs.vars.page === 'comments') {

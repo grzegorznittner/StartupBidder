@@ -58,6 +58,9 @@ public class MockDataBuilder {
 	public UserVO INSIDER;
 	public UserVO MADMAX;
 	public UserVO THEONE;
+	public UserVO JENNY;
+	public UserVO EMPEROR;
+	public UserVO BURNTSKY;
 	public UserVO DRAGON;
 	public UserVO NOT_ACTIVATED;
 
@@ -441,7 +444,7 @@ public class MockDataBuilder {
 		user.id = id();
 		user.mockData = true;
 		user.nickname = "The Insider";
-		user.name = "Insider";
+		user.name = "Joseph Jones";
 		user.email = "insider@startupbidder.com";
 		user.openId = user.email;
 		user.joined = new Date(System.currentTimeMillis() - 31 * 24 * 60 * 60 * 1000);
@@ -453,7 +456,7 @@ public class MockDataBuilder {
 		user.id = id();
 		user.mockData = true;
 		user.nickname = "The Dragon";
-		user.name = "Dragon";
+		user.name = "Silvaneus P. Dragonopoulous";
 		user.email = "dragon@startupbidder.com";
 		user.openId = user.email;
 		user.joined = new Date(System.currentTimeMillis() - 26 * 24 * 60 * 60 * 1000);
@@ -467,7 +470,7 @@ public class MockDataBuilder {
 		user.id = id();
 		user.mockData = true;
 		user.nickname = "MadMax";
-		user.name = "Mad";
+		user.name = "Max Reissman";
 		user.email = "madmax@startupbidder.com";
 		user.openId = user.email;
 		user.joined = new Date(System.currentTimeMillis() - 35 * 24 * 60 * 60 * 1000);
@@ -480,8 +483,8 @@ public class MockDataBuilder {
 		user = new SBUser();
 		user.id = id();
 		user.mockData = true;
-		user.nickname = "Bruce";
-		user.name = "The One";
+		user.nickname = "The One";
+		user.name = "Bruce Wayne";
 		user.email = "bruce@startupbidder.com";
 		user.openId = user.email;
 		user.joined = new Date(System.currentTimeMillis() - 30 * 24 * 60 * 60 * 1000);
@@ -490,12 +493,54 @@ public class MockDataBuilder {
 		user.lastLoggedIn = new Date();
 		THEONE = DtoToVoConverter.convert(user);
 		users.add(user); // 5
+
+    	user = new SBUser();
+		user.id = id();
+		user.mockData = true;
+		user.nickname = "jenny";
+		user.name = "Jennifer Rodriguez";
+		user.email = "jenny@io.com";
+		user.openId = user.email;
+		user.joined = new Date(System.currentTimeMillis() - 30 * 24 * 60 * 60 * 1000);
+		user.status = SBUser.Status.DEACTIVATED;
+		user.investor = true;
+		user.lastLoggedIn = new Date();
+		JENNY = DtoToVoConverter.convert(user);
+		users.add(user); // 6
+
+    	user = new SBUser();
+		user.id = id();
+		user.mockData = true;
+		user.nickname = "Emperor 7";
+		user.name = "Xiaofu Li";
+		user.email = "li@xingminginvestments.cn";
+		user.openId = user.email;
+		user.joined = new Date(System.currentTimeMillis() - 30 * 24 * 60 * 60 * 1000);
+		user.status = SBUser.Status.DEACTIVATED;
+		user.investor = true;
+		user.lastLoggedIn = new Date();
+		EMPEROR = DtoToVoConverter.convert(user);
+		users.add(user); // 7
+
+    	user = new SBUser();
+		user.id = id();
+		user.mockData = true;
+		user.nickname = "BurntSky";
+		user.name = "Hitomi Karankawa";
+		user.email = "hitomik@burntsky.com";
+		user.openId = user.email;
+		user.joined = new Date(System.currentTimeMillis() - 30 * 24 * 60 * 60 * 1000);
+		user.status = SBUser.Status.DEACTIVATED;
+		user.investor = true;
+		user.lastLoggedIn = new Date();
+		BURNTSKY = DtoToVoConverter.convert(user);
+		users.add(user); // 8
 		
 		user = new SBUser();
 		user.id = id();
 		user.mockData = true;
 		user.admin = true;
-		user.nickname = "Arley";
+		user.nickname = "arley";
 		user.name = "John A. Burns";
 		user.email = "johnarleyburns@gmail.com";
 		user.openId = user.email;
@@ -504,7 +549,7 @@ public class MockDataBuilder {
 		user.investor = true;
 		user.lastLoggedIn = new Date();
 		users.add(user);
-		JOHN = DtoToVoConverter.convert(user); // 6
+		JOHN = DtoToVoConverter.convert(user); // 9
 		
 		user = new SBUser();
 		user.id = id();
@@ -518,7 +563,7 @@ public class MockDataBuilder {
 		user.status = SBUser.Status.ACTIVE;
 		user.investor = true;
 		user.lastLoggedIn = new Date();
-		users.add(user); // 7
+		users.add(user); // 10 
 		GREG = DtoToVoConverter.convert(user);
 		
 		user = new SBUser();
@@ -533,7 +578,7 @@ public class MockDataBuilder {
 		user.status = SBUser.Status.CREATED;
 		user.investor = false;
 		user.lastLoggedIn = null;
-		users.add(user); // 8
+		users.add(user); // 11
 		NOT_ACTIVATED = DtoToVoConverter.convert(user);
 		
 		return users;
@@ -631,6 +676,18 @@ public class MockDataBuilder {
 		bp = prepareListing(MADMAX, "Acupuncture", Listing.State.CLOSED, "Healthcare", 10000, 40,
 				"You'll feel better and more relaxed", "Acupuncture is one of the alternative treatment methodologies that have become popular as a solution to several health problem.  One needs to have a license to practice as an Acupuncturist.  A licensed Acupuncturist can start own practice or get associated with fitness centers which offer Acupuncture as one of their services.");
 		listings.add(bp); // 20
+
+		bp = prepareListing(JENNY, "PartyFinder", Listing.State.ACTIVE, "Internet", 20000, 5,
+				"Life is a party, so party on", "You've got some free time tonight, but you don't have anything planned.  You could go check in on each of your bars to see what your friends are doing, you could try and instant message everyone, you could see what's happening on facebook and hope someone checks it.  Or you can use PartyFinder.  Simply post where you're going to be and when, and all your closest friends are sent an SMS on where and when the action's at.  It's the best way to get a party going.");
+		listings.add(bp); // 21
+
+		bp = prepareListing(BURNTSKY, "Tabify", Listing.State.ACTIVE, "Retail", 100000, 10,
+				"Condensing your bookshelf onto your tablet", "Everyone's got that bookshelf they haven't touched in ages.  You don't want to just toss them out, you know you'll get nothing for them at the used bookstore, and besides, you might want to look at them again someday.  But your cramped apartment is getting moreso by the day and you need space.  That's where Tabletify saves the day.  We take all your books, digitize them in full color high resolution down to the last page, and load it onto a USB stick.  Using a patented process we then load it via our app onto your tablet.  Viola, you've got everything you had in a fraction of the space.  And with our Iron Mountain archival service, you'll have all those books for generations to come.  Load it today, load it with Tabify.");
+		listings.add(bp); // 22
+
+		bp = prepareListing(EMPEROR, "MysticTea", Listing.State.ACTIVE, "Pharma", 150000, 15,
+				"Ancient Chinese secrets brought to your drugstore shelf", "Everyone has heard of accupuncture by now, but not many know the biggest secret of ancient Chinese medicine, the Mystical Tea.  There are actually 12 mystical teas, each one aiding a specific part of the body, bringing comfort and relief in a natural, non-toxic way.  We take this ancient wisdom and package it into a convenient, customer-friendly one-dose application that is sold in drugstores across China.  Now we're bringing this secret to the West.");
+		listings.add(bp); // 23
 
 		return listings;
 	}
@@ -754,7 +811,9 @@ public class MockDataBuilder {
 			{"S Bridge Rd, Singapore","Singapore",null,"Singapore",1.2850154,103.84689030000004},
 			{"Red Square, Moscow, Russia","Moscow",null,"Russian Federation",55.75463449999999,37.62149550000004},
 			{"Berlin, Germany","Berlin",null,"Germany",52.519171,13.406091199999992},
-			{"Seattle Hill-Silver Firs, WA, USA","Seattle Hill-Silver Firs","WA","USA",47.8811111,-122.17861110000001}
+			{"Calle de Don Luis Bri\u00F1as, 48013 Bilbao, Spain", "Bilbao", null, "Spain", 43.2630245, -2.9474244000000454 },
+            {"Shinjuku, Tokyo, Japan", "Tokyo", null, "Japan", 35.6911017, 139.70676300000002 },
+            {"Taipei 101, Sinyi District, Taiwan", "Taipei", null, "Taiwan", 25.0334959, 121.5638626 }
 	};
 	
 	private String getVideo() {
@@ -775,7 +834,10 @@ public class MockDataBuilder {
 			"http://player.vimeo.com/video/14866982?title=0&byline=0&portrait=0",
 			"http://player.vimeo.com/video/20250134?title=0&byline=0&portrait=0",
 			"http://player.vimeo.com/video/15060334?title=0&byline=0&portrait=0",
-			"http://player.vimeo.com/video/16544905?title=0&byline=0&portrait=0"
+			"http://player.vimeo.com/video/16544905?title=0&byline=0&portrait=0",
+            "http://www.youtube.com/embed/kmAjp77ovEo",
+            "http://www.youtube.com/watch?v=MnNwzUsne2Y",
+            "http://www.youtube.com/embed/wyIlsMjIEW"
 //			"http://www.dailymotion.com/video/xe99rh_women-in-the-business-world_lifestyle",
 //			"http://www.dailymotion.com/video/xe98f2_small-business-stories-armchair-adv_lifestyle",
 //			"http://www.dailymotion.com/video/xe965l_how-to-become-a-financially-indepen_lifestyle",
@@ -801,7 +863,10 @@ public class MockDataBuilder {
 			"http://www.cnbc.com/",
 			"http://www.fool.com/",
 			"http://www.thestreet.com/",
-			"http://www.bizjournals.com/"
+			"http://www.bizjournals.com/",
+            "http://www.angel.co/",
+            "http://www.ycombinator.com/",
+            "http://www.capitalfactory.com/"
 	};
 	
 	public String getBusinessPlan() {
@@ -870,7 +935,10 @@ public class MockDataBuilder {
 			"Larry Ellison, Dave Duffield, Al Shugart",
 			"Akio Morita",
 			"Scott McNeely",
-			"Diane Greene"
+			"Diane Greene",
+			"Akiro Kurosawa",
+			"Miguel de Cervantes",
+			"Yang Chu"
 	};
 	
 	private String getQuote() {
@@ -934,7 +1002,19 @@ public class MockDataBuilder {
 			"There is a tragic flaw in our precious Constitution, and I don't know what can be done to fix it. This is it: Only nut cases want to be president.",
 			"How little of permanent happiness could belong to a couple who were only brought together because their passions were stronger than their virtue.",
 			"I am who I choose to be. I always have been what I chose…though not always what I pleased.",
-			"I tend to live in the past because most of my life is there."
+			"I tend to live in the past because most of my life is there.",
+            "There are no facts, only interpretations.",
+            "Mathematics would certainly have not come into existence if one had known from the beginning that there was in nature no exactly straight line, no actual circle, no absolute magnitude.",
+            "He who fights with monsters should look to it that he himself does not become a monster. And when you gaze long into an abyss the abyss also gazes into you.",
+            "The surest way to corrupt a youth is to instruct him to hold in higher esteem those who think alike than those who think differently.",
+            "Art is the supreme task and the truly metaphysical activity in this life",
+            "Once upon a time, in some out of the way corner of that universe which is dispersed into numberless twinkling solar systems, there was a star upon which clever beasts invented knowing.",
+            "We believe that we know something about the things themselves when we speak of trees, colors, snow, and flowers; and yet we possess nothing but metaphors for things — metaphors which correspond in no way to the original entities.",
+            "Unpleasant, even dangerous, qualities can be found in every nation and every individual",
+            "Mystical explanations are considered deep; the truth is, they are not even shallow.",
+            "Become who you are.",
+            "For believe me! - the secret for harvesting from existence the greatest fruitfulness and the greatest enjoyment is: to live dangerously!",
+            "Your will and your foot which has a will to go over and beyond yourselves — that shall constitute your new honor."
 	};
 
 	public String getTestDataPath() {
