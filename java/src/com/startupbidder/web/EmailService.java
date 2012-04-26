@@ -29,6 +29,7 @@ import com.startupbidder.datamodel.SBUser;
 import com.startupbidder.vo.BidVO;
 import com.startupbidder.vo.CommentVO;
 import com.startupbidder.vo.ListingVO;
+import com.startupbidder.vo.NotificationVO;
 import com.startupbidder.vo.UserVO;
 
 /**
@@ -60,26 +61,7 @@ public class EmailService {
 	
 	private EmailService() {
 	}
-	
-	private String getServiceLocation () {
-		return SystemProperty.environment.value() == SystemProperty.Environment.Value.Development ?
-				"http://localhost:7777" : "http://www.startupbidder.com";
-	}
-	
-	private String createLinkUrl(Object object) {
-		if (object instanceof UserVO) {
-			return getServiceLocation() + "/user/get?id=" + ((UserVO)object).getId();
-		} else if (object instanceof ListingVO) {
-			return getServiceLocation() + "/listing/get?id=" + ((ListingVO)object).getId();
-		} else if (object instanceof CommentVO) {
-			return getServiceLocation() + "/comment/get?id=" + ((CommentVO)object).getId();
-		} else if (object instanceof BidVO) {
-			return getServiceLocation() + "/bid/get?id=" + ((BidVO)object).getId();
-		} else {
-			return "";
-		}
-	}
-
+		
 	public void send(String from, String to, String subject, String htmlBody) throws AddressException, MessagingException {
 		Properties props = new Properties();
         Session session = Session.getDefaultInstance(props, null);
@@ -101,10 +83,10 @@ public class EmailService {
 		Transport.send(message, message.getAllRecipients());
 	}
 
-	public boolean sendListingNotification(Notification notification, SBUser addressee, Listing listing, SBUser listingOwner) {
+	public boolean sendListingNotification(NotificationVO notification) {
 		String htmlTemplateFile = "./WEB-INF/email-templates/notification.html";
 		try {
-			Map<String, String> props = prepareProperties(notification, addressee, listing, listingOwner);
+			Map<String, String> props = prepareProperties(notification);
 			String htmlTemplate = FileUtils.readFileToString(new File(htmlTemplateFile), "UTF-8");
 			String htmlBody = applyProperties(htmlTemplate, props);
 			String subject = props.get(NOTIFICATION_TITLE);
@@ -116,34 +98,18 @@ public class EmailService {
 		}
 	}
 	
-	private Map<String, String> prepareProperties(Notification notification, SBUser addressee, Listing listing, SBUser listingOwner) {
+	private Map<String, String> prepareProperties(NotificationVO notification) {
 		Map<String, String> props = new HashMap<String, String>();
 		
-		String listingLink = getServiceLocation() + notification.getTargetLink();
-
-		props.put(LINK_TO_VIEW_ON_STARTUPBIDDER, "http://www.startupbidder.com/notification-page.html?id=" + notification.getWebKey());
-		switch(notification.type) {
-		case NEW_COMMENT_FOR_MONITORED_LISTING:
-			props.put(NOTIFICATION_TITLE, "New comment for listing \"" + listing.name + "\"");
-			props.put(TEXT_NO_LINK, "Listing \"" + listing.name + "\" has got a new comment.");
-			props.put(VISIT_LISTING_TEXT, "In order to view comment(s) please visit <a href=\"" + listingLink + "\">company's page at startupbidder.com</a>.");
-			break;
-		case NEW_COMMENT_FOR_YOUR_LISTING:
-			props.put(NOTIFICATION_TITLE, "New comment for listing \"" + listing.name + "\"");
-			props.put(TEXT_NO_LINK, "Your listing \"" + listing.name + "\" has got a new comment.");
-			props.put(VISIT_LISTING_TEXT, "In order to view comment(s) please visit <a href=\"" + listingLink + "\">company's page at startupbidder.com</a>.");
-			break;
-		case NEW_LISTING:
-			props.put(NOTIFICATION_TITLE, "New listing \"" + listing.name + "\" posted");
-			props.put(TEXT_NO_LINK, "A new listing \"" + listing.name + "\" has been posted by " + listingOwner.nickname + " on startupbidder.com");
-			props.put(VISIT_LISTING_TEXT, "Please visit <a href=\"" + listingLink + "\">company's page at startupbidder.com</a>.");
-			break;
-		}
-		props.put(LINK_TO_LISTING, listingLink);
-		props.put(LINK_TO_LISTING_LOGO, getServiceLocation() + "/listing/logo?id=" + listing.getWebKey());
-		props.put(LISTING_NAME, listing.name);
-		props.put(LISTING_CATEGORY_LOCATION, listing.category + " <br>" + listing.briefAddress);
-		props.put(LISTING_MANTRA, listing.mantra);
+		props.put(LINK_TO_VIEW_ON_STARTUPBIDDER, "http://www.startupbidder.com/notification-page.html?id=" + notification.getId());
+		props.put(NOTIFICATION_TITLE, notification.getTitle());
+		props.put(TEXT_NO_LINK, notification.getText1());
+		props.put(VISIT_LISTING_TEXT, notification.getText2());
+		props.put(LINK_TO_LISTING, notification.getLink());
+		props.put(LINK_TO_LISTING_LOGO, notification.getListingLogoLink());
+		props.put(LISTING_NAME, notification.getListingName());
+		props.put(LISTING_CATEGORY_LOCATION, notification.getListingCategory() + " <br>" + notification.getListingBriefAddress());
+		props.put(LISTING_MANTRA, notification.getListingMantra());
 		props.put(COPYRIGHT_TEXT, "2012 startupbidder.com");
 		props.put(LINK_TO_UPDATE_PROFILE_PAGE, "http://www.startupbidder.com/edit-profile-page.html");
 		return props;

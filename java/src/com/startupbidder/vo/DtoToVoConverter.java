@@ -234,11 +234,45 @@ public class DtoToVoConverter {
 		notif.setId(new Key<Notification>(Notification.class, notifDTO.id).getString());
 		notif.setCreated(notifDTO.created);
 		notif.setSentDate(notifDTO.sentDate);
-		notif.setTitle(notifDTO.title);
-		notif.setText(notifDTO.text);
 		notif.setListing(notifDTO.listing.getString());
+		notif.setListingName(notifDTO.listingName);
+		notif.setListingOwner(notifDTO.listingOwner);
+		notif.setListingMantra(notifDTO.listingMantra);
+		notif.setListingCategory(notifDTO.listingCategory);
+		notif.setListingBriefAddress(notifDTO.listingBriefAddress);
 		notif.setType(notifDTO.type.toString());
 		notif.setRead(notifDTO.read);
+		String listingLink = notif.getLink();
+		switch(notifDTO.type) {
+		case NEW_COMMENT_FOR_MONITORED_LISTING:
+			notif.setTitle("New comment for listing \"" + notifDTO.listingName + "\"");
+			notif.setText1("Listing \"" + notifDTO.listingName + "\" has got a new comment.");
+			notif.setText2("In order to view comment(s) please visit <a href=\"" + listingLink + "\">company's page at startupbidder.com</a>.");
+			break;
+		case NEW_COMMENT_FOR_YOUR_LISTING:
+			notif.setTitle("New comment for listing \"" + notifDTO.listingName + "\"");
+			notif.setText1("Your listing \"" + notifDTO.listingName + "\" has got a new comment.");
+			notif.setText2("In order to view comment(s) please visit <a href=\"" + listingLink + "\">company's page at startupbidder.com</a>.");
+			break;
+		case NEW_LISTING:
+			notif.setTitle("New listing \"" + notifDTO.listingName + "\" posted");
+			notif.setText1("A new listing \"" + notifDTO.listingName + "\" has been posted by " + notifDTO.listingOwner + " on startupbidder.com");
+			notif.setText2("Please visit <a href=\"" + listingLink + "\">company's page at startupbidder.com</a>.");
+			break;
+		case ASK_LISTING_OWNER:
+			notif.setTitle("Listing \"" + notifDTO.listingName + "\" got question from \"" + notifDTO.fromUserNickname + "\"" );
+			notif.setText1("Question about listing \"" + notifDTO.listingName + "\" has been posted by " + notifDTO.fromUserNickname + ":<br/>"
+					+ "<i>" + notifDTO.message + "</i>");
+			notif.setText2("Please visit <a href=\"" + listingLink + "\">company's page at startupbidder.com</a>.");
+			break;
+		case PRIVATE_MESSAGE:
+			notif.setTitle("Private message from \"" + notifDTO.fromUserNickname + "\" about \"" + notifDTO.listingName + "\"" );
+			notif.setText1("Message from user " + notifDTO.fromUserNickname + ":<br/>"
+					+ "<i>" + notifDTO.message + "</i>");
+			notif.setText2("Please visit <a href=\"" + listingLink + "\">company's page at startupbidder.com</a>.");
+			break;
+		}
+
 		return notif;
 	}
 	

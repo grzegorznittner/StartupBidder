@@ -300,8 +300,6 @@ public class VoToModelConverter {
 		}
 		notification.created = notificationVO.getCreated();
 		notification.sentDate = notificationVO.getSentDate();
-		notification.title = notificationVO.getTitle();
-		notification.text = notificationVO.getText();
 		notification.type = Notification.Type.valueOf(notificationVO.getType().toUpperCase());
 		notification.listing = new Key<Listing>(notificationVO.getListing());
 		notification.read = notificationVO.isRead();

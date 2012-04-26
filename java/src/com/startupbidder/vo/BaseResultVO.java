@@ -5,6 +5,8 @@ import org.codehaus.jackson.annotate.JsonAutoDetect;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 
+import com.google.appengine.api.utils.SystemProperty;
+
 /**
  * Base class for VO classes contains some common objects always send to the client.
  * 

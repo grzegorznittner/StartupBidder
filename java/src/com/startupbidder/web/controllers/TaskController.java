@@ -108,12 +108,9 @@ public class TaskController extends ModelDrivenController {
 		Notification notification = ObjectifyDatastoreDAO.getInstance().getNotification(BaseVO.toKeyId(notifId));
 		model = DtoToVoConverter.convert(notification);
 
-		if (!notification.read) {
-			Listing listing = ObjectifyDatastoreDAO.getInstance().getListing(notification.listing.getId());
-			SBUser listingOwner = ObjectifyDatastoreDAO.getInstance().getUser(listing.owner.getString());
-			
-			log.info("Sending notification " + notification + " for listing " + listing.name + " (" + listing.id + ")");
-			if (EmailService.instance().sendListingNotification(notification, listingOwner, listing, listingOwner)) {
+		if (!notification.read) {			
+			log.info("Sending notification: " + notification);
+			if (EmailService.instance().sendListingNotification(DtoToVoConverter.convert(notification))) {
 				notification.sentDate = new Date();
 				ObjectifyDatastoreDAO.getInstance().storeNotification(notification);
 			}

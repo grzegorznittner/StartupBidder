@@ -17,7 +17,6 @@ import com.google.appengine.api.taskqueue.TaskOptions;
 import com.google.appengine.api.users.User;
 import com.googlecode.objectify.Key;
 import com.startupbidder.dao.ObjectifyDatastoreDAO;
-import com.startupbidder.datamodel.BaseObject;
 import com.startupbidder.datamodel.Comment;
 import com.startupbidder.datamodel.Listing;
 import com.startupbidder.datamodel.Monitor;
@@ -30,7 +29,6 @@ import com.startupbidder.vo.CommentVO;
 import com.startupbidder.vo.DtoToVoConverter;
 import com.startupbidder.vo.ErrorCodes;
 import com.startupbidder.vo.ListPropertiesVO;
-import com.startupbidder.vo.ListingAndUserVO;
 import com.startupbidder.vo.ListingDocumentVO;
 import com.startupbidder.vo.ListingVO;
 import com.startupbidder.vo.MonitorListVO;
@@ -282,7 +280,7 @@ public class ServiceFacade {
 		notification.created = new Date();
 		notification.read = false;
 		notification.sentDate = null;
-		notification.text = message;
+		notification.message = message;
 		notification = getDAO().storeNotification(notification);
 		if (notification != null) {
 			String taskName = timeStampFormatter.print(new Date().getTime()) + "send_notification_" + notification.type + "_" + notification.user.getId();
