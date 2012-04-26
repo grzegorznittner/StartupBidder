@@ -14,6 +14,9 @@ pl.implement(SafeStringClass, {
     },
     clean: function(str) {
         return SafeStringClass.prototype.htmlEntities(SafeStringClass.prototype.trim(str));
+    },
+    ucfirst: function(str) {
+        return str.charAt(0).toUpperCase() + str.slice(1);
     }
 });
 

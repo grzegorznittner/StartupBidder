@@ -86,8 +86,7 @@ pl.implement(CommentsClass, {
         if (!pl('#addcommentbox').hasClass('bound')) {
             this.bindAddCommentBox();
         }
-        pl('#addcommenttitle').show();
-        pl('#addcommentbox').show();            
+        pl('#addcommenttitle,#addcommentbox').show();
     },
     displayComments: function() {
         var html, deletableComments, i, comment, deletable, commentDeleteSel;

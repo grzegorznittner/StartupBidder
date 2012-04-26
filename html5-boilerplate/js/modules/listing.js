@@ -44,7 +44,6 @@ pl.implement(ListingClass, {
         this.ip.display(this);
         this.ip.bindButtons();
         this.displayMessage();
-        this.displayInfobox();
         this.displayMap();
         this.displayDocuments();
         this.displayFunding();
@@ -55,21 +54,30 @@ pl.implement(ListingClass, {
         this.displayFreeze();
     },
     displayBasics: function() {
-        var logobg = this.logo ? 'url(' + this.logo + ') no-repeat scroll left top' : null;
+        var logobg = this.logo ? 'url(' + this.logo + ') no-repeat scroll left top' : null,
+            url = this.website ? new URLClass(this.website) : null,
+            categoryfounderstext = (this.category ? (this.category==='Other' ? 'A' : (this.category.match(/^[AEIOU]/) ? 'An '+this.category : 'A '+this.category)) : 'A')
+                + ' company' + (this.brief_address ? ' in ' + this.brief_address : '')
+                + (this.founders ? ' founded by ' + this.founders : ''),
+            listingdatetext = SafeStringClass.prototype.ucfirst(this.status) + ' listing' + (this.listing_date ? ' from ' + this.dateobj.format(this.listing_date) : ' not yet listed') + ' at ';
         if (logobg) {
             pl('#companylogo').removeClass('noimage').css({background: logobg});
         }
-        pl('#title').html(this.title || 'Company Name Here');
+        pl('#title').text(this.title || 'Company Name Here');
         pl('title').text('Startupbidder Listing: ' + (this.title || 'Company Name Here'));
-        pl('#address').html(this.brief_address);
-        pl('#mantra').html(this.mantra);
-        pl('#founders').html(this.founders);
-        pl('#companystatus').html('Listing is ' + this.status);
+        pl('#mantra').text(this.mantra);
+        pl('#companystatus').text('Listing is ' + this.status);
         if (this.status === 'withdrawn') {
             pl('#companystatus').addClass('attention');
         }
         pl('#videopresentation').attr({src: this.video});
-        pl('#summary').html(this.summary || 'Listing summary goes here');
+        pl('#summary').text(this.summary || 'Listing summary goes here');
+        pl('#categoryfounderstext').text(categoryfounderstext);
+        pl('#listing_date_text').text(listingdatetext);
+        pl('#websitelink').attr({href: this.website});
+        if (url) {
+            pl('#domainname').text(url.getHostname());
+        }
         pl('#listingdata').show();
     },
     bindFollow: function() {
@@ -131,16 +139,6 @@ pl.implement(ListingClass, {
         if (this.loggedin_profile) {
             message = new MessageClass(this.id, this.loggedin_profile.profile_id);
             message.display();
-        }
-    },
-    displayInfobox: function() {
-        var url = this.website ? new URLClass(this.website) : null,
-            categorytext = this.category ? (this.category==='Other' ? 'A' : (this.category.match(/^[AEIOU]/) ? 'An '+this.category : 'A '+this.category)) : 'A';
-        pl('#categorytext').html(categorytext);
-        pl('#listing_date').html(this.listing_date ? this.dateobj.format(this.listing_date) : 'Not yet listed');
-        pl('#websitelink').attr({href: this.website});
-        if (url) {
-            pl('#domainname').html(url.getHostname());
         }
     },
     displayMap: function() {
@@ -462,7 +460,7 @@ pl.implement(ListingClass, {
                     self.displayTab('messages');
                 }
             }).show();
-            pl('#makebidtitle,#makebidbox,#addmessagetitle,#addmessagebox').show();
+            pl('#makebidtitle,#makebidbox,#addmessagetitle,#addmessagebox,#messagestab').show();
         }
         pl('#basicstab').bind({
             click: function() {
