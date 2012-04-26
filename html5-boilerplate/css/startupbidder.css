@@ -3,6 +3,13 @@
 html, body, #wrap { height: 100%; }
 body { margin: 0; }
 body > #wrap { height: auto; min-height: 100%; }
+body.nearby-page { height: 100%; }
+body.nearby-page > #wrap { height: 100%; }
+body.nearby-page > #wrap > #main { height: 100%; }
+body.nearby-page > #wrap > #main > div.container { height: 100%; }
+body.nearby-page > #wrap > #main > div.container > div.nearbywrapper { height: 100%; width: 100%; padding-bottom: 55px; }
+#mappanel { height: 100%; width: 100%; }
+#map { height: 100%; width: 100%; }
 #main { padding-bottom: 35px; }
 #newlistingmain { padding-bottom: 35px; }
 #footer { position: relative; margin-top: -35px; height: 35px; clear: both; width: 100%; }
@@ -113,9 +120,9 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .companybannermantra { position: absolute; font-size: 14px; font-weight: bold; width: 380px; bottom:3px; left:158px; color: grey; }
 .companybannerfollow { position: absolute; top: 0; right: -10px; }
 .companybannerfollowbtn { clear: both; float: right; }
-.companynavcontainer { position: absolute; bottom:0; left:544px; height: 21px; }
+.companynavcontainer { position: absolute; bottom:0; left:554px; height: 21px; }
 .companynav {
-    float: left; padding: 0px 10px; margin-right: 10px; text-align: center; height: 19px;
+    float: left; padding: 0px 5px; margin-right: 10px; text-align: center; height: 19px;
     font-size: 14px; font-weight: bold; color: grey;
     border-radius: 5px 5px 0 0;
     border: 2px solid white;
@@ -171,7 +178,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .countericon { width: 20px; height: 20px; background: url(../img/icons/counter.png); }
 .bidcountericon { width: 20px; height: 20px; background: url(../img/icons/counter.png); }
 .bidcounteredicon { width: 20px; height: 20px; background: url(../img/icons/counter.png); }
-.notificationicon { width: 22px; height: 20px; background: url(../img/icons/email_20x20.png); background-position: 0px 2px; }
+.notificationicon { width: 20px; height: 20px; background: url(../img/icons/email_20x20.png); background-position: 0px 2px; }
 .checkboxgreenicon { width: 32px; height: 32px; background: url(../img/icons/checkbox_green_32x32.png); background-position: 0px 0px; }
 .checkboxredicon { width: 32px; height: 32px; background: url(../img/icons/checkbox_red_32x32.png); background-position: 0px 0px; }
 .documenticon { width: 16px; height: 16px; background: url(../img/icons/document.png); }
@@ -358,9 +365,9 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .boxstepcomplete { background-color: #999999; }
 .boxsteperror { background-color: red; }
 .boxsteperror div { color: white; }
-.sendmsgwrapper { display: none; }
 .commentswrapper { display: none; }
 .bidswrapper { display: none; }
+.messageswrapper { display: none; }
 .commentpanel dl dt { font-size: 12px; height: 32px; padding: 0 0 0 10px; }
 .commentdttitle { position: relative; height: 32px; }
 .commentdttitleline { padding-top: 7px; }
@@ -395,12 +402,9 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .sideboxlisting { font-size: 10px; }
 .sideboxmap { width: 302px; height: 302px; }
 .bidpanel { padding-top: 5px; }
-.nearbypanel { width: 946px; height: 946px; }
-.nearbymap { width: 946px; height: 946px; }
-.addcommenttitle { display: none; }
-.addcommentbox { display: none; }
-.addmessagetitle { display: none; }
-.addmessagebox { display: none; }
+/* .nearbypanel { width: 946px; height: 946px; } */
+/* .nearbymap { width: 946px; height: 946px; } */
+.nearbymap { height: 100%; width: 100%; }
 .listingbox { display: none; }
 .documentbox { height: 114px; }
 .documentwrapper { display: none; }

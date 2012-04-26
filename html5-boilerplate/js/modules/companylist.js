@@ -21,7 +21,7 @@ pl.implement(CompanyTileClass, {
         this.brief_address = json.brief_address || 'No Address';
         this.address = json.address || 'No Address';
         this.suggested_amt = json.asked_fund && json.suggested_amt ? CurrencyClass.prototype.format(json.suggested_amt) : '';
-        this.suggested_text = this.suggested_amt || 'Not seeking funds';
+        this.suggested_text = this.suggested_amt || 'Not asking funds';
         this.finance_line = this.daysText + (this.suggested_amt ? ' at ' + this.suggested_amt : '');
         this.mantra = json.mantra || 'No Mantra';
         this.founders = json.founders || 'No Founders';

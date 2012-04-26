@@ -15,19 +15,21 @@ include(header.m4)
     <div class="container">
         <div class="companybanner span-24">
             <div class="companybannerlogo tileimg noimage" id="companylogo"></div>
-            <div class="companybannertitle" id="title"></div>
-            <div class="companybannertextgrey">
-                <span id="categorytext"></span> company in <span id="address"></span> by <span id="founders"></span>
-                <a class="companybannertextlink" href="#">send message</a>
+            <div class="initialhidden" id="listingdata">
+                <div class="companybannertitle" id="title"></div>
+                <div class="companybannertextgrey">
+                    <span id="categoryfounderstext"></span>
+                    <a class="companybannertextlink hoverlink initialhidden" href="" id="sendmessagelink">send message</a>
+                </div>
+                <div class="companybannertextgrey">
+                    <span id="listing_date_text" class="inputfield"></span>
+                    &nbsp;<a class="companybannertextlink" href="#" target="_blank" id="websitelink">
+                        <span id="domainname" class="companybannerlink"></span>
+                    </a>
+                    <div class="span-1 linkicon"></div>
+                </div>
+                <div class="companybannermantra" id="mantra"></div>
             </div>
-            <div class="companybannertextgrey">
-                <span style="float:left;">Posted on <span id="listing_date"></span> from&nbsp;</span>
-                <a class="companybannertextlink" href="#" target="_blank" id="websitelink">
-                    <span id="domainname" class="companybannerlink"></span>
-                </a>
-                <div class="span-1 linkicon"></div>
-            </div>
-            <div class="companybannermantra" id="mantra"></div>
             <div class="companybannerfollow">
                 <div class="inputmsg inputfield last initialhidden" id="followtext">You are following this listing</div>
                 <div class="companybannerfollowbtn smallinputbutton span-3 hoverlink initialhidden" id="followbtn"></div>
@@ -43,6 +45,14 @@ include(header.m4)
                 <div class="companynav hoverlink" id="commentstab">
                     COMMENTS <span id="num_comments"></span>
                 </div>
+                <div class="companynav hoverlink initialhidden" id="messagestab">
+                    MESSAGES <span id="num_messages"></span>
+                </div>
+<!--
+                <div class="companynav hoverlink" id="timelinetab">
+                    TIMELINE <span id="num_notifications"></span>
+                </div>
+-->
             </div>
         </div>
     </div>
@@ -68,20 +78,9 @@ include(header.m4)
 <!-- end left column -->
 
 <!-- begin second row left column -->
-    <div class="span-16 sendmsgwrapper" id="sendmsgwrapper">
-        <div class="boxtitle addmessagetitle" id="addmessagetitle">PRIVATE MESSAGE TO THE OWNER</div>
-        <div class="boxpanel messagepanel addmessagebox" id="addmessagebox">
-            <p>
-                <textarea class="textarea messagetextarea" id="addmessagetext" name="addmessagetext" cols="20" rows="5">Put your private message here...</textarea>
-                <span class="span-12 inputmsg successful" id="addmessagemsg">&nbsp;</span>
-                <span class="span-3 inputbutton" id="addmessagebtn">SEND</span>
-            </p>
-        </div>
-    </div>
-
     <div class="span-16 commentswrapper" id="commentswrapper">
-        <div class="boxtitle addcommenttitle" id="addcommenttitle">ADD COMMENT</div>
-        <div class="boxpanel commentpanel addcommentbox" id="addcommentbox">
+        <div class="boxtitle addcommenttitle initialhidden" id="addcommenttitle">ADD COMMENT</div>
+        <div class="boxpanel commentpanel addcommentbox initialhidden" id="addcommentbox">
             <p>
                 <textarea class="textarea messagetextarea" id="addcommenttext" name="addcommenttext" cols="20" rows="5">Put your comment here...</textarea>
                 <span class="span-12 inputmsg successful" id="addcommentmsg">&nbsp;</span>
@@ -96,8 +95,8 @@ include(header.m4)
     </div>
 
     <div class="span-16 bidswrapper" id="bidswrapper">
-        <div class="boxtitle addcommenttitle" id="makebidtitle">MAKE BID</div>
-        <div class="boxpanel commentpanel addcommentbox" id="makebidbox">
+        <div class="boxtitle initialhidden" id="makebidtitle">MAKE BID</div>
+        <div class="boxpanel commentpanel initialhidden" id="makebidbox">
             <p>
                 <textarea class="textarea messagetextarea" id="makebidtext" name="makebidtext" cols="20" rows="5">Make your bid here...</textarea>
                 <span class="span-12 inputmsg successful" id="makebidmsg">&nbsp;</span>
@@ -106,8 +105,24 @@ include(header.m4)
         </div>
         <div class="boxtitle">BIDS</div>
         <div class="boxpanel commentpanel">
-            <div id="bidsmsg"></div>
+            <div id="bidsmsg" class="inputmsg"></div>
             <dl id="bidslist"></dl>
+    	</div>
+    </div>
+
+    <div class="span-16 messageswrapper" id="messageswrapper">
+        <div class="boxtitle initialhidden" id="addmessagetitle">PRIVATE MESSAGE TO THE OWNER</div>
+        <div class="boxpanel messagepanel initialhidden" id="addmessagebox">
+            <p>
+                <textarea class="textarea messagetextarea" id="addmessagetext" name="addmessagetext" cols="20" rows="5">Put your private message here...</textarea>
+                <span class="span-12 inputmsg successful" id="addmessagemsg">&nbsp;</span>
+                <span class="span-3 inputbutton" id="addmessagebtn">SEND</span>
+            </p>
+        </div>
+        <div class="boxtitle">PRIVATE MESSAGES</div>
+        <div class="boxpanel commentpanel">
+            <div id="messagesmsg" class="inputmsg"></div>
+            <dl id="messageslist"></dl>
     	</div>
     </div>
 

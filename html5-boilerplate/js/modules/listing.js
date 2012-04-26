@@ -37,13 +37,13 @@ pl.implement(ListingClass, {
         this.ajax.call();
     },
     display: function() {
+        this.displayTabs();
         this.displayBasics();
         this.displayFollow();
         this.bmc.display(this);
         this.ip.display(this);
         this.ip.bindButtons();
         this.displayMessage();
-        this.displayInfobox();
         this.displayMap();
         this.displayDocuments();
         this.displayFunding();
@@ -52,25 +52,32 @@ pl.implement(ListingClass, {
         this.displayApprove();
         this.displaySendback();
         this.displayFreeze();
-        this.displayTabs();
     },
     displayBasics: function() {
-        var logobg = this.logo ? 'url(' + this.logo + ') no-repeat scroll left top' : null;
+        var logobg = this.logo ? 'url(' + this.logo + ') no-repeat scroll left top' : null,
+            url = this.website ? new URLClass(this.website) : null,
+            categoryfounderstext = (this.category ? (this.category==='Other' ? 'A' : (this.category.match(/^[AEIOU]/) ? 'An '+this.category : 'A '+this.category)) : 'A')
+                + ' company' + (this.brief_address ? ' in ' + this.brief_address : '')
+                + (this.founders ? ' founded by ' + this.founders : ''),
+            listingdatetext = SafeStringClass.prototype.ucfirst(this.status) + ' listing' + (this.listing_date ? ' from ' + this.dateobj.format(this.listing_date) : ' not yet listed') + ' at ';
         if (logobg) {
             pl('#companylogo').removeClass('noimage').css({background: logobg});
         }
-        pl('#title').html(this.title || 'Company Name Here');
+        pl('#title').text(this.title || 'Company Name Here');
         pl('title').text('Startupbidder Listing: ' + (this.title || 'Company Name Here'));
-        pl('#address').html(this.brief_address);
-        pl('#mantra').html(this.mantra);
-        pl('#founders').html(this.founders);
-        pl('#companystatus').html('Listing is ' + this.status);
+        pl('#mantra').text(this.mantra);
+        pl('#companystatus').text('Listing is ' + this.status);
         if (this.status === 'withdrawn') {
             pl('#companystatus').addClass('attention');
         }
-        pl('#num_comments').html(this.num_comments);
         pl('#videopresentation').attr({src: this.video});
-        pl('#summary').html(this.summary || 'Listing summary goes here');
+        pl('#summary').text(this.summary || 'Listing summary goes here');
+        pl('#categoryfounderstext').text(categoryfounderstext);
+        pl('#listing_date_text').text(listingdatetext);
+        pl('#websitelink').attr({href: this.website});
+        if (url) {
+            pl('#domainname').text(url.getHostname());
+        }
         pl('#listingdata').show();
     },
     bindFollow: function() {
@@ -132,16 +139,6 @@ pl.implement(ListingClass, {
         if (this.loggedin_profile) {
             message = new MessageClass(this.id, this.loggedin_profile.profile_id);
             message.display();
-        }
-    },
-    displayInfobox: function() {
-        var url = this.website ? new URLClass(this.website) : null,
-            categorytext = this.category ? (this.category==='Other' ? 'A' : (this.category.match(/^[AEIOU]/) ? 'An '+this.category : 'A '+this.category)) : 'A';
-        pl('#categorytext').html(categorytext);
-        pl('#listing_date').html(this.listing_date ? this.dateobj.format(this.listing_date) : 'Not yet listed');
-        pl('#websitelink').attr({href: this.website});
-        if (url) {
-            pl('#domainname').html(url.getHostname());
         }
     },
     displayMap: function() {
@@ -412,6 +409,10 @@ pl.implement(ListingClass, {
             tabs.push('#commentstab');
             wrappers.push('#commentswrapper');
         }
+        if (pl('#messagestab').hasClass('companynavselected')) {
+            tabs.push('#messagestab');
+            wrappers.push('#messageswrapper');
+        }
         tabsel = tabs.join(', ');
         wrappersel = wrappers.join(', ');
         pl(tabsel).removeClass('companynavselected');
@@ -438,6 +439,10 @@ pl.implement(ListingClass, {
                 pl(wrappersel).show();
                 pl('#bidsmsg').text('No bids');
             }
+            else if (tab === 'messages') {
+                pl(wrappersel).show();
+                pl('#messagesmsg').text('No messages');
+            }
             else {
                 pl(wrappersel).show();
             }
@@ -446,22 +451,40 @@ pl.implement(ListingClass, {
     displayTabs: function() {
         var self = this,
             qs = new QueryStringClass();
-        console.log('foo');
-        pl('#num_comments').text(self.num_comments);
-        pl('#num_bids').text(self.num_bids);
+        pl('#num_comments').text(self.num_comments || 0);
+        pl('#num_bids').text(self.num_bids || 0);
+        pl('#num_messages').text(self.num_messages || 0);
+        if (this.loggedin_profile) {
+            pl('#sendmessagelink').bind({
+                click: function() {
+                    self.displayTab('messages');
+                    return false;
+                }
+            }).css({display: 'inline'});
+            pl('#makebidtitle,#makebidbox,#addmessagetitle,#addmessagebox,#messagestab').show();
+        }
         pl('#basicstab').bind({
             click: function() {
                 self.displayTab('basics');
+                return false;
             }
         });
         pl('#commentstab').bind({
             click: function() {
                 self.displayTab('comments');
+                return false;
             }
         });
         pl('#bidstab').bind({
             click: function() {
                 self.displayTab('bids');
+                return false;
+            }
+        });
+        pl('#messagestab').bind({
+            click: function() {
+                self.displayTab('messages');
+                return false;
             }
         });
         if (qs.vars.page === 'comments') {
@@ -469,6 +492,9 @@ pl.implement(ListingClass, {
         }
         else if (qs.vars.page === 'bids') {
             self.displayTab('bids');
+        }
+        else if (qs.vars.page === 'messages') {
+            self.displayTab('messages');
         }
     }
 });

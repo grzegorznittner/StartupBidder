@@ -15,7 +15,7 @@ include(header.m4)
 '
 include(banner.m4)
 `
-<div class="span-24">
+<div class="span-24 nearbywrapper">
     <div class="boxtitle smokegrey" id="listingstitle"></div>
 
     <div id="mappanel" class="boxpanel nearbypanel">

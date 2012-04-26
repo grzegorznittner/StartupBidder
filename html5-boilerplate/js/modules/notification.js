@@ -6,7 +6,7 @@ pl.implement(NotificationClass, {
             self[k] = json[k];
         }
         self.createddate = self.create_date ? DateClass.prototype.format(self.create_date) : '';
-        self.message = self.text ? SafeStringClass.prototype.htmlEntities(self.text) : '';
+        self.message = self.title ? SafeStringClass.prototype.htmlEntities(self.title) : '';
         self.messageclass = self.read ? '' : ' inputmsg'; // unread
         self.listingurl = self.listing && self.listing.listing_id ? '/company-page.html?id=' + self.listing.listing_id : ''; // FIXME
         self.listingtext = self.listing && self.listing.title ? SafeStringClass.prototype.htmlEntities(self.listing.title) : ''; // FIXME
@@ -30,7 +30,7 @@ pl.implement(NotificationClass, {
             testJson = {
                 url: '/notification-page.html?id=fubar',
                 type: 'comment',
-                text: 'You received a comment on foo',
+                title: 'You received a comment on foo',
                 date: '201204121344',
                 listing: {
                     listing_id: 'ag1zdGFydHVwYmlkZGVycg4LEgdMaXN0aW5nGOAPDA',
@@ -43,7 +43,7 @@ pl.implement(NotificationClass, {
         var self = this,
             emptyJson = {
                 create_date: null,
-                text: 'You currently have no notifications.',
+                title: 'You currently have no notifications.',
                 read: true,
                 notify_type: 'notification',
                 link: null,
