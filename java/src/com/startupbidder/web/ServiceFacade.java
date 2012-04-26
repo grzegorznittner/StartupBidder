@@ -83,7 +83,7 @@ public class ServiceFacade {
 			commentProperties.setStartIndex(0);
 			commentProperties.setTotalResults(0);
 		} else {
-			Monitor monitor = getDAO().getListingMonitor(loggedInUser.toKeyId(), listing.toKeyId());
+			Monitor monitor = loggedInUser != null ? getDAO().getListingMonitor(loggedInUser.toKeyId(), listing.toKeyId()) : null;
 			ListingFacade.instance().applyListingData(loggedInUser, listing, monitor);
 			List<CommentVO> comments = DtoToVoConverter.convertComments(
 					getDAO().getCommentsForListing(BaseVO.toKeyId(listingId)));

@@ -1688,7 +1688,7 @@ public class ListingFacade {
 		props.add(new ListingPropertyVO("business_plan_url", mock.getBusinessPlan()));
 		props.add(new ListingPropertyVO("presentation_url", mock.getPresentation()));
 		props.add(new ListingPropertyVO("financials_url", mock.getFinancials()));
-		props.add(new ListingPropertyVO("logo_url", mock.getLogo()));
+		props.add(new ListingPropertyVO("logo_url", mock.getLogo((int)listingId)));
 		
 		Listing listing = getDAO().getListing(listingId);
 		for (ListingPropertyVO prop : props) {

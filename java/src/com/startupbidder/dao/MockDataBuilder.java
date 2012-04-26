@@ -405,56 +405,6 @@ public class MockDataBuilder {
 		return comments;
 	}	
 
-	public List<Vote> createMockVotes(Collection<SBUser> usersList, Collection<Listing> listings) {
-		List<Vote> votes = new ArrayList<Vote>();
-		
-		List<SBUser> users = new ArrayList<SBUser>(usersList);
-		
-		for (Listing listing : listings) {
-			int numOfVotes = new Random().nextInt(users.size());
-			long commentTimeSpan = (System.currentTimeMillis() - listing.listedOn.getTime()) / (numOfVotes + 1);
-			while (numOfVotes > 0) {
-				Vote vote = new Vote();
-				vote.id = id();
-				vote.mockData = true;
-				vote.listing = new Key<Listing>(Listing.class, listing.id);
-				
-				Key<SBUser> userId = new Key<SBUser>(SBUser.class, users.get(numOfVotes).id);
-				if (!listing.owner.equals(userId)) {
-					vote.voter = userId;
-					vote.user = null;
-					vote.value = 1;
-					vote.commentedOn = new Date(listing.listedOn.getTime() + numOfVotes * commentTimeSpan);
-					votes.add(vote);
-				}
-				numOfVotes--;
-			}
-		}
-
-		for (SBUser user : users) {
-			int numOfVotes = new Random().nextInt(users.size());
-			long commentTimeSpan = (System.currentTimeMillis() - user.joined.getTime()) / (numOfVotes + 1);
-			while (numOfVotes > 0) {
-				Vote vote = new Vote();
-				vote.id = id();
-				vote.mockData = true;
-				vote.user = new Key<SBUser>(SBUser.class, user.id);
-				
-				Key<SBUser> userId = new Key<SBUser>(SBUser.class, users.get(numOfVotes).id);
-				if (!user.id.equals(userId)) {
-					vote.voter = userId;
-					vote.listing = null;
-					vote.value = 1;
-					vote.commentedOn = new Date(user.joined.getTime() + numOfVotes * commentTimeSpan);
-					votes.add(vote);
-				}
-				numOfVotes--;
-			}
-		}
-		
-		return votes;
-	}
-
 	/**
 	 * Generates mock users
 	 */
@@ -878,11 +828,8 @@ public class MockDataBuilder {
 		}
 	}
 	
-	private static int logoId = -1;
-	
-	public String getLogo() {
-		logoId = (logoId + 1) % logos.length;
-		return getTestDataPath() + logos[logoId];
+	public String getLogo(int seed) {
+		return getTestDataPath() + logos[seed % logos.length];
 	}
 	
 	private String[] logos = {
