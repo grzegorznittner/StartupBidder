@@ -689,6 +689,10 @@ public class MockDataBuilder {
 				"Ancient Chinese secrets brought to your drugstore shelf", "Everyone has heard of accupuncture by now, but not many know the biggest secret of ancient Chinese medicine, the Mystical Tea.  There are actually 12 mystical teas, each one aiding a specific part of the body, bringing comfort and relief in a natural, non-toxic way.  We take this ancient wisdom and package it into a convenient, customer-friendly one-dose application that is sold in drugstores across China.  Now we're bringing this secret to the West.");
 		listings.add(bp); // 23
 
+		bp = prepareListing(EMPEROR, "New Century Wines", Listing.State.ACTIVE, "Retail", 40000, 5,
+				"The best of European wines in the New China", "We've all heard that the Chinese economy is growing in leaps and bounds.  What you probably don't know, however, is how hard it is to get a good bottle of wine in Beijing.  But we're changing all that, bringing the best of France, Italy, and more to the finest restaurants and shops in China.");
+		listings.add(bp); // 24
+
 		return listings;
 	}
 	
@@ -783,11 +787,8 @@ public class MockDataBuilder {
 		
 		return bp;
 	}
-	
-	private Object[] getLocation() {
-		return locations[RandomUtils.nextInt(locations.length)];
-	}
-	
+
+
 	private Object[][] locations = {
 			{"Lohstra\u00DFe 53, 49074 Osnabr\u00FCck, Germany","Osnabr\u00FCck",null,"Germany", 52.27913570, 8.041329399999995},
 			{"Fellenoord 310, 5611 Centrum, The Netherlands","Eindhoven",null,"The Netherlands", 51.44266050, 5.472869100000025},
@@ -813,9 +814,31 @@ public class MockDataBuilder {
 			{"Berlin, Germany","Berlin",null,"Germany",52.519171,13.406091199999992},
 			{"Calle de Don Luis Bri\u00F1as, 48013 Bilbao, Spain", "Bilbao", null, "Spain", 43.2630245, -2.9474244000000454 },
             {"Shinjuku, Tokyo, Japan", "Tokyo", null, "Japan", 35.6911017, 139.70676300000002 },
-            {"Taipei 101, Sinyi District, Taiwan", "Taipei", null, "Taiwan", 25.0334959, 121.5638626 }
+            {"Taipei 101, Sinyi District, Taiwan", "Taipei", null, "Taiwan", 25.0334959, 121.5638626 },
+            {"5547 Valerie St, Houston, TX 77081, USA", "Houston", "TX", "USA", 29.693061, -95.48842100000002 },
+            {"5606 Hazen St, Houston, TX 77081, USA", "Houston", "TX", "USA", 29.691896, -95.48864600000002 }
 	};
-	
+    private int locationCounter = 0;
+    Object[][] shuffledLocations = null;
+	private Object[] getLocation() {
+        if (shuffledLocations == null) {
+            // Fisher-Yates inside-out algorithm
+            Object[][] source = locations;
+            int n = source.length;
+            Object[][] a = new Object[n][6];
+            a[0] = source[0];
+            for (int i = 1; i < n - 1; i++) {
+                int j = RandomUtils.nextInt(i+1);
+                a[i] = a[j];
+                a[j] = source[i];
+            }
+            shuffledLocations = a;
+        }
+        Object[] location = shuffledLocations[locationCounter];
+        locationCounter = ++locationCounter % shuffledLocations.length;
+        return location;
+	}
+		
 	private String getVideo() {
 		return videos[RandomUtils.nextInt(videos.length)];
 	}
