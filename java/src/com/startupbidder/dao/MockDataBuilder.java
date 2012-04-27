@@ -12,18 +12,13 @@ import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.google.appengine.repackaged.org.apache.commons.httpclient.HttpMethod;
-import com.google.appengine.repackaged.org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.math.RandomUtils;
-import org.apache.http.client.HttpClient;
-import org.codehaus.jackson.JsonFactory;
-import org.codehaus.jackson.JsonParser;
+import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.ObjectReader;
-import org.hsqldb.util.ConnectionSetting;
 import org.joda.time.DateTime;
 
 import com.google.appengine.api.blobstore.BlobstoreService;
@@ -704,7 +699,7 @@ public class MockDataBuilder {
 				"The best of European wines in the New China", "We've all heard that the Chinese economy is growing in leaps and bounds.  What you probably don't know, however, is how hard it is to get a good bottle of wine in Beijing.  But we're changing all that, bringing the best of France, Italy, and more to the finest restaurants and shops in China.");
 		listings.add(bp); // 24
 
-        List<Listing> bps = getAngelcoListings();
+        List<Listing> bps = getAngelListings();
         for (Listing bpl : bps) {
             listings.add(bpl);
         }
@@ -712,60 +707,61 @@ public class MockDataBuilder {
 		return listings;
 	}
 
-    private class AngelListing {
-        public String id;
-        public String name;
-        public String angellist_url;
-        public String logo_url;
-        public String product_desc;
-        public String high_concept;
-        public String company_url;
-        public String created_at;
-        public String updated_at;
-        public String video_url;
-    }
 
-    private List<Listing> getAngelcoListings() {
+    private List<Listing> getAngelListings() {
         List<Listing> listings = new ArrayList<Listing>();
-        try {
-            URL url = new URL("http://api.angel.co/1/startups/6702");
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setDoOutput(true);
-            connection.setRequestMethod("GET");
-            StringWriter stringWriter = new StringWriter();
-            IOUtils.copy(connection.getInputStream(), stringWriter, "UTF-8");
-            String jsonInput = stringWriter.toString();
-            connection.disconnect();
-            System.out.println(jsonInput);
-            System.out.println(connection.getResponseCode());
-            if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                ObjectMapper mapper = new ObjectMapper();
-                ObjectReader reader = mapper.reader(AngelListing.class);
-                AngelListing result = reader.readValue(jsonInput);
-                SBUser user = users.get(RandomUtils.nextInt(users.size()));
-                String type = "Software";
-                int askamt = RandomUtils.nextInt(100)*1000;
-                int askpct = 5 + 5*RandomUtils.nextInt(9);
-                DateTime createdAt = new DateTime(result.created_at);
-                DateTime modifiedAt = new DateTime(result.updated_at);
-                Listing listing = prepareListing(
-                    DtoToVoConverter.convert(user),
-                    result.name,
-                    Listing.State.ACTIVE,
-                    type,
-                    askamt,
-                    askpct,
-                    result.high_concept,
-                    result.product_desc,
-                    result.company_url,
-                    createdAt,
-                    modifiedAt
-                );
-                System.out.println(listing.toString());
-                listings.add(listing);
+        String[] angelIds = {
+            "6702", "409", "19169", "19163", "19164", "19165", "19166", "19167", "19168", "19162", "19160",
+            "19170", "19171", "19174", "19175", "19176", "19177", "19178", "19179",
+            "19181", "19182", "19184", "19185",
+            "19150", "19151", "19152", "19153", "19154", "19155", "19156", "19158", "19159",
+            "1910", "1911", "19149"
+        };
+        for (String angelId : angelIds) {
+            try {
+                String angelPath = "http://api.angel.co/1/startups/" + angelId;
+                URL url = new URL(angelPath);
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection.setDoOutput(true);
+                connection.setRequestMethod("GET");
+                StringWriter stringWriter = new StringWriter();
+                IOUtils.copy(connection.getInputStream(), stringWriter, "UTF-8");
+                String jsonInput = stringWriter.toString();
+                connection.disconnect();
+                System.out.println(jsonInput);
+                System.out.println(connection.getResponseCode());
+                if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                    ObjectMapper mapper = new ObjectMapper();
+                    mapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+                    ObjectReader reader = mapper.reader(AngelListing.class);
+                    AngelListing result = reader.readValue(jsonInput);
+                    System.out.println(result.toString());
+                    //SBUser user = users.get(RandomUtils.nextInt(users.size()));
+                    String type = "Software";
+                    int askamt = RandomUtils.nextInt(100)*1000;
+                    int askpct = 5 + 5*RandomUtils.nextInt(9);
+                    DateTime createdAt = new DateTime(result.created_at);
+                    DateTime modifiedAt = new DateTime(result.updated_at);
+                    Listing listing = prepareListing(
+                        JOHN, // DtoToVoConverter.convert(user),
+                        result.name,
+                        Listing.State.ACTIVE,
+                        type,
+                        askamt,
+                        askpct,
+                        result.high_concept,
+                        result.product_desc,
+                        result.company_url,
+                        createdAt,
+                        modifiedAt
+                    );
+                    System.out.println(listing.toString());
+                    listings.add(listing);
+                }
             }
-        }
-        catch(Exception e) {
+            catch(Exception e) {
+                e.printStackTrace();
+            }
         }
         return listings;
     }
