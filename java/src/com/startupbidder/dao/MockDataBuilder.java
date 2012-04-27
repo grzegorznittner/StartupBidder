@@ -1,7 +1,9 @@
 package com.startupbidder.dao;
 
 
-import java.io.File;
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -10,9 +12,18 @@ import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.google.appengine.repackaged.org.apache.commons.httpclient.HttpMethod;
+import com.google.appengine.repackaged.org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.math.RandomUtils;
+import org.apache.http.client.HttpClient;
+import org.codehaus.jackson.JsonFactory;
+import org.codehaus.jackson.JsonParser;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.ObjectReader;
+import org.hsqldb.util.ConnectionSetting;
 import org.joda.time.DateTime;
 
 import com.google.appengine.api.blobstore.BlobstoreService;
@@ -693,11 +704,79 @@ public class MockDataBuilder {
 				"The best of European wines in the New China", "We've all heard that the Chinese economy is growing in leaps and bounds.  What you probably don't know, however, is how hard it is to get a good bottle of wine in Beijing.  But we're changing all that, bringing the best of France, Italy, and more to the finest restaurants and shops in China.");
 		listings.add(bp); // 24
 
+        List<Listing> bps = getAngelcoListings();
+        for (Listing bpl : bps) {
+            listings.add(bpl);
+        }
+
 		return listings;
 	}
+
+    private class AngelListing {
+        public String id;
+        public String name;
+        public String angellist_url;
+        public String logo_url;
+        public String product_desc;
+        public String high_concept;
+        public String company_url;
+        public String created_at;
+        public String updated_at;
+        public String video_url;
+    }
+
+    private List<Listing> getAngelcoListings() {
+        List<Listing> listings = new ArrayList<Listing>();
+        try {
+            URL url = new URL("http://api.angel.co/1/startups/6702");
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setDoOutput(true);
+            connection.setRequestMethod("GET");
+            StringWriter stringWriter = new StringWriter();
+            IOUtils.copy(connection.getInputStream(), stringWriter, "UTF-8");
+            String jsonInput = stringWriter.toString();
+            connection.disconnect();
+            System.out.println(jsonInput);
+            System.out.println(connection.getResponseCode());
+            if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                ObjectMapper mapper = new ObjectMapper();
+                ObjectReader reader = mapper.reader(AngelListing.class);
+                AngelListing result = reader.readValue(jsonInput);
+                SBUser user = users.get(RandomUtils.nextInt(users.size()));
+                String type = "Software";
+                int askamt = RandomUtils.nextInt(100)*1000;
+                int askpct = 5 + 5*RandomUtils.nextInt(9);
+                DateTime createdAt = new DateTime(result.created_at);
+                DateTime modifiedAt = new DateTime(result.updated_at);
+                Listing listing = prepareListing(
+                    DtoToVoConverter.convert(user),
+                    result.name,
+                    Listing.State.ACTIVE,
+                    type,
+                    askamt,
+                    askpct,
+                    result.high_concept,
+                    result.product_desc,
+                    result.company_url,
+                    createdAt,
+                    modifiedAt
+                );
+                System.out.println(listing.toString());
+                listings.add(listing);
+            }
+        }
+        catch(Exception e) {
+        }
+        return listings;
+    }
 	
-	private Listing prepareListing(UserVO owner, String name, Listing.State state, String category, int amount, int percentage,
-			String mantra, String summary) {
+    private Listing prepareListing(UserVO owner, String name, Listing.State state, String category, int amount, int percentage,
+            String mantra, String summary) {
+        return prepareListing(owner, name, state, category, amount, percentage, mantra, summary, null, null, null);
+    }
+
+    private Listing prepareListing(UserVO owner, String name, Listing.State state, String category, int amount, int percentage,
+            String mantra, String summary, String companyUrl, DateTime createdAt, DateTime modifiedAt) {
 		Listing bp = new Listing();
 		bp.id = id();
 		bp.name = name;
@@ -713,10 +792,13 @@ public class MockDataBuilder {
 		
 		bp.category = category;
 		bp.state = state;
-		
-		int hours = RandomUtils.nextInt(500) + 80;
-		DateTime createdTime = new DateTime().minusHours(hours);
-		
+
+ 		int hours = RandomUtils.nextInt(500) + 80;
+		DateTime createdTime = createdAt != null ? createdAt : new DateTime().minusHours(hours);
+		if (modifiedAt != null) {
+            bp.modified = modifiedAt.toDate();
+        }
+
 		bp.created = createdTime.toDate();
 		switch(state) {
 		case NEW:
@@ -756,7 +838,8 @@ public class MockDataBuilder {
 		bp.longitude = (Double)location[5];
 		
 		bp.videoUrl = getVideo();
-		bp.website = getWebsite();
+
+		bp.website = companyUrl != null ? getWebsite() : null;
 		
 		bp.answer1 = getQuote();
 		bp.answer2 = getQuote();
