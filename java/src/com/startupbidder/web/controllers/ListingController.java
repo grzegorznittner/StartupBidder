@@ -334,7 +334,7 @@ public class ListingController extends ModelDrivenController {
 		return headers;
 	}
 	
-	private String[] getAddressComponents(JsonNode element) {
+	public static String[] getAddressComponents(JsonNode element) {
 		String[] address = null;
 		
 		JsonNode types = element.get("types");

@@ -4,18 +4,21 @@ package com.startupbidder.dao;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.Random;
+import java.net.URLEncoder;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.startupbidder.vo.ListingAndUserVO;
+import com.startupbidder.vo.ListingPropertyVO;
+import com.startupbidder.web.controllers.ListingController;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.RandomUtils;
+import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.ObjectReader;
@@ -77,7 +80,9 @@ public class MockDataBuilder {
 	private Listing johnsListing;
 	
 	private long id = 2000L;
-	
+
+    private static Map<Long, String> logoUrls = new ConcurrentHashMap<Long, String>();
+
 	private long id() {
 		return id++;
 	}
@@ -711,12 +716,16 @@ public class MockDataBuilder {
     private List<Listing> getAngelListings() {
         List<Listing> listings = new ArrayList<Listing>();
         String[] angelIds = {
-            "6702", "409", "19169", "19163", "19164", "19165", "19166", "19167", "19168", "19162", "19160",
+            "6702"
+            ,"409", "19169", "19163", "19164", "19165", "19166", "19167", "19168", "19162", "19160",
             "19170", "19171", "19174", "19175", "19176", "19177", "19178", "19179",
             "19181", "19182", "19184", "19185",
             "19150", "19151", "19152", "19153", "19154", "19155", "19156", "19158", "19159",
-            "1910", "1911", "19149"
+            "1910", "1911", "19149", "19147", "19146", "19145", "19143", "19139",
+            "19138", "19137", "19136", "19134", "19132", "19130"
         };
+        String[] types = { "Software", "Other", "Media", "Medical", "Hardware", "Internet", "Industrial",
+                "Financial", "Chemical", "Retail", "Pharma", "Manufacturing", "Healthcare", "Environmental"};
         for (String angelId : angelIds) {
             try {
                 String angelPath = "http://api.angel.co/1/startups/" + angelId;
@@ -737,11 +746,17 @@ public class MockDataBuilder {
                     AngelListing result = reader.readValue(jsonInput);
                     System.out.println(result.toString());
                     //SBUser user = users.get(RandomUtils.nextInt(users.size()));
-                    String type = "Software";
+                    String type = types[RandomUtils.nextInt(types.length)];
                     int askamt = RandomUtils.nextInt(100)*1000;
                     int askpct = 5 + 5*RandomUtils.nextInt(9);
                     DateTime createdAt = new DateTime(result.created_at);
                     DateTime modifiedAt = new DateTime(result.updated_at);
+                    String address = null;
+                    if (result.locations != null && result.locations.size() > 0) {
+                        AngelListing.AngelLocation loc = result.locations.get(0);
+                        address = loc.name;
+                        System.out.println("AngelLocation: "+address);
+                    }
                     Listing listing = prepareListing(
                         JOHN, // DtoToVoConverter.convert(user),
                         result.name,
@@ -753,7 +768,9 @@ public class MockDataBuilder {
                         result.product_desc,
                         result.company_url,
                         createdAt,
-                        modifiedAt
+                        modifiedAt,
+                        result.logo_url,
+                        address
                     );
                     System.out.println(listing.toString());
                     listings.add(listing);
@@ -768,11 +785,11 @@ public class MockDataBuilder {
 	
     private Listing prepareListing(UserVO owner, String name, Listing.State state, String category, int amount, int percentage,
             String mantra, String summary) {
-        return prepareListing(owner, name, state, category, amount, percentage, mantra, summary, null, null, null);
+        return prepareListing(owner, name, state, category, amount, percentage, mantra, summary, null, null, null, null, null);
     }
 
     private Listing prepareListing(UserVO owner, String name, Listing.State state, String category, int amount, int percentage,
-            String mantra, String summary, String companyUrl, DateTime createdAt, DateTime modifiedAt) {
+            String mantra, String summary, String companyUrl, DateTime createdAt, DateTime modifiedAt, String logo_url, String address) {
 		Listing bp = new Listing();
 		bp.id = id();
 		bp.name = name;
@@ -824,7 +841,9 @@ public class MockDataBuilder {
 			bp.closingOn = createdTime.plusDays(32).toDate();
 			break;
 		}
-		Object[] location = getLocation();
+
+		Object[] location = address != null ? getGeocodedLocation(address) : getRandomLocation();
+        
 		bp.address = (String)location[0];
 		bp.city = (String)location[1];
 		bp.usState = "USA".equals(location[3]) ? (String)location[2] : null;
@@ -832,10 +851,10 @@ public class MockDataBuilder {
 		DtoToVoConverter.updateBriefAddress(bp);
 		bp.latitude = (Double)location[4];
 		bp.longitude = (Double)location[5];
-		
+
 		bp.videoUrl = getVideo();
 
-		bp.website = companyUrl != null ? getWebsite() : null;
+		bp.website = companyUrl != null ? companyUrl : getWebsite();
 		
 		bp.answer1 = getQuote();
 		bp.answer2 = getQuote();
@@ -864,10 +883,111 @@ public class MockDataBuilder {
 		bp.answer25 = getQuoteWithNulls();
 		bp.answer26 = getQuoteWithNulls();
 		
+        if (logo_url != null) {
+            logo_url = logo_url.replaceAll("^https://", "http://");
+            logoUrls.put(bp.id, logo_url);
+            System.out.println(logo_url);
+            System.out.println(logoUrls.toString());
+        }
+
 		return bp;
 	}
 
+    private Object[] getGeocodedLocation(String address) {
+        Object[] location = { null, null, null, null, 0.0, 0.0 };
+        String addressString = geocodeAddress(address);
+        System.out.println("geocodeaddress: "+addressString);
+        if (!StringUtils.isEmpty(addressString)) {
+            try {      
+                ObjectMapper mapper = new ObjectMapper();
+                JsonNode rootNode = mapper.readValue(addressString, JsonNode.class);
+                Map<String, String> properties = new HashMap<String, String>();
+    
+                if (rootNode.get("results") == null || rootNode.get("results").get(0) == null) {
+                    throw new Exception("no results found");
+                }
+                JsonNode place = rootNode.get("results").get(0);
+                JsonNode addressComponents = place.get("address_components");
+                if (addressComponents == null) { 
+                    throw new Exception("no address_components found");
+                }
+                Iterator<JsonNode> elements = addressComponents.getElements();
+                for (; elements.hasNext(); ) {
+                    String[] comp = ListingController.getAddressComponents(elements.next());
+                    if (comp != null) {
+                        // using type and short_name
+                        properties.put("SHORT_" + comp[0], comp[1]);
+                        // using type and long_name
+                        properties.put("LONG_" + comp[0], comp[2]);
+                    }
+                }
+                if ("US".equals(properties.get("SHORT_country"))) {
+                    properties.put("country", "USA");
+                    String state = properties.get("SHORT_administrative_area_level_1");
+                    if (state != null) {
+                        properties.put("state", state);
+                    }
+                } else {
+                    properties.put("country", properties.get("LONG_country"));
+                }             
+                JsonNode formattedAddress = place.get("formatted_address");
+                if (formattedAddress == null) {
+                    throw new Exception("no formatted_address found");
+                }
+                properties.put("formatted_address", formattedAddress.getValueAsText());
+                JsonNode geometry = place.get("geometry");
+                if (geometry != null && geometry.get("location") != null) {
+                    Iterator<JsonNode> locationIt = geometry.get("location").getElements();
+                    String ta = locationIt.next().getValueAsText();
+                    String ua = locationIt.next().getValueAsText();
 
+                    properties.put("latitude", ta);
+                    properties.put("longitude", ua);
+                }
+                else {
+                    throw new Exception("no latitude and longitude found");
+                }
+                System.out.println("geocodelocation props: " + properties);
+                // ListingAndUserVO listing = ListingFacade.instance().updateListingAddressProperties(getLoggedInUser(), properties);
+                Object[] geocodedLocation = {
+                    properties.get("formatted_address"),
+                    properties.get("LONG_locality"),
+                    properties.get("state"),
+                    properties.get("country"),
+                    new Double(properties.get("latitude")),
+                    new Double(properties.get("longitude"))
+                };
+                location = geocodedLocation;
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return location;
+    }
+    
+    private String geocodeAddress(String address) {
+        String json = null;
+        try {
+            String apiPath = "http://maps.googleapis.com/maps/api/geocode/json?language=en-GB&region=us&sensor=false&address=" + URLEncoder.encode(address, "UTF-8");
+            URL url = new URL(apiPath);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setDoOutput(true);
+            connection.setRequestMethod("GET");
+            StringWriter stringWriter = new StringWriter();
+            IOUtils.copy(connection.getInputStream(), stringWriter, "UTF-8");
+            String jsonInput = stringWriter.toString();
+            connection.disconnect();
+            if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                json = jsonInput;
+            }
+        }
+        catch(Exception e) {
+            e.printStackTrace();
+        }
+        return json;
+    }
+    
 	private Object[][] locations = {
 			{"Lohstra\u00DFe 53, 49074 Osnabr\u00FCck, Germany","Osnabr\u00FCck",null,"Germany", 52.27913570, 8.041329399999995},
 			{"Fellenoord 310, 5611 Centrum, The Netherlands","Eindhoven",null,"The Netherlands", 51.44266050, 5.472869100000025},
@@ -897,9 +1017,12 @@ public class MockDataBuilder {
             {"5547 Valerie St, Houston, TX 77081, USA", "Houston", "TX", "USA", 29.693061, -95.48842100000002 },
             {"5606 Hazen St, Houston, TX 77081, USA", "Houston", "TX", "USA", 29.691896, -95.48864600000002 }
 	};
+    
     private int locationCounter = 0;
+    
     Object[][] shuffledLocations = null;
-	private Object[] getLocation() {
+    
+	private Object[] getRandomLocation() {
         if (shuffledLocations == null) {
             // Fisher-Yates inside-out algorithm
             Object[][] source = locations;
@@ -995,8 +1118,19 @@ public class MockDataBuilder {
 		}
 	}
 	
-	public String getLogo(int seed) {
-		return getTestDataPath() + logos[seed % logos.length];
+	public String getLogo(long listingId) {
+        String dataUrl;
+        if (logoUrls.containsKey(listingId)) {
+            dataUrl = logoUrls.get(listingId);
+        }
+        else {
+            int seed = (int)listingId;
+		    dataUrl = getTestDataPath() + logos[seed % logos.length];
+        }
+        System.out.println("getLogo key "+listingId);
+        System.out.println("getLogo val "+logoUrls.get(listingId));
+        System.out.println("getLogo url "+dataUrl);
+        return dataUrl;
 	}
 	
 	private String[] logos = {
