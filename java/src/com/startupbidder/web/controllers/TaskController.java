@@ -50,8 +50,8 @@ public class TaskController extends ModelDrivenController {
 		}
 		failFast = request.getHeader("X-AppEngine-FailFast");
 		
-		log.log(Level.INFO, "Task '" + taskName + "' called of queue '" + queueName
-				+ "', taksRetryCount=" + taskRetryCount + ", failFast=" + failFast);
+		//log.log(Level.INFO, "Task '" + taskName + "' called of queue '" + queueName
+		//		+ "', taksRetryCount=" + taskRetryCount + ", failFast=" + failFast);
 		
 		if("calculate-user-stats".equalsIgnoreCase(getCommand(1))) {
 			return calculateUserStats(request);

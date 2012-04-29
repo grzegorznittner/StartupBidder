@@ -72,8 +72,11 @@ public class SetupServlet extends HttpServlet {
 			out.println("<form method=\"POST\" action=\"/system/create-mock-datastore/.html\">"
 					+ "<input type=\"submit\" value=\"Recreate mock datastore\"/></form>");
 
-			out.println("<form method=\"GET\" action=\"/cron/update-listing-stats/.html\">"
-					+ "<input type=\"submit\" value=\"Update all listings stats\"/></form>");
+            out.println("<form method=\"GET\" action=\"/cron/update-listing-stats/.html\">"
+                    + "<input type=\"submit\" value=\"Update all listings stats\"/></form>");
+
+            out.println("<form method=\"GET\" action=\"/system/delete-angellist-cache/.html\">"
+                    + "<input type=\"submit\" value=\"Delete AngelList Cache\"/></form>");
 
 			out.println("<p>Google Doc credentials:</p>");
 			out.println("<form method=\"POST\" action=\"/system/set-property/.html\">"

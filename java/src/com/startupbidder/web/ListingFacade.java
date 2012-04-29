@@ -253,7 +253,7 @@ public class ListingFacade {
 			for (ListingPropertyVO prop : propsToUpdate) {
 				VoToModelConverter.updateListingProperty(listing, prop);
 			}
-			log.info("Updating listing: " + listing);
+			//log.info("Updating listing: " + listing);
 			getDAO().storeListing(listing);
 		}
 		result.setListing(DtoToVoConverter.convert(listing));
@@ -311,7 +311,7 @@ public class ListingFacade {
 			}
 			// creates brief addres and makes city/state/country lowercase
 			DtoToVoConverter.updateBriefAddress(listing);
-			log.info("Updating listing: " + listing);
+			//log.info("Updating listing: " + listing);
 			getDAO().storeListing(listing);
 		}
 		result.setListing(DtoToVoConverter.convert(listing));
@@ -368,8 +368,8 @@ public class ListingFacade {
 				docBytes = IOUtils.toByteArray(con.getInputStream());
 				mimeType = con.getContentType();
 			}
-			log.info("Fetched " + docBytes.length + " bytes, content type '" + mimeType
-					+ "', from '" + prop.getPropertyValue() + "'");
+			//log.info("Fetched " + docBytes.length + " bytes, content type '" + mimeType
+			//		+ "', from '" + prop.getPropertyValue() + "'");
 		} catch (Exception e) {
 			log.log(Level.WARNING, "Error while fetching document from " + prop.getPropertyValue(), e);
 			return null;
@@ -480,7 +480,7 @@ public class ListingFacade {
 				dbListing.closingOn = midnight.plusDays(LISTING_DEFAULT_CLOSING_ON_DAYS).toDate();
 			}
 		}
-		log.info("Activating listing: " + dbListing);
+		//log.info("Activating listing: " + dbListing);
 		dbListing.state = Listing.State.ACTIVE;
 		
 		ListingVO forUpdate = DtoToVoConverter.convert(dbListing);
@@ -1406,18 +1406,18 @@ public class ListingFacade {
 			// calculating user stats here may be disabled here
 			listingStats = calculateListingStatistics(listingId);
 		}
-		log.log(Level.INFO, "Listing stats for '" + listingId + "' : " + listingStats);
+		//log.log(Level.INFO, "Listing stats for '" + listingId + "' : " + listingStats);
 		return listingStats;
 	}
 
 	public ListingStats calculateListingStatistics(long listingId) {
 		ListingStats listingStats = getDAO().updateListingStatistics(listingId);
-		log.log(Level.INFO, "Calculated listing stats for '" + listingId + "' : " + listingStats);
+		//log.log(Level.INFO, "Calculated listing stats for '" + listingId + "' : " + listingStats);
 		return listingStats;
 	}
 	
 	public void scheduleUpdateOfListingStatistics(String listingWebKey, UpdateReason reason) {
-		log.log(Level.INFO, "Scheduling listing stats update for '" + listingWebKey + "', reason: " + reason);
+		//log.log(Level.INFO, "Scheduling listing stats update for '" + listingWebKey + "', reason: " + reason);
 		ListingStats listingStats = getDAO().getListingStatistics(VoToModelConverter.stringToKey(listingWebKey).getId());
 		if (listingStats != null) {
 			switch(reason) {
@@ -1441,7 +1441,7 @@ public class ListingFacade {
 				break;
 			}
 			// updates stats in datastore and memcache
-			log.info("Updating listing stats due to " + reason + ": " + listingStats);
+			//log.info("Updating listing stats due to " + reason + ": " + listingStats);
 			getDAO().storeListingStatistics(listingStats);
 		}
 		if (reason == UpdateReason.NONE) {
@@ -1488,7 +1488,7 @@ public class ListingFacade {
 	}
 
 	private Listing updateListingDoc(Listing listing, ListingDoc docDTO) {
-		log.info("Updating listing document " + docDTO);
+		//log.info("Updating listing document " + docDTO);
 		Key<ListingDoc> replacedDocId = null;
 		switch(docDTO.type) {
 		case BUSINESS_PLAN:
@@ -1512,7 +1512,7 @@ public class ListingFacade {
 		
 		if (replacedDocId != null) {
 			try {
-				log.info("Deleting doc previously associated with listing " + replacedDocId);
+				//log.info("Deleting doc previously associated with listing " + replacedDocId);
 				ListingDoc docToDelete = getDAO().getListingDocument(replacedDocId.getId());
 				BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
 				blobstoreService.delete(docToDelete.blob);
@@ -1553,7 +1553,7 @@ public class ListingFacade {
 		}
 		ImagesService imagesService = ImagesServiceFactory.getImagesService();
         Image originalImage = ImagesServiceFactory.makeImage(logo);
-		log.info("Original image: " + originalImage.getWidth() + " x " + originalImage.getHeight());
+		//log.info("Original image: " + originalImage.getWidth() + " x " + originalImage.getHeight());
         Image newImage = null;
         if (originalImage.getWidth() != originalImage.getHeight()) {
         	Transform crop = null;
@@ -1564,21 +1564,21 @@ public class ListingFacade {
         		double percentCrop = (originalImage.getHeight() - originalImage.getWidth()) / (2.0 * originalImage.getHeight());
         		crop = ImagesServiceFactory.makeCrop(0.0, percentCrop, 1.0, 1.0 - percentCrop);
         	}
-    		log.info("Center cropping image ...");
+    		//log.info("Center cropping image ...");
         	newImage = imagesService.applyTransform(crop, originalImage);
-    		log.info("Cropped image: " + newImage.getWidth() + " x " + newImage.getHeight());
+    		//log.info("Cropped image: " + newImage.getWidth() + " x " + newImage.getHeight());
         } else {
         	newImage = originalImage;
         }
         if (newImage.getWidth() != 146) {
         	Transform resize = ImagesServiceFactory.makeResize(146, 146);
         	newImage = imagesService.applyTransform(resize, newImage);
-    		log.info("Resized image: " + newImage.getWidth() + " x " + newImage.getHeight());
+    		//log.info("Resized image: " + newImage.getWidth() + " x " + newImage.getHeight());
         }
         byte[] newImageData = newImage.getImageData();
 		
 		String logo64 = Base64.encodeBase64String(newImageData);
-		log.info("Data uri for logo has " + logo64.length() + " bytes");
+		//log.info("Data uri for logo has " + logo64.length() + " bytes");
 		return "data:" + format + ";base64," + logo64;
 	}
 
@@ -1718,12 +1718,12 @@ public class ListingFacade {
 		MockDataBuilder mock = new MockDataBuilder();
 		
 		List<ListingPropertyVO> props = new ArrayList<ListingPropertyVO>();
-		props.add(new ListingPropertyVO("business_plan_url", mock.getBusinessPlan()));
-		props.add(new ListingPropertyVO("presentation_url", mock.getPresentation()));
-		props.add(new ListingPropertyVO("financials_url", mock.getFinancials()));
-		props.add(new ListingPropertyVO("logo_url", mock.getLogo(listingId)));
 		
 		Listing listing = getDAO().getListing(listingId);
+        props.add(new ListingPropertyVO("business_plan_url", mock.getBusinessPlan()));
+        props.add(new ListingPropertyVO("presentation_url", mock.getPresentation()));
+        props.add(new ListingPropertyVO("financials_url", mock.getFinancials()));
+        props.add(new ListingPropertyVO("logo_url", mock.getLogo(listingId)));
 		for (ListingPropertyVO prop : props) {
 			if (prop.getPropertyValue() == null) {
 				continue;

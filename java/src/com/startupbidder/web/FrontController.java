@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.googlecode.objectify.ObjectifyService;
+import com.startupbidder.dao.AngelListCache;
 import com.startupbidder.datamodel.Bid;
 import com.startupbidder.datamodel.Category;
 import com.startupbidder.datamodel.Comment;
@@ -63,6 +64,7 @@ public class FrontController extends HttpServlet {
 		ObjectifyService.register(Category.class);
 		ObjectifyService.register(Location.class);
 		ObjectifyService.register(ListingLocation.class);
+        ObjectifyService.register(AngelListCache.class);
 	}
 	
 	@Override
@@ -73,7 +75,7 @@ public class FrontController extends HttpServlet {
 	@Override
 	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String pathInfo = request.getPathInfo();
-		log.log(Level.INFO, "pathInfo=" + pathInfo);
+		//log.log(Level.INFO, "pathInfo=" + pathInfo);
 		
 		ModelDrivenController controller = null;
 		HttpHeaders headers = null;
@@ -102,11 +104,11 @@ public class FrontController extends HttpServlet {
 		}
 		
 		if (controller != null) {
-			log.log(Level.INFO, "Created controller: " + controller.getClass().getCanonicalName());
+			//log.log(Level.INFO, "Created controller: " + controller.getClass().getCanonicalName());
 			headers = ((ModelDrivenController)controller).execute(request);
 			if (controller.getModel() != null) {
-				log.log(Level.INFO, "Returned object class: " + controller.getModel().getClass().getCanonicalName());
-				log.log(Level.INFO, "Returned object: " + controller.getModel().toString());
+				//log.log(Level.INFO, "Returned object class: " + controller.getModel().getClass().getCanonicalName());
+				//log.log(Level.INFO, "Returned object: " + controller.getModel().toString());
 			} else {
 				log.log(Level.SEVERE, "Returned object is NULL");
 			}

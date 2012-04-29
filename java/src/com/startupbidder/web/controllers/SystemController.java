@@ -47,8 +47,10 @@ public class SystemController extends ModelDrivenController {
 				return clearDatastore(request);
 			} else if("print-datastore".equalsIgnoreCase(getCommand(1))) {
 				return printDatastoreContents(request);
-			} else if("create-mock-datastore".equalsIgnoreCase(getCommand(1))) {
-				return createMockDatastore(request);
+            } else if("create-mock-datastore".equalsIgnoreCase(getCommand(1))) {
+                return createMockDatastore(request);
+            } else if("delete-angellist-cache".equalsIgnoreCase(getCommand(1))) {
+                return deleteAngelListCache(request);
 			} else if("export-datastore".equalsIgnoreCase(getCommand(1))) {
 				return exportDatastore(request);
 			}
@@ -107,8 +109,21 @@ public class SystemController extends ModelDrivenController {
 		}
 		return headers;
 	}
-	
-	private HttpHeaders createMockDatastore(HttpServletRequest request) {
+
+    private HttpHeaders deleteAngelListCache(HttpServletRequest request) {
+        HttpHeaders headers = new HttpHeadersImpl("delete");
+
+        UserVO loggedInUser = getLoggedInUser();
+        if (loggedInUser != null && loggedInUser.isAdmin()) {
+            String deletedObjects = new MockDataBuilder().deleteAngelListCache(loggedInUser);
+            model = deletedObjects;
+        } else {
+            headers.setStatus(500);
+        }
+        return headers;
+    }
+
+    private HttpHeaders createMockDatastore(HttpServletRequest request) {
 		HttpHeaders headers = new HttpHeadersImpl("recreate-mock-datastore");
 		
 		UserVO loggedInUser = getLoggedInUser();
