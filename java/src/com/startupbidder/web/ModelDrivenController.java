@@ -11,11 +11,12 @@ import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.datanucleus.util.StringUtils;
+//import org.datanucleus.util.StringUtils;
 
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;

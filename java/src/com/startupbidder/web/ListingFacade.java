@@ -21,8 +21,9 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ToStringBuilder;
-import org.datanucleus.util.StringUtils;
+//import org.datanucleus.util.StringUtils;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
@@ -125,7 +126,7 @@ public class ListingFacade {
 			l.state = Listing.State.NEW;
 			l.owner = new Key<SBUser>(loggedInUser.getId());
 			l.contactEmail = loggedInUser.getEmail();
-			l.founders = StringUtils.notEmpty(loggedInUser.getName()) ? loggedInUser.getName() : loggedInUser.getNickname();
+			l.founders = !StringUtils.isEmpty(loggedInUser.getName()) ? loggedInUser.getName() : loggedInUser.getNickname();
 			l.askedForFunding = true;
 			l.suggestedAmount = 20000;
 			l.suggestedPercentage = 5;
@@ -422,7 +423,7 @@ public class ListingFacade {
 			log.warning("Listing doesn't exist or user not logged in");
 			return null;
 		}
-		boolean adminOrOwner = StringUtils.areStringsEqual(loggedInUser.getId(), dbListing.owner.getString())
+		boolean adminOrOwner = StringUtils.equals(loggedInUser.getId(), dbListing.owner.getString())
 				|| loggedInUser.isAdmin();
 		if (!adminOrOwner) {
 			log.warning("User must be an owner of the listing or an admin");
@@ -512,7 +513,7 @@ public class ListingFacade {
 			returnValue.setErrorCode(ErrorCodes.NOT_LOGGED_IN);
 			return returnValue;
 		}
-		if (!StringUtils.areStringsEqual(loggedInUser.getId(), dbListing.owner.getString())) {
+		if (!StringUtils.equals(loggedInUser.getId(), dbListing.owner.getString())) {
 			log.log(Level.WARNING, "User '" + loggedInUser + "' is not an owner of listing " + dbListing, new Exception("Not listing owner"));
 			returnValue.setErrorMessage("User is not an owner of the listing");
 			returnValue.setErrorCode(ErrorCodes.NOT_AN_OWNER);
@@ -536,7 +537,7 @@ public class ListingFacade {
 			
 			Listing updatedListing = getDAO().updateListingStateAndDates(VoToModelConverter.convert(forUpdate));
 			if (updatedListing != null) {
-				if (StringUtils.areStringsEqual(updatedListing.owner.getString(), loggedInUser.getId())) {
+				if (StringUtils.equals(updatedListing.owner.getString(), loggedInUser.getId())) {
 					loggedInUser.setEditedListing(null);
 					loggedInUser.setEditedStatus(null);
 				}
@@ -659,7 +660,7 @@ public class ListingFacade {
 			returnValue.setErrorCode(ErrorCodes.ENTITY_VALIDATION);
 			return returnValue;
 		}
-		if (!StringUtils.areStringsEqual(loggedInUser.getId(), dbListing.owner.getString())) {
+		if (!StringUtils.equals(loggedInUser.getId(), dbListing.owner.getString())) {
 			log.log(Level.WARNING, "User must be an owner of the listing", new Exception("Not an owner"));
 			returnValue.setErrorMessage("User must be an owner of the listing");
 			returnValue.setErrorCode(ErrorCodes.ENTITY_VALIDATION);
@@ -1099,7 +1100,7 @@ public class ListingFacade {
 	public ListingListVO getUserListings(UserVO loggedInUser, String userId, ListPropertiesVO listingProperties) {
 		
 		List<ListingVO> listings = null;
-		if (loggedInUser != null && StringUtils.areStringsEqual(userId, loggedInUser.getId())) {
+		if (loggedInUser != null && StringUtils.equals(userId, loggedInUser.getId())) {
 			listings = DtoToVoConverter.convertListings(
 				getDAO().getUserListings(BaseVO.toKeyId(userId), listingProperties));
 		} else {
@@ -1196,10 +1197,10 @@ public class ListingFacade {
 		String[] keywords = splitSearchKeywords(text);
 		
 		List<Long> results = null;
-		if (StringUtils.notEmpty(keywords[0])) {
+		if (!StringUtils.isEmpty(keywords[0])) {
 			results = DocService.instance().fullTextSearch(keywords[0]);
 		}
-		if (StringUtils.notEmpty(keywords[1])) {
+		if (!StringUtils.isEmpty(keywords[1])) {
 			List<Long> categoryResults = getDAO().getListingsIdsForCategory(keywords[1]);
 			log.info("Category search for '" + keywords[1] + "' returned " + categoryResults.size()
 					+ " items. Items: " + Arrays.toString(categoryResults.toArray()));
@@ -1209,7 +1210,7 @@ public class ListingFacade {
 				results = categoryResults;
 			}
 		}
-		if (StringUtils.notEmpty(keywords[2])) {
+		if (!StringUtils.isEmpty(keywords[2])) {
 			String[] location = splitLocationString(keywords[2]);
 			List<Long> locationResults = getDAO().getListingsIdsForLocation(location[2], location[1], location[0]);
 			log.info("Location search for '" + Arrays.toString(location) + "' returned " + locationResults.size()
@@ -1586,7 +1587,7 @@ public class ListingFacade {
 		ListingAndUserVO result = new ListingAndUserVO();
 		
 		Listing listing = getDAO().getListing(BaseVO.toKeyId(listingId));
-		if (!loggedInUser.isAdmin() && !StringUtils.areStringsEqual(listing.owner.getString(), loggedInUser.getId())) {
+		if (!loggedInUser.isAdmin() && !StringUtils.equals(listing.owner.getString(), loggedInUser.getId())) {
 			result.setErrorCode(ErrorCodes.NOT_AN_OWNER);
 			result.setErrorMessage("User '" + loggedInUser.getName() + "' is not an owner of listing.");
 			return result;

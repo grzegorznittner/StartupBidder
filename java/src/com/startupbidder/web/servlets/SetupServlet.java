@@ -78,6 +78,12 @@ public class SetupServlet extends HttpServlet {
             out.println("<form method=\"GET\" action=\"/system/delete-angellist-cache/.html\">"
                     + "<input type=\"submit\" value=\"Delete AngelList Cache\"/></form>");
 
+            out.println("<p>AngelList Startup Import:</p>");
+            out.println("<form method=\"POST\" action=\"/system/import-angellist-data/.html\">"
+                    + "From ID: <input name=\"fromId\" type=\"text\" value=\"19000\"/></br>"
+                    + "To ID: <input name=\"toId\" type=\"text\" value=\"19100\"/></br>"
+                    + "<input type=\"submit\" value=\"Import Data\"/></form>");
+
 			out.println("<p>Google Doc credentials:</p>");
 			out.println("<form method=\"POST\" action=\"/system/set-property/.html\">"
 					+ "User: <input name=\"name\" type=\"hidden\" value=\"googledoc.user\"/><input name=\"value\" type=\"text\" value=\"" + currentUser.getEmail() + "\"/></br>"

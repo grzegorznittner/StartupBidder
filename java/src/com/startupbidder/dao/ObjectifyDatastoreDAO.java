@@ -11,7 +11,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.datanucleus.util.StringUtils;
+import org.apache.commons.lang.StringUtils;
+//import org.datanucleus.util.StringUtils;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
@@ -847,7 +848,7 @@ public class ObjectifyDatastoreDAO {
 				// for already activated users don't do anything
 				return user;
 			}
-			if (StringUtils.areStringsEqual(user.activationCode, activationCode)) {
+			if (StringUtils.equals(user.activationCode, activationCode)) {
 				user.status = SBUser.Status.ACTIVE;
 				getOfy().put(user);
 				return user;

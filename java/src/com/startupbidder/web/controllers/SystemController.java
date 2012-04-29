@@ -51,6 +51,8 @@ public class SystemController extends ModelDrivenController {
                 return createMockDatastore(request);
             } else if("delete-angellist-cache".equalsIgnoreCase(getCommand(1))) {
                 return deleteAngelListCache(request);
+            } else if("import-angellist-data".equalsIgnoreCase(getCommand(1))) {
+                return importAngelListData(request);
 			} else if("export-datastore".equalsIgnoreCase(getCommand(1))) {
 				return exportDatastore(request);
 			}
@@ -124,17 +126,31 @@ public class SystemController extends ModelDrivenController {
     }
 
     private HttpHeaders createMockDatastore(HttpServletRequest request) {
-		HttpHeaders headers = new HttpHeadersImpl("recreate-mock-datastore");
-		
-		UserVO loggedInUser = getLoggedInUser();
-		if (loggedInUser != null && loggedInUser.isAdmin()) {
-			String deletedObjects = new MockDataBuilder().clearDatastore(loggedInUser);
-			model = deletedObjects + new MockDataBuilder().createMockDatastore(true, false);
-		} else {
-			headers.setStatus(500);
-		}
-		return headers;
-	}
+        HttpHeaders headers = new HttpHeadersImpl("recreate-mock-datastore");
+
+        UserVO loggedInUser = getLoggedInUser();
+        if (loggedInUser != null && loggedInUser.isAdmin()) {
+            String deletedObjects = new MockDataBuilder().clearDatastore(loggedInUser);
+            model = deletedObjects + new MockDataBuilder().createMockDatastore(true, false);
+        } else {
+            headers.setStatus(500);
+        }
+        return headers;
+    }
+
+    private HttpHeaders importAngelListData(HttpServletRequest request) {
+        HttpHeaders headers = new HttpHeadersImpl("import-angellist-data");
+
+        UserVO loggedInUser = getLoggedInUser();
+        String fromId = request.getParameter("fromId");
+        String toId = request.getParameter("toId");
+        if (loggedInUser != null && loggedInUser.isAdmin() && !StringUtils.isEmpty(fromId) && !StringUtils.isEmpty(toId)) {
+            model = new MockDataBuilder().importAngelListData(fromId, toId);
+        } else {
+            headers.setStatus(500);
+        }
+        return headers;
+    }
 
 	private HttpHeaders printDatastoreContents(HttpServletRequest request) {
 		HttpHeaders headers = new HttpHeadersImpl("print-datastore");

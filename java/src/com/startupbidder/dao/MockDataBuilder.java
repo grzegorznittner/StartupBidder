@@ -199,6 +199,51 @@ public class MockDataBuilder {
 		return output.toString();
 	}
 	
+    public String importAngelListData(String fromId, String toId) {
+        StringBuffer output = new StringBuffer();
+        List<SBUser> users = createAngelListUsers();
+        for (SBUser user : users) {
+            try {
+                getOfy().get(SBUser.class, user.id);
+            }
+            catch (NotFoundException e) {
+                getOfy().put(user);
+                output.append("Inserted AngelList User: " + user.name + "</br>");
+            }
+        }
+        
+        try {
+            getOfy().get(Category.class, 1);
+        }
+        catch (NotFoundException e) {
+            getOfy().put(createCategories());
+            output.append("Inserted Categories");
+        }
+
+        List<Listing> listings = createAngelListListings(users, fromId, toId);
+        for (Listing listing : listings) {
+            try {
+                getOfy().get(Listing.class, listing.id);
+            }
+            catch (NotFoundException e) {
+                getOfy().put(listing);
+                output.append("Inserted AngelList Listing: " + listing.id + ".</br>");
+            }
+        }
+
+        List<ListingLocation> listingLocList = new ArrayList<ListingLocation>();
+        for (Listing listing : listings) {
+            listingLocList.add(new ListingLocation(listing));
+            ObjectifyDatastoreDAO.getInstance().updateListingStatistics(listing.id);
+            ListingFacade.instance().updateMockListingImages(listing.id);               
+        }
+        output.append("Listing statistics updated and file update scheduled.</br>");
+        getOfy().put(listingLocList);
+        output.append("Listing location data stored.</br>");
+        
+        return output.toString();
+    }
+    
 	public String printDatastoreContents(UserVO loggedInUser) {
 		if (loggedInUser == null || !loggedInUser.isAdmin()) {
 			log.log(Level.WARNING, "User '" + loggedInUser + "' is not an admin.");
@@ -575,23 +620,9 @@ public class MockDataBuilder {
         user.status = SBUser.Status.ACTIVE;
         user.investor = true;
         user.lastLoggedIn = new Date();
-        users.add(user); // 10
+        users.add(user); // 9
         GREG = DtoToVoConverter.convert(user);
 
-        user = new SBUser();
-        user.id = id();
-        user.mockData = true;
-        user.admin = true;
-        user.nickname = "The Angel";
-        user.name = "John 'AngelList' Doe";
-        user.email = ANGEL_EMAIL;
-        user.openId = user.email;
-        user.joined = new Date(0L);
-        user.status = SBUser.Status.ACTIVE;
-        user.investor = true;
-        user.lastLoggedIn = new Date();
-        users.add(user); // 10
-        ANGEL = DtoToVoConverter.convert(user);
 
         user = new SBUser();
 		user.id = id();
@@ -605,12 +636,31 @@ public class MockDataBuilder {
 		user.status = SBUser.Status.CREATED;
 		user.investor = false;
 		user.lastLoggedIn = null;
-		users.add(user); // 11
+		users.add(user); // 10
 		NOT_ACTIVATED = DtoToVoConverter.convert(user);
 		
 		return users;
 	}
-	
+
+    public List<SBUser> createAngelListUsers() {
+        List<SBUser> users = new ArrayList<SBUser>();
+        SBUser user = new SBUser();
+        user.id = id();
+        user.mockData = true;
+        user.admin = true;
+        user.nickname = "The Angel";
+        user.name = "Angelica Listopoulous";
+        user.email = ANGEL_EMAIL;
+        user.openId = user.email;
+        user.joined = new Date(0L);
+        user.status = SBUser.Status.ACTIVE;
+        user.investor = true;
+        user.lastLoggedIn = new Date();
+        users.add(user); // 10
+        ANGEL = DtoToVoConverter.convert(user);
+        return users;
+    }
+    
 	/**
 	 * Generates mock listings
 	 */
@@ -720,15 +770,19 @@ public class MockDataBuilder {
 				"The best of European wines in the New China", "We've all heard that the Chinese economy is growing in leaps and bounds.  What you probably don't know, however, is how hard it is to get a good bottle of wine in Beijing.  But we're changing all that, bringing the best of France, Italy, and more to the finest restaurants and shops in China.");
 		listings.add(bp); // 24
 
-        List<Listing> bps = getAngelListings();
+		return listings;
+	}
+
+    public List<Listing> createAngelListListings(List<SBUser> users, String fromId, String toId) {
+        List<Listing> listings = new ArrayList<Listing>();
+        List<Listing> bps = getAngelListings(fromId, toId);
         for (Listing bpl : bps) {
             listings.add(bpl);
         }
+        return listings;
+    }
 
-		return listings;
-	}
-    
-    private List<String> fillAngelIds() {
+    private List<String> fillAngelIds(String fromId, String toId) {
         /*
         String[] presetIds = {
             "6702"
@@ -817,11 +871,13 @@ public class MockDataBuilder {
                     "19127",
                     "19128",
                     "19129"
-        };  
-              */
+        };
         int min = 18500;
         int max = 18800;
-        //int max = 19200;
+        int max = 19200;
+        */
+        int min = Integer.parseInt(fromId);
+        int max = Integer.parseInt(toId);
         List<String> angelIds = new ArrayList<String>();
         for (int i = min; i <= max; i++) {
             angelIds.add(String.valueOf(i));    
@@ -890,9 +946,9 @@ public class MockDataBuilder {
         return output.toString();
     }
     
-    private List<Listing> getAngelListings() {
+    private List<Listing> getAngelListings(String fromId, String toId) {
         List<Listing> listings = new ArrayList<Listing>();
-        List<String> angelIds = fillAngelIds();
+        List<String> angelIds = fillAngelIds(fromId, toId);
  
         try {
             Objectify ofy = getOfy();
@@ -1017,7 +1073,7 @@ public class MockDataBuilder {
 			break;
 		}
 
-        Location location = null;
+        GeocodeLocation location = null;
         if (address != null) {
             location = getGeocodedLocation(address);
         }
@@ -1075,19 +1131,21 @@ public class MockDataBuilder {
 
 		return bp;
 	}
-
-    private Map<String, Location> geocodeCache = new HashMap<String, Location>();
     
-    private Location getGeocodedLocation(String address) {
-        if (geocodeCache.containsKey(address)) {
-            return geocodeCache.get(address);
+    private GeocodeLocation getGeocodedLocation(String address) {
+        try {
+            return getOfy().get(GeocodeLocation.class, address);
         }
+        catch (NotFoundException e) {
+        }       
+        
         String addressString = geocodeAddress(address);
-        Location location = new Location(null, null, null, null, null, null);
         if (StringUtils.isEmpty(addressString)) {
-            geocodeCache.put(address, location);
+            GeocodeLocation location = new GeocodeLocation();
+            getOfy().put(location);
             return location;
         }
+        
         try {
             ObjectMapper mapper = new ObjectMapper();
             JsonNode rootNode = mapper.readValue(addressString, JsonNode.class);
@@ -1137,45 +1195,49 @@ public class MockDataBuilder {
             else {
                 throw new Exception("no latitude and longitude found");
             }
-            location = new Location(properties.get("formatted_address"),
+            GeocodeLocation location = new GeocodeLocation(
+                    properties.get("formatted_address"),
                     properties.get("LONG_locality"),
                     properties.get("state"),
                     properties.get("country"),
                     new Double(properties.get("latitude")),
                     new Double(properties.get("longitude"))
             );
+            getOfy().put(location);
+            return location;
         }
         catch (Exception e) {
             log.severe(e.getLocalizedMessage());
-            location = fallbackLocation(address);
         }
-        geocodeCache.put(address, location);
+
+        GeocodeLocation location = new GeocodeLocation();
+        getOfy().put(location);
         return location;
     }
    
-    private Location fallbackLocation(String address) {
+    private GeocodeLocation fallbackLocation(String address) {
         String a = address.toLowerCase(Locale.ENGLISH);
-        Location l = null;
+        GeocodeLocation l = null;
         if (a.contains("san francisco")) {
-            l = new Location("600 Montgomery St, San Francisco, CA, USA", "San Francisco", "CA", "USA", 37.7952, -122.4028);
+            l = new GeocodeLocation("600 Montgomery St, San Francisco, CA, USA", "San Francisco", "CA", "USA", 37.7952, -122.4028);
         }
         else if (a.contains("new york")) {
-            l = new Location("18 Broad St, New York, NY, USA", "New York", "NY", "USA", 40.706833, -74.011028);
+            l = new GeocodeLocation("18 Broad St, New York, NY, USA", "New York", "NY", "USA", 40.706833, -74.011028);
         }
         else if (a.contains("berlin")) {
-            l = new Location("Platz der Republik 1, Berlin, Germany", "Berlin", null, "Germany", 52.5186, 13.376);
+            l = new GeocodeLocation("Platz der Republik 1, Berlin, Germany", "Berlin", null, "Germany", 52.5186, 13.376);
         }
         else if (a.contains("los angeles")) {
-            l = new Location("200 Getty Center Drive  Los Angeles, CA, USA", "Los Angeles", "CA", "USA", 34.0775, -118.475);
+            l = new GeocodeLocation("200 Getty Center Drive  Los Angeles, CA, USA", "Los Angeles", "CA", "USA", 34.0775, -118.475);
         }
         else if (a.contains("boston")) {
-            l = new Location("9 Oxford Street, Cambridge, MA, USA", "Cambridge", "MA", "USA", 42.374444, -71.116944);
+            l = new GeocodeLocation("9 Oxford Street, Cambridge, MA, USA", "Cambridge", "MA", "USA", 42.374444, -71.116944);
         }
         else if (a.contains("austin")) {
-            l = new Location("1100 Congress St, Austin, TX, USA", "Austin", "TX", "USA", 30.274722, -97.740556);
+            l = new GeocodeLocation("1100 Congress St, Austin, TX, USA", "Austin", "TX", "USA", 30.274722, -97.740556);
         }
         else {
-            l = new Location("Threadneedle St, London EC2R, UK", "London", null, "United Kingdom", 51.51406, -0.08839);
+            l = new GeocodeLocation("Threadneedle St, London EC2R, UK", "London", null, "United Kingdom", 51.51406, -0.08839);
         }
         return l;
     }
@@ -1232,44 +1294,23 @@ public class MockDataBuilder {
             {"5547 Valerie St, Houston, TX 77081, USA", "Houston", "TX", "USA", 29.693061, -95.48842100000002 },
             {"5606 Hazen St, Houston, TX 77081, USA", "Houston", "TX", "USA", 29.691896, -95.48864600000002 }
 	};
-    
-    public static class Location {
-        public String address;
-        public String city;
-        public String state;
-        public String country;
-        public Double latitude;
-        public Double longitude;
-        public Location(String address, String city, String state, String country, Double latitude, Double longitude) {
-            this.address = address;
-            this.city = city;
-            this.state = state;
-            this.country = country;
-            this.latitude = latitude;
-            this.longitude = longitude;
-        }
-        public void randomize(double scaleFactor) {
-            latitude += scaleFactor * (RandomUtils.nextDouble() - 0.5);
-            longitude += scaleFactor * (RandomUtils.nextDouble() - 0.5);
-        }
-    }
-    
+
     private int locationCounter = 0;
     
-    List<Location> shuffledLocations = null;
+    List<GeocodeLocation> shuffledLocations = null;
     
-	private Location getRandomLocation() {
+	private GeocodeLocation getRandomLocation() {
         if (shuffledLocations == null) {
-            List<Location> source = new ArrayList<Location>();
+            List<GeocodeLocation> source = new ArrayList<GeocodeLocation>();
             for (int i = 0; i < mockLocations.length; i++) {
                 Object[] l = mockLocations[i];
-                source.add(new Location((String)l[0], (String)l[1], (String)l[2], (String)l[3], (Double)l[4], (Double)l[5]));
+                source.add(new GeocodeLocation((String)l[0], (String)l[1], (String)l[2], (String)l[3], (Double)l[4], (Double)l[5]));
             }
             // Fisher-Yates inside-out algorithm
             int n = source.size();
-            List<Location> a = new ArrayList<Location>(n);
+            List<GeocodeLocation> a = new ArrayList<GeocodeLocation>(n);
             for (int i = 0; i < n; i++) {
-                a.add(new Location(null, null, null, null, 0.0, 0.0));
+                a.add(new GeocodeLocation(null, null, null, null, 0.0, 0.0));
             }
             a.set(0, source.get(0));
             for (int i = 1; i < n - 1; i++) {
@@ -1279,7 +1320,7 @@ public class MockDataBuilder {
             }
             shuffledLocations = a;
         }
-        Location location = shuffledLocations.get(locationCounter);
+        GeocodeLocation location = shuffledLocations.get(locationCounter);
         locationCounter = ++locationCounter % shuffledLocations.size();
         return location;
 	}
