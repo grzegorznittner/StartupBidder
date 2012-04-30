@@ -1324,9 +1324,9 @@ public class ListingFacade {
 		for (Notification notification : notifications) {
 			boolean privateMessage = notification.type == Notification.Type.PRIVATE_MESSAGE 
 					|| notification.type == Notification.Type.ASK_LISTING_OWNER;
-			boolean author = loggedInUser != null && notification.fromUser != null 
-					&& notification.fromUser.getId() == loggedInUser.toKeyId();
-			if (isListingOwner || !privateMessage || author) {
+			boolean authorOrAddresee = loggedInUser != null && notification.fromUser != null 
+					&& (notification.fromUser.getId() == loggedInUser.toKeyId() || notification.user.getId() == loggedInUser.toKeyId());
+			if (isListingOwner || !privateMessage || authorOrAddresee) {
 				NotificationVO notifVO = DtoToVoConverter.convert(notification);
 				notifVO.setOrderNumber(num++);
 				filteredNotif.add(notifVO);
@@ -1740,7 +1740,7 @@ public class ListingFacade {
 				log.warning("Error while fetching/converting external resource. " + prop);
 			}
 		}
-		getDAO().storeListing(listing);		
+		getDAO().storeListing(listing);
 	}
-	
+
 }

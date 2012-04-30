@@ -212,19 +212,31 @@ public class HelloServlet extends HttpServlet {
 			out.println("<p style=\"background: none repeat scroll 0% 0% rgb(187, 187, 187);\">Comments API:</p>");
 			out.println("<a href=\"/comments/listing/" + topListing.getWebKey() + "/.json?max_results=6\">Comments for top listing</a><br/>");
 			out.println("<a href=\"/comments/user/" + currentUser.getId() + "/.json?max_results=6\">Comments for current user</a><br/>");
-			out.println("<a href=\"/comments/get/" + comments.get(0).getWebKey() + "/.json\">Get comment id '" + comments.get(0).getWebKey() + "'</a><br/>");
-			out.println("<form method=\"POST\" action=\"/comment/create/.json\"><textarea name=\"comment\" rows=\"5\" cols=\"100\">"
-						+ "{ \"listing_id\":\"" + topListing.getWebKey() + "\", \"profile_id\":\"" + currentUser.getId() + "\", \"text\":\"comment test\" }"
-						+ "</textarea><input type=\"submit\" value=\"Create a comment (for top listing)\"/></form>");
-			out.println("<form method=\"POST\" action=\"/comment/delete/.json?id=" + comments.get(0).getWebKey() + "\"><input type=\"submit\" value=\"Deletes comment id '" + comments.get(0).getWebKey() + "'\"/></form>");
+			if (comments != null && comments.size() > 0) {
+				out.println("<a href=\"/comments/get/" + comments.get(0).getWebKey() + "/.json\">Get comment id '" + comments.get(0).getWebKey() + "'</a><br/>");
+				out.println("<form method=\"POST\" action=\"/comment/create/.json\"><textarea name=\"comment\" rows=\"5\" cols=\"100\">"
+							+ "{ \"listing_id\":\"" + topListing.getWebKey() + "\", \"profile_id\":\"" + currentUser.getId() + "\", \"text\":\"comment test\" }"
+							+ "</textarea><input type=\"submit\" value=\"Create a comment (for top listing)\"/></form>");
+				out.println("<form method=\"POST\" action=\"/comment/delete/.json?id=" + comments.get(0).getWebKey() + "\"><input type=\"submit\" value=\"Deletes comment id '" + comments.get(0).getWebKey() + "'\"/></form>");
+			} else {
+				out.println("No comments.<br/>");				
+			}
 			out.println("<br/>");
 			
 			out.println("<p style=\"background: none repeat scroll 0% 0% rgb(187, 187, 187);\">Notification API:</p>");
 			out.println("<a href=\"/notification/user/.json?max_results=6\">Notifications for current user</a><br/>");
 			List<Notification> notifications = datastore.getAllUserNotification(currentUser.toKeyId(), new ListPropertiesVO());
 			if (!notifications.isEmpty()) {
-				out.println("<a href=\"/notification/get/" + notifications.get(0).getWebKey() + "/.json\">First notification for current user</a><br/>");
-				out.println("<a href=\"/notification/ack/" + notifications.get(0).getWebKey() + "/.json\">Acknowledging first notification for current user</a><br/>");
+				for (Notification notif : notifications) {
+					out.println("" + notif.type + ", listing: " + notif.listingName + ", message:" + notif.message + "<br/>");
+					out.println("<a href=\"/notification/get/" + notifications.get(0).getWebKey() + "/.json\">View</a> ");
+					out.println("<a href=\"/notification/ack/" + notifications.get(0).getWebKey() + "/.json\">Mark as read</a><br/>");
+					if (notif.type == Notification.Type.ASK_LISTING_OWNER || notif.type == Notification.Type.PRIVATE_MESSAGE) {
+						out.println("<form method=\"POST\" action=\"/listing/reply_message/.json\"><textarea name=\"message\" rows=\"3\" cols=\"50\">"
+								+ "{\"message_id\":\"" + notif.getWebKey() + "\", \"text\":\"Reply text\"}"
+								+ "</textarea><input type=\"submit\" value=\"Send reply\"/></form>");
+					}
+				}
 			} else {
 				out.println("Current user doesn't have any notification, create one first (eg. make a comment)<br/>");
 			}
@@ -343,6 +355,12 @@ public class HelloServlet extends HttpServlet {
 					out.println("<form method=\"POST\" action=\"/monitor/set/" + listing.getId() + "/.json\"><input type=\"submit\" value=\"Set monitor\"/></form>");
 				}
 			}
+			out.println("<form method=\"POST\" action=\"/listing/ask_owner/.json\"><textarea name=\"message\" rows=\"3\" cols=\"50\">"
+					+ "{\"listing_id\":\"" + listing.getId() + "\", \"text\":\"Message text\"}"
+					+ "</textarea><input type=\"submit\" value=\"Ask owner\"/></form>");
+			out.println("<form method=\"POST\" action=\"/listing/send_private/.json\"><textarea name=\"message\" rows=\"3\" cols=\"50\">"
+					+ "{\"listing_id\":\"" + listing.getId() + "\", \"text\":\"Message text\"}"
+					+ "</textarea><input type=\"submit\" value=\"Send private\"/></form>");
 			out.println("<a href=\"/listing/get/" + listing.getId() + ".json?\">View</a>");
 			out.println("<a href=\"/listing/messages/" + listing.getId() + ".json?\">Listing notifications</a></td>");
 			out.println("<td>");
