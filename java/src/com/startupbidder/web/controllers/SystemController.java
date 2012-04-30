@@ -51,6 +51,8 @@ public class SystemController extends ModelDrivenController {
                 return createMockDatastore(request);
             } else if("delete-angellist-cache".equalsIgnoreCase(getCommand(1))) {
                 return deleteAngelListCache(request);
+            } else if("delete-geocode-cache".equalsIgnoreCase(getCommand(1))) {
+                return deleteGeocodeCache(request);
             } else if("import-angellist-data".equalsIgnoreCase(getCommand(1))) {
                 return importAngelListData(request);
 			} else if("export-datastore".equalsIgnoreCase(getCommand(1))) {
@@ -117,7 +119,22 @@ public class SystemController extends ModelDrivenController {
 
         UserVO loggedInUser = getLoggedInUser();
         if (loggedInUser != null && loggedInUser.isAdmin()) {
-            String deletedObjects = new MockDataBuilder().deleteAngelListCache(loggedInUser);
+            String fromId = request.getParameter("fromId");
+            String toId = request.getParameter("toId");
+            String deletedObjects = new MockDataBuilder().deleteAngelListCache(loggedInUser, fromId, toId);
+            model = deletedObjects;
+        } else {
+            headers.setStatus(500);
+        }
+        return headers;
+    }
+
+    private HttpHeaders deleteGeocodeCache(HttpServletRequest request) {
+        HttpHeaders headers = new HttpHeadersImpl("delete");
+
+        UserVO loggedInUser = getLoggedInUser();
+        if (loggedInUser != null && loggedInUser.isAdmin()) {
+            String deletedObjects = new MockDataBuilder().deleteGeocodeCache(loggedInUser);
             model = deletedObjects;
         } else {
             headers.setStatus(500);

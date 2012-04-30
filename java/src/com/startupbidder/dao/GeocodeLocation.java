@@ -13,23 +13,24 @@ import javax.persistence.Id;
 * To change this template use File | Settings | File Templates.
 */
 public class GeocodeLocation {
-    @Id
-    public String address;
-    @Unindexed
-    public String city;
+    @Id public String source_address;
+    @Unindexed public String address;
+    @Unindexed public String city;
     @Unindexed public String state;
     @Unindexed public String country;
     @Unindexed public Double latitude;
     @Unindexed public Double longitude;
     public GeocodeLocation() {
-        this.address = null;
-        this.city = null;
+        this.source_address = null;
+        this.address = "Threadneedle St, London EC2R, UKd";
+        this.city = "London";
         this.state = null;
-        this.country = null;
-        this.latitude = null;
-        this.longitude = null;
+        this.country = "United Kingdom";
+        this.latitude = 51.51406;
+        this.longitude = -0.08839;
     }
-    public GeocodeLocation(String address, String city, String state, String country, Double latitude, Double longitude) {
+    public GeocodeLocation(String source_address, String address, String city, String state, String country, Double latitude, Double longitude) {
+        this.source_address = source_address;
         this.address = address;
         this.city = city;
         this.state = state;
@@ -38,7 +39,7 @@ public class GeocodeLocation {
         this.longitude = longitude;
     }
     public void randomize(double scaleFactor) {
-        latitude += scaleFactor * (RandomUtils.nextDouble() - 0.5);
-        longitude += scaleFactor * (RandomUtils.nextDouble() - 0.5);
+        latitude = (latitude != null ? latitude : 51.51406) + scaleFactor * (RandomUtils.nextDouble() - 0.5);
+        longitude = (longitude != null ? longitude : -0.08839) + scaleFactor * (RandomUtils.nextDouble() - 0.5);
     }
 }

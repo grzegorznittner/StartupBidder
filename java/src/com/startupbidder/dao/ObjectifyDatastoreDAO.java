@@ -1113,7 +1113,7 @@ public class ObjectifyDatastoreDAO {
 	}
 
 	public void deleteDocument(long docId) {
-		log.info("Deleting document id = " + docId);
+		//log.info("Deleting document id = " + docId);
 		getOfy().delete(ListingDoc.class, docId);
 	}
 

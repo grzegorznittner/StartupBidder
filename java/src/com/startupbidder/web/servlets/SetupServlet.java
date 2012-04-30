@@ -72,17 +72,26 @@ public class SetupServlet extends HttpServlet {
 			out.println("<form method=\"POST\" action=\"/system/create-mock-datastore/.html\">"
 					+ "<input type=\"submit\" value=\"Recreate mock datastore\"/></form>");
 
-            out.println("<form method=\"GET\" action=\"/cron/update-listing-stats/.html\">"
+            out.println("<form method=\"POST\" action=\"/cron/update-listing-stats/.html\">"
                     + "<input type=\"submit\" value=\"Update all listings stats\"/></form>");
 
-            out.println("<form method=\"GET\" action=\"/system/delete-angellist-cache/.html\">"
-                    + "<input type=\"submit\" value=\"Delete AngelList Cache\"/></form>");
+            out.println("<form method=\"POST\" action=\"/system/delete-geocode-cache/.html\">"
+                    + "<input type=\"submit\" value=\"Delete Geocode Cache\"/></form>");
 
             out.println("<p>AngelList Startup Import:</p>");
             out.println("<form method=\"POST\" action=\"/system/import-angellist-data/.html\">"
                     + "From ID: <input name=\"fromId\" type=\"text\" value=\"19000\"/></br>"
                     + "To ID: <input name=\"toId\" type=\"text\" value=\"19100\"/></br>"
                     + "<input type=\"submit\" value=\"Import Data\"/></form>");
+
+            out.println("<p>AngelList Startup Delete Cache:</p>");
+            out.println("<form method=\"POST\" action=\"/system/delete-angellist-cache/.html\">"
+                    + "From ID: <input name=\"fromId\" type=\"text\" value=\"19000\"/></br>"
+                    + "To ID: <input name=\"toId\" type=\"text\" value=\"19100\"/></br>"
+                    + "<input type=\"submit\" value=\"Delete Data\"/></form>");
+
+            out.println("<form method=\"POST\" action=\"/system/delete-angellist-cache/.html\">"
+                    + "<input type=\"submit\" value=\"Delete Full AngelList Cache\"/></form>");
 
 			out.println("<p>Google Doc credentials:</p>");
 			out.println("<form method=\"POST\" action=\"/system/set-property/.html\">"

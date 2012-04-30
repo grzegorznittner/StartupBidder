@@ -914,7 +914,7 @@ public class MockDataBuilder {
         }
         if (listingType == null) {
             for (String type: types) {
-                if (mantra.contains(type)) {
+                if (mantra != null && mantra.contains(type)) {
                     listingType = type;
                     break;
                 }
@@ -922,7 +922,7 @@ public class MockDataBuilder {
         }
         if (listingType == null) {
             for (String type: types) {
-                if (desc.contains(type)) {
+                if (desc != null && desc.contains(type)) {
                     listingType = type;
                     break;
                 }
@@ -934,18 +934,48 @@ public class MockDataBuilder {
         return listingType;
     }
 
-    public String deleteAngelListCache(UserVO loggedInUser) {
+    public String deleteAngelListCache(UserVO loggedInUser, String fromId, String toId) {
         if (loggedInUser == null || !loggedInUser.isAdmin()) {
             log.log(Level.WARNING, "User '" + loggedInUser + "' is not an admin.");
             return "User '" + loggedInUser + "' is not an admin.";
         }
         StringBuffer output = new StringBuffer();
-        QueryResultIterable<Key<AngelListCache>> a = getOfy().query(AngelListCache.class).fetchKeys();
-        output.append("Deleted AngelList Cache: " + a.toString() + "</br>");
+        if (StringUtils.isEmpty(fromId) || StringUtils.isEmpty(toId)) {
+            QueryResultIterable<Key<AngelListCache>> a = getOfy().query(AngelListCache.class).fetchKeys();
+            output.append("Deleted AngelList Cache: " + a.toString() + "</br>");
+            getOfy().delete(a);
+        }
+        else {
+            List<String> angelIds = fillAngelIds(fromId, toId);
+            for (String angelId : angelIds) {
+                String angelPath = ANGEL_STARTUP_API_ROOT + angelId;
+                try {
+                    AngelListCache angelListCache = getOfy().get(AngelListCache.class, angelPath);
+                    getOfy().delete(angelListCache);
+                    output.append("Deleted AngelList Cache id: " + angelId);
+                }
+                catch (NotFoundException e) {
+                    ;
+                }
+            }
+        }
+        return output.toString();
+    }
+
+    public String deleteGeocodeCache(UserVO loggedInUser) {
+        if (loggedInUser == null || !loggedInUser.isAdmin()) {
+            log.log(Level.WARNING, "User '" + loggedInUser + "' is not an admin.");
+            return "User '" + loggedInUser + "' is not an admin.";
+        }
+        StringBuffer output = new StringBuffer();
+        QueryResultIterable<Key<GeocodeLocation>> a = getOfy().query(GeocodeLocation.class).fetchKeys();
+        output.append("Deleted Geocode Cache: " + a.toString() + "</br>");
         getOfy().delete(a);
         return output.toString();
     }
-    
+
+    public static final String ANGEL_STARTUP_API_ROOT = "http://api.angel.co/1/startups/";
+
     private List<Listing> getAngelListings(String fromId, String toId) {
         List<Listing> listings = new ArrayList<Listing>();
         List<String> angelIds = fillAngelIds(fromId, toId);
@@ -953,7 +983,7 @@ public class MockDataBuilder {
         try {
             Objectify ofy = getOfy();
             for (String angelId : angelIds) {
-                String angelPath = "http://api.angel.co/1/startups/" + angelId;
+                String angelPath = ANGEL_STARTUP_API_ROOT + angelId;
                 AngelListCache angelListCache = null;
                 try {
                     angelListCache = ofy.get(AngelListCache.class, angelPath);
@@ -962,49 +992,71 @@ public class MockDataBuilder {
                     ;
                 }
                 if (angelListCache == null) {
-                    URL url = new URL(angelPath);
-                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                    connection.setDoOutput(true);
-                    connection.setRequestMethod("GET");
-                    StringWriter stringWriter = new StringWriter();
-                    IOUtils.copy(connection.getInputStream(), stringWriter, "UTF-8");
-                    String angelJson = stringWriter.toString();
-                    connection.disconnect();
-                    angelListCache = new AngelListCache(angelPath, angelJson);
-                    ofy.put(angelListCache);
-                }
-                if (angelListCache != null && angelListCache.json != null && angelListCache.json.contains("\"hidden\":false")) {
-                    ObjectMapper mapper = new ObjectMapper();
-                    mapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-                    ObjectReader reader = mapper.reader(AngelListing.class);
-                    AngelListing result = reader.readValue(angelListCache.json);
-                    //SBUser user = users.get(RandomUtils.nextInt(users.size()));
-                    String type = bestGuessListingType(result.name, result.high_concept, result.product_desc);
-                    int askamt = RandomUtils.nextInt(100)*1000;
-                    int askpct = 5 + 5*RandomUtils.nextInt(9);
-                    DateTime createdAt = new DateTime(result.created_at);
-                    DateTime modifiedAt = new DateTime(result.updated_at);
-                    String address = null;
-                    if (result.locations != null && result.locations.size() > 0) {
-                        AngelListing.AngelLocation loc = result.locations.get(0);
-                        address = loc.name;
+                    try {
+                        URL url = new URL(angelPath);
+                        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                        connection.setDoOutput(true);
+                        connection.setRequestMethod("GET");
+                        StringWriter stringWriter = new StringWriter();
+                        IOUtils.copy(connection.getInputStream(), stringWriter, "UTF-8");
+                        String angelJson = stringWriter.toString();
+                        connection.disconnect();
+                        angelListCache = new AngelListCache(angelPath, angelJson);
+                        ofy.put(angelListCache);
                     }
-                    Listing listing = prepareListing(
-                        ANGEL, // DtoToVoConverter.convert(user),
-                        result.name,
-                        Listing.State.ACTIVE,
-                        type,
-                        askamt,
-                        askpct,
-                        result.high_concept,
-                        result.product_desc,
-                        result.company_url,
-                        createdAt,
-                        modifiedAt,
-                        result.logo_url,
-                        address
-                    );
-                    listings.add(listing);
+                    catch (Exception e) {
+                        System.out.println("Exception while importing AngelList startup: "+angelId);
+                        e.printStackTrace();
+                    }
+                }
+                if (angelListCache == null) {
+                    System.out.println("Could not load AngelList cache for id: " + angelId);
+                }
+                else if (StringUtils.isEmpty(angelListCache.json)) {
+                    System.out.println("Unable to import, empty response for AngelList cache for id: " + angelId);
+                }
+                else if (!angelListCache.json.contains("\"hidden\":false")) {
+                    System.out.println("Unable to import, matching tag not found in AngelList cache for id: " + angelId + " json: " + angelListCache.json);
+                }
+                else {
+                    try {
+                        ObjectMapper mapper = new ObjectMapper();
+                        mapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+                        ObjectReader reader = mapper.reader(AngelListing.class);
+                        AngelListing result = reader.readValue(angelListCache.json);
+                        //SBUser user = users.get(RandomUtils.nextInt(users.size()));
+                        String type = bestGuessListingType(result.name, result.high_concept, result.product_desc);
+                        int askamt = RandomUtils.nextInt(100)*1000;
+                        int askpct = 5 + 5*RandomUtils.nextInt(9);
+                        DateTime createdAt = new DateTime(result.created_at);
+                        DateTime modifiedAt = new DateTime(result.updated_at);
+                        String address = null;
+                        if (result.locations != null && result.locations.size() > 0) {
+                            AngelListing.AngelLocation loc = result.locations.get(0);
+                            address = loc.name;
+                        }
+                        Listing listing = prepareListing(
+                            ANGEL, // DtoToVoConverter.convert(user),
+                            result.name,
+                            Listing.State.ACTIVE,
+                            type,
+                            askamt,
+                            askpct,
+                            result.high_concept,
+                            result.product_desc,
+                            result.company_url,
+                            createdAt,
+                            modifiedAt,
+                            result.logo_url,
+                            address
+                        );
+                        listings.add(listing);
+                        System.out.println("Added listing: "+listing);
+                    }
+                    catch (Exception e) {
+                        System.out.println("Exception while importing AngelList startup: "+angelId);
+                        e.printStackTrace();
+                    }
                 }
             }
         }
@@ -1076,13 +1128,11 @@ public class MockDataBuilder {
         GeocodeLocation location = null;
         if (address != null) {
             location = getGeocodedLocation(address);
+            location.randomize(0.1);
         }
-        if (location == null || location.address == null) {
+        if (location == null) {
             location = getRandomLocation();
             location.randomize(0.001);
-        }
-        else {
-            location.randomize(0.1);
         }
 
 		bp.address = location.address;
@@ -1141,7 +1191,7 @@ public class MockDataBuilder {
         
         String addressString = geocodeAddress(address);
         if (StringUtils.isEmpty(addressString)) {
-            GeocodeLocation location = new GeocodeLocation();
+            GeocodeLocation location = fallbackLocation(address);
             getOfy().put(location);
             return location;
         }
@@ -1188,14 +1238,20 @@ public class MockDataBuilder {
                 Iterator<JsonNode> locationIt = geometry.get("location").getElements();
                 String ta = locationIt.next().getValueAsText();
                 String ua = locationIt.next().getValueAsText();
-
+                if (StringUtils.isEmpty(ta)) {
+                    throw new Exception("no latitude found");
+                }
+                if (StringUtils.isEmpty(ua)) {
+                    throw new Exception("no longitude found");
+                }
                 properties.put("latitude", ta);
                 properties.put("longitude", ua);
             }
             else {
-                throw new Exception("no latitude and longitude found");
+                throw new Exception("no places location property found");
             }
             GeocodeLocation location = new GeocodeLocation(
+                    address,
                     properties.get("formatted_address"),
                     properties.get("LONG_locality"),
                     properties.get("state"),
@@ -1210,7 +1266,7 @@ public class MockDataBuilder {
             log.severe(e.getLocalizedMessage());
         }
 
-        GeocodeLocation location = new GeocodeLocation();
+        GeocodeLocation location = fallbackLocation(address);
         getOfy().put(location);
         return location;
     }
@@ -1219,25 +1275,25 @@ public class MockDataBuilder {
         String a = address.toLowerCase(Locale.ENGLISH);
         GeocodeLocation l = null;
         if (a.contains("san francisco")) {
-            l = new GeocodeLocation("600 Montgomery St, San Francisco, CA, USA", "San Francisco", "CA", "USA", 37.7952, -122.4028);
+            l = new GeocodeLocation(address, "600 Montgomery St, San Francisco, CA, USA", "San Francisco", "CA", "USA", 37.7952, -122.4028);
         }
         else if (a.contains("new york")) {
-            l = new GeocodeLocation("18 Broad St, New York, NY, USA", "New York", "NY", "USA", 40.706833, -74.011028);
+            l = new GeocodeLocation(address, "18 Broad St, New York, NY, USA", "New York", "NY", "USA", 40.706833, -74.011028);
         }
         else if (a.contains("berlin")) {
-            l = new GeocodeLocation("Platz der Republik 1, Berlin, Germany", "Berlin", null, "Germany", 52.5186, 13.376);
+            l = new GeocodeLocation(address, "Platz der Republik 1, Berlin, Germany", "Berlin", null, "Germany", 52.5186, 13.376);
         }
         else if (a.contains("los angeles")) {
-            l = new GeocodeLocation("200 Getty Center Drive  Los Angeles, CA, USA", "Los Angeles", "CA", "USA", 34.0775, -118.475);
+            l = new GeocodeLocation(address, "200 Getty Center Drive  Los Angeles, CA, USA", "Los Angeles", "CA", "USA", 34.0775, -118.475);
         }
         else if (a.contains("boston")) {
-            l = new GeocodeLocation("9 Oxford Street, Cambridge, MA, USA", "Cambridge", "MA", "USA", 42.374444, -71.116944);
+            l = new GeocodeLocation(address, "9 Oxford Street, Cambridge, MA, USA", "Cambridge", "MA", "USA", 42.374444, -71.116944);
         }
         else if (a.contains("austin")) {
-            l = new GeocodeLocation("1100 Congress St, Austin, TX, USA", "Austin", "TX", "USA", 30.274722, -97.740556);
+            l = new GeocodeLocation(address, "1100 Congress St, Austin, TX, USA", "Austin", "TX", "USA", 30.274722, -97.740556);
         }
         else {
-            l = new GeocodeLocation("Threadneedle St, London EC2R, UK", "London", null, "United Kingdom", 51.51406, -0.08839);
+            l = new GeocodeLocation(address, "Threadneedle St, London EC2R, UK", "London", null, "United Kingdom", 51.51406, -0.08839);
         }
         return l;
     }
@@ -1260,6 +1316,7 @@ public class MockDataBuilder {
             }
         }
         catch(Exception e) {
+            System.out.println("Could not geocode address " + address);
             e.printStackTrace();
         }
         return json;
@@ -1304,13 +1361,13 @@ public class MockDataBuilder {
             List<GeocodeLocation> source = new ArrayList<GeocodeLocation>();
             for (int i = 0; i < mockLocations.length; i++) {
                 Object[] l = mockLocations[i];
-                source.add(new GeocodeLocation((String)l[0], (String)l[1], (String)l[2], (String)l[3], (Double)l[4], (Double)l[5]));
+                source.add(new GeocodeLocation((String)l[0], (String)l[0], (String)l[1], (String)l[2], (String)l[3], (Double)l[4], (Double)l[5]));
             }
             // Fisher-Yates inside-out algorithm
             int n = source.size();
             List<GeocodeLocation> a = new ArrayList<GeocodeLocation>(n);
             for (int i = 0; i < n; i++) {
-                a.add(new GeocodeLocation(null, null, null, null, 0.0, 0.0));
+                a.add(new GeocodeLocation());
             }
             a.set(0, source.get(0));
             for (int i = 1; i < n - 1; i++) {
