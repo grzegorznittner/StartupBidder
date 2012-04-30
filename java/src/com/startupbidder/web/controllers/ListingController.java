@@ -24,11 +24,13 @@ import org.codehaus.jackson.node.ArrayNode;
 import com.startupbidder.dao.ObjectifyDatastoreDAO;
 import com.startupbidder.datamodel.Listing;
 import com.startupbidder.datamodel.ListingDoc;
+import com.startupbidder.datamodel.Notification;
 import com.startupbidder.vo.BaseVO;
 import com.startupbidder.vo.ListPropertiesVO;
 import com.startupbidder.vo.ListingAndUserVO;
 import com.startupbidder.vo.ListingPropertyVO;
 import com.startupbidder.vo.ListingVO;
+import com.startupbidder.vo.NotificationVO;
 import com.startupbidder.web.HttpHeaders;
 import com.startupbidder.web.HttpHeadersImpl;
 import com.startupbidder.web.ListingFacade;
@@ -121,6 +123,12 @@ public class ListingController extends ModelDrivenController {
 				return delete(request);
 			} else if("delete_file".equalsIgnoreCase(getCommand(1))) {
 				return deleteFile(request);
+			} else if("ask_owner".equalsIgnoreCase(getCommand(1))) {
+				return askOwner(request);
+			} else if("send_private".equalsIgnoreCase(getCommand(1))) {
+				return sendPrivate(request);
+			} else if("reply_message".equalsIgnoreCase(getCommand(1))) {
+				return replyMessage(request);
 			}
 		}
 
@@ -559,6 +567,86 @@ public class ListingController extends ModelDrivenController {
     	ListPropertiesVO listingProperties = getListProperties(request);
     	model = ListingFacade.instance().getListingNotifications(getLoggedInUser(), listingId, listingProperties);
         return new HttpHeadersImpl("messages").disableCaching();
+    }
+    
+    // GET /listings/ask_owner
+    private HttpHeaders askOwner(HttpServletRequest request) throws JsonParseException, JsonMappingException, IOException {
+		HttpHeaders headers = new HttpHeadersImpl("ask_owner");
+
+		ObjectMapper mapper = new ObjectMapper();
+		log.log(Level.INFO, "Parameters: " + request.getParameterMap());
+		String listingString = request.getParameter("message");
+		if (!StringUtils.isEmpty(listingString)) {
+			JsonNode rootNode = mapper.readValue(listingString, JsonNode.class);
+			String listingId = null;
+			if (rootNode.get("listing_id") != null) {
+				listingId = rootNode.get("listing_id").getValueAsText();
+			}
+			String text = null;
+			if (rootNode.get("text") != null) {
+				text = rootNode.get("text").getValueAsText();
+			}
+			NotificationVO notif = ServiceFacade.instance().askOwner(getLoggedInUser(), text, listingId, 
+					Notification.Type.ASK_LISTING_OWNER);
+			model = notif;
+		} else {
+			log.severe("Missing message parameter!");
+			headers.setStatus(500);
+		}
+		return headers;
+    }
+
+    // GET /listings/send_private
+    private HttpHeaders sendPrivate(HttpServletRequest request) throws JsonParseException, JsonMappingException, IOException {
+		HttpHeaders headers = new HttpHeadersImpl("send_private");
+
+		ObjectMapper mapper = new ObjectMapper();
+		log.log(Level.INFO, "Parameters: " + request.getParameterMap());
+		String listingString = request.getParameter("message");
+		if (!StringUtils.isEmpty(listingString)) {
+			JsonNode rootNode = mapper.readValue(listingString, JsonNode.class);
+			String listingId = null;
+			if (rootNode.get("listing_id") != null) {
+				listingId = rootNode.get("listing_id").getValueAsText();
+			}
+			String text = null;
+			if (rootNode.get("text") != null) {
+				text = rootNode.get("text").getValueAsText();
+			}
+			NotificationVO notif = ServiceFacade.instance().askOwner(getLoggedInUser(), text, listingId, 
+					Notification.Type.PRIVATE_MESSAGE);
+			model = notif;
+		} else {
+			log.severe("Missing message parameter!");
+			headers.setStatus(500);
+		}
+		return headers;
+    }
+
+    // GET /listings/send_private
+    private HttpHeaders replyMessage(HttpServletRequest request) throws JsonParseException, JsonMappingException, IOException {
+		HttpHeaders headers = new HttpHeadersImpl("reply_message");
+
+		ObjectMapper mapper = new ObjectMapper();
+		log.log(Level.INFO, "Parameters: " + request.getParameterMap());
+		String listingString = request.getParameter("message");
+		if (!StringUtils.isEmpty(listingString)) {
+			JsonNode rootNode = mapper.readValue(listingString, JsonNode.class);
+			String messageId = null;
+			if (rootNode.get("message_id") != null) {
+				messageId = rootNode.get("message_id").getValueAsText();
+			}
+			String text = null;
+			if (rootNode.get("text") != null) {
+				text = rootNode.get("text").getValueAsText();
+			}
+			NotificationVO notif = ServiceFacade.instance().replyMessage(getLoggedInUser(), text, messageId);
+			model = notif;
+		} else {
+			log.severe("Missing message parameter!");
+			headers.setStatus(500);
+		}
+		return headers;
     }
 
 	public Object getModel() {
