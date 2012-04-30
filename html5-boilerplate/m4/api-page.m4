@@ -411,6 +411,33 @@ include(api-banner.m4)
             Returns unread notifications for logged in user.
             </p>
         </dd>
+
+        <dt>POST /listing/ask_owner/
+            <form method="POST" action="/listing/ask_owner"><input type="text" name="message" value="{ listing_id: &rsquo;listing id&rsquo;, text: &rsquo;message text&rsquo; }"></input><input type="submit" value="TEST"></input></form>
+        </dt>
+        <dd>
+            <p>
+            Sends question to the listing owner.
+            </p>
+        </dd>
+
+        <dt>POST /listing/send_private/
+            <form method="POST" action="/listing/send_private"><input type="text" name="message" value="{ listing_id: &rsquo;listing id&rsquo;, text: &rsquo;message text&rsquo; }"></input><input type="submit" value="TEST"></input></form>
+        </dt>
+        <dd>
+            <p>
+            Sends private message to the listing owner.
+            </p>
+        </dd>
+
+        <dt>POST /listing/reply_message/
+            <form method="POST" action="/listing/reply_message"><input type="text" name="message" value="{ message_id: &rsquo;message id&rsquo;, text: &rsquo;message text&rsquo; }"></input><input type="submit" value="TEST"></input></form>
+        </dt>
+        <dd>
+            <p>
+            Sends reply to a message. Only messages sent through <code>/listing/ask_owner</code> and <code>/listing/send_private</code> can be replied using this method.
+            </p>
+        </dd>
     </div>
 
     <div class="boxtitle">FILE API</div>
