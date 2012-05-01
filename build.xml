@@ -189,8 +189,9 @@
   	<extract_host_and_port proxy="${env.https_proxy}" host_property="https_proxy_host" port_property="https_proxy_port"/>
   	<dev_appserver war="war" port="7777" >
       <options>
-        <!-- arg value="- -jvm_flag=-Xdebug"/>
-        <arg value="- -jvm_flag=-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=7778"/ -->
+        <!-- arg value="- -jvm_flag=-Xdebug"/
+        arg value="- -jvm_flag=-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=7778"/ -->
+        <arg value="--jvm_flag=-Xmx1024m"/>
         <arg value="--jvm_flag=-Dhttp.proxyHost=${http_proxy_host}"/>
         <arg value="--jvm_flag=-Dhttp.proxyPort=${http_proxy_port}"/>
         <arg value="--jvm_flag=-Dhttps.proxyHost=${https_proxy_host}"/>

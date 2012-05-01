@@ -9,6 +9,8 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.googlecode.objectify.NotFoundException;
 import com.startupbidder.web.controllers.ListingController;
@@ -71,7 +73,9 @@ public class MockDataBuilder {
 	public UserVO BURNTSKY;
 	public UserVO DRAGON;
     public UserVO ANGEL;
+    public UserVO STARTUPLY;
     public static final String ANGEL_EMAIL = "api@angel.co";
+    public static final String STARTUPLY_EMAIL = "contact@startuply.com";
 	public UserVO NOT_ACTIVATED;
 
 	public List<SBUser> users;
@@ -119,7 +123,11 @@ public class MockDataBuilder {
 		QueryResultIterable<Key<ListingDoc>> d = getOfy().query(ListingDoc.class).fetchKeys();
 		output.append("Deleted listing docs: " + docs.toString() + "</br>");
 		getOfy().delete(d);
-		
+
+        QueryResultIterable<Key<ListingLocation>> locs = getOfy().query(ListingLocation.class).fetchKeys();
+        output.append("Deleted listing locations: " + locs.toString() + "</br>");
+        getOfy().delete(locs);
+
 		QueryResultIterable<Key<ListingStats>> ls = getOfy().query(ListingStats.class).fetchKeys();
 		output.append("Deleted listings stats: " + ls.toString() + "</br>");
 		getOfy().delete(ls);		
@@ -233,9 +241,15 @@ public class MockDataBuilder {
 
         List<ListingLocation> listingLocList = new ArrayList<ListingLocation>();
         for (Listing listing : listings) {
-            listingLocList.add(new ListingLocation(listing));
-            ObjectifyDatastoreDAO.getInstance().updateListingStatistics(listing.id);
-            ListingFacade.instance().updateMockListingImages(listing.id);               
+            try {
+                listingLocList.add(new ListingLocation(listing));
+                ObjectifyDatastoreDAO.getInstance().updateListingStatistics(listing.id);
+                ListingFacade.instance().updateMockListingImages(listing.id);
+            }
+            catch (Exception e) {
+                System.out.println("Exception while processing listing id: " + listing.id);
+                e.printStackTrace();
+            }
         }
         output.append("Listing statistics updated and file update scheduled.</br>");
         getOfy().put(listingLocList);
@@ -243,8 +257,59 @@ public class MockDataBuilder {
         
         return output.toString();
     }
-    
-	public String printDatastoreContents(UserVO loggedInUser) {
+
+    public String importStartuplyData() {
+        StringBuffer output = new StringBuffer();
+        List<SBUser> users = createStartuplyUsers();
+        for (SBUser user : users) {
+            try {
+                getOfy().get(SBUser.class, user.id);
+            }
+            catch (NotFoundException e) {
+                getOfy().put(user);
+                output.append("Inserted Startuply User: " + user.name + "</br>");
+            }
+        }
+
+        try {
+            getOfy().get(Category.class, 1);
+        }
+        catch (NotFoundException e) {
+            getOfy().put(createCategories());
+            output.append("Inserted Categories");
+        }
+
+        List<Listing> listings = createStartuplyListings(users);
+        for (Listing listing : listings) {
+            try {
+                getOfy().get(Listing.class, listing.id);
+            }
+            catch (NotFoundException e) {
+                getOfy().put(listing);
+                output.append("Inserted Startuply Listing: " + listing.id + ".</br>");
+            }
+        }
+
+        List<ListingLocation> listingLocList = new ArrayList<ListingLocation>();
+        for (Listing listing : listings) {
+            try {
+                listingLocList.add(new ListingLocation(listing));
+                ObjectifyDatastoreDAO.getInstance().updateListingStatistics(listing.id);
+                ListingFacade.instance().updateMockListingImages(listing.id, false);
+            }
+            catch (Exception e) {
+                System.out.println("Exception while processing listing id: " + listing.id);
+                e.printStackTrace();
+            }
+        }
+        output.append("Listing statistics updated and file update scheduled.</br>");
+        getOfy().put(listingLocList);
+        output.append("Listing location data stored.</br>");
+
+        return output.toString();
+    }
+
+    public String printDatastoreContents(UserVO loggedInUser) {
 		if (loggedInUser == null || !loggedInUser.isAdmin()) {
 			log.log(Level.WARNING, "User '" + loggedInUser + "' is not an admin.");
 			return "User '" + loggedInUser + "' is not an admin.";
@@ -656,11 +721,29 @@ public class MockDataBuilder {
         user.status = SBUser.Status.ACTIVE;
         user.investor = true;
         user.lastLoggedIn = new Date();
-        users.add(user); // 10
+        users.add(user);
         ANGEL = DtoToVoConverter.convert(user);
         return users;
     }
-    
+
+    public List<SBUser> createStartuplyUsers() {
+        List<SBUser> users = new ArrayList<SBUser>();
+        SBUser user = new SBUser();
+        user.id = id();
+        user.mockData = true;
+        user.admin = true;
+        user.nickname = "Startuply";
+        user.name = "Startus Uplius";
+        user.email = STARTUPLY_EMAIL;
+        user.openId = user.email;
+        user.joined = new Date(0L);
+        user.status = SBUser.Status.ACTIVE;
+        user.investor = true;
+        user.lastLoggedIn = new Date();
+        users.add(user);
+        STARTUPLY = DtoToVoConverter.convert(user);
+        return users;
+    }
 	/**
 	 * Generates mock listings
 	 */
@@ -782,6 +865,14 @@ public class MockDataBuilder {
         return listings;
     }
 
+    public List<Listing> createStartuplyListings(List<SBUser> users) {
+        List<Listing> listings = new ArrayList<Listing>();
+        List<Listing> bps = getStartuplyListings();
+        for (Listing bpl : bps) {
+            listings.add(bpl);
+        }
+        return listings;
+    }
     private List<String> fillAngelIds(String fromId, String toId) {
         /*
         String[] presetIds = {
@@ -1051,7 +1142,7 @@ public class MockDataBuilder {
                             address
                         );
                         listings.add(listing);
-                        System.out.println("Added listing: "+listing);
+                        System.out.println("Added AngelList listing: "+listing);
                     }
                     catch (Exception e) {
                         System.out.println("Exception while importing AngelList startup: "+angelId);
@@ -1065,7 +1156,222 @@ public class MockDataBuilder {
         }
         return listings;
     }
-	
+
+    public static final String STARTUPLY_ROOT = "http://www.startuply.com";
+
+    private List<String> getStartuplyIds() {
+        List<String> startuplyIds = new ArrayList<String>();
+        String startuplyPath = STARTUPLY_ROOT + "/Startups/";
+        try {
+            StartuplyCache startuplyCache = null;
+            try {
+                startuplyCache = getOfy().get(StartuplyCache.class, startuplyPath);
+            }
+            catch (NotFoundException e) {
+                ;
+            }
+            if (startuplyCache == null) {
+                URL url = new URL(startuplyPath);
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection.setConnectTimeout(15000);
+                connection.setReadTimeout(15000);
+                connection.setDoOutput(true);
+                connection.setRequestMethod("GET");
+                StringWriter stringWriter = new StringWriter();
+                IOUtils.copy(connection.getInputStream(), stringWriter, "UTF-8");
+                String startuplyPage = stringWriter.toString();
+                connection.disconnect();
+                if (!StringUtils.isEmpty(startuplyPage)) {
+                    startuplyCache = new StartuplyCache(startuplyPath, startuplyPage);
+                    //getOfy().put(startuplyCache);       // too large for google
+                }
+                else {
+                    throw new Exception("Could not load startuply main page: "+startuplyPage);
+                }
+            }
+            Pattern p = Pattern.compile("<a href=\"/Companies/([^.]*)[.]aspx\">([^\\<])*</a>");
+            Matcher m = p.matcher(startuplyCache.page);
+            while (m.find()) {
+                String startuplyId = m.group(1);
+                startuplyIds.add(startuplyId);
+                //String startuplyName = m.group(2);
+                //System.out.println("StartuplyId: " + startuplyId + " name: " + startuplyName);
+            }            
+        }
+        catch (Exception e) {
+            System.out.println("Exception while importing Startuply startups");
+            e.printStackTrace();
+        }    
+        return startuplyIds;
+    }
+    
+    private List<Listing> getStartuplyListings() {
+        List<Listing> listings = new ArrayList<Listing>();
+        List<String> startuplyIds = getStartuplyIds();
+        System.out.println("Loading " + startuplyIds.size() + " Startuply listings");
+        
+        try {
+            Pattern namePattern = Pattern.compile("<h1 id=\"companyNameHeader\"[^>]*>([^<]*)", Pattern.MULTILINE);
+            Pattern websitePattern = Pattern.compile("<a href=\"http://([^\"]*)\">\\1", Pattern.MULTILINE);
+            Pattern addressPattern = Pattern.compile("<table id=\"branchTable\".*<td class=\"SortedColumn\">[^<]*</td>\\s*<td[^>]*>([^<]*)", Pattern.MULTILINE | Pattern.DOTALL);
+            Pattern logoPattern = Pattern.compile("<img\\s+src=\"([^\"]*)\"\\s+id=\"ctl00_Content_Logo\"", Pattern.MULTILINE);
+            Pattern industriesPattern = Pattern.compile("<div[^>]*>Industries</div>\\s*<div[^>]*>\\s*<a[^>]*>([^<]*)</a>\\s*", Pattern.MULTILINE);
+            Pattern industries2Pattern = Pattern.compile("\\s*,\\s*<a[^>]*>([^<]*)</a>", Pattern.MULTILINE);
+            Pattern missionPattern = Pattern.compile("<h1[^>]*>[^<]* Mission</h1>\\s*<div[^>]*>\\s*([^<]*)", Pattern.MULTILINE);
+            Pattern mantraPattern = Pattern.compile("([^\\.]+)");
+            Pattern productsPattern = Pattern.compile("<h1[^>]*>[^<]* Products</h1>\\s*<div[^>]*>\\s*([^<]*)", Pattern.MULTILINE);
+            Pattern teamPattern = Pattern.compile("<h1[^>]*>[^<]* Team</h1>\\s*<div[^>]*>\\s*([^<]*)", Pattern.MULTILINE);
+            Pattern lifePattern = Pattern.compile("<h1[^>]*>Life [^<]</h1>\\s*<div[^>]*>\\s*([^<]*)", Pattern.MULTILINE);
+            int counter = 0;
+            for (String startuplyId : startuplyIds) {
+                if (counter > 4000) {
+                    break;
+                }
+                counter++;
+                
+                String startuplyPath = STARTUPLY_ROOT + "/Companies/" + startuplyId + ".aspx";
+                StartuplyCache startuplyCache = null;
+                try {
+                    startuplyCache = getOfy().get(StartuplyCache.class, startuplyPath);
+                }
+                catch (NotFoundException e) {
+                    ;
+                }
+                if (startuplyCache == null) {
+                    try {
+                        URL url = new URL(startuplyPath);
+                        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                        connection.setDoOutput(true);
+                        connection.setRequestMethod("GET");
+                        StringWriter stringWriter = new StringWriter();
+                        IOUtils.copy(connection.getInputStream(), stringWriter, "UTF-8");
+                        String startuplyPage = stringWriter.toString();
+                        connection.disconnect();
+                        if (!StringUtils.isEmpty(startuplyPage)) {
+                            startuplyPage = startuplyPage.replaceAll("<br />", ""); // messes up multiline desc if we don't do this
+                            startuplyCache = new StartuplyCache(startuplyPath, startuplyPage);
+                            getOfy().put(startuplyCache);
+                        }
+                    }
+                    catch (Exception e) {
+                        System.out.println("Exception while importing Startuply startup: "+startuplyId);
+                        e.printStackTrace();
+                    }
+                }
+                if (startuplyCache == null) {
+                    System.out.println("Could not load Startuply cache for id: " + startuplyId);
+                }
+                else if (StringUtils.isEmpty(startuplyCache.page)) {
+                    System.out.println("Unable to import, empty response for Startuply cache page for id: " + startuplyId);
+                }
+                else {
+                    try {
+                        //System.out.println(startuplyCache.page);
+                        String name = "";
+                        Matcher nameMatcher = namePattern.matcher(startuplyCache.page);
+                        if (nameMatcher.find()) {
+                            name = nameMatcher.group(1);
+                        }
+                        String address = "";
+                        Matcher addressMatcher = addressPattern.matcher(startuplyCache.page);
+                        if (addressMatcher.find()) {
+                            address = addressMatcher.group(1);
+                        }
+                        String website = "";
+                        Matcher websiteMatcher = websitePattern.matcher(startuplyCache.page);
+                        if (websiteMatcher.find()) {
+                            website = "http://" + websiteMatcher.group(1);
+                        }
+                        String logo = "";
+                        Matcher logoMatcher = logoPattern.matcher(startuplyCache.page);
+                        if (logoMatcher.find()) {
+                            logo = STARTUPLY_ROOT + logoMatcher.group(1);
+                        }
+                        String industries = "";
+                        Matcher industriesMatcher = industriesPattern.matcher(startuplyCache.page);
+                        if (industriesMatcher.find()) {
+                            industries = industriesMatcher.group(1);
+                            industriesMatcher.usePattern(industries2Pattern);
+                            while (industriesMatcher.find()) {
+                                industries += " " + industriesMatcher.group(1);
+                            }
+                        }
+                        String description = "";
+                        String mantra = "";
+                        Matcher missionMatcher = missionPattern.matcher(startuplyCache.page);
+                        if (missionMatcher.find()) {
+                            description = missionMatcher.group(1);
+                            Matcher mantraMatcher = mantraPattern.matcher(description);
+                            if (mantraMatcher.find()) {
+                                mantra = mantraMatcher.group(1);
+                            }
+                        }
+                        Matcher productsMatcher = productsPattern.matcher(startuplyCache.page);
+                        if (productsMatcher.find()) {
+                            String products = productsMatcher.group(1);
+                            description += " " + products;
+                        }
+                        Matcher teamMatcher = teamPattern.matcher(startuplyCache.page);
+                        if (teamMatcher.find()) {
+                            String team = teamMatcher.group(1);
+                            description += " " + team;
+                        }                        
+                        Matcher lifeMatcher = lifePattern.matcher(startuplyCache.page);
+                        if (lifeMatcher.find()) {
+                            String life = lifeMatcher.group(1);
+                            description += " " + life;
+                        }
+
+                        if (StringUtils.isEmpty(name)) {
+                            System.out.println("Unable to import, couldn't find name for Startuply id: " + startuplyId);
+                        }
+                        else {
+                            String type = bestGuessListingType(name, industries, description);
+                            //System.out.println("Matched name:[" + name + "] address:["+address + "] website:["+website + "] logo:["+logo + "] industries:["+industries+"] mantra:["+mantra+"] description:["+description+"]");
+                            int askamt = 5*RandomUtils.nextInt(20)*1000;
+                            int askpct = 5 + 5*RandomUtils.nextInt(9);
+                            if (askamt < 10000) {
+                                askamt = 0;
+                            }
+                            if (StringUtils.isEmpty(mantra)) {
+                                mantra = industries;
+                            }
+                            if (StringUtils.isEmpty(description)) {
+                                description = "In summary, " + name + " is a great company in the " + industries + " space.";
+                            }
+                            Listing listing = prepareListing(
+                                    STARTUPLY, // DtoToVoConverter.convert(user),
+                                    name,
+                                    Listing.State.ACTIVE,
+                                    type,
+                                    askamt,
+                                    askpct,
+                                    mantra,
+                                    description,
+                                    website,
+                                    null,
+                                    null,
+                                    logo,
+                                    address
+                            );
+                            listings.add(listing);
+                            //System.out.println("Added Startuply listing: "+listing);
+                            System.out.println("Added Startuply listing "+ counter + " of " + startuplyIds.size() + " name: "+name);
+                        }
+                    }
+                    catch (Exception e) {
+                        System.out.println("Exception while importing Startuply startup: "+startuplyId);
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+        catch(Exception e) {
+            e.printStackTrace();
+        }
+        return listings;
+    }
+
     private Listing prepareListing(UserVO owner, String name, Listing.State state, String category, int amount, int percentage,
             String mantra, String summary) {
         return prepareListing(owner, name, state, category, amount, percentage, mantra, summary, null, null, null, null, null);
@@ -1145,7 +1451,7 @@ public class MockDataBuilder {
 
 		bp.videoUrl = getVideo();
 
-		bp.website = companyUrl != null ? companyUrl : getWebsite();
+		bp.website = !StringUtils.isEmpty(companyUrl) ? companyUrl : getWebsite();
 		
 		bp.answer1 = getQuote();
 		bp.answer2 = getQuote();
@@ -1174,7 +1480,7 @@ public class MockDataBuilder {
 		bp.answer25 = getQuoteWithNulls();
 		bp.answer26 = getQuoteWithNulls();
 		
-        if (logo_url != null) {
+        if (!StringUtils.isEmpty(logo_url)) {
             logo_url = logo_url.replaceAll("^https://", "http://");
             logoUrls.put(bp.id, logo_url);
         }
@@ -1298,8 +1604,13 @@ public class MockDataBuilder {
         return l;
     }
 
+    private boolean googleMapsAPIOverCapacity = false;
+    
     private String geocodeAddress(String address) {
         String json = null;
+        if (googleMapsAPIOverCapacity) {
+            return json;
+        }
         try {
             //String apiPath = "http://maps.googleapis.com/maps/api/geocode/json?language=en-GB&sensor=false&key=AIzaSyCZxuJD5cknHJ4ygggT-YPLJtIycTP76EY&address=" + URLEncoder.encode(address, "UTF-8");
             String apiPath = "http://maps.googleapis.com/maps/api/geocode/json?language=en-GB&sensor=false&address=" + URLEncoder.encode(address, "UTF-8");
@@ -1311,6 +1622,11 @@ public class MockDataBuilder {
             IOUtils.copy(connection.getInputStream(), stringWriter, "UTF-8");
             String jsonInput = stringWriter.toString();
             connection.disconnect();
+            if (jsonInput.contains("\"status\" : \"OVER_QUERY_LIMIT\"")) {
+                googleMapsAPIOverCapacity = true;
+                System.out.println("Google Maps API over capacity, shutting down future geocode requests");
+                return null;
+            }
             if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
                 json = jsonInput;
             }

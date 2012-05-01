@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.googlecode.objectify.ObjectifyService;
 import com.startupbidder.dao.AngelListCache;
 import com.startupbidder.dao.GeocodeLocation;
+import com.startupbidder.dao.StartuplyCache;
 import com.startupbidder.datamodel.Bid;
 import com.startupbidder.datamodel.Category;
 import com.startupbidder.datamodel.Comment;
@@ -67,6 +68,7 @@ public class FrontController extends HttpServlet {
 		ObjectifyService.register(ListingLocation.class);
         ObjectifyService.register(AngelListCache.class);
         ObjectifyService.register(GeocodeLocation.class);
+        ObjectifyService.register(StartuplyCache.class);
 	}
 	
 	@Override

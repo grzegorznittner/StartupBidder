@@ -55,6 +55,8 @@ public class SystemController extends ModelDrivenController {
                 return deleteGeocodeCache(request);
             } else if("import-angellist-data".equalsIgnoreCase(getCommand(1))) {
                 return importAngelListData(request);
+            } else if("import-startuply-data".equalsIgnoreCase(getCommand(1))) {
+                return importStartuplyData(request);
 			} else if("export-datastore".equalsIgnoreCase(getCommand(1))) {
 				return exportDatastore(request);
 			}
@@ -149,6 +151,18 @@ public class SystemController extends ModelDrivenController {
         if (loggedInUser != null && loggedInUser.isAdmin()) {
             String deletedObjects = new MockDataBuilder().clearDatastore(loggedInUser);
             model = deletedObjects + new MockDataBuilder().createMockDatastore(true, false);
+        } else {
+            headers.setStatus(500);
+        }
+        return headers;
+    }
+
+    private HttpHeaders importStartuplyData(HttpServletRequest request) {
+        HttpHeaders headers = new HttpHeadersImpl("import-startuply-data");
+
+        UserVO loggedInUser = getLoggedInUser();
+        if (loggedInUser != null && loggedInUser.isAdmin()) {
+            model = new MockDataBuilder().importStartuplyData();
         } else {
             headers.setStatus(500);
         }

@@ -1715,32 +1715,42 @@ public class ListingFacade {
 		return result;
 	}
 
-	public void updateMockListingImages(long listingId) {
+    public void updateMockListingImages(long listingId) {
+        updateMockListingImages(listingId, true);
+    }
+
+    public void updateMockListingImages(long listingId, boolean addDocs) {
 		MockDataBuilder mock = new MockDataBuilder();
 		
 		List<ListingPropertyVO> props = new ArrayList<ListingPropertyVO>();
 		
 		Listing listing = getDAO().getListing(listingId);
-        props.add(new ListingPropertyVO("business_plan_url", mock.getBusinessPlan()));
-        props.add(new ListingPropertyVO("presentation_url", mock.getPresentation()));
-        props.add(new ListingPropertyVO("financials_url", mock.getFinancials()));
+        props.add(new ListingPropertyVO("business_plan_url", (addDocs ? mock.getBusinessPlan() : null)));
+        props.add(new ListingPropertyVO("presentation_url", (addDocs ? mock.getPresentation() : null)));
+        props.add(new ListingPropertyVO("financials_url", (addDocs ? mock.getFinancials() : null)));
         props.add(new ListingPropertyVO("logo_url", mock.getLogo(listingId)));
-		for (ListingPropertyVO prop : props) {
-			if (prop.getPropertyValue() == null) {
-				continue;
-			}
-			ListingDoc doc = fetchAndUpdateListingDoc(listing, prop);
-			if (doc != null) {
-				Listing updatedlisting = updateListingDoc(listing, doc);
-				if (updatedlisting != null) {
-					listing = updatedlisting;
-				} else {
-					log.warning("Error updating listing. " + listing);
-				}
-			} else {
-				log.warning("Error while fetching/converting external resource. " + prop);
-			}
-		}
+        try {
+            for (ListingPropertyVO prop : props) {
+                if (prop.getPropertyValue() == null) {
+                    continue;
+                }
+                ListingDoc doc = fetchAndUpdateListingDoc(listing, prop);
+                if (doc != null) {
+                    Listing updatedlisting = updateListingDoc(listing, doc);
+                    if (updatedlisting != null) {
+                        listing = updatedlisting;
+                    } else {
+                        log.warning("Error updating listing. " + listing);
+                    }
+                } else {
+                    log.warning("Error while fetching/converting external resource. " + prop);
+                }
+            }
+        }
+        catch (Exception e) {
+            System.out.println("Exception while updating mock images for listing id: " + listingId);
+            e.printStackTrace();
+        }
 		getDAO().storeListing(listing);
 	}
 
