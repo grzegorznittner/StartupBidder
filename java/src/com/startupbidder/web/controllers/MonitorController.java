@@ -82,14 +82,22 @@ public class MonitorController extends ModelDrivenController {
 		return headers;
 	}
 
+    public static final int DEFAULT_MAX_RESULTS = 5;
+    public static final int MAX_RESULTS = 20;
+
 	/*
 	 * GET /monitor/active-for-user?type=<type name>
 	 * type name := ()
 	 */
 	private HttpHeaders activeForUser(HttpServletRequest request) {
 		HttpHeaders headers = new HttpHeadersImpl("active-for-user");
-		
-		model = ServiceFacade.instance().getMonitorsForUser(getLoggedInUser());
+
+        String maxItemsStr = request.getParameter("max_results");
+        int maxItems = maxItemsStr != null ? Integer.parseInt(maxItemsStr) : DEFAULT_MAX_RESULTS;
+        if (maxItems > MAX_RESULTS) { // avoid DoS attacks
+            maxItems = MAX_RESULTS;
+        }
+		model = ServiceFacade.instance().getMonitorsForUser(getLoggedInUser(), maxItems);
 		
 		return headers;
 	}
@@ -100,9 +108,15 @@ public class MonitorController extends ModelDrivenController {
 	 */
 	private HttpHeaders activeForOListing(HttpServletRequest request) {
 		HttpHeaders headers = new HttpHeadersImpl("active-for-listing");
-		
-		String listingId = getCommandOrParameter(request, 2, "id");
-		model = ServiceFacade.instance().getMonitorsForObject(getLoggedInUser(), listingId);
+
+        String maxItemsStr = request.getParameter("max_results");
+        int maxItems = maxItemsStr != null ? Integer.parseInt(maxItemsStr) : DEFAULT_MAX_RESULTS;
+        if (maxItems > MAX_RESULTS) { // avoid DoS attacks
+            maxItems = MAX_RESULTS;
+        }
+
+        String listingId = getCommandOrParameter(request, 2, "id");
+		model = ServiceFacade.instance().getMonitorsForObject(getLoggedInUser(), listingId, maxItems);
 		
 		return headers;
 	}

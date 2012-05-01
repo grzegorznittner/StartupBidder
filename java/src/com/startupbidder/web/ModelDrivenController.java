@@ -35,6 +35,7 @@ public abstract class ModelDrivenController {
 	private static final Logger log = Logger.getLogger(ModelDrivenController.class.getName());
 	
 	private static int DEFAULT_MAX_RESULTS = 5;
+    private static int MAX_RESULTS = 20;
 	private String command[];
 	private UserVO loggedInUser;
 	
@@ -167,6 +168,9 @@ public abstract class ModelDrivenController {
 		String maxItemsStr = request.getParameter("max_results");
 		
 		int maxItems = maxItemsStr != null ? Integer.parseInt(maxItemsStr) : DEFAULT_MAX_RESULTS;
+        if (maxItems > MAX_RESULTS) { // avoid DoS attacks
+            maxItems = MAX_RESULTS;
+        }
 		listingProperties.setMaxResults(maxItems);
 		listingProperties.setNextCursor(request.getParameter("next_cursor"));
 		listingProperties.setPrevCursor(request.getParameter("prev_cursor"));

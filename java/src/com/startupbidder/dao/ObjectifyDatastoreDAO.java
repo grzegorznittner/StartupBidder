@@ -483,8 +483,13 @@ public class ObjectifyDatastoreDAO {
 	}
 
 	public List<Listing> getAllListings() {
+        int maxResults = 20;
 		QueryResultIterable<Key<Listing>> listingsIt = getOfy().query(Listing.class)
-				.order("-listedOn").prefetchSize(20).fetchKeys();
+				.order("-listedOn")
+                .limit(maxResults)
+                .prefetchSize(maxResults)
+                .chunkSize(maxResults)
+                .fetchKeys();
 		List<Listing> listings = new ArrayList<Listing>(getOfy().get(listingsIt).values());
 		return listings;
 	}
@@ -539,6 +544,8 @@ public class ObjectifyDatastoreDAO {
 		QueryResultIterable<Key<Listing>> listingsIt = getOfy().query(Listing.class)
 				.filter("owner =", new Key<SBUser>(SBUser.class, userId))
 				.filter("state =", Listing.State.ACTIVE)
+                .limit(listingProperties.getMaxResults())
+                .chunkSize(listingProperties.getMaxResults())
 				.order("-listedOn").prefetchSize(listingProperties.getMaxResults()).fetchKeys();
 		List<Listing> listings = new ArrayList<Listing>(getOfy().get(listingsIt).values());
 		listingProperties.setNumberOfResults(listings.size());
@@ -548,7 +555,9 @@ public class ObjectifyDatastoreDAO {
 	public List<Listing> getUserListings(long userId, ListPropertiesVO listingProperties) {
 		QueryResultIterable<Key<Listing>> listingsIt = getOfy().query(Listing.class)
 				.filter("owner =", new Key<SBUser>(SBUser.class, userId))
-				.order("-listedOn").prefetchSize(listingProperties.getMaxResults()).fetchKeys();
+                .limit(listingProperties.getMaxResults())
+                .chunkSize(listingProperties.getMaxResults())
+                .order("-listedOn").prefetchSize(listingProperties.getMaxResults()).fetchKeys();
 		List<Listing> listings = new ArrayList<Listing>(getOfy().get(listingsIt).values());
 		listingProperties.setNumberOfResults(listings.size());
 		return listings;
@@ -557,7 +566,11 @@ public class ObjectifyDatastoreDAO {
 	public List<Listing> getTopListings(ListPropertiesVO listingProperties) {
 		QueryResultIterable<Key<ListingStats>> topListingsStat = getOfy().query(ListingStats.class)
 				.filter("state", Listing.State.ACTIVE)
-				.order("-score").prefetchSize(listingProperties.getMaxResults()).fetchKeys();
+				.order("-score")
+                .limit(listingProperties.getMaxResults())
+                .chunkSize(listingProperties.getMaxResults())
+                .prefetchSize(listingProperties.getMaxResults())
+                .fetchKeys();
 		
 		List<Key<Listing>> listingKeys = new ArrayList<Key<Listing>>();
 		for(ListingStats stat : getOfy().get(topListingsStat).values()) {
@@ -572,7 +585,11 @@ public class ObjectifyDatastoreDAO {
 	public List<Listing> getPostedListings(ListPropertiesVO listingProperties) {
 		QueryResultIterable<Key<Listing>> listingsIt = getOfy().query(Listing.class)
 				.filter("state =", Listing.State.POSTED)
-				.order("-posted").prefetchSize(listingProperties.getMaxResults()).fetchKeys();
+                .order("-posted")
+                .limit(listingProperties.getMaxResults())
+                .chunkSize(listingProperties.getMaxResults())
+                .prefetchSize(listingProperties.getMaxResults())
+                .fetchKeys();
 		List<Listing> listings = new ArrayList<Listing>(getOfy().get(listingsIt).values());
 		listingProperties.setNumberOfResults(listings.size());
 		return listings;
@@ -581,7 +598,11 @@ public class ObjectifyDatastoreDAO {
 	public List<Listing> getActiveListings(ListPropertiesVO listingProperties) {
 		QueryResultIterable<Key<Listing>> listingsIt = getOfy().query(Listing.class)
 				.filter("state =", Listing.State.ACTIVE)
-				.order("-listedOn").prefetchSize(listingProperties.getMaxResults()).fetchKeys();
+				.order("-listedOn")
+                .limit(listingProperties.getMaxResults())
+                .chunkSize(listingProperties.getMaxResults())
+                .prefetchSize(listingProperties.getMaxResults())
+                .fetchKeys();
 		List<Listing> listings = new ArrayList<Listing>(getOfy().get(listingsIt).values());
 		listingProperties.setNumberOfResults(listings.size());
 		return listings;
@@ -590,7 +611,11 @@ public class ObjectifyDatastoreDAO {
 	public List<Listing> getFrozenListings(ListPropertiesVO listingProperties) {
 		QueryResultIterable<Key<Listing>> listingsIt = getOfy().query(Listing.class)
 				.filter("state =", Listing.State.FROZEN)
-				.order("-listedOn").prefetchSize(listingProperties.getMaxResults()).fetchKeys();
+				.order("-listedOn")
+                .limit(listingProperties.getMaxResults())
+                .chunkSize(listingProperties.getMaxResults())
+                .prefetchSize(listingProperties.getMaxResults())
+                .fetchKeys();
 		List<Listing> listings = new ArrayList<Listing>(getOfy().get(listingsIt).values());
 		listingProperties.setNumberOfResults(listings.size());
 		return listings;
@@ -599,7 +624,11 @@ public class ObjectifyDatastoreDAO {
 	public List<Listing> getMostValuedListings(ListPropertiesVO listingProperties) {
 		QueryResultIterable<Key<ListingStats>> topListingsStat = getOfy().query(ListingStats.class)
 				.filter("state =", Listing.State.ACTIVE)
-				.order("-valuation").prefetchSize(listingProperties.getMaxResults()).fetchKeys();
+				.order("-valuation")
+                .limit(listingProperties.getMaxResults())
+                .chunkSize(listingProperties.getMaxResults())
+                .prefetchSize(listingProperties.getMaxResults())
+                .fetchKeys();
 		
 		List<Key<Listing>> listingKeys = new ArrayList<Key<Listing>>();
 		for(ListingStats stat : getOfy().get(topListingsStat).values()) {
@@ -614,7 +643,11 @@ public class ObjectifyDatastoreDAO {
 	public List<Listing> getMostDiscussedListings(ListPropertiesVO listingProperties) {
 		QueryResultIterable<Key<ListingStats>> topListingsStat = getOfy().query(ListingStats.class)
 				.filter("state =", Listing.State.ACTIVE)
-				.order("-numberOfComments").prefetchSize(listingProperties.getMaxResults()).fetchKeys();
+				.order("-numberOfComments")
+                .limit(listingProperties.getMaxResults())
+                .chunkSize(listingProperties.getMaxResults())
+                .prefetchSize(listingProperties.getMaxResults())
+                .fetchKeys();
 		
 		List<Key<Listing>> listingKeys = new ArrayList<Key<Listing>>();
 		for(ListingStats stat : getOfy().get(topListingsStat).values()) {
@@ -629,7 +662,11 @@ public class ObjectifyDatastoreDAO {
 	public List<Listing> getMostPopularListings(ListPropertiesVO listingProperties) {
 		QueryResultIterable<Key<ListingStats>> topListingsStat = getOfy().query(ListingStats.class)
 				.filter("state =", Listing.State.ACTIVE)
-				.order("-numberOfVotes").prefetchSize(listingProperties.getMaxResults()).fetchKeys();
+				.order("-numberOfVotes")
+                .limit(listingProperties.getMaxResults())
+                .chunkSize(listingProperties.getMaxResults())
+                .prefetchSize(listingProperties.getMaxResults())
+                .fetchKeys();
 		
 		List<Key<Listing>> listingKeys = new ArrayList<Key<Listing>>();
 		for(ListingStats stat : getOfy().get(topListingsStat).values()) {
@@ -644,7 +681,9 @@ public class ObjectifyDatastoreDAO {
 	public List<Listing> getLatestListings(ListPropertiesVO listingProperties) {
 		QueryResultIterable<Key<Listing>> listingsIt = getOfy().query(Listing.class)
 				.filter("state =", Listing.State.ACTIVE)
-				.order("-listedOn").prefetchSize(listingProperties.getMaxResults()).fetchKeys();
+				.order("-listedOn")
+                .prefetchSize(listingProperties.getMaxResults())
+                .fetchKeys();
 		List<Listing> listings = new ArrayList<Listing>(getOfy().get(listingsIt).values());
 		listingProperties.setNumberOfResults(listings.size());
 		return listings;
@@ -653,7 +692,11 @@ public class ObjectifyDatastoreDAO {
 	public List<Listing> getClosingListings(ListPropertiesVO listingProperties) {
 		QueryResultIterable<Key<Listing>> listingsIt = getOfy().query(Listing.class)
 				.filter("state =", Listing.State.ACTIVE)
-				.order("closingOn").prefetchSize(listingProperties.getMaxResults()).fetchKeys();
+				.order("closingOn")
+                .limit(listingProperties.getMaxResults())
+                .chunkSize(listingProperties.getMaxResults())
+                .prefetchSize(listingProperties.getMaxResults())
+                .fetchKeys();
 		List<Listing> listings = new ArrayList<Listing>(getOfy().get(listingsIt).values());
 		listingProperties.setNumberOfResults(listings.size());
 		return listings;
@@ -1156,7 +1199,10 @@ public class ObjectifyDatastoreDAO {
 	public List<Notification> getAllUserNotification(long userId, ListPropertiesVO notificationProperties) {
 		QueryResultIterable<Key<Notification>> notIt = getOfy().query(Notification.class)
 				.filter("user =", new Key<SBUser>(SBUser.class, userId))
-				.order("-created").limit(notificationProperties.getMaxResults()).fetchKeys();
+				.order("-created")
+                .limit(notificationProperties.getMaxResults())
+                .chunkSize(notificationProperties.getMaxResults())
+                .fetchKeys();
 		List<Notification> nots = new ArrayList<Notification>(getOfy().get(notIt).values());
 		return nots;
 	}
@@ -1223,27 +1269,33 @@ public class ObjectifyDatastoreDAO {
 		}
 	}
 
-	public List<Monitor> getMonitorsForListing(long objectId) {
+	public List<Monitor> getMonitorsForListing(long objectId, int maxResults) {
 		QueryResultIterable<Key<Monitor>> monIt = getOfy().query(Monitor.class)
 				.filter("monitoredListing =", new Key<Listing>(Listing.class, objectId))
-				.filter("active =", true).fetchKeys();
+				.filter("active =", true)
+                .limit(maxResults)
+                .chunkSize(maxResults)
+                .fetchKeys();
 		List<Monitor> mons = new ArrayList<Monitor>(getOfy().get(monIt).values());
 		return mons;
 	}
 
-	public List<Monitor> getMonitorsForUser(long userId) {
+	public List<Monitor> getMonitorsForUser(long userId, int maxResults) {
 		log.info("getMonitorsForUser: userId=" + userId);
 		
 		QueryResultIterable<Key<Monitor>> monIt = getOfy().query(Monitor.class)
 				.filter("user =", new Key<SBUser>(SBUser.class, userId))
-				.filter("active =", true).fetchKeys();
+				.filter("active =", true)
+                .limit(maxResults)
+                .chunkSize(maxResults)
+                .fetchKeys();
 		List<Monitor> mons = new ArrayList<Monitor>(getOfy().get(monIt).values());
 		return mons;
 	}
 
-	public Map<String, Monitor> getMonitorsMapForUser(long userId) {
+	public Map<String, Monitor> getMonitorsMapForUser(long userId, int maxResults) {
 		Map<String, Monitor> result = new HashMap<String, Monitor>();
-		for (Monitor monitor : getMonitorsForUser(userId)) {
+		for (Monitor monitor : getMonitorsForUser(userId, maxResults)) {
 			result.put(monitor.monitoredListing.getString(), monitor);
 		}
 		return result;

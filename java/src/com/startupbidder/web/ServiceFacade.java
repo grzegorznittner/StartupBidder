@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.datanucleus.util.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
@@ -64,14 +64,7 @@ public class ServiceFacade {
 	public ObjectifyDatastoreDAO getDAO () {
 		return ObjectifyDatastoreDAO.getInstance();
 	}
-	
-	/**
-	 * Returns list of listing's comments
-	 * 
-	 * @param listingId Listing id
-	 * @param cursor Cursor string
-	 * @return List of comments
-	 */
+
 	public CommentListVO getCommentsForListing(UserVO loggedInUser, String listingId, ListPropertiesVO commentProperties) {
 		CommentListVO list = new CommentListVO();
 		ListingVO listing = DtoToVoConverter.convert(getDAO().getListing(BaseVO.toKeyId(listingId)));
@@ -102,13 +95,7 @@ public class ServiceFacade {
 
 		return list;
 	}
-	
-	/**
-	 * Returns list of user's comments
-	 * @param listingId User id
-	 * @param cursor Cursor string
-	 * @return List of comments
-	 */
+
 	public CommentListVO getCommentsForUser(UserVO loggedInUser, String userId, ListPropertiesVO commentProperties) {
 		CommentListVO list = new CommentListVO();
 
@@ -177,7 +164,7 @@ public class ServiceFacade {
 		CommentVO comment = getComment(loggedInUser, commentId);
 		if (loggedInUser.isAdmin()) {
 			log.info("Admin is going to delete comment: " + comment);
-		} else if (!StringUtils.areStringsEqual(comment.getUser(), loggedInUser.getId())) {
+		} else if (!StringUtils.equals(comment.getUser(), loggedInUser.getId())) {
 			log.info("Comment author is going to delete comment: " + comment);
 		} else {
 			Listing listing = getDAO().getListing(BaseVO.toKeyId(comment.getListing()));
@@ -380,7 +367,7 @@ public class ServiceFacade {
 			return null;
 		}
 		Notification originalNotification = getDAO().getNotification(BaseVO.toKeyId(messageId));
-		if (!StringUtils.areStringsEqual(loggedInUser.getId(), originalNotification.user.getString())) {
+		if (!StringUtils.equals(loggedInUser.getId(), originalNotification.user.getString())) {
 			log.warning("User '" + loggedInUser.getNickname() + "' is replying to message not addressed to him. Original notification: " + originalNotification);
 			return null;
 		}
@@ -555,7 +542,7 @@ public class ServiceFacade {
 		return monitor;
 	}
 
-	public MonitorListVO getMonitorsForObject(UserVO loggedInUser, String listingId) {
+	public MonitorListVO getMonitorsForObject(UserVO loggedInUser, String listingId, int maxResults) {
 		MonitorListVO list = new MonitorListVO();
 		List<MonitorVO> monitors = null;
 
@@ -564,7 +551,7 @@ public class ServiceFacade {
 			return null;
 		}
 		monitors = DtoToVoConverter.convertMonitors(
-				getDAO().getMonitorsForListing(BaseVO.toKeyId(listingId)));
+				getDAO().getMonitorsForListing(BaseVO.toKeyId(listingId), maxResults));
 		int num = 1;
 		for (MonitorVO monitor : monitors) {
 			monitor.setOrderNumber(num++);
@@ -574,7 +561,7 @@ public class ServiceFacade {
 		return list;
 	}
 
-	public MonitorListVO getMonitorsForUser(UserVO loggedInUser) {
+	public MonitorListVO getMonitorsForUser(UserVO loggedInUser, int maxResults) {
 		MonitorListVO list = new MonitorListVO();
 		List<MonitorVO> monitors = null;
 		if (loggedInUser == null) {
@@ -583,7 +570,7 @@ public class ServiceFacade {
 		}
 
 		monitors = DtoToVoConverter.convertMonitors(
-				getDAO().getMonitorsForUser(loggedInUser.toKeyId()));
+				getDAO().getMonitorsForUser(loggedInUser.toKeyId(), maxResults));
 		int num = 1;
 		for (MonitorVO monitor : monitors) {
 			monitor.setOrderNumber(num++);
