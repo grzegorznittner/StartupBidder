@@ -30,6 +30,7 @@ import com.google.gdata.util.AuthenticationException;
 import com.startupbidder.datamodel.Listing;
 import com.startupbidder.datamodel.SystemProperty;
 import com.startupbidder.vo.DtoToVoConverter;
+import com.startupbidder.vo.ListPropertiesVO;
 import com.startupbidder.vo.ListingDocumentVO;
 import com.startupbidder.vo.ListingVO;
 import com.startupbidder.web.ListingFacade.UpdateReason;
@@ -159,7 +160,7 @@ public class DocService {
 		return updatedDocs;
 	}
 	
-	public List<Long> fullTextSearch(String searchText) {
+	public List<Long> fullTextSearch(String searchText, ListPropertiesVO listingProperties) {
 		List<Long> list = new ArrayList<Long>();
 		
 		if (StringUtils.isEmpty(searchText)) {
@@ -174,6 +175,7 @@ public class DocService {
 			URL feedUri = new URL("https://docs.google.com/feeds/default/private/full/");
 			DocumentQuery query = new DocumentQuery(feedUri);
 			query.setFullTextQuery(searchText);
+			query.setMaxResults(listingProperties.getMaxResults() * 2);
 			DocumentListFeed feed = client.getFeed(query, DocumentListFeed.class);
 			for (DocumentListEntry entry : feed.getEntries()) {
 				String title = entry.getTitle().getPlainText();

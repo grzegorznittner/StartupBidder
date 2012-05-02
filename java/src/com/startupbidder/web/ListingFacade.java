@@ -4,15 +4,19 @@ import java.io.File;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.ByteBuffer;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -23,6 +27,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.math.RandomUtils;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
@@ -1197,10 +1202,10 @@ public class ListingFacade {
 		
 		List<Long> results = null;
 		if (!StringUtils.isEmpty(keywords[0])) {
-			results = DocService.instance().fullTextSearch(keywords[0]);
+			results = DocService.instance().fullTextSearch(keywords[0], listingProperties);
 		}
 		if (!StringUtils.isEmpty(keywords[1])) {
-			List<Long> categoryResults = getDAO().getListingsIdsForCategory(keywords[1]);
+			List<Long> categoryResults = getDAO().getListingsIdsForCategory(keywords[1], listingProperties);
 			log.info("Category search for '" + keywords[1] + "' returned " + categoryResults.size()
 					+ " items. Items: " + Arrays.toString(categoryResults.toArray()));
 			if (results != null) {
@@ -1211,7 +1216,7 @@ public class ListingFacade {
 		}
 		if (!StringUtils.isEmpty(keywords[2])) {
 			String[] location = splitLocationString(keywords[2]);
-			List<Long> locationResults = getDAO().getListingsIdsForLocation(location[2], location[1], location[0]);
+			List<Long> locationResults = getDAO().getListingsIdsForLocation(location[2], location[1], location[0], listingProperties);
 			log.info("Location search for '" + Arrays.toString(location) + "' returned " + locationResults.size()
 					+ " items. Items: " + Arrays.toString(locationResults.toArray()));
 			if (results != null) {
@@ -1220,6 +1225,7 @@ public class ListingFacade {
 				results = locationResults;
 			}
 		}
+		results = results.subList(0, listingProperties.getMaxResults() > results.size() ? results.size() : listingProperties.getMaxResults());
 		log.info("Combined results contains " + results.size() + " items. Items: " + Arrays.toString(results.toArray()));
 		
 		List<Listing> listingList = getDAO().getListings(results);
@@ -1695,9 +1701,21 @@ public class ListingFacade {
 		if (data == null) {
 			List<ListingLocation> locations = getDAO().getAllListingLocations();
 			
+			DecimalFormatSymbols dfs = new DecimalFormatSymbols();
+			dfs.setDecimalSeparator('.');
+			DecimalFormat df = new DecimalFormat("###.######", dfs);
 			data = new ArrayList<Object[]>();
+			Set<String> locationSet = new HashSet<String>();
+			
+			String location[] = new String[2];
 			for (ListingLocation loc : locations) {
-				data.add(new Object[] {loc.getWebKey(), loc.latitude, loc.longitude});
+				location[0] = df.format(loc.latitude);
+				location[1] = df.format(loc.longitude);
+				while (locationSet.contains(location[0] + location[1])) {
+					location = randomizeLocation(loc, df);
+				}
+				locationSet.add(location[0] + location[1]);
+				data.add(new Object[] {loc.getWebKey(), location[0], location[1]});
 			}
 			// all listing locations cache is also modified in method ObjectifyDatastoreDAO.updateListingStateAndDates
 			mem.put(MEMCACHE_ALL_LISTING_LOCATIONS, data);
@@ -1714,7 +1732,13 @@ public class ListingFacade {
 		return result;
 	}
 
-    public void updateMockListingImages(long listingId) {
+    private String[] randomizeLocation(ListingLocation loc, DecimalFormat df) {
+    	log.info("Randomizing: " + loc);
+		return new String[] {df.format(loc.latitude + ((double)RandomUtils.nextInt(100)) * 0.000001),
+				df.format(loc.longitude + ((double)RandomUtils.nextInt(100)) * 0.000001)};
+	}
+
+	public void updateMockListingImages(long listingId) {
         updateMockListingImages(listingId, true);
     }
 

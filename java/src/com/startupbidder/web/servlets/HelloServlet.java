@@ -10,8 +10,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.codec.binary.Base64;
-import org.datanucleus.util.StringUtils;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
@@ -38,7 +36,6 @@ import com.startupbidder.vo.ListingAndUserVO;
 import com.startupbidder.vo.ListingDocumentVO;
 import com.startupbidder.vo.ListingListVO;
 import com.startupbidder.vo.ListingVO;
-import com.startupbidder.vo.UserListVO;
 import com.startupbidder.vo.UserVO;
 import com.startupbidder.web.FrontController;
 import com.startupbidder.web.ListingFacade;
@@ -225,7 +222,9 @@ public class HelloServlet extends HttpServlet {
 			
 			out.println("<p style=\"background: none repeat scroll 0% 0% rgb(187, 187, 187);\">Notification API:</p>");
 			out.println("<a href=\"/notification/user/.json?max_results=6\">Notifications for current user</a><br/>");
-			List<Notification> notifications = datastore.getAllUserNotification(currentUser.toKeyId(), new ListPropertiesVO());
+			ListPropertiesVO prop = new ListPropertiesVO();
+			prop.setMaxResults(20);
+			List<Notification> notifications = datastore.getAllUserNotification(currentUser.toKeyId(), prop);
 			if (!notifications.isEmpty()) {
 				for (Notification notif : notifications) {
 					out.println("" + notif.type + ", listing: " + notif.listingName + ", message:" + notif.message + "<br/>");
