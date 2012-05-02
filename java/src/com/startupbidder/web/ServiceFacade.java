@@ -561,7 +561,7 @@ public class ServiceFacade {
 		return list;
 	}
 
-	public MonitorListVO getMonitorsForUser(UserVO loggedInUser, int maxResults) {
+	public MonitorListVO getMonitorsForUser(UserVO loggedInUser) {
 		MonitorListVO list = new MonitorListVO();
 		List<MonitorVO> monitors = null;
 		if (loggedInUser == null) {
@@ -570,7 +570,7 @@ public class ServiceFacade {
 		}
 
 		monitors = DtoToVoConverter.convertMonitors(
-				getDAO().getMonitorsForUser(loggedInUser.toKeyId(), maxResults));
+				getDAO().getMonitorsForUser(loggedInUser.toKeyId()));
 		int num = 1;
 		for (MonitorVO monitor : monitors) {
 			monitor.setOrderNumber(num++);

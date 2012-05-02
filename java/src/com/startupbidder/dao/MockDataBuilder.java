@@ -247,8 +247,7 @@ public class MockDataBuilder {
                 ListingFacade.instance().updateMockListingImages(listing.id);
             }
             catch (Exception e) {
-                System.out.println("Exception while processing listing id: " + listing.id);
-                e.printStackTrace();
+                log.log(Level.WARNING, "Exception while processing listing id: " + listing.id, e);
             }
         }
         output.append("Listing statistics updated and file update scheduled.</br>");
@@ -298,8 +297,7 @@ public class MockDataBuilder {
                 ListingFacade.instance().updateMockListingImages(listing.id, false);
             }
             catch (Exception e) {
-                System.out.println("Exception while processing listing id: " + listing.id);
-                e.printStackTrace();
+                log.log(Level.WARNING, "Exception while processing listing id: " + listing.id, e);
             }
         }
         output.append("Listing statistics updated and file update scheduled.</br>");
@@ -1096,18 +1094,17 @@ public class MockDataBuilder {
                         ofy.put(angelListCache);
                     }
                     catch (Exception e) {
-                        System.out.println("Exception while importing AngelList startup: "+angelId);
-                        e.printStackTrace();
+                        log.log(Level.WARNING, "Exception while importing AngelList startup: " + angelId, e);
                     }
                 }
                 if (angelListCache == null) {
-                    System.out.println("Could not load AngelList cache for id: " + angelId);
+                    log.info("Could not load AngelList cache for id: " + angelId);
                 }
                 else if (StringUtils.isEmpty(angelListCache.json)) {
-                    System.out.println("Unable to import, empty response for AngelList cache for id: " + angelId);
+                    log.info("Unable to import, empty response for AngelList cache for id: " + angelId);
                 }
                 else if (!angelListCache.json.contains("\"hidden\":false")) {
-                    System.out.println("Unable to import, matching tag not found in AngelList cache for id: " + angelId + " json: " + angelListCache.json);
+                    log.info("Unable to import, matching tag not found in AngelList cache for id: " + angelId + " json: " + angelListCache.json);
                 }
                 else {
                     try {
@@ -1142,10 +1139,10 @@ public class MockDataBuilder {
                             address
                         );
                         listings.add(listing);
-                        System.out.println("Added AngelList listing: "+listing);
+                        log.info("Added AngelList listing: " + listing);
                     }
                     catch (Exception e) {
-                        System.out.println("Exception while importing AngelList startup: "+angelId);
+                        log.info("Exception while importing AngelList startup: " + angelId);
                         e.printStackTrace();
                     }
                 }
@@ -1195,12 +1192,11 @@ public class MockDataBuilder {
                 String startuplyId = m.group(1);
                 startuplyIds.add(startuplyId);
                 //String startuplyName = m.group(2);
-                //System.out.println("StartuplyId: " + startuplyId + " name: " + startuplyName);
+                //log.info("StartuplyId: " + startuplyId + " name: " + startuplyName);
             }            
         }
         catch (Exception e) {
-            System.out.println("Exception while importing Startuply startups");
-            e.printStackTrace();
+            log.log(Level.WARNING, "Exception while importing Startuply startups", e);
         }    
         return startuplyIds;
     }
@@ -1208,7 +1204,7 @@ public class MockDataBuilder {
     private List<Listing> getStartuplyListings() {
         List<Listing> listings = new ArrayList<Listing>();
         List<String> startuplyIds = getStartuplyIds();
-        System.out.println("Loading " + startuplyIds.size() + " Startuply listings");
+        log.info("Loading " + startuplyIds.size() + " Startuply listings");
         
         try {
             Pattern namePattern = Pattern.compile("<h1 id=\"companyNameHeader\"[^>]*>([^<]*)", Pattern.MULTILINE);
@@ -1254,19 +1250,18 @@ public class MockDataBuilder {
                         }
                     }
                     catch (Exception e) {
-                        System.out.println("Exception while importing Startuply startup: "+startuplyId);
-                        e.printStackTrace();
+                        log.log(Level.WARNING, "Exception while importing Startuply startup: "+startuplyId, e);
                     }
                 }
                 if (startuplyCache == null) {
-                    System.out.println("Could not load Startuply cache for id: " + startuplyId);
+                    log.info("Could not load Startuply cache for id: " + startuplyId);
                 }
                 else if (StringUtils.isEmpty(startuplyCache.page)) {
-                    System.out.println("Unable to import, empty response for Startuply cache page for id: " + startuplyId);
+                    log.info("Unable to import, empty response for Startuply cache page for id: " + startuplyId);
                 }
                 else {
                     try {
-                        //System.out.println(startuplyCache.page);
+                        //log.info(startuplyCache.page);
                         String name = "";
                         Matcher nameMatcher = namePattern.matcher(startuplyCache.page);
                         if (nameMatcher.find()) {
@@ -1323,11 +1318,11 @@ public class MockDataBuilder {
                         }
 
                         if (StringUtils.isEmpty(name)) {
-                            System.out.println("Unable to import, couldn't find name for Startuply id: " + startuplyId);
+                            log.info("Unable to import, couldn't find name for Startuply id: " + startuplyId);
                         }
                         else {
                             String type = bestGuessListingType(name, industries, description);
-                            //System.out.println("Matched name:[" + name + "] address:["+address + "] website:["+website + "] logo:["+logo + "] industries:["+industries+"] mantra:["+mantra+"] description:["+description+"]");
+                            //log.info("Matched name:[" + name + "] address:["+address + "] website:["+website + "] logo:["+logo + "] industries:["+industries+"] mantra:["+mantra+"] description:["+description+"]");
                             int askamt = 5*RandomUtils.nextInt(20)*1000;
                             int askpct = 5 + 5*RandomUtils.nextInt(9);
                             if (askamt < 10000) {
@@ -1355,13 +1350,12 @@ public class MockDataBuilder {
                                     address
                             );
                             listings.add(listing);
-                            //System.out.println("Added Startuply listing: "+listing);
-                            System.out.println("Added Startuply listing "+ counter + " of " + startuplyIds.size() + " name: "+name);
+                            //log.info("Added Startuply listing: "+listing);
+                            log.info("Added Startuply listing " + counter + " of " + startuplyIds.size() + " name: " + name);
                         }
                     }
                     catch (Exception e) {
-                        System.out.println("Exception while importing Startuply startup: "+startuplyId);
-                        e.printStackTrace();
+                        log.log(Level.WARNING, "Exception while importing Startuply startup: " + startuplyId, e);
                     }
                 }
             }
@@ -1624,7 +1618,7 @@ public class MockDataBuilder {
             connection.disconnect();
             if (jsonInput.contains("\"status\" : \"OVER_QUERY_LIMIT\"")) {
                 googleMapsAPIOverCapacity = true;
-                System.out.println("Google Maps API over capacity, shutting down future geocode requests");
+                log.info("Google Maps API over capacity, shutting down future geocode requests");
                 return null;
             }
             if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
@@ -1632,8 +1626,7 @@ public class MockDataBuilder {
             }
         }
         catch(Exception e) {
-            System.out.println("Could not geocode address " + address);
-            e.printStackTrace();
+            log.log(Level.WARNING, "Could not geocode address " + address, e);
         }
         return json;
     }

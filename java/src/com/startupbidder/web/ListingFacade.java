@@ -801,7 +801,7 @@ public class ListingFacade {
 	
 	public DiscoverListingsVO getDiscoverListingList(UserVO loggedInUser) {
 		DiscoverListingsVO result = new DiscoverListingsVO();
-		Map<String, Monitor> monitors = loggedInUser != null ? getDAO().getMonitorsMapForUser(loggedInUser.toKeyId(), 4) : new HashMap<String, Monitor>();
+		Map<String, Monitor> monitors = loggedInUser != null ? getDAO().getMonitorsMapForUser(loggedInUser.toKeyId()) : new HashMap<String, Monitor>();
 		
 		ListPropertiesVO props = new ListPropertiesVO();
 		props.setMaxResults(4);
@@ -844,7 +844,7 @@ public class ListingFacade {
 			// on John's request we return 200 when user is not logged in
 			return result;
 		}
-		Map<String, Monitor> monitors = getDAO().getMonitorsMapForUser(loggedInUser.toKeyId(), 4);
+		Map<String, Monitor> monitors = getDAO().getMonitorsMapForUser(loggedInUser.toKeyId());
 		
 		ListPropertiesVO props = new ListPropertiesVO();
 		props.setMaxResults(100);
@@ -939,7 +939,7 @@ public class ListingFacade {
 	
 	private List<Listing> getMonitoredListings(UserVO loggedInUser, int maxResults) {
 		List<Key<Listing>> monitoredListingKeys = new ArrayList<Key<Listing>>();
-		List<Monitor> monitors = getDAO().getMonitorsForUser(loggedInUser.toKeyId(), maxResults);
+		List<Monitor> monitors = getDAO().getMonitorsForUser(loggedInUser.toKeyId());
 		log.info("Fetched monitors for user '" + loggedInUser.toKeyId() + "': " + monitors);
 		for (Monitor monitor : monitors) {
 			monitoredListingKeys.add(new Key<Listing>(Listing.class, monitor.monitoredListing.getId()));
@@ -953,7 +953,7 @@ public class ListingFacade {
 	public ListingListVO getMonitoredListings(UserVO loggedInUser, ListPropertiesVO listingProperties) {
 		List<ListingVO> listings = DtoToVoConverter.convertListings(
 				getMonitoredListings(loggedInUser, listingProperties.getMaxResults()));
-		Map<String, Monitor> monitors = loggedInUser != null ? getDAO().getMonitorsMapForUser(loggedInUser.toKeyId(), listingProperties.getMaxResults()) : new HashMap<String, Monitor>();
+		Map<String, Monitor> monitors = loggedInUser != null ? getDAO().getMonitorsMapForUser(loggedInUser.toKeyId()) : new HashMap<String, Monitor>();
 		int index = listingProperties.getStartIndex() > 0 ? listingProperties.getStartIndex() : 1;
 		for (ListingVO listing : listings) {
 			applyListingData(loggedInUser, listing, monitors.get(listing.getId()));
@@ -971,7 +971,7 @@ public class ListingFacade {
 	public ListingListVO getClosingActiveListings(UserVO loggedInUser, ListPropertiesVO listingProperties) {
 		List<ListingVO> listings = DtoToVoConverter.convertListings(getDAO().getClosingListings(listingProperties));
 		int index = listingProperties.getStartIndex() > 0 ? listingProperties.getStartIndex() : 1;
-		Map<String, Monitor> monitors = loggedInUser != null ? getDAO().getMonitorsMapForUser(loggedInUser.toKeyId(), listingProperties.getMaxResults()) : new HashMap<String, Monitor>();
+		Map<String, Monitor> monitors = loggedInUser != null ? getDAO().getMonitorsMapForUser(loggedInUser.toKeyId()) : new HashMap<String, Monitor>();
 		for (ListingVO listing : listings) {
 			applyListingData(loggedInUser, listing, monitors.get(listing.getId()));
 			listing.setOrderNumber(index++);
@@ -990,7 +990,7 @@ public class ListingFacade {
 	 */
 	public ListingListVO getMostDiscussedActiveListings(UserVO loggedInUser, ListPropertiesVO listingProperties) {
 		List<ListingVO> listings = DtoToVoConverter.convertListings(getDAO().getMostDiscussedListings(listingProperties));
-		Map<String, Monitor> monitors = loggedInUser != null ? getDAO().getMonitorsMapForUser(loggedInUser.toKeyId(), listingProperties.getMaxResults()) : new HashMap<String, Monitor>();
+		Map<String, Monitor> monitors = loggedInUser != null ? getDAO().getMonitorsMapForUser(loggedInUser.toKeyId()) : new HashMap<String, Monitor>();
 		int index = listingProperties.getStartIndex() > 0 ? listingProperties.getStartIndex() : 1;
 		for (ListingVO listing : listings) {
 			applyListingData(loggedInUser, listing, monitors.get(listing.getId()));
@@ -1012,7 +1012,7 @@ public class ListingFacade {
 	 */
 	public ListingListVO getMostPopularActiveListings(UserVO loggedInUser, ListPropertiesVO listingProperties) {
 		List<ListingVO> listings = DtoToVoConverter.convertListings(getDAO().getMostPopularListings(listingProperties));
-		Map<String, Monitor> monitors = loggedInUser != null ? getDAO().getMonitorsMapForUser(loggedInUser.toKeyId(), listingProperties.getMaxResults()) : new HashMap<String, Monitor>();
+		Map<String, Monitor> monitors = loggedInUser != null ? getDAO().getMonitorsMapForUser(loggedInUser.toKeyId()) : new HashMap<String, Monitor>();
 		int index = listingProperties.getStartIndex() > 0 ? listingProperties.getStartIndex() : 1;
 		for (ListingVO listing : listings) {
 			applyListingData(loggedInUser, listing, monitors.get(listing.getId()));
@@ -1036,7 +1036,7 @@ public class ListingFacade {
 		ListPropertiesVO tmpProperties = new ListPropertiesVO();
 		tmpProperties.setMaxResults(Integer.MAX_VALUE);
 		List<ListingVO> listings = DtoToVoConverter.convertListings(getDAO().getTopListings(tmpProperties));
-		Map<String, Monitor> monitors = loggedInUser != null ? getDAO().getMonitorsMapForUser(loggedInUser.toKeyId(), listingProperties.getMaxResults()) : new HashMap<String, Monitor>();
+		Map<String, Monitor> monitors = loggedInUser != null ? getDAO().getMonitorsMapForUser(loggedInUser.toKeyId()) : new HashMap<String, Monitor>();
 		for (ListingVO listing : listings) {
 			applyListingData(loggedInUser, listing, monitors.get(listing.getId()));
 		}
@@ -1078,7 +1078,7 @@ public class ListingFacade {
 	 */
 	public ListingListVO getTopActiveListings(UserVO loggedInUser, ListPropertiesVO listingProperties) {
 		List<ListingVO> listings = DtoToVoConverter.convertListings(getDAO().getTopListings(listingProperties));
-		Map<String, Monitor> monitors = loggedInUser != null ? getDAO().getMonitorsMapForUser(loggedInUser.toKeyId(), listingProperties.getMaxResults()) : new HashMap<String, Monitor>();
+		Map<String, Monitor> monitors = loggedInUser != null ? getDAO().getMonitorsMapForUser(loggedInUser.toKeyId()) : new HashMap<String, Monitor>();
 		int index = listingProperties.getStartIndex() > 0 ? listingProperties.getStartIndex() : 1;
 		for (ListingVO listing : listings) {
 			applyListingData(loggedInUser, listing, monitors.get(listing.getId()));
@@ -1107,7 +1107,7 @@ public class ListingFacade {
 			listings = DtoToVoConverter.convertListings(
 					getDAO().getUserActiveListings(BaseVO.toKeyId(userId), listingProperties));
 		}
-		Map<String, Monitor> monitors = loggedInUser != null ? getDAO().getMonitorsMapForUser(loggedInUser.toKeyId(), listingProperties.getMaxResults()) : new HashMap<String, Monitor>();
+		Map<String, Monitor> monitors = loggedInUser != null ? getDAO().getMonitorsMapForUser(loggedInUser.toKeyId()) : new HashMap<String, Monitor>();
 		int index = listingProperties.getStartIndex() > 0 ? listingProperties.getStartIndex() : 1;
 		for (ListingVO listing : listings) {
 			applyListingData(loggedInUser, listing, monitors.get(listing.getId()));
@@ -1132,7 +1132,7 @@ public class ListingFacade {
 			return list;
 		}
 		List<ListingVO> listings = DtoToVoConverter.convertListings(getDAO().getPostedListings(listingProperties));
-		Map<String, Monitor> monitors = loggedInUser != null ? getDAO().getMonitorsMapForUser(loggedInUser.toKeyId(), listingProperties.getMaxResults()) : new HashMap<String, Monitor>();
+		Map<String, Monitor> monitors = loggedInUser != null ? getDAO().getMonitorsMapForUser(loggedInUser.toKeyId()) : new HashMap<String, Monitor>();
 		int index = listingProperties.getStartIndex() > 0 ? listingProperties.getStartIndex() : 1;
 		for (ListingVO listing : listings) {
 			applyListingData(loggedInUser, listing, monitors.get(listing.getId()));
@@ -1151,7 +1151,7 @@ public class ListingFacade {
 	 */
 	public ListingListVO getLatestActiveListings(UserVO loggedInUser, ListPropertiesVO listingProperties) {
 		List<ListingVO> listings = DtoToVoConverter.convertListings(getDAO().getActiveListings(listingProperties));
-		Map<String, Monitor> monitors = loggedInUser != null ? getDAO().getMonitorsMapForUser(loggedInUser.toKeyId(), listingProperties.getMaxResults()) : new HashMap<String, Monitor>();
+		Map<String, Monitor> monitors = loggedInUser != null ? getDAO().getMonitorsMapForUser(loggedInUser.toKeyId()) : new HashMap<String, Monitor>();
 		int index = listingProperties.getStartIndex() > 0 ? listingProperties.getStartIndex() : 1;
 		for (ListingVO listing : listings) {
 			applyListingData(loggedInUser, listing, monitors.get(listing.getId()));
@@ -1177,7 +1177,7 @@ public class ListingFacade {
 			return list;
 		}
 		List<ListingVO> listings = DtoToVoConverter.convertListings(getDAO().getFrozenListings(listingProperties));
-		Map<String, Monitor> monitors = loggedInUser != null ? getDAO().getMonitorsMapForUser(loggedInUser.toKeyId(), listingProperties.getMaxResults()) : new HashMap<String, Monitor>();
+		Map<String, Monitor> monitors = loggedInUser != null ? getDAO().getMonitorsMapForUser(loggedInUser.toKeyId()) : new HashMap<String, Monitor>();
 		int index = listingProperties.getStartIndex() > 0 ? listingProperties.getStartIndex() : 1;
 		for (ListingVO listing : listings) {
 			applyListingData(loggedInUser, listing, monitors.get(listing.getId()));

@@ -1280,22 +1280,20 @@ public class ObjectifyDatastoreDAO {
 		return mons;
 	}
 
-	public List<Monitor> getMonitorsForUser(long userId, int maxResults) {
+	public List<Monitor> getMonitorsForUser(long userId) {
 		log.info("getMonitorsForUser: userId=" + userId);
 		
 		QueryResultIterable<Key<Monitor>> monIt = getOfy().query(Monitor.class)
 				.filter("user =", new Key<SBUser>(SBUser.class, userId))
 				.filter("active =", true)
-                .limit(maxResults)
-                .chunkSize(maxResults)
                 .fetchKeys();
 		List<Monitor> mons = new ArrayList<Monitor>(getOfy().get(monIt).values());
 		return mons;
 	}
 
-	public Map<String, Monitor> getMonitorsMapForUser(long userId, int maxResults) {
+	public Map<String, Monitor> getMonitorsMapForUser(long userId) {
 		Map<String, Monitor> result = new HashMap<String, Monitor>();
-		for (Monitor monitor : getMonitorsForUser(userId, maxResults)) {
+		for (Monitor monitor : getMonitorsForUser(userId)) {
 			result.put(monitor.monitoredListing.getString(), monitor);
 		}
 		return result;

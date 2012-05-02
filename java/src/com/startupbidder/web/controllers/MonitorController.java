@@ -92,12 +92,7 @@ public class MonitorController extends ModelDrivenController {
 	private HttpHeaders activeForUser(HttpServletRequest request) {
 		HttpHeaders headers = new HttpHeadersImpl("active-for-user");
 
-        String maxItemsStr = request.getParameter("max_results");
-        int maxItems = maxItemsStr != null ? Integer.parseInt(maxItemsStr) : DEFAULT_MAX_RESULTS;
-        if (maxItems > MAX_RESULTS) { // avoid DoS attacks
-            maxItems = MAX_RESULTS;
-        }
-		model = ServiceFacade.instance().getMonitorsForUser(getLoggedInUser(), maxItems);
+		model = ServiceFacade.instance().getMonitorsForUser(getLoggedInUser());
 		
 		return headers;
 	}
