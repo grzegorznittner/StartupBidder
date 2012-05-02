@@ -13,9 +13,7 @@ import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 
 import com.startupbidder.dao.ObjectifyDatastoreDAO;
-import com.startupbidder.datamodel.Listing;
 import com.startupbidder.datamodel.Notification;
-import com.startupbidder.datamodel.SBUser;
 import com.startupbidder.vo.BaseVO;
 import com.startupbidder.vo.DtoToVoConverter;
 import com.startupbidder.vo.ListingVO;
@@ -50,8 +48,8 @@ public class TaskController extends ModelDrivenController {
 		}
 		failFast = request.getHeader("X-AppEngine-FailFast");
 		
-		//log.log(Level.INFO, "Task '" + taskName + "' called of queue '" + queueName
-		//		+ "', taksRetryCount=" + taskRetryCount + ", failFast=" + failFast);
+		log.log(Level.INFO, "Task '" + taskName + "' called of queue '" + queueName
+				+ "', taksRetryCount=" + taskRetryCount + ", failFast=" + failFast);
 		
 		if("calculate-user-stats".equalsIgnoreCase(getCommand(1))) {
 			return calculateUserStats(request);

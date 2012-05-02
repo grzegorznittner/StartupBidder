@@ -77,13 +77,13 @@ public class ObjectifyDatastoreDAO {
 
 	public SBUser getUserByEmail(String email) {
 		SBUser user = getOfy().query(SBUser.class).filter("email =", email).get();
-		//log.info("User for " + email + " is: " + user);
+		log.info("User for " + email + " is: " + user);
 		return user;
 	}
 
 	public SBUser getUserByAuthCookie(String authCookie) {
 		SBUser user = getOfy().query(SBUser.class).filter("authCookie =", authCookie).get();
-		//log.info("User for cookie '" + authCookie + "' is: " + user);
+		log.info("User for cookie '" + authCookie + "' is: " + user);
 		return user != null && user.status == SBUser.Status.ACTIVE ? user : null;
 	}
 
@@ -146,7 +146,7 @@ public class ObjectifyDatastoreDAO {
 		userStats.user = new Key<SBUser>(SBUser.class, user.id);
 		userStats.status = user.status;
 		
-		//log.info("Updating user statistics, user: " + user.email);
+		log.info("Updating user statistics, user: " + user.email);
 
 		QueryResultIterable<Key<Bid>> bidsIt = getOfy().query(Bid.class)
 				.filter("user =", userStats.user).filter("status =", Bid.Action.ACTIVATE).fetchKeys();
@@ -197,7 +197,7 @@ public class ObjectifyDatastoreDAO {
 				.filter("user =", userStats.user).filter("acknowledged !=", Boolean.FALSE).fetchKeys();
 		userStats.numberOfNotifications = CollectionUtils.size(notifsIt.iterator());
 		
-		//log.info("user: " + userId + ", statistics: " + userStats);
+		log.info("user: " + userId + ", statistics: " + userStats);
 
 		getOfy().put(userStats);
 		
@@ -292,7 +292,7 @@ public class ObjectifyDatastoreDAO {
 		listingStats.score = score;
 		
 		listingStats.created = new Date();
-		//log.info("listing: " + listingId + ", statistics: " + listingStats);
+		log.info("listing: " + listingId + ", statistics: " + listingStats);
 		getOfy().put(listingStats);
 
 		return listingStats;
@@ -439,7 +439,7 @@ public class ObjectifyDatastoreDAO {
 	}
 	
 	public Listing storeListing(Listing newListing) {
-		//log.info("Storing " + newListing);
+		log.info("Storing " + newListing);
 		getOfy().put(newListing);
 		return newListing;
 	}
@@ -1156,7 +1156,7 @@ public class ObjectifyDatastoreDAO {
 	}
 
 	public void deleteDocument(long docId) {
-		//log.info("Deleting document id = " + docId);
+		log.info("Deleting document id = " + docId);
 		getOfy().delete(ListingDoc.class, docId);
 	}
 

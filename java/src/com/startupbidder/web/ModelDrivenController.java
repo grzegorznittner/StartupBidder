@@ -158,7 +158,7 @@ public abstract class ModelDrivenController {
 			pathElements.add(tokenizer.nextToken());
 		}
 		
-		//log.log(Level.INFO, "Commands: " + pathElements.toString());
+		log.log(Level.INFO, "Commands: " + pathElements.toString());
 		return pathElements.toArray(new String[0]);
 	}
 

@@ -70,12 +70,12 @@ public class FileController extends ModelDrivenController {
 		String docId = getCommandOrParameter(request, 2, "doc");
 
 		ListingDocumentVO doc = ListingFacade.instance().getListingDocument(getLoggedInUser(), docId);
-		//log.log(Level.INFO, "Sending back document: " + doc);
+		log.log(Level.INFO, "Sending back document: " + doc);
 		if (doc != null && doc.getBlob() != null) {
 			headers.addHeader("Content-Disposition", "attachment; filename=" + doc.getType().toLowerCase());
 			headers.setBlobKey(doc.getBlob());
 		} else {
-			//log.log(Level.INFO, "Document not found or blob not available!");
+			log.log(Level.INFO, "Document not found or blob not available!");
 			headers.setStatus(500);
 		}
 		
@@ -87,13 +87,13 @@ public class FileController extends ModelDrivenController {
 		
 		String docId = getCommandOrParameter(request, 2, "doc");
 
-		//log.log(Level.INFO, "Deleting document id: " + docId);
+		log.log(Level.INFO, "Deleting document id: " + docId);
 		ListingDocumentVO doc = ServiceFacade.instance().deleteDocument(getLoggedInUser(), docId);
 		if (doc != null) {
 			model = doc;
-			//log.log(Level.INFO, "Document deleted: " + doc);
+			log.log(Level.INFO, "Document deleted: " + doc);
 		} else {
-			//log.log(Level.INFO, "Document not found!");
+			log.log(Level.INFO, "Document not found!");
 			headers.setStatus(500);
 		}
 		
@@ -106,7 +106,7 @@ public class FileController extends ModelDrivenController {
 		String docId = getCommandOrParameter(request, 2, "doc");
 
 		model = ListingFacade.instance().getListingDocument(getLoggedInUser(), docId);
-		//log.log(Level.INFO, "Returning document: " + model);
+		log.log(Level.INFO, "Returning document: " + model);
 		
 		return headers;
 	}
@@ -117,7 +117,7 @@ public class FileController extends ModelDrivenController {
 		BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
 		Map<String, BlobKey> blobs = blobstoreService.getUploadedBlobs(request);
 		
-		//log.log(Level.INFO, "Got blobs : " + blobs);
+		log.log(Level.INFO, "Got blobs : " + blobs);
 		ListingDocumentVO doc = null;
 		if (blobs.containsKey(ListingDoc.Type.BUSINESS_PLAN.toString())) {
 			BlobKey blobKey = blobs.get(ListingDoc.Type.BUSINESS_PLAN.toString());
@@ -156,7 +156,7 @@ public class FileController extends ModelDrivenController {
 		}
 
 		if (doc != null) {
-			//log.log(Level.INFO, "Storing document: " + doc);
+			log.log(Level.INFO, "Storing document: " + doc);
 			doc = ListingFacade.instance().createListingDocument(getLoggedInUser(), doc);
 			if (doc != null) {
 				headers.setRedirectUrl("/listing/edited/" + doc.getType() + "/");
