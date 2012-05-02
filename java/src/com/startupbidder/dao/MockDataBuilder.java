@@ -83,12 +83,28 @@ public class MockDataBuilder {
 	
 	private Listing gregsListing;
 	private Listing johnsListing;
-	
+
+    private boolean isIdInitialized = false;
 	private long id = 2000L;
 
     private static Map<Long, String> logoUrls = new ConcurrentHashMap<Long, String>();
 
 	private long id() {
+        if (!isIdInitialized) {
+            try {
+                Listing maxListing = getOfy().query(Listing.class).order("-id").chunkSize(1).prefetchSize(1).get();
+                if (maxListing == null) {
+                    log.info("No listing IDs found, starting from default id: " + id);
+                }
+                else {
+                    id = maxListing.id;
+                }
+            }
+            catch (NotFoundException e) {
+                log.info("No listing IDs found, starting from default id: " + id);
+            }
+            isIdInitialized = true;
+        }
 		return id++;
 	}
 
@@ -208,6 +224,7 @@ public class MockDataBuilder {
 	}
 	
     public String importAngelListData(String fromId, String toId) {
+        isIdInitialized = false; // reset
         StringBuffer output = new StringBuffer();
         List<SBUser> users = createAngelListUsers();
         for (SBUser user : users) {
@@ -258,6 +275,7 @@ public class MockDataBuilder {
     }
 
     public String importStartuplyData() {
+        isIdInitialized = false;
         StringBuffer output = new StringBuffer();
         List<SBUser> users = createStartuplyUsers();
         for (SBUser user : users) {
@@ -1220,11 +1238,11 @@ public class MockDataBuilder {
             Pattern lifePattern = Pattern.compile("<h1[^>]*>Life [^<]</h1>\\s*<div[^>]*>\\s*([^<]*)", Pattern.MULTILINE);
             int counter = 0;
             for (String startuplyId : startuplyIds) {
-                if (counter > 4000) {
-                    break;
-                }
                 counter++;
-                
+                if (counter <= 4000) {
+                    continue;
+                }
+
                 String startuplyPath = STARTUPLY_ROOT + "/Companies/" + startuplyId + ".aspx";
                 StartuplyCache startuplyCache = null;
                 try {
