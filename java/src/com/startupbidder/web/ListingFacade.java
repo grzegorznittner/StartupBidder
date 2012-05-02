@@ -1725,9 +1725,11 @@ public class ListingFacade {
 		List<ListingPropertyVO> props = new ArrayList<ListingPropertyVO>();
 		
 		Listing listing = getDAO().getListing(listingId);
-        props.add(new ListingPropertyVO("business_plan_url", (addDocs ? mock.getBusinessPlan() : null)));
-        props.add(new ListingPropertyVO("presentation_url", (addDocs ? mock.getPresentation() : null)));
-        props.add(new ListingPropertyVO("financials_url", (addDocs ? mock.getFinancials() : null)));
+		if (addDocs) {
+			props.add(new ListingPropertyVO("business_plan_url", mock.getBusinessPlan()));
+			props.add(new ListingPropertyVO("presentation_url", mock.getPresentation()));
+			props.add(new ListingPropertyVO("financials_url", mock.getFinancials()));
+		}
         props.add(new ListingPropertyVO("logo_url", mock.getLogo(listingId)));
         try {
             for (ListingPropertyVO prop : props) {
@@ -1748,8 +1750,7 @@ public class ListingFacade {
             }
         }
         catch (Exception e) {
-            System.out.println("Exception while updating mock images for listing id: " + listingId);
-            e.printStackTrace();
+            log.log(Level.WARNING, "Exception while updating mock images for listing id: " + listingId, e);
         }
 		getDAO().storeListing(listing);
 	}
