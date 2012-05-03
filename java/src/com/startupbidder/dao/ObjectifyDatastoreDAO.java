@@ -87,17 +87,28 @@ public class ObjectifyDatastoreDAO {
 		return user != null && user.status == SBUser.Status.ACTIVE ? user : null;
 	}
 
-	public SBUser createUser(String email) {
+	public SBUser createUser(String email, String nickname) {
 		SBUser user = getOfy().query(SBUser.class).filter("email =", email).get();
 		if (user == null) {
 			user = new SBUser();
 			user.email = email;
-		
-			if (email.contains("@")) {
-				user.name = email.substring(0, email.indexOf("@"));
-			} else {
-				user.name = "<not set>";
+		    if (StringUtils.isEmpty(user.email)) {
+                user.email = "anonymous@anonymous.org";
+            }
+            if (!StringUtils.isEmpty(nickname)) {
+                user.nickname = nickname;
+            }
+			else if (email.contains("@")) {
+				user.nickname = email.substring(0, email.indexOf("@"));
 			}
+            else if (!StringUtils.isEmpty(email)) {
+				user.nickname = email;
+			}
+            else {
+                user.nickname = "Anonymous";
+            }
+
+            user.name = user.nickname;
 			user.modified = user.lastLoggedIn = user.joined = new Date();
 			user.status = SBUser.Status.ACTIVE;
 			

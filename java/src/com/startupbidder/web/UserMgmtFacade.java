@@ -99,7 +99,7 @@ public class UserMgmtFacade {
 			return null;
 		}
 		
-		UserVO user = DtoToVoConverter.convert(getDAO().createUser(loggedInUser.getEmail()));
+		UserVO user = DtoToVoConverter.convert(getDAO().createUser(loggedInUser.getEmail(), loggedInUser.getNickname()));
 		//applyUserStatistics(user, user);
 		return user;
 	}

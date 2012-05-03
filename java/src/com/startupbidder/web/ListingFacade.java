@@ -1312,8 +1312,18 @@ public class ListingFacade {
 		result[2] = result[2].trim();
 		return result;
 	}
-	
-	public NotificationListVO getListingNotifications(UserVO loggedInUser, String listingId, ListPropertiesVO notifProperties) {
+
+    public NotificationListVO getListingPrivateMessages(UserVO loggedInUser, String listingId, ListPropertiesVO notifProperties) {
+        Notification.Type[] includeTypes = { Notification.Type.PRIVATE_MESSAGE };
+        return getListingNotifications(loggedInUser, listingId, notifProperties, includeTypes);
+    }
+
+    public NotificationListVO getListingQuestionsAndAnswers(UserVO loggedInUser, String listingId, ListPropertiesVO notifProperties) {
+        Notification.Type[] includeTypes = { Notification.Type.ASK_LISTING_OWNER };
+        return getListingNotifications(loggedInUser, listingId, notifProperties, includeTypes);
+    }  
+    
+	private NotificationListVO getListingNotifications(UserVO loggedInUser, String listingId, ListPropertiesVO notifProperties, Notification.Type[] includeTypes) {
 		NotificationListVO list = new NotificationListVO();
 		Listing listing = getDAO().getListing(BaseVO.toKeyId(listingId));
 		if (listing == null) {
@@ -1323,20 +1333,29 @@ public class ListingFacade {
 			return list;
 		}
 		List<Notification> notifications = getDAO().getAllListingNotifications(BaseVO.toKeyId(listingId), notifProperties);
-		
-		boolean isListingOwner = loggedInUser != null && loggedInUser.toKeyId() == listing.owner.getId();
+
+        Map<Notification.Type, Boolean> includeMap = new HashMap<Notification.Type, Boolean>();
+        for (Notification.Type includeType : includeTypes) {
+            includeMap.put(includeType, true);
+        }
+        
+		//boolean isListingOwner = loggedInUser != null && loggedInUser.toKeyId() == listing.owner.getId();
 		List<NotificationVO> filteredNotif = new ArrayList<NotificationVO>();
 		int num = notifProperties.getStartIndex() > 0 ? notifProperties.getStartIndex() : 1;
 		for (Notification notification : notifications) {
-			boolean privateMessage = notification.type == Notification.Type.PRIVATE_MESSAGE 
-					|| notification.type == Notification.Type.ASK_LISTING_OWNER;
-			boolean authorOrAddresee = loggedInUser != null && notification.fromUser != null 
-					&& (notification.fromUser.getId() == loggedInUser.toKeyId() || notification.user.getId() == loggedInUser.toKeyId());
-			if (isListingOwner || !privateMessage || authorOrAddresee) {
-				NotificationVO notifVO = DtoToVoConverter.convert(notification);
-				notifVO.setOrderNumber(num++);
-				filteredNotif.add(notifVO);
-			}
+            boolean isApplicable = notification.type != null && includeMap.containsKey(notification.type) && includeMap.get(notification.type);
+            if (notification.type == Notification.Type.PRIVATE_MESSAGE) { // special case, hide appropriately
+                boolean authorOrAddresee = loggedInUser != null && notification.fromUser != null
+                        && (notification.fromUser.getId() == loggedInUser.toKeyId() || notification.user.getId() == loggedInUser.toKeyId());
+                if (!authorOrAddresee) { // isListingOwner never matters here
+                    isApplicable = false;
+                }
+            }
+            if (isApplicable) {
+                NotificationVO notifVO = DtoToVoConverter.convert(notification);
+                notifVO.setOrderNumber(num++);
+                filteredNotif.add(notifVO);
+            }
 		}
 		notifProperties.setTotalResults(notifications.size());
 		list.setNotifications(filteredNotif);

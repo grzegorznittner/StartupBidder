@@ -43,7 +43,6 @@ pl.implement(ListingClass, {
         this.bmc.display(this);
         this.ip.display(this);
         this.ip.bindButtons();
-        this.displayMessage();
         this.displayMap();
         this.displayDocuments();
         this.displayFunding();
@@ -134,12 +133,6 @@ pl.implement(ListingClass, {
     displayNotFollowing: function() {
             pl('#followtext').hide();
             pl('#followbtn').text('FOLLOW').show();
-    },
-    displayMessage: function() {
-        if (this.loggedin_profile) {
-            message = new MessageClass(this.id, this.loggedin_profile.profile_id);
-            message.display();
-        }
     },
     displayMap: function() {
         this.address = this.address || 'Unknown Address';
@@ -401,13 +394,17 @@ pl.implement(ListingClass, {
             wrappers.push('#basicswrapper1');
             wrappers.push('#basicswrapper2');
         }
+        if (pl('#commentstab').hasClass('companynavselected')) {
+            tabs.push('#commentstab');
+            wrappers.push('#commentswrapper');
+        }
         if (pl('#bidstab').hasClass('companynavselected')) {
             tabs.push('#bidstab');
             wrappers.push('#bidswrapper');
         }
-        if (pl('#commentstab').hasClass('companynavselected')) {
-            tabs.push('#commentstab');
-            wrappers.push('#commentswrapper');
+        if (pl('#qandastab').hasClass('companynavselected')) {
+            tabs.push('#qandastab');
+            wrappers.push('#qandaswrapper');
         }
         if (pl('#messagestab').hasClass('companynavselected')) {
             tabs.push('#messagestab');
@@ -420,10 +417,14 @@ pl.implement(ListingClass, {
     },
     displayTab: function(tab) {
         var self = this,
+            listingid = self.id,
             tabid = tab + 'tab',
             tabsel = '#' + tabid,
             wrapperid = tab + 'wrapper',
-            wrappersel = '#' + wrapperid;
+            wrappersel = '#' + wrapperid,
+            comments,
+            qandas,
+            messages;
         if (!pl(tabsel).hasClass('companynavselected')) {
             self.hideSelectedTabs();
             pl(tabsel).addClass('companynavselected');
@@ -432,16 +433,69 @@ pl.implement(ListingClass, {
             }
             else if (tab === 'comments') {
                 pl(wrappersel).show();
-                comments = new CommentsClass(self.id);
-                comments.load();
+                if (!self.isCommentListLoaded) {
+                    comments = new RemarkClass({
+                        listing_id: listingid,
+                        type: 'comment',
+                        geturl: '/comments/listing/',
+                        getproperty: 'comments',
+                        idproperty: 'comment_id',
+                        fromnameproperty: 'profile_username',
+                        fromnameprefix: 'Posted by',
+                        dateproperty: 'comment_date',
+                        textproperty: 'text',
+                        posturl: '/comment/create',
+                        deleteurl:  '/comment/delete'
+                    });
+                    comments.load();
+                    self.isCommentListLoaded = true;
+                }
             }
             else if (tab === 'bids') {
                 pl(wrappersel).show();
-                pl('#bidsmsg').text('No bids');
+                pl('#bidsmsg').html('<p>No bids</p>');
+            }
+            else if (tab === 'qandas') {
+                pl(wrappersel).show();
+                if (!self.isQuestionListLoaded) {
+                    qandas = new RemarkClass({
+                        listing_id: listingid,
+                        type: 'qanda',
+                        displaytype: 'question',
+                        geturl: '/listings/questions_and_answers/',
+                        getproperty: 'notifications',
+                        idproperty: 'notification_id',
+                        fromnameproperty: 'from_user_nickname',
+                        fromnameprefix: 'Asked by',
+                        dateproperty: 'create_date',
+                        textproperty: 'text_1',
+                        posturl: '/listing/ask_owner',
+                        postproperty: 'message',
+                        deleteurl:  null
+                    });
+                    qandas.load();
+                    self.isQuestionListLoaded = true;
+                }
             }
             else if (tab === 'messages') {
                 pl(wrappersel).show();
-                pl('#messagesmsg').text('No messages');
+                if (!self.isMessageListLoaded) {
+                    messages = new RemarkClass({
+                        listing_id: listingid,
+                        type: 'message',
+                        geturl: '/listings/private_messages/',
+                        getproperty: 'notifications',
+                        idproperty: 'notification_id',
+                        fromnameproperty: 'from_user_nickname',
+                        fromnameprefix: 'Sent by',
+                        dateproperty: 'create_date',
+                        textproperty: 'text_1',
+                        posturl: '/listing/send_private',
+                        deleteurl:  null
+                    });
+                    messages.load();
+                    self.isMessageListLoaded = true;
+                }
             }
             else {
                 pl(wrappersel).show();
@@ -453,6 +507,7 @@ pl.implement(ListingClass, {
             qs = new QueryStringClass();
         pl('#num_comments').text(self.num_comments || 0);
         pl('#num_bids').text(self.num_bids || 0);
+        pl('#num_qandas').text(self.num_qandas || 0);
         pl('#num_messages').text(self.num_messages || 0);
         if (this.loggedin_profile) {
             pl('#sendmessagelink').bind({
@@ -481,6 +536,12 @@ pl.implement(ListingClass, {
                 return false;
             }
         });
+        pl('#qandastab').bind({
+            click: function() {
+                self.displayTab('qandas');
+                return false;
+            }
+        });
         pl('#messagestab').bind({
             click: function() {
                 self.displayTab('messages');
@@ -492,6 +553,9 @@ pl.implement(ListingClass, {
         }
         else if (qs.vars.page === 'bids') {
             self.displayTab('bids');
+        }
+        else if (qs.vars.page === 'qandas') {
+            self.displayTab('qandas');
         }
         else if (qs.vars.page === 'messages') {
             self.displayTab('messages');

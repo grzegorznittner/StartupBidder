@@ -45,14 +45,12 @@ include(header.m4)
                 <div class="companynav hoverlink" id="commentstab">
                     COMMENTS <span id="num_comments"></span>
                 </div>
-                <div class="companynav hoverlink initialhidden" id="messagestab">
+                <div class="companynav hoverlink" id="qandastab">
+                    QUESTIONS <span id="num_qandas"></span>
+                </div>
+                <div class="companynav companynavlast hoverlink initialhidden" id="messagestab">
                     MESSAGES <span id="num_messages"></span>
                 </div>
-<!--
-                <div class="companynav hoverlink" id="timelinetab">
-                    TIMELINE <span id="num_notifications"></span>
-                </div>
--->
             </div>
         </div>
     </div>
@@ -78,9 +76,9 @@ include(header.m4)
 <!-- end left column -->
 
 <!-- begin second row left column -->
-    <div class="span-16 commentswrapper" id="commentswrapper">
+    <div class="span-16 initialhidden" id="commentswrapper">
         <div class="boxtitle addcommenttitle initialhidden" id="addcommenttitle">ADD COMMENT</div>
-        <div class="boxpanel commentpanel addcommentbox initialhidden" id="addcommentbox">
+        <div class="boxpanel remarkpanel addcommentbox initialhidden" id="addcommentbox">
             <p>
                 <textarea class="textarea messagetextarea" id="addcommenttext" name="addcommenttext" cols="20" rows="5">Put your comment here...</textarea>
                 <span class="span-12 inputmsg successful" id="addcommentmsg">&nbsp;</span>
@@ -88,15 +86,15 @@ include(header.m4)
             </p>
         </div>
         <div class="boxtitle">COMMENTS</div>
-        <div class="boxpanel commentpanel">
-            <div id="commentsmsg"></div>
+        <div class="boxpanel remarkpanel">
+            <div id="commentmsg"></div>
             <dl id="commentlist"></dl>
     	</div>
     </div>
 
-    <div class="span-16 bidswrapper" id="bidswrapper">
+    <div class="span-16 initialhidden" id="bidswrapper">
         <div class="boxtitle initialhidden" id="makebidtitle">MAKE BID</div>
-        <div class="boxpanel commentpanel initialhidden" id="makebidbox">
+        <div class="boxpanel remarkpanel initialhidden" id="makebidbox">
             <p>
                 <textarea class="textarea messagetextarea" id="makebidtext" name="makebidtext" cols="20" rows="5">Make your bid here...</textarea>
                 <span class="span-12 inputmsg successful" id="makebidmsg">&nbsp;</span>
@@ -104,15 +102,31 @@ include(header.m4)
             </p>
         </div>
         <div class="boxtitle">BIDS</div>
-        <div class="boxpanel commentpanel">
+        <div class="boxpanel remarkpanel">
             <div id="bidsmsg" class="inputmsg"></div>
             <dl id="bidslist"></dl>
     	</div>
     </div>
 
-    <div class="span-16 messageswrapper" id="messageswrapper">
+    <div class="span-16 initialhidden" id="qandaswrapper">
+        <div class="boxtitle initialhidden" id="addqandatitle">PUBLIC QUESTION TO THE OWNER</div>
+        <div class="boxpanel remarkpanel initialhidden" id="addqandabox">
+            <p>
+                <textarea class="textarea messagetextarea" id="addqandatext" name="addqandatext" cols="20" rows="5">Put your question here...</textarea>
+                <span class="span-12 inputmsg successful" id="addqandamsg">&nbsp;</span>
+                <span class="span-3 inputbutton" id="addqandabtn">SEND</span>
+            </p>
+        </div>
+        <div class="boxtitle">QUESTIONS AND ANSWERS</div>
+        <div class="boxpanel remarkpanel">
+            <div id="qandamsg"></div>
+            <dl id="qandalist"></dl>
+    	</div>
+    </div>
+
+    <div class="span-16 initialhidden" id="messageswrapper">
         <div class="boxtitle initialhidden" id="addmessagetitle">PRIVATE MESSAGE TO THE OWNER</div>
-        <div class="boxpanel messagepanel initialhidden" id="addmessagebox">
+        <div class="boxpanel remarkpanel initialhidden" id="addmessagebox">
             <p>
                 <textarea class="textarea messagetextarea" id="addmessagetext" name="addmessagetext" cols="20" rows="5">Put your private message here...</textarea>
                 <span class="span-12 inputmsg successful" id="addmessagemsg">&nbsp;</span>
@@ -120,9 +134,9 @@ include(header.m4)
             </p>
         </div>
         <div class="boxtitle">PRIVATE MESSAGES</div>
-        <div class="boxpanel commentpanel">
-            <div id="messagesmsg" class="inputmsg"></div>
-            <dl id="messageslist"></dl>
+        <div class="boxpanel remarkpanel">
+            <div id="messagemsg"></div>
+            <dl id="messagelist"></dl>
     	</div>
     </div>
 
@@ -564,8 +578,7 @@ include(footer.m4)
   <script src="js/modules/base.js"></script>
   <script src="js/modules/companylist.js"></script>
   <script src="js/modules/forms.js"></script>
-  <script src="js/modules/message.js"></script>
-  <script src="js/modules/comments.js"></script>
+  <script src="js/modules/remarks.js"></script>
   <script src="js/modules/bmc.js"></script>
   <script src="js/modules/ip.js"></script>
   <script src="js/modules/listing.js"></script>

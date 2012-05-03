@@ -270,7 +270,7 @@ public class ServiceFacade {
 		Notification notification = new Notification();
 		notification.user = new Key<SBUser>(SBUser.class, toUser.id);
 		notification.userEmail = toUser.email;
-		notification.userNickname = StringUtils.isEmpty(toUser.nickname) ? toUser.email : toUser.nickname;
+		notification.userNickname = toUser.nickname;
 		notification.listing = new Key<Listing>(Listing.class, listing.id);
 		notification.listingName = listing.name;
 		notification.listingOwner = listing.owner.getString();
@@ -299,7 +299,7 @@ public class ServiceFacade {
 		Notification notification = new Notification();
 		notification.user = new Key<SBUser>(SBUser.class, toUser.id);
 		notification.userEmail = toUser.email;
-		notification.userNickname = StringUtils.isEmpty(toUser.nickname) ? toUser.email : toUser.nickname;
+		notification.userNickname = toUser.nickname;
 		notification.listing = new Key<Listing>(Listing.class, listing.id);
 		notification.listingName = listing.name;
 		notification.listingOwner = listing.owner.getString();
@@ -327,7 +327,7 @@ public class ServiceFacade {
 		Notification notification = new Notification();
 		notification.user = new Key<SBUser>(SBUser.class, toUser.id);
 		notification.userEmail = toUser.email;
-		notification.userNickname = StringUtils.isEmpty(toUser.nickname) ? toUser.email : toUser.nickname;
+		notification.userNickname = toUser.nickname;
 		notification.listing = new Key<Listing>(Listing.class, listing.id);
 		notification.listingName = listing.name;
 		notification.listingOwner = listing.owner.getString();
@@ -387,10 +387,10 @@ public class ServiceFacade {
 		notification.message = message;
 		notification.user = new Key<SBUser>(SBUser.class, toUser.id);
 		notification.userEmail = toUser.email;
-		notification.userNickname = StringUtils.isEmpty(toUser.nickname) ? toUser.email : toUser.nickname;
+		notification.userNickname = toUser.nickname;
 		notification.fromUser = new Key<SBUser>(SBUser.class, fromUser.toKeyId());
 		notification.fromUserEmail = fromUser.getEmail();
-		notification.fromUserNickname = StringUtils.isEmpty(fromUser.getNickname()) ? fromUser.getEmail() : fromUser.getNickname();
+		notification.fromUserNickname = fromUser.getNickname();
 		notification.listing = new Key<Listing>(Listing.class, listing.id);
 		notification.listingName = listing.name;
 		notification.listingOwner = listing.owner.getString();
@@ -421,7 +421,7 @@ public class ServiceFacade {
 		notification.userNickname = originalNotification.fromUserNickname;
 		notification.fromUser = new Key<SBUser>(SBUser.class, fromUser.toKeyId());
 		notification.fromUserEmail = fromUser.getEmail();
-		notification.fromUserNickname = StringUtils.isEmpty(fromUser.getNickname()) ? fromUser.getEmail() : fromUser.getNickname();
+		notification.fromUserNickname = fromUser.getNickname();
 		notification.listing = originalNotification.listing;
 		notification.listingName = originalNotification.listingName;
 		notification.listingOwner = originalNotification.listingOwner;

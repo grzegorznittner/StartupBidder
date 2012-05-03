@@ -94,8 +94,10 @@ public class ListingController extends ModelDrivenController {
 				return getLocations(request);
 			} else if("all-listing-locations".equalsIgnoreCase(getCommand(1))) {
 				return getAllListingLocations(request);
-			} else if("messages".equalsIgnoreCase(getCommand(1))) {
-				return messages(request);
+            } else if("private_messages".equalsIgnoreCase(getCommand(1))) {
+                return privateMessages(request);
+            } else if("questions_and_answers".equalsIgnoreCase(getCommand(1))) {
+                return questionsAndAnswers(request);
 			} else if ("logo".equalsIgnoreCase(getCommand(1))) {
 				return logo(request);
 			} else {
@@ -562,11 +564,18 @@ public class ListingController extends ModelDrivenController {
 	}
 	
     // GET /listings/messages
-    private HttpHeaders messages(HttpServletRequest request) {
-    	String listingId = getCommandOrParameter(request, 2, "id");
-    	ListPropertiesVO listingProperties = getListProperties(request);
-    	model = ListingFacade.instance().getListingNotifications(getLoggedInUser(), listingId, listingProperties);
-        return new HttpHeadersImpl("messages").disableCaching();
+    private HttpHeaders privateMessages(HttpServletRequest request) {
+        String listingId = getCommandOrParameter(request, 2, "id");
+        ListPropertiesVO listingProperties = getListProperties(request);
+        model = ListingFacade.instance().getListingPrivateMessages(getLoggedInUser(), listingId, listingProperties);
+        return new HttpHeadersImpl("private_messages").disableCaching();
+    }
+
+    private HttpHeaders questionsAndAnswers(HttpServletRequest request) {
+        String listingId = getCommandOrParameter(request, 2, "id");
+        ListPropertiesVO listingProperties = getListProperties(request);
+        model = ListingFacade.instance().getListingQuestionsAndAnswers(getLoggedInUser(), listingId, listingProperties);
+        return new HttpHeadersImpl("questions_and_answers").disableCaching();
     }
     
     // GET /listings/ask_owner
