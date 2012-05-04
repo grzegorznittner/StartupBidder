@@ -323,6 +323,17 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .offerwrapperdisplay {
     height: 185px;
 }
+.droptransition {
+    overflow: hidden;
+    height: 0;
+    -moz-transition: height 300ms;
+    -webkit-transition: height 300ms;
+    -o-transition: height 300ms;
+    -ms-transition: height 300ms;
+    transition: height 300ms;
+}
+.remarkreply { height: 0; }
+.remarkreplyshow { height: 150px; }
 
 /* box styles */
 .boxtitle { margin-top: 10px; color: #333333; font-weight: bold; clear: both; }
@@ -371,6 +382,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .remarkdttitleline { padding-top: 7px; }
 .remarkdelete { width: 32px; height: 32px; margin: 0; position: absolute; top: 0; right: 0; }
 .remarkdelete:hover { opacity: 0.7; cursor: pointer; }
+.remarkreplybtn { position:absolute; top:0px; right:5px; border-radius:3px; padding:0 5px 0 5px; height:21px;  }
 .boxoption { display: block; float: left; text-align: center; height: 25px; padding-top: 5px; margin-bottom: 5px; font-weight: bold; }
 .boxoption1 { width: 146px; }
 .boxoption2 { width: 160px; }

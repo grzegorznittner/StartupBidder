@@ -1360,7 +1360,9 @@ public class ListingFacade {
 		notifProperties.setTotalResults(notifications.size());
 		list.setNotifications(filteredNotif);
 		list.setNotificationsProperties(notifProperties);
-		list.setUser(new UserBasicVO(loggedInUser));
+		if (loggedInUser != null) {
+            list.setUser(new UserBasicVO(loggedInUser));
+        }
 		
 		return list;
 	}
