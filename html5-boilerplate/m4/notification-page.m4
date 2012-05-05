@@ -17,10 +17,18 @@ include(header.m4)
 
     <div id="notificationmsg"></div>
 
-    <div class="boxtitle smokegrey">NOTIFICATION</div>
+    <div class="boxtitle smokegrey" id="notification_header">YOUR NOTIFICATION</div>
     <div class="boxpanel">
-        <div class="inputmsg" id="notification_title"></div>
-        <div class="" id="notification_message"></div>
+        <dl>
+            <dt class="inputmsg" id="notification_title"></dt>
+            <dd>
+                <p class="inputmsg" id="notification_date"></p>
+                <p class="notificationtext" id="notification_text_1"></p>
+                <p class="notificationtext" id="notification_text_2"></p>
+                <p class="inputmsg" id="notification_message"></p>
+            </dd>
+        </dl>
+        <div id="notification_listing"></div>
     </div>
 
 </div> <!-- end left column -->

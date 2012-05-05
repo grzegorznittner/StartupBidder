@@ -55,9 +55,9 @@ pl.implement(ListingClass, {
     displayBasics: function() {
         var logobg = this.logo ? 'url(' + this.logo + ') no-repeat scroll left top' : null,
             url = this.website ? new URLClass(this.website) : null,
-            categoryfounderstext = (this.category ? (this.category==='Other' ? 'A' : (this.category.match(/^[AEIOU]/) ? 'An '+this.category : 'A '+this.category)) : 'A')
-                + ' company' + (this.brief_address ? ' in ' + this.brief_address : '')
-                + (this.founders ? ' founded by ' + this.founders : ''),
+            categoryaddresstext = (this.category ? (this.category==='Other' ? 'A' : (this.category.match(/^[AEIOU]/) ? 'An '+this.category : 'A '+this.category)) : 'A')
+                + ' company' + (this.brief_address ? ' in ' + this.brief_address : ''),
+            founderstext = (this.founders ? ' founded by ' + this.founders : ''),
             listingdatetext = SafeStringClass.prototype.ucfirst(this.status) + ' listing' + (this.listing_date ? ' from ' + this.dateobj.format(this.listing_date) : ' not yet listed') + ' at ';
         if (logobg) {
             pl('#companylogo').removeClass('noimage').css({background: logobg});
@@ -71,7 +71,8 @@ pl.implement(ListingClass, {
         }
         pl('#videopresentation').attr({src: this.video});
         pl('#summary').text(this.summary || 'Listing summary goes here');
-        pl('#categoryfounderstext').text(categoryfounderstext);
+        pl('#categoryaddresstext').text(categoryaddresstext);
+        pl('#founderstext').text(founderstext);
         pl('#listing_date_text').text(listingdatetext);
         pl('#websitelink').attr({href: this.website});
         if (url) {
