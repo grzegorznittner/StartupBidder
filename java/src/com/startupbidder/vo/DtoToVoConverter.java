@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.datanucleus.util.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
@@ -232,9 +232,14 @@ public class DtoToVoConverter {
 		}
 		NotificationVO notif = new NotificationVO();
 		notif.setId(new Key<Notification>(Notification.class, notifDTO.id).getString());
+        notif.setUser(notifDTO.user.getString());
+        notif.setUserNickname(notifDTO.userNickname);
+        notif.setFromUser(notifDTO.fromUser != null ? notifDTO.fromUser.getString() : null);
+        notif.setFromUserNickname(notifDTO.fromUserNickname);
+        notif.setParentNotification(notifDTO.parentNotification != null ? notifDTO.parentNotification.getString() : null);
 		notif.setCreated(notifDTO.created);
 		notif.setSentDate(notifDTO.sentDate);
-		notif.setListing(notifDTO.listing.getString());
+		notif.setListing(notifDTO.listing != null ? notifDTO.listing.getString() : null);
 		notif.setListingName(notifDTO.listingName);
 		notif.setListingOwner(notifDTO.listingOwner);
 		notif.setListingMantra(notifDTO.listingMantra);
@@ -245,31 +250,45 @@ public class DtoToVoConverter {
 		String listingLink = notif.getLink();
 		switch(notifDTO.type) {
 		case NEW_COMMENT_FOR_MONITORED_LISTING:
-			notif.setTitle("New comment for listing \"" + notifDTO.listingName + "\"");
-			notif.setText1("Listing \"" + notifDTO.listingName + "\" has got a new comment.");
+			notif.setTitle("New comment for listing " + notifDTO.listingName);
+			notif.setText1("Listing " + notifDTO.listingName + " has received a new comment.");
 			notif.setText2("In order to view comment(s) please visit <a href=\"" + listingLink + "\">company's page at startupbidder.com</a>.");
 			break;
 		case NEW_COMMENT_FOR_YOUR_LISTING:
-			notif.setTitle("New comment for listing \"" + notifDTO.listingName + "\"");
-			notif.setText1("Your listing \"" + notifDTO.listingName + "\" has got a new comment.");
+			notif.setTitle("New comment for listing " + notifDTO.listingName);
+			notif.setText1("Your listing \"" + notifDTO.listingName + "\" has received a new comment.");
 			notif.setText2("In order to view comment(s) please visit <a href=\"" + listingLink + "\">company's page at startupbidder.com</a>.");
 			break;
 		case NEW_LISTING:
-			notif.setTitle("New listing \"" + notifDTO.listingName + "\" posted");
-			notif.setText1("A new listing \"" + notifDTO.listingName + "\" has been posted by " + notifDTO.listingOwner + " on startupbidder.com");
+			notif.setTitle("New listing " + notifDTO.listingName + " posted");
+			notif.setText1("A new listing " + notifDTO.listingName + " has been posted by " + notifDTO.listingOwner + " on startupbidder.com");
 			notif.setText2("Please visit <a href=\"" + listingLink + "\">company's page at startupbidder.com</a>.");
 			break;
 		case ASK_LISTING_OWNER:
-			notif.setTitle("Listing \"" + notifDTO.listingName + "\" got question from \"" + notifDTO.fromUserNickname + "\"" );
-			notif.setText1("Question about listing \"" + notifDTO.listingName + "\" has been posted by " + notifDTO.fromUserNickname + ":<br/>"
-					+ "<i>" + notifDTO.message + "</i>");
+            if (notif.getParentNotification() == null) {
+			    notif.setTitle("A question from " + notifDTO.fromUserNickname + " concerning listing " + notifDTO.listingName);
+                notif.setText1("Question about listing " + notifDTO.listingName + " has been posted by " + notifDTO.fromUserNickname + ":<br/>"
+                    + "<i>" + notifDTO.message + "</i>");
+            }
+            else {
+                notif.setTitle("Received reply concerning question for listing " + notifDTO.listingName + " from " + notifDTO.fromUserNickname);
+                notif.setText1("Reply concerning listing " + notifDTO.listingName + " has been posted by " + notifDTO.fromUserNickname + ":<br/>"
+                        + "<i>" + notifDTO.message + "</i>");                
+            }
 			notif.setText2("Please visit <a href=\"" + listingLink + "\">company's page at startupbidder.com</a>.");
 			break;
 		case PRIVATE_MESSAGE:
-			notif.setTitle("Private message from \"" + notifDTO.fromUserNickname + "\" about \"" + notifDTO.listingName + "\"" );
-			notif.setText1("Message from user " + notifDTO.fromUserNickname + ":<br/>"
-					+ "<i>" + notifDTO.message + "</i>");
-			notif.setText2("Please visit <a href=\"" + listingLink + "\">company's page at startupbidder.com</a>.");
+            if (notif.getParentNotification() == null) {
+			    notif.setTitle("Private message from " + notifDTO.fromUserNickname + " concerning listing " + notifDTO.listingName );
+			    notif.setText1("Private message from user " + notifDTO.fromUserNickname + ":<br/>"
+                    + "<i>" + notifDTO.message + "</i>");
+            }
+            else {
+                notif.setTitle("Received reply concerning private message for listing " + notifDTO.listingName + " from " + notifDTO.fromUserNickname);
+                notif.setText1("Private reply concerning listing " + notifDTO.listingName + " has been posted by " + notifDTO.fromUserNickname + ":<br/>"
+                    + "<i>" + notifDTO.message + "</i>");
+            }
+            notif.setText2("Please visit <a href=\"" + listingLink + "\">company's page at startupbidder.com</a>.");
 			break;
 		}
 

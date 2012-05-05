@@ -41,11 +41,12 @@ public class Notification extends BaseObject {
 	}
 	
 	@Indexed public Key<SBUser> user;
-	public String userNickname;
+    public String userNickname;
 	public String userEmail;
 	@Indexed(IfNotNull.class) public Key<SBUser> fromUser;
 	public String fromUserNickname;
 	public String fromUserEmail;
+    @Indexed(IfNotNull.class) public Key<Notification> parentNotification;
 	@Indexed public Type type;
 	@Indexed public Key<Listing> listing;
 	public String listingName;

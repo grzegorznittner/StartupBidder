@@ -422,6 +422,7 @@ public class ServiceFacade {
 		notification.fromUser = new Key<SBUser>(SBUser.class, fromUser.toKeyId());
 		notification.fromUserEmail = fromUser.getEmail();
 		notification.fromUserNickname = fromUser.getNickname();
+        notification.parentNotification = new Key<Notification>(Notification.class, originalNotification.id);
 		notification.listing = originalNotification.listing;
 		notification.listingName = originalNotification.listingName;
 		notification.listingOwner = originalNotification.listingOwner;

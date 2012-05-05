@@ -21,8 +21,11 @@ public class NotificationVO extends BaseVO {
 	@JsonProperty("num") private int orderNumber;
 	@JsonProperty("notify_id") private String id;
 	@JsonProperty("notify_type") @JsonSerialize(using=LowecaseSerializer.class)	private String type;
+    @JsonProperty("user_id") private String user;
 	@JsonProperty("user_nickname") private String userNickname;
+    @JsonProperty("from_user_id") private String fromUser;
 	@JsonProperty("from_user_nickname") private String fromUserNickname;
+    @JsonProperty("parent_notify_id") private String parentNotification;
 	@JsonProperty("listing_id")	private String listing;
 	@JsonProperty("listing_name") private String listingName;
 	@JsonProperty("listing_owner") private String listingOwner;
@@ -37,8 +40,6 @@ public class NotificationVO extends BaseVO {
 	@JsonProperty("create_date") @JsonSerialize(using=DateSerializer.class) private Date created;
 	@JsonProperty("sent_date") @JsonSerialize(using=DateSerializer.class) private Date sentDate;
 	@JsonProperty("read") private boolean read;
-	/* It's not sent as JSON */
-	private String user;
 	
 	@Override
 	public String getId() {
@@ -137,18 +138,30 @@ public class NotificationVO extends BaseVO {
 	public void setUser(String user) {
 		this.user = user;
 	}
-	public String getUserNickname() {
+    public String getUserNickname() {
 		return userNickname;
 	}
 	public void setUserNickname(String userNickname) {
 		this.userNickname = userNickname;
 	}
-	public String getFromUserNickname() {
-		return fromUserNickname;
-	}
-	public void setFromUserNickname(String fromUserNickname) {
-		this.fromUserNickname = fromUserNickname;
-	}
+    public String getFromUserNickname() {
+        return fromUserNickname;
+    }
+    public void setFromUserNickname(String fromUserNickname) {
+        this.fromUserNickname = fromUserNickname;
+    }
+    public String getFromUser() {
+        return fromUser;
+    }
+    public void setFromUser(String fromUser) {
+        this.fromUser = fromUser;
+    }
+    public String getParentNotification() {
+        return parentNotification;
+    }
+    public void setParentNotification(String parentNotification) {
+        this.parentNotification = parentNotification;
+    }
 	@JsonProperty("listing_logo_url")
 	public String getListingLogoLink() {
 		return getServiceLocation() + "/listing/logo?id=" + this.listing;

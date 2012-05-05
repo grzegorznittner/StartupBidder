@@ -78,16 +78,17 @@ pl.implement(RemarkClass, {
     },
     bindAddRemarkBox: function() {
         var self = this,
-            boxbinder = self.bindAddBoxGenerator(null, self.addboxid, self.addtextid, self.addmsgid, self.btnid, self.displaytype, self.posturl);
+            boxbinder = self.bindAddBoxGenerator(0, self.addboxid, self.addtextid, self.addmsgid, self.addbtnid, self.displaytype, self.posturl);
         boxbinder();
     },
     bindAddBoxGenerator: function(remarkid, boxid, textid, msgid, btnid, displaytype, posturl) {
-        var self = this;
+        var self = this,
+            boxsel = '#' + boxid,
+            textsel = '#' + textid,
+            msgsel = '#' + msgid,
+            btnsel = '#' + btnid;
+        console.log('foo', boxsel, textsel, msgsel, btnsel);
         return function() {
-            var boxsel = '#' + boxid,
-                textsel = '#' + textid,
-                msgsel = '#' + msgid,
-                btnsel = '#' + btnid;
             if (pl(boxsel).hasClass('bound')) {
                 return;
             }
@@ -120,6 +121,7 @@ pl.implement(RemarkClass, {
             });
             pl(btnsel).bind({
                 click: function(event) {
+                    console.log('clicked');
                     var completeFunc = function() {
                             pl(textsel).removeClass('edited').attr({value: 'Put your ' + displaytype + ' here...'});
                             pl(btnsel).removeClass(self.addenabledclass);
@@ -132,11 +134,13 @@ pl.implement(RemarkClass, {
                         },
                         data = {},
                         ajax = new AjaxClass(posturl, msgid, completeFunc);
-                    if (self.type === 'comments') {
+                    if (self.listing_id) {
                         typedata.listing_id = self.listing_id;
+                    }
+                    if (self.type === 'comments') {
                         typedata.profile_id = self.loggedin_profile_id;
                     }
-                    else {
+                    else if (remarkid) {
                         typedata.message_id = remarkid;
                     }
                     if (!pl(btnsel).hasClass(self.addenabledclass)) {
@@ -164,7 +168,8 @@ pl.implement(RemarkClass, {
             deletable,
             islistingowner,
             replyable,
-            deletesel;
+            deletesel,
+            bindlist = [];
         pl('#'+self.numremarksid).text(self.remarklist.length);
         if (self.remarklist.length === 0) {
             pl('#'+self.statusmsgid).html(self.defaultmsg).show();
@@ -174,17 +179,18 @@ pl.implement(RemarkClass, {
             remark = self.remarklist[i];
             islistingowner = self.loggedin_profile_id && (self.loggedin_profile_id === remark.listing_owner);
             deletable = (remark.profile_id === self.loggedin_profile_id) && self.type !== 'message';
-            replyable = self.loggedin_profile_id ? (self.type === 'qanda' && islistingowner) : false;
+            replyable = self.loggedin_profile_id && remark.user_id && self.loggedin_profile_id === remark.user_id;
             html += self.makeRemark(remark, deletable, replyable);
+            bindlist.push([remark, deletable, replyable]);
         }
-        pl('#'+this.listid).html(html).show();
-        for (i = 0; i < self.remarklist.length; i++) {
-            remark = self.remarklist[i];
-            islistingowner = self.loggedin_profile_id && (self.loggedin_profile_id === remark.listing_owner);
-            deletable = (remark.profile_id === self.loggedin_profile_id) && self.type !== 'message';
-            replyable = self.loggedin_profile_id ? (self.type === 'qanda' && islistingowner) : false;
+        pl('#'+this.listid).html(html);
+        for (i = 0; i < bindlist.length; i++) {
+            remark = bindlist[i][0];
+            deletable = bindlist[i][1];
+            replyable = bindlist[i][2];
             self.bindRemark(remark, deletable, replyable);
         }
+        pl('#'+this.listid).show();
     },
     deleteRemarkGenerator: function(remarkid) {
         var self = this;
@@ -217,7 +223,6 @@ pl.implement(RemarkClass, {
             remarkprefix = self.fromnameprefix,
             remarkfrom = remark[self.fromnameproperty],
             remarkto = remark[self.tonameproperty],
-            // replyable = self.loggedin_profile_id && remarkto && remarkto === self.loggedin_profile.username;
             remarkreplybtn = replyable ? '<div class="smallinputbutton darkblue remarkreplybtn hoverlink" id="' + self.type + '_replybtn_' + remarkid + '">REPLY</div>' : '',
             remarkdate = remark[self.dateproperty],
             remarktext = remark[self.textproperty],
