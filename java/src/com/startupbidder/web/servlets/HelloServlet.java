@@ -163,14 +163,20 @@ public class HelloServlet extends HttpServlet {
 			
 			out.println("<form method=\"POST\" action=\"/listing/post/.json\"><input type=\"submit\" value=\"Submits edited listing (sets POST status)\"/></form>");
 			out.println("<br/><a href=\"/listings/posted/.json?max_results=6\">Posted listings (admins only)</a><br/>");
+			listProperties = new ListPropertiesVO();
+			listProperties.setMaxResults(50);
 			ListingListVO postedListings = ListingFacade.instance().getPostedListings(currentUser, listProperties);
 			printPostedListings(out, currentUser, postedListings);
 			
 			out.println("<br/><a href=\"/listings/closing/.json?max_results=6\">Closing listings</a><br/>");
+			listProperties = new ListPropertiesVO();
+			listProperties.setMaxResults(50);
 			ListingListVO activeListings = ListingFacade.instance().getClosingActiveListings(currentUser, listProperties);
 			printActiveListings(out, currentUser, activeListings);
 			
 			out.println("<br/><a href=\"/listings/frozen/.json?max_results=6\">Frozen listings</a><br/>");
+			listProperties = new ListPropertiesVO();
+			listProperties.setMaxResults(50);
 			ListingListVO frozenListings = ListingFacade.instance().getFrozenListings(currentUser, listProperties);
 			printFrozenListings(out, currentUser, frozenListings);
 			
@@ -248,6 +254,7 @@ public class HelloServlet extends HttpServlet {
 			
 			out.println("<p style=\"background: none repeat scroll 0% 0% rgb(187, 187, 187);\">File API:</p>");
 			out.println("<a href=\"/file/get-upload-url/2/.json\">Get upload URL(s)</a><br/>");
+			/*
 			List<ListingDocumentVO> docs = ListingFacade.instance().getAllListingDocuments(currentUser);
 			DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy/MM/dd HH:mm");
 			if (docs != null && !docs.isEmpty()) {
@@ -273,6 +280,7 @@ public class HelloServlet extends HttpServlet {
 			} else {
 				out.println("No documents uploaded</br>");
 			}
+			*/
 
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -17,7 +17,9 @@ import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 
+import com.google.appengine.api.datastore.Cursor;
 import com.google.appengine.api.datastore.QueryResultIterable;
+import com.google.appengine.api.datastore.QueryResultIterator;
 import com.google.appengine.api.memcache.MemcacheService;
 import com.google.appengine.api.memcache.MemcacheServiceFactory;
 import com.googlecode.objectify.Key;
@@ -585,16 +587,29 @@ public class ObjectifyDatastoreDAO {
 	}
 
 	public List<Listing> getTopListings(ListPropertiesVO listingProperties) {
-		QueryResultIterable<Key<ListingStats>> topListingsStat = getOfy().query(ListingStats.class)
+		Query<ListingStats> query = getOfy().query(ListingStats.class)
 				.filter("state", Listing.State.ACTIVE)
 				.order("-score")
-                .limit(listingProperties.getMaxResults())
                 .chunkSize(listingProperties.getMaxResults())
-                .prefetchSize(listingProperties.getMaxResults())
-                .fetchKeys();
+                .prefetchSize(listingProperties.getMaxResults());
+		if (StringUtils.isNotEmpty(listingProperties.getNextCursor())) {
+			log.info("Starting query from cursor: " + listingProperties.getNextCursor());
+			query.startCursor(Cursor.fromWebSafeString(listingProperties.getNextCursor()));
+		}
+		QueryResultIterator<Key<ListingStats>> topListingsStat = query.fetchKeys().iterator();
 		
+		List<Key<ListingStats>> keyList = new ArrayList<Key<ListingStats>>();
+		while (topListingsStat.hasNext()) {
+			keyList.add(topListingsStat.next());
+			if (keyList.size() >= listingProperties.getMaxResults()) {
+				if (topListingsStat.hasNext()) {
+					listingProperties.setNextCursor(topListingsStat.getCursor().toWebSafeString());
+				}
+				break;
+			}
+		}
 		List<Key<Listing>> listingKeys = new ArrayList<Key<Listing>>();
-		for(ListingStats stat : getOfy().get(topListingsStat).values()) {
+		for(ListingStats stat : getOfy().get(keyList).values()) {
 			listingKeys.add(stat.listing);
 		}
 		

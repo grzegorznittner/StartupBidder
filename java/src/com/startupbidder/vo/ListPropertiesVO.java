@@ -13,15 +13,12 @@ import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 @JsonAutoDetect(getterVisibility=Visibility.NONE, setterVisibility=Visibility.NONE,
 		fieldVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE)
 public class ListPropertiesVO {
-	@JsonProperty("start_index")
 	private int startIndex;
 	@JsonProperty("max_results")
 	private int maxResults;
-	@JsonProperty("total_results")
 	private int totalResults;
 	@JsonProperty("num_results")
 	private int numberOfResults;
-	@JsonProperty("prev_cursor")
 	private String prevCursor;
 	@JsonProperty("next_cursor")
 	private String nextCursor;
