@@ -18,7 +18,7 @@ include(header.m4)
             <div class="initialhidden" id="listingdata">
                 <div class="companybannertitle" id="title"></div>
                 <div class="companybannertextgrey">
-                    <span id="categoryfounderstext"></span>
+                    <span id="categoryaddresstext"></span><span> </span><span id="founderstext"></span>
                     <a class="companybannertextlink hoverlink initialhidden" href="" id="sendmessagelink">send message</a>
                 </div>
                 <div class="companybannertextgrey">

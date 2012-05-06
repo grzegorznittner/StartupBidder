@@ -18,8 +18,9 @@ include(api-banner.m4)
 <!-- left column -->
 <div class="span-16">
 
-    <div class="boxtitle">SEARCH API</div>
+    <div class="boxtitle">COMPANY LIST API</div>
     <div class="boxpanel apipanel">
+
         <dt>GET /listings/discover/
             <form method="GET" action="/listings/discover"><input type="submit" value="TEST"></input></form>
         </dt>
@@ -98,7 +99,10 @@ include(api-banner.m4)
             The max_results parameter allows for limiting response size.
             </p>
         </dd>
+    </div>
 
+    <div class="boxtitle">SEARCH API</div>
+    <div class="boxpanel apipanel">
         <dt>GET /listings/keyword?text=&lt;searchtext&gt; <i>OPTIONAL max_results=&lt;n&gt;</i>
             <form method="GET" action="/listings/keyword"><input type="text" name="text" value="&lt;searchtext&gt;"></input><input type="submit" value="TEST"></input></form>
         </dt>
@@ -117,36 +121,9 @@ include(api-banner.m4)
             The max_results parameter allows for limiting response size.
             </p>
         </dd>
-
-        <dt>GET /listing/messages/&lt;id&gt;
-            <form method="GET" action="/listings/messages/"><input type="text" name="id" value="&lt;listing_id&gt;"></input><input type="submit" value="TEST"></input></form>
-        </dt>
-        <dd>
-            <p>
-            Returns notifications and private messages for given listing. Only listing owner sees all private messages. Other users see only their messages.
-            </p>
-        </dd>
-
-        <dt>GET /listings/posted/ <i>ADMIN ONLY</i>
-            <form method="GET" action="/listings/posted/"><input type="submit" value="TEST"></input></form>
-        </dt>
-        <dd>
-            <p>
-            Returns posted status listings, that is, those which have been submitted by a user and are awaiting approval by a startupbidder admin.  Can only be called by a startupbidder admin.
-            </p>
-        </dd>
-
-        <dt>GET /listings/frozen/ <i>ADMIN ONLY</i>
-            <form method="GET" action="/listings/frozen/"><input type="submit" value="TEST"></input></form>
-        </dt>
-        <dd>
-            <p>
-            Returns frozen status listings, that is, those which have been frozen by a startupbidder admin.  Can only be called by a startupbidder admin.
-            </p>
-        </dd>
     </div>
 
-    <div class="boxtitle">LISTINGS API</div>
+    <div class="boxtitle">LISTING API</div>
     <div class="boxpanel apipanel">
         <dt>GET /listings/get/&lt;id&gt;
             <form method="GET" action="/listings/get"><input type="text" name="id" value="&lt;listing_id&gt;"></input><input type="submit" value="TEST"></input></form>
@@ -222,37 +199,6 @@ include(api-banner.m4)
             </p>
         </dd>
 
-        <dt>POST /listing/freeze/&lt;id&gt; <i>ADMIN ONLY</i>
-            <form method="POST" action="/listing/freeze"><input type="text" name="id" value="&lt;listing_id&gt;"></input><input type="submit" value="TEST"></input></form>
-        </dt>
-        <dd>
-            <p>
-            Freezes the listing with the given id.  This suspends the listing pending further review, which may be done if a listing is found to be inaccurate or in violation of any law or regulation.
-            This method can only be called by admins.
-            </p>
-        </dd>
-
-        <dt>POST /listing/activate/&lt;id&gt; <i>ADMIN ONLY</i>
-            <form method="POST" action="/listing/activate"><input type="text" name="id" value="&lt;listing_id&gt;"></input><input type="submit" value="TEST"></input></form>
-        </dt>
-        <dd>
-            <p>
-            Activates the listing with the given id.  This makes the listing live and active on the site.  If asking for funds, bidding is enabled at this point.
-            Commenting also becomes enabled for the listing.  This method can only be called if the listing is in posted or frozen state.
-            This method can only be called by admins.
-            </p>
-        </dd>
-
-        <dt>POST /listing/send_back/&lt;id&gt; <i>ADMIN ONLY</i>
-            <form method="POST" action="/listing/send_back"><input type="text" name="id" value="&lt;listing_id&gt;"></input><input type="submit" value="TEST"></input></form>
-        </dt>
-        <dd>
-            <p>
-            Sends the listing with the given id back to the user for further modification.  This suspends the listing pending further review,
-            which may be done if a listing is found to be inaccurate or in violation of any law or regulation.
-            This method can only be called by admins.
-            </p>
-        </dd>
     </div>
 
     <div class="boxtitle">LOCATIONS API</div>
@@ -412,6 +358,26 @@ include(api-banner.m4)
             </p>
         </dd>
 
+        <dt>GET /listing/private_messages/&lt;id&gt;
+            <form method="GET" action="/listings/private_messages/"><input type="text" name="id" value="&lt;listing_id&gt;"></input><input type="submit" value="TEST"></input></form>
+        </dt>
+        <dd>
+            <p>
+            Returns private messages for given listing. Only listing owner sees all private messages. Other users see only their messages.  A user can reply to any message directed
+to themself.
+            </p>
+        </dd>
+
+        <dt>GET /listing/questions_and_answers/&lt;id&gt;
+            <form method="GET" action="/listings/questions_and_answers/"><input type="text" name="id" value="&lt;listing_id&gt;"></input><input type="submit" value="TEST"></input></form>
+        </dt>
+        <dd>
+            <p>
+            Returns questions and answers for given listing. Questions can be asked by any logged in user, but they only see their own questions until the owner makes a reply.  Only the
+owner can reply to a question using the <code>/listing/reply_message</code> API.  The question and answer pair then becomes viewable publicly on the site.
+            </p>
+        </dd>
+
         <dt>POST /listing/ask_owner/
             <form method="POST" action="/listing/ask_owner"><input type="text" name="message" value="{ listing_id: &rsquo;listing id&rsquo;, text: &rsquo;message text&rsquo; }"></input><input type="submit" value="TEST"></input></form>
         </dt>
@@ -517,6 +483,59 @@ include(api-banner.m4)
             </p>
         </dd>
     </div>
+
+    <div class="boxtitle">ADMIN API</div>
+    <div class="boxpanel apipanel">
+        <dt>GET /listings/posted/ <i>ADMIN ONLY</i>
+            <form method="GET" action="/listings/posted/"><input type="submit" value="TEST"></input></form>
+        </dt>
+        <dd>
+            <p>
+            Returns posted status listings, that is, those which have been submitted by a user and are awaiting approval by a startupbidder admin.  Can only be called by a startupbidder admin.
+            </p>
+        </dd>
+
+        <dt>GET /listings/frozen/ <i>ADMIN ONLY</i>
+            <form method="GET" action="/listings/frozen/"><input type="submit" value="TEST"></input></form>
+        </dt>
+        <dd>
+            <p>
+            Returns frozen status listings, that is, those which have been frozen by a startupbidder admin.  Can only be called by a startupbidder admin.
+            </p>
+        </dd>
+
+        <dt>POST /listing/freeze/&lt;id&gt; <i>ADMIN ONLY</i>
+            <form method="POST" action="/listing/freeze"><input type="text" name="id" value="&lt;listing_id&gt;"></input><input type="submit" value="TEST"></input></form>
+        </dt>
+        <dd>
+            <p>
+            Freezes the listing with the given id.  This suspends the listing pending further review, which may be done if a listing is found to be inaccurate or in violation of any law or regulation.
+            This method can only be called by admins.
+            </p>
+        </dd>
+
+        <dt>POST /listing/activate/&lt;id&gt; <i>ADMIN ONLY</i>
+            <form method="POST" action="/listing/activate"><input type="text" name="id" value="&lt;listing_id&gt;"></input><input type="submit" value="TEST"></input></form>
+        </dt>
+        <dd>
+            <p>
+            Activates the listing with the given id.  This makes the listing live and active on the site.  If asking for funds, bidding is enabled at this point.
+            Commenting also becomes enabled for the listing.  This method can only be called if the listing is in posted or frozen state.
+            This method can only be called by admins.
+            </p>
+        </dd>
+
+        <dt>POST /listing/send_back/&lt;id&gt; <i>ADMIN ONLY</i>
+            <form method="POST" action="/listing/send_back"><input type="text" name="id" value="&lt;listing_id&gt;"></input><input type="submit" value="TEST"></input></form>
+        </dt>
+        <dd>
+            <p>
+            Sends the listing with the given id back to the user for further modification.  This suspends the listing pending further review,
+            which may be done if a listing is found to be inaccurate or in violation of any law or regulation.
+            This method can only be called by admins.
+            </p>
+        </dd>
+    </div> 
 
 </div> <!-- end left column -->
 

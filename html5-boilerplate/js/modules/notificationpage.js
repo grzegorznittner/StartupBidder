@@ -4,6 +4,7 @@ function NotificationPageClass() {
 pl.implement(NotificationPageClass,{
     loadPage: function() {
         var self = this,
+            notification = new NotificationClass(),
             completeFunc = function(json) {
                 var header = new HeaderClass(),
                     profile = new ProfileClass(),
@@ -17,6 +18,7 @@ pl.implement(NotificationPageClass,{
              },
             ajax = new AjaxClass('/listings/discover_user/', 'profilemsg', completeFunc);
         ajax.call();
+        notification.load();
     }
 });
 

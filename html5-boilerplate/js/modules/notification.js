@@ -1,5 +1,22 @@
 function NotificationClass() {}
 pl.implement(NotificationClass, {
+    load: function() {
+        var self = this,
+            queryString = new QueryStringClass(),
+            id = queryString.vars.id,
+            completeFunc = function(json) {
+                self.store(json);
+                self.setPageHtml();
+            },
+            ajax = new AjaxClass('/notifications/get/' + id, 'notification_message', completeFunc);
+        if (id) {
+            ajax.call();
+        }
+        else {
+            self.setNotFound();
+            self.setPageHtml();
+        }
+    },
     store: function(json) {
         var self = this;
         for (k in json) {
@@ -8,8 +25,6 @@ pl.implement(NotificationClass, {
         self.createddate = self.create_date ? DateClass.prototype.format(self.create_date) : '';
         self.message = self.title ? SafeStringClass.prototype.htmlEntities(self.title) : '';
         self.messageclass = self.read ? '' : ' inputmsg'; // unread
-        self.listingurl = self.listing && self.listing.listing_id ? '/company-page.html?id=' + self.listing.listing_id : ''; // FIXME
-        self.listingtext = self.listing && self.listing.title ? SafeStringClass.prototype.htmlEntities(self.listing.title) : ''; // FIXME
         if (!self.notify_type) {
             self.type = 'notification';
         }
@@ -22,38 +37,53 @@ pl.implement(NotificationClass, {
         else {
             self.type = 'notification';
         }
-        self.openanchor = self.link ? '<a href="' + self.link + '" class="hoverlink' + self.messageclass + '">' : '';
-        self.closeanchor = self.link ? '</a>' : '';
+        self.datetext = self.created_date ? 'Sent on ' + DateClass.prototype.format(self.created_date) : '';
+        self.openanchor = self.notify_id ? '<a href="/notification-page.html?id=' + self.notify_id + '" class="hoverlink' + self.messageclass + '">' : '';
+        self.closeanchor = self.notify_id ? '</a>' : '';
     },
-    setTest: function() {
+    setPageHtml: function() {
         var self = this,
-            testJson = {
-                url: '/notification-page.html?id=fubar',
-                type: 'comment',
-                title: 'You received a comment on foo',
-                date: '201204121344',
-                listing: {
-                    listing_id: 'ag1zdGFydHVwYmlkZGVycg4LEgdMaXN0aW5nGOAPDA',
-                    title: 'Computer Training Camp'
-                }
-            };
-        self.store(testJson);
+            listing = {},
+            tile = new CompanyTileClass({ companybannertileclass: 'companybannertilenoborder' });
+        pl('#notification_title').text(self.title);
+        pl('#notification_date').text(self.datetext);
+        pl('#notification_text_1').html(self.text_1||'');
+        pl('#notification_text_2').html(self.text_2||'');
+        if (self.listing_id) {
+            listing.listing_id = self.listing_id;
+            listing.logo = self.listing_logo_url;
+            listing.category = self.listing_category;
+            listing.title = self.listing_name;
+            listing.brief_address = self.listing_brief_address;
+            listing.mantra = self.listing_mantra;
+            /* self.listing_owner (user id) */
+            tile.store(listing);
+            //pl('#notification_header').text('NOTIFICATION FOR ' + listing.title.toUpperCase());
+            pl('#notification_listing').html(tile.makeFullWidthHtml());
+        }
     },
     setEmpty: function() {
         var self = this,
             emptyJson = {
-                create_date: null,
                 title: 'You currently have no notifications.',
                 read: true,
                 notify_type: 'notification',
-                link: null,
-                listing: null
+                notify_id: 0
+            };
+        self.store(emptyJson);
+    },
+    setNotFound: function() {
+        var self = this,
+            emptyJson = {
+                title: 'You must pass a notification ID.',
+                read: true,
+                notify_type: 'notification',
+                notify_id: 0
             };
         self.store(emptyJson);
     },
     makeHtml: function() {
-        var self = this,
-            listinghtml = self.listingurl && self.listingtext ? '<span class="sideboxlisting"><a href="'+self.listingurl+'" class="hoverlink">'+self.listingtext+'</a></span>' : ''; // FIXME
+        var self = this;
         return '\
         <div class="sideboxnotify sideboxlink">\
             <span class="sideboxicon" style="overflow:visible;">\
