@@ -19,6 +19,7 @@ public class ListPropertiesVO {
 	private int totalResults;
 	@JsonProperty("num_results")
 	private int numberOfResults;
+	@JsonProperty("prev_cursor")
 	private String prevCursor;
 	@JsonProperty("next_cursor")
 	private String nextCursor;
