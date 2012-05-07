@@ -182,6 +182,11 @@ public class HelloServlet extends HttpServlet {
 			ListingListVO frozenListings = ListingFacade.instance().getFrozenListings(currentUser, listProperties);
 			printFrozenListings(out, currentUser, frozenListings);
 			
+			out.println("<a href=\"/listings/user/active/.json?max_results=6\">User's active listings</a><br/>");
+			out.println("<a href=\"/listings/user/withdrawn/.json?max_results=6\">User's withdrawn listings</a><br/>");
+			out.println("<a href=\"/listings/user/frozen/.json?max_results=6\">User's frozen listings</a><br/>");
+			out.println("<a href=\"/listings/user/closed/.json?max_results=6\">User's closed listings</a><br/><br/>");
+			
 			out.println("<a href=\"/listings/top/.json?max_results=6\">Top listings</a><br/>");
 			out.println("<a href=\"/listings/valuation/.json?max_results=6\">Top valued listings</a><br/>");
 			out.println("<a href=\"/listings/popular/.json?max_results=6\">Most popular listings</a><br/>");
@@ -303,36 +308,42 @@ public class HelloServlet extends HttpServlet {
 			return;
 		}
 
+		int count = 0;
 		for (ListingVO listing : postedListings.getListings()) {
+			count++;
 			out.println("<tr><td>" + listing.getName() + " posted by " + listing.getOwnerName() + "</td>");
 			out.println("<td><form method=\"POST\" action=\"/listing/activate/" + listing.getId() + "/.json\"><input type=\"submit\" value=\"Activate\"/></form>");
 			out.println("<form method=\"POST\" action=\"/listing/send_back/" + listing.getId() + "/.json\"><input type=\"submit\" value=\"Send back\"/></form>");
 			out.println("<a href=\"/listing/get/" + listing.getId() + ".json?\">View</a></td>");
 			out.println("<td>");
-			List<ListingDocumentVO> docs = getListingDocs(currentUser, listing);
-			if (docs != null && !docs.isEmpty()) {
-				BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
-				
-				out.println("<table border=\"1\"><tr><td colspan=\"2\"><center>Uploaded documents</center></td></tr>");
-				for (ListingDocumentVO doc : docs) {
-					out.println("<tr>");
-					out.println("<td>");
-					if (ListingDoc.Type.LOGO.toString().equalsIgnoreCase(doc.getType())) {
-						BlobInfo logoInfo = new BlobInfoFactory().loadBlobInfo(doc.getBlob());
-						if (logoInfo != null) {
-							byte logo[] = blobstoreService.fetchData(doc.getBlob(), 0, logoInfo.getSize() - 1);
-							out.println("<img src=\"" + ListingFacade.instance().convertLogoToBase64(logo) + "\"/>");
+			if (count < 5) {
+				List<ListingDocumentVO> docs = getListingDocs(currentUser, listing);
+				if (docs != null && !docs.isEmpty()) {
+					BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
+					
+					out.println("<table border=\"1\"><tr><td colspan=\"2\"><center>Uploaded documents</center></td></tr>");
+					for (ListingDocumentVO doc : docs) {
+						out.println("<tr>");
+						out.println("<td>");
+						if (ListingDoc.Type.LOGO.toString().equalsIgnoreCase(doc.getType())) {
+							BlobInfo logoInfo = new BlobInfoFactory().loadBlobInfo(doc.getBlob());
+							if (logoInfo != null) {
+								byte logo[] = blobstoreService.fetchData(doc.getBlob(), 0, logoInfo.getSize() - 1);
+								out.println("<img src=\"" + ListingFacade.instance().convertLogoToBase64(logo) + "\"/>");
+							}
 						}
+						out.println("<a href=\"/file/download/" + doc.getId() + ".json\">Download "
+								+ doc.getType() + " uploaded " + fmt.print(doc.getCreated().getTime()) + ", type: " + doc.getType() + "</a></td>");
+						out.println("<td><form method=\"POST\" action=\"/listing/delete_file/.json?id="
+								+ listing.getId() + "&type=" + doc.getType() + "\"><input type=\"submit\" value=\"Delete\"/></form>");
+						out.println("</td></tr>");
 					}
-					out.println("<a href=\"/file/download/" + doc.getId() + ".json\">Download "
-							+ doc.getType() + " uploaded " + fmt.print(doc.getCreated().getTime()) + ", type: " + doc.getType() + "</a></td>");
-					out.println("<td><form method=\"POST\" action=\"/listing/delete_file/.json?id="
-							+ listing.getId() + "&type=" + doc.getType() + "\"><input type=\"submit\" value=\"Delete\"/></form>");
-					out.println("</td></tr>");
+					out.println("</table>");
+				} else {
+					out.println("No documents uploaded");
 				}
-				out.println("</table>");
 			} else {
-				out.println("No documents uploaded");
+				out.println("Documents won't be displayed.");
 			}
 			out.println("<td>");
 			out.println("</tr>");
@@ -352,7 +363,9 @@ public class HelloServlet extends HttpServlet {
 			return;
 		}
 
+		int count = 0;
 		for (ListingVO listing : activeListings.getListings()) {
+			count++;
 			out.println("<tr><td>" + listing.getName() + " posted by " + listing.getOwnerName() + "</td>");
 			out.println("<td><form method=\"POST\" action=\"/listing/withdraw/" + listing.getId() + "/.json\"><input type=\"submit\" value=\"Withdraw\"/></form>");
 			out.println("<form method=\"POST\" action=\"/listing/freeze/" + listing.getId() + "/.json\"><input type=\"submit\" value=\"Freeze\"/></form>");
@@ -373,31 +386,35 @@ public class HelloServlet extends HttpServlet {
 			out.println("<a href=\"/listing/get/" + listing.getId() + ".json?\">View</a>");
 			out.println("<a href=\"/listing/messages/" + listing.getId() + ".json?\">Listing notifications</a></td>");
 			out.println("<td>");
-			List<ListingDocumentVO> docs = getListingDocs(currentUser, listing);
-			if (docs != null && !docs.isEmpty()) {
-				BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
-				
-				out.println("<table border=\"1\"><tr><td colspan=\"2\">Uploaded documents</td></tr>");
-				for (ListingDocumentVO doc : docs) {
-					out.println("<tr>");
-					out.println("<td>");
-					if (ListingDoc.Type.LOGO.toString().equalsIgnoreCase(doc.getType())) {
-						BlobInfo logoInfo = new BlobInfoFactory().loadBlobInfo(doc.getBlob());
-						if (logoInfo != null) {
-							byte logo[] = blobstoreService.fetchData(doc.getBlob(), 0, logoInfo.getSize() - 1);
-							out.println("<img src=\"" + ListingFacade.instance().convertLogoToBase64(logo) + "\"/>");
+			if (count < 5) {
+				List<ListingDocumentVO> docs = getListingDocs(currentUser, listing);
+				if (docs != null && !docs.isEmpty()) {
+					BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
+					
+					out.println("<table border=\"1\"><tr><td colspan=\"2\">Uploaded documents</td></tr>");
+					for (ListingDocumentVO doc : docs) {
+						out.println("<tr>");
+						out.println("<td>");
+						if (ListingDoc.Type.LOGO.toString().equalsIgnoreCase(doc.getType())) {
+							BlobInfo logoInfo = new BlobInfoFactory().loadBlobInfo(doc.getBlob());
+							if (logoInfo != null) {
+								byte logo[] = blobstoreService.fetchData(doc.getBlob(), 0, logoInfo.getSize() - 1);
+								out.println("<img src=\"" + ListingFacade.instance().convertLogoToBase64(logo) + "\"/>");
+							}
 						}
+						out.println("<a href=\"/listing/logo/" + listing.getId() + ".json?\">View logo</a></td>");
+						out.println("<a href=\"/file/download/" + doc.getId() + ".json\">Download "
+								+ doc.getType() + " uploaded " + fmt.print(doc.getCreated().getTime()) + ", type: " + doc.getType() + "</a></td>");
+						out.println("<td><form method=\"POST\" action=\"/listing/delete_file/.json?id="
+								+ listing.getId() + "&type=" + doc.getType() + "\"><input type=\"submit\" value=\"Delete\"/></form>");
+						out.println("</td></tr>");
 					}
-					out.println("<a href=\"/listing/logo/" + listing.getId() + ".json?\">View logo</a></td>");
-					out.println("<a href=\"/file/download/" + doc.getId() + ".json\">Download "
-							+ doc.getType() + " uploaded " + fmt.print(doc.getCreated().getTime()) + ", type: " + doc.getType() + "</a></td>");
-					out.println("<td><form method=\"POST\" action=\"/listing/delete_file/.json?id="
-							+ listing.getId() + "&type=" + doc.getType() + "\"><input type=\"submit\" value=\"Delete\"/></form>");
-					out.println("</td></tr>");
+					out.println("</table>");
+				} else {
+					out.println("No documents uploaded");
 				}
-				out.println("</table>");
 			} else {
-				out.println("No documents uploaded");
+				out.println("Documents won't be displayed.");
 			}
 			out.println("<td>");
 			out.println("</tr>");
@@ -417,38 +434,44 @@ public class HelloServlet extends HttpServlet {
 			return;
 		}
 
+		int count = 0;
 		for (ListingVO listing : frozenListings.getListings()) {
+			count ++;
 			out.println("<tr><td>" + listing.getName() + " posted by " + listing.getOwnerName() + "</td>");
 			out.println("<td><form method=\"POST\" action=\"/listing/activate/" + listing.getId() + "/.json\"><input type=\"submit\" value=\"Activate\"/></form>");
 			out.println("<form method=\"POST\" action=\"/listing/send_back/" + listing.getId() + "/.json\"><input type=\"submit\" value=\"Send back\"/></form>");
 			out.println("<a href=\"/listing/get/" + listing.getId() + ".json?\">View</a></td>");
 			out.println("<td>");
-			List<ListingDocumentVO> docs = getListingDocs(currentUser, listing);
-			if (docs != null && !docs.isEmpty()) {
-				BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
-				
-				out.println("<table border=\"1\"><tr><td colspan=\"2\">Uploaded documents</td></tr>");
-				for (ListingDocumentVO doc : docs) {
-					out.println("<tr>");
-					out.println("<td>");
-					if (ListingDoc.Type.LOGO.toString().equalsIgnoreCase(doc.getType())) {
-						BlobInfo logoInfo = new BlobInfoFactory().loadBlobInfo(doc.getBlob());
-						if (logoInfo != null) {
-							byte logo[] = blobstoreService.fetchData(doc.getBlob(), 0, logoInfo.getSize() - 1);
-							out.println("<img src=\"" + ListingFacade.instance().convertLogoToBase64(logo) + "\"/>");
+			if (count < 5) {
+				List<ListingDocumentVO> docs = getListingDocs(currentUser, listing);
+				if (docs != null && !docs.isEmpty()) {
+					BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
+					
+					out.println("<table border=\"1\"><tr><td colspan=\"2\">Uploaded documents</td></tr>");
+					for (ListingDocumentVO doc : docs) {
+						out.println("<tr>");
+						out.println("<td>");
+						if (ListingDoc.Type.LOGO.toString().equalsIgnoreCase(doc.getType())) {
+							BlobInfo logoInfo = new BlobInfoFactory().loadBlobInfo(doc.getBlob());
+							if (logoInfo != null) {
+								byte logo[] = blobstoreService.fetchData(doc.getBlob(), 0, logoInfo.getSize() - 1);
+								out.println("<img src=\"" + ListingFacade.instance().convertLogoToBase64(logo) + "\"/>");
+							}
 						}
+						out.println("<a href=\"/file/download/" + doc.getId() + ".json\">Download "
+								+ doc.getType() + " uploaded " + fmt.print(doc.getCreated().getTime()) + ", type: " + doc.getType() + "</a></td>");
+						out.println("<td><form method=\"POST\" action=\"/listing/delete_file/.json?id="
+								+ listing.getId() + "&type=" + doc.getType() + "\"><input type=\"submit\" value=\"Delete\"/></form>");
+						out.println("</td></tr>");
 					}
-					out.println("<a href=\"/file/download/" + doc.getId() + ".json\">Download "
-							+ doc.getType() + " uploaded " + fmt.print(doc.getCreated().getTime()) + ", type: " + doc.getType() + "</a></td>");
-					out.println("<td><form method=\"POST\" action=\"/listing/delete_file/.json?id="
-							+ listing.getId() + "&type=" + doc.getType() + "\"><input type=\"submit\" value=\"Delete\"/></form>");
-					out.println("</td></tr>");
+					out.println("</table>");
+				} else {
+					out.println("No documents uploaded");
 				}
-				out.println("</table>");
 			} else {
-				out.println("No documents uploaded");
+				out.println("Document won't be displayed.");
 			}
-			out.println("<td>");
+			out.println("</td>");
 			out.println("</tr>");
 		}
 		out.println("</table>");

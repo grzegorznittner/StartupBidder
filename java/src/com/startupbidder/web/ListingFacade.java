@@ -851,31 +851,22 @@ public class ListingFacade {
 		Map<String, Monitor> monitors = getDAO().getMonitorsMapForUser(loggedInUser.toKeyId());
 		
 		ListPropertiesVO props = new ListPropertiesVO();
-		props.setMaxResults(100);
-		List<ListingVO> list = prepareListingList(loggedInUser, getDAO().getUserListings(loggedInUser.toKeyId(), props), monitors, 100);
-		log.info("Fetched listings owned by user '" + loggedInUser.toKeyId() + "': " + list);
-		
-		List<ListingVO> activeListings = new ArrayList<ListingVO>();
-		List<ListingVO> withdrawnListings = new ArrayList<ListingVO>();
-		List<ListingVO> frozenListings = new ArrayList<ListingVO>();
-		List<ListingVO> closedListings = new ArrayList<ListingVO>();
-		for (ListingVO listing : list) {
-			Listing.State state = Listing.State.valueOf(listing.getState());
-			switch(state) {
-			case ACTIVE:
-				activeListings.add(listing);
-				break;
-			case WITHDRAWN:
-				withdrawnListings.add(listing);
-				break;
-			case FROZEN:
-				frozenListings.add(listing);
-				break;
-			case CLOSED:
-				closedListings.add(listing);
-				break;
-			}
-		}
+		props.setMaxResults(4);
+		List<ListingVO> activeListings = prepareListingList(loggedInUser,
+				getDAO().getUserListings(loggedInUser.toKeyId(), Listing.State.ACTIVE, props), monitors, 4);
+		props = new ListPropertiesVO();
+		props.setMaxResults(4);
+		List<ListingVO> withdrawnListings = prepareListingList(loggedInUser,
+				getDAO().getUserListings(loggedInUser.toKeyId(), Listing.State.WITHDRAWN, props), monitors, 4);
+		props = new ListPropertiesVO();
+		props.setMaxResults(4);
+		List<ListingVO> frozenListings = prepareListingList(loggedInUser,
+				getDAO().getUserListings(loggedInUser.toKeyId(), Listing.State.FROZEN, props), monitors, 4);
+		props = new ListPropertiesVO();
+		props.setMaxResults(4);
+		List<ListingVO> closedListings = prepareListingList(loggedInUser,
+				getDAO().getUserListings(loggedInUser.toKeyId(), Listing.State.CLOSED, props), monitors, 4);
+
 		if (activeListings.size() > 0) {
 			result.setActiveListings(activeListings);
 		}
@@ -895,7 +886,7 @@ public class ListingFacade {
 		}
 		
 		List<Listing> monitoredListing = getMonitoredListings(loggedInUser, 4);
-		list = prepareListingList(loggedInUser, monitoredListing, monitors, 4);
+		List<ListingVO> list = prepareListingList(loggedInUser, monitoredListing, monitors, 4);
 		result.setCommentedListings(list);
 		
 		props = new ListPropertiesVO();
@@ -1101,16 +1092,18 @@ public class ListingFacade {
 	 * If queried user is logged in then returns all listings created by specified user.
 	 * If not only ACTIVE listings are returned.
 	 */
-	public ListingListVO getUserListings(UserVO loggedInUser, String userId, ListPropertiesVO listingProperties) {
-		
-		List<ListingVO> listings = null;
-		if (loggedInUser != null && StringUtils.equals(userId, loggedInUser.getId())) {
-			listings = DtoToVoConverter.convertListings(
-				getDAO().getUserListings(BaseVO.toKeyId(userId), listingProperties));
-		} else {
-			listings = DtoToVoConverter.convertListings(
-					getDAO().getUserActiveListings(BaseVO.toKeyId(userId), listingProperties));
+	public ListingListVO getUserListings(UserVO loggedInUser, String stateString, ListPropertiesVO listingProperties) {
+		ListingListVO list = new ListingListVO();
+		if (loggedInUser == null) {
+			log.log(Level.WARNING, "User not logged in");
+			list.setErrorMessage("User not logged in");
+			list.setErrorCode(ErrorCodes.NOT_LOGGED_IN);
+			return list;
 		}
+		Listing.State state = stateString != null ? Listing.State.valueOf(stateString.toUpperCase()) : null;
+		List<ListingVO> listings = DtoToVoConverter.convertListings(
+				getDAO().getUserListings(loggedInUser.toKeyId(), state, listingProperties));
+
 		Map<String, Monitor> monitors = loggedInUser != null ? getDAO().getMonitorsMapForUser(loggedInUser.toKeyId()) : new HashMap<String, Monitor>();
 		int index = listingProperties.getStartIndex() > 0 ? listingProperties.getStartIndex() : 1;
 		for (ListingVO listing : listings) {
@@ -1118,12 +1111,11 @@ public class ListingFacade {
 			listing.setOrderNumber(index++);
 		}
 		
-		ListingListVO list = new ListingListVO();
 		list.setListings(listings);
 		list.setListingsProperties(listingProperties);
 		list.setCategories(getTopCategories());
 		list.setTopLocations(getTopLocations());
-		list.setUser(new UserBasicVO(UserMgmtFacade.instance().getUser(loggedInUser, userId).getUser()));
+		list.setUser(new UserBasicVO(loggedInUser));
 	
 		return list;
 	}

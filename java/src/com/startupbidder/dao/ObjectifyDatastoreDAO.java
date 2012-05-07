@@ -617,12 +617,15 @@ public class ObjectifyDatastoreDAO {
 		return listings;
 	}
 
-	public List<Listing> getUserListings(long userId, ListPropertiesVO listingProperties) {
+	public List<Listing> getUserListings(long userId, Listing.State listingState, ListPropertiesVO listingProperties) {
 		Query<Listing> query = getOfy().query(Listing.class)
-				.filter("owner =", new Key<SBUser>(SBUser.class, userId))
-                .order("-listedOn")
-                .chunkSize(listingProperties.getMaxResults())
-                .prefetchSize(listingProperties.getMaxResults());
+				.filter("owner =", new Key<SBUser>(SBUser.class, userId));
+		if (listingState != null) {
+			query.filter("state", listingState);
+		}
+        query.order("-listedOn")
+       			.chunkSize(listingProperties.getMaxResults())
+       			.prefetchSize(listingProperties.getMaxResults());
 		List<Key<Listing>> keyList = handleCursorForListingQuery(listingProperties, query);
 		List<Listing> listings = new ArrayList<Listing>(getOfy().get(keyList).values());
 		listingProperties.setNumberOfResults(listings.size());

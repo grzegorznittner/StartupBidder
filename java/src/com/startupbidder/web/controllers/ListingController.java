@@ -449,12 +449,12 @@ public class ListingController extends ModelDrivenController {
         return new HttpHeadersImpl("monitored").disableCaching();
 	}
 
-    // GET /listings/user
+    // GET /listings/user/<state>/
     private HttpHeaders user(HttpServletRequest request) {
-    	String userId = getCommandOrParameter(request, 2, "id");
+    	String state = getCommandOrParameter(request, 2, "state");
 		ListPropertiesVO listingProperties = getListProperties(request);
 
-    	model = ListingFacade.instance().getUserListings(getLoggedInUser(), userId, listingProperties);
+    	model = ListingFacade.instance().getUserListings(getLoggedInUser(), state, listingProperties);
         return new HttpHeadersImpl("user").disableCaching();
     }
 
