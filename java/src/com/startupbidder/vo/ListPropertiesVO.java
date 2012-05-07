@@ -1,5 +1,10 @@
 package com.startupbidder.vo;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.codehaus.jackson.annotate.JsonAutoDetect;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
@@ -14,16 +19,36 @@ import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 		fieldVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE)
 public class ListPropertiesVO {
 	private int startIndex;
-	@JsonProperty("max_results")
-	private int maxResults;
+	@JsonProperty("max_results") private int maxResults;
 	private int totalResults;
-	@JsonProperty("num_results")
-	private int numberOfResults;
-	@JsonProperty("prev_cursor")
+	@JsonProperty("num_results") private int numberOfResults;
 	private String prevCursor;
-	@JsonProperty("next_cursor")
 	private String nextCursor;
+	@JsonProperty("more_results_url") private String moreResultsUrl;
+	private String requestPathInfo;
+	private Map<String, String> parameters = new HashMap<String, String>();
 	
+	public void updateMoreResultsUrl() {
+		StringBuffer url = new StringBuffer();
+		url.append(requestPathInfo).append("?");
+		for (Map.Entry<String, String> param : parameters.entrySet()) {
+			if ("next_cursor".equals(param.getKey())) {
+				continue;
+			}
+			url.append(param.getKey()).append("=").append(param.getValue()).append("&");
+		}
+		url.append("next_cursor=").append(nextCursor);
+		moreResultsUrl = url.toString();
+	}
+	public void setRequestData(HttpServletRequest request) {
+		this.requestPathInfo = request.getPathInfo();
+		@SuppressWarnings("rawtypes")
+		Map paramMap = request.getParameterMap();
+		for (Object paramName : paramMap.keySet()) {
+			String values[] = (String[])paramMap.get(paramName);
+			parameters.put((String)paramName, values[0]);
+		}
+	}
 	public int getStartIndex() {
 		return startIndex;
 	}
@@ -59,5 +84,8 @@ public class ListPropertiesVO {
 	}
 	public void setMaxResults(int maxResults) {
 		this.maxResults = maxResults;
+	}
+	public String getMoreResultsUrl() {
+		return moreResultsUrl;
 	}
 }

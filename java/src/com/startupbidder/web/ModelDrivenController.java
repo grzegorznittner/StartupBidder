@@ -174,6 +174,7 @@ public abstract class ModelDrivenController {
 		listingProperties.setMaxResults(maxItems);
 		listingProperties.setNextCursor(request.getParameter("next_cursor"));
 		listingProperties.setPrevCursor(request.getParameter("prev_cursor"));
+		listingProperties.setRequestData(request);
 		
 		return listingProperties;
 	}

@@ -94,6 +94,8 @@ public class HelloServlet extends HttpServlet {
 			List<SBUser> users = datastore.getAllUsers();
 
 			List<Listing> usersListings = datastore.getUserActiveListings(currentUser.toKeyId(), listProperties);
+			listProperties = new ListPropertiesVO();
+			listProperties.setMaxResults(20);
 			List<Comment> comments = datastore.getCommentsForListing(datastore.getMostDiscussedListings(listProperties).get(0).id);
 			
 			//testMockDatastore(user, datastore, out);

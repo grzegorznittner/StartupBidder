@@ -12,7 +12,6 @@ import java.util.logging.Logger;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-//import org.datanucleus.util.StringUtils;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
@@ -575,6 +574,7 @@ public class ObjectifyDatastoreDAO {
 			if (keyList.size() >= listingProperties.getMaxResults()) {
 				if (topListingsStat.hasNext()) {
 					listingProperties.setNextCursor(topListingsStat.getCursor().toWebSafeString());
+					listingProperties.updateMoreResultsUrl();
 				}
 				break;
 			}
@@ -596,6 +596,7 @@ public class ObjectifyDatastoreDAO {
 			if (keyList.size() >= listingProperties.getMaxResults()) {
 				if (topListingsStat.hasNext()) {
 					listingProperties.setNextCursor(topListingsStat.getCursor().toWebSafeString());
+					listingProperties.updateMoreResultsUrl();
 				}
 				break;
 			}
