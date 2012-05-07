@@ -8,22 +8,19 @@ function CompanyTileClass(options) {
 pl.implement(CompanyTileClass, {
     setValues: function(json) {
         var date = json.listing_date || json.created_date,
-            closingText,
-            listingText,
             url = json.website ? new URLClass(json.website) : null;
         this.status = json.status;
-        if (this.status && this.status === 'new') {
-            closingText = 'New listing';
-            listingText = 'New listing';
-            this.daysText = listingText;
+        if (!this.status) {
+            this.daysText = '';
         }
-        else if (this.status) {
-            closingText = json.days_left === 0 ? 'Closing today!' : (json.days_left < 0 ? 'Bidding closed' : json.days_left + ' days left'),
-            listingText = json.asked_fund ? closingText : (json.days_ago ? json.days_ago + ' days ago' : 'Listed today');
-            this.daysText = listingText;
+        else if (this.status === 'active' && this.asked_fund) {
+            this.daysText = json.days_left === 0 ? 'Closing today!' : (json.days_left < 0 ? 'Bidding closed' : json.days_left + ' days left');
+        }
+        else if (this.status === 'active' && !this.asked_fund) {
+            this.daysText = json.days_ago ? json.days_ago + ' days ago' : 'Listed today';
         }
         else {
-            this.daysText = '';
+            this.daysText = SafeStringClass.prototype.ucfirst(this.status);
         }
         this.imgClass = json.logo ? '' : 'noimage';
         this.imgStyle = json.logo ? 'background: url(' + json.logo + ') no-repeat scroll left top' : '';
@@ -147,53 +144,129 @@ pl.implement(CompanyTileClass, {
 
 function CompanyListClass(options) {
     this.options = options || {};
+    this.options.colsPerRow = this.options.colsPerRow || ( this.options.fullWidth ? 1 : 4 );
+    this.options.companydiv = this.options.companydiv || 'companydiv';
+    this.options.propertykey= this.options.propertykey || 'listings';
 }
 pl.implement(CompanyListClass, {
-    storeList: function(json, _colsPerRow, _companydiv, _companykey) {
-        var i, company, tile, last,
-            colsPerRow = _colsPerRow ? _colsPerRow : ( this.options.fullWidth ? 1 : 4),
-            companydiv = _companydiv || this.options.listingsdiv || 'companydiv',
-            companykey = _companykey || this.options.propertykey || 'listings',
-            companysel = '#' + companydiv,
-            companies = this.options.propertyissingle ? (json && json[companykey] ? [ json[companykey] ] : null ) : (json && json[companykey] && json[companykey].length > 0 ? json[companykey] : null),
-            showmore = this.options.showmore && companies && (companies.length >= colsPerRow),
-            profile = json && json.loggedin_profile ? json.loggedin_profile : null,
-            postnowlink = profile ? 'new-listing-basics-page.html' : 'login-page.html',
-            options = json.loggedin_profile && json.loggedin_profile.admin ? { admin: true } : {},
-            html = "";
+    storeList: function(json) {
+        var companiesval = json && json[this.options.propertykey],
+            postnowlink = json && json.loggedin_profile ? 'new-listing-basics-page.html' : 'login-page.html',
+            isadmin = json && json.loggedin_profile && json.loggedin_profile.admin,
+            tileoptions = { admin: isadmin },
+            more_results_url = json.listings_props && json.listings_props.more_results_url,
+            html = "",
+            seeall,
+            companies,
+            company,
+            tile,
+            last,
+            i;
+        if (this.options.propertyissingle) {
+            companies = companiesval ? [ companiesval ] : [];
+        }
+        else {
+            companies = companiesval || [];
+        }
+        seeall = this.options.seeall && companies && (companies.length >= this.options.colsPerRow),
         pl('#postnowtextlink,#postnowbtnlink').attr({href: postnowlink});
-        if (!companies) {
-            pl(companysel).html('<span class="attention">No companies found</span>');
+        if (!companies.length) {
+            pl('#'+this.options.companydiv).html('<span class="attention">No companies found</span>');
             return;
         }
         for (i = 0; i < companies.length; i++) {
             company = companies[i];
-            tile  = new CompanyTileClass(options);
+            tile  = new CompanyTileClass(tileoptions);
             tile.setValues(company);
-            if (this.options.fullWidth || (colsPerRow === 4 && companies.length === 1)) {
+            if (this.options.fullWidth || (this.options.colsPerRow === 4 && companies.length === 1)) {
                 html += tile.makeFullWidthHtml();
             }
-            else if (colsPerRow === 4 && companies.length === 2 && i === 0) {
+            else if (this.options.colsPerRow === 4 && companies.length === 2 && i === 0) {
                 html += tile.makeHalfWidthHtml();
             }
-            else if (colsPerRow === 4 && companies.length === 2 && i === 1) {
+            else if (this.options.colsPerRow === 4 && companies.length === 2 && i === 1) {
                 html += tile.makeHalfWidthHtml('last');
             }
-            else if (colsPerRow === 4 && companies.length === 3 && i < 2) {
+            else if (this.options.colsPerRow === 4 && companies.length === 3 && i < 2) {
                 html += tile.makeHtml();
             }
-            else if (colsPerRow === 4 && companies.length === 3 && i === 2) {
+            else if (this.options.colsPerRow === 4 && companies.length === 3 && i === 2) {
                 html += tile.makeHalfWidthHtml('last');
             }
             else {
-                last = (i+1) % colsPerRow === 0 ? 'last' : '';
+                last = (i+1) % this.options.colsPerRow === 0 ? 'last' : '';
                 html += tile.makeHtml(last);
             }
         }
-        if (showmore) {
-            html += '<div class="showmore"><a href="' + this.options.showmore + '">More...</a></div>\n';
+        if (more_results_url) {
+            html += '<div class="showmore hoverlink" id="moreresults"><span class="initialhidden" id="moreresultsurl">' + more_results_url + '</span><span id="moreresultsmsg">More...</span></div>\n';
         }
-        pl(companysel).html(html);
+        else if (seeall) {
+            html += '<div class="showmore"><a href="' + this.options.seeall + '">See all</a></div>\n';
+        }
+        pl('#'+this.options.companydiv).html(html);
+        if (more_results_url) {
+            this.bindMoreResults();
+        }
+    },
+    bindMoreResults: function() {
+        var self = this;
+        pl('#moreresults').bind({
+            click: function() {
+                var completeFunc = function(json) {
+                        var companies = json.listings || [],
+                            more_results_url = companies.length > 0 && json.listings_props && json.listings_props.more_results_url,
+                            html = '',
+                            company,
+                            tile,
+                            last,
+                            i;
+                        for (i = 0; i < companies.length; i++) {
+                            company = companies[i];
+                            tile  = new CompanyTileClass(self.options);
+                            tile.setValues(company);
+                            last = (i+1) % self.options.colsPerRow === 0 ? 'last' : '';
+                            html += tile.makeHtml(last);
+                        }
+                        if (html) {
+                            pl('#moreresults').before(html);
+                        }
+                        if (more_results_url) {
+                            pl('#moreresultsurl').text(more_results_url);
+                            pl('#moreresultsmsg').text('More...');
+                        }
+                        else {
+                            pl('#moreresultsmsg').text('');
+                            pl('#moreresults').removeClass('hoverlink').unbind();
+                        }
+                    },
+                    more_results_url = pl('#moreresultsurl').text(),
+                    index = more_results_url ? more_results_url.indexOf('?') : -1,
+                    components = more_results_url && index >= 0 ? [ more_results_url.slice(0, index), more_results_url.slice(index+1) ] : [ more_results_url, null ],
+                    url = components[0],
+                    parameters = components[1] ? components[1].split('&') : null,
+                    ajax,
+                    data,
+                    keyval,
+                    i;
+                if (more_results_url) {
+                    ajax = new AjaxClass(url, 'moreresultsmsg', completeFunc);
+                    if (parameters) {
+                        data = {};
+                        for (i = 0; i < parameters.length; i++) {
+                            keyval = parameters[i].split('=');
+                            data[keyval[0]] = keyval[1];
+                        }
+                        ajax.setGetData(data);
+                    }
+                    ajax.call();
+                }
+                else {
+                    pl('#moreresultsmsg').text('');
+                    pl('#moreresults').removeClass('hoverlink').unbind();
+                }
+            }
+        });
     }
 });
 
@@ -262,53 +335,14 @@ function RelatedCompaniesClass(listing_id) {
 }
 pl.implement(RelatedCompaniesClass, {
     load: function() {
-        var completeFunc, basePage;
-        completeFunc = function(json) {
-            companyList = new CompanyListClass();
-            companyList.storeList(json,2);
-        };
-        basePage = new BaseCompanyListPageClass();
+        var completeFunc = function(json) {
+                companyList = new CompanyListClass({colsPerRow: 2});
+                companyList.storeList(json);
+            },
+            basePage = new BaseCompanyListPageClass();
         basePage.type = 'related';
         basePage.listing_id = this.listing_id;
         basePage.loadPage(completeFunc);
-    }
-});
-
-function TestCompaniesClass() { // FIXME: remove after implementation fixed
-        var randomLen, i;
-        this.randomSort = function (a,b) {
-            var temp = parseInt( Math.random()*10 );
-            var isOddOrEven = temp%2;
-            var isPosOrNeg = temp>5 ? 1 : -1;
-            return( isOddOrEven*isPosOrNeg );
-        };
-        this.allCompanies = [{"num":1,"listing_id":"ag1zdGFydHVwYmlkZGVychcLEgdMaXN0aW5nIgpraWxsIGVtYWlsDA","title":"Kill email","suggested_amt":20000,"suggested_pct":50,"suggested_val":40000,"previous_val":40000,"valuation":40000,"median_valuation":75000,"score":3316,"listing_date":"20111018","closing_date":"20111117","status":"active","mantra":"Making email as obsolete as the memo.","summary":"If any startup says it's going to eliminate email, it's destined for failure. You can iterate on the inbox, and try to improve it, but even that's not much of a business. The latest high profile flop in this arena is Google Wave. It was supposed to change email forever. It was going to displace email. Didn't happen.","profile_id":"ag1zdGFydHVwYmlkZGVychkLEgRVc2VyIg9idXNpbmVzc2luc2lkZXIM","profile_username":"Insider","num_comments":38,"num_bids":15,"votable":true,"days_ago":95,"days_left":-66,"mockData":true,"business_plan_id":null,"presentation_id":null,"financials_id":null},{"num":2,"listing_id":"ag1zdGFydHVwYmlkZGVychsLEgdMaXN0aW5nIg5sb2NhbG5ld3NzaXRlcww","title":"Local news sites","suggested_amt":9800,"suggested_pct":20,"suggested_val":49000,"previous_val":365217,"valuation":365217,"median_valuation":77000,"score":1326,"listing_date":"20111011","closing_date":"20111110","status":"active","mantra":"Local news made global","summary":"Maybe Tim Armstrong, AOL, and Patch will prove it wrong, but to this point nobody has been able to crack the local news market and make a sustainable business.In theory creating a network of local news sites that people care about is a good idea. You build a community, there's a baked in advertising group with local businesses, and classifieds. But, it appears to be too niche to scale into a big business.","profile_id":"ag1zdGFydHVwYmlkZGVychQLEgRVc2VyIgpkcmFnb25zZGVuDA","profile_username":"The Dragon","num_comments":22,"num_bids":19,"votable":false,"days_ago":102,"days_left":-73,"mockData":true,"business_plan_id":null,"presentation_id":null,"financials_id":null},{"num":3,"listing_id":"ag1zdGFydHVwYmlkZGVyciMLEgdMaXN0aW5nIhZjb21wX3VwZ3JhZGluZ19zZXJ2aWNlDA","title":"Computer Upgrading Service","suggested_amt":11550,"suggested_pct":33,"suggested_val":35000,"previous_val":35000,"valuation":35000,"median_valuation":63000,"score":899,"listing_date":"20111009","closing_date":"20111108","status":"active","mantra":"Taking the pain out of managing your technology","summary":"Starting a business that specializes in upgrading existing computer systems with new internal and external equipment is a terrific homebased business to initiate that has great potential to earn an outstanding income for the operator of the business. A computer upgrading service is a very easy business to get rolling, providing you have the skills and equipment necessary to complete upgrading tasks, such as installing more memory into the hard drive, replacing a hard drive, or adding a new disk drive to the computer system. Ideally, to secure the most profitable segment of the potential market, the service should specialize in upgrading business computers as there are many reasons why a business would upgrade a computer system as opposed to replacing the computer system. Additionally, managing the business from a homebased location while providing clients with a mobile service is the best way to keep operating overheads minimized and potentially increases the size of the target market by expanding the service area, due to the fact the business operates on a mobile format.","profile_id":"ag1zdGFydHVwYmlkZGVychkLEgRVc2VyIg9ncnplZ29yem5pdHRuZXIM","profile_username":"Greg","num_comments":34,"num_bids":27,"votable":false,"days_ago":104,"days_left":-75,"mockData":true,"business_plan_id":null,"presentation_id":null,"financials_id":null},{"num":4,"listing_id":"ag1zdGFydHVwYmlkZGVychsLEgdMaXN0aW5nIg5zZW1hbnRpY3NlYXJjaAw","title":"Semantic Search","suggested_amt":18000,"suggested_pct":45,"suggested_val":40000,"previous_val":40000,"valuation":40000,"median_valuation":61500,"score":639,"listing_date":"20111005","closing_date":"20111104","status":"active","mantra":"Adding meaning to your search experience","summary":"The fact of the matter is Google, and to a much lesser extent Bing, own the search market. Ask Barry Diller, if you don't believe us.Yet, startups still spring up hoping to disrupt the incumbents. Cuil flopped. Wolfram Alpha is irrelevant. Powerset, which was a semantic search engine was bailed out by Microsoft, which acquired it.","profile_id":"ag1zdGFydHVwYmlkZGVychILEgRVc2VyIghqcGZvd2xlcgw","profile_username":"fowler","num_comments":2,"num_bids":24,"votable":false,"days_ago":108,"days_left":-79,"mockData":true,"business_plan_id":null,"presentation_id":null,"financials_id":null},{"num":5,"listing_id":"ag1zdGFydHVwYmlkZGVyciILEgdMaXN0aW5nIhVzb2NpYWxyZWNvbW1lbmRhdGlvbnMM","title":"Social recommendations","suggested_amt":1500,"suggested_pct":10,"suggested_val":15000,"previous_val":15000,"valuation":15000,"median_valuation":42500,"score":412,"listing_date":"20111004","closing_date":"20111103","status":"active","mantra":"Purchasing for status in your peer group","summary":"It's a very tempting idea. Collect data from people about their tastes and preferences. Then use that data to create recommendations for others. Or, use that data to create recommendations for the people that filled in the information. It doesn't work. The latest to try is Hunch and Get Glue.Hunch is pivoting towards non-consumer-facing white label business. Get Glue has had some success of late, but it's hardly a breakout business.","profile_id":"ag1zdGFydHVwYmlkZGVychELEgRVc2VyIgdjaGluZXNlDA","profile_username":"The One","num_comments":42,"num_bids":20,"votable":false,"days_ago":109,"days_left":-80,"mockData":true,"business_plan_id":null,"presentation_id":null,"financials_id":null}];
-        this.allCompanies.sort(this.randomSort);
-        randomLen = Math.floor(Math.random() * this.allCompanies.length);
-        this.companies = [];
-        for (i = 0; i < randomLen; i++) {
-            this.companies[i] = this.allCompanies[i];
-        }
-}
-pl.implement(TestCompaniesClass, {
-    testJson: function() {
-        return this.companies;
-    },
-    testNotifications: function() {
-        var types, dates, i, company, notifications, notification;
-        types = ['comment', 'bid'];
-        dates = ['2011/11/29 13:12', '2011/12/20 9:46', '2012/01/13 8:37'];
-        notifications = [];
-        for (i = 0; i < this.companies.length; i++) {
-            company = this.companies[i];
-            notification = {};
-            notification.url = '/company-page.html?id=' + company.listing_id;
-            notification.type = types[Math.floor(Math.random() * types.length)]
-            notification.text =  'You received a ' + notification.type + ' on ' + company.title;
-            notification.date = dates[Math.floor(Math.random() * dates.length)]
-            notifications[i] = notification;
-        }
-        return notifications;
     }
 });
 
@@ -397,5 +431,4 @@ pl.implement(SearchBoxClass, {
         });
     }
 });
-
 

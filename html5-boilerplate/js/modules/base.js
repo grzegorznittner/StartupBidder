@@ -250,6 +250,9 @@ pl.implement(AjaxClass, {
     setPost: function() {
         this.ajaxOpts.type = 'POST';
     },
+    setGetData: function(data) {
+        this.ajaxOpts.data = data;
+    },
     setPostData: function(data) { // for post operations
         var property, propertyData, serializedData;
         this.setPost();

@@ -13,7 +13,7 @@ pl.implement(MainPageClass,{
                 categoryList.display();
                 locationList.display();
                 searchbox.bindEvents();
-                companyList.storeList(json,4);
+                companyList.storeList(json);
             },
             basePage = new BaseCompanyListPageClass();
         basePage.loadPage(completeFunc);

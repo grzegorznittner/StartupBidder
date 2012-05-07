@@ -23,7 +23,6 @@ include(header.m4)
             <dt class="inputmsg" id="notification_title"></dt>
             <dd>
                 <p class="inputmsg" id="notification_date"></p>
-                <p class="notificationtext" id="notification_text_1"></p>
                 <p class="notificationtext" id="notification_text_2"></p>
                 <p class="inputmsg" id="notification_message"></p>
             </dd>

@@ -12,11 +12,11 @@
         <div class="twitterbanner">
           <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://www.startupbidder.com" data-text="startupbidder" data-via="startupbidder" data-related="startupbidder" data-hashtags="startupbidder">Tweet</a>
         </div>    
-        <div class="facebookbanner">
-            <div class="fb-like" data-href="http://www.startupbidder.com" data-send="false" data-width="310" data-show-faces="false" data-font="arial"></div>
-        </div>
         <div class="gplusbanner">
             <g:plusone size="medium" annotation="inline" width="310" href="http://www.startupbidder.com"></g:plusone>
+        </div>
+        <div class="facebookbanner">
+            <div class="fb-like" data-href="http://www.startupbidder.com" data-send="false" data-width="310" data-show-faces="false" data-font="arial"></div>
         </div>
     </span>
 </div> <!-- end banner -->

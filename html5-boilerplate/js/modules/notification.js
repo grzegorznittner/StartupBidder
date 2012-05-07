@@ -47,7 +47,6 @@ pl.implement(NotificationClass, {
             tile = new CompanyTileClass({ companybannertileclass: 'companybannertilenoborder' });
         pl('#notification_title').text(self.title);
         pl('#notification_date').text(self.datetext);
-        pl('#notification_text_1').html(self.text_1||'');
         pl('#notification_text_2').html(self.text_2||'');
         if (self.listing_id) {
             listing.listing_id = self.listing_id;

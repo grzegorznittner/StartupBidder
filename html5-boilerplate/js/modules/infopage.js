@@ -3,11 +3,10 @@ pl.implement(InformationPageClass,{
     loadPage: function() {
         var completeFunc, basePage;
         completeFunc = function(json) {
-            var header, companyList;
-            header = new HeaderClass();
-            companyList = new CompanyListClass();
+            var header = new HeaderClass(),
+                companyList = new CompanyListClass({ colsPerRow: 2});
             header.setLogin(json);
-            companyList.storeList(json,2);
+            companyList.storeList(json);
         };
         basePage = new BaseCompanyListPageClass();
         basePage.loadPage(completeFunc);

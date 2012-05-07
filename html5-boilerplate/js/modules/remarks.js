@@ -19,7 +19,7 @@ new RemarkClass({
     idproperty: 'notification_id',
     fromnameproperty: 'from_user_nickname',
     dateproperty: 'create_date',
-    textproperty: 'text_1',
+    textproperty: 'text_2',
     posturl: '/listing/send_private',
     deleteurl:  null});
 */
@@ -87,7 +87,6 @@ pl.implement(RemarkClass, {
             textsel = '#' + textid,
             msgsel = '#' + msgid,
             btnsel = '#' + btnid;
-        console.log('foo', boxsel, textsel, msgsel, btnsel);
         return function() {
             if (pl(boxsel).hasClass('bound')) {
                 return;
@@ -121,7 +120,6 @@ pl.implement(RemarkClass, {
             });
             pl(btnsel).bind({
                 click: function(event) {
-                    console.log('clicked');
                     var completeFunc = function() {
                             pl(textsel).removeClass('edited').attr({value: 'Put your ' + displaytype + ' here...'});
                             pl(btnsel).removeClass(self.addenabledclass);
@@ -220,7 +218,7 @@ pl.implement(RemarkClass, {
     makeRemark: function(remark, deletable, replyable) {
         var self = this,
             remarkid = remark[self.idproperty],
-            remarkprefix = self.fromnameprefix,
+            remarkprefix = remark.parent_notify_id ? 'Reply from' : self.fromnameprefix,
             remarkfrom = remark[self.fromnameproperty],
             remarkto = remark[self.tonameproperty],
             remarkreplybtn = replyable ? '<div class="smallinputbutton darkblue remarkreplybtn hoverlink" id="' + self.type + '_replybtn_' + remarkid + '">REPLY</div>' : '',

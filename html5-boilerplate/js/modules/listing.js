@@ -470,7 +470,7 @@ pl.implement(ListingClass, {
                         fromnameprefix: 'Asked by',
                         tonameroperty: 'to_user_nickname',
                         dateproperty: 'create_date',
-                        textproperty: 'text_1',
+                        textproperty: 'text_2',
                         posturl: '/listing/ask_owner',
                         postproperty: 'message',
                         deleteurl:  null
@@ -492,7 +492,7 @@ pl.implement(ListingClass, {
                         fromnameprefix: 'Sent by',
                         tonameroperty: 'to_user_nickname',
                         dateproperty: 'create_date',
-                        textproperty: 'text_1',
+                        textproperty: 'text_2',
                         posturl: '/listing/send_private',
                         deleteurl:  null
                     });

@@ -10,7 +10,7 @@ pl.implement(ProfilePageClass,{
             listingfound = false,
             companylist;
         options.propertykey = propertykey;
-        options.listingsdiv = propertykey;
+        options.companydiv = propertykey;
         if (listings && (options.propertyissingle || listings.length > 0)) {
             pl(wrappersel).show();
             companylist = new CompanyListClass(options);
@@ -25,8 +25,25 @@ pl.implement(ProfilePageClass,{
                 var header = new HeaderClass(),
                     profile = new ProfileClass(),
                     notifyList = new NotifyListClass(),
-                    listprops = [ 'edited_listing', 'active_listings', 'admin_posted_listings', 'admin_frozen_listings', 'monitored_listings', 'closed_listings', 'withdrawn_listings', 'frozen_listings' ],
-                    options = { edited_listing: { propertyissingle: true, fullWidth: true} },
+                    listprops = [ 'edited_listing',
+                        'active_listings',
+                        'admin_posted_listings',
+                        'admin_frozen_listings',
+                        'monitored_listings',
+                        'closed_listings',
+                        'withdrawn_listings',
+                        'frozen_listings'
+                    ],
+                    options = {
+                        edited_listing: { propertyissingle: true, fullWidth: true },
+                        active_listings: { seeall: '/profile-page.html?type=active' },
+                        monitored_listings: { seeall: '/profile-page.html?type=monitored' },
+                        closed_listings: { seeall: '/profile-page.html?type=closed' },
+                        withdrawn_listings: { seeall: '/profile-page.html?type=withdrawn' },
+                        frozen_listings: { seeall: '/profile-page.html?type=frozen' },
+                        admin_posted_listings: { seeall: '/profile-page.html?type=admin_posted' },
+                        admin_frozen_listings: { seeall: '/profile-page.html?type=admin_frozen' }
+                    },
                     listingfound = false,
                     propertykey,
                     i;
