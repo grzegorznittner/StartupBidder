@@ -355,8 +355,8 @@
 
     <div class="boxtitle">COMMENTS API</div>
     <div class="boxpanel apipanel">
-        <dt>GET /comments/listing/&lt;id&gt;
-            <form method="GET" action="/comments/listing/"><input type="text" name="id" value="&lt;listing_id&gt;"></input><input type="submit" value="TEST"></input></form>
+        <dt>GET /listing/comments/&lt;id&gt;
+            <form method="GET" action="/listing/comments/"><input type="text" name="id" value="&lt;listing_id&gt;"></input><input type="submit" value="TEST"></input></form>
         </dt>
         <dd>
             <p>
@@ -379,8 +379,8 @@
             Return an individual comment for the given comment id.
             </p>
         </dd>
-        <dt>POST /comment/create?comment=&lt;comment_json&gt;
-            <form method="GET" action="/comment/create/">
+        <dt>POST /listing/post_comment?comment=&lt;comment_json&gt;
+            <form method="POST" action="/comment/create/">
                 <input type="text" name="comment" value="{ listing_id: &lt;listing_id&gt;, text: &lt;comment_text&gt;}"></input>
                 <input type="submit" value="TEST"></input>
             </form>
@@ -390,8 +390,8 @@
             Create a comment by the currently logged in user for the given listing with the supplied text.
             </p>
         </dd>
-        <dt>POST /comment/delete/&lt;id&gt;
-            <form method="POST" action="/comment/delete/"><input type="text" name="id" value="&lt;comment_id&gt;"></input><input type="submit" value="TEST"></input></form>
+        <dt>POST /listing/delete_comment/&lt;id&gt;
+            <form method="POST" action="/listing/delete_comment/"><input type="text" name="id" value="&lt;comment_id&gt;"></input><input type="submit" value="TEST"></input></form>
         </dt>
         <dd>
             <p>

@@ -220,16 +220,16 @@ public class HelloServlet extends HttpServlet {
 			
 			*/
 			out.println("<p style=\"background: none repeat scroll 0% 0% rgb(187, 187, 187);\">Comments API:</p>");
-			out.println("<a href=\"/comments/listing/" + topListing.getWebKey() + "/.json?max_results=6\">Comments for top listing</a><br/>");
+			out.println("<a href=\"/listing/comments/" + topListing.getWebKey() + "/.json?max_results=6\">Comments for top listing</a><br/>");
 			out.println("<a href=\"/comments/user/" + currentUser.getId() + "/.json?max_results=6\">Comments for current user</a><br/>");
 			if (comments != null && comments.size() > 0) {
 				out.println("<a href=\"/comments/get/" + comments.get(0).getWebKey() + "/.json\">Get comment id '" + comments.get(0).getWebKey() + "'</a><br/>");
-				out.println("<form method=\"POST\" action=\"/comment/create/.json\"><textarea name=\"comment\" rows=\"5\" cols=\"100\">"
-							+ "{ \"listing_id\":\"" + topListing.getWebKey() + "\", \"profile_id\":\"" + currentUser.getId() + "\", \"text\":\"comment test\" }"
+				out.println("<form method=\"POST\" action=\"/listing/post_comment/.json\"><textarea name=\"comment\" rows=\"5\" cols=\"100\">"
+							+ "{ \"listing_id\":\"" + topListing.getWebKey() + "\", \"text\":\"comment test\" }"
 							+ "</textarea><input type=\"submit\" value=\"Create a comment (for top listing)\"/></form>");
-				out.println("<form method=\"POST\" action=\"/comment/delete/.json?id=" + comments.get(0).getWebKey() + "\"><input type=\"submit\" value=\"Deletes comment id '" + comments.get(0).getWebKey() + "'\"/></form>");
+				out.println("<form method=\"POST\" action=\"/listing/delete_comment/.json?id=" + comments.get(0).getWebKey() + "\"><input type=\"submit\" value=\"Deletes comment id '" + comments.get(0).getWebKey() + "'\"/></form>");
 			} else {
-				out.println("No comments.<br/>");				
+				out.println("No comments.<br/>");
 			}
 			out.println("<br/>");
 			

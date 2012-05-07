@@ -36,116 +36,15 @@ public class CommentController extends ModelDrivenController {
 				return all(request);
 			} else if("user".equalsIgnoreCase(getCommand(1))) {
 				return user(request);
-			} else if("listing".equalsIgnoreCase(getCommand(1))) {
-				return listing(request);
 			} else if("get".equalsIgnoreCase(getCommand(1))) {
 				return get(request);
 			} else {
 				return index(request);
 			}
 		} else if ("POST".equalsIgnoreCase(request.getMethod())) {
-			if("create".equalsIgnoreCase(getCommand(1))) {
-				return create(request);
-			} else if("update".equalsIgnoreCase(getCommand(1))) {
-				return update(request);
-			} else if("delete".equalsIgnoreCase(getCommand(1))) {
-				return delete(request);
-			}
-		} else if ("DELETE".equalsIgnoreCase(request.getMethod())) {
-			return delete(request);
+			// moved to listing controller
 		}
 		return null;
-	}
-
-	/*
-	 * DELETE /comment?id=<id> 
-	 * POST /comment/delete?id=<id>
-	 */
-	private HttpHeaders delete(HttpServletRequest request) {
-		HttpHeaders headers = new HttpHeadersImpl("delete");
-		
-		String commentId = "DELETE".equalsIgnoreCase(request.getMethod())
-				? getCommandOrParameter(request, 1, "id") : getCommandOrParameter(request, 2, "id");
-		if (!StringUtils.isEmpty(commentId)) {
-            // this always returns null
-			model = ServiceFacade.instance().deleteComment(getLoggedInUser(), commentId);
-		} else {
-			log.log(Level.WARNING, "Parameter 'id' is not provided!");
-			headers.setStatus(500);
-		}
-		
-		return headers;
-	}
-
-	/*
-	 * POST /comment/create?comment=<bid json>
-	 */
-	private HttpHeaders create(HttpServletRequest request) throws JsonParseException, JsonMappingException, IOException {
-		HttpHeaders headers = new HttpHeadersImpl("create");
-		
-		ObjectMapper mapper = new ObjectMapper();
-		log.log(Level.INFO, "Parameters: " + request.getParameterMap());
-		String commentString = request.getParameter("comment");
-		if (!StringUtils.isEmpty(commentString)) {
-			CommentVO comment = mapper.readValue(commentString, CommentVO.class);
-			log.log(Level.INFO, "Creating comment: " + comment);
-			comment = ServiceFacade.instance().createComment(getLoggedInUser(), comment);
-			model = comment;
-			if (comment == null) {
-				log.log(Level.WARNING, "Comment not created!");
-				headers.setStatus(500);
-			}
-		} else {
-			log.log(Level.WARNING, "Parameter 'comment' is empty!");
-			headers.setStatus(500);
-		}
-
-		return headers;
-	}
-
-	/*
-	 * PUT /comment/update?comment=<bid json>
-	 */
-	private HttpHeaders update(HttpServletRequest request) throws JsonParseException, JsonMappingException, IOException {
-		HttpHeaders headers = new HttpHeadersImpl("update");
-		
-		ObjectMapper mapper = new ObjectMapper();
-		log.log(Level.INFO, "Parameters: " + request.getParameterMap());
-		String commentString = request.getParameter("comment");
-		if (!StringUtils.isEmpty(commentString)) {
-			CommentVO comment = mapper.readValue(commentString, CommentVO.class);
-			log.log(Level.INFO, "Updating comment: " + comment);
-			if (comment == null || comment.getId() == null) {
-				log.log(Level.WARNING, "Commend id not provided!");
-				headers.setStatus(500);
-			} else {
-				comment = ServiceFacade.instance().updateComment(getLoggedInUser(), comment);
-				model = comment;
-				if (comment == null) {
-					log.log(Level.WARNING, "Comment not found!");
-					headers.setStatus(500);
-				}
-			}
-		} else {
-			log.log(Level.WARNING, "Parameter 'comment' is empty!");
-			headers.setStatus(500);
-		}
-
-		return headers;
-	}
-
-	/*
-	 *  /comments/user/ag1zdGFydHVwYmlkZGVychQLEgdMaXN0aW5nIgdtaXNsZWFkDA/.html
-	 *  /comments/listing/?id=ag1zdGFydHVwYmlkZGVychQLEgdMaXN0aW5nIgdtaXNsZWFkDA.html
-	 */
-	private HttpHeaders listing(HttpServletRequest request) {
-		HttpHeaders headers = new HttpHeadersImpl("listing");
-		
-		ListPropertiesVO commentProperties = getListProperties(request);
-		String listingId = getCommandOrParameter(request, 2, "id");
-		model = ServiceFacade.instance().getCommentsForListing(getLoggedInUser(), listingId, commentProperties);
-		
-		return headers;
 	}
 
 	/*
