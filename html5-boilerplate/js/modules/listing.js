@@ -438,15 +438,15 @@ pl.implement(ListingClass, {
                     comments = new RemarkClass({
                         listing_id: listingid,
                         type: 'comment',
-                        geturl: '/comments/listing/',
+                        geturl: '/listing/comments/',
                         getproperty: 'comments',
                         idproperty: 'comment_id',
                         fromnameproperty: 'profile_username',
                         fromnameprefix: 'Posted by',
                         dateproperty: 'comment_date',
                         textproperty: 'text',
-                        posturl: '/comment/create',
-                        deleteurl:  '/comment/delete'
+                        posturl: '/listing/post_comment',
+                        deleteurl:  '/listing/delete_comment'
                     });
                     comments.load();
                     self.isCommentListLoaded = true;

@@ -1,28 +1,3 @@
-/*
-new RemarkClass({
-    listing_id: listing_id,
-    type: 'comment',
-    geturl: '/comments/listing/',
-    getproperty: 'comments',
-    idproperty: 'comment_id',
-    fromnameproperty: 'profile_username',
-    dateproperty: 'comment_date',
-    textproperty: 'text',
-    posturl: '/comment/create',
-    deleteurl:  '/comment/delete'});
-
-new RemarkClass({
-    listing_id: listing_id,
-    type: 'message',
-    geturl: '/listings/messages',
-    getproperty: 'notifications',
-    idproperty: 'notification_id',
-    fromnameproperty: 'from_user_nickname',
-    dateproperty: 'create_date',
-    textproperty: 'text_2',
-    posturl: '/listing/send_private',
-    deleteurl:  null});
-*/
 function RemarkClass(options) {
     var self = this;
     self.options = options || {};
