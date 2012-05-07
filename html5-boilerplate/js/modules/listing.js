@@ -117,7 +117,7 @@ pl.implement(ListingClass, {
     displayFollow: function() {
         var self = this,
             following = self.monitored;
-        if (self.loggedin_profile) {
+        if (self.loggedin_profile && self.loggedin_profile.profile_id !== self.profile_id) {
             if (following) {
                 self.displayFollowing();
             }
