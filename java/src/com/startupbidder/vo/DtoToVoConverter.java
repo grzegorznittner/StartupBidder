@@ -252,43 +252,43 @@ public class DtoToVoConverter {
 		case NEW_COMMENT_FOR_MONITORED_LISTING:
 			notif.setTitle("New comment for listing " + notifDTO.listingName);
 			notif.setText1("Listing " + notifDTO.listingName + " has received a new comment.");
-			notif.setText2("In order to view comment(s) please visit <a href=\"" + listingLink + "\">company's page at startupbidder.com</a>.");
+			notif.setText3("In order to view comment(s) please visit <a href=\"" + listingLink + "\">company's page at startupbidder.com</a>.");
 			break;
 		case NEW_COMMENT_FOR_YOUR_LISTING:
 			notif.setTitle("New comment for listing " + notifDTO.listingName);
 			notif.setText1("Your listing \"" + notifDTO.listingName + "\" has received a new comment.");
-			notif.setText2("In order to view comment(s) please visit <a href=\"" + listingLink + "\">company's page at startupbidder.com</a>.");
+			notif.setText3("In order to view comment(s) please visit <a href=\"" + listingLink + "\">company's page at startupbidder.com</a>.");
 			break;
 		case NEW_LISTING:
 			notif.setTitle("New listing " + notifDTO.listingName + " posted");
 			notif.setText1("A new listing " + notifDTO.listingName + " has been posted by " + notifDTO.listingOwner + " on startupbidder.com");
-			notif.setText2("Please visit <a href=\"" + listingLink + "\">company's page at startupbidder.com</a>.");
+			notif.setText3("Please visit <a href=\"" + listingLink + "\">company's page at startupbidder.com</a>.");
 			break;
 		case ASK_LISTING_OWNER:
             if (notif.getParentNotification() == null) {
 			    notif.setTitle("A question from " + notifDTO.fromUserNickname + " concerning listing " + notifDTO.listingName);
-                notif.setText1("Question about listing " + notifDTO.listingName + " has been posted by " + notifDTO.fromUserNickname + ":<br/>"
-                    + "<i>" + notifDTO.message + "</i>");
+                notif.setText1("Question about listing " + notifDTO.listingName + " has been posted by " + notifDTO.fromUserNickname + ":");
+                notif.setText2(notifDTO.message);
             }
             else {
                 notif.setTitle("Received reply concerning question for listing " + notifDTO.listingName + " from " + notifDTO.fromUserNickname);
-                notif.setText1("Reply concerning listing " + notifDTO.listingName + " has been posted by " + notifDTO.fromUserNickname + ":<br/>"
-                        + "<i>" + notifDTO.message + "</i>");                
+                notif.setText1("Reply concerning listing " + notifDTO.listingName + " has been posted by " + notifDTO.fromUserNickname + ":");
+                notif.setText2(notifDTO.message);
             }
-			notif.setText2("Please visit <a href=\"" + listingLink + "\">company's page at startupbidder.com</a>.");
+			notif.setText3("Please visit <a href=\"" + listingLink + "\">company's page at startupbidder.com</a>.");
 			break;
 		case PRIVATE_MESSAGE:
             if (notif.getParentNotification() == null) {
 			    notif.setTitle("Private message from " + notifDTO.fromUserNickname + " concerning listing " + notifDTO.listingName );
-			    notif.setText1("Private message from user " + notifDTO.fromUserNickname + ":<br/>"
-                    + "<i>" + notifDTO.message + "</i>");
+			    notif.setText1("Private message from user " + notifDTO.fromUserNickname + ":");
+			    notif.setText2(notifDTO.message);
             }
             else {
                 notif.setTitle("Received reply concerning private message for listing " + notifDTO.listingName + " from " + notifDTO.fromUserNickname);
-                notif.setText1("Private reply concerning listing " + notifDTO.listingName + " has been posted by " + notifDTO.fromUserNickname + ":<br/>"
-                    + "<i>" + notifDTO.message + "</i>");
+                notif.setText1("Private reply concerning listing " + notifDTO.listingName + " has been posted by " + notifDTO.fromUserNickname + ":");
+                notif.setText2(notifDTO.message);
             }
-            notif.setText2("Please visit <a href=\"" + listingLink + "\">company's page at startupbidder.com</a>.");
+            notif.setText3("Please visit <a href=\"" + listingLink + "\">company's page at startupbidder.com</a>.");
 			break;
 		}
 

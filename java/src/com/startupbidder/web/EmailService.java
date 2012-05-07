@@ -103,12 +103,12 @@ public class EmailService {
 		
 		props.put(LINK_TO_VIEW_ON_STARTUPBIDDER, "http://www.startupbidder.com/notification-page.html?id=" + notification.getId());
 		props.put(NOTIFICATION_TITLE, notification.getTitle());
-		props.put(TEXT_NO_LINK, notification.getText1());
-		props.put(VISIT_LISTING_TEXT, notification.getText2());
+		props.put(TEXT_NO_LINK, notification.getText1() + " <br/> <i>" + notification.getText2() + "</i>");
+		props.put(VISIT_LISTING_TEXT, notification.getText3());
 		props.put(LINK_TO_LISTING, notification.getLink());
 		props.put(LINK_TO_LISTING_LOGO, notification.getListingLogoLink());
 		props.put(LISTING_NAME, notification.getListingName());
-		props.put(LISTING_CATEGORY_LOCATION, notification.getListingCategory() + " <br>" + notification.getListingBriefAddress());
+		props.put(LISTING_CATEGORY_LOCATION, notification.getListingCategory() + " <br/>" + notification.getListingBriefAddress());
 		props.put(LISTING_MANTRA, notification.getListingMantra());
 		props.put(COPYRIGHT_TEXT, "2012 startupbidder.com");
 		props.put(LINK_TO_UPDATE_PROFILE_PAGE, "http://www.startupbidder.com/edit-profile-page.html");
