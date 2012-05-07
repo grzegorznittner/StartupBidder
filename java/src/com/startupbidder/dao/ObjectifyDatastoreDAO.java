@@ -998,7 +998,7 @@ public class ObjectifyDatastoreDAO {
 
 	public Comment updateComment(Comment newComment) {
 		try {
-			Comment comment = getOfy().get(Comment.class, newComment.id);			
+			Comment comment = getOfy().get(Comment.class, newComment.id);
 			comment.comment = newComment.comment;
 			getOfy().put(comment);
 			return comment;

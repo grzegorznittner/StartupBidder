@@ -187,11 +187,18 @@ public class ServiceFacade {
 			log.warning("User not logged in.");
 			return null;
 		}
+		Listing listing = getDAO().getListing(BaseVO.toKeyId(comment.getListing()));
+		if (listing == null) {
+			log.warning("Listing with id '" + comment.getListing() + "' doesn't exist.");
+			return null;
+		}
 		
+		comment.setListingName(listing.name);
 		comment.setUser(loggedInUser.getId());
 		comment.setUserName(loggedInUser.getNickname());
 		Comment commentDTO = VoToModelConverter.convert(comment);
 		comment = DtoToVoConverter.convert(getDAO().createComment(commentDTO));
+		comment.setListingName(listing.name);
 
 		Monitor monitor = new Monitor();
 		monitor.monitoredListing = new Key<Listing>(Listing.class, commentDTO.listing.getId());
@@ -206,6 +213,10 @@ public class ServiceFacade {
 	}
 
 	public CommentVO updateComment(UserVO loggedInUser, CommentVO comment) {
+		if (StringUtils.isEmpty(comment.getId())) {
+			log.warning("Comment id was not provided!");
+			return null;
+		}
 		if (StringUtils.isEmpty(comment.getComment())) {
 			log.warning("Comment '" + comment.getId() + "' cannot be updated with empty text");
 			return null;

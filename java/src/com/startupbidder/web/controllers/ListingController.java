@@ -26,6 +26,7 @@ import com.startupbidder.datamodel.Listing;
 import com.startupbidder.datamodel.ListingDoc;
 import com.startupbidder.datamodel.Notification;
 import com.startupbidder.vo.BaseVO;
+import com.startupbidder.vo.CommentVO;
 import com.startupbidder.vo.ListPropertiesVO;
 import com.startupbidder.vo.ListingAndUserVO;
 import com.startupbidder.vo.ListingPropertyVO;
@@ -98,6 +99,8 @@ public class ListingController extends ModelDrivenController {
                 return privateMessages(request);
             } else if("questions_and_answers".equalsIgnoreCase(getCommand(1))) {
                 return questionsAndAnswers(request);
+			} else if("comments".equalsIgnoreCase(getCommand(1))) {
+				return listingComments(request);
 			} else if ("logo".equalsIgnoreCase(getCommand(1))) {
 				return logo(request);
 			} else {
@@ -131,6 +134,12 @@ public class ListingController extends ModelDrivenController {
 				return sendPrivate(request);
 			} else if("reply_message".equalsIgnoreCase(getCommand(1))) {
 				return replyMessage(request);
+			} else if("post_comment".equalsIgnoreCase(getCommand(1))) {
+				return postComment(request);
+			} else if("update_comment".equalsIgnoreCase(getCommand(1))) {
+				return updateComment(request);
+			} else if("delete_comment".equalsIgnoreCase(getCommand(1))) {
+				return deleteComment(request);
 			}
 		}
 
@@ -657,6 +666,95 @@ public class ListingController extends ModelDrivenController {
 		}
 		return headers;
     }
+
+	/*
+	 * POST /listing/post_comment?comment=<comment json>
+	 */
+	private HttpHeaders postComment(HttpServletRequest request) throws JsonParseException, JsonMappingException, IOException {
+		HttpHeaders headers = new HttpHeadersImpl("post_comment");
+		
+		ObjectMapper mapper = new ObjectMapper();
+		log.log(Level.INFO, "Parameters: " + request.getParameterMap());
+		String commentString = request.getParameter("comment");
+		if (!StringUtils.isEmpty(commentString)) {
+			CommentVO comment = mapper.readValue(commentString, CommentVO.class);
+			log.log(Level.INFO, "Creating comment: " + comment);
+			comment = ServiceFacade.instance().createComment(getLoggedInUser(), comment);
+			model = comment;
+			if (comment == null) {
+				log.log(Level.WARNING, "Comment not created!");
+				headers.setStatus(500);
+			}
+		} else {
+			log.log(Level.WARNING, "Parameter 'comment' is empty!");
+			headers.setStatus(500);
+		}
+
+		return headers;
+	}
+
+	/*
+	 * PUT /listing/update_comment?comment=<comment json>
+	 */
+	private HttpHeaders updateComment(HttpServletRequest request) throws JsonParseException, JsonMappingException, IOException {
+		HttpHeaders headers = new HttpHeadersImpl("update_comment");
+		
+		ObjectMapper mapper = new ObjectMapper();
+		log.log(Level.INFO, "Parameters: " + request.getParameterMap());
+		String commentString = request.getParameter("comment");
+		if (!StringUtils.isEmpty(commentString)) {
+			CommentVO comment = mapper.readValue(commentString, CommentVO.class);
+			log.log(Level.INFO, "Updating comment: " + comment);
+			if (comment == null || comment.getId() == null) {
+				log.log(Level.WARNING, "Commend id not provided!");
+				headers.setStatus(500);
+			} else {
+				comment = ServiceFacade.instance().updateComment(getLoggedInUser(), comment);
+				model = comment;
+				if (comment == null) {
+					log.log(Level.WARNING, "Comment not found!");
+					headers.setStatus(500);
+				}
+			}
+		} else {
+			log.log(Level.WARNING, "Parameter 'comment' is empty!");
+			headers.setStatus(500);
+		}
+
+		return headers;
+	}
+
+	/*
+	 * DELETE /comment?id=<id> 
+	 * POST /comment/delete?id=<id>
+	 */
+	private HttpHeaders deleteComment(HttpServletRequest request) {
+		HttpHeaders headers = new HttpHeadersImpl("delete");
+		
+		String commentId = getCommandOrParameter(request, 2, "id");
+		if (!StringUtils.isEmpty(commentId)) {
+            // this always returns null
+			model = ServiceFacade.instance().deleteComment(getLoggedInUser(), commentId);
+		} else {
+			log.log(Level.WARNING, "Parameter 'id' is not provided!");
+			headers.setStatus(500);
+		}
+		
+		return headers;
+	}
+
+	/*
+	 *  /listing/comments/?id=ag1zdGFydHVwYmlkZGVychQLEgdMaXN0aW5nIgdtaXNsZWFkDA.html
+	 */
+	private HttpHeaders listingComments(HttpServletRequest request) {
+		HttpHeaders headers = new HttpHeadersImpl("comments");
+		
+		ListPropertiesVO commentProperties = getListProperties(request);
+		String listingId = getCommandOrParameter(request, 2, "id");
+		model = ServiceFacade.instance().getCommentsForListing(getLoggedInUser(), listingId, commentProperties);
+		
+		return headers;
+	}
 
 	public Object getModel() {
     	return model;
