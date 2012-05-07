@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="en">
 
@@ -7,7 +8,7 @@
 
   <!-- Use the .htaccess and remove these lines to avoid edge case issues.
        More info: h5bp.com/b/378 -->
-  <meta http-equiv="Content-type" content="text/html; charset=utf-8"/>
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 
   <title>Startupbidder</title>
@@ -24,7 +25,7 @@
 
   <!-- CSS: implied media=all -->
   <!-- CSS concatenated and minified via ant build script-->
-  <link rel="stylesheet" href='css/936730f.css' type="text/css"/>
+  <link rel="stylesheet" href="css/style.css" type="text/css" />
   <!-- end CSS-->
 
   <link rel="canonical" href="http://startupbidder.appspot.com"/>
@@ -75,7 +76,7 @@
     <span class="span-8 push-15px socialbanner">
         <div class="twitterbanner">
           <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://www.startupbidder.com" data-text="startupbidder" data-via="startupbidder" data-related="startupbidder" data-hashtags="startupbidder">Tweet</a>
-        </div>
+        </div>    
         <div class="facebookbanner">
             <div class="fb-like" data-href="http://www.startupbidder.com" data-send="false" data-width="310" data-show-faces="false" data-font="arial"></div>
         </div>
@@ -380,7 +381,7 @@
             </p>
         </dd>
         <dt>POST /listing/post_comment?comment=&lt;comment_json&gt;
-            <form method="POST" action="/comment/create/">
+            <form method="POST" action="/listing/post_comment/">
                 <input type="text" name="comment" value="{ listing_id: &lt;listing_id&gt;, text: &lt;comment_text&gt;}"></input>
                 <input type="submit" value="TEST"></input>
             </form>
@@ -647,7 +648,7 @@ owner can reply to a question using the <code>/listing/reply_message</code> API.
             This method can only be called by admins.
             </p>
         </dd>
-    </div>
+    </div> 
 
 </div> <!-- end left column -->
 
@@ -717,18 +718,21 @@ owner can reply to a question using the <code>/listing/reply_message</code> API.
 
   <!-- JavaScript at the bottom for fast page loading -->
   <script src="js/libs/prevel.min.js"></script>
-  <script src='js/f3b5040/base.js'></script>
-  <script src='js/f3b5040/headeronlypage.js'></script>
-  <script src='js/f3b5040/tracker.js'></script>
-  <script src='js/f3b5040/socialplugins.js'></script>
+  <script src="js/modules/base.js"></script>
+  <script src="js/modules/headeronlypage.js"></script>
+  <script src="js/modules/tracker.js"></script>
+  <script src="js/modules/socialplugins.js"></script>
 
 
   <!-- Prompt IE 6 users to install Chrome Frame. Remove this if you want to support IE 6.
        chromium.org/developers/how-tos/chrome-frame-getting-started -->
-  <!--[if lt IE 7 ]><script src="//ajax.googleapis.com/ajax/libs/chrome-frame/1.0.3/CFInstall.min.js"></script>
-    <script>window.attachEvent("onload",function(){CFInstall.check({mode:"overlay"})})</script><![endif]-->
+  <!--[if lt IE 7 ]>
+    <script src="//ajax.googleapis.com/ajax/libs/chrome-frame/1.0.3/CFInstall.min.js"></script>
+    <script>window.attachEvent("onload",function(){CFInstall.check({mode:"overlay"})})</script>
+  <![endif]-->
 
 
 
 </body>
 </html>
+

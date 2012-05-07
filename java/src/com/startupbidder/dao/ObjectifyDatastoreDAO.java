@@ -903,13 +903,8 @@ public class ObjectifyDatastoreDAO {
 		}
 	}
 
-	public Comment getComment(String commentId) {
-		try {
-			return getOfy().get(Comment.class, commentId);
-		} catch (Exception e) {
-			log.log(Level.WARNING, "Comment entity '" + commentId + "' not found", e);
-			return null;
-		}
+	public Comment getComment(long commentId) {
+		return getOfy().find(Comment.class, commentId);
 	}
 
 	public boolean userCanVoteForListing(long voterId, long listingId) {

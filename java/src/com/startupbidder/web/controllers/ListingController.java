@@ -729,7 +729,7 @@ public class ListingController extends ModelDrivenController {
 	 * POST /comment/delete?id=<id>
 	 */
 	private HttpHeaders deleteComment(HttpServletRequest request) {
-		HttpHeaders headers = new HttpHeadersImpl("delete");
+		HttpHeaders headers = new HttpHeadersImpl("delete_comment");
 		
 		String commentId = getCommandOrParameter(request, 2, "id");
 		if (!StringUtils.isEmpty(commentId)) {

@@ -150,7 +150,12 @@ public class ServiceFacade {
 	}
  
 	public CommentVO getComment(UserVO loggedInUser, String commentId) {
-		return DtoToVoConverter.convert(getDAO().getComment(commentId));
+		Comment comment = getDAO().getComment(BaseVO.toKeyId(commentId));
+		if (comment == null) {
+			log.log(Level.WARNING, "Comment entity '" + commentId + "' not found");
+			return null;
+		}
+		return DtoToVoConverter.convert(comment);
 	}
 
 	public CommentListVO deleteComment(UserVO loggedInUser, String commentId) {
