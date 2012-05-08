@@ -5,7 +5,7 @@ function ProfileListingPageClass() {
     this.data = { max_results: 20 };
     this.urlmap = {
         active: '/listings/user/active',
-        monitored: '/listings/user/monitored',
+        monitored: '/listings/monitored',
         closed: '/listings/user/closed',
         withdrawn: '/listings/user/withdrawn',
         frozen: '/listings/user/frozen',

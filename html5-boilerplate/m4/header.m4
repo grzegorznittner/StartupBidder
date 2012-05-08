@@ -1,8 +1,6 @@
 `
 <div class="topheader" id="topheader">
-    <div class="container topheaderline">Want to raise money for startups or invest in one?
-        <a href="/about-page.html" class="topheaderlink">We&rsquo;ll tell you how!</a>
-    </div>
+    <div class="container topheaderline" id="topheaderline"></div>
 </div>
 
 <div class="header" id="header">
