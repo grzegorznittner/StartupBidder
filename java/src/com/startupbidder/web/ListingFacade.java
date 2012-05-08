@@ -1081,7 +1081,7 @@ public class ListingFacade {
 			listing.setOrderNumber(index++);
 		}
 		
-		list.setNotifications(getShortListOfNotifications(loggedInUser));
+		applyShortNotificationsAndMonitoredListings(loggedInUser, list);
 		
 		list.setListings(listings);
 		list.setListingsProperties(listingProperties);
@@ -1092,7 +1092,7 @@ public class ListingFacade {
 		return list;
 	}
 
-	public List<NotificationVO> getShortListOfNotifications(UserVO loggedInUser) {
+	public List<NotificationVO> applyShortNotificationsAndMonitoredListings(UserVO loggedInUser, ListingListVO list) {
 		List<NotificationVO> notifications = null;
 		ListPropertiesVO notifProperties = new ListPropertiesVO();
 		notifProperties.setMaxResults(5);
@@ -1102,6 +1102,13 @@ public class ListingFacade {
 		for (NotificationVO notification : notifications) {
 			notification.setOrderNumber(num++);
 		}
+		
+		ListPropertiesVO props = new ListPropertiesVO();
+		props.setMaxResults(4);
+		List<Listing> monitoredListing = getDAO().getMonitoredListings(loggedInUser.toKeyId(), props);
+		List<ListingVO> monitored = prepareListingList(loggedInUser, monitoredListing);
+		list.setMonitoredListings(monitored);
+		
 		return notifications;
 	}
 	
@@ -1118,7 +1125,7 @@ public class ListingFacade {
 			listing.setOrderNumber(index++);
 		}
 		
-		list.setNotifications(getShortListOfNotifications(loggedInUser));
+		applyShortNotificationsAndMonitoredListings(loggedInUser, list);
 		
 		list.setListings(listings);		
 		list.setListingsProperties(listingProperties);
@@ -1162,7 +1169,7 @@ public class ListingFacade {
 			listing.setOrderNumber(index++);
 		}
 		
-		list.setNotifications(getShortListOfNotifications(loggedInUser));
+		applyShortNotificationsAndMonitoredListings(loggedInUser, list);
 		
 		list.setListings(listings);		
 		list.setListingsProperties(listingProperties);
