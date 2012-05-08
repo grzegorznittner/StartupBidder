@@ -2,37 +2,53 @@ function CompanyTileClass(options) {
     this.options = options || {};
     this.companybannertileclass = options.companybannertileclass || 'companybannertile';
     if (this.options.json) {
-        this.setValues(this.options.json);
+        this.store(this.options.json);
     }
 }
 pl.implement(CompanyTileClass, {
-    setValues: function(json) {
-        var date = json.listing_date || json.created_date,
-            url = json.website ? new URLClass(json.website) : null;
+    store: function(json) {
         this.status = json.status;
         if (!this.status) {
-            this.daysText = '';
+            this.daystext = '';
         }
-        else if (this.status === 'active' && this.asked_fund) {
-            this.daysText = json.days_left === 0 ? 'Closing today!' : (json.days_left < 0 ? 'Bidding closed' : json.days_left + ' days left');
+        else if (this.status === 'active' && json.asked_fund && !json.closing_date) {
+            this.daystext = 'Bidding open';
         }
-        else if (this.status === 'active' && !this.asked_fund) {
-            this.daysText = json.days_ago ? json.days_ago + ' days ago' : 'Listed today';
+        else if (this.status === 'active' && json.asked_fund && json.closing_date) {
+            this.daysleft = DateClass.prototype.daysBetween(DateClass.prototype.todayDate(), DateClass.prototype.dateFromYYYYMMDD(json.closing_date));
+            this.daystext = this.daysleft === 0 ? 'Closing today!' : (this.daysleft < 0 ? 'Bidding closed' : this.daysleft + ' days left');
+        }
+        else if (this.status === 'active' && !json.asked_fund && json.listing_date) {
+            this.daysago = DateClass.prototype.daysBetween(DateClass.prototype.dateFromYYYYMMDD(json.listing_date), DateClass.prototype.todayDate());
+            this.daystext = this.daysago === 0 ? 'Listed today' : this.daysago + ' days ago';
         }
         else {
-            this.daysText = SafeStringClass.prototype.ucfirst(this.status);
+            this.daystext = SafeStringClass.prototype.ucfirst(this.status);
         }
         this.imgClass = json.logo ? '' : 'noimage';
         this.imgStyle = json.logo ? 'background: url(' + json.logo + ') no-repeat scroll left top' : '';
         this.category = json.category || 'Other';
         this.categoryUC = json.category ? json.category.toUpperCase() : 'OTHER';
-        this.posted = date ? DateClass.prototype.format(date) : 'not posted';
+        this.posted = json.posted_date ? DateClass.prototype.format(json.posted_date) : 'not posted';
         this.name = json.title || 'No Company Name';
         this.brief_address = json.brief_address || 'No Address';
         this.address = json.address || 'No Address';
-        this.suggested_amt = json.asked_fund && json.suggested_amt ? CurrencyClass.prototype.format(json.suggested_amt) : '';
-        this.suggested_text = this.status ? (this.suggested_amt || 'Not raising funds') : '';
-        this.finance_line = this.status ? this.daysText + (this.suggested_amt ? ' at ' + this.suggested_amt : '') : '';
+        if (this.status && json.asked_fund && json.suggested_amt && json.suggested_pct) {
+            this.suggested_amt = CurrencyClass.prototype.format(json.suggested_amt);
+            this.suggested_pct = PercentClass.prototype.format(json.suggested_pct);
+            this.suggested_text = this.suggested_amt + ' for ' + this.suggested_pct;
+            this.finance_line = this.daystext + ' at ' + this.suggested_text;
+        }
+        else if (this.status) {
+            this.suggested_amt = '';
+            this.suggested_text = 'Not raising funds';
+            this.finance_line = this.daystext;
+        }
+        else {
+            this.suggested_amt = '';
+            this.suggested_text = '';
+            this.finance_line = '';
+        }
         this.mantra = json.mantra || 'No Mantra';
         this.founders = json.founders || 'No Founders';
         this.foundertext = json.founders ? 'Founded by ' + json.founders : '';
@@ -41,12 +57,10 @@ pl.implement(CompanyTileClass, {
             this.url = '/company-page.html?id=' + json.listing_id;
         }
         this.websitelink = json.website || '#';
-        this.websitedomain = url ? url.getHostname() : 'No Website';
+        this.websiteurl = json.website ? new URLClass(json.website) : null;
+        this.websitedomain = this.websiteurl ? this.websiteurl.getHostname() : 'No Website';
         this.openanchor = this.options.preview ? '' : '<a href="' + this.url + '">';
         this.closeanchor = this.options.preview ? '' : '</a>';
-     },
-    store: function(json) {
-        this.setValues(json);
     },
     makeHtml: function(lastClass) {
             html = '\
@@ -56,7 +70,7 @@ pl.implement(CompanyTileClass, {
 <div class="tileimg hoverlink" style="' + this.imgStyle + '"></div>\
 ' + this.closeanchor + '\
 <div class="tiledays"></div>\
-<div class="tiledaystext">' + this.daysText + '</div>\
+<div class="tiledaystext">' + this.daystext + '</div>\
 <div class="tiletype"></div>\
 <div class="tiletypetext">' + this.categoryUC + '</div>\
 <div class="tilepoints"></div>\
@@ -88,7 +102,7 @@ pl.implement(CompanyTileClass, {
     <div>' + this.address + '</div>\
     <div class="infomantra">' + this.mantra + '</div>\
     <div><span class="infolabel">Asking:</span> ' + this.suggested_text + '</div>\
-    <div><span class="infolabel">Bidding:</span> ' + this.daysText + '</div>\
+    <div><span class="infolabel">Bidding:</span> ' + this.daystext + '</div>\
     <div><span class="infolabel">Industry:</span> ' + this.category + '</div>\
     <div><span class="infolabel">Founders:</span> ' + this.founders + '</div>\
 </p>\
@@ -119,7 +133,7 @@ pl.implement(CompanyTileClass, {
 ' + this.openanchor + '\
     <div class="companyhalflogo tileimg noimage hoverlink" style="' + this.imgStyle + '"></div>\
     <div class="halftiledays"></div>\
-    <div class="halftiledaystext">' + this.daysText + '</div>\
+    <div class="halftiledaystext">' + this.daystext + '</div>\
     <div class="halftiletype"></div>\
     <div class="halftiletypetext">' + this.suggested_text + '</div>\
 ' + this.closeanchor + '\
@@ -137,7 +151,7 @@ pl.implement(CompanyTileClass, {
 ';
     },
     display: function(listing, divid) {
-        this.setValues(listing);
+        this.store(listing);
         pl('#'+divid).html(this.makeHtml('last'));
     }
 });
@@ -177,7 +191,7 @@ pl.implement(CompanyListClass, {
         for (i = 0; i < companies.length; i++) {
             company = companies[i];
             tile  = new CompanyTileClass(tileoptions);
-            tile.setValues(company);
+            tile.store(company);
             if (this.options.fullWidth || (this.options.colsPerRow === 4 && companies.length === 1)) {
                 html += tile.makeFullWidthHtml();
             }
@@ -224,7 +238,7 @@ pl.implement(CompanyListClass, {
                         for (i = 0; i < companies.length; i++) {
                             company = companies[i];
                             tile  = new CompanyTileClass(self.options);
-                            tile.setValues(company);
+                            tile.store(company);
                             last = (i+1) % self.options.colsPerRow === 0 ? 'last' : '';
                             html += tile.makeHtml(last);
                         }

@@ -85,6 +85,15 @@ pl.implement(DateClass, {
             date = dateObj.getUTCDate();
         return '' + year + (month < 10 ? 0 : '') + month + (date < 10 ? 0 : '') + date;
     },
+    todayDate: function() {
+        return new Date();
+    },
+    dateFromYYYYMMDD: function(yyyymmdd) {
+        var yyyy = yyyymmdd.substr(0,4),
+            mm = yyyymmdd.substr(4,2) - 1,
+            dd = yyyymmdd.substr(6,2);
+        return new Date(yyyy, mm, dd);
+    },
     today: function() {
         var today = new Date();
         return DateClass.prototype.formatDate(today);
@@ -101,6 +110,11 @@ pl.implement(DateClass, {
             newDate = new Date();
         newDate.setTime(t2);
         return newDate;
+    },
+    daysBetween: function(d1, d2) {
+        var d1num = DateClass.prototype.formatDate(d1),
+            d2num = DateClass.prototype.formatDate(d2);
+        return Math.floor(d2num - d1num);
     }
 });
 
