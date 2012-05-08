@@ -41,6 +41,7 @@ import com.startupbidder.datamodel.SystemProperty;
 import com.startupbidder.datamodel.UserStats;
 import com.startupbidder.datamodel.Vote;
 import com.startupbidder.vo.ListPropertiesVO;
+import com.startupbidder.vo.UserVO;
 import com.startupbidder.web.ListingFacade;
 
 /**
@@ -574,11 +575,13 @@ public class ObjectifyDatastoreDAO {
 			if (keyList.size() >= listingProperties.getMaxResults()) {
 				if (topListingsStat.hasNext()) {
 					listingProperties.setNextCursor(topListingsStat.getCursor().toWebSafeString());
+					listingProperties.setNumberOfResults(keyList.size());
 					listingProperties.updateMoreResultsUrl();
 				}
 				break;
 			}
 		}
+		listingProperties.setNumberOfResults(keyList.size());
 		return keyList;
 	}
 	
@@ -596,11 +599,13 @@ public class ObjectifyDatastoreDAO {
 			if (keyList.size() >= listingProperties.getMaxResults()) {
 				if (topListingsStat.hasNext()) {
 					listingProperties.setNextCursor(topListingsStat.getCursor().toWebSafeString());
+					listingProperties.setNumberOfResults(keyList.size());
 					listingProperties.updateMoreResultsUrl();
 				}
 				break;
 			}
 		}
+		listingProperties.setNumberOfResults(keyList.size());
 		return keyList;
 	}
 	
@@ -613,7 +618,6 @@ public class ObjectifyDatastoreDAO {
 				.prefetchSize(listingProperties.getMaxResults());
 		List<Key<Listing>> keyList = handleCursorForListingQuery(listingProperties, query);
 		List<Listing> listings = new ArrayList<Listing>(getOfy().get(keyList).values());
-		listingProperties.setNumberOfResults(listings.size());
 		return listings;
 	}
 
@@ -628,7 +632,6 @@ public class ObjectifyDatastoreDAO {
        			.prefetchSize(listingProperties.getMaxResults());
 		List<Key<Listing>> keyList = handleCursorForListingQuery(listingProperties, query);
 		List<Listing> listings = new ArrayList<Listing>(getOfy().get(keyList).values());
-		listingProperties.setNumberOfResults(listings.size());
 		return listings;
 	}
 
@@ -646,7 +649,6 @@ public class ObjectifyDatastoreDAO {
 		}
 		
 		List<Listing> listings = new ArrayList<Listing>(getOfy().get(listingKeys).values());
-		listingProperties.setNumberOfResults(listings.size());
 		return listings;
 	}
 
@@ -658,7 +660,6 @@ public class ObjectifyDatastoreDAO {
                 .prefetchSize(listingProperties.getMaxResults());
 		List<Key<Listing>> keyList = handleCursorForListingQuery(listingProperties, query);
 		List<Listing> listings = new ArrayList<Listing>(getOfy().get(keyList).values());
-		listingProperties.setNumberOfResults(listings.size());
 		return listings;
 	}
 
@@ -670,7 +671,6 @@ public class ObjectifyDatastoreDAO {
                 .prefetchSize(listingProperties.getMaxResults());
 		List<Key<Listing>> keyList = handleCursorForListingQuery(listingProperties, query);
 		List<Listing> listings = new ArrayList<Listing>(getOfy().get(keyList).values());
-		listingProperties.setNumberOfResults(listings.size());
 		return listings;
 	}
 
@@ -682,7 +682,6 @@ public class ObjectifyDatastoreDAO {
                 .prefetchSize(listingProperties.getMaxResults());
 		List<Key<Listing>> keyList = handleCursorForListingQuery(listingProperties, query);
 		List<Listing> listings = new ArrayList<Listing>(getOfy().get(keyList).values());
-		listingProperties.setNumberOfResults(listings.size());
 		return listings;
 	}
 
@@ -700,7 +699,6 @@ public class ObjectifyDatastoreDAO {
 		}
 		
 		List<Listing> listings = new ArrayList<Listing>(getOfy().get(listingKeys).values());
-		listingProperties.setNumberOfResults(listings.size());
 		return listings;
 	}
 
@@ -718,7 +716,6 @@ public class ObjectifyDatastoreDAO {
 		}
 		
 		List<Listing> listings = new ArrayList<Listing>(getOfy().get(listingKeys).values());
-		listingProperties.setNumberOfResults(listings.size());
 		return listings;
 	}
 
@@ -736,7 +733,6 @@ public class ObjectifyDatastoreDAO {
 		}
 		
 		List<Listing> listings = new ArrayList<Listing>(getOfy().get(listingKeys).values());
-		listingProperties.setNumberOfResults(listings.size());
 		return listings;
 	}
 
@@ -748,7 +744,6 @@ public class ObjectifyDatastoreDAO {
                 .prefetchSize(listingProperties.getMaxResults());
 		List<Key<Listing>> keyList = handleCursorForListingQuery(listingProperties, query);
 		List<Listing> listings = new ArrayList<Listing>(getOfy().get(keyList).values());
-		listingProperties.setNumberOfResults(listings.size());
 		return listings;
 	}
 
@@ -760,7 +755,6 @@ public class ObjectifyDatastoreDAO {
                 .prefetchSize(listingProperties.getMaxResults());
 		List<Key<Listing>> keyList = handleCursorForListingQuery(listingProperties, query);
 		List<Listing> listings = new ArrayList<Listing>(getOfy().get(keyList).values());
-		listingProperties.setNumberOfResults(listings.size());
 		return listings;
 	}
 
@@ -1326,31 +1320,65 @@ public class ObjectifyDatastoreDAO {
 		}
 	}
 
-	public List<Monitor> getMonitorsForListing(long objectId, int maxResults) {
-		QueryResultIterable<Key<Monitor>> monIt = getOfy().query(Monitor.class)
+	private List<Key<Monitor>> handleCursorForMonitorQuery(ListPropertiesVO listProperties, Query<Monitor> query) {
+		if (StringUtils.isNotEmpty(listProperties.getNextCursor())) {
+			log.info("Starting query from cursor: " + listProperties.getNextCursor());
+			query.startCursor(Cursor.fromWebSafeString(listProperties.getNextCursor()));
+			listProperties.setPrevCursor(listProperties.getNextCursor());
+		}
+		QueryResultIterator<Key<Monitor>> monitors = query.fetchKeys().iterator();
+		
+		List<Key<Monitor>> keyList = new ArrayList<Key<Monitor>>();
+		while (monitors.hasNext()) {
+			keyList.add(monitors.next());
+			if (keyList.size() >= listProperties.getMaxResults()) {
+				if (monitors.hasNext()) {
+					listProperties.setNextCursor(monitors.getCursor().toWebSafeString());
+					listProperties.setNumberOfResults(keyList.size());
+					listProperties.updateMoreResultsUrl();
+				}
+				break;
+			}
+		}
+		listProperties.setNumberOfResults(keyList.size());
+		return keyList;
+	}
+	
+	public List<Monitor> getMonitorsForListing(long objectId, ListPropertiesVO listProperties) {
+		Query<Monitor> query = getOfy().query(Monitor.class)
 				.filter("monitoredListing =", new Key<Listing>(Listing.class, objectId))
 				.filter("active =", true)
-                .limit(maxResults)
-                .chunkSize(maxResults)
-                .fetchKeys();
-		List<Monitor> mons = new ArrayList<Monitor>(getOfy().get(monIt).values());
+       			.chunkSize(listProperties.getMaxResults())
+       			.prefetchSize(listProperties.getMaxResults());
+		List<Key<Monitor>> keyList = handleCursorForMonitorQuery(listProperties, query);
+		List<Monitor> mons = new ArrayList<Monitor>(getOfy().get(keyList).values());
 		return mons;
 	}
 
-	public List<Monitor> getMonitorsForUser(long userId) {
-		log.info("getMonitorsForUser: userId=" + userId);
-		
-		QueryResultIterable<Key<Monitor>> monIt = getOfy().query(Monitor.class)
+	public List<Monitor> getMonitorsForUser(long userId, ListPropertiesVO listProperties) {
+		Query<Monitor> query = getOfy().query(Monitor.class)
 				.filter("user =", new Key<SBUser>(SBUser.class, userId))
 				.filter("active =", true)
-                .fetchKeys();
-		List<Monitor> mons = new ArrayList<Monitor>(getOfy().get(monIt).values());
+       			.chunkSize(listProperties.getMaxResults())
+       			.prefetchSize(listProperties.getMaxResults());
+		List<Key<Monitor>> keyList = handleCursorForMonitorQuery(listProperties, query);
+		List<Monitor> mons = new ArrayList<Monitor>(getOfy().get(keyList).values());
 		return mons;
 	}
+	
+	public List<Listing> getMonitoredListings(long userId, ListPropertiesVO listProperties) {
+		List<Key<Listing>> monitoredListingKeys = new ArrayList<Key<Listing>>();
+		List<Monitor> monitors = getMonitorsForUser(userId, listProperties);
+		log.info("Fetched monitors for user '" + userId + "': " + monitors);
+		for (Monitor monitor : monitors) {
+			monitoredListingKeys.add(new Key<Listing>(Listing.class, monitor.monitoredListing.getId()));
+		}
+		return getListingsByKeys(monitoredListingKeys);
+	}
 
-	public Map<String, Monitor> getMonitorsMapForUser(long userId) {
+	public Map<String, Monitor> getMonitorsMapForUser(long userId, ListPropertiesVO listProperties) {
 		Map<String, Monitor> result = new HashMap<String, Monitor>();
-		for (Monitor monitor : getMonitorsForUser(userId)) {
+		for (Monitor monitor : getMonitorsForUser(userId, listProperties)) {
 			result.put(monitor.monitoredListing.getString(), monitor);
 		}
 		return result;

@@ -384,7 +384,7 @@ public class HelloServlet extends HttpServlet {
 					+ "{\"listing_id\":\"" + listing.getId() + "\", \"text\":\"Message text\"}"
 					+ "</textarea><input type=\"submit\" value=\"Send private\"/></form>");
 			out.println("<a href=\"/listing/get/" + listing.getId() + ".json?\">View</a>");
-			out.println("<a href=\"/listing/messages/" + listing.getId() + ".json?\">Listing notifications</a></td>");
+			out.println("<a href=\"/listing/private_messages/" + listing.getId() + ".json?\">Listing notifications</a></td>");
 			out.println("<td>");
 			if (count < 5) {
 				List<ListingDocumentVO> docs = getListingDocs(currentUser, listing);

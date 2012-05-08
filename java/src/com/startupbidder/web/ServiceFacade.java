@@ -559,7 +559,7 @@ public class ServiceFacade {
 		return monitor;
 	}
 
-	public MonitorListVO getMonitorsForObject(UserVO loggedInUser, String listingId, int maxResults) {
+	public MonitorListVO getMonitorsForObject(UserVO loggedInUser, String listingId, ListPropertiesVO listProperties) {
 		MonitorListVO list = new MonitorListVO();
 		List<MonitorVO> monitors = null;
 
@@ -568,17 +568,18 @@ public class ServiceFacade {
 			return null;
 		}
 		monitors = DtoToVoConverter.convertMonitors(
-				getDAO().getMonitorsForListing(BaseVO.toKeyId(listingId), maxResults));
-		int num = 1;
+				getDAO().getMonitorsForListing(BaseVO.toKeyId(listingId), listProperties));
+		int index = listProperties.getStartIndex() > 0 ? listProperties.getStartIndex() : 1;
 		for (MonitorVO monitor : monitors) {
-			monitor.setOrderNumber(num++);
+			monitor.setOrderNumber(index++);
 		}
+		list.setMonitorsProperties(listProperties);
 		list.setMonitors(monitors);
 		
 		return list;
 	}
 
-	public MonitorListVO getMonitorsForUser(UserVO loggedInUser) {
+	public MonitorListVO getMonitorsForUser(UserVO loggedInUser, ListPropertiesVO listProperties) {
 		MonitorListVO list = new MonitorListVO();
 		List<MonitorVO> monitors = null;
 		if (loggedInUser == null) {
@@ -586,12 +587,12 @@ public class ServiceFacade {
 			return null;
 		}
 
-		monitors = DtoToVoConverter.convertMonitors(
-				getDAO().getMonitorsForUser(loggedInUser.toKeyId()));
-		int num = 1;
+		monitors = DtoToVoConverter.convertMonitors(getDAO().getMonitorsForUser(loggedInUser.toKeyId(), listProperties));
+		int index = listProperties.getStartIndex() > 0 ? listProperties.getStartIndex() : 1;
 		for (MonitorVO monitor : monitors) {
-			monitor.setOrderNumber(num++);
+			monitor.setOrderNumber(index++);
 		}
+		list.setMonitorsProperties(listProperties);
 		list.setMonitors(monitors);
 		list.setUser(loggedInUser);
 		

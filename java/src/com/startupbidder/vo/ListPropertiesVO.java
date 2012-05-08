@@ -18,7 +18,7 @@ import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 @JsonAutoDetect(getterVisibility=Visibility.NONE, setterVisibility=Visibility.NONE,
 		fieldVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE)
 public class ListPropertiesVO {
-	private int startIndex;
+	@JsonProperty("start_index") private int startIndex = 1;
 	@JsonProperty("max_results") private int maxResults;
 	private int totalResults;
 	@JsonProperty("num_results") private int numberOfResults;
@@ -32,12 +32,13 @@ public class ListPropertiesVO {
 		StringBuffer url = new StringBuffer();
 		url.append(requestPathInfo).append("?");
 		for (Map.Entry<String, String> param : parameters.entrySet()) {
-			if ("next_cursor".equals(param.getKey())) {
+			if ("next_cursor".equals(param.getKey()) || "start_index".equals(param.getKey())) {
 				continue;
 			}
 			url.append(param.getKey()).append("=").append(param.getValue()).append("&");
 		}
-		url.append("next_cursor=").append(nextCursor);
+		url.append("next_cursor=").append(nextCursor).append("&");
+		url.append("start_index=").append(startIndex + numberOfResults);
 		moreResultsUrl = url.toString();
 	}
 	public void setRequestData(HttpServletRequest request) {

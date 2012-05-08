@@ -10,6 +10,7 @@ import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 
+import com.startupbidder.vo.ListPropertiesVO;
 import com.startupbidder.web.HttpHeaders;
 import com.startupbidder.web.HttpHeadersImpl;
 import com.startupbidder.web.ModelDrivenController;
@@ -28,7 +29,7 @@ public class MonitorController extends ModelDrivenController {
 		if ("GET".equalsIgnoreCase(request.getMethod())) {
 			// GET method handler			
 			if("active-for-listing".equalsIgnoreCase(getCommand(1))) {
-				return activeForOListing(request);
+				return activeForObject(request);
 			} else if("active-for-user".equalsIgnoreCase(getCommand(1))) {
 				return activeForUser(request);
 			}
@@ -91,8 +92,8 @@ public class MonitorController extends ModelDrivenController {
 	 */
 	private HttpHeaders activeForUser(HttpServletRequest request) {
 		HttpHeaders headers = new HttpHeadersImpl("active-for-user");
-
-		model = ServiceFacade.instance().getMonitorsForUser(getLoggedInUser());
+		ListPropertiesVO listProperties = getListProperties(request);
+		model = ServiceFacade.instance().getMonitorsForUser(getLoggedInUser(), listProperties);
 		
 		return headers;
 	}
@@ -101,17 +102,11 @@ public class MonitorController extends ModelDrivenController {
 	 * GET /monitor/active-for-object?id=<object id>&type=<type name>
 	 * type name := ()
 	 */
-	private HttpHeaders activeForOListing(HttpServletRequest request) {
-		HttpHeaders headers = new HttpHeadersImpl("active-for-listing");
-
-        String maxItemsStr = request.getParameter("max_results");
-        int maxItems = maxItemsStr != null ? Integer.parseInt(maxItemsStr) : DEFAULT_MAX_RESULTS;
-        if (maxItems > MAX_RESULTS) { // avoid DoS attacks
-            maxItems = MAX_RESULTS;
-        }
-
+	private HttpHeaders activeForObject(HttpServletRequest request) {
+		HttpHeaders headers = new HttpHeadersImpl("active-for-object");
+		ListPropertiesVO listProperties = getListProperties(request);
         String listingId = getCommandOrParameter(request, 2, "id");
-		model = ServiceFacade.instance().getMonitorsForObject(getLoggedInUser(), listingId, maxItems);
+		model = ServiceFacade.instance().getMonitorsForObject(getLoggedInUser(), listingId, listProperties);
 		
 		return headers;
 	}

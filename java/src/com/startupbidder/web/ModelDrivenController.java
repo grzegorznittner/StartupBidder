@@ -165,15 +165,26 @@ public abstract class ModelDrivenController {
 	protected ListPropertiesVO getListProperties(HttpServletRequest request) {
 		ListPropertiesVO listingProperties = new ListPropertiesVO();
 		
-		String maxItemsStr = request.getParameter("max_results");
+		try {
+			String maxItemsStr = request.getParameter("max_results");
+			int maxItems = maxItemsStr != null ? Integer.parseInt(maxItemsStr) : DEFAULT_MAX_RESULTS;
+	        if (maxItems > MAX_RESULTS) { // avoid DoS attacks
+	            maxItems = MAX_RESULTS;
+	        }
+			listingProperties.setMaxResults(maxItems);
+		} catch (NumberFormatException e) {
+			listingProperties.setMaxResults(DEFAULT_MAX_RESULTS);
+		}
 		
-		int maxItems = maxItemsStr != null ? Integer.parseInt(maxItemsStr) : DEFAULT_MAX_RESULTS;
-        if (maxItems > MAX_RESULTS) { // avoid DoS attacks
-            maxItems = MAX_RESULTS;
-        }
-		listingProperties.setMaxResults(maxItems);
+		try {
+			String startIndexStr = request.getParameter("start_index");
+			int startIndex = startIndexStr != null ? Integer.parseInt(startIndexStr) : 1;
+			listingProperties.setStartIndex(startIndex);
+		} catch (NumberFormatException e) {
+			listingProperties.setStartIndex(1);
+		}
+		
 		listingProperties.setNextCursor(request.getParameter("next_cursor"));
-		listingProperties.setPrevCursor(request.getParameter("prev_cursor"));
 		listingProperties.setRequestData(request);
 		
 		return listingProperties;

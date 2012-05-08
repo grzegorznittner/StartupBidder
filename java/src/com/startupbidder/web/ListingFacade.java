@@ -805,27 +805,26 @@ public class ListingFacade {
 	
 	public DiscoverListingsVO getDiscoverListingList(UserVO loggedInUser) {
 		DiscoverListingsVO result = new DiscoverListingsVO();
-		Map<String, Monitor> monitors = loggedInUser != null ? getDAO().getMonitorsMapForUser(loggedInUser.toKeyId()) : new HashMap<String, Monitor>();
 		
 		ListPropertiesVO props = new ListPropertiesVO();
 		props.setMaxResults(4);
-		List<ListingVO> list = prepareListingList(loggedInUser, getDAO().getTopListings(props), monitors, 4);
+		List<ListingVO> list = prepareListingList(loggedInUser, getDAO().getTopListings(props));
 		result.setTopListings(list);
 
 		props = new ListPropertiesVO();
 		props.setMaxResults(4);
-		list = prepareListingList(loggedInUser, getDAO().getClosingListings(props), monitors, 4);
+		list = prepareListingList(loggedInUser, getDAO().getClosingListings(props));
 		result.setClosingListings(list);
 
 		props = new ListPropertiesVO();
 		props.setMaxResults(4);
-		list = prepareListingList(loggedInUser, getDAO().getLatestListings(props), monitors, 4);
+		list = prepareListingList(loggedInUser, getDAO().getLatestListings(props));
 		result.setLatestListings(list);
 		
 		if (loggedInUser != null) {
 			props = new ListPropertiesVO();
 			props.setMaxResults(4);
-			list = prepareListingList(loggedInUser, getDAO().getUserActiveListings(loggedInUser.toKeyId(), props), monitors, 4);
+			list = prepareListingList(loggedInUser, getDAO().getUserActiveListings(loggedInUser.toKeyId(), props));
 			result.setUsersListings(list);
 			
 			if (loggedInUser.getEditedListing() != null) {
@@ -848,24 +847,22 @@ public class ListingFacade {
 			// on John's request we return 200 when user is not logged in
 			return result;
 		}
-		Map<String, Monitor> monitors = getDAO().getMonitorsMapForUser(loggedInUser.toKeyId());
-		
 		ListPropertiesVO props = new ListPropertiesVO();
 		props.setMaxResults(4);
 		List<ListingVO> activeListings = prepareListingList(loggedInUser,
-				getDAO().getUserListings(loggedInUser.toKeyId(), Listing.State.ACTIVE, props), monitors, 4);
+				getDAO().getUserListings(loggedInUser.toKeyId(), Listing.State.ACTIVE, props));
 		props = new ListPropertiesVO();
 		props.setMaxResults(4);
 		List<ListingVO> withdrawnListings = prepareListingList(loggedInUser,
-				getDAO().getUserListings(loggedInUser.toKeyId(), Listing.State.WITHDRAWN, props), monitors, 4);
+				getDAO().getUserListings(loggedInUser.toKeyId(), Listing.State.WITHDRAWN, props));
 		props = new ListPropertiesVO();
 		props.setMaxResults(4);
 		List<ListingVO> frozenListings = prepareListingList(loggedInUser,
-				getDAO().getUserListings(loggedInUser.toKeyId(), Listing.State.FROZEN, props), monitors, 4);
+				getDAO().getUserListings(loggedInUser.toKeyId(), Listing.State.FROZEN, props));
 		props = new ListPropertiesVO();
 		props.setMaxResults(4);
 		List<ListingVO> closedListings = prepareListingList(loggedInUser,
-				getDAO().getUserListings(loggedInUser.toKeyId(), Listing.State.CLOSED, props), monitors, 4);
+				getDAO().getUserListings(loggedInUser.toKeyId(), Listing.State.CLOSED, props));
 
 		if (activeListings.size() > 0) {
 			result.setActiveListings(activeListings);
@@ -885,8 +882,10 @@ public class ListingFacade {
 			result.setEditedListing(DtoToVoConverter.convert(editedListing));
 		}
 		
-		List<Listing> monitoredListing = getMonitoredListings(loggedInUser, 4);
-		List<ListingVO> list = prepareListingList(loggedInUser, monitoredListing, monitors, 4);
+		props = new ListPropertiesVO();
+		props.setMaxResults(4);
+		List<Listing> monitoredListing = getDAO().getMonitoredListings(loggedInUser.toKeyId(), props);
+		List<ListingVO> list = prepareListingList(loggedInUser, monitoredListing);
 		result.setCommentedListings(list);
 		
 		props = new ListPropertiesVO();
@@ -899,13 +898,13 @@ public class ListingFacade {
 			props = new ListPropertiesVO();
 			props.setMaxResults(4);
 			List<Listing> adminFrozenListing = getDAO().getFrozenListings(props);
-			list = prepareListingList(loggedInUser, adminFrozenListing, monitors, 4);
+			list = prepareListingList(loggedInUser, adminFrozenListing);
 			result.setAdminFrozenListings(list);
 
 			props = new ListPropertiesVO();
 			props.setMaxResults(4);
 			List<Listing> adminPostedListing = getDAO().getPostedListings(props);
-			list = prepareListingList(loggedInUser, adminPostedListing, monitors, 4);
+			list = prepareListingList(loggedInUser, adminPostedListing);
 			result.setAdminPostedListings(list);
 		}
 		
@@ -915,48 +914,28 @@ public class ListingFacade {
 		return result;
 	}
 
-	private List<ListingVO> prepareListingList(UserVO loggedInUser, List<Listing> listings,
-			Map<String, Monitor> monitors, int maxResults) {
+	private List<ListingVO> prepareListingList(UserVO loggedInUser, List<Listing> listings) {
 		ListingVO listingVO;
 		int index = 1;
 		List<ListingVO> list = new ArrayList<ListingVO>();
 		for (Listing listing : listings) {
 			listingVO = DtoToVoConverter.convert(listing);
-			applyListingData(loggedInUser, listingVO, monitors.get(listingVO.getId()));
 			listingVO.setOrderNumber(index++);
 			list.add(listingVO);
-			if (index > maxResults) {
-				break;
-			}
 		}
 		return list;
 	}
 	
-	private List<Listing> getMonitoredListings(UserVO loggedInUser, int maxResults) {
-		List<Key<Listing>> monitoredListingKeys = new ArrayList<Key<Listing>>();
-		List<Monitor> monitors = getDAO().getMonitorsForUser(loggedInUser.toKeyId());
-		log.info("Fetched monitors for user '" + loggedInUser.toKeyId() + "': " + monitors);
-		for (Monitor monitor : monitors) {
-			monitoredListingKeys.add(new Key<Listing>(Listing.class, monitor.monitoredListing.getId()));
-			if (monitoredListingKeys.size() > maxResults) {
-				break;
-			}
-		}
-		return getDAO().getListingsByKeys(monitoredListingKeys);
-	}
-
-	public ListingListVO getMonitoredListings(UserVO loggedInUser, ListPropertiesVO listingProperties) {
+	public ListingListVO getMonitoredListings(UserVO loggedInUser, ListPropertiesVO listProperties) {
 		List<ListingVO> listings = DtoToVoConverter.convertListings(
-				getMonitoredListings(loggedInUser, listingProperties.getMaxResults()));
-		Map<String, Monitor> monitors = loggedInUser != null ? getDAO().getMonitorsMapForUser(loggedInUser.toKeyId()) : new HashMap<String, Monitor>();
-		int index = listingProperties.getStartIndex() > 0 ? listingProperties.getStartIndex() : 1;
+				getDAO().getMonitoredListings(loggedInUser.toKeyId(), listProperties));
+		int index = listProperties.getStartIndex() > 0 ? listProperties.getStartIndex() : 1;
 		for (ListingVO listing : listings) {
-			applyListingData(loggedInUser, listing, monitors.get(listing.getId()));
 			listing.setOrderNumber(index++);
 		}
 		ListingListVO list = new ListingListVO();
 		list.setListings(listings);
-		list.setListingsProperties(listingProperties);
+		list.setListingsProperties(listProperties);
 		list.setCategories(getTopCategories());
 		list.setTopLocations(getTopLocations());
 	
@@ -966,9 +945,7 @@ public class ListingFacade {
 	public ListingListVO getClosingActiveListings(UserVO loggedInUser, ListPropertiesVO listingProperties) {
 		List<ListingVO> listings = DtoToVoConverter.convertListings(getDAO().getClosingListings(listingProperties));
 		int index = listingProperties.getStartIndex() > 0 ? listingProperties.getStartIndex() : 1;
-		Map<String, Monitor> monitors = loggedInUser != null ? getDAO().getMonitorsMapForUser(loggedInUser.toKeyId()) : new HashMap<String, Monitor>();
 		for (ListingVO listing : listings) {
-			applyListingData(loggedInUser, listing, monitors.get(listing.getId()));
 			listing.setOrderNumber(index++);
 		}
 		ListingListVO list = new ListingListVO();
@@ -985,10 +962,8 @@ public class ListingFacade {
 	 */
 	public ListingListVO getMostDiscussedActiveListings(UserVO loggedInUser, ListPropertiesVO listingProperties) {
 		List<ListingVO> listings = DtoToVoConverter.convertListings(getDAO().getMostDiscussedListings(listingProperties));
-		Map<String, Monitor> monitors = loggedInUser != null ? getDAO().getMonitorsMapForUser(loggedInUser.toKeyId()) : new HashMap<String, Monitor>();
 		int index = listingProperties.getStartIndex() > 0 ? listingProperties.getStartIndex() : 1;
 		for (ListingVO listing : listings) {
-			applyListingData(loggedInUser, listing, monitors.get(listing.getId()));
 			listing.setOrderNumber(index++);
 		}
 		ListingListVO list = new ListingListVO();
@@ -1007,10 +982,8 @@ public class ListingFacade {
 	 */
 	public ListingListVO getMostPopularActiveListings(UserVO loggedInUser, ListPropertiesVO listingProperties) {
 		List<ListingVO> listings = DtoToVoConverter.convertListings(getDAO().getMostPopularListings(listingProperties));
-		Map<String, Monitor> monitors = loggedInUser != null ? getDAO().getMonitorsMapForUser(loggedInUser.toKeyId()) : new HashMap<String, Monitor>();
 		int index = listingProperties.getStartIndex() > 0 ? listingProperties.getStartIndex() : 1;
 		for (ListingVO listing : listings) {
-			applyListingData(loggedInUser, listing, monitors.get(listing.getId()));
 			listing.setOrderNumber(index++);
 		}
 		ListingListVO list = new ListingListVO();
@@ -1028,12 +1001,13 @@ public class ListingFacade {
 	 * @return
 	 */
 	public ListingListVO getMostValuedActiveListings(UserVO loggedInUser, ListPropertiesVO listingProperties) {
-		ListPropertiesVO tmpProperties = new ListPropertiesVO();
-		tmpProperties.setMaxResults(Integer.MAX_VALUE);
-		List<ListingVO> listings = DtoToVoConverter.convertListings(getDAO().getTopListings(tmpProperties));
-		Map<String, Monitor> monitors = loggedInUser != null ? getDAO().getMonitorsMapForUser(loggedInUser.toKeyId()) : new HashMap<String, Monitor>();
+		if (true) {
+			throw new RuntimeException("This method is not working!");
+		}
+		List<ListingVO> listings = DtoToVoConverter.convertListings(getDAO().getTopListings(listingProperties));
+		int index = listingProperties.getStartIndex() > 0 ? listingProperties.getStartIndex() : 1;
 		for (ListingVO listing : listings) {
-			applyListingData(loggedInUser, listing, monitors.get(listing.getId()));
+			listing.setOrderNumber(index++);
 		}
 		Collections.sort(listings, new Comparator<ListingVO> () {
 			public int compare(ListingVO left, ListingVO right) {
@@ -1050,11 +1024,6 @@ public class ListingFacade {
 		listingProperties.setTotalResults(listings.size());
 		listings = listings.subList(0, listingProperties.getMaxResults() > listings.size() ? listings.size() : listingProperties.getMaxResults());
 		listingProperties.setNumberOfResults(listings.size());
-		
-		int index = listingProperties.getStartIndex() > 0 ? listingProperties.getStartIndex() : 1;
-		for (ListingVO listing : listings) {
-			listing.setOrderNumber(index++);
-		}
 		
 		ListingListVO list = new ListingListVO();
 		list.setListings(listings);
@@ -1073,10 +1042,8 @@ public class ListingFacade {
 	 */
 	public ListingListVO getTopActiveListings(UserVO loggedInUser, ListPropertiesVO listingProperties) {
 		List<ListingVO> listings = DtoToVoConverter.convertListings(getDAO().getTopListings(listingProperties));
-		Map<String, Monitor> monitors = loggedInUser != null ? getDAO().getMonitorsMapForUser(loggedInUser.toKeyId()) : new HashMap<String, Monitor>();
 		int index = listingProperties.getStartIndex() > 0 ? listingProperties.getStartIndex() : 1;
 		for (ListingVO listing : listings) {
-			applyListingData(loggedInUser, listing, monitors.get(listing.getId()));
 			listing.setOrderNumber(index++);
 		}
 		ListingListVO list = new ListingListVO();
@@ -1104,10 +1071,8 @@ public class ListingFacade {
 		List<ListingVO> listings = DtoToVoConverter.convertListings(
 				getDAO().getUserListings(loggedInUser.toKeyId(), state, listingProperties));
 
-		Map<String, Monitor> monitors = loggedInUser != null ? getDAO().getMonitorsMapForUser(loggedInUser.toKeyId()) : new HashMap<String, Monitor>();
 		int index = listingProperties.getStartIndex() > 0 ? listingProperties.getStartIndex() : 1;
 		for (ListingVO listing : listings) {
-			applyListingData(loggedInUser, listing, monitors.get(listing.getId()));
 			listing.setOrderNumber(index++);
 		}
 		
@@ -1128,10 +1093,8 @@ public class ListingFacade {
 			return list;
 		}
 		List<ListingVO> listings = DtoToVoConverter.convertListings(getDAO().getPostedListings(listingProperties));
-		Map<String, Monitor> monitors = loggedInUser != null ? getDAO().getMonitorsMapForUser(loggedInUser.toKeyId()) : new HashMap<String, Monitor>();
 		int index = listingProperties.getStartIndex() > 0 ? listingProperties.getStartIndex() : 1;
 		for (ListingVO listing : listings) {
-			applyListingData(loggedInUser, listing, monitors.get(listing.getId()));
 			listing.setOrderNumber(index++);
 		}
 		list.setListings(listings);		
@@ -1147,10 +1110,8 @@ public class ListingFacade {
 	 */
 	public ListingListVO getLatestActiveListings(UserVO loggedInUser, ListPropertiesVO listingProperties) {
 		List<ListingVO> listings = DtoToVoConverter.convertListings(getDAO().getActiveListings(listingProperties));
-		Map<String, Monitor> monitors = loggedInUser != null ? getDAO().getMonitorsMapForUser(loggedInUser.toKeyId()) : new HashMap<String, Monitor>();
 		int index = listingProperties.getStartIndex() > 0 ? listingProperties.getStartIndex() : 1;
 		for (ListingVO listing : listings) {
-			applyListingData(loggedInUser, listing, monitors.get(listing.getId()));
 			listing.setOrderNumber(index++);
 		}
 		ListingListVO list = new ListingListVO();
@@ -1173,10 +1134,8 @@ public class ListingFacade {
 			return list;
 		}
 		List<ListingVO> listings = DtoToVoConverter.convertListings(getDAO().getFrozenListings(listingProperties));
-		Map<String, Monitor> monitors = loggedInUser != null ? getDAO().getMonitorsMapForUser(loggedInUser.toKeyId()) : new HashMap<String, Monitor>();
 		int index = listingProperties.getStartIndex() > 0 ? listingProperties.getStartIndex() : 1;
 		for (ListingVO listing : listings) {
-			applyListingData(loggedInUser, listing, monitors.get(listing.getId()));
 			listing.setOrderNumber(index++);
 		}
 		list.setListings(listings);		
