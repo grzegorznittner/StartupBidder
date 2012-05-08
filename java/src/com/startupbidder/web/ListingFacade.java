@@ -827,6 +827,11 @@ public class ListingFacade {
 			list = prepareListingList(loggedInUser, getDAO().getUserActiveListings(loggedInUser.toKeyId(), props));
 			result.setUsersListings(list);
 			
+			props = new ListPropertiesVO();
+			props.setMaxResults(4);
+			list = prepareListingList(loggedInUser, getDAO().getMonitoredListings(loggedInUser.toKeyId(), props));
+			result.setMonitoredListings(list);
+			
 			if (loggedInUser.getEditedListing() != null) {
 				Listing editedListing = getDAO().getListing(BaseVO.toKeyId(loggedInUser.getEditedListing()));
 				result.setEditedListing(DtoToVoConverter.convert(editedListing));

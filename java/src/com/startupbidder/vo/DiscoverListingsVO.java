@@ -17,6 +17,7 @@ public class DiscoverListingsVO extends BaseResultVO {
 	@JsonProperty("top_listings") private List<ListingVO> topListings;
 	@JsonProperty("closing_listings") private List<ListingVO> closingListings;
 	@JsonProperty("latest_listings") private List<ListingVO> latestListings;
+	@JsonProperty("monitored_listings") private List<ListingVO> monitoredListings;
 	@JsonProperty("users_listings") private List<ListingVO> usersListings;
 	@JsonProperty("edited_listing") private ListingVO editedListing;
 	@JsonProperty("categories") private Map<String, Integer> categories;
@@ -63,5 +64,11 @@ public class DiscoverListingsVO extends BaseResultVO {
 	}
 	public void setEditedListing(ListingVO editedListing) {
 		this.editedListing = editedListing;
+	}
+	public List<ListingVO> getMonitoredListings() {
+		return monitoredListings;
+	}
+	public void setMonitoredListings(List<ListingVO> monitoredListings) {
+		this.monitoredListings = monitoredListings;
 	}
 }
