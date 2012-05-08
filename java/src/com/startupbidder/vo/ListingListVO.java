@@ -15,6 +15,7 @@ import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 		fieldVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE)
 public class ListingListVO extends BaseResultVO {
 	@JsonProperty("listings") private List<ListingVO> listings;
+	@JsonProperty("notifications") private List<NotificationVO> notifications;
 	@JsonProperty("listings_props")	private ListPropertiesVO listingsProperties;
 	@JsonProperty("profile") private UserBasicVO user;
 	@JsonProperty("categories") private Map<String, Integer> categories;
@@ -49,5 +50,11 @@ public class ListingListVO extends BaseResultVO {
 	}
 	public void setTopLocations(Map<String, Integer> topLocations) {
 		this.topLocations = topLocations;
+	}
+	public List<NotificationVO> getNotifications() {
+		return notifications;
+	}
+	public void setNotifications(List<NotificationVO> notifications) {
+		this.notifications = notifications;
 	}
 }
