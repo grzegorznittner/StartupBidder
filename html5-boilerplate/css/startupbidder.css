@@ -71,7 +71,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 }
 
 /* header styles */
-.topheader { width: 100%; height: 26px; background: #32aff6; display: none; }
+.topheader { width: 100%; height: 26px; background: #32aff6; }
 .topheaderline { color: white; font-weight: normal; }
 .topheaderlink { color: white; font-weight: bold; }
 .header { width: 100%; height: 55px; background: #49515a; }

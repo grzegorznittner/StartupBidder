@@ -305,7 +305,10 @@ pl.implement(HeaderClass, {
     setLoggedIn: function(profile, logout_url) {
         var username = profile.username || 'You',
             posttext = profile.edited_listing ? 'In-Progress': 'Post',
+            num_notifications = profile.num_notifications || 0,
+            notificationlinktext = num_notifications ? num_notifications + ' unread notifications' : 'no unread notifications',
             newlistingurl = profile.edited_status === 'posted' ? 'new-listing-submitted-page.html' : 'new-listing-basics-page.html';
+        pl('#topheaderline').html('You have <a href="/profile-page.html" class="topheaderlink hoverlink">' + notificationlinktext + '</a>');
         pl('#postlink').attr('href', newlistingurl);
         pl('#posttext').html(posttext);
         if (profile.admin) {
@@ -319,7 +322,7 @@ pl.implement(HeaderClass, {
         }
     },
     setLoggedOut: function(login_url) {
-        pl('#topheader').show();
+        pl('#topheaderline').html('Want to raise money for startups or invest in one? <a href="/about-page.html" class="topheaderlink hoverlink">We&rsquo;ll tell you how!</a>');
         if (login_url && pl('body').hasClass('login-page')) {
             pl('#googleloginlink').attr({href: login_url}).show();
         }
