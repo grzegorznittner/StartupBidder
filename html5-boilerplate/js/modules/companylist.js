@@ -160,7 +160,7 @@ function CompanyListClass(options) {
     this.options = options || {};
     this.options.colsPerRow = this.options.colsPerRow || ( this.options.fullWidth ? 1 : 4 );
     this.options.companydiv = this.options.companydiv || 'companydiv';
-    this.options.propertykey= this.options.propertykey || 'listings';
+    this.options.propertykey = this.options.propertykey || 'listings';
 }
 pl.implement(CompanyListClass, {
     storeList: function(json) {

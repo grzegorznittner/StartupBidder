@@ -86,10 +86,10 @@ pl.implement(NewListingMediaClass, {
                     uploadurl = uploadurlmatch && uploadurlmatch.length === 2 ? uploadurlmatch[1] : null,
                     dataurimatch = iframe.match(/value&gt;(.*)&lt;\/value/),
                     datauri = dataurimatch && dataurimatch.length === 2 ? dataurimatch[1] : null;
-                if (uploadurl) {
+                if (uploadurl && uploadurl !== 'null') {
                     self.base.listing.logo_upload = uploadurl;
                 }
-                if (datauri) {
+                if (datauri && datauri !== 'null') {
                     self.base.listing.logo = datauri;
                     self.displayLogo(datauri);
                     self.base.displayCalculated();

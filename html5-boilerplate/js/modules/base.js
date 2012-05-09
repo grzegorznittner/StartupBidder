@@ -248,7 +248,10 @@ function AjaxClass(url, statusId, completeFunc, successFunc, loadFunc, errorFunc
         self.completeFunc(json);
     };
     this.loadFunc = loadFunc || function() { pl(self.statusSel).html('<span class="inprogress">Loading...</span>'); };
-    this.errorFunc = errorFunc || function(errorNum) { pl(self.statusSel).html('<span class="attention">Error from server: ' + errorNum + '</span>'); };
+    this.errorFunc = errorFunc || function(errorNum, errorStr, json) {
+        var errorStr = (json && json.errorMsg) || ('Error from server: ' + errorNum + ' ' + errorStr);
+        pl(self.statusSel).html('<span class="attention">' + errorStr + '</span>');
+    };
     this.ajaxOpts = {
         async: true,
         url: this.url,

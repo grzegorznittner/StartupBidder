@@ -359,8 +359,8 @@ public class UserMgmtFacade {
 		return userVotes;
 	}
 
-	public Boolean checkUserName(UserVO loggedInUser, String nickName) {
-		return StringUtils.notEmpty(nickName) && getDAO().checkNickName(nickName);
+	public Boolean checkUserName(UserVO loggedInUser, String nickName) { // either unchanged or not used in the datastore
+		return StringUtils.notEmpty(nickName) && (loggedInUser.getNickname().equals(nickName) || getDAO().checkNickName(nickName));
 	}
 	
 	public void scheduleUpdateOfUserStatistics(String userId, UpdateReason reason) {

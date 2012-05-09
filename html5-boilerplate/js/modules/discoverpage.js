@@ -14,10 +14,15 @@ pl.implement(DiscoverPageClass,{
                     locations = json.top_locations || {},
                     categoryList = new BaseListClass(categories, 'category', 2, 'category'),
                     locationList = new BaseListClass(locations, 'location', 2, 'location');
+        console.log('BAR');
                 header.setLogin(json);
+        console.log('BAZ');
                 categoryList.display();
+        console.log('BUZ');
                 locationList.display();
+        console.log('BUZ2');
                 searchbox.bindEvents();
+        console.log('BUZ3');
                 if (json.edited_listing) {
                     pl('#edited_listing_wrapper').show();
                     editedListing.storeList(json);
