@@ -714,8 +714,9 @@ public class ListingFacade {
 		if (dbListing.state == Listing.State.POSTED || dbListing.state == Listing.State.FROZEN) {
 			List<Listing> newOrPosted = getDAO().getUserNewOrPostedListings(dbListing.owner.getId());
 			if (newOrPosted != null && newOrPosted.size() > 0) {
-				log.warning("Listing owner '" + loggedInUser + "' has already have NEW/POSTED listing");
-				returnValue.setErrorMessage("Listing owner '" + loggedInUser + "' has already have NEW/POSTED listing");
+                String errorStr = "Listing owner with nickname '" + loggedInUser.getNickname() + "' already has an in-progress listing, cannot send back";
+				log.warning(errorStr);
+				returnValue.setErrorMessage(errorStr);
 				returnValue.setErrorCode(ErrorCodes.OPERATION_NOT_ALLOWED);
 				return returnValue;
 			}
