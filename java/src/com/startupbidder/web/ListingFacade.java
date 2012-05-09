@@ -932,13 +932,20 @@ public class ListingFacade {
 	}
 	
 	public ListingListVO getMonitoredListings(UserVO loggedInUser, ListPropertiesVO listProperties) {
+		ListingListVO list = new ListingListVO();
+		if (loggedInUser == null) {
+			log.warning("User not logged in.");
+			list.setErrorCode(ErrorCodes.NOT_LOGGED_IN);
+			list.setErrorMessage("User is not logged in.");
+			return list;
+		}
 		List<ListingVO> listings = DtoToVoConverter.convertListings(
 				getDAO().getMonitoredListings(loggedInUser.toKeyId(), listProperties));
 		int index = listProperties.getStartIndex() > 0 ? listProperties.getStartIndex() : 1;
 		for (ListingVO listing : listings) {
 			listing.setOrderNumber(index++);
 		}
-		ListingListVO list = new ListingListVO();
+		applyShortNotifications(loggedInUser, list);
 		list.setListings(listings);
 		list.setListingsProperties(listProperties);
 		list.setCategories(getTopCategories());
@@ -1092,7 +1099,19 @@ public class ListingFacade {
 		return list;
 	}
 
-	public List<NotificationVO> applyShortNotificationsAndMonitoredListings(UserVO loggedInUser, ListingListVO list) {
+	public void applyShortNotifications(UserVO loggedInUser, ListingListVO list) {
+		List<NotificationVO> notifications = null;
+		ListPropertiesVO notifProperties = new ListPropertiesVO();
+		notifProperties.setMaxResults(5);
+		notifications = DtoToVoConverter.convertNotifications(
+				getDAO().getAllUserNotification(loggedInUser.toKeyId(), notifProperties));
+		int num = 1;
+		for (NotificationVO notification : notifications) {
+			notification.setOrderNumber(num++);
+		}
+	}
+	
+	public void applyShortNotificationsAndMonitoredListings(UserVO loggedInUser, ListingListVO list) {
 		List<NotificationVO> notifications = null;
 		ListPropertiesVO notifProperties = new ListPropertiesVO();
 		notifProperties.setMaxResults(5);
@@ -1108,8 +1127,6 @@ public class ListingFacade {
 		List<Listing> monitoredListing = getDAO().getMonitoredListings(loggedInUser.toKeyId(), props);
 		List<ListingVO> monitored = prepareListingList(loggedInUser, monitoredListing);
 		list.setMonitoredListings(monitored);
-		
-		return notifications;
 	}
 	
 	public ListingListVO getPostedListings(UserVO loggedInUser, ListPropertiesVO listingProperties) {
