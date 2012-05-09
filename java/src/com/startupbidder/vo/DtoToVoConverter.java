@@ -148,6 +148,39 @@ public class DtoToVoConverter {
 		return listing;
 	}
 
+	public static ListingTileVO convertTile(Listing listingDTO) {
+		if (listingDTO == null) {
+			return null;
+		}
+		ListingTileVO listing = new ListingTileVO();
+		listing.setId(new Key<Listing>(Listing.class, listingDTO.id).getString());
+		listing.setMockData(listingDTO.mockData);
+		listing.setModified(listingDTO.modified);
+		listing.setCreated(listingDTO.created);
+		listing.setClosingOn(listingDTO.closingOn);
+		listing.setListedOn(listingDTO.listedOn);
+		listing.setPostedOn(listingDTO.posted);
+		listing.setName(listingDTO.name);
+		listing.setOwner(keyToString(listingDTO.owner));
+		listing.setAskedForFunding(listingDTO.askedForFunding);
+		listing.setSuggestedValuation(listingDTO.suggestedValuation);
+		listing.setSuggestedAmount(listingDTO.suggestedAmount);
+		listing.setSuggestedPercentage(listingDTO.suggestedPercentage);
+		listing.setState(listingDTO.state.toString());
+		listing.setLogo(listingDTO.logoBase64);
+		listing.setSummary(listingDTO.summary);
+		listing.setMantra(listingDTO.mantra);
+		listing.setWebsite(listingDTO.website);
+		listing.setCategory(listingDTO.category);
+
+		listing.setLatitude(listingDTO.latitude);
+		listing.setLongitude(listingDTO.longitude);
+
+		listing.setBriefAddress(listingDTO.briefAddress);
+		
+		return listing;
+	}
+
 	public static CommentVO convert(Comment commentDTO) {
 		if (commentDTO == null) {
 			return null;
@@ -318,6 +351,17 @@ public class DtoToVoConverter {
 		for (Listing bpDTO : bpDtoList) {
 			ListingVO bpVO = convert(bpDTO);
 			bpVoList.add(bpVO);
+		}
+		return bpVoList;
+	}
+
+	public static List<ListingTileVO> convertListingTiles(List<Listing> bpDtoList) {
+		if (bpDtoList == null) {
+			return null;
+		}
+		List<ListingTileVO> bpVoList = new ArrayList<ListingTileVO>();
+		for (Listing bpDTO : bpDtoList) {
+			bpVoList.add(convertTile(bpDTO));
 		}
 		return bpVoList;
 	}

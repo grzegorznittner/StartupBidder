@@ -14,11 +14,11 @@ import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 @JsonAutoDetect(getterVisibility=Visibility.NONE, setterVisibility=Visibility.NONE,
 		fieldVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE)
 public class DiscoverListingsVO extends BaseResultVO {
-	@JsonProperty("top_listings") private List<ListingVO> topListings;
-	@JsonProperty("closing_listings") private List<ListingVO> closingListings;
-	@JsonProperty("latest_listings") private List<ListingVO> latestListings;
-	@JsonProperty("monitored_listings") private List<ListingVO> monitoredListings;
-	@JsonProperty("users_listings") private List<ListingVO> usersListings;
+	@JsonProperty("top_listings") private List<ListingTileVO> topListings;
+	@JsonProperty("closing_listings") private List<ListingTileVO> closingListings;
+	@JsonProperty("latest_listings") private List<ListingTileVO> latestListings;
+	@JsonProperty("monitored_listings") private List<ListingTileVO> monitoredListings;
+	@JsonProperty("users_listings") private List<ListingTileVO> usersListings;
 	@JsonProperty("edited_listing") private ListingVO editedListing;
 	@JsonProperty("categories") private Map<String, Integer> categories;
 	@JsonProperty("top_locations") private Map<String, Integer> topLocations;
@@ -35,28 +35,28 @@ public class DiscoverListingsVO extends BaseResultVO {
 	public void setTopLocations(Map<String, Integer> topLocations) {
 		this.topLocations = topLocations;
 	}
-	public List<ListingVO> getTopListings() {
+	public List<ListingTileVO> getTopListings() {
 		return topListings;
 	}
-	public void setTopListings(List<ListingVO> topListings) {
+	public void setTopListings(List<ListingTileVO> topListings) {
 		this.topListings = topListings;
 	}
-	public List<ListingVO> getClosingListings() {
+	public List<ListingTileVO> getClosingListings() {
 		return closingListings;
 	}
-	public void setClosingListings(List<ListingVO> closingListings) {
+	public void setClosingListings(List<ListingTileVO> closingListings) {
 		this.closingListings = closingListings;
 	}
-	public List<ListingVO> getLatestListings() {
+	public List<ListingTileVO> getLatestListings() {
 		return latestListings;
 	}
-	public void setLatestListings(List<ListingVO> latestListings) {
+	public void setLatestListings(List<ListingTileVO> latestListings) {
 		this.latestListings = latestListings;
 	}
-	public List<ListingVO> getUsersListings() {
+	public List<ListingTileVO> getUsersListings() {
 		return usersListings;
 	}
-	public void setUsersListings(List<ListingVO> usersListings) {
+	public void setUsersListings(List<ListingTileVO> usersListings) {
 		this.usersListings = usersListings;
 	}
 	public ListingVO getEditedListing() {
@@ -65,10 +65,10 @@ public class DiscoverListingsVO extends BaseResultVO {
 	public void setEditedListing(ListingVO editedListing) {
 		this.editedListing = editedListing;
 	}
-	public List<ListingVO> getMonitoredListings() {
+	public List<ListingTileVO> getMonitoredListings() {
 		return monitoredListings;
 	}
-	public void setMonitoredListings(List<ListingVO> monitoredListings) {
+	public void setMonitoredListings(List<ListingTileVO> monitoredListings) {
 		this.monitoredListings = monitoredListings;
 	}
 }

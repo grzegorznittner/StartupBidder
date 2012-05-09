@@ -29,6 +29,7 @@ import com.startupbidder.vo.ListPropertiesVO;
 import com.startupbidder.vo.ListingAndUserVO;
 import com.startupbidder.vo.ListingListVO;
 import com.startupbidder.vo.ListingPropertyVO;
+import com.startupbidder.vo.ListingTileVO;
 import com.startupbidder.vo.ListingVO;
 import com.startupbidder.web.ListingFacade;
 
@@ -1014,7 +1015,7 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 		ListPropertiesVO listProps = new ListPropertiesVO();
 		ListingListVO list = ListingFacade.instance().getLatestActiveListings(mocks.INSIDER, listProps);
 		assertNotNull("Logged in user, so list should not be empty", list);
-		List<ListingVO> listings = list.getListings();
+		List<ListingTileVO> listings = list.getListings();
 		checkListingsReturned(listings, listingList.get(0), listingList.get(1), listingList.get(2), listingList.get(3),
 				listingList.get(4), listingList.get(5), listingList.get(6));
 		checkListingsNotReturned(listings, listingList.get(7), listingList.get(8), listingList.get(9), listingList.get(10),
@@ -1045,7 +1046,7 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 		ListPropertiesVO listProps = new ListPropertiesVO();
 		ListingListVO list = ListingFacade.instance().getClosingActiveListings(mocks.INSIDER, listProps);
 		assertNotNull("Logged in user, so list should not be empty", list);
-		List<ListingVO> listings = list.getListings();
+		List<ListingTileVO> listings = list.getListings();
 		checkListingsReturned(listings, listingList.get(0), listingList.get(1), listingList.get(2), listingList.get(3),
 				listingList.get(4), listingList.get(5), listingList.get(6));
 		checkListingsNotReturned(listings, listingList.get(7), listingList.get(8), listingList.get(9), listingList.get(10),

@@ -5,13 +5,9 @@ import java.util.Date;
 import java.util.List;
 
 import org.codehaus.jackson.annotate.JsonAutoDetect;
+import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
-import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
-
-import com.startupbidder.util.DateSerializer;
-import com.startupbidder.util.LowecaseSerializer;
 
 /**
  * 
@@ -20,7 +16,7 @@ import com.startupbidder.util.LowecaseSerializer;
 @JsonAutoDetect(getterVisibility=Visibility.NONE, setterVisibility=Visibility.NONE,
 		fieldVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE)
 @JsonIgnoreProperties(ignoreUnknown=true)
-public class ListingVO extends BaseVO {
+public class ListingVO extends ListingTileVO {
 	public static final List<String> UPDATABLE_PROPERTIES = Arrays.asList(new String[] {
 			"title", "mantra", "summary", "contact_email", "founders", "website", "category",
 			"asked_fund", "suggested_amt", "suggested_pct", "video", "answer1", "answer2", "answer3",
@@ -31,45 +27,21 @@ public class ListingVO extends BaseVO {
 	public static final List<String> FETCHED_PROPERTIES = Arrays.asList(new String[] {"business_plan_url", 
 			"presentation_url", "financials_url", "logo_url"});
 	
-	@JsonProperty("num") private int orderNumber;
-	@JsonProperty("listing_id")	private String id;
-	@JsonProperty("title") private String name;
-	@JsonProperty("asked_fund") private boolean askedForFunding;
-	@JsonProperty("suggested_amt") private int suggestedAmount;
-	@JsonProperty("suggested_pct") private int suggestedPercentage;
-	@JsonProperty("suggested_val") private int suggestedValuation;
 	@JsonProperty("previous_val") private int previousValuation;
 	@JsonProperty("valuation") private int valuation;
 	@JsonProperty("median_valuation") private int medianValuation;
 	@JsonProperty("score") private int score;
-	@JsonProperty("modified_date") @JsonSerialize(using=DateSerializer.class) private Date  modified;
-	@JsonProperty("created_date") @JsonSerialize(using=DateSerializer.class) private Date  created;
-	@JsonProperty("posted_date") @JsonSerialize(using=DateSerializer.class) private Date  postedOn;
-	@JsonProperty("listing_date") @JsonSerialize(using=DateSerializer.class) private Date  listedOn;
-	@JsonProperty("closing_date") @JsonSerialize(using=DateSerializer.class) private Date  closingOn;
-	@JsonProperty("status")	@JsonSerialize(using=LowecaseSerializer.class) private String state;
-	@JsonProperty("mantra")	private String mantra;
-	@JsonProperty("summary") private String summary;
-	@JsonProperty("website") private String website;
-	@JsonProperty("category") private String category;
-	@JsonProperty("profile_id") private String owner;
-	@JsonProperty("profile_username") private String ownerName;
 	@JsonProperty("founders") private String founders;
 	@JsonProperty("contact_email") private String contactEmail;
 	@JsonProperty("address") private String address;
-	@JsonProperty("brief_address") private String briefAddress;
-	@JsonProperty("latitude") private Double latitude;
-	@JsonProperty("longitude") private Double longitude;
 	@JsonProperty("num_comments") private long numberOfComments;
 	@JsonProperty("num_bids") private long numberOfBids;
 	@JsonProperty("days_ago") private int daysAgo;
 	@JsonProperty("days_left") private int daysLeft;
-	@JsonProperty("mockData") private boolean mockData;
 	@JsonProperty("monitored") private boolean monitored;
 	@JsonProperty("business_plan_id") private String buinessPlanId;
 	@JsonProperty("presentation_id") private String presentationId;
 	@JsonProperty("financials_id") private String financialsId;
-	@JsonProperty("logo") private String logo;
 	@JsonProperty("video")	private String video;
 	@JsonProperty("business_plan_upload") private String buinessPlanUpload;
 	@JsonProperty("presentation_upload") private String presentationUpload;

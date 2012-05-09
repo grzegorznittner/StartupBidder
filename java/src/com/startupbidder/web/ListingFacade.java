@@ -76,6 +76,7 @@ import com.startupbidder.vo.ListingDocumentVO;
 import com.startupbidder.vo.ListingListVO;
 import com.startupbidder.vo.ListingLocationsVO;
 import com.startupbidder.vo.ListingPropertyVO;
+import com.startupbidder.vo.ListingTileVO;
 import com.startupbidder.vo.ListingVO;
 import com.startupbidder.vo.NotificationListVO;
 import com.startupbidder.vo.NotificationVO;
@@ -808,7 +809,7 @@ public class ListingFacade {
 		
 		ListPropertiesVO props = new ListPropertiesVO();
 		props.setMaxResults(4);
-		List<ListingVO> list = prepareListingList(loggedInUser, getDAO().getTopListings(props));
+		List<ListingTileVO> list = prepareListingList(loggedInUser, getDAO().getTopListings(props));
 		result.setTopListings(list);
 
 		props = new ListPropertiesVO();
@@ -854,19 +855,19 @@ public class ListingFacade {
 		}
 		ListPropertiesVO props = new ListPropertiesVO();
 		props.setMaxResults(4);
-		List<ListingVO> activeListings = prepareListingList(loggedInUser,
+		List<ListingTileVO> activeListings = prepareListingList(loggedInUser,
 				getDAO().getUserListings(loggedInUser.toKeyId(), Listing.State.ACTIVE, props));
 		props = new ListPropertiesVO();
 		props.setMaxResults(4);
-		List<ListingVO> withdrawnListings = prepareListingList(loggedInUser,
+		List<ListingTileVO> withdrawnListings = prepareListingList(loggedInUser,
 				getDAO().getUserListings(loggedInUser.toKeyId(), Listing.State.WITHDRAWN, props));
 		props = new ListPropertiesVO();
 		props.setMaxResults(4);
-		List<ListingVO> frozenListings = prepareListingList(loggedInUser,
+		List<ListingTileVO> frozenListings = prepareListingList(loggedInUser,
 				getDAO().getUserListings(loggedInUser.toKeyId(), Listing.State.FROZEN, props));
 		props = new ListPropertiesVO();
 		props.setMaxResults(4);
-		List<ListingVO> closedListings = prepareListingList(loggedInUser,
+		List<ListingTileVO> closedListings = prepareListingList(loggedInUser,
 				getDAO().getUserListings(loggedInUser.toKeyId(), Listing.State.CLOSED, props));
 
 		if (activeListings.size() > 0) {
@@ -890,7 +891,7 @@ public class ListingFacade {
 		props = new ListPropertiesVO();
 		props.setMaxResults(4);
 		List<Listing> monitoredListing = getDAO().getMonitoredListings(loggedInUser.toKeyId(), props);
-		List<ListingVO> list = prepareListingList(loggedInUser, monitoredListing);
+		List<ListingTileVO> list = prepareListingList(loggedInUser, monitoredListing);
 		result.setCommentedListings(list);
 		
 		props = new ListPropertiesVO();
@@ -919,12 +920,12 @@ public class ListingFacade {
 		return result;
 	}
 
-	private List<ListingVO> prepareListingList(UserVO loggedInUser, List<Listing> listings) {
-		ListingVO listingVO;
+	private List<ListingTileVO> prepareListingList(UserVO loggedInUser, List<Listing> listings) {
+		ListingTileVO listingVO = null;
 		int index = 1;
-		List<ListingVO> list = new ArrayList<ListingVO>();
+		List<ListingTileVO> list = new ArrayList<ListingTileVO>();
 		for (Listing listing : listings) {
-			listingVO = DtoToVoConverter.convert(listing);
+			listingVO = DtoToVoConverter.convertTile(listing);
 			listingVO.setOrderNumber(index++);
 			list.add(listingVO);
 		}
@@ -939,10 +940,10 @@ public class ListingFacade {
 			list.setErrorMessage("User is not logged in.");
 			return list;
 		}
-		List<ListingVO> listings = DtoToVoConverter.convertListings(
+		List<ListingTileVO> listings = DtoToVoConverter.convertListingTiles(
 				getDAO().getMonitoredListings(loggedInUser.toKeyId(), listProperties));
 		int index = listProperties.getStartIndex() > 0 ? listProperties.getStartIndex() : 1;
-		for (ListingVO listing : listings) {
+		for (ListingTileVO listing : listings) {
 			listing.setOrderNumber(index++);
 		}
 		applyShortNotifications(loggedInUser, list);
@@ -955,9 +956,9 @@ public class ListingFacade {
 	}
 
 	public ListingListVO getClosingActiveListings(UserVO loggedInUser, ListPropertiesVO listingProperties) {
-		List<ListingVO> listings = DtoToVoConverter.convertListings(getDAO().getClosingListings(listingProperties));
+		List<ListingTileVO> listings = DtoToVoConverter.convertListingTiles(getDAO().getClosingListings(listingProperties));
 		int index = listingProperties.getStartIndex() > 0 ? listingProperties.getStartIndex() : 1;
-		for (ListingVO listing : listings) {
+		for (ListingTileVO listing : listings) {
 			listing.setOrderNumber(index++);
 		}
 		ListingListVO list = new ListingListVO();
@@ -973,9 +974,9 @@ public class ListingFacade {
 	 * Returns the most commented listings
 	 */
 	public ListingListVO getMostDiscussedActiveListings(UserVO loggedInUser, ListPropertiesVO listingProperties) {
-		List<ListingVO> listings = DtoToVoConverter.convertListings(getDAO().getMostDiscussedListings(listingProperties));
+		List<ListingTileVO> listings = DtoToVoConverter.convertListingTiles(getDAO().getMostDiscussedListings(listingProperties));
 		int index = listingProperties.getStartIndex() > 0 ? listingProperties.getStartIndex() : 1;
-		for (ListingVO listing : listings) {
+		for (ListingTileVO listing : listings) {
 			listing.setOrderNumber(index++);
 		}
 		ListingListVO list = new ListingListVO();
@@ -993,9 +994,9 @@ public class ListingFacade {
 	 * @return List of listings
 	 */
 	public ListingListVO getMostPopularActiveListings(UserVO loggedInUser, ListPropertiesVO listingProperties) {
-		List<ListingVO> listings = DtoToVoConverter.convertListings(getDAO().getMostPopularListings(listingProperties));
+		List<ListingTileVO> listings = DtoToVoConverter.convertListingTiles(getDAO().getMostPopularListings(listingProperties));
 		int index = listingProperties.getStartIndex() > 0 ? listingProperties.getStartIndex() : 1;
-		for (ListingVO listing : listings) {
+		for (ListingTileVO listing : listings) {
 			listing.setOrderNumber(index++);
 		}
 		ListingListVO list = new ListingListVO();
@@ -1038,7 +1039,7 @@ public class ListingFacade {
 		listingProperties.setNumberOfResults(listings.size());
 		
 		ListingListVO list = new ListingListVO();
-		list.setListings(listings);
+//		list.setListings(listings);
 		list.setListingsProperties(listingProperties);
 		list.setCategories(getTopCategories());
 		list.setTopLocations(getTopLocations());
@@ -1053,9 +1054,9 @@ public class ListingFacade {
 	 * @return List of listings
 	 */
 	public ListingListVO getTopActiveListings(UserVO loggedInUser, ListPropertiesVO listingProperties) {
-		List<ListingVO> listings = DtoToVoConverter.convertListings(getDAO().getTopListings(listingProperties));
+		List<ListingTileVO> listings = DtoToVoConverter.convertListingTiles(getDAO().getTopListings(listingProperties));
 		int index = listingProperties.getStartIndex() > 0 ? listingProperties.getStartIndex() : 1;
-		for (ListingVO listing : listings) {
+		for (ListingTileVO listing : listings) {
 			listing.setOrderNumber(index++);
 		}
 		ListingListVO list = new ListingListVO();
@@ -1080,11 +1081,11 @@ public class ListingFacade {
 			return list;
 		}
 		Listing.State state = stateString != null ? Listing.State.valueOf(stateString.toUpperCase()) : null;
-		List<ListingVO> listings = DtoToVoConverter.convertListings(
+		List<ListingTileVO> listings = DtoToVoConverter.convertListingTiles(
 				getDAO().getUserListings(loggedInUser.toKeyId(), state, listingProperties));
 
 		int index = listingProperties.getStartIndex() > 0 ? listingProperties.getStartIndex() : 1;
-		for (ListingVO listing : listings) {
+		for (ListingTileVO listing : listings) {
 			listing.setOrderNumber(index++);
 		}
 		
@@ -1125,7 +1126,7 @@ public class ListingFacade {
 		ListPropertiesVO props = new ListPropertiesVO();
 		props.setMaxResults(4);
 		List<Listing> monitoredListing = getDAO().getMonitoredListings(loggedInUser.toKeyId(), props);
-		List<ListingVO> monitored = prepareListingList(loggedInUser, monitoredListing);
+		List<ListingTileVO> monitored = prepareListingList(loggedInUser, monitoredListing);
 		list.setMonitoredListings(monitored);
 	}
 	
@@ -1136,9 +1137,9 @@ public class ListingFacade {
 			list.setErrorMessage("Only admins can see posted listings");
 			return list;
 		}
-		List<ListingVO> listings = DtoToVoConverter.convertListings(getDAO().getPostedListings(listingProperties));
+		List<ListingTileVO> listings = DtoToVoConverter.convertListingTiles(getDAO().getPostedListings(listingProperties));
 		int index = listingProperties.getStartIndex() > 0 ? listingProperties.getStartIndex() : 1;
-		for (ListingVO listing : listings) {
+		for (ListingTileVO listing : listings) {
 			listing.setOrderNumber(index++);
 		}
 		
@@ -1156,9 +1157,9 @@ public class ListingFacade {
 	 * Returns active listings, sorted by listed on date
 	 */
 	public ListingListVO getLatestActiveListings(UserVO loggedInUser, ListPropertiesVO listingProperties) {
-		List<ListingVO> listings = DtoToVoConverter.convertListings(getDAO().getActiveListings(listingProperties));
+		List<ListingTileVO> listings = DtoToVoConverter.convertListingTiles(getDAO().getActiveListings(listingProperties));
 		int index = listingProperties.getStartIndex() > 0 ? listingProperties.getStartIndex() : 1;
-		for (ListingVO listing : listings) {
+		for (ListingTileVO listing : listings) {
 			listing.setOrderNumber(index++);
 		}
 		ListingListVO list = new ListingListVO();
@@ -1180,9 +1181,9 @@ public class ListingFacade {
 			list.setErrorMessage("Only admins can see posted listings");
 			return list;
 		}
-		List<ListingVO> listings = DtoToVoConverter.convertListings(getDAO().getFrozenListings(listingProperties));
+		List<ListingTileVO> listings = DtoToVoConverter.convertListingTiles(getDAO().getFrozenListings(listingProperties));
 		int index = listingProperties.getStartIndex() > 0 ? listingProperties.getStartIndex() : 1;
-		for (ListingVO listing : listings) {
+		for (ListingTileVO listing : listings) {
 			listing.setOrderNumber(index++);
 		}
 		
@@ -1198,7 +1199,7 @@ public class ListingFacade {
 
 	public ListingListVO listingKeywordSearch(UserVO loggedInUser, String text, ListPropertiesVO listingProperties) {
 		ListingListVO listingsList = new ListingListVO();
-		List<ListingVO> listings = new ArrayList<ListingVO>();
+		List<ListingTileVO> listings = new ArrayList<ListingTileVO>();
 		String[] keywords = splitSearchKeywords(text);
 		
 		List<Long> results = null;
@@ -1231,7 +1232,7 @@ public class ListingFacade {
 		
 		List<Listing> listingList = getDAO().getListings(results);
 		for (Listing listingDAO : listingList) {
-			ListingVO listing = DtoToVoConverter.convert(listingDAO);
+			ListingTileVO listing = DtoToVoConverter.convertTile(listingDAO);
 			listing.setOrderNumber(listings.size() + 1);
 			if (Listing.State.ACTIVE.toString().equalsIgnoreCase(listing.getState())) {
 				log.info("Active listing added to keyword search results " + listing);

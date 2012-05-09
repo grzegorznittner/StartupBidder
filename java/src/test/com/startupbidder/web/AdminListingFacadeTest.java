@@ -24,6 +24,7 @@ import com.startupbidder.vo.ErrorCodes;
 import com.startupbidder.vo.ListPropertiesVO;
 import com.startupbidder.vo.ListingAndUserVO;
 import com.startupbidder.vo.ListingListVO;
+import com.startupbidder.vo.ListingTileVO;
 import com.startupbidder.vo.ListingVO;
 import com.startupbidder.vo.UserAndUserVO;
 import com.startupbidder.web.ListingFacade;
@@ -216,7 +217,7 @@ public class AdminListingFacadeTest extends AdminFacadeAbstractTest {
 		assertNotNull("Result should not be empty", list);
 		assertNotNull("Logged in user is mocks.GREG, so list should not be empty", list.getListings());
 		assertSame("We should get failure", ErrorCodes.OK, list.getErrorCode());
-		List<ListingVO> listings = list.getListings();
+		List<ListingTileVO> listings = list.getListings();
 		checkListingsReturned(listings, listingList.get(8), listingList.get(9), listingList.get(10), listingList.get(14));
 		checkListingsNotReturned(listings, listingList.get(0), listingList.get(1), listingList.get(2), listingList.get(3),
 				listingList.get(4), listingList.get(5), listingList.get(6), listingList.get(7), listingList.get(11)

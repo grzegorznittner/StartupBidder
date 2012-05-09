@@ -30,6 +30,7 @@ import com.startupbidder.datamodel.ListingDoc;
 import com.startupbidder.datamodel.Monitor;
 import com.startupbidder.datamodel.Notification;
 import com.startupbidder.datamodel.SBUser;
+import com.startupbidder.vo.DtoToVoConverter;
 import com.startupbidder.vo.ErrorCodes;
 import com.startupbidder.vo.ListPropertiesVO;
 import com.startupbidder.vo.ListingAndUserVO;
@@ -167,19 +168,19 @@ public class HelloServlet extends HttpServlet {
 			out.println("<br/><a href=\"/listings/posted/.json?max_results=6\">Posted listings (admins only)</a><br/>");
 			listProperties = new ListPropertiesVO();
 			listProperties.setMaxResults(50);
-			ListingListVO postedListings = ListingFacade.instance().getPostedListings(currentUser, listProperties);
+			List<ListingVO> postedListings = DtoToVoConverter.convertListings(datastore.getPostedListings(listProperties));
 			printPostedListings(out, currentUser, postedListings);
 			
 			out.println("<br/><a href=\"/listings/closing/.json?max_results=6\">Closing listings</a><br/>");
 			listProperties = new ListPropertiesVO();
 			listProperties.setMaxResults(50);
-			ListingListVO activeListings = ListingFacade.instance().getClosingActiveListings(currentUser, listProperties);
+			List<ListingVO> activeListings = DtoToVoConverter.convertListings(datastore.getClosingListings(listProperties));
 			printActiveListings(out, currentUser, activeListings);
 			
 			out.println("<br/><a href=\"/listings/frozen/.json?max_results=6\">Frozen listings</a><br/>");
 			listProperties = new ListPropertiesVO();
 			listProperties.setMaxResults(50);
-			ListingListVO frozenListings = ListingFacade.instance().getFrozenListings(currentUser, listProperties);
+			List<ListingVO> frozenListings = DtoToVoConverter.convertListings(datastore.getFrozenListings(listProperties));
 			printFrozenListings(out, currentUser, frozenListings);
 			
 			out.println("<a href=\"/listings/user/active/.json?max_results=6\">User's active listings</a><br/>");
@@ -296,20 +297,19 @@ public class HelloServlet extends HttpServlet {
 		}
 	}
 
-	private void printPostedListings(PrintWriter out, UserVO currentUser, ListingListVO postedListings) {
+	private void printPostedListings(PrintWriter out, UserVO currentUser, List<ListingVO> postedListings) {
 		DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy/MM/dd HH:mm");
 		out.println("<table border=\"1\" width=\"100%\">");
 		out.println("<tr><td colspan=\"3\"><b>Posted listings</b></td></tr>");
 
-		if (postedListings == null || postedListings.getListings() == null || postedListings.getListings().size() == 0
-				|| postedListings.getErrorCode() != ErrorCodes.OK) {
+		if (postedListings == null || postedListings.size() == 0) {
 			out.println("<tr><td colspan=\"3\"><b>No posted listings or user is not admin!.<b><small>" + postedListings + "</small></td></tr>");
 			out.println("</table>");
 			return;
 		}
 
 		int count = 0;
-		for (ListingVO listing : postedListings.getListings()) {
+		for (ListingVO listing : postedListings) {
 			count++;
 			out.println("<tr><td>" + listing.getName() + " posted by " + listing.getOwnerName() + "</td>");
 			out.println("<td><form method=\"POST\" action=\"/listing/activate/" + listing.getId() + "/.json\"><input type=\"submit\" value=\"Activate\"/></form>");
@@ -351,20 +351,19 @@ public class HelloServlet extends HttpServlet {
 		out.println("</table>");
 	}
 
-	private void printActiveListings(PrintWriter out, UserVO currentUser, ListingListVO activeListings) {
+	private void printActiveListings(PrintWriter out, UserVO currentUser, List<ListingVO> activeListings) {
 		DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy/MM/dd HH:mm");
 		out.println("<table border=\"1\" width=\"100%\">");
 		out.println("<tr><td colspan=\"3\"><b>Active listings</b></td>");
 		
-		if (activeListings == null || activeListings.getListings() == null || activeListings.getListings().size() == 0
-				|| activeListings.getErrorCode() != ErrorCodes.OK) {
+		if (activeListings == null || activeListings.size() == 0) {
 			out.println("<tr><td colspan=\"3\"><b>No active listings.<b><small>" + activeListings + "</small></td></tr>");
 			out.println("</table>");
 			return;
 		}
 
 		int count = 0;
-		for (ListingVO listing : activeListings.getListings()) {
+		for (ListingVO listing : activeListings) {
 			count++;
 			out.println("<tr><td>" + listing.getName() + " posted by " + listing.getOwnerName() + "</td>");
 			out.println("<td><form method=\"POST\" action=\"/listing/withdraw/" + listing.getId() + "/.json\"><input type=\"submit\" value=\"Withdraw\"/></form>");
@@ -422,20 +421,19 @@ public class HelloServlet extends HttpServlet {
 		out.println("</table>");
 	}
 
-	private void printFrozenListings(PrintWriter out, UserVO currentUser, ListingListVO frozenListings) {
+	private void printFrozenListings(PrintWriter out, UserVO currentUser, List<ListingVO> frozenListings) {
 		DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy/MM/dd HH:mm");
 		out.println("<table border=\"1\" width=\"100%\">");
 		out.println("<tr><td colspan=\"3\"><b>Frozen listings</b></td>");
 		
-		if (frozenListings == null || frozenListings.getListings() == null || frozenListings.getListings().size() == 0
-				|| frozenListings.getErrorCode() != ErrorCodes.OK) {
+		if (frozenListings == null|| frozenListings.size() == 0) {
 			out.println("<tr><td colspan=\"3\"><b>No frozen listings or user is not admin!.<b><small>" + frozenListings + "</small></td></tr>");
 			out.println("</table>");
 			return;
 		}
 
 		int count = 0;
-		for (ListingVO listing : frozenListings.getListings()) {
+		for (ListingVO listing : frozenListings) {
 			count ++;
 			out.println("<tr><td>" + listing.getName() + " posted by " + listing.getOwnerName() + "</td>");
 			out.println("<td><form method=\"POST\" action=\"/listing/activate/" + listing.getId() + "/.json\"><input type=\"submit\" value=\"Activate\"/></form>");

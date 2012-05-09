@@ -14,18 +14,18 @@ import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 @JsonAutoDetect(getterVisibility=Visibility.NONE, setterVisibility=Visibility.NONE,
 		fieldVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE)
 public class ListingListVO extends BaseResultVO {
-	@JsonProperty("listings") private List<ListingVO> listings;
-	@JsonProperty("monitored_listings") private List<ListingVO> monitoredListings;
+	@JsonProperty("listings") private List<ListingTileVO> listings;
+	@JsonProperty("monitored_listings") private List<ListingTileVO> monitoredListings;
 	@JsonProperty("notifications") private List<NotificationVO> notifications;
 	@JsonProperty("listings_props")	private ListPropertiesVO listingsProperties;
 	@JsonProperty("profile") private UserBasicVO user;
 	@JsonProperty("categories") private Map<String, Integer> categories;
 	@JsonProperty("top_locations") private Map<String, Integer> topLocations;
 
-	public List<ListingVO> getListings() {
+	public List<ListingTileVO> getListings() {
 		return listings;
 	}
-	public void setListings(List<ListingVO> listings) {
+	public void setListings(List<ListingTileVO> listings) {
 		this.listings = listings;
 	}
 	public ListPropertiesVO getListingsProperties() {
@@ -58,10 +58,10 @@ public class ListingListVO extends BaseResultVO {
 	public void setNotifications(List<NotificationVO> notifications) {
 		this.notifications = notifications;
 	}
-	public List<ListingVO> getMonitoredListings() {
+	public List<ListingTileVO> getMonitoredListings() {
 		return monitoredListings;
 	}
-	public void setMonitoredListings(List<ListingVO> monitoredListings) {
+	public void setMonitoredListings(List<ListingTileVO> monitoredListings) {
 		this.monitoredListings = monitoredListings;
 	}
 }

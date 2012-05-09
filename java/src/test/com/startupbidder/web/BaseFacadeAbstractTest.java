@@ -53,6 +53,7 @@ import com.startupbidder.datamodel.UserStats;
 import com.startupbidder.datamodel.Vote;
 import com.startupbidder.datamodel.SBUser.Status;
 import com.startupbidder.vo.DtoToVoConverter;
+import com.startupbidder.vo.ListingTileVO;
 import com.startupbidder.vo.ListingVO;
 import com.startupbidder.vo.UserVO;
 import com.startupbidder.web.UserMgmtFacade;
@@ -571,10 +572,10 @@ public abstract class BaseFacadeAbstractTest {
 		return bid;
 	}
 	
-	public void checkListingsReturned(List<ListingVO> list, Listing ... listings) {
+	public void checkListingsReturned(List<ListingTileVO> list, Listing ... listings) {
 		for (Listing listing : listings) {
 			boolean contains = false;
-			for (ListingVO l : list) {
+			for (ListingTileVO l : list) {
 				if (l.toKeyId() == listing.id) {
 					contains = true;
 					break;
@@ -584,10 +585,10 @@ public abstract class BaseFacadeAbstractTest {
 		}
 	}
 
-	public void checkListingsNotReturned(List<ListingVO> list, Listing ... listings) {
+	public void checkListingsNotReturned(List<ListingTileVO> list, Listing ... listings) {
 		for (Listing listing : listings) {
 			boolean contains = false;
-			for (ListingVO l : list) {
+			for (ListingTileVO l : list) {
 				if (l.toKeyId() == listing.id) {
 					contains = true;
 					break;
