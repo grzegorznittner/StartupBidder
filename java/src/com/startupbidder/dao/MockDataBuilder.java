@@ -274,7 +274,7 @@ public class MockDataBuilder {
         return output.toString();
     }
 
-    public String importStartuplyData() {
+    public String importStartuplyData(int fromId, int toId) {
         isIdInitialized = false;
         StringBuffer output = new StringBuffer();
         List<SBUser> users = createStartuplyUsers();
@@ -296,7 +296,7 @@ public class MockDataBuilder {
             output.append("Inserted Categories");
         }
 
-        List<Listing> listings = createStartuplyListings(users);
+        List<Listing> listings = createStartuplyListings(users, fromId, toId);
         for (Listing listing : listings) {
             try {
                 getOfy().get(Listing.class, listing.id);
@@ -881,9 +881,9 @@ public class MockDataBuilder {
         return listings;
     }
 
-    public List<Listing> createStartuplyListings(List<SBUser> users) {
+    public List<Listing> createStartuplyListings(List<SBUser> users, int fromId, int toId) {
         List<Listing> listings = new ArrayList<Listing>();
-        List<Listing> bps = getStartuplyListings();
+        List<Listing> bps = getStartuplyListings(fromId, toId);
         for (Listing bpl : bps) {
             listings.add(bpl);
         }
@@ -1219,7 +1219,7 @@ public class MockDataBuilder {
         return startuplyIds;
     }
     
-    private List<Listing> getStartuplyListings() {
+    private List<Listing> getStartuplyListings(int fromId, int toId) {
         List<Listing> listings = new ArrayList<Listing>();
         List<String> startuplyIds = getStartuplyIds();
         log.info("Loading " + startuplyIds.size() + " Startuply listings");
@@ -1239,7 +1239,7 @@ public class MockDataBuilder {
             int counter = 0;
             for (String startuplyId : startuplyIds) {
                 counter++;
-                if (counter <= 4000) {
+                if (counter <= fromId || counter >= toId) {
                     continue;
                 }
 

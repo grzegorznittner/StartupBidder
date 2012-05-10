@@ -162,7 +162,7 @@ public class SystemController extends ModelDrivenController {
 
         UserVO loggedInUser = getLoggedInUser();
         if (loggedInUser != null && loggedInUser.isAdmin()) {
-            model = new MockDataBuilder().importStartuplyData();
+            model = new MockDataBuilder().importStartuplyData(0, 4000);
         } else {
             headers.setStatus(500);
         }
