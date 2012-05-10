@@ -13,10 +13,13 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
+import org.apache.commons.lang.StringUtils;
 
 import com.google.appengine.tools.remoteapi.RemoteApiInstaller;
 import com.google.appengine.tools.remoteapi.RemoteApiOptions;
 import com.startupbidder.dao.MockDataBuilder;
+import com.startupbidder.vo.ListPropertiesVO;
+import com.startupbidder.vo.ListingPropertyVO;
 import com.startupbidder.web.FrontController;
 
 public class DataImport {
@@ -27,6 +30,8 @@ public class DataImport {
 	private String loglevel = "FINE";
 	private int fromId = 0;
 	private int toId = 50;
+	private int chunksize = 500;
+	private String cursor = null;
 	
 	private RemoteApiInstaller remoteAPIInstaller;
 	private String appDomain = "localhost";
@@ -84,8 +89,10 @@ public class DataImport {
                 .hasArg()
                 .withDescription("application port, for GAE it will be 443, defaults to 7777 (dev environment)")
                 .create("port"));
-		options.addOption(new Option( "startuply", "imports data from startuply" ));
-		options.addOption(new Option( "angellist", "imports data from angel list" ));
+		options.addOption(new Option( "mock", "imports mock data from startupbidder sources"));
+		options.addOption(new Option( "startuply", "imports data from startuply"));
+		options.addOption(new Option( "angellist", "imports data from angel list"));
+		options.addOption(new Option( "updatestats", "updates listing statistics"));
 		options.addOption(OptionBuilder.withArgName("fromid")
                 .hasArg()
                 .withDescription("first company id which will be imported")
@@ -94,6 +101,14 @@ public class DataImport {
                 .hasArg()
                 .withDescription("last company id which will be imported")
                 .create("toid"));
+		options.addOption(OptionBuilder.withArgName("chunksize")
+                .hasArg()
+                .withDescription("max number of listings updated (used by updatestats)")
+                .create("chunksize"));
+		options.addOption(OptionBuilder.withArgName("cursor")
+                .hasArg()
+                .withDescription("cursor to update next chunk of listings (returned by updatestats)")
+                .create("cursor"));
 		
 		return options;
 	}
@@ -105,13 +120,13 @@ public class DataImport {
 	        CommandLine line = parser.parse(options, args);
 	        if (line.hasOption("help")) {
 	        	HelpFormatter formatter = new HelpFormatter();
-	        	formatter.printHelp("import", options);
+	        	formatter.printHelp("import.sh", options);
 	        	return;
 	        }
 	        if (line.hasOption("loglevel")) {
 	        	loglevel = line.getOptionValue("loglevel");
 	        }
-	        setupLogger();
+	        //setupLogger();
 	        
 	        if (line.hasOption("user")) {
 	        	username = line.getOptionValue("user");
@@ -127,6 +142,9 @@ public class DataImport {
 	        }
 	        registerRemoteAPI();
 	        
+	        if (line.hasOption("mock")) {
+	        	new MockDataBuilder().createMockDatastore(true, true);
+	        }
 	        if (line.hasOption("startuply")) {
 	        	if (line.hasOption("fromid")) {
 	        		fromId = Integer.valueOf(line.getOptionValue("fromid"));
@@ -146,6 +164,20 @@ public class DataImport {
 	        	}
 	        	log.info("Import AngelList data from " + fromId + " to " + toId);
 	        	new MockDataBuilder().importAngelListData("" + fromId, "" + toId);
+	        }
+	        if (line.hasOption("updatestats")) {
+	        	if (line.hasOption("chunksize")) {
+	        		chunksize = Integer.valueOf(line.getOptionValue("chunksize"));
+	        	}
+	        	if (line.hasOption("cursor")) {
+	        		cursor = line.getOptionValue("cursor");
+	        	}
+	        	ListPropertiesVO props = new MockDataBuilder().updateListingStatistics(chunksize, cursor);
+	        	if (StringUtils.isEmpty(props.getNextCursor())) {
+	        		log.info("Updated all listings");
+	        	} else {
+	        		log.info("Cursor for next chunk: " + props.getNextCursor());
+	        	}
 	        }
 	        deregisterRemoteAPI();
 	    } catch(Exception exp) {

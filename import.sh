@@ -1,7 +1,20 @@
 #!/bin/bash
 
-proxyhost=localhost
-proxyport=11111
+if [ -n "$HTTP_PROXY"  ] ; then
+  # http_proxy variables are in format http://localhost:11111
+  # we need to extract host and port from it
+  proxyhost=localhost
+  proxyport=11111
+
+  proxypattern=h*/
+  proxy=${HTTP_PROXY##$proxypattern}
+  proxyhost="${proxy%:*}"
+  proxyport="${proxy#*:}"
+
+  echo Using proxy settings, host: $proxyhost , port: $proxyport "(from \$HTTP_PROXY variable)"
+else
+  echo Not using proxy
+fi
 
 # OS specific support.  $var _must_ be set to either true or false.
 cygwin=false;
@@ -66,7 +79,11 @@ do
   CLASSPATH="$CLASSPATH:$i"
 done
 
-ant_exec_command="exec \"$JAVACMD\" -Dhttp.proxyHost=\"$proxyhost\" -Dhttp.proxyPort=\"$proxyport\" -Dhttps.proxyHost=\"$proxyhost\" -Dhttps.proxyPort=\"$proxyport\" -Dhttp.nonProxyHosts=local\*\|127\* -classpath \"$CLASSPATH\" com.startupbidder.cli.DataImport $*"
+if [ -n "$HTTP_PROXY"  ] ; then
+  ant_exec_command="exec \"$JAVACMD\" -Dhttp.proxyHost=\"$proxyhost\" -Dhttp.proxyPort=\"$proxyport\" -Dhttps.proxyHost=\"$proxyhost\" -Dhttps.proxyPort=\"$proxyport\" -Dhttp.nonProxyHosts=local\*\|127\* -classpath \"$CLASSPATH\" com.startupbidder.cli.DataImport $*"
+else
+  ant_exec_command="exec \"$JAVACMD\" -classpath \"$CLASSPATH\" com.startupbidder.cli.DataImport $*"
+fi
 #echo $ant_exec_command
 
 eval $ant_exec_command

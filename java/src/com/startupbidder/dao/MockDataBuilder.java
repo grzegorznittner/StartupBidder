@@ -50,6 +50,7 @@ import com.startupbidder.datamodel.SystemProperty;
 import com.startupbidder.datamodel.UserStats;
 import com.startupbidder.datamodel.Vote;
 import com.startupbidder.vo.DtoToVoConverter;
+import com.startupbidder.vo.ListPropertiesVO;
 import com.startupbidder.vo.UserVO;
 import com.startupbidder.web.ListingFacade;
 
@@ -174,6 +175,20 @@ public class MockDataBuilder {
 		
 		output.append("</br>");
 		return output.toString();
+	}
+	
+	public ListPropertiesVO updateListingStatistics(int chunkSize, String nextCursor) {
+		ListPropertiesVO props = new ListPropertiesVO();
+		props.setMaxResults(chunkSize);
+		props.setNextCursor(nextCursor);
+		List<Listing> listings = ObjectifyDatastoreDAO.getInstance().getLatestListings(props);
+		int counter = 1;
+		log.info("Updating listing statistics. Chunk size: " + chunkSize + ", cursor: " + nextCursor);
+		for (Listing listing : listings) {
+			log.info("    " + (counter++) + ". " + listing.id + " - " + listing.name);
+			ObjectifyDatastoreDAO.getInstance().updateListingStatistics(listing.id);
+		}
+		return props;
 	}
 	
 	public String createMockDatastore(boolean storeData, boolean initializeNow) {
