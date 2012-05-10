@@ -68,7 +68,7 @@ public class UserMgmtFacade {
 		if (user == null) {
 			return null;
 		}
-		//applyUserStatistics(user, user);
+		applyUserStatistics(user, user);
 		return user;
 	}
 
@@ -83,7 +83,7 @@ public class UserMgmtFacade {
 		if (user == null) {
 			return null;
 		}
-		//applyUserStatistics(loggedInUser, user);
+		applyUserStatistics(loggedInUser, user);
 
 		UserAndUserVO userAndUser = new UserAndUserVO();
 		userAndUser.setUser(user);
@@ -100,7 +100,7 @@ public class UserMgmtFacade {
 		}
 		
 		UserVO user = DtoToVoConverter.convert(getDAO().createUser(loggedInUser.getEmail(), loggedInUser.getNickname()));
-		//applyUserStatistics(user, user);
+		applyUserStatistics(user, user);
 		return user;
 	}
 	
@@ -155,7 +155,7 @@ public class UserMgmtFacade {
 		String authCookie = encryptPassword(encryptedPassword + new Date().getTime());
 		
 		user = DtoToVoConverter.convert(getDAO().createUser(email, encryptedPassword, authCookie, name, location, investor));
-		//applyUserStatistics(user, user);
+		applyUserStatistics(user, user);
 		return user;
 	}
 
@@ -273,7 +273,7 @@ public class UserMgmtFacade {
 		}
 		UserVO user = DtoToVoConverter.convert(getDAO().updateUser(oldUser));
 		if (user != null) {
-			//applyUserStatistics(loggedInUser, user);
+			applyUserStatistics(loggedInUser, user);
 			//ServiceFacade.instance().createNotification(user.getId(), user.getId(), Notification.Type.YOUR_PROFILE_WAS_MODIFIED, "");
 		}
 		return user;
@@ -294,7 +294,7 @@ public class UserMgmtFacade {
 		List<UserVO> users = DtoToVoConverter.convertUsers(getDAO().getAllUsers());
 		int index = 1;
 		for (UserVO user : users) {
-			//applyUserStatistics(loggedInUser, user);
+			applyUserStatistics(loggedInUser, user);
 			user.setOrderNumber(index++);
 		}
 
@@ -302,24 +302,28 @@ public class UserMgmtFacade {
 		return userList;
 	}
 
-	/*
-	 * User statistics are not implemented
-	public void applyUserStatistics(UserVO loggedInUser, UserVO user) {
+    public void applyUserStatistics(UserVO user) {
+        applyUserStatistics(null, user);
+    }
+
+    public void applyUserStatistics(UserVO loggedInUser, UserVO user) {
 		if (user != null && user.getId() != null) {
+            /*
 			if (loggedInUser != null) {
 				user.setVotable(getDAO().userCanVoteForUser(loggedInUser.toKeyId(), user.toKeyId()));
 			} else {
 				user.setVotable(false);
 			}
-			
+			*/
+            
 			UserStats userStats = getUserStatistics(user.getId());
 			if (userStats != null) {
-				user.setNumberOfBids(userStats.numberOfBids);
-				user.setNumberOfComments(userStats.numberOfComments);
-				user.setNumberOfListings(userStats.numberOfListings);
-				user.setNumberOfVotes(userStats.numberOfVotes);
-				user.setNumberOfAcceptedBids(userStats.numberOfAcceptedBids);
-				user.setNumberOfFundedBids(userStats.numberOfFundedBids);
+				//user.setNumberOfBids(userStats.numberOfBids);
+				//user.setNumberOfComments(userStats.numberOfComments);
+				//user.setNumberOfListings(userStats.numberOfListings);
+				//user.setNumberOfVotes(userStats.numberOfVotes);
+				//user.setNumberOfAcceptedBids(userStats.numberOfAcceptedBids);
+				//user.setNumberOfFundedBids(userStats.numberOfFundedBids);
 				user.setNumberOfNotifications(userStats.numberOfNotifications);
 			} else {
 				log.info("User statistics not available for user '" + user.getEmail() + "'");
@@ -327,6 +331,7 @@ public class UserMgmtFacade {
 		}
 	}
 	
+    /*
 	public UserVO getTopInvestor(UserVO loggedInUser) {
 		UserVO user = DtoToVoConverter.convert(getDAO().getTopInvestor());
 		applyUserStatistics(loggedInUser, user);
@@ -337,7 +342,7 @@ public class UserMgmtFacade {
 	public UserVO activateUser(String userId, String activationCode) {
 		UserVO user = DtoToVoConverter.convert(getDAO().activateUser(BaseVO.toKeyId(userId), activationCode));
 		if (user != null) {
-			//applyUserStatistics(loggedInUser, user);
+			applyUserStatistics(user);
 		}
 		return user;
 	}
@@ -351,10 +356,11 @@ public class UserMgmtFacade {
 			}
 		}
 		UserVO user = DtoToVoConverter.convert(getDAO().deactivateUser(BaseVO.toKeyId(userId)));
-		//applyUserStatistics(loggedInUser, user);
+		applyUserStatistics(loggedInUser, user);
 		return user;
 	}
 
+    /*
 	public UserVotesVO userVotes(UserVO loggedInUser, String userId) {
 		UserVotesVO userVotes = new UserVotesVO();
 		UserVO user = DtoToVoConverter.convert(getDAO().getUser(userId));
@@ -370,6 +376,7 @@ public class UserMgmtFacade {
 		
 		return userVotes;
 	}
+    */
 
 	public Boolean checkUserNameIsValid(UserVO loggedInUser, String nickName) { // true if nickname is a valid username in use, false otherwise
         if (StringUtils.isEmpty(nickName)) { // empty nickname not allowed
@@ -440,7 +447,7 @@ public class UserMgmtFacade {
 
 	/**
 	 * Value up user
-	 */
+	 *
 	public UserVO valueUpUser(UserVO voter, String userId) {
 		if (voter == null) {
 			return null;
@@ -454,5 +461,5 @@ public class UserMgmtFacade {
 		}
 		return user;
 	}
-
+    */
 }

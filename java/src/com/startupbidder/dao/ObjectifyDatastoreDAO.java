@@ -169,7 +169,7 @@ public class ObjectifyDatastoreDAO {
 		userStats.status = user.status;
 		
 		log.info("Updating user statistics, user: " + user.email);
-
+/*
 		QueryResultIterable<Key<Bid>> bidsIt = getOfy().query(Bid.class)
 				.filter("user =", userStats.user).filter("status =", Bid.Action.ACTIVATE).fetchKeys();
 		userStats.numberOfBids = CollectionUtils.size(bidsIt.iterator());
@@ -214,10 +214,13 @@ public class ObjectifyDatastoreDAO {
 		votesIt = getOfy().query(Vote.class)
 				.filter("user =", userStats.user).fetchKeys();
 		userStats.numberOfVotes = CollectionUtils.size(votesIt.iterator());
-
+*/
 		QueryResultIterable<Key<Notification>> notifsIt = getOfy().query(Notification.class)
-				.filter("user =", userStats.user).filter("acknowledged !=", Boolean.FALSE).fetchKeys();
-		userStats.numberOfNotifications = CollectionUtils.size(notifsIt.iterator());
+				.filter("user =", userStats.user)
+                .filter("read =", Boolean.FALSE)
+                .fetchKeys();
+
+        userStats.numberOfNotifications = CollectionUtils.size(notifsIt.iterator());
 		
 		log.info("user: " + userId + ", statistics: " + userStats);
 
@@ -227,13 +230,13 @@ public class ObjectifyDatastoreDAO {
 	}
 	
 	public UserStats getUserStatistics(long userId) {
-//		try {
-//			return getOfy().get(new Key<UserStats>(UserStats.class, userId));
-//		} catch (Exception e) {
-//			log.log(Level.WARNING, "User statistics entity '" + userId + "' not found");
-//			return null;
-//		}
-		throw new java.lang.RuntimeException("User statistics are not implemented");
+		try {
+			return getOfy().get(new Key<UserStats>(UserStats.class, userId));
+		} catch (Exception e) {
+			log.log(Level.WARNING, "User statistics entity '" + userId + "' not found");
+			return null;
+		}
+		//throw new java.lang.RuntimeException("User statistics are not implemented");
 	}
 
 	public ListingStats updateListingStatistics(long listingId) {
@@ -1223,6 +1226,7 @@ public class ObjectifyDatastoreDAO {
 
 	public Notification storeNotification(Notification notification) {
 		getOfy().put(notification);
+        updateUserStatistics(notification.user.getId());
 		return notification;
 	}
 
@@ -1236,6 +1240,7 @@ public class ObjectifyDatastoreDAO {
 		}
 		notification.read = true;
 		getOfy().put(notification);
+        updateUserStatistics(notification.user.getId());
 		return notification;
 	}
 

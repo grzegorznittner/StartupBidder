@@ -1084,6 +1084,20 @@ public class MockDataBuilder {
         return output.toString();
     }
 
+    public String deleteStartuplyCache(UserVO loggedInUser) {
+        if (loggedInUser == null || !loggedInUser.isAdmin()) {
+            log.log(Level.WARNING, "User '" + loggedInUser + "' is not an admin.");
+            return "User '" + loggedInUser + "' is not an admin.";
+        }
+        StringBuffer output = new StringBuffer();
+
+        QueryResultIterable<Key<StartuplyCache>> a = getOfy().query(StartuplyCache.class).fetchKeys();
+        output.append("Deleted Startuply Cache: " + a.toString() + "</br>");
+        getOfy().delete(a);
+
+        return output.toString();
+    }
+
     public String deleteGeocodeCache(UserVO loggedInUser) {
         if (loggedInUser == null || !loggedInUser.isAdmin()) {
             log.log(Level.WARNING, "User '" + loggedInUser + "' is not an admin.");

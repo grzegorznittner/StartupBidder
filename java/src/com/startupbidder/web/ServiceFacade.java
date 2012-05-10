@@ -297,6 +297,7 @@ public class ServiceFacade {
 		notification.created = new Date();
 		notification.read = false;
 		notification.sentDate = null;
+        notification.message = comment.comment;
 		notification = getDAO().storeNotification(notification);
 		if (notification != null) {
 			String taskName = timeStampFormatter.print(new Date().getTime()) + "send_notification_" + notification.type + "_" + notification.user.getId();
