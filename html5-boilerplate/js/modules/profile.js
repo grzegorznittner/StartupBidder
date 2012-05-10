@@ -40,11 +40,11 @@ pl.implement(EditProfileClass, {
                 */
                 username: pl('#username').attr('value'),
                 email: pl('#email').attr('value'),
-                name: pl('#name').attr('value')
+                name: pl('#name').attr('value'),
+                investor: pl('#investor').attr('value') ? 'true' : 'false'
                 /*
                 title: pl('#title').attr('value'),
                 organization: pl('#organization').attr('value'),
-                investor: pl('#investor').attr('value') ? 'true' : 'false',
                 facebook:'',
                 twitter:'',
                 linkedin:''
@@ -134,6 +134,9 @@ pl.implement(EditProfileClass, {
                     else if (username.length < 3) {
                         return 'Nickname must be at least three characters';
                     }
+                    else if (username.length > 30) {
+                        return 'Nickname must be no more than 30 characters';
+                    }
                     else {
                         ajax = new AjaxClass('/user/check-user-name', 'personalinfomsg', null, successFunc);
                         ajax.setGetData({ name: username });
@@ -145,9 +148,12 @@ pl.implement(EditProfileClass, {
                     pl('#logintext').text(newval);
                 };
             }
+            if (textFieldId === 'name') {
+                textFieldObj.fieldBase.addValidator(textFieldObj.fieldBase.validator.makeLengthChecker(3, 100));
+            }
             textFieldObj.bindEvents();
         }
-        investorCheckbox = new CheckboxFieldClass('investor', json.investor, self.getUpdater(), 'settingsmsg');
+        investorCheckbox = new CheckboxFieldClass('investor', json.investor, self.getUpdater(), 'personalinfomsg');
         investorCheckbox.bindEvents();
 /*
         notifyCheckbox = new CheckboxFieldClass('notifyenabled', json.notifyenabled, self.getUpdater(), 'settingsmsg');

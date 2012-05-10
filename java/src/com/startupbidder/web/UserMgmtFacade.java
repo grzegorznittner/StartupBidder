@@ -218,19 +218,33 @@ public class UserMgmtFacade {
 			return null;
 		}
 		if (StringUtils.isNotEmpty(nickname)) {
-			if (!checkUserNameIsValid(loggedInUser, nickname)) {
+            if (nickname.length() < 3) {
+                log.warning("New nickname '" + name + "' must be at least 3 characters");
+                return null;
+            }
+            else if (nickname.length() > 30) {
+                log.warning("New nickname '" + name + "' must be no more than 15 characters");
+                return null;
+            }
+            else if (!checkUserNameIsValid(loggedInUser, nickname)) {
 				log.warning("Nickname '" + nickname + "' for user is not unique!");
 				return null;
-			} else {
+			}
+            else {
 				oldUser.nickname = nickname;
 			}
 		}
 		if (StringUtils.isNotEmpty(name)) {
-			if (name.length() < 6) {
-				log.warning("New user name '" + name + "' is too short!");
+			if (name.length() < 3) {
+				log.warning("New user name '" + name + "' must be at least 3 characters");
 				return null;
-			} else {
-				oldUser.name = name;
+			}
+            else if (name.length() > 100) {
+				log.warning("New user name '" + name + "' must be no more than 100 characters");
+				return null;
+			}
+            else {
+                oldUser.name = name;
 			}
 		}
 		// @FIXME Implement proper location verifier
