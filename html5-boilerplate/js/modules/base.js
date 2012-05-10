@@ -248,7 +248,10 @@ function AjaxClass(url, statusId, completeFunc, successFunc, loadFunc, errorFunc
         self.completeFunc(json);
     };
     this.loadFunc = loadFunc || function() { pl(self.statusSel).html('<span class="inprogress">Loading...</span>'); };
-    this.errorFunc = errorFunc || function(errorNum) { pl(self.statusSel).html('<span class="attention">Error from server: ' + errorNum + '</span>'); };
+    this.errorFunc = errorFunc || function(errorNum, json) {
+        var errorStr = (json && json.error_msg) ? 'Error: ' + json.error_msg : 'Error from server: ' + errorNum;
+        pl(self.statusSel).html('<span class="attention">' + errorStr + '</span>');
+    };
     this.ajaxOpts = {
         async: true,
         url: this.url,
@@ -304,7 +307,7 @@ pl.implement(HeaderClass, {
     },
     setLoggedIn: function(profile, logout_url) {
         var username = profile.username || 'You',
-            posttext = profile.edited_listing ? 'In-Progress': 'Post',
+            posttext = profile.edited_listing ? 'Your Post': 'Post',
             num_notifications = profile.num_notifications || 0,
             notificationlinktext = num_notifications ? num_notifications + ' unread notifications' : 'no unread notifications',
             newlistingurl = profile.edited_status === 'posted' ? 'new-listing-submitted-page.html' : 'new-listing-basics-page.html';
@@ -327,7 +330,7 @@ pl.implement(HeaderClass, {
             pl('#googleloginlink').attr({href: login_url}).show();
         }
         pl('#postlink').attr('href', 'login-page.html');
-        pl('#posttext').html('Post');
+        pl('#posttext').html('Sign In to Post');
         pl('#loginlink').attr('href', 'login-page.html');
         pl('#logintext').html('Sign In');
     }

@@ -89,16 +89,6 @@ include(api-banner.m4)
             The max_results parameter allows for limiting response size.
             </p>
         </dd>
-
-        <dt>GET /listings/monitored/ <i>OPTIONAL max_results=&lt;n&gt;</i>
-            <form method="GET" action="/listings/monitored/"><input type="submit" value="TEST"></input></form>
-        </dt>
-        <dd>
-            <p>
-            Returns listings on startupbidder monitored by logged in user.
-            The max_results parameter allows for limiting response size.
-            </p>
-        </dd>
     </div>
 
     <div class="boxtitle">SEARCH API</div>
@@ -480,6 +470,16 @@ owner can reply to a question using the <code>/listing/reply_message</code> API.
         <dd>
             <p>
             Deactivates a given user.  Note that you must be logged in as this user or an admin in order to call this method.
+            </p>
+        </dd>
+
+        <dt>POST /user/check-user-name/
+            <form method="POST" action="/user/check-user-name/"><input type="text" name="name" value="&lt;user name&gt;"></input><input type="submit" value="TEST"></input></form>
+        </dt>
+        <dd>
+            <p>
+            Checks if the given username is currently taken.  If it is available, returns "true".  If the name is already taken, returns "false".  Used to check if a username exists before
+            the user is allowed to update their username, as all usernames (nicknames) must be unique for the site.
             </p>
         </dd>
     </div>

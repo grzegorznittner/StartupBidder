@@ -52,8 +52,13 @@ pl.implement(CompanyTileClass, {
         this.mantra = json.mantra || 'No Mantra';
         this.founders = json.founders || 'No Founders';
         this.foundertext = json.founders ? 'Founded by ' + json.founders : '';
-        this.url = this.status === 'new' ? '/new-listing-submit-page.html' : (this.status === 'posted' ? '/new-listing-submitted-page.html' : '/company-page.html?id=' + json.listing_id);
-        if (this.options.admin) {
+        if (this.status === 'new') {
+            this.url = '/new-listing-submit-page.html';
+        }
+        else if (this.status === 'posted' && !this.options.admin) {
+            this.url = '/new-listing-submitted-page.html';
+        }
+        else {
             this.url = '/company-page.html?id=' + json.listing_id;
         }
         this.websitelink = json.website || '#';
@@ -160,7 +165,7 @@ function CompanyListClass(options) {
     this.options = options || {};
     this.options.colsPerRow = this.options.colsPerRow || ( this.options.fullWidth ? 1 : 4 );
     this.options.companydiv = this.options.companydiv || 'companydiv';
-    this.options.propertykey= this.options.propertykey || 'listings';
+    this.options.propertykey = this.options.propertykey || 'listings';
 }
 pl.implement(CompanyListClass, {
     storeList: function(json) {
