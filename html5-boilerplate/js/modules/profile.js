@@ -113,6 +113,38 @@ pl.implement(EditProfileClass, {
             if (textFieldId === 'email') {
                 textFieldObj.fieldBase.addValidator(textFieldObj.fieldBase.validator.isEmail);
             }
+            if (textFieldId === 'username') {
+                textFieldObj.fieldBase.addValidator(function(username) {
+                    var successFunc = function(json) {
+                            var icon = new ValidIconClass('usernameicon');
+                            if (json) {
+                                icon.showValid();
+                                pl('#personalinfomsg').text();
+                            }
+                            else {
+                                icon.showInvalid();
+                                pl('#personalinfomsg').html('<span class="attention">Nickname already taken, please choose another</span>');
+                            } 
+                        },
+                        icon = new ValidIconClass('usernameicon'),
+                        ajax;
+                    if (!username || !username.length) {
+                        return 'Nickname must not be empty';
+                    }
+                    else if (username.length < 3) {
+                        return 'Nickname must be at least three characters';
+                    }
+                    else {
+                        ajax = new AjaxClass('/user/check-user-name', 'personalinfomsg', null, successFunc);
+                        ajax.setGetData({ name: username });
+                        ajax.call();
+                    }
+                    return 0;
+                });
+                textFieldObj.fieldBase.postSuccessFunc = function(newval) {
+                    pl('#logintext').text(newval);
+                };
+            }
             textFieldObj.bindEvents();
         }
         investorCheckbox = new CheckboxFieldClass('investor', json.investor, self.getUpdater(), 'settingsmsg');

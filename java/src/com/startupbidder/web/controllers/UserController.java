@@ -230,7 +230,7 @@ public class UserController extends ModelDrivenController {
 
 	private HttpHeaders checkUserName(HttpServletRequest request) {
     	String userName = getCommandOrParameter(request, 2, "name");
-    	model = UserMgmtFacade.instance().checkUserName(getLoggedInUser(), userName);
+    	model = UserMgmtFacade.instance().checkUserNameIsValid(getLoggedInUser(), userName);
 
     	HttpHeaders headers = new HttpHeadersImpl("check-user-name");
 		return headers;

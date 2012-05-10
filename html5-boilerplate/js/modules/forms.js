@@ -108,7 +108,6 @@ pl.implement(EmailCheckClass, {
                                 return "Destination IP address is invalid!";
                         }
                 }
-                return true;
         }
         var atomPat=new RegExp("^" + atom + "$");
         var domArr=domain.split(".");
@@ -355,6 +354,7 @@ function FieldBaseClass(id, value, updateFunction, msgId) {
     this.id = id;
     this.value = value;
     this.updateFunction = updateFunction;
+    this.postSuccessFunc = null;
     this.sel = '#' + id;
     this.validator = new ValidatorClass();
     this.msg = new UserMessageClass(msgId);
@@ -388,6 +388,9 @@ pl.implement(FieldBaseClass, {
         return function() {
             self.msg.show('successful', 'Saved changes');
             self.value = self.newval;
+            if (self.postSuccessFunc) {
+                self.postSuccessFunc(self.value);
+            }
         };
     },
     disable: function() {

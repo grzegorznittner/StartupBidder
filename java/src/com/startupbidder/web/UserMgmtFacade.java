@@ -9,7 +9,7 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.datanucleus.util.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
@@ -60,7 +60,7 @@ public class UserMgmtFacade {
 		}
 		String email = loggedInUser.getEmail();
 		UserVO user = null;
-		if (StringUtils.notEmpty(email)) {
+		if (StringUtils.isNotEmpty(email)) {
 			user = DtoToVoConverter.convert(getDAO().getUserByEmail(email));
 		} else {
 			user = DtoToVoConverter.convert(getDAO().getUserByEmail(loggedInUser.getUserId()));
@@ -174,7 +174,7 @@ public class UserMgmtFacade {
 	 */
 	public String checkUserCredentials(String email, String password) {
 		SBUser user = getDAO().getUserByEmail(email);
-		if(StringUtils.areStringsEqual(user.password, encryptPassword(password))) {
+		if(StringUtils.equals(user.password, encryptPassword(password))) {
 			return user.authCookie;
 		} else {
 			return null;
@@ -192,7 +192,7 @@ public class UserMgmtFacade {
 	
 	public String changePassword(String email, String oldPassword, String newPassword) {
 		SBUser user = getDAO().getUserByEmail(email);
-		if(StringUtils.areStringsEqual(user.password, encryptPassword(oldPassword))) {
+		if(StringUtils.equals(user.password, encryptPassword(oldPassword))) {
 			user.password = encryptPassword(newPassword);
 			user.authCookie = encryptPassword(user.password + new Date().getTime());
 			log.info("User '" + email + "' is going to update password");
@@ -206,9 +206,7 @@ public class UserMgmtFacade {
 	
 	/**
 	 * Updates user data. Field validation is done before.
-	 * 
-	 * @param userData User data object
-	 */
+	*/
 	public UserVO updateUser(UserVO loggedInUser, String name, String nickname, String location, String phone, Boolean investor, Boolean notifyEnabled) {
 		SBUser oldUser = getDAO().getUser(loggedInUser.getId());
 		if (oldUser == null) {
@@ -219,15 +217,15 @@ public class UserMgmtFacade {
 			log.warning("User '" + loggedInUser.getEmail() + "' is not active!");
 			return null;
 		}
-		if (StringUtils.notEmpty(nickname)) {
-			if (!checkUserName(loggedInUser, nickname)) {
+		if (StringUtils.isNotEmpty(nickname)) {
+			if (!checkUserNameIsValid(loggedInUser, nickname)) {
 				log.warning("Nickname '" + nickname + "' for user is not unique!");
 				return null;
 			} else {
 				oldUser.nickname = nickname;
 			}
 		}
-		if (StringUtils.notEmpty(name)) {
+		if (StringUtils.isNotEmpty(name)) {
 			if (name.length() < 6) {
 				log.warning("New user name '" + name + "' is too short!");
 				return null;
@@ -236,7 +234,7 @@ public class UserMgmtFacade {
 			}
 		}
 		// @FIXME Implement proper location verifier
-		if (StringUtils.notEmpty(location)) {
+		if (StringUtils.isNotEmpty(location)) {
 			if (location.length() < 10) {
 				log.warning("New user location '" + name + "' is too short!");
 				return null;
@@ -245,7 +243,7 @@ public class UserMgmtFacade {
 			}
 		}
 		// @FIXME User regexp for phone number validation
-		if (StringUtils.notEmpty(phone)) {
+		if (StringUtils.isNotEmpty(phone)) {
 			if (phone.length() < 7) {
 				log.warning("New phone '" + phone + "' is too short!");
 				return null;
@@ -359,8 +357,17 @@ public class UserMgmtFacade {
 		return userVotes;
 	}
 
-	public Boolean checkUserName(UserVO loggedInUser, String nickName) { // either unchanged or not used in the datastore
-		return StringUtils.notEmpty(nickName) && (loggedInUser.getNickname().equals(nickName) || getDAO().checkNickName(nickName));
+	public Boolean checkUserNameIsValid(UserVO loggedInUser, String nickName) { // true if nickname is a valid username in use, false otherwise
+        if (StringUtils.isEmpty(nickName)) { // empty nickname not allowed
+            return false;
+        }
+        if (!StringUtils.isEmpty(loggedInUser.getNickname()) && loggedInUser.getNickname().equalsIgnoreCase(nickName)) { // keeping my existing name is okay
+            return true;
+        }
+        if (getDAO().checkNickNameInUse(nickName)) { // same as existing nickname not allowed
+            return false;
+        }
+        return true;
 	}
 	
 	public void scheduleUpdateOfUserStatistics(String userId, UpdateReason reason) {

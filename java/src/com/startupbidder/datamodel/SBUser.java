@@ -15,6 +15,7 @@ import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Indexed;
 import com.googlecode.objectify.annotation.Unindexed;
 import com.googlecode.objectify.condition.IfNotNull;
+import org.apache.commons.lang.math.RandomUtils;
 
 /**
  * @author "Grzegorz Nittner" <grzegorz.nittner@gmail.com>
@@ -45,7 +46,8 @@ public class SBUser extends BaseObject {
 	public String openId;
 
 	public String name;
-	@Indexed public String nickname;
+    @Indexed public String nickname;
+    @Indexed public String nicknameLower;
 	public String phone;
 	public String location;
 	@Indexed public String country;
@@ -66,11 +68,41 @@ public class SBUser extends BaseObject {
 	public SBUser() {
 	}
 	
-	public SBUser(String email, String name, String nickname, String phone, String location, 
-			boolean admin, boolean investor, Status status) {
+    public SBUser(String email, String name, String phone, String location,
+            boolean admin, boolean investor, Status status) {
+        this(
+                email,
+                name,
+                (email.contains("@") ? email.substring(0, email.indexOf("@")) : "anonymous" + String.valueOf(RandomUtils.nextInt(1000000000))),
+                phone,
+                location,
+                admin,
+                investor,
+                status
+        );
+    }
+
+    public SBUser(String email, String name, String nickname, String phone, String location,
+            boolean admin, boolean investor, Status status) {
+        this(
+                email,
+                name,
+                nickname,
+                nickname.toLowerCase(),
+                phone,
+                location,
+                admin,
+                investor,
+                status
+        );
+    }
+
+    public SBUser(String email, String name, String nickname, String nicknameLower, String phone, String location,
+            boolean admin, boolean investor, Status status) {
 		this.email = email;
 		this.name = name;
 		this.nickname = nickname;
+        this.nicknameLower = nicknameLower;
 		this.phone = phone;
 		this.location = location;
 		this.admin = admin;

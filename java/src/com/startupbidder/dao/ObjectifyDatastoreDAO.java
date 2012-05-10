@@ -12,6 +12,7 @@ import java.util.logging.Logger;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.RandomUtils;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
@@ -77,73 +78,81 @@ public class ObjectifyDatastoreDAO {
 		}
 	}
 
-	public SBUser getUserByEmail(String email) {
-		SBUser user = getOfy().query(SBUser.class).filter("email =", email).get();
-		log.info("User for " + email + " is: " + user);
-		return user;
-	}
+    public SBUser getUserByEmail(String email) {
+        SBUser user = getOfy().query(SBUser.class).filter("email =", email).get();
+        log.info("Existing user for email " + email + " is " + user);
+        return user;
+    }
+
+    public SBUser getUserByNickname(String nickname) {
+        String nicknameLower = nickname.toLowerCase();
+        SBUser user = getOfy().query(SBUser.class).filter("nicknameLower =", nicknameLower).get();
+        log.info("Existing user for nickname " + nickname + " is " + user);
+        return user;
+    }
 
 	public SBUser getUserByAuthCookie(String authCookie) {
 		SBUser user = getOfy().query(SBUser.class).filter("authCookie =", authCookie).get();
-		log.info("User for cookie '" + authCookie + "' is: " + user);
+		log.info("Existing user for cookie " + authCookie + " is " + user);
 		return user != null && user.status == SBUser.Status.ACTIVE ? user : null;
 	}
 
 	public SBUser createUser(String email, String nickname) {
-		SBUser user = getOfy().query(SBUser.class).filter("email =", email).get();
-		if (user == null) {
-			user = new SBUser();
-			user.email = email;
-		    if (StringUtils.isEmpty(user.email)) {
-                user.email = "anonymous@anonymous.org";
-            }
-            if (!StringUtils.isEmpty(nickname)) {
-                user.nickname = nickname;
-            }
-			else if (email.contains("@")) {
-				user.nickname = email.substring(0, email.indexOf("@"));
-			}
-            else if (!StringUtils.isEmpty(email)) {
-				user.nickname = email;
-			}
-            else {
-                user.nickname = "Anonymous";
-            }
-
-            user.name = user.nickname;
-			user.modified = user.lastLoggedIn = user.joined = new Date();
-			user.status = SBUser.Status.ACTIVE;
-			
-			getOfy().put(user);
-		} else {
-			log.warning("User with email '" + email + "' already exists!");
-			return null;
-		}
+        String userEmail = StringUtils.isNotEmpty(email) ? email : "anonymous" + String.valueOf(RandomUtils.nextInt(1000000000)) + "@startupbidder.com";
+        SBUser user = getUserByEmail(userEmail);
+        if (user != null) {
+            log.warning("User with email '" + userEmail + "' already exists, cannot create user.");
+            return null;
+        }
+        String userNickname = (StringUtils.isNotEmpty(nickname) && !nickname.equalsIgnoreCase(email))
+                    ? nickname
+                    : (userEmail.contains("@") ? email.substring(0, email.indexOf("@")) : "anonymous" + String.valueOf(RandomUtils.nextInt(1000000000)));
+        user = getUserByNickname(userNickname);
+        if (user != null) {
+            log.warning("User with nickname " + userNickname + " already exists, cannot create user.");
+            return null;
+        }
+    	user = new SBUser();
+        user.email = userEmail;
+        user.nickname = userNickname;
+        user.nicknameLower = userNickname.toLowerCase();
+	    user.modified = user.lastLoggedIn = user.joined = new Date();
+		user.status = SBUser.Status.ACTIVE;
+		getOfy().put(user);
+        log.info("Created user with nickname " + user.nickname + " as " + user);
 		return user;
 	}
 	
 	public SBUser createUser(String email, String password, String authCookie, String name, String location, boolean investor) {
-		SBUser user = getOfy().query(SBUser.class).filter("email =", email).get();
-		if (user == null) {
-			user = new SBUser();
-			user.email = email;
-			user.name = name;
-			user.password = password;
-			user.authCookie = authCookie;
-			user.location = location;
-			user.investor = investor;
-			user.status = SBUser.Status.CREATED;
-			user.joined = new Date();
-			user.activationCode = "" + email.hashCode() + user.joined.hashCode();
-			
-			getOfy().put(user);
-			return user;
-		} else {
-			log.warning("User with email '" + email + "' already exists!");
-			return null;
-		}
+        String userEmail = StringUtils.isNotEmpty(email) ? email : "anonymous" + String.valueOf(RandomUtils.nextInt(1000000000)) + "@startupbidder.com";
+        SBUser user = getUserByEmail(email);
+        if (user != null) {
+            log.warning("User with email '" + userEmail + "' already exists, cannot create user.");
+            return null;
+        }
+        String userNickname = userEmail.contains("@") ? email.substring(0, email.indexOf("@")) : "anonymous" + String.valueOf(RandomUtils.nextInt(1000000000));
+        user = getUserByNickname(userNickname);
+        if (user != null) {
+            log.warning("User with nickname matching '" + userNickname + "' case insensitive already exists, cannot create user.");
+            return null;
+        }
+        user = new SBUser();
+        user.email = userEmail;
+        user.nickname = userNickname;
+        user.nicknameLower = userNickname.toLowerCase();
+		user.name = name;
+		user.password = password;
+		user.authCookie = authCookie;
+		user.location = location;
+		user.investor = investor;
+        user.modified = user.lastLoggedIn = user.joined = new Date();
+		user.status = SBUser.Status.CREATED;
+		user.joined = new Date();
+		user.activationCode = "" + email.hashCode() + user.joined.hashCode();
+		getOfy().put(user);
+        log.info("Created user with defaulted nickname " + user.nickname + " as " + user);
+		return user;
 	}
-
 
 	public UserStats updateUserStatistics(long userId) {
 		SBUser user = null;
@@ -325,6 +334,7 @@ public class ObjectifyDatastoreDAO {
 			SBUser user = getOfy().get(SBUser.class, newUser.id);
 			user.name = newUser.name;
 			user.nickname = newUser.nickname;
+            user.nicknameLower = newUser.nickname.toLowerCase();
 			user.location = newUser.location;
 			user.phone = newUser.phone;
 			user.investor = newUser.investor;
@@ -967,8 +977,8 @@ public class ObjectifyDatastoreDAO {
 		}
 	}
 
-	public boolean checkNickName(String nickName) {
-		return getOfy().query(SBUser.class).filter("nickname =", nickName).count() == 0;
+	public boolean checkNickNameInUse(String nickName) {
+		return getOfy().query(SBUser.class).filter("nicknameLower =", nickName.toLowerCase()).count() != 0;
 	}
 
 	public void deleteComment(long commentId) {
