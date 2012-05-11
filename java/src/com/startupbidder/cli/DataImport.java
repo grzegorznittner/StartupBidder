@@ -1,6 +1,7 @@
 package com.startupbidder.cli;
 
 import java.io.IOException;
+import java.util.Scanner;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Handler;
 import java.util.logging.Level;
@@ -54,6 +55,7 @@ public class DataImport {
 	    	.credentials(username, password);
 
 		remoteAPIInstaller = new RemoteApiInstaller();
+		remoteAPIInstaller.logMethodCalls();
 		remoteAPIInstaller.install(remoteAPIOptions);
 	}
 	
@@ -79,7 +81,8 @@ public class DataImport {
                 .create("user"));
 		options.addOption(OptionBuilder.withArgName("pass")
                 .hasArg()
-                .withDescription("AppEngine's user password")
+                .withDescription("AppEngine's user password. If not provided you'll be asked for it. " +
+                		"IT'S RECOMMENDED to enter it from command line.")
                 .create("pass"));
 		options.addOption(OptionBuilder.withArgName("domain")
                 .hasArg()
@@ -133,6 +136,9 @@ public class DataImport {
 	        }
 	        if (line.hasOption("pass")) {
 	        	password = line.getOptionValue("pass");
+	        } else {
+	        	System.out.println();
+	        	password = new String(System.console().readPassword("Password for account '" + username + "': "));
 	        }
 	        if (line.hasOption("domain")) {
 	        	appDomain = line.getOptionValue("domain");
