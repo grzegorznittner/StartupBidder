@@ -40,11 +40,11 @@ pl.implement(EditProfileClass, {
                 */
                 username: pl('#username').attr('value'),
                 email: pl('#email').attr('value'),
-                name: pl('#name').attr('value')
+                name: pl('#name').attr('value'),
+                investor: pl('#investor').attr('value') ? 'true' : 'false'
                 /*
                 title: pl('#title').attr('value'),
                 organization: pl('#organization').attr('value'),
-                investor: pl('#investor').attr('value') ? 'true' : 'false',
                 facebook:'',
                 twitter:'',
                 linkedin:''
@@ -113,9 +113,47 @@ pl.implement(EditProfileClass, {
             if (textFieldId === 'email') {
                 textFieldObj.fieldBase.addValidator(textFieldObj.fieldBase.validator.isEmail);
             }
+            if (textFieldId === 'username') {
+                textFieldObj.fieldBase.addValidator(function(username) {
+                    var successFunc = function(json) {
+                            var icon = new ValidIconClass('usernameicon');
+                            if (json) {
+                                icon.showValid();
+                                pl('#personalinfomsg').text();
+                            }
+                            else {
+                                icon.showInvalid();
+                                pl('#personalinfomsg').html('<span class="attention">Nickname already taken, please choose another</span>');
+                            } 
+                        },
+                        icon = new ValidIconClass('usernameicon'),
+                        ajax;
+                    if (!username || !username.length) {
+                        return 'Nickname must not be empty';
+                    }
+                    else if (username.length < 3) {
+                        return 'Nickname must be at least three characters';
+                    }
+                    else if (username.length > 30) {
+                        return 'Nickname must be no more than 30 characters';
+                    }
+                    else {
+                        ajax = new AjaxClass('/user/check-user-name', 'personalinfomsg', null, successFunc);
+                        ajax.setGetData({ name: username });
+                        ajax.call();
+                    }
+                    return 0;
+                });
+                textFieldObj.fieldBase.postSuccessFunc = function(newval) {
+                    pl('#logintext').text(newval);
+                };
+            }
+            if (textFieldId === 'name') {
+                textFieldObj.fieldBase.addValidator(textFieldObj.fieldBase.validator.makeLengthChecker(3, 100));
+            }
             textFieldObj.bindEvents();
         }
-        investorCheckbox = new CheckboxFieldClass('investor', json.investor, self.getUpdater(), 'settingsmsg');
+        investorCheckbox = new CheckboxFieldClass('investor', json.investor, self.getUpdater(), 'personalinfomsg');
         investorCheckbox.bindEvents();
 /*
         notifyCheckbox = new CheckboxFieldClass('notifyenabled', json.notifyenabled, self.getUpdater(), 'settingsmsg');

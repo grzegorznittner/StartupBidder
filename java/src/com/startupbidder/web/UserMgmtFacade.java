@@ -9,7 +9,7 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.datanucleus.util.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
@@ -60,7 +60,7 @@ public class UserMgmtFacade {
 		}
 		String email = loggedInUser.getEmail();
 		UserVO user = null;
-		if (StringUtils.notEmpty(email)) {
+		if (StringUtils.isNotEmpty(email)) {
 			user = DtoToVoConverter.convert(getDAO().getUserByEmail(email));
 		} else {
 			user = DtoToVoConverter.convert(getDAO().getUserByEmail(loggedInUser.getUserId()));
@@ -68,7 +68,7 @@ public class UserMgmtFacade {
 		if (user == null) {
 			return null;
 		}
-		//applyUserStatistics(user, user);
+		applyUserStatistics(user, user);
 		return user;
 	}
 
@@ -83,7 +83,7 @@ public class UserMgmtFacade {
 		if (user == null) {
 			return null;
 		}
-		//applyUserStatistics(loggedInUser, user);
+		applyUserStatistics(loggedInUser, user);
 
 		UserAndUserVO userAndUser = new UserAndUserVO();
 		userAndUser.setUser(user);
@@ -100,7 +100,7 @@ public class UserMgmtFacade {
 		}
 		
 		UserVO user = DtoToVoConverter.convert(getDAO().createUser(loggedInUser.getEmail(), loggedInUser.getNickname()));
-		//applyUserStatistics(user, user);
+		applyUserStatistics(user, user);
 		return user;
 	}
 	
@@ -155,7 +155,7 @@ public class UserMgmtFacade {
 		String authCookie = encryptPassword(encryptedPassword + new Date().getTime());
 		
 		user = DtoToVoConverter.convert(getDAO().createUser(email, encryptedPassword, authCookie, name, location, investor));
-		//applyUserStatistics(user, user);
+		applyUserStatistics(user, user);
 		return user;
 	}
 
@@ -174,7 +174,7 @@ public class UserMgmtFacade {
 	 */
 	public String checkUserCredentials(String email, String password) {
 		SBUser user = getDAO().getUserByEmail(email);
-		if(StringUtils.areStringsEqual(user.password, encryptPassword(password))) {
+		if(StringUtils.equals(user.password, encryptPassword(password))) {
 			return user.authCookie;
 		} else {
 			return null;
@@ -192,7 +192,7 @@ public class UserMgmtFacade {
 	
 	public String changePassword(String email, String oldPassword, String newPassword) {
 		SBUser user = getDAO().getUserByEmail(email);
-		if(StringUtils.areStringsEqual(user.password, encryptPassword(oldPassword))) {
+		if(StringUtils.equals(user.password, encryptPassword(oldPassword))) {
 			user.password = encryptPassword(newPassword);
 			user.authCookie = encryptPassword(user.password + new Date().getTime());
 			log.info("User '" + email + "' is going to update password");
@@ -206,9 +206,7 @@ public class UserMgmtFacade {
 	
 	/**
 	 * Updates user data. Field validation is done before.
-	 * 
-	 * @param userData User data object
-	 */
+	*/
 	public UserVO updateUser(UserVO loggedInUser, String name, String nickname, String location, String phone, Boolean investor, Boolean notifyEnabled) {
 		SBUser oldUser = getDAO().getUser(loggedInUser.getId());
 		if (oldUser == null) {
@@ -219,24 +217,38 @@ public class UserMgmtFacade {
 			log.warning("User '" + loggedInUser.getEmail() + "' is not active!");
 			return null;
 		}
-		if (StringUtils.notEmpty(nickname)) {
-			if (!checkUserName(loggedInUser, nickname)) {
+		if (StringUtils.isNotEmpty(nickname)) {
+            if (nickname.length() < 3) {
+                log.warning("New nickname '" + name + "' must be at least 3 characters");
+                return null;
+            }
+            else if (nickname.length() > 30) {
+                log.warning("New nickname '" + name + "' must be no more than 15 characters");
+                return null;
+            }
+            else if (!checkUserNameIsValid(loggedInUser, nickname)) {
 				log.warning("Nickname '" + nickname + "' for user is not unique!");
 				return null;
-			} else {
+			}
+            else {
 				oldUser.nickname = nickname;
 			}
 		}
-		if (StringUtils.notEmpty(name)) {
-			if (name.length() < 6) {
-				log.warning("New user name '" + name + "' is too short!");
+		if (StringUtils.isNotEmpty(name)) {
+			if (name.length() < 3) {
+				log.warning("New user name '" + name + "' must be at least 3 characters");
 				return null;
-			} else {
-				oldUser.name = name;
+			}
+            else if (name.length() > 100) {
+				log.warning("New user name '" + name + "' must be no more than 100 characters");
+				return null;
+			}
+            else {
+                oldUser.name = name;
 			}
 		}
 		// @FIXME Implement proper location verifier
-		if (StringUtils.notEmpty(location)) {
+		if (StringUtils.isNotEmpty(location)) {
 			if (location.length() < 10) {
 				log.warning("New user location '" + name + "' is too short!");
 				return null;
@@ -245,7 +257,7 @@ public class UserMgmtFacade {
 			}
 		}
 		// @FIXME User regexp for phone number validation
-		if (StringUtils.notEmpty(phone)) {
+		if (StringUtils.isNotEmpty(phone)) {
 			if (phone.length() < 7) {
 				log.warning("New phone '" + phone + "' is too short!");
 				return null;
@@ -261,7 +273,7 @@ public class UserMgmtFacade {
 		}
 		UserVO user = DtoToVoConverter.convert(getDAO().updateUser(oldUser));
 		if (user != null) {
-			//applyUserStatistics(loggedInUser, user);
+			applyUserStatistics(loggedInUser, user);
 			//ServiceFacade.instance().createNotification(user.getId(), user.getId(), Notification.Type.YOUR_PROFILE_WAS_MODIFIED, "");
 		}
 		return user;
@@ -282,7 +294,7 @@ public class UserMgmtFacade {
 		List<UserVO> users = DtoToVoConverter.convertUsers(getDAO().getAllUsers());
 		int index = 1;
 		for (UserVO user : users) {
-			//applyUserStatistics(loggedInUser, user);
+			applyUserStatistics(loggedInUser, user);
 			user.setOrderNumber(index++);
 		}
 
@@ -290,24 +302,28 @@ public class UserMgmtFacade {
 		return userList;
 	}
 
-	/*
-	 * User statistics are not implemented
-	public void applyUserStatistics(UserVO loggedInUser, UserVO user) {
+    public void applyUserStatistics(UserVO user) {
+        applyUserStatistics(null, user);
+    }
+
+    public void applyUserStatistics(UserVO loggedInUser, UserVO user) {
 		if (user != null && user.getId() != null) {
+            /*
 			if (loggedInUser != null) {
 				user.setVotable(getDAO().userCanVoteForUser(loggedInUser.toKeyId(), user.toKeyId()));
 			} else {
 				user.setVotable(false);
 			}
-			
+			*/
+            
 			UserStats userStats = getUserStatistics(user.getId());
 			if (userStats != null) {
-				user.setNumberOfBids(userStats.numberOfBids);
-				user.setNumberOfComments(userStats.numberOfComments);
-				user.setNumberOfListings(userStats.numberOfListings);
-				user.setNumberOfVotes(userStats.numberOfVotes);
-				user.setNumberOfAcceptedBids(userStats.numberOfAcceptedBids);
-				user.setNumberOfFundedBids(userStats.numberOfFundedBids);
+				//user.setNumberOfBids(userStats.numberOfBids);
+				//user.setNumberOfComments(userStats.numberOfComments);
+				//user.setNumberOfListings(userStats.numberOfListings);
+				//user.setNumberOfVotes(userStats.numberOfVotes);
+				//user.setNumberOfAcceptedBids(userStats.numberOfAcceptedBids);
+				//user.setNumberOfFundedBids(userStats.numberOfFundedBids);
 				user.setNumberOfNotifications(userStats.numberOfNotifications);
 			} else {
 				log.info("User statistics not available for user '" + user.getEmail() + "'");
@@ -315,6 +331,7 @@ public class UserMgmtFacade {
 		}
 	}
 	
+    /*
 	public UserVO getTopInvestor(UserVO loggedInUser) {
 		UserVO user = DtoToVoConverter.convert(getDAO().getTopInvestor());
 		applyUserStatistics(loggedInUser, user);
@@ -325,7 +342,7 @@ public class UserMgmtFacade {
 	public UserVO activateUser(String userId, String activationCode) {
 		UserVO user = DtoToVoConverter.convert(getDAO().activateUser(BaseVO.toKeyId(userId), activationCode));
 		if (user != null) {
-			//applyUserStatistics(loggedInUser, user);
+			applyUserStatistics(user);
 		}
 		return user;
 	}
@@ -339,10 +356,11 @@ public class UserMgmtFacade {
 			}
 		}
 		UserVO user = DtoToVoConverter.convert(getDAO().deactivateUser(BaseVO.toKeyId(userId)));
-		//applyUserStatistics(loggedInUser, user);
+		applyUserStatistics(loggedInUser, user);
 		return user;
 	}
 
+    /*
 	public UserVotesVO userVotes(UserVO loggedInUser, String userId) {
 		UserVotesVO userVotes = new UserVotesVO();
 		UserVO user = DtoToVoConverter.convert(getDAO().getUser(userId));
@@ -358,9 +376,19 @@ public class UserMgmtFacade {
 		
 		return userVotes;
 	}
+    */
 
-	public Boolean checkUserName(UserVO loggedInUser, String nickName) { // either unchanged or not used in the datastore
-		return StringUtils.notEmpty(nickName) && (loggedInUser.getNickname().equals(nickName) || getDAO().checkNickName(nickName));
+	public Boolean checkUserNameIsValid(UserVO loggedInUser, String nickName) { // true if nickname is a valid username in use, false otherwise
+        if (StringUtils.isEmpty(nickName)) { // empty nickname not allowed
+            return false;
+        }
+        if (!StringUtils.isEmpty(loggedInUser.getNickname()) && loggedInUser.getNickname().equalsIgnoreCase(nickName)) { // keeping my existing name is okay
+            return true;
+        }
+        if (getDAO().checkNickNameInUse(nickName)) { // same as existing nickname not allowed
+            return false;
+        }
+        return true;
 	}
 	
 	public void scheduleUpdateOfUserStatistics(String userId, UpdateReason reason) {
@@ -419,7 +447,7 @@ public class UserMgmtFacade {
 
 	/**
 	 * Value up user
-	 */
+	 *
 	public UserVO valueUpUser(UserVO voter, String userId) {
 		if (voter == null) {
 			return null;
@@ -433,5 +461,5 @@ public class UserMgmtFacade {
 		}
 		return user;
 	}
-
+    */
 }

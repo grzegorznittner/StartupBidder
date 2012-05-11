@@ -82,6 +82,10 @@ public class SetupServlet extends HttpServlet {
             out.println("<form method=\"POST\" action=\"/system/import-startuply-data/.html\">"
                     + "<input type=\"submit\" value=\"Import Data\"/></form>");
 
+            out.println("<p>Startuply Delete Cache:</p>");
+            out.println("<form method=\"POST\" action=\"/system/delete-startuply-cache/.html\">"
+                    + "<input type=\"submit\" value=\"Delete Data\"/></form>");
+
             out.println("<p>AngelList Startup Import:</p>");
             out.println("<form method=\"POST\" action=\"/system/import-angellist-data/.html\">"
                     + "From ID: <input name=\"fromId\" type=\"text\" value=\"19000\"/></br>"

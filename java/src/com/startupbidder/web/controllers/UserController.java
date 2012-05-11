@@ -41,8 +41,8 @@ public class UserController extends ModelDrivenController {
 				return topInvestor(request);
 			} else if("loggedin".equalsIgnoreCase(getCommand(1))) {
 				return loggedin(request);
-			} else if("votes".equalsIgnoreCase(getCommand(1))) {
-				return votes(request);
+			/* } else if("votes".equalsIgnoreCase(getCommand(1))) {
+				return votes(request); */
 			} else if("check-user-name".equalsIgnoreCase(getCommand(1))) {
 				return checkUserName(request);
 			} else {
@@ -61,9 +61,9 @@ public class UserController extends ModelDrivenController {
 				return create(request);
 			} else if ("delete".equalsIgnoreCase(getCommand(1))) {
 				return delete(request);
-			} else if ("up".equalsIgnoreCase(getCommand(1))) {
+			} /* else if ("up".equalsIgnoreCase(getCommand(1))) {
 				return up(request);
-			}
+			} */
 		}
 		return null;
 	}
@@ -200,7 +200,7 @@ public class UserController extends ModelDrivenController {
     		userId = getLoggedInUser().getId();
     	}
     	String activationCode = getCommandOrParameter(request, 3, "code");
-    	model = UserMgmtFacade.instance().activateUser(userId, activationCode);
+        model = UserMgmtFacade.instance().activateUser(userId, activationCode);
 
     	HttpHeaders headers = new HttpHeadersImpl("activate");
 		return headers;
@@ -217,6 +217,7 @@ public class UserController extends ModelDrivenController {
 		return headers;
 	}
 
+    /*
 	private HttpHeaders votes(HttpServletRequest request) {
     	String userId = getCommandOrParameter(request, 2, "id");
     	if (userId == null) {
@@ -227,15 +228,17 @@ public class UserController extends ModelDrivenController {
 		HttpHeaders headers = new HttpHeadersImpl("deactivate");
 		return headers;
 	}
+    */
 
 	private HttpHeaders checkUserName(HttpServletRequest request) {
     	String userName = getCommandOrParameter(request, 2, "name");
-    	model = UserMgmtFacade.instance().checkUserName(getLoggedInUser(), userName);
+    	model = UserMgmtFacade.instance().checkUserNameIsValid(getLoggedInUser(), userName);
 
     	HttpHeaders headers = new HttpHeadersImpl("check-user-name");
 		return headers;
 	}
 
+    /*
 	private HttpHeaders up(HttpServletRequest request) {
     	String userId = getCommandOrParameter(request, 2, "id");
     	if (userId == null) {
@@ -246,6 +249,7 @@ public class UserController extends ModelDrivenController {
     	HttpHeaders headers = new HttpHeadersImpl("up");
 		return headers;
 	}
+    */
 
 	@Override
 	public Object getModel() {

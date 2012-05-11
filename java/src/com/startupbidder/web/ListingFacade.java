@@ -1421,12 +1421,7 @@ public class ListingFacade {
 		listing.setScore((int)listingStats.score);
 		
 		// calculate daysAgo and daysLeft
-		Days daysAgo = Days.daysBetween(new DateTime(listing.getListedOn()), new DateTime());
-		listing.setDaysAgo(daysAgo.getDays());
-	
-		Days daysLeft = Days.daysBetween(new DateTime(), new DateTime(listing.getClosingOn()));
-		listing.setDaysLeft(daysLeft.getDays());
-		
+
 		listing.setMonitored(monitor != null && monitor.active);
 	}
 
