@@ -590,7 +590,6 @@ include(footer.m4)
   <script src="js/modules/base.js"></script>
   <script src="js/modules/headeronlypage.js"></script>
   <script src="js/modules/tracker.js"></script>
-  <script src="js/modules/socialplugins.js"></script>
 '
 include(promptie.m4)
 `

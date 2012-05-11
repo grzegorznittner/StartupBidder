@@ -36,7 +36,6 @@ include(footer.m4)
   <script src="js/modules/companylist.js"></script>
   <script src="js/modules/nearbypage.js"></script>
   <script src="js/modules/tracker.js"></script>
-  <script src="js/modules/socialplugins.js"></script>
 '
 include(promptie.m4)
 `

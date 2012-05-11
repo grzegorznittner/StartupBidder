@@ -10,18 +10,19 @@ body.nearby-page > #wrap > #main > div.container { height: 100%; }
 body.nearby-page > #wrap > #main > div.container > div.nearbywrapper { height: 100%; width: 100%; padding-bottom: 55px; }
 #mappanel { height: 100%; width: 100%; }
 #map { height: 100%; width: 100%; }
-#main { padding-bottom: 35px; }
-#newlistingmain { padding-bottom: 35px; }
-#footer { position: relative; margin-top: -35px; height: 35px; clear: both; width: 100%; }
+#main { padding-bottom: 160px; }
+#newlistingmain { padding-bottom: 160px; }
+#footer { position: relative; margin-top: -160px; height: 160px; clear: both; width: 100%; }
 .clearfix:after { content: "."; display: block; height: 0; clear: both; visibility: hidden; }
 .clearfix { display: inline-block; }
 * html .clearfix { height: 1%; }
 .clearfix { display: block; }
-.footertext { position: relative; font-weight: bold; font-size: 18px; top: 2px; color: #dcd8db; }
-.footerlink { position: relative; font-weight: bold; font-size: 18px; top: 2px; color: #dcd8db; padding: 0px 15px; border-left: 2px solid white; }
-.footerlinknoborder { border-left: none; }
-.copyrightspan { text-align: right; }
-.copyrighttext { font-size: 10px; font-weight: bold; top: 10px; position: relative; }
+.footercol { border-right: 2px solid white; padding-bottom: 5px; }
+.footercol a { display: block; }
+.footertext { position: relative; font-weight: bold; font-size: 18px; top: 10px; }
+.footerlink { font-size: 14px; color: #dcd8db; }
+.footersocial { background: #f2f2f2; padding: 2px; border-radius: 5px; }
+.copyrighttext { font-size: 12px; position: absolute; right: 0; bottom: 0; }
 .attention { color: #8A1F11; }
 .errorcolor { color: #8A1F11; }
 .inprogress { color: #8F8A11; }

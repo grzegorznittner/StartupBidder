@@ -223,7 +223,7 @@ public class UserMgmtFacade {
                 return null;
             }
             else if (nickname.length() > 30) {
-                log.warning("New nickname '" + name + "' must be no more than 15 characters");
+                log.warning("New nickname '" + name + "' must be no more than 30 characters");
                 return null;
             }
             else if (!checkUserNameIsValid(loggedInUser, nickname)) {

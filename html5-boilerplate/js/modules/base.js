@@ -315,7 +315,7 @@ pl.implement(HeaderClass, {
         pl('#postlink').attr('href', newlistingurl);
         pl('#posttext').html(posttext);
         if (profile.admin) {
-            pl('#aboutlink').after('<a href="/setup"><span class="footerlink">Setup</span></a>');
+            pl('#adminsetup,#adminhello').css({visibility:'visible'});
         }
         pl('#loginlink').attr('href', 'profile-page.html');
         pl('#logintext').html(username);
