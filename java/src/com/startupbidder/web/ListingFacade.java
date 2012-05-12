@@ -1111,7 +1111,8 @@ public class ListingFacade {
 		for (NotificationVO notification : notifications) {
 			notification.setOrderNumber(num++);
 		}
-	}
+        list.setNotifications(notifications);
+    }
 	
 	public void applyShortNotificationsAndMonitoredListings(UserVO loggedInUser, ListingListVO list) {
 		List<NotificationVO> notifications = null;
@@ -1123,7 +1124,8 @@ public class ListingFacade {
 		for (NotificationVO notification : notifications) {
 			notification.setOrderNumber(num++);
 		}
-		
+		list.setNotifications(notifications);
+
 		ListPropertiesVO props = new ListPropertiesVO();
 		props.setMaxResults(4);
 		List<Listing> monitoredListing = getDAO().getMonitoredListings(loggedInUser.toKeyId(), props);
