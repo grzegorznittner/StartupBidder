@@ -10,6 +10,8 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.startupbidder.vo.DtoToVoConverter;
+import com.startupbidder.vo.NotificationVO;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.RandomUtils;
@@ -311,9 +313,25 @@ public class ObjectifyDatastoreDAO {
 			median = (values.get(values.size() / 2 - 1) + values.get(values.size() / 2)) / 2;
 		}
 		listingStats.medianValuation = median;
-		
+
+        int numQuestions = 0;
+        int numMessages = 0;
+        ListPropertiesVO props = new ListPropertiesVO();
+        List<NotificationVO> notifications = DtoToVoConverter.convertNotifications(getAllListingNotifications(listingId, props));
+        for (NotificationVO notification : notifications) {
+            Notification.Type type = Notification.Type.valueOf(notification.getType());
+            if (type == Notification.Type.ASK_LISTING_OWNER) {
+                numQuestions++;
+            }
+            else if (type == Notification.Type.PRIVATE_MESSAGE) {
+                numMessages++;
+            }
+        }
+        listingStats.numberOfQuestions = numQuestions;
+        listingStats.numberOfMessages = numMessages;
+        
 		double timeFactor = Math.pow((double)(Days.daysBetween(new DateTime(listing.listedOn), new DateTime()).getDays() + 2), 1.5d);
-		double score = (listingStats.numberOfMonitors + listingStats.numberOfComments + listingStats.numberOfBids + median) / timeFactor;
+		double score = (listingStats.numberOfMonitors + listingStats.numberOfComments + 10*listingStats.numberOfBids + listingStats.numberOfQuestions + listingStats.numberOfMessages + (median/1000)) / timeFactor;
 		listingStats.score = score;
 		
 		listingStats.created = new Date();
@@ -361,7 +379,7 @@ public class ObjectifyDatastoreDAO {
 		List<SBUser> users = new ArrayList<SBUser>(getOfy().get(usersIt).values());
 		return users;
 	}
-
+/*
 	public SBUser getTopInvestor() {
 		UserStats topUserStat = getOfy().query(UserStats.class)
 				.filter("status", SBUser.Status.ACTIVE)
@@ -381,7 +399,7 @@ public class ObjectifyDatastoreDAO {
 		List<Vote> votes = new ArrayList<Vote>(getOfy().get(votesIt).values());
 		return votes;
 	}
-
+*/
 	public Listing createListing(Listing listing) {
 		SBUser owner = getOfy().get(listing.owner);
 		if (owner.editedListing == null) {
@@ -508,17 +526,25 @@ public class ObjectifyDatastoreDAO {
 		return listing;
 	}
 
-	public List<Listing> getAllListings() {
+    public List<Listing> getAllListings() {
         int maxResults = 20;
-		QueryResultIterable<Key<Listing>> listingsIt = getOfy().query(Listing.class)
-				.order("-listedOn")
+        QueryResultIterable<Key<Listing>> listingsIt = getOfy().query(Listing.class)
+                .order("-listedOn")
                 .limit(maxResults)
                 .prefetchSize(maxResults)
                 .chunkSize(maxResults)
                 .fetchKeys();
-		List<Listing> listings = new ArrayList<Listing>(getOfy().get(listingsIt).values());
-		return listings;
-	}
+        List<Listing> listings = new ArrayList<Listing>(getOfy().get(listingsIt).values());
+        return listings;
+    }
+
+    public List<Listing> getAllListingsInternal() { // use with care
+        QueryResultIterable<Key<Listing>> listingsIt = getOfy().query(Listing.class)
+                .order("-listedOn")
+                .fetchKeys();
+        List<Listing> listings = new ArrayList<Listing>(getOfy().get(listingsIt).values());
+        return listings;
+    }
 
 	public List<Listing> getUserNewOrPostedListings(long userId) {
 		QueryResultIterable<Key<Listing>> listingsIt = getOfy().query(Listing.class)
@@ -801,7 +827,7 @@ public class ObjectifyDatastoreDAO {
 		}
 		return null;
 	}
-
+/*
 	public SBUser valueUpUser(long userId, long voterId) {
 		try {
 			SBUser user = getOfy().get(SBUser.class, userId);
@@ -832,7 +858,7 @@ public class ObjectifyDatastoreDAO {
 		}
 		return null;
 	}
-	
+*/
 	public List<Comment> getCommentsForListing(long listingId) {
 		QueryResultIterable<Key<Comment>> commentsIt = getOfy().query(Comment.class)
 				.filter("listing =", new Key<Listing>(Listing.class, listingId))
@@ -888,13 +914,13 @@ public class ObjectifyDatastoreDAO {
 				.filter("listing =", new Key<Listing>(Listing.class, listingId))
 				.count();
 	}
-
+/*
 	public int getNumberOfVotesForUser(long userId) {
 		return getOfy().query(Vote.class)
 				.filter("bidder =", new Key<SBUser>(SBUser.class, userId))
 				.count();
 	}
-	
+*/
 	public int getActivity(long listingId) {
 		return getOfy().query(Comment.class)
 				.filter("listing =", new Key<Listing>(Listing.class, listingId))
@@ -913,7 +939,7 @@ public class ObjectifyDatastoreDAO {
 	public Comment getComment(long commentId) {
 		return getOfy().find(Comment.class, commentId);
 	}
-
+/*
 	public boolean userCanVoteForListing(long voterId, long listingId) {
 		Listing listing = null;
 		try {
@@ -947,7 +973,7 @@ public class ObjectifyDatastoreDAO {
 
 		return notOwnerOfListing && notVotedForListing;
 	}
-
+*/
 	public SBUser activateUser(long userId, String activationCode) {
 		try {
 			SBUser user = getOfy().get(SBUser.class, userId);
@@ -1392,7 +1418,7 @@ public class ObjectifyDatastoreDAO {
 		}
 		return getListingsByKeys(monitoredListingKeys);
 	}
-
+/*
 	public Map<String, Monitor> getMonitorsMapForUser(long userId, ListPropertiesVO listProperties) {
 		Map<String, Monitor> result = new HashMap<String, Monitor>();
 		for (Monitor monitor : getMonitorsForUser(userId, listProperties)) {
@@ -1400,7 +1426,7 @@ public class ObjectifyDatastoreDAO {
 		}
 		return result;
 	}
-
+*/
 	public List<Category> getCategories() {
 		QueryResultIterable<Key<Category>> catIt = getOfy().query(Category.class)
 				.order("name").fetchKeys();

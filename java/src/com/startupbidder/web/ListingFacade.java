@@ -87,7 +87,7 @@ import com.startupbidder.vo.UserVO;
 public class ListingFacade {
 	private static final Logger log = Logger.getLogger(ListingFacade.class.getName());
 	
-	public static enum UpdateReason {NEW_BID, BID_UPDATE, NEW_COMMENT, DELETE_COMMENT, NEW_MONITOR, DELETE_MONITOR, NONE};
+	public static enum UpdateReason {NEW_BID, BID_UPDATE, NEW_COMMENT, DELETE_COMMENT, NEW_MONITOR, DELETE_MONITOR, NEW_QUESTION, NEW_QUESTION_REPLY, NEW_MESSAGE, NEW_MESSAGE_REPLY, NONE};
 	public static final String MEMCACHE_ALL_LISTING_LOCATIONS = "AllListingLocations";
 	/**
 	 * Delay for listing stats task execution.
@@ -1372,43 +1372,63 @@ public class ListingFacade {
 		return list;
 	}
 
-	public List<ListingStats> updateAllListingStatistics() {
-		List<ListingStats> list = new ArrayList<ListingStats>();
-		Map<String, Location> locations = new HashMap<String, Location>();
-		Map<String, Category> categories = new HashMap<String, Category>();
-		for(Category category : getDAO().getCategories()) {
-			category.count = 0;
-			categories.put(category.name, category);
-		}
-	
-		List<Listing> listings = getDAO().getAllListings();
+    public String updateAllAggregateStatistics() {
+        List<Category> c = getDAO().getCategories();
+        log.log(Level.INFO, "Starting category calculation for " + c.size() + " categories");
+        Map<String, Category> categories = new HashMap<String, Category>();
+        for(Category category : c) {
+            category.count = 0;
+            categories.put(category.name, category);
+        }
+        log.log(Level.INFO, "Calculated count statistics for " + c.size() + " categories");
+
+        Map<String, Location> locations = new HashMap<String, Location>();
+        List<Listing> listings = getDAO().getAllListingsInternal();
+        log.log(Level.INFO, "Starting listing calculation for " + listings.size() + " listings");
+          for (Listing listing : listings) {
+            if (listing.state == Listing.State.ACTIVE) {
+                // updating top locations data
+                Location loc = locations.get(listing.briefAddress);
+                if (loc != null) {
+                    loc.value++;
+                } else {
+                    locations.put(listing.briefAddress, new Location(listing.briefAddress));
+                }
+                // updating top categories data
+                Category cat = categories.get(listing.category);
+                if (cat != null) {
+                    cat.count++;
+                }
+            }
+        }
+        log.log(Level.INFO, "Generated " + locations.size() + " locations for " + listings.size() + " listings");
+
+        getDAO().storeCategories(new ArrayList<Category>(categories.values()));
+        log.log(Level.INFO, "Updated count statistics for " + c.size() + " categories ");
+        getDAO().storeLocations(new ArrayList<Location>(locations.values()));
+        log.log(Level.INFO, "Updated location statistics for " + locations.size() + " locations");
+
+        return "Updated statistics for " + c.size() + " categories and " + locations.size() + " locations";
+    }
+    
+	public String updateAllListingStatistics() {
+		List<Listing> listings = getDAO().getAllListingsInternal();
+        log.log(Level.INFO, "Starting stat update for " + listings.size() + " listings");
 		for (Listing listing : listings) {
-			ListingStats stats = calculateListingStatistics(listing.id);
-			if (listing.state == Listing.State.ACTIVE) {
-				// updating top locations data
-				Location loc = locations.get(listing.briefAddress);
-				if (loc != null) {
-					loc.value++;
-				} else {
-					locations.put(listing.briefAddress, new Location(listing.briefAddress));
-				}
-				list.add(stats);
-				// updating top categories data
-				Category cat = categories.get(listing.category);
-				if (cat != null) {
-					cat.count++;
-				}
-			}
+			calculateListingStatistics(listing.id);
 		}
-		getDAO().storeLocations(new ArrayList<Location>(locations.values()));
-		getDAO().storeCategories(new ArrayList<Category>(categories.values()));
-		
-		log.log(Level.INFO, "Updated stats for " + list.size() + " listings: " + list);
-		int updatedDocs = DocService.instance().updateListingData(listings);
-		log.log(Level.INFO, "Updated docs for " + updatedDocs + " listings.");
-		return list;
+		log.log(Level.INFO, "Updated stats for " + listings.size() + " listings");
+        return "Updated stats for " + listings.size() + " listings";
 	}
 
+    public String updateAllListingDocuments() {
+        List<Listing> listings = getDAO().getAllListingsInternal();
+        log.log(Level.INFO, "Starting doc update for " + listings.size() + " listings.");
+        int updatedDocs = DocService.instance().updateListingData(listings);
+        log.log(Level.INFO, "Updated docs for " + updatedDocs + " listings.");
+        return "Updated docs for " + updatedDocs + " listings.";
+    }
+    
 	public void applyListingData(UserVO loggedInUser, ListingVO listing, Monitor monitor) {
 		// set user data
 		SBUser user = getDAO().getUser(listing.getOwner());
@@ -1417,6 +1437,10 @@ public class ListingFacade {
 		ListingStats listingStats = getListingStatistics(listing.toKeyId());
 		listing.setNumberOfBids(listingStats.numberOfBids);
 		listing.setNumberOfComments(listingStats.numberOfComments);
+        listing.setNumberOfQuestions(listingStats.numberOfQuestions);
+        if (loggedInUser != null && (loggedInUser.isAdmin() || StringUtils.equals(loggedInUser.getId(), listing.getOwner()))) {
+            listing.setNumberOfMessages(listingStats.numberOfMessages);
+        }
 		listing.setValuation((int)listingStats.valuation);
 		listing.setMedianValuation((int)listingStats.medianValuation);
 		listing.setPreviousValuation((int)listingStats.previousValuation);
@@ -1463,6 +1487,18 @@ public class ListingFacade {
 			case DELETE_MONITOR:
 				listingStats.numberOfMonitors = listingStats.numberOfMonitors - 1;
 				break;
+            case NEW_QUESTION:
+                listingStats.numberOfQuestions++;
+                break;
+            case NEW_QUESTION_REPLY:
+                listingStats.numberOfQuestions++;
+                break;
+            case NEW_MESSAGE:
+                listingStats.numberOfMessages++;
+                break;
+            case NEW_MESSAGE_REPLY:
+                listingStats.numberOfMessages++;
+                break;
 			default:
 				// reason can be also null
 				break;

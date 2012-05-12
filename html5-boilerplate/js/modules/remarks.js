@@ -96,9 +96,11 @@ pl.implement(RemarkClass, {
             pl(btnsel).bind({
                 click: function(event) {
                     var completeFunc = function() {
+                            var numitems = pl('#'+self.numitemsid).text();
                             pl(textsel).removeClass('edited').attr({value: 'Put your ' + displaytype + ' here...'});
                             pl(btnsel).removeClass(self.addenabledclass);
                             pl(msgsel).html(displaytype + ' posted');
+                            pl('#'+self.numitemsid).text(numitems + 1);
                             self.ajax.call();
                         },
                         text = SafeStringClass.prototype.clean(pl(textsel).attr('value')),
@@ -157,6 +159,7 @@ pl.implement(RemarkClass, {
             bindlist.push([remark, deletable, replyable]);
         }
         pl('#'+this.listid).html(html);
+        pl('#'+self.numitemsid).text(pl('#'+self.listid).get(0).childNodes.length / 2);
         for (i = 0; i < bindlist.length; i++) {
             remark = bindlist[i][0];
             deletable = bindlist[i][1];

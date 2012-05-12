@@ -419,6 +419,12 @@ public class ServiceFacade {
 		notification.read = false;
 		notification.sentDate = null;
 		notification = getDAO().storeNotification(notification);
+        if (type == Notification.Type.ASK_LISTING_OWNER) {
+            ListingFacade.instance().scheduleUpdateOfListingStatistics(listing.getWebKey(), UpdateReason.NEW_QUESTION);
+        }
+        else if (type == Notification.Type.PRIVATE_MESSAGE) {
+            ListingFacade.instance().scheduleUpdateOfListingStatistics(listing.getWebKey(), UpdateReason.NEW_MESSAGE);
+        }
 		if (notification != null) {
 			String taskName = timeStampFormatter.print(new Date().getTime()) + "send_notification_" + notification.type + "_" + notification.user.getId();
 			Queue queue = QueueFactory.getDefaultQueue();
@@ -451,6 +457,12 @@ public class ServiceFacade {
 		notification.read = false;
 		notification.sentDate = null;
 		notification = getDAO().storeNotification(notification);
+        if (notification.type == Notification.Type.ASK_LISTING_OWNER) {
+            ListingFacade.instance().scheduleUpdateOfListingStatistics(notification.listing.toString(), UpdateReason.NEW_QUESTION_REPLY);
+        }
+        else if (notification.type == Notification.Type.PRIVATE_MESSAGE) {
+            ListingFacade.instance().scheduleUpdateOfListingStatistics(notification.listing.toString(), UpdateReason.NEW_MESSAGE_REPLY);
+        }
 		if (notification != null) {
 			String taskName = timeStampFormatter.print(new Date().getTime()) + "send_notification_" + notification.type + "_" + notification.user.getId();
 			Queue queue = QueueFactory.getDefaultQueue();

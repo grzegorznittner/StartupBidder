@@ -10,18 +10,18 @@ body.nearby-page > #wrap > #main > div.container { height: 100%; }
 body.nearby-page > #wrap > #main > div.container > div.nearbywrapper { height: 100%; width: 100%; padding-bottom: 55px; }
 #mappanel { height: 100%; width: 100%; }
 #map { height: 100%; width: 100%; }
-#main { padding-bottom: 160px; }
-#newlistingmain { padding-bottom: 160px; }
-#footer { position: relative; margin-top: -160px; height: 160px; clear: both; width: 100%; }
+#main { padding-bottom: 170px; }
+#newlistingmain { padding-bottom: 170px; }
+#footer { position: relative; margin-top: -170px; height: 170px; clear: both; width: 100%; }
 .clearfix:after { content: "."; display: block; height: 0; clear: both; visibility: hidden; }
 .clearfix { display: inline-block; }
 * html .clearfix { height: 1%; }
 .clearfix { display: block; }
-.footercol { border-right: 2px solid white; padding-bottom: 5px; }
+.footercontainer { border-top: 2px solid grey; padding-top: 10px; }
+.footercol { border-right: 2px solid grey; padding-bottom: 5px; height: 130px; }
 .footercol a { display: block; }
 .footertext { position: relative; font-weight: bold; font-size: 18px; top: 10px; }
-.footerlink { font-size: 14px; color: #dcd8db; }
-.footersocial { background: #f2f2f2; padding: 2px; border-radius: 5px; }
+.footerlink { font-size: 14px; }
 .copyrighttext { font-size: 12px; position: absolute; right: 0; bottom: 0; }
 .attention { color: #8A1F11; }
 .errorcolor { color: #8A1F11; }
@@ -119,7 +119,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .companybannerlink { float: left; }
 .companybannertextgrey { font-size: 14px; font-weight: bold; color: grey; width: 830px; }
 .companybannerlogo { margin-top: 2px; width: 146px; height: 146px; margin-right: 10px; margin-left: 2px; float: left; }
-.companybannermantra { position: absolute; font-size: 14px; font-weight: bold; width: 380px; bottom:3px; left:158px; color: grey; }
+.companybannermantra { position: absolute; font-size: 14px; font-weight: bold; width: 830px; bottom:3px; padding-bottom: 18px; left:158px; color: grey; }
 .companybannerfollow { position: absolute; top: 0; right: -10px; }
 .companybannerfollowbtn { clear: both; float: right; }
 .companynavcontainer { position: absolute; bottom:0; right: 0; height: 21px; }

@@ -1,7 +1,7 @@
 `
-<div class="darkgreybg" id="footer">
+<div id="footer">
   
-<div class="container footertext lightgrey">
+<div class="container footertext footercontainer">
     <div class="span-4 footercol">
         Startupbidder
         <a href="about-page.html" id="aboutlink"><span class="footerlink hoverlink">About</span></a>
@@ -26,7 +26,7 @@
     </div>
     <div class="span-8">
         Connect
-        <span class="span-8 socialbanner footersocial">
+        <span class="span-8 socialbanner">
             <div class="twitterbanner">
               <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://www.startupbidder.com" data-text="startupbidder" data-via="startupbidder" data-related="startupbidder" data-hashtags="startupbidder">Tweet</a>
             </div>    

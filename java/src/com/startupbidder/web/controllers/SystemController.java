@@ -177,8 +177,9 @@ public class SystemController extends ModelDrivenController {
         HttpHeaders headers = new HttpHeadersImpl("import-startuply-data");
 
         UserVO loggedInUser = getLoggedInUser();
-        if (loggedInUser != null && loggedInUser.isAdmin()) {
-            model = new MockDataBuilder().importStartuplyData(0, 4000);
+        String max = request.getParameter("max");
+        if (loggedInUser != null && loggedInUser.isAdmin() && !StringUtils.isEmpty(max)) {
+            model = new MockDataBuilder().importStartuplyData(0, Integer.valueOf(max));
         } else {
             headers.setStatus(500);
         }

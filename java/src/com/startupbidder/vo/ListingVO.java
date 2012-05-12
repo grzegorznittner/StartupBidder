@@ -36,6 +36,8 @@ public class ListingVO extends ListingTileVO {
 	@JsonProperty("address") private String address;
 	@JsonProperty("num_comments") private long numberOfComments;
 	@JsonProperty("num_bids") private long numberOfBids;
+    @JsonProperty("num_qandas") private long numberOfQuestions;
+    @JsonProperty("num_messages") private long numberOfMessages;
 	@JsonProperty("days_ago") private int daysAgo;
 	@JsonProperty("days_left") private int daysLeft;
 	@JsonProperty("monitored") private boolean monitored;
@@ -259,6 +261,21 @@ public class ListingVO extends ListingTileVO {
 		this.numberOfBids = numberOfBids;
 	}
 
+    public long getNumberOfQuestions() {
+        return numberOfQuestions;
+    }
+
+    public void setNumberOfQuestions(long numberOfQuestions) {
+        this.numberOfQuestions = numberOfQuestions;
+    }
+
+    public long getNumberOfMessages() {
+        return numberOfMessages;
+    }
+
+    public void setNumberOfMessages(long numberOfMessages) {
+        this.numberOfMessages = numberOfMessages;
+    }
 	public int getDaysAgo() {
 		return daysAgo;
 	}

@@ -30,21 +30,38 @@ public class CronTaskController extends ModelDrivenController {
 			log.warning("Cron actions can be only executed by AppEngine's Cron or StartupBidder admins");
 			return null;
 		}
-		
-		if("update-listing-stats".equalsIgnoreCase(getCommand(1))) {
-			return updateListingStats(request);
-		}
+
+        if("update-aggregate-stats".equalsIgnoreCase(getCommand(1))) {
+            return updateAggregateStats(request);
+        }
+        else if("update-listing-stats".equalsIgnoreCase(getCommand(1))) {
+            return updateListingStats(request);
+        }
+        else if("update-listing-docs".equalsIgnoreCase(getCommand(1))) {
+            return updateListingDocs(request);
+        }
+
 		return null;
 	}
 
-	private HttpHeaders updateListingStats(HttpServletRequest request) {
-		HttpHeaders headers = new HttpHeadersImpl("update-listing-stats");
-		
-		model = ListingFacade.instance().updateAllListingStatistics();
-
+	private HttpHeaders updateAggregateStats(HttpServletRequest request) {
+		HttpHeaders headers = new HttpHeadersImpl("update-aggregate-stats");
+		model = ListingFacade.instance().updateAllAggregateStatistics();
 		return headers;
 	}
-	
+
+    private HttpHeaders updateListingStats(HttpServletRequest request) {
+        HttpHeaders headers = new HttpHeadersImpl("update-listing-stats");
+        model = ListingFacade.instance().updateAllListingStatistics();
+        return headers;
+    }
+
+    private HttpHeaders updateListingDocs(HttpServletRequest request) {
+        HttpHeaders headers = new HttpHeadersImpl("update-listing-docs");
+        model = ListingFacade.instance().updateAllListingDocuments();
+        return headers;
+    }
+
 	@Override
 	public Object getModel() {
 		return model;

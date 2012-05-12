@@ -45,6 +45,8 @@ public class ListingStats extends BaseObject {
 	public long numberOfComments;
 	public long numberOfBids;
 	public long numberOfMonitors;
+    public long numberOfQuestions;
+    public long numberOfMessages;
 	public double score;
 	
 	public String getWebKey() {

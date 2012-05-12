@@ -55,6 +55,7 @@ public class SetupServlet extends HttpServlet {
 		
 		try {
 			out.println("<html><head><title>StartupBidder setup page</title></head><body>");
+            out.println("<h1>User Info</h1>");
 			out.println("<p>Hello, " + user.getNickname() + " ..................................");
 			out.println("<a href=\"" + userService.createLogoutURL("/hello") + "\">logout</a></p>");
 			
@@ -66,20 +67,44 @@ public class SetupServlet extends HttpServlet {
 			//	out.println("<p>You're not authorized to use setup page! Only Admin users can access this page! </p>");
 			//	return;
 			//}
-			
-			out.println("Mock data files will be fetched from: " + new MockDataBuilder().getTestDataPath() + "</br>");
+
+            out.println("<h1>Mock Data</h1>");
+
+            out.println("Mock data files will be fetched from: " + new MockDataBuilder().getTestDataPath() + "</br>");
 			
 			out.println("<form method=\"POST\" action=\"/system/create-mock-datastore/.html\">"
 					+ "<input type=\"submit\" value=\"Recreate mock datastore\"/></form>");
 
+
+            out.println("<h1>Statistics</h1>");
+
+            out.println("<form method=\"POST\" action=\"/cron/update-aggregate-stats/.html\">"
+                    + "<input type=\"submit\" value=\"Update all aggregate stats\"/></form>");
+
             out.println("<form method=\"POST\" action=\"/cron/update-listing-stats/.html\">"
                     + "<input type=\"submit\" value=\"Update all listings stats\"/></form>");
+
+
+            out.println("<h1>Documents</h1>");
+
+            out.println("<form method=\"POST\" action=\"/cron/update-listing-docs/.html\">"
+                    + "<input type=\"submit\" value=\"Update all listings docs\"/></form>");
+
+            out.println("<p>Google Doc credentials:</p>");
+            out.println("<form method=\"POST\" action=\"/system/set-property/.html\">"
+                    + "User: <input name=\"name\" type=\"hidden\" value=\"googledoc.user\"/><input name=\"value\" type=\"text\" value=\"" + currentUser.getEmail() + "\"/></br>"
+                    + "Password: <input name=\"name.1\" type=\"hidden\" value=\"googledoc.password\"/><input name=\"value.1\" type=\"password\" value=\"\"/></br>"
+                    + "<input type=\"submit\" value=\"Set Google Doc credentials\"/></form>");
+
+
+            out.println("<h1>Imports</h1>");
 
             out.println("<form method=\"POST\" action=\"/system/delete-geocode-cache/.html\">"
                     + "<input type=\"submit\" value=\"Delete Geocode Cache\"/></form>");
 
             out.println("<p>Startuply Startup Import:</p>");
             out.println("<form method=\"POST\" action=\"/system/import-startuply-data/.html\">"
+                    + "Max Count to Import: <input name=\"max\" type=\"text\" value=\"1000\"/></br>"
                     + "<input type=\"submit\" value=\"Import Data\"/></form>");
 
             out.println("<p>Startuply Delete Cache:</p>");
@@ -101,11 +126,8 @@ public class SetupServlet extends HttpServlet {
             out.println("<form method=\"POST\" action=\"/system/delete-angellist-cache/.html\">"
                     + "<input type=\"submit\" value=\"Delete Full AngelList Cache\"/></form>");
 
-			out.println("<p>Google Doc credentials:</p>");
-			out.println("<form method=\"POST\" action=\"/system/set-property/.html\">"
-					+ "User: <input name=\"name\" type=\"hidden\" value=\"googledoc.user\"/><input name=\"value\" type=\"text\" value=\"" + currentUser.getEmail() + "\"/></br>"
-					+ "Password: <input name=\"name.1\" type=\"hidden\" value=\"googledoc.password\"/><input name=\"value.1\" type=\"password\" value=\"\"/></br>"
-					+ "<input type=\"submit\" value=\"Set Google Doc credentials\"/></form>");
+
+            out.println("<h1>System Settings</h1>");
 
 			out.println("<p>Set system property:</p>");
 			out.println("<form method=\"POST\" action=\"/system/set-property/.html\">"
