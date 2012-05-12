@@ -376,11 +376,21 @@ pl.implement(ListClass, {
         var htmlCol1 = '',
             i,
             item,
+            name,
+            count,
             itemurl;
         for (i = 0; i < list.length; i++) {
             item = list[i];
-            itemurl = '/main-page.html?type=' + this.options.type + '&amp;val=' + encodeURIComponent(item);
-            htmlCol1 += '<a href="' + itemurl + '" class="hoverlink"><li>'+item+'</li></a>';
+            name = item[0];
+            count = item[1];
+            itemurl = '/main-page.html?type=' + this.options.type + '&amp;val=' + encodeURIComponent(name);
+            htmlCol1 +=
+                 '<a href="' + itemurl + '" class="hoverlink">'
+                +   '<li>'
+                +     '<span class="sideboxlistnum span-1">' + count + '</span>'
+                +     '<span class="sideboxlistname last">' + name + '</span>'
+                +   '</li>'
+                + '</a>';
         }
         pl(divcol1).html(htmlCol1);
     },
@@ -410,14 +420,21 @@ pl.implement(BaseListClass, {
             v;
         for (k in self.kvlist) {
             v = self.kvlist[k];
-            list.push(k); // ignore v for now
+            list.push([k, v]);
         }
-        list.sort();
+        list.sort(function(a, b) {
+            if (a[1] === b[1]) {
+                return a[0] - b[0];
+            }
+            else {
+                return b[1] - a[1];
+            }
+        });
         if (self.over === 2) {
             lc.spreadOverTwoCols(list, '#'+self.col1id, '#'+self.col2id);
         }
         else {
-            lc.spreadOverOneCol(list, '#'+self.col1id, type);
+            lc.spreadOverOneCol(list, '#'+self.col1id, this.type);
         }
     }
 });

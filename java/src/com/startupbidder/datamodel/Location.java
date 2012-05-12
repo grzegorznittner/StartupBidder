@@ -45,12 +45,11 @@ public class Location extends BaseObject {
 	}
 	
 	public static class TopComparator implements Comparator<Location> {
-		@Override
 		public int compare(Location o1, Location o2) {
 			if (o1.value < o2.value) {
-				return -1;
-			} else if (o1.value > o2.value) {
 				return 1;
+			} else if (o1.value > o2.value) {
+				return -1;
 			} else {
 				return 0;
 			}

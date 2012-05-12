@@ -399,9 +399,11 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .sidebox p { margin: 5px 10px 10px 10px; text-indent: 0px; font-weight: normal; }
 .sideboxcol1 { width: 146px; float: left; margin-right: 10px; }
 .sideboxcol2 { width: 142px; float: left; }
+.sideboxcolfull { width: 292px; float: left; margin-right: 10px; }
 .sideboxlist { list-style: none; list-style-position: inside; margin: 0; padding: 0; font-weight: bold; }
 .sideboxlist li { margin-left: 10px; text-indent: -10px; }
-/* .sideboxlist li:hover { opacity: 0.7 } */
+.sideboxlistnum { font-size: 18px; line-height: 27px; clear: both; }
+.sideboxlistname { line-height: 27px; }
 .sideboxbutton { width: 310px; height: 50px; font-size: 34px; font-weight: bold; text-align: center; margin-bottom: 10px; }
 .sideboxbuttonsmall { width: 150px; height: 30px; font-size: 20px; }
 .sideboxbuttoninterior { width: 292px; height: 50px; font-size: 34px; font-weight: bold; text-align: center; margin: 0 5px 5px 5px; }

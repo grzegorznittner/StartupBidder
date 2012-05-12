@@ -1435,8 +1435,10 @@ public class ObjectifyDatastoreDAO {
 	}
 
 	public void storeLocations(List<Location> locations) {
+        log.info("Storing locations: " + locations);
 		Collections.sort(locations, new Location.TopComparator());
 		List<Location> topLocations = locations.subList(0, locations.size() > 20 ? 20 : locations.size() - 1);
+        log.info("Top locations: " + topLocations);
 		
 		QueryResultIterable<Key<Location>> locIt = getOfy().query(Location.class).fetchKeys();
 		getOfy().delete(locIt);

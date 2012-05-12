@@ -22,11 +22,8 @@
     <div class="boxtitle">LOCATIONS</div>
     <div class="sidebox">
         <span class="attention" id="locationmsg"></span>
-        <span class="sideboxcol1 clear">
+        <span class="sideboxcolfull clear">
             <ul class="sideboxlist" id="locationdivcol1"></ul>
-        </span>
-        <span class="sideboxcol2">
-            <ul class="sideboxlist" id="locationdivcol2"></ul>
         </span>
     </div>
 </div> <!-- end right column -->
