@@ -1328,49 +1328,81 @@ public class ListingFacade {
         return getListingNotifications(loggedInUser, listingId, notifProperties, includeTypes);
     }  
     
-	private NotificationListVO getListingNotifications(UserVO loggedInUser, String listingId, ListPropertiesVO notifProperties, Notification.Type[] includeTypes) {
-		NotificationListVO list = new NotificationListVO();
-		Listing listing = getDAO().getListing(BaseVO.toKeyId(listingId));
-		if (listing == null) {
-			list.setErrorCode(ErrorCodes.DATASTORE_ERROR);
-			list.setErrorMessage("Listing doesn't exist!");
-			log.log(Level.WARNING, "Listing '" + listingId + "' doesn't exist in datastore.");
-			return list;
-		}
-		List<Notification> notifications = getDAO().getAllListingNotifications(BaseVO.toKeyId(listingId), notifProperties);
+    private NotificationListVO getListingNotifications(UserVO loggedInUser, String listingId, ListPropertiesVO notifProperties, Notification.Type[] includeTypes) {
+        NotificationListVO list = new NotificationListVO();
+        Listing listing = getDAO().getListing(BaseVO.toKeyId(listingId));
+        if (listing == null) {
+            list.setErrorCode(ErrorCodes.DATASTORE_ERROR);
+            list.setErrorMessage("Listing doesn't exist!");
+            log.log(Level.WARNING, "Listing '" + listingId + "' doesn't exist in datastore.");
+            return list;
+        }
+        List<Notification> notifications = getDAO().getAllListingNotifications(BaseVO.toKeyId(listingId), notifProperties);
 
         Map<Notification.Type, Boolean> includeMap = new HashMap<Notification.Type, Boolean>();
         for (Notification.Type includeType : includeTypes) {
             includeMap.put(includeType, true);
         }
-        
-		//boolean isListingOwner = loggedInUser != null && loggedInUser.toKeyId() == listing.owner.getId();
-		List<NotificationVO> filteredNotif = new ArrayList<NotificationVO>();
-		int num = notifProperties.getStartIndex() > 0 ? notifProperties.getStartIndex() : 1;
-		for (Notification notification : notifications) {
-            boolean isApplicable = notification.type != null && includeMap.containsKey(notification.type) && includeMap.get(notification.type);
-            if (notification.type == Notification.Type.PRIVATE_MESSAGE) { // special case, hide appropriately
-                boolean authorOrAddresee = loggedInUser != null && notification.fromUser != null
-                        && (notification.fromUser.getId() == loggedInUser.toKeyId() || notification.user.getId() == loggedInUser.toKeyId());
-                if (!authorOrAddresee) { // isListingOwner never matters here
-                    isApplicable = false;
+
+        // we need a map for fast lookup
+        Map<String, Notification> notificationMap = new HashMap<String, Notification>();
+        for (Notification notification : notifications) {
+            notificationMap.put(notification.getWebKey(), notification);
+        }
+
+        // for child inquiries
+        Map<Key<Notification>, List<Notification>> notificationChildren = new HashMap<Key<Notification>, List<Notification>>();
+        for (Notification notification : notifications) {
+            Key<Notification> parentKey = notification.parentNotification;
+            if (parentKey != null) {
+                List<Notification> children = notificationChildren.get(parentKey);
+                if (children == null) { // lazy initialization
+                    children = new ArrayList<Notification>();
+                    notificationChildren.put(parentKey, children);
                 }
+                children.add(notification);
             }
+        }
+
+        //boolean isListingOwner = loggedInUser != null && loggedInUser.toKeyId() == listing.owner.getId();
+        List<NotificationVO> filteredNotif = new ArrayList<NotificationVO>();
+        int num = notifProperties.getStartIndex() > 0 ? notifProperties.getStartIndex() : 1;
+        for (Notification notification : notifications) {
+            boolean isCorrectNotificationType = notification.type != null && includeMap.containsKey(notification.type) && includeMap.get(notification.type);
+            if (!isCorrectNotificationType) {
+                continue;
+            }
+
+            /* feeder booleans */
+            boolean authorOrAddresee = loggedInUser != null && notification.fromUser != null
+                    && (notification.fromUser.getId() == loggedInUser.toKeyId() || notification.user.getId() == loggedInUser.toKeyId());
+            boolean isQuestionType = notification.type == Notification.Type.ASK_LISTING_OWNER;
+            boolean isMessageType = notification.type == Notification.Type.PRIVATE_MESSAGE;
+            boolean hasQuestion = notification.parentNotification != null;
+            boolean hasAnswer = notificationChildren.get(new Key<Notification>(Notification.class, notification.id)) != null;
+
+            /* notify categories */
+            boolean isPublicQuestion = isQuestionType && (hasQuestion || hasAnswer);
+            boolean isPrivateQuestion = isQuestionType && authorOrAddresee;
+            boolean isPrivateMessage = isMessageType && authorOrAddresee;
+
+            /* final calculation */
+            boolean isApplicable = isPublicQuestion || isPrivateQuestion || isPrivateMessage;
             if (isApplicable) {
                 NotificationVO notifVO = DtoToVoConverter.convert(notification);
                 notifVO.setOrderNumber(num++);
                 filteredNotif.add(notifVO);
             }
-		}
-		notifProperties.setTotalResults(notifications.size());
-		list.setNotifications(filteredNotif);
-		list.setNotificationsProperties(notifProperties);
-		if (loggedInUser != null) {
+        }
+        notifProperties.setTotalResults(notifications.size());
+        list.setNotifications(filteredNotif);
+        list.setNotificationsProperties(notifProperties);
+        if (loggedInUser != null) {
             list.setUser(new UserBasicVO(loggedInUser));
         }
-		
-		return list;
-	}
+
+        return list;
+    }
 
     public String updateAllAggregateStatistics() {
         List<Category> c = getDAO().getCategories();

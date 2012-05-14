@@ -36,10 +36,24 @@ pl.implement(RemarkClass, {
         self.ajax.call();
     },
     store: function(json) {
-        var self = this;
-        self.remarklist = json[self.getproperty] || [];
+        var self = this,
+            remark,
+            parent_id,
+            i;
         self.loggedin_profile = json.loggedin_profile;
         self.loggedin_profile_id = self.loggedin_profile ? self.loggedin_profile.profile_id : null;
+        self.remarklist = json[self.getproperty] || [];
+        self.remarkChildren = {};
+        for (i = 0; i < self.remarklist.length; i++) {
+            remark = self.remarklist[i];
+            parent_id = remark.parent_notify_id;
+            if (parent_id) {
+                if (!self.remarkChildren[parent_id]) { // lazy init
+                    self.remarkChildren[parent_id] = [];
+                }
+                self.remarkChildren[parent_id].push(remark);
+            }
+        }
     },
     display: function() {
         var self = this;
@@ -152,9 +166,14 @@ pl.implement(RemarkClass, {
         }
         for (i = 0; i < self.remarklist.length; i++) {
             remark = self.remarklist[i];
-            islistingowner = self.loggedin_profile_id && (self.loggedin_profile_id === remark.listing_owner);
-            deletable = (remark.profile_id === self.loggedin_profile_id) && self.type !== 'message';
-            replyable = self.loggedin_profile_id && remark.user_id && self.loggedin_profile_id === remark.user_id;
+            islistingowner = self.loggedin_profile_id && self.loggedin_profile_id === remark.listing_owner;
+            deletable = self.type === 'comment' && remark.profile_id === self.loggedin_profile_id;
+            isaddressedtome = self.loggedin_profile_id && remark.user_id && self.loggedin_profile_id === remark.user_id;
+            ischild = remark.parent_notify_id;
+            hasreply = self.remarkChildren[remark.notify_id];
+            isreplyablequestion = self.type === 'qanda' && isaddressedtome && islistingowner && !ischild && !hasreply;
+            isreplyablemessage = self.type === 'message' && isaddressedtome;
+            replyable = isreplyablequestion || isreplyablemessage;
             html += self.makeRemark(remark, deletable, replyable);
             bindlist.push([remark, deletable, replyable]);
         }

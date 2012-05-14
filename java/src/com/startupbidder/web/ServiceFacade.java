@@ -458,10 +458,10 @@ public class ServiceFacade {
 		notification.sentDate = null;
 		notification = getDAO().storeNotification(notification);
         if (notification.type == Notification.Type.ASK_LISTING_OWNER) {
-            ListingFacade.instance().scheduleUpdateOfListingStatistics(notification.listing.toString(), UpdateReason.NEW_QUESTION_REPLY);
+            ListingFacade.instance().scheduleUpdateOfListingStatistics(notification.listing.getString(), UpdateReason.NEW_QUESTION_REPLY);
         }
         else if (notification.type == Notification.Type.PRIVATE_MESSAGE) {
-            ListingFacade.instance().scheduleUpdateOfListingStatistics(notification.listing.toString(), UpdateReason.NEW_MESSAGE_REPLY);
+            ListingFacade.instance().scheduleUpdateOfListingStatistics(notification.listing.getString(), UpdateReason.NEW_MESSAGE_REPLY);
         }
 		if (notification != null) {
 			String taskName = timeStampFormatter.print(new Date().getTime()) + "send_notification_" + notification.type + "_" + notification.user.getId();
