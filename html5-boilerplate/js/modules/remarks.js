@@ -158,6 +158,7 @@ pl.implement(RemarkClass, {
             islistingowner,
             replyable,
             deletesel,
+            firstchild,
             bindlist = [];
         pl('#'+self.numremarksid).text(self.remarklist.length);
         if (self.remarklist.length === 0) {
@@ -170,10 +171,19 @@ pl.implement(RemarkClass, {
             deletable = self.type === 'comment' && remark.profile_id === self.loggedin_profile_id;
             isaddressedtome = self.loggedin_profile_id && remark.user_id && self.loggedin_profile_id === remark.user_id;
             ischild = remark.parent_notify_id;
-            hasreply = self.remarkChildren[remark.notify_id];
+            hasreply = self.remarkChildren[remark.notify_id] ? true : false;
             isreplyablequestion = self.type === 'qanda' && isaddressedtome && islistingowner && !ischild && !hasreply;
             isreplyablemessage = self.type === 'message' && isaddressedtome;
             replyable = isreplyablequestion || isreplyablemessage;
+            if (remark.notify_type === 'ask_listing_owner' && hasreply && !remark.answer) { // FIXME: merge questions
+                firstchild = self.remarkChildren[remark.notify_id][0];
+                remark.answer = firstchild.text_2;
+                remark.answer_date = firstchild.create_date;
+                replyable = false;
+            }
+            if (remark.notify_type === 'ask_listing_owner' && ischild) { // FIXME: don't display
+                continue;
+            }
             html += self.makeRemark(remark, deletable, replyable);
             bindlist.push([remark, deletable, replyable]);
         }
@@ -228,6 +238,9 @@ pl.implement(RemarkClass, {
                     <span class="span-3 inputbutton" id="' + self.type + '_replysendbtn_' + remarkid + '">SEND</span>\
                 </div>\
             ' : '';
+            if (remark.notify_type === 'ask_listing_owner' && !replyable && remark.answer) {
+                remarktext += '<p style="font-weight:bold;">Answered by ' + remark.user_nickname + ' on ' + DateClass.prototype.format(remark.create_date) + ':</p><p style="font-weight:normal;">' + remark.answer + '</p>';
+            }
         return '\
 <dt id="' + self.type + '_' + remarkid + '">\
     <div class="remarkdttitle">\
