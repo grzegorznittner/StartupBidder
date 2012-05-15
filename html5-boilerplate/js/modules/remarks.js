@@ -239,7 +239,7 @@ pl.implement(RemarkClass, {
                 </div>\
             ' : '';
             if (remark.notify_type === 'ask_listing_owner' && !replyable && remark.answer) {
-                remarktext += '<p style="font-weight:bold;">Answered by ' + remark.user_nickname + ' on ' + DateClass.prototype.format(remark.create_date) + ':</p><p style="font-weight:normal;">' + remark.answer + '</p>';
+                remarktext += '<p style="font-weight:bold;">Answered by ' + remark.user_nickname + ' on ' + DateClass.prototype.format(remark.answer_date) + ':</p><p style="font-weight:normal;">' + remark.answer + '</p>';
             }
         return '\
 <dt id="' + self.type + '_' + remarkid + '">\
