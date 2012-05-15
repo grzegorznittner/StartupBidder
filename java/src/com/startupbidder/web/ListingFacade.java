@@ -29,8 +29,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.math.RandomUtils;
 import org.joda.time.DateMidnight;
-import org.joda.time.DateTime;
-import org.joda.time.Days;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
@@ -898,7 +896,7 @@ public class ListingFacade {
 		props = new ListPropertiesVO();
 		props.setMaxResults(10);
 		List<NotificationVO> notifications = DtoToVoConverter.convertNotifications(
-				getDAO().getAllUserNotification(loggedInUser.toKeyId(), props));
+				getDAO().getAllUserNotifications(loggedInUser.toKeyId(), props));
 		result.setNotifications(notifications);
 		
 		if (loggedInUser.isAdmin()) {
@@ -1106,7 +1104,7 @@ public class ListingFacade {
 		ListPropertiesVO notifProperties = new ListPropertiesVO();
 		notifProperties.setMaxResults(5);
 		notifications = DtoToVoConverter.convertNotifications(
-				getDAO().getAllUserNotification(loggedInUser.toKeyId(), notifProperties));
+				getDAO().getAllUserNotifications(loggedInUser.toKeyId(), notifProperties));
 		int num = 1;
 		for (NotificationVO notification : notifications) {
 			notification.setOrderNumber(num++);
@@ -1119,7 +1117,7 @@ public class ListingFacade {
 		ListPropertiesVO notifProperties = new ListPropertiesVO();
 		notifProperties.setMaxResults(5);
 		notifications = DtoToVoConverter.convertNotifications(
-				getDAO().getAllUserNotification(loggedInUser.toKeyId(), notifProperties));
+				getDAO().getAllUserNotifications(loggedInUser.toKeyId(), notifProperties));
 		int num = 1;
 		for (NotificationVO notification : notifications) {
 			notification.setOrderNumber(num++);
@@ -1319,16 +1317,14 @@ public class ListingFacade {
 	}
 
     public NotificationListVO getListingPrivateMessages(UserVO loggedInUser, String listingId, ListPropertiesVO notifProperties) {
-        Notification.Type[] includeTypes = { Notification.Type.PRIVATE_MESSAGE };
-        return getListingNotifications(loggedInUser, listingId, notifProperties, includeTypes);
+        return getListingNotifications(loggedInUser, listingId, notifProperties, Notification.Type.PRIVATE_MESSAGE);
     }
 
     public NotificationListVO getListingQuestionsAndAnswers(UserVO loggedInUser, String listingId, ListPropertiesVO notifProperties) {
-        Notification.Type[] includeTypes = { Notification.Type.ASK_LISTING_OWNER };
-        return getListingNotifications(loggedInUser, listingId, notifProperties, includeTypes);
-    }  
+        return getListingNotifications(loggedInUser, listingId, notifProperties, Notification.Type.ASK_LISTING_OWNER);
+    }
     
-    private NotificationListVO getListingNotifications(UserVO loggedInUser, String listingId, ListPropertiesVO notifProperties, Notification.Type[] includeTypes) {
+    private NotificationListVO getListingNotifications(UserVO loggedInUser, String listingId, ListPropertiesVO notifProperties, Notification.Type includeType) {
         NotificationListVO list = new NotificationListVO();
         Listing listing = getDAO().getListing(BaseVO.toKeyId(listingId));
         if (listing == null) {
@@ -1337,65 +1333,15 @@ public class ListingFacade {
             log.log(Level.WARNING, "Listing '" + listingId + "' doesn't exist in datastore.");
             return list;
         }
-        List<Notification> notifications = getDAO().getAllListingNotifications(BaseVO.toKeyId(listingId), notifProperties);
-
-        Map<Notification.Type, Boolean> includeMap = new HashMap<Notification.Type, Boolean>();
-        for (Notification.Type includeType : includeTypes) {
-            includeMap.put(includeType, true);
+        List<Notification> notifications = null;
+        if (loggedInUser == null) {
+        	notifications = getDAO().getPublicListingNotifications(BaseVO.toKeyId(listingId), notifProperties);
+        } else {
+        	notifications = getDAO().getUserListingNotifications(loggedInUser.toKeyId(), BaseVO.toKeyId(listingId), includeType, notifProperties);
         }
-
-        // we need a map for fast lookup
-        Map<String, Notification> notificationMap = new HashMap<String, Notification>();
-        for (Notification notification : notifications) {
-            notificationMap.put(notification.getWebKey(), notification);
-        }
-
-        // for child inquiries
-        Map<Key<Notification>, List<Notification>> notificationChildren = new HashMap<Key<Notification>, List<Notification>>();
-        for (Notification notification : notifications) {
-            Key<Notification> parentKey = notification.parentNotification;
-            if (parentKey != null) {
-                List<Notification> children = notificationChildren.get(parentKey);
-                if (children == null) { // lazy initialization
-                    children = new ArrayList<Notification>();
-                    notificationChildren.put(parentKey, children);
-                }
-                children.add(notification);
-            }
-        }
-
-        //boolean isListingOwner = loggedInUser != null && loggedInUser.toKeyId() == listing.owner.getId();
-        List<NotificationVO> filteredNotif = new ArrayList<NotificationVO>();
-        int num = notifProperties.getStartIndex() > 0 ? notifProperties.getStartIndex() : 1;
-        for (Notification notification : notifications) {
-            boolean isCorrectNotificationType = notification.type != null && includeMap.containsKey(notification.type) && includeMap.get(notification.type);
-            if (!isCorrectNotificationType) {
-                continue;
-            }
-
-            /* feeder booleans */
-            boolean authorOrAddresee = loggedInUser != null && notification.fromUser != null
-                    && (notification.fromUser.getId() == loggedInUser.toKeyId() || notification.user.getId() == loggedInUser.toKeyId());
-            boolean isQuestionType = notification.type == Notification.Type.ASK_LISTING_OWNER;
-            boolean isMessageType = notification.type == Notification.Type.PRIVATE_MESSAGE;
-            boolean hasQuestion = notification.parentNotification != null;
-            boolean hasAnswer = notificationChildren.get(new Key<Notification>(Notification.class, notification.id)) != null;
-
-            /* notify categories */
-            boolean isPublicQuestion = isQuestionType && (hasQuestion || hasAnswer);
-            boolean isPrivateQuestion = isQuestionType && authorOrAddresee;
-            boolean isPrivateMessage = isMessageType && authorOrAddresee;
-
-            /* final calculation */
-            boolean isApplicable = isPublicQuestion || isPrivateQuestion || isPrivateMessage;
-            if (isApplicable) {
-                NotificationVO notifVO = DtoToVoConverter.convert(notification);
-                notifVO.setOrderNumber(num++);
-                filteredNotif.add(notifVO);
-            }
-        }
+        
         notifProperties.setTotalResults(notifications.size());
-        list.setNotifications(filteredNotif);
+        list.setNotifications(DtoToVoConverter.convertNotifications(notifications));
         list.setNotificationsProperties(notifProperties);
         if (loggedInUser != null) {
             list.setUser(new UserBasicVO(loggedInUser));

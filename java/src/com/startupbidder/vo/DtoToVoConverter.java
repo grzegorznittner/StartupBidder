@@ -265,11 +265,19 @@ public class DtoToVoConverter {
 		}
 		NotificationVO notif = new NotificationVO();
 		notif.setId(new Key<Notification>(Notification.class, notifDTO.id).getString());
-        notif.setUser(notifDTO.user.getString());
-        notif.setUserNickname(notifDTO.userNickname);
-        notif.setFromUser(notifDTO.fromUser != null ? notifDTO.fromUser.getString() : null);
-        notif.setFromUserNickname(notifDTO.fromUserNickname);
-        notif.setParentNotification(notifDTO.parentNotification != null ? notifDTO.parentNotification.getString() : null);
+		if (notifDTO.direction == Notification.Direction.A_TO_B) {
+			notif.setUser(notifDTO.userB.getString());
+			notif.setUserNickname(notifDTO.userBNickname);
+			notif.setFromUser(notifDTO.userA != null ? notifDTO.userA.getString() : null);
+			notif.setFromUserNickname(notifDTO.userANickname);
+		} else {
+			notif.setUser(notifDTO.userA.getString());
+			notif.setUserNickname(notifDTO.userANickname);
+			notif.setFromUser(notifDTO.userB != null ? notifDTO.userB.getString() : null);
+			notif.setFromUserNickname(notifDTO.userBNickname);
+		}
+		notif.setParentNotification(notifDTO.parentNotification != null ? notifDTO.parentNotification.getString() : null);
+		notif.setContextNotificationId(new Key<Notification>(Notification.class, notifDTO.context).getString());
 		notif.setCreated(notifDTO.created);
 		notif.setSentDate(notifDTO.sentDate);
 		notif.setListing(notifDTO.listing != null ? notifDTO.listing.getString() : null);
@@ -280,7 +288,9 @@ public class DtoToVoConverter {
 		notif.setListingBriefAddress(notifDTO.listingBriefAddress);
 		notif.setType(notifDTO.type.toString());
 		notif.setRead(notifDTO.read);
+		notif.setReplied(notifDTO.replied);
 		String listingLink = notif.getLink();
+		String fromUserNickname = notifDTO.direction == Notification.Direction.A_TO_B ? notifDTO.userANickname : notifDTO.userBNickname;
 		switch(notifDTO.type) {
 		case NEW_COMMENT_FOR_MONITORED_LISTING:
 			notif.setTitle("New comment for listing " + notifDTO.listingName);
@@ -299,26 +309,32 @@ public class DtoToVoConverter {
 			break;
 		case ASK_LISTING_OWNER:
             if (notif.getParentNotification() == null) {
-			    notif.setTitle("A question from " + notifDTO.fromUserNickname + " concerning listing " + notifDTO.listingName);
-                notif.setText1("Question about listing " + notifDTO.listingName + " has been posted by " + notifDTO.fromUserNickname + ":");
-                notif.setText2(notifDTO.message);
-            }
-            else {
-                notif.setTitle("Received reply concerning question for listing " + notifDTO.listingName + " from " + notifDTO.fromUserNickname);
-                notif.setText1("Reply concerning listing " + notifDTO.listingName + " has been posted by " + notifDTO.fromUserNickname + ":");
-                notif.setText2(notifDTO.message);
+			    notif.setTitle("A question from " + fromUserNickname + " concerning listing " + notifDTO.listingName);
+                notif.setText1("Question about listing " + notifDTO.listingName + " has been posted by " + fromUserNickname + ":");
+            } else {
+                notif.setTitle("Received reply concerning question for listing " + notifDTO.listingName + " from " + fromUserNickname);
+                notif.setText1("Reply concerning listing " + notifDTO.listingName + " has been posted by " + fromUserNickname + ":");
             }
 			notif.setText3("Please visit <a href=\"" + listingLink + "\">company's page at startupbidder.com</a>.");
+			if (StringUtils.isEmpty(notif.getParentNotification())) {
+				// it's question
+				notif.setText2(notifDTO.message);
+			} else {
+				// it's answer
+				notif.setText2(notifDTO.question);
+				notif.setCreated(notifDTO.questionDate);
+				notif.setAnswer(notifDTO.message); // setting answer
+				notif.setAnswerDate(notifDTO.created);
+			}
 			break;
 		case PRIVATE_MESSAGE:
             if (notif.getParentNotification() == null) {
-			    notif.setTitle("Private message from " + notifDTO.fromUserNickname + " concerning listing " + notifDTO.listingName );
-			    notif.setText1("Private message from user " + notifDTO.fromUserNickname + ":");
+			    notif.setTitle("Private message from " + fromUserNickname + " concerning listing " + notifDTO.listingName );
+			    notif.setText1("Private message from user " + fromUserNickname + ":");
 			    notif.setText2(notifDTO.message);
-            }
-            else {
-                notif.setTitle("Received reply concerning private message for listing " + notifDTO.listingName + " from " + notifDTO.fromUserNickname);
-                notif.setText1("Private reply concerning listing " + notifDTO.listingName + " has been posted by " + notifDTO.fromUserNickname + ":");
+            } else {
+                notif.setTitle("Received reply concerning private message for listing " + notifDTO.listingName + " from " + fromUserNickname);
+                notif.setText1("Private reply concerning listing " + notifDTO.listingName + " has been posted by " + fromUserNickname + ":");
                 notif.setText2(notifDTO.message);
             }
             notif.setText3("Please visit <a href=\"" + listingLink + "\">company's page at startupbidder.com</a>.");

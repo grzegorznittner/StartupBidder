@@ -317,7 +317,8 @@ public class ObjectifyDatastoreDAO {
         int numQuestions = 0;
         int numMessages = 0;
         ListPropertiesVO props = new ListPropertiesVO();
-        List<NotificationVO> notifications = DtoToVoConverter.convertNotifications(getAllListingNotifications(listingId, props));
+        props.setMaxResults(1000);
+        List<NotificationVO> notifications = DtoToVoConverter.convertNotifications(getPublicListingNotifications(listingId, props));
         for (NotificationVO notification : notifications) {
             Notification.Type type = Notification.Type.valueOf(notification.getType());
             if (type == Notification.Type.ASK_LISTING_OWNER) {
@@ -1250,62 +1251,119 @@ public class ObjectifyDatastoreDAO {
 		getOfy().delete(ListingDoc.class, docId);
 	}
 
-	public Notification storeNotification(Notification notification) {
-		getOfy().put(notification);
-        updateUserStatistics(notification.user.getId());
-		return notification;
-	}
-
-	public Notification markNotificationAsRead(long userId, long listingId) {
-		Notification notification = getOfy().query(Notification.class)
-				.filter("user =", new Key<SBUser>(SBUser.class, userId))
-				.filter("listing =", new Key<Listing>(Listing.class, listingId))
-				.filter("read =", Boolean.FALSE).get();
-		if (notification == null) {
-			return null;
+	public Notification[] storeNotification(Notification ...notifications) {
+		getOfy().put(notifications);
+		for (Notification notif : notifications) {
+			updateUserStatistics(notif.userA.getId());
 		}
-		notification.read = true;
-		getOfy().put(notification);
-        updateUserStatistics(notification.user.getId());
-		return notification;
+        return notifications;
 	}
 
-	public List<Notification> getUnreadNotifications(long userId, long listingId) {
-		QueryResultIterable<Key<Notification>> notIt = getOfy().query(Notification.class)
-				.filter("user =", new Key<SBUser>(SBUser.class, userId))
+	public List<Notification> markNotificationAsRead(long userId, long listingId) {
+		QueryResultIterable<Notification> notifIt = getOfy().query(Notification.class)
+				.filter("userA =", new Key<SBUser>(SBUser.class, userId))
 				.filter("listing =", new Key<Listing>(Listing.class, listingId))
-				.filter("read =", Boolean.FALSE).fetchKeys();
-		List<Notification> nots = new ArrayList<Notification>(getOfy().get(notIt).values());
-		return nots;
+				.filter("read =", Boolean.FALSE).fetch();
+		List<Notification> updateList = new ArrayList<Notification>();
+		for (Notification notif : notifIt) {
+			notif.read = true;
+			updateList.add(notif);
+		}
+		if (updateList.size() > 0) {
+			getOfy().put(updateList);
+			// since all notification belong to one user we just need to update his/her statistics
+			updateUserStatistics(userId);
+		}
+		return updateList;
 	}
 
-	public List<Notification> getUserNotification(long userId, ListPropertiesVO notificationProperties) {
-		QueryResultIterable<Key<Notification>> notIt = getOfy().query(Notification.class)
-				.filter("user =", new Key<SBUser>(SBUser.class, userId))
+	private List<Key<Notification>> handleCursorForNotificationQuery(ListPropertiesVO listProperties, Query<Notification> query) {
+		if (StringUtils.isNotEmpty(listProperties.getNextCursor())) {
+			log.info("Starting query from cursor: " + listProperties.getNextCursor());
+			query.startCursor(Cursor.fromWebSafeString(listProperties.getNextCursor()));
+			listProperties.setPrevCursor(listProperties.getNextCursor());
+		}
+		QueryResultIterator<Key<Notification>> monitors = query.fetchKeys().iterator();
+		
+		List<Key<Notification>> keyList = new ArrayList<Key<Notification>>();
+		while (monitors.hasNext()) {
+			keyList.add(monitors.next());
+			if (keyList.size() >= listProperties.getMaxResults()) {
+				if (monitors.hasNext()) {
+					listProperties.setNextCursor(monitors.getCursor().toWebSafeString());
+					listProperties.setNumberOfResults(keyList.size());
+					listProperties.updateMoreResultsUrl();
+				}
+				break;
+			}
+		}
+		listProperties.setNumberOfResults(keyList.size());
+		return keyList;
+	}
+
+	public List<Notification> getUnreadNotifications(long userId, long listingId, ListPropertiesVO listProperties) {
+		Query<Notification> query = getOfy().query(Notification.class)
+				.filter("userA =", new Key<SBUser>(SBUser.class, userId))
+				.filter("listing =", new Key<Listing>(Listing.class, listingId))
 				.filter("read =", Boolean.FALSE)
-				.order("-created").fetchKeys();
-		List<Notification> nots = new ArrayList<Notification>(getOfy().get(notIt).values());
+				.order("-created")
+				.chunkSize(listProperties.getMaxResults())
+       			.prefetchSize(listProperties.getMaxResults());
+		List<Key<Notification>> keyList = handleCursorForNotificationQuery(listProperties, query);
+		List<Notification> nots = new ArrayList<Notification>(getOfy().get(keyList).values());
 		return nots;
 	}
 
-	public List<Notification> getAllUserNotification(long userId, ListPropertiesVO notificationProperties) {
-		QueryResultIterable<Key<Notification>> notIt = getOfy().query(Notification.class)
-				.filter("user =", new Key<SBUser>(SBUser.class, userId))
+	public List<Notification> getAllUserNotifications(long userId, ListPropertiesVO listProperties) {
+		Query<Notification> query = getOfy().query(Notification.class)
+				.filter("userA =", new Key<SBUser>(SBUser.class, userId))
 				.order("read")
 				.order("-created")
-                .limit(notificationProperties.getMaxResults())
-                .chunkSize(notificationProperties.getMaxResults())
-                .fetchKeys();
-		List<Notification> nots = new ArrayList<Notification>(getOfy().get(notIt).values());
+				.chunkSize(listProperties.getMaxResults())
+       			.prefetchSize(listProperties.getMaxResults());
+		List<Key<Notification>> keyList = handleCursorForNotificationQuery(listProperties, query);
+		List<Notification> nots = new ArrayList<Notification>(getOfy().get(keyList).values());
 		return nots;
 	}
 
-	public List<Notification> getAllListingNotifications(long listingId, ListPropertiesVO notificationProperties) {
-		QueryResultIterable<Key<Notification>> notIt = getOfy().query(Notification.class)
+	public List<Notification> getUnreadUserNotifications(long userId, ListPropertiesVO listProperties) {
+		Query<Notification> query = getOfy().query(Notification.class)
+				.filter("userA =", new Key<SBUser>(SBUser.class, userId))
+				.filter("read =", true)
+				.order("-created")
+				.chunkSize(listProperties.getMaxResults())
+       			.prefetchSize(listProperties.getMaxResults());
+		List<Key<Notification>> keyList = handleCursorForNotificationQuery(listProperties, query);
+		List<Notification> nots = new ArrayList<Notification>(getOfy().get(keyList).values());
+		return nots;
+	}
+
+	public List<Notification> getUserListingNotifications(long userId, long listingId, Notification.Type type, ListPropertiesVO listProperties) {
+		Query<Notification> query = getOfy().query(Notification.class)
+				.filter("userA =", new Key<SBUser>(SBUser.class, userId))
+				.filter("listing =", new Key<Listing>(Listing.class, listingId));
+		if (type != null) {
+			query.filter("type =", type);
+		}
+		query.order("read")
+				.order("-created")
+				.chunkSize(listProperties.getMaxResults())
+       			.prefetchSize(listProperties.getMaxResults());
+		List<Key<Notification>> keyList = handleCursorForNotificationQuery(listProperties, query);
+		List<Notification> nots = new ArrayList<Notification>(getOfy().get(keyList).values());
+		return nots;
+	}
+
+	public List<Notification> getPublicListingNotifications(long listingId, ListPropertiesVO listProperties) {
+		Query<Notification> query = getOfy().query(Notification.class)
+				.filter("direction =", Notification.Direction.A_TO_B)
 				.filter("listing =", new Key<Listing>(Listing.class, listingId))
-				.order("read")
-				.order("-created").fetchKeys();
-		List<Notification> nots = new ArrayList<Notification>(getOfy().get(notIt).values());
+				.filter("replied =", true)
+				.order("-created")
+				.chunkSize(listProperties.getMaxResults())
+       			.prefetchSize(listProperties.getMaxResults());
+		List<Key<Notification>> keyList = handleCursorForNotificationQuery(listProperties, query);
+		List<Notification> nots = new ArrayList<Notification>(getOfy().get(keyList).values());
 		return nots;
 	}
 

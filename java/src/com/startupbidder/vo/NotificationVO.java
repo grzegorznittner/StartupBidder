@@ -25,6 +25,7 @@ public class NotificationVO extends BaseVO {
 	@JsonProperty("user_nickname") private String userNickname;
     @JsonProperty("from_user_id") private String fromUser;
 	@JsonProperty("from_user_nickname") private String fromUserNickname;
+	@JsonProperty("context_notify_id") private String contextNotificationId;
     @JsonProperty("parent_notify_id") private String parentNotification;
 	@JsonProperty("listing_id")	private String listing;
 	@JsonProperty("listing_name") private String listingName;
@@ -37,10 +38,13 @@ public class NotificationVO extends BaseVO {
 	@JsonProperty("text_1") private String text1;
 	@JsonProperty("text_2") private String text2;
 	@JsonProperty("text_3") private String text3;
+	@JsonProperty("answer") private String answer;
+	@JsonProperty("answer_date") @JsonSerialize(using=DateSerializer.class) private Date answerDate;
 	
 	@JsonProperty("create_date") @JsonSerialize(using=DateSerializer.class) private Date created;
 	@JsonProperty("sent_date") @JsonSerialize(using=DateSerializer.class) private Date sentDate;
 	@JsonProperty("read") private boolean read;
+	@JsonProperty("replied") private boolean replied;
 	
 	@Override
 	public String getId() {
@@ -169,6 +173,30 @@ public class NotificationVO extends BaseVO {
     public void setParentNotification(String parentNotification) {
         this.parentNotification = parentNotification;
     }
+	public boolean isReplied() {
+		return replied;
+	}
+	public String getAnswer() {
+		return answer;
+	}
+	public void setAnswer(String answer) {
+		this.answer = answer;
+	}
+	public void setReplied(boolean replied) {
+		this.replied = replied;
+	}
+	public Date getAnswerDate() {
+		return answerDate;
+	}
+	public void setAnswerDate(Date answerDate) {
+		this.answerDate = answerDate;
+	}
+	public String getContextNotificationId() {
+		return contextNotificationId;
+	}
+	public void setContextNotificationId(String contextNotificationId) {
+		this.contextNotificationId = contextNotificationId;
+	}
 	@JsonProperty("listing_logo_url")
 	public String getListingLogoLink() {
 		return getServiceLocation() + "/listing/logo?id=" + this.listing;
