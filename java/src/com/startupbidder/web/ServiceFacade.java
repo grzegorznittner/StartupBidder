@@ -274,7 +274,9 @@ public class ServiceFacade {
 		
 		if (type == Notification.Type.NEW_COMMENT_FOR_MONITORED_LISTING || 
 				type == Notification.Type.NEW_COMMENT_FOR_YOUR_LISTING) {
-			List<Notification> notifications = getDAO().getUnreadNotifications(toUser.id, listing.id);
+			ListPropertiesVO props = new ListPropertiesVO();
+			props.setMaxResults(100);
+			List<Notification> notifications = getDAO().getUnreadNotifications(toUser.id, listing.id, props);
 			for (Notification notif : notifications) {
 				if (notif.type == Notification.Type.NEW_COMMENT_FOR_MONITORED_LISTING || 
 						notif.type == Notification.Type.NEW_COMMENT_FOR_YOUR_LISTING) {
@@ -284,9 +286,9 @@ public class ServiceFacade {
 			}
 		}
 		Notification notification = new Notification();
-		notification.user = new Key<SBUser>(SBUser.class, toUser.id);
-		notification.userEmail = toUser.email;
-		notification.userNickname = toUser.nickname;
+		notification.userA = new Key<SBUser>(SBUser.class, toUser.id);
+		notification.userAEmail = toUser.email;
+		notification.userANickname = toUser.nickname;
 		notification.listing = new Key<Listing>(Listing.class, listing.id);
 		notification.listingName = listing.name;
 		notification.listingOwner = listing.owner.getString();
@@ -298,9 +300,9 @@ public class ServiceFacade {
 		notification.read = false;
 		notification.sentDate = null;
         notification.message = comment.comment;
-		notification = getDAO().storeNotification(notification);
+		notification = getDAO().storeNotification(notification)[0];
 		if (notification != null) {
-			String taskName = timeStampFormatter.print(new Date().getTime()) + "send_notification_" + notification.type + "_" + notification.user.getId();
+			String taskName = timeStampFormatter.print(new Date().getTime()) + "send_notification_" + notification.type + "_" + notification.userA.getId();
 			Queue queue = QueueFactory.getDefaultQueue();
 			queue.add(TaskOptions.Builder.withUrl("/task/send-notification").param("id", "" + notification.getWebKey())
 					.taskName(taskName));
@@ -314,9 +316,9 @@ public class ServiceFacade {
 		SBUser toUser = getDAO().getUser(toUserId);
 		
 		Notification notification = new Notification();
-		notification.user = new Key<SBUser>(SBUser.class, toUser.id);
-		notification.userEmail = toUser.email;
-		notification.userNickname = toUser.nickname;
+		notification.userA = new Key<SBUser>(SBUser.class, toUser.id);
+		notification.userAEmail = toUser.email;
+		notification.userANickname = toUser.nickname;
 		notification.listing = new Key<Listing>(Listing.class, listing.id);
 		notification.listingName = listing.name;
 		notification.listingOwner = listing.owner.getString();
@@ -327,9 +329,9 @@ public class ServiceFacade {
 		notification.created = new Date();
 		notification.read = false;
 		notification.sentDate = null;
-		notification = getDAO().storeNotification(notification);
+		notification = getDAO().storeNotification(notification)[0];
 		if (notification != null) {
-			String taskName = timeStampFormatter.print(new Date().getTime()) + "send_notification_" + notification.type + "_" + notification.user.getId();
+			String taskName = timeStampFormatter.print(new Date().getTime()) + "send_notification_" + notification.type + "_" + notification.userA.getId();
 			Queue queue = QueueFactory.getDefaultQueue();
 			queue.add(TaskOptions.Builder.withUrl("/task/send-notification").param("id", "" + notification.getWebKey())
 					.taskName(taskName));
@@ -342,9 +344,9 @@ public class ServiceFacade {
 		SBUser toUser = getDAO().getUser(listing.owner.getString());
 		
 		Notification notification = new Notification();
-		notification.user = new Key<SBUser>(SBUser.class, toUser.id);
-		notification.userEmail = toUser.email;
-		notification.userNickname = toUser.nickname;
+		notification.userA = new Key<SBUser>(SBUser.class, toUser.id);
+		notification.userAEmail = toUser.email;
+		notification.userANickname = toUser.nickname;
 		notification.listing = new Key<Listing>(Listing.class, listing.id);
 		notification.listingName = listing.name;
 		notification.listingOwner = listing.owner.getString();
@@ -355,9 +357,9 @@ public class ServiceFacade {
 		notification.created = new Date();
 		notification.read = false;
 		notification.sentDate = null;
-		notification = getDAO().storeNotification(notification);
+		notification = getDAO().storeNotification(notification)[0];
 		if (notification != null) {
-			String taskName = timeStampFormatter.print(new Date().getTime()) + "send_notification_" + notification.type + "_" + notification.user.getId();
+			String taskName = timeStampFormatter.print(new Date().getTime()) + "send_notification_" + notification.type + "_" + notification.userA.getId();
 			Queue queue = QueueFactory.getDefaultQueue();
 			queue.add(TaskOptions.Builder.withUrl("/task/send-notification").param("id", "" + notification.getWebKey())
 					.taskName(taskName));
@@ -374,6 +376,10 @@ public class ServiceFacade {
 		}
 		
 		Listing listing = getDAO().getListing(BaseVO.toKeyId(listingId));
+		if (loggedInUser.toKeyId() == listing.owner.getId()) {
+			log.warning("User is an owner of the listing, can't ask himself/herself.");
+			return null;
+		}
 		Notification notification = createMessageNotification(loggedInUser, text, listing, notificationType);
 		return DtoToVoConverter.convert(notification);
 	}
@@ -384,8 +390,15 @@ public class ServiceFacade {
 			return null;
 		}
 		Notification originalNotification = getDAO().getNotification(BaseVO.toKeyId(messageId));
-		if (!StringUtils.equals(loggedInUser.getId(), originalNotification.user.getString())) {
+		log.info("User '" + loggedInUser.getNickname() + "' (" + loggedInUser.getId() + ") is replying to notification: " + originalNotification);
+		long addresseeId = originalNotification.direction == Notification.Direction.A_TO_B ? originalNotification.userB.getId()
+				: originalNotification.userA.getId();
+		if (loggedInUser.toKeyId() != addresseeId) {
 			log.warning("User '" + loggedInUser.getNickname() + "' is replying to message not addressed to him. Original notification: " + originalNotification);
+			return null;
+		}
+		if (originalNotification.type == Notification.Type.ASK_LISTING_OWNER && originalNotification.replied) {
+			log.warning("Question is already answered.");
 			return null;
 		}
 		if (originalNotification.type != Notification.Type.ASK_LISTING_OWNER && originalNotification.type != Notification.Type.PRIVATE_MESSAGE) {
@@ -400,89 +413,132 @@ public class ServiceFacade {
 	public Notification createMessageNotification(UserVO fromUser, String message, Listing listing, Notification.Type type) {
 		SBUser toUser = getDAO().getUser(listing.owner.getString());
 		
-		Notification notification = new Notification();
-		notification.message = message;
-		notification.user = new Key<SBUser>(SBUser.class, toUser.id);
-		notification.userEmail = toUser.email;
-		notification.userNickname = toUser.nickname;
-		notification.fromUser = new Key<SBUser>(SBUser.class, fromUser.toKeyId());
-		notification.fromUserEmail = fromUser.getEmail();
-		notification.fromUserNickname = fromUser.getNickname();
-		notification.listing = new Key<Listing>(Listing.class, listing.id);
-		notification.listingName = listing.name;
-		notification.listingOwner = listing.owner.getString();
-		notification.listingMantra = listing.mantra;
-		notification.listingBriefAddress = listing.briefAddress;
-		notification.listingCategory = listing.category;
-		notification.type = type;
-		notification.created = new Date();
-		notification.read = false;
-		notification.sentDate = null;
-		notification = getDAO().storeNotification(notification);
+		Notification notifA = new Notification();
+		Notification notifB = new Notification();
+		notifB.message = notifA.message = message;
+		notifB.listing = notifA.listing = new Key<Listing>(Listing.class, listing.id);
+		notifB.listingName = notifA.listingName = listing.name;
+		notifB.listingOwner = notifA.listingOwner = listing.owner.getString();
+		notifB.listingMantra = notifA.listingMantra = listing.mantra;
+		notifB.listingBriefAddress = notifA.listingBriefAddress = listing.briefAddress;
+		notifB.listingCategory = notifA.listingCategory = listing.category;
+		notifB.type = notifA.type = type;
+		notifB.created = notifA.created = new Date();
+		notifB.read = notifA.read = false;
+		notifB.replied = notifA.replied = false;
+		notifB.sentDate = notifA.sentDate = null;
+
+		notifA.userA = new Key<SBUser>(SBUser.class, toUser.id);
+		notifA.userAEmail = toUser.email;
+		notifA.userANickname = toUser.nickname;
+		notifA.userB = new Key<SBUser>(SBUser.class, fromUser.toKeyId());
+		notifA.userBEmail = fromUser.getEmail();
+		notifA.userBNickname = fromUser.getNickname();
+		notifA.direction = Notification.Direction.B_TO_A;
+		
+		notifB.userB = new Key<SBUser>(SBUser.class, toUser.id);
+		notifB.userBEmail = toUser.email;
+		notifB.userBNickname = toUser.nickname;
+		notifB.userA = new Key<SBUser>(SBUser.class, fromUser.toKeyId());
+		notifB.userAEmail = fromUser.getEmail();
+		notifB.userANickname = fromUser.getNickname();
+		notifB.direction = Notification.Direction.A_TO_B;
+
+		Notification notifs[] = getDAO().storeNotification(notifA, notifB);
+		// we update context values and store notifications again
+		notifs[0].context = notifs[0].id;
+		notifs[1].context = notifs[0].id;
+		notifs = getDAO().storeNotification(notifs);
         if (type == Notification.Type.ASK_LISTING_OWNER) {
             ListingFacade.instance().scheduleUpdateOfListingStatistics(listing.getWebKey(), UpdateReason.NEW_QUESTION);
         }
         else if (type == Notification.Type.PRIVATE_MESSAGE) {
             ListingFacade.instance().scheduleUpdateOfListingStatistics(listing.getWebKey(), UpdateReason.NEW_MESSAGE);
         }
-		if (notification != null) {
-			String taskName = timeStampFormatter.print(new Date().getTime()) + "send_notification_" + notification.type + "_" + notification.user.getId();
-			Queue queue = QueueFactory.getDefaultQueue();
-			queue.add(TaskOptions.Builder.withUrl("/task/send-notification").param("id", "" + notification.getWebKey())
+        for (Notification not : notifs) {
+        	if (not != null) {
+        		String taskName = timeStampFormatter.print(new Date().getTime()) + "send_notification_" + not.type + "_" + not.userA.getId();
+        		Queue queue = QueueFactory.getDefaultQueue();
+        		queue.add(TaskOptions.Builder.withUrl("/task/send-notification").param("id", "" + not.getWebKey())
 					.taskName(taskName));
-		} else {
-			log.warning("Can't schedule notification " + notification);
-		}
-		return notification;
+        	} else {
+        		log.warning("Can't schedule notification " + not);
+        	}
+        }
+		return notifs[0];
 	}
 
 	public Notification createReplyNotification(UserVO fromUser, Notification originalNotification, String message) {
-		Notification notification = new Notification();
-		notification.message = message;
-		notification.user = originalNotification.fromUser;
-		notification.userEmail = originalNotification.fromUserEmail;
-		notification.userNickname = originalNotification.fromUserNickname;
-		notification.fromUser = new Key<SBUser>(SBUser.class, fromUser.toKeyId());
-		notification.fromUserEmail = fromUser.getEmail();
-		notification.fromUserNickname = fromUser.getNickname();
-        notification.parentNotification = new Key<Notification>(Notification.class, originalNotification.id);
-		notification.listing = originalNotification.listing;
-		notification.listingName = originalNotification.listingName;
-		notification.listingOwner = originalNotification.listingOwner;
-		notification.listingMantra = originalNotification.listingMantra;
-		notification.listingBriefAddress = originalNotification.listingBriefAddress;
-		notification.listingCategory = originalNotification.listingCategory;
-		notification.type = originalNotification.type;
-		notification.created = new Date();
-		notification.read = false;
-		notification.sentDate = null;
-		notification = getDAO().storeNotification(notification);
-        if (notification.type == Notification.Type.ASK_LISTING_OWNER) {
-            ListingFacade.instance().scheduleUpdateOfListingStatistics(notification.listing.getString(), UpdateReason.NEW_QUESTION_REPLY);
-        }
-        else if (notification.type == Notification.Type.PRIVATE_MESSAGE) {
-            ListingFacade.instance().scheduleUpdateOfListingStatistics(notification.listing.getString(), UpdateReason.NEW_MESSAGE_REPLY);
-        }
-		if (notification != null) {
-			String taskName = timeStampFormatter.print(new Date().getTime()) + "send_notification_" + notification.type + "_" + notification.user.getId();
-			Queue queue = QueueFactory.getDefaultQueue();
-			queue.add(TaskOptions.Builder.withUrl("/task/send-notification").param("id", "" + notification.getWebKey())
-					.taskName(taskName));
+		Notification notifA = new Notification();
+		Notification notifB = new Notification();
+		notifB.message = notifA.message = message;
+		notifB.question = notifA.question = originalNotification.message;
+		notifB.questionDate = notifA.questionDate = originalNotification.created;
+		notifB.listing = notifA.listing = originalNotification.listing;
+		notifB.listingName = notifA.listingName = originalNotification.listingName;
+		notifB.listingOwner = notifA.listingOwner = originalNotification.listingOwner;
+		notifB.listingMantra = notifA.listingMantra = originalNotification.listingMantra;
+		notifB.listingBriefAddress = notifA.listingBriefAddress = originalNotification.listingBriefAddress;
+		notifB.listingCategory = notifA.listingCategory = originalNotification.listingCategory;
+		notifB.type = notifA.type = originalNotification.type;
+		notifB.created = notifA.created = new Date();
+		notifB.read = notifA.read = false;
+		originalNotification.replied = notifB.replied = notifA.replied = true;
+		notifB.parentNotification = notifA.parentNotification = new Key<Notification>(Notification.class, originalNotification.id);
+		notifB.context = notifA.context = originalNotification.context;
+		notifB.sentDate = notifA.sentDate = null;
+
+		notifB.userB = notifA.userA = originalNotification.userA;
+		notifB.userBEmail = notifA.userAEmail = originalNotification.userAEmail;
+		notifB.userBNickname = notifA.userANickname = originalNotification.userANickname;			
+
+		notifB.userA = notifA.userB = originalNotification.userB;
+		notifB.userAEmail = notifA.userBEmail = originalNotification.userBEmail;
+		notifB.userANickname = notifA.userBNickname = originalNotification.userBNickname;
+
+		/* notifA.userA = userA
+		 * notifA.userB = userB
+		 * notifB.userA = userA
+		 * notifB.userB = userB
+		 * now it should be set opposite
+		 */
+		if (originalNotification.direction == Notification.Direction.B_TO_A) {
+			notifA.direction = Notification.Direction.A_TO_B;
+			notifB.direction = Notification.Direction.B_TO_A;
 		} else {
-			log.warning("Can't schedule notification " + notification);
+			notifA.direction = Notification.Direction.B_TO_A;
+			notifB.direction = Notification.Direction.A_TO_B;
 		}
-		return notification;
+
+		Notification notifs[] = getDAO().storeNotification(notifA, notifB, originalNotification);
+        if (notifA.type == Notification.Type.ASK_LISTING_OWNER) {
+            ListingFacade.instance().scheduleUpdateOfListingStatistics(notifA.listing.getString(), UpdateReason.NEW_QUESTION_REPLY);
+        }
+        else if (notifA.type == Notification.Type.PRIVATE_MESSAGE) {
+            ListingFacade.instance().scheduleUpdateOfListingStatistics(notifA.listing.getString(), UpdateReason.NEW_MESSAGE_REPLY);
+        }
+        for (Notification not : notifs) {
+        	if (not != null) {
+        		String taskName = timeStampFormatter.print(new Date().getTime()) + "send_notification_" + not.type + "_" + not.userA.getId();
+        		Queue queue = QueueFactory.getDefaultQueue();
+        		queue.add(TaskOptions.Builder.withUrl("/task/send-notification").param("id", "" + not.getWebKey())
+					.taskName(taskName));
+        	} else {
+        		log.warning("Can't schedule notification " + not);
+        	}
+        }
+		return notifs[0];
 	}
 
-	public NotificationVO markNotificationAsRead(UserVO loggedInUser, String listingId) {
-		NotificationVO notification = DtoToVoConverter.convert(
+	public List<NotificationVO> markNotificationAsRead(UserVO loggedInUser, String listingId) {
+		List<NotificationVO> notifs = DtoToVoConverter.convertNotifications(
 				getDAO().markNotificationAsRead(BaseVO.toKeyId(loggedInUser.getId()), BaseVO.toKeyId(listingId)));
-		if (notification == null) {
+		if (notifs == null) {
 			log.warning("Notification for user '" + loggedInUser.getNickname() + "' on listing id " + listingId + " not found!");
 		} else {
 			log.info("Notification for user '" + loggedInUser.getNickname() + "' on listing id " + listingId + " was marked as read.");
 		}
-		return notification;
+		return notifs;
 	}
 
 	public NotificationListVO getUnreadNotificationsForUser(UserVO loggedInUser, ListPropertiesVO notifProperties) {
@@ -494,7 +550,7 @@ public class ServiceFacade {
 			return list;
 		}
 		List<NotificationVO> notifications = DtoToVoConverter.convertNotifications(
-				getDAO().getUserNotification(loggedInUser.toKeyId(), notifProperties));
+				getDAO().getUnreadUserNotifications(loggedInUser.toKeyId(), notifProperties));
 		int num = notifProperties.getStartIndex() > 0 ? notifProperties.getStartIndex() : 1;
 		for (NotificationVO notification : notifications) {
 			notification.setOrderNumber(num++);
@@ -518,7 +574,7 @@ public class ServiceFacade {
 		List<NotificationVO> notifications = null;
 
 		notifications = DtoToVoConverter.convertNotifications(
-				getDAO().getAllUserNotification(loggedInUser.toKeyId(), notifProperties));
+				getDAO().getAllUserNotifications(loggedInUser.toKeyId(), notifProperties));
 		int num = notifProperties.getStartIndex() > 0 ? notifProperties.getStartIndex() : 1;
 		for (NotificationVO notification : notifications) {
 			notification.setOrderNumber(num++);

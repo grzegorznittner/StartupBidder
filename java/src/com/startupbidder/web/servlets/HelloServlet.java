@@ -238,7 +238,7 @@ public class HelloServlet extends HttpServlet {
 			out.println("<a href=\"/notification/user/.json?max_results=6\">Notifications for current user</a><br/>");
 			ListPropertiesVO prop = new ListPropertiesVO();
 			prop.setMaxResults(20);
-			List<Notification> notifications = datastore.getAllUserNotification(currentUser.toKeyId(), prop);
+			List<Notification> notifications = datastore.getAllUserNotifications(currentUser.toKeyId(), prop);
 			if (!notifications.isEmpty()) {
 				for (Notification notif : notifications) {
 					out.println("" + notif.type + ", listing: " + notif.listingName + ", message:" + notif.message + "<br/>");
