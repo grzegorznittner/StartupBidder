@@ -48,9 +48,6 @@ include(header.m4)
                 <div class="companynav hoverlink" id="qandastab">
                     QUESTIONS <span id="num_qandas"></span>
                 </div>
-                <div class="companynav companynavlast hoverlink initialhidden" id="messagestab">
-                    MESSAGES <span id="num_messages"></span>
-                </div>
             </div>
         </div>
     </div>
@@ -121,22 +118,6 @@ include(header.m4)
         <div class="boxpanel remarkpanel">
             <div id="qandamsg"></div>
             <dl id="qandalist"></dl>
-    	</div>
-    </div>
-
-    <div class="span-16 initialhidden" id="messageswrapper">
-        <div class="boxtitle initialhidden" id="addmessagetitle">PRIVATE MESSAGE TO THE OWNER</div>
-        <div class="boxpanel remarkpanel initialhidden" id="addmessagebox">
-            <p>
-                <textarea class="textarea messagetextarea" id="addmessagetext" name="addmessagetext" cols="20" rows="5">Put your private message here...</textarea>
-                <span class="span-12 inputmsg successful" id="addmessagemsg">&nbsp;</span>
-                <span class="span-3 inputbutton" id="addmessagebtn">SEND</span>
-            </p>
-        </div>
-        <div class="boxtitle">PRIVATE MESSAGES</div>
-        <div class="boxpanel remarkpanel">
-            <div id="messagemsg"></div>
-            <dl id="messagelist"></dl>
     	</div>
     </div>
 

@@ -407,10 +407,6 @@ pl.implement(ListingClass, {
             tabs.push('#qandastab');
             wrappers.push('#qandaswrapper');
         }
-        if (pl('#messagestab').hasClass('companynavselected')) {
-            tabs.push('#messagestab');
-            wrappers.push('#messageswrapper');
-        }
         tabsel = tabs.join(', ');
         wrappersel = wrappers.join(', ');
         pl(tabsel).removeClass('companynavselected');
@@ -424,8 +420,7 @@ pl.implement(ListingClass, {
             wrapperid = tab + 'wrapper',
             wrappersel = '#' + wrapperid,
             comments,
-            qandas,
-            messages;
+            qandas;
         if (!pl(tabsel).hasClass('companynavselected')) {
             self.hideSelectedTabs();
             pl(tabsel).addClass('companynavselected');
@@ -479,27 +474,6 @@ pl.implement(ListingClass, {
                     self.isQuestionListLoaded = true;
                 }
             }
-            else if (tab === 'messages') {
-                pl(wrappersel).show();
-                if (!self.isMessageListLoaded) {
-                    messages = new RemarkClass({
-                        listing_id: listingid,
-                        type: 'message',
-                        geturl: '/listings/private_messages/',
-                        getproperty: 'notifications',
-                        idproperty: 'notify_id',
-                        fromnameproperty: 'from_user_nickname',
-                        fromnameprefix: 'Sent by',
-                        tonameroperty: 'to_user_nickname',
-                        dateproperty: 'create_date',
-                        textproperty: 'text_2',
-                        posturl: '/listing/send_private',
-                        deleteurl:  null
-                    });
-                    messages.load();
-                    self.isMessageListLoaded = true;
-                }
-            }
             else {
                 pl(wrappersel).show();
             }
@@ -511,15 +485,9 @@ pl.implement(ListingClass, {
         pl('#num_comments').text(self.num_comments || 0);
         pl('#num_bids').text(self.num_bids || 0);
         pl('#num_qandas').text(self.num_qandas || 0);
-        pl('#num_messages').text(self.num_messages || 0);
         if (this.loggedin_profile) {
-            pl('#sendmessagelink').bind({
-                click: function() {
-                    self.displayTab('messages');
-                    return false;
-                }
-            }).css({display: 'inline'});
-            pl('#makebidtitle,#makebidbox,#addmessagetitle,#addmessagebox,#messagestab').show();
+            pl('#sendmessagelink').attr({href: '/message_page.html?to_user=' + self.owner }).css({display: 'inline'});
+            pl('#makebidtitle,#makebidbox').show();
         }
         pl('#basicstab').bind({
             click: function() {
@@ -545,12 +513,6 @@ pl.implement(ListingClass, {
                 return false;
             }
         });
-        pl('#messagestab').bind({
-            click: function() {
-                self.displayTab('messages');
-                return false;
-            }
-        });
         if (qs.vars.page === 'comments') {
             self.displayTab('comments');
         }
@@ -559,9 +521,6 @@ pl.implement(ListingClass, {
         }
         else if (qs.vars.page === 'qandas') {
             self.displayTab('qandas');
-        }
-        else if (qs.vars.page === 'messages') {
-            self.displayTab('messages');
         }
     }
 });
