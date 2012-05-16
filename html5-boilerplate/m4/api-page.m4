@@ -15,11 +15,37 @@ include(header.m4)
 '
 include(api-banner.m4)
 `
-<!-- left column -->
-<div class="span-16">
+<div class="boxtitle">CONNECT TO STARTUPBIDDER</div>
+<div class="boxpanel apipanel">
+        <p>
+        Startupbidder provides a public API for providing summary and detailed information
+        on our listings.  This is the same API that we use internally.  We eat our own cooking,
+        so to speak.  Some functions are callable only by startupbidder admins for security,
+        and all APIs may be rate-limited to prevent DoS and spam attacks.
+        </p>
+        <p>
+        All API calls return a standard json response, with the exception of the listing file download API which returns a file.
+        All POST methods supporting multiple values use standard json as well.  This aids in javascript integration.
+        The standard json response consists of the logged in user profile, the login url, the logout url, and one or more data fields.
+        With this approach, we attempt to aggregate all typically needed return information so that only a single json call is
+        needed for most pages and use cases.  Our extensive caching strategy makes this computationally fast and inexpensive.
+        </p>
+</div>
 
-    <div class="boxtitle">COMPANY LIST API</div>
+<div class="boxtitle">API TERMS OF USE</div>
+<div class="boxpanel apipanel">
+        <p>
+        You may use the public API royalty-free, subject to the limitation that you must
+        provide a link back to startupbidder on your site or application and clearly state
+        that the data is coming from startupbidder.  We reserve the right to block access
+        which is found to have violated our terms of service.  The complete terms of use
+        are available on the terms and conditions page.
+        </p>
+</div>
+
+    <span class="boxtitle">COMPANY LIST API</span>
     <div class="boxpanel apipanel">
+    <p>Get a list of companies depending on the category, ranking, or user criteria.</p>
 
         <dt>GET /listings/discover/
             <form method="GET" action="/listings/discover"><input type="submit" value="TEST"></input></form>
@@ -93,6 +119,8 @@ include(api-banner.m4)
 
     <div class="boxtitle">SEARCH API</div>
     <div class="boxpanel apipanel">
+    <p>Search for a set of listings using keywords, location, and category matches</p>
+    
         <dt>GET /listings/keyword?text=&lt;searchtext&gt; <i>OPTIONAL max_results=&lt;n&gt;</i>
             <form method="GET" action="/listings/keyword"><input type="text" name="text" value="&lt;searchtext&gt;"></input><input type="submit" value="TEST"></input></form>
         </dt>
@@ -115,6 +143,7 @@ include(api-banner.m4)
 
     <div class="boxtitle">LISTING API</div>
     <div class="boxpanel apipanel">
+    <p>Get and update information on an individual company listing</p>
         <dt>GET /listings/get/&lt;id&gt;
             <form method="GET" action="/listings/get"><input type="text" name="id" value="&lt;listing_id&gt;"></input><input type="submit" value="TEST"></input></form>
         </dt>
@@ -193,6 +222,8 @@ include(api-banner.m4)
 
     <div class="boxtitle">LOCATIONS API</div>
     <div class="boxpanel apipanel">
+    <p>Find the set of location groupings, roughly city/state/country metropolitan areas, containing startups on this site</p>
+
         <dt>GET /listings/locations/
             <form method="GET" action="/listings/locations/"><input type="submit" value="TEST"></input></form>
         </dt>
@@ -213,6 +244,8 @@ include(api-banner.m4)
 
     <div class="boxtitle">CATEGORIES API</div>
     <div class="boxpanel apipanel">
+    <p>Find information on the various venture-capital categories supported by startupbidder including a list of startups for each category</p>
+
         <dt>GET /listings/categories/
             <form method="GET" action="/listings/categories/"><input type="submit" value="TEST"></input></form>
         </dt>
@@ -233,6 +266,8 @@ include(api-banner.m4)
 
     <div class="boxtitle">COMMENTS API</div>
     <div class="boxpanel apipanel">
+    <p>Find and create comments on a particular listing</p>
+
         <dt>GET /comments/listing/&lt;id&gt;
             <form method="GET" action="/comments/listing/"><input type="text" name="id" value="&lt;listing_id&gt;"></input><input type="submit" value="TEST"></input></form>
         </dt>
@@ -280,6 +315,8 @@ include(api-banner.m4)
 
     <div class="boxtitle">MONITOR API</div>
     <div class="boxpanel apipanel">
+    <p>Watch listings and be automatically notified of bids, comments, and other changes to the listing</p>
+
         <dt>GET /monitors/active-for-user/&lt;id&gt;
             <form method="GET" action="/monitors/active-for-user/"><input type="submit" value="TEST"></input></form>
         </dt>
@@ -318,86 +355,62 @@ include(api-banner.m4)
         </dd>
     </div>
 
+    <div class="boxtitle">QUESTION AND ANSWER API</div>
+    <div class="boxpanel apipanel">
+    <p>Find questions and answers concerning this listing and ask new ones.</p>
+
+    <dt>GET /listing/questions_answers/&lt;listing_id&gt;</dt>
+    <dd>
+        <p>Get the set of questions and answers for this listing.</p>
+    </dd>
+
+    <dt>POST /listing/ask_owner?listing_id=&lt;id&gt;&amp;message=&lt;text&gt;</dt>
+    <dd>
+        <p>Ask owner a question concerning the listing.  You must be a logged in user in order to ask a question.</p>
+    </dd>
+
+    <dt>POST /listing/answer_question?question_id=&lt;id&gt;&amp;message=&lt;text&gt;</dt>
+    <dd>
+        <p>Answer a question.  Only the listing owner is allowed to answer questions.</p>
+    </dd>
+    </div>
+
+    <div class="boxtitle">PRIVATE MESSAGE API</div>
+    <div class="boxpanel apipanel">
+    <p>Send and receive private messages between users on the site.  You must be logged in to use these methods.</p>
+
+    <dt>GET /user/get_message_users</dt>
+    <dd>
+        <p>Get the list of users with which the currently logged in user has had a conversation.</p>
+    </dd>
+
+    <dt>GET /user/get_messages/&lt;user_id&gt;</dt>
+    <dd>
+        <p>Get the list of messages between the logged in user and the user with the given <code>user_id</code>.</p>
+    </dd>
+
+    <dt>POST /user/send_message?user_id=&lt;id&gt;&amp;message=&lt;text&gt;</dt>
+    <dd>
+        <p>Post a message from the logged in user to the user with the given <code>user_id</code>.</p>
+    </dd>
+    </div>
+
     <div class="boxtitle">NOTIFICATION API</div>
     <div class="boxpanel apipanel">
-        <dt>GET /notifications/get/&lt;id&gt;
-            <form method="GET" action="/notifications/get/"><input type="text" name="id" value="&lt;notification_id&gt;"></input><input type="submit" value="TEST"></input></form>
-        </dt>
-        <dd>
-            <p>
-            Returns an individual notification for the given comment id.
-            Calling this method automatically marks particular notification as read.
-            </p>
-        </dd>
+    <p>Get notifications for the currently logged in user.</p>
 
-        <dt>GET /notifications/user/&lt;id&gt;
-            <form method="GET" action="/notifications/user/"><input type="submit" value="TEST"></input></form>
+        <dt>GET /notifications/user
+           <form method="GET" action="/notifications/user/"><input type="submit" value="TEST"></input></form>
         </dt>
         <dd>
-            <p>
-            Returns all notifications for logged in user.
-            </p>
-        </dd>
-
-        <dt>GET /notifications/unread_user/&lt;id&gt;
-            <form method="GET" action="/notifications/unread_user/"><input type="submit" value="TEST"></input></form>
-        </dt>
-        <dd>
-            <p>
-            Returns unread notifications for logged in user.
-            </p>
-        </dd>
-
-        <dt>GET /listing/private_messages/&lt;id&gt;
-            <form method="GET" action="/listings/private_messages/"><input type="text" name="id" value="&lt;listing_id&gt;"></input><input type="submit" value="TEST"></input></form>
-        </dt>
-        <dd>
-            <p>
-            Returns private messages for given listing. Only listing owner sees all private messages. Other users see only their messages.  A user can reply to any message directed
-to themself.
-            </p>
-        </dd>
-
-        <dt>GET /listing/questions_and_answers/&lt;id&gt;
-            <form method="GET" action="/listings/questions_and_answers/"><input type="text" name="id" value="&lt;listing_id&gt;"></input><input type="submit" value="TEST"></input></form>
-        </dt>
-        <dd>
-            <p>
-            Returns questions and answers for given listing. Questions can be asked by any logged in user, but they only see their own questions until the owner makes a reply.  Only the
-owner can reply to a question using the <code>/listing/reply_message</code> API.  The question and answer pair then becomes viewable publicly on the site.
-            </p>
-        </dd>
-
-        <dt>POST /listing/ask_owner/
-            <form method="POST" action="/listing/ask_owner"><input type="text" name="message" value="{ listing_id: &rsquo;listing id&rsquo;, text: &rsquo;message text&rsquo; }"></input><input type="submit" value="TEST"></input></form>
-        </dt>
-        <dd>
-            <p>
-            Sends question to the listing owner.
-            </p>
-        </dd>
-
-        <dt>POST /listing/send_private/
-            <form method="POST" action="/listing/send_private"><input type="text" name="message" value="{ listing_id: &rsquo;listing id&rsquo;, text: &rsquo;message text&rsquo; }"></input><input type="submit" value="TEST"></input></form>
-        </dt>
-        <dd>
-            <p>
-            Sends private message to the listing owner.
-            </p>
-        </dd>
-
-        <dt>POST /listing/reply_message/
-            <form method="POST" action="/listing/reply_message"><input type="text" name="message" value="{ message_id: &rsquo;message id&rsquo;, text: &rsquo;message text&rsquo; }"></input><input type="submit" value="TEST"></input></form>
-        </dt>
-        <dd>
-            <p>
-            Sends reply to a message. Only messages sent through <code>/listing/ask_owner</code> and <code>/listing/send_private</code> can be replied using this method.
-            </p>
+            <p>Returns the list of notifications for the logged in user.  Making this call automatically marks all notifications as read.</p>
         </dd>
     </div>
 
     <div class="boxtitle">FILE API</div>
     <div class="boxpanel apipanel">
+    <p>Upload and download documents associated with a listing</p>
+
         <dt>POST &lt;upload_url&gt;
             <form method="POST" action="&lt;upload_url&gt;"><input type="file" name="BUSINESS_PLAN" value="Add BUSINESS_PLAN"></input><input type="submit" value="TEST"></input></form>
         </dt>
@@ -446,6 +459,8 @@ owner can reply to a question using the <code>/listing/reply_message</code> API.
 
     <div class="boxtitle">USER API</div>
     <div class="boxpanel apipanel">
+    <p>Get information on individual users</p>
+
         <dt>GET /user/loggedin/
             <form method="GET" action="/user/loggedin"><input type="submit" value="TEST"></input></form>
         </dt>
@@ -486,7 +501,9 @@ owner can reply to a question using the <code>/listing/reply_message</code> API.
 
     <div class="boxtitle">ADMIN API</div>
     <div class="boxpanel apipanel">
-        <dt>GET /listings/posted/ <i>ADMIN ONLY</i>
+    <p>Perform administrative tasks on startupbidder; you must have administrative rights as a logged in user in order for these calls to work</p>
+
+        <dt>GET /listings/posted/
             <form method="GET" action="/listings/posted/"><input type="submit" value="TEST"></input></form>
         </dt>
         <dd>
@@ -495,7 +512,7 @@ owner can reply to a question using the <code>/listing/reply_message</code> API.
             </p>
         </dd>
 
-        <dt>GET /listings/frozen/ <i>ADMIN ONLY</i>
+        <dt>GET /listings/frozen/
             <form method="GET" action="/listings/frozen/"><input type="submit" value="TEST"></input></form>
         </dt>
         <dd>
@@ -504,7 +521,7 @@ owner can reply to a question using the <code>/listing/reply_message</code> API.
             </p>
         </dd>
 
-        <dt>POST /listing/freeze/&lt;id&gt; <i>ADMIN ONLY</i>
+        <dt>POST /listing/freeze/&lt;id&gt;
             <form method="POST" action="/listing/freeze"><input type="text" name="id" value="&lt;listing_id&gt;"></input><input type="submit" value="TEST"></input></form>
         </dt>
         <dd>
@@ -514,7 +531,7 @@ owner can reply to a question using the <code>/listing/reply_message</code> API.
             </p>
         </dd>
 
-        <dt>POST /listing/activate/&lt;id&gt; <i>ADMIN ONLY</i>
+        <dt>POST /listing/activate/&lt;id&gt;
             <form method="POST" action="/listing/activate"><input type="text" name="id" value="&lt;listing_id&gt;"></input><input type="submit" value="TEST"></input></form>
         </dt>
         <dd>
@@ -525,7 +542,7 @@ owner can reply to a question using the <code>/listing/reply_message</code> API.
             </p>
         </dd>
 
-        <dt>POST /listing/send_back/&lt;id&gt; <i>ADMIN ONLY</i>
+        <dt>POST /listing/send_back/&lt;id&gt;
             <form method="POST" action="/listing/send_back"><input type="text" name="id" value="&lt;listing_id&gt;"></input><input type="submit" value="TEST"></input></form>
         </dt>
         <dd>
@@ -536,46 +553,6 @@ owner can reply to a question using the <code>/listing/reply_message</code> API.
             </p>
         </dd>
     </div> 
-
-</div> <!-- end left column -->
-
-<!-- right column -->
-<div class="span-8 last">
-    <div class="boxtitle">CONNECT TO STARTUPBIDDER</div>
-    <div class="sidebox">
-        <p>
-        Startupbidder provides a public API for providing summary and detailed information
-        on our listings.  This is the same API that we use internally.  We eat our own cooking,
-        so to speak.  Some functions are callable only by startupbidder admins for security,
-        and all APIs may be rate-limited to prevent DoS and spam attacks.
-        </p>
-    </div>
-
-    <div class="boxtitle">TIPS</div>
-    <div class="sidebox">
-        <p>
-        All API calls return a standard json response, with the exception of the listing file download API which returns a file.
-        All POST methods supporting multiple values use standard json as well.  This aids in javascript integration.
-        </p>
-        <p>
-        The standard json response consists of the logged in user profile, the login url, the logout url, and one or more data fields.
-        With this approach, we attempt to aggregate all typically needed return information so that only a single json call is
-        needed for most pages and use cases.  Our extensive caching strategy makes this computationally fast and inexpensive.
-        </p>
-    </div>
-
-    <div class="boxtitle">API TERMS OF USE</div>
-    <div class="sidebox">
-        <p>
-        You may use the public API royalty-free, subject to the limitation that you must
-        provide a link back to startupbidder on your site or application and clearly state
-        that the data is coming from startupbidder.  We reserve the right to block access
-        which is found to have violated our terms of service.  The complete terms of use
-        are available on the terms and conditions page.
-        </p>
-    </div>
-
-</div> <!-- end right column -->
 
 <div id="loadmsg"></div>
 

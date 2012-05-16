@@ -32,7 +32,8 @@ body.nearby-page > #wrap > #main > div.container > div.nearbywrapper { height: 1
 
 /* general styles */
 /* body { font-size: 14px; font-weight: bold; color: #4083a9; background: #f2f2f2; } */
-body { font-size: 14px; font-weight: normal; color: #4083a9; background: #f2f2f2; }
+/* body { font-size: 14px; font-weight: normal; color: #4083a9; background: #f2f2f2; } */
+body { font-size: 14px; font-weight: normal; background: #f2f2f2; }
 .curvedborder, .sidebox, .sideboxbutton, .sideboxbuttoninterior, .tile, .companybannertile, .companyhalftile, .boxpanel, .boxstep, .boxselected, .inputbutton, .smallinputbutton, .sideboxselected, .banner, .bmcborder {
   -moz-border-radius: 5px; -webkit-border-radius: 5px; border-radius: 5px;
   -moz-box-shadow: 3px 3px 3px rgba(0,0,0,0.5); -webkit-box-shadow: 3px 3px 3px rgba(0,0,0,0.5); box-shadow: 3px 3px 3px rgba(0,0,0,0.5);
@@ -362,12 +363,22 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .boxpanel p { margin: 5px 10px 10px 10px; text-indent: 0px; font-weight: bold; }
 .boxpanel dl dt { margin-left: 0; padding: 5px 10px; color: #333333; }
 .boxpanel dl dd { margin-left: 0; padding: 5px 10px; background: #f2f2f2; font-weight: normal; }
+/*
 .apipanel dt { margin: 5px 10px; color: #4083a9; clear: both; font-weight: bold; }
 .apipanel dt form { float: right; }
 .apipanel dt form input { margin-left: 10px; margin-top: 0px; color: #4083a9; border-radius: 5px; font-weight: bold; padding: 5px; }
 .apipanel dt form input[type="submit"]:hover { opacity: 0.7 }
 .apipanel dd { margin: 5px 10px 30px 5px; padding: 5px 10px; font-weight: bold; }
 .apipanel dd p { font-weight: normal; }
+*/
+.apipanel { width: 950px; margin-right: 0; }
+.apipanel p { font-weight: normal; }
+.apipanel dt { float: left; margin-right: 10px; width: 270px; font-weight: bold; color: #4083a9; padding-left: 10px; } /* span-8 apicall */
+.apipanel dt i { display: none; }
+.apipanel dt form { display: none; }
+.apipanel dd { float: left; margin-right: 10px; width: 630px; margin-right: 0; padding-right: 0; } /* span-16 last */
+.apicall { font-weight: bold; }
+.apicall a { padding-left: 10px; }
 .boxstep { width: 626px; padding: 0px; height: 30px; position: relative; }
 .boxsteptitle, .boxsteptext { padding-top: 5px; font-weight: bold; color: #333333; left: 0; text-align: center; position: absolute; }
 .boxsteptitle { padding-left: 5px; width: 617px; }
