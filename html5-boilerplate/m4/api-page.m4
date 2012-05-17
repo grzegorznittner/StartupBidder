@@ -47,104 +47,403 @@ include(api-banner.m4)
     <div class="boxpanel apipanel">
     <p>Get a list of companies depending on the category, ranking, or user criteria.</p>
 
-        <dt>GET /listings/discover/
-            <form method="GET" action="/listings/discover"><input type="submit" value="TEST"></input></form>
-        </dt>
+        <dt>GET /listings/discover</dt>
         <dd>
             <p>
             Return the front page listings, which includes logged in user active listings, investor bid listings, top listings, and other major category listings.  However, only four
             listings max are returned for each type.  To get the remaining listings of this type, call the appropriate type-based listing API method.
             </p>
         </dd>
+        <div class="apidetail">
+            <h4>Parameters</h4>
+            <ul>
+                <li>None.</li>
+            </ul>
+            <h4>Response</h4>
+            <ul>
+                <li><code>login_url</code> URL to use for site login action</li>
+                <li><code>logout_url</code> URL to use for site logout action</li>
+                <li><code>loggedin_profile</code> private user profile object, null if not logged in, see User API for profile object details</li>
+                <li><code>error_code</code> error status for this call, 0 on success</li>
+                <li><code>error_msg</code> error message for this call, null on success</li>
+                <li><code>top_listings</code> list of the four currently highest rated listings, see Listing API for listing object details</li>
+                <li><code>closing_listings</code> list of the four listings whose bidding is closing the soonest</li>
+                <li><code>latest_listings</code> list of the four listings most recently activated on the site</li>
+                <li><code>monitored_listings</code> list of the four most recently watched listings for the logged in user, null if not logged in</li>
+                <li><code>users_listings</code> list of the four listings most recently posted by the currently logged in user, null otherwise</li>
+                <li><code>edited_listing</code> the logged in user&rsquo;s listing currently being edited but not yet approved, null otherwise</li>
+                <li><code>categories</code> the map of all venture capital industry categories on the site with at least one active listing.  Structure is:
+<pre name="code" class="js">
+{
+    :category_name: :active_listing_count,
+    ...
+}
+</pre>
+                </li>
+                <li><code>top_locations</code> the map of the twenty locations with the most active listings on the site.  Locations are grouped by
+                    brief address, which corresponds roughly to the Metropolitan Stastical Area, which is the city and country in most locations and
+                    the city, state and country in the USA.  Sructure is:
+<pre name="code" class="js">
+{
+    :brief_address: :active_listing_count,
+    ...
+}
+</pre>
+                </li>
+            </ul>
+            <h4>Test</h4>
+            <form method="GET" action="/listings/discover" target="listings-discover">
+                <input type="submit" class="inputbutton" value="SUBMIT"></input>
+            </form>
+            <iframe name="listings-discover"></iframe>
+            <p>
+        </div>
 
-        <dt>GET /listings/discover_user/
-            <form method="GET" action="/listings/discover_user"><input type="submit" value="TEST"></input></form>
-        </dt>
+        <dt>GET /listings/discover_user</dt>
         <dd>
             <p>
-            Return the logged in user&rsquo;s listings.
+            Return the logged in user profile front page listings, however, only four listings max are returned for each type.
+            To get the remaining listings of this type, call the appropriate type-based listing API method.
+            </p>
+            <p>
+            NOTE: all fields except <code>login_url</code> are null unless the user is logged in.
             </p>
         </dd>
+        <div class="apidetail">
+            <h4>Parameters</h4>
+            <ul>
+                <li>None.</li>
+            </ul>
+            <h4>Response</h4>
+            <ul>
+                <li><code>login_url</code> URL to use for site login action</li>
+                <li><code>logout_url</code> URL to use for site logout action</li>
+                <li><code>loggedin_profile</code> private user profile object, see User API for profile object details</li>
+                <li><code>error_code</code> error status for this call, 0 on success</li>
+                <li><code>error_msg</code> error message for this call, null on success</li>
+                <li><code>active_listings</code> list of the four user listings most recently posted</li>
+                <li><code>withdrawn_listings</code> list of the four user listings most recently withdrawn</li>
+                <li><code>frozen_listings</code> list of the four user listings most recently frozen by an administrator</li>
+                <li><code>closed_listings</code> list of the four user listings most recently closed for bidding</li>
+                <li><code>monitored_listings</code> list of the four listings most recently watched by the user</li>
+                <li><code>edited_listing</code> the logged in user&rsquo;s listing currently being edited but not yet approved, null otherwise</li>
+                <li><code>notifications</code> list of the user notifications, unread first then by date order, see Notification API for details</li>
+                <li><code>admin_posted_listings</code> list of all listings submitted for review but not yet approved, null except for logged in admins</li>
+                <li><code>admin_frozen_listings</code> list of all administratively frozen listings, null except for logged in admins</li>
+                <li><code>categories</code> map of listing categories, same as for <var>/listings/discover</var></li>
+                <li><code>top_locations</code> map of top locations, same as for <var>/listings/discover</var></li>
+            </ul>
+            <h4>Test</h4>
+            <form method="GET" action="/listings/discover_user" target="listings-discover_user">
+                <input type="submit" class="inputbutton" value="SUBMIT"></input>
+            </form>
+            <iframe name="listings-discover_user"></iframe>
+            <p>
+        </div>
 
-        <dt>GET /listings/monitored/ <i>OPTIONAL max_results=&lt;n&gt;</i>
-            <form method="GET" action="/listings/monitored/"><input type="submit" value="TEST"></input></form>
-        </dt>
+        <dt>GET /listings/monitored</dt>
         <dd>
             <p>
-            Returns listings the user is watching, ordered by posting date descending.
-            The max_results parameter allows for limiting response size.
+            Returns listings the user is watching, ordered by posting date descending, by default limited to five results.
+            If more listings are available, they can be obtained by the <code>more_results_url</code> property of the <code>listings_props</code> in the response.
+            </p>
+            <p>
+            NOTE: all fields except <code>login_url</code> are null unless the user is logged in.
             </p>
         </dd>
+        <div class="apidetail">
+            <h4>Parameters</h4>
+            <ul>
+                <li><code>max_results</code> OPTIONAL for the max number of results to return, default 5, up to 20</i>
+            </ul>
+            <h4>Response</h4>
+            <ul>
+                <li><code>login_url</code> URL to use for site login action</li>
+                <li><code>logout_url</code> URL to use for site logout action</li>
+                <li><code>loggedin_profile</code> private user profile object, see User API for profile object details</li>
+                <li><code>error_code</code> error status for this call, 0 on success</li>
+                <li><code>error_msg</code> error message for this call, null on success</li>
+                <li><code>listings</code> list of listings matching this request, up to the <var>max_results</var></li>
+                <li><code>notifications</code> list of the user notifications, unread first then by date order, see Notification API for details</li>
+                <li><code>listings_props</code> list properties for this query.  You can call <var>more_results_url</var> in an AJAX request for additional listings.
+                    Structure:
+<pre name="code" class="js">
+{
+    :start_index: :index,
+    :max_results: :max,
+    :num_results: :n,
+    :more_results_url: :url
+}
+</pre>
+                </li>
+                <li><code>categories</code> map of listing categories, same as for <var>/listings/discover</var></li>
+                <li><code>top_locations</code> map of top locations, same as for <var>/listings/discover</var></li>
+            </ul>
+            <h4>Test</h4>
+            <form method="GET" action="/listings/monitored" target="listings-monitored">
+                <input type="submit" class="inputbutton" value="SUBMIT"></input>
+            </form>
+            <iframe name="listings-monitored"></iframe>
+            <p>
+        </div>
 
-        <dt>GET /listings/top/ <i>OPTIONAL max_results=&lt;n&gt;</i>
-            <form method="GET" action="/listings/top/"><input type="submit" value="TEST"></input></form>
-        </dt>
+        <dt>GET /listings/top</dt>
         <dd>
             <p>
-            Returns the top ranked listings on startupbidder.  The algorithm used is fully explained in the FAQ, it functions as an exponentially time-decayed score similar to Hacker News.
-            The max_results parameter allows for limiting response size.
+            Returns the top ranked listings on startupbidder.  The algorithm used is fully explained in the FAQ, it functions as an exponentially time-decayed
+            score similar to Hacker News.
+            If more listings are available, they can be obtained by the <code>more_results_url</code> property of the <code>listings_props</code> in the response.
             </p>
         </dd>
+        <div class="apidetail">
+            <h4>Parameters</h4>
+            <ul>
+                <li><code>max_results</code> OPTIONAL for the max number of results to return, default 5, up to 20</i>
+            </ul>
+            <h4>Response</h4>
+            <ul>
+                <li><code>login_url</code> URL to use for site login action</li>
+                <li><code>logout_url</code> URL to use for site logout action</li>
+                <li><code>loggedin_profile</code> private user profile object, see User API for profile object details</li>
+                <li><code>error_code</code> error status for this call, 0 on success</li>
+                <li><code>error_msg</code> error message for this call, null on success</li>
+                <li><code>listings</code> list of listings matching this request, up to the <var>max_results</var></li>
+                <li><code>listings_props</code> list properties for this query.  You can call <var>more_results_url</var> in an AJAX request for additional listings.
+                    Structure:
+<pre name="code" class="js">
+{
+    :start_index: :index,
+    :max_results: :max,
+    :num_results: :n,
+    :more_results_url: :url
+}
+</pre>
+                </li>
+                <li><code>categories</code> map of listing categories, same as for <var>/listings/discover</var></li>
+                <li><code>top_locations</code> map of top locations, same as for <var>/listings/discover</var></li>
+            </ul>
+            <h4>Test</h4>
+            <form method="GET" action="/listings/top" target="listings-top">
+                <input type="submit" class="inputbutton" value="SUBMIT"></input>
+            </form>
+            <iframe name="listings-top"></iframe>
+            <p>
+        </div>
 
-        <dt>GET /listings/valuation/ <i>OPTIONAL max_results=&lt;n&gt;</i>
-            <form method="GET" action="/listings/valuation/"><input type="submit" value="TEST"></input></form>
-        </dt>
+        <dt>GET /listings/valuation</dt>
         <dd>
             <p>
-            Returns the most valued listings on startupbidder, ordered by median bid valuation descending.  We use median instead of max in order to avoid outliers distoring the value.
-            The max_results parameter allows for limiting response size.
+            Returns the most valued active listings on startupbidder, ordered by median bid valuation descending.
+            We use median instead of max in order to avoid outliers distoring the value.
+            If more listings are available, they can be obtained by the <code>more_results_url</code> property of the <code>listings_props</code> in the response.
             </p>
         </dd>
+        <div class="apidetail">
+            <h4>Parameters</h4>
+            <ul>
+                <li><code>max_results</code> OPTIONAL for the max number of results to return, default 5, up to 20</i>
+            </ul>
+            <h4>Response</h4>
+            <ul>
+                <li><code>login_url</code> URL to use for site login action</li>
+                <li><code>logout_url</code> URL to use for site logout action</li>
+                <li><code>loggedin_profile</code> private user profile object, see User API for profile object details</li>
+                <li><code>error_code</code> error status for this call, 0 on success</li>
+                <li><code>error_msg</code> error message for this call, null on success</li>
+                <li><code>listings</code> list of listings matching this request, up to the <var>max_results</var></li>
+                <li><code>listings_props</code> list properties for this query.  You can call <var>more_results_url</var> in an AJAX request for additional listings.
+                    Structure:
+<pre name="code" class="js">
+{
+    :start_index: :index,
+    :max_results: :max,
+    :num_results: :n,
+    :more_results_url: :url
+}
+</pre>
+                </li>
+                <li><code>categories</code> map of listing categories, same as for <var>/listings/discover</var></li>
+                <li><code>top_locations</code> map of top locations, same as for <var>/listings/discover</var></li>
+            </ul>
+            <h4>Test</h4>
+            <form method="GET" action="/listings/valuation" target="listings-valuation">
+                <input type="submit" class="inputbutton" value="SUBMIT"></input>
+            </form>
+            <iframe name="listings-valuation"></iframe>
+            <p>
+        </div>
 
-        <dt>GET /listings/latest/ <i>OPTIONAL max_results=&lt;n&gt;</i>
-            <form method="GET" action="/listings/latest/"><input type="submit" value="TEST"></input></form>
-        </dt>
+        <dt>GET /listings/closing</dt>
+        <dd>
+            <p>
+            Returns the active listings in order of closing date, thus the listings closing soonest are first.
+            If more listings are available, they can be obtained by the <code>more_results_url</code> property of the <code>listings_props</code> in the response.
+            </p>
+        </dd>
+        <div class="apidetail">
+            <h4>Parameters</h4>
+            <ul>
+                <li><code>max_results</code> OPTIONAL for the max number of results to return, default 5, up to 20</i>
+            </ul>
+            <h4>Response</h4>
+            <ul>
+                <li><code>login_url</code> URL to use for site login action</li>
+                <li><code>logout_url</code> URL to use for site logout action</li>
+                <li><code>loggedin_profile</code> private user profile object, see User API for profile object details</li>
+                <li><code>error_code</code> error status for this call, 0 on success</li>
+                <li><code>error_msg</code> error message for this call, null on success</li>
+                <li><code>listings</code> list of listings matching this request, up to the <var>max_results</var></li>
+                <li><code>listings_props</code> list properties for this query.  You can call <var>more_results_url</var> in an AJAX request for additional listings.
+                    Structure:
+<pre name="code" class="js">
+{
+    :start_index: :index,
+    :max_results: :max,
+    :num_results: :n,
+    :more_results_url: :url
+}
+</pre>
+                </li>
+                <li><code>categories</code> map of listing categories, same as for <var>/listings/discover</var></li>
+                <li><code>top_locations</code> map of top locations, same as for <var>/listings/discover</var></li>
+            </ul>
+            <h4>Test</h4>
+            <form method="GET" action="/listings/closing" target="listings-closing">
+                <input type="submit" class="inputbutton" value="SUBMIT"></input>
+            </form>
+            <iframe name="listings-closing"></iframe>
+            <p>
+        </div>
+
+        <dt>GET /listings/latest</dt>
         <dd>
             <p>
             Returns the latest listings on startupbidder, ordered by posting date descending.  Thus, the newest listings are returned first.
-            The max_results parameter allows for limiting response size.
+            If more listings are available, they can be obtained by the <code>more_results_url</code> property of the <code>listings_props</code> in the response.
             </p>
         </dd>
-
-        <dt>GET /listings/closing/ <i>OPTIONAL max_results=&lt;n&gt;</i>
-            <form method="GET" action="/listings/closing/"><input type="submit" value="TEST"></input></form>
-        </dt>
-        <dd>
+        <div class="apidetail">
+            <h4>Parameters</h4>
+            <ul>
+                <li><code>max_results</code> OPTIONAL for the max number of results to return, default 5, up to 20</i>
+            </ul>
+            <h4>Response</h4>
+            <ul>
+                <li><code>login_url</code> URL to use for site login action</li>
+                <li><code>logout_url</code> URL to use for site logout action</li>
+                <li><code>loggedin_profile</code> private user profile object, see User API for profile object details</li>
+                <li><code>error_code</code> error status for this call, 0 on success</li>
+                <li><code>error_msg</code> error message for this call, null on success</li>
+                <li><code>listings</code> list of listings matching this request, up to the <var>max_results</var></li>
+                <li><code>listings_props</code> list properties for this query.  You can call <var>more_results_url</var> in an AJAX request for additional listings.
+                    Structure:
+<pre name="code" class="js">
+{
+    :start_index: :index,
+    :max_results: :max,
+    :num_results: :n,
+    :more_results_url: :url
+}
+</pre>
+                </li>
+                <li><code>categories</code> map of listing categories, same as for <var>/listings/discover</var></li>
+                <li><code>top_locations</code> map of top locations, same as for <var>/listings/discover</var></li>
+            </ul>
+            <h4>Test</h4>
+            <form method="GET" action="/listings/latest" target="listings-latest">
+                <input type="submit" class="inputbutton" value="SUBMIT"></input>
+            </form>
+            <iframe name="listings-latest"></iframe>
             <p>
-            Returns listings on startupbidder open for bidding, ordered by closing date ascending.  Thus, the listing whose bidding is closing soonest is returned first.
-            The max_results parameter allows for limiting response size.
-            </p>
-        </dd>
+        </div>
     </div>
 
     <div class="boxtitle">SEARCH API</div>
     <div class="boxpanel apipanel">
     <p>Search for a set of listings using keywords, location, and category matches</p>
     
-        <dt>GET /listings/keyword?text=&lt;searchtext&gt; <i>OPTIONAL max_results=&lt;n&gt;</i>
-            <form method="GET" action="/listings/keyword"><input type="text" name="text" value="&lt;searchtext&gt;"></input><input type="submit" value="TEST"></input></form>
-        </dt>
+        <dt>GET /listings/keyword</dt>
         <dd>
             <p>
-            Returns listings on startupbidder matching the given keywords.  Relevancy ranking is applied, with the most relevant listings returned first.  Multiple keywords, including
-            special keywords, are combined with an implicit AND operator.  The following special search keywords are supported:
-            </p>
-            <p>
-            <code>location: &lt;location_name&gt;</code> - returns listings matching the location name as returned by method /listings/locations
-            </p>
-            <p>
-            <code>category: &lt;category_name&gt;</code> - returns listings matching the category name as returned by method /listings/categories
-            </p>
-            <p>
-            The max_results parameter allows for limiting response size.
+            Returns listings on startupbidder matching a given set of keywords.  Revelancy ranking is applied, with the most relevant listings returned first.
+            If more listings are available, they can be obtained by the <code>more_results_url</code> property of the <code>listings_props</code> in the response.
             </p>
         </dd>
+        <div class="apidetail">
+            <h4>Parameters</h4>
+            <ul>
+                <li>
+                    <code>text</code>
+                    <div class="span-15">
+                    <p>
+                    The text field is used to supply the set of basic and special keywords to seacrh by.  Multiple keywords, including
+                    special keywords, are combined with an implicit AND operator.  The following special search keywords are supported:
+                    </p>
+                    <p>
+                    <var>location:name</var> - match by location <var>name</var> as per <var>/listings/locations</var>
+                    </p>
+                    <p>
+                    <var>category:name</var> - match by category <var>name</var> as per <var>/listings/categories</var>
+                    </p>
+                    <p>
+                    The max_results parameter allows for limiting response size.
+                    </p>
+                    </div>
+                </li>
+                <li style="clear:both;"><code>max_results</code> OPTIONAL for the max number of results to return, default 5, up to 20</li>
+            </ul>
+            <h4>Response</h4>
+            <ul>
+                <li><code>login_url</code> URL to use for site login action</li>
+                <li><code>logout_url</code> URL to use for site logout action</li>
+                <li><code>loggedin_profile</code> private user profile object, see User API for profile object details</li>
+                <li><code>error_code</code> error status for this call, 0 on success</li>
+                <li><code>error_msg</code> error message for this call, null on success</li>
+                <li><code>listings</code> list of listings matching this request, up to the <var>max_results</var>, or an empty list if nothing is found</li>
+                <li><code>listings_props</code> list properties for this query.  You can call <var>more_results_url</var> in an AJAX request for additional listings.
+                    Structure:
+<pre name="code" class="js">
+{
+    :start_index: :index,
+    :max_results: :max,
+    :num_results: :n,
+    :more_results_url: :url
+}
+</pre>
+                </li>
+                <li><code>categories</code> map of listing categories, same as for <var>/listings/discover</var></li>
+                <li><code>top_locations</code> map of top locations, same as for <var>/listings/discover</var></li>
+            </ul>
+            <h4>Test</h4>
+            <form method="GET" action="/listings/keyword" target="listings-keyword">
+
+                <div class="formitem">
+                    <label class="inputlabel" for="title">TEXT</label>
+                    <span class="inputfield">
+                        <input class="text inputwidetext" type="text" name="text" value="keywords"></input>
+                    </span>
+                    <span class="inputicon">
+                        <div id="titleicon"></div>
+                    </span>
+                </div>
+        
+                <div class="formitem clear">
+                    <span class="inputlabel"></span>
+                    <span class="inputfield">
+                        <input type="submit" class="inputbutton" value="SUBMIT"></input>
+                    </span>
+                </div>
+
+            </form>
+            <iframe name="listings-keyword"></iframe>
+            <p>
+        </div>
     </div>
 
     <div class="boxtitle">LISTING API</div>
     <div class="boxpanel apipanel">
     <p>Get and update information on an individual company listing</p>
-        <dt>GET /listings/get/&lt;id&gt;
+        <dt>GET /listings/get/:id
             <form method="GET" action="/listings/get"><input type="text" name="id" value="&lt;listing_id&gt;"></input><input type="submit" value="TEST"></input></form>
         </dt>
         <dd>
@@ -153,7 +452,7 @@ include(api-banner.m4)
             </p>
         </dd>
 
-        <dt>GET /listings/logo/&lt;id&gt;
+        <dt>GET /listings/logo/:id
             <form method="GET" action="/listings/logo"><input type="text" name="id" value="&lt;listing_id&gt;"></input><input type="submit" value="TEST"></input></form>
         </dt>
         <dd>
@@ -162,18 +461,19 @@ include(api-banner.m4)
             </p>
         </dd>
 
-        <dt>POST /listing/create/
+        <dt>POST /listing/create
             <form method="POST" action="/listings/create/"><input type="submit" value="TEST"></input></form>
         </dt>
         <dd>
             <p>
-            Creates a new listing for the currently logged in user.  Only works for logged in users.  If the user already has a new listing which has not yet been approved, this existing
+            Creates a new listing for the currently logged in user.  Only works for logged in users.  If the user already has a new
+            listing which has not yet been approved, this existing
             listing is returned.  The happens because the user may only have one new listing at a time in the startupbidder system.
             Thus you can also call this method if you want the current in-edit listing.
             </p>
         </dd>
 
-        <dt>POST /listing/update_field/
+        <dt>POST /listing/update_field
             <form method="POST" action="/listing/update_field"><input type="text" name="listing" value="{ title: &rsquo;Foo, Inc.&rsquo; }"></input><input type="submit" value="TEST"></input></form>
         </dt>
         <dd>
@@ -190,7 +490,7 @@ include(api-banner.m4)
             </p>
         </dd>
 
-        <dt>POST /listing/post/
+        <dt>POST /listing/post
             <form method="POST" action="/listing/post/"><input type="submit" value="TEST"></input></form>
         </dt>
         <dd>
@@ -199,7 +499,7 @@ include(api-banner.m4)
             </p>
         </dd>
 
-        <dt>POST /listing/delete/
+        <dt>POST /listing/delete
             <form method="POST" action="/listing/delete/"><input type="submit" value="TEST"></input></form>
         </dt>
         <dd>
@@ -208,7 +508,7 @@ include(api-banner.m4)
             </p>
         </dd>
 
-        <dt>POST /listing/withdraw/&lt;id&gt;
+        <dt>POST /listing/withdraw
             <form method="POST" action="/listing/withdraw"><input type="text" name="id" value="&lt;listing_id&gt;"></input><input type="submit" value="TEST"></input></form>
         </dt>
         <dd>
@@ -224,7 +524,7 @@ include(api-banner.m4)
     <div class="boxpanel apipanel">
     <p>Find the set of location groupings, roughly city/state/country metropolitan areas, containing startups on this site</p>
 
-        <dt>GET /listings/locations/
+        <dt>GET /listings/locations
             <form method="GET" action="/listings/locations/"><input type="submit" value="TEST"></input></form>
         </dt>
         <dd>
@@ -232,7 +532,7 @@ include(api-banner.m4)
             Return the most active locations for startupbidder.  The returned location names can be used as a location value for the search API.
             </p>
         </dd>
-        <dt>GET /listings/all-listing-locations/
+        <dt>GET /listings/all-listing-locations
             <form method="GET" action="/listings/all-listing-locations/"><input type="submit" value="TEST"></input></form>
         </dt>
         <dd>
@@ -246,7 +546,7 @@ include(api-banner.m4)
     <div class="boxpanel apipanel">
     <p>Find information on the various venture-capital categories supported by startupbidder including a list of startups for each category</p>
 
-        <dt>GET /listings/categories/
+        <dt>GET /listings/categories
             <form method="GET" action="/listings/categories/"><input type="submit" value="TEST"></input></form>
         </dt>
         <dd>
@@ -254,7 +554,7 @@ include(api-banner.m4)
             Return all company categories for listings.  This is a list of the possible different categories of a company within the startupbidder system.
             </p>
         </dd>
-        <dt>GET /listings/used_categories/
+        <dt>GET /listings/used_categories
             <form method="GET" action="/listings/used_categories/"><input type="submit" value="TEST"></input></form>
         </dt>
         <dd>
@@ -266,9 +566,9 @@ include(api-banner.m4)
 
     <div class="boxtitle">COMMENTS API</div>
     <div class="boxpanel apipanel">
-    <p>Find and create comments on a particular listing</p>
+    <p>Find and create comments on a particular listing; comments are always public to all.</p>
 
-        <dt>GET /comments/listing/&lt;id&gt;
+        <dt>GET /comments/listing/:id
             <form method="GET" action="/comments/listing/"><input type="text" name="id" value="&lt;listing_id&gt;"></input><input type="submit" value="TEST"></input></form>
         </dt>
         <dd>
@@ -276,7 +576,7 @@ include(api-banner.m4)
             Return all comments for the given listing id.
             </p>
         </dd>
-        <dt>GET /comments/user/&lt;id&gt;
+        <dt>GET /comments/user/:id
             <form method="GET" action="/comments/user/"><input type="text" name="id" value="&lt;user_id&gt;"></input><input type="submit" value="TEST"></input></form>
         </dt>
         <dd>
@@ -284,7 +584,7 @@ include(api-banner.m4)
             Return all comments for the given user id.
             </p>
         </dd>
-        <dt>GET /comments/get/&lt;id&gt;
+        <dt>GET /comments/get/:id
             <form method="GET" action="/comments/get/"><input type="text" name="id" value="&lt;comment_id&gt;"></input><input type="submit" value="TEST"></input></form>
         </dt>
         <dd>
@@ -292,7 +592,7 @@ include(api-banner.m4)
             Return an individual comment for the given comment id.
             </p>
         </dd>
-        <dt>POST /comment/create?comment=&lt;comment_json&gt;
+        <dt>POST /comment/create
             <form method="GET" action="/comment/create/">
                 <input type="text" name="comment" value="{ listing_id: &lt;listing_id&gt;, text: &lt;comment_text&gt;}"></input>
                 <input type="submit" value="TEST"></input>
@@ -303,7 +603,7 @@ include(api-banner.m4)
             Create a comment by the currently logged in user for the given listing with the supplied text.
             </p>
         </dd>
-        <dt>POST /comment/delete/&lt;id&gt;
+        <dt>POST /comment/delete
             <form method="POST" action="/comment/delete/"><input type="text" name="id" value="&lt;comment_id&gt;"></input><input type="submit" value="TEST"></input></form>
         </dt>
         <dd>
@@ -317,7 +617,7 @@ include(api-banner.m4)
     <div class="boxpanel apipanel">
     <p>Watch listings and be automatically notified of bids, comments, and other changes to the listing</p>
 
-        <dt>GET /monitors/active-for-user/&lt;id&gt;
+        <dt>GET /monitors/active-for-user/:id
             <form method="GET" action="/monitors/active-for-user/"><input type="submit" value="TEST"></input></form>
         </dt>
         <dd>
@@ -326,7 +626,7 @@ include(api-banner.m4)
             </p>
         </dd>
 
-        <dt>GET /monitors/active-for-listing/&lt;id&gt;
+        <dt>GET /monitors/active-for-listing/:id
             <form method="GET" action="/monitors/active-for-listing/"><input type="text" name="id" value="&lt;listing_id&gt;"><input type="submit" value="TEST"></input></form>
         </dt>
         <dd>
@@ -335,7 +635,7 @@ include(api-banner.m4)
             </p>
         </dd>
 
-        <dt>POST /monitor/set/&lt;id&gt;
+        <dt>POST /monitor/set
             <form method="POST" action="/monitor/set/"><input type="text" name="id" value="&lt;listing_id&gt;"></input><input type="submit" value="TEST"></input></form>
         </dt>
         <dd>
@@ -345,7 +645,7 @@ include(api-banner.m4)
             Monitor status is provided with listing objects.
             </p>
         </dd>
-        <dt>POST /monitor/deactivate/&lt;id&gt;
+        <dt>POST /monitor/deactivate
             <form method="POST" action="/monitor/deactivate/"><input type="text" name="id" value="&lt;listing_id&gt;"></input><input type="submit" value="TEST"></input></form>
         </dt>
         <dd>
@@ -357,19 +657,23 @@ include(api-banner.m4)
 
     <div class="boxtitle">QUESTION AND ANSWER API</div>
     <div class="boxpanel apipanel">
-    <p>Find questions and answers concerning this listing and ask new ones.</p>
+    <p>Find questions and answers concerning a listing and ask new ones for the owner to answer.</p>
 
-    <dt>GET /listing/questions_answers/&lt;listing_id&gt;</dt>
+    <dt>GET /listing/questions_answers/:id
     <dd>
         <p>Get the set of questions and answers for this listing.</p>
     </dd>
 
-    <dt>POST /listing/ask_owner?listing_id=&lt;id&gt;&amp;message=&lt;text&gt;</dt>
+    <dt>POST /listing/ask_owner
+        <form method="POST" action="/listing/ask_owner/"><input type="text" name="id" value="&lt;listing_id&gt;"></input><input type="text" name="message" value="&lt;text&gt"></input><input type="submit" value="TEST"></input></form>
+    </dt>
     <dd>
         <p>Ask owner a question concerning the listing.  You must be a logged in user in order to ask a question.</p>
     </dd>
 
-    <dt>POST /listing/answer_question?question_id=&lt;id&gt;&amp;message=&lt;text&gt;</dt>
+    <dt>POST /listing/answer_question
+        <form method="POST" action="/listing/answer_question/"><input type="text" name="id" value="&lt;question_id&gt;"></input><input type="text" name="message" value="&lt;text&gt"></input><input type="submit" value="TEST"></input></form>
+    </dt>
     <dd>
         <p>Answer a question.  Only the listing owner is allowed to answer questions.</p>
     </dd>
@@ -384,12 +688,14 @@ include(api-banner.m4)
         <p>Get the list of users with which the currently logged in user has had a conversation.</p>
     </dd>
 
-    <dt>GET /user/get_messages/&lt;user_id&gt;</dt>
+    <dt>GET /user/get_messages/:id</dt>
     <dd>
         <p>Get the list of messages between the logged in user and the user with the given <code>user_id</code>.</p>
     </dd>
 
-    <dt>POST /user/send_message?user_id=&lt;id&gt;&amp;message=&lt;text&gt;</dt>
+    <dt>POST /user/send_message
+        <form method="POST" action="/user/send_message/"><input type="text" name="id" value="&lt;user_id&gt;"></input><input type="text" name="message" value="&lt;text&gt"></input><input type="submit" value="TEST"></input></form>
+    </dt>
     <dd>
         <p>Post a message from the logged in user to the user with the given <code>user_id</code>.</p>
     </dd>
@@ -397,7 +703,7 @@ include(api-banner.m4)
 
     <div class="boxtitle">NOTIFICATION API</div>
     <div class="boxpanel apipanel">
-    <p>Get notifications for the currently logged in user.</p>
+    <p>Get notifications for the currently logged in user, which includes listing notifications such as bids and questions and also private messages.</p>
 
         <dt>GET /notifications/user
            <form method="GET" action="/notifications/user/"><input type="submit" value="TEST"></input></form>
@@ -409,9 +715,9 @@ include(api-banner.m4)
 
     <div class="boxtitle">FILE API</div>
     <div class="boxpanel apipanel">
-    <p>Upload and download documents associated with a listing</p>
+    <p>Upload and download documents associated with a listing, downloads are public but uploads are only for the listing owner.</p>
 
-        <dt>POST &lt;upload_url&gt;
+        <dt>POST :upload_url
             <form method="POST" action="&lt;upload_url&gt;"><input type="file" name="BUSINESS_PLAN" value="Add BUSINESS_PLAN"></input><input type="submit" value="TEST"></input></form>
         </dt>
         <dd>
@@ -439,7 +745,7 @@ include(api-banner.m4)
             </p>
         </dd>
 
-        <dt>GET /file/download/&lt;id&gt;
+        <dt>GET /file/download/:id
             <form method="GET" action="/file/download"><input type="text" name="id" value="&lt;file_id&gt;"></input><input type="submit" value="TEST"></input></form>
         </dt>
         <dd>
@@ -459,9 +765,9 @@ include(api-banner.m4)
 
     <div class="boxtitle">USER API</div>
     <div class="boxpanel apipanel">
-    <p>Get information on individual users</p>
+    <p>Get information on individual users, full information is only available for the currently logged in user.</p>
 
-        <dt>GET /user/loggedin/
+        <dt>GET /user/loggedin
             <form method="GET" action="/user/loggedin"><input type="submit" value="TEST"></input></form>
         </dt>
         <dd>
@@ -470,7 +776,7 @@ include(api-banner.m4)
             </p>
         </dd>
 
-        <dt>GET /user/get/&lt;id&gt;
+        <dt>GET /user/get/:id
             <form method="GET" action="/user/get"><input type="text" name="id" value="&lt;user_id&gt;"></input><input type="submit" value="TEST"></input></form>
         </dt>
         <dd>
@@ -479,7 +785,7 @@ include(api-banner.m4)
             </p>
         </dd>
 
-        <dt>POST /user/deactivate/&lt;id&gt;
+        <dt>POST /user/deactivate
             <form method="POST" action="/user/deactivate"><input type="text" name="id" value="&lt;user_id&gt;"></input><input type="submit" value="TEST"></input></form>
         </dt>
         <dd>
@@ -488,7 +794,7 @@ include(api-banner.m4)
             </p>
         </dd>
 
-        <dt>POST /user/check-user-name/
+        <dt>POST /user/check-user-name
             <form method="POST" action="/user/check-user-name/"><input type="text" name="name" value="&lt;user name&gt;"></input><input type="submit" value="TEST"></input></form>
         </dt>
         <dd>
@@ -503,7 +809,7 @@ include(api-banner.m4)
     <div class="boxpanel apipanel">
     <p>Perform administrative tasks on startupbidder; you must have administrative rights as a logged in user in order for these calls to work</p>
 
-        <dt>GET /listings/posted/
+        <dt>GET /listings/posted
             <form method="GET" action="/listings/posted/"><input type="submit" value="TEST"></input></form>
         </dt>
         <dd>
@@ -512,7 +818,7 @@ include(api-banner.m4)
             </p>
         </dd>
 
-        <dt>GET /listings/frozen/
+        <dt>GET /listings/frozen
             <form method="GET" action="/listings/frozen/"><input type="submit" value="TEST"></input></form>
         </dt>
         <dd>
@@ -521,7 +827,7 @@ include(api-banner.m4)
             </p>
         </dd>
 
-        <dt>POST /listing/freeze/&lt;id&gt;
+        <dt>POST /listing/freeze
             <form method="POST" action="/listing/freeze"><input type="text" name="id" value="&lt;listing_id&gt;"></input><input type="submit" value="TEST"></input></form>
         </dt>
         <dd>
@@ -531,7 +837,7 @@ include(api-banner.m4)
             </p>
         </dd>
 
-        <dt>POST /listing/activate/&lt;id&gt;
+        <dt>POST /listing/activate
             <form method="POST" action="/listing/activate"><input type="text" name="id" value="&lt;listing_id&gt;"></input><input type="submit" value="TEST"></input></form>
         </dt>
         <dd>
@@ -542,7 +848,7 @@ include(api-banner.m4)
             </p>
         </dd>
 
-        <dt>POST /listing/send_back/&lt;id&gt;
+        <dt>POST /listing/send_back
             <form method="POST" action="/listing/send_back"><input type="text" name="id" value="&lt;listing_id&gt;"></input><input type="submit" value="TEST"></input></form>
         </dt>
         <dd>
@@ -564,8 +870,9 @@ include(footer.m4)
 `
   <!-- JavaScript at the bottom for fast page loading -->
   <script src="js/libs/prevel.min.js"></script>
+  <script src="js/libs/hl-all.js"></script>
   <script src="js/modules/base.js"></script>
-  <script src="js/modules/headeronlypage.js"></script>
+  <script src="js/modules/apipage.js"></script>
   <script src="js/modules/tracker.js"></script>
 '
 include(promptie.m4)
