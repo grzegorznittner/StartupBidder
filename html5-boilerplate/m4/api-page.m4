@@ -229,7 +229,7 @@ include(api-banner.m4)
             <iframe name="listings-top"></iframe>
             <p>
         </div>
-
+<!--
         <dt>GET /listings/valuation</dt>
         <dd>
             <p>
@@ -272,7 +272,7 @@ include(api-banner.m4)
             <iframe name="listings-valuation"></iframe>
             <p>
         </div>
-
+-->
         <dt>GET /listings/closing</dt>
         <dd>
             <p>
@@ -422,9 +422,6 @@ include(api-banner.m4)
                     <span class="inputfield">
                         <input class="text inputwidetext" type="text" name="text" value="keywords"></input>
                     </span>
-                    <span class="inputicon">
-                        <div id="titleicon"></div>
-                    </span>
                 </div>
         
                 <div class="formitem clear">
@@ -443,14 +440,93 @@ include(api-banner.m4)
     <div class="boxtitle">LISTING API</div>
     <div class="boxpanel apipanel">
     <p>Get and update information on an individual company listing</p>
-        <dt>GET /listings/get/:id
-            <form method="GET" action="/listings/get"><input type="text" name="id" value="&lt;listing_id&gt;"></input><input type="submit" value="TEST"></input></form>
-        </dt>
+
+        <dt>GET /listings/get/:id</dt>
         <dd>
             <p>
             Return listing data for a given listing id.  Note the special field "logo" which actually returns the data uri of the logo image.
+            All listings are private until activated, and then public thereafter.
             </p>
         </dd>
+        <div class="apidetail">
+            <h4>Parameters</h4>
+            <ul>
+                <li><code>id</code> alphanumeric listing id as returned by the listing list and search API</li>
+            </ul>
+            <h4>Response</h4>
+            <ul>
+                <li><code>login_url</code> URL to use for site login action</li>
+                <li><code>logout_url</code> URL to use for site logout action</li>
+                <li><code>loggedin_profile</code> private user profile object, see User API for profile object details</li>
+                <li><code>error_code</code> error status for this call, 0 on success</li>
+                <li><code>error_msg</code> error message for this call, null on success</li>
+                <li><code>listing</code> data object for this listing, properties detailed below:
+                <li><code class="apiprop">.listing_id</code> alphanumeric listing id</li>
+                <li><code class="apiprop">.title</code> name of the company, partnership, or other business entity</li>
+                <li><code class="apiprop">.asked_fund</code> <var>true</var> if the listing is asking for funding, <var>false</var> otherwise</li>
+                <li><code class="apiprop">.suggested_amt</code> raw USD amount being asked in funding, between 20000 and 400000</li>
+                <li><code class="apiprop">.suggested_pct</code> raw percentage of business offered for funding, between 5 and 50</li>
+                <li><code class="apiprop">.suggested_val</code> calculated implied valuation of business, between 40000 and 8000000</li>
+                <li><code class="apiprop">.modified_date</code> date the listing was last changed in YYYYMMDD format</li>
+                <li><code class="apiprop">.created_date</code> date user created the listing on startupbidder</li>
+                <li><code class="apiprop">.posted_date</code> date user submitted listing to an admin</li>
+                <li><code class="apiprop">.listing_date</code> date admin approved the listing</li>
+                <li><code class="apiprop">.closing_date</code> date bidding closes for this listing</li>
+                <li><code class="apiprop">.status</code> progresses from <var>new</var> -> <var>posted</var> -> <var>active</var>, can also be <var>withdrawn</var> or <var>frozen</var></li>
+                <li><code class="apiprop">.mantra</code> one sentance summary of the business</li>
+                <li><code class="apiprop">.summary</code> one paragraph summary of the company</li>
+                <li><code class="apiprop">.website</code> external website URL of the company</li>
+                <li><code class="apiprop">.category</code> industry category as per <var>/listings/categories</var></li>
+                <li><code class="apiprop">.profile_id</code> user ID of the user who posted the listing</li>
+                <li><code class="apiprop">.profile_username</code> username of the user who posted the listing</li>
+                <li><code class="apiprop">.brief_address</code> listing city, country or city, state country for USA</li>
+                <li><code class="apiprop">.latitude</code> decimal latitude of the company business address</li>
+                <li><code class="apiprop">.longitude</code> decimal longitude of the company business address</li>
+                <li><code class="apiprop">.logo</code> data URI for the 146px by 146px listing company logo as per RFC 2397</li>
+                <li><code class="apiprop">.previous_val</code> last valuation immediately before the current valuation was set</li>
+                <li><code class="apiprop">.valuation</code> current valuation, same as median_valuation but suggested_val if no bids exist</li>
+                <li><code class="apiprop">.median_valuation</code> the median valuation implied by the median bid for this listing</li>
+                <li><code class="apiprop">.score</code> score for this listing computed as according to the FAQ</li>
+                <li><code class="apiprop">.founders</code> comma-separated string of the company founders</li>
+                <li><code class="apiprop">.contact_email</code> public contact email for the company</li>
+                <li><code class="apiprop">.address</code> full google maps readable business address for this listing</li>
+                <li><code class="apiprop">.num_comments</code> number of comments for this listing</li>
+                <li><code class="apiprop">.num_bids</code> number of bids made on this listing</li>
+                <li><code class="apiprop">.num_qandas</code> number of questions asked about this listing, only counts answered questions</li>
+                <li><code class="apiprop">.days_ago</code> number of days that have elapsed since this listing was posted, rounded down</li>
+                <li><code class="apiprop">.days_left</code> number of days until this listing closes, rounded down</li>
+                <li><code class="apiprop">.monitored</code> <var>true</var> if logged in user is watching this listing, <var>false</var> otherwise</li>
+                <li><code class="apiprop">.business_plan_id</code> business plan download ID for this listing via the File API</li>
+                <li><code class="apiprop">.presentation_id</code> presentation download ID for this listing via the File API</li>
+                <li><code class="apiprop">.financials_id</code> financial statement download ID for this listing via the File API</li>
+                <li><code class="apiprop">.video</code> embed url for a video about this listing from youtube, dailymotion, or vidmeo</li>
+                <li><code class="apiprop">.business_plan_upload</code> one-time URL for uploading a business plan document via the File API</li>
+                <li><code class="apiprop">.presentation_upload</code> one-time URL for uploading a presentation document via the File API<</li>
+                <li><code class="apiprop">.financials_upload</code> one-time URL for uploading a financial statement via the File API<</li>
+                <li><code class="apiprop">.logo_upload</code> one-time URL for uploading a company logo via the File API<</li>
+                <li><code class="apiprop">.answer1</code> the fields answer1 through answer26 are used for BMC and presentation construction</li>
+            </ul>
+            <h4>Test</h4>
+            <form method="GET" action="/listings/get" target="listings-get">
+
+                <div class="formitem">
+                    <label class="inputlabel" for="title">ID</label>
+                    <span class="inputfield">
+                        <input class="text inputwidetext" type="text" name="id" id="listing_id" value="0"></input>
+                    </span>
+                </div>
+        
+                <div class="formitem clear">
+                    <span class="inputlabel"></span>
+                    <span class="inputfield">
+                        <input type="submit" class="inputbutton" value="SUBMIT"></input>
+                    </span>
+                </div>
+
+            </form>
+            <iframe name="listings-get"></iframe>
+            <p>
+        </div>
 
         <dt>GET /listings/logo/:id
             <form method="GET" action="/listings/logo"><input type="text" name="id" value="&lt;listing_id&gt;"></input><input type="submit" value="TEST"></input></form>
