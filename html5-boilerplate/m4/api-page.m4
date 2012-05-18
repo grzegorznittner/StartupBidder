@@ -47,7 +47,7 @@ include(api-banner.m4)
     <div class="boxpanel apipanel">
     <p>Get a list of companies depending on the category, ranking, or user criteria.</p>
 
-        <dt>GET /listings/discover</dt>
+        <dt>GET /listing/discover</dt>
         <dd>
             <p>
             Return the front page listings, which includes logged in user active listings, investor bid listings, top listings, and other major category listings.  However, only four
@@ -82,7 +82,7 @@ include(api-banner.m4)
                 </li>
                 <li><code>top_locations</code> the map of the twenty locations with the most active listings on the site.  Locations are grouped by
                     brief address, which corresponds roughly to the Metropolitan Stastical Area, which is the city and country in most locations and
-                    the city, state and country in the USA.  Sructure is:
+                    the city, state and country in the USA.  Structure is:
 <pre name="code" class="js">
 {
     :brief_address: :active_listing_count,
@@ -92,14 +92,13 @@ include(api-banner.m4)
                 </li>
             </ul>
             <h4>Test</h4>
-            <form method="GET" action="/listings/discover" target="listings-discover">
+            <form method="GET" action="/listing/discover" target="listings-discover">
                 <input type="submit" class="inputbutton" value="SUBMIT"></input>
             </form>
             <iframe name="listings-discover"></iframe>
-            <p>
         </div>
 
-        <dt>GET /listings/discover_user</dt>
+        <dt>GET /listing/discover_user</dt>
         <dd>
             <p>
             Return the logged in user profile front page listings, however, only four listings max are returned for each type.
@@ -130,18 +129,17 @@ include(api-banner.m4)
                 <li><code>notifications</code> list of the user notifications, unread first then by date order, see Notification API for details</li>
                 <li><code>admin_posted_listings</code> list of all listings submitted for review but not yet approved, null except for logged in admins</li>
                 <li><code>admin_frozen_listings</code> list of all administratively frozen listings, null except for logged in admins</li>
-                <li><code>categories</code> map of listing categories, same as for <var>/listings/discover</var></li>
-                <li><code>top_locations</code> map of top locations, same as for <var>/listings/discover</var></li>
+                <li><code>categories</code> map of listing categories, same as for <var>/listing/discover</var></li>
+                <li><code>top_locations</code> map of top locations, same as for <var>/listing/discover</var></li>
             </ul>
             <h4>Test</h4>
-            <form method="GET" action="/listings/discover_user" target="listings-discover_user">
+            <form method="GET" action="/listing/discover_user" target="listings-discover_user">
                 <input type="submit" class="inputbutton" value="SUBMIT"></input>
             </form>
             <iframe name="listings-discover_user"></iframe>
-            <p>
         </div>
 
-        <dt>GET /listings/monitored</dt>
+        <dt>GET /listing/monitored</dt>
         <dd>
             <p>
             Returns listings the user is watching, ordered by posting date descending, by default limited to five results.
@@ -169,25 +167,24 @@ include(api-banner.m4)
                     Structure:
 <pre name="code" class="js">
 {
-    :start_index: :index,
-    :max_results: :max,
-    :num_results: :n,
-    :more_results_url: :url
+    start_index: :index,
+    max_results: :max,
+    num_results: :n,
+    more_results_url: :url
 }
 </pre>
                 </li>
-                <li><code>categories</code> map of listing categories, same as for <var>/listings/discover</var></li>
-                <li><code>top_locations</code> map of top locations, same as for <var>/listings/discover</var></li>
+                <li><code>categories</code> map of listing categories, same as for <var>/listing/discover</var></li>
+                <li><code>top_locations</code> map of top locations, same as for <var>/listing/discover</var></li>
             </ul>
             <h4>Test</h4>
-            <form method="GET" action="/listings/monitored" target="listings-monitored">
+            <form method="GET" action="/listing/monitored" target="listings-monitored">
                 <input type="submit" class="inputbutton" value="SUBMIT"></input>
             </form>
             <iframe name="listings-monitored"></iframe>
-            <p>
         </div>
 
-        <dt>GET /listings/top</dt>
+        <dt>GET /listing/top</dt>
         <dd>
             <p>
             Returns the top ranked listings on startupbidder.  The algorithm used is fully explained in the FAQ, it functions as an exponentially time-decayed
@@ -212,25 +209,24 @@ include(api-banner.m4)
                     Structure:
 <pre name="code" class="js">
 {
-    :start_index: :index,
-    :max_results: :max,
-    :num_results: :n,
-    :more_results_url: :url
+    start_index: :index,
+    max_results: :max,
+    num_results: :n,
+    more_results_url: :url
 }
 </pre>
                 </li>
-                <li><code>categories</code> map of listing categories, same as for <var>/listings/discover</var></li>
-                <li><code>top_locations</code> map of top locations, same as for <var>/listings/discover</var></li>
+                <li><code>categories</code> map of listing categories, same as for <var>/listing/discover</var></li>
+                <li><code>top_locations</code> map of top locations, same as for <var>/listing/discover</var></li>
             </ul>
             <h4>Test</h4>
-            <form method="GET" action="/listings/top" target="listings-top">
+            <form method="GET" action="/listing/top" target="listings-top">
                 <input type="submit" class="inputbutton" value="SUBMIT"></input>
             </form>
             <iframe name="listings-top"></iframe>
-            <p>
         </div>
 <!--
-        <dt>GET /listings/valuation</dt>
+        <dt>GET /listing/valuation</dt>
         <dd>
             <p>
             Returns the most valued active listings on startupbidder, ordered by median bid valuation descending.
@@ -255,25 +251,24 @@ include(api-banner.m4)
                     Structure:
 <pre name="code" class="js">
 {
-    :start_index: :index,
-    :max_results: :max,
-    :num_results: :n,
-    :more_results_url: :url
+    start_index: :index,
+    max_results: :max,
+    num_results: :n,
+    more_results_url: :url
 }
 </pre>
                 </li>
-                <li><code>categories</code> map of listing categories, same as for <var>/listings/discover</var></li>
-                <li><code>top_locations</code> map of top locations, same as for <var>/listings/discover</var></li>
+                <li><code>categories</code> map of listing categories, same as for <var>/listing/discover</var></li>
+                <li><code>top_locations</code> map of top locations, same as for <var>/listing/discover</var></li>
             </ul>
             <h4>Test</h4>
-            <form method="GET" action="/listings/valuation" target="listings-valuation">
+            <form method="GET" action="/listing/valuation" target="listings-valuation">
                 <input type="submit" class="inputbutton" value="SUBMIT"></input>
             </form>
             <iframe name="listings-valuation"></iframe>
-            <p>
         </div>
 -->
-        <dt>GET /listings/closing</dt>
+        <dt>GET /listing/closing</dt>
         <dd>
             <p>
             Returns the active listings in order of closing date, thus the listings closing soonest are first.
@@ -297,25 +292,24 @@ include(api-banner.m4)
                     Structure:
 <pre name="code" class="js">
 {
-    :start_index: :index,
-    :max_results: :max,
-    :num_results: :n,
-    :more_results_url: :url
+    start_index: :index,
+    max_results: :max,
+    num_results: :n,
+    more_results_url: :url
 }
 </pre>
                 </li>
-                <li><code>categories</code> map of listing categories, same as for <var>/listings/discover</var></li>
-                <li><code>top_locations</code> map of top locations, same as for <var>/listings/discover</var></li>
+                <li><code>categories</code> map of listing categories, same as for <var>/listing/discover</var></li>
+                <li><code>top_locations</code> map of top locations, same as for <var>/listing/discover</var></li>
             </ul>
             <h4>Test</h4>
-            <form method="GET" action="/listings/closing" target="listings-closing">
+            <form method="GET" action="/listing/closing" target="listings-closing">
                 <input type="submit" class="inputbutton" value="SUBMIT"></input>
             </form>
             <iframe name="listings-closing"></iframe>
-            <p>
         </div>
 
-        <dt>GET /listings/latest</dt>
+        <dt>GET /listing/latest</dt>
         <dd>
             <p>
             Returns the latest listings on startupbidder, ordered by posting date descending.  Thus, the newest listings are returned first.
@@ -339,22 +333,21 @@ include(api-banner.m4)
                     Structure:
 <pre name="code" class="js">
 {
-    :start_index: :index,
-    :max_results: :max,
-    :num_results: :n,
-    :more_results_url: :url
+    start_index: :index,
+    max_results: :max,
+    num_results: :n,
+    more_results_url: :url
 }
 </pre>
                 </li>
-                <li><code>categories</code> map of listing categories, same as for <var>/listings/discover</var></li>
-                <li><code>top_locations</code> map of top locations, same as for <var>/listings/discover</var></li>
+                <li><code>categories</code> map of listing categories, same as for <var>/listing/discover</var></li>
+                <li><code>top_locations</code> map of top locations, same as for <var>/listing/discover</var></li>
             </ul>
             <h4>Test</h4>
-            <form method="GET" action="/listings/latest" target="listings-latest">
+            <form method="GET" action="/listing/latest" target="listings-latest">
                 <input type="submit" class="inputbutton" value="SUBMIT"></input>
             </form>
             <iframe name="listings-latest"></iframe>
-            <p>
         </div>
     </div>
 
@@ -362,7 +355,7 @@ include(api-banner.m4)
     <div class="boxpanel apipanel">
     <p>Search for a set of listings using keywords, location, and category matches</p>
     
-        <dt>GET /listings/keyword</dt>
+        <dt>GET /listing/keyword</dt>
         <dd>
             <p>
             Returns listings on startupbidder matching a given set of keywords.  Revelancy ranking is applied, with the most relevant listings returned first.
@@ -380,10 +373,10 @@ include(api-banner.m4)
                     special keywords, are combined with an implicit AND operator.  The following special search keywords are supported:
                     </p>
                     <p>
-                    <var>location:name</var> - match by location <var>name</var> as per <var>/listings/locations</var>
+                    <var>location:name</var> - match by location <var>name</var> as per <var>/listing/locations</var>
                     </p>
                     <p>
-                    <var>category:name</var> - match by category <var>name</var> as per <var>/listings/categories</var>
+                    <var>category:name</var> - match by category <var>name</var> as per <var>/listing/categories</var>
                     </p>
                     <p>
                     The max_results parameter allows for limiting response size.
@@ -404,18 +397,18 @@ include(api-banner.m4)
                     Structure:
 <pre name="code" class="js">
 {
-    :start_index: :index,
-    :max_results: :max,
-    :num_results: :n,
-    :more_results_url: :url
+    start_index: :index,
+    max_results: :max,
+    num_results: :n,
+    more_results_url: :url
 }
 </pre>
                 </li>
-                <li><code>categories</code> map of listing categories, same as for <var>/listings/discover</var></li>
-                <li><code>top_locations</code> map of top locations, same as for <var>/listings/discover</var></li>
+                <li><code>categories</code> map of listing categories, same as for <var>/listing/discover</var></li>
+                <li><code>top_locations</code> map of top locations, same as for <var>/listing/discover</var></li>
             </ul>
             <h4>Test</h4>
-            <form method="GET" action="/listings/keyword" target="listings-keyword">
+            <form method="GET" action="/listing/keyword" target="listings-keyword">
 
                 <div class="formitem">
                     <label class="inputlabel" for="title">TEXT</label>
@@ -433,7 +426,6 @@ include(api-banner.m4)
 
             </form>
             <iframe name="listings-keyword"></iframe>
-            <p>
         </div>
     </div>
 
@@ -441,7 +433,7 @@ include(api-banner.m4)
     <div class="boxpanel apipanel">
     <p>Get and update information on an individual company listing</p>
 
-        <dt>GET /listings/get/:id</dt>
+        <dt>GET /listing/get/:id</dt>
         <dd>
             <p>
             Return listing data for a given listing id.  Note the special field "logo" which actually returns the data uri of the logo image.
@@ -454,6 +446,8 @@ include(api-banner.m4)
                 <li><code>id</code> alphanumeric listing id as returned by the listing list and search API</li>
             </ul>
             <h4>Response</h4>
+                <p>NOTE: fields answer1 through answer10 are used for the Business Model Canvas construction, fields
+                answer 11 through answer 26 are used for the Investor Presentation construction</p>
             <ul>
                 <li><code>login_url</code> URL to use for site login action</li>
                 <li><code>logout_url</code> URL to use for site logout action</li>
@@ -472,11 +466,11 @@ include(api-banner.m4)
                 <li><code class="apiprop">.posted_date</code> date user submitted listing to an admin</li>
                 <li><code class="apiprop">.listing_date</code> date admin approved the listing</li>
                 <li><code class="apiprop">.closing_date</code> date bidding closes for this listing</li>
-                <li><code class="apiprop">.status</code> progresses from <var>new</var> -> <var>posted</var> -> <var>active</var>, can also be <var>withdrawn</var> or <var>frozen</var></li>
+                <li><code class="apiprop">.status</code> progresses from <var>new</var> -&gt; <var>posted</var> -&gt; <var>active</var>, can also be <var>withdrawn</var> or <var>frozen</var></li>
                 <li><code class="apiprop">.mantra</code> one sentance summary of the business</li>
-                <li><code class="apiprop">.summary</code> one paragraph summary of the company</li>
+                <li><code class="apiprop">.summary</code> one paragraph summary of the company, the "elevator pitch"</li>
                 <li><code class="apiprop">.website</code> external website URL of the company</li>
-                <li><code class="apiprop">.category</code> industry category as per <var>/listings/categories</var></li>
+                <li><code class="apiprop">.category</code> industry category as per <var>/listing/categories</var></li>
                 <li><code class="apiprop">.profile_id</code> user ID of the user who posted the listing</li>
                 <li><code class="apiprop">.profile_username</code> username of the user who posted the listing</li>
                 <li><code class="apiprop">.brief_address</code> listing city, country or city, state country for USA</li>
@@ -501,13 +495,38 @@ include(api-banner.m4)
                 <li><code class="apiprop">.financials_id</code> financial statement download ID for this listing via the File API</li>
                 <li><code class="apiprop">.video</code> embed url for a video about this listing from youtube, dailymotion, or vidmeo</li>
                 <li><code class="apiprop">.business_plan_upload</code> one-time URL for uploading a business plan document via the File API</li>
-                <li><code class="apiprop">.presentation_upload</code> one-time URL for uploading a presentation document via the File API<</li>
-                <li><code class="apiprop">.financials_upload</code> one-time URL for uploading a financial statement via the File API<</li>
-                <li><code class="apiprop">.logo_upload</code> one-time URL for uploading a company logo via the File API<</li>
-                <li><code class="apiprop">.answer1</code> the fields answer1 through answer26 are used for BMC and presentation construction</li>
+                <li><code class="apiprop">.presentation_upload</code> one-time URL for uploading a presentation document via the File API</li>
+                <li><code class="apiprop">.financials_upload</code> one-time URL for uploading a financial statement via the File API</li>
+                <li><code class="apiprop">.logo_upload</code> one-time URL for uploading a company logo via the File API</li>
+                <li><code class="apiprop">answer1</code> KEY ACTIVITIES</li>
+                <li><code class="apiprop">answer2</code> KEY RESOURCES</li>
+                <li><code class="apiprop">answer3</code> KEY PARTNERS</li>
+                <li><code class="apiprop">answer4</code> VALUE PROPOSITIONS</li>
+                <li><code class="apiprop">answer5</code> CUSTOMER SEGMENTS</li>
+                <li><code class="apiprop">answer6</code> CHANNELS</li>
+                <li><code class="apiprop">answer7</code> CUSTOMER RELATIONSHIPS</li>
+                <li><code class="apiprop">answer8</code> COST STRUCTURE</li>
+                <li><code class="apiprop">answer9</code> REVENUE STREAMS</li>
+                <li><code class="apiprop">answer10</code> PROBLEM</li>
+                <li><code class="apiprop">answer11</code> SOLUTION</li>
+                <li><code class="apiprop">answer12</code> FEATURES AND BENEFITS</li>
+                <li><code class="apiprop">answer13</code> COMPANY STATUS</li>
+                <li><code class="apiprop">answer14</code> MARKET</li>
+                <li><code class="apiprop">answer15</code> CUSTOMER</li>
+                <li><code class="apiprop">answer16</code> COMPETITORS</li>
+                <li><code class="apiprop">answer17</code> COMPETITIVE COMPARISON</li>
+                <li><code class="apiprop">answer18</code> BUSINESS MODEL</li>
+                <li><code class="apiprop">answer19</code> MARKETING PLAN</li>
+                <li><code class="apiprop">answer20</code> TEAM</li>
+                <li><code class="apiprop">answer21</code> TEAM VALUES</li>
+                <li><code class="apiprop">answer22</code> CURRENT FINANCIALS</li>
+                <li><code class="apiprop">answer23</code> FINANCIAL PROJECTIONS</li>
+                <li><code class="apiprop">answer24</code> OWNERS</li>
+                <li><code class="apiprop">answer25</code> INVESTMENT</li>
+                <li><code class="apiprop">answer26</code> TIMELINE AND WRAPUP</li>
             </ul>
             <h4>Test</h4>
-            <form method="GET" action="/listings/get" target="listings-get">
+            <form method="GET" action="/listing/get" target="listings-get">
 
                 <div class="formitem">
                     <label class="inputlabel" for="title">ID</label>
@@ -525,21 +544,46 @@ include(api-banner.m4)
 
             </form>
             <iframe name="listings-get"></iframe>
-            <p>
         </div>
 
-        <dt>GET /listings/logo/:id
-            <form method="GET" action="/listings/logo"><input type="text" name="id" value="&lt;listing_id&gt;"></input><input type="submit" value="TEST"></input></form>
-        </dt>
+        <dt>GET /listing/logo/:id</dt>
         <dd>
             <p>
             Return listing logo for a given listing id. Should be used as source for image tags if data uri cannot be used.
             </p>
         </dd>
+        <div class="apidetail">
+            <h4>Parameters</h4>
+            <ul>
+                <li><code>id</code> alphanumeric listing id as returned by the listing list and search API</li>
+            </ul>
+            <h4>Response</h4>
+            <ul>
+                <li>returns an image binary</li>
+            </ul>
+            <h4>Test</h4>
+            <form method="GET" action="/listing/logo" target="listings-logo">
 
-        <dt>POST /listing/create
-            <form method="POST" action="/listings/create/"><input type="submit" value="TEST"></input></form>
-        </dt>
+                <div class="formitem">
+                    <label class="inputlabel" for="title">ID</label>
+                    <span class="inputfield">
+                        <input class="text inputwidetext" type="text" name="id" id="listing_id" value="0"></input>
+                    </span>
+                </div>
+        
+                <div class="formitem clear">
+                    <span class="inputlabel"></span>
+                    <span class="inputfield">
+                        <input type="submit" class="inputbutton" value="SUBMIT"></input>
+                    </span>
+                </div>
+
+            </form>
+            <iframe name="listings-logo"></iframe>
+        </div>
+
+
+        <dt>POST /listing/create</dt>
         <dd>
             <p>
             Creates a new listing for the currently logged in user.  Only works for logged in users.  If the user already has a new
@@ -548,145 +592,535 @@ include(api-banner.m4)
             Thus you can also call this method if you want the current in-edit listing.
             </p>
         </dd>
+        <div class="apidetail">
+            <h4>Parameters</h4>
+            <ul>
+                <li><var>none</var></li>
+            </ul>
+            <h4>Response</h4>
+            <ul>
+                <li><code>login_url</code> URL to use for site login action</li>
+                <li><code>logout_url</code> URL to use for site logout action</li>
+                <li><code>loggedin_profile</code> private user profile object, see User API for profile object details</li>
+                <li><code>error_code</code> error status for this call, 0 on success</li>
+                <li><code>error_msg</code> error message for this call, null on success</li>
+                <li><code>listing</code> the standard listing object as returned by the <var>/listing/get</var> method</li>
+                <li><code>categories</code> list of all available industry categories the listing <var>category</var> can be set to</li>
+            </ul>
+            <h4>Test</h4>
+            <form method="POST" action="/listing/create" target="listing-create">
+                <input type="submit" class="inputbutton" value="SUBMIT"></input>
+            </form>
+            <iframe name="listing-create"></iframe>
+        </div>
 
-        <dt>POST /listing/update_field
-            <form method="POST" action="/listing/update_field"><input type="text" name="listing" value="{ title: &rsquo;Foo, Inc.&rsquo; }"></input><input type="submit" value="TEST"></input></form>
-        </dt>
+        <dt>POST /listing/update_field</dt>
         <dd>
             <p>
-            Updates a field for the currently logged in user&rsquo;s listing.  Value is a json string.  Multiple fields can be passed at once for efficient update.  Updatable fields keys are:
-            </p>
-            <p>
-            <code>
-                title, mantra, summary, contact_email, founders, website, category, asked_fund, suggested_amt, suggested_pct, video, answer1, answer2, answer3, answer4, answer5, answer6, answer7, answer8, answer9, answer10, answer11, answer12, answer13, answer14, answer15, answer16, answer17, answer18, answer19, answer20, answer21, answer22, answer23, answer24, answer25, answer26, logo_url, business_plan_url, presentation_url, financials_url
-            </code>
-            </p>
-            <p>
-            Note that by calling the *_url methods, the system will download the file at that url and store it in the backend.
+            Updates a field for the currently logged in user&rsquo;s listing.  Value is a json string.  Multiple fields can be passed at once for efficient update.
+            Updatable fields keys are detailed in the parameter section.
             </p>
         </dd>
+        <div class="apidetail">
+            <h4>Parameters</h4>
+            <ul>
+                <li>
+                    <code>listing</code>
+                    The listing property json contains one or more field-value pairs which you wish to update.  Value meanings as are per the <var>/listing/get</var> method.
+                    Note that by passing the URL valued properties
+                    <var>business_plan_url</var>, <var>presentation_url</var> or <var>financials_url</var>, the system will download the file at that url
+                    and store it in the backend.  Listing property structure:
+<pre name="code" class="js">
+{
+    title: :title,
+    mantra: :mantra,
+    summary: :summary,
+    contact_email: :contact_email,
+    founders: :founders,
+    website: :website,
+    category: :category,
+    asked_fund: :asked_fund,
+    suggested_amt: :suggested_amt,
+    suggested_pct: :suggested_pct,
+    video: :video,
+    answer1: :answer1,
+    answer2: :answer2,
+    answer3: :answer3,
+    answer4: :answer4,
+    answer5: :answer5,
+    answer6: :answer6,
+    answer7: :answer7,
+    answer8: :answer8,
+    answer9: :answer9,
+    answer10: :answer10,
+    answer11: :answer11,
+    answer12: :answer12,
+    answer13: :answer13,
+    answer14: :answer14,
+    answer15: :answer15,
+    answer16: :answer16,
+    answer17: :answer17,
+    answer18: :answer18,
+    answer19: :answer19,
+    answer20: :answer20,
+    answer21: :answer21,
+    answer22: :answer22,
+    answer23: :answer23,
+    answer24: :answer24,
+    answer25: :answer25,
+    answer26: :answer26,
+    logo_url: :logo_url,
+    business_plan_url: :business_plan_url,
+    presentation_url: :presentation_url,
+    financials_url: :financials_url
+}
+</pre>
+                </li>
+            </ul>
+            <h4>Response</h4>
+            <ul>
+                <li><code>login_url</code> URL to use for site login action</li>
+                <li><code>logout_url</code> URL to use for site logout action</li>
+                <li><code>loggedin_profile</code> private user profile object, see User API for profile object details</li>
+                <li><code>error_code</code> error status for this call, 0 on success</li>
+                <li><code>error_msg</code> error message for this call, null on success</li>
+                <li><code>listing</code> listing object as per <var>/listing/get</var> method</li>
+            </ul>
+            <h4>Test</h4>
+            <form method="POST" action="/listing/update_field" target="listing-update_field">
 
-        <dt>POST /listing/post
-            <form method="POST" action="/listing/post/"><input type="submit" value="TEST"></input></form>
-        </dt>
+                <div class="formitem">
+                    <label class="inputlabel" for="title">LISTING</label>
+                    <span class="inputfield">
+                        <input class="text inputwidetext" type="text" name="listing" value="{ title: &rsquo;Foo, Inc.&rsquo; }"></input>
+                    </span>
+                </div>
+        
+                <div class="formitem clear">
+                    <span class="inputlabel"></span>
+                    <span class="inputfield">
+                        <input type="submit" class="inputbutton" value="SUBMIT"></input>
+                    </span>
+                </div>
+
+            </form>
+            <iframe name="listing-update_field"></iframe>
+        </div>
+
+        <dt>POST /listing/post</dt>
         <dd>
             <p>
-            Submits the user&rsquo;s new listing for approval by a startupbidder admin.  After approval, the current listing will become active and the user may then create a new additional listing.
+            Submits the user&rsquo;s new listing for approval by a startupbidder admin.  No ID is passed since the user may only have one pending listing at a time.
+            After approval, the current listing will become active and the user may then create a new additional listing.
+            You must be the logged in listing owner in order to post the listing.  Will return 200 on success, 500 on error if field validation fails.
             </p>
         </dd>
+        <div class="apidetail">
+            <h4>Parameters</h4>
+            <ul>
+                <li><var>none</var></li>
+            </ul>
+            <h4>Response</h4>
+            <ul>
+                <li><code>login_url</code> URL to use for site login action</li>
+                <li><code>logout_url</code> URL to use for site logout action</li>
+                <li><code>loggedin_profile</code> private user profile object, see User API for profile object details</li>
+                <li><code>error_code</code> error status for this call, 0 on success</li>
+                <li><code>error_msg</code> error message for this call, null on success</li>
+                <li><code>listing</code> listing object as per <var>/listing/get</var> method</li>
+            </ul>
+            <h4>Test</h4>
+            <form method="POST" action="/listing/post" target="listing-post">
+                <input type="submit" class="inputbutton" value="SUBMIT"></input>
+            </form>
+            <iframe name="listing-post"></iframe>
+        </div>
 
-        <dt>POST /listing/delete
-            <form method="POST" action="/listing/delete/"><input type="submit" value="TEST"></input></form>
-        </dt>
+        <dt>POST /listing/delete</dt>
         <dd>
             <p>
             Deletes the user&rsquo;s new listing.  This only works for a listing which has not yet been approved.  To delete a listing which has already been approved, call the withdraw method.
+            You must be the logged in listing owner in order to delete the listing.
             </p>
         </dd>
+        <div class="apidetail">
+            <h4>Parameters</h4>
+            <ul>
+                <li><var>none</var></li>
+            </ul>
+            <h4>Response</h4>
+            <ul>
+                <li><code>login_url</code> URL to use for site login action</li>
+                <li><code>logout_url</code> URL to use for site logout action</li>
+                <li><code>loggedin_profile</code> private user profile object, see User API for profile object details</li>
+                <li><code>error_code</code> error status for this call, 0 on success</li>
+                <li><code>error_msg</code> error message for this call, null on success</li>
+                <li><code>listing</code> listing object as per <var>/listing/get</var> method</li>
+            </ul>
+            <h4>Test</h4>
+            <form method="POST" action="/listing/delete" target="listing-delete">
+                <input type="submit" class="inputbutton" value="SUBMIT"></input>
+            </form>
+            <iframe name="listing-delete"></iframe>
+        </div>
 
-        <dt>POST /listing/withdraw
-            <form method="POST" action="/listing/withdraw"><input type="text" name="id" value="&lt;listing_id&gt;"></input><input type="submit" value="TEST"></input></form>
-        </dt>
+        <dt>POST /listing/withdraw/:id</dt>
         <dd>
             <p>
-            Withdraws the listing with the given id.  You must either be the logged in owner of this listing or an admin in order to call this method.  Note that for regulatory reasons,
-            listings can never be deleted once approved, they must instead be withdrawn.  Withdrawn listings are kept in the system as per the startupbidder data retention policy.
+            Withdraws the user&rsquo;s listing with the given id.  You must either be the logged in owner of this listing or an admin in order to call this method.
+            Note that for legal reasons, listings can never be deleted once approved, they must instead be withdrawn.  Withdrawn listings are kept in the system
+            as per the startupbidder data retention policy.
             </p>
         </dd>
-
+        <div class="apidetail">
+            <h4>Parameters</h4>
+            <ul>
+                <li><code>id</code> alphanumeric listing id as returned by the listing list and search API</li>
+            </ul>
+            <h4>Response</h4>
+            <ul>
+                <li><code>login_url</code> URL to use for site login action</li>
+                <li><code>logout_url</code> URL to use for site logout action</li>
+                <li><code>loggedin_profile</code> private user profile object, see User API for profile object details</li>
+                <li><code>error_code</code> error status for this call, 0 on success</li>
+                <li><code>error_msg</code> error message for this call, null on success</li>
+                <li><code>listing</code> listing object as per <var>/listing/get</var> method</li>
+            </ul>
+            <h4>Test</h4>
+            <form method="POST" action="/listing/withdraw" target="listings-withdraw">
+                <div class="formitem">
+                    <label class="inputlabel" for="title">ID</label>
+                    <span class="inputfield">
+                        <input class="text inputwidetext" type="text" name="id" id="listing_id" value="0"></input>
+                    </span>
+                </div>
+                <div class="formitem clear">
+                    <span class="inputlabel"></span>
+                    <span class="inputfield">
+                        <input type="submit" class="inputbutton" value="SUBMIT"></input>
+                    </span>
+                </div>
+            </form>
+            <iframe name="listings-withdraw"></iframe>
+        </div>
     </div>
 
     <div class="boxtitle">LOCATIONS API</div>
     <div class="boxpanel apipanel">
     <p>Find the set of location groupings, roughly city/state/country metropolitan areas, containing startups on this site</p>
 
-        <dt>GET /listings/locations
-            <form method="GET" action="/listings/locations/"><input type="submit" value="TEST"></input></form>
-        </dt>
+        <dt>GET /listing/locations</dt>
         <dd>
             <p>
             Return the most active locations for startupbidder.  The returned location names can be used as a location value for the search API.
             </p>
         </dd>
-        <dt>GET /listings/all-listing-locations
-            <form method="GET" action="/listings/all-listing-locations/"><input type="submit" value="TEST"></input></form>
-        </dt>
+        <div class="apidetail">
+            <h4>Parameters</h4>
+            <ul>
+                <li><var>none</var></li>
+            </ul>
+            <h4>Response</h4>
+            <ul>
+                <li>Returns the map of the twenty locations with the most active listings on the site.  Locations are grouped by
+                    brief address, which corresponds roughly to the Metropolitan Stastical Area, which is the city and country in most locations and
+                    the city, state and country in the USA.  Structure is:
+<pre name="code" class="js">
+{
+    :brief_address: :active_listing_count,
+    ...
+}
+</pre>
+                </li>
+            </ul>
+            <h4>Test</h4>
+            <form method="GET" action="/listing/locations" target="listings-locations">
+                <input type="submit" class="inputbutton" value="SUBMIT"></input>
+            </form>
+            <iframe name="listings-locations"></iframe>
+        </div>
+
+        <dt>GET /listing/all-listing-locations</dt>
         <dd>
             <p>
-            Return all locations for all listings in startupbidder in an abbreviated format.  Each returned item has the listing_id, it&rsquo;s latitude, and it&rsquo;s longitude.  Suitable for efficient display of all listings on a map.
+            Return all locations for all listings in startupbidder in an abbreviated format.  Suitable for efficient display of all
+            listings on a map.  Be aware this can return thousands of listings.
             </p>
         </dd>
+        <div class="apidetail">
+            <h4>Parameters</h4>
+            <ul>
+                <li><var>none</var></li>
+            </ul>
+            <h4>Response</h4>
+            <ul>
+                <li><code>login_url</code> URL to use for site login action</li>
+                <li><code>logout_url</code> URL to use for site logout action</li>
+                <li><code>loggedin_profile</code> private user profile object, see User API for profile object details</li>
+                <li><code>error_code</code> error status for this call, 0 on success</li>
+                <li><code>error_msg</code> error message for this call, null on success</li>
+                <li><code>listing</code> listing object as per <var>/listing/get</var> method</li>
+                <li><code>map_listings</code> list of all active listing locations with their listing ID, decimal latitude, and decimal longitude.  Structure is:
+<pre name="code" class="js">
+[
+    [ :listing_id, :latitude, :longitude ],
+    ...
+]
+</pre>
+                </li>
+            </ul>
+            <h4>Test</h4>
+            <form method="GET" action="/listing/all-listing-locations" target="listings-all-listing-locations">
+                <input type="submit" class="inputbutton" value="SUBMIT"></input>
+            </form>
+            <iframe name="listings-all-listing-locations"></iframe>
+        </div>
     </div>
 
     <div class="boxtitle">CATEGORIES API</div>
     <div class="boxpanel apipanel">
     <p>Find information on the various venture-capital categories supported by startupbidder including a list of startups for each category</p>
 
-        <dt>GET /listings/categories
-            <form method="GET" action="/listings/categories/"><input type="submit" value="TEST"></input></form>
-        </dt>
+        <dt>GET /listing/categories</dt>
         <dd>
             <p>
             Return all company categories for listings.  This is a list of the possible different categories of a company within the startupbidder system.
             </p>
         </dd>
-        <dt>GET /listings/used_categories
-            <form method="GET" action="/listings/used_categories/"><input type="submit" value="TEST"></input></form>
-        </dt>
+        <div class="apidetail">
+            <h4>Parameters</h4>
+            <ul>
+                <li><var>none</var></li>
+            </ul>
+            <h4>Response</h4>
+            <ul>
+                <li>Returns a map of all company venture capital categories with the structure:
+<pre name="code" class="js">
+{
+    :category_name: :display_name,
+    ...
+}
+</pre>
+                </li>
+            </ul>
+            <h4>Test</h4>
+            <form method="GET" action="/listing/categories" target="listings-categories">
+                <input type="submit" class="inputbutton" value="SUBMIT"></input>
+            </form>
+            <iframe name="listings-categories"></iframe>
+        </div>
+
+        <dt>GET /listing/used_categories</dt>
         <dd>
             <p>
-            Return all company categories for listings which are actually used.  This only returns categories which have one or more listings active.
+            Return all company categories for listings which are actually used along with the usage count.  This only returns categories which have one or more listings active.
             </p>
         </dd>
+        <div class="apidetail">
+            <h4>Parameters</h4>
+            <ul>
+                <li><var>none</var></li>
+            </ul>
+            <h4>Response</h4>
+            <ul>
+                <li>Returns a map of all company venture capital categories with at least one active listing with the structure:
+<pre name="code" class="js">
+{
+    :category_name: :active_listing_count,
+    ...
+}
+</pre>
+                </li>
+            </ul>
+            <h4>Test</h4>
+            <form method="GET" action="/listing/used_categories" target="listings-used_categories">
+                <input type="submit" class="inputbutton" value="SUBMIT"></input>
+            </form>
+            <iframe name="listings-used_categories"></iframe>
+        </div>
     </div>
 
     <div class="boxtitle">COMMENTS API</div>
     <div class="boxpanel apipanel">
     <p>Find and create comments on a particular listing; comments are always public to all.</p>
 
-        <dt>GET /comments/listing/:id
-            <form method="GET" action="/comments/listing/"><input type="text" name="id" value="&lt;listing_id&gt;"></input><input type="submit" value="TEST"></input></form>
-        </dt>
+        <dt>GET /listing/comments/:id</dt>
         <dd>
             <p>
-            Return all comments for the given listing id.
+            Return all comments for the given listing id.  Comments are always public.
             </p>
         </dd>
-        <dt>GET /comments/user/:id
-            <form method="GET" action="/comments/user/"><input type="text" name="id" value="&lt;user_id&gt;"></input><input type="submit" value="TEST"></input></form>
-        </dt>
-        <dd>
-            <p>
-            Return all comments for the given user id.
-            </p>
-        </dd>
-        <dt>GET /comments/get/:id
-            <form method="GET" action="/comments/get/"><input type="text" name="id" value="&lt;comment_id&gt;"></input><input type="submit" value="TEST"></input></form>
-        </dt>
-        <dd>
-            <p>
-            Return an individual comment for the given comment id.
-            </p>
-        </dd>
-        <dt>POST /comment/create
-            <form method="GET" action="/comment/create/">
-                <input type="text" name="comment" value="{ listing_id: &lt;listing_id&gt;, text: &lt;comment_text&gt;}"></input>
-                <input type="submit" value="TEST"></input>
+        <div class="apidetail">
+            <h4>Parameters</h4>
+            <ul>
+                <li><code>id</code> alphanumeric listing id as returned by the listing list and search API</li>
+            </ul>
+            <h4>Response</h4>
+            <ul>
+                <li><code>login_url</code> URL to use for site login action</li>
+                <li><code>logout_url</code> URL to use for site logout action</li>
+                <li><code>loggedin_profile</code> private user profile object, see User API for profile object details</li>
+                <li><code>error_code</code> error status for this call, 0 on success</li>
+                <li><code>error_msg</code> error message for this call, null on success</li>
+                <li><code>listing</code> listing object as per <var>/listing/get</var> method</li>
+                <li><code>comments</code> list of comments ordered in date ascending order with structure:
+<pre name="code" class="js">
+[
+    {
+        comment_id: :comment_id,
+        listing_id: :listing_id,
+        listing_title: :title,
+        profile_id: :comment_poster_id,
+        profile_username: :comment_poster_username,
+        text: :text,
+        comment_date: :comment_date_yyyymmdd
+    },
+    ...
+]
+</pre>
+            </ul>
+            <h4>Test</h4>
+            <form method="GET" action="/listing/comments" target="listings-comments">
+                <div class="formitem">
+                    <label class="inputlabel" for="title">ID</label>
+                    <span class="inputfield">
+                        <input class="text inputwidetext" type="text" name="id" id="listing_id" value="0"></input>
+                    </span>
+                </div>
+                <div class="formitem clear">
+                    <span class="inputlabel"></span>
+                    <span class="inputfield">
+                        <input type="submit" class="inputbutton" value="SUBMIT"></input>
+                    </span>
+                </div>
             </form>
-        </dt>
+            <iframe name="listings-comments"></iframe>
+        </div>
+
+        <dt>GET /comments/get/:id</dt>
         <dd>
             <p>
-            Create a comment by the currently logged in user for the given listing with the supplied text.
+            Gets a comment.
             </p>
         </dd>
-        <dt>POST /comment/delete
-            <form method="POST" action="/comment/delete/"><input type="text" name="id" value="&lt;comment_id&gt;"></input><input type="submit" value="TEST"></input></form>
-        </dt>
+        <div class="apidetail">
+            <h4>Parameters</h4>
+            <ul>
+                <li><code>id</code> alphanumeric comment id as returned by the Comments API</li>
+            </ul>
+            <h4>Response</h4>
+            <ul>
+                <li><code>comment_id</code> id for the comment</li>
+                <li><code>listing_id</code> id for the listing this comment corresponds to</li>
+                <li><code>listing_title</code> title for the comment listing</li>
+                <li><code>profile_id</code> id for the user who posted this comment</li>
+                <li><code>profile_username</code> username for the user who posted this comment</li>
+                <li><code>text</code> text of the comment</li>
+                <li><code>comment_date</code> date in YYYYMMDD format when the comment was posted</li>
+            </ul>
+            <h4>Test</h4>
+            <form method="GET" action="/comments/get" target="comments-get">
+                <div class="formitem">
+                    <label class="inputlabel" for="title">ID</label>
+                    <span class="inputfield">
+                        <input class="text inputwidetext" type="text" name="id" id="comment_id" value="0"></input>
+                    </span>
+                </div>
+                <div class="formitem clear">
+                    <span class="inputlabel"></span>
+                    <span class="inputfield">
+                        <input type="submit" class="inputbutton" value="SUBMIT"></input>
+                    </span>
+                </div>
+            </form>
+            <iframe name="comments-get"></iframe>
+        </div>
+
+        <dt>POST /listing/post_comment</dt>
         <dd>
             <p>
-            Deletes the comment with the give comment id.  The comment must have been created by the currently logged in user.
+            Post a comment from the currently logged in user concerning a particular listing.  Only listings may be commented on.
             </p>
         </dd>
+        <div class="apidetail">
+            <h4>Parameters</h4>
+            <ul>
+                <li><code>comment</code> json of comment structure which can be posted, all fields are mandatory:
+<pre name="code" class="js">
+{
+    listing_id: :listing_id,
+    text: :text
+}
+</pre>
+                </li>
+            </ul>
+            <h4>Response</h4>
+            <ul>
+                <li><code>comment_id</code> id for the comment</li>
+                <li><code>listing_id</code> id for the listing this comment corresponds to</li>
+                <li><code>listing_title</code> title for the comment listing</li>
+                <li><code>profile_id</code> id for the user who posted this comment</li>
+                <li><code>profile_username</code> username for the user who posted this comment</li>
+                <li><code>text</code> text of the comment</li>
+                <li><code>comment_date</code> date in YYYYMMDD format when the comment was posted</li>
+            </ul>
+            <h4>Test</h4>
+            <form method="POST" action="/listing/post_comment" target="listings-post-comment">
+                <div class="formitem">
+                    <label class="inputlabel" for="title">COMMENT</label>
+                    <span class="inputfield">
+                        <input class="text inputwidetext" type="text" name="comment" value="{ listing_id: &rsquo;0&rsquo;, text: &rsquo;this is my comment&rsquo;}"></input>
+                    </span>
+                </div>
+                <div class="formitem clear">
+                    <span class="inputlabel"></span>
+                    <span class="inputfield">
+                        <input type="submit" class="inputbutton" value="SUBMIT"></input>
+                    </span>
+                </div>
+            </form>
+            <iframe name="listings-post-comment"></iframe>
+        </div>
+
+        <dt>POST /listing/delete_comment</dt>
+        <dd>
+            <p>
+            Deletes the comment with the give comment id.  Deletion only works if the user is logged in and the comment was created by the same user.
+            </p>
+        </dd>
+        <div class="apidetail">
+            <h4>Parameters</h4>
+            <ul>
+                <li><code>id</code> alphanumeric comment id as returned by the Comments API</li>
+            </ul>
+            <h4>Response</h4>
+            <ul>
+                <li><code>login_url</code> URL to use for site login action</li>
+                <li><code>logout_url</code> URL to use for site logout action</li>
+                <li><code>loggedin_profile</code> private user profile object, see User API for profile object details</li>
+                <li><code>error_code</code> error status for this call, 0 on success</li>
+                <li><code>error_msg</code> error message for this call, null on success</li>
+                <li><code>listing</code> listing object as per <var>/listing/get</var> method</li>
+                <li><code>comments</code> list of comments ordered in date ascending order as per the <var>/listing/comments</var> method</li>
+            </ul>
+            <h4>Test</h4>
+            <form method="POST" action="/listing/delete_comment" target="listings-delete-comment">
+                <div class="formitem">
+                    <label class="inputlabel" for="title">ID</label>
+                    <span class="inputfield">
+                        <input class="text inputwidetext" type="text" name="id" id="comment_id" value="0"></input>
+                    </span>
+                </div>
+                <div class="formitem clear">
+                    <span class="inputlabel"></span>
+                    <span class="inputfield">
+                        <input type="submit" class="inputbutton" value="SUBMIT"></input>
+                    </span>
+                </div>
+            </form>
+            <iframe name="listings-delete-comment"></iframe>
+        </div>
+
     </div>
 
     <div class="boxtitle">MONITOR API</div>
@@ -885,8 +1319,8 @@ include(api-banner.m4)
     <div class="boxpanel apipanel">
     <p>Perform administrative tasks on startupbidder; you must have administrative rights as a logged in user in order for these calls to work</p>
 
-        <dt>GET /listings/posted
-            <form method="GET" action="/listings/posted/"><input type="submit" value="TEST"></input></form>
+        <dt>GET /listing/posted
+            <form method="GET" action="/listing/posted/"><input type="submit" value="TEST"></input></form>
         </dt>
         <dd>
             <p>
@@ -894,8 +1328,8 @@ include(api-banner.m4)
             </p>
         </dd>
 
-        <dt>GET /listings/frozen
-            <form method="GET" action="/listings/frozen/"><input type="submit" value="TEST"></input></form>
+        <dt>GET /listing/frozen
+            <form method="GET" action="/listing/frozen/"><input type="submit" value="TEST"></input></form>
         </dt>
         <dd>
             <p>
