@@ -497,7 +497,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .apidetail ul li code { width: 280px; float: left; margin-right: 10px; }
 .apidetail h4 { display: block; margin: 0; font-weight: bold; }
 .apidetailframe { height: 400px !important; overflow: auto !important; }
-.apidetaildisplay { height: 100%; }
+.apidetaildisplay { height: 100%; border-bottom: 2px solid gray; }
 .apiprop { padding-left: 20px; }
 
 /* upload */

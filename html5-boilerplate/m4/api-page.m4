@@ -92,10 +92,10 @@ include(api-banner.m4)
                 </li>
             </ul>
             <h4>Test</h4>
-            <form method="GET" action="/listing/discover" target="listings-discover">
+            <form method="GET" action="/listing/discover" target="listing-discover">
                 <input type="submit" class="inputbutton" value="SUBMIT"></input>
             </form>
-            <iframe name="listings-discover"></iframe>
+            <iframe name="listing-discover"></iframe>
         </div>
 
         <dt>GET /listing/discover_user</dt>
@@ -133,10 +133,10 @@ include(api-banner.m4)
                 <li><code>top_locations</code> map of top locations, same as for <var>/listing/discover</var></li>
             </ul>
             <h4>Test</h4>
-            <form method="GET" action="/listing/discover_user" target="listings-discover_user">
+            <form method="GET" action="/listing/discover_user" target="listing-discover_user">
                 <input type="submit" class="inputbutton" value="SUBMIT"></input>
             </form>
-            <iframe name="listings-discover_user"></iframe>
+            <iframe name="listing-discover_user"></iframe>
         </div>
 
         <dt>GET /listing/monitored</dt>
@@ -178,10 +178,10 @@ include(api-banner.m4)
                 <li><code>top_locations</code> map of top locations, same as for <var>/listing/discover</var></li>
             </ul>
             <h4>Test</h4>
-            <form method="GET" action="/listing/monitored" target="listings-monitored">
+            <form method="GET" action="/listing/monitored" target="listing-monitored">
                 <input type="submit" class="inputbutton" value="SUBMIT"></input>
             </form>
-            <iframe name="listings-monitored"></iframe>
+            <iframe name="listing-monitored"></iframe>
         </div>
 
         <dt>GET /listing/top</dt>
@@ -220,10 +220,10 @@ include(api-banner.m4)
                 <li><code>top_locations</code> map of top locations, same as for <var>/listing/discover</var></li>
             </ul>
             <h4>Test</h4>
-            <form method="GET" action="/listing/top" target="listings-top">
+            <form method="GET" action="/listing/top" target="listing-top">
                 <input type="submit" class="inputbutton" value="SUBMIT"></input>
             </form>
-            <iframe name="listings-top"></iframe>
+            <iframe name="listing-top"></iframe>
         </div>
 <!--
         <dt>GET /listing/valuation</dt>
@@ -262,10 +262,10 @@ include(api-banner.m4)
                 <li><code>top_locations</code> map of top locations, same as for <var>/listing/discover</var></li>
             </ul>
             <h4>Test</h4>
-            <form method="GET" action="/listing/valuation" target="listings-valuation">
+            <form method="GET" action="/listing/valuation" target="listing-valuation">
                 <input type="submit" class="inputbutton" value="SUBMIT"></input>
             </form>
-            <iframe name="listings-valuation"></iframe>
+            <iframe name="listing-valuation"></iframe>
         </div>
 -->
         <dt>GET /listing/closing</dt>
@@ -303,10 +303,10 @@ include(api-banner.m4)
                 <li><code>top_locations</code> map of top locations, same as for <var>/listing/discover</var></li>
             </ul>
             <h4>Test</h4>
-            <form method="GET" action="/listing/closing" target="listings-closing">
+            <form method="GET" action="/listing/closing" target="listing-closing">
                 <input type="submit" class="inputbutton" value="SUBMIT"></input>
             </form>
-            <iframe name="listings-closing"></iframe>
+            <iframe name="listing-closing"></iframe>
         </div>
 
         <dt>GET /listing/latest</dt>
@@ -344,10 +344,10 @@ include(api-banner.m4)
                 <li><code>top_locations</code> map of top locations, same as for <var>/listing/discover</var></li>
             </ul>
             <h4>Test</h4>
-            <form method="GET" action="/listing/latest" target="listings-latest">
+            <form method="GET" action="/listing/latest" target="listing-latest">
                 <input type="submit" class="inputbutton" value="SUBMIT"></input>
             </form>
-            <iframe name="listings-latest"></iframe>
+            <iframe name="listing-latest"></iframe>
         </div>
     </div>
 
@@ -408,15 +408,13 @@ include(api-banner.m4)
                 <li><code>top_locations</code> map of top locations, same as for <var>/listing/discover</var></li>
             </ul>
             <h4>Test</h4>
-            <form method="GET" action="/listing/keyword" target="listings-keyword">
-
+            <form method="GET" action="/listing/keyword" target="listing-keyword">
                 <div class="formitem">
                     <label class="inputlabel" for="title">TEXT</label>
                     <span class="inputfield">
-                        <input class="text inputwidetext" type="text" name="text" value="keywords"></input>
+                        <input class="text inputwidetext" type="text" name="text" value="software"></input>
                     </span>
                 </div>
-        
                 <div class="formitem clear">
                     <span class="inputlabel"></span>
                     <span class="inputfield">
@@ -425,7 +423,7 @@ include(api-banner.m4)
                 </div>
 
             </form>
-            <iframe name="listings-keyword"></iframe>
+            <iframe name="listing-keyword"></iframe>
         </div>
     </div>
 
@@ -526,24 +524,21 @@ include(api-banner.m4)
                 <li><code class="apiprop">answer26</code> TIMELINE AND WRAPUP</li>
             </ul>
             <h4>Test</h4>
-            <form method="GET" action="/listing/get" target="listings-get">
-
+            <form method="GET" action="/listing/get" target="listing-get">
                 <div class="formitem">
                     <label class="inputlabel" for="title">ID</label>
                     <span class="inputfield">
-                        <input class="text inputwidetext" type="text" name="id" id="listing_id" value="0"></input>
+                        <input class="text inputwidetext listingid" type="text" name="id" value="0"></input>
                     </span>
                 </div>
-        
                 <div class="formitem clear">
                     <span class="inputlabel"></span>
                     <span class="inputfield">
                         <input type="submit" class="inputbutton" value="SUBMIT"></input>
                     </span>
                 </div>
-
             </form>
-            <iframe name="listings-get"></iframe>
+            <iframe name="listing-get"></iframe>
         </div>
 
         <dt>GET /listing/logo/:id</dt>
@@ -562,24 +557,21 @@ include(api-banner.m4)
                 <li>returns an image binary</li>
             </ul>
             <h4>Test</h4>
-            <form method="GET" action="/listing/logo" target="listings-logo">
-
+            <form method="GET" action="/listing/logo" target="listing-logo">
                 <div class="formitem">
                     <label class="inputlabel" for="title">ID</label>
                     <span class="inputfield">
-                        <input class="text inputwidetext" type="text" name="id" id="listing_id" value="0"></input>
+                        <input class="text inputwidetext listingid" type="text" name="id" value="0"></input>
                     </span>
                 </div>
-        
                 <div class="formitem clear">
                     <span class="inputlabel"></span>
                     <span class="inputfield">
                         <input type="submit" class="inputbutton" value="SUBMIT"></input>
                     </span>
                 </div>
-
             </form>
-            <iframe name="listings-logo"></iframe>
+            <iframe name="listing-logo"></iframe>
         </div>
 
 
@@ -739,8 +731,8 @@ include(api-banner.m4)
         <dt>POST /listing/delete</dt>
         <dd>
             <p>
-            Deletes the user&rsquo;s new listing.  This only works for a listing which has not yet been approved.  To delete a listing which has already been approved, call the withdraw method.
-            You must be the logged in listing owner in order to delete the listing.
+            Deletes the user&rsquo;s new listing.  This only works for a listing which has not yet been approved.  To delete a listing which has already been approved,
+            call the withdraw method.  You must be the logged in listing owner in order to delete the listing.
             </p>
         </dd>
         <div class="apidetail">
@@ -764,7 +756,7 @@ include(api-banner.m4)
             <iframe name="listing-delete"></iframe>
         </div>
 
-        <dt>POST /listing/withdraw/:id</dt>
+        <dt>POST /listing/withdraw</dt>
         <dd>
             <p>
             Withdraws the user&rsquo;s listing with the given id.  You must either be the logged in owner of this listing or an admin in order to call this method.
@@ -787,11 +779,11 @@ include(api-banner.m4)
                 <li><code>listing</code> listing object as per <var>/listing/get</var> method</li>
             </ul>
             <h4>Test</h4>
-            <form method="POST" action="/listing/withdraw" target="listings-withdraw">
+            <form method="POST" action="/listing/withdraw" target="listing-withdraw">
                 <div class="formitem">
                     <label class="inputlabel" for="title">ID</label>
                     <span class="inputfield">
-                        <input class="text inputwidetext" type="text" name="id" id="listing_id" value="0"></input>
+                        <input class="text inputwidetext listingid" type="text" name="id" value="0"></input>
                     </span>
                 </div>
                 <div class="formitem clear">
@@ -801,8 +793,9 @@ include(api-banner.m4)
                     </span>
                 </div>
             </form>
-            <iframe name="listings-withdraw"></iframe>
+            <iframe name="listing-withdraw"></iframe>
         </div>
+
     </div>
 
     <div class="boxtitle">LOCATIONS API</div>
@@ -834,10 +827,10 @@ include(api-banner.m4)
                 </li>
             </ul>
             <h4>Test</h4>
-            <form method="GET" action="/listing/locations" target="listings-locations">
+            <form method="GET" action="/listing/locations" target="listing-locations">
                 <input type="submit" class="inputbutton" value="SUBMIT"></input>
             </form>
-            <iframe name="listings-locations"></iframe>
+            <iframe name="listing-locations"></iframe>
         </div>
 
         <dt>GET /listing/all-listing-locations</dt>
@@ -870,10 +863,10 @@ include(api-banner.m4)
                 </li>
             </ul>
             <h4>Test</h4>
-            <form method="GET" action="/listing/all-listing-locations" target="listings-all-listing-locations">
+            <form method="GET" action="/listing/all-listing-locations" target="listing-all-listing-locations">
                 <input type="submit" class="inputbutton" value="SUBMIT"></input>
             </form>
-            <iframe name="listings-all-listing-locations"></iframe>
+            <iframe name="listing-all-listing-locations"></iframe>
         </div>
     </div>
 
@@ -904,10 +897,10 @@ include(api-banner.m4)
                 </li>
             </ul>
             <h4>Test</h4>
-            <form method="GET" action="/listing/categories" target="listings-categories">
+            <form method="GET" action="/listing/categories" target="listing-categories">
                 <input type="submit" class="inputbutton" value="SUBMIT"></input>
             </form>
-            <iframe name="listings-categories"></iframe>
+            <iframe name="listing-categories"></iframe>
         </div>
 
         <dt>GET /listing/used_categories</dt>
@@ -933,10 +926,10 @@ include(api-banner.m4)
                 </li>
             </ul>
             <h4>Test</h4>
-            <form method="GET" action="/listing/used_categories" target="listings-used_categories">
+            <form method="GET" action="/listing/used_categories" target="listing-used_categories">
                 <input type="submit" class="inputbutton" value="SUBMIT"></input>
             </form>
-            <iframe name="listings-used_categories"></iframe>
+            <iframe name="listing-used_categories"></iframe>
         </div>
     </div>
 
@@ -980,11 +973,11 @@ include(api-banner.m4)
 </pre>
             </ul>
             <h4>Test</h4>
-            <form method="GET" action="/listing/comments" target="listings-comments">
+            <form method="GET" action="/listing/comments" target="listing-comments">
                 <div class="formitem">
                     <label class="inputlabel" for="title">ID</label>
                     <span class="inputfield">
-                        <input class="text inputwidetext" type="text" name="id" id="listing_id" value="0"></input>
+                        <input class="text inputwidetext listingid" type="text" name="id" value="0"></input>
                     </span>
                 </div>
                 <div class="formitem clear">
@@ -994,7 +987,7 @@ include(api-banner.m4)
                     </span>
                 </div>
             </form>
-            <iframe name="listings-comments"></iframe>
+            <iframe name="listing-comments"></iframe>
         </div>
 
         <dt>GET /comments/get/:id</dt>
@@ -1023,7 +1016,7 @@ include(api-banner.m4)
                 <div class="formitem">
                     <label class="inputlabel" for="title">ID</label>
                     <span class="inputfield">
-                        <input class="text inputwidetext" type="text" name="id" id="comment_id" value="0"></input>
+                        <input class="text inputwidetext commentid" type="text" name="id" value="0"></input>
                     </span>
                 </div>
                 <div class="formitem clear">
@@ -1065,11 +1058,11 @@ include(api-banner.m4)
                 <li><code>comment_date</code> date in YYYYMMDD format when the comment was posted</li>
             </ul>
             <h4>Test</h4>
-            <form method="POST" action="/listing/post_comment" target="listings-post-comment">
+            <form method="POST" action="/listing/post_comment" target="listing-post-comment">
                 <div class="formitem">
                     <label class="inputlabel" for="title">COMMENT</label>
                     <span class="inputfield">
-                        <input class="text inputwidetext" type="text" name="comment" value="{ listing_id: &rsquo;0&rsquo;, text: &rsquo;this is my comment&rsquo;}"></input>
+                        <input class="text inputwidetext commentobj" type="text" name="comment" value="{ listing_id: &rsquo;0&rsquo;, text: &rsquo;this is my comment&rsquo;}"></input>
                     </span>
                 </div>
                 <div class="formitem clear">
@@ -1079,7 +1072,7 @@ include(api-banner.m4)
                     </span>
                 </div>
             </form>
-            <iframe name="listings-post-comment"></iframe>
+            <iframe name="listing-post-comment"></iframe>
         </div>
 
         <dt>POST /listing/delete_comment</dt>
@@ -1104,11 +1097,11 @@ include(api-banner.m4)
                 <li><code>comments</code> list of comments ordered in date ascending order as per the <var>/listing/comments</var> method</li>
             </ul>
             <h4>Test</h4>
-            <form method="POST" action="/listing/delete_comment" target="listings-delete-comment">
+            <form method="POST" action="/listing/delete_comment" target="listing-delete-comment">
                 <div class="formitem">
                     <label class="inputlabel" for="title">ID</label>
                     <span class="inputfield">
-                        <input class="text inputwidetext" type="text" name="id" id="comment_id" value="0"></input>
+                        <input class="text inputwidetext commentid" type="text" name="id" id="comment_id" value="0"></input>
                     </span>
                 </div>
                 <div class="formitem clear">
@@ -1118,7 +1111,7 @@ include(api-banner.m4)
                     </span>
                 </div>
             </form>
-            <iframe name="listings-delete-comment"></iframe>
+            <iframe name="listing-delete-comment"></iframe>
         </div>
 
     </div>
@@ -1127,229 +1120,920 @@ include(api-banner.m4)
     <div class="boxpanel apipanel">
     <p>Watch listings and be automatically notified of bids, comments, and other changes to the listing</p>
 
-        <dt>GET /monitors/active-for-user/:id
-            <form method="GET" action="/monitors/active-for-user/"><input type="submit" value="TEST"></input></form>
-        </dt>
+        <dt>GET /monitor/active-for-user</dt>
         <dd>
             <p>
-            Returns list of active monitors for logged in user.
+            Returns list of active monitors for logged in user.  Monitors are used for watching listings.
             </p>
         </dd>
+        <div class="apidetail">
+            <h4>Parameters</h4>
+            <ul>
+                <li><var>none</var></li>
+            </ul>
+            <h4>Response</h4>
+            <ul>
+                <li><code>login_url</code> URL to use for site login action</li>
+                <li><code>logout_url</code> URL to use for site logout action</li>
+                <li><code>loggedin_profile</code> private user profile object, see User API for profile object details</li>
+                <li><code>error_code</code> error status for this call, 0 on success</li>
+                <li><code>error_msg</code> error message for this call, null on success</li>
+                <li><code>profile</code> logged in user profile as per the User API</li>
+                <li><code>monitors</code> watch listing monitors for the user with structure:</li>
+<pre name="code" class="js">
+[
+    {
+        monitor_id: :monitor_id,
+        listing_id: :listing_id,
+        type: :monitor_type,
+        profile_id: :comment_poster_id,
+        profile_username: :comment_poster_username,
+        create_date: :create_date_yyyymmdd
+        deactivate_date: :deactivate_date_yyyymmdd,
+        active: :active_flag
+    },
+    ...
+]
+</pre>
+                </li>
+                <li><code>monitors_props</code> list properties for this query. Call <var>more_results_url</var> in an AJAX request for more.
+                    Structure:
+<pre name="code" class="js">
+{
+    start_index: :index,
+    max_results: :max,
+    num_results: :n,
+    more_results_url: :url
+}
+</pre>
+                </li>
+            </ul>
+            <h4>Test</h4>
+            <form method="GET" action="/monitor/active-for-user" target="monitors-active-for-user">
+                <input type="submit" class="inputbutton" value="SUBMIT"></input>
+            </form>
+            <iframe name="monitors-active-for-user"></iframe>
+        </div>
 
-        <dt>GET /monitors/active-for-listing/:id
-            <form method="GET" action="/monitors/active-for-listing/"><input type="text" name="id" value="&lt;listing_id&gt;"><input type="submit" value="TEST"></input></form>
-        </dt>
+        <dt>GET /monitors/active-for-listing/:id</dt>
         <dd>
             <p>
-            Returns list of active monitors for given listing.
+            Returns list of active monitors for the given listing.  This can be used to find the users which are watching a given listing.
             </p>
         </dd>
+        <div class="apidetail">
+            <h4>Parameters</h4>
+            <ul>
+                <li><code>id</code> alphanumeric listing id as returned by the listing list and search API</li>
+            </ul>
+            <h4>Response</h4>
+            <ul>
+                <li><code>login_url</code> URL to use for site login action</li>
+                <li><code>logout_url</code> URL to use for site logout action</li>
+                <li><code>loggedin_profile</code> private user profile object, see User API for profile object details</li>
+                <li><code>error_code</code> error status for this call, 0 on success</li>
+                <li><code>error_msg</code> error message for this call, null on success</li>
+                <li><code>monitors</code> list of monitors as detailed by the <var>/monitor/set</var> method with structure:</li>
+<pre name="code" class="js">
+[
+    {
+        monitor_id: :monitor_id,
+        listing_id: :listing_id,
+        type: :monitor_type,
+        profile_id: :comment_poster_id,
+        profile_username: :comment_poster_username,
+        create_date: :create_date_yyyymmdd
+        deactivate_date: :deactivate_date_yyyymmdd,
+        active: :active_flag
+    },
+    ...
+]
+</pre>
+                </li>
+                <li><code>monitors_props</code> list properties for this query. Call <var>more_results_url</var> in an AJAX request for more.
+                    Structure:
+<pre name="code" class="js">
+{
+    start_index: :index,
+    max_results: :max,
+    num_results: :n,
+    more_results_url: :url
+}
+</pre>
+                </li>
+            </ul>
+            <h4>Test</h4>
+            <form method="GET" action="/monitor/active-for-listing" target="monitors-active-for-listing">
+                <div class="formitem">
+                    <label class="inputlabel" for="title">LISTING ID</label>
+                    <span class="inputfield">
+                        <input class="text inputwidetext listingid" type="text" name="id" value="0"></input>
+                    </span>
+                </div>
+                <div class="formitem clear">
+                    <span class="inputlabel"></span>
+                    <span class="inputfield">
+                        <input type="submit" class="inputbutton" value="SUBMIT"></input>
+                    </span>
+                </div>
+            </form>
+            <iframe name="monitors-active-for-listing"></iframe>
+        </div>
 
         <dt>POST /monitor/set
             <form method="POST" action="/monitor/set/"><input type="text" name="id" value="&lt;listing_id&gt;"></input><input type="submit" value="TEST"></input></form>
         </dt>
         <dd>
             <p>
-            Activates monitoring of the provided listing by the currently logged in user.  This allows the user to keep track of the listing.
             <br/>
             Monitor status is provided with listing objects.
             </p>
         </dd>
-        <dt>POST /monitor/deactivate
-            <form method="POST" action="/monitor/deactivate/"><input type="text" name="id" value="&lt;listing_id&gt;"></input><input type="submit" value="TEST"></input></form>
-        </dt>
+
+        <dt>POST /monitor/set/:id</dt>
         <dd>
             <p>
-            Deactivates monitoring of the provided listing by the currently logged in user.  This means the user no longer keeps of the listing.
+            Activates monitoring of the provided listing by the currently logged in user.  This allows the user to keep track of the listing.
+            The <var>monitor</var> property of the <var>listing</var> property in the Listing API will then be true for this listing-user pair.
             </p>
         </dd>
+        <div class="apidetail">
+            <h4>Parameters</h4>
+            <ul>
+                <li><code>id</code> alphanumeric listing id as returned by the listing list and search API</li>
+            </ul>
+            <h4>Response</h4>
+            <ul>
+                <li><code>monitor_id</code> monitor id unique to the user and listing pair</li>
+                <li><code>listing_id</code> listing id for the listing being watched</li>
+                <li><code>type</code> always <var>null</var>, unused</li>
+                <li><code>profile_id</code> profile id for the user watching this listing</li>
+                <li><code>profile_username</code> username for the user watching this listing</li>
+                <li><code>create_date</code> date the user started watching this listing in YYYYMMDD format</li>
+                <li><code>deactivate_date</code> date the user stopped watching this listing in YYYYMMDD format</li>
+                <li><code>active</code> will always be <var>true</var> after a successful set call</li>
+            </ul>
+            <h4>Test</h4>
+            <form method="POST" action="/monitor/set" target="monitor-set">
+                <div class="formitem">
+                    <label class="inputlabel" for="title">LISTING ID</label>
+                    <span class="inputfield">
+                        <input class="text inputwidetext listingid" type="text" name="id" value="0"></input>
+                    </span>
+                </div>
+                <div class="formitem clear">
+                    <span class="inputlabel"></span>
+                    <span class="inputfield">
+                        <input type="submit" class="inputbutton" value="SUBMIT"></input>
+                    </span>
+                </div>
+            </form>
+            <iframe name="monitor-set"></iframe>
+        </div>
+
+        <dt>POST /monitor/deactivate/:id</dt>
+        <dd>
+            <p>
+            Deactivates monitoring of the provided listing by the currently logged in user.  This means the user no longer keeps track of the listing.
+            The <var>monitor</var> property of the <var>listing</var> property in the Listing API will then be false for this listing-user pair.
+            </p>
+        </dd>
+        <div class="apidetail">
+            <h4>Parameters</h4>
+            <ul>
+                <li><code>id</code> alphanumeric listing id as returned by the listing list and search API</li>
+            </ul>
+            <h4>Response</h4>
+            <ul>
+                <li><code>monitor_id</code> monitor id unique to the user and listing pair</li>
+                <li><code>listing_id</code> listing id for the listing being watched</li>
+                <li><code>type</code> always <var>null</var>, unused</li>
+                <li><code>profile_id</code> profile id for the user watching this listing</li>
+                <li><code>profile_username</code> username for the user watching this listing</li>
+                <li><code>create_date</code> date the user started watching this listing in YYYYMMDD format</li>
+                <li><code>deactivate_date</code> date the user stopped watching this listing in YYYYMMDD format</li>
+                <li><code>active</code> will always be <var>false</var> after a successful deactivate call</li>
+            </ul>
+            <h4>Test</h4>
+            <form method="POST" action="/monitor/deactivate" target="monitor-deactivate">
+                <div class="formitem">
+                    <label class="inputlabel" for="title">LISTING ID</label>
+                    <span class="inputfield">
+                        <input class="text inputwidetext listingid" type="text" name="id" value="0"></input>
+                    </span>
+                </div>
+                <div class="formitem clear">
+                    <span class="inputlabel"></span>
+                    <span class="inputfield">
+                        <input type="submit" class="inputbutton" value="SUBMIT"></input>
+                    </span>
+                </div>
+            </form>
+            <iframe name="monitor-deactivate"></iframe>
+        </div>
+
     </div>
 
     <div class="boxtitle">QUESTION AND ANSWER API</div>
     <div class="boxpanel apipanel">
     <p>Find questions and answers concerning a listing and ask new ones for the owner to answer.</p>
 
-    <dt>GET /listing/questions_answers/:id
-    <dd>
-        <p>Get the set of questions and answers for this listing.</p>
-    </dd>
+        <dt>GET /listing/questions_answers/:id</dt>
+        <dd>
+            <p>
+            Get the set of questions and answers for this listing.  Listing owner will see all questions,
+            logged in user will see all answered questions and any questions they have asked personally,
+            public users see only all answered questions.
+            </p>
+        </dd>
+        <div class="apidetail">
+            <h4>Parameters</h4>
+            <ul>
+                <li><code>id</code> alphanumeric listing id</li>
+            </ul>
+            <h4>Response</h4>
+            <ul>
+                <li><code>qanda</code> list of questions for this listing, see <var>/listing/ask_owner</var> for field detials.  Structure:
+<pre name="code" class="js">
+[
+    {
+    question_id: :id,
+    from_user_id: :uid,
+    from_user_nickname: :name,
+    text_2: :question_text,
+    answer: :answer_text,
+    answer_date: :date_yyyymmdd,
+    create_date: :date_yyyymmdd
+    },
+    ...
+]
+</pre>
+            </ul>
+            <h4>Test</h4>
+            <form method="GET" action="/listing/questions_answers" target="listing-questions_answers">
+                <div class="formitem">
+                    <label class="inputlabel" for="title">ID</label>
+                    <span class="inputfield">
+                        <input class="text inputwidetext listingid" type="text" name="id" value="0"></input>
+                    </span>
+                </div>
+                <div class="formitem clear">
+                    <span class="inputlabel"></span>
+                    <span class="inputfield">
+                        <input type="submit" class="inputbutton" value="SUBMIT"></input>
+                    </span>
+                </div>
+            </form>
+            <iframe name="listing-questions_answers"></iframe>
+        </div>
 
-    <dt>POST /listing/ask_owner
-        <form method="POST" action="/listing/ask_owner/"><input type="text" name="id" value="&lt;listing_id&gt;"></input><input type="text" name="message" value="&lt;text&gt"></input><input type="submit" value="TEST"></input></form>
-    </dt>
-    <dd>
-        <p>Ask owner a question concerning the listing.  You must be a logged in user in order to ask a question.</p>
-    </dd>
+        <dt>POST /listing/ask_owner</dt>
+        <dd>
+            <p>Ask owner a question concerning the listing.  You must be a logged in user in order to ask a question.</p>
+        </dd>
+        <div class="apidetail">
+            <h4>Parameters</h4>
+            <ul>
+                <li><code>id</code> alphanumeric listing id as returned by the listing list and search API</li>
+                <li><code>message</code> text message user wishes to ask the owner</li>
+            </ul>
+            <h4>Response</h4>
+            <ul>
+                <li><code>question_id</code> unique ID for this question</li>
+                <li><code>from_user_id</code> user id who asked this question</li>
+                <li><code>from_user_nickname</code> username of user who asked this question</li>
+                <li><code>text_2</code> full question text</li>
+                <li><code>answer</code> full question answer, <var>null</var> if question is not answered yet</li>
+                <li><code>answer_date</code> date when question was answered, in YYYYMMDD format, null if unanswered</li>
+                <li><code>create_date</code> date when question was asked, in YYYYMMDD format</li>
+            </ul>
+            <h4>Test</h4>
+            <form method="POST" action="/listing/ask_owner" target="listing-ask_owner">
+                <div class="formitem">
+                    <label class="inputlabel" for="title">LISTING ID</label>
+                    <span class="inputfield">
+                        <input class="text inputwidetext listingid" type="text" name="id" value="0"></input>
+                    </span>
+                </div>
+                <div class="formitem clear">
+                    <label class="inputlabel" for="title">MESSAGE</label>
+                    <span class="inputfield">
+                        <input class="text inputwidetext" type="text" name="message" value="put your message here"></input>
+                    </span>
+                </div>
+                <div class="formitem clear">
+                    <span class="inputlabel"></span>
+                    <span class="inputfield">
+                        <input type="submit" class="inputbutton" value="SUBMIT"></input>
+                    </span>
+                </div>
+            </form>
+            <iframe name="listing-ask_owner"></iframe>
+        </div>
 
-    <dt>POST /listing/answer_question
-        <form method="POST" action="/listing/answer_question/"><input type="text" name="id" value="&lt;question_id&gt;"></input><input type="text" name="message" value="&lt;text&gt"></input><input type="submit" value="TEST"></input></form>
-    </dt>
-    <dd>
-        <p>Answer a question.  Only the listing owner is allowed to answer questions.</p>
-    </dd>
+        <dt>POST /listing/answer_question</dt>
+        <dd>
+            <p>Ask owner a question concerning the listing.  You must be a logged in user in order to ask a question.</p>
+        </dd>
+        <div class="apidetail">
+            <h4>Parameters</h4>
+            <ul>
+                <li><code>id</code> alphanumeric question id as returned by <var>/listing/questions_answers</var></li>
+                <li><code>message</code> text message of owner&rsquo;s answer to the question</li>
+            </ul>
+            <h4>Response</h4>
+            <ul>
+                <li><var>same as /listing/ask_owner method</var></li>
+            </ul>
+            <h4>Test</h4>
+            <form method="POST" action="/listing/answer_question" target="listing-answer_question">
+                <div class="formitem">
+                    <label class="inputlabel" for="title">QUESTION ID</label>
+                    <span class="inputfield">
+                        <input class="text inputwidetext questionid" type="text" name="id" value="0"></input>
+                    </span>
+                </div>
+                <div class="formitem clear">
+                    <label class="inputlabel" for="title">ANSWER</label>
+                    <span class="inputfield">
+                        <input class="text inputwidetext" type="text" name="message" value="put your answer here"></input>
+                    </span>
+                </div>
+                <div class="formitem clear">
+                    <span class="inputlabel"></span>
+                    <span class="inputfield">
+                        <input type="submit" class="inputbutton" value="SUBMIT"></input>
+                    </span>
+                </div>
+            </form>
+            <iframe name="listing-answer_question"></iframe>
+        </div>
+
     </div>
 
     <div class="boxtitle">PRIVATE MESSAGE API</div>
     <div class="boxpanel apipanel">
     <p>Send and receive private messages between users on the site.  You must be logged in to use these methods.</p>
 
-    <dt>GET /user/get_message_users</dt>
-    <dd>
-        <p>Get the list of users with which the currently logged in user has had a conversation.</p>
-    </dd>
+        <dt>GET /user/get_message_users</dt>
+        <dd>
+            <p>Get the list of users with which the currently logged in user has had a conversation.  Call this first in order to get access
+            to user conversations which you can then retrieve via the <var>/user/get_messages</var> method</p>
+        </dd>
+        <div class="apidetail">
+            <h4>Parameters</h4>
+            <ul>
+                <li><var>none</var></li>
+            </ul>
+            <h4>Response</h4>
+            <ul>
+                <li><code>login_url</code> URL to use for site login action</li>
+                <li><code>logout_url</code> URL to use for site logout action</li>
+                <li><code>loggedin_profile</code> private user profile object, see User API for profile object details</li>
+                <li><code>error_code</code> error status for this call, 0 on success</li>
+                <li><code>error_msg</code> error message for this call, null on success</li>
+                <li><code>users</code> list of users along with the latest conversation snippet, and whether it&rsquo;s been read.  Structure:
+<pre name="code" class="js">
+[
+    {
+        from_user_id: :uid,
+        from_user_nickname: :name,
+        last_text: :message,
+        last_date: :date_yyyymmdd,
+        read: :true_or_false
+    },
+    ...
+]
+</pre>
+                </li>
+            </ul>
+            <h4>Test</h4>
+            <form method="GET" action="/user/get_message_users" target="user-get_message_users">
+                <input type="submit" class="inputbutton" value="SUBMIT"></input>
+            </form>
+            <iframe name="user-get_message_users"></iframe>
+        </div>
 
-    <dt>GET /user/get_messages/:id</dt>
-    <dd>
-        <p>Get the list of messages between the logged in user and the user with the given <code>user_id</code>.</p>
-    </dd>
+ 
+        <dt>GET /user/get_messages/:id</dt>
+        <dd>
+            <p>Get the list of messages between the logged in user and the user with the given user <var>id</var>.</p>
+        </dd>
+        <div class="apidetail">
+            <h4>Parameters</h4>
+            <ul>
+                <li><code>id</code> alphanumeric user id</li>
+            </ul>
+            <h4>Response</h4>
+            <ul>
+                <li><code>login_url</code> URL to use for site login action</li>
+                <li><code>logout_url</code> URL to use for site logout action</li>
+                <li><code>loggedin_profile</code> private user profile object, see User API for profile object details</li>
+                <li><code>error_code</code> error status for this call, 0 on success</li>
+                <li><code>error_msg</code> error message for this call, null on success</li>
+                <li><code>to_user_profile</code> profile object for user on the other side of the conversation</li>
+                <li><code>messages</code> messages between logged in user and other user, from logged in user&rsquo;s perspective,
+                    ordered by date ascending.  Structure:
+<pre name="code" class="js">
+[
+    {
+        direction: :sent_or_received, /* "sent" if sent by loggedin user, "received" if received */
+        text: :message_text,
+        create_date: :date_yyyymmddhhmmss
+    },
+    ...
+]
+</pre>
+                </li>
+            </ul>
+            <h4>Test</h4>
+            <form method="GET" action="/user/get_messages" target="user-get_messages">
+                <div class="formitem">
+                    <label class="inputlabel" for="title">USER ID</label>
+                    <span class="inputfield">
+                        <input class="text inputwidetext profileid" type="text" name="id" value="0"></input>
+                    </span>
+                </div>
+                <div class="formitem clear">
+                    <span class="inputlabel"></span>
+                    <span class="inputfield">
+                        <input type="submit" class="inputbutton" value="SUBMIT"></input>
+                    </span>
+                </div>
+            </form>
+            <iframe name="user-get_messages"></iframe>
+        </div>
 
-    <dt>POST /user/send_message
-        <form method="POST" action="/user/send_message/"><input type="text" name="id" value="&lt;user_id&gt;"></input><input type="text" name="message" value="&lt;text&gt"></input><input type="submit" value="TEST"></input></form>
-    </dt>
-    <dd>
-        <p>Post a message from the logged in user to the user with the given <code>user_id</code>.</p>
-    </dd>
+        <dt>POST /user/send_message</dt>
+        <dd>
+            <p>Post a message from the logged in user to the user with the given <var>id</var>.</p>
+        </dd>
+        <div class="apidetail">
+            <h4>Parameters</h4>
+            <ul>
+                <li><code>id</code> alphanumeric user id</li>
+                <li><code>message</code> message text</li>
+            </ul>
+            <h4>Response</h4>
+            <ul>
+                <li><var>json response of message object:</var>
+<pre name="code" class="js">
+{
+    direction: :sent_or_received, /* "sent" if sent by loggedin user, "received" if received */
+    text: :message_text,
+    create_date: :date_yyyymmddhhmmss
+}
+</pre>
+                </li>
+            </ul>
+            <h4>Test</h4>
+            <form method="POST" action="/user/send_message" target="user-send_message">
+                <div class="formitem">
+                    <label class="inputlabel" for="title">USER ID</label>
+                    <span class="inputfield">
+                        <input class="text inputwidetext profileid" type="text" name="id" value="0"></input>
+                    </span>
+                </div>
+                <div class="formitem clear">
+                    <label class="inputlabel" for="title">MESSAGE</label>
+                    <span class="inputfield">
+                        <input class="text inputwidetext" type="text" name="message" value="put your message here"></input>
+                    </span>
+                </div>
+                <div class="formitem clear">
+                    <span class="inputlabel"></span>
+                    <span class="inputfield">
+                        <input type="submit" class="inputbutton" value="SUBMIT"></input>
+                    </span>
+                </div>
+            </form>
+            <iframe name="user-send_message"></iframe>
+        </div>
+
     </div>
 
     <div class="boxtitle">NOTIFICATION API</div>
     <div class="boxpanel apipanel">
     <p>Get notifications for the currently logged in user, which includes listing notifications such as bids and questions and also private messages.</p>
 
-        <dt>GET /notifications/user
-           <form method="GET" action="/notifications/user/"><input type="submit" value="TEST"></input></form>
-        </dt>
+        <dt>GET /notification/user</dt>
         <dd>
             <p>Returns the list of notifications for the logged in user.  Making this call automatically marks all notifications as read.</p>
         </dd>
-    </div>
+        <div class="apidetail">
+            <h4>Parameters</h4>
+            <ul>
+                <li><var>none</var></li>
+            </ul>
+            <h4>Response</h4>
+            <ul>
+                <li><code>login_url</code> URL to use for site login action</li>
+                <li><code>logout_url</code> URL to use for site logout action</li>
+                <li><code>loggedin_profile</code> private user profile object, see User API for profile object details</li>
+                <li><code>error_code</code> error status for this call, 0 on success</li>
+                <li><code>error_msg</code> error message for this call, null on success</li>
+                <li><code>notifications</code> list of user notifications in descending date order, structure:
+<pre name="code" class="js">
+[
+    {
+        notify_type: :type, /* "ask_listing_owner" or "private_message" */
+        title: :title_text,
+        text_1: :notification_text,
+        create_date: :date_yyyymmdd,
+        read: :true_or_false, /* whether message has been read */
+        link: :url /* link for underlying content to which notification refers, may be listing url, etc. */
+    }
+]
+</pre>
+                </li>
+            </ul>
+            <h4>Test</h4>
+            <form method="GET" action="/notification/user" target="notification-user">
+                <input type="submit" class="inputbutton" value="SUBMIT"></input>
+            </form>
+            <iframe name="notification-user"></iframe>
+        </div>
+
+     </div>
 
     <div class="boxtitle">FILE API</div>
     <div class="boxpanel apipanel">
-    <p>Upload and download documents associated with a listing, downloads are public but uploads are only for the listing owner.</p>
+    <p>Upload and download documents for a listing, downloads are public but uploads can only be by the owner for a <var>new</var> status listing.</p>
 
-        <dt>POST :upload_url
-            <form method="POST" action="&lt;upload_url&gt;"><input type="file" name="BUSINESS_PLAN" value="Add BUSINESS_PLAN"></input><input type="submit" value="TEST"></input></form>
-        </dt>
+        <dt>POST :upload_url</dt>
         <dd>
             <p>
-            Uploads a file for the currently logged in user&rsquo;s listing.  The actual upload url must be obtained from the /listing/create call and is the value of one of the following fields:
-            </p>
-            <p>
-            <code>
-                business_plan_upload, presentation_upload, financials_upload, logo_upload
-            </code>
-            </p>
-            <p>
-            Set the form action attribute to the value of the upload url field, set the name of the input type="file" to one of the following, all upper case:
-            </p>
-            <p>
-            <code>
-                BUSINESS_PLAN, PRESENTATION, FINANCIALS, LOGO
-            </code>
-            </p>
-            <p>
-            Then when the form is submitted, the file will be uploaded.  The file can then be retrieved via the listing file download method.
-            </p>
-            <p>
-            Also see the /listing/update_field method for an alternative way to get files into the system via url passing.
+            Uploads a file for the currently logged in user&rsquo;s edited listing.  The upload url must be obtained from the <var>/listing/create</var> method
+            and is the value of one of the fields: business_plan_upload, presentation_upload, financials_upload, or logo_upload. Then when the form is submitted,
+            the file will be uploaded.  The file can then be retrieved via the listing file download method.  Also see the <var>/listing/update_field</var> method
+            for an alternative way to get files into the system via url passing.
             </p>
         </dd>
+        <div class="apidetail">
+            <h4>Parameters</h4>
+            <p>NOTE: only one of the following parameters may be passed in a single call, and it must be of input type="file" with a <var>name</var> of:</p>
+            <ul>
+                <li><code>BUSINESS_PLAN</code> upload a business plan, either a Word or PDF document</li>
+                <li><code>PRESENTATION</code> upload a product presentation, either a Powerpoint or PDF document</li>
+                <li><code>FINANCIALS</code> upload financial statements, either an Excel or PDF document</li>
+                <li><code>LOGO</code> upload a logo, must be of png, jpeg or gif format, resized and cropped to 146px by 146px</li>
+            </ul>
+            <h4>Response</h4>
+            <ul>
+                <li><var>200</var> status code if upload succeeded upon form submit, otherwise an error code</li>
+            </ul>
+            <h4>Test</h4>
+            <form method="POST" class="uploadurl" action="upload_url" target="upload_url">
+                <div class="formitem">
+                    <label class="inputlabel" for="title">PLAN</label>
+                    <span class="inputfield">
+                        <input class="text inputwidetext" type="file" name="BUSINESS_PLAN" value="Attach Business Plan"></input>
+                    </span>
+                </div>
+                <div class="formitem clear">
+                    <label class="inputlabel" for="title">PRESENTATION</label>
+                    <span class="inputfield">
+                        <input class="text inputwidetext" type="file" name="PRESENTATION" value="Attach Presentation"></input>
+                    </span>
+                </div>
+                <div class="formitem clear">
+                    <label class="inputlabel" for="title">FINANCIALS</label>
+                    <span class="inputfield">
+                        <input class="text inputwidetext" type="file" name="FINANCIALS" value="Attach Financial Statements"></input>
+                    </span>
+                </div>
+                <div class="formitem clear">
+                    <label class="inputlabel" for="title">LOGO</label>
+                    <span class="inputfield">
+                        <input class="text inputwidetext" type="file" name="LOGO" value="Attach Logo"></input>
+                    </span>
+                </div>
+                <div class="formitem clear">
+                    <span class="inputlabel"></span>
+                    <span class="inputfield">
+                        <input type="submit" class="inputbutton" value="SUBMIT"></input>
+                    </span>
+                </div>
+            </form>
+            <iframe name="upload_url"></iframe>
+        </div>
 
-        <dt>GET /file/download/:id
-            <form method="GET" action="/file/download"><input type="text" name="id" value="&lt;file_id&gt;"></input><input type="submit" value="TEST"></input></form>
-        </dt>
+        <dt>GET /file/download/:id</dt>
         <dd>
             <p>
-            Downloads a listing file.  The file id is the value of one of the following supported listing fields:
-            </p>
-            <p>
-            <code>
-                business_plan_id, presentation_id, financials_id
-            </code>
-            </p>
-            <p>
-            Note for logo, instead of a file, the data uri of the logo image is returned directly in the listing API call.  This avoids a separate API call for each listing in order to obtain the logo.
+            Downloads a listing file with the given <var>id</var> as returned by the <var>/listing/get</var> method.  Note that logos cannot be downloaded via this method,
+            they must be downloaded via the <var>/listing/logo</var> method or via the data URI returned by <var>/listing/get</var> or in the listing list methods.
             </p>
         </dd>
+        <div class="apidetail">
+            <h4>Parameters</h4>
+            <ul>
+                <li><code>id</code> file ID as returned by the <var>/listing/get</var> method field business_plan_id, presentation_id, or financials_id</li>
+            </ul>
+            <h4>Response</h4>
+            <ul>
+                <li><var>binary file</var></li>
+            </ul>
+            <h4>Test</h4>
+            <form method="GET" action="/file/download" target="file-download">
+                <div class="formitem">
+                    <label class="inputlabel" for="title">FILE ID</label>
+                    <span class="inputfield">
+                        <input class="text inputwidetext fileid" type="text" name="id" value="0"></input>
+                    </span>
+                </div>
+                <div class="formitem clear">
+                    <span class="inputlabel"></span>
+                    <span class="inputfield">
+                        <input type="submit" class="inputbutton" value="SUBMIT"></input>
+                    </span>
+                </div>
+            </form>
+            <iframe name="file-download"></iframe>
+        </div>
+
     </div>
 
     <div class="boxtitle">USER API</div>
     <div class="boxpanel apipanel">
-    <p>Get information on individual users, full information is only available for the currently logged in user.</p>
+    <p>Get information on individual users, full information is only available to the currently logged in user and to admins.</p>
 
-        <dt>GET /user/loggedin
-            <form method="GET" action="/user/loggedin"><input type="submit" value="TEST"></input></form>
-        </dt>
+        <dt>GET /user/loggedin</dt>
         <dd>
             <p>
             Return logged in user profile data.
             </p>
         </dd>
+        <div class="apidetail">
+            <h4>Parameters</h4>
+            <ul>
+                <li><var>none</var></li>
+            </ul>
+            <h4>Response</h4>
+            <ul>
+                <li><code>profile_id</code> unique alphanumeric ID key of the user</li>
+                <li><code>username</code> human readable alphanumeric username, between 5 and 30 characters</li>
+                <li><code>name</code> full real name of user up to 120 characters</li>
+                <li><code>email</code> email address of user,</li>
+                <li><code>location</code> full physical address of user</li>
+                <li><code>phone</code> numeric phone number of user including prefixed country code</li>
+                <li><code>investor</code> <var>true</var> iff the user is an accredited, professional, or sophisticated investor</li>
+                <li><code>notify_enabled</code> <var>true</var> iff the user has email notificaitons enabled</li>
+                <li><code>edited_listing</code> the listing id of the user&rsquo;s in-progress listing, null otherwise</li>
+                <li><code>edited_status</code> edited listing status, <var>new</var> if being edited, <var>posted</var> if submitted but not yet approved</li>
+                <li><code>joined_date</code> date user signed up in YYYYMMDD format</li>
+                <li><code>last_login</code> date of last user login in YYYYMMDD format</li>
+                <li><code>modified</code> date user last modified their profile in YYYYMMDD format</li>
+                <li><code>num_listings</code> total user listing count, all statuses included </li>
+                <li><code>num_bids</code> total user bid count, all statuses included</li>
+                <li><code>num_accepted_bids</code> total number of bids placed by this user which have been accepted by the listing owner</li>
+                <li><code>num_payed_bids</code> total number of bids placed by this user which have been paid for</li>
+                <li><code>num_comments</code> total number of comments placed by this user</li>
+                <li><code>num_notifications</code> current number of unread notifications for this user</li>
+                <li><code>status</code> <var>active</var> iff user is enabled on the system</li>
+                <li><code>admin</code> <var>true</var> iff this user is a startupbidder administrator</li>
+            </ul>
+            <h4>Test</h4>
+            <form method="GET" action="/user/loggedin" target="user-loggedin">
+                <input type="submit" class="inputbutton" value="SUBMIT"></input>
+            </form>
+            <iframe name="user-loggedin"></iframe>
+        </div>
 
-        <dt>GET /user/get/:id
-            <form method="GET" action="/user/get"><input type="text" name="id" value="&lt;user_id&gt;"></input><input type="submit" value="TEST"></input></form>
-        </dt>
+        <dt>GET /user/get/:id</dt>
         <dd>
             <p>
             Return user data for a given user id.
             </p>
         </dd>
+        <div class="apidetail">
+            <h4>Parameters</h4>
+            <ul>
+                <li><code>id</code> alphanumeric user id</li>
+            </ul>
+            <h4>Response</h4>
+            <ul>
+                <li><code>login_url</code> URL to use for site login action</li>
+                <li><code>logout_url</code> URL to use for site logout action</li>
+                <li><code>loggedin_profile</code> private user profile object, see User API for profile object details</li>
+                <li><code>error_code</code> error status for this call, 0 on success</li>
+                <li><code>error_msg</code> error message for this call, null on success</li>
+                <li><code>profile</code> user object as described in method <var>/user/loggedin</var></li>
+            </ul>
+            <h4>Test</h4>
+            <form method="GET" action="/user/get" target="user-get">
+                <div class="formitem">
+                    <label class="inputlabel" for="title">ID</label>
+                    <span class="inputfield">
+                        <input class="text inputwidetext profileid" type="text" name="id" value="0"></input>
+                    </span>
+                </div>
+                <div class="formitem clear">
+                    <span class="inputlabel"></span>
+                    <span class="inputfield">
+                        <input type="submit" class="inputbutton" value="SUBMIT"></input>
+                    </span>
+                </div>
+            </form>
+            <iframe name="user-get"></iframe>
+        </div>
 
-        <dt>POST /user/deactivate
-            <form method="POST" action="/user/deactivate"><input type="text" name="id" value="&lt;user_id&gt;"></input><input type="submit" value="TEST"></input></form>
-        </dt>
+        <dt>POST /user/deactivate</dt>
         <dd>
             <p>
             Deactivates a given user.  Note that you must be logged in as this user or an admin in order to call this method.
             </p>
         </dd>
+        <div class="apidetail">
+            <h4>Parameters</h4>
+            <ul>
+                <li><code>id</code> alphanumeric user id</li>
+            </ul>
+            <h4>Response</h4>
+            <ul>
+                <li><var>same as method /user/loggedin</var></li>
+            </ul>
+            <h4>Test</h4>
+            <form method="POST" action="/user/deactivate" target="user-deactivate">
+                <div class="formitem">
+                    <label class="inputlabel" for="title">USER ID</label>
+                    <span class="inputfield">
+                        <input class="text inputwidetext profileid" type="text" name="id" value="0"></input>
+                    </span>
+                </div>
+                <div class="formitem clear">
+                    <span class="inputlabel"></span>
+                    <span class="inputfield">
+                        <input type="submit" class="inputbutton" value="SUBMIT"></input>
+                    </span>
+                </div>
+            </form>
+            <iframe name="user-deactivate"></iframe>
+        </div>
 
-        <dt>POST /user/check-user-name
-            <form method="POST" action="/user/check-user-name/"><input type="text" name="name" value="&lt;user name&gt;"></input><input type="submit" value="TEST"></input></form>
-        </dt>
+        <dt>GET /user/check-user-name</dt>
         <dd>
             <p>
-            Checks if the given username is currently taken.  If it is available, returns "true".  If the name is already taken, returns "false".  Used to check if a username exists before
-            the user is allowed to update their username, as all usernames (nicknames) must be unique for the site.
+            Checks if the given username is currently taken.  If it is available, returns <var>true</var>.  If the name is already taken, returns <var>false</var>.
+            Used to check if a username exists before the user is allowed to update their username, as all usernames (nicknames) must be unique for the site.
             </p>
         </dd>
+        <div class="apidetail">
+            <h4>Parameters</h4>
+            <ul>
+                <li><code>name</code> alphanumeric string with potential username between 5 and 30 characters</li>
+            </ul>
+            <h4>Response</h4>
+            <ul>
+                <li><var>true</var> if the passed username can be used as a new name on the system, <var>false</var> if it is already taken or otherwise invalid</li>
+            </ul>
+            <h4>Test</h4>
+            <form method="GET" action="/user/check-user-name" target="user-check-user-name">
+                <div class="formitem">
+                    <label class="inputlabel" for="title">USERNAME</label>
+                    <span class="inputfield">
+                        <input class="text inputwidetext profileusername" type="text" name="name" value="bobinator357"></input>
+                    </span>
+                </div>
+                <div class="formitem clear">
+                    <span class="inputlabel"></span>
+                    <span class="inputfield">
+                        <input type="submit" class="inputbutton" value="SUBMIT"></input>
+                    </span>
+                </div>
+            </form>
+            <iframe name="user-check-user-name"></iframe>
+        </div>
+
     </div>
 
     <div class="boxtitle">ADMIN API</div>
     <div class="boxpanel apipanel">
     <p>Perform administrative tasks on startupbidder; you must have administrative rights as a logged in user in order for these calls to work</p>
 
-        <dt>GET /listing/posted
-            <form method="GET" action="/listing/posted/"><input type="submit" value="TEST"></input></form>
-        </dt>
+        <dt>GET /listing/posted</dt>
         <dd>
             <p>
-            Returns posted status listings, that is, those which have been submitted by a user and are awaiting approval by a startupbidder admin.  Can only be called by a startupbidder admin.
+            Returns posted status listings, that is, those which have been submitted by a user and are awaiting approval by a startupbidder admin.
+            Can only be called by a startupbidder admin.
+            If more listings are available, they can be obtained by the <code>more_results_url</code> property of the <code>listings_props</code> in the response.
             </p>
         </dd>
+        <div class="apidetail">
+            <h4>Parameters</h4>
+            <ul>
+                <li><code>max_results</code> OPTIONAL for the max number of results to return, default 5, up to 20</i>
+            </ul>
+            <h4>Response</h4>
+            <ul>
+                <li><code>login_url</code> URL to use for site login action</li>
+                <li><code>logout_url</code> URL to use for site logout action</li>
+                <li><code>loggedin_profile</code> private user profile object, see User API for profile object details</li>
+                <li><code>error_code</code> error status for this call, 0 on success</li>
+                <li><code>error_msg</code> error message for this call, null on success</li>
+                <li><code>listings</code> list of listings matching this request, up to the <var>max_results</var></li>
+                <li><code>listings_props</code> list properties for this query.  You can call <var>more_results_url</var> in an AJAX request for additional listings.
+                    Structure:
+<pre name="code" class="js">
+{
+    start_index: :index,
+    max_results: :max,
+    num_results: :n,
+    more_results_url: :url
+}
+</pre>
+                </li>
+                <li><code>categories</code> map of listing categories, same as for <var>/listing/discover</var></li>
+                <li><code>top_locations</code> map of top locations, same as for <var>/listing/discover</var></li>
+            </ul>
+            <h4>Test</h4>
+            <form method="GET" action="/listing/posted" target="listing-posted">
+                <input type="submit" class="inputbutton" value="SUBMIT"></input>
+            </form>
+            <iframe name="listing-top"></iframe>
+        </div>
 
-        <dt>GET /listing/frozen
-            <form method="GET" action="/listing/frozen/"><input type="submit" value="TEST"></input></form>
-        </dt>
+        <dt>GET /listing/frozen</dt>
         <dd>
             <p>
             Returns frozen status listings, that is, those which have been frozen by a startupbidder admin.  Can only be called by a startupbidder admin.
+            If more listings are available, they can be obtained by the <code>more_results_url</code> property of the <code>listings_props</code> in the response.
             </p>
         </dd>
+        <div class="apidetail">
+            <h4>Parameters</h4>
+            <ul>
+                <li><code>max_results</code> OPTIONAL for the max number of results to return, default 5, up to 20</i>
+            </ul>
+            <h4>Response</h4>
+            <ul>
+                <li><code>login_url</code> URL to use for site login action</li>
+                <li><code>logout_url</code> URL to use for site logout action</li>
+                <li><code>loggedin_profile</code> private user profile object, see User API for profile object details</li>
+                <li><code>error_code</code> error status for this call, 0 on success</li>
+                <li><code>error_msg</code> error message for this call, null on success</li>
+                <li><code>listings</code> list of listings matching this request, up to the <var>max_results</var></li>
+                <li><code>listings_props</code> list properties for this query.  You can call <var>more_results_url</var> in an AJAX request for additional listings.
+                    Structure:
+<pre name="code" class="js">
+{
+    start_index: :index,
+    max_results: :max,
+    num_results: :n,
+    more_results_url: :url
+}
+</pre>
+                </li>
+                <li><code>categories</code> map of listing categories, same as for <var>/listing/discover</var></li>
+                <li><code>top_locations</code> map of top locations, same as for <var>/listing/discover</var></li>
+            </ul>
+            <h4>Test</h4>
+            <form method="GET" action="/listing/frozen" target="listing-frozen">
+                <input type="submit" class="inputbutton" value="SUBMIT"></input>
+            </form>
+            <iframe name="listing-frozen"></iframe>
+        </div>
 
-        <dt>POST /listing/freeze
-            <form method="POST" action="/listing/freeze"><input type="text" name="id" value="&lt;listing_id&gt;"></input><input type="submit" value="TEST"></input></form>
-        </dt>
+        <dt>POST /listing/freeze/:id</dt>
         <dd>
             <p>
-            Freezes the listing with the given id.  This suspends the listing pending further review, which may be done if a listing is found to be inaccurate or in violation of any law or regulation.
-            This method can only be called by admins.
+            Freezes the listing with the given id.  This suspends the listing pending further review, which may be done if a listing is found to be inaccurate
+            or in violation of any law or regulation.  This method can only be called by admins.
             </p>
         </dd>
+        <div class="apidetail">
+            <h4>Parameters</h4>
+            <ul>
+                <li><code>id</code> alphanumeric listing id as returned by the listing list and search API</li>
+            </ul>
+            <h4>Response</h4>
+            <ul>
+                <li><code>login_url</code> URL to use for site login action</li>
+                <li><code>logout_url</code> URL to use for site logout action</li>
+                <li><code>loggedin_profile</code> private user profile object, see User API for profile object details</li>
+                <li><code>error_code</code> error status for this call, 0 on success</li>
+                <li><code>error_msg</code> error message for this call, null on success</li>
+                <li><code>listing</code> listing object as per <var>/listing/get</var> method</li>
+            </ul>
+            <h4>Test</h4>
+            <form method="POST" action="/listing/freeze" target="listing-freeze">
+                <div class="formitem">
+                    <label class="inputlabel" for="title">ID</label>
+                    <span class="inputfield">
+                        <input class="text inputwidetext listingid" type="text" name="id" value="0"></input>
+                    </span>
+                </div>
+                <div class="formitem clear">
+                    <span class="inputlabel"></span>
+                    <span class="inputfield">
+                        <input type="submit" class="inputbutton" value="SUBMIT"></input>
+                    </span>
+                </div>
+            </form>
+            <iframe name="listing-freeze"></iframe>
+        </div>
 
-        <dt>POST /listing/activate
-            <form method="POST" action="/listing/activate"><input type="text" name="id" value="&lt;listing_id&gt;"></input><input type="submit" value="TEST"></input></form>
-        </dt>
+        <dt>POST /listing/activate/:id</dt>
         <dd>
             <p>
             Activates the listing with the given id.  This makes the listing live and active on the site.  If asking for funds, bidding is enabled at this point.
@@ -1357,10 +2041,39 @@ include(api-banner.m4)
             This method can only be called by admins.
             </p>
         </dd>
+        <div class="apidetail">
+            <h4>Parameters</h4>
+            <ul>
+                <li><code>id</code> alphanumeric listing id as returned by the listing list and search API</li>
+            </ul>
+            <h4>Response</h4>
+            <ul>
+                <li><code>login_url</code> URL to use for site login action</li>
+                <li><code>logout_url</code> URL to use for site logout action</li>
+                <li><code>loggedin_profile</code> private user profile object, see User API for profile object details</li>
+                <li><code>error_code</code> error status for this call, 0 on success</li>
+                <li><code>error_msg</code> error message for this call, null on success</li>
+                <li><code>listing</code> listing object as per <var>/listing/get</var> method</li>
+            </ul>
+            <h4>Test</h4>
+            <form method="POST" action="/listing/activate" target="listing-activate">
+                <div class="formitem">
+                    <label class="inputlabel" for="title">ID</label>
+                    <span class="inputfield">
+                        <input class="text inputwidetext listingid" type="text" name="id" value="0"></input>
+                    </span>
+                </div>
+                <div class="formitem clear">
+                    <span class="inputlabel"></span>
+                    <span class="inputfield">
+                        <input type="submit" class="inputbutton" value="SUBMIT"></input>
+                    </span>
+                </div>
+            </form>
+            <iframe name="listing-activate"></iframe>
+        </div>
 
-        <dt>POST /listing/send_back
-            <form method="POST" action="/listing/send_back"><input type="text" name="id" value="&lt;listing_id&gt;"></input><input type="submit" value="TEST"></input></form>
-        </dt>
+        <dt>POST /listing/send_back/:id</dt>
         <dd>
             <p>
             Sends the listing with the given id back to the user for further modification.  This suspends the listing pending further review,
@@ -1368,6 +2081,38 @@ include(api-banner.m4)
             This method can only be called by admins.
             </p>
         </dd>
+        <div class="apidetail">
+            <h4>Parameters</h4>
+            <ul>
+                <li><code>id</code> alphanumeric listing id as returned by the listing list and search API</li>
+            </ul>
+            <h4>Response</h4>
+            <ul>
+                <li><code>login_url</code> URL to use for site login action</li>
+                <li><code>logout_url</code> URL to use for site logout action</li>
+                <li><code>loggedin_profile</code> private user profile object, see User API for profile object details</li>
+                <li><code>error_code</code> error status for this call, 0 on success</li>
+                <li><code>error_msg</code> error message for this call, null on success</li>
+                <li><code>listing</code> listing object as per <var>/listing/get</var> method</li>
+            </ul>
+            <h4>Test</h4>
+            <form method="POST" action="/listing/send_back" target="listing-send_back">
+                <div class="formitem">
+                    <label class="inputlabel" for="title">ID</label>
+                    <span class="inputfield">
+                        <input class="text inputwidetext listingid" type="text" name="id" value="0"></input>
+                    </span>
+                </div>
+                <div class="formitem clear">
+                    <span class="inputlabel"></span>
+                    <span class="inputfield">
+                        <input type="submit" class="inputbutton" value="SUBMIT"></input>
+                    </span>
+                </div>
+            </form>
+            <iframe name="listing-send_back"></iframe>
+        </div>
+
     </div> 
 
 <div id="loadmsg"></div>
