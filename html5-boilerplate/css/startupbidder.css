@@ -18,9 +18,9 @@ body.nearby-page > #wrap > #main > div.container > div.nearbywrapper { height: 1
 * html .clearfix { height: 1%; }
 .clearfix { display: block; }
 .footercontainer { border-top: 2px solid grey; padding-top: 10px; }
-.footercol { border-right: 2px solid grey; padding-bottom: 5px; height: 130px; }
+.footercol { border-right: 2px solid grey; padding-bottom: 5px; height: 130px; font-size: 14px; }
 .footercol a { display: block; }
-.footertext { position: relative; font-weight: bold; font-size: 18px; top: 10px; }
+.footertext { position: relative; font-weight: bold; font-size: 12px; top: 10px; }
 .footerlink { font-size: 14px; }
 .copyrighttext { font-size: 12px; position: absolute; right: 0; bottom: 0; }
 .attention { color: #8A1F11; }
@@ -61,6 +61,10 @@ a:link, a:visited { text-decoration: none; color: #4083a9; }
 .white { color: #ffffff; }
 .uneditabletext { color: #49515a; }
 
+/* welcome */
+#welcometitle { color: #4083a9; }
+.welcometext { color: #4083a9; }
+
 /* gradients */
 .buttonbg, .sideboxbutton, .sideboxbuttoninterior, .smallbuttonbg, .inputbutton, .smallinputbutton {
 background: #999999;
@@ -74,8 +78,8 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 
 /* header styles */
 .topheader { width: 100%; height: 26px; background: #32aff6; }
-.topheaderline { color: white; font-weight: normal; }
-.topheaderlink { color: white; font-weight: bold; }
+.topheaderline { color: white !important; font-weight: normal; }
+.topheaderlink { color: white !important; font-weight: bold; }
 .header { width: 100%; height: 55px; background: #49515a; }
 .headerrow { height: 55px; }
 .headertext, .headerlink { position: relative; font-weight: bold; font-size: 18px; top: 14px; color: #dcd8db; padding: 5px 15px; border-left: 2px solid white; }
@@ -85,8 +89,8 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .logotextgrey { position: relative; font-weight: bold; font-size: 24px; top: 8px; color: #dcd8db; }
 .headerprofile { float: right; text-align: right; }
 .loginspan { text-align: right; }
-.headericon { position: relative; top: 16px; width: 26px; margin-right: 10px; float: right; }
 .logout { positon:relative; margin-top:6px; display: none; }
+.headersignintext { float: right; border-left: none; padding-right: 0px; }
 
 /* banner styles */
 .banner { width: 980px; height: 80px; margin-top: 10px; }
@@ -195,6 +199,11 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .bidactioniconnarrow { float: left; margin-left: 10px; margin-top: 5px; margin-right: 10px; }
 .bidactionbtn { text-align: left !important; }
 .normalicon { float: left; margin-right: 5px; }
+.headericon { height: 32px; width: 32px; margin-left: 15px; float: right; position: relative; top: 12px; }
+.headersignin { background: url(../img/icons/google_signin.png); }
+.headerlogout { background: url(../img/icons/logout.png); }
+.headermessages { background: url(../img/icons/messages.png); }
+.headernotifications { background: url(../img/icons/notifications.png); }
 
 /* searchbar styles */
 .searchbar { height: 36px; margin-top: 4px; font-size: 14px !important; font-weight: bold; }

@@ -307,32 +307,30 @@ pl.implement(HeaderClass, {
     },
     setLoggedIn: function(profile, logout_url) {
         var username = profile.username || 'You',
-            posttext = profile.edited_listing ? 'Your Post': 'Post',
+            posttext = profile.edited_listing ? 'Complete Your Listing': 'List New Company',
             num_notifications = profile.num_notifications || 0,
             notificationlinktext = num_notifications ? num_notifications + ' unread notifications' : 'no unread notifications',
             newlistingurl = profile.edited_status === 'posted' ? 'new-listing-submitted-page.html' : 'new-listing-basics-page.html';
-        pl('#topheaderline').html('You have <a href="/profile-page.html" class="topheaderlink hoverlink">' + notificationlinktext + '</a>');
+        pl('#topheaderline').html('You have <a href="/notifications-page.html" class="topheaderlink hoverlink">' + notificationlinktext + '</a>');
         pl('#postlink').attr('href', newlistingurl);
         pl('#posttext').html(posttext);
         if (profile.admin) {
             pl('#adminsetup,#adminhello').css({visibility:'visible'});
         }
-        pl('#loginlink').attr('href', 'profile-page.html');
-        pl('#logintext').html(username);
+        pl('#headerusername').html(username);
         if (logout_url) {
             pl('#logoutlink').attr({href: logout_url});
-            pl('#logout').show();
         }
+        pl('#headerloggedin').show();
     },
     setLoggedOut: function(login_url) {
         pl('#topheaderline').html('Want to raise money for startups or invest in one? <a href="/about-page.html" class="topheaderlink hoverlink">We&rsquo;ll tell you how!</a>');
-        if (login_url && pl('body').hasClass('login-page')) {
-            pl('#googleloginlink').attr({href: login_url}).show();
+        pl('#posttext').html('List New Company');
+        if (login_url) {
+            pl('#postlink').attr({href: login_url});
+            pl('#loginlink').attr({href: login_url});
         }
-        pl('#postlink').attr('href', 'login-page.html');
-        pl('#posttext').html('Sign In to Post');
-        pl('#loginlink').attr('href', 'login-page.html');
-        pl('#logintext').html('Sign In');
+        pl('#headernotloggedin').show();
     }
 });
 

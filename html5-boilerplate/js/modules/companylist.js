@@ -170,7 +170,7 @@ function CompanyListClass(options) {
 pl.implement(CompanyListClass, {
     storeList: function(json) {
         var companiesval = json && json[this.options.propertykey],
-            postnowlink = json && json.loggedin_profile ? 'new-listing-basics-page.html' : 'login-page.html',
+            postnowlink = json && json.loggedin_profile ? 'new-listing-basics-page.html' : json.login_url,
             isadmin = json && json.loggedin_profile && json.loggedin_profile.admin,
             tileoptions = { admin: isadmin },
             more_results_url = json.listings_props && json.listings_props.more_results_url,

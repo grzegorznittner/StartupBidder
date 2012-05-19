@@ -14,13 +14,8 @@
         </div>
         <div>
             <a href="edit-profile-page.html">
-                <span class="push-15px span-3 inputbutton hoverlink initialhidden" id="editprofilebutton">
+                <span class="push-4 span-3 inputbutton hoverlink initialhidden" id="editprofilebutton">
                     EDIT
-                </span>
-            </a>
-            <a id="logoutlink" href="">
-                <span class="push-1 span-3 inputbutton hoverlink initialhidden" id="logout">
-                    SIGN OUT
                 </span>
             </a>
         </div>
