@@ -577,6 +577,7 @@ public class MockDataBuilder {
 		user.joined = new Date(System.currentTimeMillis() - 22 * 24 * 60 * 60 * 1000);
 		user.status = SBUser.Status.DEACTIVATED;
 		user.lastLoggedIn = new Date();
+        user.genNicknameLower();
 		AHMED = DtoToVoConverter.convert(user);
 		users.add(user); // 0
 
@@ -590,7 +591,8 @@ public class MockDataBuilder {
 		user.joined = new Date(System.currentTimeMillis() - 23 * 24 * 60 * 60 * 1000);
 		user.status = SBUser.Status.ACTIVE;
 		user.lastLoggedIn = new Date();
-		JACOB = DtoToVoConverter.convert(user);
+        user.genNicknameLower();
+        JACOB = DtoToVoConverter.convert(user);
 		users.add(user); // 1
 
 		user = new SBUser();
@@ -602,7 +604,8 @@ public class MockDataBuilder {
 		user.openId = user.email;
 		user.joined = new Date(System.currentTimeMillis() - 31 * 24 * 60 * 60 * 1000);
 		user.status = SBUser.Status.ACTIVE;
-		INSIDER = DtoToVoConverter.convert(user);
+        user.genNicknameLower();
+        INSIDER = DtoToVoConverter.convert(user);
 		users.add(user); // 2
 
 		user = new SBUser();
@@ -616,7 +619,8 @@ public class MockDataBuilder {
 		user.status = SBUser.Status.ACTIVE;
 		user.lastLoggedIn = new Date();
 		user.investor = true;
-		DRAGON = DtoToVoConverter.convert(user);
+        user.genNicknameLower();
+        DRAGON = DtoToVoConverter.convert(user);
 		users.add(user); // 3
 
 		user = new SBUser();
@@ -630,7 +634,8 @@ public class MockDataBuilder {
 		user.status = SBUser.Status.ACTIVE;
 		user.investor = true;
 		user.lastLoggedIn = new Date();
-		MADMAX = DtoToVoConverter.convert(user);
+        user.genNicknameLower();
+        MADMAX = DtoToVoConverter.convert(user);
 		users.add(user); // 4
 
 		user = new SBUser();
@@ -644,7 +649,8 @@ public class MockDataBuilder {
 		user.status = SBUser.Status.DEACTIVATED;
 		user.investor = true;
 		user.lastLoggedIn = new Date();
-		THEONE = DtoToVoConverter.convert(user);
+        user.genNicknameLower();
+        THEONE = DtoToVoConverter.convert(user);
 		users.add(user); // 5
 
     	user = new SBUser();
@@ -658,7 +664,8 @@ public class MockDataBuilder {
 		user.status = SBUser.Status.DEACTIVATED;
 		user.investor = true;
 		user.lastLoggedIn = new Date();
-		JENNY = DtoToVoConverter.convert(user);
+        user.genNicknameLower();
+        JENNY = DtoToVoConverter.convert(user);
 		users.add(user); // 6
 
     	user = new SBUser();
@@ -672,7 +679,8 @@ public class MockDataBuilder {
 		user.status = SBUser.Status.DEACTIVATED;
 		user.investor = true;
 		user.lastLoggedIn = new Date();
-		EMPEROR = DtoToVoConverter.convert(user);
+        user.genNicknameLower();
+        EMPEROR = DtoToVoConverter.convert(user);
 		users.add(user); // 7
 
     	user = new SBUser();
@@ -686,7 +694,8 @@ public class MockDataBuilder {
 		user.status = SBUser.Status.DEACTIVATED;
 		user.investor = true;
 		user.lastLoggedIn = new Date();
-		BURNTSKY = DtoToVoConverter.convert(user);
+        user.genNicknameLower();
+        BURNTSKY = DtoToVoConverter.convert(user);
 		users.add(user); // 8
 		
 		user = new SBUser();
@@ -701,8 +710,9 @@ public class MockDataBuilder {
 		user.status = SBUser.Status.ACTIVE;
 		user.investor = true;
 		user.lastLoggedIn = new Date();
+        user.genNicknameLower();
 		users.add(user);
-		JOHN = DtoToVoConverter.convert(user); // 9
+        JOHN = DtoToVoConverter.convert(user); // 9
 
         user = new SBUser();
         user.id = id();
@@ -716,6 +726,7 @@ public class MockDataBuilder {
         user.status = SBUser.Status.ACTIVE;
         user.investor = true;
         user.lastLoggedIn = new Date();
+        user.genNicknameLower();
         users.add(user); // 9
         GREG = DtoToVoConverter.convert(user);
 
@@ -732,8 +743,9 @@ public class MockDataBuilder {
 		user.status = SBUser.Status.CREATED;
 		user.investor = false;
 		user.lastLoggedIn = null;
-		users.add(user); // 10
-		NOT_ACTIVATED = DtoToVoConverter.convert(user);
+        user.genNicknameLower();
+        users.add(user); // 10
+        NOT_ACTIVATED = DtoToVoConverter.convert(user);
 		
 		return users;
 	}
@@ -752,6 +764,7 @@ public class MockDataBuilder {
         user.status = SBUser.Status.ACTIVE;
         user.investor = true;
         user.lastLoggedIn = new Date();
+        user.genNicknameLower();
         users.add(user);
         ANGEL = DtoToVoConverter.convert(user);
         return users;
@@ -771,6 +784,7 @@ public class MockDataBuilder {
         user.status = SBUser.Status.ACTIVE;
         user.investor = true;
         user.lastLoggedIn = new Date();
+        user.genNicknameLower();
         users.add(user);
         STARTUPLY = DtoToVoConverter.convert(user);
         return users;
