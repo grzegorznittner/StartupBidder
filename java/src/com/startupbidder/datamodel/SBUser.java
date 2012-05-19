@@ -112,4 +112,8 @@ public class SBUser extends BaseObject {
 		this.activationCode = "" + this.email.hashCode() + this.joined.hashCode();
 	}
 
+    public void genNicknameLower() {
+        nicknameLower = nickname != null ? nickname.toLowerCase() : null;
+    }
+    
 }
