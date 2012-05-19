@@ -1,20 +1,20 @@
-function NotificationPageClass() {
+function MessagePageClass() {
     this.json = {};
 };
-pl.implement(NotificationPageClass,{
+pl.implement(MessagePageClass,{
     loadPage: function() {
         var completeFunc = function(json) {
                 var header = new HeaderClass(),
-                    notifyList = new NotifyListClass();
+                    messageList = new MessageListClass();
                 header.setLogin(json);
                 if (!json.loggedin_profile) { // must be logged in for this page
                     window.location = '/';
                 }
-                notifyList.display(json);
+                messageList.display(json);
              },
-            ajax = new AjaxClass('/notification/user', 'notificationsmsg', completeFunc);
+            ajax = new AjaxClass('/user/get_message_users', 'messagemsg', completeFunc);
         ajax.call();
     }
 });
 
-(new NotificationPageClass()).loadPage();
+(new MessagePageClass()).loadPage();

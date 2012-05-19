@@ -22,7 +22,6 @@ pl.implement(ProfileListingPageClass,{
             completeFunc = function(json) {
                 var header = new HeaderClass(),
                     profile = new ProfileClass(),
-                    notifyList = new NotifyListClass(),
                     companyList = new CompanyListClass();
                 self.json = json;
                 header.setLogin(json);
@@ -31,7 +30,6 @@ pl.implement(ProfileListingPageClass,{
                 }
                 profile.setProfile(json.loggedin_profile);
                 pl('#listingstitle').text(self.title);
-                notifyList.display(json);
                 companyList.storeList(json);
                 pl('#editprofilebutton').show();
              },

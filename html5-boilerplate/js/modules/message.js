@@ -1,5 +1,5 @@
-function NotificationClass() {}
-pl.implement(NotificationClass, {
+function MessageClass() {}
+pl.implement(MessageClass, {
     store: function(json) {
         var self = this;
         for (k in json) {
@@ -8,29 +8,29 @@ pl.implement(NotificationClass, {
         self.createddate = self.create_date ? DateClass.prototype.format(self.create_date) : '';
         self.message = self.title ? SafeStringClass.prototype.htmlEntities(self.title) : '';
         self.messageclass = self.read ? '' : ' inputmsg'; // unread
-        if (!self.notify_type) {
-            self.type = 'notification';
+        if (!self.message_type) {
+            self.type = 'message';
         }
-        else if (self.notify_type.match('comment')) {
+        else if (self.message_type.match('comment')) {
             self.type = 'comment';
         }
-        else if (self.notify_type.match('bid')) {
+        else if (self.message_type.match('bid')) {
             self.type = 'bid';
         }
         else {
-            self.type = 'notification';
+            self.type = 'message';
         }
         self.datetext = self.created_date ? 'Sent on ' + DateClass.prototype.format(self.created_date) : '';
-        self.openanchor = self.notify_id ? '<a href="/notification-page.html?id=' + self.notify_id + '" class="hoverlink' + self.messageclass + '">' : '';
-        self.closeanchor = self.notify_id ? '</a>' : '';
+        self.openanchor = self.message_id ? '<a href="/message-page.html?id=' + self.message_id + '" class="hoverlink' + self.messageclass + '">' : '';
+        self.closeanchor = self.message_id ? '</a>' : '';
     },
     setPageHtml: function() {
         var self = this,
             listing = {},
             tile = new CompanyTileClass({ companybannertileclass: 'companybannertilenoborder' });
-        pl('#notification_title').text(self.title);
-        pl('#notification_date').text(self.datetext);
-        pl('#notification_text_2').html(self.text_2||'');
+        pl('#message_title').text(self.title);
+        pl('#message_date').text(self.datetext);
+        pl('#message_text_2').html(self.text_2||'');
         if (self.listing_id) {
             listing.listing_id = self.listing_id;
             listing.logo = self.listing_logo_url;
@@ -40,87 +40,87 @@ pl.implement(NotificationClass, {
             listing.mantra = self.listing_mantra;
             /* self.listing_owner (user id) */
             tile.store(listing);
-            //pl('#notification_header').text('NOTIFICATION FOR ' + listing.title.toUpperCase());
-            pl('#notification_listing').html(tile.makeFullWidthHtml());
+            //pl('#message_header').text('NOTIFICATION FOR ' + listing.title.toUpperCase());
+            pl('#message_listing').html(tile.makeFullWidthHtml());
         }
     },
     setEmpty: function() {
         var self = this,
             emptyJson = {
-                title: 'You currently have no notifications.',
+                title: 'You currently have no messages.',
                 read: true,
-                notify_type: 'notification',
-                notify_id: 0
+                message_type: 'message',
+                message_id: 0
             };
         self.store(emptyJson);
     },
     setNotFound: function() {
         var self = this,
             emptyJson = {
-                title: 'You must pass a notification ID.',
+                title: 'You must pass a message ID.',
                 read: true,
-                notify_type: 'notification',
-                notify_id: 0
+                message_type: 'message',
+                message_id: 0
             };
         self.store(emptyJson);
     },
     makeHtml: function() {
         var self = this;
         return '\
-        <div>\
+        <div class="sideboxmessage sideboxlink">\
             <span class="sideboxicon" style="overflow:visible;">\
                 <div class="'+self.type+'icon" style="overflow:visible;"></div>\
             </span>\
-            <span class="notifytext">\
+            <span class="sideboxmessagetext">\
                 '+self.openanchor+'\
                 '+self.message+'\
                 '+self.closeanchor+'\
                 <br/>\
-                <span class="notifydate">'+self.createddate+'</span>\
+                <span class="sideboxdate">'+self.createddate+'</span>\
             </span>\
         </div>\
         ';
     }
 });
 
-function NotifyListClass() {}
-pl.implement(NotifyListClass, {
+function MessageListClass() {}
+pl.implement(MessageListClass, {
     store: function(json) {
         var self = this,
-            jsonlist = json && json.notifications ? json.notifications : [],
-            notification,
+            jsonlist = json && json.users ? json.users : [],
+            message,
             i;
-        self.notifications = [];
+        self.messages = [];
         if (jsonlist.length) {
             for (i = 0; i < jsonlist.length; i++) {
-                notification = new NotificationClass();
-                notification.store(jsonlist[i]);
-                self.notifications.push(notification);
+                message = new MessageClass();
+                message.store(jsonlist[i]);
+                self.messages.push(message);
             }
         }
         else {
-            notification = new NotificationClass();
-            notification.setEmpty();
-            self.notifications.push(notification);
+            message = new MessageClass();
+            message.setEmpty();
+            self.messages.push(message);
         }
     },
     display: function(json) {
         var self = this,
             html = '',
             i,
-            notification;
+            message;
         if (json !== undefined) {
             self.store(json);
         }
-        for (i = 0; i < self.notifications.length; i++) {
-            notification = self.notifications[i];
-            html += notification.makeHtml();
+        for (i = 0; i < self.messages.length; i++) {
+            message = self.messages[i];
+            html += message.makeHtml();
         }
-        if (!self.notifications.length) {
-            notification = new NotificationClass();
-            notification.setEmpty();
-            html += notification.makeHtml();
+        if (!self.messages.length) {
+            message = new MessageClass();
+            message.setEmpty();
+            html += message.makeHtml();
         }
-        pl('#notifylist').html(html);
+        pl('#messagelist').html(html);
     }
 });

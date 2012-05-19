@@ -21,8 +21,5 @@
         </div>
     </div>
 
-    <div class="boxtitle clear">YOUR NOTIFICATIONS</div>
-    <div class="sidebox" id="notifylist"></div>
-
 </div> <!-- end right column -->
 '

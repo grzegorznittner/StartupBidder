@@ -418,9 +418,11 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .sideboxtitledetail { float: left; padding-top: 11px; font-weight: bold; }
 .sideboxtitlecompact { font-size: 24px; margin-left: 5px; margin-right: 10px; font-weight: bold; }
 .sideboxdesc { margin-left: 5px; font-weight: bold; }
-.sideboxnotify { float: left; width: 302px; }
+/* .sideboxnotify { float: left; width: 302px; } */
 .sideboxicon { width: 26px; margin-right: 10px; float: left; }
-.sideboxnotifytext { float: left; width: 266px; font-weight: normal; }
+/* .sideboxnotifytext { float: left; width: 266px; font-weight: normal; } */
+.notifytext { float left; font-weight: normal; }
+.notifydate { font-size: 10px; color: grey; }
 .sideboxdate { font-size: 10px; color: grey; }
 .sideboxlisting { font-size: 10px; }
 .sideboxmap { width: 302px; height: 302px; }
