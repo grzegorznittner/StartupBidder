@@ -18,7 +18,7 @@ include(header.m4)
     <div id="notificationmsg"></div>
 
     <div class="boxtitle smokegrey clear">YOUR NOTIFICATIONS</div>
-    <div class="boxpanel" id="notifylist"></div>
+    <div class="boxpanel boxpanelfull" id="notifylist"></div>
 
 </div> <!-- end left column -->
 </div> <!-- end container -->

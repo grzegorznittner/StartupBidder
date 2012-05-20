@@ -187,9 +187,12 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .countericon { width: 20px; height: 20px; background: url(../img/icons/counter.png); }
 .bidcountericon { width: 20px; height: 20px; background: url(../img/icons/counter.png); }
 .bidcounteredicon { width: 20px; height: 20px; background: url(../img/icons/counter.png); }
-.notificationicon { width: 20px; height: 20px; background: url(../img/icons/email_20x20.png); background-position: 0px 0px; }
-.checkboxgreenicon { width: 32px; height: 32px; background: url(../img/icons/checkbox_green_32x32.png); background-position: 0px 0px; }
-.checkboxredicon { width: 32px; height: 32px; background: url(../img/icons/checkbox_red_32x32.png); background-position: 0px 0px; }
+.ask_listing_ownericon { width: 20px; height: 20px; background: url(../img/icons/info_20.png); }
+.private_messageicon { width: 20px; height: 20px; background: url(../img/icons/email_20x20.png); }
+.notificationicon { width: 20px; height: 20px; background: url(../img/icons/notification_20.png); }
+.qainfobtn { height: 20px; width: 20px; background: url(../img/icons/info_20.png); float: right; }
+.checkboxgreenicon { width: 32px; height: 32px; background: url(../img/icons/checkbox_green_32x32.png); }
+.checkboxredicon { width: 32px; height: 32px; background: url(../img/icons/checkbox_red_32x32.png); }
 .documenticon { width: 16px; height: 16px; background: url(../img/icons/document.png); }
 .presentationicon { width: 16px; height: 16px; background: url(../img/icons/presentation_small.png); }
 .spreadsheeticon { width: 16px; height: 16px; background: url(../img/icons/spreadsheet.png); }
@@ -319,7 +322,6 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .messagetextarea { color: white !important; background: #49515a !important; font-weight: bold; font-size: 14px !important; height: 60px; width: 540px !important; }
 .qatextarea { height: 65px; overflow: hidden; overflow-x: hidden; overflow-y: auto; font-weight: bold; color: white !important;
                 background: #49515a !important; font-size: 14px !important; margin: 0px 5px 5px 5px; width: 540px !important; }
-.qainfobtn { height: 20px; width: 20px; background: url(../img/icons/info_20.png); float: right; }
 .qainfobtn:hover { opacity: 0.7; cursor: pointer; }
 .qainfo { margin: 0 10px 0 5px !important; overflow: hidden; height: 0px;
     -moz-transition: height 300ms;
@@ -358,6 +360,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .boxpanel, .boxstep { border: 2px solid #999999; padding: 2px; overflow: auto; background: #e3e3e3; margin-bottom: 10px; }
 /* .boxpanel { width: 622px; overflow: auto; position: relative; } */
 .boxpanel { width: 622px; overflow: hidden; position: relative; }
+.boxpanelfull { width: 100%; }
 .companylistingbox { width: 622px; height: 146px; }
 .addcommentmsg { height: 20px; margin-left: 5px; font-weight: bold; }
 .addmessagemsg { height: 20px; margin-left: 5px; font-weight: bold; }
@@ -421,8 +424,10 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 /* .sideboxnotify { float: left; width: 302px; } */
 .sideboxicon { width: 26px; margin-right: 10px; float: left; }
 /* .sideboxnotifytext { float: left; width: 266px; font-weight: normal; } */
-.notifytext { float left; font-weight: normal; }
-.notifydate { font-size: 10px; color: grey; }
+.notifyline { clear: both; height: 35px; padding: 5px; }
+.notifyline:nth-child(2n) { background: #f2f2f2; }
+.notifytext { float: left; font-weight: normal; }
+.notifydate { float: right; font-size: 12px; padding-top: 2px; color: gray; margin-right: 10px; }
 .sideboxdate { font-size: 10px; color: grey; }
 .sideboxlisting { font-size: 10px; }
 .sideboxmap { width: 302px; height: 302px; }

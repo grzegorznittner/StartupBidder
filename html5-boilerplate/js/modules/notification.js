@@ -5,7 +5,6 @@ pl.implement(NotificationClass, {
         for (k in json) {
             self[k] = json[k];
         }
-        self.createddate = self.create_date ? DateClass.prototype.format(self.create_date) : '';
         self.message = self.title ? SafeStringClass.prototype.htmlEntities(self.title) : '';
         self.messageclass = self.read ? '' : ' inputmsg'; // unread
         if (!self.notify_type) {
@@ -17,57 +16,35 @@ pl.implement(NotificationClass, {
         else if (self.notify_type.match('bid')) {
             self.type = 'bid';
         }
+        else if (self.notify_type.match('ask_listing_owner')) {
+            self.type = 'ask_listing_owner';
+        }
+        else if (self.notify_type.match('private_message')) {
+            self.type = 'private_message';
+        }
         else {
             self.type = 'notification';
         }
-        self.datetext = self.created_date ? 'Sent on ' + DateClass.prototype.format(self.created_date) : '';
-        self.openanchor = self.notify_id ? '<a href="/notification-page.html?id=' + self.notify_id + '" class="hoverlink' + self.messageclass + '">' : '';
-        self.closeanchor = self.notify_id ? '</a>' : '';
-    },
-    setPageHtml: function() {
-        var self = this,
-            listing = {},
-            tile = new CompanyTileClass({ companybannertileclass: 'companybannertilenoborder' });
-        pl('#notification_title').text(self.title);
-        pl('#notification_date').text(self.datetext);
-        pl('#notification_text_2').html(self.text_2||'');
-        if (self.listing_id) {
-            listing.listing_id = self.listing_id;
-            listing.logo = self.listing_logo_url;
-            listing.category = self.listing_category;
-            listing.title = self.listing_name;
-            listing.brief_address = self.listing_brief_address;
-            listing.mantra = self.listing_mantra;
-            /* self.listing_owner (user id) */
-            tile.store(listing);
-            //pl('#notification_header').text('NOTIFICATION FOR ' + listing.title.toUpperCase());
-            pl('#notification_listing').html(tile.makeFullWidthHtml());
-        }
+        self.datetext = self.create_date ? DateClass.prototype.format(self.create_date) : '';
+        self.openanchor = self.link ? '<a href="' + self.link + '" class="hoverlink' + self.messageclass + '">' : '';
+        self.closeanchor = self.link ? '</a>' : '';
     },
     setEmpty: function() {
         var self = this,
             emptyJson = {
+                notify_type: 'notification',
                 title: 'You currently have no notifications.',
+                text_1: null,
+                create_date: null,
                 read: true,
-                notify_type: 'notification',
-                notify_id: 0
-            };
-        self.store(emptyJson);
-    },
-    setNotFound: function() {
-        var self = this,
-            emptyJson = {
-                title: 'You must pass a notification ID.',
-                read: true,
-                notify_type: 'notification',
-                notify_id: 0
+                link: null
             };
         self.store(emptyJson);
     },
     makeHtml: function() {
         var self = this;
         return '\
-        <div>\
+        <div class="notifyline">\
             <span class="sideboxicon" style="overflow:visible;">\
                 <div class="'+self.type+'icon" style="overflow:visible;"></div>\
             </span>\
@@ -75,9 +52,8 @@ pl.implement(NotificationClass, {
                 '+self.openanchor+'\
                 '+self.message+'\
                 '+self.closeanchor+'\
-                <br/>\
-                <span class="notifydate">'+self.createddate+'</span>\
             </span>\
+            <span class="notifydate">'+self.datetext+'</span>\
         </div>\
         ';
     }

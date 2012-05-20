@@ -76,8 +76,26 @@ pl.implement(EventClass, {
 
 function DateClass() {}
 pl.implement(DateClass, {
-    format: function(yyyymmdd) {
+    format: function(datestr) {
+        if (!datestr) {
+            return '';
+        }
+        else if (datestr.length === 8) {
+            return DateClass.prototype.formatDateStr(datestr);
+        }
+        else if (datestr.length === 14) {
+            return DateClass.prototype.formatDatetimeStr(datestr);
+        }
+        else {
+            return '';
+        }
+    },
+    formatDateStr: function(yyyymmdd) {
         return yyyymmdd ? yyyymmdd.substr(0,4) + '-' + yyyymmdd.substr(4,2) + '-' + yyyymmdd.substr(6,2) : '';
+    },
+    formatDatetimeStr: function(yyyymmddhh24mmss) {
+        return yyyymmddhh24mmss ? yyyymmddhh24mmss.substr(0,4) + '-' + yyyymmddhh24mmss.substr(4,2) + '-' + yyyymmddhh24mmss.substr(6,2)
+            + ' ' + yyyymmddhh24mmss.substr(8,2) + ':' + yyyymmddhh24mmss.substr(10,2) + ':' + yyyymmddhh24mmss.substr(12,2) : '';
     },
     formatDate: function(dateObj) {
         var year = dateObj.getUTCFullYear(),
@@ -280,8 +298,16 @@ pl.implement(AjaxClass, {
         }
         this.ajaxOpts.data = serializedData;
     },
+    mock: function(json) {
+        this.mock = json;
+    },
     call: function() {
-        pl.ajax(this.ajaxOpts);
+        if (this.mock) {
+            this.successFunc(this.mock);
+        }
+        else {
+            pl.ajax(this.ajaxOpts);
+        }
     }
 });
  

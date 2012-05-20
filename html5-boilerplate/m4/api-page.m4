@@ -1636,14 +1636,24 @@ include(api-banner.m4)
 <pre name="code" class="js">
 [
     {
-        notify_type: :type, /* "ask_listing_owner" or "private_message" */
+        notify_type: :type, /* "notification", "bid", "comment", "ask_listing_owner" or "private_message" */
         title: :title_text,
         text_1: :notification_text,
-        create_date: :date_yyyymmdd,
+        create_date: :date_yyyymmddhh24mmss,
         read: :true_or_false, /* whether message has been read */
         link: :url /* link for underlying content to which notification refers, may be listing url, etc. */
     }
 ]
+</pre>
+                </li>
+                <li><code>notifications_props</code> list properties for this query.  You can call <var>more_results_url</var> in an AJAX request for additional notifications.  Structure:
+<pre name="code" class="js">
+{
+    start_index: :index,
+    max_results: :max,
+    num_results: :n,
+    more_results_url: :url
+}
 </pre>
                 </li>
             </ul>
