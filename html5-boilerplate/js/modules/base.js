@@ -299,11 +299,11 @@ pl.implement(AjaxClass, {
         this.ajaxOpts.data = serializedData;
     },
     mock: function(json) {
-        this.mock = json;
+        this.mockData = json;
     },
     call: function() {
-        if (this.mock) {
-            this.successFunc(this.mock);
+        if (this.mockData) {
+            this.successFunc(this.mockData);
         }
         else {
             pl.ajax(this.ajaxOpts);
@@ -333,7 +333,7 @@ pl.implement(HeaderClass, {
     },
     setLoggedIn: function(profile, logout_url) {
         var username = profile.username || 'You',
-            posttext = profile.edited_listing ? 'Complete Your Listing': 'List New Company',
+            posttext = profile.edited_listing ? 'Complete Listing': 'Make New Listing',
             num_notifications = profile.num_notifications || 0,
             notificationlinktext = num_notifications ? num_notifications + ' unread notifications' : 'no unread notifications',
             newlistingurl = profile.edited_status === 'posted' ? 'new-listing-submitted-page.html' : 'new-listing-basics-page.html';

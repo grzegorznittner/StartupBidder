@@ -2,7 +2,7 @@
 <!doctype html>
 <html lang="en">
 '
-include(head.m4)
+include(api-head.m4)
 `
 <body class="api-page">
 <div id="fb-root"></div> <!-- for fb like button -->
@@ -73,7 +73,7 @@ include(api-banner.m4)
                 <li><code>users_listings</code> list of the four listings most recently posted by the currently logged in user, null otherwise</li>
                 <li><code>edited_listing</code> the logged in user&rsquo;s listing currently being edited but not yet approved, null otherwise</li>
                 <li><code>categories</code> the map of all venture capital industry categories on the site with at least one active listing.  Structure is:
-<pre name="code" class="js">
+<pre name="code" class="brush: js">
 {
     :category_name: :active_listing_count,
     ...
@@ -83,7 +83,7 @@ include(api-banner.m4)
                 <li><code>top_locations</code> the map of the twenty locations with the most active listings on the site.  Locations are grouped by
                     brief address, which corresponds roughly to the Metropolitan Stastical Area, which is the city and country in most locations and
                     the city, state and country in the USA.  Structure is:
-<pre name="code" class="js">
+<pre name="code" class="brush: js">
 {
     :brief_address: :active_listing_count,
     ...
@@ -165,7 +165,7 @@ include(api-banner.m4)
                 <li><code>notifications</code> list of the user notifications, unread first then by date order, see Notification API for details</li>
                 <li><code>listings_props</code> list properties for this query.  You can call <var>more_results_url</var> in an AJAX request for additional listings.
                     Structure:
-<pre name="code" class="js">
+<pre name="code" class="brush: js">
 {
     start_index: :index,
     max_results: :max,
@@ -207,7 +207,7 @@ include(api-banner.m4)
                 <li><code>listings</code> list of listings matching this request, up to the <var>max_results</var></li>
                 <li><code>listings_props</code> list properties for this query.  You can call <var>more_results_url</var> in an AJAX request for additional listings.
                     Structure:
-<pre name="code" class="js">
+<pre name="code" class="brush: js">
 {
     start_index: :index,
     max_results: :max,
@@ -249,7 +249,7 @@ include(api-banner.m4)
                 <li><code>listings</code> list of listings matching this request, up to the <var>max_results</var></li>
                 <li><code>listings_props</code> list properties for this query.  You can call <var>more_results_url</var> in an AJAX request for additional listings.
                     Structure:
-<pre name="code" class="js">
+<pre name="code" class="brush: js">
 {
     start_index: :index,
     max_results: :max,
@@ -290,7 +290,7 @@ include(api-banner.m4)
                 <li><code>listings</code> list of listings matching this request, up to the <var>max_results</var></li>
                 <li><code>listings_props</code> list properties for this query.  You can call <var>more_results_url</var> in an AJAX request for additional listings.
                     Structure:
-<pre name="code" class="js">
+<pre name="code" class="brush: js">
 {
     start_index: :index,
     max_results: :max,
@@ -331,7 +331,7 @@ include(api-banner.m4)
                 <li><code>listings</code> list of listings matching this request, up to the <var>max_results</var></li>
                 <li><code>listings_props</code> list properties for this query.  You can call <var>more_results_url</var> in an AJAX request for additional listings.
                     Structure:
-<pre name="code" class="js">
+<pre name="code" class="brush: js">
 {
     start_index: :index,
     max_results: :max,
@@ -395,7 +395,7 @@ include(api-banner.m4)
                 <li><code>listings</code> list of listings matching this request, up to the <var>max_results</var>, or an empty list if nothing is found</li>
                 <li><code>listings_props</code> list properties for this query.  You can call <var>more_results_url</var> in an AJAX request for additional listings.
                     Structure:
-<pre name="code" class="js">
+<pre name="code" class="brush: js">
 {
     start_index: :index,
     max_results: :max,
@@ -622,7 +622,7 @@ include(api-banner.m4)
                     Note that by passing the URL valued properties
                     <var>business_plan_url</var>, <var>presentation_url</var> or <var>financials_url</var>, the system will download the file at that url
                     and store it in the backend.  Listing property structure:
-<pre name="code" class="js">
+<pre name="code" class="brush: js">
 {
     title: :title,
     mantra: :mantra,
@@ -818,7 +818,7 @@ include(api-banner.m4)
                 <li>Returns the map of the twenty locations with the most active listings on the site.  Locations are grouped by
                     brief address, which corresponds roughly to the Metropolitan Stastical Area, which is the city and country in most locations and
                     the city, state and country in the USA.  Structure is:
-<pre name="code" class="js">
+<pre name="code" class="brush: js">
 {
     :brief_address: :active_listing_count,
     ...
@@ -854,7 +854,7 @@ include(api-banner.m4)
                 <li><code>error_msg</code> error message for this call, null on success</li>
                 <li><code>listing</code> listing object as per <var>/listing/get</var> method</li>
                 <li><code>map_listings</code> list of all active listing locations with their listing ID, decimal latitude, and decimal longitude.  Structure is:
-<pre name="code" class="js">
+<pre name="code" class="brush: js">
 [
     [ :listing_id, :latitude, :longitude ],
     ...
@@ -888,7 +888,7 @@ include(api-banner.m4)
             <h4>Response</h4>
             <ul>
                 <li>Returns a map of all company venture capital categories with the structure:
-<pre name="code" class="js">
+<pre name="code" class="brush: js">
 {
     :category_name: :display_name,
     ...
@@ -917,7 +917,7 @@ include(api-banner.m4)
             <h4>Response</h4>
             <ul>
                 <li>Returns a map of all company venture capital categories with at least one active listing with the structure:
-<pre name="code" class="js">
+<pre name="code" class="brush: js">
 {
     :category_name: :active_listing_count,
     ...
@@ -957,7 +957,7 @@ include(api-banner.m4)
                 <li><code>error_msg</code> error message for this call, null on success</li>
                 <li><code>listing</code> listing object as per <var>/listing/get</var> method</li>
                 <li><code>comments</code> list of comments ordered in date ascending order with structure:
-<pre name="code" class="js">
+<pre name="code" class="brush: js">
 [
     {
         comment_id: :comment_id,
@@ -1039,7 +1039,7 @@ include(api-banner.m4)
             <h4>Parameters</h4>
             <ul>
                 <li><code>comment</code> json of comment structure which can be posted, all fields are mandatory:
-<pre name="code" class="js">
+<pre name="code" class="brush: js">
 {
     listing_id: :listing_id,
     text: :text
@@ -1140,7 +1140,7 @@ include(api-banner.m4)
                 <li><code>error_msg</code> error message for this call, null on success</li>
                 <li><code>profile</code> logged in user profile as per the User API</li>
                 <li><code>monitors</code> watch listing monitors for the user with structure:</li>
-<pre name="code" class="js">
+<pre name="code" class="brush: js">
 [
     {
         monitor_id: :monitor_id,
@@ -1158,7 +1158,7 @@ include(api-banner.m4)
                 </li>
                 <li><code>monitors_props</code> list properties for this query. Call <var>more_results_url</var> in an AJAX request for more.
                     Structure:
-<pre name="code" class="js">
+<pre name="code" class="brush: js">
 {
     start_index: :index,
     max_results: :max,
@@ -1194,7 +1194,7 @@ include(api-banner.m4)
                 <li><code>error_code</code> error status for this call, 0 on success</li>
                 <li><code>error_msg</code> error message for this call, null on success</li>
                 <li><code>monitors</code> list of monitors as detailed by the <var>/monitor/set</var> method with structure:</li>
-<pre name="code" class="js">
+<pre name="code" class="brush: js">
 [
     {
         monitor_id: :monitor_id,
@@ -1212,7 +1212,7 @@ include(api-banner.m4)
                 </li>
                 <li><code>monitors_props</code> list properties for this query. Call <var>more_results_url</var> in an AJAX request for more.
                     Structure:
-<pre name="code" class="js">
+<pre name="code" class="brush: js">
 {
     start_index: :index,
     max_results: :max,
@@ -1354,7 +1354,7 @@ include(api-banner.m4)
             <h4>Response</h4>
             <ul>
                 <li><code>qanda</code> list of questions for this listing, see <var>/listing/ask_owner</var> for field detials.  Structure:
-<pre name="code" class="js">
+<pre name="code" class="brush: js">
 [
     {
     question_id: :id,
@@ -1493,7 +1493,7 @@ include(api-banner.m4)
                 <li><code>error_code</code> error status for this call, 0 on success</li>
                 <li><code>error_msg</code> error message for this call, null on success</li>
                 <li><code>users</code> list of users along with the latest conversation snippet, and whether it&rsquo;s been read.  Structure:
-<pre name="code" class="js">
+<pre name="code" class="brush: js">
 [
     {
         from_user_id: :uid,
@@ -1506,7 +1506,7 @@ include(api-banner.m4)
 ]
 </pre>
                 <li><code>users_props</code> list properties for this query.  You can call <var>more_results_url</var> in an AJAX request for additional users.  Structure:
-<pre name="code" class="js">
+<pre name="code" class="brush: js">
 {
     start_index: :index,
     max_results: :max,
@@ -1543,7 +1543,7 @@ include(api-banner.m4)
                 <li><code>to_user_profile</code> profile object for user on the other side of the conversation</li>
                 <li><code>messages</code> messages between logged in user and other user, from logged in user&rsquo;s perspective,
                     ordered by date ascending.  Structure:
-<pre name="code" class="js">
+<pre name="code" class="brush: js">
 [
     {
         direction: :sent_or_received, /* "sent" if sent by loggedin user, "received" if received */
@@ -1552,6 +1552,16 @@ include(api-banner.m4)
     },
     ...
 ]
+</pre>
+                </li>
+                <li><code>messages_props</code> list properties for this query.  You can call <var>more_results_url</var> in an AJAX request for additional messages.  Structure:
+<pre name="code" class="brush: js">
+{
+    start_index: :index,
+    max_results: :max,
+    num_results: :n,
+    more_results_url: :url
+}
 </pre>
                 </li>
             </ul>
@@ -1586,7 +1596,7 @@ include(api-banner.m4)
             <h4>Response</h4>
             <ul>
                 <li><var>json response of message object:</var>
-<pre name="code" class="js">
+<pre name="code" class="brush: js">
 {
     direction: :sent_or_received, /* "sent" if sent by loggedin user, "received" if received */
     text: :message_text,
@@ -1642,7 +1652,7 @@ include(api-banner.m4)
                 <li><code>error_code</code> error status for this call, 0 on success</li>
                 <li><code>error_msg</code> error message for this call, null on success</li>
                 <li><code>notifications</code> list of user notifications in descending date order, structure:
-<pre name="code" class="js">
+<pre name="code" class="brush: js">
 [
     {
         notify_type: :type, /* "notification", "bid", "comment", "ask_listing_owner" or "private_message" */
@@ -1656,7 +1666,7 @@ include(api-banner.m4)
 </pre>
                 </li>
                 <li><code>notifications_props</code> list properties for this query.  You can call <var>more_results_url</var> in an AJAX request for additional notifications.  Structure:
-<pre name="code" class="js">
+<pre name="code" class="brush: js">
 {
     start_index: :index,
     max_results: :max,
@@ -1953,7 +1963,7 @@ include(api-banner.m4)
                 <li><code>listings</code> list of listings matching this request, up to the <var>max_results</var></li>
                 <li><code>listings_props</code> list properties for this query.  You can call <var>more_results_url</var> in an AJAX request for additional listings.
                     Structure:
-<pre name="code" class="js">
+<pre name="code" class="brush: js">
 {
     start_index: :index,
     max_results: :max,
@@ -1994,7 +2004,7 @@ include(api-banner.m4)
                 <li><code>listings</code> list of listings matching this request, up to the <var>max_results</var></li>
                 <li><code>listings_props</code> list properties for this query.  You can call <var>more_results_url</var> in an AJAX request for additional listings.
                     Structure:
-<pre name="code" class="js">
+<pre name="code" class="brush: js">
 {
     start_index: :index,
     max_results: :max,
@@ -2143,8 +2153,9 @@ include(api-banner.m4)
 include(footer.m4)
 `
   <!-- JavaScript at the bottom for fast page loading -->
+  <script src="http://alexgorbatchev.com/pub/sh/current/scripts/shCore.js" type="text/javascript"></script>
+  <script src="http://alexgorbatchev.com/pub/sh/current/scripts/shBrushJScript.js" type="text/javascript"></script>
   <script src="js/libs/prevel.min.js"></script>
-  <script src="js/libs/hl-all.js"></script>
   <script src="js/modules/base.js"></script>
   <script src="js/modules/apipage.js"></script>
   <script src="js/modules/tracker.js"></script>

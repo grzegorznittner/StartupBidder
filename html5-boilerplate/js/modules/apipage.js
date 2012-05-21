@@ -68,7 +68,9 @@ pl.implement(APIPageClass, {
                         pl(iframe).addClass('apidetailframe');
                     }
                 });
-                DlHighlight.HELPERS.highlightByName('code', 'pre');
+                if (SyntaxHighlighter) {
+                    SyntaxHighlighter.all()
+                }
                 listingajax.call();
                 commentsajax.call();
                 questionsajax.call();

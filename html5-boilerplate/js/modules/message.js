@@ -5,79 +5,34 @@ pl.implement(MessageClass, {
         for (k in json) {
             self[k] = json[k];
         }
-        self.createddate = self.create_date ? DateClass.prototype.format(self.create_date) : '';
-        self.message = self.title ? SafeStringClass.prototype.htmlEntities(self.title) : '';
+        self.messagetext = self.last_text ? SafeStringClass.prototype.htmlEntities(self.last_text) : '';
         self.messageclass = self.read ? '' : ' inputmsg'; // unread
-        if (!self.message_type) {
-            self.type = 'message';
-        }
-        else if (self.message_type.match('comment')) {
-            self.type = 'comment';
-        }
-        else if (self.message_type.match('bid')) {
-            self.type = 'bid';
-        }
-        else {
-            self.type = 'message';
-        }
-        self.datetext = self.created_date ? 'Sent on ' + DateClass.prototype.format(self.created_date) : '';
-        self.openanchor = self.message_id ? '<a href="/message-page.html?id=' + self.message_id + '" class="hoverlink' + self.messageclass + '">' : '';
-        self.closeanchor = self.message_id ? '</a>' : '';
-    },
-    setPageHtml: function() {
-        var self = this,
-            listing = {},
-            tile = new CompanyTileClass({ companybannertileclass: 'companybannertilenoborder' });
-        pl('#message_title').text(self.title);
-        pl('#message_date').text(self.datetext);
-        pl('#message_text_2').html(self.text_2||'');
-        if (self.listing_id) {
-            listing.listing_id = self.listing_id;
-            listing.logo = self.listing_logo_url;
-            listing.category = self.listing_category;
-            listing.title = self.listing_name;
-            listing.brief_address = self.listing_brief_address;
-            listing.mantra = self.listing_mantra;
-            /* self.listing_owner (user id) */
-            tile.store(listing);
-            //pl('#message_header').text('NOTIFICATION FOR ' + listing.title.toUpperCase());
-            pl('#message_listing').html(tile.makeFullWidthHtml());
-        }
+        self.datetext = self.last_date ? DateClass.prototype.format(self.last_date) : '';
+        self.openanchor = self.from_user_id ? '<a href="/message_thread_page.html?from_user_id=' + self.from_user_id + '" class="hoverlink' + self.messageclass + '">' : '';
+        self.closeanchor = self.from_user_id ? '</a>' : '';
     },
     setEmpty: function() {
         var self = this,
             emptyJson = {
-                title: 'You currently have no messages.',
-                read: true,
-                message_type: 'message',
-                message_id: 0
-            };
-        self.store(emptyJson);
-    },
-    setNotFound: function() {
-        var self = this,
-            emptyJson = {
-                title: 'You must pass a message ID.',
-                read: true,
-                message_type: 'message',
-                message_id: 0
+                from_user_id: null,
+                from_user_nickname: '',
+                last_text: 'You currently have no messages.',
+                last_date: null,
+                read: true
             };
         self.store(emptyJson);
     },
     makeHtml: function() {
         var self = this;
         return '\
-        <div class="sideboxmessage sideboxlink">\
-            <span class="sideboxicon" style="overflow:visible;">\
-                <div class="'+self.type+'icon" style="overflow:visible;"></div>\
-            </span>\
-            <span class="sideboxmessagetext">\
+        <div class="messageline">\
+            <p class="messageuser span-4">' + self.from_user_nickname + '</p>\
+            <p class="messagetext span-14">\
                 '+self.openanchor+'\
-                '+self.message+'\
+                '+self.messagetext+'\
                 '+self.closeanchor+'\
-                <br/>\
-                <span class="sideboxdate">'+self.createddate+'</span>\
-            </span>\
+            </p>\
+            <p class="messagedate">'+self.datetext+'</p>\
         </div>\
         ';
     }

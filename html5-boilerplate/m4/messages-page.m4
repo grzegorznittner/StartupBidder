@@ -18,7 +18,7 @@ include(header.m4)
     <div id="messagesmsg"></div>
 
     <div class="boxtitle smokegrey clear">YOUR CONVERSATIONS</div>
-    <div class="boxpanel" id="messagelist"></div>
+    <div class="boxpanel boxpanelfull" id="messagelist"></div>
 
 </div> <!-- end left column -->
 </div> <!-- end container -->

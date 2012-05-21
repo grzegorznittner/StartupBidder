@@ -360,7 +360,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .boxpanel, .boxstep { border: 2px solid #999999; padding: 2px; overflow: auto; background: #e3e3e3; margin-bottom: 10px; }
 /* .boxpanel { width: 622px; overflow: auto; position: relative; } */
 .boxpanel { width: 622px; overflow: hidden; position: relative; }
-.boxpanelfull { width: 100%; }
+.boxpanelfull { width: 940px; }
 .companylistingbox { width: 622px; height: 146px; }
 .addcommentmsg { height: 20px; margin-left: 5px; font-weight: bold; }
 .addmessagemsg { height: 20px; margin-left: 5px; font-weight: bold; }
@@ -424,11 +424,17 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 /* .sideboxnotify { float: left; width: 302px; } */
 .sideboxicon { width: 26px; margin-right: 10px; float: left; }
 /* .sideboxnotifytext { float: left; width: 266px; font-weight: normal; } */
-.notifyline { clear: both; height: 35px; padding: 5px; }
+.notifyline { clear: both; height: padding: 5px; overflow: auto; }
 .notifyline:nth-child(2n) { background: #f2f2f2; }
 .notifytext { float: left; font-weight: normal; }
 .notifydate { float: right; font-size: 12px; padding-top: 2px; color: gray; margin-right: 10px; }
-.sideboxdate { font-size: 10px; color: grey; }
+.messageline { clear: both; padding: 5px; overflow: auto; }
+.messageline:nth-child(2n) { background: #f2f2f2; }
+.messageline p { font-weight: normal; margin: 0; text-indent: 0; }
+.messageline p .messageuser { font-weight: bold; }
+.messagetext { float: left; font-weight: normal; }
+.messagedate { float: right; font-size: 12px; padding-top: 2px; color: gray; margin-right: 10px; }
+sideboxdate { font-size: 10px; color: grey; }
 .sideboxlisting { font-size: 10px; }
 .sideboxmap { width: 302px; height: 302px; }
 .bidpanel { padding-top: 5px; }
