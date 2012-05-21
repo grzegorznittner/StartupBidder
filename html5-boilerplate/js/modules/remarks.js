@@ -70,7 +70,7 @@ pl.implement(RemarkClass, {
             boxbinder = self.bindAddBoxGenerator(0, self.addboxid, self.addtextid, self.addmsgid, self.addbtnid, self.displaytype, self.posturl);
         boxbinder();
     },
-    bindAddBoxGenerator: function(remarkid, boxid, textid, msgid, btnid, displaytype, posturl) {
+    bindAddBoxGenerator: function(remarkid, boxid, textid, msgid, btnid, displaytype) {
         var self = this,
             boxsel = '#' + boxid,
             textsel = '#' + textid,
@@ -122,7 +122,7 @@ pl.implement(RemarkClass, {
                             text: SafeStringClass.prototype.htmlEntities(text)
                         },
                         data = {},
-                        ajax = new AjaxClass(posturl, msgid, completeFunc);
+                        ajax = new AjaxClass('/user/send_message', msgid, completeFunc);
                     if (self.listing_id) {
                         typedata.listing_id = self.listing_id;
                     }

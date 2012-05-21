@@ -15,14 +15,13 @@ include(header.m4)
 <!-- left column -->
 <div class="span-24">
 
-    <div id="messagesmsg"></div>
-
     <div class="boxtitle smokegrey clear">YOUR CONVERSATION WITH <span id="from_user_nickname_upper"></span></div>
     <div class="boxpanel boxpanelfull">
-        <div class="messageline messagereplyline" id="messagesreply">
+        <div class="messageline messagereplyline initialhidden" id="messagesend">
             <p class="messageuser messagereplyuser span-4" id="myusername"></p>
-            <textarea class="textarea messagetextarea messagereplytextarea" id="addcommenttext" name="addcommenttext" cols="20" rows="5">Put your reply here...</textarea>
-            <span class="span-3 inputbutton messagebutton messagereplybutton" id="addcommentbtn">SEND</span>
+            <textarea class="textarea messagetextarea messagereplytextarea" id="messagetext" name="messagetext" cols="20" rows="5">Put your reply here...</textarea>
+            <span class="span-3 inputbutton messagebutton messagereplybutton" id="messagebtn">SEND</span>
+            <p class="messagereplymsg" id="messagemsg"></p>
         </div>
     </div>
 

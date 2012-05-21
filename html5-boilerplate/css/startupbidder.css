@@ -435,10 +435,11 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .messageline p.messageuser { font-weight: bold; }
 .messagetext { float: left; font-weight: normal; }
 .messagedate { float: right; font-size: 12px; padding-top: 2px; color: gray; margin-right: 10px; }
-.messagereplyline { position: relative; height: 85px; }
+.messagereplyline { position: relative; height: 100px; }
 .messagereplyuser { position: relative; top: 10px; }
 .messagereplytextarea { position: absolute; left: 150px; top: 5px; width: 640px !important; }
-.messagereplybutton { position: absolute; right: 0; bottom: 5px; }
+.messagereplybutton { position: absolute; right: 0; top: 40px; }
+.messagereplymsg { position: absolute; bottom: 0; left: 150px; }
 .sideboxdate { font-size: 10px; color: grey; }
 .sideboxlisting { font-size: 10px; }
 .sideboxmap { width: 302px; height: 302px; }

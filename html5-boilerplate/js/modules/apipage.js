@@ -33,6 +33,7 @@ pl.implement(APIPageClass, {
                             questionid = question && question.question_id;
                         if (questionid) {
                             pl('.questionid').attr({value: questionid});
+                            pl('.answerobj').attr({value: '{ question_id: "' + questionid + '", text: "put your answer here" }'});
                         }
                     },
                     listingajax = listingid && new AjaxClass('/listing/get/' + listingid, 'loadmsg', listingfunc),
@@ -44,9 +45,11 @@ pl.implement(APIPageClass, {
                 if (listingid) {
                     pl('.listingid').attr({value: listingid});
                     pl('.commentobj').attr({value: '{ listing_id: "' + listingid + '", text: "put your comment here" }'});
+                    pl('.askobj').attr({value: '{ listing_id: "' + listingid + '", text: "put your question here" }'});
                 }
                 if (profileid) {
                     pl('.profileid').attr({value: profileid});
+                    pl('.sendobj').attr({value: '{ profile_id: "' + profileid + '", text: "put your message here" }'});
                 }
                 if (profileusername) {
                     pl('.profileusername').attr({value: profileusername});

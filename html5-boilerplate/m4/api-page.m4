@@ -496,32 +496,32 @@ include(api-banner.m4)
                 <li><code class="apiprop">.presentation_upload</code> one-time URL for uploading a presentation document via the File API</li>
                 <li><code class="apiprop">.financials_upload</code> one-time URL for uploading a financial statement via the File API</li>
                 <li><code class="apiprop">.logo_upload</code> one-time URL for uploading a company logo via the File API</li>
-                <li><code class="apiprop">answer1</code> KEY ACTIVITIES</li>
-                <li><code class="apiprop">answer2</code> KEY RESOURCES</li>
-                <li><code class="apiprop">answer3</code> KEY PARTNERS</li>
-                <li><code class="apiprop">answer4</code> VALUE PROPOSITIONS</li>
-                <li><code class="apiprop">answer5</code> CUSTOMER SEGMENTS</li>
-                <li><code class="apiprop">answer6</code> CHANNELS</li>
-                <li><code class="apiprop">answer7</code> CUSTOMER RELATIONSHIPS</li>
-                <li><code class="apiprop">answer8</code> COST STRUCTURE</li>
-                <li><code class="apiprop">answer9</code> REVENUE STREAMS</li>
-                <li><code class="apiprop">answer10</code> PROBLEM</li>
-                <li><code class="apiprop">answer11</code> SOLUTION</li>
-                <li><code class="apiprop">answer12</code> FEATURES AND BENEFITS</li>
-                <li><code class="apiprop">answer13</code> COMPANY STATUS</li>
-                <li><code class="apiprop">answer14</code> MARKET</li>
-                <li><code class="apiprop">answer15</code> CUSTOMER</li>
-                <li><code class="apiprop">answer16</code> COMPETITORS</li>
-                <li><code class="apiprop">answer17</code> COMPETITIVE COMPARISON</li>
-                <li><code class="apiprop">answer18</code> BUSINESS MODEL</li>
-                <li><code class="apiprop">answer19</code> MARKETING PLAN</li>
-                <li><code class="apiprop">answer20</code> TEAM</li>
-                <li><code class="apiprop">answer21</code> TEAM VALUES</li>
-                <li><code class="apiprop">answer22</code> CURRENT FINANCIALS</li>
-                <li><code class="apiprop">answer23</code> FINANCIAL PROJECTIONS</li>
-                <li><code class="apiprop">answer24</code> OWNERS</li>
-                <li><code class="apiprop">answer25</code> INVESTMENT</li>
-                <li><code class="apiprop">answer26</code> TIMELINE AND WRAPUP</li>
+                <li><code class="apiprop">.answer1</code> KEY ACTIVITIES</li>
+                <li><code class="apiprop">.answer2</code> KEY RESOURCES</li>
+                <li><code class="apiprop">.answer3</code> KEY PARTNERS</li>
+                <li><code class="apiprop">.answer4</code> VALUE PROPOSITIONS</li>
+                <li><code class="apiprop">.answer5</code> CUSTOMER SEGMENTS</li>
+                <li><code class="apiprop">.answer6</code> CHANNELS</li>
+                <li><code class="apiprop">.answer7</code> CUSTOMER RELATIONSHIPS</li>
+                <li><code class="apiprop">.answer8</code> COST STRUCTURE</li>
+                <li><code class="apiprop">.answer9</code> REVENUE STREAMS</li>
+                <li><code class="apiprop">.answer10</code> PROBLEM</li>
+                <li><code class="apiprop">.answer11</code> SOLUTION</li>
+                <li><code class="apiprop">.answer12</code> FEATURES AND BENEFITS</li>
+                <li><code class="apiprop">.answer13</code> COMPANY STATUS</li>
+                <li><code class="apiprop">.answer14</code> MARKET</li>
+                <li><code class="apiprop">.answer15</code> CUSTOMER</li>
+                <li><code class="apiprop">.answer16</code> COMPETITORS</li>
+                <li><code class="apiprop">.answer17</code> COMPETITIVE COMPARISON</li>
+                <li><code class="apiprop">.answer18</code> BUSINESS MODEL</li>
+                <li><code class="apiprop">.answer19</code> MARKETING PLAN</li>
+                <li><code class="apiprop">.answer20</code> TEAM</li>
+                <li><code class="apiprop">.answer21</code> TEAM VALUES</li>
+                <li><code class="apiprop">.answer22</code> CURRENT FINANCIALS</li>
+                <li><code class="apiprop">.answer23</code> FINANCIAL PROJECTIONS</li>
+                <li><code class="apiprop">.answer24</code> OWNERS</li>
+                <li><code class="apiprop">.answer25</code> INVESTMENT</li>
+                <li><code class="apiprop">.answer26</code> TIMELINE AND WRAPUP</li>
             </ul>
             <h4>Test</h4>
             <form method="GET" action="/listing/get" target="listing-get">
@@ -1394,8 +1394,9 @@ include(api-banner.m4)
         <div class="apidetail">
             <h4>Parameters</h4>
             <ul>
-                <li><code>id</code> alphanumeric listing id as returned by the listing list and search API</li>
-                <li><code>message</code> text message user wishes to ask the owner</li>
+                <li><code>ask</code> ask question object for owner</li>
+                <li><code class="apiprop">.listing_id</code> alphanumeric listing id as returned by the listing list and search API</li>
+                <li><code class="apiprop">.text</code> text message user wishes to ask the owner</li>
             </ul>
             <h4>Response</h4>
             <ul>
@@ -1409,16 +1410,10 @@ include(api-banner.m4)
             </ul>
             <h4>Test</h4>
             <form method="POST" action="/listing/ask_owner" target="listing-ask_owner">
-                <div class="formitem">
-                    <label class="inputlabel" for="title">LISTING ID</label>
-                    <span class="inputfield">
-                        <input class="text inputwidetext listingid" type="text" name="id" value="0"></input>
-                    </span>
-                </div>
                 <div class="formitem clear">
-                    <label class="inputlabel" for="title">MESSAGE</label>
+                    <label class="inputlabel" for="title">ASK</label>
                     <span class="inputfield">
-                        <input class="text inputwidetext" type="text" name="message" value="put your message here"></input>
+                        <input class="text inputwidetext askobj" type="text" name="ask" value="{ listing_id: 0, text: &rsquo;put your question here&rsquo; }"></input>
                     </span>
                 </div>
                 <div class="formitem clear">
@@ -1438,8 +1433,9 @@ include(api-banner.m4)
         <div class="apidetail">
             <h4>Parameters</h4>
             <ul>
-                <li><code>id</code> alphanumeric question id as returned by <var>/listing/questions_answers</var></li>
-                <li><code>message</code> text message of owner&rsquo;s answer to the question</li>
+                <li><code>answer</code> answer question by owner object</li>
+                <li><code class="apiprop">.question_id</code> alphanumeric question id as returned by <var>/listing/questions_answers</var></li>
+                <li><code class="apiprop">.text</code> text message of owner&rsquo;s answer to the question</li>
             </ul>
             <h4>Response</h4>
             <ul>
@@ -1447,16 +1443,10 @@ include(api-banner.m4)
             </ul>
             <h4>Test</h4>
             <form method="POST" action="/listing/answer_question" target="listing-answer_question">
-                <div class="formitem">
-                    <label class="inputlabel" for="title">QUESTION ID</label>
-                    <span class="inputfield">
-                        <input class="text inputwidetext questionid" type="text" name="id" value="0"></input>
-                    </span>
-                </div>
                 <div class="formitem clear">
                     <label class="inputlabel" for="title">ANSWER</label>
                     <span class="inputfield">
-                        <input class="text inputwidetext" type="text" name="message" value="put your answer here"></input>
+                        <input class="text inputwidetext answerobj" type="text" name="answer" value="{ question_id: 0, text: &rsquo;put your answer here&rsquo; }"></input>
                     </span>
                 </div>
                 <div class="formitem clear">
@@ -1471,7 +1461,7 @@ include(api-banner.m4)
 
     </div>
 
-    <div class="boxtitle">PRIVATE MESSAGE API</div>
+    <div class="boxtitle">PRIVATE MESSAGES API</div>
     <div class="boxpanel apipanel">
     <p>Send and receive private messages between users on the site.  You must be logged in to use these methods.</p>
 
@@ -1590,12 +1580,13 @@ include(api-banner.m4)
         <div class="apidetail">
             <h4>Parameters</h4>
             <ul>
-                <li><code>id</code> alphanumeric user id</li>
-                <li><code>message</code> message text</li>
+                <li><code>send</code> json object of message send with properties:</li>
+                <li><code class="apiprop">.profile_id</code> alphanumeric user id</li>
+                <li><code class="apiprop">.text</code> message text</li>
             </ul>
             <h4>Response</h4>
             <ul>
-                <li><var>json response of message object:</var>
+                <li><var>json response of new message object:</var>
 <pre name="code" class="brush: js">
 {
     direction: :sent_or_received, /* "sent" if sent by loggedin user, "received" if received */
@@ -1608,15 +1599,9 @@ include(api-banner.m4)
             <h4>Test</h4>
             <form method="POST" action="/user/send_message" target="user-send_message">
                 <div class="formitem">
-                    <label class="inputlabel" for="title">USER ID</label>
+                    <label class="inputlabel" for="title">SEND</label>
                     <span class="inputfield">
-                        <input class="text inputwidetext profileid" type="text" name="id" value="0"></input>
-                    </span>
-                </div>
-                <div class="formitem clear">
-                    <label class="inputlabel" for="title">MESSAGE</label>
-                    <span class="inputfield">
-                        <input class="text inputwidetext" type="text" name="message" value="put your message here"></input>
+                        <input class="text inputwidetext sendobj" type="text" name="send" value="{ profile_id: 0, text: &rsquo;put message here&rsquo; }"></input>
                     </span>
                 </div>
                 <div class="formitem clear">
