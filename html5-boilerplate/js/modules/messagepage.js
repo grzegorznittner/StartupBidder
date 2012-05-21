@@ -1,5 +1,8 @@
 function MessagePageClass() {
     this.json = {};
+    this.queryString = new QueryStringClass();
+    this.from_user_id = this.queryString.vars.from_user_id || '';
+    this.from_user_nickname = decodeURIComponent(this.queryString.vars.from_user_nickname || '');
 };
 pl.implement(MessagePageClass,{
     loadPage: function() {
@@ -12,7 +15,8 @@ pl.implement(MessagePageClass,{
                 }
                 messageList.display(json);
              },
-            ajax = new AjaxClass('/user/get_message_users', 'messagemsg', completeFunc);
+            ajax = new AjaxClass('/user/get_messages', 'messagemsg', completeFunc);
+        pl('#from_user_nickname_upper').text(this.from_user_nickname.toUpperCase());
         ajax.mock({ 
     "login_url": null,
     "logout_url": "/_ah/logout?continue=http%3A%2F%2Flocalhost%3A7777",
@@ -31,54 +35,39 @@ pl.implement(MessagePageClass,{
     },
     "error_code": 0,
     "error_msg": null,
-    "users": [
+    "messages": [
         {
-            from_user_id: 'abc',
-            from_user_nickname: 'Dead',
-            last_text: "I'm not sure if this is the right investment for me, but I'll be in town next week, if we could meet that would be great.",
-            last_date: "20120428121845",
-            read: false
+            direction: 'received',
+            text: 'Hey I really like your idea but I need to know more, what are you doing for marketing?',
+            create_date: "20120318164617"
         },
         {
-            from_user_id: 'def',
-            from_user_nickname: 'fowler',
-            last_text: "Do you have a method for increasing efficiency of TPS reports?",
-            last_date: "20120324092322",
-            read: true
+            direction: 'received',
+            text: 'Oh I see your marketing plan, but it needs more advertising, can you bump it up a little?',
+            create_date: "20120318164818"
         },
         {
-            from_user_id: ':uid',
-            from_user_nickname: 'MadMax',
-            last_text: "This idea you've got about bacon and martinis is so crazy that it just might work!",
-            last_date: "20120322072212",
-            read: true
+            direction: 'sent',
+            text: 'Okay what if I add in $500 a month in advertising the first 6 months, how does that sound?',
+            create_date: "20120318173212"
         },
         {
-            from_user_id: ':uid',
-            from_user_nickname: 'jenny',
-            last_text: "Would you like to discuss this further over dinner for two down at the shore?",
-            last_date: "20120318172238",
-            read: true
-        },
-        {
-            from_user_id: ':uid',
-            from_user_nickname: 'arley',
-            last_text: "Mr. Madison, what you've just said is one of the most insanely idiotic things I have ever heard. At no point in your rambling, incoherent response were you even close to anything that could be considered a rational thought. Everyone in this room is now dumber for having listened to it. I award you no points, and may God have mercy on your soul.",
-            last_date: "20120318164617",
-            read: true
+            direction: 'received',
+            text: "Sounds good, let's talk more tomorrow.",
+            create_date: "20120318181243"
         }
     ],
-    "user_props": {
+    "messages_props": {
         "start_index": 1,
         "max_results": 20,
         "num_results": 5,
         "more_results_url": null
     },
-    "profile": {
-        "profile_id": "ag1zdGFydHVwYmlkZGVycg4LEgZTQlVzZXIY3pIBDA",
-        "username": "test",
+    "other_user_profile": {
+        "profile_id": "agd789601otherguy",
+        "username": "theotherguy",
         "name": null,
-        "email": "test@example.com",
+        "email": "theotherguy@example.com",
         "investor": false,
         "edited_listing": "ag1zdGFydHVwYmlkZGVycg8LEgdMaXN0aW5nGLqUAQw",
         "edited_status": null,

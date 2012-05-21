@@ -33,7 +33,7 @@
             <a href="/notifications-page.html">
                 <div class="headericon headernotifications"></div>
             </a>
-            <a href="/messages-page.html">
+            <a href="/message-group-page.html">
                 <div class="headericon headermessages"></div>
             </a>
             <a href="/profile-page.html">

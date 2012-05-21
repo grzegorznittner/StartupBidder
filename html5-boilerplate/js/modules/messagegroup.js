@@ -1,22 +1,25 @@
-function MessageClass(messagelist) {
-    this.messagelist = messagelist;
-}
-pl.implement(MessageClass, {
+function MessageGroupClass() {}
+pl.implement(MessageGroupClass, {
     store: function(json) {
         var self = this;
         for (k in json) {
             self[k] = json[k];
         }
-        self.messagetext = self.text ? SafeStringClass.prototype.htmlEntities(self.text) : '';
-        self.datetext = self.create_date ? DateClass.prototype.format(self.create_date) : '';
-        self.usertext = self.direction === 'sent' ? self.messagelist.myusername : self.messagelist.otherusername;
+        self.messagetext = self.last_text ? SafeStringClass.prototype.htmlEntities(self.last_text) : '';
+        self.messageclass = self.read ? '' : ' inputmsg'; // unread
+        self.datetext = self.last_date ? DateClass.prototype.format(self.last_date) : '';
+        self.url = self.from_user_id ? '/messages-page.html?from_user_id=' + self.from_user_id + '&from_user_nickname=' + encodeURIComponent(self.from_user_nickname) : '';
+        self.openanchor = self.url ? '<a href="' + self.url + '" class="hoverlink' + self.messageclass + '">' : '';
+        self.closeanchor = self.from_user_id ? '</a>' : '';
     },
     setEmpty: function() {
         var self = this,
             emptyJson = {
-                direction: 'received',
-                text: 'You currently have no messages with this user.',
-                create_date: null
+                from_user_id: null,
+                from_user_nickname: '',
+                last_text: 'You currently have no messages.',
+                last_date: null,
+                read: true
             };
         self.store(emptyJson);
     },
@@ -24,9 +27,11 @@ pl.implement(MessageClass, {
         var self = this;
         return '\
         <div class="messageline">\
-            <p class="messageuser span-4">' + self.usertext + '</p>\
+            <p class="messageuser span-4">' + self.from_user_nickname + '</p>\
             <p class="messagetext span-14">\
+                '+self.openanchor+'\
                 '+self.messagetext+'\
+                '+self.closeanchor+'\
             </p>\
             <p class="messagedate">'+self.datetext+'</p>\
         </div>\
@@ -34,25 +39,23 @@ pl.implement(MessageClass, {
     }
 });
 
-function MessageListClass() {}
-pl.implement(MessageListClass, {
+function MessageGroupListClass() {}
+pl.implement(MessageGroupListClass, {
     store: function(json) {
         var self = this,
-            jsonlist = json && json.messages ? json.messages : [],
+            jsonlist = json && json.users ? json.users : [],
             message,
             i;
-        self.myusername = json && json.loggedin_profile && json.loggedin_profile.username ? json.loggedin_profile.username : '',
-        self.otherusername = json && json.other_user_profile && json.other_user_profile.username ? json.other_user_profile.username : '',
         self.messages = [];
         if (jsonlist.length) {
             for (i = 0; i < jsonlist.length; i++) {
-                message = new MessageClass(this);
+                message = new MessageGroupClass();
                 message.store(jsonlist[i]);
                 self.messages.push(message);
             }
         }
         else {
-            message = new MessageClass(this);
+            message = new MessageGroupClass();
             message.setEmpty();
             self.messages.push(message);
         }
@@ -65,16 +68,15 @@ pl.implement(MessageListClass, {
         if (json !== undefined) {
             self.store(json);
         }
-        pl('#myusername').text(self.myusername || 'You');
         for (i = 0; i < self.messages.length; i++) {
             message = self.messages[i];
             html += message.makeHtml();
         }
         if (!self.messages.length) {
-            message = new MessageClass();
+            message = new MessageGroupClass();
             message.setEmpty();
             html += message.makeHtml();
         }
-        pl('#messagesreply').before(html);
+        pl('#messagegrouplist').html(html);
     }
 });

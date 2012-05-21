@@ -46,7 +46,7 @@ pl.implement(NotificationPageClass,{
             text_1: "Mystic connections",
             create_date: "20120324092322",
             read: true,
-            link: "/messages-page.html"
+            link: "/message-group-page.html"
         },
         {
             notify_type: "notification",

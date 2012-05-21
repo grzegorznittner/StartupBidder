@@ -1540,7 +1540,7 @@ include(api-banner.m4)
                 <li><code>loggedin_profile</code> private user profile object, see User API for profile object details</li>
                 <li><code>error_code</code> error status for this call, 0 on success</li>
                 <li><code>error_msg</code> error message for this call, null on success</li>
-                <li><code>to_user_profile</code> profile object for user on the other side of the conversation</li>
+                <li><code>other_user_profile</code> profile object for user on the other side of the conversation, with private fields hidden</li>
                 <li><code>messages</code> messages between logged in user and other user, from logged in user&rsquo;s perspective,
                     ordered by date ascending.  Structure:
 <pre name="code" class="brush: js">

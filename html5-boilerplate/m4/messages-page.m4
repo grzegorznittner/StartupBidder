@@ -17,8 +17,14 @@ include(header.m4)
 
     <div id="messagesmsg"></div>
 
-    <div class="boxtitle smokegrey clear">YOUR CONVERSATIONS</div>
-    <div class="boxpanel boxpanelfull" id="messagelist"></div>
+    <div class="boxtitle smokegrey clear">YOUR CONVERSATION WITH <span id="from_user_nickname_upper"></span></div>
+    <div class="boxpanel boxpanelfull">
+        <div class="messageline messagereplyline" id="messagesreply">
+            <p class="messageuser messagereplyuser span-4" id="myusername"></p>
+            <textarea class="textarea messagetextarea messagereplytextarea" id="addcommenttext" name="addcommenttext" cols="20" rows="5">Put your reply here...</textarea>
+            <span class="span-3 inputbutton messagebutton messagereplybutton" id="addcommentbtn">SEND</span>
+        </div>
+    </div>
 
 </div> <!-- end left column -->
 </div> <!-- end container -->
