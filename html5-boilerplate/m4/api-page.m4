@@ -1505,6 +1505,15 @@ include(api-banner.m4)
     ...
 ]
 </pre>
+                <li><code>users_props</code> list properties for this query.  You can call <var>more_results_url</var> in an AJAX request for additional users.  Structure:
+<pre name="code" class="js">
+{
+    start_index: :index,
+    max_results: :max,
+    num_results: :n,
+    more_results_url: :url
+}
+</pre>
                 </li>
             </ul>
             <h4>Test</h4>
