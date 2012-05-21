@@ -1362,8 +1362,8 @@ include(api-banner.m4)
     from_user_nickname: :name,
     text_2: :question_text,
     answer: :answer_text,
-    answer_date: :date_yyyymmdd,
-    create_date: :date_yyyymmdd
+    answer_date: :date_yyyymmddhh24mmss,
+    create_date: :date_yyyymmddhh24mmss
     },
     ...
 ]
@@ -1404,8 +1404,8 @@ include(api-banner.m4)
                 <li><code>from_user_nickname</code> username of user who asked this question</li>
                 <li><code>text_2</code> full question text</li>
                 <li><code>answer</code> full question answer, <var>null</var> if question is not answered yet</li>
-                <li><code>answer_date</code> date when question was answered, in YYYYMMDD format, null if unanswered</li>
-                <li><code>create_date</code> date when question was asked, in YYYYMMDD format</li>
+                <li><code>answer_date</code> date when question was answered, in YYYYMMDDHH24MMSS format, null if unanswered</li>
+                <li><code>create_date</code> date when question was asked, in YYYYMMDDHH24MMSS format</li>
             </ul>
             <h4>Test</h4>
             <form method="POST" action="/listing/ask_owner" target="listing-ask_owner">
@@ -1499,7 +1499,7 @@ include(api-banner.m4)
         from_user_id: :uid,
         from_user_nickname: :name,
         last_text: :message,
-        last_date: :date_yyyymmdd,
+        last_date: :date_yyyymmddhh24mmss,
         read: :true_or_false
     },
     ...
@@ -1548,7 +1548,7 @@ include(api-banner.m4)
     {
         direction: :sent_or_received, /* "sent" if sent by loggedin user, "received" if received */
         text: :message_text,
-        create_date: :date_yyyymmddhhmmss
+        create_date: :date_yyyymmddhh24mmss
     },
     ...
 ]
@@ -1590,7 +1590,7 @@ include(api-banner.m4)
 {
     direction: :sent_or_received, /* "sent" if sent by loggedin user, "received" if received */
     text: :message_text,
-    create_date: :date_yyyymmddhhmmss
+    create_date: :date_yyyymmddhh24mmss
 }
 </pre>
                 </li>
