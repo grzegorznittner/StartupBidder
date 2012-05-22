@@ -93,14 +93,15 @@ pl.implement(MessageListClass, {
                 }
             },
             keyup: function() {
+                var val = pl('#messagetext').attr('value');
                 if (!pl('#messagetext').hasClass('edited')) {
                     pl('#messagetext').addClass('edited');
                     pl('#messagemsg').html('&nbsp;');
                 }
-                else if (pl('#messagetext').attr('value').length >= 5 && !pl('#messagebtn').hasClass('editenabled')) {
+                if (val && val.length >= 1) {
                     pl('#messagebtn').addClass('editenabled');
                 }
-                else if (pl('#messagetext').attr('value').length < 5 && pl('#messagebtn').hasClass('editenabled')) {
+                else if (val && val.length < 1) {
                     pl('#messagebtn').removeClass('editenabled');
                 }
                 return false;
@@ -115,23 +116,29 @@ pl.implement(MessageListClass, {
         pl('#messagebtn').bind({
             click: function(event) {
                 var completeFunc = function(json) {
-                        var html = (new MessageClass()).store(json).makeHtml();
+                        var html = (new MessageClass(self)).store(json).makeHtml();
                         pl('#messagetext').removeClass('edited').attr({value: 'Put your message here...'});
                         pl('#messagebtn').removeClass('editenabled');
-                        pl('#messagemsg').html('Message posted');
+                        pl('#messagemsg').addClass('successful').text('Message posted');
                         pl('#messagesend').before(html);
                     },
+                    text = SafeStringClass.prototype.clean(pl('#messagetext').attr('value') || ''),
                     data = {
                         send: {
                             profile_id: self.otheruserprofileid,
-                            text: SafeStringClass.prototype.clean(pl('#messagetext').attr('value') || '')
+                            text: text
                         }
                     },
                     ajax = new AjaxClass('/user/send_message', 'messagemsg', completeFunc);
-                if (!pl('#messagebtn').hasClass('editenabled')) {
+                if (!pl('#messagebtn').hasClass('editenabled') || !text) {
                     return false;
                 }
                 ajax.setPostData(data);
+                ajax.mock({
+                    direction: 'sent',
+                    text: data.send.text,
+                    create_date: DateClass.prototype.now()
+                }); // FIXME
                 ajax.call();
                 return false;
             }

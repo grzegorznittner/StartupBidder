@@ -103,6 +103,23 @@ pl.implement(DateClass, {
             date = dateObj.getUTCDate();
         return '' + year + (month < 10 ? 0 : '') + month + (date < 10 ? 0 : '') + date;
     },
+    zeroPad: function(num, length) {
+        var str = '' + num,
+            len = length || 2;
+        while (str.length < len) {
+            str = '0' + str;
+        }
+        return str;
+    },
+    formatDatetime: function(dateObj) {
+        var year = dateObj.getUTCFullYear(),
+            month = DateClass.prototype.zeroPad(dateObj.getUTCMonth()+1),
+            date = DateClass.prototype.zeroPad(dateObj.getUTCDate()),
+            hour = DateClass.prototype.zeroPad(dateObj.getUTCHours()),
+            min = DateClass.prototype.zeroPad(dateObj.getUTCMinutes()),
+            sec = DateClass.prototype.zeroPad(dateObj.getUTCSeconds());
+        return '' + year + month + date + hour + min + sec;
+    },
     todayDate: function() {
         return new Date();
     },
@@ -115,6 +132,10 @@ pl.implement(DateClass, {
     today: function() {
         var today = new Date();
         return DateClass.prototype.formatDate(today);
+    },
+    now: function() {
+        var now = new Date();
+        return DateClass.prototype.formatDatetime(now);
     },
     todayPlus: function(days) {
         var today = new Date();
