@@ -16,6 +16,7 @@ function ListingClass(id, preview) {
     this.bmc = new BMCClass();
     this.ip = new IPClass();
     this.ajax = new AjaxClass(this.url, this.statusId, this.completeFunc);
+    this.alltabs = [ 'basics', 'model', 'slides', 'comments', 'bids', 'qandas' ];
 };
 pl.implement(ListingClass, {
     store: function(json) {
@@ -386,26 +387,18 @@ pl.implement(ListingClass, {
         });
     },
     hideSelectedTabs: function() {
-        var tabs = [],
+       var  tabs = [],
             wrappers = [],
+            i,
+            tab = '',
             tabsel = '',
             wrappersel = '';
-        if (pl('#basicstab').hasClass('companynavselected')) {
-            tabs.push('#basicstab');
-            wrappers.push('#basicswrapper1');
-            wrappers.push('#basicswrapper2');
-        }
-        if (pl('#commentstab').hasClass('companynavselected')) {
-            tabs.push('#commentstab');
-            wrappers.push('#commentswrapper');
-        }
-        if (pl('#bidstab').hasClass('companynavselected')) {
-            tabs.push('#bidstab');
-            wrappers.push('#bidswrapper');
-        }
-        if (pl('#qandastab').hasClass('companynavselected')) {
-            tabs.push('#qandastab');
-            wrappers.push('#qandaswrapper');
+        for (i = 0; i < this.alltabs.length; i++) {
+            tab = this.alltabs[i];
+            if (pl('#' + tab + 'tab').hasClass('companynavselected')) {
+                tabs.push('#' + tab + 'tab');
+                wrappers.push('#' + tab + 'wrapper');
+            }
         }
         tabsel = tabs.join(', ');
         wrappersel = wrappers.join(', ');
@@ -421,11 +414,18 @@ pl.implement(ListingClass, {
             wrappersel = '#' + wrapperid,
             comments,
             qandas;
+        console.log('displaytab:',tab);
         if (!pl(tabsel).hasClass('companynavselected')) {
             self.hideSelectedTabs();
             pl(tabsel).addClass('companynavselected');
             if (tab === 'basics') {
-                pl('#basicswrapper1, #basicswrapper2').show();
+                pl('#basicswrapper').show();
+            }
+            else if (tab === 'model') {
+                pl('#modelwrapper').show();
+            }
+            else if (tab === 'slides') {
+                pl('#slideswrapper').show();
             }
             else if (tab === 'comments') {
                 pl(wrappersel).show();
@@ -481,7 +481,14 @@ pl.implement(ListingClass, {
     },
     displayTabs: function() {
         var self = this,
-            qs = new QueryStringClass();
+            qs = new QueryStringClass(),
+            tabclickhandler = function() {
+                var tabname = this.id.substr(0, this.id.length - 3);
+                self.displayTab(tabname);
+                return false;
+            },
+            i,
+            tab;
         pl('#num_comments').text(self.num_comments || 0);
         pl('#num_bids').text(self.num_bids || 0);
         pl('#num_qandas').text(self.num_qandas || 0);
@@ -489,38 +496,17 @@ pl.implement(ListingClass, {
             pl('#sendmessagelink').attr({href: '/message_page.html?to_user=' + self.owner }).css({display: 'inline'});
             pl('#makebidtitle,#makebidbox').show();
         }
-        pl('#basicstab').bind({
-            click: function() {
-                self.displayTab('basics');
-                return false;
-            }
-        });
-        pl('#commentstab').bind({
-            click: function() {
-                self.displayTab('comments');
-                return false;
-            }
-        });
-        pl('#bidstab').bind({
-            click: function() {
-                self.displayTab('bids');
-                return false;
-            }
-        });
-        pl('#qandastab').bind({
-            click: function() {
-                self.displayTab('qandas');
-                return false;
-            }
-        });
-        if (qs.vars.page === 'comments') {
-            self.displayTab('comments');
+        for (i = 0; i < this.alltabs.length; i++) {
+            tab = this.alltabs[i];
+            pl('#' + tab + 'tab').unbind('click').bind({
+                click: tabclickhandler
+            });
         }
-        else if (qs.vars.page === 'bids') {
-            self.displayTab('bids');
-        }
-        else if (qs.vars.page === 'qandas') {
-            self.displayTab('qandas');
+        for (i = 0; i < this.alltabs.length; i++) {
+            tab = this.alltabs[i];
+            if (qs.vars.page === tab) {
+                self.displayTab(tab);
+            }
         }
     }
 });
