@@ -21,7 +21,7 @@ include(header.m4)
             <p class="messageuser messagereplyuser span-4" id="myusername"></p>
             <textarea class="textarea messagetextarea messagereplytextarea" id="messagetext" name="messagetext" cols="20" rows="5">Put your reply here...</textarea>
             <span class="span-3 inputbutton messagebutton messagereplybutton" id="messagebtn">SEND</span>
-            <p class="messagereplymsg" id="messagemsg"></p>
+            <p class="messagereplymsg inputmsg successful" id="messagemsg"></p>
         </div>
     </div>
 
@@ -34,7 +34,6 @@ include(footer.m4)
 `
   <script src="js/libs/prevel.min.js"></script>
   <script src="js/modules/base.js"></script>
-  <script src="js/modules/companylist.js"></script>
   <script src="js/modules/message.js"></script>
   <script src="js/modules/messagepage.js"></script>
   <script src="js/modules/tracker.js"></script>

@@ -1,8 +1,8 @@
-function ListingClass(id, preview) {
+function ListingClass(listing_id, preview) {
     var self = this;
-    this.id = id;
+    this.listing_id = listing_id;
     this.preview = preview;
-    this.url = '/listings/get/' + this.id;
+    this.url = '/listings/get/' + listing_id;
     this.statusId = 'listingstatus';
     this.completeFunc = function(json) {
         var header;
@@ -31,7 +31,7 @@ pl.implement(ListingClass, {
         }
         this.dateobj = new DateClass();
         this.currency = new CurrencyClass();
-        this.listing_url = window.location.protocol + '//' + window.location.hostname + ':' + window.location.port + '/company_page.html?id=' + this.id;
+        this.listing_url = window.location.protocol + '//' + window.location.hostname + ':' + window.location.port + '/company_page.html?id=' + this.listing_id;
         this.listing_public_title = 'Startupbidder Listing: ' + this.title;
     },
     load: function() {
@@ -406,17 +406,13 @@ pl.implement(ListingClass, {
         pl(wrappersel).hide();
     },
     displayTab: function(tab) {
-        var self = this,
-            listingid = self.id,
-            tabid = tab + 'tab',
+        var tabid = tab + 'tab',
             tabsel = '#' + tabid,
             wrapperid = tab + 'wrapper',
             wrappersel = '#' + wrapperid,
-            comments,
             qandas;
-        console.log('displaytab:',tab);
         if (!pl(tabsel).hasClass('companynavselected')) {
-            self.hideSelectedTabs();
+            this.hideSelectedTabs();
             pl(tabsel).addClass('companynavselected');
             if (tab === 'basics') {
                 pl('#basicswrapper').show();
@@ -429,22 +425,9 @@ pl.implement(ListingClass, {
             }
             else if (tab === 'comments') {
                 pl(wrappersel).show();
-                if (!self.isCommentListLoaded) {
-                    comments = new RemarkClass({
-                        listing_id: listingid,
-                        type: 'comment',
-                        geturl: '/listing/comments/',
-                        getproperty: 'comments',
-                        idproperty: 'comment_id',
-                        fromnameproperty: 'profile_username',
-                        fromnameprefix: 'Posted by',
-                        dateproperty: 'comment_date',
-                        textproperty: 'text',
-                        posturl: '/listing/post_comment',
-                        deleteurl:  '/listing/delete_comment'
-                    });
-                    comments.load();
-                    self.isCommentListLoaded = true;
+                if (!this.isCommentListLoaded) {
+                    (new CommentClass(this.listing_id, this.loggedin_profile ? this.loggedin_profile.profile_id : null)).load();
+                    this.isCommentListLoaded = true;
                 }
             }
             else if (tab === 'bids') {
@@ -453,9 +436,9 @@ pl.implement(ListingClass, {
             }
             else if (tab === 'qandas') {
                 pl(wrappersel).show();
-                if (!self.isQuestionListLoaded) {
+                if (!this.isQuestionListLoaded) {
                     qandas = new RemarkClass({
-                        listing_id: listingid,
+                        listing_id: this.listing_id,
                         type: 'qanda',
                         displaytype: 'question',
                         geturl: '/listings/questions_and_answers/',
@@ -471,7 +454,7 @@ pl.implement(ListingClass, {
                         deleteurl:  null
                     });
                     qandas.load();
-                    self.isQuestionListLoaded = true;
+                    this.isQuestionListLoaded = true;
                 }
             }
             else {

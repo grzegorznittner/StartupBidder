@@ -163,6 +163,17 @@ include(header.m4)
 </div> <!-- end basics wrapper -->
 
     <div class="span-24 initialhidden" id="commentswrapper">
+        <div class="boxtitle smokegrey clear">COMMENTS</div>
+        <div class="boxpanel boxpanelfull" id="commentlistparent">
+            <div class="messageline messagereplyline initialhidden" id="addcommentbox">
+                <p class="messageuser messagereplyuser span-4" id="myusername"></p>
+                <textarea class="textarea messagetextarea messagereplytextarea" id="addcommenttext" name="addcommenttext" cols="20" rows="5">Put your comment here...</textarea>
+                <span class="span-3 inputbutton messagebutton messagereplybutton" id="addcommentbtn">SEND</span>
+                <p class="messagereplymsg inputmsg successful" id="commentmsg"></p>
+            </div>
+        </div>
+
+<!--
         <div class="boxtitle addcommenttitle initialhidden" id="addcommenttitle">ADD COMMENT</div>
         <div class="boxpanel boxpanelfull remarkpanel addcommentbox initialhidden" id="addcommentbox">
             <p>
@@ -176,6 +187,7 @@ include(header.m4)
             <div id="commentmsg"></div>
             <dl id="commentlist"></dl>
     	</div>
+-->
     </div>
 
     <div class="span-24 initialhidden" id="bidswrapper">
@@ -234,6 +246,7 @@ include(footer.m4)
   <script src="js/modules/base.js"></script>
   <script src="js/modules/companylist.js"></script>
   <script src="js/modules/forms.js"></script>
+  <script src="js/modules/comments.js"></script>
   <script src="js/modules/remarks.js"></script>
   <script src="js/modules/bmc.js"></script>
   <script src="js/modules/ip.js"></script>

@@ -187,6 +187,12 @@ pl.implement(RemarkClass, {
             html += self.makeRemark(remark, deletable, replyable);
             bindlist.push([remark, deletable, replyable]);
         }
+        if (this.listid === 'commentlist') {
+            pl('#addcomentbox').after(html);
+        }
+        else {
+            pl('#'+this.listid).html(html);
+        }
         pl('#'+this.listid).html(html);
         pl('#'+self.numitemsid).text(pl('#'+self.listid).get(0).childNodes.length / 2);
         for (i = 0; i < bindlist.length; i++) {
