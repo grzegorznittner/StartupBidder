@@ -1,5 +1,6 @@
 package com.startupbidder.web;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
@@ -22,6 +23,7 @@ import com.startupbidder.datamodel.Comment;
 import com.startupbidder.datamodel.Listing;
 import com.startupbidder.datamodel.Monitor;
 import com.startupbidder.datamodel.Notification;
+import com.startupbidder.datamodel.QuestionAnswer;
 import com.startupbidder.datamodel.SBUser;
 import com.startupbidder.datamodel.VoToModelConverter;
 import com.startupbidder.vo.BaseVO;
@@ -36,6 +38,9 @@ import com.startupbidder.vo.MonitorListVO;
 import com.startupbidder.vo.MonitorVO;
 import com.startupbidder.vo.NotificationListVO;
 import com.startupbidder.vo.NotificationVO;
+import com.startupbidder.vo.PrivateMessageUserVO;
+import com.startupbidder.vo.PrivateMessageVO;
+import com.startupbidder.vo.QuestionAnswerVO;
 import com.startupbidder.vo.SystemPropertyVO;
 import com.startupbidder.vo.UserBasicVO;
 import com.startupbidder.vo.UserVO;
@@ -298,6 +303,7 @@ public class ServiceFacade {
 		notification.type = type;
 		notification.created = new Date();
 		notification.read = false;
+		notification.display = true;
 		notification.sentDate = null;
         notification.message = comment.comment;
 		notification = getDAO().storeNotification(notification)[0];
@@ -328,6 +334,7 @@ public class ServiceFacade {
 		notification.type = type;
 		notification.created = new Date();
 		notification.read = false;
+		notification.display = true;
 		notification.sentDate = null;
 		notification = getDAO().storeNotification(notification)[0];
 		if (notification != null) {
@@ -356,6 +363,7 @@ public class ServiceFacade {
 		notification.type = type;
 		notification.created = new Date();
 		notification.read = false;
+		notification.display = true;
 		notification.sentDate = null;
 		notification = getDAO().storeNotification(notification)[0];
 		if (notification != null) {
@@ -368,46 +376,77 @@ public class ServiceFacade {
 		}
 	}
 	
-	public NotificationVO askOwner(UserVO loggedInUser, String text, String listingId,
-			com.startupbidder.datamodel.Notification.Type notificationType) {
+	public QuestionAnswerVO askOwner(UserVO loggedInUser, String text, String listingId) {
 		if (loggedInUser == null) {
 			log.warning("User not logged in.");
 			return null;
 		}
 		
 		Listing listing = getDAO().getListing(BaseVO.toKeyId(listingId));
-		if (loggedInUser.toKeyId() == listing.owner.getId()) {
-			log.warning("User is an owner of the listing, can't ask himself/herself.");
+		if (listing == null) {
+			log.warning("Listing '" + listingId + "' doesn't exist.");
 			return null;
 		}
-		Notification notification = createMessageNotification(loggedInUser, text, listing, notificationType);
-		return DtoToVoConverter.convert(notification);
+		if (listing.state != Listing.State.ACTIVE) {
+			log.warning("Listing '" + listingId + "' is not active.");
+			return null;
+		}
+		SBUser listingOwner = getDAO().getUser(listing.owner.getString());
+		SBUser fromUser = VoToModelConverter.convert(loggedInUser);
+		if (StringUtils.isEmpty(fromUser.nickname)) {
+			// in dev environment sometimes nickname is empty
+			fromUser = getDAO().getUser(fromUser.getWebKey());
+		}
+		log.info("User " + loggedInUser.getNickname() + " is asking question about listing '" + listing.name + "' onwed by user " + listingOwner.nickname);
+		QuestionAnswer qa = getDAO().askListingOwner(fromUser, listing, text);
+		return DtoToVoConverter.convert(qa);
 	}
 
-	public NotificationVO replyMessage(UserVO loggedInUser, String text, String messageId) {
+	public QuestionAnswerVO answerQuestion(UserVO loggedInUser, String messageId, String text) {
 		if (loggedInUser == null) {
 			log.warning("User not logged in.");
 			return null;
 		}
-		Notification originalNotification = getDAO().getNotification(BaseVO.toKeyId(messageId));
-		log.info("User '" + loggedInUser.getNickname() + "' (" + loggedInUser.getId() + ") is replying to notification: " + originalNotification);
-		long addresseeId = originalNotification.direction == Notification.Direction.A_TO_B ? originalNotification.userB.getId()
-				: originalNotification.userA.getId();
-		if (loggedInUser.toKeyId() != addresseeId) {
-			log.warning("User '" + loggedInUser.getNickname() + "' is replying to message not addressed to him. Original notification: " + originalNotification);
+		
+		QuestionAnswer qa = getDAO().getQuestionAnswer(BaseVO.toKeyId(messageId));
+		if (qa == null) {
+			log.warning("QuestionAnswer '" + messageId + "' doesn't exist.");
 			return null;
 		}
-		if (originalNotification.type == Notification.Type.ASK_LISTING_OWNER && originalNotification.replied) {
+		if (loggedInUser.toKeyId() != qa.listingOwner.getId()) {
+			log.warning("User '" + loggedInUser.getNickname() + "' is replying to question not addressed to him. Original question: " + qa);
+			return null;
+		}
+		if (qa.answerDate != null) {
 			log.warning("Question is already answered.");
 			return null;
 		}
-		if (originalNotification.type != Notification.Type.ASK_LISTING_OWNER && originalNotification.type != Notification.Type.PRIVATE_MESSAGE) {
-			log.warning("User '" + loggedInUser.getNickname() + "' is replying to message which cannot be replied.");
+		Listing listing = getDAO().getListing(qa.listing.getId());
+		if (listing == null) {
+			log.warning("Listing '" + qa.listing.getString() + "' doesn't exist.");
+			return null;
+		}
+		if (listing.state != Listing.State.ACTIVE) {
+			log.warning("Listing '" + qa.listing.getString() + "' is not active.");
 			return null;
 		}
 		
-		Notification notification = createReplyNotification(loggedInUser, originalNotification, text);
-		return DtoToVoConverter.convert(notification);
+		log.info("User '" + loggedInUser.getNickname() + "' (" + loggedInUser.getId() + ") is replying to question: " + qa);
+		qa = getDAO().answerQuestion(qa, text, true);
+		log.info("Answered q&a: " + qa);
+		return DtoToVoConverter.convert(qa);
+	}
+	
+	public List<QuestionAnswerVO> getQuestionsAndAnswers(UserVO loggedInUser, String listingId, ListPropertiesVO listProperties) {
+		Listing listing = getDAO().getListing(BaseVO.toKeyId(listingId));
+		if (loggedInUser == null) {
+			return DtoToVoConverter.convertQuestionAnswers(getDAO().getQuestionAnswers(listing, listProperties));
+		}
+		if (loggedInUser.toKeyId() == listing.owner.getId()) {
+			return DtoToVoConverter.convertQuestionAnswers(getDAO().getQuestionAnswersForListingOwner(listing, listProperties));
+		} else {
+			return DtoToVoConverter.convertQuestionAnswers(getDAO().getQuestionAnswersForUser(VoToModelConverter.convert(loggedInUser), listing, listProperties));
+		}
 	}
 
 	public Notification createMessageNotification(UserVO fromUser, String message, Listing listing, Notification.Type type) {
@@ -428,6 +467,7 @@ public class ServiceFacade {
 		notifB.replied = notifA.replied = false;
 		notifB.sentDate = notifA.sentDate = null;
 
+		notifA.display = true;
 		notifA.userA = new Key<SBUser>(SBUser.class, toUser.id);
 		notifA.userAEmail = toUser.email;
 		notifA.userANickname = toUser.nickname;
@@ -436,6 +476,7 @@ public class ServiceFacade {
 		notifA.userBNickname = fromUser.getNickname();
 		notifA.direction = Notification.Direction.B_TO_A;
 		
+		notifB.display = false;
 		notifB.userB = new Key<SBUser>(SBUser.class, toUser.id);
 		notifB.userBEmail = toUser.email;
 		notifB.userBNickname = toUser.nickname;
@@ -504,11 +545,16 @@ public class ServiceFacade {
 		 */
 		if (originalNotification.direction == Notification.Direction.B_TO_A) {
 			notifA.direction = Notification.Direction.A_TO_B;
+			notifA.display = false;
 			notifB.direction = Notification.Direction.B_TO_A;
+			notifB.display = true;
 		} else {
 			notifA.direction = Notification.Direction.B_TO_A;
+			notifA.display = true;
 			notifB.direction = Notification.Direction.A_TO_B;
+			notifB.display = false;
 		}
+		originalNotification.display = false;
 
 		Notification notifs[] = getDAO().storeNotification(notifA, notifB, originalNotification);
         if (notifA.type == Notification.Type.ASK_LISTING_OWNER) {
@@ -596,6 +642,24 @@ public class ServiceFacade {
 		getDAO().storeNotification(notification);
 		NotificationVO notificationVO = DtoToVoConverter.convert(notification);
 		return notificationVO;
+	}
+	
+	public List<NotificationVO> getNotificationThread(UserVO loggedInUser, String contextId) {
+		List<Notification> notifThread = getDAO().getNotificationThread(BaseVO.toKeyId(contextId));
+		if (notifThread == null) {
+			log.warning("Notification thread with id '" + contextId + "' not found!");
+		}
+		List<Notification> toUpdate = new ArrayList<Notification>();
+		for (Notification notif : notifThread) {
+			if (!notif.read) {
+				notif.read = true;
+				toUpdate.add(notif);
+			}
+		}
+		if (toUpdate.size() > 0) {
+			getDAO().storeNotification(toUpdate.toArray(new Notification[]{}));
+		}
+		return DtoToVoConverter.convertNotifications(notifThread);
 	}
 	
 	public MonitorVO setListingMonitor(UserVO loggedInUser, String listingId) {

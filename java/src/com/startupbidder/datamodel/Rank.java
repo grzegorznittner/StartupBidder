@@ -21,7 +21,10 @@ import com.googlecode.objectify.annotation.Unindexed;
 @Unindexed
 @Entity
 @Cached(expirationSeconds=60*30)
-public class Rank extends BaseObject {
+public class Rank extends BaseObject<Rank> {
+	public Key<Rank> getKey() {
+		return new Key<Rank>(Rank.class, id);
+	}
 	@Id public Long id;
 	
 	public boolean mockData;

@@ -22,14 +22,16 @@ import com.googlecode.objectify.annotation.Unindexed;
 @Unindexed
 @Entity
 @Cached(expirationSeconds=60*30)
-public class Location extends BaseObject {
+public class Location extends BaseObject<Location> {
 	public Location() {
 	}
 	public Location(String briefAddress) {
 		this.briefAddress = briefAddress;
 		this.value = 1;
 	}
-	
+	public Key<Location> getKey() {
+		return new Key<Location>(Location.class, id);
+	}
 	@Id public Long id;
 	
 	public Date modified;

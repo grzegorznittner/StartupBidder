@@ -22,9 +22,11 @@ import com.googlecode.objectify.annotation.Unindexed;
 @Unindexed
 @Entity
 @Cached(expirationSeconds=60*10)
-public class ListingDoc extends BaseObject {
+public class ListingDoc extends BaseObject<ListingDoc> {
 	public static enum Type {BUSINESS_PLAN, PRESENTATION, FINANCIALS, LOGO};
-
+	public Key<ListingDoc> getKey() {
+		return new Key<ListingDoc>(ListingDoc.class, id);
+	}
 	@Id public Long id;
 	
 	public boolean mockData;

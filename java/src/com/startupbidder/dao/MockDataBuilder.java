@@ -44,6 +44,9 @@ import com.startupbidder.datamodel.ListingStats;
 import com.startupbidder.datamodel.Monitor;
 import com.startupbidder.datamodel.Notification;
 import com.startupbidder.datamodel.PaidBid;
+import com.startupbidder.datamodel.PrivateMessage;
+import com.startupbidder.datamodel.PrivateMessageUser;
+import com.startupbidder.datamodel.QuestionAnswer;
 import com.startupbidder.datamodel.Rank;
 import com.startupbidder.datamodel.SBUser;
 import com.startupbidder.datamodel.SystemProperty;
@@ -164,6 +167,18 @@ public class MockDataBuilder {
 		QueryResultIterable<Key<Notification>> n = getOfy().query(Notification.class).fetchKeys();
 		output.append("Deleted notifications: " + n.toString() + "</br>");
 		getOfy().delete(n);
+		
+		QueryResultIterable<Key<PrivateMessage>> pm = getOfy().query(PrivateMessage.class).fetchKeys();
+		output.append("Deleted private messages: " + pm.toString() + "</br>");
+		getOfy().delete(pm);
+		
+		QueryResultIterable<Key<PrivateMessageUser>> pmu = getOfy().query(PrivateMessageUser.class).fetchKeys();
+		output.append("Deleted private messages users: " + pmu.toString() + "</br>");
+		getOfy().delete(pmu);
+		
+		QueryResultIterable<Key<QuestionAnswer>> qa = getOfy().query(QuestionAnswer.class).fetchKeys();
+		output.append("Deleted question and answers: " + qa.toString() + "</br>");
+		getOfy().delete(qa);
 		
 		QueryResultIterable<Key<Rank>> r = getOfy().query(Rank.class).fetchKeys();
 		output.append("Deleted ranks: " + r.toString() + "</br>");

@@ -18,9 +18,11 @@ import com.googlecode.objectify.annotation.Unindexed;
 @Unindexed
 @Entity
 @Cached(expirationSeconds=60*30*2)
-public class UserStats extends BaseObject {
+public class UserStats extends BaseObject<UserStats> {
+	public Key<UserStats> getKey() {
+		return new Key<UserStats>(UserStats.class, id);
+	}
 	// long value of id for UserStats is the same as SBUser's one 
-	
 	@Id public Long id;
 	
 	public boolean mockData;

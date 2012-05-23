@@ -1316,14 +1316,6 @@ public class ListingFacade {
 		return result;
 	}
 
-    public NotificationListVO getListingPrivateMessages(UserVO loggedInUser, String listingId, ListPropertiesVO notifProperties) {
-        return getListingNotifications(loggedInUser, listingId, notifProperties, Notification.Type.PRIVATE_MESSAGE);
-    }
-
-    public NotificationListVO getListingQuestionsAndAnswers(UserVO loggedInUser, String listingId, ListPropertiesVO notifProperties) {
-        return getListingNotifications(loggedInUser, listingId, notifProperties, Notification.Type.ASK_LISTING_OWNER);
-    }
-    
     private NotificationListVO getListingNotifications(UserVO loggedInUser, String listingId, ListPropertiesVO notifProperties, Notification.Type includeType) {
         NotificationListVO list = new NotificationListVO();
         Listing listing = getDAO().getListing(BaseVO.toKeyId(listingId));

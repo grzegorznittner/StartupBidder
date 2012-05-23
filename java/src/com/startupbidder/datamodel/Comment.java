@@ -22,7 +22,10 @@ import com.googlecode.objectify.annotation.Unindexed;
 @Unindexed
 @Entity
 @Cached(expirationSeconds=60*30)
-public class Comment extends BaseObject {
+public class Comment extends BaseObject<Comment> {
+	public Key<Comment> getKey() {
+		return new Key<Comment>(Comment.class, id);
+	}
 	@Id public Long id;
 	
 	public boolean mockData;

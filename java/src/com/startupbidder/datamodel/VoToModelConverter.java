@@ -15,6 +15,7 @@ import com.startupbidder.vo.ListingPropertyVO;
 import com.startupbidder.vo.ListingVO;
 import com.startupbidder.vo.MonitorVO;
 import com.startupbidder.vo.NotificationVO;
+import com.startupbidder.vo.QuestionAnswerVO;
 import com.startupbidder.vo.SystemPropertyVO;
 import com.startupbidder.vo.UserVO;
 import com.startupbidder.vo.VoteVO;
@@ -34,6 +35,24 @@ public class VoToModelConverter {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
+	public static QuestionAnswer convert(QuestionAnswerVO qaVO) {
+		QuestionAnswer qa = new QuestionAnswer();
+		if (!StringUtils.isEmpty(qaVO.getId())) {
+			qa.id = new Key<QuestionAnswer>(qaVO.getId()).getId();
+		}
+		qa.answer = qaVO.getAnswer();
+		qa.answerDate = qaVO.getAnswerDate();
+		qa.created = qaVO.getCreated();
+		qa.published = qaVO.isPublished();
+		qa.question = qaVO.getQuestion();
+		qa.user = (Key<SBUser>)stringToKey(qaVO.getUser());
+		qa.userNickname = qaVO.getUserNickname();
+		qa.listing = (Key<Listing>)stringToKey(qaVO.getListing());		
+		return qa;
+	}
+	
+	@SuppressWarnings("unchecked")
 	public static Bid convert(BidVO bidVO) {
 		Bid bid = new Bid();
 		if (!StringUtils.isEmpty(bidVO.getId())) {
@@ -64,6 +83,7 @@ public class VoToModelConverter {
 		return bid;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public static Listing convert(ListingVO listingVO) {
 		Listing listing = new Listing();
 		if (!StringUtils.isEmpty(listingVO.getId())) {
@@ -260,6 +280,7 @@ public class VoToModelConverter {
 		return doc;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public static SBUser convert(UserVO userVO) {
 		SBUser user = new SBUser();
 		if (!StringUtils.isEmpty(userVO.getId())) {
@@ -365,5 +386,14 @@ public class VoToModelConverter {
 			monitorDtoList.add(monitorDTO);
 		}
 		return monitorDtoList;
+	}
+	
+	public static List<QuestionAnswer> convertQuestionAnswers(List<QuestionAnswerVO> monitorVoList) {
+		List<QuestionAnswer> qaDtoList = new ArrayList<QuestionAnswer>();
+		for (QuestionAnswerVO qaVO : monitorVoList) {
+			QuestionAnswer qaDTO = convert(qaVO);
+			qaDtoList.add(qaDTO);
+		}
+		return qaDtoList;
 	}
 }
