@@ -369,6 +369,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .addcommentbtn:hover { opacity: 0.3; }
 .addcommentenabled { opacity: 1.0; }
 .addcommentenabled:hover { opacity: 0.8; }
+.commentdeleteicon { position: absolute; right: 139px; }
 .newlistingmsg { float: left; margin-right; 10px; padding-left: 116px; width: 420px; height: 85px; font-weight: bold; overflow: auto; }
 .newlistingtitlemsg { position: absolute; margin-right: 5px; right: 0; }
 .newlistingaskmsg { margin-left: 10px; }

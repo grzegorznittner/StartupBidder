@@ -69,7 +69,8 @@ pl.implement(CommentClass, {
                         pl('#addcommentbtn').removeClass('editenabled');
                         pl('#commentmsg').html('Comment posted');
                         pl('#num_comments').text(numcomments);
-                        pl('#addcommentbox').before(self.makeComment(comment, deletable));
+                        pl('#addcommentbox').before(self.makeComment(comment));
+                        self.bindComment(comment);
                     },
                     text = SafeStringClass.prototype.clean(pl('#addcommenttext').attr('value')),
                     data = {
@@ -105,7 +106,6 @@ pl.implement(CommentClass, {
             html = '',
             i,
             comment,
-            deletable,
             deletesel,
             firstchild,
             bindlist = [];
@@ -115,62 +115,57 @@ pl.implement(CommentClass, {
         }
         for (i = 0; i < self.commentlist.length; i++) {
             comment = self.commentlist[i];
-            deletable = comment.profile_id === self.loggedin_profile_id;
-            html += self.makeComment(comment, deletable);
-            bindlist.push([comment, deletable]);
+            html += self.makeComment(comment);
+            bindlist.push(comment);
         }
-        console.log(html);
         pl('#addcommentbox').before(html);
         for (i = 0; i < bindlist.length; i++) {
-            comment = bindlist[i][0];
-            deletable = bindlist[i][1];
-            self.bindComment(comment, deletable);
+            comment = bindlist[i];
+            self.bindComment(comment);
         }
     },
     deleteCommentGenerator: function(commentid) {
         var self = this;
         return function() {
-            var successFunc = function(json) {
-                    var numcomments = pl('#num_comments').text() - 1;
-                    pl('#comment_'+commentid).remove();
-                    pl('#num_comments').text(numcomments);
-                    if (numcomments === 0) {
-                        pl('#commentmsg').html('<p>Be the first to comment!</p>');
-                    }
-                },
-                url = '/listing/delete_comment?id=' + commentid,
-                deletemsgid = 'comment_delete_msg_' + commentid,
-                ajax = new AjaxClass(url, deletemsgid, null, successFunc);
-            ajax.setPost();
-            ajax.call();
         };
     },
-    makeComment: function(comment, deletable) {
+    makeComment: function(comment) {
         var text = SafeStringClass.prototype.htmlEntities(comment.text),
             datetext = DateClass.prototype.format(comment.comment_date),
+            deletable = comment.profile_id === this.loggedin_profile_id,
             deletemsgspan = deletable ? ' <span id="comment_delete_msg_' + comment.comment_id + '" class="push-4 span-14 messagetext inputmsg successful"></span>' : '',
-            deleteicon = deletable ? '<div id="comment_delete_' + comment.comment_id + '" class="checkboxredicon"></div>' : '';
+            deleteicon = deletable ? '<div id="comment_delete_' + comment.comment_id + '" class="commentdeleteicon checkboxredicon hoverlink"></div>' : '';
         return '\
         <div class="messageline" id="comment_' + comment.comment_id + '">\
             <p class="messageuser span-4">' + comment.profile_username + '</p>\
             <p class="messagetext span-14">\
                 ' + text + '\
-                ' + deleteicon + '\
             </p>\
             <p class="messagedate">'+  datetext + '</p>\
+                ' + deleteicon + '\
                 ' + deletemsgspan + '\
         </div>\
         ';
     },
-    bindComment: function(comment, deletable) {
-        var self = this,
-            commentid = comment['comment_id'],
-            deletesel;
-        if (deletable) {
-            deletesel = '#comment_delete_' + commentid,
-            pl(deletesel).bind({
-                click: self.deleteCommentGenerator(commentid)
-            });
+    deleteComment: function() {
+        var commentid = this.id.replace('comment_delete_', '');
+            completefunc = function(json) {
+                var numcomments = pl('#num_comments').text() - 1;
+                pl('#comment_'+commentid).remove();
+                pl('#num_comments').text(numcomments);
+                if (numcomments === 0) {
+                    pl('#commentmsg').html('<p>Be the first to comment!</p>');
+                }
+            },
+            url = '/listing/delete_comment?id=' + commentid,
+            deletemsgid = 'comment_delete_msg_' + commentid,
+            ajax = new AjaxClass(url, deletemsgid, completefunc);
+        ajax.setPost();
+        ajax.call();
+    },
+    bindComment: function(comment) {
+        if (comment.profile_id === this.loggedin_profile_id) {
+            pl('#comment_delete_' + comment.comment_id).bind('click', this.deleteComment);
         }
     }
 });

@@ -92,7 +92,6 @@ pl.implement(NotificationPageClass,{
         "mockData": false,
         "admin": false
     }}); // FIXME
-    console.log('foo');
         ajax.call();
     }
 });
