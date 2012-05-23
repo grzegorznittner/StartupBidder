@@ -24,14 +24,13 @@ import org.codehaus.jackson.node.ArrayNode;
 import com.startupbidder.dao.ObjectifyDatastoreDAO;
 import com.startupbidder.datamodel.Listing;
 import com.startupbidder.datamodel.ListingDoc;
-import com.startupbidder.datamodel.Notification;
 import com.startupbidder.vo.BaseVO;
 import com.startupbidder.vo.CommentVO;
 import com.startupbidder.vo.ListPropertiesVO;
 import com.startupbidder.vo.ListingAndUserVO;
 import com.startupbidder.vo.ListingPropertyVO;
 import com.startupbidder.vo.ListingVO;
-import com.startupbidder.vo.NotificationVO;
+import com.startupbidder.vo.QuestionAnswerVO;
 import com.startupbidder.web.HttpHeaders;
 import com.startupbidder.web.HttpHeadersImpl;
 import com.startupbidder.web.ListingFacade;
@@ -95,8 +94,6 @@ public class ListingController extends ModelDrivenController {
 				return getLocations(request);
 			} else if("all-listing-locations".equalsIgnoreCase(getCommand(1))) {
 				return getAllListingLocations(request);
-            } else if("private_messages".equalsIgnoreCase(getCommand(1))) {
-                return privateMessages(request);
             } else if("questions_and_answers".equalsIgnoreCase(getCommand(1))) {
                 return questionsAndAnswers(request);
 			} else if("comments".equalsIgnoreCase(getCommand(1))) {
@@ -130,10 +127,8 @@ public class ListingController extends ModelDrivenController {
 				return deleteFile(request);
 			} else if("ask_owner".equalsIgnoreCase(getCommand(1))) {
 				return askOwner(request);
-			} else if("send_private".equalsIgnoreCase(getCommand(1))) {
-				return sendPrivate(request);
-			} else if("reply_message".equalsIgnoreCase(getCommand(1))) {
-				return replyMessage(request);
+			} else if("answer_question".equalsIgnoreCase(getCommand(1))) {
+				return answerQuestion(request);
 			} else if("post_comment".equalsIgnoreCase(getCommand(1))) {
 				return postComment(request);
 			} else if("update_comment".equalsIgnoreCase(getCommand(1))) {
@@ -572,18 +567,10 @@ public class ListingController extends ModelDrivenController {
 		return headers;
 	}
 	
-    // GET /listings/messages
-    private HttpHeaders privateMessages(HttpServletRequest request) {
-        String listingId = getCommandOrParameter(request, 2, "id");
-        ListPropertiesVO listingProperties = getListProperties(request);
-        model = ListingFacade.instance().getListingPrivateMessages(getLoggedInUser(), listingId, listingProperties);
-        return new HttpHeadersImpl("private_messages").disableCaching();
-    }
-
     private HttpHeaders questionsAndAnswers(HttpServletRequest request) {
         String listingId = getCommandOrParameter(request, 2, "id");
         ListPropertiesVO listingProperties = getListProperties(request);
-        model = ListingFacade.instance().getListingQuestionsAndAnswers(getLoggedInUser(), listingId, listingProperties);
+        model = ServiceFacade.instance().getQuestionsAndAnswers(getLoggedInUser(), listingId, listingProperties);
         return new HttpHeadersImpl("questions_and_answers").disableCaching();
     }
     
@@ -604,9 +591,8 @@ public class ListingController extends ModelDrivenController {
 			if (rootNode.get("text") != null) {
 				text = rootNode.get("text").getValueAsText();
 			}
-			NotificationVO notif = ServiceFacade.instance().askOwner(getLoggedInUser(), text, listingId, 
-					Notification.Type.ASK_LISTING_OWNER);
-			model = notif;
+			QuestionAnswerVO qa = ServiceFacade.instance().askOwner(getLoggedInUser(), text, listingId);
+			model = qa;
 		} else {
 			log.severe("Missing message parameter!");
 			headers.setStatus(500);
@@ -614,52 +600,26 @@ public class ListingController extends ModelDrivenController {
 		return headers;
     }
 
-    // GET /listings/send_private
-    private HttpHeaders sendPrivate(HttpServletRequest request) throws JsonParseException, JsonMappingException, IOException {
-		HttpHeaders headers = new HttpHeadersImpl("send_private");
+    // GET /listings/answer_question
+    private HttpHeaders answerQuestion(HttpServletRequest request) throws JsonParseException, JsonMappingException, IOException {
+		HttpHeaders headers = new HttpHeadersImpl("answer_question");
 
 		ObjectMapper mapper = new ObjectMapper();
 		log.log(Level.INFO, "Parameters: " + request.getParameterMap());
 		String listingString = request.getParameter("message");
 		if (!StringUtils.isEmpty(listingString)) {
 			JsonNode rootNode = mapper.readValue(listingString, JsonNode.class);
-			String listingId = null;
-			if (rootNode.get("listing_id") != null) {
-				listingId = rootNode.get("listing_id").getValueAsText();
+			String questionId = null;
+			if (rootNode.get("question_id") != null) {
+				questionId = rootNode.get("question_id").getValueAsText();
 			}
 			String text = null;
 			if (rootNode.get("text") != null) {
 				text = rootNode.get("text").getValueAsText();
 			}
-			NotificationVO notif = ServiceFacade.instance().askOwner(getLoggedInUser(), text, listingId, 
-					Notification.Type.PRIVATE_MESSAGE);
-			model = notif;
-		} else {
-			log.severe("Missing message parameter!");
-			headers.setStatus(500);
-		}
-		return headers;
-    }
-
-    // GET /listings/send_private
-    private HttpHeaders replyMessage(HttpServletRequest request) throws JsonParseException, JsonMappingException, IOException {
-		HttpHeaders headers = new HttpHeadersImpl("reply_message");
-
-		ObjectMapper mapper = new ObjectMapper();
-		log.log(Level.INFO, "Parameters: " + request.getParameterMap());
-		String listingString = request.getParameter("message");
-		if (!StringUtils.isEmpty(listingString)) {
-			JsonNode rootNode = mapper.readValue(listingString, JsonNode.class);
-			String messageId = null;
-			if (rootNode.get("message_id") != null) {
-				messageId = rootNode.get("message_id").getValueAsText();
-			}
-			String text = null;
-			if (rootNode.get("text") != null) {
-				text = rootNode.get("text").getValueAsText();
-			}
-			NotificationVO notif = ServiceFacade.instance().replyMessage(getLoggedInUser(), text, messageId);
-			model = notif;
+			log.info("Method answer_question called, parameter question_id: " + questionId);
+			QuestionAnswerVO qa = ServiceFacade.instance().answerQuestion(getLoggedInUser(), questionId, text);
+			model = qa;
 		} else {
 			log.severe("Missing message parameter!");
 			headers.setStatus(500);

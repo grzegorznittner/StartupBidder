@@ -22,7 +22,7 @@ import com.googlecode.objectify.condition.IfNotNull;
 @Unindexed
 @Entity
 @Cached(expirationSeconds=60*30)
-public class Listing extends BaseObject {
+public class Listing extends BaseObject<Listing> {
 	/**
 	 * NEW - just created, not submited by user
 	 * POSTED - submited by user, passed simple verfication, needs to be checked by Admins to be available on website
@@ -33,6 +33,9 @@ public class Listing extends BaseObject {
 	 */
 	public enum State {NEW, POSTED, ACTIVE, CLOSED, WITHDRAWN, FROZEN};
 
+	public Key<Listing> getKey() {
+		return new Key<Listing>(Listing.class, id);
+	}
 	@Id public Long id;
 	
 	public boolean mockData;

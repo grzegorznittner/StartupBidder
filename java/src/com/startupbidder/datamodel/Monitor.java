@@ -22,7 +22,10 @@ import com.googlecode.objectify.condition.IfNotNull;
 @Unindexed
 @Entity
 @Cached(expirationSeconds=60*30)
-public class Monitor extends BaseObject {
+public class Monitor extends BaseObject<Monitor> {
+	public Key<Monitor> getKey() {
+		return new Key<Monitor>(Monitor.class, id);
+	}
 	@Id public Long id;
 	
 	public boolean mockData;

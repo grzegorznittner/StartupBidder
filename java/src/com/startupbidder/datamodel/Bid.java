@@ -22,12 +22,15 @@ import com.googlecode.objectify.annotation.Unindexed;
 @Unindexed
 @Entity
 @Cached(expirationSeconds=60*30)
-public class Bid extends BaseObject {
+public class Bid extends BaseObject<Bid> {
 	public enum FundType {SYNDICATE, SOLE_INVESTOR, COMMON, PREFERRED, NOTE};
 
 	public enum Action { ACTIVATE, UPDATE, CANCEL, ACCEPT};
 	public enum Actor { OWNER, BIDDER };
 
+	public Key<Bid> getKey() {
+		return new Key<Bid>(Bid.class, id);
+	}
 	@Id public Long id;
 	
 	public boolean mockData;

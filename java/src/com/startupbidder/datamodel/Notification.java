@@ -14,6 +14,7 @@ import com.googlecode.objectify.annotation.Cached;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Indexed;
 import com.googlecode.objectify.annotation.Unindexed;
+import com.googlecode.objectify.condition.IfTrue;
 
 /**
  * @author "Grzegorz Nittner" <grzegorz.nittner@gmail.com>
@@ -22,13 +23,16 @@ import com.googlecode.objectify.annotation.Unindexed;
 @Unindexed
 @Entity
 @Cached(expirationSeconds=60*30)
-public class Notification extends BaseObject {
+public class Notification extends BaseObject<Notification> {
 	public static enum Direction {A_TO_B, B_TO_A};
 	public static enum Type {NEW_BID_FOR_YOUR_LISTING, YOUR_BID_WAS_REJECTED, YOUR_BID_WAS_COUNTERED,
 		YOUR_BID_WAS_ACCEPTED, YOU_ACCEPTED_BID, YOU_PAID_BID, BID_PAID_FOR_YOUR_LISTING, BID_WAS_WITHDRAWN,
 		NEW_COMMENT_FOR_YOUR_LISTING, NEW_COMMENT_FOR_MONITORED_LISTING, NEW_LISTING,
 		PRIVATE_MESSAGE, ASK_LISTING_OWNER};
 
+	public Key<Notification> getKey() {
+		return new Key<Notification>(Notification.class, id);
+	}
 	@Id public Long id;
 	public boolean mockData;
 	
@@ -46,11 +50,11 @@ public class Notification extends BaseObject {
 	@Indexed public Direction direction;
 	@Indexed public Type type;
 	
-
 	/** All messages in the same conversations have the same context equal to id of first message */
 	@Indexed public long context;
 	public Key<Notification> parentNotification;
 	@Indexed public boolean replied;
+	@Indexed(IfTrue.class) public boolean display;
 	
 	@Indexed public Key<Listing> listing;
 	public String listingName;

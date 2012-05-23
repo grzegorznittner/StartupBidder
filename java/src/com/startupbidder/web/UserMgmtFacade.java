@@ -360,24 +360,6 @@ public class UserMgmtFacade {
 		return user;
 	}
 
-    /*
-	public UserVotesVO userVotes(UserVO loggedInUser, String userId) {
-		UserVotesVO userVotes = new UserVotesVO();
-		UserVO user = DtoToVoConverter.convert(getDAO().getUser(userId));
-		//applyUserStatistics(loggedInUser, user);
-		
-		List<VoteVO> votes = DtoToVoConverter.convertVotes(getDAO().getUserVotes(BaseVO.toKeyId(userId)));
-		for (VoteVO vote : votes) {
-			vote.setUserName(user.getName());
-			Listing listing = getDAO().getListing(BaseVO.toKeyId(vote.getListing()));
-			vote.setListingName(listing.name);
-		}
-		userVotes.setVotes(votes);
-		
-		return userVotes;
-	}
-    */
-
 	public Boolean checkUserNameIsValid(UserVO loggedInUser, String nickName) { // true if nickname is a valid username in use, false otherwise
         if (StringUtils.isEmpty(nickName)) { // empty nickname not allowed
             return false;
@@ -444,22 +426,4 @@ public class UserMgmtFacade {
 		
 		return list;
 	}
-
-	/**
-	 * Value up user
-	 *
-	public UserVO valueUpUser(UserVO voter, String userId) {
-		if (voter == null) {
-			return null;
-		}
-		UserVO user =  DtoToVoConverter.convert(getDAO().valueUpUser(
-				BaseVO.toKeyId(userId), BaseVO.toKeyId(voter.getId())));
-		if (user != null) {
-			//UserMgmtFacade.instance().scheduleUpdateOfUserStatistics(userId, UserMgmtFacade.UpdateReason.NEW_VOTE);
-			//ServiceFacade.instance().createNotification(user.getId(), user.getId(), Notification.Type.NEW_VOTE_FOR_YOU, "");
-			//UserMgmtFacade.instance().applyUserStatistics(voter, user);
-		}
-		return user;
-	}
-    */
 }

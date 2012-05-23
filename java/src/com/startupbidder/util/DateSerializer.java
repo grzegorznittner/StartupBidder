@@ -23,7 +23,7 @@ public class DateSerializer extends JsonSerializer<Date> {
 		if (value == null) {
 			jgen.writeString("");
 		} else {
-			DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyyMMdd");
+			DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyyMMddHHmmss");
 			jgen.writeString(fmt.print(value.getTime()));
 		}
 	}

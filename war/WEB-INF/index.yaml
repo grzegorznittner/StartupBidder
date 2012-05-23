@@ -276,36 +276,38 @@ indexes:
 - kind: Notification
   ancestor: no
   properties:
-    - name: user
-    - name: created
-      direction: desc
-
-- kind: Notification
-  ancestor: no
-  properties:
-    - name: user
+    - name: direction
     - name: listing
-    - name: read
-
-- kind: Notification
-  ancestor: no
-  properties:
-    - name: user
+    - name: replied
+    - name: display
     - name: created
       direction: desc
 
 - kind: Notification
   ancestor: no
   properties:
+    - name: userA
+    - name: read
+    - name: display
+    - name: created
+      direction: desc
+
+- kind: Notification
+  ancestor: no
+  properties:
+    - name: userA
     - name: listing
+    - name: type
+    - name: read
+    - name: display
     - name: created
       direction: desc
 
 - kind: Notification
   ancestor: no
   properties:
-    - name: user
-    - name: read
+    - name: context
+    - name: direction
     - name: created
       direction: desc
 
@@ -326,3 +328,49 @@ indexes:
   properties:
     - name: user
     - name: active
+
+- kind: QuestionAnswer
+  ancestor: no
+  properties:
+    - name: listing
+    - name: created
+
+- kind: QuestionAnswer
+  ancestor: no
+  properties:
+    - name: listing
+    - name: user
+    - name: published
+    - name: created
+
+- kind: QuestionAnswer
+  ancestor: no
+  properties:
+    - name: listing
+    - name: published
+    - name: created
+
+- kind: PrivateMessageUser
+  ancestor: no
+  properties:
+    - name: userA
+    - name: userB
+    - name: created
+      direction: desc
+
+- kind: PrivateMessageUser
+  ancestor: no
+  properties:
+    - name: userA
+    - name: direction
+    - name: created
+      direction: desc
+
+- kind: PrivateMessage
+  ancestor: no
+  properties:
+    - name: userA
+    - name: userB
+    - name: created
+      direction: desc
+      

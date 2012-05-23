@@ -14,7 +14,6 @@ import com.googlecode.objectify.annotation.Cached;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Indexed;
 import com.googlecode.objectify.annotation.Unindexed;
-import com.googlecode.objectify.condition.IfNotNull;
 
 /**
  * @author "Grzegorz Nittner" <grzegorz.nittner@gmail.com>
@@ -22,26 +21,29 @@ import com.googlecode.objectify.condition.IfNotNull;
 @Unindexed
 @Entity
 @Cached(expirationSeconds=60*30)
-public class Vote extends BaseObject<Vote> {
-	public Key<Vote> getKey() {
-		return new Key<Vote>(Vote.class, id);
+public class QuestionAnswer extends BaseObject<QuestionAnswer> {
+	public Key<QuestionAnswer> getKey() {
+		return new Key<QuestionAnswer>(QuestionAnswer.class, id);
 	}
 	@Id public Long id;
-	
-	public boolean mockData;
 	
 	public Date modified;
 	@PrePersist void updateModifiedDate() {
 		this.modified = new Date();
 	}
-	
+	/** User which asks questions */
+	@Indexed public Key<SBUser> user;
+	public String userNickname;
+	/** Question is always addressed to the listing owner */
 	@Indexed public Key<Listing> listing;
-	@Indexed(IfNotNull.class) public Key<SBUser> user;
-	@Indexed(IfNotNull.class) public Key<SBUser> voter;
-	public long value;
-	public Date commentedOn;
+	public Key<SBUser> listingOwner;
+	@Indexed public Date created;
+	public Date answerDate;
+	@Indexed public boolean published;
+	public String question;
+	public String answer;
 
 	public String getWebKey() {
-		return new Key<Vote>(Vote.class, id).getString();
+		return new Key<QuestionAnswer>(QuestionAnswer.class, id).getString();
 	}
 }

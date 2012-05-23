@@ -9,13 +9,19 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
+import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 
+import com.startupbidder.vo.ListPropertiesVO;
+import com.startupbidder.vo.PrivateMessageListVO;
+import com.startupbidder.vo.PrivateMessageUserListVO;
+import com.startupbidder.vo.PrivateMessageVO;
 import com.startupbidder.vo.UserVO;
 import com.startupbidder.web.HttpHeaders;
 import com.startupbidder.web.HttpHeadersImpl;
+import com.startupbidder.web.MessageFacade;
 import com.startupbidder.web.ModelDrivenController;
 import com.startupbidder.web.UserMgmtFacade;
 
@@ -37,12 +43,14 @@ public class UserController extends ModelDrivenController {
 				return all(request);
 			} else if("get".equalsIgnoreCase(getCommand(1))) {
 				return get(request);
+			} else if("get_message_users".equalsIgnoreCase(getCommand(1))) {
+				return messageUsers(request);
+			} else if("get_messages".equalsIgnoreCase(getCommand(1))) {
+				return messages(request);
 			} else if("topinvestor".equalsIgnoreCase(getCommand(1))) {
 				return topInvestor(request);
 			} else if("loggedin".equalsIgnoreCase(getCommand(1))) {
 				return loggedin(request);
-			/* } else if("votes".equalsIgnoreCase(getCommand(1))) {
-				return votes(request); */
 			} else if("check-user-name".equalsIgnoreCase(getCommand(1))) {
 				return checkUserName(request);
 			} else {
@@ -61,9 +69,9 @@ public class UserController extends ModelDrivenController {
 				return create(request);
 			} else if ("delete".equalsIgnoreCase(getCommand(1))) {
 				return delete(request);
-			} /* else if ("up".equalsIgnoreCase(getCommand(1))) {
-				return up(request);
-			} */
+			} else if("send_message".equalsIgnoreCase(getCommand(1))) {
+				return sendMessage(request);
+			}
 		}
 		return null;
 	}
@@ -250,6 +258,58 @@ public class UserController extends ModelDrivenController {
 		return headers;
 	}
     */
+
+    // POST /user/send_message
+    private HttpHeaders sendMessage(HttpServletRequest request) throws JsonParseException, JsonMappingException, IOException {
+		HttpHeaders headers = new HttpHeadersImpl("send_message");
+
+		ObjectMapper mapper = new ObjectMapper();
+		log.log(Level.INFO, "Parameters: " + request.getParameterMap());
+		String messageString = request.getParameter("message");
+		if (!StringUtils.isEmpty(messageString)) {
+			JsonNode rootNode = mapper.readValue(messageString, JsonNode.class);
+			String userId = null;
+			if (rootNode.get("profile_id") != null) {
+				userId = rootNode.get("profile_id").getValueAsText();
+			}
+			String text = null;
+			if (rootNode.get("text") != null) {
+				text = rootNode.get("text").getValueAsText();
+			}
+			PrivateMessageVO message = MessageFacade.instance().sendPrivateMessage(getLoggedInUser(), userId, text);
+			model = message;
+		} else {
+			log.severe("Missing message parameter!");
+			headers.setStatus(500);
+		}
+		return headers;
+    }
+
+	/*
+	 *  /user/message_users/
+	 */
+	private HttpHeaders messageUsers(HttpServletRequest request) {
+		HttpHeaders headers = new HttpHeadersImpl("message_users");
+		
+		ListPropertiesVO listProperties = getListProperties(request);
+		PrivateMessageUserListVO result = MessageFacade.instance().getPrivateMessageUsers(getLoggedInUser(), listProperties);
+		model = result;
+		
+		return headers;
+	}
+	
+	/*
+	 *  /user/messages/?id=ag1zdGFydHVwYmlkZGVychQLEgdMaXN0aW5nIgdtaXNsZWFkDA.html
+	 */
+	private HttpHeaders messages(HttpServletRequest request) {
+		HttpHeaders headers = new HttpHeadersImpl("messages");
+		
+		ListPropertiesVO listProperties = getListProperties(request);
+		String userId = getCommandOrParameter(request, 2, "id");
+		PrivateMessageListVO result = MessageFacade.instance().getPrivateMessages(getLoggedInUser(), userId, listProperties);
+		model = result;
+		return headers;
+	}
 
 	@Override
 	public Object getModel() {

@@ -17,6 +17,9 @@ import com.startupbidder.datamodel.Listing;
 import com.startupbidder.datamodel.ListingDoc;
 import com.startupbidder.datamodel.Monitor;
 import com.startupbidder.datamodel.Notification;
+import com.startupbidder.datamodel.PrivateMessage;
+import com.startupbidder.datamodel.PrivateMessageUser;
+import com.startupbidder.datamodel.QuestionAnswer;
 import com.startupbidder.datamodel.SBUser;
 import com.startupbidder.datamodel.SystemProperty;
 import com.startupbidder.datamodel.Vote;
@@ -33,6 +36,47 @@ public class DtoToVoConverter {
 		} else {
 			return null;
 		}
+	}
+	
+	public static PrivateMessageVO convert(PrivateMessage msgDTO) {
+		if (msgDTO == null) {
+			return null;
+		}
+		PrivateMessageVO qa = new PrivateMessageVO();
+		qa.setText(msgDTO.text);
+		qa.setCreated(msgDTO.created);
+		qa.setDirection(msgDTO.direction.toString());
+		return qa;
+	}
+	
+	public static PrivateMessageUserVO convert(PrivateMessageUser msgDTO) {
+		if (msgDTO == null) {
+			return null;
+		}
+		PrivateMessageUserVO qa = new PrivateMessageUserVO();
+		qa.setText(msgDTO.text);
+		qa.setLastDate(msgDTO.created);
+		qa.setDirection(msgDTO.direction.toString());
+		qa.setUser(msgDTO.direction == PrivateMessage.Direction.A_TO_B ? msgDTO.userA.getString() : msgDTO.userB.getString());
+		qa.setUserNickname(msgDTO.direction == PrivateMessage.Direction.A_TO_B ? msgDTO.userANickname: msgDTO.userBNickname);
+		return qa;
+	}
+	
+	public static QuestionAnswerVO convert(QuestionAnswer qaDTO) {
+		if (qaDTO == null) {
+			return null;
+		}
+		QuestionAnswerVO qa = new QuestionAnswerVO();
+		qa.setId(qaDTO.id != null ? new Key<QuestionAnswer>(QuestionAnswer.class, qaDTO.id).getString() : null);
+		qa.setAnswer(qaDTO.answer);
+		qa.setAnswerDate(qaDTO.answerDate);
+		qa.setCreated(qaDTO.created);
+		qa.setListing(keyToString(qaDTO.listing));
+		qa.setPublished(qaDTO.published);
+		qa.setQuestion(qaDTO.question);
+		qa.setUser(keyToString(qaDTO.user));
+		qa.setUserNickname(qaDTO.userNickname);
+		return qa;
 	}
 
 	public static BidVO convert(Bid bidDTO) {
@@ -476,6 +520,42 @@ public class DtoToVoConverter {
 			monitorVoList.add(monitorVO);
 		}
 		return monitorVoList;
+	}
+	
+	public static List<QuestionAnswerVO> convertQuestionAnswers(List<QuestionAnswer> qaDtoList) {
+		if (qaDtoList == null) {
+			return null;
+		}
+		List<QuestionAnswerVO> qaVoList = new ArrayList<QuestionAnswerVO>();
+		for (QuestionAnswer qaDTO : qaDtoList) {
+			QuestionAnswerVO qaVO = convert(qaDTO);
+			qaVoList.add(qaVO);
+		}
+		return qaVoList;
+	}
+	
+	public static List<PrivateMessageVO> convertPrivateMessage(List<PrivateMessage> msgDtoList) {
+		if (msgDtoList == null) {
+			return null;
+		}
+		List<PrivateMessageVO> qaVoList = new ArrayList<PrivateMessageVO>();
+		for (PrivateMessage msgDTO : msgDtoList) {
+			PrivateMessageVO msgVO = convert(msgDTO);
+			qaVoList.add(msgVO);
+		}
+		return qaVoList;
+	}
+	
+	public static List<PrivateMessageUserVO> convertPrivateMessageUser(List<PrivateMessageUser> msgDtoList) {
+		if (msgDtoList == null) {
+			return null;
+		}
+		List<PrivateMessageUserVO> qaVoList = new ArrayList<PrivateMessageUserVO>();
+		for (PrivateMessageUser msgDTO : msgDtoList) {
+			PrivateMessageUserVO msgVO = convert(msgDTO);
+			qaVoList.add(msgVO);
+		}
+		return qaVoList;
 	}
 	
 	public static Map<String, List<BidVO>> convertBidMap(Map<Key<SBUser>, List<Bid>> bidMap) {

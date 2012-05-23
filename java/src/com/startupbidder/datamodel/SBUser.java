@@ -24,9 +24,11 @@ import org.apache.commons.lang.math.RandomUtils;
 @Unindexed
 @Entity
 @Cached(expirationSeconds=60*60*2)
-public class SBUser extends BaseObject {
+public class SBUser extends BaseObject<SBUser> {
 	public enum Status {CREATED, ACTIVE, DEACTIVATED};
-	
+	public Key<SBUser> getKey() {
+		return new Key<SBUser>(SBUser.class, id);
+	}
 	@Id public Long id;
 	
 	public boolean mockData;

@@ -39,6 +39,7 @@ import com.startupbidder.datamodel.Location;
 import com.startupbidder.datamodel.Monitor;
 import com.startupbidder.datamodel.Notification;
 import com.startupbidder.datamodel.PaidBid;
+import com.startupbidder.datamodel.QuestionAnswer;
 import com.startupbidder.datamodel.SBUser;
 import com.startupbidder.datamodel.SystemProperty;
 import com.startupbidder.datamodel.UserStats;
@@ -70,12 +71,38 @@ public class ObjectifyDatastoreDAO {
 		Objectify ofy = ObjectifyService.begin();
 		return ofy;
 	}
+	
+	public static class CursorHandler<T> {
+		public List<Key<T>> handleQuery(ListPropertiesVO listProperties, Query<T> query) {
+			if (StringUtils.isNotEmpty(listProperties.getNextCursor())) {
+				log.info("Starting query from cursor: " + listProperties.getNextCursor());
+				query.startCursor(Cursor.fromWebSafeString(listProperties.getNextCursor()));
+				listProperties.setPrevCursor(listProperties.getNextCursor());
+			}
+			QueryResultIterator<Key<T>> qands = query.fetchKeys().iterator();
+			
+			List<Key<T>> keyList = new ArrayList<Key<T>>();
+			while (qands.hasNext()) {
+				keyList.add(qands.next());
+				if (keyList.size() >= listProperties.getMaxResults()) {
+					if (qands.hasNext()) {
+						listProperties.setNextCursor(qands.getCursor().toWebSafeString());
+						listProperties.setNumberOfResults(keyList.size());
+						listProperties.updateMoreResultsUrl();
+					}
+					break;
+				}
+			}
+			listProperties.setNumberOfResults(keyList.size());
+			return keyList;
+		}
+	}
 
 	public SBUser getUser(String userId) {
 		try {
 			return (SBUser)getOfy().get(Key.create(userId));
 		} catch (Exception e) {
-			log.log(Level.WARNING, "User '" + userId + "'not found", e);
+			log.log(Level.WARNING, "User '" + userId + "' not found", e);
 			return null;
 		}
 	}
@@ -601,54 +628,6 @@ public class ObjectifyDatastoreDAO {
 		return listingsIds;
 	}
 
-	private List<Key<ListingStats>> handleCursorForListingStatsQuery(ListPropertiesVO listingProperties, Query<ListingStats> query) {
-		if (StringUtils.isNotEmpty(listingProperties.getNextCursor())) {
-			log.info("Starting query from cursor: " + listingProperties.getNextCursor());
-			query.startCursor(Cursor.fromWebSafeString(listingProperties.getNextCursor()));
-			listingProperties.setPrevCursor(listingProperties.getNextCursor());
-		}
-		QueryResultIterator<Key<ListingStats>> topListingsStat = query.fetchKeys().iterator();
-		
-		List<Key<ListingStats>> keyList = new ArrayList<Key<ListingStats>>();
-		while (topListingsStat.hasNext()) {
-			keyList.add(topListingsStat.next());
-			if (keyList.size() >= listingProperties.getMaxResults()) {
-				if (topListingsStat.hasNext()) {
-					listingProperties.setNextCursor(topListingsStat.getCursor().toWebSafeString());
-					listingProperties.setNumberOfResults(keyList.size());
-					listingProperties.updateMoreResultsUrl();
-				}
-				break;
-			}
-		}
-		listingProperties.setNumberOfResults(keyList.size());
-		return keyList;
-	}
-	
-	private List<Key<Listing>> handleCursorForListingQuery(ListPropertiesVO listingProperties, Query<Listing> query) {
-		if (StringUtils.isNotEmpty(listingProperties.getNextCursor())) {
-			log.info("Starting query from cursor: " + listingProperties.getNextCursor());
-			query.startCursor(Cursor.fromWebSafeString(listingProperties.getNextCursor()));
-			listingProperties.setPrevCursor(listingProperties.getNextCursor());
-		}
-		QueryResultIterator<Key<Listing>> topListingsStat = query.fetchKeys().iterator();
-		
-		List<Key<Listing>> keyList = new ArrayList<Key<Listing>>();
-		while (topListingsStat.hasNext()) {
-			keyList.add(topListingsStat.next());
-			if (keyList.size() >= listingProperties.getMaxResults()) {
-				if (topListingsStat.hasNext()) {
-					listingProperties.setNextCursor(topListingsStat.getCursor().toWebSafeString());
-					listingProperties.setNumberOfResults(keyList.size());
-					listingProperties.updateMoreResultsUrl();
-				}
-				break;
-			}
-		}
-		listingProperties.setNumberOfResults(keyList.size());
-		return keyList;
-	}
-	
 	public List<Listing> getUserActiveListings(long userId, ListPropertiesVO listingProperties) {
 		Query<Listing> query = getOfy().query(Listing.class)
 				.filter("owner =", new Key<SBUser>(SBUser.class, userId))
@@ -656,7 +635,7 @@ public class ObjectifyDatastoreDAO {
 				.order("-listedOn")
                 .chunkSize(listingProperties.getMaxResults())
 				.prefetchSize(listingProperties.getMaxResults());
-		List<Key<Listing>> keyList = handleCursorForListingQuery(listingProperties, query);
+		List<Key<Listing>> keyList = new CursorHandler<Listing>().handleQuery(listingProperties, query);
 		List<Listing> listings = new ArrayList<Listing>(getOfy().get(keyList).values());
 		return listings;
 	}
@@ -670,7 +649,7 @@ public class ObjectifyDatastoreDAO {
         query.order("-listedOn")
        			.chunkSize(listingProperties.getMaxResults())
        			.prefetchSize(listingProperties.getMaxResults());
-		List<Key<Listing>> keyList = handleCursorForListingQuery(listingProperties, query);
+		List<Key<Listing>> keyList = new CursorHandler<Listing>().handleQuery(listingProperties, query);
 		List<Listing> listings = new ArrayList<Listing>(getOfy().get(keyList).values());
 		return listings;
 	}
@@ -682,7 +661,7 @@ public class ObjectifyDatastoreDAO {
                 .chunkSize(listingProperties.getMaxResults())
                 .prefetchSize(listingProperties.getMaxResults());
 		
-		List<Key<ListingStats>> keyList = handleCursorForListingStatsQuery(listingProperties, query);
+		List<Key<ListingStats>> keyList = new CursorHandler<ListingStats>().handleQuery(listingProperties, query);
 		List<Key<Listing>> listingKeys = new ArrayList<Key<Listing>>();
 		for(ListingStats stat : getOfy().get(keyList).values()) {
 			listingKeys.add(stat.listing);
@@ -698,7 +677,7 @@ public class ObjectifyDatastoreDAO {
                 .order("-posted")
                 .chunkSize(listingProperties.getMaxResults())
                 .prefetchSize(listingProperties.getMaxResults());
-		List<Key<Listing>> keyList = handleCursorForListingQuery(listingProperties, query);
+		List<Key<Listing>> keyList = new CursorHandler<Listing>().handleQuery(listingProperties, query);
 		List<Listing> listings = new ArrayList<Listing>(getOfy().get(keyList).values());
 		return listings;
 	}
@@ -709,7 +688,7 @@ public class ObjectifyDatastoreDAO {
 				.order("-listedOn")
                 .chunkSize(listingProperties.getMaxResults())
                 .prefetchSize(listingProperties.getMaxResults());
-		List<Key<Listing>> keyList = handleCursorForListingQuery(listingProperties, query);
+		List<Key<Listing>> keyList = new CursorHandler<Listing>().handleQuery(listingProperties, query);
 		List<Listing> listings = new ArrayList<Listing>(getOfy().get(keyList).values());
 		return listings;
 	}
@@ -720,7 +699,7 @@ public class ObjectifyDatastoreDAO {
 				.order("-listedOn")
                 .chunkSize(listingProperties.getMaxResults())
                 .prefetchSize(listingProperties.getMaxResults());
-		List<Key<Listing>> keyList = handleCursorForListingQuery(listingProperties, query);
+		List<Key<Listing>> keyList = new CursorHandler<Listing>().handleQuery(listingProperties, query);
 		List<Listing> listings = new ArrayList<Listing>(getOfy().get(keyList).values());
 		return listings;
 	}
@@ -732,7 +711,7 @@ public class ObjectifyDatastoreDAO {
                 .chunkSize(listingProperties.getMaxResults())
                 .prefetchSize(listingProperties.getMaxResults());
 
-		List<Key<ListingStats>> keyList = handleCursorForListingStatsQuery(listingProperties, query);
+		List<Key<ListingStats>> keyList = new CursorHandler<ListingStats>().handleQuery(listingProperties, query);
 		List<Key<Listing>> listingKeys = new ArrayList<Key<Listing>>();
 		for(ListingStats stat : getOfy().get(keyList).values()) {
 			listingKeys.add(stat.listing);
@@ -749,7 +728,7 @@ public class ObjectifyDatastoreDAO {
                 .chunkSize(listingProperties.getMaxResults())
                 .prefetchSize(listingProperties.getMaxResults());
 		
-		List<Key<ListingStats>> keyList = handleCursorForListingStatsQuery(listingProperties, query);
+		List<Key<ListingStats>> keyList = new CursorHandler<ListingStats>().handleQuery(listingProperties, query);
 		List<Key<Listing>> listingKeys = new ArrayList<Key<Listing>>();
 		for(ListingStats stat : getOfy().get(keyList).values()) {
 			listingKeys.add(stat.listing);
@@ -766,7 +745,7 @@ public class ObjectifyDatastoreDAO {
                 .chunkSize(listingProperties.getMaxResults())
                 .prefetchSize(listingProperties.getMaxResults());
 		
-		List<Key<ListingStats>> keyList = handleCursorForListingStatsQuery(listingProperties, query);
+		List<Key<ListingStats>> keyList = new CursorHandler<ListingStats>().handleQuery(listingProperties, query);
 		List<Key<Listing>> listingKeys = new ArrayList<Key<Listing>>();
 		for(ListingStats stat : getOfy().get(keyList).values()) {
 			listingKeys.add(stat.listing);
@@ -782,7 +761,7 @@ public class ObjectifyDatastoreDAO {
 				.order("-listedOn")
                 .chunkSize(listingProperties.getMaxResults())
                 .prefetchSize(listingProperties.getMaxResults());
-		List<Key<Listing>> keyList = handleCursorForListingQuery(listingProperties, query);
+		List<Key<Listing>> keyList = new CursorHandler<Listing>().handleQuery(listingProperties, query);
 		List<Listing> listings = new ArrayList<Listing>(getOfy().get(keyList).values());
 		return listings;
 	}
@@ -793,7 +772,7 @@ public class ObjectifyDatastoreDAO {
 				.order("closingOn")
                 .chunkSize(listingProperties.getMaxResults())
                 .prefetchSize(listingProperties.getMaxResults());
-		List<Key<Listing>> keyList = handleCursorForListingQuery(listingProperties, query);
+		List<Key<Listing>> keyList = new CursorHandler<Listing>().handleQuery(listingProperties, query);
 		List<Listing> listings = new ArrayList<Listing>(getOfy().get(keyList).values());
 		return listings;
 	}
@@ -1277,39 +1256,16 @@ public class ObjectifyDatastoreDAO {
 		return updateList;
 	}
 
-	private List<Key<Notification>> handleCursorForNotificationQuery(ListPropertiesVO listProperties, Query<Notification> query) {
-		if (StringUtils.isNotEmpty(listProperties.getNextCursor())) {
-			log.info("Starting query from cursor: " + listProperties.getNextCursor());
-			query.startCursor(Cursor.fromWebSafeString(listProperties.getNextCursor()));
-			listProperties.setPrevCursor(listProperties.getNextCursor());
-		}
-		QueryResultIterator<Key<Notification>> monitors = query.fetchKeys().iterator();
-		
-		List<Key<Notification>> keyList = new ArrayList<Key<Notification>>();
-		while (monitors.hasNext()) {
-			keyList.add(monitors.next());
-			if (keyList.size() >= listProperties.getMaxResults()) {
-				if (monitors.hasNext()) {
-					listProperties.setNextCursor(monitors.getCursor().toWebSafeString());
-					listProperties.setNumberOfResults(keyList.size());
-					listProperties.updateMoreResultsUrl();
-				}
-				break;
-			}
-		}
-		listProperties.setNumberOfResults(keyList.size());
-		return keyList;
-	}
-
 	public List<Notification> getUnreadNotifications(long userId, long listingId, ListPropertiesVO listProperties) {
 		Query<Notification> query = getOfy().query(Notification.class)
 				.filter("userA =", new Key<SBUser>(SBUser.class, userId))
 				.filter("listing =", new Key<Listing>(Listing.class, listingId))
-				.filter("read =", Boolean.FALSE)
+				.filter("read =", false)
+				.filter("display =", true)
 				.order("-created")
 				.chunkSize(listProperties.getMaxResults())
        			.prefetchSize(listProperties.getMaxResults());
-		List<Key<Notification>> keyList = handleCursorForNotificationQuery(listProperties, query);
+		List<Key<Notification>> keyList = new CursorHandler<Notification>().handleQuery(listProperties, query);
 		List<Notification> nots = new ArrayList<Notification>(getOfy().get(keyList).values());
 		return nots;
 	}
@@ -1317,11 +1273,12 @@ public class ObjectifyDatastoreDAO {
 	public List<Notification> getAllUserNotifications(long userId, ListPropertiesVO listProperties) {
 		Query<Notification> query = getOfy().query(Notification.class)
 				.filter("userA =", new Key<SBUser>(SBUser.class, userId))
+				.filter("display =", true)
 				.order("read")
 				.order("-created")
 				.chunkSize(listProperties.getMaxResults())
        			.prefetchSize(listProperties.getMaxResults());
-		List<Key<Notification>> keyList = handleCursorForNotificationQuery(listProperties, query);
+		List<Key<Notification>> keyList = new CursorHandler<Notification>().handleQuery(listProperties, query);
 		List<Notification> nots = new ArrayList<Notification>(getOfy().get(keyList).values());
 		return nots;
 	}
@@ -1329,11 +1286,12 @@ public class ObjectifyDatastoreDAO {
 	public List<Notification> getUnreadUserNotifications(long userId, ListPropertiesVO listProperties) {
 		Query<Notification> query = getOfy().query(Notification.class)
 				.filter("userA =", new Key<SBUser>(SBUser.class, userId))
-				.filter("read =", true)
+				.filter("read =", false)
+				.filter("display =", true)
 				.order("-created")
 				.chunkSize(listProperties.getMaxResults())
        			.prefetchSize(listProperties.getMaxResults());
-		List<Key<Notification>> keyList = handleCursorForNotificationQuery(listProperties, query);
+		List<Key<Notification>> keyList = new CursorHandler<Notification>().handleQuery(listProperties, query);
 		List<Notification> nots = new ArrayList<Notification>(getOfy().get(keyList).values());
 		return nots;
 	}
@@ -1341,15 +1299,14 @@ public class ObjectifyDatastoreDAO {
 	public List<Notification> getUserListingNotifications(long userId, long listingId, Notification.Type type, ListPropertiesVO listProperties) {
 		Query<Notification> query = getOfy().query(Notification.class)
 				.filter("userA =", new Key<SBUser>(SBUser.class, userId))
-				.filter("listing =", new Key<Listing>(Listing.class, listingId));
-		if (type != null) {
-			query.filter("type =", type);
-		}
-		query.order("read")
+				.filter("listing =", new Key<Listing>(Listing.class, listingId))
+				.filter("type =", type)
+				.filter("display =", true)
+				.order("read")
 				.order("-created")
 				.chunkSize(listProperties.getMaxResults())
        			.prefetchSize(listProperties.getMaxResults());
-		List<Key<Notification>> keyList = handleCursorForNotificationQuery(listProperties, query);
+		List<Key<Notification>> keyList = new CursorHandler<Notification>().handleQuery(listProperties, query);
 		List<Notification> nots = new ArrayList<Notification>(getOfy().get(keyList).values());
 		return nots;
 	}
@@ -1359,10 +1316,11 @@ public class ObjectifyDatastoreDAO {
 				.filter("direction =", Notification.Direction.A_TO_B)
 				.filter("listing =", new Key<Listing>(Listing.class, listingId))
 				.filter("replied =", true)
+				//.filter("display =", true) @FIXME: this type of filtering is removing valid q&a
 				.order("-created")
 				.chunkSize(listProperties.getMaxResults())
        			.prefetchSize(listProperties.getMaxResults());
-		List<Key<Notification>> keyList = handleCursorForNotificationQuery(listProperties, query);
+		List<Key<Notification>> keyList = new CursorHandler<Notification>().handleQuery(listProperties, query);
 		List<Notification> nots = new ArrayList<Notification>(getOfy().get(keyList).values());
 		return nots;
 	}
@@ -1374,6 +1332,16 @@ public class ObjectifyDatastoreDAO {
 			log.log(Level.WARNING, "Notification with id '" + notifId + "' not found!");
 			return null;
 		}
+	}
+	
+	public List<Notification> getNotificationThread(long notifId) {
+		Query<Notification> query = getOfy().query(Notification.class)
+				.filter("context =", notifId)
+				.filter("direction =", Notification.Direction.A_TO_B)
+				.order("-created")
+				.chunkSize(200)
+       			.prefetchSize(200);
+		return new ArrayList<Notification>(getOfy().get(query.fetchKeys()).values());
 	}
 	
 	public Monitor getListingMonitor(long userId, long listingId) {
@@ -1421,37 +1389,13 @@ public class ObjectifyDatastoreDAO {
 		}
 	}
 
-	private List<Key<Monitor>> handleCursorForMonitorQuery(ListPropertiesVO listProperties, Query<Monitor> query) {
-		if (StringUtils.isNotEmpty(listProperties.getNextCursor())) {
-			log.info("Starting query from cursor: " + listProperties.getNextCursor());
-			query.startCursor(Cursor.fromWebSafeString(listProperties.getNextCursor()));
-			listProperties.setPrevCursor(listProperties.getNextCursor());
-		}
-		QueryResultIterator<Key<Monitor>> monitors = query.fetchKeys().iterator();
-		
-		List<Key<Monitor>> keyList = new ArrayList<Key<Monitor>>();
-		while (monitors.hasNext()) {
-			keyList.add(monitors.next());
-			if (keyList.size() >= listProperties.getMaxResults()) {
-				if (monitors.hasNext()) {
-					listProperties.setNextCursor(monitors.getCursor().toWebSafeString());
-					listProperties.setNumberOfResults(keyList.size());
-					listProperties.updateMoreResultsUrl();
-				}
-				break;
-			}
-		}
-		listProperties.setNumberOfResults(keyList.size());
-		return keyList;
-	}
-	
 	public List<Monitor> getMonitorsForListing(long objectId, ListPropertiesVO listProperties) {
 		Query<Monitor> query = getOfy().query(Monitor.class)
 				.filter("monitoredListing =", new Key<Listing>(Listing.class, objectId))
 				.filter("active =", true)
        			.chunkSize(listProperties.getMaxResults())
        			.prefetchSize(listProperties.getMaxResults());
-		List<Key<Monitor>> keyList = handleCursorForMonitorQuery(listProperties, query);
+		List<Key<Monitor>> keyList = new CursorHandler<Monitor>().handleQuery(listProperties, query);
 		List<Monitor> mons = new ArrayList<Monitor>(getOfy().get(keyList).values());
 		return mons;
 	}
@@ -1462,7 +1406,7 @@ public class ObjectifyDatastoreDAO {
 				.filter("active =", true)
        			.chunkSize(listProperties.getMaxResults())
        			.prefetchSize(listProperties.getMaxResults());
-		List<Key<Monitor>> keyList = handleCursorForMonitorQuery(listProperties, query);
+		List<Key<Monitor>> keyList = new CursorHandler<Monitor>().handleQuery(listProperties, query);
 		List<Monitor> mons = new ArrayList<Monitor>(getOfy().get(keyList).values());
 		return mons;
 	}
@@ -1516,5 +1460,85 @@ public class ObjectifyDatastoreDAO {
 
 	public List<ListingLocation> getAllListingLocations() {
 		return getOfy().query(ListingLocation.class).list();
+	}
+
+	public QuestionAnswer askListingOwner(SBUser user, Listing listing, String text) {
+		QuestionAnswer qa = new QuestionAnswer();
+		qa.question = text;
+		qa.created = new Date();
+		qa.listing = listing.getKey();
+		qa.listingOwner = listing.owner;
+		qa.published = false;
+		qa.user = user.getKey();
+		qa.userNickname = user.nickname;
+		getOfy().put(qa);
+		
+		return qa;
+	}
+	
+	public QuestionAnswer answerQuestion(QuestionAnswer qa, String answer, boolean publish) {
+		qa.answer = answer;
+		qa.answerDate = new Date();
+		qa.published = publish;
+		getOfy().put(qa);
+		return qa;
+	}
+	
+	public QuestionAnswer getQuestionAnswer(long qaId) {
+		return getOfy().find(QuestionAnswer.class, qaId);
+	}
+	
+	public List<QuestionAnswer> getQuestionAnswersForListingOwner(Listing listing, ListPropertiesVO listProperties) {
+		Query<QuestionAnswer> query = getOfy().query(QuestionAnswer.class)
+				.filter("listing =", listing.getKey())
+				.order("created")
+       			.chunkSize(listProperties.getMaxResults())
+       			.prefetchSize(listProperties.getMaxResults());
+		List<Key<QuestionAnswer>> keyList = new CursorHandler<QuestionAnswer>().handleQuery(listProperties, query);
+		List<QuestionAnswer> mons = new ArrayList<QuestionAnswer>(getOfy().get(keyList).values());
+		return mons;
+	}
+	
+	public List<QuestionAnswer> getQuestionAnswersForUser(SBUser user, Listing listing, ListPropertiesVO listProperties) {
+		Query<QuestionAnswer> query = getOfy().query(QuestionAnswer.class)
+				.filter("listing =", listing.getKey())
+				.filter("user =", user.getKey())
+				.filter("published =", false)
+				.order("created")
+       			.chunkSize(100)
+       			.prefetchSize(100);
+		// fetching all unanswered questions asked by user
+		List<Key<QuestionAnswer>> keyList = new ArrayList<Key<QuestionAnswer>>();
+		for (Key<QuestionAnswer> key : query.fetchKeys()) {
+			keyList.add(key);
+		}
+		if (keyList.size() < listProperties.getMaxResults()) {
+			// fetching public questions
+			listProperties.setMaxResults(listProperties.getMaxResults() - keyList.size());
+			query = getOfy().query(QuestionAnswer.class)
+				.filter("listing =", listing.getKey())
+				.filter("published =", true)
+				.order("created")
+       			.chunkSize(listProperties.getMaxResults())
+       			.prefetchSize(listProperties.getMaxResults());
+			keyList.addAll(new CursorHandler<QuestionAnswer>().handleQuery(listProperties, query));
+		}
+		List<QuestionAnswer> qandas = new ArrayList<QuestionAnswer>(getOfy().get(keyList).values());
+		return qandas;
+	}
+
+	/**
+	 * Returns only public Q&As
+	 */
+	public List<QuestionAnswer> getQuestionAnswers(Listing listing, ListPropertiesVO listProperties) {
+		Query<QuestionAnswer> query = getOfy().query(QuestionAnswer.class)
+				.filter("listing =", listing.getKey())
+				.filter("published =", true)
+				.order("created")
+       			.chunkSize(listProperties.getMaxResults())
+       			.prefetchSize(listProperties.getMaxResults());
+		List<Key<QuestionAnswer>> keyList = new CursorHandler<QuestionAnswer>().handleQuery(listProperties, query);
+		List<QuestionAnswer> qandas = new ArrayList<QuestionAnswer>(getOfy().get(keyList).values());
+		return qandas;
 	}
 }

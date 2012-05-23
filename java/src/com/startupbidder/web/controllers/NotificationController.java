@@ -9,10 +9,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
 
 import com.startupbidder.vo.ListPropertiesVO;
-import com.startupbidder.vo.NotificationVO;
 import com.startupbidder.web.HttpHeaders;
 import com.startupbidder.web.HttpHeadersImpl;
 import com.startupbidder.web.ModelDrivenController;
@@ -37,6 +35,8 @@ public class NotificationController extends ModelDrivenController {
 				return user(request);
 			} else if("get".equalsIgnoreCase(getCommand(1))) {
 				return get(request);
+			} else if("get_thread".equalsIgnoreCase(getCommand(1))) {
+				return getThread(request);
 			}
 		}
 		return null;
@@ -87,6 +87,13 @@ public class NotificationController extends ModelDrivenController {
 		HttpHeaders headers = new HttpHeadersImpl("get");
 		String notifId = getCommandOrParameter(request, 2, "id");
 		model = ServiceFacade.instance().getNotification(getLoggedInUser(), notifId);
+		return headers;
+	}
+
+	private HttpHeaders getThread(HttpServletRequest request) {
+		HttpHeaders headers = new HttpHeadersImpl("get_thread");
+		String contextId = getCommandOrParameter(request, 2, "id");
+		model = ServiceFacade.instance().getNotificationThread(getLoggedInUser(), contextId);
 		return headers;
 	}
 

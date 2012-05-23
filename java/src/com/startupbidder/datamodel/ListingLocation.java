@@ -18,7 +18,7 @@ import com.googlecode.objectify.annotation.Unindexed;
  */
 @Unindexed
 @Entity
-public class ListingLocation extends BaseObject {
+public class ListingLocation extends BaseObject<ListingLocation> {
 	public ListingLocation() {
 	}
 	public ListingLocation(Listing listing) {
@@ -26,7 +26,9 @@ public class ListingLocation extends BaseObject {
 		this.latitude = listing.latitude;
 		this.longitude = listing.longitude;
 	}
-	
+	public Key<ListingLocation> getKey() {
+		return new Key<ListingLocation>(ListingLocation.class, id);
+	}
 	@Id public Long id;
 	public Double latitude;
 	public Double longitude;

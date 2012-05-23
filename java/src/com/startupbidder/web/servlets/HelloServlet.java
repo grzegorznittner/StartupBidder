@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
@@ -17,26 +18,26 @@ import com.google.appengine.api.blobstore.BlobInfo;
 import com.google.appengine.api.blobstore.BlobInfoFactory;
 import com.google.appengine.api.blobstore.BlobstoreService;
 import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
-import com.google.appengine.api.datastore.Key;
-import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
+import com.startupbidder.dao.MessageObjectifyDatastoreDAO;
 import com.startupbidder.dao.ObjectifyDatastoreDAO;
 import com.startupbidder.datamodel.Bid;
 import com.startupbidder.datamodel.Comment;
 import com.startupbidder.datamodel.Listing;
 import com.startupbidder.datamodel.ListingDoc;
 import com.startupbidder.datamodel.Monitor;
-import com.startupbidder.datamodel.Notification;
+import com.startupbidder.datamodel.PrivateMessage;
+import com.startupbidder.datamodel.PrivateMessageUser;
 import com.startupbidder.datamodel.SBUser;
+import com.startupbidder.datamodel.VoToModelConverter;
 import com.startupbidder.vo.DtoToVoConverter;
-import com.startupbidder.vo.ErrorCodes;
 import com.startupbidder.vo.ListPropertiesVO;
 import com.startupbidder.vo.ListingAndUserVO;
 import com.startupbidder.vo.ListingDocumentVO;
-import com.startupbidder.vo.ListingListVO;
 import com.startupbidder.vo.ListingVO;
+import com.startupbidder.vo.QuestionAnswerVO;
 import com.startupbidder.vo.UserVO;
 import com.startupbidder.web.FrontController;
 import com.startupbidder.web.ListingFacade;
@@ -234,25 +235,53 @@ public class HelloServlet extends HttpServlet {
 			}
 			out.println("<br/>");
 			
-			out.println("<p style=\"background: none repeat scroll 0% 0% rgb(187, 187, 187);\">Notification API:</p>");
-			out.println("<a href=\"/notification/user/.json?max_results=6\">Notifications for current user</a><br/>");
+			out.println("<p style=\"background: none repeat scroll 0% 0% rgb(187, 187, 187);\">Private Messages API:</p>");
+			
+			out.println("<a href=\"/user/get_message_users/.json?\">Private message users</a><br/>");
 			ListPropertiesVO prop = new ListPropertiesVO();
 			prop.setMaxResults(20);
-			List<Notification> notifications = datastore.getAllUserNotifications(currentUser.toKeyId(), prop);
-			if (!notifications.isEmpty()) {
-				for (Notification notif : notifications) {
-					out.println("" + notif.type + ", listing: " + notif.listingName + ", message:" + notif.message + "<br/>");
-					out.println("<a href=\"/notification/get/" + notifications.get(0).getWebKey() + "/.json\">View</a> ");
-					out.println("<a href=\"/notification/ack/" + notifications.get(0).getWebKey() + "/.json\">Mark as read</a><br/>");
-					if (notif.type == Notification.Type.ASK_LISTING_OWNER || notif.type == Notification.Type.PRIVATE_MESSAGE) {
-						out.println("<form method=\"POST\" action=\"/listing/reply_message/.json\"><textarea name=\"message\" rows=\"3\" cols=\"50\">"
-								+ "{\"message_id\":\"" + notif.getWebKey() + "\", \"text\":\"Reply text\"}"
-								+ "</textarea><input type=\"submit\" value=\"Send reply\"/></form>");
-					}
+			List<PrivateMessageUser> messageUsers = MessageObjectifyDatastoreDAO.getInstance().getMessageShortList(VoToModelConverter.convert(currentUser), prop);
+			if (messageUsers != null && !messageUsers.isEmpty()) {
+				for (PrivateMessageUser msg : messageUsers) {
+					String toUserId = msg.direction == PrivateMessage.Direction.A_TO_B ? msg.userB.getString() : msg.userA.getString();
+					String toUserNick = msg.direction == PrivateMessage.Direction.A_TO_B ? msg.userBNickname : msg.userANickname;
+					out.println("" + msg.userBNickname + " (" + msg.counter + ") posted '" + msg.text + "' on " + msg.created + "<br/>");
+					out.println("<a href=\"/user/get_messages/" + toUserId + "/.json\">View messages</a> ");
+					out.println("<form method=\"POST\" action=\"/user/send_message/.json\"><textarea name=\"message\" rows=\"3\" cols=\"50\">"
+								+ "{\"profile_id\":\"" + toUserId + "\", \"text\":\"Reply text to " + toUserNick + "\"}"
+								+ "</textarea><input type=\"submit\" value=\"Send private to " + toUserNick + "\"/></form>");
 				}
 			} else {
-				out.println("Current user doesn't have any notification, create one first (eg. make a comment)<br/>");
+				out.println("Current user doesn't have any messages<br/>");
 			}
+			for (SBUser usr : users) {
+				if (usr.id != currentUser.toKeyId()) {
+					out.println("<form method=\"POST\" action=\"/user/send_message/.json\"><textarea name=\"message\" rows=\"3\" cols=\"50\">"
+							+ "{\"profile_id\":\"" + usr.getWebKey() + "\", \"text\":\"Message text to " + usr.nickname + "\"}"
+							+ "</textarea><input type=\"submit\" value=\"Send private to " + usr.nickname + "\"/></form>");
+				}
+			}
+
+			out.println("<p style=\"background: none repeat scroll 0% 0% rgb(187, 187, 187);\">Notificatin API:</p>");			
+			out.println("<a href=\"/notification/user/.json?max_results=6\">Notifications for current user</a><br/>");
+
+//			List<Notification> notifications = datastore.getAllUserNotifications(currentUser.toKeyId(), prop);
+//			if (!notifications.isEmpty()) {
+//				for (Notification notif : notifications) {
+//					out.println("" + notif.type + ", listing: " + notif.listingName + ", message:" + notif.message + "<br/>");
+//					out.println("<a href=\"/notification/get/" + notifications.get(0).getWebKey() + "/.json\">View</a> ");
+//					String contextId = new Key<Notification>(Notification.class, notifications.get(0).context).getString();
+//					out.println("<a href=\"/notification/get_thread/" + contextId + "/.json\">View thread</a> ");
+//					out.println("<a href=\"/notification/ack/" + notifications.get(0).getWebKey() + "/.json\">Mark as read</a><br/>");
+//					if (notif.type == Notification.Type.ASK_LISTING_OWNER || notif.type == Notification.Type.PRIVATE_MESSAGE) {
+//						out.println("<form method=\"POST\" action=\"/listing/reply_message/.json\"><textarea name=\"message\" rows=\"3\" cols=\"50\">"
+//								+ "{\"message_id\":\"" + notif.getWebKey() + "\", \"text\":\"Reply text\"}"
+//								+ "</textarea><input type=\"submit\" value=\"Send reply\"/></form>");
+//					}
+//				}
+//			} else {
+//				out.println("Current user doesn't have any notification, create one first (eg. make a comment)<br/>");
+//			}
 			out.println("<br/>");
 			
 			out.println("<p style=\"background: none repeat scroll 0% 0% rgb(187, 187, 187);\">Monitor API:</p>");
@@ -366,25 +395,44 @@ public class HelloServlet extends HttpServlet {
 		for (ListingVO listing : activeListings) {
 			count++;
 			out.println("<tr><td>" + listing.getName() + " posted by " + listing.getOwnerName() + "</td>");
-			out.println("<td><form method=\"POST\" action=\"/listing/withdraw/" + listing.getId() + "/.json\"><input type=\"submit\" value=\"Withdraw\"/></form>");
-			out.println("<form method=\"POST\" action=\"/listing/freeze/" + listing.getId() + "/.json\"><input type=\"submit\" value=\"Freeze\"/></form>");
+			out.println("<td><table width=\"100%\"><tr>");
+			out.println("<td><form method=\"POST\" action=\"/listing/withdraw/" + listing.getId() + "/.json\"><input type=\"submit\" value=\"Withdraw\"/></form></td>");
+			out.println("<td><form method=\"POST\" action=\"/listing/freeze/" + listing.getId() + "/.json\"><input type=\"submit\" value=\"Freeze\"/></form></td>");
 			if (currentUser != null) {
 				Monitor monitor = ObjectifyDatastoreDAO.getInstance().getListingMonitor(currentUser.toKeyId(), listing.toKeyId());
 				if (monitor != null && monitor.active) {
-					out.println("<form method=\"POST\" action=\"/monitor/deactivate/" + listing.getId() + "/.json\"><input type=\"submit\" value=\"Deactivate monitor\"/></form>");
+					out.println("<td><form method=\"POST\" action=\"/monitor/deactivate/" + listing.getId() + "/.json\"><input type=\"submit\" value=\"Deactivate monitor\"/></form></td>");
 				} else {
-					out.println("<form method=\"POST\" action=\"/monitor/set/" + listing.getId() + "/.json\"><input type=\"submit\" value=\"Set monitor\"/></form>");
+					out.println("<td><form method=\"POST\" action=\"/monitor/set/" + listing.getId() + "/.json\"><input type=\"submit\" value=\"Set monitor\"/></form></td>");
 				}
 			}
+			out.println("</tr></table>");
+
+			ListPropertiesVO listProperties = new ListPropertiesVO();
+			listProperties.setMaxResults(50);
+			List<QuestionAnswerVO> qas = ServiceFacade.instance().getQuestionsAndAnswers(currentUser, listing.getId(), listProperties);
+			for (QuestionAnswerVO qa : qas) {
+				if (qa.getAnswerDate() != null) {
+					out.println("Q: " + qa.getQuestion() + "<br/>");
+					out.println("A: " + qa.getAnswer() + "<br/>");
+				} else {
+					out.println("Q: " + qa.getQuestion() + "<br/>");
+					if (StringUtils.equals(listing.getOwner(), currentUser.getId())) {
+						out.println("<form method=\"POST\" action=\"/listing/answer_question/.json\"><textarea name=\"message\" rows=\"2\" cols=\"50\">"
+							+ "{\"question_id\":\"" + qa.getId() + "\", \"text\":\"Answer text\"}"
+							+ "</textarea><input type=\"submit\" value=\"Answer\"/></form>");
+					} else {
+						out.println("A: unanswered<br/><br/>");
+					}
+				}
+			}
+			
+			out.println("<a href=\"/listing/questions_and_answers/" + listing.getId() + ".json?\">View Q&amp;A</a>");
 			out.println("<form method=\"POST\" action=\"/listing/ask_owner/.json\"><textarea name=\"message\" rows=\"3\" cols=\"50\">"
 					+ "{\"listing_id\":\"" + listing.getId() + "\", \"text\":\"Message text\"}"
 					+ "</textarea><input type=\"submit\" value=\"Ask owner\"/></form>");
-			out.println("<form method=\"POST\" action=\"/listing/send_private/.json\"><textarea name=\"message\" rows=\"3\" cols=\"50\">"
-					+ "{\"listing_id\":\"" + listing.getId() + "\", \"text\":\"Message text\"}"
-					+ "</textarea><input type=\"submit\" value=\"Send private\"/></form>");
 			out.println("<a href=\"/listing/get/" + listing.getId() + ".json?\">View</a>");
-			out.println("<a href=\"/listing/private_messages/" + listing.getId() + ".json?\">Listing notifications</a></td>");
-			out.println("<td>");
+			out.println("</td><td>");
 			if (count < 5) {
 				List<ListingDocumentVO> docs = getListingDocs(currentUser, listing);
 				if (docs != null && !docs.isEmpty()) {
@@ -541,79 +589,6 @@ public class HelloServlet extends HttpServlet {
 			if (!validBid) {
 				out.println("Can't test marking bid as paid as user's listings don't have any accepted bids.</br>");
 			}
-		}
-	}
-
-	private void testMockDatastore(User user, PrintWriter out) {
-		out.println("<p><b>Datastore key function test:</b></p>");
-		Key testStringKey = KeyFactory.createKey(Listing.class.getSimpleName(), "bpId");
-		Key testLongKey = KeyFactory.createKey(Listing.class.getSimpleName(), 1234L);
-		out.println("testStringKey.toString() = " + testStringKey.toString() + "</br>");
-		out.println("testLongKey.toString() = " + testLongKey.toString() + "</br>");
-		out.println("KeyFactory.keyToString(testStringKey) = " + KeyFactory.keyToString(testStringKey) + "</br>");
-		out.println("KeyFactory.keyToString(testLongKey) = " + KeyFactory.keyToString(testLongKey) + "</br>");
-		out.println("KeyFactory.stringToKey(KeyFactory.keyToString(testStringKey)) = " + KeyFactory.stringToKey(KeyFactory.keyToString(testStringKey)) + "</br>");
-		out.println("KeyFactory.stringToKey(KeyFactory.keyToString(testLongKey)) = " + KeyFactory.stringToKey(KeyFactory.keyToString(testLongKey)) + "</br>");
-		
-		out.println("<p><b>Current user data:</b></p>");
-		SBUser currentUser = ObjectifyDatastoreDAO.getInstance().getUser(user.getNickname());
-		out.println("<p>" + currentUser + "</p>");
-		
-		currentUser.investor = true;
-		ObjectifyDatastoreDAO.getInstance().updateUser(currentUser);
-		out.println("<p><b>Updated current user data:</b></p>");
-		out.println("<p>" + currentUser + "</p>");
-		
-		ListPropertiesVO listProperties = new ListPropertiesVO();
-		listProperties.setMaxResults(10);
-		
-		ObjectifyDatastoreDAO datastore = ObjectifyDatastoreDAO.getInstance();
-		out.println("<p><b>Current user business plans:</b></p>");
-		for (Listing bp : datastore.getUserActiveListings(currentUser.id, listProperties)) {
-			int rating = datastore.getNumberOfVotesForListing(bp.id);
-			int activity = datastore.getActivity(bp.id);
-			out.println("<p>" + "<b>R=" + rating + "</b>" + "<b>A=" + activity + "</b>" + bp + "</p>");
-			datastore.valueUpListing(bp.id, currentUser.id);
-		}
-		
-		out.println("<p><b>Top business plans:</b></p>");
-		for (Listing bp : datastore.getTopListings(listProperties)) {
-			int rating = datastore.getNumberOfVotesForListing(bp.id);
-			int activity = datastore.getActivity(bp.id);
-			out.println("<p>" + "<b>R=" + rating + "</b>" + "<b>A=" + activity + "</b>" + bp + "</p>");
-			datastore.valueUpListing(bp.id, currentUser.id);
-		}
-		out.println("<p><b>Active business plans:</b></p>");
-		for (Listing bp : datastore.getActiveListings(listProperties)) {
-			int rating = datastore.getNumberOfVotesForListing(bp.id);
-			int activity = datastore.getActivity(bp.id);
-			out.println("<p>" + "<b>R=" + rating + "</b>" + "<b>A=" + activity + "</b>" + bp + "</p>");
-		}
-		
-		out.println("<p><b>Top business plans (2):</b></p>");
-		for (Listing bp : datastore.getTopListings(listProperties)) {
-			int rating = datastore.getNumberOfVotesForListing(bp.id);
-			int activity = datastore.getActivity(bp.id);
-			out.println("<p>" + "<b>R=" + rating + "</b>" + "<b>A=" + activity + "</b>" + bp + "</p>");
-			datastore.valueUpListing(bp.id, currentUser.id);
-		}
-		out.println("<p><b>Active business plans (2):</b></p>");
-		for (Listing bp : datastore.getActiveListings(listProperties)) {
-			int rating = datastore.getNumberOfVotesForListing(bp.id);
-			int activity = datastore.getActivity(bp.id);
-			out.println("<p>" + "<b>R=" + rating + "</b>" + "<b>A=" + activity + "</b>" + bp + "</p>");
-		}
-
-		Listing topBP = datastore.getTopListings(listProperties).get(0);
-		out.println("<p><b>Bids for top business plan '" + topBP + "</b></p>");
-		for (Bid bid : datastore.getBidsForListing(topBP.id)) {
-			out.println("<p>" + bid + "</p>");
-		}
-
-		Listing topActiveBP = datastore.getActiveListings(listProperties).get(0);
-		out.println("<p><b>Comments for most active business plan '" + topActiveBP + "</b></p>");
-		for (Comment comment : datastore.getCommentsForListing(topActiveBP.id)) {
-			out.println("<p>" + comment + "</p>");
 		}
 	}
 
