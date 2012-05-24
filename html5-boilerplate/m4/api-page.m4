@@ -1465,7 +1465,7 @@ include(api-banner.m4)
     <div class="boxpanel apipanel">
     <p>Send and receive private messages between users on the site.  You must be logged in to use these methods.</p>
 
-        <dt>GET /user/get_message_users</dt>
+        <dt>GET /user/message_users</dt>
         <dd>
             <p>Get the list of users with which the currently logged in user has had a conversation.  Call this first in order to get access
             to user conversations which you can then retrieve via the <var>/user/get_messages</var> method</p>
@@ -1490,6 +1490,7 @@ include(api-banner.m4)
         from_user_nickname: :name,
         last_text: :message,
         last_date: :date_yyyymmddhh24mmss,
+        counter: :number_of_messages
         read: :true_or_false
     },
     ...
@@ -1514,7 +1515,7 @@ include(api-banner.m4)
         </div>
 
  
-        <dt>GET /user/get_messages/:id</dt>
+        <dt>GET /user/messages/:id</dt>
         <dd>
             <p>Get the list of messages between the logged in user and the user with the given user <var>id</var>.</p>
         </dd>

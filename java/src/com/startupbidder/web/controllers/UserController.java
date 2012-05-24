@@ -43,9 +43,9 @@ public class UserController extends ModelDrivenController {
 				return all(request);
 			} else if("get".equalsIgnoreCase(getCommand(1))) {
 				return get(request);
-			} else if("get_message_users".equalsIgnoreCase(getCommand(1))) {
+			} else if("message_users".equalsIgnoreCase(getCommand(1))) {
 				return messageUsers(request);
-			} else if("get_messages".equalsIgnoreCase(getCommand(1))) {
+			} else if("messages".equalsIgnoreCase(getCommand(1))) {
 				return messages(request);
 			} else if("topinvestor".equalsIgnoreCase(getCommand(1))) {
 				return topInvestor(request);

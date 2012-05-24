@@ -18,8 +18,8 @@ import com.startupbidder.util.LowecaseSerializer;
 		fieldVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE)
 public class PrivateMessageUserVO extends BaseVO {
 	@JsonProperty("direction") @JsonSerialize(using=LowecaseSerializer.class) private String direction;
-	@JsonProperty("user_id") private String user;
-	@JsonProperty("user_nickname") private String userNickname;
+	@JsonProperty("from_user_id") private String user;
+	@JsonProperty("from_user_nickname") private String userNickname;
 	@JsonProperty("last_date") @JsonSerialize(using=DateSerializer.class) private Date lastDate;
 	@JsonProperty("last_text") private String text;
 	@JsonProperty("counter") private int counter;
