@@ -34,8 +34,8 @@ public class PrivateMessage extends BaseObject<PrivateMessage> {
 		this.userAEmail = fromUser.email;
 		this.userANickname = fromUser.nickname;
 		this.userB = toUser.getKey();
-		this.userAEmail = toUser.email;
-		this.userANickname = toUser.nickname;
+		this.userBEmail = toUser.email;
+		this.userBNickname = toUser.nickname;
 	}
 	public Key<PrivateMessage> getKey() {
 		return new Key<PrivateMessage>(PrivateMessage.class, id);
@@ -75,5 +75,8 @@ public class PrivateMessage extends BaseObject<PrivateMessage> {
 	}
 	public String getWebKey() {
 		return new Key<PrivateMessage>(PrivateMessage.class, id).getString();
+	}
+	public String toString() {
+		return "Message: " + userANickname + (direction == Direction.A_TO_B ? " -> " : " <- ") + userBNickname;
 	}
 }

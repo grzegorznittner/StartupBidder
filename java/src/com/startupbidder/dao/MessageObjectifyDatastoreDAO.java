@@ -105,7 +105,6 @@ public class MessageObjectifyDatastoreDAO {
 	public List<PrivateMessageUser> getMessageShortList(SBUser user, ListPropertiesVO listProperties) {
 		Query<PrivateMessageUser> query = getOfy().query(PrivateMessageUser.class)
 				.filter("userA =", user.getKey())
-				.filter("direction =", PrivateMessage.Direction.B_TO_A)
 				.order("-created")
        			.chunkSize(listProperties.getMaxResults())
        			.prefetchSize(listProperties.getMaxResults());
@@ -114,10 +113,10 @@ public class MessageObjectifyDatastoreDAO {
 		return msgs;
 	}
 	
-	public List<PrivateMessage> getMessageList(SBUser user, SBUser fromUser, ListPropertiesVO listProperties) {
+	public List<PrivateMessage> getMessageList(SBUser user, SBUser otherUser, ListPropertiesVO listProperties) {
 		Query<PrivateMessage> query = getOfy().query(PrivateMessage.class)
 				.filter("userA =", user.getKey())
-				.filter("userB =", fromUser.getKey())
+				.filter("userB =", otherUser.getKey())
 				.order("-created")
        			.chunkSize(listProperties.getMaxResults())
        			.prefetchSize(listProperties.getMaxResults());

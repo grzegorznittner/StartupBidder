@@ -76,4 +76,7 @@ public class PrivateMessageUser extends BaseObject<PrivateMessageUser> {
 	public String getWebKey() {
 		return new Key<PrivateMessageUser>(PrivateMessageUser.class, id).getString();
 	}
+	public String toString() {
+		return "MessageUser: " + userANickname + (direction == Direction.A_TO_B ? " -> " : " <- ") + userBNickname;
+	}
 }

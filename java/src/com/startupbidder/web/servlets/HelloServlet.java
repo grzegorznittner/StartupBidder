@@ -243,9 +243,10 @@ public class HelloServlet extends HttpServlet {
 			List<PrivateMessageUser> messageUsers = MessageObjectifyDatastoreDAO.getInstance().getMessageShortList(VoToModelConverter.convert(currentUser), prop);
 			if (messageUsers != null && !messageUsers.isEmpty()) {
 				for (PrivateMessageUser msg : messageUsers) {
-					String toUserId = msg.direction == PrivateMessage.Direction.A_TO_B ? msg.userB.getString() : msg.userA.getString();
-					String toUserNick = msg.direction == PrivateMessage.Direction.A_TO_B ? msg.userBNickname : msg.userANickname;
-					out.println("" + msg.userBNickname + " (" + msg.counter + ") posted '" + msg.text + "' on " + msg.created + "<br/>");
+					String fromUserNick = msg.direction == PrivateMessage.Direction.A_TO_B ? msg.userANickname : msg.userBNickname;
+					String toUserId = msg.userA.getId() == currentUser.toKeyId() ? msg.userB.getString() : msg.userA.getString();
+					String toUserNick = msg.userA.getId() == currentUser.toKeyId() ? msg.userBNickname : msg.userANickname;
+					out.println("" + fromUserNick + " (" + msg.counter + ") posted '" + msg.text + "' on " + msg.created + "<br/>");
 					out.println("<a href=\"/user/get_messages/" + toUserId + "/.json\">View messages</a> ");
 					out.println("<form method=\"POST\" action=\"/user/send_message/.json\"><textarea name=\"message\" rows=\"3\" cols=\"50\">"
 								+ "{\"profile_id\":\"" + toUserId + "\", \"text\":\"Reply text to " + toUserNick + "\"}"

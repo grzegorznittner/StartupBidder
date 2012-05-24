@@ -45,7 +45,7 @@ public class DtoToVoConverter {
 		PrivateMessageVO qa = new PrivateMessageVO();
 		qa.setText(msgDTO.text);
 		qa.setCreated(msgDTO.created);
-		qa.setDirection(msgDTO.direction.toString());
+		qa.setDirection(msgDTO.direction == PrivateMessage.Direction.A_TO_B ? "sent" : "received");
 		return qa;
 	}
 	
@@ -56,7 +56,7 @@ public class DtoToVoConverter {
 		PrivateMessageUserVO qa = new PrivateMessageUserVO();
 		qa.setText(msgDTO.text);
 		qa.setLastDate(msgDTO.created);
-		qa.setDirection(msgDTO.direction.toString());
+		qa.setDirection(msgDTO.direction == PrivateMessage.Direction.A_TO_B ? "sent" : "received");
 		qa.setUser(msgDTO.direction == PrivateMessage.Direction.A_TO_B ? msgDTO.userA.getString() : msgDTO.userB.getString());
 		qa.setUserNickname(msgDTO.direction == PrivateMessage.Direction.A_TO_B ? msgDTO.userANickname: msgDTO.userBNickname);
 		return qa;
@@ -538,12 +538,12 @@ public class DtoToVoConverter {
 		if (msgDtoList == null) {
 			return null;
 		}
-		List<PrivateMessageVO> qaVoList = new ArrayList<PrivateMessageVO>();
+		List<PrivateMessageVO> msgVoList = new ArrayList<PrivateMessageVO>();
 		for (PrivateMessage msgDTO : msgDtoList) {
 			PrivateMessageVO msgVO = convert(msgDTO);
-			qaVoList.add(msgVO);
+			msgVoList.add(msgVO);
 		}
-		return qaVoList;
+		return msgVoList;
 	}
 	
 	public static List<PrivateMessageUserVO> convertPrivateMessageUser(List<PrivateMessageUser> msgDtoList) {
