@@ -53,7 +53,7 @@ public class PrivateMessage extends BaseObject<PrivateMessage> {
 	@Indexed public Key<SBUser> userB;
     public String userBNickname;
 	public String userBEmail;
-	@Indexed public Direction direction;
+	public Direction direction;
 	
 	@Indexed public Date   created;
 	public String text;

@@ -57,8 +57,9 @@ public class DtoToVoConverter {
 		qa.setText(msgDTO.text);
 		qa.setLastDate(msgDTO.created);
 		qa.setDirection(msgDTO.direction == PrivateMessage.Direction.A_TO_B ? "sent" : "received");
-		qa.setUser(msgDTO.direction == PrivateMessage.Direction.A_TO_B ? msgDTO.userA.getString() : msgDTO.userB.getString());
-		qa.setUserNickname(msgDTO.direction == PrivateMessage.Direction.A_TO_B ? msgDTO.userANickname: msgDTO.userBNickname);
+		qa.setUser(msgDTO.userB.getString());
+		qa.setUserNickname(msgDTO.userBNickname);
+		qa.setCounter(msgDTO.counter);
 		return qa;
 	}
 	

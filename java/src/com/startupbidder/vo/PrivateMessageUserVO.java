@@ -22,6 +22,7 @@ public class PrivateMessageUserVO extends BaseVO {
 	@JsonProperty("user_nickname") private String userNickname;
 	@JsonProperty("last_date") @JsonSerialize(using=DateSerializer.class) private Date lastDate;
 	@JsonProperty("last_text") private String text;
+	@JsonProperty("counter") private int counter;
 	public PrivateMessageUserVO() {
 	}
 	public String getId() {
@@ -56,5 +57,11 @@ public class PrivateMessageUserVO extends BaseVO {
 	}
 	public void setText(String text) {
 		this.text = text;
+	}
+	public int getCounter() {
+		return counter;
+	}
+	public void setCounter(int counter) {
+		this.counter = counter;
 	}
 }

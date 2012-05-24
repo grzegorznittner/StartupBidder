@@ -43,22 +43,18 @@ public class MessageObjectifyDatastoreDAO {
 		PrivateMessage msg2 = msg1.createCrossMessage();
 		
 		PrivateMessageUser[] shorts = getMessageShorts(toUser, fromUser);
+		PrivateMessageUser short0 = new PrivateMessageUser(msg1);
 		if (shorts[0] != null) {
-			shorts[0].text = text;
-			shorts[0].created = msg1.created;
-			shorts[0].counter++;
-		} else {
-			shorts[0] = new PrivateMessageUser(msg1);
-			shorts[0].counter = 1;
+			short0.id = shorts[0].id;
+			short0.counter = shorts[0].counter + 1;
 		}
+		PrivateMessageUser short1 = new PrivateMessageUser(msg2);
 		if (shorts[1] != null) {
-			shorts[1].text = text;
-			shorts[1].created = msg1.created;
-			shorts[1].counter++;
-		} else {
-			shorts[1] = new PrivateMessageUser(msg2);
-			shorts[1].counter = 1;
+			short1.id = shorts[1].id;
+			short1.counter = shorts[1].counter + 1;
 		}
+		shorts[0] = short0;
+		shorts[1] = short1;
 		log.info("Storing private messages: " + msg1 + "; " + msg2 + ". Updating message shorts: " + shorts[0] + "; " + shorts[1]);
 		getOfy().put(msg1, msg2, shorts[0], shorts[1]);
 		return msg1;

@@ -362,7 +362,6 @@ indexes:
   ancestor: no
   properties:
     - name: userA
-    - name: direction
     - name: created
       direction: desc
 

@@ -14,17 +14,17 @@ import org.codehaus.jackson.annotate.JsonProperty;
 		fieldVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE)
 public class PrivateMessageListVO extends BaseResultVO {
 	@JsonProperty("messages") private List<PrivateMessageVO> messages;
-	@JsonProperty("other_user_profile") private UserBasicVO otherUser;
+	@JsonProperty("other_user_profile") private UserShortVO otherUser;
 	public List<PrivateMessageVO> getMessages() {
 		return messages;
 	}
 	public void setMessages(List<PrivateMessageVO> messages) {
 		this.messages = messages;
 	}
-	public UserBasicVO getOtherUser() {
+	public UserShortVO getOtherUser() {
 		return otherUser;
 	}
-	public void setOtherUser(UserBasicVO otherUser) {
+	public void setOtherUser(UserShortVO otherUser) {
 		this.otherUser = otherUser;
 	}
 }

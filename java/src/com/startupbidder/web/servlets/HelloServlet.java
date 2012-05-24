@@ -37,6 +37,7 @@ import com.startupbidder.vo.ListPropertiesVO;
 import com.startupbidder.vo.ListingAndUserVO;
 import com.startupbidder.vo.ListingDocumentVO;
 import com.startupbidder.vo.ListingVO;
+import com.startupbidder.vo.PrivateMessageUserVO;
 import com.startupbidder.vo.QuestionAnswerVO;
 import com.startupbidder.vo.UserVO;
 import com.startupbidder.web.FrontController;
@@ -242,15 +243,14 @@ public class HelloServlet extends HttpServlet {
 			prop.setMaxResults(20);
 			List<PrivateMessageUser> messageUsers = MessageObjectifyDatastoreDAO.getInstance().getMessageShortList(VoToModelConverter.convert(currentUser), prop);
 			if (messageUsers != null && !messageUsers.isEmpty()) {
-				for (PrivateMessageUser msg : messageUsers) {
-					String fromUserNick = msg.direction == PrivateMessage.Direction.A_TO_B ? msg.userANickname : msg.userBNickname;
-					String toUserId = msg.userA.getId() == currentUser.toKeyId() ? msg.userB.getString() : msg.userA.getString();
-					String toUserNick = msg.userA.getId() == currentUser.toKeyId() ? msg.userBNickname : msg.userANickname;
-					out.println("" + fromUserNick + " (" + msg.counter + ") posted '" + msg.text + "' on " + msg.created + "<br/>");
-					out.println("<a href=\"/user/get_messages/" + toUserId + "/.json\">View messages</a> ");
-					out.println("<form method=\"POST\" action=\"/user/send_message/.json\"><textarea name=\"message\" rows=\"3\" cols=\"50\">"
-								+ "{\"profile_id\":\"" + toUserId + "\", \"text\":\"Reply text to " + toUserNick + "\"}"
-								+ "</textarea><input type=\"submit\" value=\"Send private to " + toUserNick + "\"/></form>");
+				for (PrivateMessageUserVO msg : DtoToVoConverter.convertPrivateMessageUser(messageUsers)) {
+					out.println("<p style=\"background: none repeat scroll 0% 0% rgb(220, 220, 220);\">");
+					out.println("" + msg.getUserNickname() + " (" + msg.getCounter() + ") last " + msg.getDirection() + " '" + msg.getText() + "' on " + msg.getLastDate() + " ");
+					out.println("<a href=\"/user/get_messages/" + msg.getUser() + "/.json\">View all conversation with " + msg.getUserNickname() + "</a> ");
+					out.println("</p>");
+					out.println("<form method=\"POST\" action=\"/user/send_message/.json\"><textarea name=\"message\" rows=\"1\" cols=\"120\">"
+								+ "{\"profile_id\":\"" + msg.getUser() + "\", \"text\":\"Reply text " + (msg.getCounter() + 1) + " to " + msg.getUserNickname() + "\"}"
+								+ "</textarea><input type=\"submit\" value=\"Send private to " + msg.getUserNickname() + "\"/></form>");
 				}
 			} else {
 				out.println("Current user doesn't have any messages<br/>");

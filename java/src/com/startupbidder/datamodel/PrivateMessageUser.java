@@ -36,12 +36,12 @@ public class PrivateMessageUser extends BaseObject<PrivateMessageUser> {
 	@Indexed public Key<SBUser> userB;
     public String userBNickname;
 	public String userBEmail;
-	@Indexed public Direction direction;
+	public Direction direction;
 	
 	@Indexed public Date   created;
 	public String text;
 	@Indexed public boolean read;
-	public int counter = 0;
+	public int counter = 1;
 	
 	public PrivateMessageUser() {
 	}

@@ -20,6 +20,7 @@ import com.startupbidder.vo.PrivateMessageUserListVO;
 import com.startupbidder.vo.PrivateMessageUserVO;
 import com.startupbidder.vo.PrivateMessageVO;
 import com.startupbidder.vo.UserBasicVO;
+import com.startupbidder.vo.UserShortVO;
 import com.startupbidder.vo.UserVO;
 
 /**
@@ -95,7 +96,7 @@ public class MessageFacade {
 				getDAO().getMessageList(user, otherUser, listProperties));
 		log.info("Returning " + msgs.size() + " messages.");
 		result.setMessages(msgs);
-		result.setOtherUser(new UserBasicVO(DtoToVoConverter.convert(otherUser)));
+		result.setOtherUser(new UserShortVO(DtoToVoConverter.convert(otherUser)));
 		return result;
 	}
 
