@@ -20,6 +20,7 @@ public class PrivateMessageVO extends BaseVO {
 	@JsonProperty("direction") @JsonSerialize(using=LowecaseSerializer.class) private String direction;
 	@JsonProperty("create_date") @JsonSerialize(using=DateSerializer.class) private Date created;
 	@JsonProperty("text") private String text;
+	@JsonProperty("read") private boolean read;
 	public PrivateMessageVO() {
 	}
 	public String getId() {
@@ -42,5 +43,11 @@ public class PrivateMessageVO extends BaseVO {
 	}
 	public void setText(String text) {
 		this.text = text;
+	}
+	public boolean isRead() {
+		return read;
+	}
+	public void setRead(boolean read) {
+		this.read = read;
 	}
 }

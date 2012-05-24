@@ -238,7 +238,7 @@ public class HelloServlet extends HttpServlet {
 			
 			out.println("<p style=\"background: none repeat scroll 0% 0% rgb(187, 187, 187);\">Private Messages API:</p>");
 			
-			out.println("<a href=\"/user/get_message_users/.json?\">Private message users</a><br/>");
+			out.println("<a href=\"/user/message_users/.json?\">Private message users</a><br/>");
 			ListPropertiesVO prop = new ListPropertiesVO();
 			prop.setMaxResults(20);
 			List<PrivateMessageUser> messageUsers = MessageObjectifyDatastoreDAO.getInstance().getMessageShortList(VoToModelConverter.convert(currentUser), prop);
@@ -246,7 +246,7 @@ public class HelloServlet extends HttpServlet {
 				for (PrivateMessageUserVO msg : DtoToVoConverter.convertPrivateMessageUser(messageUsers)) {
 					out.println("<p style=\"background: none repeat scroll 0% 0% rgb(220, 220, 220);\">");
 					out.println("" + msg.getUserNickname() + " (" + msg.getCounter() + ") last " + msg.getDirection() + " '" + msg.getText() + "' on " + msg.getLastDate() + " ");
-					out.println("<a href=\"/user/get_messages/" + msg.getUser() + "/.json\">View all conversation with " + msg.getUserNickname() + "</a> ");
+					out.println("<a href=\"/user/messages/" + msg.getUser() + "/.json\">View all conversation with " + msg.getUserNickname() + "</a> ");
 					out.println("</p>");
 					out.println("<form method=\"POST\" action=\"/user/send_message/.json\"><textarea name=\"message\" rows=\"1\" cols=\"120\">"
 								+ "{\"profile_id\":\"" + msg.getUser() + "\", \"text\":\"Reply text " + (msg.getCounter() + 1) + " to " + msg.getUserNickname() + "\"}"

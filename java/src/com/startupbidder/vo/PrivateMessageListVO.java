@@ -15,6 +15,7 @@ import org.codehaus.jackson.annotate.JsonProperty;
 public class PrivateMessageListVO extends BaseResultVO {
 	@JsonProperty("messages") private List<PrivateMessageVO> messages;
 	@JsonProperty("other_user_profile") private UserShortVO otherUser;
+	@JsonProperty("messages_props")	private ListPropertiesVO messagesProperties;
 	public List<PrivateMessageVO> getMessages() {
 		return messages;
 	}
@@ -26,5 +27,11 @@ public class PrivateMessageListVO extends BaseResultVO {
 	}
 	public void setOtherUser(UserShortVO otherUser) {
 		this.otherUser = otherUser;
+	}
+	public ListPropertiesVO getMessagesProperties() {
+		return messagesProperties;
+	}
+	public void setMessagesProperties(ListPropertiesVO messagesProperties) {
+		this.messagesProperties = messagesProperties;
 	}
 }

@@ -78,6 +78,7 @@ public class MessageFacade {
 		List<PrivateMessageUserVO> msgs = DtoToVoConverter.convertPrivateMessageUser(
 				getDAO().getMessageShortList(user, listProperties));
 		result.setMessages(msgs);
+		result.setMessagesProperties(listProperties);
 		return result;
 	}
 
@@ -92,11 +93,13 @@ public class MessageFacade {
 		SBUser user = VoToModelConverter.convert(loggedInUser);
 		SBUser otherUser = getUserDAO().getUser(userId);
 		log.info("Retrieving messages between '" + user.nickname + "' (" + user.id + ") and '" + otherUser.nickname + "' (" + otherUser.id + ")");
-		List<PrivateMessageVO> msgs = DtoToVoConverter.convertPrivateMessage(
-				getDAO().getMessageList(user, otherUser, listProperties));
-		log.info("Returning " + msgs.size() + " messages.");
-		result.setMessages(msgs);
+		List<PrivateMessage> msgs = getDAO().getMessageList(user, otherUser, listProperties);
+		List<PrivateMessageVO> msgsVO = DtoToVoConverter.convertPrivateMessage(msgs);
+		getDAO().updateReadFlag(user, otherUser, msgs);
+		log.info("Returning " + msgsVO.size() + " messages.");
+		result.setMessages(msgsVO);
 		result.setOtherUser(new UserShortVO(DtoToVoConverter.convert(otherUser)));
+		result.setMessagesProperties(listProperties);
 		return result;
 	}
 

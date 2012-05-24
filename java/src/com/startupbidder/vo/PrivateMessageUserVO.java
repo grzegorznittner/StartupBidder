@@ -23,6 +23,7 @@ public class PrivateMessageUserVO extends BaseVO {
 	@JsonProperty("last_date") @JsonSerialize(using=DateSerializer.class) private Date lastDate;
 	@JsonProperty("last_text") private String text;
 	@JsonProperty("counter") private int counter;
+	@JsonProperty("read") private boolean read;
 	public PrivateMessageUserVO() {
 	}
 	public String getId() {
@@ -63,5 +64,11 @@ public class PrivateMessageUserVO extends BaseVO {
 	}
 	public void setCounter(int counter) {
 		this.counter = counter;
+	}
+	public boolean isRead() {
+		return read;
+	}
+	public void setRead(boolean read) {
+		this.read = read;
 	}
 }

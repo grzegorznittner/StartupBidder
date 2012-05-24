@@ -120,4 +120,26 @@ public class MessageObjectifyDatastoreDAO {
 		List<PrivateMessage> msgs = new ArrayList<PrivateMessage>(getOfy().get(keyList).values());
 		return msgs;
 	}
+
+	public void updateReadFlag(SBUser user, SBUser otherUser, List<PrivateMessage> msgs) {
+		List<PrivateMessage> forUpdate = new ArrayList<PrivateMessage>();
+		for (PrivateMessage msg : msgs) {
+			if (!msg.read) {
+				msg.read = true;
+				forUpdate.add(msg);
+			} else {
+				break;
+			}
+		}
+		if (forUpdate.size() > 0) {
+			PrivateMessageUser shorts[] = getMessageShorts(user, otherUser);
+			shorts[0].read = true;
+			shorts[1].read = true;
+			forUpdate.add(shorts[0]);
+			forUpdate.add(shorts[1]);
+			
+			log.info("Updating read flag for " + forUpdate.size() + " message objects.");
+			getOfy().put(forUpdate);
+		}
+	}
 }

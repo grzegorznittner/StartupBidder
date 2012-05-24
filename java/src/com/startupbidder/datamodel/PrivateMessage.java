@@ -57,7 +57,7 @@ public class PrivateMessage extends BaseObject<PrivateMessage> {
 	
 	@Indexed public Date   created;
 	public String text;
-	@Indexed public boolean read;
+	public boolean read;
 
 	public PrivateMessage createCrossMessage() {
 		PrivateMessage cross = new PrivateMessage();

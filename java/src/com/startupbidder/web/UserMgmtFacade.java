@@ -19,8 +19,6 @@ import com.google.appengine.api.taskqueue.TaskOptions;
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.startupbidder.dao.ObjectifyDatastoreDAO;
-import com.startupbidder.datamodel.Listing;
-import com.startupbidder.datamodel.Notification;
 import com.startupbidder.datamodel.SBUser;
 import com.startupbidder.datamodel.UserStats;
 import com.startupbidder.vo.BaseVO;
@@ -28,8 +26,6 @@ import com.startupbidder.vo.DtoToVoConverter;
 import com.startupbidder.vo.UserAndUserVO;
 import com.startupbidder.vo.UserListVO;
 import com.startupbidder.vo.UserVO;
-import com.startupbidder.vo.UserVotesVO;
-import com.startupbidder.vo.VoteVO;
 
 public class UserMgmtFacade {
 	private static final Logger log = Logger.getLogger(UserMgmtFacade.class.getName());
