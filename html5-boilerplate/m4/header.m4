@@ -28,16 +28,16 @@
     <div class="span-8 last loginspan headerrow initialhidden" id="headerloggedin">
         <div>
             <a id="logoutlink" href="">
-                <div class="headericon headerlogout"></div>
+                <div class="headericon headerlogout" title="Logout"></div>
             </a>
             <a href="/notifications-page.html">
-                <div class="headericon headernotifications"></div>
+                <div class="headericon headernotifications" title="Notifications"></div>
             </a>
             <a href="/message-group-page.html">
-                <div class="headericon headermessages"></div>
+                <div class="headericon headermessages" title="Messages"></div>
             </a>
             <a href="/profile-page.html">
-                <span class="headerlink hoverlink headerlinkright" id="headerusername">You</span>
+                <span class="headerlink hoverlink headerlinkright" id="headerusername" title="Profile">You</span>
             </a>
         </div>
     </div>

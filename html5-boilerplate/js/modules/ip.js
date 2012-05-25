@@ -17,7 +17,9 @@ pl.implement(IPClass, {
             // contact_emaillink = contact_email ? 'mailto:' + contact_email :'',
             brief_address = listing.brief_address || 'Postal address here',
             website = listing.website || 'Website here',
-            asking = listing.asked_fund ? 'Asking ' + CurrencyClass.prototype.format(suggested_amt) + ' for ' + PercentClass.prototype.format(suggested_pct) : 'Not asking for funds at this time.',
+            asking = listing.asked_fund
+                ? 'Asking ' + CurrencyClass.prototype.format(listing.suggested_amt) + ' for ' + PercentClass.prototype.format(listing.suggested_pct)
+                : 'Not asking for funds at this time.',
             m = 10,
             n = 26,
             i,

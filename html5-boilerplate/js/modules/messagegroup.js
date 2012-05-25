@@ -28,7 +28,7 @@ pl.implement(MessageGroupClass, {
         return '\
         <div class="messageline">\
             <p class="messageuser span-4">' + self.from_user_nickname + '</p>\
-            <p class="messagetext span-14">\
+            <p class="messagetext span-14 darkblue">\
                 '+self.openanchor+'\
                 '+self.messagetext+'\
                 '+self.closeanchor+'\
