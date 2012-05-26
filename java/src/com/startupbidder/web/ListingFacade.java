@@ -85,7 +85,7 @@ import com.startupbidder.vo.UserVO;
 public class ListingFacade {
 	private static final Logger log = Logger.getLogger(ListingFacade.class.getName());
 	
-	public static enum UpdateReason {NEW_BID, BID_UPDATE, NEW_COMMENT, DELETE_COMMENT, NEW_MONITOR, DELETE_MONITOR, NEW_QUESTION, NEW_QUESTION_REPLY, NEW_MESSAGE, NEW_MESSAGE_REPLY, NONE};
+	public static enum UpdateReason {NEW_BID, BID_UPDATE, NEW_COMMENT, DELETE_COMMENT, NEW_MONITOR, DELETE_MONITOR, QUESTION_ANSWERED, NONE};
 	public static final String MEMCACHE_ALL_LISTING_LOCATIONS = "AllListingLocations";
 	/**
 	 * Delay for listing stats task execution.
@@ -1408,9 +1408,6 @@ public class ListingFacade {
 		listing.setNumberOfBids(listingStats.numberOfBids);
 		listing.setNumberOfComments(listingStats.numberOfComments);
         listing.setNumberOfQuestions(listingStats.numberOfQuestions);
-        if (loggedInUser != null && (loggedInUser.isAdmin() || StringUtils.equals(loggedInUser.getId(), listing.getOwner()))) {
-            listing.setNumberOfMessages(listingStats.numberOfMessages);
-        }
 		listing.setValuation((int)listingStats.valuation);
 		listing.setMedianValuation((int)listingStats.medianValuation);
 		listing.setPreviousValuation((int)listingStats.previousValuation);
@@ -1457,17 +1454,8 @@ public class ListingFacade {
 			case DELETE_MONITOR:
 				listingStats.numberOfMonitors = listingStats.numberOfMonitors - 1;
 				break;
-            case NEW_QUESTION:
+            case QUESTION_ANSWERED:
                 listingStats.numberOfQuestions++;
-                break;
-            case NEW_QUESTION_REPLY:
-                listingStats.numberOfQuestions++;
-                break;
-            case NEW_MESSAGE:
-                listingStats.numberOfMessages++;
-                break;
-            case NEW_MESSAGE_REPLY:
-                listingStats.numberOfMessages++;
                 break;
 			default:
 				// reason can be also null

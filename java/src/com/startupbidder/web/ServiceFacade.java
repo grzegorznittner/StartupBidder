@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.startupbidder.datamodel.*;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -18,14 +19,6 @@ import com.google.appengine.api.taskqueue.TaskOptions;
 import com.google.appengine.api.users.User;
 import com.googlecode.objectify.Key;
 import com.startupbidder.dao.ObjectifyDatastoreDAO;
-import com.startupbidder.datamodel.Bid;
-import com.startupbidder.datamodel.Comment;
-import com.startupbidder.datamodel.Listing;
-import com.startupbidder.datamodel.Monitor;
-import com.startupbidder.datamodel.Notification;
-import com.startupbidder.datamodel.QuestionAnswer;
-import com.startupbidder.datamodel.SBUser;
-import com.startupbidder.datamodel.VoToModelConverter;
 import com.startupbidder.vo.BaseVO;
 import com.startupbidder.vo.CommentListVO;
 import com.startupbidder.vo.CommentVO;
@@ -432,7 +425,10 @@ public class ServiceFacade {
 		}
 		
 		log.info("User '" + loggedInUser.getNickname() + "' (" + loggedInUser.getId() + ") is replying to question: " + qa);
-		qa = getDAO().answerQuestion(qa, text, true);
+		qa = getDAO().answerQuestion(listing, qa, text, true);
+
+        ListingFacade.instance().scheduleUpdateOfListingStatistics(listing.getWebKey(), UpdateReason.QUESTION_ANSWERED);
+        
 		log.info("Answered q&a: " + qa);
 		return DtoToVoConverter.convert(qa);
 	}
@@ -490,12 +486,6 @@ public class ServiceFacade {
 		notifs[0].context = notifs[0].id;
 		notifs[1].context = notifs[0].id;
 		notifs = getDAO().storeNotification(notifs);
-        if (type == Notification.Type.ASK_LISTING_OWNER) {
-            ListingFacade.instance().scheduleUpdateOfListingStatistics(listing.getWebKey(), UpdateReason.NEW_QUESTION);
-        }
-        else if (type == Notification.Type.PRIVATE_MESSAGE) {
-            ListingFacade.instance().scheduleUpdateOfListingStatistics(listing.getWebKey(), UpdateReason.NEW_MESSAGE);
-        }
         for (Notification not : notifs) {
         	if (not != null) {
         		String taskName = timeStampFormatter.print(new Date().getTime()) + "send_notification_" + not.type + "_" + not.userA.getId();
@@ -557,12 +547,6 @@ public class ServiceFacade {
 		originalNotification.display = false;
 
 		Notification notifs[] = getDAO().storeNotification(notifA, notifB, originalNotification);
-        if (notifA.type == Notification.Type.ASK_LISTING_OWNER) {
-            ListingFacade.instance().scheduleUpdateOfListingStatistics(notifA.listing.getString(), UpdateReason.NEW_QUESTION_REPLY);
-        }
-        else if (notifA.type == Notification.Type.PRIVATE_MESSAGE) {
-            ListingFacade.instance().scheduleUpdateOfListingStatistics(notifA.listing.getString(), UpdateReason.NEW_MESSAGE_REPLY);
-        }
         for (Notification not : notifs) {
         	if (not != null) {
         		String taskName = timeStampFormatter.print(new Date().getTime()) + "send_notification_" + not.type + "_" + not.userA.getId();

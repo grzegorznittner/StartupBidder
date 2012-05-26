@@ -9,8 +9,10 @@ pl.implement(QuestionClass, {
             complete = function(json) {
                 console.log(json);
                 self.display(json);
-            };
-        (new AjaxClass('/listings/questions_and_answers/' + this.listing_id, 'qandamsg', complete)).call();
+            },
+            ajax = new AjaxClass('/listings/questions_and_answers/' + this.listing_id, 'qandamsg', complete);
+        ajax.setGetData({ max_results: 20 });
+        ajax.call();
     },
     store: function(json) {
         this.questionlist = json || [];

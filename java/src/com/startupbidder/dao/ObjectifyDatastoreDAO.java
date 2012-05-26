@@ -10,8 +10,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.startupbidder.vo.DtoToVoConverter;
-import com.startupbidder.vo.NotificationVO;
+import com.startupbidder.vo.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.RandomUtils;
@@ -44,8 +43,6 @@ import com.startupbidder.datamodel.SBUser;
 import com.startupbidder.datamodel.SystemProperty;
 import com.startupbidder.datamodel.UserStats;
 import com.startupbidder.datamodel.Vote;
-import com.startupbidder.vo.ListPropertiesVO;
-import com.startupbidder.vo.UserVO;
 import com.startupbidder.web.ListingFacade;
 
 /**
@@ -341,25 +338,10 @@ public class ObjectifyDatastoreDAO {
 		}
 		listingStats.medianValuation = median;
 
-        int numQuestions = 0;
-        int numMessages = 0;
-        ListPropertiesVO props = new ListPropertiesVO();
-        props.setMaxResults(1000);
-        List<NotificationVO> notifications = DtoToVoConverter.convertNotifications(getPublicListingNotifications(listingId, props));
-        for (NotificationVO notification : notifications) {
-            Notification.Type type = Notification.Type.valueOf(notification.getType());
-            if (type == Notification.Type.ASK_LISTING_OWNER) {
-                numQuestions++;
-            }
-            else if (type == Notification.Type.PRIVATE_MESSAGE) {
-                numMessages++;
-            }
-        }
-        listingStats.numberOfQuestions = numQuestions;
-        listingStats.numberOfMessages = numMessages;
-        
+        listingStats.numberOfQuestions = getQuestionAnswersPublishedCount(listing);
+
 		double timeFactor = Math.pow((double)(Days.daysBetween(new DateTime(listing.listedOn), new DateTime()).getDays() + 2), 1.5d);
-		double score = (listingStats.numberOfMonitors + listingStats.numberOfComments + 10*listingStats.numberOfBids + listingStats.numberOfQuestions + listingStats.numberOfMessages + (median/1000)) / timeFactor;
+		double score = (listingStats.numberOfMonitors + listingStats.numberOfComments + 100*listingStats.numberOfBids + 10*listingStats.numberOfQuestions + (median/1000)) / timeFactor;
 		listingStats.score = score;
 		
 		listingStats.created = new Date();
@@ -368,7 +350,7 @@ public class ObjectifyDatastoreDAO {
 
 		return listingStats;
 	}
-	
+    
 	public ListingStats getListingStatistics(long listingId) {
 		return getOfy().find(new Key<ListingStats>(ListingStats.class, listingId));
 	}
@@ -1476,15 +1458,15 @@ public class ObjectifyDatastoreDAO {
 		return qa;
 	}
 	
-	public QuestionAnswer answerQuestion(QuestionAnswer qa, String answer, boolean publish) {
-		qa.answer = answer;
+	public QuestionAnswer answerQuestion(Listing listing, QuestionAnswer qa, String answer, boolean publish) {
+        qa.answer = answer;
 		qa.answerDate = new Date();
 		qa.published = publish;
 		getOfy().put(qa);
-		return qa;
+        return qa;
 	}
-	
-	public QuestionAnswer getQuestionAnswer(long qaId) {
+
+    public QuestionAnswer getQuestionAnswer(long qaId) {
 		return getOfy().find(QuestionAnswer.class, qaId);
 	}
 	
@@ -1541,4 +1523,12 @@ public class ObjectifyDatastoreDAO {
 		List<QuestionAnswer> qandas = new ArrayList<QuestionAnswer>(getOfy().get(keyList).values());
 		return qandas;
 	}
+
+    public int getQuestionAnswersPublishedCount(Listing listing) {
+        QueryResultIterable<Key<QuestionAnswer>> questionIt = getOfy().query(QuestionAnswer.class)
+                .filter("listing = ", listing.getKey())
+                .filter("published =", true)
+                .fetchKeys();
+        return CollectionUtils.size(questionIt.iterator());
+    }
 }

@@ -63,12 +63,12 @@ pl.implement(CommentClass, {
         pl('#addcommentbtn').bind({
             click: function(event) {
                 var completeFunc = function(json) {
-                        var numcomments = pl('#num_comments').text() + 1,
+                        var numcomments = 1 * pl('#num_comments').text(),
                             comment = json;
                         pl('#addcommenttext').removeClass('edited').attr({value: 'Put your comment here...'});
                         pl('#addcommentbtn').removeClass('editenabled');
                         pl('#commentmsg').html('Comment posted');
-                        pl('#num_comments').text(numcomments);
+                        pl('#num_comments').text(numcomments + 1);
                         pl('#addcommentbox').before(self.makeComment(comment));
                         self.bindComment(comment);
                     },

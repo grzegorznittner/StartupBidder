@@ -48,7 +48,7 @@ pl.implement(ListingClass, {
         this.displayMap();
         this.displayDocuments();
         this.displayFunding();
-        //this.displaySocial();
+        this.displaySocial();
         this.displayWithdraw();
         this.displayApprove();
         this.displaySendback();
