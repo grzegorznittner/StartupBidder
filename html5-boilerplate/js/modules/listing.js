@@ -440,7 +440,7 @@ pl.implement(ListingClass, {
             else if (tab === 'qandas') {
                 pl(wrappersel).show();
                 if (!this.isQuestionListLoaded) {
-                    (new QuestionClass(this.listing_id, this.loggedin_profile_id)).load();
+                    (new QuestionClass(this.listing_id, this.profile_id, this.loggedin_profile_id)).load();
                     this.isQuestionListLoaded = true;
                 }
             }
@@ -463,7 +463,7 @@ pl.implement(ListingClass, {
         pl('#num_bids').text(self.num_bids || 0);
         pl('#num_qandas').text(self.num_qandas || 0);
         if (this.loggedin_profile) {
-            pl('#sendmessagelink').attr({href: '/message_page.html?to_user=' + self.owner }).css({display: 'inline'});
+            pl('#sendmessagelink').attr({href: '/message_page.html?to_user=' + self.profile_id }).css({display: 'inline'});
             pl('#makebidtitle,#makebidbox').show();
         }
         for (i = 0; i < this.alltabs.length; i++) {

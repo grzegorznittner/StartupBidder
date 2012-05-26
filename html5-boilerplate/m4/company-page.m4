@@ -19,7 +19,7 @@ include(header.m4)
                 <div class="companybannertitle aquamarine" id="title"></div>
                 <div class="companybannertextgrey">
                     <span id="categoryaddresstext"></span><span> </span><span id="founderstext"></span>
-                    <a class="companybannertextlink hoverlink initialhidden" href="" id="sendmessagelink">send message</a>
+                    <a class="companybannertextlink hoverlink initialhidden" href="" id="sendmessagelink">send private message</a>
                 </div>
                 <div class="companybannertextgrey">
                     <span id="listing_date_text" class="inputfield"></span>
@@ -31,7 +31,7 @@ include(header.m4)
                 <div class="companybannermantra" id="mantra"></div>
             </div>
             <div class="companybannerfollow">
-                <div class="inputmsg inputfield last initialhidden" id="followtext">You are following this listing</div>
+                <div class="inputmsg inputfield last followmsg initialhidden" id="followtext">You are following this listing</div>
                 <div class="companybannerfollowbtn smallinputbutton span-3 darkblue hoverlink initialhidden" id="followbtn"></div>
                 <div class="inputmsg inputfield last" id="followmsg"></div>
             </div>
@@ -163,7 +163,7 @@ include(header.m4)
 </div> <!-- end basics wrapper -->
 
     <div class="span-24 initialhidden" id="commentswrapper">
-        <div class="boxtitle smokegrey clear">COMMENTS</div>
+        <div class="boxtitle smokegrey clear">PUBLIC COMMENTS</div>
         <div class="boxpanel boxpanelfull" id="commentlistparent">
             <div class="messageline messagereplyline initialhidden" id="addcommentbox">
                 <p class="messageuser messagereplyuser span-4" id="myusername"></p>
@@ -175,7 +175,7 @@ include(header.m4)
     </div>
 
     <div class="span-24 initialhidden" id="bidswrapper">
-        <div class="boxtitle initialhidden" id="makebidtitle">MAKE BID</div>
+        <div class="boxtitle initialhidden" id="makebidtitle">MAKE PRIVATE BID</div>
         <div class="boxpanel boxpanelfull remarkpanel initialhidden" id="makebidbox">
             <p>
                 <textarea class="textarea messagetextarea" id="makebidtext" name="makebidtext" cols="20" rows="5">Make your bid here...</textarea>
@@ -183,7 +183,7 @@ include(header.m4)
                 <span class="span-3 inputbutton addcommentbtn" id="makebidbtn">POST</span>
             </p>
         </div>
-        <div class="boxtitle">BIDS</div>
+        <div class="boxtitle">PRIVATE BIDS</div>
         <div class="boxpanel boxpanelfull remarkpanel">
             <div id="bidsmsg" class="inputmsg"></div>
             <dl id="bidslist"></dl>
@@ -191,10 +191,12 @@ include(header.m4)
     </div>
 
     <div class="span-24 initialhidden" id="qandaswrapper">
-        <div class="boxtitle smokegrey clear">QUESTIONS AND ANSWERS</div>
+        <div class="boxtitlegap smokegrey clear">PUBLIC QUESTIONS AND ANSWERS
+            <span class="newlistingtitlemsg" id="qandatitlemsg"></span>
+        </div>
         <div class="boxpanel boxpanelfull" id="qandalistparent">
-            <div class="messageline messagereplyline initialhidden" id="addqandabox">
-                <p class="messageuser messagereplyuser span-4" id="myusername"></p>
+            <div class="messageline messagereplyline questionaskline initialhidden" id="addqandabox">
+                <p class="messageuser messagereplyuser span-4">Ask a question</p>
                 <textarea class="textarea messagetextarea messagereplytextarea" id="addqandatext" name="addqandatext" cols="20" rows="5">Put your question here...</textarea>
                 <span class="span-3 inputbutton messagebutton messagereplybutton" id="addqandabtn">SEND</span>
                 <p class="messagereplymsg inputmsg successful" id="qandamsg"></p>

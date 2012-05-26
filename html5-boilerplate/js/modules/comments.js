@@ -124,11 +124,6 @@ pl.implement(CommentClass, {
             self.bindComment(comment);
         }
     },
-    deleteCommentGenerator: function(commentid) {
-        var self = this;
-        return function() {
-        };
-    },
     makeComment: function(comment) {
         var text = SafeStringClass.prototype.htmlEntities(comment.text),
             datetext = DateClass.prototype.format(comment.comment_date),

@@ -103,6 +103,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .followimg { top: 20px; position: relative; }
 .followtext { font-weight: bold; }
 .followtextit { font-style: italic; }
+.followmsg { color: gray; }
 .pull-15px { left: -15px; position: relative; }
 .push-15px { left: 15px; position: relative; }
 .push-20px { left: 20px; position: relative; }
@@ -435,10 +436,17 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .messageline:nth-child(2n) { background: #f2f2f2; }
 .messageline p { font-weight: normal; margin: 0; text-indent: 0; }
 .messageline p.messageuser { font-weight: bold; }
+.messageline p.answerdate { font-weight: bold; }
 .messagetext { float: left; font-weight: normal; }
 .messagedate { float: right; font-size: 12px; padding-top: 2px; color: gray; margin-right: 10px; font-weight: bold; }
-.messagereplyline { position: relative; height: 100px; }
+.questionanswerline { clear: both; position: relative; overflow: auto; }
+.questionanswerline .messagetext { padding-top: 10px; }
+.questiondate { min-height: 60px; }
+.questionreplyline { clear: both; padding: 5px; position: relative; }
+.questionreplylineshow { height: 100px; }
+.questionreplybtn { position: absolute; right: 7px; }
 .messagereplyuser { position: relative; top: 10px; }
+.questionaskline { position: relative; min-height: 100px; }
 .messagereplytextarea { position: absolute; left: 150px; top: 5px; width: 640px !important; }
 .messagereplybutton { position: absolute; right: 0; top: 40px; }
 .messagereplymsg { position: absolute; bottom: 0; left: 150px; }

@@ -1353,17 +1353,19 @@ include(api-banner.m4)
             </ul>
             <h4>Response</h4>
             <ul>
-                <li><code>qanda</code> list of questions for this listing, see <var>/listing/ask_owner</var> for field detials.  Structure:
+                <li>list of questions for this listing, see <var>/listing/ask_owner</var> for field detials.  Structure:
 <pre name="code" class="brush: js">
 [
     {
     question_id: :id,
-    from_user_id: :uid,
-    from_user_nickname: :name,
-    text_2: :question_text,
+    listing_id: :id,
+    user_id: :uid,
+    user_nickname: :name,
+    question: :question_text,
     answer: :answer_text,
+    create_date: :date_yyyymmddhh24mmss,
     answer_date: :date_yyyymmddhh24mmss,
-    create_date: :date_yyyymmddhh24mmss
+    published: :true_or_false
     },
     ...
 ]
@@ -1394,7 +1396,7 @@ include(api-banner.m4)
         <div class="apidetail">
             <h4>Parameters</h4>
             <ul>
-                <li><code>ask</code> ask question object for owner</li>
+                <li><code>message</code> ask question object for owner</li>
                 <li><code class="apiprop">.listing_id</code> alphanumeric listing id as returned by the listing list and search API</li>
                 <li><code class="apiprop">.text</code> text message user wishes to ask the owner</li>
             </ul>
@@ -1433,7 +1435,7 @@ include(api-banner.m4)
         <div class="apidetail">
             <h4>Parameters</h4>
             <ul>
-                <li><code>answer</code> answer question by owner object</li>
+                <li><code>message</code> answer question by owner object</li>
                 <li><code class="apiprop">.question_id</code> alphanumeric question id as returned by <var>/listing/questions_answers</var></li>
                 <li><code class="apiprop">.text</code> text message of owner&rsquo;s answer to the question</li>
             </ul>
