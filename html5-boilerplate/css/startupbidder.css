@@ -450,6 +450,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .messagereplytextarea { position: absolute; left: 150px; top: 5px; width: 640px !important; }
 .messagereplybutton { position: absolute; right: 0; top: 40px; }
 .messagereplymsg { position: absolute; bottom: 0; left: 150px; }
+.messagereplyline { min-height: 100px; position: relative; }
 .addcommentbox { min-height: 100px; }
 .sideboxdate { font-size: 10px; color: grey; }
 .sideboxlisting { font-size: 10px; }
