@@ -215,10 +215,11 @@ pl.implement(QuestionClass, {
             answerblock = '<div class="questionanswerline' + (question.answer ? '' : ' initialhidden')  + '" id="qanda_answerbox_' + question.question_id + '">'
                 + '<p class="messageuser messagereplyuser span-4">Answered by owner</p>'
                 + '<span class="messagetext span-15" id="qanda_answertext_' + question.question_id + '">' + answertext + '</span>'
-                + '<span class="messagedate questiondate" id="qanda_answerdate_' + question.question_id + '">' + answerdate + '</span>'
+                + '<span class="messagedate" id="qanda_answerdate_' + question.question_id + '">' + answerdate + '</span>'
                 + '</div>',
             unansweredblock = question.answer ? '' : '<p class="answerdate" id="qanda_replyanswerdate_' + question.question_id + '">Not yet answered by owner</p>'
-                + '<p id="qanda_replyanswer_' + question.question_id + '"></p>';
+                + '<p id="qanda_replyanswer_' + question.question_id + '"></p>',
+            questiondateclass = question.answer ? 'messagedate' : 'messagedate questiondate';
         return '\
         <div class="messageline" id="qanda_' + question.question_id + '">\
             <p class="messageuser span-4">Asked by ' + question.user_nickname + '</p>\
@@ -226,7 +227,7 @@ pl.implement(QuestionClass, {
                 ' + questiontext + '\
                 ' + unansweredblock + '\
             </span>\
-            <span class="messagedate questiondate">\
+            <span class="' + questiondateclass + '">\
                 ' + questiondateblock + '\
                 ' + questionreplybtn + '\
             </span>\

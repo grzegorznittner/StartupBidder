@@ -54,6 +54,9 @@ pl.implement(APIPageClass, {
                 if (profileusername) {
                     pl('.profileusername').attr({value: profileusername});
                 }
+                if (listingid && profileid) {
+                    pl('.bidobj').attr({value: '{ listing_id: "' + listingid + '", investor_id: "' + profileid + '", amt: 20000, pct: 5, type: "INVESTOR_POST", text: "bid note" }'});
+                }
                 pl('.apipanel dt').bind({
                     click: function() {
                         var detail = pl(this.nextSibling.nextSibling.nextSibling.nextSibling),
