@@ -184,14 +184,19 @@ include(header.m4)
         </div>
 
         <div class="initialhidden" id="bidsloggedin">
-            <div class="boxtitlegap smokegrey clear">MAKE PRIVATE BID
+            <div class="boxtitlegap smokegrey clear">YOUR BIDS FOR THIS LISTING
                 <span class="newlistingtitlemsg" id="bidtitlemsg"></span>
             </div>
             <div class="boxpanel boxpanelfull" id="bidlistparent">
                 <div class="messageline messagereplyline questionaskline initialhidden" id="makebidbox">
                     <p class="messageuser messagereplyuser span-4">Make a bid</p>
-                    <textarea class="textarea messagetextarea messagereplytextarea" id="makebidtext" name="makebidtext" cols="20" rows="5">Put your note concerning this bid here...</textarea>
-                    <span class="span-3 inputbutton messagebutton messagereplybutton" id="makebidbtn">PREVIEW</span>
+                    <span class="span-14">
+                        <div>AMOUNT</div>
+                        <div>PERCENT</div>
+                        <div>IMPLIED VAL</div>
+                        <textarea class="textarea messagetextarea messagereplytextarea" id="makebidtext" name="makebidtext" cols="20" rows="5">Put your note concerning this bid here...</textarea>
+                    </span>
+                    <span class="span-3 inputbutton messagebutton messagereplybutton" id="makebidbtn">MAKE BID</span>
                     <p class="messagereplymsg inputmsg successful" id="bidmsg"></p>
                 </div>
             </div>
@@ -242,6 +247,7 @@ include(footer.m4)
   <script src="js/modules/base.js"></script>
   <script src="js/modules/companylist.js"></script>
   <script src="js/modules/forms.js"></script>
+  <script src="js/modules/singleinvestorbidlist.js"></script>
   <script src="js/modules/comments.js"></script>
   <script src="js/modules/questions.js"></script>
   <script src="js/modules/bmc.js"></script>

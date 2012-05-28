@@ -1764,7 +1764,11 @@ include(api-banner.m4)
     <div class="boxtitle">PRIVATE INVESTOR BID API</div>
     <div class="boxpanel apipanel">
         <p>Get information on investor bids for a listing.  Bids are obtained in reference to the listing and investor.
-            All bids are private, only viewable by the bidder and listing owner.</p>
+            The client should consider two cases: first, if the logged in user is the listing owner; and second, if the
+            logged in user is an actual or potential investor, not the owner.  In the first case, <var>/listing/bid_investors</var>
+            should be called as there may be multiple investors the owner can view.  In the second case, <var>/listing/bids</var>
+            should be called instead as the investor can only view their own bids.
+            Note that all bids are private, only viewable by the bidder and listing owner.</p>
     
         <dt>GET /listing/bid_investors/:id</dt>
         <dd>
@@ -1854,9 +1858,6 @@ include(api-banner.m4)
 <pre name="code" class="brush: js">
 [
     {
-        listing_id: :id,
-        investor_id: :profile_id,
-        investor_nickname: :name,
         amt: :amt,
         pct: :pct,
         val: :val, /* calculated as amt / (pct / 100) */       

@@ -86,9 +86,9 @@ pl.implement(ListingClass, {
         var self = this;
         pl('#followbtn').bind({
             click: function() {
-                var following = self.monitored;
-                if (following) {
-                    self.unfollow();
+            var following = self.monitored;
+            if (following) {
+                self.unfollow();
                 }
                 else {
                     self.follow();
@@ -434,13 +434,20 @@ pl.implement(ListingClass, {
                 }
             }
             else if (tab === 'bids') {
-                if (this.loggedin_profile_id && this.loggedin_profile_id === this.profile_id) {
+                if (this.isBidListLoaded) {
+                    // skip
+                }
+                else if (this.loggedin_profile_id && this.loggedin_profile_id === this.profile_id) {
+                    //(new OwnerBidGroupListClass(this.listing_id)).load();
                     pl('#bidsnotloggedin, #bidsloggedin').hide();
                     pl('#bidsowner').show();
+                    this.isBidListLoaded = true;
                 }
                 else if (this.loggedin_profile_id) {
+                    (new SingleInvestorBidListClass(this.listing_id, this.loggedin_profile_id, this.loggedin_profile.username || 'anonymous')).load();
                     pl('#bidsnotloggedin, #bidsowner').hide();
                     pl('#bidsloggedin').show();
+                    this.isBidListLoaded = true;
                 }
                 else {
                     pl('#bidsloggedin, #bidsowner').hide();
