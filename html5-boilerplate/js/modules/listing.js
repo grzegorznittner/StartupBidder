@@ -434,8 +434,19 @@ pl.implement(ListingClass, {
                 }
             }
             else if (tab === 'bids') {
+                if (this.loggedin_profile_id && this.loggedin_profile_id === this.profile_id) {
+                    pl('#bidsnotloggedin, #bidsloggedin').hide();
+                    pl('#bidsowner').show();
+                }
+                else if (this.loggedin_profile_id) {
+                    pl('#bidsnotloggedin, #bidsowner').hide();
+                    pl('#bidsloggedin').show();
+                }
+                else {
+                    pl('#bidsloggedin, #bidsowner').hide();
+                    pl('#bidsnotloggedin').show();
+                }
                 pl(wrappersel).show();
-                pl('#bidsmsg').html('<p>No bids</p>');
             }
             else if (tab === 'qandas') {
                 pl(wrappersel).show();
@@ -460,8 +471,13 @@ pl.implement(ListingClass, {
             i,
             tab;
         pl('#num_comments').text(self.num_comments || 0);
-        pl('#num_bids').text(self.num_bids || 0);
         pl('#num_qandas').text(self.num_qandas || 0);
+        if (this.loggedin_profile_id && this.loggedin_profile_id === this.profile_id) {
+            pl('#num_bids').text(self.num_bids || 0);
+        }
+        else {
+            pl('#num_bids').text('');
+        }
         if (this.loggedin_profile) {
             pl('#sendmessagelink').attr({href: '/message_page.html?to_user=' + self.profile_id }).css({display: 'inline'});
             pl('#makebidtitle,#makebidbox').show();

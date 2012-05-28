@@ -175,19 +175,33 @@ include(header.m4)
     </div>
 
     <div class="span-24 initialhidden" id="bidswrapper">
-        <div class="boxtitle initialhidden" id="makebidtitle">MAKE PRIVATE BID</div>
-        <div class="boxpanel boxpanelfull remarkpanel initialhidden" id="makebidbox">
-            <p>
-                <textarea class="textarea messagetextarea" id="makebidtext" name="makebidtext" cols="20" rows="5">Make your bid here...</textarea>
-                <span class="span-12 inputmsg successful" id="makebidmsg">&nbsp;</span>
-                <span class="span-3 inputbutton addcommentbtn" id="makebidbtn">POST</span>
-            </p>
+
+        <div class="initialhidden" id="bidsnotloggedin">
+            <div class="boxtitlegap smokegrey clear">MAKE PRIVATE BID</div>
+            <div class="boxpanel boxpanelfull">
+                <p>Sign in to place a bid.</p>
+            </div>
         </div>
-        <div class="boxtitle">PRIVATE BIDS</div>
-        <div class="boxpanel boxpanelfull remarkpanel">
-            <div id="bidsmsg" class="inputmsg"></div>
-            <dl id="bidslist"></dl>
-    	</div>
+
+        <div class="initialhidden" id="bidsloggedin">
+            <div class="boxtitlegap smokegrey clear">MAKE PRIVATE BID
+                <span class="newlistingtitlemsg" id="bidtitlemsg"></span>
+            </div>
+            <div class="boxpanel boxpanelfull" id="bidlistparent">
+                <div class="messageline messagereplyline questionaskline initialhidden" id="makebidbox">
+                    <p class="messageuser messagereplyuser span-4">Make a bid</p>
+                    <textarea class="textarea messagetextarea messagereplytextarea" id="makebidtext" name="makebidtext" cols="20" rows="5">Put your note concerning this bid here...</textarea>
+                    <span class="span-3 inputbutton messagebutton messagereplybutton" id="makebidbtn">PREVIEW</span>
+                    <p class="messagereplymsg inputmsg successful" id="bidmsg"></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="initialhidden" id="bidsowner">
+            <div class="boxtitlegap smokegrey clear">INVESTOR BIDS</div>
+            <div class="boxpanel boxpanelfull" id="bidgrouplist"><p>No bids recevied for this listing.</p></div>
+        </div>
+
     </div>
 
     <div class="span-24 initialhidden" id="qandaswrapper">
