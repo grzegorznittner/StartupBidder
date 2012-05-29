@@ -35,7 +35,7 @@ import com.googlecode.objectify.Objectify;
 import com.googlecode.objectify.ObjectifyService;
 import com.startupbidder.dao.MockDataBuilder;
 import com.startupbidder.dao.ObjectifyDatastoreDAO;
-import com.startupbidder.datamodel.Bid;
+import com.startupbidder.datamodel.OldBid;
 import com.startupbidder.datamodel.Category;
 import com.startupbidder.datamodel.Comment;
 import com.startupbidder.datamodel.Listing;
@@ -45,7 +45,7 @@ import com.startupbidder.datamodel.ListingStats;
 import com.startupbidder.datamodel.Location;
 import com.startupbidder.datamodel.Monitor;
 import com.startupbidder.datamodel.Notification;
-import com.startupbidder.datamodel.PaidBid;
+import com.startupbidder.datamodel.OldPaidBid;
 import com.startupbidder.datamodel.PrivateMessage;
 import com.startupbidder.datamodel.PrivateMessageUser;
 import com.startupbidder.datamodel.QuestionAnswer;
@@ -130,7 +130,7 @@ public abstract class BaseFacadeAbstractTest {
 	}
 	
 	protected List<Listing> listingList = null;
-	protected List<Bid> bidList = null;
+	protected List<OldBid> bidList = null;
 
 	static {
 		Handler fh = new ConsoleHandler();
@@ -140,7 +140,7 @@ public abstract class BaseFacadeAbstractTest {
 		ObjectifyService.register(SBUser.class);
 		ObjectifyService.register(Listing.class);
 		ObjectifyService.register(UserStats.class);
-		ObjectifyService.register(Bid.class);
+		ObjectifyService.register(OldBid.class);
 		ObjectifyService.register(Comment.class);
 		ObjectifyService.register(ListingDoc.class);
 		ObjectifyService.register(ListingStats.class);
@@ -149,7 +149,7 @@ public abstract class BaseFacadeAbstractTest {
 		ObjectifyService.register(QuestionAnswer.class);
 		ObjectifyService.register(PrivateMessage.class);
 		ObjectifyService.register(PrivateMessageUser.class);
-		ObjectifyService.register(PaidBid.class);
+		ObjectifyService.register(OldPaidBid.class);
 		ObjectifyService.register(Rank.class);
 		ObjectifyService.register(SystemProperty.class);
 		ObjectifyService.register(Vote.class);
@@ -526,37 +526,37 @@ public abstract class BaseFacadeAbstractTest {
 	}
 	
 	private void createTestBids() {
-		bidList = new ArrayList<Bid>();
+		bidList = new ArrayList<OldBid>();
 		
 		// Tests rely on order of the objects
 		// Add new objects to the end of the list.
 		
-		bidList.add(prepareBid(LISTING1_OWNER1, OWNER1, BIDDER1, Bid.Actor.BIDDER, Bid.Action.ACTIVATE, 10, 3, 20000, 25));
-		bidList.add(prepareBid(LISTING1_OWNER1, OWNER1, BIDDER1, Bid.Actor.OWNER, Bid.Action.ACTIVATE, 8, 3, 25000, 25));
-		bidList.add(prepareBid(LISTING1_OWNER1, OWNER1, BIDDER1, Bid.Actor.BIDDER, Bid.Action.ACTIVATE, 7, 3, 21000, 25));
-		bidList.add(prepareBid(LISTING1_OWNER1, OWNER1, BIDDER1, Bid.Actor.BIDDER, Bid.Action.CANCEL, 6, 0, 0, 0));
+		bidList.add(prepareBid(LISTING1_OWNER1, OWNER1, BIDDER1, OldBid.Actor.BIDDER, OldBid.Action.ACTIVATE, 10, 3, 20000, 25));
+		bidList.add(prepareBid(LISTING1_OWNER1, OWNER1, BIDDER1, OldBid.Actor.OWNER, OldBid.Action.ACTIVATE, 8, 3, 25000, 25));
+		bidList.add(prepareBid(LISTING1_OWNER1, OWNER1, BIDDER1, OldBid.Actor.BIDDER, OldBid.Action.ACTIVATE, 7, 3, 21000, 25));
+		bidList.add(prepareBid(LISTING1_OWNER1, OWNER1, BIDDER1, OldBid.Actor.BIDDER, OldBid.Action.CANCEL, 6, 0, 0, 0));
 
-		bidList.add(prepareBid(LISTING1_OWNER1, OWNER1, BIDDER1, Bid.Actor.BIDDER, Bid.Action.ACTIVATE, 5, 3, 15000, 25));
-		bidList.add(prepareBid(LISTING1_OWNER1, OWNER1, BIDDER1, Bid.Actor.OWNER, Bid.Action.ACTIVATE, 4, 3, 25000, 25));
-		bidList.add(prepareBid(LISTING1_OWNER1, OWNER1, BIDDER1, Bid.Actor.BIDDER, Bid.Action.ACTIVATE, 3, 3, 16000, 25));
-		bidList.add(prepareBid(LISTING1_OWNER1, OWNER1, BIDDER1, Bid.Actor.OWNER, Bid.Action.CANCEL, 2, 0, 0, 0));
+		bidList.add(prepareBid(LISTING1_OWNER1, OWNER1, BIDDER1, OldBid.Actor.BIDDER, OldBid.Action.ACTIVATE, 5, 3, 15000, 25));
+		bidList.add(prepareBid(LISTING1_OWNER1, OWNER1, BIDDER1, OldBid.Actor.OWNER, OldBid.Action.ACTIVATE, 4, 3, 25000, 25));
+		bidList.add(prepareBid(LISTING1_OWNER1, OWNER1, BIDDER1, OldBid.Actor.BIDDER, OldBid.Action.ACTIVATE, 3, 3, 16000, 25));
+		bidList.add(prepareBid(LISTING1_OWNER1, OWNER1, BIDDER1, OldBid.Actor.OWNER, OldBid.Action.CANCEL, 2, 0, 0, 0));
 
-		bidList.add(prepareBid(LISTING1_OWNER1, OWNER1, BIDDER2, Bid.Actor.BIDDER, Bid.Action.ACTIVATE, 7, 3, 21000, 30));
+		bidList.add(prepareBid(LISTING1_OWNER1, OWNER1, BIDDER2, OldBid.Actor.BIDDER, OldBid.Action.ACTIVATE, 7, 3, 21000, 30));
 
-		bidList.add(prepareBid(LISTING2_OWNER1, OWNER1, BIDDER1, Bid.Actor.BIDDER, Bid.Action.ACTIVATE, 5, 3, 5000, 30));
-		bidList.add(prepareBid(LISTING2_OWNER1, OWNER1, BIDDER1, Bid.Actor.OWNER, Bid.Action.ACTIVATE, 2, 3, 6000, 30));
+		bidList.add(prepareBid(LISTING2_OWNER1, OWNER1, BIDDER1, OldBid.Actor.BIDDER, OldBid.Action.ACTIVATE, 5, 3, 5000, 30));
+		bidList.add(prepareBid(LISTING2_OWNER1, OWNER1, BIDDER1, OldBid.Actor.OWNER, OldBid.Action.ACTIVATE, 2, 3, 6000, 30));
 
-		bidList.add(prepareBid(LISTING1_OWNER2, OWNER2, BIDDER1, Bid.Actor.BIDDER, Bid.Action.ACTIVATE,5, 3, 60000, 50));
-		bidList.add(prepareBid(LISTING1_OWNER2, OWNER2, BIDDER1, Bid.Actor.OWNER, Bid.Action.ACTIVATE, 4, 3, 65000, 50));
+		bidList.add(prepareBid(LISTING1_OWNER2, OWNER2, BIDDER1, OldBid.Actor.BIDDER, OldBid.Action.ACTIVATE,5, 3, 60000, 50));
+		bidList.add(prepareBid(LISTING1_OWNER2, OWNER2, BIDDER1, OldBid.Actor.OWNER, OldBid.Action.ACTIVATE, 4, 3, 65000, 50));
 
 		Objectify ofy = ObjectifyService.begin();
 		ofy.put(bidList);
 	}
 
-	public Bid prepareBid(int listingIdx, int ownerIdx, int bidderIdx, Bid.Actor actor, Bid.Action action, int placedDaysAgo, int expiersInDays, int value, int percent) {
+	public OldBid prepareBid(int listingIdx, int ownerIdx, int bidderIdx, OldBid.Actor actor, OldBid.Action action, int placedDaysAgo, int expiersInDays, int value, int percent) {
 		DateTime placed = new DateTime().minusDays(placedDaysAgo);
 		
-		Bid bid = new Bid();
+		OldBid bid = new OldBid();
 		bid.action = action;
 		bid.actor = actor;
 		bid.bidder = new Key<SBUser>(SBUser.class, mocks.users.get(bidderIdx).id);
@@ -568,8 +568,8 @@ public abstract class BaseFacadeAbstractTest {
 		bid.expires = placed.plusDays(expiersInDays).toDate();
 		bid.value = value;
 		bid.percentOfCompany = percent;
-		bid.fundType = Bid.FundType.SOLE_INVESTOR;
-		if (actor == Bid.Actor.BIDDER) {
+		bid.fundType = OldBid.FundType.SOLE_INVESTOR;
+		if (actor == OldBid.Actor.BIDDER) {
 			bid.comment = "Bid by " + mocks.users.get(bidderIdx).name;
 		} else {
 			bid.comment = "Bid by " + mocks.users.get(ownerIdx).name;

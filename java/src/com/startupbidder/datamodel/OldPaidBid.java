@@ -16,13 +16,13 @@ import com.googlecode.objectify.annotation.Unindexed;
 @Unindexed
 @Entity
 @Cached(expirationSeconds=60*30)
-public class PaidBid extends Bid {
-	@Indexed public Key<Bid> bid;
+public class OldPaidBid extends OldBid {
+	@Indexed public Key<OldBid> bid;
 	
-	public PaidBid() {
+	public OldPaidBid() {
 	}
 	
-	public PaidBid(Bid bid) {
+	public OldPaidBid(OldBid bid) {
 		this.bidder = bid.bidder;
 		this.comment = bid.comment;
 		this.fundType = bid.fundType;
@@ -35,10 +35,10 @@ public class PaidBid extends Bid {
 		this.action = bid.action;
 		this.valuation = bid.valuation;
 		this.value = bid.value;
-		this.bid = new Key<Bid>(Bid.class, bid.id);
+		this.bid = new Key<OldBid>(OldBid.class, bid.id);
 	}
 
 	public String getWebKey() {
-		return new Key<PaidBid>(PaidBid.class, id).getString();
+		return new Key<OldPaidBid>(OldPaidBid.class, id).getString();
 	}
 }

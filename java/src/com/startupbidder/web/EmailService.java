@@ -26,7 +26,7 @@ import com.google.appengine.api.utils.SystemProperty;
 import com.startupbidder.datamodel.Listing;
 import com.startupbidder.datamodel.Notification;
 import com.startupbidder.datamodel.SBUser;
-import com.startupbidder.vo.BidVO;
+import com.startupbidder.vo.OldBidVO;
 import com.startupbidder.vo.CommentVO;
 import com.startupbidder.vo.ListingVO;
 import com.startupbidder.vo.NotificationVO;

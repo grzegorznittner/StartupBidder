@@ -15,7 +15,7 @@ import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 
-import com.startupbidder.datamodel.Bid;
+import com.startupbidder.datamodel.OldBid;
 import com.startupbidder.vo.GraphDataVO;
 import com.startupbidder.vo.ListPropertiesVO;
 import com.startupbidder.vo.TickerDataVO;
@@ -99,7 +99,7 @@ public class StatisticsFacade {
 		
 		ListPropertiesVO bidsProperties = new ListPropertiesVO();
 		bidsProperties.setMaxResults(100);
-		List<Bid> bids = ServiceFacade.instance().getDAO().getBidsByDate(bidsProperties);
+		List<OldBid> bids = ServiceFacade.instance().getDAO().getBidsByDate(bidsProperties);
 
 		int[] values = new int[2];
 		if (bids.size() > 1) {
@@ -107,7 +107,7 @@ public class StatisticsFacade {
 					new DateTime(bids.get(bids.size() - 1).placed)).getDays());
 			
 			values = new int[bidTimeSpan];
-			for (Bid bid : bids) {
+			for (OldBid bid : bids) {
 				int days = Math.abs(Days.daysBetween(new DateTime(bid.placed.getTime()), midnight).getDays());
 				if (days < values.length) {
 					values[days]++;
@@ -143,7 +143,7 @@ public class StatisticsFacade {
 		
 		ListPropertiesVO bidsProperties = new ListPropertiesVO();
 		bidsProperties.setMaxResults(100);
-		List<Bid> bids = ServiceFacade.instance().getDAO().getBidsByDate(bidsProperties);
+		List<OldBid> bids = ServiceFacade.instance().getDAO().getBidsByDate(bidsProperties);
 
 		int[] values = new int[2];
 		if (bids.size() > 1) {
@@ -151,7 +151,7 @@ public class StatisticsFacade {
 					new DateTime(bids.get(bids.size() - 1).placed)).getDays());
 			
 			values = new int[bidTimeSpan];
-			for (Bid bid : bids) {
+			for (OldBid bid : bids) {
 				int days = Math.abs(Days.daysBetween(new DateTime(bid.placed.getTime()), midnight).getDays());
 				if (days < values.length) {
 					values[days] += bid.valuation;

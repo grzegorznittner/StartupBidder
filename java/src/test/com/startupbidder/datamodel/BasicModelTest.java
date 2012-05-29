@@ -19,14 +19,14 @@ import com.google.appengine.tools.development.testing.LocalUserServiceTestConfig
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.Objectify;
 import com.googlecode.objectify.ObjectifyService;
-import com.startupbidder.datamodel.Bid;
+import com.startupbidder.datamodel.OldBid;
 import com.startupbidder.datamodel.Comment;
 import com.startupbidder.datamodel.Listing;
 import com.startupbidder.datamodel.ListingDoc;
 import com.startupbidder.datamodel.ListingStats;
 import com.startupbidder.datamodel.Monitor;
 import com.startupbidder.datamodel.Notification;
-import com.startupbidder.datamodel.PaidBid;
+import com.startupbidder.datamodel.OldPaidBid;
 import com.startupbidder.datamodel.Rank;
 import com.startupbidder.datamodel.SBUser;
 import com.startupbidder.datamodel.SystemProperty;
@@ -40,13 +40,13 @@ public class BasicModelTest {
 		ObjectifyService.register(SBUser.class);
 		ObjectifyService.register(Listing.class);
 		ObjectifyService.register(UserStats.class);
-		ObjectifyService.register(Bid.class);
+		ObjectifyService.register(OldBid.class);
 		ObjectifyService.register(Comment.class);
 		ObjectifyService.register(ListingDoc.class);
 		ObjectifyService.register(ListingStats.class);
 		ObjectifyService.register(Monitor.class);
 		ObjectifyService.register(Notification.class);
-		ObjectifyService.register(PaidBid.class);
+		ObjectifyService.register(OldPaidBid.class);
 		ObjectifyService.register(Rank.class);
 		ObjectifyService.register(SystemProperty.class);
 		ObjectifyService.register(Vote.class);
@@ -173,24 +173,24 @@ public class BasicModelTest {
 	public void testBid() {
 		Objectify ofy = ObjectifyService.begin();
 		
-		Bid bid = new Bid();
+		OldBid bid = new OldBid();
 		bid.comment = "Comment for bid";
-		bid.fundType = Bid.FundType.PREFERRED;
+		bid.fundType = OldBid.FundType.PREFERRED;
 		bid.interestRate = 10;
 		bid.percentOfCompany = 45;
 		bid.placed = new Date();
-		bid.action = Bid.Action.ACTIVATE;
+		bid.action = OldBid.Action.ACTIVATE;
 		bid.valuation = 4500;
 		bid.value = 100;
 		bid.bidder = new Key<SBUser>(SBUser.class, 1000L);
 		bid.listing = new Key<Listing>(Listing.class, 1001L);
 		bid.listingOwner = new Key<SBUser>(SBUser.class, 1002L);
 		
-		Key<Bid> key = ofy.put(bid);
+		Key<OldBid> key = ofy.put(bid);
 		assertNotNull("Key is null", key);
 		assertNotNull(bid.id);
 		
-		Bid retrievedUser = ofy.get(key);
+		OldBid retrievedUser = ofy.get(key);
 		assertNotNull("Retrieved user is null", retrievedUser);
 		assertNotNull("Modifed date is not set", bid.modified);
 		assertEquals(bid.comment, retrievedUser.comment);

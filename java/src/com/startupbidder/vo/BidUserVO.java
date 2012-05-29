@@ -16,16 +16,19 @@ import com.startupbidder.util.LowecaseSerializer;
  */
 @JsonAutoDetect(getterVisibility=Visibility.NONE, setterVisibility=Visibility.NONE,
 		fieldVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE)
-public class BidVO extends BaseVO {
+public class BidUserVO extends BaseVO {
 	@JsonProperty("direction") @JsonSerialize(using=LowecaseSerializer.class) private String direction;
-	@JsonProperty("create_date") @JsonSerialize(using=DateSerializer.class) private Date created;
-	@JsonProperty("text") private String text;
+	@JsonProperty("from_user_id") private String user;
+	@JsonProperty("from_user_nickname") private String userNickname;
+	@JsonProperty("last_date") @JsonSerialize(using=DateSerializer.class) private Date lastDate;
+	@JsonProperty("last_text") private String text;
+	@JsonProperty("counter") private int counter;
 	@JsonProperty("read") private boolean read;
 	@JsonProperty("amt") private int amount;
 	@JsonProperty("pct") private int percentage;
 	@JsonProperty("val") private int value;
 	@JsonProperty("type") @JsonSerialize(using=LowecaseSerializer.class) private String type;
-	public BidVO() {
+	public BidUserVO() {
 	}
 	public String getId() {
 		return "not_set";
@@ -36,17 +39,35 @@ public class BidVO extends BaseVO {
 	public void setDirection(String direction) {
 		this.direction = direction;
 	}
-	public Date getCreated() {
-		return created;
+	public String getUser() {
+		return user;
 	}
-	public void setCreated(Date created) {
-		this.created = created;
+	public void setUser(String user) {
+		this.user = user;
+	}
+	public String getUserNickname() {
+		return userNickname;
+	}
+	public void setUserNickname(String userNickname) {
+		this.userNickname = userNickname;
+	}
+	public Date getLastDate() {
+		return lastDate;
+	}
+	public void setLastDate(Date lastDate) {
+		this.lastDate = lastDate;
 	}
 	public String getText() {
 		return text;
 	}
 	public void setText(String text) {
 		this.text = text;
+	}
+	public int getCounter() {
+		return counter;
+	}
+	public void setCounter(int counter) {
+		this.counter = counter;
 	}
 	public boolean isRead() {
 		return read;

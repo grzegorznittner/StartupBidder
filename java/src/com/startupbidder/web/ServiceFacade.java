@@ -18,7 +18,7 @@ import com.google.appengine.api.taskqueue.TaskOptions;
 import com.google.appengine.api.users.User;
 import com.googlecode.objectify.Key;
 import com.startupbidder.dao.ObjectifyDatastoreDAO;
-import com.startupbidder.datamodel.Bid;
+import com.startupbidder.datamodel.OldBid;
 import com.startupbidder.datamodel.Comment;
 import com.startupbidder.datamodel.Listing;
 import com.startupbidder.datamodel.Monitor;
@@ -317,7 +317,7 @@ public class ServiceFacade {
 		}
 	}
 
-	public void createBidNotification(String toUserId, Bid bid, Notification.Type type) {
+	public void createBidNotification(String toUserId, OldBid bid, Notification.Type type) {
 		Listing listing = getDAO().getListing(bid.listing.getId());
 		SBUser toUser = getDAO().getUser(toUserId);
 		

@@ -19,7 +19,7 @@ import com.google.appengine.tools.development.testing.LocalUserServiceTestConfig
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.Objectify;
 import com.googlecode.objectify.ObjectifyService;
-import com.startupbidder.datamodel.Bid;
+import com.startupbidder.datamodel.OldBid;
 import com.startupbidder.datamodel.Comment;
 import com.startupbidder.datamodel.Listing;
 import com.startupbidder.datamodel.ListingDoc;
@@ -47,7 +47,7 @@ public class EntityConverterTest {
 		ObjectifyService.register(Comment.class);
 		ObjectifyService.register(Vote.class);
 		ObjectifyService.register(Rank.class);
-		ObjectifyService.register(Bid.class);
+		ObjectifyService.register(OldBid.class);
 		ObjectifyService.register(ListingDoc.class);
 	}
 	
@@ -70,12 +70,12 @@ public class EntityConverterTest {
 	public void testBid() throws EntityNotFoundException {
 		DateMidnight midnight = new DateMidnight();
 		
-		Bid bid = new Bid();
-		bid.fundType = Bid.FundType.NOTE;
+		OldBid bid = new OldBid();
+		bid.fundType = OldBid.FundType.NOTE;
 		bid.listing = new Key<Listing>(Listing.class, 1000L);
 		bid.percentOfCompany = 44;
 		bid.placed = new Date(100000);
-		bid.action = Bid.Action.ACTIVATE;
+		bid.action = OldBid.Action.ACTIVATE;
 		bid.bidder = new Key<SBUser>(SBUser.class, 1001L);
 		bid.bidderName = "Bidder name";
 		bid.value = 44444;
@@ -85,7 +85,7 @@ public class EntityConverterTest {
 		System.out.println("Original: " + bid);
 		
 		getOfy().put(bid);
-		Bid newBid = getOfy().get(Bid.class, bid.id);
+		OldBid newBid = getOfy().get(OldBid.class, bid.id);
 
 		System.out.println("Recreated: " + newBid);
 		

@@ -8,13 +8,13 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 
 import com.googlecode.objectify.Key;
-import com.startupbidder.vo.BidVO;
 import com.startupbidder.vo.CommentVO;
 import com.startupbidder.vo.ListingDocumentVO;
 import com.startupbidder.vo.ListingPropertyVO;
 import com.startupbidder.vo.ListingVO;
 import com.startupbidder.vo.MonitorVO;
 import com.startupbidder.vo.NotificationVO;
+import com.startupbidder.vo.OldBidVO;
 import com.startupbidder.vo.QuestionAnswerVO;
 import com.startupbidder.vo.SystemPropertyVO;
 import com.startupbidder.vo.UserVO;
@@ -39,7 +39,7 @@ public class VoToModelConverter {
 	public static QuestionAnswer convert(QuestionAnswerVO qaVO) {
 		QuestionAnswer qa = new QuestionAnswer();
 		if (!StringUtils.isEmpty(qaVO.getId())) {
-			qa.id = new Key<QuestionAnswer>(qaVO.getId()).getId();
+			qa.id = qaVO.toKeyId();
 		}
 		qa.answer = qaVO.getAnswer();
 		qa.answerDate = qaVO.getAnswerDate();
@@ -53,21 +53,21 @@ public class VoToModelConverter {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static Bid convert(BidVO bidVO) {
-		Bid bid = new Bid();
+	public static OldBid convert(OldBidVO bidVO) {
+		OldBid bid = new OldBid();
 		if (!StringUtils.isEmpty(bidVO.getId())) {
-			bid.id = new Key<Bid>(bidVO.getId()).getId();
+			bid.id = bidVO.toKeyId();
 		}
 		bid.listing = (Key<Listing>)stringToKey(bidVO.getListing());
 		bid.listingName = bidVO.getListingName();
 		if (!StringUtils.isEmpty(bidVO.getFundType())) {
-			bid.fundType = Bid.FundType.valueOf(StringUtils.upperCase(bidVO.getFundType()));
+			bid.fundType = OldBid.FundType.valueOf(StringUtils.upperCase(bidVO.getFundType()));
 		}
 		if (!StringUtils.isEmpty(bidVO.getAction())) {
-			bid.action = Bid.Action.valueOf(StringUtils.upperCase(bidVO.getAction()));
+			bid.action = OldBid.Action.valueOf(StringUtils.upperCase(bidVO.getAction()));
 		}
 		if (!StringUtils.isEmpty(bidVO.getActor())) {
-			bid.actor = Bid.Actor.valueOf(StringUtils.upperCase(bidVO.getActor()));
+			bid.actor = OldBid.Actor.valueOf(StringUtils.upperCase(bidVO.getActor()));
 		}
 		bid.expires = bidVO.getExpires();
 		bid.mockData = bidVO.isMockData();
@@ -87,7 +87,7 @@ public class VoToModelConverter {
 	public static Listing convert(ListingVO listingVO) {
 		Listing listing = new Listing();
 		if (!StringUtils.isEmpty(listingVO.getId())) {
-			listing.id = new Key<Listing>(listingVO.getId()).getId();
+			listing.id = listingVO.toKeyId();
 		}
 		listing.mockData = listingVO.isMockData();
 		listing.modified = listingVO.getModified();
@@ -243,7 +243,7 @@ public class VoToModelConverter {
 	public static Comment convert(CommentVO commentVO) {
 		Comment comment = new Comment();
 		if (!StringUtils.isEmpty(commentVO.getId())) {
-			comment.id = new Key<Comment>(commentVO.getId()).getId();
+			comment.id = commentVO.toKeyId();
 		}
 		comment.mockData = commentVO.isMockData();
 		comment.comment = commentVO.getComment();
@@ -361,10 +361,10 @@ public class VoToModelConverter {
 		return commentDTOList;
 	}
 
-	public static List<Bid> convertBids(List<BidVO> bidVoList) {
-		List<Bid> bidDtoList = new ArrayList<Bid>();
-		for (BidVO bidVO : bidVoList) {
-			Bid bidDTO = convert(bidVO);
+	public static List<OldBid> convertBids(List<OldBidVO> bidVoList) {
+		List<OldBid> bidDtoList = new ArrayList<OldBid>();
+		for (OldBidVO bidVO : bidVoList) {
+			OldBid bidDTO = convert(bidVO);
 			bidDtoList.add(bidDTO);
 		}
 		return bidDtoList;
