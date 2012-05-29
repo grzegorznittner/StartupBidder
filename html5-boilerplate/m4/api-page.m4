@@ -1774,10 +1774,12 @@ include(api-banner.m4)
     
         <dt>GET /listing/order_book/:id</dt>
         <dd>
-            <p>Get the public order book, the list of all bids for this listing, with private data removed, ordered by date ascending.
-            Thus, the bidder and bid note fields are not shown, so there is no way of tying the bid to the specific bidder.
-            Instead only the bid action, amount, percent, implied valuation and date are given.
-            Since this information has private data removed, it may be displayed publicly even to non-logged in visitors.</p>
+            <p>Get the public order book, the list of bid activiity for this listing, with private data removed, ordered by date ascending.
+                Bids are listed in three categories: investor bids, owner asks, and accepted bids.</p>
+            <p>Note that only the anonymized, public aspects of the bid are shown.
+                Thus, the bidder and bid note fields are not shown, so there is no way of tying the bid to the specific bidder.
+                Instead only the bid action, amount, percent, implied valuation and date are given.
+                Since this information has private data removed, it may be displayed publicly even to non-logged in visitors.</p>
         </dd>
         <div class="apidetail">
             <h4>Parameters</h4>
@@ -1791,28 +1793,46 @@ include(api-banner.m4)
                 <li><code>loggedin_profile</code> private user profile object, see User API for profile object details</li>
                 <li><code>error_code</code> error status for this call, 0 on success</li>
                 <li><code>error_msg</code> error message for this call, null on success</li>
-                <li><code>bids</code> list of bids for this listing by date, with private information removed, structure:
+                <li><code>investor_bids</code> list of most recent investor bids for this listing by date, with private information removed, structure:
 <pre name="code" class="brush: js">
 [
     {
         amt: :amount,
         pct: :pct,
         val: :val, /* calculated as amt / (pct / 100) */       
-        type: :bid_type, /* INVESTOR_POST, INVESTOR_COUNTER, INVESTOR_ACCEPT, INVESTOR_REJECT, INVESTOR_WITHDRAW,
-                                 OWNER_ACCEPT, OWNER_REJECT, OWNER_COUNTER, OWNER_WITHDRAW */ 
+        type: :bid_type, /* INVESTOR_POST, INVESTOR_COUNTER, INVESTOR_ACCEPT, INVESTOR_REJECT, INVESTOR_WITHDRAW */
         created_date: :date_yyyymmddhh24mmss
     },
     ...
 ]
 </pre>
-                <li><code>bids_props</code> list properties, call <var>more_results_url</var> in AJAX for more, structure:
+                </li>
+                <li><code>owner_bids</code> list of most recent owner bids for this listing by date, with private information removed, structure:
 <pre name="code" class="brush: js">
-{
-    start_index: :index,
-    max_results: :max,
-    num_results: :n,
-    more_results_url: :url
-}
+[
+    {
+        amt: :amount,
+        pct: :pct,
+        val: :val, /* calculated as amt / (pct / 100) */       
+        type: :bid_type, /* OWNER_ACCEPT, OWNER_REJECT, OWNER_COUNTER, OWNER_WITHDRAW */ 
+        created_date: :date_yyyymmddhh24mmss
+    },
+    ...
+]
+</pre>
+                </li>
+                <li><code>accepted_bids</code> list of bids accepted by the investor or owner by date, with private information removed, structure:
+<pre name="code" class="brush: js">
+[
+    {
+        amt: :amount,
+        pct: :pct,
+        val: :val, /* calculated as amt / (pct / 100) */       
+        type: :bid_type, /* INVESTOR_ACCEPT, OWNER_ACCEPT */
+        created_date: :date_yyyymmddhh24mmss
+    },
+    ...
+]
 </pre>
                 </li>
             </ul>
