@@ -34,7 +34,7 @@ import com.google.appengine.api.taskqueue.TaskOptions;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.Objectify;
 import com.googlecode.objectify.ObjectifyService;
-import com.startupbidder.datamodel.Bid;
+import com.startupbidder.datamodel.OldBid;
 import com.startupbidder.datamodel.Category;
 import com.startupbidder.datamodel.Comment;
 import com.startupbidder.datamodel.Listing;
@@ -43,7 +43,7 @@ import com.startupbidder.datamodel.ListingLocation;
 import com.startupbidder.datamodel.ListingStats;
 import com.startupbidder.datamodel.Monitor;
 import com.startupbidder.datamodel.Notification;
-import com.startupbidder.datamodel.PaidBid;
+import com.startupbidder.datamodel.OldPaidBid;
 import com.startupbidder.datamodel.PrivateMessage;
 import com.startupbidder.datamodel.PrivateMessageUser;
 import com.startupbidder.datamodel.QuestionAnswer;
@@ -152,7 +152,7 @@ public class MockDataBuilder {
 		output.append("Deleted listings stats: " + ls.toString() + "</br>");
 		getOfy().delete(ls);		
 
-		QueryResultIterable<Key<Bid>> b = getOfy().query(Bid.class).fetchKeys();
+		QueryResultIterable<Key<OldBid>> b = getOfy().query(OldBid.class).fetchKeys();
 		output.append("Deleted bids: " + b.toString() + "</br>");
 		getOfy().delete(b);
 		
@@ -416,13 +416,13 @@ public class MockDataBuilder {
 			}
 		}
 		
-		List<Key<Bid>> bidKeys = new ArrayList<Key<Bid>>();
-		CollectionUtils.addAll(bidKeys, getOfy().query(Bid.class).fetchKeys().iterator());
+		List<Key<OldBid>> bidKeys = new ArrayList<Key<OldBid>>();
+		CollectionUtils.addAll(bidKeys, getOfy().query(OldBid.class).fetchKeys().iterator());
 		outputBuffer.append("<p>Bids (" + bidKeys.size() + "):</p>");
 		if (bidKeys.size() > 0) {
 			//for (Bid obj : getOfy().get(bidKeys).values()) {
-			for (Key<Bid> key : bidKeys) {
-				Bid obj = getOfy().get(key);
+			for (Key<OldBid> key : bidKeys) {
+				OldBid obj = getOfy().get(key);
 				outputBuffer.append(obj).append("<br/>");
 			}
 			if (delete) {
@@ -430,11 +430,11 @@ public class MockDataBuilder {
 			}
 		}
 		
-		List<Key<PaidBid>> paidBidKeys = new ArrayList<Key<PaidBid>>();
-		CollectionUtils.addAll(paidBidKeys, getOfy().query(PaidBid.class).fetchKeys().iterator());
+		List<Key<OldPaidBid>> paidBidKeys = new ArrayList<Key<OldPaidBid>>();
+		CollectionUtils.addAll(paidBidKeys, getOfy().query(OldPaidBid.class).fetchKeys().iterator());
 		outputBuffer.append("<p>Paid bids (" + paidBidKeys.size() + "):</p>");
 		if (paidBidKeys.size() > 0) {
-			for (PaidBid obj : getOfy().get(paidBidKeys).values()) {
+			for (OldPaidBid obj : getOfy().get(paidBidKeys).values()) {
 				outputBuffer.append(obj).append("<br/>");
 			}
 			if (delete) {

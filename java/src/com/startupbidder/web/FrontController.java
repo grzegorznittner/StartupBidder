@@ -14,7 +14,7 @@ import com.googlecode.objectify.ObjectifyService;
 import com.startupbidder.dao.AngelListCache;
 import com.startupbidder.dao.GeocodeLocation;
 import com.startupbidder.dao.StartuplyCache;
-import com.startupbidder.datamodel.Bid;
+import com.startupbidder.datamodel.OldBid;
 import com.startupbidder.datamodel.Category;
 import com.startupbidder.datamodel.Comment;
 import com.startupbidder.datamodel.Listing;
@@ -24,7 +24,7 @@ import com.startupbidder.datamodel.ListingStats;
 import com.startupbidder.datamodel.Location;
 import com.startupbidder.datamodel.Monitor;
 import com.startupbidder.datamodel.Notification;
-import com.startupbidder.datamodel.PaidBid;
+import com.startupbidder.datamodel.OldPaidBid;
 import com.startupbidder.datamodel.PrivateMessage;
 import com.startupbidder.datamodel.PrivateMessageUser;
 import com.startupbidder.datamodel.QuestionAnswer;
@@ -33,7 +33,7 @@ import com.startupbidder.datamodel.SBUser;
 import com.startupbidder.datamodel.SystemProperty;
 import com.startupbidder.datamodel.UserStats;
 import com.startupbidder.datamodel.Vote;
-import com.startupbidder.web.controllers.BidController;
+import com.startupbidder.web.controllers.OldBidController;
 import com.startupbidder.web.controllers.CommentController;
 import com.startupbidder.web.controllers.CronTaskController;
 import com.startupbidder.web.controllers.FileController;
@@ -56,7 +56,7 @@ public class FrontController extends HttpServlet {
 		ObjectifyService.register(SBUser.class);
 		ObjectifyService.register(Listing.class);
 		ObjectifyService.register(UserStats.class);
-		ObjectifyService.register(Bid.class);
+		ObjectifyService.register(OldBid.class);
 		ObjectifyService.register(Comment.class);
 		ObjectifyService.register(ListingDoc.class);
 		ObjectifyService.register(ListingStats.class);
@@ -65,7 +65,7 @@ public class FrontController extends HttpServlet {
 		ObjectifyService.register(QuestionAnswer.class);
 		ObjectifyService.register(PrivateMessage.class);
 		ObjectifyService.register(PrivateMessageUser.class);
-		ObjectifyService.register(PaidBid.class);
+		ObjectifyService.register(OldPaidBid.class);
 		ObjectifyService.register(Rank.class);
 		ObjectifyService.register(SystemProperty.class);
 		ObjectifyService.register(Vote.class);
@@ -93,8 +93,6 @@ public class FrontController extends HttpServlet {
 			controller = new UserController();
 		} else if (pathInfo.startsWith("/listing")) {
 			controller = new ListingController();
-		} else if (pathInfo.startsWith("/bid")) {
-			controller = new BidController();
 		} else if (pathInfo.startsWith("/comment")) {
 			controller = new CommentController();
 		} else if (pathInfo.startsWith("/system")) {

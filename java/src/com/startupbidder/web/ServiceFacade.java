@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.startupbidder.datamodel.*;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -19,6 +18,14 @@ import com.google.appengine.api.taskqueue.TaskOptions;
 import com.google.appengine.api.users.User;
 import com.googlecode.objectify.Key;
 import com.startupbidder.dao.ObjectifyDatastoreDAO;
+import com.startupbidder.datamodel.Comment;
+import com.startupbidder.datamodel.Listing;
+import com.startupbidder.datamodel.Monitor;
+import com.startupbidder.datamodel.Notification;
+import com.startupbidder.datamodel.OldBid;
+import com.startupbidder.datamodel.QuestionAnswer;
+import com.startupbidder.datamodel.SBUser;
+import com.startupbidder.datamodel.VoToModelConverter;
 import com.startupbidder.vo.BaseVO;
 import com.startupbidder.vo.CommentListVO;
 import com.startupbidder.vo.CommentVO;
@@ -31,8 +38,6 @@ import com.startupbidder.vo.MonitorListVO;
 import com.startupbidder.vo.MonitorVO;
 import com.startupbidder.vo.NotificationListVO;
 import com.startupbidder.vo.NotificationVO;
-import com.startupbidder.vo.PrivateMessageUserVO;
-import com.startupbidder.vo.PrivateMessageVO;
 import com.startupbidder.vo.QuestionAnswerVO;
 import com.startupbidder.vo.SystemPropertyVO;
 import com.startupbidder.vo.UserBasicVO;
@@ -310,7 +315,7 @@ public class ServiceFacade {
 		}
 	}
 
-	public void createBidNotification(String toUserId, Bid bid, Notification.Type type) {
+	public void createBidNotification(String toUserId, OldBid bid, Notification.Type type) {
 		Listing listing = getDAO().getListing(bid.listing.getId());
 		SBUser toUser = getDAO().getUser(toUserId);
 		

@@ -25,15 +25,23 @@ import com.startupbidder.dao.ObjectifyDatastoreDAO;
 import com.startupbidder.datamodel.Listing;
 import com.startupbidder.datamodel.ListingDoc;
 import com.startupbidder.vo.BaseVO;
+import com.startupbidder.vo.BidListVO;
+import com.startupbidder.vo.BidUserListVO;
+import com.startupbidder.vo.BidVO;
 import com.startupbidder.vo.CommentVO;
 import com.startupbidder.vo.ListPropertiesVO;
 import com.startupbidder.vo.ListingAndUserVO;
 import com.startupbidder.vo.ListingPropertyVO;
 import com.startupbidder.vo.ListingVO;
+import com.startupbidder.vo.PrivateMessageListVO;
+import com.startupbidder.vo.PrivateMessageUserListVO;
+import com.startupbidder.vo.PrivateMessageVO;
 import com.startupbidder.vo.QuestionAnswerVO;
+import com.startupbidder.web.BidFacade;
 import com.startupbidder.web.HttpHeaders;
 import com.startupbidder.web.HttpHeadersImpl;
 import com.startupbidder.web.ListingFacade;
+import com.startupbidder.web.MessageFacade;
 import com.startupbidder.web.ModelDrivenController;
 import com.startupbidder.web.ServiceFacade;
 
@@ -96,6 +104,12 @@ public class ListingController extends ModelDrivenController {
 				return getAllListingLocations(request);
             } else if("questions_and_answers".equalsIgnoreCase(getCommand(1))) {
                 return questionsAndAnswers(request);
+			} else if("bid_users".equalsIgnoreCase(getCommand(1))) {
+                return bidUsers(request);
+			} else if("bids".equalsIgnoreCase(getCommand(1))) {
+                return bids(request);
+			} else if("make_bid".equalsIgnoreCase(getCommand(1))) {
+                return makeBid(request);
 			} else if("comments".equalsIgnoreCase(getCommand(1))) {
 				return listingComments(request);
 			} else if ("logo".equalsIgnoreCase(getCommand(1))) {
@@ -713,6 +727,82 @@ public class ListingController extends ModelDrivenController {
 		String listingId = getCommandOrParameter(request, 2, "id");
 		model = ServiceFacade.instance().getCommentsForListing(getLoggedInUser(), listingId, commentProperties);
 		
+		return headers;
+	}
+
+    // POST /user/make_bid
+    private HttpHeaders makeBid(HttpServletRequest request) throws JsonParseException, JsonMappingException, IOException {
+		HttpHeaders headers = new HttpHeadersImpl("make_bid");
+
+		ObjectMapper mapper = new ObjectMapper();
+		log.log(Level.INFO, "Parameters: " + request.getParameterMap());
+		String bidString = request.getParameter("bid");
+		if (!StringUtils.isEmpty(bidString)) {
+			JsonNode rootNode = mapper.readValue(bidString, JsonNode.class);
+			String listingId = null;
+			if (rootNode.get("listing_id") != null) {
+				listingId = rootNode.get("listing_id").getValueAsText();
+			}
+			String investorId = null;
+			if (rootNode.get("investor_id") != null) {
+				investorId = rootNode.get("investor_id").getValueAsText();
+			}
+			String text = null;
+			if (rootNode.get("text") != null) {
+				text = rootNode.get("text").getValueAsText();
+			}
+			String type = null;
+			if (rootNode.get("type") != null) {
+				type = rootNode.get("type").getValueAsText();
+			}
+			int amount = 0;
+			if (rootNode.get("amt") != null) {
+				amount = rootNode.get("amt").getValueAsInt();
+			}
+			int percentage = 0;
+			if (rootNode.get("pct") != null) {
+				percentage = rootNode.get("pct").getValueAsInt();
+			}
+			BidVO bid = null;
+			if (StringUtils.isEmpty(investorId)) {
+				bid = BidFacade.instance().makeBid(getLoggedInUser(), listingId, type, amount, percentage, text);
+			} else {
+				bid = BidFacade.instance().ownerMakesBid(getLoggedInUser(), listingId, investorId, type, amount, percentage, text);
+			}
+			model = bid;
+		} else {
+			log.severe("Missing bid parameter!");
+			headers.setStatus(500);
+		}
+		return headers;
+    }
+
+	/*
+	 *  /user/bid_users/
+	 */
+	private HttpHeaders bidUsers(HttpServletRequest request) {
+		HttpHeaders headers = new HttpHeadersImpl("bid_users");
+		
+		String listingId = getCommandOrParameter(request, 2, "id");
+		ListPropertiesVO listProperties = getListProperties(request);
+		BidUserListVO result = BidFacade.instance().getBidUsers(getLoggedInUser(), listingId, listProperties);
+		model = result;
+		
+		return headers;
+	}
+	
+	/*
+	 *  /user/bids/?id=<listingid>&investor_id=<userid>.html
+	 *  /user/bids/<listingid>/<from_user_id>/.html
+	 */
+	private HttpHeaders bids(HttpServletRequest request) {
+		HttpHeaders headers = new HttpHeadersImpl("bids");
+		
+		ListPropertiesVO listProperties = getListProperties(request);
+		String listingId = getCommandOrParameter(request, 2, "id");
+		String investorId = getCommandOrParameter(request, 3, "investor_id");
+		BidListVO result = BidFacade.instance().getBids(getLoggedInUser(), listingId, investorId, listProperties);
+		model = result;
 		return headers;
 	}
 

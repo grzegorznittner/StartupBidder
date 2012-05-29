@@ -12,6 +12,8 @@ import org.joda.time.Interval;
 
 import com.googlecode.objectify.Key;
 import com.startupbidder.datamodel.Bid;
+import com.startupbidder.datamodel.BidUser;
+import com.startupbidder.datamodel.OldBid;
 import com.startupbidder.datamodel.Comment;
 import com.startupbidder.datamodel.Listing;
 import com.startupbidder.datamodel.ListingDoc;
@@ -65,6 +67,41 @@ public class DtoToVoConverter {
 		return qa;
 	}
 	
+	public static BidVO convert(Bid bidDTO) {
+		if (bidDTO == null) {
+			return null;
+		}
+		BidVO qa = new BidVO();
+		qa.setText(bidDTO.text);
+		qa.setCreated(bidDTO.created);
+		qa.setDirection(bidDTO.direction == Bid.Direction.A_TO_B ? "sent" : "received");
+		qa.setRead(bidDTO.read);
+		qa.setAmount(bidDTO.amount);
+		qa.setPercentage(bidDTO.percentage);
+		qa.setValue(bidDTO.value);
+		qa.setType(bidDTO.type.toString());
+		return qa;
+	}
+	
+	public static BidUserVO convert(BidUser bidDTO) {
+		if (bidDTO == null) {
+			return null;
+		}
+		BidUserVO qa = new BidUserVO();
+		qa.setText(bidDTO.text);
+		qa.setLastDate(bidDTO.created);
+		qa.setDirection(bidDTO.direction == Bid.Direction.A_TO_B ? "sent" : "received");
+		qa.setUser(bidDTO.userB.getString());
+		qa.setUserNickname(bidDTO.userBNickname);
+		qa.setCounter(bidDTO.counter);
+		qa.setRead(bidDTO.read);
+		qa.setAmount(bidDTO.amount);
+		qa.setPercentage(bidDTO.percentage);
+		qa.setValue(bidDTO.value);
+		qa.setType(bidDTO.type.toString());
+		return qa;
+	}
+	
 	public static QuestionAnswerVO convert(QuestionAnswer qaDTO) {
 		if (qaDTO == null) {
 			return null;
@@ -82,12 +119,12 @@ public class DtoToVoConverter {
 		return qa;
 	}
 
-	public static BidVO convert(Bid bidDTO) {
+	public static OldBidVO convert(OldBid bidDTO) {
 		if (bidDTO == null) {
 			return null;
 		}
-		BidVO bid = new BidVO();
-		bid.setId(bidDTO.id != null ? new Key<Bid>(Bid.class, bidDTO.id).getString() : null);
+		OldBidVO bid = new OldBidVO();
+		bid.setId(bidDTO.id != null ? new Key<OldBid>(OldBid.class, bidDTO.id).getString() : null);
 		bid.setMockData(bidDTO.mockData);
 		bid.setListing(keyToString(bidDTO.listing));
 		bid.setListingName(bidDTO.listingName);
@@ -441,13 +478,13 @@ public class DtoToVoConverter {
 		return commentVoList;
 	}
 
-	public static List<BidVO> convertBids(List<Bid> bidDtoList) {
+	public static List<OldBidVO> convertOldBids(List<OldBid> bidDtoList) {
 		if (bidDtoList == null) {
 			return null;
 		}
-		List<BidVO> bidVoList = new ArrayList<BidVO>();
-		for (Bid bidDTO : bidDtoList) {
-			BidVO bidVO = convert(bidDTO);
+		List<OldBidVO> bidVoList = new ArrayList<OldBidVO>();
+		for (OldBid bidDTO : bidDtoList) {
+			OldBidVO bidVO = convert(bidDTO);
 			bidVoList.add(bidVO);
 		}
 		return bidVoList;
@@ -537,7 +574,7 @@ public class DtoToVoConverter {
 		return qaVoList;
 	}
 	
-	public static List<PrivateMessageVO> convertPrivateMessage(List<PrivateMessage> msgDtoList) {
+	public static List<PrivateMessageVO> convertPrivateMessages(List<PrivateMessage> msgDtoList) {
 		if (msgDtoList == null) {
 			return null;
 		}
@@ -549,7 +586,7 @@ public class DtoToVoConverter {
 		return msgVoList;
 	}
 	
-	public static List<PrivateMessageUserVO> convertPrivateMessageUser(List<PrivateMessageUser> msgDtoList) {
+	public static List<PrivateMessageUserVO> convertPrivateMessageUsers(List<PrivateMessageUser> msgDtoList) {
 		if (msgDtoList == null) {
 			return null;
 		}
@@ -561,10 +598,34 @@ public class DtoToVoConverter {
 		return qaVoList;
 	}
 	
-	public static Map<String, List<BidVO>> convertBidMap(Map<Key<SBUser>, List<Bid>> bidMap) {
-		Map<String, List<BidVO>> result = new HashMap<String, List<BidVO>>();
-		for (Map.Entry<Key<SBUser>, List<Bid>> entry : bidMap.entrySet()) {
-			result.put(entry.getKey().getString(), convertBids(entry.getValue()));
+	public static List<BidVO> convertBids(List<Bid> bidDtoList) {
+		if (bidDtoList == null) {
+			return null;
+		}
+		List<BidVO> bidVoList = new ArrayList<BidVO>();
+		for (Bid bidDTO : bidDtoList) {
+			BidVO bidVO = convert(bidDTO);
+			bidVoList.add(bidVO);
+		}
+		return bidVoList;
+	}
+	
+	public static List<BidUserVO> convertBidUsers(List<BidUser> bidDtoList) {
+		if (bidDtoList == null) {
+			return null;
+		}
+		List<BidUserVO> bidVoList = new ArrayList<BidUserVO>();
+		for (BidUser bidDTO : bidDtoList) {
+			BidUserVO bidVO = convert(bidDTO);
+			bidVoList.add(bidVO);
+		}
+		return bidVoList;
+	}
+	
+	public static Map<String, List<OldBidVO>> convertBidMap(Map<Key<SBUser>, List<OldBid>> bidMap) {
+		Map<String, List<OldBidVO>> result = new HashMap<String, List<OldBidVO>>();
+		for (Map.Entry<Key<SBUser>, List<OldBid>> entry : bidMap.entrySet()) {
+			result.put(entry.getKey().getString(), convertOldBids(entry.getValue()));
 		}
 		return result;
 	}

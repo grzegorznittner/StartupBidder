@@ -10,16 +10,16 @@ import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
  */
 @JsonAutoDetect(getterVisibility=Visibility.NONE, setterVisibility=Visibility.NONE,
 		fieldVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE)
-public class BidAndUserVO extends BaseResultVO {
+public class OldBidAndUserVO extends BaseResultVO {
 	@JsonProperty("bid")
-	private BidVO bid;
+	private OldBidVO bid;
 	@JsonProperty("profile")
 	private UserBasicVO user;
 
-	public BidVO getBid() {
+	public OldBidVO getBid() {
 		return bid;
 	}
-	public void setBid(BidVO bid) {
+	public void setBid(OldBidVO bid) {
 		this.bid = bid;
 	}
 	public UserBasicVO getUser() {
