@@ -77,6 +77,7 @@ pl.implement(EventClass, {
 function DateClass() {}
 pl.implement(DateClass, {
     format: function(datestr) {
+        console.log(datestr, datestr ? datestr.length : 'none');
         if (!datestr) {
             return '';
         }

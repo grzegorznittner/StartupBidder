@@ -1,5 +1,16 @@
 function BidClass(bidslist) {
     this.bidslist = bidslist;
+    this.typeclassmap = {
+        INVESTOR_POST: 'inprogress',
+        INVESTOR_COUNTER: 'inprogress',
+        INVESTOR_ACCEPT: 'successful',
+        INVESTOR_REJECT: 'errorcolor',
+        INVESTOR_WITHDRAW: 'errorcolor',
+        OWNER_ACCEPT: 'successful',
+        OWNER_REJECT: 'errorcolor',
+        OWNER_COUNTER: 'inprogress',
+        OWNER_WITHDRAW: 'errorcolor'
+    }
 }
 pl.implement(BidClass, {
     store: function(json) {
@@ -10,10 +21,12 @@ pl.implement(BidClass, {
         self.amttext = self.amt ? CurrencyClass.prototype.format(self.amt) : '';
         self.pcttext = self.pct ? PercentClass.prototype.format(self.pct) : '';
         self.valtext = self.val ? CurrencyClass.prototype.format(self.val) : '';
-        self.typetext = self.type ? self.type.replace(/(INVESTOR_|OWNER_)/, '').toLowerCase() : '';
+        self.typetext = self.type ? self.type.replace(/(INVESTOR_|OWNER_)/, '') : '';
         self.bidtext = self.text ? SafeStringClass.prototype.htmlEntities(self.text) : 'No bids';
         self.datetext = self.created_date ? DateClass.prototype.format(self.created_date) : '';
-        self.usertext = self.type.indexOf('INVESTOR') ? self.bidslist.investorusername : self.bidslist.ownerusername;
+        // self.usertext = self.type.indexOf('INVESTOR') ? self.bidslist.investorusername : self.bidslist.ownerusername;
+        self.usertext = self.type && self.type.match(/INVESTOR/) ? 'You' : 'Owner';
+        self.typeclass = self.typeclassmap[self.type] || '';
         return self;
     },
     setEmpty: function() {
@@ -30,30 +43,38 @@ pl.implement(BidClass, {
     },
     makeHeader: function() {
         return '\
-        <div class="messageline darkblue">\
-            <p class="messageuser span-4">Actor</p>\
-            <p class="messageuser span-2">Action</p>\
-            <p class="messageuser span-2">Bid</p>\
-            <p class="messageuser span-2">Equity</p>\
-            <p class="messageuser span-2">Valuation</p>\
-            <p class="messageuser span-6">Note</p>\
-            <p class="messagedate">Date</p>\
+        <style>\
+            .bidheader { background: #49515a !important; }\
+            .bidheader p { color: white; font-weight: bold !important; text-align: center; }\
+            .bidline p { font-weight: bold; text-align: center; }\
+            .bidnote { text-align: left !important; font-weight: normal !important; }\
+            .biddateheader { float: left; width: 140px; }\
+            .biddate { float: left; width: 140px; text-align: right; font-size: 12px; padding-top: 2px; }\
+        </style>\
+        <div class="messageline bidheader">\
+            <p class="span-2">Actor</p>\
+            <p class="span-2">Action</p>\
+            <p class="span-3">Bid</p>\
+            <p class="span-2">Equity</p>\
+            <p class="span-3">Valuation</p>\
+            <p class="span-9">Note</p>\
+            <p class="biddateheader">Date</p>\
         </div>\
         ';
     },
     makeHtml: function() {
         var self = this;
         return '\
-        <div class="messageline">\
-            <p class="messageuser span-4">' + self.usertext + '</p>\
-            <p class="messageuser span-2">' + self.typetext + '</p>\
-            <p class="messageuser span-2">' + self.amttext + '</p>\
-            <p class="messageuser span-2">' + self.pcttext + '</p>\
-            <p class="messageuser span-2">' + self.valtext + '</p>\
-            <p class="messagetext span-6">\
+        <div class="messageline bidline">\
+            <p class="span-2">' + self.usertext + '</p>\
+            <p class="span-2 ' + self.typeclass + '">' + self.typetext + '</p>\
+            <p class="span-3 ' + self.typeclass + '">' + self.amttext + '</p>\
+            <p class="span-2 ' + self.typeclass + '">' + self.pcttext + '</p>\
+            <p class="span-3 ' + self.typeclass + '">' + self.valtext + '</p>\
+            <p class="span-9 bidnote">\
                 '+self.bidtext+'\
             </p>\
-            <p class="messagedate">'+self.datetext+'</p>\
+            <p class="biddate">'+self.datetext+'</p>\
         </div>\
         ';
     }
@@ -75,52 +96,52 @@ pl.implement(SingleInvestorBidListClass, {
 bids:
 [
     {
-        amt: 20000,
-        pct: 5,
-        val: 400000,
+        amt: '20000',
+        pct: '5',
+        val: '400000',
         type: 'INVESTOR_POST',
         text: 'Is is a great idea, let us see if we can make it happen',
-        created_date: 20120528183623
+        created_date: '20120528183623'
     },
     {
-        amt: 20000,
-        pct: 5,
-        val: 400000,
+        amt: '20000',
+        pct: '5',
+        val: '400000',
         type: 'OWNER_REJECT',
         text: 'Not enough money for me to proceed, but thank you for your interest',
-        created_date: 20120528191242
+        created_date: '20120528191242'
     },
     {
-        amt: 40000,
-        pct: 10,
-        val: 400000,
+        amt: '40000',
+        pct: '10',
+        val: '400000',
         type: 'INVESTOR_POST',
         text: 'Here is a little more money, naturally I will require more shares as part of the deal',
-        created_date: 20120528213422
+        created_date: '20120528213422'
     },
     {
-        amt: 40000,
-        pct: 5,
-        val: 800000,
+        amt: '40000',
+        pct: '5',
+        val: '800000',
         type: 'OWNER_COUNTER',
         text: 'Well not that much equity, but it is looking a little more in line with what I have been thinking.',
-        created_date: 20120528214814
+        created_date: '20120528214814'
     },
     {
-        amt: 40000,
-        pct: 10,
-        val: 400000,
+        amt: '40000',
+        pct: '10',
+        val: '400000',
         type: 'INVESTOR_COUNTER',
         text: 'It looks like the money is agreeable, however as I indicated before I need more equity upside to be compensated fairly',
-        created_date: 20120528231215
+        created_date: '20120528231215'
     },
     {
-        amt: 40000,
-        pct: 10,
-        val: 400000,
+        amt: '40000',
+        pct: '10',
+        val: '400000',
         type: 'OWNER_ACCEPT',
         text: 'Okay I am comfortable with these terms, we have a deal',
-        created_date: 20120528232341
+        created_date: '20120528232341'
     }
 ]
         }); // FIXME

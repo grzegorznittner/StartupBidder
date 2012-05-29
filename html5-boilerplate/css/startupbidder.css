@@ -83,11 +83,11 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .topheaderlink { color: white !important; font-weight: bold; }
 .header { width: 100%; height: 55px; background: #49515a; }
 .headerrow { height: 55px; }
-.headertext, .headerlink { position: relative; font-weight: bold; font-size: 18px; top: 14px; color: #dcd8db; padding: 5px 15px; border-left: 2px solid white; }
+.headertext, .headerlink { position: relative; font-weight: bold; font-size: 18px; top: 14px; color: white; padding: 5px 15px; border-left: 2px solid white; }
 .headerlinknoborder { border-left: none; }
 .headerlinkright { border-left: none; padding-right: 0px; }
 .logotextblue { position: relative; font-weight: bold; font-size: 24px; top: 8px; color: #32aff6; }
-.logotextgrey { position: relative; font-weight: bold; font-size: 24px; top: 8px; color: #dcd8db; }
+.logotextgrey { position: relative; font-weight: bold; font-size: 24px; top: 8px; color: white; }
 .headerprofile { float: right; text-align: right; }
 .loginspan { text-align: right; }
 .logout { positon:relative; margin-top:6px; display: none; }

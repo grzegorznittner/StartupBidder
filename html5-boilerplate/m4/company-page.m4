@@ -184,7 +184,7 @@ include(header.m4)
         </div>
 
         <div class="initialhidden" id="bidsloggedin">
-            <div class="boxtitlegap smokegrey clear">YOUR BIDS FOR THIS LISTING
+            <div class="boxtitlegap smokegrey clear">YOUR BID HISTORY FOR THIS LISTING
                 <span class="newlistingtitlemsg" id="bidtitlemsg"></span>
             </div>
             <div class="boxpanel boxpanelfull" id="bidlistparent">

@@ -7,7 +7,6 @@ pl.implement(QuestionClass, {
     load: function() {
         var self = this,
             complete = function(json) {
-                console.log(json);
                 self.display(json);
             },
             ajax = new AjaxClass('/listings/questions_and_answers/' + this.listing_id, 'qandamsg', complete);
@@ -66,7 +65,6 @@ pl.implement(QuestionClass, {
             click: function(event) {
                 var val = SafeStringClass.prototype.clean(pl('#addqandatext').attr('value')),
                     completeFunc = function(json) {
-                        console.log(json);
                         var html = self.makeQuestion(json);
                         pl('#addqandatext').removeClass('edited').attr({value: 'Put your question here...'});
                         pl('#addqandabtn').removeClass('editenabled');
@@ -91,11 +89,9 @@ pl.implement(QuestionClass, {
     },
     bindReplyGenerator: function(questionid) {
         var self = this,
-            //boxsel = '#qanda_replybox_' + questionid,
             textsel = '#qanda_replytext_' + questionid,
             msgsel = '#qanda_replymsg_' + questionid,
             btnsel = '#qanda_replysendbtn_' + questionid;
-        console.log(textsel);
         return function() {
             pl(textsel).bind({
                 focus: function() {
@@ -194,7 +190,6 @@ pl.implement(QuestionClass, {
         }
     },
     makeQuestion: function(question, replyable) {
-        console.log(question, replyable);
         var self = this,
             questionreplybtn = replyable ? '<div class="inputbutton darkblue questionreplybtn span-3 hoverlink" id="qanda_replybtn_' + question.question_id + '">ANSWER</div>' : '',
             questiondate = DateClass.prototype.format(question.create_date),
@@ -241,7 +236,6 @@ pl.implement(QuestionClass, {
         pl('#qanda_replybox_' + questionid).addClass('questionreplylineshow');
         pl('#qanda_replybtn_' + questionid).hide();
         pl('#qanda_replyanswerdate_' + questionid).text('');
-        console.log('#qanda_replyanswerdate_'+questionid);
     },
     bindQuestion: function(question) {
         pl('#qanda_replybtn_' + question.question_id).bind('click', this.showReplyBox);
