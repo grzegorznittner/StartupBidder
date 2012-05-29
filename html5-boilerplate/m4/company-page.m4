@@ -184,16 +184,47 @@ include(header.m4)
         </div>
 
         <div class="initialhidden" id="bidsloggedin">
-            <div class="boxtitlegap smokegrey clear">YOUR BID HISTORY FOR THIS LISTING
+            <div class="boxtitlegap smokegrey clear">ORDER BOOK 
+                <span class="newlistingtitlemsg" id="orderbooktitlemsg"></span>
+            </div>
+            <div class="boxpanel boxpanelfull" id="orderbookparent">
+            </div>
+
+            <div class="boxtitlegap smokegrey clear">YOUR BIDS
                 <span class="newlistingtitlemsg" id="bidtitlemsg"></span>
             </div>
             <div class="boxpanel boxpanelfull" id="bidlistparent">
-                <div class="messageline messagereplyline questionaskline initialhidden" id="makebidbox">
+                <div class="messageline makebidline initialhidden" id="makebidbox">
                     <p class="messageuser messagereplyuser span-4">Make a bid</p>
                     <span class="span-14">
-                        <div>AMOUNT</div>
-                        <div>PERCENT</div>
-                        <div>IMPLIED VAL</div>
+                        <div class="formitem">
+                            <label class="inputlabel" for="title">AMOUNT</label>
+                            <span class="inputfield">
+                                <input class="text inputwidetext" type="text" name="makebidamt" id="makebidamt" value="$200,000" length="8" maxlength="8"></input>
+                            </span>
+                            <span class="inputicon">
+                                <div id="makebidamticon"></div>
+                            </span>
+                        </div>
+                        <div class="formitem clear">
+                            <label class="inputlabel" for="category">PERCENT</label>
+                            <span class="inputfield">
+                                <input class="text inputwidetext" type="text" name="makebidpct" id="makebidpct" value="5%" length="3" maxlength="3"></input>
+                            </span>
+                            <span class="inputicon">
+                                <div id="makebidpcticon"></div>
+                            </span>
+                        </div>
+                        <div class="formitem clear">
+                            <label class="inputlabel" for="category">VALUATION</label>
+                            <span class="inputfield">
+                                <input class="text inputwidetext" type="text" name="val" id="makebidval" value="" disabled="disabled"></input>
+                            </span>
+                            <span class="inputicon">
+                                <div id="categoryicon"></div>
+                            </span>
+                        </div>
+
                         <textarea class="textarea messagetextarea messagereplytextarea" id="makebidtext" name="makebidtext" cols="20" rows="5">Put your note concerning this bid here...</textarea>
                     </span>
                     <span class="span-3 inputbutton messagebutton messagereplybutton" id="makebidbtn">MAKE BID</span>
@@ -247,6 +278,7 @@ include(footer.m4)
   <script src="js/modules/base.js"></script>
   <script src="js/modules/companylist.js"></script>
   <script src="js/modules/forms.js"></script>
+  <script src="js/modules/orderbook.js"></script>
   <script src="js/modules/singleinvestorbidlist.js"></script>
   <script src="js/modules/comments.js"></script>
   <script src="js/modules/questions.js"></script>

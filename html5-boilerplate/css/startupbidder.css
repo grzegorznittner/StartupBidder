@@ -447,7 +447,8 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .questionreplybtn { position: absolute; right: 7px; }
 .messagereplyuser { position: relative; top: 10px; }
 .questionaskline { position: relative; min-height: 100px; }
-.messagereplytextarea { position: absolute; left: 150px; top: 5px; width: 640px !important; }
+.makebidline { position: relative; min-height: 200px; }
+.messagereplytextarea { position: absolute; left: 150px; bottom: 18px; width: 640px !important; }
 .messagereplybutton { position: absolute; right: 0; top: 40px; }
 .messagereplymsg { position: absolute; bottom: 0; left: 150px; }
 .messagereplyline { min-height: 100px; position: relative; }

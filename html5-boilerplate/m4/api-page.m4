@@ -1761,16 +1761,80 @@ include(api-banner.m4)
         </div>
     </div>
 
-    <div class="boxtitle">PRIVATE INVESTOR BID API</div>
+    <div class="boxtitle">BID API</div>
     <div class="boxpanel apipanel">
-        <p>Get information on investor bids for a listing.  Bids are obtained in reference to the listing and investor.
-            The client should consider two cases: first, if the logged in user is the listing owner; and second, if the
-            logged in user is an actual or potential investor, not the owner.  In the first case, <var>/listing/bid_investors</var>
-            should be called as there may be multiple investors the owner can view.  In the second case, <var>/listing/bids</var>
-            should be called instead as the investor can only view their own bids.
-            Note that all bids are private, only viewable by the bidder and listing owner.</p>
+        <p>Get information on investor bids for a listing.  Some bid information is available publicly in anonymous format
+           with private data removed, this is the order book used to show what bids are happening for this listing.
+           Detailed bids are private and obtained in reference to the listing and investor.</p>
+        <p>The client should consider two cases for private bids: first, if the logged in user is the listing owner; and second, if the
+           logged in user is an actual or potential investor, not the owner.  In the first case, <var>/listing/bid_investors</var>
+           should be called as there may be multiple investors the owner can view.  In the second case, <var>/listing/bids</var>
+           should be called instead as the investor can only view their own bids.
+           Note that all bids are private, only viewable by the bidder and listing owner.</p>
     
-        <dt>GET /listing/bid_investors/:id</dt>
+        <dt>GET /listing/order_book/:id</dt>
+        <dd>
+            <p>Get the public order book, the list of all bids for this listing, with private data removed, ordered by date ascending.
+            Thus, the bidder and bid note fields are not shown, so there is no way of tying the bid to the specific bidder.
+            Instead only the bid action, amount, percent, implied valuation and date are given.
+            Since this information has private data removed, it may be displayed publicly even to non-logged in visitors.</p>
+        </dd>
+        <div class="apidetail">
+            <h4>Parameters</h4>
+            <ul>
+                <li><code>id</code> listing ID</li>
+            </ul>
+            <h4>Response</h4>
+            <ul>
+                <li><code>login_url</code> URL to use for site login action</li>
+                <li><code>logout_url</code> URL to use for site logout action</li>
+                <li><code>loggedin_profile</code> private user profile object, see User API for profile object details</li>
+                <li><code>error_code</code> error status for this call, 0 on success</li>
+                <li><code>error_msg</code> error message for this call, null on success</li>
+                <li><code>bids</code> list of bids for this listing by date, with private information removed, structure:
+<pre name="code" class="brush: js">
+[
+    {
+        amt: :amount,
+        pct: :pct,
+        val: :val, /* calculated as amt / (pct / 100) */       
+        type: :bid_type, /* INVESTOR_POST, INVESTOR_COUNTER, INVESTOR_ACCEPT, INVESTOR_REJECT, INVESTOR_WITHDRAW,
+                                 OWNER_ACCEPT, OWNER_REJECT, OWNER_COUNTER, OWNER_WITHDRAW */ 
+        created_date: :date_yyyymmddhh24mmss
+    },
+    ...
+]
+</pre>
+                <li><code>bids_props</code> list properties, call <var>more_results_url</var> in AJAX for more, structure:
+<pre name="code" class="brush: js">
+{
+    start_index: :index,
+    max_results: :max,
+    num_results: :n,
+    more_results_url: :url
+}
+</pre>
+                </li>
+            </ul>
+            <h4>Test</h4>
+            <form method="GET" action="/listing/order_book" target="listing-order_book">
+                <div class="formitem">
+                    <label class="inputlabel" for="title">ID</label>
+                    <span class="inputfield">
+                        <input class="text inputwidetext listingid" type="text" name="id" value="0"></input>
+                    </span>
+                </div>
+                <div class="formitem clear">
+                    <span class="inputlabel"></span>
+                    <span class="inputfield">
+                        <input type="submit" class="inputbutton" value="SUBMIT"></input>
+                    </span>
+                </div>
+            </form>
+            <iframe name="listing-order_book"></iframe>
+        </div>
+
+        <dt>GET /listing/order_book/:id</dt>
         <dd>
             <p>Get the list of investors who have bid on this listing with the latest bid information by the investor. 
             Call this method first to get access to the latest bidding by investors, then call <var>/listing/bids</var> to get the full bid history.</p>
@@ -1844,7 +1908,7 @@ include(api-banner.m4)
             <h4>Parameters</h4>
             <ul>
                 <li><code>id</code> listing ID</li>
-                <li><code>investor_id</code> investor user profile ID who has bid on this listing</li>
+                <li><code>investor_id</code> <var>OPTIONAL</var> investor user profile ID who has bid on this listing, defaults to logged in profile ID for non-owners</li> 
             </ul>
             <h4>Response</h4>
             <ul>
@@ -1905,7 +1969,7 @@ include(api-banner.m4)
             <iframe name="listing-bids"></iframe>
         </div>
 
-        <dt>POST /listing/send_bid</dt>
+        <dt>POST /listing/make_bid</dt>
         <dd>
             <p>Post a bid from the logged in user to the listing and with the bid properties as specified in the bid field.
                 Note that bids always include a bid type which represents an action of the party as to the bid, as restricted
@@ -1920,7 +1984,7 @@ include(api-banner.m4)
             <ul>
                 <li><code>bid</code> bid to create as per the logged in user with properties:</li>
                 <li><code>.listing_id</code> the listing this bid is for</li>
-                <li><code>.investor_id</code> the profile_id of the investor who placed the bid</li>
+                <li><code>.investor_id</code> <var>OPTIONAL</var> the profile_id of the investor who placed the bid, only passed for listing owner making bid</li>
                 <li><code>.amt</code> amount of cash being offered by the investor, e.g. 20000</li>
                 <li><code>.pct</code> percentage of the company/project being demanded by the investor, e.g. 5</li>
                 <li><code>.type</code> 
@@ -1947,7 +2011,7 @@ include(api-banner.m4)
                 </li>
             </ul>
             <h4>Test</h4>
-            <form method="POST" action="/listing/send_bid" target="listing-send_bid">
+            <form method="POST" action="/listing/make_bid" target="listing-make_bid">
                 <div class="formitem">
                     <label class="inputlabel" for="title">BID</label>
                     <span class="inputfield">
@@ -1962,7 +2026,7 @@ include(api-banner.m4)
                     </span>
                 </div>
             </form>
-            <iframe name="listing-send_bid"></iframe>
+            <iframe name="listing-make_bid"></iframe>
         </div>
     </div>
 

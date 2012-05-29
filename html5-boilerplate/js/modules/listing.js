@@ -434,24 +434,23 @@ pl.implement(ListingClass, {
                 }
             }
             else if (tab === 'bids') {
-                if (this.isBidListLoaded) {
-                    // skip
-                }
-                else if (this.loggedin_profile_id && this.loggedin_profile_id === this.profile_id) {
-                    //(new OwnerBidGroupListClass(this.listing_id)).load();
-                    pl('#bidsnotloggedin, #bidsloggedin').hide();
-                    pl('#bidsowner').show();
+                if (!this.isBidListLoaded) {
+                    (new OrderBookClass(this.listing_id)).load();
+                    if (this.loggedin_profile_id && this.loggedin_profile_id === this.profile_id) {
+                        //(new OwnerBidGroupListClass(this.listing_id)).load();
+                        pl('#bidsnotloggedin, #bidsloggedin').hide();
+                        pl('#bidsowner').show();
+                    }
+                    else if (this.loggedin_profile_id) {
+                        (new SingleInvestorBidListClass(this.listing_id, this.loggedin_profile_id, this.loggedin_profile.username || 'anonymous')).load();
+                        pl('#bidsnotloggedin, #bidsowner').hide();
+                        pl('#bidsloggedin').show();
+                    }
+                    else {
+                        pl('#bidsloggedin, #bidsowner').hide();
+                        pl('#bidsnotloggedin').show();
+                    }
                     this.isBidListLoaded = true;
-                }
-                else if (this.loggedin_profile_id) {
-                    (new SingleInvestorBidListClass(this.listing_id, this.loggedin_profile_id, this.loggedin_profile.username || 'anonymous')).load();
-                    pl('#bidsnotloggedin, #bidsowner').hide();
-                    pl('#bidsloggedin').show();
-                    this.isBidListLoaded = true;
-                }
-                else {
-                    pl('#bidsloggedin, #bidsowner').hide();
-                    pl('#bidsnotloggedin').show();
                 }
                 pl(wrappersel).show();
             }
