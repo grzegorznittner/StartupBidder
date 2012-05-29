@@ -163,8 +163,7 @@ include(api-banner.m4)
                 <li><code>error_msg</code> error message for this call, null on success</li>
                 <li><code>listings</code> list of listings matching this request, up to the <var>max_results</var></li>
                 <li><code>notifications</code> list of the user notifications, unread first then by date order, see Notification API for details</li>
-                <li><code>listings_props</code> list properties for this query.  You can call <var>more_results_url</var> in an AJAX request for additional listings.
-                    Structure:
+                <li><code>listings_props</code> list properties, call <var>more_results_url</var> in AJAX for more, structure:
 <pre name="code" class="brush: js">
 {
     start_index: :index,
@@ -205,8 +204,7 @@ include(api-banner.m4)
                 <li><code>error_code</code> error status for this call, 0 on success</li>
                 <li><code>error_msg</code> error message for this call, null on success</li>
                 <li><code>listings</code> list of listings matching this request, up to the <var>max_results</var></li>
-                <li><code>listings_props</code> list properties for this query.  You can call <var>more_results_url</var> in an AJAX request for additional listings.
-                    Structure:
+                <li><code>listings_props</code> list properties, call <var>more_results_url</var> in AJAX for more, structure:
 <pre name="code" class="brush: js">
 {
     start_index: :index,
@@ -247,8 +245,7 @@ include(api-banner.m4)
                 <li><code>error_code</code> error status for this call, 0 on success</li>
                 <li><code>error_msg</code> error message for this call, null on success</li>
                 <li><code>listings</code> list of listings matching this request, up to the <var>max_results</var></li>
-                <li><code>listings_props</code> list properties for this query.  You can call <var>more_results_url</var> in an AJAX request for additional listings.
-                    Structure:
+                <li><code>listings_props</code> list properties, call <var>more_results_url</var> in AJAX for more, structure:
 <pre name="code" class="brush: js">
 {
     start_index: :index,
@@ -288,8 +285,7 @@ include(api-banner.m4)
                 <li><code>error_code</code> error status for this call, 0 on success</li>
                 <li><code>error_msg</code> error message for this call, null on success</li>
                 <li><code>listings</code> list of listings matching this request, up to the <var>max_results</var></li>
-                <li><code>listings_props</code> list properties for this query.  You can call <var>more_results_url</var> in an AJAX request for additional listings.
-                    Structure:
+                <li><code>listings_props</code> list properties, call <var>more_results_url</var> in AJAX for more, structure:
 <pre name="code" class="brush: js">
 {
     start_index: :index,
@@ -329,8 +325,7 @@ include(api-banner.m4)
                 <li><code>error_code</code> error status for this call, 0 on success</li>
                 <li><code>error_msg</code> error message for this call, null on success</li>
                 <li><code>listings</code> list of listings matching this request, up to the <var>max_results</var></li>
-                <li><code>listings_props</code> list properties for this query.  You can call <var>more_results_url</var> in an AJAX request for additional listings.
-                    Structure:
+                <li><code>listings_props</code> list properties, call <var>more_results_url</var> in AJAX for more, structure:
 <pre name="code" class="brush: js">
 {
     start_index: :index,
@@ -393,8 +388,7 @@ include(api-banner.m4)
                 <li><code>error_code</code> error status for this call, 0 on success</li>
                 <li><code>error_msg</code> error message for this call, null on success</li>
                 <li><code>listings</code> list of listings matching this request, up to the <var>max_results</var>, or an empty list if nothing is found</li>
-                <li><code>listings_props</code> list properties for this query.  You can call <var>more_results_url</var> in an AJAX request for additional listings.
-                    Structure:
+                <li><code>listings_props</code> list properties, call <var>more_results_url</var> in AJAX for more, structure:
 <pre name="code" class="brush: js">
 {
     start_index: :index,
@@ -1156,8 +1150,7 @@ include(api-banner.m4)
 ]
 </pre>
                 </li>
-                <li><code>monitors_props</code> list properties for this query. Call <var>more_results_url</var> in an AJAX request for more.
-                    Structure:
+                <li><code>monitors_props</code> list properties, call <var>more_results_url</var> in AJAX for more, structure:
 <pre name="code" class="brush: js">
 {
     start_index: :index,
@@ -1210,8 +1203,7 @@ include(api-banner.m4)
 ]
 </pre>
                 </li>
-                <li><code>monitors_props</code> list properties for this query. Call <var>more_results_url</var> in an AJAX request for more.
-                    Structure:
+                <li><code>monitors_props</code> list properties, call <var>more_results_url</var> in AJAX for more, structure:
 <pre name="code" class="brush: js">
 {
     start_index: :index,
@@ -1353,17 +1345,19 @@ include(api-banner.m4)
             </ul>
             <h4>Response</h4>
             <ul>
-                <li><code>qanda</code> list of questions for this listing, see <var>/listing/ask_owner</var> for field detials.  Structure:
+                <li>list of questions for this listing, see <var>/listing/ask_owner</var> for field detials.  Structure:
 <pre name="code" class="brush: js">
 [
     {
     question_id: :id,
-    from_user_id: :uid,
-    from_user_nickname: :name,
-    text_2: :question_text,
+    listing_id: :id,
+    user_id: :uid,
+    user_nickname: :name,
+    question: :question_text,
     answer: :answer_text,
+    create_date: :date_yyyymmddhh24mmss,
     answer_date: :date_yyyymmddhh24mmss,
-    create_date: :date_yyyymmddhh24mmss
+    published: :true_or_false
     },
     ...
 ]
@@ -1394,7 +1388,7 @@ include(api-banner.m4)
         <div class="apidetail">
             <h4>Parameters</h4>
             <ul>
-                <li><code>ask</code> ask question object for owner</li>
+                <li><code>message</code> ask question object for owner</li>
                 <li><code class="apiprop">.listing_id</code> alphanumeric listing id as returned by the listing list and search API</li>
                 <li><code class="apiprop">.text</code> text message user wishes to ask the owner</li>
             </ul>
@@ -1433,7 +1427,7 @@ include(api-banner.m4)
         <div class="apidetail">
             <h4>Parameters</h4>
             <ul>
-                <li><code>answer</code> answer question by owner object</li>
+                <li><code>message</code> answer question by owner object</li>
                 <li><code class="apiprop">.question_id</code> alphanumeric question id as returned by <var>/listing/questions_answers</var></li>
                 <li><code class="apiprop">.text</code> text message of owner&rsquo;s answer to the question</li>
             </ul>
@@ -1468,7 +1462,7 @@ include(api-banner.m4)
         <dt>GET /user/message_users</dt>
         <dd>
             <p>Get the list of users with which the currently logged in user has had a conversation.  Call this first in order to get access
-            to user conversations which you can then retrieve via the <var>/user/get_messages</var> method</p>
+            to user conversations which you can then retrieve via the <var>/user/messages</var> method</p>
         </dd>
         <div class="apidetail">
             <h4>Parameters</h4>
@@ -1496,7 +1490,7 @@ include(api-banner.m4)
     ...
 ]
 </pre>
-                <li><code>users_props</code> list properties for this query.  You can call <var>more_results_url</var> in an AJAX request for additional users.  Structure:
+                <li><code>users_props</code> list properties, call <var>more_results_url</var> in AJAX for more, structure:
 <pre name="code" class="brush: js">
 {
     start_index: :index,
@@ -1508,13 +1502,12 @@ include(api-banner.m4)
                 </li>
             </ul>
             <h4>Test</h4>
-            <form method="GET" action="/user/get_message_users" target="user-get_message_users">
+            <form method="GET" action="/user/message_users" target="user-message_users">
                 <input type="submit" class="inputbutton" value="SUBMIT"></input>
             </form>
-            <iframe name="user-get_message_users"></iframe>
+            <iframe name="user-message_users"></iframe>
         </div>
 
- 
         <dt>GET /user/messages/:id</dt>
         <dd>
             <p>Get the list of messages between the logged in user and the user with the given user <var>id</var>.</p>
@@ -1545,7 +1538,7 @@ include(api-banner.m4)
 ]
 </pre>
                 </li>
-                <li><code>messages_props</code> list properties for this query.  You can call <var>more_results_url</var> in an AJAX request for additional messages.  Structure:
+                <li><code>messages_props</code> list properties, call <var>more_results_url</var> in AJAX for more, structure:
 <pre name="code" class="brush: js">
 {
     start_index: :index,
@@ -1557,7 +1550,7 @@ include(api-banner.m4)
                 </li>
             </ul>
             <h4>Test</h4>
-            <form method="GET" action="/user/get_messages" target="user-get_messages">
+            <form method="GET" action="/user/messages" target="user-messages">
                 <div class="formitem">
                     <label class="inputlabel" for="title">USER ID</label>
                     <span class="inputfield">
@@ -1571,12 +1564,12 @@ include(api-banner.m4)
                     </span>
                 </div>
             </form>
-            <iframe name="user-get_messages"></iframe>
+            <iframe name="user-messages"></iframe>
         </div>
 
         <dt>POST /user/send_message</dt>
         <dd>
-            <p>Post a message from the logged in user to the user with the given <var>id</var>.</p>
+            <p>Post a message from the logged in user to the user identified in the message field.</p>
         </dd>
         <div class="apidetail">
             <h4>Parameters</h4>
@@ -1651,7 +1644,7 @@ include(api-banner.m4)
 ]
 </pre>
                 </li>
-                <li><code>notifications_props</code> list properties for this query.  You can call <var>more_results_url</var> in an AJAX request for additional notifications.  Structure:
+                <li><code>notifications_props</code> list properties, call <var>more_results_url</var> in AJAX for more, structure:
 <pre name="code" class="brush: js">
 {
     start_index: :index,
@@ -1766,7 +1759,211 @@ include(api-banner.m4)
             </form>
             <iframe name="file-download"></iframe>
         </div>
+    </div>
 
+    <div class="boxtitle">PRIVATE INVESTOR BID API</div>
+    <div class="boxpanel apipanel">
+        <p>Get information on investor bids for a listing.  Bids are obtained in reference to the listing and investor.
+            The client should consider two cases: first, if the logged in user is the listing owner; and second, if the
+            logged in user is an actual or potential investor, not the owner.  In the first case, <var>/listing/bid_investors</var>
+            should be called as there may be multiple investors the owner can view.  In the second case, <var>/listing/bids</var>
+            should be called instead as the investor can only view their own bids.
+            Note that all bids are private, only viewable by the bidder and listing owner.</p>
+    
+        <dt>GET /listing/bid_investors/:id</dt>
+        <dd>
+            <p>Get the list of investors who have bid on this listing with the latest bid information by the investor. 
+            Call this method first to get access to the latest bidding by investors, then call <var>/listing/bids</var> to get the full bid history.</p>
+        </dd>
+        <div class="apidetail">
+            <h4>Parameters</h4>
+            <ul>
+                <li><code>id</code> listing ID</li>
+            </ul>
+            <h4>Response</h4>
+            <ul>
+                <li><code>login_url</code> URL to use for site login action</li>
+                <li><code>logout_url</code> URL to use for site logout action</li>
+                <li><code>loggedin_profile</code> private user profile object, see User API for profile object details</li>
+                <li><code>error_code</code> error status for this call, 0 on success</li>
+                <li><code>error_msg</code> error message for this call, null on success</li>
+                <li><code>investors</code> list of investors along with the latest bid concerning them, and whether it&rsquo;s been read.  Structure:
+<pre name="code" class="brush: js">
+[
+    {
+        listing_id: :id,
+        investor_id: :uid,
+        investor_nickname: :name,
+        last_amt: :amount,
+        last_pct: :pct,
+        last_val: :val, /* calculated as amt / (pct / 100) */       
+        last_type: :bid_type, /* INVESTOR_POST, INVESTOR_COUNTER, INVESTOR_ACCEPT, INVESTOR_REJECT, INVESTOR_WITHDRAW,
+                                 OWNER_ACCEPT, OWNER_REJECT, OWNER_COUNTER, OWNER_WITHDRAW */ 
+        last_text: :bid_note,
+        last_date: :date_yyyymmddhh24mmss,
+        counter: :number_of_bids_from_this_investor,
+        read: :true_or_false
+    },
+    ...
+]
+</pre>
+                <li><code>investors_props</code> list properties, call <var>more_results_url</var> in AJAX for more, structure:
+<pre name="code" class="brush: js">
+{
+    start_index: :index,
+    max_results: :max,
+    num_results: :n,
+    more_results_url: :url
+}
+</pre>
+                </li>
+            </ul>
+            <h4>Test</h4>
+            <form method="GET" action="/listing/bid_investors" target="listing-bid_investors">
+                <div class="formitem">
+                    <label class="inputlabel" for="title">ID</label>
+                    <span class="inputfield">
+                        <input class="text inputwidetext listingid" type="text" name="id" value="0"></input>
+                    </span>
+                </div>
+                <div class="formitem clear">
+                    <span class="inputlabel"></span>
+                    <span class="inputfield">
+                        <input type="submit" class="inputbutton" value="SUBMIT"></input>
+                    </span>
+                </div>
+            </form>
+            <iframe name="listing-bid_investors"></iframe>
+        </div>
+
+        <dt>GET /listing/bids/:id/:investor_id</dt>
+        <dd>
+            <p>Get the list of bids for the given listing <var>id</var> and investor <var>profile_id</var>, ordered by date ascending.</p>
+        </dd>
+        <div class="apidetail">
+            <h4>Parameters</h4>
+            <ul>
+                <li><code>id</code> listing ID</li>
+                <li><code>investor_id</code> investor user profile ID who has bid on this listing</li>
+            </ul>
+            <h4>Response</h4>
+            <ul>
+                <li><code>login_url</code> URL to use for site login action</li>
+                <li><code>logout_url</code> URL to use for site logout action</li>
+                <li><code>loggedin_profile</code> private user profile object, see User API for profile object details</li>
+                <li><code>error_code</code> error status for this call, 0 on success</li>
+                <li><code>error_msg</code> error message for this call, null on success</li>
+                <li><code>investor</code> profile object for investor, with private fields hidden</li>
+                <li><code>bids</code> bids for this investor and listing, ordered by date ascending.  Structure:
+<pre name="code" class="brush: js">
+[
+    {
+        amt: :amt,
+        pct: :pct,
+        val: :val, /* calculated as amt / (pct / 100) */       
+        type: :type, /* INVESTOR_POST, INVESTOR_COUNTER, INVESTOR_ACCEPT, INVESTOR_REJECT, INVESTOR_WITHDRAW,
+                        OWNER_ACCEPT, OWNER_REJECT, OWNER_COUNTER, OWNER_WITHDRAW */ 
+        text: :note,
+        created_date: :yyyymmddhh24mmss
+    },
+    ...
+]
+</pre>
+                </li>
+                <li><code>bids_props</code> list properties, call <var>more_results_url</var> in AJAX for more, structure:
+<pre name="code" class="brush: js">
+{
+    start_index: :index,
+    max_results: :max,
+    num_results: :n,
+    more_results_url: :url
+}
+</pre>
+                </li>
+            </ul>
+            <h4>Test</h4>
+            <form method="GET" action="/listing/bids" target="listing-bids">
+                <div class="formitem">
+                    <label class="inputlabel" for="title">LISTING ID</label>
+                    <span class="inputfield">
+                        <input class="text inputwidetext listingid" type="text" name="id" value="0"></input>
+                    </span>
+                </div>
+                <div class="formitem clear">
+                    <label class="inputlabel" for="title">INVESTOR ID</label>
+                    <span class="inputfield">
+                        <input class="text inputwidetext profileid" type="text" name="investor_id" value="0"></input>
+                    </span>
+                </div>
+                <div class="formitem clear">
+                    <span class="inputlabel"></span>
+                    <span class="inputfield">
+                        <input type="submit" class="inputbutton" value="SUBMIT"></input>
+                    </span>
+                </div>
+            </form>
+            <iframe name="listing-bids"></iframe>
+        </div>
+
+        <dt>POST /listing/send_bid</dt>
+        <dd>
+            <p>Post a bid from the logged in user to the listing and with the bid properties as specified in the bid field.
+                Note that bids always include a bid type which represents an action of the party as to the bid, as restricted
+                by the bid history.  For instance, a user without previous bid history for a listing may place a bid as an investor.
+                The listing owner may then approve or reject this bid with the exact same amount and percent, or may counter with
+                a different counter or percent.  This causes a bid to only be approvable exactly as offered by the counterparty.
+                Note that properties <var>investor_nickname</var>, <var>val</var> and <var>created_date</var> cannot be passed, as they are
+                generated automatically by the server.</p>
+        </dd>
+        <div class="apidetail">
+            <h4>Parameters</h4>
+            <ul>
+                <li><code>bid</code> bid to create as per the logged in user with properties:</li>
+                <li><code>.listing_id</code> the listing this bid is for</li>
+                <li><code>.investor_id</code> the profile_id of the investor who placed the bid</li>
+                <li><code>.amt</code> amount of cash being offered by the investor, e.g. 20000</li>
+                <li><code>.pct</code> percentage of the company/project being demanded by the investor, e.g. 5</li>
+                <li><code>.type</code> 
+                    one of INVESTOR_POST, INVESTOR_COUNTER, INVESTOR_ACCEPT, INVESTOR_REJECT, INVESTOR_WITHDRAW, OWNER_ACCEPT, OWNER_REJECT, OWNER_COUNTER, OWNER_WITHDRAW</li>
+                <li><code>.text</code> note attached to this bid, may describe additional conditions</li>
+            </ul>
+            <h4>Response</h4>
+            <ul>
+                <li><var>json response of new bid object:</var>
+<pre name="code" class="brush: js">
+{
+    listing_id: :id,
+    investor_id: :profile_id,
+    investor_nickname: :name,
+    amt: :amt,
+    pct: :pct,
+    val: :val, /* calculated as amt / (pct / 100) */       
+    type: :type, /* INVESTOR_POST, INVESTOR_COUNTER, INVESTOR_ACCEPT, INVESTOR_REJECT, INVESTOR_WITHDRAW,
+                    OWNER_ACCEPT, OWNER_REJECT, OWNER_COUNTER, OWNER_WITHDRAW */ 
+    text: :note,
+    created_date: :yyyymmddhh24mmss
+},
+</pre>
+                </li>
+            </ul>
+            <h4>Test</h4>
+            <form method="POST" action="/listing/send_bid" target="listing-send_bid">
+                <div class="formitem">
+                    <label class="inputlabel" for="title">BID</label>
+                    <span class="inputfield">
+                        <input class="text inputwidetext bidobj" type="text" name="bid"
+                            value="{ listing_id: 0, investor_id: 0, amt: 20000, pct: 5, type: 'INVESTOR_POST', text: 'bid note' }"></input>
+                    </span>
+                </div>
+                <div class="formitem clear">
+                    <span class="inputlabel"></span>
+                    <span class="inputfield">
+                        <input type="submit" class="inputbutton" value="SUBMIT"></input>
+                    </span>
+                </div>
+            </form>
+            <iframe name="listing-send_bid"></iframe>
+        </div>
     </div>
 
     <div class="boxtitle">USER API</div>
@@ -1947,8 +2144,7 @@ include(api-banner.m4)
                 <li><code>error_code</code> error status for this call, 0 on success</li>
                 <li><code>error_msg</code> error message for this call, null on success</li>
                 <li><code>listings</code> list of listings matching this request, up to the <var>max_results</var></li>
-                <li><code>listings_props</code> list properties for this query.  You can call <var>more_results_url</var> in an AJAX request for additional listings.
-                    Structure:
+                <li><code>listings_props</code> list properties, call <var>more_results_url</var> in AJAX, structure:
 <pre name="code" class="brush: js">
 {
     start_index: :index,
@@ -1988,8 +2184,7 @@ include(api-banner.m4)
                 <li><code>error_code</code> error status for this call, 0 on success</li>
                 <li><code>error_msg</code> error message for this call, null on success</li>
                 <li><code>listings</code> list of listings matching this request, up to the <var>max_results</var></li>
-                <li><code>listings_props</code> list properties for this query.  You can call <var>more_results_url</var> in an AJAX request for additional listings.
-                    Structure:
+                <li><code>listings_props</code> list properties, call <var>more_results_url</var> in AJAX for more, structure:
 <pre name="code" class="brush: js">
 {
     start_index: :index,

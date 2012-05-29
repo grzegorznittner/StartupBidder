@@ -57,6 +57,7 @@ a:link, a:visited { text-decoration: none; color: #4083a9; }
 .darkblue { color: #4083a9; }
 .darkgrey { color: #49515a; }
 .darkgreybg { background: #49515a; }
+.aquamarine { color: #49a389; }
 .smokegrey { color: #333333; }
 .white { color: #ffffff; }
 .uneditabletext { color: #49515a; }
@@ -82,11 +83,11 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .topheaderlink { color: white !important; font-weight: bold; }
 .header { width: 100%; height: 55px; background: #49515a; }
 .headerrow { height: 55px; }
-.headertext, .headerlink { position: relative; font-weight: bold; font-size: 18px; top: 14px; color: #dcd8db; padding: 5px 15px; border-left: 2px solid white; }
+.headertext, .headerlink { position: relative; font-weight: bold; font-size: 18px; top: 14px; color: white; padding: 5px 15px; border-left: 2px solid white; }
 .headerlinknoborder { border-left: none; }
 .headerlinkright { border-left: none; padding-right: 0px; }
 .logotextblue { position: relative; font-weight: bold; font-size: 24px; top: 8px; color: #32aff6; }
-.logotextgrey { position: relative; font-weight: bold; font-size: 24px; top: 8px; color: #dcd8db; }
+.logotextgrey { position: relative; font-weight: bold; font-size: 24px; top: 8px; color: white; }
 .headerprofile { float: right; text-align: right; }
 .loginspan { text-align: right; }
 .logout { positon:relative; margin-top:6px; display: none; }
@@ -102,6 +103,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .followimg { top: 20px; position: relative; }
 .followtext { font-weight: bold; }
 .followtextit { font-style: italic; }
+.followmsg { color: gray; }
 .pull-15px { left: -15px; position: relative; }
 .push-15px { left: 15px; position: relative; }
 .push-20px { left: 20px; position: relative; }
@@ -407,8 +409,8 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .sideboxselected { background: white; !important}
 .sidebox { width: 302px; border: 2px solid #999999; padding: 2px; overflow: auto; background: #e3e3e3; margin-bottom: 10px; overflow: hidden; }
 .sidebox p { margin: 5px 10px 10px 10px; text-indent: 0px; font-weight: normal; }
-.sideboxcol1 { width: 146px; float: left; margin-right: 10px; }
-.sideboxcol2 { width: 142px; float: left; }
+.sideboxcol1 { width: 150px; float: left; margin-right: 0; }
+.sideboxcol2 { width: 150px; float: left; }
 .sideboxcolfull { width: 292px; float: left; margin-right: 10px; }
 .sideboxlist { list-style: none; list-style-position: inside; margin: 0; padding: 0; font-weight: bold; }
 .sideboxlist li { margin-left: 10px; text-indent: -10px; }
@@ -430,17 +432,26 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .notifyline:nth-child(2n) { background: #f2f2f2; }
 .notifytext { float: left; font-weight: normal; }
 .notifydate { float: right; font-size: 12px; padding-top: 2px; color: gray; margin-right: 10px; }
-.messageline { clear: both; padding: 5px; overflow: auto; }
+.messageline { clear: both; padding: 5px; overflow: auto; position: relative; }
 .messageline:nth-child(2n) { background: #f2f2f2; }
 .messageline p { font-weight: normal; margin: 0; text-indent: 0; }
 .messageline p.messageuser { font-weight: bold; }
+.messageline p.answerdate { font-weight: bold; }
 .messagetext { float: left; font-weight: normal; }
-.messagedate { float: right; font-size: 12px; padding-top: 2px; color: gray; margin-right: 10px; }
-.messagereplyline { position: relative; height: 100px; }
+.messagedate { float: right; font-size: 12px; padding-top: 2px; color: gray; margin-right: 10px; font-weight: bold; }
+.questionanswerline { clear: both; position: relative; overflow: auto; }
+.questionanswerline .messagetext { padding-top: 10px; }
+.questiondate { min-height: 60px; }
+.questionreplyline { clear: both; padding: 5px; position: relative; }
+.questionreplylineshow { height: 100px; }
+.questionreplybtn { position: absolute; right: 7px; }
 .messagereplyuser { position: relative; top: 10px; }
+.questionaskline { position: relative; min-height: 100px; }
 .messagereplytextarea { position: absolute; left: 150px; top: 5px; width: 640px !important; }
 .messagereplybutton { position: absolute; right: 0; top: 40px; }
 .messagereplymsg { position: absolute; bottom: 0; left: 150px; }
+.messagereplyline { min-height: 100px; position: relative; }
+.addcommentbox { min-height: 100px; }
 .sideboxdate { font-size: 10px; color: grey; }
 .sideboxlisting { font-size: 10px; }
 .sideboxmap { width: 302px; height: 302px; }
@@ -484,6 +495,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .deactivatemsg { display: none; font-weight: bold; }
 .deactivatecancelbtn { display: none; margin-top: 10px; }
 .mapaddresstext { font-weight: bold; }
+.addresstext { font-weight: bold; color: gray; }
 .summarypanel { min-height: 130px; }
 .sidebox, .askingbox { min-height: 21px; }
 .showmore { float: right; margin-right: 10px; font-weight: bold; margin-bottom: 10px; }

@@ -33,6 +33,7 @@ pl.implement(ListingClass, {
         this.currency = new CurrencyClass();
         this.listing_url = window.location.protocol + '//' + window.location.hostname + ':' + window.location.port + '/company_page.html?id=' + this.listing_id;
         this.listing_public_title = 'Startupbidder Listing: ' + this.title;
+        this.loggedin_profile_id = this.loggedin_profile && this.loggedin_profile.profile_id;
     },
     load: function() {
         this.ajax.call();
@@ -85,9 +86,9 @@ pl.implement(ListingClass, {
         var self = this;
         pl('#followbtn').bind({
             click: function() {
-                var following = self.monitored;
-                if (following) {
-                    self.unfollow();
+            var following = self.monitored;
+            if (following) {
+                self.unfollow();
                 }
                 else {
                     self.follow();
@@ -168,11 +169,14 @@ pl.implement(ListingClass, {
         pl('#documentwrapper').show();
     },
     displayFunding: function() {
+        var closingmsg = this.closing_date && this.days_left >= 0
+                ? 'CLOSES ON ' + this.dateobj.format(this.closing_date) + ' (' + (this.days_left > 0 ? this.days_left + ' DAY' + (this.days_left > 1 ? 'S' : '') + ' LEFT' : 'CLOSES TODAY!') + ')'
+                : 'BIDDING CLOSED';
         if (this.asked_fund) {
-            pl('#suggested_amt').html(this.currency.format(this.suggested_amt));
-            pl('#suggested_pct').html(this.suggested_pct);
-            pl('#suggested_val').html(this.currency.format(this.suggested_val));
-            pl('#closingmsg').html(this.closing_date && this.days_left >= 0 ? 'CLOSES ON ' + this.dateobj.format(this.closing_date) + ' (' + (this.days_left > 0 ? this.days_left + ' DAYS LEFT' : 'CLOSES TODAY!') + ')' : 'BIDDING CLOSED');
+            pl('#suggested_amt').text(this.currency.format(this.suggested_amt));
+            pl('#suggested_pct').text(this.suggested_pct);
+            pl('#suggested_val').text(this.currency.format(this.suggested_val));
+            pl('#closingmsg').text(closingmsg);
 /*
             if (this.num_bids && this.num_bids > 0) {
                 this.best_bid_pct = 10 + 5*Math.floor(8*Math.random()); // FIXME
@@ -409,8 +413,7 @@ pl.implement(ListingClass, {
         var tabid = tab + 'tab',
             tabsel = '#' + tabid,
             wrapperid = tab + 'wrapper',
-            wrappersel = '#' + wrapperid,
-            qandas;
+            wrappersel = '#' + wrapperid;
         if (!pl(tabsel).hasClass('companynavselected')) {
             this.hideSelectedTabs();
             pl(tabsel).addClass('companynavselected');
@@ -426,34 +429,36 @@ pl.implement(ListingClass, {
             else if (tab === 'comments') {
                 pl(wrappersel).show();
                 if (!this.isCommentListLoaded) {
-                    (new CommentClass(this.listing_id, this.loggedin_profile ? this.loggedin_profile.profile_id : null)).load();
+                    (new CommentClass(this.listing_id, this.loggedin_profile_id)).load();
                     this.isCommentListLoaded = true;
                 }
             }
             else if (tab === 'bids') {
+                if (this.isBidListLoaded) {
+                    // skip
+                }
+                else if (this.loggedin_profile_id && this.loggedin_profile_id === this.profile_id) {
+                    //(new OwnerBidGroupListClass(this.listing_id)).load();
+                    pl('#bidsnotloggedin, #bidsloggedin').hide();
+                    pl('#bidsowner').show();
+                    this.isBidListLoaded = true;
+                }
+                else if (this.loggedin_profile_id) {
+                    (new SingleInvestorBidListClass(this.listing_id, this.loggedin_profile_id, this.loggedin_profile.username || 'anonymous')).load();
+                    pl('#bidsnotloggedin, #bidsowner').hide();
+                    pl('#bidsloggedin').show();
+                    this.isBidListLoaded = true;
+                }
+                else {
+                    pl('#bidsloggedin, #bidsowner').hide();
+                    pl('#bidsnotloggedin').show();
+                }
                 pl(wrappersel).show();
-                pl('#bidsmsg').html('<p>No bids</p>');
             }
             else if (tab === 'qandas') {
                 pl(wrappersel).show();
                 if (!this.isQuestionListLoaded) {
-                    qandas = new RemarkClass({
-                        listing_id: this.listing_id,
-                        type: 'qanda',
-                        displaytype: 'question',
-                        geturl: '/listings/questions_and_answers/',
-                        getproperty: 'notifications',
-                        idproperty: 'notify_id',
-                        fromnameproperty: 'from_user_nickname',
-                        fromnameprefix: 'Asked by',
-                        tonameroperty: 'to_user_nickname',
-                        dateproperty: 'create_date',
-                        textproperty: 'text_2',
-                        posturl: '/listing/ask_owner',
-                        postproperty: 'message',
-                        deleteurl:  null
-                    });
-                    qandas.load();
+                    (new QuestionClass(this.listing_id, this.profile_id, this.loggedin_profile_id)).load();
                     this.isQuestionListLoaded = true;
                 }
             }
@@ -473,10 +478,15 @@ pl.implement(ListingClass, {
             i,
             tab;
         pl('#num_comments').text(self.num_comments || 0);
-        pl('#num_bids').text(self.num_bids || 0);
         pl('#num_qandas').text(self.num_qandas || 0);
+        if (this.loggedin_profile_id && this.loggedin_profile_id === this.profile_id) {
+            pl('#num_bids').text(self.num_bids || 0);
+        }
+        else {
+            pl('#num_bids').text('');
+        }
         if (this.loggedin_profile) {
-            pl('#sendmessagelink').attr({href: '/message_page.html?to_user=' + self.owner }).css({display: 'inline'});
+            pl('#sendmessagelink').attr({href: '/message_page.html?to_user=' + self.profile_id }).css({display: 'inline'});
             pl('#makebidtitle,#makebidbox').show();
         }
         for (i = 0; i < this.alltabs.length; i++) {

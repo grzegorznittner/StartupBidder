@@ -16,10 +16,10 @@ include(header.m4)
         <div class="companybanner span-24">
             <div class="companybannerlogo tileimg noimage" id="companylogo"></div>
             <div class="initialhidden" id="listingdata">
-                <div class="companybannertitle" id="title"></div>
+                <div class="companybannertitle aquamarine" id="title"></div>
                 <div class="companybannertextgrey">
                     <span id="categoryaddresstext"></span><span> </span><span id="founderstext"></span>
-                    <a class="companybannertextlink hoverlink initialhidden" href="" id="sendmessagelink">send message</a>
+                    <a class="companybannertextlink hoverlink initialhidden" href="" id="sendmessagelink">send private message</a>
                 </div>
                 <div class="companybannertextgrey">
                     <span id="listing_date_text" class="inputfield"></span>
@@ -31,8 +31,8 @@ include(header.m4)
                 <div class="companybannermantra" id="mantra"></div>
             </div>
             <div class="companybannerfollow">
-                <div class="inputmsg inputfield last initialhidden" id="followtext">You are following this listing</div>
-                <div class="companybannerfollowbtn smallinputbutton span-3 hoverlink initialhidden" id="followbtn"></div>
+                <div class="inputmsg inputfield last followmsg initialhidden" id="followtext">You are following this listing</div>
+                <div class="companybannerfollowbtn smallinputbutton span-3 darkblue hoverlink initialhidden" id="followbtn"></div>
                 <div class="inputmsg inputfield last" id="followmsg"></div>
             </div>
             <div class="companynavcontainer">
@@ -65,7 +65,7 @@ include(header.m4)
 <div class="basicswrapper" id="basicswrapper">
     <div class="span-16">
         <div class="boxtitle">SUMMARY</div>
-        <div class="boxpanel summarypanel">
+        <div class="boxpanel summarypanel darkgrey">
             <p id="summary"></p>
     	</div>
         <div class="boxtitle">MEDIA</div>
@@ -116,7 +116,7 @@ include(header.m4)
     
         <div class="boxtitle">LOCATION</div>
         <div class="sidebox">
-            <div class="inputmsg" id="fulladdress"></div>
+            <div class="addresstext darkgrey" id="fulladdress"></div>
             <div class="sideboxmap">
                 <a href="#" class="formlink hoverlink" target="_blank" id="addresslink">
                     <img src="#" id="mapimg"></img>
@@ -163,63 +163,64 @@ include(header.m4)
 </div> <!-- end basics wrapper -->
 
     <div class="span-24 initialhidden" id="commentswrapper">
-        <div class="boxtitle smokegrey clear">COMMENTS</div>
+        <div class="boxtitle smokegrey clear">PUBLIC COMMENTS</div>
         <div class="boxpanel boxpanelfull" id="commentlistparent">
-            <div class="messageline messagereplyline initialhidden" id="addcommentbox">
+            <div class="messageline messagereplyline addcommentbox initialhidden" id="addcommentbox">
                 <p class="messageuser messagereplyuser span-4" id="myusername"></p>
                 <textarea class="textarea messagetextarea messagereplytextarea" id="addcommenttext" name="addcommenttext" cols="20" rows="5">Put your comment here...</textarea>
                 <span class="span-3 inputbutton messagebutton messagereplybutton" id="addcommentbtn">SEND</span>
                 <p class="messagereplymsg inputmsg successful" id="commentmsg"></p>
             </div>
         </div>
-
-<!--
-        <div class="boxtitle addcommenttitle initialhidden" id="addcommenttitle">ADD COMMENT</div>
-        <div class="boxpanel boxpanelfull remarkpanel addcommentbox initialhidden" id="addcommentbox">
-            <p>
-                <textarea class="textarea messagetextarea" id="addcommenttext" name="addcommenttext" cols="20" rows="5">Put your comment here...</textarea>
-                <span class="span-12 inputmsg successful" id="addcommentmsg">&nbsp;</span>
-                <span class="span-3 inputbutton addcommentbtn" id="addcommentbtn">POST</span>
-            </p>
-        </div>
-        <div class="boxtitle">COMMENTS</div>
-        <div class="boxpanel boxpanelfull remarkpanel">
-            <div id="commentmsg"></div>
-            <dl id="commentlist"></dl>
-    	</div>
--->
     </div>
 
     <div class="span-24 initialhidden" id="bidswrapper">
-        <div class="boxtitle initialhidden" id="makebidtitle">MAKE BID</div>
-        <div class="boxpanel boxpanelfull remarkpanel initialhidden" id="makebidbox">
-            <p>
-                <textarea class="textarea messagetextarea" id="makebidtext" name="makebidtext" cols="20" rows="5">Make your bid here...</textarea>
-                <span class="span-12 inputmsg successful" id="makebidmsg">&nbsp;</span>
-                <span class="span-3 inputbutton addcommentbtn" id="makebidbtn">POST</span>
-            </p>
+
+        <div class="initialhidden" id="bidsnotloggedin">
+            <div class="boxtitlegap smokegrey clear">MAKE PRIVATE BID</div>
+            <div class="boxpanel boxpanelfull">
+                <p>Sign in to place a bid.</p>
+            </div>
         </div>
-        <div class="boxtitle">BIDS</div>
-        <div class="boxpanel boxpanelfull remarkpanel">
-            <div id="bidsmsg" class="inputmsg"></div>
-            <dl id="bidslist"></dl>
-    	</div>
+
+        <div class="initialhidden" id="bidsloggedin">
+            <div class="boxtitlegap smokegrey clear">YOUR BID HISTORY FOR THIS LISTING
+                <span class="newlistingtitlemsg" id="bidtitlemsg"></span>
+            </div>
+            <div class="boxpanel boxpanelfull" id="bidlistparent">
+                <div class="messageline messagereplyline questionaskline initialhidden" id="makebidbox">
+                    <p class="messageuser messagereplyuser span-4">Make a bid</p>
+                    <span class="span-14">
+                        <div>AMOUNT</div>
+                        <div>PERCENT</div>
+                        <div>IMPLIED VAL</div>
+                        <textarea class="textarea messagetextarea messagereplytextarea" id="makebidtext" name="makebidtext" cols="20" rows="5">Put your note concerning this bid here...</textarea>
+                    </span>
+                    <span class="span-3 inputbutton messagebutton messagereplybutton" id="makebidbtn">MAKE BID</span>
+                    <p class="messagereplymsg inputmsg successful" id="bidmsg"></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="initialhidden" id="bidsowner">
+            <div class="boxtitlegap smokegrey clear">INVESTOR BIDS</div>
+            <div class="boxpanel boxpanelfull" id="bidgrouplist"><p>No bids recevied for this listing.</p></div>
+        </div>
+
     </div>
 
     <div class="span-24 initialhidden" id="qandaswrapper">
-        <div class="boxtitle initialhidden" id="addqandatitle">PUBLIC QUESTION TO THE OWNER</div>
-        <div class="boxpanel boxpanelfull remarkpanel initialhidden" id="addqandabox">
-            <p>
-                <textarea class="textarea messagetextarea" id="addqandatext" name="addqandatext" cols="20" rows="5">Put your question here...</textarea>
-                <span class="span-12 inputmsg successful" id="addqandamsg">&nbsp;</span>
-                <span class="span-3 inputbutton" id="addqandabtn">SEND</span>
-            </p>
+        <div class="boxtitlegap smokegrey clear">PUBLIC QUESTIONS AND ANSWERS
+            <span class="newlistingtitlemsg" id="qandatitlemsg"></span>
         </div>
-        <div class="boxtitle">QUESTIONS AND ANSWERS</div>
-        <div class="boxpanel boxpanelfull remarkpanel">
-            <div id="qandamsg"></div>
-            <dl id="qandalist"></dl>
-    	</div>
+        <div class="boxpanel boxpanelfull" id="qandalistparent">
+            <div class="messageline messagereplyline questionaskline initialhidden" id="addqandabox">
+                <p class="messageuser messagereplyuser span-4">Ask a question</p>
+                <textarea class="textarea messagetextarea messagereplytextarea" id="addqandatext" name="addqandatext" cols="20" rows="5">Put your question here...</textarea>
+                <span class="span-3 inputbutton messagebutton messagereplybutton" id="addqandabtn">SEND</span>
+                <p class="messagereplymsg inputmsg successful" id="qandamsg"></p>
+            </div>
+        </div>
     </div>
 
 <div class="initialhidden" id="modelwrapper">
@@ -246,8 +247,9 @@ include(footer.m4)
   <script src="js/modules/base.js"></script>
   <script src="js/modules/companylist.js"></script>
   <script src="js/modules/forms.js"></script>
+  <script src="js/modules/singleinvestorbidlist.js"></script>
   <script src="js/modules/comments.js"></script>
-  <script src="js/modules/remarks.js"></script>
+  <script src="js/modules/questions.js"></script>
   <script src="js/modules/bmc.js"></script>
   <script src="js/modules/ip.js"></script>
   <script src="js/modules/listing.js"></script>
