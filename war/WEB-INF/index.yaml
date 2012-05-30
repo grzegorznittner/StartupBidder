@@ -372,4 +372,30 @@ indexes:
     - name: userB
     - name: created
       direction: desc
+
+- kind: BidUser
+  ancestor: no
+  properties:
+    - name: listing
+    - name: userA
+    - name: userB
+    - name: created
+      direction: desc
+
+- kind: BidUser
+  ancestor: no
+  properties:
+    - name: listing
+    - name: userA
+    - name: created
+      direction: desc
+
+- kind: Bid
+  ancestor: no
+  properties:
+    - name: listing
+    - name: userA
+    - name: userB
+    - name: created
+      direction: desc
       

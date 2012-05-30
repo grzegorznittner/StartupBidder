@@ -17,7 +17,6 @@ import com.startupbidder.util.LowecaseSerializer;
 @JsonAutoDetect(getterVisibility=Visibility.NONE, setterVisibility=Visibility.NONE,
 		fieldVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE)
 public class BidVO extends BaseVO {
-	@JsonProperty("direction") @JsonSerialize(using=LowecaseSerializer.class) private String direction;
 	@JsonProperty("create_date") @JsonSerialize(using=DateSerializer.class) private Date created;
 	@JsonProperty("text") private String text;
 	@JsonProperty("read") private boolean read;
@@ -29,12 +28,6 @@ public class BidVO extends BaseVO {
 	}
 	public String getId() {
 		return "not_set";
-	}
-	public String getDirection() {
-		return direction;
-	}
-	public void setDirection(String direction) {
-		this.direction = direction;
 	}
 	public Date getCreated() {
 		return created;

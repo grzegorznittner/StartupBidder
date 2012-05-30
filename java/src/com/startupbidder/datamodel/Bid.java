@@ -27,8 +27,9 @@ public class Bid extends BaseObject<Bid> {
 		INVESTOR_WITHDRAW, OWNER_ACCEPT, OWNER_REJECT, OWNER_COUNTER, OWNER_WITHDRAW};
 	public Bid () {
 	}
-	public Bid(SBUser toUser, SBUser fromUser, String text, int amount, int percentage, int value, Type type) {
+	public Bid(Listing listing, SBUser toUser, SBUser fromUser, String text, int amount, int percentage, int value, Type type) {
 		this.created = new Date();
+		this.listing = listing.getKey();
 		this.read = false;
 		this.text = text;
 		this.direction = Bid.Direction.A_TO_B;
@@ -73,6 +74,7 @@ public class Bid extends BaseObject<Bid> {
 
 	public Bid createCrossBid() {
 		Bid cross = new Bid();
+		cross.listing = this.listing;
 		cross.userA = this.userB;
 		cross.userAEmail = this.userBEmail;
 		cross.userANickname = this.userBNickname;

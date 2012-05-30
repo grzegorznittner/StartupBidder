@@ -108,8 +108,6 @@ public class ListingController extends ModelDrivenController {
                 return bidUsers(request);
 			} else if("bids".equalsIgnoreCase(getCommand(1))) {
                 return bids(request);
-			} else if("make_bid".equalsIgnoreCase(getCommand(1))) {
-                return makeBid(request);
 			} else if("comments".equalsIgnoreCase(getCommand(1))) {
 				return listingComments(request);
 			} else if ("logo".equalsIgnoreCase(getCommand(1))) {
@@ -149,6 +147,8 @@ public class ListingController extends ModelDrivenController {
 				return updateComment(request);
 			} else if("delete_comment".equalsIgnoreCase(getCommand(1))) {
 				return deleteComment(request);
+			} else if("make_bid".equalsIgnoreCase(getCommand(1))) {
+                return makeBid(request);
 			}
 		}
 
@@ -763,6 +763,8 @@ public class ListingController extends ModelDrivenController {
 			if (rootNode.get("pct") != null) {
 				percentage = rootNode.get("pct").getValueAsInt();
 			}
+			log.info("Make bid called with params: listing_id=" + listingId + ", investor_id=" + investorId
+					+ ", text=" + text + ", type=" + type + ", amt=" + amount + ", pct=" + percentage);
 			BidVO bid = null;
 			if (StringUtils.isEmpty(investorId)) {
 				bid = BidFacade.instance().makeBid(getLoggedInUser(), listingId, type, amount, percentage, text);

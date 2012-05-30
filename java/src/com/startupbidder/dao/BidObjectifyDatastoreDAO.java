@@ -40,8 +40,8 @@ public class BidObjectifyDatastoreDAO {
 	}
 
 	public Bid makeBid(BidUser shorts[], Listing listing, SBUser toUser, SBUser fromUser, Bid.Type bidType, int amount, int percentage, String text) {
-		int value = amount / (100 * percentage);
-		Bid bid1 = new Bid(toUser, fromUser, text, amount, percentage, value, bidType);
+		int value = (amount * 100) / percentage;
+		Bid bid1 = new Bid(listing, toUser, fromUser, text, amount, percentage, value, bidType);
 		Bid bid2 = bid1.createCrossBid();
 		
 		BidUser short0 = new BidUser(bid1);

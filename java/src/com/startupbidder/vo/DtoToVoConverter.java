@@ -71,35 +71,33 @@ public class DtoToVoConverter {
 		if (bidDTO == null) {
 			return null;
 		}
-		BidVO qa = new BidVO();
-		qa.setText(bidDTO.text);
-		qa.setCreated(bidDTO.created);
-		qa.setDirection(bidDTO.direction == Bid.Direction.A_TO_B ? "sent" : "received");
-		qa.setRead(bidDTO.read);
-		qa.setAmount(bidDTO.amount);
-		qa.setPercentage(bidDTO.percentage);
-		qa.setValue(bidDTO.value);
-		qa.setType(bidDTO.type.toString());
-		return qa;
+		BidVO bid = new BidVO();
+		bid.setText(bidDTO.text);
+		bid.setCreated(bidDTO.created);
+		bid.setRead(bidDTO.read);
+		bid.setAmount(bidDTO.amount);
+		bid.setPercentage(bidDTO.percentage);
+		bid.setValue(bidDTO.value);
+		bid.setType(bidDTO.type.toString());
+		return bid;
 	}
 	
 	public static BidUserVO convert(BidUser bidDTO) {
 		if (bidDTO == null) {
 			return null;
 		}
-		BidUserVO qa = new BidUserVO();
-		qa.setText(bidDTO.text);
-		qa.setLastDate(bidDTO.created);
-		qa.setDirection(bidDTO.direction == Bid.Direction.A_TO_B ? "sent" : "received");
-		qa.setUser(bidDTO.userB.getString());
-		qa.setUserNickname(bidDTO.userBNickname);
-		qa.setCounter(bidDTO.counter);
-		qa.setRead(bidDTO.read);
-		qa.setAmount(bidDTO.amount);
-		qa.setPercentage(bidDTO.percentage);
-		qa.setValue(bidDTO.value);
-		qa.setType(bidDTO.type.toString());
-		return qa;
+		BidUserVO bidUser = new BidUserVO();
+		bidUser.setText(bidDTO.text);
+		bidUser.setLastDate(bidDTO.created);
+		bidUser.setUser(bidDTO.userB.getString());
+		bidUser.setUserNickname(bidDTO.userBNickname);
+		bidUser.setCounter(bidDTO.counter);
+		bidUser.setRead(bidDTO.read);
+		bidUser.setAmount(bidDTO.amount);
+		bidUser.setPercentage(bidDTO.percentage);
+		bidUser.setValue(bidDTO.value);
+		bidUser.setType(bidDTO.type.toString());
+		return bidUser;
 	}
 	
 	public static QuestionAnswerVO convert(QuestionAnswer qaDTO) {

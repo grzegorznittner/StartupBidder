@@ -17,9 +17,8 @@ import com.startupbidder.util.LowecaseSerializer;
 @JsonAutoDetect(getterVisibility=Visibility.NONE, setterVisibility=Visibility.NONE,
 		fieldVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE)
 public class BidUserVO extends BaseVO {
-	@JsonProperty("direction") @JsonSerialize(using=LowecaseSerializer.class) private String direction;
-	@JsonProperty("from_user_id") private String user;
-	@JsonProperty("from_user_nickname") private String userNickname;
+	@JsonProperty("investor_id") private String user;
+	@JsonProperty("investor_nickname") private String userNickname;
 	@JsonProperty("last_date") @JsonSerialize(using=DateSerializer.class) private Date lastDate;
 	@JsonProperty("last_text") private String text;
 	@JsonProperty("counter") private int counter;
@@ -32,12 +31,6 @@ public class BidUserVO extends BaseVO {
 	}
 	public String getId() {
 		return "not_set";
-	}
-	public String getDirection() {
-		return direction;
-	}
-	public void setDirection(String direction) {
-		this.direction = direction;
 	}
 	public String getUser() {
 		return user;

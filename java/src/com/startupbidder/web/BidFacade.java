@@ -63,9 +63,19 @@ public class BidFacade {
 			// in dev environment sometimes nickname is empty
 			investor = getGeneralDAO().getUser(investor.getWebKey());
 		}
+		Bid.Type bidType = Bid.Type.valueOf(StringUtils.upperCase(type));
+		if (bidType != Bid.Type.INVESTOR_ACCEPT && bidType != Bid.Type.INVESTOR_COUNTER
+				&& bidType != Bid.Type.INVESTOR_POST && bidType != Bid.Type.INVESTOR_REJECT
+				&& bidType != Bid.Type.INVESTOR_WITHDRAW) {
+			log.warning("Investor is trying to make a bid using OWNER_* type.");
+			return null;
+		}
 		Listing listing = getGeneralDAO().getListing(BaseVO.toKeyId(listingId));
+		if (listing.state != Listing.State.ACTIVE) {
+			log.warning("Investor is trying to make a bid for non active listing.");
+			return null;
+		}
 		SBUser owner = getGeneralDAO().getUser(listing.owner.getString());
-		Bid.Type bidType = Bid.Type.valueOf(type);
 
 		BidUser[] shorts = getDAO().getBidShorts(listing, owner, investor);
 		String validationText = validateBid(shorts, bidType);
@@ -90,9 +100,22 @@ public class BidFacade {
 			// in dev environment sometimes nickname is empty
 			owner = getGeneralDAO().getUser(owner.getWebKey());
 		}
+		Bid.Type bidType = Bid.Type.valueOf(StringUtils.upperCase(type));
+		if (bidType != Bid.Type.OWNER_ACCEPT && bidType != Bid.Type.OWNER_COUNTER
+				&& bidType != Bid.Type.OWNER_REJECT && bidType != Bid.Type.OWNER_WITHDRAW) {
+			log.warning("Owner is trying to make a bid using INVESTOR_* type.");
+			return null;
+		}
 		Listing listing = getGeneralDAO().getListing(BaseVO.toKeyId(listingId));
+		if (listing.owner.getId() != loggedInUser.toKeyId()) {
+			log.warning("User not an owner of the listing.");
+			return null;
+		}
+		if (listing.state != Listing.State.ACTIVE) {
+			log.warning("Owner is trying to make a bid for non active listing.");
+			return null;
+		}
 		SBUser investor = getGeneralDAO().getUser(investorId);
-		Bid.Type bidType = Bid.Type.valueOf(type);
 		
 		BidUser[] shorts = getDAO().getBidShorts(listing, investor, owner);
 		String validationText = validateBid(shorts, bidType);
@@ -116,27 +139,73 @@ public class BidFacade {
 				return "No previous bids.";
 			}
 		}
+		// checking last bid type
 		switch (shorts[0].type) {
-		case INVESTOR_ACCEPT:
-			break;
-		case INVESTOR_COUNTER:
-			break;
 		case INVESTOR_POST:
-			break;
-		case INVESTOR_REJECT:
-			break;
-		case INVESTOR_WITHDRAW:
-			break;
-		case OWNER_ACCEPT:
-			break;
+			switch(bidType) {
+			case INVESTOR_POST: case INVESTOR_ACCEPT: case INVESTOR_COUNTER: case INVESTOR_REJECT:
+				return "Investor has posted an offer. Cannot post/reject/counter/accept it now.";
+			case OWNER_WITHDRAW:
+				return "Investor has posted an offer. Owner cannot withdraw this offer now.";
+			case OWNER_COUNTER: case OWNER_ACCEPT: case OWNER_REJECT: case INVESTOR_WITHDRAW:
+				return null;
+			default:
+				return "Not allowed state.";
+			}
+		case INVESTOR_COUNTER:
+			switch(bidType) {
+			case INVESTOR_POST: case INVESTOR_ACCEPT: case INVESTOR_COUNTER: case INVESTOR_REJECT:
+				return "Investor has already placed counter offer. Cannot post/reject/counter/accept it now.";
+			case OWNER_WITHDRAW:
+				return "Investor has placed counter offer. Owner cannot withdraw this offer now.";
+			case OWNER_COUNTER:	case OWNER_ACCEPT: case OWNER_REJECT: case INVESTOR_WITHDRAW:
+				return null;
+			default:
+				return "Not allowed state.";
+			}
 		case OWNER_COUNTER:
-			break;
+			switch(bidType) {
+			case OWNER_COUNTER:	case OWNER_ACCEPT: case OWNER_REJECT: case INVESTOR_POST:
+				return "Owner has already placed counter offer. Cannot post/reject/counter/accept it now.";
+			case INVESTOR_WITHDRAW:
+				return "Owner has placed counter offer. Investor cannot withdraw this offer now.";
+			case OWNER_WITHDRAW: case INVESTOR_ACCEPT: case INVESTOR_COUNTER: case INVESTOR_REJECT:
+				return null;
+			default:
+				return "Not allowed state.";
+			}
+		case INVESTOR_ACCEPT:
+			if (bidType == Type.INVESTOR_POST) {
+				return null;
+			}
+			return "Investor has already accepted an offer.";
+		case INVESTOR_REJECT:
+			if (bidType == Type.INVESTOR_POST) {
+				return null;
+			}
+			return "Investor has rejected an offer.";
+		case INVESTOR_WITHDRAW:
+			if (bidType == Type.INVESTOR_POST) {
+				return null;
+			}
+			return "Investor has withdrawn an offer.";
+		case OWNER_ACCEPT:
+			if (bidType == Type.INVESTOR_POST) {
+				return null;
+			}
+			return "Owner has accepted an offer.";
 		case OWNER_REJECT:
-			break;
+			if (bidType == Type.INVESTOR_POST) {
+				return null;
+			}
+			return "Owner has rejected an offer.";
 		case OWNER_WITHDRAW:
-			break;
+			if (bidType == Type.INVESTOR_POST) {
+				return null;
+			}
+			return "Owner has withdrawn an offer.";
 		}
-		return null;
+		return "Not allowed state.";
 	}
 
 	public BidUserListVO getBidUsers(UserVO loggedInUser, String listingId, ListPropertiesVO listProperties) {
@@ -147,10 +216,22 @@ public class BidFacade {
 			result.setErrorMessage("User not logged in");
 			return result;
 		}
-		SBUser user = VoToModelConverter.convert(loggedInUser);
 		Listing listing = getGeneralDAO().getListing(BaseVO.toKeyId(listingId));
-		List<BidUserVO> bids = DtoToVoConverter.convertBidUsers(
-				getDAO().getBidShortList(listing, user, listProperties));
+		if (listing.owner.getId() != loggedInUser.toKeyId()) {
+			log.warning("User not an owner of the listing.");
+			result.setErrorCode(ErrorCodes.NOT_AN_OWNER);
+			result.setErrorMessage("User not an owner of the listing");
+			return result;
+		}
+		SBUser user = VoToModelConverter.convert(loggedInUser);
+		log.info("Bid users for user: " + user);
+		List<BidUser> bidUsers = getDAO().getBidShortList(listing, user, listProperties);
+		for (BidUser bid : bidUsers) {
+			log.info("  * " + bid.userA.getId() + " (" + bid.userANickname + ") - "
+					+ bid.userB.getId() + " (" + bid.userBNickname + ") - "
+					+ bid.direction + " - " + bid.type + " " + bid.amount + " for " + bid.percentage + "%");
+		}
+		List<BidUserVO> bids = DtoToVoConverter.convertBidUsers(bidUsers);
 		result.setBids(bids);
 		result.setBidsProperties(listProperties);
 		return result;
@@ -169,7 +250,7 @@ public class BidFacade {
 		SBUser investor = null;
 		if (StringUtils.isEmpty(investorId)) {
 			owner = getGeneralDAO().getUser(listing.owner.getString());
-			investor = getGeneralDAO().getUser(investorId);
+			investor = VoToModelConverter.convert(loggedInUser);
 		} else {
 			if (listing.owner.getId() != loggedInUser.toKeyId()) {
 				log.warning("User is not a listing owner.");
@@ -180,10 +261,15 @@ public class BidFacade {
 			owner = VoToModelConverter.convert(loggedInUser);
 			investor = getGeneralDAO().getUser(investorId);
 		}
-		log.info("Retrieving bids between '" + owner.nickname + "' (" + owner.id + ") and '" + investor.nickname + "' (" + investor.id + ")");
-		List<Bid> msgs = getDAO().getBidList(listing, owner, investor, listProperties);
-		List<BidVO> msgsVO = DtoToVoConverter.convertBids(msgs);
-		getDAO().updateReadFlag(listing, owner, investor, msgs);
+		log.info("Retrieving bids between '" + investor.nickname + "' (" + investor.id + ") and '" + owner.nickname + "' (" + owner.id + ")");
+		List<Bid> bids = getDAO().getBidList(listing, investor, owner, listProperties);
+		for (Bid bid : bids) {
+			log.info("  * " + bid.userA.getId() + " (" + bid.userANickname + ") - "
+					+ bid.userB.getId() + " (" + bid.userBNickname + ") - "
+					+ bid.direction + " - " + bid.type + " " + bid.amount + " for " + bid.percentage + "%");
+		}
+		List<BidVO> msgsVO = DtoToVoConverter.convertBids(bids);
+		getDAO().updateReadFlag(listing, owner, investor, bids);
 		log.info("Returning " + msgsVO.size() + " messages.");
 		result.setBids(msgsVO);
 		result.setOtherUser(new UserShortVO(DtoToVoConverter.convert(investor)));

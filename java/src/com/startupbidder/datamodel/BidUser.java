@@ -19,17 +19,22 @@ public class BidUser extends Bid {
 	
 	public BidUser() {
 	}
-	public BidUser(Bid msg) {
-		this.direction = msg.direction;
-		this.read = msg.read;
-		this.text = msg.text;
-		this.userA = msg.userA;
-		this.userAEmail = msg.userAEmail;
-		this.userANickname = msg.userANickname;
-		this.userB = msg.userB;
-		this.userBEmail = msg.userBEmail;
-		this.userBNickname = msg.userBNickname;
-		this.created = msg.created;
+	public BidUser(Bid bid) {
+		this.listing = bid.listing;
+		this.direction = bid.direction;
+		this.read = bid.read;
+		this.text = bid.text;
+		this.userA = bid.userA;
+		this.userAEmail = bid.userAEmail;
+		this.userANickname = bid.userANickname;
+		this.userB = bid.userB;
+		this.userBEmail = bid.userBEmail;
+		this.userBNickname = bid.userBNickname;
+		this.created = bid.created;
+		this.type = bid.type;
+		this.amount = bid.amount;
+		this.percentage = bid.percentage;
+		this.value = bid.value;
 	}
 
 	public String toString() {

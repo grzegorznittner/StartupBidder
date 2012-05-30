@@ -34,6 +34,8 @@ import com.google.appengine.api.taskqueue.TaskOptions;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.Objectify;
 import com.googlecode.objectify.ObjectifyService;
+import com.startupbidder.datamodel.Bid;
+import com.startupbidder.datamodel.BidUser;
 import com.startupbidder.datamodel.OldBid;
 import com.startupbidder.datamodel.Category;
 import com.startupbidder.datamodel.Comment;
@@ -175,6 +177,14 @@ public class MockDataBuilder {
 		QueryResultIterable<Key<PrivateMessageUser>> pmu = getOfy().query(PrivateMessageUser.class).fetchKeys();
 		output.append("Deleted private messages users: " + pmu.toString() + "</br>");
 		getOfy().delete(pmu);
+		
+		QueryResultIterable<Key<Bid>> bids = getOfy().query(Bid.class).fetchKeys();
+		output.append("Deleted bids: " + bids.toString() + "</br>");
+		getOfy().delete(bids);
+		
+		QueryResultIterable<Key<BidUser>> bidu = getOfy().query(BidUser.class).fetchKeys();
+		output.append("Deleted bid users: " + bidu.toString() + "</br>");
+		getOfy().delete(bidu);
 		
 		QueryResultIterable<Key<QuestionAnswer>> qa = getOfy().query(QuestionAnswer.class).fetchKeys();
 		output.append("Deleted question and answers: " + qa.toString() + "</br>");

@@ -32,6 +32,10 @@ import com.startupbidder.datamodel.PrivateMessage;
 import com.startupbidder.datamodel.PrivateMessageUser;
 import com.startupbidder.datamodel.SBUser;
 import com.startupbidder.datamodel.VoToModelConverter;
+import com.startupbidder.vo.BidListVO;
+import com.startupbidder.vo.BidUserListVO;
+import com.startupbidder.vo.BidUserVO;
+import com.startupbidder.vo.BidVO;
 import com.startupbidder.vo.DtoToVoConverter;
 import com.startupbidder.vo.ListPropertiesVO;
 import com.startupbidder.vo.ListingAndUserVO;
@@ -40,6 +44,7 @@ import com.startupbidder.vo.ListingVO;
 import com.startupbidder.vo.PrivateMessageUserVO;
 import com.startupbidder.vo.QuestionAnswerVO;
 import com.startupbidder.vo.UserVO;
+import com.startupbidder.web.BidFacade;
 import com.startupbidder.web.FrontController;
 import com.startupbidder.web.ListingFacade;
 import com.startupbidder.web.ServiceFacade;
@@ -199,29 +204,6 @@ public class HelloServlet extends HttpServlet {
 			out.println("<form method=\"GET\" action=\"/listing/keyword/.json\"><input name=\"text\" type=\"text\" value=\"business\"/>"
 					+ "<input type=\"submit\" value=\"Keyword search\"/></form>");
 
-			/* out.println("<p style=\"background: none repeat scroll 0% 0% rgb(187, 187, 187);\">Bids API:</p>");
-			log.info("Selected bid: " + bids.get(0).toString());
-			out.println("<a href=\"/bids/listing/" + topListing.getWebKey() + "/.json?max_results=6\">Bids for top listing</a><br/>");
-			out.println("<a href=\"/bids/user/" + topInvestor.getWebKey() + "/.json?max_results=6\">Bids for top investor</a><br/>");
-			out.println("<a href=\"/bids/accepted-by-user/" + topInvestor.getWebKey() + "/.json?max_results=6\">Bids accepted by top investor</a><br/>");
-			out.println("<a href=\"/bids/funded-by-user/" + topInvestor.getWebKey() + "/.json?max_results=6\">Bids funded by top investor</a><br/>");
-			out.println("<a href=\"/bids/get/" + bids.get(0).getWebKey() + "/.json\">Get bid id '" + bids.get(0).getWebKey() + "'</a><br/>");
-			out.println("<form method=\"POST\" action=\"/bid/create/.json\"><textarea name=\"bid\" rows=\"5\" cols=\"100\">"
-					+ "{ \"listing_id\":\"" + topListing.getWebKey() + "\", \"profile_id\":\"" + topInvestor.getWebKey() + "\", \"amount\":\"14000\", \"equity_pct\":\"10\", \"bid_type\":\"common\", \"interest_rate\":0 }"
-					+ "</textarea><input type=\"submit\" value=\"Create a bid\"/></form>");
-			out.println("<form method=\"POST\" action=\"/bid/activate/.json\"> <input type=\"hidden\" name=\"id\" value=\"" + bids.get(0).getWebKey() + "\"/><input type=\"submit\" value=\"Activate bid id '" + bids.get(0).getWebKey() + "'\"/></form>");
-			out.println("<form method=\"POST\" action=\"/bid/reject/.json\"> <input type=\"hidden\" name=\"id\" value=\"" + bids.get(0).getWebKey() + "\"/><input type=\"submit\" value=\"Reject bid id '" + bids.get(0).getWebKey() + "'\"/></form>");
-			out.println("<form method=\"POST\" action=\"/bid/withdraw/.json\"> <input type=\"hidden\" name=\"id\" value=\"" + bids.get(0).getWebKey() + "\"/><input type=\"submit\" value=\"Withdraw bid id '" + bids.get(0).getWebKey() + "'\"/></form>");
-			out.println("<form method=\"POST\" action=\"/bid/accept/.json\"> <input type=\"hidden\" name=\"id\" value=\"" + bids.get(0).getWebKey() + "\"/><input type=\"submit\" value=\"Accept bid id '" + bids.get(0).getWebKey() + "' (most likely fails)\"/></form>");
-			printAcceptBid(datastore, out, usersListings);
-			out.println("<form method=\"POST\" action=\"/bid/paid/.json\"> <input type=\"hidden\" name=\"id\" value=\"" + bids.get(0).getWebKey() + "\"/><input type=\"submit\" value=\"Mark bid as paid, id '" + bids.get(0).getWebKey() + "' (most likely fails)\"/></form>");
-			printPayBid(datastore, out, usersListings);
-			
-			out.println("<a href=\"/bids/statistics/.json\">Get bid statistics (deprecated)</a><br/>");
-			out.println("<a href=\"/bids/bid-day-volume/.json\">Get bid day volume</a><br/>");
-			out.println("<a href=\"/bids/bid-day-valuation/.json\">Get bid day valuation</a><br/>");
-			
-			*/
 			out.println("<p style=\"background: none repeat scroll 0% 0% rgb(187, 187, 187);\">Comments API:</p>");
 			out.println("<a href=\"/listing/comments/" + topListing.getWebKey() + "/.json?max_results=6\">Comments for top listing</a><br/>");
 			out.println("<a href=\"/comments/user/" + currentUser.getId() + "/.json?max_results=6\">Comments for current user</a><br/>");
@@ -266,23 +248,6 @@ public class HelloServlet extends HttpServlet {
 			out.println("<p style=\"background: none repeat scroll 0% 0% rgb(187, 187, 187);\">Notificatin API:</p>");			
 			out.println("<a href=\"/notification/user/.json?max_results=6\">Notifications for current user</a><br/>");
 
-//			List<Notification> notifications = datastore.getAllUserNotifications(currentUser.toKeyId(), prop);
-//			if (!notifications.isEmpty()) {
-//				for (Notification notif : notifications) {
-//					out.println("" + notif.type + ", listing: " + notif.listingName + ", message:" + notif.message + "<br/>");
-//					out.println("<a href=\"/notification/get/" + notifications.get(0).getWebKey() + "/.json\">View</a> ");
-//					String contextId = new Key<Notification>(Notification.class, notifications.get(0).context).getString();
-//					out.println("<a href=\"/notification/get_thread/" + contextId + "/.json\">View thread</a> ");
-//					out.println("<a href=\"/notification/ack/" + notifications.get(0).getWebKey() + "/.json\">Mark as read</a><br/>");
-//					if (notif.type == Notification.Type.ASK_LISTING_OWNER || notif.type == Notification.Type.PRIVATE_MESSAGE) {
-//						out.println("<form method=\"POST\" action=\"/listing/reply_message/.json\"><textarea name=\"message\" rows=\"3\" cols=\"50\">"
-//								+ "{\"message_id\":\"" + notif.getWebKey() + "\", \"text\":\"Reply text\"}"
-//								+ "</textarea><input type=\"submit\" value=\"Send reply\"/></form>");
-//					}
-//				}
-//			} else {
-//				out.println("Current user doesn't have any notification, create one first (eg. make a comment)<br/>");
-//			}
 			out.println("<br/>");
 			
 			out.println("<p style=\"background: none repeat scroll 0% 0% rgb(187, 187, 187);\">Monitor API:</p>");
@@ -395,7 +360,8 @@ public class HelloServlet extends HttpServlet {
 		int count = 0;
 		for (ListingVO listing : activeListings) {
 			count++;
-			out.println("<tr><td>" + listing.getName() + " posted by " + listing.getOwnerName() + "</td>");
+			out.println("<tr><td>" + listing.getName() + " posted by " + listing.getOwnerName());
+			out.println("<br/><a href=\"/listing/get/" + listing.getId() + ".json?\">View</a></td>");
 			out.println("<td><table width=\"100%\"><tr>");
 			out.println("<td><form method=\"POST\" action=\"/listing/withdraw/" + listing.getId() + "/.json\"><input type=\"submit\" value=\"Withdraw\"/></form></td>");
 			out.println("<td><form method=\"POST\" action=\"/listing/freeze/" + listing.getId() + "/.json\"><input type=\"submit\" value=\"Freeze\"/></form></td>");
@@ -427,12 +393,44 @@ public class HelloServlet extends HttpServlet {
 					}
 				}
 			}
-			
 			out.println("<a href=\"/listing/questions_and_answers/" + listing.getId() + ".json?\">View Q&amp;A</a>");
 			out.println("<form method=\"POST\" action=\"/listing/ask_owner/.json\"><textarea name=\"message\" rows=\"3\" cols=\"50\">"
 					+ "{\"listing_id\":\"" + listing.getId() + "\", \"text\":\"Message text\"}"
 					+ "</textarea><input type=\"submit\" value=\"Ask owner\"/></form>");
-			out.println("<a href=\"/listing/get/" + listing.getId() + ".json?\">View</a>");
+			
+			if (StringUtils.equals(currentUser.getId(), listing.getOwner())) {
+				out.println("<a href=\"/listing/bid_users/" + listing.getId() + ".json?\">View Bid Users</a>");
+				listProperties = new ListPropertiesVO();
+				listProperties.setMaxResults(50);
+				BidUserListVO bidUsers = BidFacade.instance().getBidUsers(currentUser, listing.getId(), listProperties);
+				for (BidUserVO bu : bidUsers.getBids()) {
+					out.println(bu.getUserNickname() + " (" + bu.getCounter() + ") " + bu.getType() + " " + bu.getAmount() + " for " + bu.getPercentage() + "% valued "
+							+ bu.getValue() + " on " + bu.getLastDate() + " ");
+					out.println("<a href=\"/listing/bids/" + listing.getId() + "/" + bu.getUser() + ".json?\">View bids from " + bu.getUserNickname() + "</a>");
+					out.println("<form method=\"POST\" action=\"/listing/make_bid/.json\"><textarea name=\"bid\" rows=\"3\" cols=\"50\">"
+							+ "{\"listing_id\":\"" + listing.getId() + "\", \"text\":\"Bid text text\", "
+							+ "\"amt\":\"10000\", \"pct\":\"5\", \"type\":\"INVESTOR_POST\" "
+							+ (StringUtils.equals(currentUser.getId(), listing.getOwner()) ? ", \"investor_id\":\"" + bu.getUser() + "\"" : "") + "}"
+							+ "</textarea><input type=\"submit\" value=\"Make bid\"/></form>");
+				}
+			} else {
+				listProperties = new ListPropertiesVO();
+				listProperties.setMaxResults(50);
+				BidListVO bids = BidFacade.instance().getBids(currentUser, listing.getId(), null, listProperties);
+				if (bids.getBids() != null) {
+					int bidNr = bids.getBids().size();
+					for (BidVO bu : bids.getBids()) {
+						out.println("" + (bidNr--) + ". " + bu.getType() + " " + bu.getAmount() + " for " + bu.getPercentage() + "% valued "
+								+ bu.getValue() + " on " + bu.getCreated() + "<br/> ");
+					}
+				}
+				out.println("<a href=\"/listing/bids/" + listing.getId() + ".json?\">View bids</a>");
+				out.println("<form method=\"POST\" action=\"/listing/make_bid/.json\"><textarea name=\"bid\" rows=\"3\" cols=\"50\">"
+					+ "{\"listing_id\":\"" + listing.getId() + "\", \"text\":\"Bid text 1\", "
+					+ "\"amt\":\"10000\", \"pct\":\"5\", \"type\":\"INVESTOR_POST\" }"
+					+ "</textarea><input type=\"submit\" value=\"Make bid\"/></form>");
+			}
+			
 			out.println("</td><td>");
 			if (count < 5) {
 				List<ListingDocumentVO> docs = getListingDocs(currentUser, listing);
