@@ -78,7 +78,7 @@ public class BidFacade {
 		SBUser owner = getGeneralDAO().getUser(listing.owner.getString());
 
 		BidUser[] shorts = getDAO().getBidShorts(listing, owner, investor);
-		String validationText = validateBid(shorts, bidType);
+		String validationText = validateBid(shorts, bidType, amount, percentage);
 		if (validationText == null) {
 			log.info("User '" + investor.nickname + "' is making '" + bidType + "' for listing '" + listing.name + "' owned by '" + owner.nickname + "'");
 			Bid bid = getDAO().makeBid(shorts, listing, owner, investor, bidType, amount, percentage, text);
@@ -118,7 +118,7 @@ public class BidFacade {
 		SBUser investor = getGeneralDAO().getUser(investorId);
 		
 		BidUser[] shorts = getDAO().getBidShorts(listing, investor, owner);
-		String validationText = validateBid(shorts, bidType);
+		String validationText = validateBid(shorts, bidType, amount, percentage);
 		if (validationText == null) {
 			log.info("User '" + owner.nickname + "', owner of listing '" + listing.name + "' is making '" + bidType + "' to offer made by '" + investor.nickname + "'");
 			Bid bid = getDAO().makeBid(shorts, listing, investor, owner, bidType, amount, percentage, text);
@@ -131,7 +131,7 @@ public class BidFacade {
 		}
 	}
 
-	private String validateBid(BidUser[] shorts, Type bidType) {
+	private String validateBid(BidUser[] shorts, Type bidType, int amount, int percentage) {
 		if (shorts[0] == null) {
 			if (bidType == Bid.Type.INVESTOR_POST) {
 				return null;
@@ -147,8 +147,14 @@ public class BidFacade {
 				return "Investor has posted an offer. Cannot post/reject/counter/accept it now.";
 			case OWNER_WITHDRAW:
 				return "Investor has posted an offer. Owner cannot withdraw this offer now.";
-			case OWNER_COUNTER: case OWNER_ACCEPT: case OWNER_REJECT: case INVESTOR_WITHDRAW:
+			case OWNER_COUNTER: case OWNER_REJECT: case INVESTOR_WITHDRAW:
 				return null;
+			case OWNER_ACCEPT:
+				if (shorts[0].amount == amount && shorts[0].percentage == percentage) {
+					return null;
+				} else {
+					return "Accepted amount/percentage is not the same as in the offer.";
+				}
 			default:
 				return "Not allowed state.";
 			}
@@ -158,8 +164,14 @@ public class BidFacade {
 				return "Investor has already placed counter offer. Cannot post/reject/counter/accept it now.";
 			case OWNER_WITHDRAW:
 				return "Investor has placed counter offer. Owner cannot withdraw this offer now.";
-			case OWNER_COUNTER:	case OWNER_ACCEPT: case OWNER_REJECT: case INVESTOR_WITHDRAW:
+			case OWNER_COUNTER: case OWNER_REJECT: case INVESTOR_WITHDRAW:
 				return null;
+			case OWNER_ACCEPT:
+				if (shorts[0].amount == amount && shorts[0].percentage == percentage) {
+					return null;
+				} else {
+					return "Accepted amount/percentage is not the same as in the offer.";
+				}
 			default:
 				return "Not allowed state.";
 			}
@@ -169,8 +181,14 @@ public class BidFacade {
 				return "Owner has already placed counter offer. Cannot post/reject/counter/accept it now.";
 			case INVESTOR_WITHDRAW:
 				return "Owner has placed counter offer. Investor cannot withdraw this offer now.";
-			case OWNER_WITHDRAW: case INVESTOR_ACCEPT: case INVESTOR_COUNTER: case INVESTOR_REJECT:
+			case OWNER_WITHDRAW: case INVESTOR_COUNTER: case INVESTOR_REJECT:
 				return null;
+			case INVESTOR_ACCEPT:
+				if (shorts[0].amount == amount && shorts[0].percentage == percentage) {
+					return null;
+				} else {
+					return "Accepted amount/percentage is not the same as in the offer.";
+				}
 			default:
 				return "Not allowed state.";
 			}
