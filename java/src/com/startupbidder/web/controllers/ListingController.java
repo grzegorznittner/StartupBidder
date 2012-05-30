@@ -765,13 +765,13 @@ public class ListingController extends ModelDrivenController {
 			}
 			log.info("Make bid called with params: listing_id=" + listingId + ", investor_id=" + investorId
 					+ ", text=" + text + ", type=" + type + ", amt=" + amount + ", pct=" + percentage);
-			BidVO bid = null;
+			BidListVO result = null;
 			if (StringUtils.isEmpty(investorId)) {
-				bid = BidFacade.instance().makeBid(getLoggedInUser(), listingId, type, amount, percentage, text);
+				result = BidFacade.instance().makeBid(getLoggedInUser(), listingId, type, amount, percentage, text);
 			} else {
-				bid = BidFacade.instance().ownerMakesBid(getLoggedInUser(), listingId, investorId, type, amount, percentage, text);
+				result = BidFacade.instance().ownerMakesBid(getLoggedInUser(), listingId, investorId, type, amount, percentage, text);
 			}
-			model = bid;
+			model = result;
 		} else {
 			log.severe("Missing bid parameter!");
 			headers.setStatus(500);

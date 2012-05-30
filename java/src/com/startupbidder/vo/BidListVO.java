@@ -16,6 +16,7 @@ public class BidListVO extends BaseResultVO {
 	@JsonProperty("bids") private List<BidVO> bids;
 	@JsonProperty("other_user_profile") private UserShortVO otherUser;
 	@JsonProperty("bids_props")	private ListPropertiesVO bidsProperties;
+	@JsonProperty("valid_actions") private String validActions;
 	public List<BidVO> getBids() {
 		return bids;
 	}
@@ -33,5 +34,11 @@ public class BidListVO extends BaseResultVO {
 	}
 	public void setBidsProperties(ListPropertiesVO bidsProperties) {
 		this.bidsProperties = bidsProperties;
+	}
+	public String getValidActions() {
+		return validActions;
+	}
+	public void setValidActions(String validActions) {
+		this.validActions = validActions;
 	}
 }
