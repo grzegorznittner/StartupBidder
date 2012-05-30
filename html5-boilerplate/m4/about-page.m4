@@ -52,7 +52,7 @@ help you clarify your own ideas and business plan.  First, you need to gather
 together the existing materials you have, at a minimum your logo, a short
 presentation in powerpoint or pdf, and your business plan in word or pdf
 format.  Most importantly, think about if you want to ask for money and if so,
-how much, and for what percent of your company, and with what closing date, as
+how much, and for what percent of your company, as
 you&rsquo;ll need to enter this information.  If you&rsquo;re not already a member, then
 sign in by clicking Sign In on the header link.  After you&rsquo;re registered, click
 on the Post link on the header to begin the process.  There are several steps
@@ -73,21 +73,20 @@ Once your listing is live, you will immediately be displayed on the top page
 and in the relevant search categories.  Members may comment and bid upon your
 listing which will be reflected in the search rankings.  If you&rsquo;ve chosen to
 ask for money, you will also be able to receive bids from investors worldwide
-up until the closing date.  If you receive a bid, you will be notified in your
+from then onward.  If you receive a bid, you will be notified in your
 notifications tab and via email of the investment amount and terms.  You may
 then either accept, reject, or make a counteroffer.  In the case of a
 counteroffer, the investor will receive notice of the counter and will then be
 able to accept, reject, or counter the offer themselves.  This process proceeds
-until one side either accepts or rejects an offer.  Bids may be received until
-the end of day on the closing date, after which time bidding will be closed.
+until one side either accepts or rejects an offer.  Bids may be received as
+long as the listing is active.
 
     </p>
 
     <p>
 
-You may only accept one bid during a funding round, and once that bid is accepted
-all other bids will be automatically rejected and bidding will be closed.  Startupbidder
-will then contact both you and the investor to pursue a formal funding agreement.
+You may accept as many bids as you wish during a funding round.  Once a bid is accepted,
+startupbidder will then contact both you and the investor to pursue a formal funding agreement.
 It is recommended that this be done upon the advice of your own legal counsel.  We
 will then send you an invoice for a fee upon completed bidding as per the terms and
 conditions.
@@ -147,11 +146,10 @@ This process proceeds until one side either accepts or rejects an offer.
 
     <p>
 
-In the case of acceptance, your bid becomes the winning bid and all other bids
-are automatically rejected and bidding is closed.  The entrepreneur will then
-be immediately notified of the accepted bid and both of you will be sent an 
-email notice of the completion.  You then will be asked to follow up with a formal
-funding agreement with the advice of legal counsel.
+In the case of acceptance, the entrepreneur will be immediately notified of the
+accepted bid and both of you will be sent an email notice of the completion. 
+You then will be asked to follow up with a formal funding agreement
+by the advice of legal counsel.
 
     </p>
 

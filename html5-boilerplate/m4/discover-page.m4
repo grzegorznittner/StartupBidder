@@ -36,8 +36,8 @@ include(searchbox.m4)
     <div class="boxtitle smokegrey">TOP LISTINGS</div>
     <div id="top_listings"></div>
 
-    <div class="boxtitle smokegrey">CLOSING SOON</div>
-    <div id="closing_listings"></div>
+    <div class="boxtitle smokegrey">MOST FUNDED</div>
+    <div id="valuation_listings"></div>
 
     <div class="boxtitle smokegrey">JUST LISTED</div>
     <div id="latest_listings"></div>

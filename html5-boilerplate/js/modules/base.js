@@ -77,7 +77,6 @@ pl.implement(EventClass, {
 function DateClass() {}
 pl.implement(DateClass, {
     format: function(datestr) {
-        console.log(datestr, datestr ? datestr.length : 'none');
         if (!datestr) {
             return '';
         }
@@ -222,6 +221,11 @@ pl.implement(PercentClass, {
         return (match ? 0 : 'Please enter a percent value');
     }
 });
+
+function ValuationClass() {}
+ValuationClass.prototype.valuation = function(amt, pct) {
+    return amt && pct ? Math.floor((100 / pct) * amt) : 0;
+}
 
 function URLClass(url) {
     this.url = url;

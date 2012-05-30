@@ -8,7 +8,6 @@ pl.implement(DiscoverPageClass,{
                     usersListings = new CompanyListClass({ propertykey: 'users_listings', companydiv: 'users_listings', seeall: '/profile-listing-page.html?type=active' }),
                     monitoredListings = new CompanyListClass({ propertykey: 'monitored_listings', companydiv: 'monitored_listings', seeall: '/profile-listing-page.html?type=monitored' }),
                     topListings = new CompanyListClass({ propertykey: 'top_listings', companydiv: 'top_listings', seeall: '/main-page.html?type=top' }),
-                    closingListings = new CompanyListClass({ propertykey: 'closing_listings', companydiv: 'closing_listings', seeall: '/main-page.html?type=closing' }),
                     latestListings = new CompanyListClass({ propertykey: 'latest_listings', companydiv: 'latest_listings', seeall: '/main-page.html?type=latest' }),
                     categories = json.categories || {},
                     locations = json.top_locations || {},
@@ -31,7 +30,6 @@ pl.implement(DiscoverPageClass,{
                     monitoredListings.storeList(json);
                 }
                 topListings.storeList(json);
-                closingListings.storeList(json);
                 latestListings.storeList(json);
             },
             ajax = new AjaxClass('/listings/discover/', 'top_listings', completeFunc);

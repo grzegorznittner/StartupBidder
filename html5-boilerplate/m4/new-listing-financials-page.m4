@@ -232,7 +232,7 @@ listing without asking for any money.
 
     <div class="boxtitle clear">TIPS</div>
     <div class="sidebox">
-<p>ASKING - amount of money you want for investment, between $5,000 and $500,000 USD, closing 90 days in the future</p>
+<p>ASKING - amount of money you want for investment, between $5,000 and $500,000 USD</p>
 <p>FOR - what percentage of common equity you are selling in exchange for the investment, between 5% and 50%</p>
 <p>PRESENTATION - your slide deck presentation to investors, a Powerpoint or PDF document, keep it short</p>
 <p>BUSINESS PLAN - your business plan, a Word or PDF document that describes your business in detail</p>

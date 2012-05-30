@@ -169,14 +169,12 @@ pl.implement(ListingClass, {
         pl('#documentwrapper').show();
     },
     displayFunding: function() {
-        var closingmsg = this.closing_date && this.days_left >= 0
-                ? 'CLOSES ON ' + this.dateobj.format(this.closing_date) + ' (' + (this.days_left > 0 ? this.days_left + ' DAY' + (this.days_left > 1 ? 'S' : '') + ' LEFT' : 'CLOSES TODAY!') + ')'
-                : 'BIDDING CLOSED';
+        var total_raised = this.total_raised && this.total_raised > 0 ? this.currency.format(this.total_raised) : '$0';
         if (this.asked_fund) {
             pl('#suggested_amt').text(this.currency.format(this.suggested_amt));
             pl('#suggested_pct').text(this.suggested_pct);
             pl('#suggested_val').text(this.currency.format(this.suggested_val));
-            pl('#closingmsg').text(closingmsg);
+            pl('#total_raised').text(total_raised);
 /*
             if (this.num_bids && this.num_bids > 0) {
                 this.best_bid_pct = 10 + 5*Math.floor(8*Math.random()); // FIXME
@@ -435,7 +433,7 @@ pl.implement(ListingClass, {
             }
             else if (tab === 'bids') {
                 if (!this.isBidListLoaded) {
-                    (new OrderBookClass(this.listing_id)).load();
+                    (new OrderBookClass(this.listing_id, this.suggested_amt, this.suggested_pct, this.listing_date)).load();
                     if (this.loggedin_profile_id && this.loggedin_profile_id === this.profile_id) {
                         //(new OwnerBidGroupListClass(this.listing_id)).load();
                         pl('#bidsnotloggedin, #bidsloggedin').hide();

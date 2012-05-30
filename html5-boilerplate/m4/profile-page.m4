@@ -21,7 +21,7 @@ include(header.m4)
         <div class="boxpanel">
             You currently have no listings.
             <a href="/new-listing-basics-page.html" class="inputmsg hoverlink">Post</a> a new listing or
-            <a href="/main-page.html?type=closing" class="inputmsg hoverlink">invest</a> in one today!
+            <a href="/main-page.html?type=valuation" class="inputmsg hoverlink">invest</a> in one today!
         </div>
     </div>
 
@@ -48,11 +48,6 @@ include(header.m4)
     <div id="monitored_listings_wrapper" class="initialhidden">
         <div class="boxtitle smokegrey">YOUR WATCHED LISTINGS</div>
         <div id="monitored_listings"></div>
-    </div>
-
-    <div id="closed_listings_wrapper" class="initialhidden">
-        <div class="boxtitle smokegrey">YOUR CLOSED LISTINGS</div>
-        <div id="closed_listings"></div>
     </div>
 
     <div id="withdrawn_listings_wrapper" class="initialhidden">

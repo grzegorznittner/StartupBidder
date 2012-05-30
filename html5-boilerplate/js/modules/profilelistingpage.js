@@ -6,7 +6,6 @@ function ProfileListingPageClass() {
     this.urlmap = {
         active: '/listings/user/active',
         monitored: '/listings/monitored',
-        closed: '/listings/user/closed',
         withdrawn: '/listings/user/withdrawn',
         frozen: '/listings/user/frozen',
         admin_posted: '/listings/posted',

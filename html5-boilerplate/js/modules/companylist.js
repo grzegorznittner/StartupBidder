@@ -11,12 +11,8 @@ pl.implement(CompanyTileClass, {
         if (!this.status) {
             this.daystext = '';
         }
-        else if (this.status === 'active' && json.asked_fund && !json.closing_date) {
+        else if (this.status === 'active' && json.asked_fund) {
             this.daystext = 'Bidding open';
-        }
-        else if (this.status === 'active' && json.asked_fund && json.closing_date) {
-            this.daysleft = DateClass.prototype.daysBetween(DateClass.prototype.todayDate(), DateClass.prototype.dateFromYYYYMMDD(json.closing_date));
-            this.daystext = this.daysleft === 0 ? 'Closing today!' : (this.daysleft < 0 ? 'Bidding closed' : this.daysleft + ' days left');
         }
         else if (this.status === 'active' && !json.asked_fund && json.listing_date) {
             this.daysago = DateClass.prototype.daysBetween(DateClass.prototype.dateFromYYYYMMDD(json.listing_date), DateClass.prototype.todayDate());
@@ -300,12 +296,7 @@ function BaseCompanyListPageClass() {
 pl.implement(BaseCompanyListPageClass,{
     setListingSearch: function() {
         var searchtype = 'top';
-        if (this.type === 'related') { // FIXME: related unimplemented
-            // type = 'related?id='+this.listing_id
-            searchtype = 'top';
-            this.data.max_results = 4;
-        }
-        else if (this.type === 'category') {
+        if (this.type === 'category') {
             searchtype = 'keyword';
             this.data.text = 'category:' + this.val;
         }
@@ -329,7 +320,7 @@ pl.implement(BaseCompanyListPageClass,{
         this.setListingSearch();
         ajax = new AjaxClass(this.url, 'companydiv', completeFunc);
         pl('#listingstitle').html(title);
-        if (this.type === 'closing') {
+        if (this.type === 'valuation') {
             pl('#welcometitle').html('Invest in a startup today!');
             pl('#welcometext').html('The companies below are ready for investment and open for bidding');
             pl('#investbox').hide();
@@ -346,22 +337,6 @@ pl.implement(BaseCompanyListPageClass,{
         }
         ajax.ajaxOpts.data = this.data;
         ajax.call();
-    }
-});
-
-function RelatedCompaniesClass(listing_id) {
-    this.listing_id = listing_id;
-}
-pl.implement(RelatedCompaniesClass, {
-    load: function() {
-        var completeFunc = function(json) {
-                companyList = new CompanyListClass({colsPerRow: 2});
-                companyList.storeList(json);
-            },
-            basePage = new BaseCompanyListPageClass();
-        basePage.type = 'related';
-        basePage.listing_id = this.listing_id;
-        basePage.loadPage(completeFunc);
     }
 });
 

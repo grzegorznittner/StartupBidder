@@ -67,7 +67,6 @@ include(api-banner.m4)
                 <li><code>error_code</code> error status for this call, 0 on success</li>
                 <li><code>error_msg</code> error message for this call, null on success</li>
                 <li><code>top_listings</code> list of the four currently highest rated listings, see Listing API for listing object details</li>
-                <li><code>closing_listings</code> list of the four listings whose bidding is closing the soonest</li>
                 <li><code>latest_listings</code> list of the four listings most recently activated on the site</li>
                 <li><code>monitored_listings</code> list of the four most recently watched listings for the logged in user, null if not logged in</li>
                 <li><code>users_listings</code> list of the four listings most recently posted by the currently logged in user, null otherwise</li>
@@ -123,7 +122,6 @@ include(api-banner.m4)
                 <li><code>active_listings</code> list of the four user listings most recently posted</li>
                 <li><code>withdrawn_listings</code> list of the four user listings most recently withdrawn</li>
                 <li><code>frozen_listings</code> list of the four user listings most recently frozen by an administrator</li>
-                <li><code>closed_listings</code> list of the four user listings most recently closed for bidding</li>
                 <li><code>monitored_listings</code> list of the four listings most recently watched by the user</li>
                 <li><code>edited_listing</code> the logged in user&rsquo;s listing currently being edited but not yet approved, null otherwise</li>
                 <li><code>notifications</code> list of the user notifications, unread first then by date order, see Notification API for details</li>
@@ -223,12 +221,11 @@ include(api-banner.m4)
             </form>
             <iframe name="listing-top"></iframe>
         </div>
-<!--
+
         <dt>GET /listing/valuation</dt>
         <dd>
             <p>
-            Returns the most valued active listings on startupbidder, ordered by median bid valuation descending.
-            We use median instead of max in order to avoid outliers distoring the value.
+            Returns the most valued active listings on startupbidder, ordered by total accepted bids descending.
             If more listings are available, they can be obtained by the <code>more_results_url</code> property of the <code>listings_props</code> in the response.
             </p>
         </dd>
@@ -263,46 +260,6 @@ include(api-banner.m4)
                 <input type="submit" class="inputbutton" value="SUBMIT"></input>
             </form>
             <iframe name="listing-valuation"></iframe>
-        </div>
--->
-        <dt>GET /listing/closing</dt>
-        <dd>
-            <p>
-            Returns the active listings in order of closing date, thus the listings closing soonest are first.
-            If more listings are available, they can be obtained by the <code>more_results_url</code> property of the <code>listings_props</code> in the response.
-            </p>
-        </dd>
-        <div class="apidetail">
-            <h4>Parameters</h4>
-            <ul>
-                <li><code>max_results</code> OPTIONAL for the max number of results to return, default 5, up to 20</i>
-            </ul>
-            <h4>Response</h4>
-            <ul>
-                <li><code>login_url</code> URL to use for site login action</li>
-                <li><code>logout_url</code> URL to use for site logout action</li>
-                <li><code>loggedin_profile</code> private user profile object, see User API for profile object details</li>
-                <li><code>error_code</code> error status for this call, 0 on success</li>
-                <li><code>error_msg</code> error message for this call, null on success</li>
-                <li><code>listings</code> list of listings matching this request, up to the <var>max_results</var></li>
-                <li><code>listings_props</code> list properties, call <var>more_results_url</var> in AJAX for more, structure:
-<pre name="code" class="brush: js">
-{
-    start_index: :index,
-    max_results: :max,
-    num_results: :n,
-    more_results_url: :url
-}
-</pre>
-                </li>
-                <li><code>categories</code> map of listing categories, same as for <var>/listing/discover</var></li>
-                <li><code>top_locations</code> map of top locations, same as for <var>/listing/discover</var></li>
-            </ul>
-            <h4>Test</h4>
-            <form method="GET" action="/listing/closing" target="listing-closing">
-                <input type="submit" class="inputbutton" value="SUBMIT"></input>
-            </form>
-            <iframe name="listing-closing"></iframe>
         </div>
 
         <dt>GET /listing/latest</dt>
@@ -457,7 +414,6 @@ include(api-banner.m4)
                 <li><code class="apiprop">.created_date</code> date user created the listing on startupbidder</li>
                 <li><code class="apiprop">.posted_date</code> date user submitted listing to an admin</li>
                 <li><code class="apiprop">.listing_date</code> date admin approved the listing</li>
-                <li><code class="apiprop">.closing_date</code> date bidding closes for this listing</li>
                 <li><code class="apiprop">.status</code> progresses from <var>new</var> -&gt; <var>posted</var> -&gt; <var>active</var>, can also be <var>withdrawn</var> or <var>frozen</var></li>
                 <li><code class="apiprop">.mantra</code> one sentance summary of the business</li>
                 <li><code class="apiprop">.summary</code> one paragraph summary of the company, the "elevator pitch"</li>
@@ -478,9 +434,9 @@ include(api-banner.m4)
                 <li><code class="apiprop">.address</code> full google maps readable business address for this listing</li>
                 <li><code class="apiprop">.num_comments</code> number of comments for this listing</li>
                 <li><code class="apiprop">.num_bids</code> number of bids made on this listing</li>
+                <li><code class="apiprop">.total_raised</code> total amount of accepted bids for this listing</li>
                 <li><code class="apiprop">.num_qandas</code> number of questions asked about this listing, only counts answered questions</li>
                 <li><code class="apiprop">.days_ago</code> number of days that have elapsed since this listing was posted, rounded down</li>
-                <li><code class="apiprop">.days_left</code> number of days until this listing closes, rounded down</li>
                 <li><code class="apiprop">.monitored</code> <var>true</var> if logged in user is watching this listing, <var>false</var> otherwise</li>
                 <li><code class="apiprop">.business_plan_id</code> business plan download ID for this listing via the File API</li>
                 <li><code class="apiprop">.presentation_id</code> presentation download ID for this listing via the File API</li>
@@ -1793,35 +1749,37 @@ include(api-banner.m4)
                 <li><code>loggedin_profile</code> private user profile object, see User API for profile object details</li>
                 <li><code>error_code</code> error status for this call, 0 on success</li>
                 <li><code>error_msg</code> error message for this call, null on success</li>
-                <li><code>investor_bids</code> list of most recent investor bids for this listing by date, with private information removed, structure:
+                <li><code>investor_bids</code> list of most recent investor POST, COUNTER or ACCEPT bids for this listing, ordered by valuation descending,
+                    with private information removed, structure:
 <pre name="code" class="brush: js">
 [
     {
         amt: :amount,
         pct: :pct,
         val: :val, /* calculated as amt / (pct / 100) */       
-        type: :bid_type, /* INVESTOR_POST, INVESTOR_COUNTER, INVESTOR_ACCEPT, INVESTOR_REJECT, INVESTOR_WITHDRAW */
+        type: :bid_type, /* INVESTOR_POST, INVESTOR_COUNTER, INVESTOR_ACCEPT */
         created_date: :date_yyyymmddhh24mmss
     },
     ...
 ]
 </pre>
                 </li>
-                <li><code>owner_bids</code> list of most recent owner bids for this listing by date, with private information removed, structure:
+                <li><code>owner_bids</code> list of most recent owner COUNTER or ACCEPT bids for this listing, ordered by valuation ascending,
+                    with private information removed, structure:
 <pre name="code" class="brush: js">
 [
     {
         amt: :amount,
         pct: :pct,
         val: :val, /* calculated as amt / (pct / 100) */       
-        type: :bid_type, /* OWNER_ACCEPT, OWNER_REJECT, OWNER_COUNTER, OWNER_WITHDRAW */ 
+        type: :bid_type, /* OWNER_ACCEPT, OWNER_COUNTER */ 
         created_date: :date_yyyymmddhh24mmss
     },
     ...
 ]
 </pre>
                 </li>
-                <li><code>accepted_bids</code> list of bids accepted by the investor or owner by date, with private information removed, structure:
+                <li><code>accepted_bids</code> list of most recent ACCEPT bids the investor or owner, ordered by date descending, with private information removed, structure:
 <pre name="code" class="brush: js">
 [
     {

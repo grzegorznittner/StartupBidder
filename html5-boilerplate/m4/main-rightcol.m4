@@ -5,7 +5,7 @@
 
     <div id="investbox">
         <div class="boxtitle">FUND A STARTUP</div>
-        <a href="main-page.html?type=closing"><div class="sideboxbutton hoverlink">INVEST NOW</div></a>
+        <a href="main-page.html?type=valuation"><div class="sideboxbutton hoverlink">INVEST NOW</div></a>
     </div>
 
     <div class="boxtitle">INDUSTRIES</div>
