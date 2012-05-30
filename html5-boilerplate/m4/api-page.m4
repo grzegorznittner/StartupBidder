@@ -1922,6 +1922,7 @@ include(api-banner.m4)
 }
 </pre>
                 </li>
+                <li><code>valid_actions</code> list of valid actions, that is, new bid types, which the logged in user may submit for this listing</li>
             </ul>
             <h4>Test</h4>
             <form method="GET" action="/listing/bids" target="listing-bids">
@@ -1971,22 +1972,34 @@ include(api-banner.m4)
             </ul>
             <h4>Response</h4>
             <ul>
-                <li><var>json response of new bid object:</var>
+                <li><var>json response list containing new bid object:</var>
+<pre name="code" class="brush: js">
+[
+    {
+        listing_id: :id,
+        investor_id: :profile_id,
+        investor_nickname: :name,
+        amt: :amt,
+        pct: :pct,
+        val: :val, /* calculated as amt / (pct / 100) */       
+        type: :type, /* INVESTOR_POST, INVESTOR_COUNTER, INVESTOR_ACCEPT, INVESTOR_REJECT, INVESTOR_WITHDRAW,
+                        OWNER_ACCEPT, OWNER_REJECT, OWNER_COUNTER, OWNER_WITHDRAW */ 
+        text: :note,
+        created_date: :yyyymmddhh24mmss
+    }
+]
+                </li>
+                <li><code>bids_props</code> list properties, call <var>more_results_url</var> in AJAX for more, structure:
 <pre name="code" class="brush: js">
 {
-    listing_id: :id,
-    investor_id: :profile_id,
-    investor_nickname: :name,
-    amt: :amt,
-    pct: :pct,
-    val: :val, /* calculated as amt / (pct / 100) */       
-    type: :type, /* INVESTOR_POST, INVESTOR_COUNTER, INVESTOR_ACCEPT, INVESTOR_REJECT, INVESTOR_WITHDRAW,
-                    OWNER_ACCEPT, OWNER_REJECT, OWNER_COUNTER, OWNER_WITHDRAW */ 
-    text: :note,
-    created_date: :yyyymmddhh24mmss
-},
+    start_index: :index,
+    max_results: :max,
+    num_results: :n,
+    more_results_url: :url
+}
 </pre>
                 </li>
+                <li><code>valid_actions</code> list of valid actions, that is, new bid types, which the logged in user may submit for this listing</li>
             </ul>
             <h4>Test</h4>
             <form method="POST" action="/listing/make_bid" target="listing-make_bid">
