@@ -1812,7 +1812,7 @@ include(api-banner.m4)
             <iframe name="listing-order_book"></iframe>
         </div>
 
-        <dt>GET /listing/order_book/:id</dt>
+        <dt>GET /listing/bid_users/:id</dt>
         <dd>
             <p>Get the list of investors who have bid on this listing with the latest bid information by the investor. 
             Call this method first to get access to the latest bidding by investors, then call <var>/listing/bids</var> to get the full bid history.</p>
