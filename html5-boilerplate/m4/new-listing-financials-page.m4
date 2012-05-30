@@ -76,7 +76,7 @@ listing without asking for any money.
             </span>
         </div>
         <div class="formitem clear">
-            <span class="inputlabel">IMPLIED VAL</span>
+            <span class="inputlabel">VALUATION</span>
             <span class="inputfield">
                 <div class="medtext successful" id="suggested_val"></div>
             </span>
