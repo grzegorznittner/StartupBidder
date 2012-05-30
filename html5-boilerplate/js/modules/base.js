@@ -211,7 +211,7 @@ pl.implement(CurrencyClass, {
 function PercentClass() {}
 pl.implement(PercentClass, {
     format: function(num) {
-        return NumberClass.prototype.formatText(num, '', '%');
+        return NumberClass.prototype.formatText(num, '', '');
     },
     clean: function(num) {
         return NumberClass.prototype.clean(num);
@@ -377,7 +377,7 @@ pl.implement(HeaderClass, {
     },
     setLoggedOut: function(login_url) {
         pl('#topheaderline').html('Want to raise money for startups or invest in one? <a href="/about-page.html" class="topheaderlink hoverlink">We&rsquo;ll tell you how!</a>');
-        pl('#posttext').html('List New Company');
+        pl('#posttext').html('List New');
         if (login_url) {
             pl('#postlink').attr({href: login_url});
             pl('#loginlink').attr({href: login_url});
