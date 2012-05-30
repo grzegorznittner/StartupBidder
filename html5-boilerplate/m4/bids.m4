@@ -26,7 +26,7 @@
                         <div class="formitem">
                             <label class="inputlabel" for="amt">AMOUNT</label>
                             <span class="inputfield">
-                                <input class="text inputwidetext" type="text" name="amt" id="makebidamt" value="$200,000" length="8" maxlength="8"></input>
+                                <input class="text inputwidetext" type="text" name="amt" id="makebidamt" value="" length="8" maxlength="8"></input>
                             </span>
                             <span class="inputicon">
                                 <div id="makebidamticon"></div>
@@ -35,19 +35,16 @@
                         <div class="formitem clear">
                             <label class="inputlabel" for="pct">PERCENT</label>
                             <span class="inputfield">
-                                <input class="text inputwidetext" type="text" name="pct" id="makebidpct" value="5%" length="3" maxlength="3"></input>
+                                <input class="text inputwidetext" type="text" name="pct" id="makebidpct" value="" length="3" maxlength="3"></input>
                             </span>
                             <span class="inputicon">
                                 <div id="makebidpcticon"></div>
                             </span>
                         </div>
                         <div class="formitem clear">
-                            <label class="inputlabel" for="val">VALUATION</label>
+                            <span class="inputlabel">VALUATION</span>
                             <span class="inputfield">
-                                <input class="text inputwidetext" type="text" name="val" id="makebidval" value="" disabled="disabled"></input>
-                            </span>
-                            <span class="inputicon">
-                                <div id="makebidvalicon"></div>
+                                <div class="medtext successful" id="makebidval"></div>
                             </span>
                         </div>
                         <div class="formitem clear">
@@ -60,8 +57,8 @@
                             </span>
                         </div>
                     </span>
-                    <span class="span-3 inputbutton messagebutton messagereplybutton" id="makebidbtn">MAKE BID</span>
-                    <p class="messagereplymsg inputmsg successful" id="bidmsg"></p>
+                    <span class="span-3 inputbutton messagebutton messagereplybutton" id="postbidbtn">POST BID</span>
+                    <p class="messagereplymsg inputmsg successful" id="makebidmsg"></p>
                 </div>
             </div>
         </div>

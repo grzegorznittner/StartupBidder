@@ -188,25 +188,99 @@ bids:
             bid.setEmpty();
             html += bid.makeHtml();
         }
-        //self.bindAddBox();
+        self.bindBidBox();
         pl('#makebidbox').before(html).show();
     },
-    bindAddBox: function() {
+    displayCalculatedIfValid: function() {
+        var amt = CurrencyClass.prototype.clean(pl('#makebidamt').attr('value')) || 0,
+            pct = PercentClass.prototype.clean(pl('#makebidpct').attr('value')) || 0,
+            val = pct ? Math.floor(Math.floor(100 * amt / pct)) : 0,
+            cur = CurrencyClass.prototype.format(CurrencyClass.prototype.clean(val)),
+            dis = cur || '';
+        pl('#makebidval').text(dis);
+    },
+    getUpdater: function(fieldName, cleaner) {
         var self = this;
-        if (pl('#messagetext').hasClass('bound')) {
+        return function(newdata, loadFunc, errorFunc, successFunc) {
+            var newval = (newdata ? (cleaner ? cleaner(newdata.changeKey) : newdata.changeKey) : undefined);
+            if (newval) {
+                console.log(this);
+                this.newval = newval;
+                this.value = newval;
+                this.msg.show('successful', '');
+                self.displayCalculatedIfValid();
+            }
+        };
+    },
+    genDisplayCalculatedIfValid: function(field) {
+        var self = this;
+        return function(result, val) {
+            var id = field.fieldBase.id;
+            if (result === 0) {
+                self.displayCalculated();
+            }
+        };
+    },
+    genDisplayCalculatedIfValidAmt: function(field) {
+        var self = this;
+            f1 = this.genDisplayCalculatedIfValid(field);
+        return function(result, val) {
+            self.displayIfValidAmt(result, val);
+            f1();
+            self.displayCalculatedIfValid();
+        }
+    },
+    genDisplayCalculatedIfValidPct: function(field) {
+        var self = this;
+            f1 = this.genDisplayCalculatedIfValid(field);
+        return function(result, val) {
+            self.displayIfValidPct(result, val);
+            f1();
+            self.displayCalculatedIfValid();
+        }
+    },
+    displayIfValidAmt: function(result, val) {
+        var fmt = CurrencyClass.prototype.format(val);
+        if (result === 0) {
+            pl('#makebidamt').attr({value: fmt});
+        }
+    },
+    displayIfValidPct: function(result, val) {
+        var fmt = PercentClass.prototype.format(val);
+        if (result === 0) {
+            pl('#makebidpct').attr({value: fmt});
+        }
+    },
+    bindBidBox: function() {
+        var self = this,
+            amtfield,
+            pctfield;
+        if (pl('#makebidtext').hasClass('bound')) {
             return;
         }
-        pl('#messagetext').bind({
+        amtfield = new TextFieldClass('makebidamt', null, this.getUpdater('makebidamt', CurrencyClass.prototype.clean), 'makebidmsg'),
+        pctfield = new TextFieldClass('makebidpct', null, this.getUpdater('makebidpct', PercentClass.prototype.clean), 'makebidmsg');
+        amtfield.fieldBase.setDisplayName('AMOUNT');
+        pctfield.fieldBase.setDisplayName('PERCENT');
+        amtfield.fieldBase.addValidator(ValidatorClass.prototype.genIsNumberBetween(1000, 500000));
+        pctfield.fieldBase.addValidator(ValidatorClass.prototype.genIsNumberBetween(1, 50));
+        amtfield.fieldBase.validator.preValidateTransform = CurrencyClass.prototype.clean;
+        pctfield.fieldBase.validator.preValidateTransform = PercentClass.prototype.clean;
+        amtfield.fieldBase.validator.postValidator = this.genDisplayCalculatedIfValidAmt(amtfield);
+        pctfield.fieldBase.validator.postValidator = this.genDisplayCalculatedIfValidPct(pctfield);
+        amtfield.bindEvents();
+        pctfield.bindEvents();
+        pl('#makebidtext').bind({
             focus: function() {
-                if (!pl('#messagetext').hasClass('edited')) {
-                    pl('#messagetext').attr({value: ''});
+                if (!pl('#makebidtext').hasClass('edited')) {
+                    pl('#makebidtext').attr({value: ''});
                     pl('#messagemsg').html('&nbsp;');
                 }
             },
             keyup: function() {
-                var val = pl('#messagetext').attr('value');
-                if (!pl('#messagetext').hasClass('edited')) {
-                    pl('#messagetext').addClass('edited');
+                var val = pl('#makebidtext').attr('value');
+                if (!pl('#makebidtext').hasClass('edited')) {
+                    pl('#makebidtext').addClass('edited');
                     pl('#messagemsg').html('&nbsp;');
                 }
                 if (val && val.length >= 1) {
@@ -218,22 +292,22 @@ bids:
                 return false;
             },
             blur: function() {
-                if (!pl('#messagetext').hasClass('edited')) {
-                    pl('#messagetext').attr({value: 'Put your message here...'});
+                if (!pl('#makebidtext').hasClass('edited')) {
+                    pl('#makebidtext').attr({value: 'Put your message here...'});
                     pl('#messagebtn').removeClass('editenabled');
                 }
             }
         });
-        pl('#messagebtn').bind({
+        pl('#postbidbtn').bind({
             click: function(event) {
                 var completeFunc = function(json) {
                         var html = (new BidClass(self)).store(json).makeHtml();
-                        pl('#messagetext').removeClass('edited').attr({value: 'Put your message here...'});
+                        pl('#makebidtext').removeClass('edited').attr({value: 'Put your message here...'});
                         pl('#messagebtn').removeClass('editenabled');
                         pl('#messagemsg').addClass('successful').text('Bid posted');
                         pl('#messagesend').before(html);
                     },
-                    text = SafeStringClass.prototype.clean(pl('#messagetext').attr('value') || ''),
+                    text = SafeStringClass.prototype.clean(pl('#makebidtext').attr('value') || ''),
                     data = {
                         send: {
                             listing_id: self.listing_id,
@@ -254,6 +328,6 @@ bids:
                 return false;
             }
         });
-        pl('#messagetext').addClass('bound');
+        pl('#makebidtext').addClass('bound');
     }
 });
