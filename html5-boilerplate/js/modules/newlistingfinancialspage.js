@@ -176,8 +176,8 @@ pl.implement(NewListingFinancialsClass, {
             },
             validators = {
                 asked_fund: ValidatorClass.prototype.isCheckedVal,
-                suggested_amt: ValidatorClass.prototype.genIsNumberBetween(5000, 500000),
-                suggested_pct: ValidatorClass.prototype.genIsNumberBetween(5, 50)
+                suggested_amt: ValidatorClass.prototype.genIsNumberBetween(1000, 500000),
+                suggested_pct: ValidatorClass.prototype.genIsNumberBetween(1, 50)
             },
             classes = {
                 asked_fund: CheckboxFieldClass,
