@@ -20,9 +20,15 @@
                 <span class="newlistingtitlemsg" id="bidtitlemsg"></span>
             </div>
             <div class="boxpanel boxpanelfull" id="bidlistparent">
+                <div id="bidlistlast"></div>
+            </div>
+
+            <div class="boxtitlegap smokegrey clear">NEW BID
+                <span class="newlistingtitlemsg" id="newbidtitlemsg"></span>
+            </div>
+            <div class="boxpanel boxpanelfull" id="makebidboxparent">
                 <div class="messageline makebidline initialhidden" id="makebidbox">
-                    <p class="messageuser messagereplyuser span-4">Make a bid</p>
-                    <span class="span-16">
+                    <span class="span-16 push-4">
                         <div class="formitem">
                             <label class="inputlabel" for="amt">AMOUNT</label>
                             <span class="inputfield">
@@ -43,21 +49,21 @@
                         </div>
                         <div class="formitem clear">
                             <span class="inputlabel">VALUATION</span>
-                            <span class="inputfield">
+                            <span class="inputfield valuationfield">
                                 <div class="medtext successful" id="makebidval"></div>
                             </span>
                         </div>
                         <div class="formitem clear">
                             <label class="inputlabel" for="note">NOTE</label>
                             <span class="inputfield">
-                                <textarea class="textarea makebidtextarea" name="note" id="makebidtext" cols="20" rows="5">Put your note concerning this bid here...</textarea>
+                                <textarea class="textarea makebidtextarea" name="note" id="makebidtext" cols="20" rows="5">Put your note to the owner here...</textarea>
                             </span>
                             <span class="inputicon">
                                 <div id="makebidtexticon"></div>
                             </span>
                         </div>
                     </span>
-                    <span class="span-3 inputbutton messagebutton messagereplybutton" id="postbidbtn">POST BID</span>
+                    <span class="span-3 inputbutton messagebutton messagereplybutton" id="investor_post_btn">MAKE BID</span>
                     <p class="messagereplymsg inputmsg successful" id="makebidmsg"></p>
                 </div>
             </div>

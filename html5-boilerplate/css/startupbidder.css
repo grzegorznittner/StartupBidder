@@ -230,6 +230,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .
 /* form styles */
 .formitem { }
+.valuationfield { height: 43px; }
 .inputlabel, .widelabel, .formlabel, .smallformlabel, .inputcaptcha, .inputhelp,
 .inputicon, .topinputicon, .inputlink, .inputimgbutton,
 .formlabelvalue, .formcol1, .formcol2, .formcol1fourth, .formcol2fourth,
