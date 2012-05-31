@@ -24,6 +24,7 @@ import com.startupbidder.vo.BidVO;
 import com.startupbidder.vo.DtoToVoConverter;
 import com.startupbidder.vo.ErrorCodes;
 import com.startupbidder.vo.ListPropertiesVO;
+import com.startupbidder.vo.OrderBookVO;
 import com.startupbidder.vo.UserShortVO;
 import com.startupbidder.vo.UserVO;
 
@@ -143,7 +144,7 @@ public class BidFacade {
 			return result;
 		}
 		Listing listing = getGeneralDAO().getListing(BaseVO.toKeyId(listingId));
-		if (listing.state != Listing.State.ACTIVE) {
+		if (listing == null || listing.state != Listing.State.ACTIVE) {
 			log.warning("Listing is not active: " + listing);
 			result.setErrorCode(ErrorCodes.ENTITY_VALIDATION);
 			result.setErrorMessage("Listing is not active");
@@ -226,6 +227,45 @@ public class BidFacade {
 		return "";
 	}
 
+	public OrderBookVO getOrderBook(UserVO loggedInUser, String listingId) {
+		OrderBookVO result = new OrderBookVO();
+		Listing listing = getGeneralDAO().getListing(BaseVO.toKeyId(listingId));
+		if (listing == null) {
+			log.warning("Listing doesn't exist.");
+			result.setErrorCode(ErrorCodes.ENTITY_VALIDATION);
+			result.setErrorMessage("Listing doesn't exist");
+			return result;
+		}
+		List<Bid> investorBids = new ArrayList<Bid>();
+		List<Bid> ownerBids = new ArrayList<Bid>();
+		List<Bid> acceptedBids = new ArrayList<Bid>();
+		// getBidsForListing returns bids for which userA is always listing owner
+		List<Bid> bids = getDAO().getBidsForListing(listing);
+		for (Bid bid : bids) {
+			switch(bid.type) {
+			case INVESTOR_POST:
+			case INVESTOR_COUNTER:
+				investorBids.add(bid);
+				break;
+			case INVESTOR_ACCEPT:
+				acceptedBids.add(bid);
+				investorBids.add(bid);
+				break;
+			case OWNER_ACCEPT:
+				acceptedBids.add(bid);
+				ownerBids.add(bid);
+				break;
+			case OWNER_COUNTER:
+				ownerBids.add(bid);
+				break;
+			}
+		}
+		result.setInvestorBids(DtoToVoConverter.convertAnonBids(investorBids));
+		result.setOwnerBids(DtoToVoConverter.convertAnonBids(ownerBids));
+		result.setAcceptedBids(DtoToVoConverter.convertAnonBids(acceptedBids));
+		return result;
+	}
+
 	public BidUserListVO getBidUsers(UserVO loggedInUser, String listingId, ListPropertiesVO listProperties) {
 		BidUserListVO result = new BidUserListVO();
 		if (loggedInUser == null) {
@@ -235,7 +275,7 @@ public class BidFacade {
 			return result;
 		}
 		Listing listing = getGeneralDAO().getListing(BaseVO.toKeyId(listingId));
-		if (listing.owner.getId() != loggedInUser.toKeyId()) {
+		if (listing == null || listing.owner.getId() != loggedInUser.toKeyId()) {
 			log.warning("User not an owner of the listing.");
 			result.setErrorCode(ErrorCodes.NOT_AN_OWNER);
 			result.setErrorMessage("User not an owner of the listing");
@@ -264,6 +304,12 @@ public class BidFacade {
 			return result;
 		}
 		Listing listing = getGeneralDAO().getListing(BaseVO.toKeyId(listingId));
+		if (listing == null) {
+			log.warning("Listing doesn't exist.");
+			result.setErrorCode(ErrorCodes.ENTITY_VALIDATION);
+			result.setErrorMessage("Listing doesn't exist");
+			return result;
+		}
 		SBUser owner = null;
 		SBUser investor = null;
 		boolean isOwner = true;
@@ -282,7 +328,8 @@ public class BidFacade {
 			owner = VoToModelConverter.convert(loggedInUser);
 			investor = getGeneralDAO().getUser(investorId);
 		}
-		log.info("Retrieving bids between '" + investor.nickname + "' (" + investor.id + ") and '" + owner.nickname + "' (" + owner.id + ")");
+		log.info("Retrieving bids for listing " + listing.name + " (" + listing.getKey() + ") between '"
+				+ investor.nickname + "' (" + investor.getKey() + ") and '" + owner.nickname + "' (" + owner.getKey() + ")");
 		List<Bid> bids = getDAO().getBidList(listing, investor, owner, listProperties);
 		for (Bid bid : bids) {
 			log.info("  * " + bid.userA.getId() + " (" + bid.userANickname + ") - "

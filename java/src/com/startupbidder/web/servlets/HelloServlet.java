@@ -398,8 +398,9 @@ public class HelloServlet extends HttpServlet {
 					+ "{\"listing_id\":\"" + listing.getId() + "\", \"text\":\"Message text\"}"
 					+ "</textarea><input type=\"submit\" value=\"Ask owner\"/></form>");
 			
+			out.println("<a href=\"/listing/order_book/" + listing.getId() + ".json?\">View Order Book</a><br/>");
 			if (StringUtils.equals(currentUser.getId(), listing.getOwner())) {
-				out.println("<a href=\"/listing/bid_users/" + listing.getId() + ".json?\">View Bid Users</a>");
+				out.println("<a href=\"/listing/bid_users/" + listing.getId() + ".json?\">View Bid Users</a><br/>");
 				listProperties = new ListPropertiesVO();
 				listProperties.setMaxResults(50);
 				BidUserListVO bidUsers = BidFacade.instance().getBidUsers(currentUser, listing.getId(), listProperties);

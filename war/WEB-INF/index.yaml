@@ -398,4 +398,11 @@ indexes:
     - name: userB
     - name: created
       direction: desc
+
+- kind: Bid
+  ancestor: no
+  properties:
+    - name: listing
+    - name: created
+      direction: desc
       

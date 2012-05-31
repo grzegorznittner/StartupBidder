@@ -108,6 +108,17 @@ public class BidObjectifyDatastoreDAO {
 		return bids;
 	}
 
+	public List<Bid> getBidsForListing(Listing listing) {
+		Query<Bid> query = getOfy().query(Bid.class)
+				.filter("listing =", listing.getKey())
+				.filter("userA =", listing.owner)
+				.order("-created")
+       			.chunkSize(100)
+       			.prefetchSize(100);
+		List<Bid> bids = new ArrayList<Bid>(getOfy().get(query.fetchKeys()).values());
+		return bids;
+	}
+
 	public void updateReadFlag(Listing listing, SBUser user, SBUser otherUser, List<Bid> bids) {
 		List<Bid> forUpdate = new ArrayList<Bid>();
 		for (Bid msg : bids) {

@@ -82,6 +82,19 @@ public class DtoToVoConverter {
 		return bid;
 	}
 	
+	public static AnonBidVO convertAnonBid(Bid bidDTO) {
+		if (bidDTO == null) {
+			return null;
+		}
+		AnonBidVO bid = new AnonBidVO();
+		bid.setCreated(bidDTO.created);
+		bid.setAmount(bidDTO.amount);
+		bid.setPercentage(bidDTO.percentage);
+		bid.setValue(bidDTO.value);
+		bid.setType(bidDTO.type.toString());
+		return bid;
+	}
+	
 	public static BidUserVO convert(BidUser bidDTO) {
 		if (bidDTO == null) {
 			return null;
@@ -603,6 +616,18 @@ public class DtoToVoConverter {
 		List<BidVO> bidVoList = new ArrayList<BidVO>();
 		for (Bid bidDTO : bidDtoList) {
 			BidVO bidVO = convert(bidDTO);
+			bidVoList.add(bidVO);
+		}
+		return bidVoList;
+	}
+	
+	public static List<AnonBidVO> convertAnonBids(List<Bid> bidDtoList) {
+		if (bidDtoList == null) {
+			return null;
+		}
+		List<AnonBidVO> bidVoList = new ArrayList<AnonBidVO>();
+		for (Bid bidDTO : bidDtoList) {
+			AnonBidVO bidVO = convertAnonBid(bidDTO);
 			bidVoList.add(bidVO);
 		}
 		return bidVoList;

@@ -33,6 +33,7 @@ import com.startupbidder.vo.ListPropertiesVO;
 import com.startupbidder.vo.ListingAndUserVO;
 import com.startupbidder.vo.ListingPropertyVO;
 import com.startupbidder.vo.ListingVO;
+import com.startupbidder.vo.OrderBookVO;
 import com.startupbidder.vo.PrivateMessageListVO;
 import com.startupbidder.vo.PrivateMessageUserListVO;
 import com.startupbidder.vo.PrivateMessageVO;
@@ -104,6 +105,8 @@ public class ListingController extends ModelDrivenController {
 				return getAllListingLocations(request);
             } else if("questions_and_answers".equalsIgnoreCase(getCommand(1))) {
                 return questionsAndAnswers(request);
+			} else if("order_book".equalsIgnoreCase(getCommand(1))) {
+                return orderBook(request);
 			} else if("bid_users".equalsIgnoreCase(getCommand(1))) {
                 return bidUsers(request);
 			} else if("bids".equalsIgnoreCase(getCommand(1))) {
@@ -730,7 +733,7 @@ public class ListingController extends ModelDrivenController {
 		return headers;
 	}
 
-    // POST /user/make_bid
+    // POST /listing/make_bid
     private HttpHeaders makeBid(HttpServletRequest request) throws JsonParseException, JsonMappingException, IOException {
 		HttpHeaders headers = new HttpHeadersImpl("make_bid");
 
@@ -780,7 +783,7 @@ public class ListingController extends ModelDrivenController {
     }
 
 	/*
-	 *  /user/bid_users/
+	 *  /listing/bid_users/
 	 */
 	private HttpHeaders bidUsers(HttpServletRequest request) {
 		HttpHeaders headers = new HttpHeadersImpl("bid_users");
@@ -794,8 +797,21 @@ public class ListingController extends ModelDrivenController {
 	}
 	
 	/*
-	 *  /user/bids/?id=<listingid>&investor_id=<userid>.html
-	 *  /user/bids/<listingid>/<from_user_id>/.html
+	 *  /listing/order_book/
+	 */
+	private HttpHeaders orderBook(HttpServletRequest request) {
+		HttpHeaders headers = new HttpHeadersImpl("order_book");
+		
+		String listingId = getCommandOrParameter(request, 2, "id");
+		OrderBookVO result = BidFacade.instance().getOrderBook(getLoggedInUser(), listingId);
+		model = result;
+		
+		return headers;
+	}
+	
+	/*
+	 *  /listing/bids/?id=<listingid>&investor_id=<userid>.html
+	 *  /listing/bids/<listingid>/<from_user_id>/.html
 	 */
 	private HttpHeaders bids(HttpServletRequest request) {
 		HttpHeaders headers = new HttpHeadersImpl("bids");
