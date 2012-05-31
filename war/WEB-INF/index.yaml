@@ -403,6 +403,7 @@ indexes:
   ancestor: no
   properties:
     - name: listing
+    - name: userA
     - name: created
       direction: desc
       
