@@ -160,7 +160,7 @@ valid_actions: [ "investor_post", "investor_counter", "investor_reject", "invest
         });
     },
 
-    mock_investor_post: function(ajax, data) {
+    mock_make_bid: function(ajax, data) {
         ajax.mock({
 bids:
 [
@@ -363,10 +363,11 @@ valid_actions: [ "investor_counter", "investor_reject", "investor_accept", "inve
         }
     },
     
-    bind_investor_post: function() {
-        var self = this;
-        console.log('bindme');
-        pl('#investor_post_btn').bind({
+    bind_investor_post: function(type) {
+        var self = this,
+            type = type || 'investor_post',
+            btnid = type + '_btn';
+        pl('#' + btnid).bind({
             click: function(event) {
                 var complete = function(json) {
                         var bids = json.bids || [],
@@ -391,7 +392,7 @@ valid_actions: [ "investor_counter", "investor_reject", "investor_accept", "inve
                             amt: amt,
                             pct: pct,
                             val: val,
-                            type: 'investor_post',
+                            type: type,
                             text: text
                         }
                     },
@@ -406,14 +407,15 @@ valid_actions: [ "investor_counter", "investor_reject", "investor_accept", "inve
                 }
                 console.log('data');
                 ajax.setPostData(data);
-                self.mock_investor_post(ajax, data); // FIXME
+                self.mock_make_bid(ajax, data); // FIXME
                 ajax.call();
                 return false;
             }
-        });
+        }).show();
     },
 
     bind_investor_counter: function() {
+        this.bind_investor_post('investor_counter');
     },
 
     bind_investor_accept: function() {

@@ -28,7 +28,8 @@
             </div>
             <div class="boxpanel boxpanelfull" id="makebidboxparent">
                 <div class="messageline makebidline initialhidden" id="makebidbox">
-                    <span class="span-16 push-4">
+                    <span class="span-4">&nbsp;</span>
+                    <span class="span-15">
                         <div class="formitem">
                             <label class="inputlabel" for="amt">AMOUNT</label>
                             <span class="inputfield">
@@ -63,7 +64,12 @@
                             </span>
                         </div>
                     </span>
-                    <span class="span-3 inputbutton messagebutton messagereplybutton" id="investor_post_btn">MAKE BID</span>
+                    <span class="span-4">
+                        <div class="makebidbuttons"> 
+                            <div><span class="span-3 inputbutton initialhidden" id="investor_post_btn">MAKE BID</span></div>
+                            <div><span class="span-3 inputbutton initialhidden" id="investor_counter_btn">COUNTER</span></div>
+                        </div>
+                    </span>
                     <p class="messagereplymsg inputmsg successful" id="makebidmsg"></p>
                 </div>
             </div>
