@@ -2,6 +2,7 @@ package com.startupbidder.vo;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.annotate.JsonAutoDetect;
 import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 import org.codehaus.jackson.annotate.JsonProperty;
@@ -16,7 +17,7 @@ public class BidListVO extends BaseResultVO {
 	@JsonProperty("bids") private List<BidVO> bids;
 	@JsonProperty("other_user_profile") private UserShortVO otherUser;
 	@JsonProperty("bids_props")	private ListPropertiesVO bidsProperties;
-	@JsonProperty("valid_actions") private String validActions;
+	@JsonProperty("valid_actions") private String validActions[];
 	public List<BidVO> getBids() {
 		return bids;
 	}
@@ -35,10 +36,7 @@ public class BidListVO extends BaseResultVO {
 	public void setBidsProperties(ListPropertiesVO bidsProperties) {
 		this.bidsProperties = bidsProperties;
 	}
-	public String getValidActions() {
-		return validActions;
-	}
 	public void setValidActions(String validActions) {
-		this.validActions = validActions;
+		this.validActions = StringUtils.split(validActions, ',');
 	}
 }

@@ -65,38 +65,20 @@ public class BidObjectifyDatastoreDAO {
 		BidUser bids[] = new BidUser[2];
 		List<Key<BidUser>> toDelete = new ArrayList<Key<BidUser>>();
 
-		Query<BidUser> query = getOfy().query(BidUser.class)
+		Key<BidUser> msgKey = getOfy().query(BidUser.class)
 				.filter("listing =", listing.getKey())
 				.filter("userA =", user1.getKey())
 				.filter("userB =", user2.getKey())
-				.order("-created")
-       			.chunkSize(5).prefetchSize(5);
-		int count = 0;
-		for (Key<BidUser> msgKey : query.fetchKeys()) {
-			if (count++ == 0) {
-				bids[0] = getOfy().get(msgKey);
-			} else {
-				toDelete.add(msgKey);
-			}
-		}
-		query = getOfy().query(BidUser.class)
+				.order("-created").getKey();
+		bids[0] = msgKey != null ? getOfy().get(msgKey) : null;
+		msgKey = getOfy().query(BidUser.class)
 				.filter("listing =", listing.getKey())
 				.filter("userA =", user2.getKey())
 				.filter("userB =", user1.getKey())
-				.order("-created")
-       			.chunkSize(5).prefetchSize(5);
-		count = 0;
-		for (Key<BidUser> msgKey : query.fetchKeys()) {
-			if (count++ == 0) {
-				bids[1] = getOfy().get(msgKey);
-			} else {
-				toDelete.add(msgKey);
-			}
-		}
-		if (toDelete.size() > 0) {
-			log.info("Deleting redundant entries: " + toDelete);
-			// deleting redundant entries
-			getOfy().delete(toDelete);
+				.order("-created").getKey();
+		bids[1] = msgKey != null ? getOfy().get(msgKey) : null;
+		if (bids[0] == null ^ bids[1] == null) {
+			log.severe("Data inconsistency. It will be fixed by updateReadFlag call. bids[0]: " + bids[0] + ", bids[1]: " + bids[1]);
 		}
 		return bids;
 	}
@@ -138,10 +120,26 @@ public class BidObjectifyDatastoreDAO {
 		}
 		if (forUpdate.size() > 0) {
 			BidUser shorts[] = getBidShorts(listing, user, otherUser);
-			shorts[0].read = true;
-			shorts[1].read = true;
-			forUpdate.add(shorts[0]);
-			forUpdate.add(shorts[1]);
+			if (shorts[0] == null && shorts[1] != null) {
+				log.severe("Fixing missed BidUser object, should not happen. Other object: " + shorts[1]);
+				// it should not happen, but unfortunatelly has already happened
+				shorts[0] = new BidUser(shorts[1].createCrossBid());
+				shorts[0].counter = shorts[1].counter;
+			}
+			if (shorts[1] == null && shorts[0] != null) {
+				log.severe("Fixing missed BidUser object, should not happen. Other object: " + shorts[1]);
+				// it should not happen, but unfortunatelly has already happened
+				shorts[1] = new BidUser(shorts[0].createCrossBid());
+				shorts[1].counter = shorts[0].counter;
+			}
+			if (shorts[0] == null && shorts[1] == null) {
+				log.severe("Both BidUser objects are missing! Listing: " + listing.getKey()
+						+ ", user1: " + user.getKey() + ", user2: " + otherUser.getKey());
+			}
+			if (shorts[0] != null) {
+				shorts[0].read = true;
+				forUpdate.add(shorts[0]);
+			}
 			
 			log.info("Updating read flag for " + forUpdate.size() + " bid objects.");
 			getOfy().put(forUpdate);

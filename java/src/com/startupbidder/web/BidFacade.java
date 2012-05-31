@@ -194,7 +194,7 @@ public class BidFacade {
 			switch(bidType) {
 			case INVESTOR_POST:
 			case INVESTOR_COUNTER:
-				return "owner_accept, owner_reject, owner_counter";
+				return "owner_accept,owner_reject,owner_counter";
 			case INVESTOR_ACCEPT:
 			case INVESTOR_REJECT:
 			case INVESTOR_WITHDRAW:
@@ -220,7 +220,7 @@ public class BidFacade {
 			case OWNER_ACCEPT:
 				return "investor_post";
 			case OWNER_COUNTER:
-				return "investor_counter, investor_reject, investor_accept";
+				return "investor_counter,investor_reject,investor_accept";
 			}
 		}
 		return "";
