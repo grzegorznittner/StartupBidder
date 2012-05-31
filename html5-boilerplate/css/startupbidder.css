@@ -23,10 +23,10 @@ body.nearby-page > #wrap > #main > div.container > div.nearbywrapper { height: 1
 .footertext { position: relative; font-weight: bold; font-size: 12px; top: 10px; }
 .footerlink { font-size: 14px; }
 .copyrighttext { font-size: 12px; position: absolute; right: 0; bottom: 0; }
-.attention { color: #8A1F11; }
-.errorcolor { color: #8A1F11; }
-.inprogress { color: #8F8A11; }
-.successful { color: #009900; }
+.attention { color: #8A1F11 !important; }
+.errorcolor { color: #8A1F11 !important; }
+.inprogress { color: #8F8A11 !important; }
+.successful { color: #009900 !important; }
 .notice { position: relative; top: 15px; }
 .emptyattention { color: #8A1F11; position: relative; top: 15px; }
 

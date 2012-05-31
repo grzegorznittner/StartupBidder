@@ -1812,7 +1812,7 @@ include(api-banner.m4)
             <iframe name="listing-order_book"></iframe>
         </div>
 
-        <dt>GET /listing/bid_users/:id</dt>
+        <dt>GET /listing/investors/:id</dt>
         <dd>
             <p>Get the list of investors who have bid on this listing with the latest bid information by the investor.
             Call this method first to get access to the latest bidding by investors, then call <var>/listing/bids</var> to get the full bid history.</p>
@@ -1833,7 +1833,6 @@ include(api-banner.m4)
 <pre name="code" class="brush: js">
 [
     {
-        listing_id: :id,
         investor_id: :uid,
         investor_nickname: :name,
         last_amt: :amount,
@@ -1861,7 +1860,7 @@ include(api-banner.m4)
                 </li>
             </ul>
             <h4>Test</h4>
-            <form method="GET" action="/listing/bid_investors" target="listing-bid_investors">
+            <form method="GET" action="/listing/investors" target="listing-investors">
                 <div class="formitem">
                     <label class="inputlabel" for="title">ID</label>
                     <span class="inputfield">
@@ -1875,7 +1874,7 @@ include(api-banner.m4)
                     </span>
                 </div>
             </form>
-            <iframe name="listing-bid_investors"></iframe>
+            <iframe name="listing-investors"></iframe>
         </div>
 
         <dt>GET /listing/bids/:id/:investor_id</dt>

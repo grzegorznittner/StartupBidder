@@ -216,6 +216,7 @@ include(footer.m4)
   <script src="js/modules/forms.js"></script>
   <script src="js/modules/orderbook.js"></script>
   <script src="js/modules/singleinvestorbidlist.js"></script>
+  <script src="js/modules/investorbidgrouplist.js"></script>
   <script src="js/modules/comments.js"></script>
   <script src="js/modules/questions.js"></script>
   <script src="js/modules/bmc.js"></script>

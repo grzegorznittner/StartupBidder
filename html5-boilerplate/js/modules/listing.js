@@ -13,8 +13,6 @@ function ListingClass(listing_id, preview) {
         self.store(json);
         self.display();
     };
-    this.bmc = new BMCClass();
-    this.ip = new IPClass();
     this.ajax = new AjaxClass(this.url, this.statusId, this.completeFunc);
     this.alltabs = [ 'basics', 'model', 'slides', 'comments', 'bids', 'qandas' ];
 };
@@ -35,16 +33,15 @@ pl.implement(ListingClass, {
         this.listing_public_title = 'Startupbidder Listing: ' + this.title;
         this.loggedin_profile_id = this.loggedin_profile && this.loggedin_profile.profile_id;
     },
+
     load: function() {
         this.ajax.call();
     },
+
     display: function() {
         this.displayTabs();
         this.displayBasics();
         this.displayFollow();
-        this.bmc.display(this);
-        this.ip.display(this);
-        this.ip.bindButtons();
         this.displayMap();
         this.displayDocuments();
         this.displayFunding();
@@ -54,6 +51,7 @@ pl.implement(ListingClass, {
         this.displaySendback();
         this.displayFreeze();
     },
+
     displayBasics: function() {
         var logobg = this.logo ? 'url(' + this.logo + ') no-repeat scroll left top' : null,
             url = this.website ? new URLClass(this.website) : null,
@@ -82,6 +80,7 @@ pl.implement(ListingClass, {
         }
         pl('#listingdata').show();
     },
+
     bindFollow: function() {
         var self = this;
         pl('#followbtn').bind({
@@ -96,26 +95,31 @@ pl.implement(ListingClass, {
             }
         });
     },
+
     unfollow: function() {
         var self = this,
             completeFunc = function(json) {
                 self.monitored = false;
                 self.displayFollow();
             },
+
             ajax = new AjaxClass('/monitor/deactivate/' + self.listing_id, 'followmsg', completeFunc);
         ajax.setPost();
         ajax.call();
     },
+
     follow: function() {
         var self = this,
             completeFunc = function(json) {
                 self.monitored = true;
                 self.displayFollow();
             },
+
             ajax = new AjaxClass('/monitor/set/' + self.listing_id, 'followmsg', completeFunc);
         ajax.setPost();
         ajax.call();
     },
+
     displayFollow: function() {
         var self = this,
             following = self.monitored;
@@ -129,14 +133,17 @@ pl.implement(ListingClass, {
             self.bindFollow();
         }
     },
+
     displayFollowing: function() {
             pl('#followbtn').text('UNFOLLOW');
             pl('#followtext, #followbtn').show();
     },
+
     displayNotFollowing: function() {
             pl('#followtext').hide();
             pl('#followbtn').text('FOLLOW').show();
     },
+
     displayMap: function() {
         this.address = this.address || 'Unknown Address';
         //this.addressurl = this.addressurl || 'http://nominatim.openstreetmap.org/search?q=' + encodeURIComponent(this.address);
@@ -149,6 +156,7 @@ pl.implement(ListingClass, {
         pl('#addresslink').attr({href: this.addressurl});
         pl('#mapimg').attr({src: this.mapurl});
     },
+
     displayDocumentLink: function(linkId, btnId, docId) {
         var url;
         if (docId) {
@@ -162,12 +170,14 @@ pl.implement(ListingClass, {
             pl('#'+linkId).attr({href: '#'}).addClass('nohover').bind({click: function() { return false; }});
         }
     },
+
     displayDocuments: function() {
         this.displayDocumentLink('presentationlink', 'presentationbtn', this.presentation_id);
         this.displayDocumentLink('businessplanlink', 'businessplanbtn', this.business_plan_id);
         this.displayDocumentLink('financialslink', 'financialsbtn', this.financials_id);
         pl('#documentwrapper').show();
     },
+
     displayFunding: function() {
         var total_raised = this.total_raised && this.total_raised > 0 ? this.currency.format(this.total_raised) : '$0';
         if (this.asked_fund) {
@@ -198,6 +208,7 @@ pl.implement(ListingClass, {
             pl('#suggestedmsg').html('NOT SEEKING FUNDING').show();
         }
     },
+
     displaySocial: function() {
         if (this.preview) { // their iframe usage busts during preview
             pl('#socialsidewrapper').html('<p>Twitter, Facebook, and Google Plus buttons will be displayed here</p>');
@@ -209,10 +220,12 @@ pl.implement(ListingClass, {
         }
         pl('#socialsidewrapper').show();
     },
+
     displayTwitter: function() {
         pl('#twitterbanner').html('<a href="https://twitter.com/share" class="twitter-share-button" data-url="' + this.listing_url + '" data-text="' + this.listing_public_title + '" data-via="startupbidder" data-related="startupbidder" data-hashtags="startupbidder">Tweet</a>');
         !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");
     },
+
     displayFacebook: function() {
         this.addMetaTags('property', {
             'og:title': this.listing_public_title,
@@ -231,6 +244,7 @@ pl.implement(ListingClass, {
   fjs.parentNode.insertBefore(js, fjs);
   }(document, 'script', 'facebook-jssdk'));
     },
+
     displayGooglePlus: function() {
         this.addMetaTags('itemprop', {
             'name': this.listing_public_title,
@@ -244,6 +258,7 @@ pl.implement(ListingClass, {
     var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
   })();
     },
+
     addMetaTags: function(attributeName, metas) {
         var prop, content, metatag;
         for (prop in metas) {
@@ -252,12 +267,14 @@ pl.implement(ListingClass, {
             pl('head').append(metatag);
         }
     },
+
     displayWithdraw: function() {
         var withdrawable = this.status === 'active' && (this.loggedin_profile && this.loggedin_profile.profile_id === this.profile_id);
         if (withdrawable) {
             this.bindWithdrawButton();
         }
     },
+
     bindWithdrawButton: function() {
         var self = this;
         pl('#withdrawbox').show();
@@ -270,6 +287,7 @@ pl.implement(ListingClass, {
                         pl('#companystatus').html('Listing is ' + self.status).addClass('attention');
                         window.location.reload();
                     },
+
                     url = '/listing/withdraw/' + self.listing_id,
                     ajax = new AjaxClass(url, 'withdrawmsg', completeFunc);
                 if (pl('#withdrawcancelbtn').css('display') === 'none') { // first call
@@ -289,12 +307,14 @@ pl.implement(ListingClass, {
             }
         });
     },
+
     displayApprove: function() {
         var approvable = this.loggedin_profile && this.loggedin_profile.admin && (this.status === 'posted' || this.status === 'frozen');
         if (approvable) {
             this.bindApproveButton();
         }
     },
+
     bindApproveButton: function() {
         var self = this;
         pl('#approvebox').show();
@@ -303,6 +323,7 @@ pl.implement(ListingClass, {
                 var completeFunc = function() {
                         window.location.reload();
                     },
+
                     url = '/listing/activate/' + self.listing_id;
                     ajax = new AjaxClass(url, 'approvemsg', completeFunc);
                 if (pl('#approvecancelbtn').css('display') === 'none') { // first call
@@ -322,12 +343,14 @@ pl.implement(ListingClass, {
             }
         });
     },
+
     displaySendback: function() {
         var sendbackable = this.loggedin_profile && this.loggedin_profile.admin && (this.status === 'posted' || this.status === 'frozen');
         if (sendbackable) {
             this.bindSendbackButton();
         }
     },
+
     bindSendbackButton: function() {
         var self = this;
         pl('#sendbackbox').show();
@@ -336,6 +359,7 @@ pl.implement(ListingClass, {
                 var completeFunc = function() {
                         window.location.reload();
                     },
+
                     url = '/listing/send_back/' + self.listing_id;
                     ajax = new AjaxClass(url, 'sendbackmsg', completeFunc);
                 if (pl('#sendbackcancelbtn').css('display') === 'none') { // first call
@@ -355,12 +379,14 @@ pl.implement(ListingClass, {
             }
         });
     },
+
     displayFreeze: function() {
         var freezable = this.status === 'active' && this.loggedin_profile && this.loggedin_profile.admin;
         if (freezable) {
             this.bindFreezeButton();
         }
     },
+
     bindFreezeButton: function() {
         var self = this;
         pl('#freezebox').show();
@@ -369,6 +395,7 @@ pl.implement(ListingClass, {
                 var completeFunc = function() {
                         window.location.reload();
                     },
+
                     url = '/listing/freeze/' + self.listing_id;
                     ajax = new AjaxClass(url, 'freezemsg', completeFunc);
                 if (pl('#freezecancelbtn').css('display') === 'none') { // first call
@@ -388,6 +415,7 @@ pl.implement(ListingClass, {
             }
         });
     },
+
     hideSelectedTabs: function() {
        var  tabs = [],
             wrappers = [],
@@ -407,63 +435,109 @@ pl.implement(ListingClass, {
         pl(tabsel).removeClass('companynavselected');
         pl(wrappersel).hide();
     },
-    displayTab: function(tab) {
-        var tabid = tab + 'tab',
-            tabsel = '#' + tabid,
-            wrapperid = tab + 'wrapper',
-            wrappersel = '#' + wrapperid;
-        if (!pl(tabsel).hasClass('companynavselected')) {
-            this.hideSelectedTabs();
-            pl(tabsel).addClass('companynavselected');
-            if (tab === 'basics') {
-                pl('#basicswrapper').show();
-            }
-            else if (tab === 'model') {
-                pl('#modelwrapper').show();
-            }
-            else if (tab === 'slides') {
-                pl('#slideswrapper').show();
-            }
-            else if (tab === 'comments') {
-                pl(wrappersel).show();
-                if (!this.isCommentListLoaded) {
-                    (new CommentClass(this.listing_id, this.loggedin_profile_id)).load();
-                    this.isCommentListLoaded = true;
-                }
-            }
-            else if (tab === 'bids') {
-                if (!this.isBidListLoaded) {
-                    (new OrderBookClass(this.listing_id, this.suggested_amt, this.suggested_pct, this.listing_date)).load();
-                    if (this.loggedin_profile_id && this.loggedin_profile_id === this.profile_id) {
-                        //(new OwnerBidGroupListClass(this.listing_id)).load();
-                        pl('#bidsnotloggedin, #bidsloggedin').hide();
-                        pl('#bidsowner').show();
-                    }
-                    else if (this.loggedin_profile_id) {
-                        (new SingleInvestorBidListClass(this.listing_id, this.loggedin_profile_id, this.loggedin_profile.username || 'anonymous')).load();
-                        pl('#bidsnotloggedin, #bidsowner').hide();
-                        pl('#bidsloggedin').show();
-                    }
-                    else {
-                        pl('#bidsloggedin, #bidsowner').hide();
-                        pl('#bidsnotloggedin').show();
-                    }
-                    this.isBidListLoaded = true;
-                }
-                pl(wrappersel).show();
-            }
-            else if (tab === 'qandas') {
-                pl(wrappersel).show();
-                if (!this.isQuestionListLoaded) {
-                    (new QuestionClass(this.listing_id, this.profile_id, this.loggedin_profile_id)).load();
-                    this.isQuestionListLoaded = true;
-                }
-            }
-            else {
-                pl(wrappersel).show();
-            }
+
+    loadBMC: function() {
+        var bmc = new BMCClass();
+        bmc.display(this);
+        pl('#modelwrapper').show();
+        this.bmcLoaded = true;
+    },
+
+    loadIP: function() {
+        var ip = new IPClass();
+        ip.display(this);
+        ip.bindButtons();
+        this.ipLoaded = true;
+        pl('#slideswrapper').show();
+    },
+
+    displayBasicsTab: function() {
+        pl('#basicswrapper').show();
+    },
+
+    displayBMC: function() {
+        if (this.bmcLoaded) {
+            pl('#modelwrapper').show();
+        }
+        else {
+            this.loadBMC();
         }
     },
+
+    displayIP: function() {
+        if (this.ipLoaded) {
+            pl('#slideswrapper').show();
+        }
+        else {
+            this.loadIP();
+        }
+    },
+
+    displayComments: function() {
+        if (!this.isCommentListLoaded) {
+            (new CommentClass(this.listing_id, this.loggedin_profile_id)).load();
+            this.isCommentListLoaded = true;
+        }
+        pl('#commentswrapper').show();
+    },
+
+    displayBids: function() {
+        if (!this.isBidListLoaded) {
+            (new OrderBookClass(this.listing_id, this.suggested_amt, this.suggested_pct, this.listing_date)).load();
+            if (this.loggedin_profile_id && this.loggedin_profile_id === this.profile_id) {
+                (new InvestorBidGroupListClass(this.listing_id)).load();
+                pl('#bidsnotloggedin, #bidsloggedin').hide();
+                pl('#bidsownergroup').show();
+            }
+            else if (this.loggedin_profile_id) {
+                (new SingleInvestorBidListClass(this.listing_id, this.loggedin_profile_id, this.loggedin_profile.username || 'anonymous')).load();
+                pl('#bidsnotloggedin, #bidsownergroup').hide();
+                pl('#bidsloggedin').show();
+            }
+            else {
+                pl('#bidsloggedin, #bidsownergroup').hide();
+                pl('#bidsnotloggedin').show();
+            }
+            this.isBidListLoaded = true;
+        }
+        pl('#bidswrapper').show();
+    },
+
+    displayQandas: function() {
+        if (!this.isQuestionListLoaded) {
+            (new QuestionClass(this.listing_id, this.profile_id, this.loggedin_profile_id)).load();
+            this.isQuestionListLoaded = true;
+        }
+        pl('#qandaswrapper').show();
+    },
+
+    displayTab: function(tab) {
+        var tabsel = '#' + tab + 'tab';
+        if (pl(tabsel).hasClass('companynavselected')) {
+            return;
+        }
+        this.hideSelectedTabs();
+        pl(tabsel).addClass('companynavselected');
+        if (tab === 'basics') {
+            this.displayBasicsTab();
+        }
+        else if (tab === 'model') {
+            this.displayBMC();
+        }
+        else if (tab === 'slides') {
+            this.displayIP();
+        }
+        else if (tab === 'comments') {
+            this.displayComments();
+        }
+        else if (tab === 'bids') {
+            this.displayBids();
+        }
+        else if (tab === 'qandas') {
+            this.displayQandas();
+        }
+    },
+
     displayTabs: function() {
         var self = this,
             qs = new QueryStringClass(),
@@ -472,6 +546,7 @@ pl.implement(ListingClass, {
                 self.displayTab(tabname);
                 return false;
             },
+
             i,
             tab;
         pl('#num_comments').text(self.num_comments || 0);

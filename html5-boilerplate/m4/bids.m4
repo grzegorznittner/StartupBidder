@@ -75,9 +75,9 @@
             </div>
         </div>
 
-        <div class="initialhidden clear" id="bidsowner">
+        <div class="initialhidden clear" id="bidsownergroup">
             <div class="boxtitlegap smokegrey clear">BIDS</div>
-            <div class="boxpanel boxpanelfull" id="bidgrouplist"><p>No bids recevied for this listing.</p></div>
+            <div class="boxpanel boxpanelfull" id="investorgrouplist"><p>No bids recevied for this listing.</p></div>
         </div>
 
     </div>
