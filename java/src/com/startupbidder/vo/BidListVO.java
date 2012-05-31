@@ -15,7 +15,7 @@ import org.codehaus.jackson.annotate.JsonProperty;
 		fieldVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE)
 public class BidListVO extends BaseResultVO {
 	@JsonProperty("bids") private List<BidVO> bids;
-	@JsonProperty("other_user_profile") private UserShortVO otherUser;
+	@JsonProperty("investor_id") private UserShortVO otherUser;
 	@JsonProperty("bids_props")	private ListPropertiesVO bidsProperties;
 	@JsonProperty("valid_actions") private String validActions[];
 	public List<BidVO> getBids() {
