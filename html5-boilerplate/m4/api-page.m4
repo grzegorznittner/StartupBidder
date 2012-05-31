@@ -1922,10 +1922,7 @@ include(api-banner.m4)
 }
 </pre>
                 </li>
-                <li><code>valid_actions</code> valid bid actions for current user. Structure:
-<pre name="code" class="brush: js">
-"valid_actions": "owner_accept, owner_reject, owner_counter"
-</pre>
+                <li><code>valid_actions</code> list of valid actions, that is, new bid types, which the logged in user may submit for this listing</li>
                 </li>
             </ul>
             <h4>Test</h4>
@@ -1993,8 +1990,7 @@ include(api-banner.m4)
                         OWNER_ACCEPT, OWNER_REJECT, OWNER_COUNTER, OWNER_WITHDRAW */
         text: :note,
         created_date: :yyyymmddhh24mmss
-    },
-    ...
+    }
 ]
 </pre>
                 </li>
@@ -2008,11 +2004,7 @@ include(api-banner.m4)
 }
 </pre>
                 </li>
-                <li><code>valid_actions</code> valid bid actions for current user. Structure:
-<pre name="code" class="brush: js">
-"valid_actions": "owner_accept, owner_reject, owner_counter"
-</pre>
-                </li>
+                <li><code>valid_actions</code> list of valid actions, that is, new bid types, which the logged in user may submit for this listing</li>
             </ul>
             <h4>Test</h4>
             <form method="POST" action="/listing/make_bid" target="listing-make_bid">
