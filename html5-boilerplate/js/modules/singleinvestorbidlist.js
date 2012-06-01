@@ -59,13 +59,16 @@ pl.implement(BidClass, {
 
     makeHtml: function(options) {
         var addbuttons = options && options.last ? this.bidslist.makeAddButtons() : '';
+            amtidattr = options && options.last ? ' id="existing_bid_amt"' : '';
+            pctidattr = options && options.last ? ' id="existing_bid_pct"' : '';
+            validattr = options && options.last ? ' id="existing_bid_val"' : '';
         return '\
         <div class="messageline investorbidline ' + this.typeclass + '">\
             <p class="span-2">' + this.usertext + '</p>\
             <p class="span-2">' + this.typetext + '</p>\
-            <p class="span-3">' + this.amttext + '</p>\
-            <p class="span-2">' + this.pcttext + '</p>\
-            <p class="span-3">' + this.valtext + '</p>\
+            <p class="span-3"' + amtidattr + '>' + this.amttext + '</p>\
+            <p class="span-2"' + pctidattr + '>' + this.pcttext + '</p>\
+            <p class="span-3"' + validattr + '>' + this.valtext + '</p>\
             <p class="span-9 investorbidnote">' + this.bidtext + '</p>\
             <p class="investorbiddate">' + this.datetext + '</p>\
         ' + addbuttons + '\
@@ -84,6 +87,13 @@ function SingleInvestorBidListClass(listing_id, investor_profile_id, investor_pr
         investor_withdraw: 'You hereby agree to withdraw this bid according to the <a href="/terms-page.html">terms and conditions</a>.',
         investor_post: 'You hereby agree to make this bid according to the <a href="/terms-page.html">terms and conditions</a>.',
         investor_counter: 'You hereby agree to make this counter offer according to the <a href="/terms-page.html">terms and conditions</a>.'
+    };
+    this.successtext = {
+        investor_post: 'Bid posted',
+        investor_counter: 'Counter-offer posted',
+        investor_accept: 'Bid accepted',
+        investor_reject: 'Bid rejected',
+        investor_withdraw: 'Bid withdrawn'
     };
 }
 pl.implement(SingleInvestorBidListClass, {
@@ -375,17 +385,11 @@ valid_actions: [ "investor_counter", "investor_reject", "investor_accept", "inve
         }
     },
 
-    makeBidAction: function(type) {    
-        var complete = function(json) {
-                var bids = json.bids || [],
-                    html = (new BidClass(self)).store(bids[0]).makeHtml();
-                self.bidsprops = json.bidsprops || {};
-                self.validactions = json.validactions || [];
-                pl('#makebidamt, #makebidpct').attr({value: ''});
-                pl('#makebidval').removeClass('successful').addClass('inprogress').text('N/A');
-                pl('#makebidtext').removeClass('edited').attr({value: 'Put your note to the owner here...'});
-                pl('#newbidtitlemsg').addClass('successful').text('Bid posted');
-                pl('#bidlistlast').before(html);
+    newBidAction: function(type) {    
+        var self = this,
+            complete = function(json) {
+                pl('#investor_new_msg').addClass('successful').text(self.successtext[type] + ', reloading...');
+                setTimeout(function() { location.reload(); }, 3000);
             },
 
             text = pl('#makebidtext').hasClass('edited') && SafeStringClass.prototype.clean(pl('#makebidtext').attr('value') || '') || '',
@@ -404,24 +408,75 @@ valid_actions: [ "investor_counter", "investor_reject", "investor_accept", "inve
                 }
             },
 
-            ajax = new AjaxClass('/listing/make_bid', 'newbidtitlemsg', complete),
-            validamt = self.amtfield.validate(),
-            validpct = self.pctfield.validate(),
-            validmsg = '' + (validamt ? 'AMOUNT: ' + validamt + ' ' : '') + (validpct ? 'PERCENT: ' + validpct : '');
-        if (validmsg) {
-            self.amtfield.fieldBase.msg.show('attention', validmsg);
-            return false;
-        }
+            ajax = new AjaxClass('/listing/make_bid', 'investor_new_msg', complete);
         console.log('data');
         ajax.setPostData(data);
         self.mock_make_bid(ajax, data); // FIXME
         ajax.call();
     },
 
+    existingBidAction: function(type) {    
+        var self = this,
+            complete = function(json) {
+                pl('#investor_existing_msg').addClass('successful').text(self.successtext[type] + ', reloading...');
+                setTimeout(function() { location.reload(); }, 3000);
+            },
+
+            text = null,
+            amt = CurrencyClass.prototype.clean(pl('#existing_bid_amt').attr('value')),
+            pct = PercentClass.prototype.clean(pl('#existing_bid_pct').attr('value')),
+            val = CurrencyClass.prototype.clean(pl('#existing_bid_val').text()),
+            data = {
+                bid: {
+                    listing_id: self.listing_id,
+                    investor_id: self.investor_profile_id,
+                    amt: amt,
+                    pct: pct,
+                    val: val,
+                    type: type,
+                    text: text
+                }
+            },
+
+            ajax = new AjaxClass('/listing/make_bid', 'investor_existing_msg', complete);
+        ajax.setPostData(data);
+        self.mock_make_bid(ajax, data); // FIXME
+        ajax.call();
+    },
+
+    showNewBidConfirmButtons: function(type) {
+        var self = this,
+            btnid = type + '_btn',
+            btnsel = '#' + btnid;
+        pl('#newbidbuttons').hide();
+        pl('#investor_new_confirm_btn').unbind().bind('click', function() {
+            if (!pl(btnsel).hasClass('submitting')) {
+                pl(btnsel).addClass('submitting');
+                pl('#investor_new_msg').addClass('inprogress').text('Submitting...');
+                self.newBidAction(type);
+            }
+        });
+        pl('#investor_new_cancel_btn').unbind().bind('click', function() {
+            pl('#newconfirmbuttons').hide();
+            pl('#newbidbuttons').show();
+            self.enableNewBidEditing();
+        });
+        console.log(type, this, this.confirmtext);
+        pl('#investor_new_msg').html(this.confirmtext[type]);
+        pl('#newconfirmbuttons').show();
+    },
+
     showExistingBidConfirmButtons: function(type) {
+        var self = this,
+            btnid = type + '_btn',
+            btnsel = '#' + btnid;
         pl('#existingbidbuttons').hide();
         pl('#investor_existing_confirm_btn').unbind().bind('click', function() {
-            alert('confirm action');
+            if (!pl(btnsel).hasClass('submitting')) {
+                pl(btnsel).addClass('submitting');
+                pl('#investor_existing_msg').addClass('inprogress').text('Submitting...');
+                self.existingBidAction(type);
+            }
         });
         pl('#investor_existing_cancel_btn').unbind().bind('click', function() {
             pl('#existingconfirmbuttons').hide();
@@ -432,30 +487,27 @@ valid_actions: [ "investor_counter", "investor_reject", "investor_accept", "inve
         pl('#existingconfirmbuttons').show();
     },
 
-    showNewBidConfirmButtons: function(type) {
-        pl('#newbidbuttons').hide();
-        pl('#investor_new_confirm_btn').unbind().bind('click', function() {
-            alert('confirm action');
-        });
-        pl('#investor_new_cancel_btn').unbind().bind('click', function() {
-            pl('#newconfirmbuttons').hide();
-            pl('#newbidbuttons').show();
-        });
-        console.log(type, this, this.confirmtext);
-        pl('#investor_new_msg').html(this.confirmtext[type]);
-        pl('#newconfirmbuttons').show();
+    disableNewBidEditing: function() {
+        pl('#makebidamt, #makebidpct, #makebidtext').attr('disabled', 'disabled');
+    },
+
+    enableNewBidEditing: function() {
+        pl('#makebidamt, #makebidpct, #makebidtext').removeAttr('disabled');
     },
 
     bindNewBidActionButton: function(type) {
         var self = this,
-            type = type || 'investor_post',
             btnid = type + '_btn',
             btnsel = '#' + btnid;
         pl(btnsel).bind('click', function() {
-            if (pl(btnsel).hasClass('confirmed')) {
-                self.makeBidAction(type);
+            var validamt = self.amtfield.validate(),
+                validpct = self.pctfield.validate(),
+                validmsg = '' + (validamt ? 'AMOUNT: ' + validamt + ' ' : '') + (validpct ? 'PERCENT: ' + validpct : '');
+            if (validmsg) {
+                self.amtfield.fieldBase.msg.show('attention', validmsg);
             }
             else {
+                self.disableNewBidEditing();
                 self.showNewBidConfirmButtons(type);
             }
             return false;
@@ -467,12 +519,7 @@ valid_actions: [ "investor_counter", "investor_reject", "investor_accept", "inve
             btnid = type + '_btn',
             btnsel = '#' + btnid;
         pl(btnsel).bind('click', function() {
-            if (pl(this).hasClass('confirmed')) {
-                alert('do: ' + type);
-            }
-            else {
-                self.showExistingBidConfirmButtons(type);
-            }
+            self.showExistingBidConfirmButtons(type);
             return false;
         }).show();
     },
