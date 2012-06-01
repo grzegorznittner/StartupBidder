@@ -78,6 +78,13 @@ function SingleInvestorBidListClass(listing_id, investor_profile_id, investor_pr
     this.listing_id = listing_id;
     this.investor_profile_id = investor_profile_id;
     this.investor_profile_username = investor_profile_username;
+    this.confirmtext = {
+        investor_accept: 'You hereby agree to accept this bid according to the <a href="/terms-page.html">terms and conditions</a>.',
+        investor_reject: 'You hereby agree to reject this bid according to the <a href="/terms-page.html">terms and conditions</a>.',
+        investor_withdraw: 'You hereby agree to withdraw this bid according to the <a href="/terms-page.html">terms and conditions</a>.',
+        investor_post: 'You hereby agree to make this bid according to the <a href="/terms-page.html">terms and conditions</a>.',
+        investor_counter: 'You hereby agree to make this counter offer according to the <a href="/terms-page.html">terms and conditions</a>.'
+    };
 }
 pl.implement(SingleInvestorBidListClass, {
     mock: function(ajax) {
@@ -343,10 +350,15 @@ valid_actions: [ "investor_counter", "investor_reject", "investor_accept", "inve
 
     makeAddButtons: function() {
         return '\
-<div class="bidactionline">\
+<div class="bidactionline" id="existingbidbuttons">\
     <span class="span-3 inputbutton bidactionbutton initialhidden" id="investor_withdraw_btn">WITHDRAW</span>\
     <span class="span-3 inputbutton bidactionbutton initialhidden" id="investor_reject_btn">REJECT</span>\
     <span class="span-3 inputbutton bidactionbutton initialhidden" id="investor_accept_btn">ACCEPT</span>\
+</div>\
+<div class="bidactionline initialhidden" id="existingconfirmbuttons">\
+    <span class="span-3 inputbutton bidactionbutton" id="investor_existing_cancel_btn">CANCEL</span>\
+    <span class="span-3 inputbutton bidactionbutton" id="investor_existing_confirm_btn">CONFIRM</span>\
+    <span class="span-14 bidconfirmmessage" id="investor_existing_msg"></span>\
 </div>\
         ';
     },
@@ -362,78 +374,127 @@ valid_actions: [ "investor_counter", "investor_reject", "investor_accept", "inve
             console.log(action, actionfuncname);
         }
     },
-    
-    bind_investor_post: function(type) {
+
+    makeBidAction: function(type) {    
+        var complete = function(json) {
+                var bids = json.bids || [],
+                    html = (new BidClass(self)).store(bids[0]).makeHtml();
+                self.bidsprops = json.bidsprops || {};
+                self.validactions = json.validactions || [];
+                pl('#makebidamt, #makebidpct').attr({value: ''});
+                pl('#makebidval').removeClass('successful').addClass('inprogress').text('N/A');
+                pl('#makebidtext').removeClass('edited').attr({value: 'Put your note to the owner here...'});
+                pl('#newbidtitlemsg').addClass('successful').text('Bid posted');
+                pl('#bidlistlast').before(html);
+            },
+
+            text = pl('#makebidtext').hasClass('edited') && SafeStringClass.prototype.clean(pl('#makebidtext').attr('value') || '') || '',
+            amt = CurrencyClass.prototype.clean(pl('#makebidamt').attr('value')),
+            pct = PercentClass.prototype.clean(pl('#makebidpct').attr('value')),
+            val = CurrencyClass.prototype.clean(pl('#makebidval').text()),
+            data = {
+                bid: {
+                    listing_id: self.listing_id,
+                    investor_id: self.investor_profile_id,
+                    amt: amt,
+                    pct: pct,
+                    val: val,
+                    type: type,
+                    text: text
+                }
+            },
+
+            ajax = new AjaxClass('/listing/make_bid', 'newbidtitlemsg', complete),
+            validamt = self.amtfield.validate(),
+            validpct = self.pctfield.validate(),
+            validmsg = '' + (validamt ? 'AMOUNT: ' + validamt + ' ' : '') + (validpct ? 'PERCENT: ' + validpct : '');
+        if (validmsg) {
+            self.amtfield.fieldBase.msg.show('attention', validmsg);
+            return false;
+        }
+        console.log('data');
+        ajax.setPostData(data);
+        self.mock_make_bid(ajax, data); // FIXME
+        ajax.call();
+    },
+
+    showExistingBidConfirmButtons: function(type) {
+        pl('#existingbidbuttons').hide();
+        pl('#investor_existing_confirm_btn').unbind().bind('click', function() {
+            alert('confirm action');
+        });
+        pl('#investor_existing_cancel_btn').unbind().bind('click', function() {
+            pl('#existingconfirmbuttons').hide();
+            pl('#existingbidbuttons').show();
+        });
+        console.log(type, this, this.confirmtext);
+        pl('#investor_existing_msg').html(this.confirmtext[type]);
+        pl('#existingconfirmbuttons').show();
+    },
+
+    showNewBidConfirmButtons: function(type) {
+        pl('#newbidbuttons').hide();
+        pl('#investor_new_confirm_btn').unbind().bind('click', function() {
+            alert('confirm action');
+        });
+        pl('#investor_new_cancel_btn').unbind().bind('click', function() {
+            pl('#newconfirmbuttons').hide();
+            pl('#newbidbuttons').show();
+        });
+        console.log(type, this, this.confirmtext);
+        pl('#investor_new_msg').html(this.confirmtext[type]);
+        pl('#newconfirmbuttons').show();
+    },
+
+    bindNewBidActionButton: function(type) {
         var self = this,
             type = type || 'investor_post',
-            btnid = type + '_btn';
-        pl('#' + btnid).bind({
-            click: function(event) {
-                var complete = function(json) {
-                        var bids = json.bids || [],
-                            html = (new BidClass(self)).store(bids[0]).makeHtml();
-                        self.bidsprops = json.bidsprops || {};
-                        self.validactions = json.validactions || [];
-                        pl('#makebidamt, #makebidpct').attr({value: ''});
-                        pl('#makebidval').removeClass('successful').addClass('inprogress').text('N/A');
-                        pl('#makebidtext').removeClass('edited').attr({value: 'Put your note to the owner here...'});
-                        pl('#newbidtitlemsg').addClass('successful').text('Bid posted');
-                        pl('#bidlistlast').before(html);
-                    },
-
-                    text = pl('#makebidtext').hasClass('edited') && SafeStringClass.prototype.clean(pl('#makebidtext').attr('value') || '') || '',
-                    amt = CurrencyClass.prototype.clean(pl('#makebidamt').attr('value')),
-                    pct = PercentClass.prototype.clean(pl('#makebidpct').attr('value')),
-                    val = CurrencyClass.prototype.clean(pl('#makebidval').text()),
-                    data = {
-                        bid: {
-                            listing_id: self.listing_id,
-                            investor_id: self.investor_profile_id,
-                            amt: amt,
-                            pct: pct,
-                            val: val,
-                            type: type,
-                            text: text
-                        }
-                    },
-
-                    ajax = new AjaxClass('/listing/make_bid', 'makebidmsg', complete),
-                    validamt = self.amtfield.validate(),
-                    validpct = self.pctfield.validate(),
-                    validmsg = '' + (validamt ? 'AMOUNT: ' + validamt + ' ' : '') + (validpct ? 'PERCENT: ' + validpct : '');
-                if (validmsg) {
-                    self.amtfield.fieldBase.msg.show('attention', validmsg);
-                    return false;
-                }
-                console.log('data');
-                ajax.setPostData(data);
-                self.mock_make_bid(ajax, data); // FIXME
-                ajax.call();
-                return false;
+            btnid = type + '_btn',
+            btnsel = '#' + btnid;
+        pl(btnsel).bind('click', function() {
+            if (pl(btnsel).hasClass('confirmed')) {
+                self.makeBidAction(type);
             }
+            else {
+                self.showNewBidConfirmButtons(type);
+            }
+            return false;
         }).show();
     },
 
-    bind_investor_counter: function() {
-        this.bind_investor_post('investor_counter');
+    bindExistingBidActionButton: function(type) {
+        var self = this,
+            btnid = type + '_btn',
+            btnsel = '#' + btnid;
+        pl(btnsel).bind('click', function() {
+            if (pl(this).hasClass('confirmed')) {
+                alert('do: ' + type);
+            }
+            else {
+                self.showExistingBidConfirmButtons(type);
+            }
+            return false;
+        }).show();
     },
 
-    bindActionButton: function(type) {
-        var btnid = type + '_btn';
-        pl('#' + btnid).show();
+    bind_investor_post: function(type) {
+        this.bindNewBidActionButton('investor_post');
+    },
+
+    bind_investor_counter: function() {
+        this.bindNewBidActionButton('investor_counter');
     },
 
     bind_investor_accept: function() {
-        this.bindActionButton('investor_accept');
+        this.bindExistingBidActionButton('investor_accept');
     },
 
     bind_investor_reject: function() {
-        this.bindActionButton('investor_reject');
+        this.bindExistingBidActionButton('investor_reject');
     },
 
     bind_investor_withdraw: function() {
-        console.log('foo');
-        this.bindActionButton('investor_withdraw');
+        this.bindExistingBidActionButton('investor_withdraw');
     },
 /*
     bind_owner_accept: function() {

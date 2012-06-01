@@ -61,12 +61,17 @@
                     <span class="span-4">
                         <div class="span-3 makebidvallabel">VALUATION</div>
                         <div class="span-3 makebidvaltext medtext inprogress" id="makebidval">N/A</div>
-                        <div class="makebidbuttons"> 
-                            <div><span class="span-3 inputbutton initialhidden" id="investor_post_btn">MAKE BID</span></div>
-                            <div><span class="span-3 inputbutton initialhidden" id="investor_counter_btn">COUNTER</span></div>
-                        </div>
                     </span>
-                    <p class="messagereplymsg inputmsg successful" id="makebidmsg"></p>
+<div class="newbidactionline" id="newbidbuttons">
+    <span class="span-3 inputbutton bidactionbutton initialhidden" id="investor_counter_btn">COUNTER</span>
+    <span class="span-3 inputbutton bidactionbutton initialhidden" id="investor_post_btn">MAKE BID</span>
+    <span class="span-17 bidconfirmmessage" id="makebidmsg"></span>
+</div>
+<div class="newbidactionline initialhidden" id="newconfirmbuttons">
+    <span class="span-3 inputbutton bidactionbutton" id="investor_new_cancel_btn">CANCEL</span>
+    <span class="span-3 inputbutton bidactionbutton" id="investor_new_confirm_btn">CONFIRM</span>
+    <span class="span-17 bidconfirmmessage" id="investor_new_msg"></span>
+</div>
                 </div>
             </div>
         </div>

@@ -453,8 +453,10 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .makebidbuttons { position: absolute; bottom: 20px; }
 .makebidvallabel { font-weight: bold; padding-top: 10px; color: #49515A; text-align: center; height: 33px; }
 .makebidvaltext { text-align: center; }
-.bidactionline { clear: both; margin-top: 20px; }
+.bidactionline { clear: both; padding-top: 20px; }
+.newbidactionline { clear: both; }
 .bidactionbutton { float: right; }
+.bidconfirmmessage { padding-top: 14px; padding-right: 10px; text-align: right; font-weight: bold; color: #49515a; float: right; }
 .investorbidheader { background: #49515a !important; }
 .investorbidheader p { color: white; font-weight: bold !important; text-align: center; }
 .investorbidline p { font-weight: bold; text-align: center; }
