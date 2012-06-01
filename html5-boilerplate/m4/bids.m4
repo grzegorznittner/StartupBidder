@@ -49,12 +49,6 @@
                             </span>
                         </div>
                         <div class="formitem clear">
-                            <span class="inputlabel">VALUATION</span>
-                            <span class="inputfield valuationfield">
-                                <div class="medtext successful" id="makebidval"></div>
-                            </span>
-                        </div>
-                        <div class="formitem clear">
                             <label class="inputlabel" for="note">NOTE</label>
                             <span class="inputfield">
                                 <textarea class="textarea makebidtextarea" name="note" id="makebidtext" cols="20" rows="5">Put your note to the owner here...</textarea>
@@ -65,6 +59,8 @@
                         </div>
                     </span>
                     <span class="span-4">
+                        <div class="span-3 makebidvallabel">VALUATION</div>
+                        <div class="span-3 makebidvaltext medtext inprogress" id="makebidval">N/A</div>
                         <div class="makebidbuttons"> 
                             <div><span class="span-3 inputbutton initialhidden" id="investor_post_btn">MAKE BID</span></div>
                             <div><span class="span-3 inputbutton initialhidden" id="investor_counter_btn">COUNTER</span></div>

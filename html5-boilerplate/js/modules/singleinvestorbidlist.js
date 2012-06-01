@@ -15,25 +15,24 @@ function BidClass(bidslist) {
 
 pl.implement(BidClass, {
     store: function(json) {
-        var self = this;
+        var k;
         for (k in json) {
-            self[k] = json[k];
+            this[k] = json[k];
         }
-        self.amttext = self.amt ? CurrencyClass.prototype.format(self.amt) : '';
-        self.pcttext = self.pct ? PercentClass.prototype.format(self.pct) : '';
-        self.valtext = self.val ? CurrencyClass.prototype.format(self.val) : '';
-        self.typetext = self.type ? self.type.replace(/(investor_|owner_)/, '') : '';
-        self.bidtext = self.text ? SafeStringClass.prototype.htmlEntities(self.text) : '&nbsp;';
-        self.datetext = self.created_date ? DateClass.prototype.format(self.created_date) : '';
-        //self.usertext = self.type.indexOf('INVESTOR') ? self.bidslist.investorusername : self.bidslist.ownerusername;
-        self.usertext = self.type && self.type.match(/investor/) ? 'You' : 'Owner';
-        self.typeclass = self.typeclassmap[self.type] || '';
-        return self;
+        this.amttext = this.amt ? CurrencyClass.prototype.format(this.amt) : '';
+        this.pcttext = this.pct ? PercentClass.prototype.format(this.pct) : '';
+        this.valtext = this.val ? CurrencyClass.prototype.format(this.val) : '';
+        this.typetext = this.type ? this.type.replace(/(investor_|owner_)/, '') : '';
+        this.bidtext = this.text ? SafeStringClass.prototype.htmlEntities(this.text) : '&nbsp;';
+        this.datetext = this.created_date ? DateClass.prototype.format(this.created_date) : '';
+        //this.usertext = this.type.indexOf('INVESTOR') ? this.bidslist.investorusername : this.bidslist.ownerusername;
+        this.usertext = this.type && this.type.match(/investor/) ? 'You' : 'Owner';
+        this.typeclass = this.typeclassmap[this.type] || '';
+        return this;
     },
 
     setEmpty: function() {
-        var self = this,
-            emptyJson = {
+        var emptyJson = {
                 amt: null,
                 pct: null,
                 val: null,
@@ -41,44 +40,35 @@ pl.implement(BidClass, {
                 text: 'No bids',
                 created_date: null
             };
-        self.store(emptyJson);
+        this.store(emptyJson);
     },
 
     makeHeader: function() {
         return '\
-        <style>\
-            .bidheader { background: #49515a !important; }\
-            .bidheader p { color: white; font-weight: bold !important; text-align: center; }\
-            .bidline p { font-weight: bold; text-align: center; }\
-            .bidnote { text-align: left !important; font-weight: normal !important; }\
-            .biddateheader { float: left; width: 140px; }\
-            .biddate { float: left; width: 140px; text-align: right; font-size: 12px; padding-top: 2px; }\
-        </style>\
-        <div class="messageline bidheader">\
+        <div class="messageline investorbidheader">\
             <p class="span-2">Actor</p>\
             <p class="span-2">Action</p>\
             <p class="span-3">Bid</p>\
             <p class="span-2">Equity</p>\
             <p class="span-3">Valuation</p>\
             <p class="span-9">Note</p>\
-            <p class="biddateheader">Date</p>\
+            <p class="investorbiddateheader">Date</p>\
         </div>\
         ';
     },
 
-    makeHtml: function() {
-        var self = this;
+    makeHtml: function(options) {
+        var addbuttons = options && options.last ? this.bidslist.makeAddButtons() : '';
         return '\
-        <div class="messageline bidline ' + self.typeclass + '">\
-            <p class="span-2">' + self.usertext + '</p>\
-            <p class="span-2">' + self.typetext + '</p>\
-            <p class="span-3">' + self.amttext + '</p>\
-            <p class="span-2">' + self.pcttext + '</p>\
-            <p class="span-3">' + self.valtext + '</p>\
-            <p class="span-9 bidnote">\
-                '+self.bidtext+'\
-            </p>\
-            <p class="biddate">'+self.datetext+'</p>\
+        <div class="messageline investorbidline ' + this.typeclass + '">\
+            <p class="span-2">' + this.usertext + '</p>\
+            <p class="span-2">' + this.typetext + '</p>\
+            <p class="span-3">' + this.amttext + '</p>\
+            <p class="span-2">' + this.pcttext + '</p>\
+            <p class="span-3">' + this.valtext + '</p>\
+            <p class="span-9 investorbidnote">' + this.bidtext + '</p>\
+            <p class="investorbiddate">' + this.datetext + '</p>\
+        ' + addbuttons + '\
         </div>\
         ';
     }
@@ -232,16 +222,16 @@ valid_actions: [ "investor_counter", "investor_reject", "investor_accept", "inve
             html = BidClass.prototype.makeHeader();
             for (i = 0; i < this.bids.length; i++) {
                 bid = this.bids[i];
-                html += bid.makeHtml();
+                html += bid.makeHtml({ last: (i === this.bids.length - 1)});
             }
         }
         else {
             bid = new BidClass(this);
             bid.setEmpty();
-            html += bid.makeHtml();
+            html += bid.makeHtml({ last: true });
         }
-        this.bindBidBox();
         pl('#bidlistlast').before(html);
+        this.bindBidBox();
     },
 
     displayCalculatedIfValid: function() {
@@ -250,7 +240,7 @@ valid_actions: [ "investor_counter", "investor_reject", "investor_accept", "inve
             val = pct ? Math.floor(Math.floor(100 * amt / pct)) : 0,
             cur = CurrencyClass.prototype.format(CurrencyClass.prototype.clean(val)),
             dis = cur || '';
-        pl('#makebidval').text(dis);
+        pl('#makebidval').removeClass('inprogress').addClass('successful').text(dis);
     },
 
     getUpdater: function(fieldName, cleaner) {
@@ -351,6 +341,16 @@ valid_actions: [ "investor_counter", "investor_reject", "investor_accept", "inve
         });
     },
 
+    makeAddButtons: function() {
+        return '\
+<div class="bidactionline">\
+    <span class="span-3 inputbutton bidactionbutton initialhidden" id="investor_withdraw_btn">WITHDRAW</span>\
+    <span class="span-3 inputbutton bidactionbutton initialhidden" id="investor_reject_btn">REJECT</span>\
+    <span class="span-3 inputbutton bidactionbutton initialhidden" id="investor_accept_btn">ACCEPT</span>\
+</div>\
+        ';
+    },
+
     bindButtons: function() {
         var i,
             action,
@@ -375,7 +375,7 @@ valid_actions: [ "investor_counter", "investor_reject", "investor_accept", "inve
                         self.bidsprops = json.bidsprops || {};
                         self.validactions = json.validactions || [];
                         pl('#makebidamt, #makebidpct').attr({value: ''});
-                        pl('#makebidval').text('');
+                        pl('#makebidval').removeClass('successful').addClass('inprogress').text('N/A');
                         pl('#makebidtext').removeClass('edited').attr({value: 'Put your note to the owner here...'});
                         pl('#newbidtitlemsg').addClass('successful').text('Bid posted');
                         pl('#bidlistlast').before(html);
@@ -418,13 +418,22 @@ valid_actions: [ "investor_counter", "investor_reject", "investor_accept", "inve
         this.bind_investor_post('investor_counter');
     },
 
+    bindActionButton: function(type) {
+        var btnid = type + '_btn';
+        pl('#' + btnid).show();
+    },
+
     bind_investor_accept: function() {
+        this.bindActionButton('investor_accept');
     },
 
     bind_investor_reject: function() {
+        this.bindActionButton('investor_reject');
     },
 
     bind_investor_withdraw: function() {
+        console.log('foo');
+        this.bindActionButton('investor_withdraw');
     },
 /*
     bind_owner_accept: function() {
