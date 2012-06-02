@@ -63,14 +63,24 @@ pl.implement(PublicBidClass, {
     },
 
     makeHtml: function() {
-        return '\
-        <div class="messageline orderbookline ' + this.bidclass + '">\
-            <p class="span-2">' + this.amttext + '</p>\
-            <p class="span-2">' + this.pcttext + '</p>\
-            <p class="span-2">' + this.valtext + '</p>\
-            <p class="orderbookdate">'+this.datetext+'</p>\
-        </div>\
-        ';
+        if (this.amt) {
+            return '\
+            <div class="messageline orderbookline ' + this.bidclass + '">\
+                <p class="span-2">' + this.amttext + '</p>\
+                <p class="span-2">' + this.pcttext + '</p>\
+                <p class="span-2">' + this.valtext + '</p>\
+                <p class="orderbookdate">'+this.datetext+'</p>\
+            </div>\
+            ';
+        }
+        else {
+            return '\
+            <div class="messageline orderbookline ' + this.bidclass + '">\
+                <p class="span-6 attention" style="text-align: left; padding-left: 10px; ">No ' + this.amttitle + 's</p>\
+                <p class="orderbookdate">'+this.datetext+'</p>\
+            </div>\
+            ';
+        }
     }
 });
 
