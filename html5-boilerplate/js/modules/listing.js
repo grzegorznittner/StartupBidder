@@ -559,7 +559,6 @@ pl.implement(ListingClass, {
         }
         if (this.loggedin_profile) {
             pl('#sendmessagelink').attr({href: '/message_page.html?to_user=' + self.profile_id }).css({display: 'inline'});
-            pl('#makebidtitle,#makebidbox').show();
         }
         for (i = 0; i < this.alltabs.length; i++) {
             tab = this.alltabs[i];

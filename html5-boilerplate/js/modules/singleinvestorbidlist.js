@@ -58,7 +58,8 @@ pl.implement(BidClass, {
     },
 
     makeHtml: function(options) {
-        var addbuttons = options && options.last ? this.bidslist.makeAddButtons() : '';
+        var addnote = options && options.last ? this.bidslist.makeAddNote() : '';
+            addbuttons = options && options.last ? this.bidslist.makeAddButtons() : '';
             amtidattr = options && options.last ? ' id="existing_bid_amt"' : '';
             pctidattr = options && options.last ? ' id="existing_bid_pct"' : '';
             validattr = options && options.last ? ' id="existing_bid_val"' : '';
@@ -71,6 +72,7 @@ pl.implement(BidClass, {
             <p class="span-3"' + validattr + '>' + this.valtext + '</p>\
             <p class="span-9 investorbidnote">' + this.bidtext + '</p>\
             <p class="investorbiddate">' + this.datetext + '</p>\
+        ' + addnote + '\
         ' + addbuttons + '\
         </div>\
         ';
@@ -252,12 +254,12 @@ valid_actions: [ "investor_counter", "investor_reject", "investor_accept", "inve
     },
 
     displayCalculatedIfValid: function() {
-        var amt = CurrencyClass.prototype.clean(pl('#makebidamt').attr('value')) || 0,
-            pct = PercentClass.prototype.clean(pl('#makebidpct').attr('value')) || 0,
+        var amt = CurrencyClass.prototype.clean(pl('#new_bid_amt').attr('value')) || 0,
+            pct = PercentClass.prototype.clean(pl('#new_bid_pct').attr('value')) || 0,
             val = pct ? Math.floor(Math.floor(100 * amt / pct)) : 0,
             cur = CurrencyClass.prototype.format(CurrencyClass.prototype.clean(val)),
             dis = cur || '';
-        pl('#makebidval').removeClass('inprogress').addClass('successful').text(dis);
+        pl('#new_bid_val').removeClass('inprogress').addClass('successful').text(dis);
     },
 
     getUpdater: function(fieldName, cleaner) {
@@ -265,7 +267,6 @@ valid_actions: [ "investor_counter", "investor_reject", "investor_accept", "inve
         return function(newdata, loadFunc, errorFunc, successFunc) {
             var newval = (newdata ? (cleaner ? cleaner(newdata.changeKey) : newdata.changeKey) : undefined);
             if (newval) {
-                console.log(this);
                 this.newval = newval;
                 this.value = newval;
                 this.msg.show('successful', '');
@@ -307,20 +308,20 @@ valid_actions: [ "investor_counter", "investor_reject", "investor_accept", "inve
     displayIfValidAmt: function(result, val) {
         var fmt = CurrencyClass.prototype.format(val);
         if (result === 0) {
-            pl('#makebidamt').attr({value: fmt});
+            pl('#new_bid_amt').attr({value: fmt});
         }
     },
 
     displayIfValidPct: function(result, val) {
         var fmt = PercentClass.prototype.format(val);
         if (result === 0) {
-            pl('#makebidpct').attr({value: fmt});
+            pl('#new_bid_pct').attr({value: fmt});
         }
     },
 
     bindFields: function() {
-        var amtfield = new TextFieldClass('makebidamt', null, this.getUpdater('makebidamt', CurrencyClass.prototype.clean), 'makebidmsg'),
-            pctfield = new TextFieldClass('makebidpct', null, this.getUpdater('makebidpct', PercentClass.prototype.clean), 'makebidmsg');
+        var amtfield = new TextFieldClass('new_bid_amt', null, this.getUpdater('new_bid_amt', CurrencyClass.prototype.clean), 'new_bid_msg'),
+            pctfield = new TextFieldClass('new_bid_pct', null, this.getUpdater('new_bid_pct', PercentClass.prototype.clean), 'new_bid_msg');
         amtfield.fieldBase.setDisplayName('AMOUNT');
         pctfield.fieldBase.setDisplayName('PERCENT');
         amtfield.fieldBase.addValidator(ValidatorClass.prototype.genIsNumberBetween(1000, 500000));
@@ -333,29 +334,54 @@ valid_actions: [ "investor_counter", "investor_reject", "investor_accept", "inve
         pctfield.bindEvents();
         this.amtfield = amtfield;
         this.pctfield = pctfield;
-        pl('#makebidtext').bind({
+        this.bindTextNote('new_bid_text', 'new_bid_msg');
+    },
+
+    bindTextNote: function(textid, msgid) {
+        var textsel = '#' + textid,
+            msgsel = '#' + msgid;
+        pl(textsel).bind({
             focus: function() {
-                if (!pl('#makebidtext').hasClass('edited')) {
-                    pl('#makebidtext').attr({value: ''});
-                    pl('#makebidmsg').html('&nbsp;');
+                if (!pl(textsel).hasClass('edited')) {
+                    pl(textsel).attr({value: ''});
+                    pl(msgsel).html('&nbsp;');
                 }
             },
 
             keyup: function() {
-                var val = pl('#makebidtext').attr('value');
-                if (!pl('#makebidtext').hasClass('edited')) {
-                    pl('#makebidtext').addClass('edited');
-                    pl('#makebidmsg').html('&nbsp;');
+                var val = pl(textsel).attr('value');
+                if (!pl(textsel).hasClass('edited')) {
+                    pl(textsel).addClass('edited');
+                    pl(msgsel).html('&nbsp;');
                 }
                 return false;
             },
 
             blur: function() {
-                if (!pl('#makebidtext').hasClass('edited')) {
-                    pl('#makebidtext').attr({value: 'Put your note to the owner here...'});
+                if (!pl(textsel).hasClass('edited')) {
+                    pl(textsel).attr({value: 'Put your note to the owner here...'});
                 }
             }
         });
+    },
+
+    makeAddNote: function() {
+        return '\
+            <div class="bidactionline initialhidden" id="existingbidnotebox">\
+                <span class="span-4">&nbsp;</span>\
+                <span class="span-15">\
+                    <div class="formitem clear">\
+                        <label class="inputlabel" for="note">NOTE</label>\
+                        <span class="inputfield">\
+                            <textarea class="textarea new_bid_textarea" name="note" id="existing_bid_text" cols="20" rows="5">Put your note to the owner here...</textarea>\
+                        </span>\
+                        <span class="inputicon">\
+                            <div id="new_bid_texticon"></div>\
+                        </span>\
+                    </div>\
+                </span>\
+            </div>\
+        ';
     },
 
     makeAddButtons: function() {
@@ -364,6 +390,7 @@ valid_actions: [ "investor_counter", "investor_reject", "investor_accept", "inve
     <span class="span-3 inputbutton bidactionbutton initialhidden" id="investor_withdraw_btn">WITHDRAW</span>\
     <span class="span-3 inputbutton bidactionbutton initialhidden" id="investor_reject_btn">REJECT</span>\
     <span class="span-3 inputbutton bidactionbutton initialhidden" id="investor_accept_btn">ACCEPT</span>\
+    <span class="span-11 bidconfirmmessage" id="existingbidmsg"></span>\
 </div>\
 <div class="bidactionline initialhidden" id="existingconfirmbuttons">\
     <span class="span-3 inputbutton bidactionbutton" id="investor_existing_cancel_btn">CANCEL</span>\
@@ -376,56 +403,51 @@ valid_actions: [ "investor_counter", "investor_reject", "investor_accept", "inve
     bindButtons: function() {
         var i,
             action,
-            actionfuncname;
+            actionfuncname,
+            newbidaction = false,
+            existingbidaction = false;
         for (i = 0; i < this.validactions.length; i++) {
             action = this.validactions[i];
             actionfuncname = 'bind_' + action;
             this[actionfuncname]();
-            console.log(action, actionfuncname);
+            if (action === 'investor_post' || action === 'investor_counter') {
+                newbidaction = true;
+            }
+            else if (action === 'investor_accept' || action === 'investor_reject' || action === 'investor_withdraw') {
+                existingbidaction = true;
+            }
+        }
+        if (newbidaction) {
+            pl('#new_bid_boxparent').show();
+        }
+        if (existingbidaction) {
+            this.bindTextNote('existing_bid_text', 'existingbidmsg');
+            pl('#existingbidnotebox').show();
         }
     },
 
-    newBidAction: function(type) {    
-        var self = this,
-            complete = function(json) {
-                pl('#investor_new_msg').addClass('successful').text(self.successtext[type] + ', reloading...');
-                setTimeout(function() { location.reload(); }, 3000);
-            },
-
-            text = pl('#makebidtext').hasClass('edited') && SafeStringClass.prototype.clean(pl('#makebidtext').attr('value') || '') || '',
-            amt = CurrencyClass.prototype.clean(pl('#makebidamt').attr('value')),
-            pct = PercentClass.prototype.clean(pl('#makebidpct').attr('value')),
-            val = CurrencyClass.prototype.clean(pl('#makebidval').text()),
-            data = {
-                bid: {
-                    listing_id: self.listing_id,
-                    investor_id: self.investor_profile_id,
-                    amt: amt,
-                    pct: pct,
-                    val: val,
-                    type: type,
-                    text: text
-                }
-            },
-
-            ajax = new AjaxClass('/listing/make_bid', 'investor_new_msg', complete);
-        console.log('data');
-        ajax.setPostData(data);
-        self.mock_make_bid(ajax, data); // FIXME
-        ajax.call();
+    newBidAction: function(type) {
+        this.makeBidAction(type, 'new');
+    },
+    
+    existingBidAction: function(type) {
+        this.makeBidAction(type, 'existing');
     },
 
-    existingBidAction: function(type) {    
+    makeBidAction: function(type, neworexisting) {    
         var self = this,
             complete = function(json) {
-                pl('#investor_existing_msg').addClass('successful').text(self.successtext[type] + ', reloading...');
+                pl('#investor_' + neworexisting + '_msg').addClass('successful').text(self.successtext[type] + ', reloading...');
                 setTimeout(function() { location.reload(); }, 3000);
             },
 
-            text = null,
-            amt = CurrencyClass.prototype.clean(pl('#existing_bid_amt').attr('value')),
-            pct = PercentClass.prototype.clean(pl('#existing_bid_pct').attr('value')),
-            val = CurrencyClass.prototype.clean(pl('#existing_bid_val').text()),
+            text = pl('#' + neworexisting + '_bid_text').hasClass('edited')
+                && SafeStringClass.prototype.clean(pl('#' + neworexisting + '_bid_text').attr('value') || '') || '',
+            rawamt = neworexisting === 'new' ? pl('#new_bid_amt').attr('value') : pl('#existing_bid_amt').text(),
+            rawpct = neworexisting === 'new' ? pl('#new_bid_pct').attr('value') : pl('#existing_bid_pct').text(),
+            amt = CurrencyClass.prototype.clean(rawamt),
+            pct = PercentClass.prototype.clean(rawpct),
+            val = CurrencyClass.prototype.clean(pl('#' + neworexisting + '_bid_val').text()),
             data = {
                 bid: {
                     listing_id: self.listing_id,
@@ -438,7 +460,8 @@ valid_actions: [ "investor_counter", "investor_reject", "investor_accept", "inve
                 }
             },
 
-            ajax = new AjaxClass('/listing/make_bid', 'investor_existing_msg', complete);
+            ajax = new AjaxClass('/listing/make_bid', 'investor_' + neworexisting + '_msg', complete);
+        console.log(data);
         ajax.setPostData(data);
         self.mock_make_bid(ajax, data); // FIXME
         ajax.call();
@@ -448,20 +471,23 @@ valid_actions: [ "investor_counter", "investor_reject", "investor_accept", "inve
         var self = this,
             btnid = type + '_btn',
             btnsel = '#' + btnid;
+        pl('#new_bid_amt, #new_bid_pct, #new_bid_text').attr('disabled', 'disabled');
         pl('#newbidbuttons').hide();
         pl('#investor_new_confirm_btn').unbind().bind('click', function() {
-            if (!pl(btnsel).hasClass('submitting')) {
-                pl(btnsel).addClass('submitting');
+            if (!pl('#investor_new_confirm_btn').hasClass('submitting')) {
+                pl('#investor_new_confirm_btn, #investor_new_cancel_btn').css({visibility: 'hidden'});
+                pl('#investor_new_confirm_btn').addClass('submitting');
                 pl('#investor_new_msg').addClass('inprogress').text('Submitting...');
                 self.newBidAction(type);
             }
         });
         pl('#investor_new_cancel_btn').unbind().bind('click', function() {
-            pl('#newconfirmbuttons').hide();
-            pl('#newbidbuttons').show();
-            self.enableNewBidEditing();
+            if (!pl('#investor_new_confirm_btn').hasClass('submitting')) {
+                pl('#newconfirmbuttons').hide();
+                pl('#newbidbuttons').show();
+                pl('#new_bid_amt, #new_bid_pct, #new_bid_text').removeAttr('disabled');
+            }
         });
-        console.log(type, this, this.confirmtext);
         pl('#investor_new_msg').html(this.confirmtext[type]);
         pl('#newconfirmbuttons').show();
     },
@@ -470,29 +496,25 @@ valid_actions: [ "investor_counter", "investor_reject", "investor_accept", "inve
         var self = this,
             btnid = type + '_btn',
             btnsel = '#' + btnid;
+        pl('#existing_bid_text').attr('disabled', 'disabled');
         pl('#existingbidbuttons').hide();
         pl('#investor_existing_confirm_btn').unbind().bind('click', function() {
-            if (!pl(btnsel).hasClass('submitting')) {
-                pl(btnsel).addClass('submitting');
+            if (!pl('#investor_existing_confirm_btn').hasClass('submitting')) {
+                pl('#investor_existing_confirm_btn').addClass('submitting');
+                pl('#investor_existing_confirm_btn, #investor_existing_cancel_btn').css({visibility: 'hidden'});
                 pl('#investor_existing_msg').addClass('inprogress').text('Submitting...');
                 self.existingBidAction(type);
             }
         });
         pl('#investor_existing_cancel_btn').unbind().bind('click', function() {
-            pl('#existingconfirmbuttons').hide();
-            pl('#existingbidbuttons').show();
+            if (!pl('#investor_existing_confirm_btn').hasClass('submitting')) {
+                pl('#existingconfirmbuttons').hide();
+                pl('#existingbidbuttons').show();
+                pl('#existing_bid_text').removeAttr('disabled');
+            }
         });
-        console.log(type, this, this.confirmtext);
         pl('#investor_existing_msg').html(this.confirmtext[type]);
         pl('#existingconfirmbuttons').show();
-    },
-
-    disableNewBidEditing: function() {
-        pl('#makebidamt, #makebidpct, #makebidtext').attr('disabled', 'disabled');
-    },
-
-    enableNewBidEditing: function() {
-        pl('#makebidamt, #makebidpct, #makebidtext').removeAttr('disabled');
     },
 
     bindNewBidActionButton: function(type) {
@@ -507,7 +529,6 @@ valid_actions: [ "investor_counter", "investor_reject", "investor_accept", "inve
                 self.amtfield.fieldBase.msg.show('attention', validmsg);
             }
             else {
-                self.disableNewBidEditing();
                 self.showNewBidConfirmButtons(type);
             }
             return false;
@@ -557,10 +578,10 @@ valid_actions: [ "investor_counter", "investor_reject", "investor_accept", "inve
     },
 */
     bindBidBox: function() {
-        if (!pl('#makebidbox').hasClass('bound')) {
+        if (!pl('#new_bid_box').hasClass('bound')) {
             this.bindFields();
             this.bindButtons();
-            pl('#makebidbox').addClass('bound');
+            pl('#new_bid_box').addClass('bound');
         }
     }
 });
