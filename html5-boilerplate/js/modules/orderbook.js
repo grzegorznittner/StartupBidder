@@ -6,11 +6,19 @@ function PublicBidClass(bidslist, bidprop) {
         'owner_bids': 'Ask',
         'accepted_bids': 'Sale'
     };
-    this.bidclassmap = {
-        'INVESTOR_ACCEPT': 'successful',
-        'OWNER_ACCEPT': 'successful'
-    }
     this.amttitle = this.bidproptitle[this.bidprop];
+    this.typeclassmap = {
+        investor_post: 'inprogress',
+        investor_counter: 'inprogress',
+        investor_accept: 'successful',
+        investor_reject: 'errorcolor',
+        investor_withdraw: 'errorcolor',
+        owner_post: 'inprogress',
+        owner_accept: 'successful',
+        owner_reject: 'errorcolor',
+        owner_counter: 'inprogress',
+        owner_withdraw: 'errorcolor'
+    };
 }
 pl.implement(PublicBidClass, {
     store: function(json) {
@@ -21,19 +29,21 @@ pl.implement(PublicBidClass, {
         this.amttext = this.amt ? CurrencyClass.prototype.format(this.amt) : '';
         this.pcttext = this.pct ? PercentClass.prototype.format(this.pct) : '';
         this.valtext = this.val ? CurrencyClass.prototype.format(this.val) : '';
-        this.datetext = this.created_date ? DateClass.prototype.format(this.created_date) : '';
-        this.bidclass = this.bidclassmap[this.type] || '';
+        this.datetext = this.create_date ? DateClass.prototype.format(this.create_date) : '';
+        this.bidclass = this.typeclassmap[this.type] || '';
         return this;
     },
+
     setEmpty: function() {
         var emptyJson = {
                 amt: null,
                 pct: null,
                 val: null,
-                created_date: null
+                create_date: null
             };
         this.store(emptyJson);
     },
+
     makeHeader: function() {
         return '\
         <style>\
@@ -51,6 +61,7 @@ pl.implement(PublicBidClass, {
         </div>\
         ';
     },
+
     makeHtml: function() {
         return '\
         <div class="messageline orderbookline ' + this.bidclass + '">\
@@ -71,45 +82,67 @@ function OrderBookClass(listing_id, suggested_amt, suggested_pct, listing_date) 
         amt: suggested_amt,
         pct: suggested_pct,
         val: ValuationClass.prototype.valuation(suggested_amt, suggested_pct),
-        created_date: listing_date
+        type: 'owner_post',
+        create_date: listing_date
     });
 }
 pl.implement(OrderBookClass, {
+    mock: function(ajax) {
+        ajax.mock({
+investor_bids: [
+    { amt: '20000', pct: '5', val: '400000', type: 'investor_post', create_date: '20120528183623' },
+
+    { amt: '40000', pct: '10', val: '400000', type: 'investor_post', create_date: '20120528213422' },
+
+    { amt: '40000', pct: '10', val: '400000', type: 'investor_counter', create_date: '20120528231215' },
+
+    { amt: '20000', pct: '5', val: '400000', type: 'investor_post', create_date: '20120529183623' },
+
+    { amt: '45000', pct: '25', val: '180000', type: 'investor_post', create_date: '20120529213422' },
+
+    { amt: '45000', pct: '25', val: '180000', type: 'investor_counter', create_date: '20120529231215' },
+
+    { amt: '10000', pct: '5', val: '200000', type: 'investor_post', create_date: '20120530213422' },
+
+    { amt: '15000', pct: '6', val: '250000', type: 'investor_accept', create_date: '20120530230121' }
+],
+owner_bids: [
+    // { amt: '20000', pct: '5', val: '400000', type: 'owner_reject', create_date: '20120528191242' }, 
+    { amt: '40000', pct: '5', val: '800000', type: 'owner_counter', create_date: '20120528214814' },
+
+    { amt: '40000', pct: '10', val: '400000', type: 'owner_accept', create_date: '20120528232341' },
+
+    //{ amt: '35000', pct: '15', val: '233333', type: 'owner_reject', create_date: '20120529191242' },
+
+    { amt: '45000', pct: '15', val: '300000', type: 'owner_counter', create_date: '20120529214814' },
+
+    { amt: '45000', pct: '25', val: '180000', type: 'owner_accept', create_date: '20120529232341' },
+
+    { amt: '15000', pct: '6', val: '250000', type: 'owner_counter', create_date: '20120530221237' }
+],
+accepted_bids: [
+    { amt: '40000', pct: '10', val: '400000', type: 'owner_accept', create_date: '20120528232341' },
+
+    { amt: '45000', pct: '25', val: '180000', type: 'owner_accept', create_date: '20120529232341' },
+
+    { amt: '15000', pct: '6', val: '250000', type: 'investor_accept', create_date: '20120530230121' }
+]
+
+        });
+    },
+
+
     load: function() {
         var self = this,
             complete = function(json) {
                 self.display(json);
             },
-            ajax = new AjaxClass('/listing/order_book/' + this.listing_id, 'orderbooktitlemsg', complete);
-        ajax.mock({
-investor_bids: [
-    { amt: '20000', pct: '5', val: '400000', type: 'INVESTOR_POST', created_date: '20120528183623' },
-    { amt: '40000', pct: '10', val: '400000', type: 'INVESTOR_POST', created_date: '20120528213422' },
-    { amt: '40000', pct: '10', val: '400000', type: 'INVESTOR_COUNTER', created_date: '20120528231215' },
-    { amt: '20000', pct: '5', val: '400000', type: 'INVESTOR_POST', created_date: '20120529183623' },
-    { amt: '45000', pct: '25', val: '180000', type: 'INVESTOR_POST', created_date: '20120529213422' },
-    { amt: '45000', pct: '25', val: '180000', type: 'INVESTOR_COUNTER', created_date: '20120529231215' },
-    { amt: '10000', pct: '5', val: '200000', type: 'INVESTOR_POST', created_date: '20120530213422' },
-    { amt: '15000', pct: '6', val: '250000', type: 'INVESTOR_ACCEPT', created_date: '20120530230121' }
-],
-owner_bids: [
-    // { amt: '20000', pct: '5', val: '400000', type: 'OWNER_REJECT', created_date: '20120528191242' }, 
-    { amt: '40000', pct: '5', val: '800000', type: 'OWNER_COUNTER', created_date: '20120528214814' },
-    { amt: '40000', pct: '10', val: '400000', type: 'OWNER_ACCEPT', created_date: '20120528232341' },
-    //{ amt: '35000', pct: '15', val: '233333', type: 'OWNER_REJECT', created_date: '20120529191242' },
-    { amt: '45000', pct: '15', val: '300000', type: 'OWNER_COUNTER', created_date: '20120529214814' },
-    { amt: '45000', pct: '25', val: '180000', type: 'OWNER_ACCEPT', created_date: '20120529232341' },
-    { amt: '15000', pct: '6', val: '250000', type: 'OWNER_COUNTER', created_date: '20120530221237' }
-],
-accepted_bids: [
-    { amt: '40000', pct: '10', val: '400000', type: 'OWNER_ACCEPT', created_date: '20120528232341' },
-    { amt: '45000', pct: '25', val: '180000', type: 'OWNER_ACCEPT', created_date: '20120529232341' },
-    { amt: '15000', pct: '6', val: '250000', type: 'INVESTOR_ACCEPT', created_date: '20120530230121' }
-]
 
-        }); // FIXME
+            ajax = new AjaxClass('/listing/order_book/' + this.listing_id, 'orderbooktitlemsg', complete);
+        // this.mock(ajax);
         ajax.call();
     },
+
     store: function(json) {
         var 
             bidprop,
@@ -139,7 +172,7 @@ accepted_bids: [
                     sorter = function(a, b) { return a.val - b.val }; // ascending valuation
                 }
                 else if (bidprop === 'accepted_bids') {
-                    sorter = function(a, b) { return b.created_date - a.created_date }; // descending date
+                    sorter = function(a, b) { return b.create_date - a.create_date }; // descending date
                 }
                 this.bids[bidprop].sort(sorter);
             }
@@ -150,6 +183,7 @@ accepted_bids: [
             }
         }
     },
+
     display: function(json) {
         var html,
             biddivsel,

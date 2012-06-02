@@ -6,6 +6,7 @@ function BidClass(bidslist) {
         investor_accept: 'successful',
         investor_reject: 'errorcolor',
         investor_withdraw: 'errorcolor',
+        owner_post: 'inprogress',
         owner_accept: 'successful',
         owner_reject: 'errorcolor',
         owner_counter: 'inprogress',
@@ -24,7 +25,7 @@ pl.implement(BidClass, {
         this.valtext = this.val ? CurrencyClass.prototype.format(this.val) : '';
         this.typetext = this.type ? this.type.replace(/(investor_|owner_)/, '') : '';
         this.bidtext = this.text ? SafeStringClass.prototype.htmlEntities(this.text) : '&nbsp;';
-        this.datetext = this.created_date ? DateClass.prototype.format(this.created_date) : '';
+        this.datetext = this.create_date ? DateClass.prototype.format(this.create_date) : '';
         //this.usertext = this.type.indexOf('INVESTOR') ? this.bidslist.investorusername : this.bidslist.ownerusername;
         this.usertext = this.type && this.type.match(/investor/) ? 'You' : 'Owner';
         this.typeclass = this.typeclassmap[this.type] || '';
@@ -38,7 +39,7 @@ pl.implement(BidClass, {
                 val: null,
                 type: null,
                 text: 'No bids',
-                created_date: null
+                create_date: null
             };
         this.store(emptyJson);
     },
@@ -109,7 +110,7 @@ bids:
         val: '400000',
         type: 'investor_post',
         text: 'Is is a great idea, let us see if we can make it happen',
-        created_date: '20120528183623'
+        create_date: '20120528183623'
     },
 
     {
@@ -118,7 +119,7 @@ bids:
         val: '400000',
         type: 'owner_reject',
         text: 'Not enough money for me to proceed, but thank you for your interest',
-        created_date: '20120528191242'
+        create_date: '20120528191242'
     },
 
     {
@@ -127,7 +128,7 @@ bids:
         val: '400000',
         type: 'investor_post',
         text: 'Here is a little more money, naturally I will require more shares as part of the deal',
-        created_date: '20120528213422'
+        create_date: '20120528213422'
     },
 
     {
@@ -136,7 +137,7 @@ bids:
         val: '800000',
         type: 'owner_counter',
         text: 'Well not that much equity, but it is looking a little more in line with what I have been thinking.',
-        created_date: '20120528214814'
+        create_date: '20120528214814'
     },
 
     {
@@ -145,7 +146,7 @@ bids:
         val: '400000',
         type: 'investor_counter',
         text: 'It looks like the money is agreeable, however as I indicated before I need more equity upside to be compensated fairly',
-        created_date: '20120528231215'
+        create_date: '20120528231215'
     },
 
     {
@@ -154,7 +155,7 @@ bids:
         val: '400000',
         type: 'owner_accept',
         text: 'Okay I am comfortable with these terms, we have a deal',
-        created_date: '20120528232341'
+        create_date: '20120528232341'
     }
 ],
 
@@ -179,7 +180,7 @@ bids:
         val: data.bid.val,
         type: data.bid.type,
         text: data.bid.text,
-        created_date: DateClass.prototype.now()
+        create_date: DateClass.prototype.now()
     }
 ],
 
@@ -200,8 +201,8 @@ valid_actions: [ "investor_counter", "investor_reject", "investor_accept", "inve
                 self.display(json);
             },
 
-            ajax = new AjaxClass('/listing/bids/' + this.listing_id + '/' + this.investor_profile_id, 'bidtitlemsg', complete);
-        this.mock(ajax); // FIXME
+            ajax = new AjaxClass('/listing/bids/' + this.listing_id, 'bidtitlemsg', complete);
+        //this.mock(ajax); // FIXME
         ajax.call();
     },
 
@@ -217,6 +218,7 @@ valid_actions: [ "investor_counter", "investor_reject", "investor_accept", "inve
         this.validactions = validactions;
         this.bids = [];
         if (jsonlist.length) {
+            jsonlist.reverse(); // we want orderdd by date
             for (i = 0; i < jsonlist.length; i++) {
                 bid = new BidClass(this);
                 bid.store(jsonlist[i]);
@@ -367,7 +369,7 @@ valid_actions: [ "investor_counter", "investor_reject", "investor_accept", "inve
 
     makeAddNote: function() {
         return '\
-            <div class="bidactionline initialhidden" id="existingbidnotebox">\
+            <div class="notebidactionline initialhidden" id="existingbidnotebox">\
                 <span class="span-4">&nbsp;</span>\
                 <span class="span-15">\
                     <div class="formitem clear">\
@@ -418,7 +420,7 @@ valid_actions: [ "investor_counter", "investor_reject", "investor_accept", "inve
             }
         }
         if (newbidaction) {
-            pl('#new_bid_boxparent').show();
+            pl('#new_bid_boxtitle, #new_bid_boxparent').show();
         }
         if (existingbidaction) {
             this.bindTextNote('existing_bid_text', 'existingbidmsg');
@@ -451,7 +453,7 @@ valid_actions: [ "investor_counter", "investor_reject", "investor_accept", "inve
             data = {
                 bid: {
                     listing_id: self.listing_id,
-                    investor_id: self.investor_profile_id,
+                    //investor_id: self.investor_profile_id, // only passed for owner
                     amt: amt,
                     pct: pct,
                     val: val,
@@ -463,7 +465,7 @@ valid_actions: [ "investor_counter", "investor_reject", "investor_accept", "inve
             ajax = new AjaxClass('/listing/make_bid', 'investor_' + neworexisting + '_msg', complete);
         console.log(data);
         ajax.setPostData(data);
-        self.mock_make_bid(ajax, data); // FIXME
+        //self.mock_make_bid(ajax, data); // FIXME
         ajax.call();
     },
 

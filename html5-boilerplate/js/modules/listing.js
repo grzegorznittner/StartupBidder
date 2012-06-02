@@ -521,6 +521,9 @@ pl.implement(ListingClass, {
         if (tab === 'basics') {
             this.displayBasicsTab();
         }
+        else if ((new QueryStringClass()).vars.page !== tab) {
+            document.location = '/company-page.html?id=' + this.listing_id + '&page=' + tab;
+        }
         else if (tab === 'model') {
             this.displayBMC();
         }
@@ -540,7 +543,6 @@ pl.implement(ListingClass, {
 
     displayTabs: function() {
         var self = this,
-            qs = new QueryStringClass(),
             tabclickhandler = function() {
                 var tabname = this.id.substr(0, this.id.length - 3);
                 self.displayTab(tabname);
@@ -568,7 +570,7 @@ pl.implement(ListingClass, {
         }
         for (i = 0; i < this.alltabs.length; i++) {
             tab = this.alltabs[i];
-            if (qs.vars.page === tab) {
+            if ((new QueryStringClass()).vars.page === tab) {
                 self.displayTab(tab);
             }
         }

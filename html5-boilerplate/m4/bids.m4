@@ -23,7 +23,7 @@
                 <div id="bidlistlast"></div>
             </div>
 
-            <div class="boxtitlegap smokegrey clear">MAKE A NEW BID
+            <div class="boxtitlegap smokegrey clear initialhidden" id="new_bid_boxtitle">MAKE A NEW BID
                 <span class="newlistingtitlemsg" id="newbidtitlemsg"></span>
             </div>
             <div class="boxpanel boxpanelfull initialhidden" id="new_bid_boxparent">

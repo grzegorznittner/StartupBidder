@@ -1717,7 +1717,7 @@ include(api-banner.m4)
         </div>
     </div>
 
-    <div class="boxtitle">BID API</div>
+    <div class="boxtitle">BIDDING API</div>
     <div class="boxpanel apipanel">
         <p>Get information on investor bids for a listing.  Some bid information is available publicly in anonymous format
            with private data removed, this is the order book used to show what bids are happening for this listing.
@@ -1879,7 +1879,11 @@ include(api-banner.m4)
 
         <dt>GET /listing/bids/:id/:investor_id</dt>
         <dd>
-            <p>Get the list of bids for the given listing <var>id</var> and investor <var>profile_id</var>, ordered by date ascending.</p>
+            <p>Get the list of bids for the given listing <var>id</var> and investor <var>investor_id</var>, ordered by date ascending.  You can use this API
+            in two ways.  First, if logged in as the listing owner, pass both the listing <var>id</var> and <var>investor_id</var> to get the bids on the listing
+            by that particular investor as obtained from the <var>/listing/investors</var> call.  The second way to use the API is to pass only the listing 
+            <var>id</var> and not the <var>investor_id</var>, which will return only the bids for the logged in investor.  Using the API in this way is
+            required due to privacy restrictions, since all bids are private.</p>
         </dd>
         <div class="apidetail">
             <h4>Parameters</h4>
@@ -1936,6 +1940,7 @@ include(api-banner.m4)
                     <label class="inputlabel" for="title">INVESTOR ID</label>
                     <span class="inputfield">
                         <input class="text inputwidetext profileid" type="text" name="investor_id" value="0"></input>
+                        OPTIONAL: ONLY PASSED WHEN LOGGED IN AS LISTING OWNER
                     </span>
                 </div>
                 <div class="formitem clear">
@@ -1957,13 +1962,18 @@ include(api-banner.m4)
                 a different counter or percent.  This causes a bid to only be approvable exactly as offered by the counterparty.
                 Note that properties <var>investor_nickname</var>, <var>val</var> and <var>created_date</var> cannot be passed, as they are
                 generated automatically by the server.</p>
+             <p>This API is called in one of two ways.  First, if the logged in user is the listing owner, the <var>bid</var> property
+                should have the <var>investor_id</var> field defined with the investor for the bid.  This is necessary since there may
+                be multiple investors for a single listing.  Second, if the logged in user is an investor, not the listing owner, then
+                the <var>bid</var> property must not have the <var>investor_id</var> defined, as the investor ID will be taken automatically
+                from the logged in user.  This happens since an investor may only place a bid as themselves and only if they are logged in.</p>
         </dd>
         <div class="apidetail">
             <h4>Parameters</h4>
             <ul>
                 <li><code>bid</code> bid to create as per the logged in user with properties:</li>
                 <li><code>.listing_id</code> the listing this bid is for</li>
-                <li><code>.investor_id</code> <var>OPTIONAL</var> the profile_id of the investor who placed the bid, only passed for listing owner making bid</li>
+                <li><code>.investor_id</code> <var>OPTIONAL</var> the profile_id of the investor who placed the bid, only passed when logged in listing owner making a bid action</li>
                 <li><code>.amt</code> amount of cash being offered by the investor, e.g. 20000</li>
                 <li><code>.pct</code> percentage of the company/project being demanded by the investor, e.g. 5</li>
                 <li><code>.type</code>
