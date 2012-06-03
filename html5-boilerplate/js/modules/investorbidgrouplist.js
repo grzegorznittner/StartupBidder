@@ -7,6 +7,7 @@ function InvestorBidGroupClass(bidslist) {
         investor_accept: 'successful',
         investor_reject: 'errorcolor',
         investor_withdraw: 'errorcolor',
+        owner_post: 'inprogress',
         owner_accept: 'successful',
         owner_reject: 'errorcolor',
         owner_counter: 'inprogress',
@@ -16,19 +17,23 @@ function InvestorBidGroupClass(bidslist) {
 
 pl.implement(InvestorBidGroupClass, {
     store: function(json) {
-        var k;
+        var amt = json.last_amt || json.amt,
+            pct = json.last_pct || json.pct,
+            val = json.last_val || json.val,
+            type = json.last_type || json.type,
+            countertext = json.counter ? ' (' + json.counter + ')' : '',
+            k;
         for (k in json) {
             this[k] = json[k];
         }
         this.messageclass = this.read ? '' : ' inputmsg'; // unread
+        this.amttext = amt ? CurrencyClass.prototype.format(amt) : '';
+        this.pcttext = pct ? PercentClass.prototype.format(pct) + '%' : '';
+        this.valtext = val ? CurrencyClass.prototype.format(val) : '';
+        this.typetext = type ? type.replace(/(investor_|owner_)/, '') : '';
+        this.bidtext = this.last_text ? SafeStringClass.prototype.htmlEntities(this.last_text) : 'None';
         this.datetext = this.last_date ? DateClass.prototype.format(this.last_date) : '';
-        this.amttext = this.last_amt ? CurrencyClass.prototype.format(this.last_amt) : '';
-        this.pcttext = this.last_pct ? PercentClass.prototype.format(this.last_pct) + '%' : '';
-        this.valtext = this.last_val ? CurrencyClass.prototype.format(this.last_val) : '';
-        this.typetext = this.last_type ? this.last_type.replace(/(investor_|owner_)/, '') : '';
-        this.bidtext = this.last_text ? SafeStringClass.prototype.htmlEntities(this.last_text) : '&nbsp;';
-        this.datetext = this.last_date ? DateClass.prototype.format(this.last_date) : '';
-        this.usertext = this.investor_nickname;
+        this.usertext = this.investor_nickname + countertext;
         this.typeclass = this.typeclassmap[this.last_type] || '';
         this.url = this.investor_id ? '/owner-bids-page.html'
             + '?listing_id=' + this.listing_id
@@ -98,7 +103,7 @@ function InvestorBidGroupListClass(listing_id) {
 }
 pl.implement(InvestorBidGroupListClass, {
     store: function(json) {
-        var jsonlist = json && json.investors ? json.investors : [],
+        var jsonlist = json && json.users ? json.users: [],
             investor,
             i;
         this.investors = [];
@@ -143,8 +148,8 @@ pl.implement(InvestorBidGroupListClass, {
                 self.display(json); 
             },
 
-            ajax = new AjaxClass('/listing/investors/' + this.listing_id, 'messagemsg', completeFunc);
-        this.mock(ajax);
+            ajax = new AjaxClass('/listing/bid_users/' + this.listing_id, 'messagemsg', completeFunc);
+        //this.mock(ajax);
         ajax.call();
     },
 
@@ -168,7 +173,7 @@ pl.implement(InvestorBidGroupListClass, {
 
     "error_code": 0,
     "error_msg": null,
-    "investors": [
+    "users": [
         {
             investor_id: 'abca89708a7oe0u',
             investor_nickname: 'theotherguy',
@@ -241,7 +246,7 @@ pl.implement(InvestorBidGroupListClass, {
             read: true
         }
     ],
-    "investors_props": {
+    "users_props": {
         "start_index": 1,
         "max_results": 20,
         "num_results": 5,

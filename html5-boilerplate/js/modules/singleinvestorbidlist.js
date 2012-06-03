@@ -24,7 +24,7 @@ pl.implement(BidClass, {
         this.pcttext = this.pct ? PercentClass.prototype.format(this.pct) : '';
         this.valtext = this.val ? CurrencyClass.prototype.format(this.val) : '';
         this.typetext = this.type ? this.type.replace(/(investor_|owner_)/, '') : '';
-        this.bidtext = this.text ? SafeStringClass.prototype.htmlEntities(this.text) : '&nbsp;';
+        this.bidtext = this.text ? SafeStringClass.prototype.htmlEntities(this.text) : 'None';
         this.datetext = this.create_date ? DateClass.prototype.format(this.create_date) : '';
         //this.usertext = this.type.indexOf('INVESTOR') ? this.bidslist.investorusername : this.bidslist.ownerusername;
         this.usertext = this.type && this.type.match(/investor/) ? 'You' : 'Owner';
