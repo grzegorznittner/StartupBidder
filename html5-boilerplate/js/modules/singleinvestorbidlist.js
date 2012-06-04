@@ -26,7 +26,7 @@ pl.implement(BidClass, {
         this.typetext = this.type ? this.type.replace(/(investor_|owner_)/, '') : '';
         this.bidtext = this.text ? SafeStringClass.prototype.htmlEntities(this.text) : 'None';
         this.datetext = this.create_date ? DateClass.prototype.format(this.create_date) : '';
-        //this.usertext = this.type.indexOf('INVESTOR') ? this.bidslist.investorusername : this.bidslist.ownerusername;
+        //this.usertext = this.type.indexOf('INVESTOR') ? this.bidslist.investorusername : this.bidslist.ownerusername; // only for owner
         this.usertext = this.type && this.type.match(/investor/) ? 'You' : 'Owner';
         this.typeclass = this.typeclassmap[this.type] || '';
         return this;
@@ -80,10 +80,9 @@ pl.implement(BidClass, {
     }
 });
 
-function SingleInvestorBidListClass(listing_id, investor_profile_id, investor_profile_username) {
-    this.listing_id = listing_id;
-    this.investor_profile_id = investor_profile_id;
-    this.investor_profile_username = investor_profile_username;
+function SingleInvestorBidListClass() {
+    var queryString = new QueryStringClass();
+    this.listing_id = queryString.vars.id;
     this.confirmtext = {
         investor_accept: 'You hereby agree to accept this bid according to the <a href="/terms-page.html">terms and conditions</a>.',
         investor_reject: 'You hereby agree to reject this bid according to the <a href="/terms-page.html">terms and conditions</a>.',
@@ -198,9 +197,14 @@ valid_actions: [ "investor_counter", "investor_reject", "investor_accept", "inve
     load: function() {
         var self = this,
             complete = function(json) {
+                var header = new HeaderClass(),
+                    companybanner = new CompanyBannerClass('bids'),
+                    orderbook = new OrderBookClass(json.listing_id, json.suggested_amt, json.suggested_pct, json.listing_date);
+                header.setLogin(json);
+                companybanner.display(json);
+                orderbook.load();
                 self.display(json);
             },
-
             ajax = new AjaxClass('/listing/bids/' + this.listing_id, 'bidtitlemsg', complete);
         //this.mock(ajax); // FIXME
         ajax.call();
@@ -212,7 +216,8 @@ valid_actions: [ "investor_counter", "investor_reject", "investor_accept", "inve
             jsonlist = json && json.bids || [],
             bid,
             i;
-        this.investorusername = this.investor_profile_username;
+        //this.investor_profile_id = json.loggedin_profile && json.loggedin_profile.profile_id; // only for owner
+        //this.investorusername = json.loggedin_profile && json.loggedin_profile.username;
         this.ownerusername = 'owner';
         this.bidsprops = bidsprops;
         this.validactions = validactions;
@@ -253,6 +258,7 @@ valid_actions: [ "investor_counter", "investor_reject", "investor_accept", "inve
         }
         pl('#bidlistlast').before(html);
         this.bindBidBox();
+        pl('#bidsloggedin').show();
     },
 
     displayCalculatedIfValid: function() {
@@ -587,3 +593,5 @@ valid_actions: [ "investor_counter", "investor_reject", "investor_accept", "inve
         }
     }
 });
+
+(new SingleInvestorBidListClass()).load();

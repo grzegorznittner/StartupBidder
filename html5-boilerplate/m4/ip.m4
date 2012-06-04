@@ -1,5 +1,8 @@
+`
 <div class="span-24 last">
-    <div class="boxtitle bmctitle">INVESTOR PRESENTATION</div>
+    <div class="boxtitle bmctitle">INVESTOR PRESENTATION
+        <span class="newlistingtitlemsg" id="ipmsg"></span>
+    </div>
 
     <div class="bmcborder ipmain">
 
@@ -217,3 +220,4 @@
     </div>
 </div>
 <!-- end presentation -->
+'

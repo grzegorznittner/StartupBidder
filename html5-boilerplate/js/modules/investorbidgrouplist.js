@@ -98,8 +98,9 @@ pl.implement(InvestorBidGroupClass, {
     }
 });
 
-function InvestorBidGroupListClass(listing_id) {
-    this.listing_id = listing_id;
+function InvestorBidGroupListClass() {
+    var queryString = new QueryStringClass();
+    this.listing_id = queryString.vars.id;
 }
 pl.implement(InvestorBidGroupListClass, {
     store: function(json) {
@@ -140,15 +141,22 @@ pl.implement(InvestorBidGroupListClass, {
             html += investor.makeHtml();
         }
         pl('#investorgrouplist').html(html);
+        pl('#bidsownergroup').show();
     },
 
     load: function() {
         var self = this,
             completeFunc = function(json) {
+                var header = new HeaderClass(),
+                    companybanner = new CompanyBannerClass('bids'),
+                    orderbook = new OrderBookClass(json.listing_id, json.suggested_amt, json.suggested_pct, json.listing_date);
+                header.setLogin(json);
+                companybanner.display(json);
+                orderbook.load();
                 self.display(json); 
             },
 
-            ajax = new AjaxClass('/listing/bid_users/' + this.listing_id, 'messagemsg', completeFunc);
+            ajax = new AjaxClass('/listing/bid_users/' + this.listing_id, 'bidstitlemsg', completeFunc);
         //this.mock(ajax);
         ajax.call();
     },
@@ -268,3 +276,5 @@ pl.implement(InvestorBidGroupListClass, {
     }});
     }
 });
+
+(new InvestorBidGroupListClass()).load();

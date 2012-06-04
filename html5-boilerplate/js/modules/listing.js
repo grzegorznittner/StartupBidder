@@ -1,20 +1,8 @@
-function ListingClass(listing_id, preview) {
-    var self = this;
-    this.listing_id = listing_id;
-    this.preview = preview;
-    this.url = '/listings/get/' + listing_id;
-    this.statusId = 'listingstatus';
-    this.completeFunc = function(json) {
-        var header;
-        if (!this.preview) {
-            header = new HeaderClass();
-            header.setLogin(json);
-        }
-        self.store(json);
-        self.display();
-    };
-    this.ajax = new AjaxClass(this.url, this.statusId, this.completeFunc);
-    this.alltabs = [ 'basics', 'model', 'slides', 'comments', 'bids', 'qandas' ];
+function ListingClass() {
+    var queryString = new QueryStringClass();
+    this.id = queryString.vars.id;
+    this.listing_id = this.id;
+    this.preview = queryString.vars.preview;
 };
 pl.implement(ListingClass, {
     store: function(json) {
@@ -24,22 +12,35 @@ pl.implement(ListingClass, {
                 this[key] = json.listing[key];
             }
         }
-        if (json && json.loggedin_profile) {
-            this.loggedin_profile = json.loggedin_profile;
-        }
-        this.dateobj = new DateClass();
-        this.currency = new CurrencyClass();
+        this.loggedin_profile = json && json.loggedin_profile;
+        this.loggedin_profile_id = this.loggedin_profile && this.loggedin_profile.profile_id;
         this.listing_url = window.location.protocol + '//' + window.location.hostname + ':' + window.location.port + '/company_page.html?id=' + this.listing_id;
         this.listing_public_title = 'Startupbidder Listing: ' + this.title;
-        this.loggedin_profile_id = this.loggedin_profile && this.loggedin_profile.profile_id;
     },
 
     load: function() {
-        this.ajax.call();
+        var self = this,
+            complete = function(json) {
+                var header = new HeaderClass(),
+                    companybanner = new CompanyBannerClass('basics');
+                if (self.preview) {
+                    pl('#header').hide();
+                    pl('#footer').hide();
+                }
+                else {
+                    header.setLogin(json);
+                }
+                companybanner.display(json);
+                self.display(json);
+            },
+            ajax = new AjaxClass('/listings/get/' + this.listing_id, 'listingstatus', complete);
+        ajax.call();
     },
 
-    display: function() {
-        this.displayTabs();
+    display: function(json) {
+        if (json) {
+            this.store(json);
+        }
         this.displayBasics();
         this.displayFollow();
         this.displayMap();
@@ -53,32 +54,9 @@ pl.implement(ListingClass, {
     },
 
     displayBasics: function() {
-        var logobg = this.logo ? 'url(' + this.logo + ') no-repeat scroll left top' : null,
-            url = this.website ? new URLClass(this.website) : null,
-            categoryaddresstext = (this.category ? (this.category==='Other' ? 'A' : (this.category.match(/^[AEIOU]/) ? 'An '+this.category : 'A '+this.category)) : 'A')
-                + ' company' + (this.brief_address ? ' in ' + this.brief_address : ''),
-            founderstext = (this.founders ? ' founded by ' + this.founders : ''),
-            listingdatetext = SafeStringClass.prototype.ucfirst(this.status) + ' listing' + (this.listing_date ? ' from ' + this.dateobj.format(this.listing_date) : ' not yet listed') + ' at ';
-        if (logobg) {
-            pl('#companylogo').removeClass('noimage').css({background: logobg});
-        }
-        pl('#title').text(this.title || 'Company Name Here');
-        pl('title').text('Startupbidder Listing: ' + (this.title || 'Company Name Here'));
-        pl('#mantra').text(this.mantra);
-        pl('#companystatus').text('Listing is ' + this.status);
-        if (this.status === 'withdrawn') {
-            pl('#companystatus').addClass('attention');
-        }
         pl('#videopresentation').attr({src: this.video});
         pl('#summary').text(this.summary || 'Listing summary goes here');
-        pl('#categoryaddresstext').text(categoryaddresstext);
-        pl('#founderstext').text(founderstext);
-        pl('#listing_date_text').text(listingdatetext);
-        pl('#websitelink').attr({href: this.website});
-        if (url) {
-            pl('#domainname').text(url.getHostname());
-        }
-        pl('#listingdata').show();
+        pl('#basicswrapper').show();
     },
 
     bindFollow: function() {
@@ -98,24 +76,24 @@ pl.implement(ListingClass, {
 
     unfollow: function() {
         var self = this,
-            completeFunc = function(json) {
+            complete = function(json) {
                 self.monitored = false;
                 self.displayFollow();
             },
 
-            ajax = new AjaxClass('/monitor/deactivate/' + self.listing_id, 'followmsg', completeFunc);
+            ajax = new AjaxClass('/monitor/deactivate/' + self.listing_id, 'followmsg', complete);
         ajax.setPost();
         ajax.call();
     },
 
     follow: function() {
         var self = this,
-            completeFunc = function(json) {
+            complete = function(json) {
                 self.monitored = true;
                 self.displayFollow();
             },
 
-            ajax = new AjaxClass('/monitor/set/' + self.listing_id, 'followmsg', completeFunc);
+            ajax = new AjaxClass('/monitor/set/' + self.listing_id, 'followmsg', complete);
         ajax.setPost();
         ajax.call();
     },
@@ -179,11 +157,11 @@ pl.implement(ListingClass, {
     },
 
     displayFunding: function() {
-        var total_raised = this.total_raised && this.total_raised > 0 ? this.currency.format(this.total_raised) : '$0';
+        var total_raised = this.total_raised && this.total_raised > 0 ? CurrencyClass.prototype.format(this.total_raised) : '$0';
         if (this.asked_fund) {
-            pl('#suggested_amt').text(this.currency.format(this.suggested_amt));
+            pl('#suggested_amt').text(CurrencyClass.prototype.format(this.suggested_amt));
             pl('#suggested_pct').text(this.suggested_pct);
-            pl('#suggested_val').text(this.currency.format(this.suggested_val));
+            pl('#suggested_val').text(CurrencyClass.prototype.format(this.suggested_val));
             pl('#total_raised').text(total_raised);
 /*
             if (this.num_bids && this.num_bids > 0) {
@@ -191,9 +169,9 @@ pl.implement(ListingClass, {
                 this.best_bid_amt = this.valuation ? Math.floor((this.best_bid_pct / 100) * this.valuation) : 1000 + 1000*Math.floor(99*Math.random());
                 this.best_bid_val = this.valuation || (100 * this.best_bid_amt / this.best_bid_pct); // FIXME
                 pl('#num_bids').html(this.num_bids);
-                pl('#best_bid_amt').html(this.currency.format(this.best_bid_amt));
+                pl('#best_bid_amt').html(CurrencyClass.prototype.format(this.best_bid_amt));
                 pl('#best_bid_pct').html(this.best_bid_pct);
-                pl('#best_bid_val').html(this.currency.format(this.best_bid_val));
+                pl('#best_bid_val').html(CurrencyClass.prototype.format(this.best_bid_val));
                 pl('#bidboxinfo').show();
             }
             else {
@@ -280,7 +258,7 @@ pl.implement(ListingClass, {
         pl('#withdrawbox').show();
         pl('#withdrawbtn').bind({
             click: function() {
-                var completeFunc = function() {
+                var complete = function() {
                         self.status = 'withdrawn';
                         pl('#withdrawmsg').addClass('successful').html('LISTING WITHDRAWN');
                         pl('#withdrawbtn, #withdrawcancelbtn').hide();
@@ -289,7 +267,7 @@ pl.implement(ListingClass, {
                     },
 
                     url = '/listing/withdraw/' + self.listing_id,
-                    ajax = new AjaxClass(url, 'withdrawmsg', completeFunc);
+                    ajax = new AjaxClass(url, 'withdrawmsg', complete);
                 if (pl('#withdrawcancelbtn').css('display') === 'none') { // first call
                     pl('#withdrawmsg, #withdrawcancelbtn').show();
                 }
@@ -320,12 +298,12 @@ pl.implement(ListingClass, {
         pl('#approvebox').show();
         pl('#approvebtn').bind({
             click: function() {
-                var completeFunc = function() {
+                var complete = function() {
                         window.location.reload();
                     },
 
                     url = '/listing/activate/' + self.listing_id;
-                    ajax = new AjaxClass(url, 'approvemsg', completeFunc);
+                    ajax = new AjaxClass(url, 'approvemsg', complete);
                 if (pl('#approvecancelbtn').css('display') === 'none') { // first call
                     pl('#approvemsg, #approvecancelbtn').show();
                 }
@@ -356,12 +334,12 @@ pl.implement(ListingClass, {
         pl('#sendbackbox').show();
         pl('#sendbackbtn').bind({
             click: function() {
-                var completeFunc = function() {
+                var complete = function() {
                         window.location.reload();
                     },
 
                     url = '/listing/send_back/' + self.listing_id;
-                    ajax = new AjaxClass(url, 'sendbackmsg', completeFunc);
+                    ajax = new AjaxClass(url, 'sendbackmsg', complete);
                 if (pl('#sendbackcancelbtn').css('display') === 'none') { // first call
                     pl('#sendbackmsg, #sendbackcancelbtn').show();
                 }
@@ -392,12 +370,12 @@ pl.implement(ListingClass, {
         pl('#freezebox').show();
         pl('#freezebtn').bind({
             click: function() {
-                var completeFunc = function() {
+                var complete = function() {
                         window.location.reload();
                     },
 
                     url = '/listing/freeze/' + self.listing_id;
-                    ajax = new AjaxClass(url, 'freezemsg', completeFunc);
+                    ajax = new AjaxClass(url, 'freezemsg', complete);
                 if (pl('#freezecancelbtn').css('display') === 'none') { // first call
                     pl('#freezemsg, #freezecancelbtn').show();
                 }
@@ -414,166 +392,8 @@ pl.implement(ListingClass, {
                 return false;
             }
         });
-    },
-
-    hideSelectedTabs: function() {
-       var  tabs = [],
-            wrappers = [],
-            i,
-            tab = '',
-            tabsel = '',
-            wrappersel = '';
-        for (i = 0; i < this.alltabs.length; i++) {
-            tab = this.alltabs[i];
-            if (pl('#' + tab + 'tab').hasClass('companynavselected')) {
-                tabs.push('#' + tab + 'tab');
-                wrappers.push('#' + tab + 'wrapper');
-            }
-        }
-        tabsel = tabs.join(', ');
-        wrappersel = wrappers.join(', ');
-        pl(tabsel).removeClass('companynavselected');
-        pl(wrappersel).hide();
-    },
-
-    loadBMC: function() {
-        var bmc = new BMCClass();
-        bmc.display(this);
-        pl('#modelwrapper').show();
-        this.bmcLoaded = true;
-    },
-
-    loadIP: function() {
-        var ip = new IPClass();
-        ip.display(this);
-        ip.bindButtons();
-        this.ipLoaded = true;
-        pl('#slideswrapper').show();
-    },
-
-    displayBasicsTab: function() {
-        pl('#basicswrapper').show();
-    },
-
-    displayBMC: function() {
-        if (this.bmcLoaded) {
-            pl('#modelwrapper').show();
-        }
-        else {
-            this.loadBMC();
-        }
-    },
-
-    displayIP: function() {
-        if (this.ipLoaded) {
-            pl('#slideswrapper').show();
-        }
-        else {
-            this.loadIP();
-        }
-    },
-
-    displayComments: function() {
-        if (!this.isCommentListLoaded) {
-            (new CommentClass(this.listing_id, this.loggedin_profile_id)).load();
-            this.isCommentListLoaded = true;
-        }
-        pl('#commentswrapper').show();
-    },
-
-    displayBids: function() {
-        if (!this.isBidListLoaded) {
-            (new OrderBookClass(this.listing_id, this.suggested_amt, this.suggested_pct, this.listing_date)).load();
-            if (this.loggedin_profile_id && this.loggedin_profile_id === this.profile_id) {
-                (new InvestorBidGroupListClass(this.listing_id)).load();
-                pl('#bidsnotloggedin, #bidsloggedin').hide();
-                pl('#bidsownergroup').show();
-            }
-            else if (this.loggedin_profile_id) {
-                (new SingleInvestorBidListClass(this.listing_id, this.loggedin_profile_id, this.loggedin_profile.username || 'anonymous')).load();
-                pl('#bidsnotloggedin, #bidsownergroup').hide();
-                pl('#bidsloggedin').show();
-            }
-            else {
-                pl('#bidsloggedin, #bidsownergroup').hide();
-                pl('#bidsnotloggedin').show();
-            }
-            this.isBidListLoaded = true;
-        }
-        pl('#bidswrapper').show();
-    },
-
-    displayQandas: function() {
-        if (!this.isQuestionListLoaded) {
-            (new QuestionClass(this.listing_id, this.profile_id, this.loggedin_profile_id)).load();
-            this.isQuestionListLoaded = true;
-        }
-        pl('#qandaswrapper').show();
-    },
-
-    displayTab: function(tab) {
-        var tabsel = '#' + tab + 'tab';
-        if (pl(tabsel).hasClass('companynavselected')) {
-            return;
-        }
-        this.hideSelectedTabs();
-        pl(tabsel).addClass('companynavselected');
-        if (tab === 'basics') {
-            this.displayBasicsTab();
-        }
-        else if ((new QueryStringClass()).vars.page !== tab) {
-            document.location = '/company-page.html?id=' + this.listing_id + '&page=' + tab;
-        }
-        else if (tab === 'model') {
-            this.displayBMC();
-        }
-        else if (tab === 'slides') {
-            this.displayIP();
-        }
-        else if (tab === 'comments') {
-            this.displayComments();
-        }
-        else if (tab === 'bids') {
-            this.displayBids();
-        }
-        else if (tab === 'qandas') {
-            this.displayQandas();
-        }
-    },
-
-    displayTabs: function() {
-        var self = this,
-            tabclickhandler = function() {
-                var tabname = this.id.substr(0, this.id.length - 3);
-                self.displayTab(tabname);
-                return false;
-            },
-
-            i,
-            tab;
-        pl('#num_comments').text(self.num_comments || 0);
-        pl('#num_qandas').text(self.num_qandas || 0);
-        if (this.loggedin_profile_id && this.loggedin_profile_id === this.profile_id) {
-            pl('#num_bids').text(self.num_bids || 0);
-        }
-        else {
-            pl('#num_bids').text('');
-        }
-        if (this.loggedin_profile) {
-            pl('#sendmessagelink').attr({href: '/message_page.html?to_user=' + self.profile_id }).css({display: 'inline'});
-        }
-        for (i = 0; i < this.alltabs.length; i++) {
-            tab = this.alltabs[i];
-            pl('#' + tab + 'tab').unbind('click').bind({
-                click: tabclickhandler
-            });
-        }
-        for (i = 0; i < this.alltabs.length; i++) {
-            tab = this.alltabs[i];
-            if ((new QueryStringClass()).vars.page === tab) {
-                self.displayTab(tab);
-            }
-        }
     }
+
 });
+(new ListingClass()).load();
 

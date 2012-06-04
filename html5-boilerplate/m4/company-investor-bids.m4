@@ -1,24 +1,8 @@
 `
-    <div class="span-24 initialhidden" id="bidswrapper">
-
-        <div class="boxtitlegap smokegrey clear">ORDER BOOK
-            <span class="newlistingtitlemsg" id="orderbooktitlemsg"></span>
+        <div class="boxtitlegap smokegrey clear">YOUR EXISTING BIDS WITH THE OWNER
+            <span class="newlistingtitlemsg" id="bidtitlemsg"></span>
         </div>
-        <div class="sidebox orderbook initialhidden" id="orderbook_investor_bids"></div>
-        <div class="sidebox orderbook initialhidden" id="orderbook_owner_bids"></div>
-        <div class="sidebox orderbooklast initialhidden" id="orderbook_accepted_bids"></div>
-
-        <div class="initialhidden clear" id="bidsnotloggedin">
-            <div class="boxtitlegap smokegrey clear">MAKE PRIVATE BID</div>
-            <div class="boxpanel boxpanelfull">
-                <p>Sign in to place a bid.</p>
-            </div>
-        </div>
-
         <div class="initialhidden clear" id="bidsloggedin">
-            <div class="boxtitlegap smokegrey clear">YOUR EXISTING BIDS WITH THE OWNER
-                <span class="newlistingtitlemsg" id="bidtitlemsg"></span>
-            </div>
             <div class="boxpanel boxpanelfull" id="bidlistparent">
                 <div id="bidlistlast"></div>
             </div>
@@ -77,11 +61,4 @@
                 </div>
             </div>
         </div>
-
-        <div class="initialhidden clear" id="bidsownergroup">
-            <div class="boxtitlegap smokegrey clear">BIDS</div>
-            <div class="boxpanel boxpanelfull" id="investorgrouplist"><p>No bids recevied for this listing.</p></div>
-        </div>
-
-    </div>
 '
