@@ -28,21 +28,23 @@ pl.implement(CompanyBannerClass, {
             categoryaddresstext = (this.category ? (this.category==='Other' ? 'A' : (this.category.match(/^[AEIOU]/) ? 'An '+this.category : 'A '+this.category)) : 'A')
                 + ' company' + (this.brief_address ? ' in ' + this.brief_address : ''),
             founderstext = (this.founders ? ' founded by ' + this.founders : ''),
-            listingdatetext = SafeStringClass.prototype.ucfirst(this.status) + ' listing' + (this.listing_date ? ' from ' + DateClass.prototype.format(this.listing_date) : ' not yet listed') + ' at ';
+            status = this.status || 'new',
+            website = this.website || '#',
+            listingdatetext = SafeStringClass.prototype.ucfirst(status) + ' listing' + (this.listing_date ? ' from ' + DateClass.prototype.format(this.listing_date) : ' not yet listed') + ' at ';
         if (logobg) {
             pl('#companylogo').removeClass('noimage').css({background: logobg});
         }
         pl('#title').text(this.title || 'Company Name Here');
         pl('title').text('Startupbidder Listing: ' + (this.title || 'Company Name Here'));
-        pl('#mantra').text(this.mantra);
-        pl('#companystatus').text('Listing is ' + this.status);
-        if (this.status === 'withdrawn') {
+        pl('#mantra').text(this.mantra || 'Mantra here');
+        pl('#companystatus').text('Listing is ' + status);
+        if (status === 'withdrawn') {
             pl('#companystatus').addClass('attention');
         }
         pl('#categoryaddresstext').text(categoryaddresstext);
         pl('#founderstext').text(founderstext);
         pl('#listing_date_text').text(listingdatetext);
-        pl('#websitelink').attr({href: this.website});
+        pl('#websitelink').attr({href: website});
         if (url) {
             pl('#domainname').text(url.getHostname());
         }
@@ -71,7 +73,7 @@ pl.implement(CompanyBannerClass, {
                 self.displayFollow();
             },
 
-            ajax = new AjaxClass('/monitor/deactivate/' + self.listing_id, 'followmsg', completeFunc);
+            ajax = new AjaxClass('/monitor/deactivate/' + this.listing_id, 'followmsg', completeFunc);
         ajax.setPost();
         ajax.call();
     },
@@ -83,22 +85,21 @@ pl.implement(CompanyBannerClass, {
                 self.displayFollow();
             },
 
-            ajax = new AjaxClass('/monitor/set/' + self.listing_id, 'followmsg', completeFunc);
+            ajax = new AjaxClass('/monitor/set/' + this.listing_id, 'followmsg', completeFunc);
         ajax.setPost();
         ajax.call();
     },
 
     displayFollow: function() {
-        var self = this,
-            following = self.monitored;
-        if (self.loggedin_profile && self.loggedin_profile.profile_id !== self.profile_id) {
+        var following = this.monitored;
+        if (this.loggedin_profile && this.loggedin_profile.profile_id !== this.profile_id) {
             if (following) {
-                self.displayFollowing();
+                this.displayFollowing();
             }
             else {
-                self.displayNotFollowing();
+                this.displayNotFollowing();
             }
-            self.bindFollow();
+            this.bindFollow();
         }
     },
 
@@ -148,7 +149,7 @@ pl.implement(CompanyBannerClass, {
             pl('#num_bids').text('');
         }
         if (this.loggedin_profile) {
-            pl('#sendmessagelink').attr({href: '/message_page.html?to_user=' + this.profile_id }).css({display: 'inline'});
+            pl('#sendmessagelink').attr({href: '/message_page.html?to_user=' + (this.profile_id || '') }).css({display: 'inline'});
         }
         pl('#companynavcontainer').show();
     }

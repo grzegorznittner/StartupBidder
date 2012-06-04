@@ -149,7 +149,12 @@ pl.implement(InvestorBidGroupListClass, {
             completeFunc = function(json) {
                 var header = new HeaderClass(),
                     companybanner = new CompanyBannerClass('bids'),
-                    orderbook = new OrderBookClass(json.listing_id, json.suggested_amt, json.suggested_pct, json.listing_date);
+                    orderbook;
+                if (!json.listing) {
+                    json.listing = {};
+                    json.listing.listing_id = self.listing_id;
+                }
+                orderbook = new OrderBookClass(json.listing.listing_id, json.listing.suggested_amt, json.listing.suggested_pct, json.listing.listing_date);
                 header.setLogin(json);
                 companybanner.display(json);
                 orderbook.load();
