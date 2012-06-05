@@ -62,7 +62,6 @@ import com.startupbidder.datamodel.ListingLocation;
 import com.startupbidder.datamodel.ListingStats;
 import com.startupbidder.datamodel.Location;
 import com.startupbidder.datamodel.Monitor;
-import com.startupbidder.datamodel.Notification;
 import com.startupbidder.datamodel.SBUser;
 import com.startupbidder.datamodel.VoToModelConverter;
 import com.startupbidder.vo.BaseVO;
@@ -77,7 +76,6 @@ import com.startupbidder.vo.ListingLocationsVO;
 import com.startupbidder.vo.ListingPropertyVO;
 import com.startupbidder.vo.ListingTileVO;
 import com.startupbidder.vo.ListingVO;
-import com.startupbidder.vo.NotificationListVO;
 import com.startupbidder.vo.NotificationVO;
 import com.startupbidder.vo.UserBasicVO;
 import com.startupbidder.vo.UserListingsVO;
@@ -705,7 +703,7 @@ public class ListingFacade {
 	/**
 	 * Sends back listing for update to the owner as it is not ready for posting on startupbidder site
 	 */
-	public ListingAndUserVO sendBackListingToOwner(UserVO loggedInUser, String listingId) {
+	public ListingAndUserVO sendBackListingToOwner(UserVO loggedInUser, String listingId, String message) {
 		ListingAndUserVO returnValue = new ListingAndUserVO();
 		
 		Listing dbListing = getDAO().getListing(BaseVO.toKeyId(listingId));
@@ -735,6 +733,10 @@ public class ListingFacade {
 				returnValue.setErrorCode(ErrorCodes.DATASTORE_ERROR);
 			} else {
 				NotificationFacade.instance().scheduleListingStateNotification(updatedListing);
+				if (message == null) {
+					message = "Your listing has not been accepted. Please correct it.";
+				}
+				MessageFacade.instance().sendPrivateMessage(loggedInUser, updatedListing.owner.getString(), message);
 			}
 			ListingVO toReturn = DtoToVoConverter.convert(updatedListing);
 			Monitor monitor = getDAO().getListingMonitor(loggedInUser.toKeyId(), toReturn.toKeyId());
@@ -750,7 +752,7 @@ public class ListingFacade {
 	/**
 	 * Freeze listing so it cannot be bid or modified. It's an administrative action.
 	 */
-	public ListingAndUserVO freezeListing(UserVO loggedInUser, String listingId) {
+	public ListingAndUserVO freezeListing(UserVO loggedInUser, String listingId, String message) {
 		ListingAndUserVO returnValue = new ListingAndUserVO();
 		if (loggedInUser == null || !loggedInUser.isAdmin()) {
 			log.warning("User not logged in or '" + loggedInUser + "' is not an admin");
@@ -779,6 +781,10 @@ public class ListingFacade {
 				returnValue.setErrorCode(ErrorCodes.DATASTORE_ERROR);
 			} else {
 				NotificationFacade.instance().scheduleListingStateNotification(updatedListing);
+				if (message == null) {
+					message = "Your listing has not been accepted. Please correct it.";
+				}
+				MessageFacade.instance().sendPrivateMessage(loggedInUser, updatedListing.owner.getString(), message);
 			}
 			
 			ListingVO toReturn = DtoToVoConverter.convert(updatedListing);

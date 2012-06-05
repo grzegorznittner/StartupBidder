@@ -1881,7 +1881,7 @@ include(api-banner.m4)
         <dd>
             <p>Get the list of bids for the given listing <var>id</var> and investor <var>investor_id</var>, ordered by date ascending.  You can use this API
             in two ways.  First, if logged in as the listing owner, pass both the listing <var>id</var> and <var>investor_id</var> to get the bids on the listing
-            by that particular investor as obtained from the <var>/listing/investors</var> call.  The second way to use the API is to pass only the listing 
+            by that particular investor as obtained from the <var>/listing/investors</var> call.  The second way to use the API is to pass only the listing
             <var>id</var> and not the <var>investor_id</var>, which will return only the bids for the logged in investor.  Using the API in this way is
             required due to privacy restrictions, since all bids are private.</p>
         </dd>
@@ -2283,7 +2283,11 @@ include(api-banner.m4)
         <div class="apidetail">
             <h4>Parameters</h4>
             <ul>
-                <li><code>id</code> alphanumeric listing id as returned by the listing list and search API</li>
+                <li>
+                    <code>listing</code> The listing property json contains:
+                    <li><code>.id</code> alphanumeric listing id as returned by the listing list and search API</li>
+                    <li><code>.message</code> message to the listing owner</li>
+                </li>
             </ul>
             <h4>Response</h4>
             <ul>
@@ -2299,7 +2303,8 @@ include(api-banner.m4)
                 <div class="formitem">
                     <label class="inputlabel" for="title">ID</label>
                     <span class="inputfield">
-                        <input class="text inputwidetext listingid" type="text" name="id" value="0"></input>
+                        <input class="text inputwidetext listingid" type="text" name="listing"
+                            value="{ id: 0, message: 'freeze note' }"></input>
                     </span>
                 </div>
                 <div class="formitem clear">
@@ -2363,7 +2368,11 @@ include(api-banner.m4)
         <div class="apidetail">
             <h4>Parameters</h4>
             <ul>
-                <li><code>id</code> alphanumeric listing id as returned by the listing list and search API</li>
+                <li>
+                    <code>listing</code> The listing property json contains:
+                    <li><code>.id</code> alphanumeric listing id as returned by the listing list and search API</li>
+                    <li><code>.message</code> message to the listing owner</li>
+                </li>
             </ul>
             <h4>Response</h4>
             <ul>
@@ -2379,7 +2388,8 @@ include(api-banner.m4)
                 <div class="formitem">
                     <label class="inputlabel" for="title">ID</label>
                     <span class="inputfield">
-                        <input class="text inputwidetext listingid" type="text" name="id" value="0"></input>
+                        <input class="text inputwidetext listingid" type="text" name="listing"
+                            value="{ id: 0, message: 'send back note' }"></input>
                     </span>
                 </div>
                 <div class="formitem clear">

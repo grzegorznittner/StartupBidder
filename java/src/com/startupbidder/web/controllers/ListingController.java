@@ -487,21 +487,53 @@ public class ListingController extends ModelDrivenController {
         return new HttpHeadersImpl("activate").disableCaching();
     }
 
-    // GET /listings/send_back
-    private HttpHeaders sendBack(HttpServletRequest request) {
-    	String listingId = getCommandOrParameter(request, 2, "id");
-    	model = ListingFacade.instance().sendBackListingToOwner(getLoggedInUser(), listingId);
-        return new HttpHeadersImpl("send_back").disableCaching();
+    // POST /listings/send_back
+    private HttpHeaders sendBack(HttpServletRequest request) throws JsonParseException, JsonMappingException, IOException {
+		log.log(Level.INFO, "Parameters: " + request.getParameterMap());
+		String listingString = request.getParameter("listing");
+		if (!StringUtils.isEmpty(listingString)) {
+			ObjectMapper mapper = new ObjectMapper();
+			JsonNode rootNode = mapper.readValue(listingString, JsonNode.class);
+			String listingId = null;
+			if (rootNode.get("id") != null) {
+				listingId = rootNode.get("id").getValueAsText();
+			}
+			String message = null;
+			if (rootNode.get("message") != null) {
+				message = rootNode.get("message").getValueAsText();
+				model = ListingFacade.instance().sendBackListingToOwner(getLoggedInUser(), listingId, message);
+			}
+		} else {
+			String listingId = getCommandOrParameter(request, 2, "id");
+			model = ListingFacade.instance().sendBackListingToOwner(getLoggedInUser(), listingId, null);
+		}
+		return new HttpHeadersImpl("send_back").disableCaching();
     }
 
-    // GET /listings/freeze
+    // POST /listings/freeze
     private HttpHeaders freeze(HttpServletRequest request) {
-    	String listingId = getCommandOrParameter(request, 2, "id");
-    	model = ListingFacade.instance().freezeListing(getLoggedInUser(), listingId);
+    	log.log(Level.INFO, "Parameters: " + request.getParameterMap());
+		String listingString = request.getParameter("listing");
+		if (!StringUtils.isEmpty(listingString)) {
+			ObjectMapper mapper = new ObjectMapper();
+			JsonNode rootNode = mapper.readValue(listingString, JsonNode.class);
+			String listingId = null;
+			if (rootNode.get("id") != null) {
+				listingId = rootNode.get("id").getValueAsText();
+			}
+			String message = null;
+			if (rootNode.get("message") != null) {
+				message = rootNode.get("message").getValueAsText();
+				model = ListingFacade.instance().freezeListing(getLoggedInUser(), listingId, message);
+			}
+		} else {
+			String listingId = getCommandOrParameter(request, 2, "id");
+			model = ListingFacade.instance().freezeListing(getLoggedInUser(), listingId, null);
+		}
         return new HttpHeadersImpl("activate").disableCaching();
     }
 
-    // GET /listings/activate
+    // POST /listings/activate
     private HttpHeaders post(HttpServletRequest request) {
     	//String listingId = getCommandOrParameter(request, 2, "id");
     	model = ListingFacade.instance().postListing(getLoggedInUser(), getLoggedInUser().getEditedListing());
