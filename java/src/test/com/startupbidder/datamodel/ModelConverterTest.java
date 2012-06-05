@@ -1,8 +1,8 @@
 package test.com.startupbidder.datamodel;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-import java.util.Date;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Handler;
 import java.util.logging.Level;
@@ -21,25 +21,23 @@ import com.google.appengine.tools.development.testing.LocalTaskQueueTestConfig;
 import com.google.appengine.tools.development.testing.LocalUserServiceTestConfig;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.ObjectifyService;
-import com.startupbidder.datamodel.OldBid;
+import com.startupbidder.datamodel.Bid;
+import com.startupbidder.datamodel.BidUser;
 import com.startupbidder.datamodel.Comment;
 import com.startupbidder.datamodel.Listing;
 import com.startupbidder.datamodel.ListingDoc;
 import com.startupbidder.datamodel.ListingStats;
 import com.startupbidder.datamodel.Monitor;
 import com.startupbidder.datamodel.Notification;
-import com.startupbidder.datamodel.OldPaidBid;
 import com.startupbidder.datamodel.Rank;
 import com.startupbidder.datamodel.SBUser;
 import com.startupbidder.datamodel.SystemProperty;
 import com.startupbidder.datamodel.UserStats;
 import com.startupbidder.datamodel.VoToModelConverter;
 import com.startupbidder.datamodel.Vote;
-import com.startupbidder.vo.OldBidVO;
 import com.startupbidder.vo.CommentVO;
 import com.startupbidder.vo.DtoToVoConverter;
 import com.startupbidder.vo.ListingVO;
-import com.startupbidder.vo.UserBasicVO;
 import com.startupbidder.vo.UserVO;
 
 public class ModelConverterTest {
@@ -57,13 +55,13 @@ public class ModelConverterTest {
 		ObjectifyService.register(SBUser.class);
 		ObjectifyService.register(Listing.class);
 		ObjectifyService.register(UserStats.class);
-		ObjectifyService.register(OldBid.class);
+		ObjectifyService.register(Bid.class);
+		ObjectifyService.register(BidUser.class);
 		ObjectifyService.register(Comment.class);
 		ObjectifyService.register(ListingDoc.class);
 		ObjectifyService.register(ListingStats.class);
 		ObjectifyService.register(Monitor.class);
 		ObjectifyService.register(Notification.class);
-		ObjectifyService.register(OldPaidBid.class);
 		ObjectifyService.register(Rank.class);
 		ObjectifyService.register(SystemProperty.class);
 		ObjectifyService.register(Vote.class);
@@ -77,53 +75,6 @@ public class ModelConverterTest {
 	@After
 	public void tearDown() {
 		helper.tearDown();
-	}
-	
-
-	@Test
-	public void testConvertBid() {
-		DateTime now = new DateTime();
-		OldBid before = new OldBid();
-		before.id = 34534L;
-		before.action = OldBid.Action.CANCEL;
-		before.actor = OldBid.Actor.OWNER;
-		before.bidderName = "bidder name";
-		before.comment = "comment";
-		before.expires = now.plusDays(3).toDate();
-		before.fundType = OldBid.FundType.PREFERRED;
-		before.interestRate = 324;
-		before.listing = new Key<Listing>(Listing.class, 3434L);
-		before.listingName = "listing name";
-		before.listingOwner = new Key<SBUser>(SBUser.class, 654645L);
-		before.mockData = true;
-		before.placed = now.toDate();
-		before.value = 40000;
-		before.percentOfCompany = 5;
-		before.valuation = 40000 * 100 / 5;
-
-		OldBidVO intrnVO = DtoToVoConverter.convert(before);
-		OldBid after = VoToModelConverter.convert(intrnVO);
-		
-		assertEquals(before.id, after.id);
-		assertEquals(before.mockData, after.mockData);
-		assertEquals(before.action, after.action);
-		assertEquals(before.actor, after.actor);
-		assertEquals(before.bidderName, after.bidderName);
-		assertEquals(before.comment, after.comment);
-		assertEquals(before.expires, after.expires);
-		assertEquals(before.fundType, after.fundType);
-		assertEquals(before.interestRate, after.interestRate);
-		assertEquals(before.listing, after.listing);
-		assertEquals(before.listingName, after.listingName);
-		assertEquals(before.listingOwner, after.listingOwner);
-		assertEquals(before.mockData, after.mockData);
-		assertEquals(before.placed, after.placed);
-		assertEquals(before.value, after.value);
-		assertEquals(before.valuation, after.valuation);
-				
-		assertTrue("Before: " + ToStringBuilder.reflectionToString(before) + "\n"
-				+ " After: " + ToStringBuilder.reflectionToString(after) + "\n"
-				+ " VO: " + ToStringBuilder.reflectionToString(intrnVO) + "\n", EqualsBuilder.reflectionEquals(before, after));
 	}
 
 	@Test

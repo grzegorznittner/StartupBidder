@@ -1,19 +1,26 @@
 package com.startupbidder.dao;
 
 
-import java.io.*;
+import java.io.File;
+import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.googlecode.objectify.NotFoundException;
-import com.startupbidder.web.controllers.ListingController;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.RandomStringUtils;
@@ -32,11 +39,11 @@ import com.google.appengine.api.taskqueue.Queue;
 import com.google.appengine.api.taskqueue.QueueFactory;
 import com.google.appengine.api.taskqueue.TaskOptions;
 import com.googlecode.objectify.Key;
+import com.googlecode.objectify.NotFoundException;
 import com.googlecode.objectify.Objectify;
 import com.googlecode.objectify.ObjectifyService;
 import com.startupbidder.datamodel.Bid;
 import com.startupbidder.datamodel.BidUser;
-import com.startupbidder.datamodel.OldBid;
 import com.startupbidder.datamodel.Category;
 import com.startupbidder.datamodel.Comment;
 import com.startupbidder.datamodel.Listing;
@@ -45,7 +52,6 @@ import com.startupbidder.datamodel.ListingLocation;
 import com.startupbidder.datamodel.ListingStats;
 import com.startupbidder.datamodel.Monitor;
 import com.startupbidder.datamodel.Notification;
-import com.startupbidder.datamodel.OldPaidBid;
 import com.startupbidder.datamodel.PrivateMessage;
 import com.startupbidder.datamodel.PrivateMessageUser;
 import com.startupbidder.datamodel.QuestionAnswer;
@@ -58,6 +64,7 @@ import com.startupbidder.vo.DtoToVoConverter;
 import com.startupbidder.vo.ListPropertiesVO;
 import com.startupbidder.vo.UserVO;
 import com.startupbidder.web.ListingFacade;
+import com.startupbidder.web.controllers.ListingController;
 
 /**
  * Generates mock data.
@@ -154,10 +161,6 @@ public class MockDataBuilder {
 		output.append("Deleted listings stats: " + ls.toString() + "</br>");
 		getOfy().delete(ls);		
 
-		QueryResultIterable<Key<OldBid>> b = getOfy().query(OldBid.class).fetchKeys();
-		output.append("Deleted bids: " + b.toString() + "</br>");
-		getOfy().delete(b);
-		
 		QueryResultIterable<Key<Comment>> c = getOfy().query(Comment.class).fetchKeys();
 		output.append("Deleted comments: " + c.toString() + "</br>");
 		getOfy().delete(c);
@@ -426,13 +429,13 @@ public class MockDataBuilder {
 			}
 		}
 		
-		List<Key<OldBid>> bidKeys = new ArrayList<Key<OldBid>>();
-		CollectionUtils.addAll(bidKeys, getOfy().query(OldBid.class).fetchKeys().iterator());
+		List<Key<Bid>> bidKeys = new ArrayList<Key<Bid>>();
+		CollectionUtils.addAll(bidKeys, getOfy().query(Bid.class).fetchKeys().iterator());
 		outputBuffer.append("<p>Bids (" + bidKeys.size() + "):</p>");
 		if (bidKeys.size() > 0) {
 			//for (Bid obj : getOfy().get(bidKeys).values()) {
-			for (Key<OldBid> key : bidKeys) {
-				OldBid obj = getOfy().get(key);
+			for (Key<Bid> key : bidKeys) {
+				Bid obj = getOfy().get(key);
 				outputBuffer.append(obj).append("<br/>");
 			}
 			if (delete) {
@@ -440,15 +443,15 @@ public class MockDataBuilder {
 			}
 		}
 		
-		List<Key<OldPaidBid>> paidBidKeys = new ArrayList<Key<OldPaidBid>>();
-		CollectionUtils.addAll(paidBidKeys, getOfy().query(OldPaidBid.class).fetchKeys().iterator());
-		outputBuffer.append("<p>Paid bids (" + paidBidKeys.size() + "):</p>");
-		if (paidBidKeys.size() > 0) {
-			for (OldPaidBid obj : getOfy().get(paidBidKeys).values()) {
+		List<Key<BidUser>> bidUserKeys = new ArrayList<Key<BidUser>>();
+		CollectionUtils.addAll(bidUserKeys, getOfy().query(BidUser.class).fetchKeys().iterator());
+		outputBuffer.append("<p>Bid users (" + bidUserKeys.size() + "):</p>");
+		if (bidUserKeys.size() > 0) {
+			for (BidUser obj : getOfy().get(bidUserKeys).values()) {
 				outputBuffer.append(obj).append("<br/>");
 			}
 			if (delete) {
-				getOfy().delete(paidBidKeys);
+				getOfy().delete(bidUserKeys);
 			}
 		}
 		

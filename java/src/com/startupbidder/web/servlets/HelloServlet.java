@@ -23,12 +23,10 @@ import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.startupbidder.dao.MessageObjectifyDatastoreDAO;
 import com.startupbidder.dao.ObjectifyDatastoreDAO;
-import com.startupbidder.datamodel.OldBid;
 import com.startupbidder.datamodel.Comment;
 import com.startupbidder.datamodel.Listing;
 import com.startupbidder.datamodel.ListingDoc;
 import com.startupbidder.datamodel.Monitor;
-import com.startupbidder.datamodel.PrivateMessage;
 import com.startupbidder.datamodel.PrivateMessageUser;
 import com.startupbidder.datamodel.SBUser;
 import com.startupbidder.datamodel.VoToModelConverter;
@@ -540,56 +538,6 @@ public class HelloServlet extends HttpServlet {
 			list.add(ListingFacade.instance().getListingDocument(loggedInUser, listing.logoId.getString()));
 		}
 		return list;
-	}
-
-	private void printAcceptBid(ObjectifyDatastoreDAO datastore, PrintWriter out,
-			List<Listing> usersListings) {
-		if (usersListings.size() == 0) {
-			out.println("Can't test bid accept as user doesn't have any listing.</br>");
-		} else {
-			boolean validBid = false;
-			for (Listing listing : usersListings) {
-				List<OldBid> bidsForUserListings = datastore.getBidsForListing(listing.id);
-				for (OldBid bid : bidsForUserListings) {
-					if (OldBid.Action.ACTIVATE.equals(bid.action)) {
-						out.println("<form method=\"POST\" action=\"/bid/accept/.json\"> <input type=\"hidden\" name=\"id\" value=\"" + bid.getWebKey() + "\"/><input type=\"submit\" value=\"Accept bid id '" + bid.getWebKey() + "' (should work)\"/></form>");
-						validBid = true;
-						break;
-					}
-				}
-				if (validBid) {
-					break;
-				}
-			}
-			if (!validBid) {
-				out.println("Can't test bid accept as user's listings don't have any active bids.</br>");
-			}
-		}
-	}
-
-	private void printPayBid(ObjectifyDatastoreDAO datastore, PrintWriter out,
-			List<Listing> usersListings) {
-		if (usersListings.size() == 0) {
-			out.println("Can't test marking bid as paid as user doesn't have any listing.</br>");
-		} else {
-			boolean validBid = false;
-			for (Listing listing : usersListings) {
-				List<OldBid> bidsForUserListings = datastore.getBidsForListing(listing.id);
-				for (OldBid bid : bidsForUserListings) {
-					if (OldBid.Action.ACCEPT.equals(bid.action)) {
-						out.println("<form method=\"POST\" action=\"/bid/paid/.json\"> <input type=\"hidden\" name=\"id\" value=\"" + bid.getWebKey() + "\"/><input type=\"submit\" value=\"Mark bid id '" + bid.getWebKey() + "' as paid (should work)\"/></form>");
-						validBid = true;
-						break;
-					}
-				}
-				if (validBid) {
-					break;
-				}
-			}
-			if (!validBid) {
-				out.println("Can't test marking bid as paid as user's listings don't have any accepted bids.</br>");
-			}
-		}
 	}
 
 }

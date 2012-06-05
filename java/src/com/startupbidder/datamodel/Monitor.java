@@ -36,6 +36,8 @@ public class Monitor extends BaseObject<Monitor> {
 	}
 	
 	@Indexed public Key<SBUser> user;
+	public String userEmail;
+	public String userNickname;
 	@Indexed(IfNotNull.class) public Key<Listing> monitoredListing;
 	@Indexed public Date   created;
 	public Date   deactivated;

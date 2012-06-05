@@ -52,6 +52,7 @@ import com.google.appengine.api.taskqueue.TaskOptions;
 import com.google.appengine.api.utils.SystemProperty;
 import com.googlecode.objectify.Key;
 import com.startupbidder.dao.MockDataBuilder;
+import com.startupbidder.dao.NotificationObjectifyDatastoreDAO;
 import com.startupbidder.dao.ObjectifyDatastoreDAO;
 import com.startupbidder.datamodel.Category;
 import com.startupbidder.datamodel.Listing;
@@ -111,6 +112,10 @@ public class ListingFacade {
 	
 	private ObjectifyDatastoreDAO getDAO() {
 		return ObjectifyDatastoreDAO.getInstance();
+	}
+
+	private NotificationObjectifyDatastoreDAO getNotificationDAO() {
+		return NotificationObjectifyDatastoreDAO.getInstance();
 	}
 
 	/**
@@ -493,7 +498,7 @@ public class ListingFacade {
 			loggedInUser.setEditedListing(null);
 			loggedInUser.setEditedStatus(null);
 			scheduleUpdateOfListingStatistics(updatedListing.getWebKey(), UpdateReason.NONE);
-			ServiceFacade.instance().createListingActivatedNotification(updatedListing, Notification.Type.NEW_LISTING);
+			NotificationFacade.instance().scheduleListingStateNotification(updatedListing);
 		}
 		ListingVO toReturn = DtoToVoConverter.convert(updatedListing);
 		Monitor monitor = getDAO().getListingMonitor(loggedInUser.toKeyId(), toReturn.toKeyId());
@@ -545,6 +550,7 @@ public class ListingFacade {
 					loggedInUser.setEditedStatus(null);
 				}
 				scheduleUpdateOfListingStatistics(updatedListing.getWebKey(), UpdateReason.NONE);
+				NotificationFacade.instance().scheduleListingStateNotification(updatedListing);
 			}
 			ListingVO toReturn = DtoToVoConverter.convert(updatedListing);
 			Monitor monitor = getDAO().getListingMonitor(loggedInUser.toKeyId(), toReturn.toKeyId());
@@ -679,6 +685,7 @@ public class ListingFacade {
 			Listing updatedListing = getDAO().updateListingStateAndDates(VoToModelConverter.convert(forUpdate));
 			if (updatedListing != null) {
 				scheduleUpdateOfListingStatistics(updatedListing.getWebKey(), UpdateReason.NONE);
+				NotificationFacade.instance().scheduleListingStateNotification(updatedListing);
 			} else {
 				returnValue.setErrorMessage("Listing not updated");
 				returnValue.setErrorCode(ErrorCodes.DATASTORE_ERROR);
@@ -726,6 +733,8 @@ public class ListingFacade {
 			if (updatedListing == null) {
 				returnValue.setErrorMessage("Listing not updated");
 				returnValue.setErrorCode(ErrorCodes.DATASTORE_ERROR);
+			} else {
+				NotificationFacade.instance().scheduleListingStateNotification(updatedListing);
 			}
 			ListingVO toReturn = DtoToVoConverter.convert(updatedListing);
 			Monitor monitor = getDAO().getListingMonitor(loggedInUser.toKeyId(), toReturn.toKeyId());
@@ -768,6 +777,8 @@ public class ListingFacade {
 			if (updatedListing == null) {
 				returnValue.setErrorMessage("Listing not updated");
 				returnValue.setErrorCode(ErrorCodes.DATASTORE_ERROR);
+			} else {
+				NotificationFacade.instance().scheduleListingStateNotification(updatedListing);
 			}
 			
 			ListingVO toReturn = DtoToVoConverter.convert(updatedListing);
@@ -896,7 +907,7 @@ public class ListingFacade {
 		props = new ListPropertiesVO();
 		props.setMaxResults(10);
 		List<NotificationVO> notifications = DtoToVoConverter.convertNotifications(
-				getDAO().getAllUserNotifications(loggedInUser.toKeyId(), props));
+				getNotificationDAO().getAllUserNotifications(VoToModelConverter.convert(loggedInUser), props));
 		result.setNotifications(notifications);
 		
 		if (loggedInUser.isAdmin()) {
@@ -1104,11 +1115,7 @@ public class ListingFacade {
 		ListPropertiesVO notifProperties = new ListPropertiesVO();
 		notifProperties.setMaxResults(5);
 		notifications = DtoToVoConverter.convertNotifications(
-				getDAO().getAllUserNotifications(loggedInUser.toKeyId(), notifProperties));
-		int num = 1;
-		for (NotificationVO notification : notifications) {
-			notification.setOrderNumber(num++);
-		}
+				getNotificationDAO().getAllUserNotifications(loggedInUser, notifProperties));
         list.setNotifications(notifications);
     }
 	
@@ -1117,11 +1124,7 @@ public class ListingFacade {
 		ListPropertiesVO notifProperties = new ListPropertiesVO();
 		notifProperties.setMaxResults(5);
 		notifications = DtoToVoConverter.convertNotifications(
-				getDAO().getAllUserNotifications(loggedInUser.toKeyId(), notifProperties));
-		int num = 1;
-		for (NotificationVO notification : notifications) {
-			notification.setOrderNumber(num++);
-		}
+				getNotificationDAO().getAllUserNotifications(loggedInUser, notifProperties));
 		list.setNotifications(notifications);
 
 		ListPropertiesVO props = new ListPropertiesVO();
@@ -1315,32 +1318,6 @@ public class ListingFacade {
 		result[2] = result[2].trim();
 		return result;
 	}
-
-    private NotificationListVO getListingNotifications(UserVO loggedInUser, String listingId, ListPropertiesVO notifProperties, Notification.Type includeType) {
-        NotificationListVO list = new NotificationListVO();
-        Listing listing = getDAO().getListing(BaseVO.toKeyId(listingId));
-        if (listing == null) {
-            list.setErrorCode(ErrorCodes.DATASTORE_ERROR);
-            list.setErrorMessage("Listing doesn't exist!");
-            log.log(Level.WARNING, "Listing '" + listingId + "' doesn't exist in datastore.");
-            return list;
-        }
-        List<Notification> notifications = null;
-        if (loggedInUser == null) {
-        	notifications = getDAO().getPublicListingNotifications(BaseVO.toKeyId(listingId), notifProperties);
-        } else {
-        	notifications = getDAO().getUserListingNotifications(loggedInUser.toKeyId(), BaseVO.toKeyId(listingId), includeType, notifProperties);
-        }
-        
-        notifProperties.setTotalResults(notifications.size());
-        list.setNotifications(DtoToVoConverter.convertNotifications(notifications));
-        list.setNotificationsProperties(notifProperties);
-        if (loggedInUser != null) {
-            list.setUser(new UserBasicVO(loggedInUser));
-        }
-
-        return list;
-    }
 
     public String updateAllAggregateStatistics() {
         List<Category> c = getDAO().getCategories();

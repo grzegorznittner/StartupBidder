@@ -12,7 +12,9 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 
+import com.startupbidder.dao.NotificationObjectifyDatastoreDAO;
 import com.startupbidder.dao.ObjectifyDatastoreDAO;
+import com.startupbidder.datamodel.Listing;
 import com.startupbidder.datamodel.Notification;
 import com.startupbidder.vo.BaseVO;
 import com.startupbidder.vo.DtoToVoConverter;
@@ -24,6 +26,7 @@ import com.startupbidder.web.HttpHeadersImpl;
 import com.startupbidder.web.ListingFacade;
 import com.startupbidder.web.ListingFacade.UpdateReason;
 import com.startupbidder.web.ModelDrivenController;
+import com.startupbidder.web.NotificationFacade;
 import com.startupbidder.web.UserMgmtFacade;
 
 /**
@@ -59,6 +62,16 @@ public class TaskController extends ModelDrivenController {
 			return updateMockListingImages(request);
 		} else if("send-notification".equalsIgnoreCase(getCommand(1))) {
 			return sendNotification(request);
+		} else if("schedule-comment-notifications".equalsIgnoreCase(getCommand(1))) {
+			return scheduleCommentNotifications(request);
+		} else if("schedule-qa-notifications".equalsIgnoreCase(getCommand(1))) {
+			return scheduleQANotifications(request);
+		} else if("schedule-message-notifications".equalsIgnoreCase(getCommand(1))) {
+			return scheduleMessageNotifications(request);
+		} else if("schedule-listing-notifications".equalsIgnoreCase(getCommand(1))) {
+			return scheduleListingNotifications(request);
+		} else if("schedule-bid-notifications".equalsIgnoreCase(getCommand(1))) {
+			return scheduleBidNotifications(request);
 		}
 		return null;
 	}
@@ -103,19 +116,54 @@ public class TaskController extends ModelDrivenController {
 		
 		String notifId = getCommandOrParameter(request, 2, "id");
 		
-		Notification notification = ObjectifyDatastoreDAO.getInstance().getNotification(BaseVO.toKeyId(notifId));
+		Notification notification = NotificationObjectifyDatastoreDAO.getInstance().getNotification(BaseVO.toKeyId(notifId));
 		model = DtoToVoConverter.convert(notification);
 
 		if (!notification.read) {
 			log.info("Sending notification: " + notification);
 			if (EmailService.instance().sendListingNotification(DtoToVoConverter.convert(notification))) {
 				notification.sentDate = new Date();
-				ObjectifyDatastoreDAO.getInstance().storeNotification(notification);
+				NotificationObjectifyDatastoreDAO.getInstance().storeNotification(notification);
 			}
 		} else {
 			log.info("Notification email was already sent for " + notification);
 		}
 		
+		return headers;
+	}
+	
+	private HttpHeaders scheduleCommentNotifications(HttpServletRequest request) {
+		HttpHeaders headers = new HttpHeadersImpl("schedule-comment-notifications");		
+		String commentId = getCommandOrParameter(request, 2, "id");		
+		model = NotificationFacade.instance().createCommentNotification(commentId);
+		return headers;
+	}
+	
+	private HttpHeaders scheduleQANotifications(HttpServletRequest request) {
+		HttpHeaders headers = new HttpHeadersImpl("schedule-qa-notifications");		
+		String qaId = getCommandOrParameter(request, 2, "id");		
+		model = NotificationFacade.instance().createQANotification(qaId);
+		return headers;
+	}
+	
+	private HttpHeaders scheduleMessageNotifications(HttpServletRequest request) {
+		HttpHeaders headers = new HttpHeadersImpl("schedule-message-notifications");		
+		String messageId = getCommandOrParameter(request, 2, "id");		
+		model = NotificationFacade.instance().createPrivateMessageNotification(messageId);
+		return headers;
+	}
+	
+	private HttpHeaders scheduleListingNotifications(HttpServletRequest request) {
+		HttpHeaders headers = new HttpHeadersImpl("schedule-listing-notifications");		
+		String listingId = getCommandOrParameter(request, 2, "id");		
+		model = NotificationFacade.instance().createListingStateNotification(listingId);
+		return headers;
+	}
+	
+	private HttpHeaders scheduleBidNotifications(HttpServletRequest request) {
+		HttpHeaders headers = new HttpHeadersImpl("schedule-bid-notifications");		
+		String bidId = getCommandOrParameter(request, 2, "id");		
+		model = NotificationFacade.instance().createBidNotification(bidId);
 		return headers;
 	}
 	

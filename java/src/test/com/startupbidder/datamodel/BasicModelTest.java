@@ -10,23 +10,20 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.google.api.gbase.client.Location;
 import com.google.appengine.api.datastore.QueryResultIterable;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
-import com.google.appengine.tools.development.testing.LocalTaskQueueTestConfig;
-import com.google.appengine.tools.development.testing.LocalUserServiceTestConfig;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.Objectify;
 import com.googlecode.objectify.ObjectifyService;
-import com.startupbidder.datamodel.OldBid;
+import com.startupbidder.datamodel.Bid;
+import com.startupbidder.datamodel.BidUser;
 import com.startupbidder.datamodel.Comment;
 import com.startupbidder.datamodel.Listing;
 import com.startupbidder.datamodel.ListingDoc;
 import com.startupbidder.datamodel.ListingStats;
 import com.startupbidder.datamodel.Monitor;
 import com.startupbidder.datamodel.Notification;
-import com.startupbidder.datamodel.OldPaidBid;
 import com.startupbidder.datamodel.Rank;
 import com.startupbidder.datamodel.SBUser;
 import com.startupbidder.datamodel.SystemProperty;
@@ -40,13 +37,13 @@ public class BasicModelTest {
 		ObjectifyService.register(SBUser.class);
 		ObjectifyService.register(Listing.class);
 		ObjectifyService.register(UserStats.class);
-		ObjectifyService.register(OldBid.class);
+		ObjectifyService.register(Bid.class);
+		ObjectifyService.register(BidUser.class);
 		ObjectifyService.register(Comment.class);
 		ObjectifyService.register(ListingDoc.class);
 		ObjectifyService.register(ListingStats.class);
 		ObjectifyService.register(Monitor.class);
 		ObjectifyService.register(Notification.class);
-		ObjectifyService.register(OldPaidBid.class);
 		ObjectifyService.register(Rank.class);
 		ObjectifyService.register(SystemProperty.class);
 		ObjectifyService.register(Vote.class);
@@ -167,43 +164,6 @@ public class BasicModelTest {
 			count++;
 		}
 		assertTrue("Expected listings with state POSTED", count > 0);
-	}
-
-	@Test
-	public void testBid() {
-		Objectify ofy = ObjectifyService.begin();
-		
-		OldBid bid = new OldBid();
-		bid.comment = "Comment for bid";
-		bid.fundType = OldBid.FundType.PREFERRED;
-		bid.interestRate = 10;
-		bid.percentOfCompany = 45;
-		bid.placed = new Date();
-		bid.action = OldBid.Action.ACTIVATE;
-		bid.valuation = 4500;
-		bid.value = 100;
-		bid.bidder = new Key<SBUser>(SBUser.class, 1000L);
-		bid.listing = new Key<Listing>(Listing.class, 1001L);
-		bid.listingOwner = new Key<SBUser>(SBUser.class, 1002L);
-		
-		Key<OldBid> key = ofy.put(bid);
-		assertNotNull("Key is null", key);
-		assertNotNull(bid.id);
-		
-		OldBid retrievedUser = ofy.get(key);
-		assertNotNull("Retrieved user is null", retrievedUser);
-		assertNotNull("Modifed date is not set", bid.modified);
-		assertEquals(bid.comment, retrievedUser.comment);
-		assertEquals(bid.fundType, retrievedUser.fundType);
-		assertEquals(bid.interestRate, retrievedUser.interestRate);
-		assertEquals(bid.percentOfCompany, retrievedUser.percentOfCompany);
-		assertEquals(bid.placed, retrievedUser.placed);
-		assertEquals(bid.action, retrievedUser.action);
-		assertEquals(bid.valuation, retrievedUser.valuation);
-		assertEquals(bid.value, retrievedUser.value);
-		assertEquals(bid.bidder, retrievedUser.bidder);
-		assertEquals(bid.listing, retrievedUser.listing);
-		assertEquals(bid.listingOwner, retrievedUser.listingOwner);
 	}
 
 }

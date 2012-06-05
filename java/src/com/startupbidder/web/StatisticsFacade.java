@@ -2,7 +2,6 @@ package com.startupbidder.web;
 
 import java.util.Collections;
 import java.util.Date;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -15,9 +14,7 @@ import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 
-import com.startupbidder.datamodel.OldBid;
 import com.startupbidder.vo.GraphDataVO;
-import com.startupbidder.vo.ListPropertiesVO;
 import com.startupbidder.vo.TickerDataVO;
 
 public class StatisticsFacade {
@@ -97,28 +94,28 @@ public class StatisticsFacade {
 		DateMidnight midnight = new DateMidnight();
 		GraphDataVO data = new GraphDataVO(GraphType.BID_DAY_VOLUME.toString());
 		
-		ListPropertiesVO bidsProperties = new ListPropertiesVO();
-		bidsProperties.setMaxResults(100);
-		List<OldBid> bids = ServiceFacade.instance().getDAO().getBidsByDate(bidsProperties);
-
-		int[] values = new int[2];
-		if (bids.size() > 1) {
-			int bidTimeSpan = Math.abs(Days.daysBetween(new DateTime(bids.get(0).placed),
-					new DateTime(bids.get(bids.size() - 1).placed)).getDays());
-			
-			values = new int[bidTimeSpan];
-			for (OldBid bid : bids) {
-				int days = Math.abs(Days.daysBetween(new DateTime(bid.placed.getTime()), midnight).getDays());
-				if (days < values.length) {
-					values[days]++;
-				}
-			}
-		}
+//		ListPropertiesVO bidsProperties = new ListPropertiesVO();
+//		bidsProperties.setMaxResults(100);
+//		List<Bid> bids = ServiceFacade.instance().getDAO().getBidsByDate(bidsProperties);
+//
+//		int[] values = new int[2];
+//		if (bids.size() > 1) {
+//			int bidTimeSpan = Math.abs(Days.daysBetween(new DateTime(bids.get(0).placed),
+//					new DateTime(bids.get(bids.size() - 1).placed)).getDays());
+//			
+//			values = new int[bidTimeSpan];
+//			for (Bid bid : bids) {
+//				int days = Math.abs(Days.daysBetween(new DateTime(bid.placed.getTime()), midnight).getDays());
+//				if (days < values.length) {
+//					values[days]++;
+//				}
+//			}
+//		}
 		
-		data.setLabel(values.length + " Day Bid Volume");
-		data.setxAxis("days ago");
-		data.setyAxis("num bids");
-		data.setValues(values);
+//		data.setLabel(values.length + " Day Bid Volume");
+//		data.setxAxis("days ago");
+//		data.setyAxis("num bids");
+//		data.setValues(values);
 		data.setCreated(new Date());
 		cache.put(GraphType.BID_DAY_VOLUME, data);
 		return data;
@@ -141,28 +138,28 @@ public class StatisticsFacade {
 		DateMidnight midnight = new DateMidnight();
 		GraphDataVO data = new GraphDataVO(GraphType.BID_DAY_VALUATION.toString());
 		
-		ListPropertiesVO bidsProperties = new ListPropertiesVO();
-		bidsProperties.setMaxResults(100);
-		List<OldBid> bids = ServiceFacade.instance().getDAO().getBidsByDate(bidsProperties);
-
-		int[] values = new int[2];
-		if (bids.size() > 1) {
-			int bidTimeSpan = Math.abs(Days.daysBetween(new DateTime(bids.get(0).placed),
-					new DateTime(bids.get(bids.size() - 1).placed)).getDays());
-			
-			values = new int[bidTimeSpan];
-			for (OldBid bid : bids) {
-				int days = Math.abs(Days.daysBetween(new DateTime(bid.placed.getTime()), midnight).getDays());
-				if (days < values.length) {
-					values[days] += bid.valuation;
-				}
-			}
-		}
-		
-		data.setLabel(values.length + " Day Bid Valuation");
-		data.setxAxis("days ago");
-		data.setyAxis("bids valuation");
-		data.setValues(values);
+//		ListPropertiesVO bidsProperties = new ListPropertiesVO();
+//		bidsProperties.setMaxResults(100);
+//		List<OldBid> bids = ServiceFacade.instance().getDAO().getBidsByDate(bidsProperties);
+//
+//		int[] values = new int[2];
+//		if (bids.size() > 1) {
+//			int bidTimeSpan = Math.abs(Days.daysBetween(new DateTime(bids.get(0).placed),
+//					new DateTime(bids.get(bids.size() - 1).placed)).getDays());
+//			
+//			values = new int[bidTimeSpan];
+//			for (OldBid bid : bids) {
+//				int days = Math.abs(Days.daysBetween(new DateTime(bid.placed.getTime()), midnight).getDays());
+//				if (days < values.length) {
+//					values[days] += bid.valuation;
+//				}
+//			}
+//		}
+//		
+//		data.setLabel(values.length + " Day Bid Valuation");
+//		data.setxAxis("days ago");
+//		data.setyAxis("bids valuation");
+//		data.setValues(values);
 		data.setCreated(new Date());
 		cache.put(GraphType.BID_DAY_VALUATION, data);
 		return data;

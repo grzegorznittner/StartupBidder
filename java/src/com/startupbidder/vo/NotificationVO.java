@@ -17,16 +17,12 @@ import com.startupbidder.util.LowecaseSerializer;
 @JsonAutoDetect(getterVisibility=Visibility.NONE, setterVisibility=Visibility.NONE,
 		fieldVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE)
 public class NotificationVO extends BaseVO {
-
-	@JsonProperty("num") private int orderNumber;
 	@JsonProperty("notify_id") private String id;
 	@JsonProperty("notify_type") @JsonSerialize(using=LowecaseSerializer.class)	private String type;
     @JsonProperty("user_id") private String user;
 	@JsonProperty("user_nickname") private String userNickname;
-    @JsonProperty("from_user_id") private String fromUser;
+	private String userEmail;
 	@JsonProperty("from_user_nickname") private String fromUserNickname;
-	@JsonProperty("context_notify_id") private String contextNotificationId;
-    @JsonProperty("parent_notify_id") private String parentNotification;
 	@JsonProperty("listing_id")	private String listing;
 	@JsonProperty("listing_name") private String listingName;
 	@JsonProperty("listing_owner") private String listingOwner;
@@ -44,7 +40,6 @@ public class NotificationVO extends BaseVO {
 	@JsonProperty("create_date") @JsonSerialize(using=DateSerializer.class) private Date created;
 	@JsonProperty("sent_date") @JsonSerialize(using=DateSerializer.class) private Date sentDate;
 	@JsonProperty("read") private boolean read;
-	@JsonProperty("replied") private boolean replied;
 	
 	@Override
 	public String getId() {
@@ -52,12 +47,6 @@ public class NotificationVO extends BaseVO {
 	}
 	public void setId(String id) {
 		this.id = id;
-	}
-	public int getOrderNumber() {
-		return orderNumber;
-	}
-	public void setOrderNumber(int orderNumber) {
-		this.orderNumber = orderNumber;
 	}
 	public String getType() {
 		return type;
@@ -155,47 +144,29 @@ public class NotificationVO extends BaseVO {
 	public void setUserNickname(String userNickname) {
 		this.userNickname = userNickname;
 	}
-    public String getFromUserNickname() {
-        return fromUserNickname;
-    }
-    public void setFromUserNickname(String fromUserNickname) {
-        this.fromUserNickname = fromUserNickname;
-    }
-    public String getFromUser() {
-        return fromUser;
-    }
-    public void setFromUser(String fromUser) {
-        this.fromUser = fromUser;
-    }
-    public String getParentNotification() {
-        return parentNotification;
-    }
-    public void setParentNotification(String parentNotification) {
-        this.parentNotification = parentNotification;
-    }
-	public boolean isReplied() {
-		return replied;
-	}
 	public String getAnswer() {
 		return answer;
 	}
+	public String getUserEmail() {
+		return userEmail;
+	}
+	public void setUserEmail(String userEmail) {
+		this.userEmail = userEmail;
+	}
+	public String getFromUserNickname() {
+		return fromUserNickname;
+	}
+	public void setFromUserNickname(String fromUserNickname) {
+		this.fromUserNickname = fromUserNickname;
+	}
 	public void setAnswer(String answer) {
 		this.answer = answer;
-	}
-	public void setReplied(boolean replied) {
-		this.replied = replied;
 	}
 	public Date getAnswerDate() {
 		return answerDate;
 	}
 	public void setAnswerDate(Date answerDate) {
 		this.answerDate = answerDate;
-	}
-	public String getContextNotificationId() {
-		return contextNotificationId;
-	}
-	public void setContextNotificationId(String contextNotificationId) {
-		this.contextNotificationId = contextNotificationId;
 	}
 	@JsonProperty("listing_logo_url")
 	public String getListingLogoLink() {
