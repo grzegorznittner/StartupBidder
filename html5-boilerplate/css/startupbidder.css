@@ -474,6 +474,8 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .sideboxmap { width: 302px; height: 302px; }
 .orderbook { float: left; margin-right: 10px; }
 .orderbooklast { float: left; margin-right: 0; }
+.lastorder { text-align:center; font-weight: bold; }
+.lastorderamt { font-size: 32px; }
 .bidpanel { padding-top: 5px; }
 /* .nearbypanel { width: 946px; height: 946px; } */
 /* .nearbymap { width: 946px; height: 946px; } */

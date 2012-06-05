@@ -359,7 +359,7 @@ pl.implement(HeaderClass, {
     },
     setLoggedIn: function(profile, logout_url) {
         var username = profile.username || 'You',
-            posttext = profile.edited_listing ? 'Complete Listing': 'Make New Listing',
+            posttext = profile.edited_listing ? 'Finish New': 'Make New',
             num_notifications = profile.num_notifications || 0,
             notificationlinktext = num_notifications ? num_notifications + ' unread notifications' : 'no unread notifications',
             newlistingurl = profile.edited_status === 'posted' ? 'new-listing-submitted-page.html' : 'new-listing-basics-page.html';

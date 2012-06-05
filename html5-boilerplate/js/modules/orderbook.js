@@ -67,7 +67,7 @@ pl.implement(PublicBidClass, {
             return '\
             <div class="messageline orderbookline ' + this.bidclass + '">\
                 <p class="span-2">' + this.amttext + '</p>\
-                <p class="span-2">' + this.pcttext + '</p>\
+                <p class="span-2">' + this.pcttext + '%</p>\
                 <p class="span-2">' + this.valtext + '</p>\
                 <p class="orderbookdate">'+this.datetext+'</p>\
             </div>\
@@ -95,6 +95,11 @@ function OrderBookClass(listing_id, suggested_amt, suggested_pct, listing_date) 
         type: 'owner_post',
         create_date: listing_date
     });
+    this.nobidsmap = {
+        investor_bids: 'No bids',
+        owner_bids: 'No Asks',
+        accepted_bids: 'No Sales'
+    };
 }
 pl.implement(OrderBookClass, {
     mock: function(ajax) {
@@ -161,9 +166,11 @@ accepted_bids: [
             j,
             bid;
         this.bids = {};
+        this.sortedbids = {};
         for (i = 0; i < this.bidprops.length; i++) {
             bidprop = this.bidprops[i];
-            this.bids[bidprop] = bidprop === 'owner_bids' ? [ this.ownerofferbid ] : [];
+            this.bids[bidprop] = [];
+            this.sortedbids[bidprop] = bidprop === 'owner_bids' ? [ this.ownerofferbid ] : [];
             jsonlist = json[bidprop];
             if (jsonlist && jsonlist.length) {
                 for (j = 0; j < jsonlist.length; j++) {
@@ -171,7 +178,11 @@ accepted_bids: [
                     bid = new PublicBidClass(this, bidprop);
                     bid.store(bidjson);
                     this.bids[bidprop].push(bid);
+                    this.sortedbids[bidprop].push(bid);
                 }
+            }
+            if (bidprop === 'owner_bids') {
+                this.bids[bidprop].push(this.ownerofferbid);
             }
             if (this.bids[bidprop].length) {
                 var sorter;
@@ -184,19 +195,18 @@ accepted_bids: [
                 else if (bidprop === 'accepted_bids') {
                     sorter = function(a, b) { return b.create_date - a.create_date }; // descending date
                 }
-                this.bids[bidprop].sort(sorter);
+                this.sortedbids[bidprop].sort(sorter);
             }
-            else {
+            else if (bidprop !== 'owner_bids') {
                 bid = new PublicBidClass(this, bidprop);
                 bid.setEmpty();
-                this.bids[bidprop].push(bid);
+                this.sortedbids[bidprop].push(bid);
             }
         }
     },
 
     display: function(json) {
         var html,
-            biddivsel,
             bidprop,
             bids,
             bid,
@@ -204,16 +214,26 @@ accepted_bids: [
         if (json !== undefined) {
             this.store(json);
         }
-        for (bidprop in this.bids) {
-            bids = this.bids[bidprop];
+        for (bidprop in this.sortedbids) {
+            bids = this.sortedbids[bidprop];
             bid = new PublicBidClass(this, bidprop);
             html = bid.makeHeader();
             for (i = 0; i < bids.length; i++) {
                 bid = bids[i];
                 html += bid.makeHtml();
             }
-            biddivsel = '#orderbook_' + bidprop;
-            pl(biddivsel).html(html).show();
+            pl('#orderbook_' + bidprop).html(html);
+
+            if (!this.bids[bidprop].length) {
+                pl('#last_' + bidprop + '_amt').addClass('errorcolor').text(this.nobidsmap[bidprop]);
+            }
+            else {
+                bid = this.bids[bidprop][0];
+                pl('#last_' + bidprop + '_amt').addClass(bid.bidclass).text(bid.amttext);
+                pl('#last_' + bidprop + '_details').text('for ' + bid.pcttext + '% valued at ' + bid.valtext);
+                pl('#last_' + bidprop + '_date').text(bid.datetext);
+            }
         }
+        pl('#last_bids_wrapper').show();
     }
 });
