@@ -1858,6 +1858,50 @@ include(api-banner.m4)
 }
 </pre>
                 </li>
+                <li><code>investor_bids</code> list of most recent investor POST, COUNTER or ACCEPT bids for this listing, ordered by valuation descending,
+                    with private information removed, structure:
+<pre name="code" class="brush: js">
+[
+    {
+        amt: :amount,
+        pct: :pct,
+        val: :val, /* calculated as amt / (pct / 100) */
+        type: :bid_type, /* INVESTOR_POST, INVESTOR_COUNTER, INVESTOR_ACCEPT */
+        created_date: :date_yyyymmddhh24mmss
+    },
+    ...
+]
+</pre>
+                </li>
+                <li><code>owner_bids</code> list of most recent owner COUNTER or ACCEPT bids for this listing, ordered by valuation ascending,
+                    with private information removed, structure:
+<pre name="code" class="brush: js">
+[
+    {
+        amt: :amount,
+        pct: :pct,
+        val: :val, /* calculated as amt / (pct / 100) */
+        type: :bid_type, /* OWNER_ACCEPT, OWNER_COUNTER */
+        created_date: :date_yyyymmddhh24mmss
+    },
+    ...
+]
+</pre>
+                </li>
+                <li><code>accepted_bids</code> list of most recent ACCEPT bids the investor or owner, ordered by date descending, with private information removed, structure:
+<pre name="code" class="brush: js">
+[
+    {
+        amt: :amount,
+        pct: :pct,
+        val: :val, /* calculated as amt / (pct / 100) */
+        type: :bid_type, /* INVESTOR_ACCEPT, OWNER_ACCEPT */
+        created_date: :date_yyyymmddhh24mmss
+    },
+    ...
+]
+</pre>
+                </li>
             </ul>
             <h4>Test</h4>
             <form method="GET" action="/listing/investors" target="listing-investors">
@@ -1926,6 +1970,50 @@ include(api-banner.m4)
 </pre>
                 </li>
                 <li><code>valid_actions</code> list of valid actions, that is, new bid types, which the logged in user may submit for this listing</li>
+                </li>
+                <li><code>investor_bids</code> list of most recent investor POST, COUNTER or ACCEPT bids for this listing, ordered by valuation descending,
+                    with private information removed, structure:
+<pre name="code" class="brush: js">
+[
+    {
+        amt: :amount,
+        pct: :pct,
+        val: :val, /* calculated as amt / (pct / 100) */
+        type: :bid_type, /* INVESTOR_POST, INVESTOR_COUNTER, INVESTOR_ACCEPT */
+        created_date: :date_yyyymmddhh24mmss
+    },
+    ...
+]
+</pre>
+                </li>
+                <li><code>owner_bids</code> list of most recent owner COUNTER or ACCEPT bids for this listing, ordered by valuation ascending,
+                    with private information removed, structure:
+<pre name="code" class="brush: js">
+[
+    {
+        amt: :amount,
+        pct: :pct,
+        val: :val, /* calculated as amt / (pct / 100) */
+        type: :bid_type, /* OWNER_ACCEPT, OWNER_COUNTER */
+        created_date: :date_yyyymmddhh24mmss
+    },
+    ...
+]
+</pre>
+                </li>
+                <li><code>accepted_bids</code> list of most recent ACCEPT bids the investor or owner, ordered by date descending, with private information removed, structure:
+<pre name="code" class="brush: js">
+[
+    {
+        amt: :amount,
+        pct: :pct,
+        val: :val, /* calculated as amt / (pct / 100) */
+        type: :bid_type, /* INVESTOR_ACCEPT, OWNER_ACCEPT */
+        created_date: :date_yyyymmddhh24mmss
+    },
+    ...
+]
+</pre>
                 </li>
             </ul>
             <h4>Test</h4>
