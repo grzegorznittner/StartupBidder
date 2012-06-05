@@ -5,13 +5,10 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import org.apache.commons.lang.StringUtils;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 
 import com.startupbidder.dao.BidObjectifyDatastoreDAO;
 import com.startupbidder.dao.ObjectifyDatastoreDAO;
 import com.startupbidder.datamodel.Bid;
-import com.startupbidder.datamodel.Bid.Type;
 import com.startupbidder.datamodel.BidUser;
 import com.startupbidder.datamodel.Listing;
 import com.startupbidder.datamodel.SBUser;
@@ -24,6 +21,7 @@ import com.startupbidder.vo.BidVO;
 import com.startupbidder.vo.DtoToVoConverter;
 import com.startupbidder.vo.ErrorCodes;
 import com.startupbidder.vo.ListPropertiesVO;
+import com.startupbidder.vo.OrderBook;
 import com.startupbidder.vo.OrderBookVO;
 import com.startupbidder.vo.UserShortVO;
 import com.startupbidder.vo.UserVO;
@@ -36,8 +34,6 @@ public class BidFacade {
 	private static final Logger log = Logger.getLogger(BidFacade.class.getName());
 	private static BidFacade instance;
 	
-	private DateTimeFormatter timeStampFormatter = DateTimeFormat.forPattern("yyyyMMdd_HHmmss_SSS");
-
 	public static BidFacade instance() {
 		if (instance == null) {
 			instance = new BidFacade();
@@ -229,7 +225,7 @@ public class BidFacade {
 		return "";
 	}
 
-	public OrderBookVO getOrderBook(UserVO loggedInUser, String listingId) {
+	public OrderBook getOrderBook(UserVO loggedInUser, String listingId) {
 		OrderBookVO result = new OrderBookVO();
 		Listing listing = getGeneralDAO().getListing(BaseVO.toKeyId(listingId));
 		if (listing == null) {
@@ -238,6 +234,11 @@ public class BidFacade {
 			result.setErrorMessage("Listing doesn't exist");
 			return result;
 		}
+		fetchOrderBook(listing, result);
+		return result;
+	}
+
+	private void fetchOrderBook(Listing listing, OrderBook result) {
 		List<Bid> investorBids = new ArrayList<Bid>();
 		List<Bid> ownerBids = new ArrayList<Bid>();
 		List<Bid> acceptedBids = new ArrayList<Bid>();
@@ -265,7 +266,6 @@ public class BidFacade {
 		result.setInvestorBids(DtoToVoConverter.convertAnonBids(investorBids));
 		result.setOwnerBids(DtoToVoConverter.convertAnonBids(ownerBids));
 		result.setAcceptedBids(DtoToVoConverter.convertAnonBids(acceptedBids));
-		return result;
 	}
 
 	public BidUserListVO getBidUsers(UserVO loggedInUser, String listingId, ListPropertiesVO listProperties) {
@@ -294,6 +294,7 @@ public class BidFacade {
 		List<BidUserVO> bids = DtoToVoConverter.convertBidUsers(bidUsers);
 		result.setBids(bids);
 		result.setBidsProperties(listProperties);
+		fetchOrderBook(listing, result);
 		return result;
 	}
 
@@ -345,6 +346,7 @@ public class BidFacade {
 		result.setValidActions(getListOfValidActions(bids != null && bids.size() > 0 ? bids.get(0).type : null, isOwner));
 		result.setOtherUser(new UserShortVO(DtoToVoConverter.convert(investor)));
 		result.setBidsProperties(listProperties);
+		fetchOrderBook(listing, result);
 		return result;
 	}
 

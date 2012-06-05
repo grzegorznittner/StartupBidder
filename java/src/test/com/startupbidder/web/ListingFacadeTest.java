@@ -879,49 +879,49 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 	@Test
 	public void testFreezeListing() {
 		ListingVO listing = DtoToVoConverter.convert(super.listingList.get(11));
-		ListingAndUserVO freezedListing = ListingFacade.instance().freezeListing(mocks.INSIDER, listing.getId());
+		ListingAndUserVO freezedListing = ListingFacade.instance().freezeListing(mocks.INSIDER, listing.getId(), null);
 		assertNotNull(freezedListing);
 		assertNotSame(ErrorCodes.OK, freezedListing.getErrorCode());
 		assertNull("Only admin can freeze listing", freezedListing.getListing());
 		
 		listing = DtoToVoConverter.convert(super.listingList.get(7));
-		freezedListing = ListingFacade.instance().freezeListing(mocks.INSIDER, listing.getId());
+		freezedListing = ListingFacade.instance().freezeListing(mocks.INSIDER, listing.getId(), null);
 		assertNotNull(freezedListing);
 		assertNotSame(ErrorCodes.OK, freezedListing.getErrorCode());
 		assertNull("Only admin can freeze listing", freezedListing.getListing());
 
 		listing = DtoToVoConverter.convert(super.listingList.get(12));
-		freezedListing = ListingFacade.instance().freezeListing(mocks.INSIDER, listing.getId());
+		freezedListing = ListingFacade.instance().freezeListing(mocks.INSIDER, listing.getId(), null);
 		assertNotNull(freezedListing);
 		assertNotSame(ErrorCodes.OK, freezedListing.getErrorCode());
 		assertNull("Only admin can freeze listing", freezedListing.getListing());
 
 		listing = DtoToVoConverter.convert(super.listingList.get(5));
-		freezedListing = ListingFacade.instance().freezeListing(mocks.INSIDER, listing.getId());
+		freezedListing = ListingFacade.instance().freezeListing(mocks.INSIDER, listing.getId(), null);
 		assertNotNull(freezedListing);
 		assertNotSame(ErrorCodes.OK, freezedListing.getErrorCode());
 		assertNull("Only admin can freeze listing", freezedListing.getListing());
 
 		listing = DtoToVoConverter.convert(super.listingList.get(6));
-		freezedListing = ListingFacade.instance().freezeListing(mocks.INSIDER, listing.getId());
+		freezedListing = ListingFacade.instance().freezeListing(mocks.INSIDER, listing.getId(), null);
 		assertNotNull(freezedListing);
 		assertNotSame(ErrorCodes.OK, freezedListing.getErrorCode());
 		assertNull("Only admin can freeze listing", freezedListing.getListing());
 		
 		listing = DtoToVoConverter.convert(super.listingList.get(14));
-		freezedListing = ListingFacade.instance().freezeListing(mocks.INSIDER, listing.getId());
+		freezedListing = ListingFacade.instance().freezeListing(mocks.INSIDER, listing.getId(), null);
 		assertNotNull(freezedListing);
 		assertNotSame(ErrorCodes.OK, freezedListing.getErrorCode());
 		assertNull("Only admin can freeze listing", freezedListing.getListing());
 
 		listing = DtoToVoConverter.convert(super.listingList.get(10));
-		freezedListing = ListingFacade.instance().freezeListing(null, listing.getId());
+		freezedListing = ListingFacade.instance().freezeListing(null, listing.getId(), null);
 		assertNotNull(freezedListing);
 		assertNotSame(ErrorCodes.OK, freezedListing.getErrorCode());
 		assertNull("Only admin can freeze listing", freezedListing.getListing());
 
 		listing = DtoToVoConverter.convert(super.listingList.get(10));
-		freezedListing = ListingFacade.instance().freezeListing(mocks.INSIDER, listing.getId());
+		freezedListing = ListingFacade.instance().freezeListing(mocks.INSIDER, listing.getId(), null);
 		assertNotNull(freezedListing);
 		assertNotSame(ErrorCodes.OK, freezedListing.getErrorCode());
 		assertNull("Only admin can freeze listing", freezedListing.getListing());
@@ -930,37 +930,37 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 	@Test
 	public void testSendBackListingToOwner() {
 		ListingVO listing = DtoToVoConverter.convert(super.listingList.get(11));
-		ListingAndUserVO sentBackListing = ListingFacade.instance().sendBackListingToOwner(mocks.INSIDER, listing.getId());
+		ListingAndUserVO sentBackListing = ListingFacade.instance().sendBackListingToOwner(mocks.INSIDER, listing.getId(), null);
 		assertNotNull(sentBackListing);
 		assertNotSame(ErrorCodes.OK, sentBackListing.getErrorCode());
 		assertNull("Withdrawn listing cannot be send back to owner", sentBackListing.getListing());
 		
 		listing = DtoToVoConverter.convert(super.listingList.get(8));
-		sentBackListing = ListingFacade.instance().sendBackListingToOwner(mocks.INSIDER, listing.getId());
+		sentBackListing = ListingFacade.instance().sendBackListingToOwner(mocks.INSIDER, listing.getId(), null);
 		assertNotNull(sentBackListing);
 		assertNotSame(ErrorCodes.OK, sentBackListing.getErrorCode());
 		assertNull("Already posted listing cannot be send back to owner", sentBackListing.getListing());
 
 		listing = DtoToVoConverter.convert(super.listingList.get(12));
-		sentBackListing = ListingFacade.instance().sendBackListingToOwner(mocks.INSIDER, listing.getId());
+		sentBackListing = ListingFacade.instance().sendBackListingToOwner(mocks.INSIDER, listing.getId(), null);
 		assertNotNull(sentBackListing);
 		assertNotSame(ErrorCodes.OK, sentBackListing.getErrorCode());
 		assertNull("Closed listing cannot be send back to owner", sentBackListing.getListing());
 
 		listing = DtoToVoConverter.convert(super.listingList.get(7));
-		sentBackListing = ListingFacade.instance().sendBackListingToOwner(mocks.INSIDER, listing.getId());
+		sentBackListing = ListingFacade.instance().sendBackListingToOwner(mocks.INSIDER, listing.getId(), null);
 		assertNotNull(sentBackListing);
 		assertNotSame(ErrorCodes.OK, sentBackListing.getErrorCode());
 		assertNull("New listing cannot be send back to owner", sentBackListing.getListing());
 
 		listing = DtoToVoConverter.convert(super.listingList.get(5));
-		sentBackListing = ListingFacade.instance().sendBackListingToOwner(mocks.INSIDER, listing.getId());
+		sentBackListing = ListingFacade.instance().sendBackListingToOwner(mocks.INSIDER, listing.getId(), null);
 		assertNotNull(sentBackListing);
 		assertNotSame(ErrorCodes.OK, sentBackListing.getErrorCode());
 		assertNull("Active listing cannot be send back by non admin", sentBackListing.getListing());
 
 		listing = DtoToVoConverter.convert(super.listingList.get(6));
-		sentBackListing = ListingFacade.instance().sendBackListingToOwner(mocks.INSIDER, listing.getId());
+		sentBackListing = ListingFacade.instance().sendBackListingToOwner(mocks.INSIDER, listing.getId(), null);
 		assertNotNull(sentBackListing);
 		assertNotSame(ErrorCodes.OK, sentBackListing.getErrorCode());
 		assertNull("Active listing cannot be send back by non admin", sentBackListing.getListing());

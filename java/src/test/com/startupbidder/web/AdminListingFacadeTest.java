@@ -286,7 +286,7 @@ public class AdminListingFacadeTest extends AdminFacadeAbstractTest {
 	@Test
 	public void testFreezeListing() {
 		ListingVO listing = DtoToVoConverter.convert(super.listingList.get(11));
-		ListingAndUserVO freezedListing = ListingFacade.instance().freezeListing(mocks.GREG, listing.getId());
+		ListingAndUserVO freezedListing = ListingFacade.instance().freezeListing(mocks.GREG, listing.getId(), null);
 		assertNotNull(freezedListing);
 		assertEquals(ErrorCodes.OK, freezedListing.getErrorCode());
 		assertNotNull("Withdrawn listing can be freezed by admin", freezedListing.getListing());
@@ -294,13 +294,13 @@ public class AdminListingFacadeTest extends AdminFacadeAbstractTest {
 		assertEquals("State should be FROZEN", Listing.State.FROZEN.toString(), freezedListing.getListing().getState());
 		
 		listing = DtoToVoConverter.convert(super.listingList.get(7));
-		freezedListing = ListingFacade.instance().freezeListing(mocks.GREG, listing.getId());
+		freezedListing = ListingFacade.instance().freezeListing(mocks.GREG, listing.getId(), null);
 		assertNotNull(freezedListing);
 		assertNotSame(ErrorCodes.OK, freezedListing.getErrorCode());
 		assertNull("New listing cannot be freezed by admin", freezedListing.getListing());
 
 		listing = DtoToVoConverter.convert(super.listingList.get(12));
-		freezedListing = ListingFacade.instance().freezeListing(mocks.GREG, listing.getId());
+		freezedListing = ListingFacade.instance().freezeListing(mocks.GREG, listing.getId(), null);
 		assertNotNull(freezedListing);
 		assertEquals(ErrorCodes.OK, freezedListing.getErrorCode());
 		assertNotNull("Closed listing can be freezed by admin", freezedListing.getListing());
@@ -308,7 +308,7 @@ public class AdminListingFacadeTest extends AdminFacadeAbstractTest {
 		assertEquals("State should be FROZEN", Listing.State.FROZEN.toString(), freezedListing.getListing().getState());
 
 		listing = DtoToVoConverter.convert(super.listingList.get(5));
-		freezedListing = ListingFacade.instance().freezeListing(mocks.GREG, listing.getId());
+		freezedListing = ListingFacade.instance().freezeListing(mocks.GREG, listing.getId(), null);
 		assertNotNull(freezedListing);
 		assertEquals(ErrorCodes.OK, freezedListing.getErrorCode());
 		assertNotNull("Active listing can be freezed by admin", freezedListing.getListing());
@@ -316,7 +316,7 @@ public class AdminListingFacadeTest extends AdminFacadeAbstractTest {
 		assertEquals("State should be FROZEN", Listing.State.FROZEN.toString(), freezedListing.getListing().getState());
 
 		listing = DtoToVoConverter.convert(super.listingList.get(6));
-		freezedListing = ListingFacade.instance().freezeListing(mocks.GREG, listing.getId());
+		freezedListing = ListingFacade.instance().freezeListing(mocks.GREG, listing.getId(), null);
 		assertNotNull(freezedListing);
 		assertEquals(ErrorCodes.OK, freezedListing.getErrorCode());
 		assertNotNull("Active listing can be freezed by admin", freezedListing.getListing());
@@ -324,19 +324,19 @@ public class AdminListingFacadeTest extends AdminFacadeAbstractTest {
 		assertEquals("State should be FROZEN", Listing.State.FROZEN.toString(), freezedListing.getListing().getState());
 		
 		listing = DtoToVoConverter.convert(super.listingList.get(14));
-		freezedListing = ListingFacade.instance().freezeListing(mocks.GREG, listing.getId());
+		freezedListing = ListingFacade.instance().freezeListing(mocks.GREG, listing.getId(), null);
 		assertNotNull(freezedListing);
 		assertNotSame(ErrorCodes.OK, freezedListing.getErrorCode());
 		assertNull("Posted listing can be freezed by admin", freezedListing.getListing());
 
 		listing = DtoToVoConverter.convert(super.listingList.get(10));
-		freezedListing = ListingFacade.instance().freezeListing(null, listing.getId());
+		freezedListing = ListingFacade.instance().freezeListing(null, listing.getId(), null);
 		assertNotNull(freezedListing);
 		assertNotSame(ErrorCodes.OK, freezedListing.getErrorCode());
 		assertNull("Passed empty logged in user", freezedListing.getListing());
 
 		listing = DtoToVoConverter.convert(super.listingList.get(4));
-		freezedListing = ListingFacade.instance().freezeListing(mocks.GREG, listing.getId());
+		freezedListing = ListingFacade.instance().freezeListing(mocks.GREG, listing.getId(), null);
 		assertNotNull(freezedListing);
 		assertEquals(ErrorCodes.OK, freezedListing.getErrorCode());
 		assertNotNull("Active listing can be freezed by admin", freezedListing.getListing());
@@ -356,32 +356,32 @@ public class AdminListingFacadeTest extends AdminFacadeAbstractTest {
 	@Test
 	public void testSendBackListingToOwner() {
 		ListingVO listing = DtoToVoConverter.convert(super.listingList.get(11));
-		ListingAndUserVO postedListing = ListingFacade.instance().sendBackListingToOwner(mocks.GREG, listing.getId());
+		ListingAndUserVO postedListing = ListingFacade.instance().sendBackListingToOwner(mocks.GREG, listing.getId(), null);
 		assertNotNull(postedListing);
 		assertNotSame(ErrorCodes.OK, postedListing.getErrorCode());
 		assertNull("Withdrawn listing should not be sent back", postedListing.getListing());
 		
 		listing = DtoToVoConverter.convert(super.listingList.get(1));
-		postedListing = ListingFacade.instance().sendBackListingToOwner(mocks.GREG, listing.getId());
+		postedListing = ListingFacade.instance().sendBackListingToOwner(mocks.GREG, listing.getId(), null);
 		assertNotNull(postedListing);
 		assertNotSame(ErrorCodes.OK, postedListing.getErrorCode());
 		assertNull("Already active listing cannot be sent back", postedListing.getListing());
 
 		listing = DtoToVoConverter.convert(super.listingList.get(12));
-		postedListing = ListingFacade.instance().sendBackListingToOwner(mocks.GREG, listing.getId());
+		postedListing = ListingFacade.instance().sendBackListingToOwner(mocks.GREG, listing.getId(), null);
 		assertNotNull(postedListing);
 		assertNotSame(ErrorCodes.OK, postedListing.getErrorCode());
 		assertNull("Closed listing cannot be sent back", postedListing.getListing());
 
 		listing = DtoToVoConverter.convert(super.listingList.get(7));
-		postedListing = ListingFacade.instance().sendBackListingToOwner(mocks.GREG, listing.getId());
+		postedListing = ListingFacade.instance().sendBackListingToOwner(mocks.GREG, listing.getId(), null);
 		assertNotNull(postedListing);
 		assertNotSame(ErrorCodes.OK, postedListing.getErrorCode());
 		assertNull("New listing cannot be sent back", postedListing.getListing());
 
 		// owner of listing 16 doesn't have NEW/POSTED listing
 		listing = DtoToVoConverter.convert(super.listingList.get(16));
-		postedListing = ListingFacade.instance().sendBackListingToOwner(mocks.GREG, listing.getId());
+		postedListing = ListingFacade.instance().sendBackListingToOwner(mocks.GREG, listing.getId(), null);
 		assertNotNull(postedListing);
 		assertEquals(ErrorCodes.OK, postedListing.getErrorCode());
 		assertNotNull("Sending back listing should work", postedListing.getListing());
@@ -402,7 +402,7 @@ public class AdminListingFacadeTest extends AdminFacadeAbstractTest {
 	public void testSendBackFrozenListing() {
 		// owner of listing 15 has already NEW/POSTED listing
 		ListingVO listing = DtoToVoConverter.convert(super.listingList.get(15));
-		ListingAndUserVO postedListing = ListingFacade.instance().sendBackListingToOwner(mocks.GREG, listing.getId());
+		ListingAndUserVO postedListing = ListingFacade.instance().sendBackListingToOwner(mocks.GREG, listing.getId(), null);
 		assertNotNull(postedListing);
 		assertNotSame("This user has already NEW/POSTED listing", ErrorCodes.OK, postedListing.getErrorCode());
 		assertNull("Sending back listing should work", postedListing.getListing());

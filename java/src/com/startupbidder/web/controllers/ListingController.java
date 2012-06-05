@@ -32,7 +32,7 @@ import com.startupbidder.vo.ListPropertiesVO;
 import com.startupbidder.vo.ListingAndUserVO;
 import com.startupbidder.vo.ListingPropertyVO;
 import com.startupbidder.vo.ListingVO;
-import com.startupbidder.vo.OrderBookVO;
+import com.startupbidder.vo.OrderBook;
 import com.startupbidder.vo.QuestionAnswerVO;
 import com.startupbidder.web.BidFacade;
 import com.startupbidder.web.HttpHeaders;
@@ -511,7 +511,7 @@ public class ListingController extends ModelDrivenController {
     }
 
     // POST /listings/freeze
-    private HttpHeaders freeze(HttpServletRequest request) {
+    private HttpHeaders freeze(HttpServletRequest request) throws JsonParseException, JsonMappingException, IOException {
     	log.log(Level.INFO, "Parameters: " + request.getParameterMap());
 		String listingString = request.getParameter("listing");
 		if (!StringUtils.isEmpty(listingString)) {
@@ -830,7 +830,7 @@ public class ListingController extends ModelDrivenController {
 		HttpHeaders headers = new HttpHeadersImpl("order_book");
 		
 		String listingId = getCommandOrParameter(request, 2, "id");
-		OrderBookVO result = BidFacade.instance().getOrderBook(getLoggedInUser(), listingId);
+		OrderBook result = BidFacade.instance().getOrderBook(getLoggedInUser(), listingId);
 		model = result;
 		
 		return headers;

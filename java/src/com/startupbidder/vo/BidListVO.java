@@ -13,9 +13,12 @@ import org.codehaus.jackson.annotate.JsonProperty;
  */
 @JsonAutoDetect(getterVisibility=Visibility.NONE, setterVisibility=Visibility.NONE,
 		fieldVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE)
-public class BidListVO extends BaseResultVO {
+public class BidListVO extends BaseResultVO implements OrderBook {
 	@JsonProperty("bids") private List<BidVO> bids;
 	@JsonProperty("investor_id") private UserShortVO otherUser;
+	@JsonProperty("investor_bids") private List<AnonBidVO> investorBids;
+	@JsonProperty("owner_bids") private List<AnonBidVO> ownerBids;
+	@JsonProperty("accepted_bids") private List<AnonBidVO> acceptedBids;
 	@JsonProperty("bids_props")	private ListPropertiesVO bidsProperties;
 	@JsonProperty("valid_actions") private String validActions[];
 	public List<BidVO> getBids() {
@@ -38,5 +41,23 @@ public class BidListVO extends BaseResultVO {
 	}
 	public void setValidActions(String validActions) {
 		this.validActions = StringUtils.split(validActions, ',');
+	}
+	public List<AnonBidVO> getInvestorBids() {
+		return investorBids;
+	}
+	public void setInvestorBids(List<AnonBidVO> investorBids) {
+		this.investorBids = investorBids;
+	}
+	public List<AnonBidVO> getOwnerBids() {
+		return ownerBids;
+	}
+	public void setOwnerBids(List<AnonBidVO> ownerBids) {
+		this.ownerBids = ownerBids;
+	}
+	public List<AnonBidVO> getAcceptedBids() {
+		return acceptedBids;
+	}
+	public void setAcceptedBids(List<AnonBidVO> acceptedBids) {
+		this.acceptedBids = acceptedBids;
 	}
 }
