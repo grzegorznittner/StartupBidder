@@ -782,7 +782,7 @@ public class ListingFacade {
 			} else {
 				NotificationFacade.instance().scheduleListingStateNotification(updatedListing);
 				if (message == null) {
-					message = "Your listing has not been accepted. Please correct it.";
+					message = "Your listing has been frozen. An administrator will contact you soon.";
 				}
 				MessageFacade.instance().sendPrivateMessage(loggedInUser, updatedListing.owner.getString(), message);
 			}
