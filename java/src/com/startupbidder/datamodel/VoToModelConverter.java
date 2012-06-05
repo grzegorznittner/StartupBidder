@@ -14,7 +14,6 @@ import com.startupbidder.vo.ListingPropertyVO;
 import com.startupbidder.vo.ListingVO;
 import com.startupbidder.vo.MonitorVO;
 import com.startupbidder.vo.NotificationVO;
-import com.startupbidder.vo.OldBidVO;
 import com.startupbidder.vo.QuestionAnswerVO;
 import com.startupbidder.vo.SystemPropertyVO;
 import com.startupbidder.vo.UserVO;
@@ -50,37 +49,6 @@ public class VoToModelConverter {
 		qa.userNickname = qaVO.getUserNickname();
 		qa.listing = (Key<Listing>)stringToKey(qaVO.getListing());		
 		return qa;
-	}
-	
-	@SuppressWarnings("unchecked")
-	public static OldBid convert(OldBidVO bidVO) {
-		OldBid bid = new OldBid();
-		if (!StringUtils.isEmpty(bidVO.getId())) {
-			bid.id = bidVO.toKeyId();
-		}
-		bid.listing = (Key<Listing>)stringToKey(bidVO.getListing());
-		bid.listingName = bidVO.getListingName();
-		if (!StringUtils.isEmpty(bidVO.getFundType())) {
-			bid.fundType = OldBid.FundType.valueOf(StringUtils.upperCase(bidVO.getFundType()));
-		}
-		if (!StringUtils.isEmpty(bidVO.getAction())) {
-			bid.action = OldBid.Action.valueOf(StringUtils.upperCase(bidVO.getAction()));
-		}
-		if (!StringUtils.isEmpty(bidVO.getActor())) {
-			bid.actor = OldBid.Actor.valueOf(StringUtils.upperCase(bidVO.getActor()));
-		}
-		bid.expires = bidVO.getExpires();
-		bid.mockData = bidVO.isMockData();
-		bid.percentOfCompany = bidVO.getPercentOfCompany();
-		bid.interestRate = bidVO.getInterestRate();
-		bid.placed = bidVO.getPlaced();
-		bid.bidder = (Key<SBUser>)stringToKey(bidVO.getUser());
-		bid.bidderName = bidVO.getUserName();
-		bid.value = bidVO.getValue();
-		bid.valuation = bidVO.getValuation();
-		bid.listingOwner = (Key<SBUser>)stringToKey(bidVO.getListingOwner());
-		bid.comment = bidVO.getComment();
-		return bid;
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -359,15 +327,6 @@ public class VoToModelConverter {
 			commentDTOList.add(commentDTO);
 		}
 		return commentDTOList;
-	}
-
-	public static List<OldBid> convertBids(List<OldBidVO> bidVoList) {
-		List<OldBid> bidDtoList = new ArrayList<OldBid>();
-		for (OldBidVO bidVO : bidVoList) {
-			OldBid bidDTO = convert(bidVO);
-			bidDtoList.add(bidDTO);
-		}
-		return bidDtoList;
 	}
 
 	public static List<Notification> convertNotifications(List<NotificationVO> notifVoList) {

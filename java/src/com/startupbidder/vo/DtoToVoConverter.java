@@ -1,9 +1,7 @@
 package com.startupbidder.vo;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateMidnight;
@@ -13,7 +11,6 @@ import org.joda.time.Interval;
 import com.googlecode.objectify.Key;
 import com.startupbidder.datamodel.Bid;
 import com.startupbidder.datamodel.BidUser;
-import com.startupbidder.datamodel.OldBid;
 import com.startupbidder.datamodel.Comment;
 import com.startupbidder.datamodel.Listing;
 import com.startupbidder.datamodel.ListingDoc;
@@ -128,31 +125,6 @@ public class DtoToVoConverter {
 		qa.setUser(keyToString(qaDTO.user));
 		qa.setUserNickname(qaDTO.userNickname);
 		return qa;
-	}
-
-	public static OldBidVO convert(OldBid bidDTO) {
-		if (bidDTO == null) {
-			return null;
-		}
-		OldBidVO bid = new OldBidVO();
-		bid.setId(bidDTO.id != null ? new Key<OldBid>(OldBid.class, bidDTO.id).getString() : null);
-		bid.setMockData(bidDTO.mockData);
-		bid.setListing(keyToString(bidDTO.listing));
-		bid.setListingName(bidDTO.listingName);
-		bid.setFundType(bidDTO.fundType.toString());
-		bid.setPercentOfCompany(bidDTO.percentOfCompany);
-		bid.setInterestRate(bidDTO.interestRate);
-		bid.setPlaced(bidDTO.placed);
-		bid.setUser(keyToString(bidDTO.bidder));
-		bid.setUserName(bidDTO.bidderName);
-		bid.setListingOwner(keyToString(bidDTO.listingOwner));
-		bid.setValue(bidDTO.value);
-		bid.setValuation(bidDTO.valuation);
-		bid.setAction(bidDTO.action.toString());
-		bid.setActor(bidDTO.actor.toString());
-		bid.setExpires(bidDTO.expires);
-		bid.setComment(bidDTO.comment);
-		return bid;
 	}
 	
 	public static ListingVO convert(Listing listingDTO) {
@@ -360,19 +332,9 @@ public class DtoToVoConverter {
 		}
 		NotificationVO notif = new NotificationVO();
 		notif.setId(new Key<Notification>(Notification.class, notifDTO.id).getString());
-		if (notifDTO.direction == Notification.Direction.A_TO_B) {
-			notif.setUser(notifDTO.userB.getString());
-			notif.setUserNickname(notifDTO.userBNickname);
-			notif.setFromUser(notifDTO.userA != null ? notifDTO.userA.getString() : null);
-			notif.setFromUserNickname(notifDTO.userANickname);
-		} else {
-			notif.setUser(notifDTO.userA.getString());
-			notif.setUserNickname(notifDTO.userANickname);
-			notif.setFromUser(notifDTO.userB != null ? notifDTO.userB.getString() : null);
-			notif.setFromUserNickname(notifDTO.userBNickname);
-		}
-		notif.setParentNotification(notifDTO.parentNotification != null ? notifDTO.parentNotification.getString() : null);
-		notif.setContextNotificationId(new Key<Notification>(Notification.class, notifDTO.context).getString());
+		notif.setUser(notifDTO.user.getString());
+		notif.setUserNickname(notifDTO.userNickname);
+		notif.setUserEmail(notifDTO.userEmail);
 		notif.setCreated(notifDTO.created);
 		notif.setSentDate(notifDTO.sentDate);
 		notif.setListing(notifDTO.listing != null ? notifDTO.listing.getString() : null);
@@ -383,9 +345,7 @@ public class DtoToVoConverter {
 		notif.setListingBriefAddress(notifDTO.listingBriefAddress);
 		notif.setType(notifDTO.type.toString());
 		notif.setRead(notifDTO.read);
-		notif.setReplied(notifDTO.replied);
 		String listingLink = notif.getLink();
-		String fromUserNickname = notifDTO.direction == Notification.Direction.A_TO_B ? notifDTO.userANickname : notifDTO.userBNickname;
 		switch(notifDTO.type) {
 		case NEW_COMMENT_FOR_MONITORED_LISTING:
 			notif.setTitle("New comment for listing " + notifDTO.listingName);
@@ -403,36 +363,51 @@ public class DtoToVoConverter {
 			notif.setText3("Please visit <a href=\"" + listingLink + "\">company's page at startupbidder.com</a>.");
 			break;
 		case ASK_LISTING_OWNER:
-            if (notif.getParentNotification() == null) {
-			    notif.setTitle("A question from " + fromUserNickname + " concerning listing " + notifDTO.listingName);
-                notif.setText1("Question about listing " + notifDTO.listingName + " has been posted by " + fromUserNickname + ":");
-            } else {
-                notif.setTitle("Received reply concerning question for listing " + notifDTO.listingName + " from " + fromUserNickname);
-                notif.setText1("Reply concerning listing " + notifDTO.listingName + " has been posted by " + fromUserNickname + ":");
-            }
+		    notif.setTitle("A question from " + notifDTO.fromUserNickname + " concerning listing " + notifDTO.listingName);
+            notif.setText1("Question about listing " + notifDTO.listingName + " has been posted by " + notifDTO.fromUserNickname + ":");
 			notif.setText3("Please visit <a href=\"" + listingLink + "\">company's page at startupbidder.com</a>.");
-			if (StringUtils.isEmpty(notif.getParentNotification())) {
-				// it's question
-				notif.setText2(notifDTO.message);
-			} else {
-				// it's answer
-				notif.setText2(notifDTO.question);
-				notif.setCreated(notifDTO.questionDate);
-				notif.setAnswer(notifDTO.message); // setting answer
-				notif.setAnswerDate(notifDTO.created);
-			}
+			notif.setText2(notifDTO.message);
 			break;
 		case PRIVATE_MESSAGE:
-            if (notif.getParentNotification() == null) {
-			    notif.setTitle("Private message from " + fromUserNickname + " concerning listing " + notifDTO.listingName );
-			    notif.setText1("Private message from user " + fromUserNickname + ":");
-			    notif.setText2(notifDTO.message);
-            } else {
-                notif.setTitle("Received reply concerning private message for listing " + notifDTO.listingName + " from " + fromUserNickname);
-                notif.setText1("Private reply concerning listing " + notifDTO.listingName + " has been posted by " + fromUserNickname + ":");
-                notif.setText2(notifDTO.message);
-            }
+		    notif.setTitle("Private message from " + notifDTO.fromUserNickname + " concerning listing " + notifDTO.listingName );
+		    notif.setText1("Private message from user " + notifDTO.fromUserNickname + ":");
+		    notif.setText2(notifDTO.message);
             notif.setText3("Please visit <a href=\"" + listingLink + "\">company's page at startupbidder.com</a>.");
+			break;
+		}
+
+		return notif;
+	}
+	
+	public static ShortNotificationVO convertShortNotification(Notification notifDTO) {
+		if (notifDTO == null) {
+			return null;
+		}
+		ShortNotificationVO notif = new ShortNotificationVO();
+		notif.setCreated(notifDTO.created);
+		notif.setListing(notifDTO.listing != null ? notifDTO.listing.getString() : null);
+		notif.setType(notifDTO.type.toString());
+		notif.setRead(notifDTO.read);
+		switch(notifDTO.type) {
+		case NEW_COMMENT_FOR_MONITORED_LISTING:
+			notif.setTitle("New comment for listing " + notifDTO.listingName);
+			notif.setText1("Listing " + notifDTO.listingName + " has received a new comment.");
+			break;
+		case NEW_COMMENT_FOR_YOUR_LISTING:
+			notif.setTitle("New comment for listing " + notifDTO.listingName);
+			notif.setText1("Your listing \"" + notifDTO.listingName + "\" has received a new comment.");
+			break;
+		case NEW_LISTING:
+			notif.setTitle("New listing " + notifDTO.listingName + " posted");
+			notif.setText1("A new listing " + notifDTO.listingName + " has been posted by " + notifDTO.listingOwner + " on startupbidder.com");
+			break;
+		case ASK_LISTING_OWNER:
+		    notif.setTitle("A question from " + notifDTO.fromUserNickname + " concerning listing " + notifDTO.listingName);
+            notif.setText1("Question about listing " + notifDTO.listingName + " has been posted by " + notifDTO.fromUserNickname + ":");
+			break;
+		case PRIVATE_MESSAGE:
+		    notif.setTitle("Private message from " + notifDTO.fromUserNickname + " concerning listing " + notifDTO.listingName );
+		    notif.setText1("Private message from user " + notifDTO.fromUserNickname + ":");
 			break;
 		}
 
@@ -487,18 +462,6 @@ public class DtoToVoConverter {
 			commentVoList.add(commentVO);
 		}
 		return commentVoList;
-	}
-
-	public static List<OldBidVO> convertOldBids(List<OldBid> bidDtoList) {
-		if (bidDtoList == null) {
-			return null;
-		}
-		List<OldBidVO> bidVoList = new ArrayList<OldBidVO>();
-		for (OldBid bidDTO : bidDtoList) {
-			OldBidVO bidVO = convert(bidDTO);
-			bidVoList.add(bidVO);
-		}
-		return bidVoList;
 	}
 
 	public static List<UserVO> convertUsers(List<SBUser> userDtoList) {
@@ -556,6 +519,18 @@ public class DtoToVoConverter {
 		List<NotificationVO> notifVoList = new ArrayList<NotificationVO>();
 		for (Notification notifDTO : notifDtoList) {
 			NotificationVO notifVO = convert(notifDTO);
+			notifVoList.add(notifVO);
+		}
+		return notifVoList;
+	}
+
+	public static List<ShortNotificationVO> convertShortNotifications(List<Notification> notifDtoList) {
+		if (notifDtoList == null) {
+			return null;
+		}
+		List<ShortNotificationVO> notifVoList = new ArrayList<ShortNotificationVO>();
+		for (Notification notifDTO : notifDtoList) {
+			ShortNotificationVO notifVO = convertShortNotification(notifDTO);
 			notifVoList.add(notifVO);
 		}
 		return notifVoList;
@@ -645,14 +620,6 @@ public class DtoToVoConverter {
 		return bidVoList;
 	}
 	
-	public static Map<String, List<OldBidVO>> convertBidMap(Map<Key<SBUser>, List<OldBid>> bidMap) {
-		Map<String, List<OldBidVO>> result = new HashMap<String, List<OldBidVO>>();
-		for (Map.Entry<Key<SBUser>, List<OldBid>> entry : bidMap.entrySet()) {
-			result.put(entry.getKey().getString(), convertOldBids(entry.getValue()));
-		}
-		return result;
-	}
-
 	public static void updateBriefAddress(Listing listingDTO) {
 		String briefAddress = "";
 		if (!StringUtils.isEmpty(listingDTO.country)) {

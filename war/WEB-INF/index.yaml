@@ -273,44 +273,6 @@ indexes:
     - name: valuation
       direction: desc
 
-- kind: Notification
-  ancestor: no
-  properties:
-    - name: direction
-    - name: listing
-    - name: replied
-    - name: display
-    - name: created
-      direction: desc
-
-- kind: Notification
-  ancestor: no
-  properties:
-    - name: userA
-    - name: read
-    - name: display
-    - name: created
-      direction: desc
-
-- kind: Notification
-  ancestor: no
-  properties:
-    - name: userA
-    - name: listing
-    - name: type
-    - name: read
-    - name: display
-    - name: created
-      direction: desc
-
-- kind: Notification
-  ancestor: no
-  properties:
-    - name: context
-    - name: direction
-    - name: created
-      direction: desc
-
 - kind: Monitor
   ancestor: no
   properties:
@@ -406,4 +368,26 @@ indexes:
     - name: userA
     - name: created
       direction: desc
-      
+
+- kind: Notification
+  ancestor: no
+  properties:
+    - name: user
+    - name: created
+      direction: desc
+
+- kind: Notification
+  ancestor: no
+  properties:
+    - name: user
+    - name: read
+    - name: created
+      direction: desc
+
+- kind: Notification
+  ancestor: no
+  properties:
+    - name: user
+    - name: listing
+    - name: created
+      direction: desc

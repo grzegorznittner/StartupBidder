@@ -66,14 +66,22 @@ public class DocService {
 		String user = (String)cache.get(SystemProperty.GOOGLEDOC_USER);
 		if (user == null) {
 			SystemProperty userProp = ServiceFacade.instance().getDAO().getSystemProperty(SystemProperty.GOOGLEDOC_USER);
-			user = userProp.value;
-			cache.put(SystemProperty.GOOGLEDOC_USER, user);
+			if (userProp != null) {
+				user = userProp.value;
+				cache.put(SystemProperty.GOOGLEDOC_USER, user);
+			}
 		}
 		String pass = (String)cache.get(SystemProperty.GOOGLEDOC_PASSWORD);
 		if (pass == null) {
 			SystemProperty passProp = ServiceFacade.instance().getDAO().getSystemProperty(SystemProperty.GOOGLEDOC_PASSWORD);
-			pass = passProp.value;
-			cache.put(SystemProperty.GOOGLEDOC_PASSWORD, pass);
+			if (passProp != null) {
+				pass = passProp.value;
+				cache.put(SystemProperty.GOOGLEDOC_PASSWORD, pass);
+			}
+		}
+		if (user == null || pass == null) {
+			log.severe("Google Doc credentials not set up!");
+			return null;
 		}
 		DocsService client = new DocsService("www-startupbidder-v1");
 		try {

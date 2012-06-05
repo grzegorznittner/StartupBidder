@@ -3,7 +3,6 @@ package test.com.startupbidder;
 import java.util.Date;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
-import org.joda.time.DateMidnight;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -19,7 +18,7 @@ import com.google.appengine.tools.development.testing.LocalUserServiceTestConfig
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.Objectify;
 import com.googlecode.objectify.ObjectifyService;
-import com.startupbidder.datamodel.OldBid;
+import com.startupbidder.datamodel.Bid;
 import com.startupbidder.datamodel.Comment;
 import com.startupbidder.datamodel.Listing;
 import com.startupbidder.datamodel.ListingDoc;
@@ -47,7 +46,7 @@ public class EntityConverterTest {
 		ObjectifyService.register(Comment.class);
 		ObjectifyService.register(Vote.class);
 		ObjectifyService.register(Rank.class);
-		ObjectifyService.register(OldBid.class);
+		ObjectifyService.register(Bid.class);
 		ObjectifyService.register(ListingDoc.class);
 	}
 	
@@ -66,32 +65,6 @@ public class EntityConverterTest {
 		return ofy;
 	}
 
-	@Test
-	public void testBid() throws EntityNotFoundException {
-		DateMidnight midnight = new DateMidnight();
-		
-		OldBid bid = new OldBid();
-		bid.fundType = OldBid.FundType.NOTE;
-		bid.listing = new Key<Listing>(Listing.class, 1000L);
-		bid.percentOfCompany = 44;
-		bid.placed = new Date(100000);
-		bid.action = OldBid.Action.ACTIVATE;
-		bid.bidder = new Key<SBUser>(SBUser.class, 1001L);
-		bid.bidderName = "Bidder name";
-		bid.value = 44444;
-		bid.expires = midnight.plusDays(3).toDate();
-		bid.placed = midnight.minusDays(1).toDate();
-		
-		System.out.println("Original: " + bid);
-		
-		getOfy().put(bid);
-		OldBid newBid = getOfy().get(OldBid.class, bid.id);
-
-		System.out.println("Recreated: " + newBid);
-		
-		Assert.assertTrue(EqualsBuilder.reflectionEquals(bid, newBid));
-	}
-	
 	@Test
 	public void testComment() throws EntityNotFoundException {
 		Comment comment = new Comment();

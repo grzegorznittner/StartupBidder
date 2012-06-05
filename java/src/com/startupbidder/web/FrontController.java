@@ -25,8 +25,6 @@ import com.startupbidder.datamodel.ListingStats;
 import com.startupbidder.datamodel.Location;
 import com.startupbidder.datamodel.Monitor;
 import com.startupbidder.datamodel.Notification;
-import com.startupbidder.datamodel.OldBid;
-import com.startupbidder.datamodel.OldPaidBid;
 import com.startupbidder.datamodel.PrivateMessage;
 import com.startupbidder.datamodel.PrivateMessageUser;
 import com.startupbidder.datamodel.QuestionAnswer;
@@ -57,7 +55,6 @@ public class FrontController extends HttpServlet {
 		ObjectifyService.register(SBUser.class);
 		ObjectifyService.register(Listing.class);
 		ObjectifyService.register(UserStats.class);
-		ObjectifyService.register(OldBid.class);
 		ObjectifyService.register(Comment.class);
 		ObjectifyService.register(ListingDoc.class);
 		ObjectifyService.register(ListingStats.class);
@@ -68,7 +65,6 @@ public class FrontController extends HttpServlet {
 		ObjectifyService.register(PrivateMessageUser.class);
 		ObjectifyService.register(Bid.class);
 		ObjectifyService.register(BidUser.class);
-		ObjectifyService.register(OldPaidBid.class);
 		ObjectifyService.register(Rank.class);
 		ObjectifyService.register(SystemProperty.class);
 		ObjectifyService.register(Vote.class);

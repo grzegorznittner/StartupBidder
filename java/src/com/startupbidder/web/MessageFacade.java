@@ -19,7 +19,6 @@ import com.startupbidder.vo.PrivateMessageListVO;
 import com.startupbidder.vo.PrivateMessageUserListVO;
 import com.startupbidder.vo.PrivateMessageUserVO;
 import com.startupbidder.vo.PrivateMessageVO;
-import com.startupbidder.vo.UserBasicVO;
 import com.startupbidder.vo.UserShortVO;
 import com.startupbidder.vo.UserVO;
 
@@ -63,6 +62,7 @@ public class MessageFacade {
 		}
 		log.info("User '" + fromUser.nickname + "' is sending private message to '" + toUser.nickname + "'");
 		PrivateMessage msg = getDAO().createPrivateMessage(toUser, fromUser, text);
+		NotificationFacade.instance().schedulePrivateMessageNotification(msg);
 		return DtoToVoConverter.convert(msg);
 	}
 

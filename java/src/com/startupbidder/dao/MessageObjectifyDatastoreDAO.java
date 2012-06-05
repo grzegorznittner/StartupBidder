@@ -22,7 +22,7 @@ import com.startupbidder.vo.ListPropertiesVO;
 public class MessageObjectifyDatastoreDAO {
 	private static final Logger log = Logger.getLogger(MessageObjectifyDatastoreDAO.class.getName());
 	static MessageObjectifyDatastoreDAO instance;
-		
+	
 	public static MessageObjectifyDatastoreDAO getInstance() {
 		if (instance == null) {
 			instance = new MessageObjectifyDatastoreDAO();
@@ -141,5 +141,9 @@ public class MessageObjectifyDatastoreDAO {
 			log.info("Updating read flag for " + forUpdate.size() + " message objects.");
 			getOfy().put(forUpdate);
 		}
+	}
+
+	public PrivateMessage getMessage(long keyId) {
+		return getOfy().find(new Key<PrivateMessage>(PrivateMessage.class, keyId));
 	}
 }

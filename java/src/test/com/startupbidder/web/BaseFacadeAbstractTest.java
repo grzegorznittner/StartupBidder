@@ -1,14 +1,11 @@
 package test.com.startupbidder.web;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.ServerSocket;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Handler;
@@ -16,11 +13,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.RandomStringUtils;
-import org.joda.time.DateMidnight;
-import org.joda.time.DateTime;
-import org.joda.time.Days;
 import org.junit.Assert;
 
 import com.google.appengine.api.users.User;
@@ -30,12 +22,11 @@ import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestC
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.google.appengine.tools.development.testing.LocalTaskQueueTestConfig;
 import com.google.appengine.tools.development.testing.LocalUserServiceTestConfig;
-import com.googlecode.objectify.Key;
 import com.googlecode.objectify.Objectify;
 import com.googlecode.objectify.ObjectifyService;
 import com.startupbidder.dao.MockDataBuilder;
-import com.startupbidder.dao.ObjectifyDatastoreDAO;
-import com.startupbidder.datamodel.OldBid;
+import com.startupbidder.datamodel.Bid;
+import com.startupbidder.datamodel.BidUser;
 import com.startupbidder.datamodel.Category;
 import com.startupbidder.datamodel.Comment;
 import com.startupbidder.datamodel.Listing;
@@ -45,7 +36,6 @@ import com.startupbidder.datamodel.ListingStats;
 import com.startupbidder.datamodel.Location;
 import com.startupbidder.datamodel.Monitor;
 import com.startupbidder.datamodel.Notification;
-import com.startupbidder.datamodel.OldPaidBid;
 import com.startupbidder.datamodel.PrivateMessage;
 import com.startupbidder.datamodel.PrivateMessageUser;
 import com.startupbidder.datamodel.QuestionAnswer;
@@ -54,12 +44,7 @@ import com.startupbidder.datamodel.SBUser;
 import com.startupbidder.datamodel.SystemProperty;
 import com.startupbidder.datamodel.UserStats;
 import com.startupbidder.datamodel.Vote;
-import com.startupbidder.datamodel.SBUser.Status;
-import com.startupbidder.vo.DtoToVoConverter;
 import com.startupbidder.vo.ListingTileVO;
-import com.startupbidder.vo.ListingVO;
-import com.startupbidder.vo.UserVO;
-import com.startupbidder.web.UserMgmtFacade;
 
 public abstract class BaseFacadeAbstractTest {
 	private static final Logger log = Logger.getLogger(BaseFacadeAbstractTest.class.getName());
@@ -130,7 +115,7 @@ public abstract class BaseFacadeAbstractTest {
 	}
 	
 	protected List<Listing> listingList = null;
-	protected List<OldBid> bidList = null;
+	protected List<Bid> bidList = null;
 
 	static {
 		Handler fh = new ConsoleHandler();
@@ -140,7 +125,8 @@ public abstract class BaseFacadeAbstractTest {
 		ObjectifyService.register(SBUser.class);
 		ObjectifyService.register(Listing.class);
 		ObjectifyService.register(UserStats.class);
-		ObjectifyService.register(OldBid.class);
+		ObjectifyService.register(Bid.class);
+		ObjectifyService.register(BidUser.class);
 		ObjectifyService.register(Comment.class);
 		ObjectifyService.register(ListingDoc.class);
 		ObjectifyService.register(ListingStats.class);
@@ -149,7 +135,6 @@ public abstract class BaseFacadeAbstractTest {
 		ObjectifyService.register(QuestionAnswer.class);
 		ObjectifyService.register(PrivateMessage.class);
 		ObjectifyService.register(PrivateMessageUser.class);
-		ObjectifyService.register(OldPaidBid.class);
 		ObjectifyService.register(Rank.class);
 		ObjectifyService.register(SystemProperty.class);
 		ObjectifyService.register(Vote.class);
@@ -526,57 +511,57 @@ public abstract class BaseFacadeAbstractTest {
 	}
 	
 	private void createTestBids() {
-		bidList = new ArrayList<OldBid>();
+		bidList = new ArrayList<Bid>();
 		
 		// Tests rely on order of the objects
 		// Add new objects to the end of the list.
 		
-		bidList.add(prepareBid(LISTING1_OWNER1, OWNER1, BIDDER1, OldBid.Actor.BIDDER, OldBid.Action.ACTIVATE, 10, 3, 20000, 25));
-		bidList.add(prepareBid(LISTING1_OWNER1, OWNER1, BIDDER1, OldBid.Actor.OWNER, OldBid.Action.ACTIVATE, 8, 3, 25000, 25));
-		bidList.add(prepareBid(LISTING1_OWNER1, OWNER1, BIDDER1, OldBid.Actor.BIDDER, OldBid.Action.ACTIVATE, 7, 3, 21000, 25));
-		bidList.add(prepareBid(LISTING1_OWNER1, OWNER1, BIDDER1, OldBid.Actor.BIDDER, OldBid.Action.CANCEL, 6, 0, 0, 0));
-
-		bidList.add(prepareBid(LISTING1_OWNER1, OWNER1, BIDDER1, OldBid.Actor.BIDDER, OldBid.Action.ACTIVATE, 5, 3, 15000, 25));
-		bidList.add(prepareBid(LISTING1_OWNER1, OWNER1, BIDDER1, OldBid.Actor.OWNER, OldBid.Action.ACTIVATE, 4, 3, 25000, 25));
-		bidList.add(prepareBid(LISTING1_OWNER1, OWNER1, BIDDER1, OldBid.Actor.BIDDER, OldBid.Action.ACTIVATE, 3, 3, 16000, 25));
-		bidList.add(prepareBid(LISTING1_OWNER1, OWNER1, BIDDER1, OldBid.Actor.OWNER, OldBid.Action.CANCEL, 2, 0, 0, 0));
-
-		bidList.add(prepareBid(LISTING1_OWNER1, OWNER1, BIDDER2, OldBid.Actor.BIDDER, OldBid.Action.ACTIVATE, 7, 3, 21000, 30));
-
-		bidList.add(prepareBid(LISTING2_OWNER1, OWNER1, BIDDER1, OldBid.Actor.BIDDER, OldBid.Action.ACTIVATE, 5, 3, 5000, 30));
-		bidList.add(prepareBid(LISTING2_OWNER1, OWNER1, BIDDER1, OldBid.Actor.OWNER, OldBid.Action.ACTIVATE, 2, 3, 6000, 30));
-
-		bidList.add(prepareBid(LISTING1_OWNER2, OWNER2, BIDDER1, OldBid.Actor.BIDDER, OldBid.Action.ACTIVATE,5, 3, 60000, 50));
-		bidList.add(prepareBid(LISTING1_OWNER2, OWNER2, BIDDER1, OldBid.Actor.OWNER, OldBid.Action.ACTIVATE, 4, 3, 65000, 50));
-
-		Objectify ofy = ObjectifyService.begin();
-		ofy.put(bidList);
+//		bidList.add(prepareBid(LISTING1_OWNER1, OWNER1, BIDDER1, OldBid.Actor.BIDDER, OldBid.Action.ACTIVATE, 10, 3, 20000, 25));
+//		bidList.add(prepareBid(LISTING1_OWNER1, OWNER1, BIDDER1, OldBid.Actor.OWNER, OldBid.Action.ACTIVATE, 8, 3, 25000, 25));
+//		bidList.add(prepareBid(LISTING1_OWNER1, OWNER1, BIDDER1, OldBid.Actor.BIDDER, OldBid.Action.ACTIVATE, 7, 3, 21000, 25));
+//		bidList.add(prepareBid(LISTING1_OWNER1, OWNER1, BIDDER1, OldBid.Actor.BIDDER, OldBid.Action.CANCEL, 6, 0, 0, 0));
+//
+//		bidList.add(prepareBid(LISTING1_OWNER1, OWNER1, BIDDER1, OldBid.Actor.BIDDER, OldBid.Action.ACTIVATE, 5, 3, 15000, 25));
+//		bidList.add(prepareBid(LISTING1_OWNER1, OWNER1, BIDDER1, OldBid.Actor.OWNER, OldBid.Action.ACTIVATE, 4, 3, 25000, 25));
+//		bidList.add(prepareBid(LISTING1_OWNER1, OWNER1, BIDDER1, OldBid.Actor.BIDDER, OldBid.Action.ACTIVATE, 3, 3, 16000, 25));
+//		bidList.add(prepareBid(LISTING1_OWNER1, OWNER1, BIDDER1, OldBid.Actor.OWNER, OldBid.Action.CANCEL, 2, 0, 0, 0));
+//
+//		bidList.add(prepareBid(LISTING1_OWNER1, OWNER1, BIDDER2, OldBid.Actor.BIDDER, OldBid.Action.ACTIVATE, 7, 3, 21000, 30));
+//
+//		bidList.add(prepareBid(LISTING2_OWNER1, OWNER1, BIDDER1, OldBid.Actor.BIDDER, OldBid.Action.ACTIVATE, 5, 3, 5000, 30));
+//		bidList.add(prepareBid(LISTING2_OWNER1, OWNER1, BIDDER1, OldBid.Actor.OWNER, OldBid.Action.ACTIVATE, 2, 3, 6000, 30));
+//
+//		bidList.add(prepareBid(LISTING1_OWNER2, OWNER2, BIDDER1, OldBid.Actor.BIDDER, OldBid.Action.ACTIVATE,5, 3, 60000, 50));
+//		bidList.add(prepareBid(LISTING1_OWNER2, OWNER2, BIDDER1, OldBid.Actor.OWNER, OldBid.Action.ACTIVATE, 4, 3, 65000, 50));
+//
+//		Objectify ofy = ObjectifyService.begin();
+//		ofy.put(bidList);
 	}
 
-	public OldBid prepareBid(int listingIdx, int ownerIdx, int bidderIdx, OldBid.Actor actor, OldBid.Action action, int placedDaysAgo, int expiersInDays, int value, int percent) {
-		DateTime placed = new DateTime().minusDays(placedDaysAgo);
-		
-		OldBid bid = new OldBid();
-		bid.action = action;
-		bid.actor = actor;
-		bid.bidder = new Key<SBUser>(SBUser.class, mocks.users.get(bidderIdx).id);
-		bid.bidderName = mocks.users.get(bidderIdx).nickname;
-		bid.listing = new Key<Listing>(Listing.class, listingList.get(listingIdx).id);
-		bid.listingName = listingList.get(listingIdx).name;
-		bid.listingOwner = new Key<SBUser>(SBUser.class, mocks.users.get(ownerIdx).id);
-		bid.placed = placed.toDate();
-		bid.expires = placed.plusDays(expiersInDays).toDate();
-		bid.value = value;
-		bid.percentOfCompany = percent;
-		bid.fundType = OldBid.FundType.SOLE_INVESTOR;
-		if (actor == OldBid.Actor.BIDDER) {
-			bid.comment = "Bid by " + mocks.users.get(bidderIdx).name;
-		} else {
-			bid.comment = "Bid by " + mocks.users.get(ownerIdx).name;
-		}
-		bid.comment +=  " on " + bid.listingName + " owned by " + mocks.users.get(ownerIdx).nickname + ", action " + bid.action + ", placed " + bid.placed;
-		return bid;
-	}
+//	public Bid prepareBid(int listingIdx, int ownerIdx, int bidderIdx, OldBid.Actor actor, OldBid.Action action, int placedDaysAgo, int expiersInDays, int value, int percent) {
+//		DateTime placed = new DateTime().minusDays(placedDaysAgo);
+//		
+//		OldBid bid = new OldBid();
+//		bid.action = action;
+//		bid.actor = actor;
+//		bid.bidder = new Key<SBUser>(SBUser.class, mocks.users.get(bidderIdx).id);
+//		bid.bidderName = mocks.users.get(bidderIdx).nickname;
+//		bid.listing = new Key<Listing>(Listing.class, listingList.get(listingIdx).id);
+//		bid.listingName = listingList.get(listingIdx).name;
+//		bid.listingOwner = new Key<SBUser>(SBUser.class, mocks.users.get(ownerIdx).id);
+//		bid.placed = placed.toDate();
+//		bid.expires = placed.plusDays(expiersInDays).toDate();
+//		bid.value = value;
+//		bid.percentOfCompany = percent;
+//		bid.fundType = OldBid.FundType.SOLE_INVESTOR;
+//		if (actor == OldBid.Actor.BIDDER) {
+//			bid.comment = "Bid by " + mocks.users.get(bidderIdx).name;
+//		} else {
+//			bid.comment = "Bid by " + mocks.users.get(ownerIdx).name;
+//		}
+//		bid.comment +=  " on " + bid.listingName + " owned by " + mocks.users.get(ownerIdx).nickname + ", action " + bid.action + ", placed " + bid.placed;
+//		return bid;
+//	}
 	
 	public void checkListingsReturned(List<ListingTileVO> list, Listing ... listings) {
 		for (Listing listing : listings) {

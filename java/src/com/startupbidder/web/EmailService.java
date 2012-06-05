@@ -22,15 +22,7 @@ import javax.mail.internet.MimeMultipart;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 
-import com.google.appengine.api.utils.SystemProperty;
-import com.startupbidder.datamodel.Listing;
-import com.startupbidder.datamodel.Notification;
-import com.startupbidder.datamodel.SBUser;
-import com.startupbidder.vo.OldBidVO;
-import com.startupbidder.vo.CommentVO;
-import com.startupbidder.vo.ListingVO;
 import com.startupbidder.vo.NotificationVO;
-import com.startupbidder.vo.UserVO;
 
 /**
  * @author "Grzegorz Nittner" <grzegorz.nittner@gmail.com>
@@ -89,7 +81,7 @@ public class EmailService {
 			Map<String, String> props = prepareProperties(notification);
 			String htmlTemplate = FileUtils.readFileToString(new File(htmlTemplateFile), "UTF-8");
 			String htmlBody = applyProperties(htmlTemplate, props);
-			String subject = props.get(NOTIFICATION_TITLE);
+			String subject = props.get(NOTIFICATION_TITLE) + " real addressee " + notification.getUserEmail();
 			send("admin@startupbidder.com", "grzegorz.nittner@vodafone.com", subject, htmlBody);
 			return true;
 		} catch (Exception e) {

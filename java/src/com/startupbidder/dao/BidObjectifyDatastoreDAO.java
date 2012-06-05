@@ -156,4 +156,8 @@ public class BidObjectifyDatastoreDAO {
 			getOfy().put(forUpdate);
 		}
 	}
+
+	public Bid getBid(long keyId) {
+		return getOfy().find(new Key<Bid>(Bid.class, keyId));
+	}
 }

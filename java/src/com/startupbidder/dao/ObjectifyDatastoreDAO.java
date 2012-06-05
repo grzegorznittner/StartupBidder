@@ -10,7 +10,6 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.startupbidder.vo.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.RandomUtils;
@@ -27,7 +26,7 @@ import com.googlecode.objectify.Key;
 import com.googlecode.objectify.Objectify;
 import com.googlecode.objectify.ObjectifyService;
 import com.googlecode.objectify.Query;
-import com.startupbidder.datamodel.OldBid;
+import com.startupbidder.datamodel.Bid;
 import com.startupbidder.datamodel.Category;
 import com.startupbidder.datamodel.Comment;
 import com.startupbidder.datamodel.Listing;
@@ -37,12 +36,12 @@ import com.startupbidder.datamodel.ListingStats;
 import com.startupbidder.datamodel.Location;
 import com.startupbidder.datamodel.Monitor;
 import com.startupbidder.datamodel.Notification;
-import com.startupbidder.datamodel.OldPaidBid;
 import com.startupbidder.datamodel.QuestionAnswer;
 import com.startupbidder.datamodel.SBUser;
 import com.startupbidder.datamodel.SystemProperty;
 import com.startupbidder.datamodel.UserStats;
 import com.startupbidder.datamodel.Vote;
+import com.startupbidder.vo.ListPropertiesVO;
 import com.startupbidder.web.ListingFacade;
 
 /**
@@ -296,10 +295,6 @@ public class ObjectifyDatastoreDAO {
 		
 		listingStats.state = listing.state;
 		
-		QueryResultIterable<Key<OldBid>> bidsIt = getOfy().query(OldBid.class)
-				.filter("listing =", listingStats.listing).filter("status !=", OldBid.Action.CANCEL).fetchKeys();
-		listingStats.numberOfBids = CollectionUtils.size(bidsIt.iterator());
-		
 		QueryResultIterable<Key<Comment>> commentsIt = getOfy().query(Comment.class)
 				.filter("listing =", listingStats.listing).fetchKeys();
 		listingStats.numberOfComments = CollectionUtils.size(commentsIt.iterator());
@@ -310,20 +305,20 @@ public class ObjectifyDatastoreDAO {
 		listingStats.numberOfMonitors = CollectionUtils.size(monitorIt.iterator());
 
 		// calculate valuation for listing (max accepted bid or suggested valuation)
-		OldBid mostValuedBid = null;
+		Bid mostValuedBid = null;
 		// calculate median for bids and set total number of bids
 		List<Integer> values = new ArrayList<Integer>();
-		for (OldBid bid : getBidsForListing(listingId)) {
-			if (mostValuedBid == null || mostValuedBid.valuation < bid.valuation) {
-				mostValuedBid = bid;
-			}
-			values.add(bid.value);
-		}
-		if (mostValuedBid != null) {
-			listingStats.valuation = mostValuedBid.valuation;
-		} else {
-			listingStats.valuation = listing.suggestedValuation;
-		}
+//		for (Bid bid : BidObjectifyDatastoreDAO.getInstance().getBidsForListing(listing)) {
+//			if (mostValuedBid == null || mostValuedBid.valuation < bid.valuation) {
+//				mostValuedBid = bid;
+//			}
+//			values.add(bid.value);
+//		}
+//		if (mostValuedBid != null) {
+//			listingStats.valuation = mostValuedBid.valuation;
+//		} else {
+//			listingStats.valuation = listing.suggestedValuation;
+//		}
 
 		Collections.sort(values);
 		int median = 0;
@@ -837,40 +832,6 @@ public class ObjectifyDatastoreDAO {
 		return comments;
 	}
 
-	public List<OldBid> getBidsForListing(long listingId) {
-		QueryResultIterable<Key<OldBid>> bidsIt = getOfy().query(OldBid.class)
-				.filter("listing =", new Key<Listing>(Listing.class, listingId))
-				.order("-placed").fetchKeys();
-		List<OldBid> bids = new ArrayList<OldBid>(getOfy().get(bidsIt).values());
-		return bids;
-	}
-
-	public List<OldBid> getBidsForUser(long userId) {
-		QueryResultIterable<Key<OldBid>> bidsIt = getOfy().query(OldBid.class)
-				.filter("bidder =", new Key<SBUser>(SBUser.class, userId))
-				.order("-placed").fetchKeys();
-		List<OldBid> bids = new ArrayList<OldBid>(getOfy().get(bidsIt).values());
-		return bids;
-	}
-	
-	public List<OldBid> getBidsAcceptedByUser(long userId) {
-		QueryResultIterable<Key<OldBid>> bidsIt = getOfy().query(OldBid.class)
-				.filter("listingOwner =", new Key<SBUser>(SBUser.class, userId))
-				.filter("status =", OldBid.Action.ACCEPT)
-				.order("-placed").fetchKeys();
-		List<OldBid> bids = new ArrayList<OldBid>(getOfy().get(bidsIt).values());
-		return bids;
-	}
-
-	public List<OldBid> getBidsFundedByUser(String userId) {
-		QueryResultIterable<Key<OldBid>> bidsIt = getOfy().query(OldBid.class)
-				.filter("bidder =", new Key<SBUser>(SBUser.class, userId))
-				.filter("status =", OldBid.Action.ACCEPT)
-				.order("-placed").fetchKeys();
-		List<OldBid> bids = new ArrayList<OldBid>(getOfy().get(bidsIt).values());
-		return bids;
-	}
-
 	public int getNumberOfVotesForListing(long listingId) {
 		return getOfy().query(Vote.class)
 				.filter("listing =", new Key<Listing>(Listing.class, listingId))
@@ -887,15 +848,6 @@ public class ObjectifyDatastoreDAO {
 		return getOfy().query(Comment.class)
 				.filter("listing =", new Key<Listing>(Listing.class, listingId))
 				.count();
-	}
-
-	public OldBid getBid(long bidId) {
-		try {
-			return getOfy().get(OldBid.class, bidId);
-		} catch (Exception e) {
-			log.log(Level.WARNING, "Bid entity '" + bidId + "' not found", e);
-			return null;
-		}
 	}
 
 	public Comment getComment(long commentId) {
@@ -998,175 +950,6 @@ public class ObjectifyDatastoreDAO {
 		}
 	}
 
-	/**
-	 * Returns all bids for listing.
-	 */
-	public Map<Key<SBUser>, List<OldBid>> getAllBids(Key<Listing> listing) {
-		Map<Key<SBUser>, List<OldBid>> result = new HashMap<Key<SBUser>, List<OldBid>>();
-		QueryResultIterable<Key<OldBid>> bidKeys = getOfy().query(OldBid.class).filter("listing =", listing).fetchKeys();
-		Collection<OldBid> bids = getOfy().get(bidKeys).values();
-		
-		for (OldBid bid : bids) {
-			if (result.containsKey(bid.bidder)) {
-				result.get(bid.bidder).add(bid);
-			} else {
-				List<OldBid> bidList = new ArrayList<OldBid>();
-				bidList.add(bid);
-				result.put(bid.bidder, bidList);
-			}
-		}
-		return result;
-	}
-
-	public OldBid makeBid(long loggedInUser, OldBid bid) {
-		getOfy().put(bid);
-		return bid;
-	}
-
-	public OldBid counterOfferedByOwner(long loggedInUser, OldBid newBid) {
-		try {
-			OldBid bid = getOfy().get(OldBid.class, newBid.id);
-			if (loggedInUser != bid.listingOwner.getId()) {
-				log.log(Level.SEVERE, "User '" + loggedInUser + "' is not the owner of the listing " + bid.listing);
-				return null;
-			}
-			
-			bid.action = OldBid.Action.ACTIVATE;
-			log.info("Activating bid: " + bid);
-			getOfy().put(bid);
-			return bid;
-		} catch (Exception e) {
-			log.log(Level.WARNING, "Bid with id '" + newBid.id + "' not found!");
-			return null;
-		}
-	}
-
-	public OldBid counterOfferedByInvestor(long loggedInUser, OldBid newBid) {
-		try {
-			OldBid bid = getOfy().get(OldBid.class, newBid.id);
-			if (loggedInUser != bid.listingOwner.getId()) {
-				log.log(Level.SEVERE, "User '" + loggedInUser + "' is not the owner of the listing " + bid.listing);
-				return null;
-			}
-			
-			bid.action = OldBid.Action.ACTIVATE;
-			log.info("Activating bid: " + bid);
-			getOfy().put(bid);
-			return bid;
-		} catch (Exception e) {
-			log.log(Level.WARNING, "Bid with id '" + newBid.id + "' not found!");
-			return null;
-		}
-	}
-
-//	public Bid rejectBid(long loggedInUser, long bidId) {
-//		try {
-//			Bid bid = getOfy().get(Bid.class, bidId);
-//			if (bid.status != Bid.Action.ACTIVE) {
-//				log.log(Level.SEVERE, "User '" + loggedInUser + "' is trying to reject bid '" + bid + "' which is not POSTED or ACTIVE!");
-//				return null;
-//			}
-//			if (loggedInUser != bid.listingOwner.getId()) {
-//				log.log(Level.SEVERE, "User '" + loggedInUser + "' is not the owner of the listing " + bid.listing);
-//				return null;
-//			}
-//			
-//			bid.status = Bid.Action.REJECTED;
-//			log.info("Rejecting bid: " + bid);
-//			getOfy().put(bid);
-//			return bid;
-//		} catch (Exception e) {
-//			log.log(Level.WARNING, "Bid with id '" + bidId + "' not found!");
-//			return null;
-//		}
-//	}
-
-	public OldBid withdrawBid(long loggedInUser, long bidId) {
-		try {
-			OldBid bid = getOfy().get(OldBid.class, bidId);
-			if (loggedInUser != bid.bidder.getId()) {
-				log.log(Level.SEVERE, "User '" + loggedInUser + "' is not the owner of the bid " + bid);
-				return null;
-			}
-			
-			bid.action = OldBid.Action.CANCEL;
-			log.info("Withdrawing bid: " + bid);
-			getOfy().put(bid);
-			return bid;
-		} catch (Exception e) {
-			log.log(Level.WARNING, "Bid with id '" + bidId + "' not found!");
-			return null;
-		}
-	}
-
-	public OldBid acceptBid(long loggedInUser, long bidId) {
-		try {
-			OldBid bid = getOfy().get(OldBid.class, bidId);
-			if (OldBid.Action.ACTIVATE != bid.action) {
-				log.log(Level.WARNING, "Bid is not active. " + bid);
-				return null;
-			}
-			Listing listing = getOfy().get(bid.listing);
-			if (loggedInUser != listing.owner.getId()) {
-				log.log(Level.SEVERE, "User '" + loggedInUser + "' is not the owner of the listing. " + listing + ", " + bid);
-				return null;
-			}
-			if (Listing.State.ACTIVE != listing.state) {
-				log.log(Level.WARNING, "Listing '" + bid.listing + "' is not active. " + listing + ", " + bid);
-				return null;
-			}
-			SBUser bidder = getOfy().get(bid.bidder);
-			if (SBUser.Status.ACTIVE != bidder.status) {
-				log.log(Level.WARNING, "Bidder is not active. " + bidder + ", " + bid);
-				return null;
-			}
-			
-			bid.action = OldBid.Action.ACCEPT;
-			log.info("Accepting bid: " + bid);
-			getOfy().put(bid);
-			return bid;
-		} catch (Exception e) {
-			log.log(Level.WARNING, "Bid with id '" + bidId + "' not found!");
-			return null;
-		}
-	}
-
-	public OldBid markBidAsPaid(long loggedInUser, long bidId) {
-		try {
-			OldBid bid = getOfy().get(OldBid.class, bidId);
-			if (OldBid.Action.ACCEPT != bid.action) {
-				log.log(Level.WARNING, "Bid is not accepted. " + bid);
-				return null;
-			}
-			Listing listing = getOfy().get(bid.listing);
-			if (loggedInUser != listing.owner.getId()) {
-				log.log(Level.SEVERE, "User '" + loggedInUser + "' is not the owner of the listing. " + listing + ", " + bid);
-				return null;
-			}
-			
-			if (getOfy().query(OldPaidBid.class).filter("bid =", new Key<OldBid>(OldBid.class, bidId)).count() > 0) {
-				log.log(Level.WARNING, "Bid with id '" + bidId + "' is already marked as paid!");
-				return null;
-			}
-
-			OldPaidBid paidBid = new OldPaidBid(bid);
-			getOfy().put(paidBid);
-			log.info("Marked bid as active: " + paidBid);
-			return paidBid;
-		} catch (Exception e) {
-			log.log(Level.WARNING, "Bid with id '" + bidId + "' not found!");
-			return null;
-		}
-	}
-	
-	public List<OldBid> getBidsByDate(ListPropertiesVO bidsProperties) {
-		QueryResultIterable<Key<OldBid>> bidsIt = getOfy().query(OldBid.class)
-				.filter("status =", OldBid.Action.ACTIVATE)
-				.order("-placed").fetchKeys();
-		List<OldBid> bids = new ArrayList<OldBid>(getOfy().get(bidsIt).values());
-		return bids;
-	}
-
 	public SystemProperty getSystemProperty(String name) {
 		return getOfy().find(SystemProperty.class, name);
 	}
@@ -1212,120 +995,6 @@ public class ObjectifyDatastoreDAO {
 		getOfy().delete(ListingDoc.class, docId);
 	}
 
-	public Notification[] storeNotification(Notification ...notifications) {
-		getOfy().put(notifications);
-		for (Notification notif : notifications) {
-			updateUserStatistics(notif.userA.getId());
-		}
-        return notifications;
-	}
-
-	public List<Notification> markNotificationAsRead(long userId, long listingId) {
-		QueryResultIterable<Notification> notifIt = getOfy().query(Notification.class)
-				.filter("userA =", new Key<SBUser>(SBUser.class, userId))
-				.filter("listing =", new Key<Listing>(Listing.class, listingId))
-				.filter("read =", Boolean.FALSE).fetch();
-		List<Notification> updateList = new ArrayList<Notification>();
-		for (Notification notif : notifIt) {
-			notif.read = true;
-			updateList.add(notif);
-		}
-		if (updateList.size() > 0) {
-			getOfy().put(updateList);
-			// since all notification belong to one user we just need to update his/her statistics
-			updateUserStatistics(userId);
-		}
-		return updateList;
-	}
-
-	public List<Notification> getUnreadNotifications(long userId, long listingId, ListPropertiesVO listProperties) {
-		Query<Notification> query = getOfy().query(Notification.class)
-				.filter("userA =", new Key<SBUser>(SBUser.class, userId))
-				.filter("listing =", new Key<Listing>(Listing.class, listingId))
-				.filter("read =", false)
-				.filter("display =", true)
-				.order("-created")
-				.chunkSize(listProperties.getMaxResults())
-       			.prefetchSize(listProperties.getMaxResults());
-		List<Key<Notification>> keyList = new CursorHandler<Notification>().handleQuery(listProperties, query);
-		List<Notification> nots = new ArrayList<Notification>(getOfy().get(keyList).values());
-		return nots;
-	}
-
-	public List<Notification> getAllUserNotifications(long userId, ListPropertiesVO listProperties) {
-		Query<Notification> query = getOfy().query(Notification.class)
-				.filter("userA =", new Key<SBUser>(SBUser.class, userId))
-				.filter("display =", true)
-				.order("read")
-				.order("-created")
-				.chunkSize(listProperties.getMaxResults())
-       			.prefetchSize(listProperties.getMaxResults());
-		List<Key<Notification>> keyList = new CursorHandler<Notification>().handleQuery(listProperties, query);
-		List<Notification> nots = new ArrayList<Notification>(getOfy().get(keyList).values());
-		return nots;
-	}
-
-	public List<Notification> getUnreadUserNotifications(long userId, ListPropertiesVO listProperties) {
-		Query<Notification> query = getOfy().query(Notification.class)
-				.filter("userA =", new Key<SBUser>(SBUser.class, userId))
-				.filter("read =", false)
-				.filter("display =", true)
-				.order("-created")
-				.chunkSize(listProperties.getMaxResults())
-       			.prefetchSize(listProperties.getMaxResults());
-		List<Key<Notification>> keyList = new CursorHandler<Notification>().handleQuery(listProperties, query);
-		List<Notification> nots = new ArrayList<Notification>(getOfy().get(keyList).values());
-		return nots;
-	}
-
-	public List<Notification> getUserListingNotifications(long userId, long listingId, Notification.Type type, ListPropertiesVO listProperties) {
-		Query<Notification> query = getOfy().query(Notification.class)
-				.filter("userA =", new Key<SBUser>(SBUser.class, userId))
-				.filter("listing =", new Key<Listing>(Listing.class, listingId))
-				.filter("type =", type)
-				.filter("display =", true)
-				.order("read")
-				.order("-created")
-				.chunkSize(listProperties.getMaxResults())
-       			.prefetchSize(listProperties.getMaxResults());
-		List<Key<Notification>> keyList = new CursorHandler<Notification>().handleQuery(listProperties, query);
-		List<Notification> nots = new ArrayList<Notification>(getOfy().get(keyList).values());
-		return nots;
-	}
-
-	public List<Notification> getPublicListingNotifications(long listingId, ListPropertiesVO listProperties) {
-		Query<Notification> query = getOfy().query(Notification.class)
-				.filter("direction =", Notification.Direction.A_TO_B)
-				.filter("listing =", new Key<Listing>(Listing.class, listingId))
-				.filter("replied =", true)
-				//.filter("display =", true) @FIXME: this type of filtering is removing valid q&a
-				.order("-created")
-				.chunkSize(listProperties.getMaxResults())
-       			.prefetchSize(listProperties.getMaxResults());
-		List<Key<Notification>> keyList = new CursorHandler<Notification>().handleQuery(listProperties, query);
-		List<Notification> nots = new ArrayList<Notification>(getOfy().get(keyList).values());
-		return nots;
-	}
-
-	public Notification getNotification(long notifId) {
-		try {
-			return getOfy().get(Notification.class, notifId);
-		} catch (Exception e) {
-			log.log(Level.WARNING, "Notification with id '" + notifId + "' not found!");
-			return null;
-		}
-	}
-	
-	public List<Notification> getNotificationThread(long notifId) {
-		Query<Notification> query = getOfy().query(Notification.class)
-				.filter("context =", notifId)
-				.filter("direction =", Notification.Direction.A_TO_B)
-				.order("-created")
-				.chunkSize(200)
-       			.prefetchSize(200);
-		return new ArrayList<Notification>(getOfy().get(query.fetchKeys()).values());
-	}
-	
 	public Monitor getListingMonitor(long userId, long listingId) {
 		return getListingMonitor(new Key<SBUser>(SBUser.class, userId), new Key<Listing>(Listing.class, listingId));
 	}

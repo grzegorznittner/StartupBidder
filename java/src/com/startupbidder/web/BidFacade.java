@@ -108,6 +108,7 @@ public class BidFacade {
 		}
 		log.info("User '" + investor.nickname + "' is making '" + bidType + "' for listing '" + listing.name + "' owned by '" + owner.nickname + "'");
 		Bid bid = getDAO().makeBid(shorts, listing, owner, investor, bidType, amount, percentage, text);
+		NotificationFacade.instance().scheduleBidNotification(bid);
 		List<BidVO> bids = new ArrayList<BidVO>();
 		bids.add(DtoToVoConverter.convert(bid));
 		result.setBids(bids);
@@ -174,6 +175,7 @@ public class BidFacade {
 
 		log.info("User '" + owner.nickname + "', owner of listing '" + listing.name + "' is making '" + bidType + "' to offer made by '" + investor.nickname + "'");
 		Bid bid = getDAO().makeBid(shorts, listing, investor, owner, bidType, amount, percentage, text);
+		NotificationFacade.instance().scheduleBidNotification(bid);
 		List<BidVO> bids = new ArrayList<BidVO>();
 		bids.add(DtoToVoConverter.convert(bid));
 		result.setBids(bids);

@@ -1,6 +1,7 @@
 package test.com.startupbidder.datamodel;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,14 +21,14 @@ import com.google.appengine.tools.development.testing.LocalUserServiceTestConfig
 import com.googlecode.objectify.Objectify;
 import com.googlecode.objectify.ObjectifyService;
 import com.startupbidder.dao.ObjectifyDatastoreDAO;
-import com.startupbidder.datamodel.OldBid;
+import com.startupbidder.datamodel.Bid;
+import com.startupbidder.datamodel.BidUser;
 import com.startupbidder.datamodel.Comment;
 import com.startupbidder.datamodel.Listing;
 import com.startupbidder.datamodel.ListingDoc;
 import com.startupbidder.datamodel.ListingStats;
 import com.startupbidder.datamodel.Monitor;
 import com.startupbidder.datamodel.Notification;
-import com.startupbidder.datamodel.OldPaidBid;
 import com.startupbidder.datamodel.PrivateMessage;
 import com.startupbidder.datamodel.PrivateMessageUser;
 import com.startupbidder.datamodel.QuestionAnswer;
@@ -52,7 +53,8 @@ public class ObjectifyDatastoreTest {
 		ObjectifyService.register(SBUser.class);
 		ObjectifyService.register(Listing.class);
 		ObjectifyService.register(UserStats.class);
-		ObjectifyService.register(OldBid.class);
+		ObjectifyService.register(Bid.class);
+		ObjectifyService.register(BidUser.class);
 		ObjectifyService.register(Comment.class);
 		ObjectifyService.register(ListingDoc.class);
 		ObjectifyService.register(ListingStats.class);
@@ -61,7 +63,6 @@ public class ObjectifyDatastoreTest {
 		ObjectifyService.register(QuestionAnswer.class);
 		ObjectifyService.register(PrivateMessage.class);
 		ObjectifyService.register(PrivateMessageUser.class);
-		ObjectifyService.register(OldPaidBid.class);
 		ObjectifyService.register(Rank.class);
 		ObjectifyService.register(SystemProperty.class);
 		ObjectifyService.register(Vote.class);
