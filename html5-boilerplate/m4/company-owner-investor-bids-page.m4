@@ -17,7 +17,7 @@ companybannermacro(`', `', `', `companynavselected', `', `')
 '
 include(company-order-book.m4)
 `
-<div class="boxtitlegap smokegrey clear">YOUR BIDS WITH THE OWNER
+<div class="boxtitlegap smokegrey clear">YOUR BIDS WITH <span id="investor_nickname"></id>
     <span class="newlistingtitlemsg" id="bidtitlemsg"></span>
 </div>
 <div class="initialhidden clear" id="bidsloggedin">
@@ -25,7 +25,7 @@ include(company-order-book.m4)
         <div id="bidlistlast"></div>
     </div>
 
-    <div class="boxtitlegap smokegrey clear initialhidden" id="new_bid_boxtitle">MAKE A NEW BID
+    <div class="boxtitlegap smokegrey clear initialhidden" id="new_bid_boxtitle">MAKE A COUNTER OFFER
         <span class="newlistingtitlemsg" id="newbidtitlemsg"></span>
     </div>
     <div class="boxpanel boxpanelfull initialhidden" id="new_bid_boxparent">
@@ -53,7 +53,7 @@ include(company-order-book.m4)
                 <div class="formitem clear">
                     <label class="inputlabel" for="note">NOTE</label>
                     <span class="inputfield">
-                        <textarea class="textarea new_bid_textarea" name="note" id="new_bid_text" cols="20" rows="5">Put your note to the owner here...</textarea>
+                        <textarea class="textarea new_bid_textarea" name="note" id="new_bid_text" cols="20" rows="5">Put your note to the investor here...</textarea>
                     </span>
                     <span class="inputicon">
                         <div id="new_bid_texticon"></div>
@@ -67,14 +67,14 @@ include(company-order-book.m4)
                 </div>
             </span>
             <div class="newbidactionline" id="newbidbuttons">
-                <span class="span-3 inputbutton bidactionbutton initialhidden" id="investor_counter_btn">COUNTER</span>
-                <span class="span-3 inputbutton bidactionbutton initialhidden" id="investor_post_btn">MAKE BID</span>
+                <span class="span-3 inputbutton bidactionbutton initialhidden" id="owner_counter_btn">COUNTER</span>
+                <!-- <span class="span-3 inputbutton bidactionbutton initialhidden" id="owner_post_btn">MAKE BID</span> -->
                 <span class="span-17 bidconfirmmessage" id="new_bid_msg"></span>
             </div>
             <div class="newbidactionline initialhidden" id="newconfirmbuttons">
-                <span class="span-3 inputbutton bidactionbutton" id="investor_new_cancel_btn">CANCEL</span>
-                <span class="span-3 inputbutton bidactionbutton" id="investor_new_confirm_btn">CONFIRM</span>
-                <span class="span-17 bidconfirmmessage" id="investor_new_msg"></span>
+                <span class="span-3 inputbutton bidactionbutton" id="owner_new_cancel_btn">CANCEL</span>
+                <span class="span-3 inputbutton bidactionbutton" id="owner_new_confirm_btn">CONFIRM</span>
+                <span class="span-17 bidconfirmmessage" id="owner_new_msg"></span>
             </div>
         </div>
     </div>
@@ -92,7 +92,7 @@ include(footer.m4)
   <script src="js/modules/forms.js"></script>
   <script src="js/modules/companybanner.js"></script>
   <script src="js/modules/orderbook.js"></script>
-  <script src="js/modules/singleinvestorbidlist.js"></script>
+  <script src="js/modules/ownersingleinvestorbidlist.js"></script>
   <script src="js/modules/tracker.js"></script>
 '
 include(promptie.m4)

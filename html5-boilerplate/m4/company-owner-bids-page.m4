@@ -16,7 +16,13 @@ companybannermacro(`', `', `', `companynavselected', `', `')
 <div class="container">
 '
 include(company-order-book.m4)
-include(company-owner-bids.m4)
+`
+<div class="boxtitlegap smokegrey clear">YOUR INVESTORS
+    <span class="newlistingtitlemsg" id="bidstitlemsg"></span>
+</div>
+<div class="initialhidden clear" id="bidsownergroup">
+    <div class="boxpanel boxpanelfull" id="investorgrouplist"></div>
+</div>
 
 </div> <!-- end container -->
 </div> <!-- end main -->
@@ -29,7 +35,7 @@ include(footer.m4)
   <script src="js/modules/base.js"></script>
   <script src="js/modules/companybanner.js"></script>
   <script src="js/modules/orderbook.js"></script>
-  <script src="js/modules/investorbidgrouplist.js"></script>
+  <script src="js/modules/ownerinvestorlist.js"></script>
   <script src="js/modules/tracker.js"></script>
 '
 include(promptie.m4)

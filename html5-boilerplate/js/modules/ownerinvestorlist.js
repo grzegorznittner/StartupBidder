@@ -35,8 +35,8 @@ pl.implement(InvestorBidGroupClass, {
         this.datetext = this.last_date ? DateClass.prototype.format(this.last_date) : '';
         this.usertext = this.investor_nickname + countertext;
         this.typeclass = this.typeclassmap[this.last_type] || '';
-        this.url = this.investor_id ? '/owner-bids-page.html'
-            + '?listing_id=' + this.listing_id
+        this.url = this.investor_id ? '/company-owner-investor-bids-page.html'
+            + '?id=' + this.listing_id
             + '&investor_id=' + this.investor_id
             + '&investor_nickname=' + encodeURIComponent(this.investor_nickname) : '';
         this.openanchor = this.url ? '<a href="' + this.url + '" class="hoverlink' + this.messageclass + ' ' + this.typeclass + '">' : '';
@@ -52,7 +52,7 @@ pl.implement(InvestorBidGroupClass, {
                 last_pct: null,
                 last_val: null,
                 last_type: null,
-                last_text: 'You currently have no bids.',
+                last_text: 'No bids received for this listing.',
                 last_date: null,
                 read: true
             };
