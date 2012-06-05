@@ -1,19 +1,23 @@
-function CommentClass(listing_id, loggedin_profile_id) {
-    var self = this;
-    this.listing_id = listing_id;
-    this.loggedin_profile_id = loggedin_profile_id;
+function CommentClass() {
+    var queryString = new QueryStringClass();
+    this.listing_id = queryString.vars.id;
 }
 pl.implement(CommentClass, {
     load: function() {
         var self = this,
-            completeFunc = function(json) {
+            complete = function(json) {
+                var header = new HeaderClass(),
+                    companybanner = new CompanyBannerClass('comments');
+                header.setLogin(json);
+                companybanner.display(json);
                 self.display(json);
             },
-            ajax = new AjaxClass('/listing/comments/' + self.listing_id, 'commentmsg', completeFunc);
+            ajax = new AjaxClass('/listing/comments/' + this.listing_id, 'commentmsg', complete);
         ajax.call();
     },
     store: function(json) {
-        this.commentlist = json['comments'] || [];
+        this.loggedin_profile_id = json.loggedin_profile && json.loggedin_profile.profile_id;
+        this.commentlist = json.comments || [];
     },
     display: function(json) {
         if (json) {
@@ -123,6 +127,7 @@ pl.implement(CommentClass, {
             comment = bindlist[i];
             self.bindComment(comment);
         }
+        pl('#commentswrapper').show();
     },
     makeComment: function(comment) {
         var text = SafeStringClass.prototype.htmlEntities(comment.text),
@@ -165,3 +170,4 @@ pl.implement(CommentClass, {
     }
 });
 
+(new CommentClass()).load();

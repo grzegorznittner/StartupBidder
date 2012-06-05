@@ -1,7 +1,9 @@
 `
 <!-- begin bmc -->
 <div class="span-24 last">
-<div class="boxtitle bmctitle">BUSINESS MODEL CANVAS</div>
+<div class="boxtitle bmctitle">BUSINESS MODEL CANVAS
+    <span class="newlistingtitlemsg" id="bmcmsg"></span>
+</div>
 <div class="bmcborder bmcwidth bmcheight">
 
 <div class="bmctallcolumnonedge bmcthreefourthsheight bmcfifthwidthminushalfbar bmccontainer">

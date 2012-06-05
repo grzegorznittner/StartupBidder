@@ -1,12 +1,21 @@
-function QuestionClass(listing_id, listing_owner_id, loggedin_profile_id) {
-    this.listing_id = listing_id;
-    this.listing_owner_id = listing_owner_id;
-    this.loggedin_profile_id = loggedin_profile_id;
+function QuestionClass() {
+    var queryString = new QueryStringClass();
+    this.listing_id = queryString.vars.id;
 }
 pl.implement(QuestionClass, {
     load: function() {
         var self = this,
             complete = function(json) {
+                var header = new HeaderClass(),
+                    companybanner = new CompanyBannerClass('questions');
+                if (!json.listing) {
+                    json.listing = {};
+                    json.listing.listing_id = self.listing_id;
+                }
+                header.setLogin(json);
+                self.listing_owner_id = json.listing && json.listing.profile_id;
+                self.loggedin_profile_id = json.loggedin_profile && json.loggedin_profile.profile_id;
+                companybanner.display(json);
                 self.display(json);
             },
             ajax = new AjaxClass('/listings/questions_and_answers/' + this.listing_id, 'qandamsg', complete);
@@ -30,6 +39,7 @@ pl.implement(QuestionClass, {
         else {
             pl('#addqandabox').before('<div class="messageline"><p style="font-weight: bold;">Login to ask a question</p></div>');
         }
+        pl('#qandaswrapper').show();        
     },
     bindAddQuestionBox: function() {
         var self = this;
@@ -243,3 +253,4 @@ pl.implement(QuestionClass, {
     }
 });
 
+(new QuestionClass()).load();

@@ -11,12 +11,19 @@ include(head.m4)
 '
 include(header.m4)
 include(company-banner.m4)
-companybannermacro(`companynavselected', `', `', `', `', `')
+companybannermacro(`', `', `', `companynavselected', `', `')
 `
 <div class="container">
 '
-include(company-basics.m4)
+include(company-order-book.m4)
 `
+<div class="boxtitlegap smokegrey clear">YOUR INVESTORS
+    <span class="newlistingtitlemsg" id="bidstitlemsg"></span>
+</div>
+<div class="initialhidden clear" id="bidsownergroup">
+    <div class="boxpanel boxpanelfull" id="investorgrouplist"></div>
+</div>
+
 </div> <!-- end container -->
 </div> <!-- end main -->
 </div> <!-- end wrap -->
@@ -27,7 +34,8 @@ include(footer.m4)
   <script src="js/libs/prevel.min.js"></script>
   <script src="js/modules/base.js"></script>
   <script src="js/modules/companybanner.js"></script>
-  <script src="js/modules/listing.js"></script>
+  <script src="js/modules/orderbook.js"></script>
+  <script src="js/modules/ownerinvestorlist.js"></script>
   <script src="js/modules/tracker.js"></script>
 '
 include(promptie.m4)

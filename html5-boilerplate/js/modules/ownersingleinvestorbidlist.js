@@ -26,7 +26,7 @@ pl.implement(BidClass, {
         this.typetext = this.type ? this.type.replace(/(investor_|owner_)/, '') : '';
         this.bidtext = this.text ? SafeStringClass.prototype.htmlEntities(this.text) : 'None';
         this.datetext = this.create_date ? DateClass.prototype.format(this.create_date) : '';
-        this.usertext = this.type && this.type.match(/investor/) ? 'You' : 'Owner';
+        this.usertext = this.type && this.type.match(/investor/) ? this.bidslist.investor_nickname : 'You';
         this.typeclass = this.typeclassmap[this.type] || '';
         return this;
     },
@@ -79,11 +79,11 @@ pl.implement(BidClass, {
     }
 });
 
-function SingleInvestorBidListClass() {
+function OwnerSingleInvestorBidListClass() {
     var queryString = new QueryStringClass();
     this.listing_id = queryString.vars.id;
     this.investor_id = queryString.vars.investor_id;
-    this.investor_nickname = queryString.vars.investor_nickname;
+    this.investor_nickname = queryString.vars.investor_nickname || 'Anonymous';
     this.confirmtext = {
         investor_accept: 'You hereby agree to accept this bid according to the <a href="/terms-page.html">terms and conditions</a>.',
         investor_reject: 'You hereby agree to reject this bid according to the <a href="/terms-page.html">terms and conditions</a>.',
@@ -109,7 +109,7 @@ function SingleInvestorBidListClass() {
         owner_withdraw: 'Bid withdrawn'
     };
 }
-pl.implement(SingleInvestorBidListClass, {
+pl.implement(OwnerSingleInvestorBidListClass, {
     mock: function(ajax) {
         ajax.mock({
 bids:
@@ -176,7 +176,7 @@ bids_props: {
      "more_results_url": null
 },
 
-valid_actions: [ "investor_post", "investor_counter", "investor_reject", "investor_accept", "investor_withdraw" ]
+valid_actions: [ "owner_post", "owner_counter", "owner_reject", "owner_accept", "owner_withdraw" ]
         });
     },
 
@@ -201,7 +201,7 @@ bids_props: {
      "more_results_url": null
 },
 
-valid_actions: [ "investor_counter", "investor_reject", "investor_accept", "investor_withdraw" ]
+valid_actions: [ "owner_counter", "owner_reject", "owner_accept", "owner_withdraw" ]
         });
     },
 
@@ -221,7 +221,8 @@ valid_actions: [ "investor_counter", "investor_reject", "investor_accept", "inve
                 orderbook.load();
                 self.display(json);
             },
-            ajax = new AjaxClass('/listing/bids/' + this.listing_id, 'bidtitlemsg', complete);
+            ajax = new AjaxClass('/listing/bids/' + this.listing_id + '/' + this.investor_id, 'bidtitlemsg', complete);
+        pl('#investor_nickname').text(this.investor_nickname.toUpperCase());
         //this.mock(ajax); // FIXME
         ajax.call();
     },
@@ -408,15 +409,15 @@ valid_actions: [ "investor_counter", "investor_reject", "investor_accept", "inve
     makeAddButtons: function() {
         return '\
 <div class="bidactionline" id="existingbidbuttons">\
-    <span class="span-3 inputbutton bidactionbutton initialhidden" id="investor_withdraw_btn">WITHDRAW</span>\
-    <span class="span-3 inputbutton bidactionbutton initialhidden" id="investor_reject_btn">REJECT</span>\
-    <span class="span-3 inputbutton bidactionbutton initialhidden" id="investor_accept_btn">ACCEPT</span>\
+    <span class="span-3 inputbutton bidactionbutton initialhidden" id="owner_withdraw_btn">WITHDRAW</span>\
+    <span class="span-3 inputbutton bidactionbutton initialhidden" id="owner_reject_btn">REJECT</span>\
+    <span class="span-3 inputbutton bidactionbutton initialhidden" id="owner_accept_btn">ACCEPT</span>\
     <span class="span-11 bidconfirmmessage" id="existingbidmsg"></span>\
 </div>\
 <div class="bidactionline initialhidden" id="existingconfirmbuttons">\
-    <span class="span-3 inputbutton bidactionbutton" id="investor_existing_cancel_btn">CANCEL</span>\
-    <span class="span-3 inputbutton bidactionbutton" id="investor_existing_confirm_btn">CONFIRM</span>\
-    <span class="span-14 bidconfirmmessage" id="investor_existing_msg"></span>\
+    <span class="span-3 inputbutton bidactionbutton" id="owner_existing_cancel_btn">CANCEL</span>\
+    <span class="span-3 inputbutton bidactionbutton" id="owner_existing_confirm_btn">CONFIRM</span>\
+    <span class="span-14 bidconfirmmessage" id="owner_existing_msg"></span>\
 </div>\
         ';
     },
@@ -431,10 +432,10 @@ valid_actions: [ "investor_counter", "investor_reject", "investor_accept", "inve
             action = this.validactions[i];
             actionfuncname = 'bind_' + action;
             this[actionfuncname]();
-            if (action === 'investor_post' || action === 'investor_counter') {
+            if (action === 'owner_post' || action === 'owner_counter') {
                 newbidaction = true;
             }
-            else if (action === 'investor_accept' || action === 'investor_reject' || action === 'investor_withdraw') {
+            else if (action === 'owner_accept' || action === 'owner_reject' || action === 'owner_withdraw') {
                 existingbidaction = true;
             }
         }
@@ -458,7 +459,7 @@ valid_actions: [ "investor_counter", "investor_reject", "investor_accept", "inve
     makeBidAction: function(type, neworexisting) {    
         var self = this,
             complete = function(json) {
-                pl('#investor_' + neworexisting + '_msg').addClass('successful').text(self.successtext[type] + ', reloading...');
+                pl('#owner_' + neworexisting + '_msg').addClass('successful').text(self.successtext[type] + ', reloading...');
                 setTimeout(function() { location.reload(); }, 3000);
             },
 
@@ -472,7 +473,7 @@ valid_actions: [ "investor_counter", "investor_reject", "investor_accept", "inve
             data = {
                 bid: {
                     listing_id: self.listing_id,
-                    //investor_id: self.investor_profile_id, // only passed for owner
+                    investor_id: self.investor_id, // only passed for owner
                     amt: amt,
                     pct: pct,
                     val: val,
@@ -481,7 +482,7 @@ valid_actions: [ "investor_counter", "investor_reject", "investor_accept", "inve
                 }
             },
 
-            ajax = new AjaxClass('/listing/make_bid', 'investor_' + neworexisting + '_msg', complete);
+            ajax = new AjaxClass('/listing/make_bid', 'owner_' + neworexisting + '_msg', complete);
         console.log(data);
         ajax.setPostData(data);
         //self.mock_make_bid(ajax, data); // FIXME
@@ -494,22 +495,22 @@ valid_actions: [ "investor_counter", "investor_reject", "investor_accept", "inve
             btnsel = '#' + btnid;
         pl('#new_bid_amt, #new_bid_pct, #new_bid_text').attr('disabled', 'disabled');
         pl('#newbidbuttons').hide();
-        pl('#investor_new_confirm_btn').unbind().bind('click', function() {
-            if (!pl('#investor_new_confirm_btn').hasClass('submitting')) {
-                pl('#investor_new_confirm_btn, #investor_new_cancel_btn').css({visibility: 'hidden'});
-                pl('#investor_new_confirm_btn').addClass('submitting');
-                pl('#investor_new_msg').addClass('inprogress').text('Submitting...');
+        pl('#owner_new_confirm_btn').unbind().bind('click', function() {
+            if (!pl('#owner_new_confirm_btn').hasClass('submitting')) {
+                pl('#owner_new_confirm_btn, #owner_new_cancel_btn').css({visibility: 'hidden'});
+                pl('#owner_new_confirm_btn').addClass('submitting');
+                pl('#owner_new_msg').addClass('inprogress').text('Submitting...');
                 self.newBidAction(type);
             }
         });
-        pl('#investor_new_cancel_btn').unbind().bind('click', function() {
-            if (!pl('#investor_new_confirm_btn').hasClass('submitting')) {
+        pl('#owner_new_cancel_btn').unbind().bind('click', function() {
+            if (!pl('#owner_new_confirm_btn').hasClass('submitting')) {
                 pl('#newconfirmbuttons').hide();
                 pl('#newbidbuttons').show();
                 pl('#new_bid_amt, #new_bid_pct, #new_bid_text').removeAttr('disabled');
             }
         });
-        pl('#investor_new_msg').html(this.confirmtext[type]);
+        pl('#owner_new_msg').html(this.confirmtext[type]);
         pl('#newconfirmbuttons').show();
     },
 
@@ -519,22 +520,22 @@ valid_actions: [ "investor_counter", "investor_reject", "investor_accept", "inve
             btnsel = '#' + btnid;
         pl('#existing_bid_text').attr('disabled', 'disabled');
         pl('#existingbidbuttons').hide();
-        pl('#investor_existing_confirm_btn').unbind().bind('click', function() {
-            if (!pl('#investor_existing_confirm_btn').hasClass('submitting')) {
-                pl('#investor_existing_confirm_btn').addClass('submitting');
-                pl('#investor_existing_confirm_btn, #investor_existing_cancel_btn').css({visibility: 'hidden'});
-                pl('#investor_existing_msg').addClass('inprogress').text('Submitting...');
+        pl('#owner_existing_confirm_btn').unbind().bind('click', function() {
+            if (!pl('#owner_existing_confirm_btn').hasClass('submitting')) {
+                pl('#owner_existing_confirm_btn').addClass('submitting');
+                pl('#owner_existing_confirm_btn, #owner_existing_cancel_btn').css({visibility: 'hidden'});
+                pl('#owner_existing_msg').addClass('inprogress').text('Submitting...');
                 self.existingBidAction(type);
             }
         });
-        pl('#investor_existing_cancel_btn').unbind().bind('click', function() {
-            if (!pl('#investor_existing_confirm_btn').hasClass('submitting')) {
+        pl('#owner_existing_cancel_btn').unbind().bind('click', function() {
+            if (!pl('#owner_existing_confirm_btn').hasClass('submitting')) {
                 pl('#existingconfirmbuttons').hide();
                 pl('#existingbidbuttons').show();
                 pl('#existing_bid_text').removeAttr('disabled');
             }
         });
-        pl('#investor_existing_msg').html(this.confirmtext[type]);
+        pl('#owner_existing_msg').html(this.confirmtext[type]);
         pl('#existingconfirmbuttons').show();
     },
 
@@ -566,38 +567,26 @@ valid_actions: [ "investor_counter", "investor_reject", "investor_accept", "inve
         }).show();
     },
 
-    bind_investor_post: function(type) {
-        this.bindNewBidActionButton('investor_post');
-    },
-
-    bind_investor_counter: function() {
-        this.bindNewBidActionButton('investor_counter');
-    },
-
-    bind_investor_accept: function() {
-        this.bindExistingBidActionButton('investor_accept');
-    },
-
-    bind_investor_reject: function() {
-        this.bindExistingBidActionButton('investor_reject');
-    },
-
-    bind_investor_withdraw: function() {
-        this.bindExistingBidActionButton('investor_withdraw');
-    },
-/*
-    bind_owner_accept: function() {
-    },
-
-    bind_owner_reject: function() {
+    bind_owner_post: function(type) {
+        this.bindNewBidActionButton('owner_post');
     },
 
     bind_owner_counter: function() {
+        this.bindNewBidActionButton('owner_counter');
+    },
+
+    bind_owner_accept: function() {
+        this.bindExistingBidActionButton('owner_accept');
+    },
+
+    bind_owner_reject: function() {
+        this.bindExistingBidActionButton('owner_reject');
     },
 
     bind_owner_withdraw: function() {
+        this.bindExistingBidActionButton('owner_withdraw');
     },
-*/
+
     bindBidBox: function() {
         if (!pl('#new_bid_box').hasClass('bound')) {
             this.bindFields();
@@ -607,4 +596,4 @@ valid_actions: [ "investor_counter", "investor_reject", "investor_accept", "inve
     }
 });
 
-(new SingleInvestorBidListClass()).load();
+(new OwnerSingleInvestorBidListClass()).load();

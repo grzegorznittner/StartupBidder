@@ -11,11 +11,11 @@ include(head.m4)
 '
 include(header.m4)
 include(company-banner.m4)
-companybannermacro(`companynavselected', `', `', `', `', `')
+companybannermacro(`', `', `', `', `companynavselected', `')
 `
 <div class="container">
 '
-include(company-basics.m4)
+include(company-comments.m4)
 `
 </div> <!-- end container -->
 </div> <!-- end main -->
@@ -27,7 +27,7 @@ include(footer.m4)
   <script src="js/libs/prevel.min.js"></script>
   <script src="js/modules/base.js"></script>
   <script src="js/modules/companybanner.js"></script>
-  <script src="js/modules/listing.js"></script>
+  <script src="js/modules/comments.js"></script>
   <script src="js/modules/tracker.js"></script>
 '
 include(promptie.m4)

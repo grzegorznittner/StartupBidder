@@ -23,10 +23,10 @@ body.nearby-page > #wrap > #main > div.container > div.nearbywrapper { height: 1
 .footertext { position: relative; font-weight: bold; font-size: 12px; top: 10px; }
 .footerlink { font-size: 14px; }
 .copyrighttext { font-size: 12px; position: absolute; right: 0; bottom: 0; }
-.attention { color: #8A1F11; }
-.errorcolor { color: #8A1F11; }
-.inprogress { color: #8F8A11; }
-.successful { color: #009900; }
+.attention { color: #8A1F11 !important; }
+.errorcolor { color: #8A1F11 !important; }
+.inprogress { color: #8F8A11 !important; }
+.successful { color: #009900 !important; }
 .notice { position: relative; top: 15px; }
 .emptyattention { color: #8A1F11; position: relative; top: 15px; }
 
@@ -177,7 +177,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .bidicon { width: 20px; height: 20px; background: url(../img/icons/bid_20x20.png); }
 .bidpostedicon { width: 20px; height: 20px; background: url(../img/icons/bid_20x20.png); }
 .bidactiveicon { width: 20px; height: 20px; background: url(../img/icons/bid_20x20.png); }
-.bidmakebidicon { width: 20px; height: 20px; background: url(../img/icons/bid_20x20.png); }
+.bidnew_bid_icon { width: 20px; height: 20px; background: url(../img/icons/bid_20x20.png); }
 .bidreviseicon { width: 20px; height: 20px; background: url(../img/icons/bid_20x20.png); }
 .thumbdownicon { width: 20px; height: 20px; background: url(../img/icons/thumbs_down.png); }
 .bidcancelicon { width: 20px; height: 20px; background: url(../img/icons/cancel_20x20.gif); }
@@ -309,7 +309,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .bidinputtitle { font-size: 22px !important; margin: 0 10px 5px 5px !important; width: 130px !important; }
 .sideinputtextarea { height: 80px; margin-top: 0; }
 .sideboxlabelsmall { float: left; padding-top: 5px; width: 35px; }
-.makebidboxlabel { float: left; padding-top: 11px; width: 35px; }
+.new_bid_boxlabel { float: left; padding-top: 11px; width: 35px; }
 .inputselect, .inputmedselect { height: 29px; padding: 5px; top: 1px; position: relative;  }
 .bidinputselect { margin: 0 0 0 0 !important; height: 38px !important; font-weight: bold; color: white !important; background: #49515a !important; font-size: 22px !important; padding-top: 5px !important;}
 .bidinputtextpct  { font-weight: bold; color: white !important; background: #49515a !important; font-size: 22px !important; width: 45px !important; margin: 0 0 0 0 !important; }
@@ -324,7 +324,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .bidformitem { float: left; }
 .bidspacer { border: 2px solid #49515A; height: 20px; right: 5px; background: #efefef; font-weight: bold; clear: both; text-align: center; }
 .messagetextarea { color: white !important; background: #49515a !important; font-weight: bold; font-size: 14px !important; height: 60px; width: 540px !important; }
-.makebidtextarea { color: white !important; background: #49515a !important; font-weight: bold; font-size: 14px !important; height: 60px; width: 420px !important; }
+.new_bid_textarea { color: white !important; background: #49515a !important; font-weight: bold; font-size: 14px !important; height: 60px; width: 420px !important; }
 .qatextarea { height: 65px; overflow: hidden; overflow-x: hidden; overflow-y: auto; font-weight: bold; color: white !important;
                 background: #49515a !important; font-size: 14px !important; margin: 0px 5px 5px 5px; width: 540px !important; }
 .qainfobtn:hover { opacity: 0.7; cursor: pointer; }
@@ -449,7 +449,21 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .questionreplybtn { position: absolute; right: 7px; }
 .messagereplyuser { position: relative; top: 10px; }
 .questionaskline { position: relative; min-height: 100px; }
-.makebidline { position: relative; min-height: 230px; }
+.new_bid_line { position: relative; min-height: 185px; }
+.new_bid_buttons { position: absolute; bottom: 20px; }
+.new_bid_vallabel { font-weight: bold; padding-top: 10px; color: #49515A; text-align: center; height: 33px; }
+.new_bid_valtext { text-align: center; }
+.notebidactionline { clear: both; padding-top: 5px; overflow: auto; }
+.bidactionline { clear: both; padding-top: 0px; overflow: auto; }
+.newbidactionline { clear: both; overflow: auto; }
+.bidactionbutton { float: right; }
+.bidconfirmmessage { padding-top: 14px; padding-right: 10px; text-align: right; font-weight: bold; color: #49515a; float: right; }
+.investorbidheader { background: #49515a !important; }
+.investorbidheader p { color: white; font-weight: bold !important; text-align: center; }
+.investorbidline p { font-weight: bold; text-align: center; }
+.investorbidnote { text-align: left !important; font-weight: normal !important; }
+.investorbiddateheader { float: left; width: 140px; }
+.investorbiddate { float: left; width: 140px; text-align: right; font-size: 12px; padding-top: 2px; }
 .messagereplytextarea { position: absolute; left: 150px; bottom: 18px; width: 640px !important; }
 .messagereplybutton { position: absolute; right: 0; top: 40px; }
 .messagereplymsg { position: absolute; bottom: 0; left: 150px; }
@@ -474,9 +488,8 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .bidboxinfo { display: none; }
 .suggestedmsg { display: none; font-weight: bold; }
 .suggestedinfo { display: none; }
-.makebidboxtitle { display: none; }
-.makebidbox { display: none; }
-.makebid_rate_box { display: none; }
+.new_bid_boxtitle { display: none; }
+.new_bid_box { display: none; }
 .counterboxtitle { display: none; }
 .counterbox { display: none; }
 .bidclosedtitle { display: none; }
