@@ -348,7 +348,7 @@ public class ServiceFacade {
 			return null;
 		}
 		Monitor monitor = new Monitor();
-		monitor.user = new Key<SBUser>(SBUser.class, loggedInUser.getId());
+		monitor.user = new Key<SBUser>(SBUser.class, loggedInUser.toKeyId());
 		monitor.userNickname = loggedInUser.getNickname();
 		monitor.userEmail = loggedInUser.getEmail();
 		monitor.monitoredListing = new Key<Listing>(Listing.class, ListingVO.toKeyId(listingId));

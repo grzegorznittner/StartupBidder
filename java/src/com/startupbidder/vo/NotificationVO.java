@@ -22,7 +22,6 @@ public class NotificationVO extends BaseVO {
     @JsonProperty("user_id") private String user;
 	@JsonProperty("user_nickname") private String userNickname;
 	private String userEmail;
-	@JsonProperty("from_user_nickname") private String fromUserNickname;
 	@JsonProperty("listing_id")	private String listing;
 	@JsonProperty("listing_name") private String listingName;
 	@JsonProperty("listing_owner") private String listingOwner;
@@ -34,8 +33,6 @@ public class NotificationVO extends BaseVO {
 	@JsonProperty("text_1") private String text1;
 	@JsonProperty("text_2") private String text2;
 	@JsonProperty("text_3") private String text3;
-	@JsonProperty("answer") private String answer;
-	@JsonProperty("answer_date") @JsonSerialize(using=DateSerializer.class) private Date answerDate;
 	
 	@JsonProperty("create_date") @JsonSerialize(using=DateSerializer.class) private Date created;
 	@JsonProperty("sent_date") @JsonSerialize(using=DateSerializer.class) private Date sentDate;
@@ -144,29 +141,11 @@ public class NotificationVO extends BaseVO {
 	public void setUserNickname(String userNickname) {
 		this.userNickname = userNickname;
 	}
-	public String getAnswer() {
-		return answer;
-	}
 	public String getUserEmail() {
 		return userEmail;
 	}
 	public void setUserEmail(String userEmail) {
 		this.userEmail = userEmail;
-	}
-	public String getFromUserNickname() {
-		return fromUserNickname;
-	}
-	public void setFromUserNickname(String fromUserNickname) {
-		this.fromUserNickname = fromUserNickname;
-	}
-	public void setAnswer(String answer) {
-		this.answer = answer;
-	}
-	public Date getAnswerDate() {
-		return answerDate;
-	}
-	public void setAnswerDate(Date answerDate) {
-		this.answerDate = answerDate;
 	}
 	@JsonProperty("listing_logo_url")
 	public String getListingLogoLink() {
@@ -185,19 +164,26 @@ public class NotificationVO extends BaseVO {
 		case NEW_BID_FOR_YOUR_LISTING:
 		case YOU_PAID_BID:
 		case YOU_ACCEPTED_BID:
-			// link to bid page
-			link += "/company-page.html?page=bids&id=" + this.listing;
+			// link to bid
+			link = "/company-page.html?page=bids&id=" + this.listing;
 		break;
 		case NEW_COMMENT_FOR_YOUR_LISTING:
 		case NEW_COMMENT_FOR_MONITORED_LISTING:
-			// link to comment page
-			link += "/company-page.html?page=comments&id=" + this.listing;
+			// link to comment
+			link = "/company-page.html?page=comments&id=" + this.listing;
 		break;
+		case LISTING_ACTIVATED:
+		case LISTING_FROZEN:
+		case LISTING_WITHDRAWN:
 		case NEW_LISTING:
-		case ASK_LISTING_OWNER:
-		case PRIVATE_MESSAGE:
 			// link to listing
-			link += "/company-page.html?id=" + this.listing;
+			link = "/company-page.html?id=" + this.listing;
+		break;
+		case ASK_LISTING_OWNER:
+			link = "/company-page.html?page=qa&id=" + this.listing;
+		break;
+		case PRIVATE_MESSAGE:
+			link = "/message-group-page.html";
 		break;
 		default:
 			// will point to main page

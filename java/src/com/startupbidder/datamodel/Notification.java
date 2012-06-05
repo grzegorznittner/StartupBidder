@@ -65,8 +65,6 @@ public class Notification extends BaseObject<Notification> {
 	public String listingMantra;
 	
 	public String message;
-	public String question;
-	public Date questionDate;
 	
 	@Indexed public Date created;
 	public Date   sentDate;
@@ -75,12 +73,24 @@ public class Notification extends BaseObject<Notification> {
 	public String getWebKey() {
 		return new Key<Notification>(Notification.class, id).getString();
 	}
-	public Notification clone() {
-		try {
-			return (Notification)super.clone();
-		} catch (CloneNotSupportedException e) {
-			return null;
-		}
+	public Notification copy() {
+		Notification newNotif = new Notification();
+		newNotif.id = this.id;
+		newNotif.created = this.created;
+		newNotif.listing = this.listing;
+		newNotif.listingBriefAddress = this.listingBriefAddress;
+		newNotif.listingCategory = this.listingCategory;
+		newNotif.listingMantra = this.listingMantra;
+		newNotif.listingName = this.listingName;
+		newNotif.listingOwner = this.listingOwner;
+		newNotif.message = this.message;
+		newNotif.read = this.read;
+		newNotif.sentDate = this.sentDate;
+		newNotif.type = this.type;
+		newNotif.user = this.user;
+		newNotif.userEmail = this.userEmail;
+		newNotif.userNickname = this.userNickname;
+		return newNotif;
 	}
 	public String getTargetLink() {
 		String link = "";
@@ -101,9 +111,18 @@ public class Notification extends BaseObject<Notification> {
 			// link to comment
 			link = "/company-page.html?page=comments&id=" + this.listing.getString();
 		break;
+		case LISTING_ACTIVATED:
+		case LISTING_FROZEN:
+		case LISTING_WITHDRAWN:
 		case NEW_LISTING:
 			// link to listing
 			link = "/company-page.html?id=" + this.listing.getString();
+		break;
+		case ASK_LISTING_OWNER:
+			link = "/company-page.html?page=qa&id=" + this.listing.getString();
+		break;
+		case PRIVATE_MESSAGE:
+			link = "/message-group-page.html";
 		break;
 		default:
 			link = "not_recognized";

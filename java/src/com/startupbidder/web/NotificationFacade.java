@@ -161,7 +161,7 @@ public class NotificationFacade {
 				.taskName(taskName));
 	}
 
-	public List<Notification> createListingStateNotification(String listingId) {
+	public List<NotificationVO> createListingStateNotification(String listingId) {
 		Listing listing = getListingDAO().getListing(BaseVO.toKeyId(listingId));
 		SBUser listingOwner = getUserDAO().getUser(listing.owner.getString());
 		List<Notification> toStore = new ArrayList<Notification>();
@@ -193,10 +193,11 @@ public class NotificationFacade {
 		}
 		
 		if (listing.state == State.NEW || listing.state == State.ACTIVE || listing.state == State.FROZEN) {
-			Notification ownerNotif = notification.clone();
+			Notification ownerNotif = (Notification)notification.copy();
 			ownerNotif.user = listingOwner.getKey();
 			ownerNotif.userEmail = listingOwner.email;
 			ownerNotif.userNickname = listingOwner.nickname;
+			log.info("Creating notification: " + ownerNotif);
 			toStore.add(ownerNotif);
 		}
 
@@ -207,11 +208,11 @@ public class NotificationFacade {
 			props.setMaxResults(1000);
 			for (Monitor monitor : getListingDAO().getMonitorsForListing(listing.id, props)) {
 				if (monitor.userEmail != null) {
-					monitoredNotif = notification.clone();
-					monitoredNotif.type = Notification.Type.NEW_COMMENT_FOR_MONITORED_LISTING;
+					monitoredNotif = (Notification)notification.copy();
 					monitoredNotif.user = monitor.user;
 					monitoredNotif.userEmail = monitor.userEmail;
 					monitoredNotif.userNickname = monitor.userNickname;
+					log.info("Creating notification: " + monitoredNotif);
 					toStore.add(monitoredNotif);
 				}
 			}
@@ -225,10 +226,10 @@ public class NotificationFacade {
 						.taskName(taskName));
 			}
 		}
-		return toStore;
+		return DtoToVoConverter.convertNotifications(toStore);
 	}
 	
-	public List<Notification> createCommentNotification(String commentId) {
+	public List<NotificationVO> createCommentNotification(String commentId) {
 		Comment comment = getListingDAO().getComment(BaseVO.toKeyId(commentId));
 		Listing listing = getListingDAO().getListing(comment.listing.getId());
 		SBUser listingOwner = getUserDAO().getUser(listing.owner.getString());
@@ -237,12 +238,13 @@ public class NotificationFacade {
 		
 		if (listing.owner.getId() != comment.user.getId()) {
 			// comment from user, we need to notify monitoring users and owner
-			Notification ownerNotif = notification.clone();
+			Notification ownerNotif = (Notification)notification.copy();
 			ownerNotif.type = Notification.Type.NEW_COMMENT_FOR_YOUR_LISTING;
 			ownerNotif.message = comment.comment;
 			ownerNotif.user = listingOwner.getKey();
 			ownerNotif.userEmail = listingOwner.email;
 			ownerNotif.userNickname = listingOwner.nickname;
+			log.info("Creating notification: " + ownerNotif);
 			toStore.add(ownerNotif);
 		}
 		
@@ -251,12 +253,13 @@ public class NotificationFacade {
 		props.setMaxResults(1000);
 		for (Monitor monitor : getListingDAO().getMonitorsForListing(listing.id, props)) {
 			if (monitor.userEmail != null) {
-				monitoredNotif = notification.clone();
+				monitoredNotif = (Notification)notification.copy();
 				monitoredNotif.type = Notification.Type.NEW_COMMENT_FOR_MONITORED_LISTING;
 				monitoredNotif.message = comment.comment;
 				monitoredNotif.user = monitor.user;
 				monitoredNotif.userEmail = monitor.userEmail;
 				monitoredNotif.userNickname = monitor.userNickname;
+				log.info("Creating notification: " + monitoredNotif);
 				toStore.add(monitoredNotif);
 			}
 		}
@@ -267,14 +270,14 @@ public class NotificationFacade {
 			queue.add(TaskOptions.Builder.withUrl("/task/send-notification").param("id", "" + notif.getWebKey())
 					.taskName(taskName));
 		}
-		return toStore;
+		return DtoToVoConverter.convertNotifications(toStore);
 	}
 
-	public Notification createBidNotification(String bidId) {
+	public NotificationVO createBidNotification(String bidId) {
 		Bid bid = getBidDAO().getBid(BaseVO.toKeyId(bidId));
 		Listing listing = getListingDAO().getListing(bid.listing.getId());
 		SBUser listingOwner = getUserDAO().getUser(listing.owner.getString());
-		SBUser toUser = getUserDAO().getUser(bid.userA.getString());
+		SBUser toUser = getUserDAO().getUser(bid.userB.getString());
 		
 		Notification notification = new Notification(listing, listingOwner);
 		notification.user = toUser.getKey();
@@ -301,6 +304,7 @@ public class NotificationFacade {
 			notification.type = Notification.Type.BID_WAS_WITHDRAWN;
 			break;
 		}
+		log.info("Creating notification: " + notification);
 		notification = getDAO().storeNotification(notification)[0];
 		if (notification != null) {
 			String taskName = timeStampFormatter.print(new Date().getTime()) + "send_notification_" + notification.type + "_" + notification.user.getId();
@@ -310,10 +314,10 @@ public class NotificationFacade {
 		} else {
 			log.warning("Can't schedule notification " + notification);
 		}
-		return notification;
+		return DtoToVoConverter.convert(notification);
 	}
 
-	public Notification createPrivateMessageNotification(String messageId) {
+	public NotificationVO createPrivateMessageNotification(String messageId) {
 		PrivateMessage message = getMessageDAO().getMessage(BaseVO.toKeyId(messageId));
 		
 		Notification notification = new Notification();
@@ -324,6 +328,7 @@ public class NotificationFacade {
 		notification.fromUserNickname = message.userANickname;
 		notification.message = message.text;
 		notification.read = false;
+		log.info("Creating notification: " + notification);
 		notification = getDAO().storeNotification(notification)[0];
 		if (notification != null) {
 			String taskName = timeStampFormatter.print(new Date().getTime()) + "send_notification_" + notification.type + "_" + notification.user.getId();
@@ -333,13 +338,15 @@ public class NotificationFacade {
 		} else {
 			log.warning("Can't schedule notification " + notification);
 		}
-		return notification;
+		return DtoToVoConverter.convert(notification);
 	}
 
-	public Notification createQANotification(String qaId) {
+	public NotificationVO createQANotification(String qaId) {
 		QuestionAnswer qa = getListingDAO().getQuestionAnswer(BaseVO.toKeyId(qaId));
+		Listing listing = getListingDAO().getListing(qa.listing.getId());
+		SBUser listingOwner = getUserDAO().getUser(listing.owner.getString());
 		
-		Notification notification = new Notification();
+		Notification notification = new Notification(listing, listingOwner);
 		if (qa.answerDate != null) {
 			// this is answer
 			SBUser questionAuthor = getUserDAO().getUser(qa.user.getString());			
@@ -349,7 +356,6 @@ public class NotificationFacade {
 			notification.message = qa.answer;
 		} else {
 			// this is question
-			SBUser listingOwner = getUserDAO().getUser(qa.listingOwner.getString());
 			notification.user = qa.listingOwner;
 			notification.userEmail = listingOwner.email;
 			notification.userNickname = listingOwner.nickname;
@@ -357,6 +363,7 @@ public class NotificationFacade {
 		}
 		notification.type = Type.ASK_LISTING_OWNER;
 		notification.read = false;
+		log.info("Creating notification: " + notification);
 		notification = getDAO().storeNotification(notification)[0];
 		if (notification != null) {
 			String taskName = timeStampFormatter.print(new Date().getTime()) + "send_notification_" + notification.type + "_" + notification.user.getId();
@@ -366,7 +373,7 @@ public class NotificationFacade {
 		} else {
 			log.warning("Can't schedule notification " + notification);
 		}
-		return notification;
+		return DtoToVoConverter.convert(notification);
 	}
 
 }
