@@ -37,8 +37,7 @@ pl.implement(InvestorBidGroupClass, {
         this.typeclass = this.typeclassmap[this.last_type] || '';
         this.url = this.investor_id ? '/company-owner-investor-bids-page.html'
             + '?id=' + this.listing_id
-            + '&investor_id=' + this.investor_id
-            + '&investor_nickname=' + encodeURIComponent(this.investor_nickname) : '';
+            + '&investor_id=' + this.investor_id : '#';
         this.openanchor = this.url ? '<a href="' + this.url + '" class="hoverlink' + this.messageclass + ' ' + this.typeclass + '">' : '';
         this.closeanchor = this.url ? '</a>' : '';
     },
@@ -104,7 +103,7 @@ function InvestorBidGroupListClass() {
 }
 pl.implement(InvestorBidGroupListClass, {
     store: function(json) {
-        var jsonlist = json && json.users ? json.users: [],
+        var jsonlist = json && json.investors || [],
             investor,
             i;
         this.investors = [];
@@ -154,14 +153,14 @@ pl.implement(InvestorBidGroupListClass, {
                     json.listing = {};
                     json.listing.listing_id = self.listing_id;
                 }
-                orderbook = new OrderBookClass(json.listing.listing_id, json.listing.suggested_amt, json.listing.suggested_pct, json.listing.listing_date);
+                orderbook = new OrderBookClass(json.listing.listing_id);
                 header.setLogin(json);
                 companybanner.display(json);
-                orderbook.load();
+                orderbook.display(json);
                 self.display(json); 
             },
 
-            ajax = new AjaxClass('/listing/bid_users/' + this.listing_id, 'bidstitlemsg', completeFunc);
+            ajax = new AjaxClass('/listing/investors/' + this.listing_id, 'bidstitlemsg', completeFunc);
         //this.mock(ajax);
         ajax.call();
     },

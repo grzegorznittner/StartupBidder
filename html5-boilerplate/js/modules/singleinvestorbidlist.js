@@ -215,10 +215,10 @@ valid_actions: [ "investor_counter", "investor_reject", "investor_accept", "inve
                     json.listing = {};
                     json.listing.listing_id = self.listing_id;
                 }
-                orderbook = new OrderBookClass(json.listing.listing_id, json.listing.suggested_amt, json.listing.suggested_pct, json.listing.listing_date);
+                orderbook = new OrderBookClass(json.listing.listing_id);
                 header.setLogin(json);
                 companybanner.display(json);
-                orderbook.load();
+                orderbook.display(json);
                 self.display(json);
             },
             ajax = new AjaxClass('/listing/bids/' + this.listing_id, 'bidtitlemsg', complete);
