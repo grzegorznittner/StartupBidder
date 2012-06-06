@@ -816,19 +816,21 @@ public class ObjectifyDatastoreDAO {
 		return null;
 	}
 */
-	public List<Comment> getCommentsForListing(long listingId) {
-		QueryResultIterable<Key<Comment>> commentsIt = getOfy().query(Comment.class)
+	public List<Comment> getCommentsForListing(long listingId, ListPropertiesVO listProperties) {
+		Query<Comment> query = getOfy().query(Comment.class)
 				.filter("listing =", new Key<Listing>(Listing.class, listingId))
-				.order("-commentedOn").fetchKeys();
-		List<Comment> comments = new ArrayList<Comment>(getOfy().get(commentsIt).values());
+				.order("-commentedOn");
+		List<Key<Comment>> keyList = new CursorHandler<Comment>().handleQuery(listProperties, query);
+		List<Comment> comments = new ArrayList<Comment>(getOfy().get(keyList).values());
 		return comments;
 	}
 
-	public List<Comment> getCommentsForUser(long userId) {
-		QueryResultIterable<Key<Comment>> commentsIt = getOfy().query(Comment.class)
+	public List<Comment> getCommentsForUser(long userId, ListPropertiesVO listProperties) {
+		Query<Comment> query = getOfy().query(Comment.class)
 				.filter("user =", new Key<SBUser>(SBUser.class, userId))
-				.order("-commentedOn").fetchKeys();
-		List<Comment> comments = new ArrayList<Comment>(getOfy().get(commentsIt).values());
+				.order("-commentedOn");
+		List<Key<Comment>> keyList = new CursorHandler<Comment>().handleQuery(listProperties, query);
+		List<Comment> comments = new ArrayList<Comment>(getOfy().get(keyList).values());
 		return comments;
 	}
 

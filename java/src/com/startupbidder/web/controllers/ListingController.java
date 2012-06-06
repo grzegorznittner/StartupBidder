@@ -683,7 +683,7 @@ public class ListingController extends ModelDrivenController {
 		if (!StringUtils.isEmpty(commentString)) {
 			CommentVO comment = mapper.readValue(commentString, CommentVO.class);
 			log.log(Level.INFO, "Creating comment: " + comment);
-			comment = ServiceFacade.instance().createComment(getLoggedInUser(), comment);
+			comment = ServiceFacade.instance().createComment(getLoggedInUser(), comment.getListing(), comment.getComment());
 			model = comment;
 			if (comment == null) {
 				log.log(Level.WARNING, "Comment not created!");

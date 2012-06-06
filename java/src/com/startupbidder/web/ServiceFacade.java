@@ -18,7 +18,6 @@ import com.startupbidder.dao.ObjectifyDatastoreDAO;
 import com.startupbidder.datamodel.Comment;
 import com.startupbidder.datamodel.Listing;
 import com.startupbidder.datamodel.Monitor;
-import com.startupbidder.datamodel.Notification;
 import com.startupbidder.datamodel.QuestionAnswer;
 import com.startupbidder.datamodel.SBUser;
 import com.startupbidder.datamodel.VoToModelConverter;
@@ -80,18 +79,10 @@ public class ServiceFacade {
 			Monitor monitor = loggedInUser != null ? getDAO().getListingMonitor(loggedInUser.toKeyId(), listing.toKeyId()) : null;
 			ListingFacade.instance().applyListingData(loggedInUser, listing, monitor);
 			List<CommentVO> comments = DtoToVoConverter.convertComments(
-					getDAO().getCommentsForListing(BaseVO.toKeyId(listingId)));
-			int index = commentProperties.getStartIndex() > 0 ? commentProperties.getStartIndex() : 1;
-			for (CommentVO comment : comments) {
-				comment.setUserName(getDAO().getUser(comment.getUser()).nickname);
-				comment.setOrderNumber(index++);
-			}
+					getDAO().getCommentsForListing(BaseVO.toKeyId(listingId), commentProperties));
 			list.setComments(comments);
 			list.setListing(listing);
-
-			commentProperties.setNumberOfResults(comments.size());
-			commentProperties.setStartIndex(0);
-			commentProperties.setTotalResults(comments.size());
+			list.setCommentsProperties(commentProperties);
 		}
 		list.setCommentsProperties(commentProperties);
 
@@ -109,29 +100,13 @@ public class ServiceFacade {
 			commentProperties.setTotalResults(0);
 		} else {
 			List<CommentVO> comments = DtoToVoConverter.convertComments(
-					getDAO().getCommentsForUser(BaseVO.toKeyId(userId)));
-			int index = commentProperties.getStartIndex() > 0 ? commentProperties.getStartIndex() : 1;
-			for (CommentVO comment : comments) {
-				comment.setUserName(user.getNickname());
-				Listing listing = getDAO().getListing(comment.toKeyId());
-				if (listing == null) {
-					log.log(Level.SEVERE, "Comment '" + comment.getId() + "' doesn't have listing id");
-				}
-				comment.setListingName(listing.name);
-				comment.setOrderNumber(index++);
-			}
+					getDAO().getCommentsForUser(BaseVO.toKeyId(userId), commentProperties));
 			list.setComments(comments);
-
-			commentProperties.setNumberOfResults(comments.size());
-			commentProperties.setStartIndex(0);
-			commentProperties.setTotalResults(comments.size());
 		}
 		list.setCommentsProperties(commentProperties);
 		list.setUser(new UserBasicVO(user));
 		return list;
 	}
-	
-
 
 	/**
 	 * Returns listing's rating
@@ -189,31 +164,39 @@ public class ServiceFacade {
 		return getCommentsForListing(loggedInUser, comment.getListing(), new ListPropertiesVO());
 	}
 
-	public CommentVO createComment(UserVO loggedInUser, CommentVO comment) {
+	public CommentVO createComment(UserVO loggedInUser, String listingId, String commentText) {
 		if (loggedInUser == null) {
 			log.warning("User not logged in.");
 			return null;
 		}
-		Listing listing = getDAO().getListing(BaseVO.toKeyId(comment.getListing()));
+		Listing listing = getDAO().getListing(BaseVO.toKeyId(listingId));
 		if (listing == null) {
-			log.warning("Listing with id '" + comment.getListing() + "' doesn't exist.");
+			log.warning("Listing with id '" + listingId + "' doesn't exist.");
 			return null;
 		}
+		SBUser user = null;
+		if (loggedInUser.getNickname() == null) {
+			// sorting out dev env issue where google user doesn't have nickname
+			user = getDAO().getUser(loggedInUser.getId());
+		} else {
+			user = VoToModelConverter.convert(loggedInUser);
+		}
 		
-		comment.setListingName(listing.name);
-		comment.setUser(loggedInUser.getId());
-		comment.setUserName(loggedInUser.getNickname());
-		Comment commentDTO = VoToModelConverter.convert(comment);
-		comment = DtoToVoConverter.convert(getDAO().createComment(commentDTO));
-		comment.setListingName(listing.name);
+		Comment comment = new Comment();
+		comment.listing = listing.getKey();
+		comment.listingName = listing.name;
+		comment.user = user.getKey();
+		comment.userNickName = user.nickname;
+		comment.comment = commentText;
+		CommentVO commentVO = DtoToVoConverter.convert(getDAO().createComment(comment));
 
 		setListingMonitor(loggedInUser, listing.getWebKey());
 		
 		UserMgmtFacade.instance().scheduleUpdateOfUserStatistics(loggedInUser.getId(), UserMgmtFacade.UpdateReason.NEW_COMMENT);
-		ListingFacade.instance().scheduleUpdateOfListingStatistics(comment.getListing(), UpdateReason.NEW_COMMENT);
+		ListingFacade.instance().scheduleUpdateOfListingStatistics(listingId, UpdateReason.NEW_COMMENT);
 		
-		NotificationFacade.instance().scheduleCommentNotification(commentDTO);
-		return comment;
+		NotificationFacade.instance().scheduleCommentNotification(comment);
+		return commentVO;
 	}
 
 	public CommentVO updateComment(UserVO loggedInUser, CommentVO comment) {

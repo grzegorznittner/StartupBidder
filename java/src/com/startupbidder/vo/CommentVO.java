@@ -16,23 +16,13 @@ import com.startupbidder.util.DateSerializer;
 @JsonAutoDetect(getterVisibility=Visibility.NONE, setterVisibility=Visibility.NONE,
 		fieldVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE)
 public class CommentVO extends BaseVO {
-	@JsonProperty("num")
-	private int orderNumber;
-	@JsonProperty("comment_id")
-	private String id;
-	@JsonProperty("listing_id")
-	private String listing;
-	@JsonProperty("listing_title")
-	private String listingName;
-	@JsonProperty("profile_id")
-	private String user;
-	@JsonProperty("profile_username")
-	private String userName;
-	@JsonProperty("text")
-	private String comment;
-	@JsonProperty("comment_date")
-	@JsonSerialize(using=DateSerializer.class)
-	private Date   commentedOn;
+	@JsonProperty("comment_id")	private String id;
+	@JsonProperty("listing_id")	private String listing;
+	@JsonProperty("listing_title") private String listingName;
+	@JsonProperty("profile_id") private String user;
+	@JsonProperty("profile_username") private String userName;
+	@JsonProperty("text") private String comment;
+	@JsonProperty("comment_date") @JsonSerialize(using=DateSerializer.class) private Date   commentedOn;
 	
 	public CommentVO() {
 	}
@@ -90,13 +80,5 @@ public class CommentVO extends BaseVO {
 
 	public void setUserName(String userName) {
 		this.userName = userName;
-	}
-
-	public int getOrderNumber() {
-		return orderNumber;
-	}
-
-	public void setOrderNumber(int orderNumber) {
-		this.orderNumber = orderNumber;
 	}
 }

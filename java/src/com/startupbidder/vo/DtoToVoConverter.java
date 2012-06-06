@@ -257,6 +257,7 @@ public class DtoToVoConverter {
 		comment.setComment(commentDTO.comment);
 		comment.setCommentedOn(commentDTO.commentedOn);
 		comment.setListing(keyToString(commentDTO.listing));
+		comment.setListingName(commentDTO.listingName);
 		comment.setUser(keyToString(commentDTO.user));
 		comment.setUserName(commentDTO.userNickName);
 		return comment;

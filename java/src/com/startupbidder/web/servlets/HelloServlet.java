@@ -364,6 +364,7 @@ public class HelloServlet extends HttpServlet {
 			}
 			out.println("</tr></table>");
 
+			out.println("<a href=\"/listing/comments/" + listing.getId() + "/.json\">View all comments</a><br/>");
 			ListPropertiesVO listProperties = new ListPropertiesVO();
 			listProperties.setMaxResults(20);
 			CommentListVO comments = ServiceFacade.instance().getCommentsForListing(currentUser, listing.getId(), listProperties);

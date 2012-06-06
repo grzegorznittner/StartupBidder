@@ -40,6 +40,7 @@ public class Comment extends BaseObject<Comment> {
 	@Indexed public Date   commentedOn;
 	@Indexed public Key<Comment> parent;
 	public String userNickName;
+	public String listingName;
 	public String comment;
 
 	public String getWebKey() {
