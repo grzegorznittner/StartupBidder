@@ -398,11 +398,11 @@ public class HelloServlet extends HttpServlet {
 			
 			out.println("<a href=\"/listing/order_book/" + listing.getId() + ".json?\">View Order Book</a><br/>");
 			if (StringUtils.equals(currentUser.getId(), listing.getOwner())) {
-				out.println("<a href=\"/listing/bid_users/" + listing.getId() + ".json?\">View Bid Users</a><br/>");
+				out.println("<a href=\"/listing/investors/" + listing.getId() + ".json?\">View Investors</a><br/>");
 				listProperties = new ListPropertiesVO();
 				listProperties.setMaxResults(50);
-				BidUserListVO bidUsers = BidFacade.instance().getBidUsers(currentUser, listing.getId(), listProperties);
-				for (BidUserVO bu : bidUsers.getBids()) {
+				BidUserListVO bidUsers = BidFacade.instance().getInvestors(currentUser, listing.getId(), listProperties);
+				for (BidUserVO bu : bidUsers.getInvestors()) {
 					out.println(bu.getUserNickname() + " (" + bu.getCounter() + ") " + bu.getType() + " " + bu.getAmount() + " for " + bu.getPercentage() + "% valued "
 							+ bu.getValue() + " on " + bu.getLastDate() + " ");
 					out.println("<a href=\"/listing/bids/" + listing.getId() + "/" + bu.getUser() + ".json?\">View bids from " + bu.getUserNickname() + "</a>");

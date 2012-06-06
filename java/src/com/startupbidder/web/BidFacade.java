@@ -268,7 +268,7 @@ public class BidFacade {
 		result.setAcceptedBids(DtoToVoConverter.convertAnonBids(acceptedBids));
 	}
 
-	public BidUserListVO getBidUsers(UserVO loggedInUser, String listingId, ListPropertiesVO listProperties) {
+	public BidUserListVO getInvestors(UserVO loggedInUser, String listingId, ListPropertiesVO listProperties) {
 		BidUserListVO result = new BidUserListVO();
 		if (loggedInUser == null) {
 			log.warning("User not logged in.");
@@ -292,8 +292,8 @@ public class BidFacade {
 					+ bid.direction + " - " + bid.type + " " + bid.amount + " for " + bid.percentage + "%");
 		}
 		List<BidUserVO> bids = DtoToVoConverter.convertBidUsers(bidUsers);
-		result.setBids(bids);
-		result.setBidsProperties(listProperties);
+		result.setInvestors(bids);
+		result.setInvestorsProperties(listProperties);
 		fetchOrderBook(listing, result);
 		return result;
 	}

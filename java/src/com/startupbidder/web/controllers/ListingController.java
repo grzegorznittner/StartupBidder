@@ -102,8 +102,8 @@ public class ListingController extends ModelDrivenController {
                 return questionsAndAnswers(request);
 			} else if("order_book".equalsIgnoreCase(getCommand(1))) {
                 return orderBook(request);
-			} else if("bid_users".equalsIgnoreCase(getCommand(1))) {
-                return bidUsers(request);
+			} else if("investors".equalsIgnoreCase(getCommand(1))) {
+                return investors(request);
 			} else if("bids".equalsIgnoreCase(getCommand(1))) {
                 return bids(request);
 			} else if("comments".equalsIgnoreCase(getCommand(1))) {
@@ -812,12 +812,12 @@ public class ListingController extends ModelDrivenController {
 	/*
 	 *  /listing/bid_users/
 	 */
-	private HttpHeaders bidUsers(HttpServletRequest request) {
-		HttpHeaders headers = new HttpHeadersImpl("bid_users");
+	private HttpHeaders investors(HttpServletRequest request) {
+		HttpHeaders headers = new HttpHeadersImpl("investors");
 		
 		String listingId = getCommandOrParameter(request, 2, "id");
 		ListPropertiesVO listProperties = getListProperties(request);
-		BidUserListVO result = BidFacade.instance().getBidUsers(getLoggedInUser(), listingId, listProperties);
+		BidUserListVO result = BidFacade.instance().getInvestors(getLoggedInUser(), listingId, listProperties);
 		model = result;
 		
 		return headers;

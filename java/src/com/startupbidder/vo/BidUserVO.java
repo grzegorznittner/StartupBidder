@@ -23,10 +23,10 @@ public class BidUserVO extends BaseVO {
 	@JsonProperty("last_text") private String text;
 	@JsonProperty("counter") private int counter;
 	@JsonProperty("read") private boolean read;
-	@JsonProperty("amt") private int amount;
-	@JsonProperty("pct") private int percentage;
-	@JsonProperty("val") private int value;
-	@JsonProperty("type") @JsonSerialize(using=LowecaseSerializer.class) private String type;
+	@JsonProperty("last_amt") private int amount;
+	@JsonProperty("last_pct") private int percentage;
+	@JsonProperty("last_val") private int value;
+	@JsonProperty("last_type") @JsonSerialize(using=LowecaseSerializer.class) private String type;
 	public BidUserVO() {
 	}
 	public String getId() {
