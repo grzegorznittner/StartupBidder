@@ -213,7 +213,6 @@ public class VoToModelConverter {
 		if (!StringUtils.isEmpty(commentVO.getId())) {
 			comment.id = commentVO.toKeyId();
 		}
-		comment.mockData = commentVO.isMockData();
 		comment.comment = commentVO.getComment();
 		comment.listing = new Key<Listing>(commentVO.getListing());
 		comment.commentedOn = commentVO.getCommentedOn();

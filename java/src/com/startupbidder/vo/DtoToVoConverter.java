@@ -254,7 +254,6 @@ public class DtoToVoConverter {
 		}
 		CommentVO comment = new CommentVO();
 		comment.setId(new Key<Comment>(Comment.class, commentDTO.id).getString());
-		comment.setMockData(commentDTO.mockData);
 		comment.setComment(commentDTO.comment);
 		comment.setCommentedOn(commentDTO.commentedOn);
 		comment.setListing(keyToString(commentDTO.listing));

@@ -171,11 +171,11 @@ public class ServiceFacade {
 		CommentVO comment = getComment(loggedInUser, commentId);
 		if (loggedInUser.isAdmin()) {
 			log.info("Admin is going to delete comment: " + comment);
-		} else if (!StringUtils.equals(comment.getUser(), loggedInUser.getId())) {
+		} else if (StringUtils.equals(comment.getUser(), loggedInUser.getId())) {
 			log.info("Comment author is going to delete comment: " + comment);
 		} else {
 			Listing listing = getDAO().getListing(BaseVO.toKeyId(comment.getListing()));
-			if (listing.id == loggedInUser.toKeyId()) {
+			if (listing.owner.getId() == loggedInUser.toKeyId()) {
 				log.info("Listing owner is going to delete comment: " + comment);
 			} else {
 				log.warning("User '" + loggedInUser.getNickname() + "' is not allowed to delete comment: " + comment);

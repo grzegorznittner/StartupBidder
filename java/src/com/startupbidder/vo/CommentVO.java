@@ -33,8 +33,6 @@ public class CommentVO extends BaseVO {
 	@JsonProperty("comment_date")
 	@JsonSerialize(using=DateSerializer.class)
 	private Date   commentedOn;
-	@JsonProperty("mockData")
-	private boolean mockData;
 	
 	public CommentVO() {
 	}
@@ -100,13 +98,5 @@ public class CommentVO extends BaseVO {
 
 	public void setOrderNumber(int orderNumber) {
 		this.orderNumber = orderNumber;
-	}
-
-	public boolean isMockData() {
-		return mockData;
-	}
-
-	public void setMockData(boolean mockData) {
-		this.mockData = mockData;
 	}
 }

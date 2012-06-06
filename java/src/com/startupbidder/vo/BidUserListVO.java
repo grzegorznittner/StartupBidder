@@ -13,6 +13,7 @@ import org.codehaus.jackson.annotate.JsonProperty;
 @JsonAutoDetect(getterVisibility=Visibility.NONE, setterVisibility=Visibility.NONE,
 		fieldVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE)
 public class BidUserListVO extends BaseResultVO implements OrderBook {
+	@JsonProperty("listing") private ListingVO listing;
 	@JsonProperty("investors") private List<BidUserVO> investors;
 	@JsonProperty("investors_props")	private ListPropertiesVO investorsProperties;
 	@JsonProperty("investor_bids") private List<AnonBidVO> investorBids;
@@ -20,6 +21,12 @@ public class BidUserListVO extends BaseResultVO implements OrderBook {
 	@JsonProperty("accepted_bids") private List<AnonBidVO> acceptedBids;
 	public List<BidUserVO> getInvestors() {
 		return investors;
+	}
+	public ListingVO getListing() {
+		return listing;
+	}
+	public void setListing(ListingVO listing) {
+		this.listing = listing;
 	}
 	public void setInvestors(List<BidUserVO> investors) {
 		this.investors = investors;

@@ -34,6 +34,8 @@ import com.startupbidder.vo.BidListVO;
 import com.startupbidder.vo.BidUserListVO;
 import com.startupbidder.vo.BidUserVO;
 import com.startupbidder.vo.BidVO;
+import com.startupbidder.vo.CommentListVO;
+import com.startupbidder.vo.CommentVO;
 import com.startupbidder.vo.DtoToVoConverter;
 import com.startupbidder.vo.ListPropertiesVO;
 import com.startupbidder.vo.ListingAndUserVO;
@@ -101,9 +103,6 @@ public class HelloServlet extends HttpServlet {
 			List<SBUser> users = datastore.getAllUsers();
 
 			List<Listing> usersListings = datastore.getUserActiveListings(currentUser.toKeyId(), listProperties);
-			listProperties = new ListPropertiesVO();
-			listProperties.setMaxResults(20);
-			List<Comment> comments = datastore.getCommentsForListing(datastore.getMostDiscussedListings(listProperties).get(0).id);
 			
 			//testMockDatastore(user, datastore, out);
 			out.println("<p style=\"background: none repeat scroll 0% 0% rgb(187, 187, 187);\">User API:</p>");
@@ -206,15 +205,6 @@ public class HelloServlet extends HttpServlet {
 			out.println("<p style=\"background: none repeat scroll 0% 0% rgb(187, 187, 187);\">Comments API:</p>");
 			out.println("<a href=\"/listing/comments/" + topListing.getWebKey() + "/.json?max_results=6\">Comments for top listing</a><br/>");
 			out.println("<a href=\"/comments/user/" + currentUser.getId() + "/.json?max_results=6\">Comments for current user</a><br/>");
-			if (comments != null && comments.size() > 0) {
-				out.println("<a href=\"/comments/get/" + comments.get(0).getWebKey() + "/.json\">Get comment id '" + comments.get(0).getWebKey() + "'</a><br/>");
-				out.println("<form method=\"POST\" action=\"/listing/post_comment/.json\"><textarea name=\"comment\" rows=\"5\" cols=\"100\">"
-							+ "{ \"listing_id\":\"" + topListing.getWebKey() + "\", \"text\":\"comment test\" }"
-							+ "</textarea><input type=\"submit\" value=\"Create a comment (for top listing)\"/></form>");
-				out.println("<form method=\"POST\" action=\"/listing/delete_comment/.json?id=" + comments.get(0).getWebKey() + "\"><input type=\"submit\" value=\"Deletes comment id '" + comments.get(0).getWebKey() + "'\"/></form>");
-			} else {
-				out.println("No comments.<br/>");
-			}
 			out.println("<br/>");
 			
 			out.println("<p style=\"background: none repeat scroll 0% 0% rgb(187, 187, 187);\">Private Messages API:</p>");
@@ -375,6 +365,25 @@ public class HelloServlet extends HttpServlet {
 			out.println("</tr></table>");
 
 			ListPropertiesVO listProperties = new ListPropertiesVO();
+			listProperties.setMaxResults(20);
+			CommentListVO comments = ServiceFacade.instance().getCommentsForListing(currentUser, listing.getId(), listProperties);
+			if (comments.getComments() != null) {
+				for (CommentVO comment : comments.getComments()) {
+					out.println("by:" + comment.getUserName() + ": " + comment.getComment() + " (" + comment.getCommentedOn() + ") ");
+					out.println("<a href=\"/comments/get/" + comment.getId() + "/.json\">View</a><br/>");
+					if (StringUtils.equals(comment.getUser(), currentUser.getId())) {
+						out.println("<form method=\"POST\" action=\"/listing/delete_comment/.json\"><input type=\"hidden\" name=\"id\" value=\""
+								+ comment.getId() + "\"></input><input type=\"submit\" value=\"delete\"/></form>");
+					}
+				}
+			} else {
+				out.println("No comments.<br/>");
+			}
+			out.println("<form method=\"POST\" action=\"/listing/post_comment/.json\"><textarea name=\"comment\" rows=\"2\" cols=\"50\">"
+					+ "{ \"listing_id\":\"" + listing.getId() + "\", \"text\":\"comment text\" }"
+					+ "</textarea><input type=\"submit\" value=\"Post comment\"/></form>");
+
+			listProperties = new ListPropertiesVO();
 			listProperties.setMaxResults(50);
 			QuestionAnswerListVO qas = ServiceFacade.instance().getQuestionsAndAnswers(currentUser, listing.getId(), listProperties);
 			for (QuestionAnswerVO qa : qas.getQuestionAnswers()) {

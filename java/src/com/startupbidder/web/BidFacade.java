@@ -109,6 +109,7 @@ public class BidFacade {
 		bids.add(DtoToVoConverter.convert(bid));
 		result.setBids(bids);
 		result.setValidActions(getListOfValidActions(bidType, true));
+		result.setListing(DtoToVoConverter.convert(listing));
 		
 		ListPropertiesVO props = new ListPropertiesVO();
 		props.setNumberOfResults(shorts[0].counter + 1);
@@ -176,6 +177,7 @@ public class BidFacade {
 		bids.add(DtoToVoConverter.convert(bid));
 		result.setBids(bids);
 		result.setValidActions(getListOfValidActions(bidType, true));
+		result.setListing(DtoToVoConverter.convert(listing));
 		
 		ListPropertiesVO props = new ListPropertiesVO();
 		props.setNumberOfResults(shorts[0].counter + 1);
@@ -234,6 +236,7 @@ public class BidFacade {
 			result.setErrorMessage("Listing doesn't exist");
 			return result;
 		}
+		result.setListing(DtoToVoConverter.convert(listing));
 		fetchOrderBook(listing, result);
 		return result;
 	}
@@ -283,6 +286,7 @@ public class BidFacade {
 			result.setErrorMessage("User not an owner of the listing");
 			return result;
 		}
+		result.setListing(DtoToVoConverter.convert(listing));
 		SBUser user = VoToModelConverter.convert(loggedInUser);
 		log.info("Bid users for user: " + user);
 		List<BidUser> bidUsers = getDAO().getBidShortList(listing, user, listProperties);
@@ -313,6 +317,7 @@ public class BidFacade {
 			result.setErrorMessage("Listing doesn't exist");
 			return result;
 		}
+		result.setListing(DtoToVoConverter.convert(listing));
 		SBUser owner = null;
 		SBUser investor = null;
 		boolean isOwner = true;
