@@ -347,6 +347,12 @@ public class ServiceFacade {
 			log.warning("Listing id is empty!");
 			return null;
 		}
+		long listingLongId = BaseVO.toKeyId(listingId);
+		Listing listing = getDAO().getListing(listingLongId);
+		if (listing == null || listing.owner.getId() == listingLongId) {
+			log.warning("Listing doesn't exist or user is an owner of this listing. Listing: " + listing);
+			return null;
+		}
 		Monitor monitor = new Monitor();
 		monitor.user = new Key<SBUser>(SBUser.class, loggedInUser.toKeyId());
 		monitor.userNickname = loggedInUser.getNickname();
