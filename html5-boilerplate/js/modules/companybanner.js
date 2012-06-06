@@ -120,9 +120,6 @@ pl.implement(CompanyBannerClass, {
                 tab = tabid.replace(/tab$/,''),
                 page,
                 url;
-            if (tab === self.tab) {
-                return; // already set to "#" by default
-            }
             if (tab === 'basics') {
                 page = 'company-page.html';
             }

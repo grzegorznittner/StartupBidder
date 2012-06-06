@@ -83,7 +83,6 @@ function OwnerSingleInvestorBidListClass() {
     var queryString = new QueryStringClass();
     this.listing_id = queryString.vars.id;
     this.investor_id = queryString.vars.investor_id;
-    this.investor_nickname = queryString.vars.investor_nickname && decodeURIComponent(queryString.vars.investor_nickname) || 'Anonymous';
     this.confirmtext = {
         investor_accept: 'You hereby agree to accept this bid according to the <a href="/terms-page.html">terms and conditions</a>.',
         investor_reject: 'You hereby agree to reject this bid according to the <a href="/terms-page.html">terms and conditions</a>.',
@@ -215,14 +214,13 @@ valid_actions: [ "owner_counter", "owner_reject", "owner_accept", "owner_withdra
                     json.listing = {};
                     json.listing.listing_id = self.listing_id;
                 }
-                orderbook = new OrderBookClass(json.listing.listing_id, json.listing.suggested_amt, json.listing.suggested_pct, json.listing.listing_date);
+                orderbook = new OrderBookClass(json.listing.listing_id);
                 header.setLogin(json);
                 companybanner.display(json);
-                orderbook.load();
+                orderbook.display(json);
                 self.display(json);
             },
             ajax = new AjaxClass('/listing/bids/' + this.listing_id + '/' + this.investor_id, 'bidtitlemsg', complete);
-        pl('#investor_nickname').text(this.investor_nickname.toUpperCase());
         //this.mock(ajax); // FIXME
         ajax.call();
     },
@@ -233,6 +231,7 @@ valid_actions: [ "owner_counter", "owner_reject", "owner_accept", "owner_withdra
             jsonlist = json && json.bids || [],
             bid,
             i;
+        this.investor_nickname = json.investor && json.investor.username || 'Anonymous';
         this.bidsprops = bidsprops;
         this.validactions = validactions;
         this.bids = [];
@@ -258,6 +257,7 @@ valid_actions: [ "owner_counter", "owner_reject", "owner_accept", "owner_withdra
         if (json !== undefined) {
             this.store(json);
         }
+        pl('#investor_nickname').text(this.investor_nickname.toUpperCase());
         if (this.bids.length) {
             html = BidClass.prototype.makeHeader();
             for (i = 0; i < this.bids.length; i++) {

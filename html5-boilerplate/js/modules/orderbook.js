@@ -84,17 +84,9 @@ pl.implement(PublicBidClass, {
     }
 });
 
-function OrderBookClass(listing_id, suggested_amt, suggested_pct, listing_date) {
+function OrderBookClass(listing_id) {
     this.listing_id = listing_id;
     this.bidprops = [ 'investor_bids', 'owner_bids', 'accepted_bids' ];
-    this.ownerofferbid = new PublicBidClass(this, 'owner_bids');
-    this.ownerofferbid.store({
-        amt: suggested_amt,
-        pct: suggested_pct,
-        val: ValuationClass.prototype.valuation(suggested_amt, suggested_pct),
-        type: 'owner_post',
-        create_date: listing_date
-    });
     this.nobidsmap = {
         investor_bids: 'No bids',
         owner_bids: 'No Asks',
@@ -158,6 +150,20 @@ accepted_bids: [
         ajax.call();
     },
 
+    storeOfferBid: function(json) {
+        var listing = json.listing;
+        if (listing) {
+            this.ownerofferbid = new PublicBidClass(this, 'owner_bids');
+            this.ownerofferbid.store({
+                amt: listing.suggested_amt,
+                pct: listing.suggested_pct,
+                val: ValuationClass.prototype.valuation(listing.suggested_amt, listing.suggested_pct),
+                type: 'owner_post',
+                create_date: listing.listing_date
+            });
+        }
+    },
+
     store: function(json) {
         var 
             bidprop,
@@ -167,6 +173,7 @@ accepted_bids: [
             bid;
         this.bids = {};
         this.sortedbids = {};
+        this.storeOfferBid(json);
         for (i = 0; i < this.bidprops.length; i++) {
             bidprop = this.bidprops[i];
             this.bids[bidprop] = [];

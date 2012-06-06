@@ -1,7 +1,7 @@
 function BMCClass() {
 }
 pl.implement(BMCClass, {
-    display: function(listing) {
+    store: function(listing) {
         var n = 9,
             i,
             field,
@@ -17,6 +17,10 @@ pl.implement(BMCClass, {
             html = HTMLMarkup.prototype.stylize(val, 'bmc');
             pl(sel).html(html);
         }
+    },
+    display: function(listing) {
+        this.store(listing);
+        pl('#bmc').show();
     },
     getUpdater: function(id) {
         return function(json) {
