@@ -40,6 +40,7 @@ import com.startupbidder.vo.ListingAndUserVO;
 import com.startupbidder.vo.ListingDocumentVO;
 import com.startupbidder.vo.ListingVO;
 import com.startupbidder.vo.PrivateMessageUserVO;
+import com.startupbidder.vo.QuestionAnswerListVO;
 import com.startupbidder.vo.QuestionAnswerVO;
 import com.startupbidder.vo.UserVO;
 import com.startupbidder.web.BidFacade;
@@ -375,8 +376,8 @@ public class HelloServlet extends HttpServlet {
 
 			ListPropertiesVO listProperties = new ListPropertiesVO();
 			listProperties.setMaxResults(50);
-			List<QuestionAnswerVO> qas = ServiceFacade.instance().getQuestionsAndAnswers(currentUser, listing.getId(), listProperties);
-			for (QuestionAnswerVO qa : qas) {
+			QuestionAnswerListVO qas = ServiceFacade.instance().getQuestionsAndAnswers(currentUser, listing.getId(), listProperties);
+			for (QuestionAnswerVO qa : qas.getQuestionAnswers()) {
 				if (qa.getAnswerDate() != null) {
 					out.println("Q: " + qa.getQuestion() + "<br/>");
 					out.println("A: " + qa.getAnswer() + "<br/>");
@@ -391,7 +392,7 @@ public class HelloServlet extends HttpServlet {
 					}
 				}
 			}
-			out.println("<a href=\"/listing/questions_and_answers/" + listing.getId() + ".json?\">View Q&amp;A</a>");
+			out.println("<a href=\"/listing/questions_answers/" + listing.getId() + ".json?\">View Q&amp;A</a>");
 			out.println("<form method=\"POST\" action=\"/listing/ask_owner/.json\"><textarea name=\"message\" rows=\"3\" cols=\"50\">"
 					+ "{\"listing_id\":\"" + listing.getId() + "\", \"text\":\"Message text\"}"
 					+ "</textarea><input type=\"submit\" value=\"Ask owner\"/></form>");

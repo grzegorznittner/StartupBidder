@@ -1301,23 +1301,22 @@ include(api-banner.m4)
             </ul>
             <h4>Response</h4>
             <ul>
-                <li>list of questions for this listing, see <var>/listing/ask_owner</var> for field detials.  Structure:
+                <li><code>login_url</code> URL to use for site login action</li>
+                <li><code>logout_url</code> URL to use for site logout action</li>
+                <li><code>loggedin_profile</code> private user profile object, see User API for profile object details</li>
+                <li><code>error_code</code> error status for this call, 0 on success</li>
+                <li><code>error_msg</code> error message for this call, null on success</li>
+                <li><code>questions_answers</code> list of questions and answers</li>
+                <li><code>questions_answers_props</code> list properties, call <var>more_results_url</var> in AJAX for more, structure:
 <pre name="code" class="brush: js">
-[
-    {
-    question_id: :id,
-    listing_id: :id,
-    user_id: :uid,
-    user_nickname: :name,
-    question: :question_text,
-    answer: :answer_text,
-    create_date: :date_yyyymmddhh24mmss,
-    answer_date: :date_yyyymmddhh24mmss,
-    published: :true_or_false
-    },
-    ...
-]
+{
+    start_index: :index,
+    max_results: :max,
+    num_results: :n,
+    more_results_url: :url
+}
 </pre>
+                </li>
             </ul>
             <h4>Test</h4>
             <form method="GET" action="/listing/questions_answers" target="listing-questions_answers">

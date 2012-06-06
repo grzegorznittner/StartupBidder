@@ -32,6 +32,7 @@ import com.startupbidder.vo.ListingDocumentVO;
 import com.startupbidder.vo.ListingVO;
 import com.startupbidder.vo.MonitorListVO;
 import com.startupbidder.vo.MonitorVO;
+import com.startupbidder.vo.QuestionAnswerListVO;
 import com.startupbidder.vo.QuestionAnswerVO;
 import com.startupbidder.vo.SystemPropertyVO;
 import com.startupbidder.vo.UserBasicVO;
@@ -326,16 +327,20 @@ public class ServiceFacade {
 		return DtoToVoConverter.convert(qa);
 	}
 	
-	public List<QuestionAnswerVO> getQuestionsAndAnswers(UserVO loggedInUser, String listingId, ListPropertiesVO listProperties) {
+	public QuestionAnswerListVO getQuestionsAndAnswers(UserVO loggedInUser, String listingId, ListPropertiesVO listProperties) {
+		QuestionAnswerListVO result = new QuestionAnswerListVO();
 		Listing listing = getDAO().getListing(BaseVO.toKeyId(listingId));
 		if (loggedInUser == null) {
-			return DtoToVoConverter.convertQuestionAnswers(getDAO().getQuestionAnswers(listing, listProperties));
+			result.setQuestionAnswers(DtoToVoConverter.convertQuestionAnswers(getDAO().getQuestionAnswers(listing, listProperties)));
 		}
 		if (loggedInUser.toKeyId() == listing.owner.getId()) {
-			return DtoToVoConverter.convertQuestionAnswers(getDAO().getQuestionAnswersForListingOwner(listing, listProperties));
+			result.setQuestionAnswers(DtoToVoConverter.convertQuestionAnswers(getDAO().getQuestionAnswersForListingOwner(listing, listProperties)));
 		} else {
-			return DtoToVoConverter.convertQuestionAnswers(getDAO().getQuestionAnswersForUser(VoToModelConverter.convert(loggedInUser), listing, listProperties));
+			result.setQuestionAnswers(DtoToVoConverter.convertQuestionAnswers(
+					getDAO().getQuestionAnswersForUser(VoToModelConverter.convert(loggedInUser), listing, listProperties)));
 		}
+		result.setQuestionAnswersProperties(listProperties);
+		return result;
 	}
 
 	public MonitorVO setListingMonitor(UserVO loggedInUser, String listingId) {

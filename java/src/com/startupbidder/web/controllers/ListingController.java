@@ -98,7 +98,7 @@ public class ListingController extends ModelDrivenController {
 				return getLocations(request);
 			} else if("all-listing-locations".equalsIgnoreCase(getCommand(1))) {
 				return getAllListingLocations(request);
-            } else if("questions_and_answers".equalsIgnoreCase(getCommand(1))) {
+            } else if("questions_answers".equalsIgnoreCase(getCommand(1))) {
                 return questionsAndAnswers(request);
 			} else if("order_book".equalsIgnoreCase(getCommand(1))) {
                 return orderBook(request);
