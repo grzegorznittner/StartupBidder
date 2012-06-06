@@ -347,9 +347,9 @@ public class ServiceFacade {
 			log.warning("Listing id is empty!");
 			return null;
 		}
-		long listingLongId = BaseVO.toKeyId(listingId);
-		Listing listing = getDAO().getListing(listingLongId);
-		if (listing == null || listing.owner.getId() == listingLongId) {
+		Listing listing = getDAO().getListing(BaseVO.toKeyId(listingId));
+		log.info("User " + loggedInUser.getEmail() + " ("+ loggedInUser.toKeyId() + ") setting monitor on listing: " + listing);
+		if (listing == null || listing.owner.getId() == loggedInUser.toKeyId()) {
 			log.warning("Listing doesn't exist or user is an owner of this listing. Listing: " + listing);
 			return null;
 		}
