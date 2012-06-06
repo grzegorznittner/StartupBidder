@@ -18,8 +18,8 @@ import com.startupbidder.util.DateSerializer;
 public class QuestionAnswerVO extends BaseVO {
 	@JsonProperty("question_id") private String id;
 	@JsonProperty("listing_id") private String listing;
-	@JsonProperty("user_id") private String user;
-	@JsonProperty("user_nickname") private String userNickname;
+	@JsonProperty("from_user_id") private String user;
+	@JsonProperty("from_user_nickname") private String userNickname;
 	@JsonProperty("create_date") @JsonSerialize(using=DateSerializer.class) private Date created;
 	@JsonProperty("question") private String question;
 	@JsonProperty("answer") private String answer;
