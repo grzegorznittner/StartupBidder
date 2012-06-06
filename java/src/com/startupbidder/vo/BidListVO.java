@@ -16,7 +16,7 @@ import org.codehaus.jackson.annotate.JsonProperty;
 public class BidListVO extends BaseResultVO implements OrderBook {
 	@JsonProperty("listing") private ListingVO listing;
 	@JsonProperty("bids") private List<BidVO> bids;
-	@JsonProperty("investor_id") private UserShortVO otherUser;
+	@JsonProperty("investor") private UserShortVO investor;
 	@JsonProperty("investor_bids") private List<AnonBidVO> investorBids;
 	@JsonProperty("owner_bids") private List<AnonBidVO> ownerBids;
 	@JsonProperty("accepted_bids") private List<AnonBidVO> acceptedBids;
@@ -34,11 +34,11 @@ public class BidListVO extends BaseResultVO implements OrderBook {
 	public void setBids(List<BidVO> bids) {
 		this.bids = bids;
 	}
-	public UserShortVO getOtherUser() {
-		return otherUser;
+	public UserShortVO getInvestor() {
+		return investor;
 	}
-	public void setOtherUser(UserShortVO otherUser) {
-		this.otherUser = otherUser;
+	public void setInvestor(UserShortVO investor) {
+		this.investor = investor;
 	}
 	public ListPropertiesVO getBidsProperties() {
 		return bidsProperties;

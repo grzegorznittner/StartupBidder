@@ -349,7 +349,7 @@ public class BidFacade {
 		log.info("Returning " + msgsVO.size() + " messages.");
 		result.setBids(msgsVO);
 		result.setValidActions(getListOfValidActions(bids != null && bids.size() > 0 ? bids.get(0).type : null, isOwner));
-		result.setOtherUser(new UserShortVO(DtoToVoConverter.convert(investor)));
+		result.setInvestor(new UserShortVO(DtoToVoConverter.convert(investor)));
 		result.setBidsProperties(listProperties);
 		fetchOrderBook(listing, result);
 		return result;
