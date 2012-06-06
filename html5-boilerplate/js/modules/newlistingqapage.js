@@ -74,8 +74,33 @@ pl.implement(NewListingQAClass, {
             this.base.fields.push(field);
         } 
         this.ip.bindButtons();
-        this.base.bindInfoButtons();
         this.base.bindNavButtons();
+        this.bindInfoButtons();
+    },
+    bindInfoButtons: function() {
+        pl('.qainfobtn').bind({
+            click: function(e) {
+                var evt = new EventClass(e),
+                    tgt = evt.target(),
+                    nextsib = tgt.parentNode.nextSibling,
+                    infoel,
+                    classes;
+                if (nextsib.nodeType !== 1) {
+                    nextsib = nextsib.nextSibling;
+                }
+                infoel = nextsib.firstChild;
+                if (infoel.nodeType !== 1) {
+                    infoel = infoel.nextSibling;
+                }
+                classes = infoel.getAttribute('class');
+                if (classes.match('qainfodisplay')) {
+                    pl(infoel).removeClass('qainfodisplay');
+                }
+                else {
+                    infoel.setAttribute('class', classes + ' qainfodisplay');
+                }
+            }
+        });
     }
 });
 

@@ -47,24 +47,6 @@ include(header.m4)
 
     <div class="boxpanel">
         <div class="formitem clear">
-            <span class="qalabel">KEY ACTIVITIES - WHAT DOES YOUR BUSINESS DO?</span>
-            <div class="qainfobtn"></div>
-        </div>
-        <div class="formitem clear">
-            <p class="qainfo">What are the key activities of your business?  How are you using resources to deliver the value propositions? What are the steps you go through to provide the product?  How do you take products and services from your suppliers and add value?  How do you spend business resources and time?</p>
-        </div>
-        <div class="formitem clear">
-            <span class="inputfield">
-                <textarea class="qatextarea" cols="20" rows="5" name="answer1" id="answer1"></textarea>
-            </span>
-            <span class="topinputicon">
-                <div id="answer1icon"></div>
-            </span>
-        </div>
-    </div>
-
-    <div class="boxpanel">
-        <div class="formitem clear">
             <span class="qalabel">KEY RESOURCES - WHAT ASSETS AND IP DISTINGUISH YOU?</span>
             <div class="qainfobtn"></div>
         </div>
@@ -77,24 +59,6 @@ include(header.m4)
             </span>
             <span class="topinputicon">
                 <div id="answer2icon"></div>
-            </span>
-        </div>
-    </div>
-
-    <div class="boxpanel">
-        <div class="formitem clear">
-            <span class="qalabel">KEY PARTNERS - WHO ARE YOUR VENDORS?</span>
-            <div class="qainfobtn"></div>
-        </div>
-        <div class="formitem clear">
-            <p class="qainfo">Who are you buying products and services from?  Who will you use in the future?  Do you have a line of credit with them?  What sort of quantities are you committed to?  What sort of quantites can they ramp up to?  Do you plan to change suppliers?  Do you have a broad group of suppliers to chose from or is there only one for the particular input you need?</p>
-        </div>
-        <div class="formitem clear">
-            <span class="inputfield">
-                <textarea class="qatextarea" cols="20" rows="5" name="answer3" id="answer3"></textarea>
-            </span>
-            <span class="topinputicon">
-                <div id="answer3icon"></div>
             </span>
         </div>
     </div>
@@ -263,6 +227,7 @@ Your goal here is to present specific relevant detail that can help someone to e
 
 '
 include(bmc.m4)
+include(bmc-editable.m4)
 `
 
 </div> <!-- end container -->

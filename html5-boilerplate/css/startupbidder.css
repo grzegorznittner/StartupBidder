@@ -193,6 +193,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .private_messageicon { width: 20px; height: 20px; background: url(../img/icons/email_20x20.png); }
 .notificationicon { width: 20px; height: 20px; background: url(../img/icons/notification_20.png); }
 .qainfobtn { height: 20px; width: 20px; background: url(../img/icons/info_20.png); float: right; }
+.bmcinfobtn { height: 20px; width: 20px; background: url(../img/icons/info_20.png); float: right; }
 .checkboxgreenicon { width: 32px; height: 32px; background: url(../img/icons/checkbox_green_32x32.png); }
 .checkboxredicon { width: 32px; height: 32px; background: url(../img/icons/checkbox_red_32x32.png); }
 .documenticon { width: 16px; height: 16px; background: url(../img/icons/document.png); }
@@ -217,7 +218,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .searchbutton:hover { cursor: pointer; }
 
 /* infowindow */
-.infowindowwrapper { min-height: 288px; }
+.infowindowwrapper { min-height: 288px; background:white; padding:5px; }
 .infowindow { color: #333333; font-weight: bold; font-size: 12px; line-height: 16px; }
 .infotitle { font-size: 20px; line-height: 20px; }
 /* .infomantra { color: #4083a9; } */
@@ -327,8 +328,11 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .new_bid_textarea { color: white !important; background: #49515a !important; font-weight: bold; font-size: 14px !important; height: 60px; width: 420px !important; }
 .qatextarea { height: 65px; overflow: hidden; overflow-x: hidden; overflow-y: auto; font-weight: bold; color: white !important;
                 background: #49515a !important; font-size: 14px !important; margin: 0px 5px 5px 5px; width: 540px !important; }
+.bmctextarea { height: 400px; overflow: hidden; overflow-x: hidden; overflow-y: auto; font-weight: normal; color: black !important;
+                font-size: 14px !important; margin: 0; width: 165px !important; background: none !important; border: 0 !important; }
+.bmctextareashort { height: 160px; }
 .qainfobtn:hover { opacity: 0.7; cursor: pointer; }
-.qainfo { margin: 0 10px 0 5px !important; overflow: hidden; height: 0px;
+.qainfo { margin: 0 10px 0 5px !important; overflow: hidden; height: 0px; 
     -moz-transition: height 300ms;
     -webkit-transition: height 300ms;
     -o-transition: height 300ms;
@@ -336,6 +340,20 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
     transition: height 300ms;
 }
 .qainfodisplay { height: 110px; }
+.bmcinfobtn { position: relative; top: -25px; left: 15px; }
+.bmcinfobtn:hover { opacity: 0.7; cursor: pointer; }
+.bmcinfo { overflow: hidden; width: 600px; height: 0; background: white; color: black; position: absolute; top: 60px; left: 100px; font-size: 14px; font-weight: normal;
+    -moz-transition: height 300ms;
+    -webkit-transition: height 300ms;
+    -o-transition: height 300ms;
+    -ms-transition: height 300ms;
+    transition: height 300ms;
+}
+.bmcinfodisplay {
+    height: 150px;
+    padding: 5px;
+    border: 1px solid black;
+}
 .offerbox { width: 622px; height: 141px; }
 .offerwrapper { width: 640px; height: 0px; overflow: hidden;
     -moz-transition: height 300ms;
@@ -647,8 +665,12 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .bmcthreeeighthsheightminushalfbar { height: 232px; }
 .bmcthreefourthsheight { height: 469px; }
 
-.bmctitle { margin-top: 20px; }
-.bmcborder { border: 6px solid #999999; border-radius: 6px; margin-bottom: 10px; }
+.bmctitle { margin-top: 20px; clear: both; overflow: hidden; }
+.bmctitletext { float: left; padding-top: 20px; }
+.bmctitlemsg { float: right; padding-top: 20px; }
+.bmctitleboxbtn { float: right; margin-left: 20px; padding-top: 5px; }
+.bmctitlebtn { float: right; margin-left: 20px; }
+.bmcborder { border: 6px solid #999999; border-radius: 6px; margin-bottom: 10px; clear: both; position: relative; }
 .bmccontainer { overflow: hidden; }
 .bmccell { padding: 5px; }
 .bmcsection { font-size: 18px; font-weight: bold; color: black; }

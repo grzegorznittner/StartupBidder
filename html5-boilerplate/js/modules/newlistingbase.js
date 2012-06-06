@@ -242,28 +242,6 @@ pl.implement(NewListingBaseClass, {
             ajax.setPostData(data);
             ajax.call();
         };
-    },
-    bindInfoButtons: function() {
-        pl('.qainfobtn').bind({
-            click: function(e) {
-                var evt = new EventClass(e),
-                    tgt = evt.target(),
-                    nextsib = tgt.parentNode.nextSibling,
-                    infoel,
-                    classes;
-                if (nextsib.nodeType !== 1) {
-                    nextsib = nextsib.nextSibling;
-                }
-                infoel = nextsib.firstChild;
-                if (infoel.nodeType !== 1) {
-                    infoel = infoel.nextSibling;
-                }
-                classes = infoel.getAttribute('class');
-                if (!classes.match('qainfodisplay')) {
-                    infoel.setAttribute('class', classes + ' qainfodisplay');
-                }
-            }
-        });
     }
 });
 

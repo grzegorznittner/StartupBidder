@@ -13,6 +13,7 @@ pl.implement(NewListingBMCClass, {
                     header = new HeaderClass();
                 header.setLogin(json);
                 self.base.store(listing);
+                self.bmc.store(listing);
                 self.display();
             };
         ajax = new AjaxClass('/listings/create', 'newlistingmsg', completeFunc);
@@ -27,21 +28,10 @@ pl.implement(NewListingBMCClass, {
             this.bindEvents();
             this.bound = true;
         }
-        this.bmc.display(this.base.listing);
+        pl('#bmc-editable').show();
     },
     bindEvents: function() {
         var textFields = [],
-            msgFields = [
-                'infrastructuremsg',
-                'infrastructuremsg',
-                'infrastructuremsg',
-                'offeringmsg',
-                'customersmsg',
-                'customersmsg',
-                'customersmsg',
-                'financesmsg',
-                'financesmsg'
-            ],
             m = 1,
             n = 9,
             i,
@@ -54,7 +44,7 @@ pl.implement(NewListingBMCClass, {
         }
         for (i = 0; i < textFields.length; i++) {
             id = textFields[i];
-            field = new TextFieldClass(id, this.base.listing[id], this.base.getUpdater(id, null, this.bmc.getUpdater(id)), msgFields[i]);
+            field = new TextFieldClass(id, this.base.listing[id], this.base.getUpdater(id, null, this.bmc.getUpdater(id)), 'bmc-editable-msg');
             if (this.base.displayNameOverrides[id]) {
                 field.fieldBase.setDisplayName(this.base.displayNameOverrides[id]);
             }
@@ -63,8 +53,44 @@ pl.implement(NewListingBMCClass, {
             field.bindEvents({noEnterKeySubmit: true});
             this.base.fields.push(field);
         } 
-        this.base.bindInfoButtons();
         this.base.bindNavButtons();
+        this.bindEditButton();
+        this.bindPreviewButton();
+        this.bindInfoButtons();
+    },
+    bindEditButton: function() {
+        pl('#bmc-edit-btn').bind('click', function() {
+            pl('#bmc').hide();
+            pl('#bmc-editable').show();
+        }).show();
+    },
+    bindPreviewButton: function() {
+        pl('#bmc-preview-btn').bind('click', function() {
+            pl('#bmc-editable').hide();
+            pl('#bmc').show();
+        });
+    },
+    bindInfoButtons: function() {
+        pl('.bmcinfobtn').bind({
+            click: function(e) {
+                var evt = new EventClass(e),
+                    infoel;
+                infoel = evt.target().nextSibling;
+                if (infoel.nodeType !== 1) {
+                    infoel = infoel.nextSibling;
+                }
+                if (pl(infoel).hasClass('bmcinfodisplay')) {
+                    pl('.bmcinfo').removeClass('bmcinfodisplay');
+                }
+                else {
+                    pl('.bmcinfo').removeClass('bmcinfodisplay');
+                    pl(infoel).addClass('bmcinfodisplay');
+                }
+            }
+        });
+        pl('.bmcinfo').bind('click', function() {
+            pl('.bmcinfo').removeClass('bmcinfodisplay');
+        });
     }
 });
 
