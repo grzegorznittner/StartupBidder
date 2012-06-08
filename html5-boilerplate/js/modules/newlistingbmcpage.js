@@ -75,21 +75,23 @@ pl.implement(NewListingBMCClass, {
             click: function(e) {
                 var evt = new EventClass(e),
                     infoel;
-                infoel = evt.target().nextSibling;
-                if (infoel.nodeType !== 1) {
-                    infoel = infoel.nextSibling;
-                }
-                if (pl(infoel).hasClass('bmcinfodisplay')) {
-                    pl('.bmcinfo').removeClass('bmcinfodisplay');
+                infoel = evt.target().parentNode.nextSibling.nextSibling.nextSibling.nextSibling.childNodes[3];
+                if (pl(infoel).hasClass('bmcinfodisplay') || pl(infoel).hasClass('bmcinfodisplayvaluepropositions')) {
+                    pl('.bmcinfo').removeClass('bmcinfodisplay').removeClass('bmcinfodisplayvaluepropositions');
                 }
                 else {
-                    pl('.bmcinfo').removeClass('bmcinfodisplay');
-                    pl(infoel).addClass('bmcinfodisplay');
+                    pl('.bmcinfo').removeClass('bmcinfodisplay').removeClass('bmcinfodisplayvaluepropositions');
+                    if (pl(infoel).hasClass('bmcinfovaluepropositions')) {
+                        pl(infoel).addClass('bmcinfodisplayvaluepropositions');
+                    }
+                    else {
+                        pl(infoel).addClass('bmcinfodisplay');
+                    }
                 }
             }
         });
         pl('.bmcinfo').bind('click', function() {
-            pl('.bmcinfo').removeClass('bmcinfodisplay');
+            pl('.bmcinfo').removeClass('bmcinfodisplay').removeClass('bmcinfodisplayvaluepropositions');
         });
     }
 });

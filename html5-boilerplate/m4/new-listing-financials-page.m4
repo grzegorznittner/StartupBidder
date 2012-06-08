@@ -239,11 +239,6 @@ listing without asking for any money.
 <p>FINANCIALS - your most current financial statements, if you have no operating history, then list current capital and runway</p>
     </div>
 
-    <div class="boxtitle">WITHDRAW POST</div>
-    <div class="newwithdrawmsg attention" id="newwithdrawmsg">Are you sure?<br/>This cannot be undone.</div>
-    <a href="#" id="newwithdrawbtn"><div class="sideboxbutton sideboxbuttonsmall">WITHDRAW</div></a>
-    <a href="#" class="newwithdrawcancelbtn" id="newwithdrawcancelbtn"><div class="sideboxbutton sideboxbuttonsmall">CANCEL</div></a>
-
 </div>
 <!-- end right column -->
 

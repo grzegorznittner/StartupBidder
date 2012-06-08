@@ -31,7 +31,7 @@ pl.implement(CompanyTileClass, {
         this.address = json.address || 'No Address';
         if (this.status && json.asked_fund && json.suggested_amt && json.suggested_pct) {
             this.suggested_amt = CurrencyClass.prototype.format(json.suggested_amt);
-            this.suggested_pct = PercentClass.prototype.format(json.suggested_pct);
+            this.suggested_pct = PercentClass.prototype.format(json.suggested_pct) + '%';
             this.suggested_text = this.suggested_amt + ' for ' + this.suggested_pct;
             this.finance_line = this.daystext + ' at ' + this.suggested_text;
         }

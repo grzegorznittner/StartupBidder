@@ -434,11 +434,6 @@ Your goal here is to present specific relevant detail that can help someone to e
 </p>
     </div>
 
-    <div class="boxtitle">WITHDRAW POST</div>
-    <div class="newwithdrawmsg attention" id="newwithdrawmsg">Are you sure?<br/>This cannot be undone.</div>
-    <a href="#" id="newwithdrawbtn"><div class="sideboxbutton sideboxbuttonsmall">WITHDRAW</div></a>
-    <a href="#" class="newwithdrawcancelbtn" id="newwithdrawcancelbtn"><div class="sideboxbutton sideboxbuttonsmall">CANCEL</div></a>
-
 </div>
 <!-- end right column -->
 

@@ -149,11 +149,6 @@ THE BUSINESS TO ASK FOR FUNDING ON THIS SITE.
         <p>LOCATION - e.g. 1 Infinite Loop, Cupertino, CA, USA, where your business is located, or has a nexus</p>
     </div>
 
-    <div class="boxtitle">WITHDRAW POST</div>
-    <div class="newwithdrawmsg attention" id="newwithdrawmsg">Are you sure?<br/>This cannot be undone.</div>
-    <a href="#" id="newwithdrawbtn"><div class="sideboxbutton sideboxbuttonsmall">WITHDRAW</div></a>
-    <a href="#" class="newwithdrawcancelbtn" id="newwithdrawcancelbtn"><div class="sideboxbutton sideboxbuttonsmall">CANCEL</div></a>
-
 </div>
 <!-- end right column -->
 

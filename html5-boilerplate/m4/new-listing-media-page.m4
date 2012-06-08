@@ -130,11 +130,6 @@ record a voiceover of a quick run through your slide deck.
         <p>VIDEO - public presentation of the company available on youtube, can be a live action blackboard talk, a product demonstration, or a powerpoint with voiceover</p>
     </div>
 
-    <div class="boxtitle">WITHDRAW POST</div>
-    <div class="newwithdrawmsg attention" id="newwithdrawmsg">Are you sure?<br/>This cannot be undone.</div>
-    <a href="#" id="newwithdrawbtn"><div class="sideboxbutton sideboxbuttonsmall">WITHDRAW</div></a>
-    <a href="#" class="newwithdrawcancelbtn" id="newwithdrawcancelbtn"><div class="sideboxbutton sideboxbuttonsmall">CANCEL</div></a>
-
 </div>
 <!-- end right column -->
 
