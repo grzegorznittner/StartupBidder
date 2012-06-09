@@ -13,6 +13,7 @@ pl.implement(NotificationPageClass,{
                 notifyList.display(json);
              },
             ajax = new AjaxClass('/notification/user', 'notificationsmsg', completeFunc);
+/*
         ajax.mock({ 
     "login_url": null,
     "logout_url": "/_ah/logout?continue=http%3A%2F%2Flocalhost%3A7777",
@@ -91,7 +92,8 @@ pl.implement(NotificationPageClass,{
         "votable": false,
         "mockData": false,
         "admin": false
-    }}); // FIXME
+    }});
+*/
         ajax.call();
     }
 });
