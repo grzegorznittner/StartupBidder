@@ -614,6 +614,9 @@ public class ListingController extends ModelDrivenController {
     private HttpHeaders questionsAndAnswers(HttpServletRequest request) {
         String listingId = getCommandOrParameter(request, 2, "id");
         ListPropertiesVO listingProperties = getListProperties(request);
+        if (listingProperties.getMaxResults() <= 5) {
+        	listingProperties.setMaxResults(20);
+		}
         model = ServiceFacade.instance().getQuestionsAndAnswers(getLoggedInUser(), listingId, listingProperties);
         return new HttpHeadersImpl("questions_and_answers").disableCaching();
     }
