@@ -754,6 +754,9 @@ public class ListingController extends ModelDrivenController {
 		HttpHeaders headers = new HttpHeadersImpl("comments");
 		
 		ListPropertiesVO commentProperties = getListProperties(request);
+		if (commentProperties.getMaxResults() <= 5) {
+			commentProperties.setMaxResults(20);
+		}
 		String listingId = getCommandOrParameter(request, 2, "id");
 		model = ServiceFacade.instance().getCommentsForListing(getLoggedInUser(), listingId, commentProperties);
 		
