@@ -34,6 +34,7 @@ public class Notification extends BaseObject<Notification> {
 	public Notification(Listing listing, SBUser listingOwner) {
 		this.listing = listing.getKey();
 		this.listingName = listing.name;
+		this.listingOwnerUser = listingOwner.getKey();
 		this.listingOwner = listingOwner.nickname;
 		this.listingCategory = listing.category;
 		this.listingMantra = listing.mantra;
@@ -59,6 +60,7 @@ public class Notification extends BaseObject<Notification> {
 		
 	@Indexed public Key<Listing> listing;
 	public String listingName;
+	public Key<SBUser> listingOwnerUser;
 	public String listingOwner;
 	public String listingCategory;
 	public String listingBriefAddress;
@@ -83,6 +85,7 @@ public class Notification extends BaseObject<Notification> {
 		newNotif.listingMantra = this.listingMantra;
 		newNotif.listingName = this.listingName;
 		newNotif.listingOwner = this.listingOwner;
+		newNotif.listingOwnerUser = this.listingOwnerUser;
 		newNotif.message = this.message;
 		newNotif.read = this.read;
 		newNotif.sentDate = this.sentDate;
@@ -103,13 +106,16 @@ public class Notification extends BaseObject<Notification> {
 		case NEW_BID_FOR_YOUR_LISTING:
 		case YOU_PAID_BID:
 		case YOU_ACCEPTED_BID:
-			// link to bid
-			link = "/company-page.html?page=bids&id=" + this.listing.getString();
+			if (listingOwnerUser.getId() == user.getId()) {
+				link = "/company-owner-bids-page.html?id=" + this.listing.getString();
+			} else {
+				link = "/company-owner-bids-page.html?id=" + this.listing.getString();
+			}
 		break;
 		case NEW_COMMENT_FOR_YOUR_LISTING:
 		case NEW_COMMENT_FOR_MONITORED_LISTING:
 			// link to comment
-			link = "/company-page.html?page=comments&id=" + this.listing.getString();
+			link = "/company-comments-page.html?id=" + this.listing.getString();
 		break;
 		case LISTING_ACTIVATED:
 		case LISTING_FROZEN:
@@ -119,7 +125,7 @@ public class Notification extends BaseObject<Notification> {
 			link = "/company-page.html?id=" + this.listing.getString();
 		break;
 		case ASK_LISTING_OWNER:
-			link = "/company-page.html?page=qa&id=" + this.listing.getString();
+			link = "/company-questions-page.html?id=" + this.listing.getString();
 		break;
 		case PRIVATE_MESSAGE:
 			link = "/message-group-page.html";

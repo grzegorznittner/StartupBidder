@@ -2,6 +2,7 @@ package com.startupbidder.vo;
 
 import java.util.Date;
 
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.annotate.JsonAutoDetect;
 import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 import org.codehaus.jackson.annotate.JsonProperty;
@@ -25,18 +26,25 @@ public class NotificationVO extends BaseVO {
 	@JsonProperty("listing_id")	private String listing;
 	@JsonProperty("listing_name") private String listingName;
 	@JsonProperty("listing_owner") private String listingOwner;
+	private String listingOwnerId;
 	@JsonProperty("listing_category") private String listingCategory;
 	@JsonProperty("listing_brief_address") private String listingBriefAddress;
 	@JsonProperty("listing_mantra") private String listingMantra;
 	/** The following 3 values are generated based on notification type (are not stored in datastore) */
 	@JsonProperty("title") private String title;
 	@JsonProperty("text_1") private String text1;
-	@JsonProperty("text_2") private String text2;
-	@JsonProperty("text_3") private String text3;
+	private String text2;
+	private String text3;
+	@JsonProperty("link") private String link;
 	
 	@JsonProperty("create_date") @JsonSerialize(using=DateSerializer.class) private Date created;
 	@JsonProperty("sent_date") @JsonSerialize(using=DateSerializer.class) private Date sentDate;
 	@JsonProperty("read") private boolean read;
+	
+	@JsonProperty("listing_logo_url")
+	public String getListingLogoLink() {
+		return getServiceLocation() + "/listing/logo?id=" + this.listing;
+	}
 	
 	@Override
 	public String getId() {
@@ -68,6 +76,12 @@ public class NotificationVO extends BaseVO {
 	}
 	public void setListingOwner(String listingOwner) {
 		this.listingOwner = listingOwner;
+	}
+	public String getListingOwnerId() {
+		return listingOwnerId;
+	}
+	public void setListingOwnerId(String listingOwnerId) {
+		this.listingOwnerId = listingOwnerId;
 	}
 	public String getListingCategory() {
 		return listingCategory;
@@ -147,47 +161,10 @@ public class NotificationVO extends BaseVO {
 	public void setUserEmail(String userEmail) {
 		this.userEmail = userEmail;
 	}
-	@JsonProperty("listing_logo_url")
-	public String getListingLogoLink() {
-		return getServiceLocation() + "/listing/logo?id=" + this.listing;
-	}
-	@JsonProperty("link")
 	public String getLink() {
-		String link = getServiceLocation ();
-		Notification.Type type = Notification.Type.valueOf(this.type);
-		switch (type) {
-		case BID_PAID_FOR_YOUR_LISTING:
-		case BID_WAS_WITHDRAWN:
-		case YOUR_BID_WAS_ACCEPTED:
-		case YOUR_BID_WAS_COUNTERED:
-		case YOUR_BID_WAS_REJECTED:
-		case NEW_BID_FOR_YOUR_LISTING:
-		case YOU_PAID_BID:
-		case YOU_ACCEPTED_BID:
-			// link to bid
-			link = "/company-page.html?page=bids&id=" + this.listing;
-		break;
-		case NEW_COMMENT_FOR_YOUR_LISTING:
-		case NEW_COMMENT_FOR_MONITORED_LISTING:
-			// link to comment
-			link = "/company-page.html?page=comments&id=" + this.listing;
-		break;
-		case LISTING_ACTIVATED:
-		case LISTING_FROZEN:
-		case LISTING_WITHDRAWN:
-		case NEW_LISTING:
-			// link to listing
-			link = "/company-page.html?id=" + this.listing;
-		break;
-		case ASK_LISTING_OWNER:
-			link = "/company-page.html?page=qa&id=" + this.listing;
-		break;
-		case PRIVATE_MESSAGE:
-			link = "/message-group-page.html";
-		break;
-		default:
-			// will point to main page
-		}
 		return link;
+	}
+	public void setLink(String link) {
+		this.link = link;
 	}
 }

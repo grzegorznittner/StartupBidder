@@ -110,9 +110,6 @@ public class ListingController extends ModelDrivenController {
 				return listingComments(request);
 			} else if ("logo".equalsIgnoreCase(getCommand(1))) {
 				return logo(request);
-			} else {
-				// default action
-				return index(request);
 			}
 		} else if ("POST".equalsIgnoreCase(request.getMethod())) {
 			if ("create".equalsIgnoreCase(getCommand(1))) {
