@@ -120,6 +120,7 @@ pl.implement(NewListingMediaClass, {
         self.displayVideo(videourl);
         this.base.displayCalculated();
         this.base.bindNavButtons(this.genNextValidator());
+        this.base.bindTitleInfo();
     },
     genNextValidator: function() {
         var self = this;

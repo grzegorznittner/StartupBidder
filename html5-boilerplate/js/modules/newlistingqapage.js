@@ -75,6 +75,7 @@ pl.implement(NewListingQAClass, {
         } 
         this.ip.bindButtons();
         this.base.bindNavButtons();
+        this.base.bindTitleInfo();
         this.bindInfoButtons();
     },
     bindInfoButtons: function() {

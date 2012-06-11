@@ -427,13 +427,12 @@ pl.implement(CheckboxFieldClass, {
             change: function() {
                 var changeKey = self.fieldBase.id,
                     newval = pl(self.fieldBase.sel).attr('checked'),
-                    msg;
                     msg = self.fieldBase.validator.validate(newval);
                 if (msg === 0) {
                     self.fieldBase.updateFunction({ changeKey: newval }, self.fieldBase.getLoadFunc(), self.fieldBase.getErrorFunc(self.getDisplayFunc()), self.fieldBase.getSuccessFunc());
                 }
                 else {
-                    self.msg.show('attention', msg);
+                    self.fieldBase.msg.show('attention', msg);
                 }
                 return false;
             }
@@ -494,14 +493,16 @@ pl.implement(SelectFieldClass, {
             value = self.getValue();
         return self.fieldBase.validator.validate(value);
     },
-    bindEvents: function() {
-        var self = this;
+    bindEvents: function(optionsparam) {
+        var self = this,
+            options = optionsparam || {};
         pl(self.fieldBase.sel).bind({
             change: function() {
-                var icon = new ValidIconClass(self.fieldBase.id + 'icon'),
+                var icon = new ValidIconClass(options.iconid || self.fieldBase.id + 'icon'),
                     changeKey = self.fieldBase.id,
                     newval = self.getValue(),
                     validMsg = self.fieldBase.validator.validate(newval);
+                self.icon = icon;
                 if (validMsg !== 0) {
                     self.fieldBase.msg.show('attention', validMsg);
                     icon.showInvalid();
@@ -542,10 +543,12 @@ pl.implement(TextFieldClass, {
     },
     bindEvents: function(optionsparam) {
         var self = this,
-            icon = new ValidIconClass(self.fieldBase.id + 'icon'),
+            options = optionsparam || {},
+            icon = new ValidIconClass(options.iconid || self.fieldBase.id + 'icon'),
             safeStr = new SafeStringClass(),
             sel = self.fieldBase.sel;
-            self.options = optionsparam || {};
+        self.options = options;
+        self.icon = icon;
         pl(sel).bind({
             paste: function() {
                 var newval = pl(sel).attr('value');
@@ -624,7 +627,7 @@ pl.implement(TextFieldClass, {
     },
     update: function() {
         var self = this,
-            icon = new ValidIconClass(self.fieldBase.id + 'icon'),
+            icon = self.icon || new ValidIconClass(self.fieldBase.id + 'icon'),
             safeStr = new SafeStringClass(),
             sel = self.fieldBase.sel;
             changeKey = self.fieldBase.id,

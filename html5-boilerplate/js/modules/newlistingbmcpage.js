@@ -50,10 +50,11 @@ pl.implement(NewListingBMCClass, {
             }
             field.fieldBase.addValidator(ValidatorClass.prototype.makeLengthChecker(16, 1000));
             field.fieldBase.validator.postValidator = this.bmc.genDisplay(field, this.base.genDisplayCalculatedIfValid(field));
-            field.bindEvents({noEnterKeySubmit: true});
+            field.bindEvents({noEnterKeySubmit: true, iconid: 'bmcfieldicon'});
             this.base.fields.push(field);
         } 
         this.base.bindNavButtons();
+        this.base.bindTitleInfo();
         this.bindEditButton();
         this.bindPreviewButton();
         this.bindInfoButtons();
@@ -65,34 +66,25 @@ pl.implement(NewListingBMCClass, {
         }).show();
     },
     bindPreviewButton: function() {
+        var self = this;
         pl('#bmc-preview-btn').bind('click', function() {
             pl('#bmc-editable').hide();
             pl('#bmc').show();
+            self.base.hideAllInfo();
         });
     },
     bindInfoButtons: function() {
-        pl('.bmcinfobtn').bind({
-            click: function(e) {
+        var self = this;
+        pl('.bmctextarea, .bmctextareashort, .bmctextareawide').bind({
+            focus: function(e) {
                 var evt = new EventClass(e),
-                    infoel;
-                infoel = evt.target().parentNode.nextSibling.nextSibling.nextSibling.nextSibling.childNodes[3];
-                if (pl(infoel).hasClass('bmcinfodisplay') || pl(infoel).hasClass('bmcinfodisplayvaluepropositions')) {
-                    pl('.bmcinfo').removeClass('bmcinfodisplay').removeClass('bmcinfodisplayvaluepropositions');
-                }
-                else {
-                    pl('.bmcinfo').removeClass('bmcinfodisplay').removeClass('bmcinfodisplayvaluepropositions');
-                    if (pl(infoel).hasClass('bmcinfovaluepropositions')) {
-                        pl(infoel).addClass('bmcinfodisplayvaluepropositions');
-                    }
-                    else {
-                        pl(infoel).addClass('bmcinfodisplay');
-                    }
-                }
-            }
+                    infoel = evt.target().previousSibling.previousSibling.childNodes[3];
+                self.base.hideAllInfo();
+                pl(infoel).addClass(pl(infoel).hasClass('bmcinfovaluepropositions') ? 'bmcinfodisplayvaluepropositions' : 'bmcinfodisplay');
+            },
+            blur: self.base.hideAllInfo
         });
-        pl('.bmcinfo').bind('click', function() {
-            pl('.bmcinfo').removeClass('bmcinfodisplay').removeClass('bmcinfodisplayvaluepropositions');
-        });
+        pl('.bmcinfo').bind('click', self.base.hideAllInfo);
     }
 });
 

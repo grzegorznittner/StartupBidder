@@ -19,7 +19,7 @@ include(header.m4)
 
     <div class="boxstep">
         <!-- <span class="boxstepn" id="boxstepn"></span> -->
-        <span class="boxsteptitle">YOUR COMPANY PROFILE HAS BEEN SUBMITTED</span>
+        <span class="boxsteptitle">YOUR LISTING PROFILE HAS BEEN SUBMITTED</span>
     </div>
 <!-- end banner -->
 
@@ -29,7 +29,7 @@ include(header.m4)
     <div class="boxtitle">INSTRUCTIONS</div>
     <div class="boxpanel">
     <p>
-Your company listing has now been submitted to startupbidder.  We will review the listing,
+Your listing has now been submitted to startupbidder.  We will review the listing,
 suggest any changes needed if necessary, and then approve the listing.  Once approved,
 you will be immediately notified via email.  The listing will then appear as the first
 listing on the front page.  Users worldwide will be able to comment on your listing.

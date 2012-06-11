@@ -230,6 +230,7 @@ pl.implement(NewListingFinancialsClass, {
         this.displayCalculatedIfValid();
         this.displayAskedEffects();
         this.base.bindNavButtons(this.genNextValidator());
+        this.base.bindTitleInfo();
     },
     genNextValidator: function() {
         var self = this;

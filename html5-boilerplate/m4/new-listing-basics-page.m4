@@ -13,37 +13,47 @@ include(header.m4)
 <div class="container">
 
 <!-- begin banner -->
-    <div class="bannertextsmall">NEW COMPANY WIZARD - BASICS</div>
+    <div class="bannertextsmall">NEW LISTING WIZARD - BASICS</div>
 
-    <div class="boxstep last">
-        <span class="boxstep1 boxstepcomplete"><div class="boxsteptext">BASICS</div></span>
-        <a href="new-listing-media-page.html"><span class="boxstep2"><div class="boxsteptext">MEDIA</div></span></a>
-        <a href="new-listing-bmc-page.html"><span class="boxstep3"><div class="boxsteptext">BMC</div></span></a>
-        <a href="new-listing-qa-page.html"><span class="boxstep4"><div class="boxsteptext">Q &amp; A</div></span></a>
-        <a href="new-listing-financials-page.html"><span class="boxstep5"><div class="boxsteptext">FINANCIALS</div></span></a>
-        <a href="new-listing-submit-page.html"><span class="boxstep6"><div class="boxsteptext">SUBMIT</div></span></a>
+    <div class="span-16">
+        <div class="boxstep last">
+            <span class="boxstep1 boxstepcomplete"><div class="boxsteptext">BASICS</div></span>
+            <a href="new-listing-media-page.html"><span class="boxstep2"><div class="boxsteptext">MEDIA</div></span></a>
+            <a href="new-listing-bmc-page.html"><span class="boxstep3"><div class="boxsteptext">BMC</div></span></a>
+            <a href="new-listing-qa-page.html"><span class="boxstep4"><div class="boxsteptext">Q &amp; A</div></span></a>
+            <a href="new-listing-financials-page.html"><span class="boxstep5"><div class="boxsteptext">FINANCIALS</div></span></a>
+            <a href="new-listing-submit-page.html"><span class="boxstep6"><div class="boxsteptext">SUBMIT</div></span></a>
+        </div>
+        <div class="boxstep last">
+            <span class="boxstepn" id="boxstepn"></span>
+            <span class="boxsteptitle">YOU HAVE FILLED <span id="boxsteppct">0</span>% OF YOUR LISTING PROFILE</span>
+        </div>
+    </div>
+    <div class="span-8 last">
+        <a href="#" class="nextbuttonlink">
+            <span class="push-5 span-3 smallinputbutton titleprevnextbtn">
+                NEXT
+            </span>
+        </a>
     </div>
 
-    <div class="boxstep last">
-        <span class="boxstepn" id="boxstepn"></span>
-        <span class="boxsteptitle">YOU HAVE FILLED <span id="boxsteppct">0</span>% OF YOUR COMPANY PROFILE</span>
-    </div>
 <!-- end banner -->
 
 <!-- left column -->
 <div class="span-16">
 
-    <div class="boxtitle">INSTRUCTIONS</div>
-    <div class="boxpanel">
-    <p>
-List your company here on startupbidder and submit a funding request to your choice of investors.
-Startupbidder will review the listing and suggest any changes before approving.
-NOTE THAT YOU MUST BE THE OWNER OR AN AUTHORIZED AGENT OF
-THE BUSINESS TO ASK FOR FUNDING ON THIS SITE.
-    </p>
+    <div class="boxtitle">
+        <span class="titletext">BASIC INFO</span>
+        <div class="titleinfobtn"></div>
+        <div class="titleinfo">
+            <label class="titleinfoheader">Instructions</label>
+            <p> List your project or company here on startupbidder and submit a funding
+            request to your choice of investors.  Startupbidder will review the listing and
+            suggest any changes before approving.</p>
+            <p>NOTE THAT YOU MUST BE THE OWNER OR AN AUTHORIZED AGENT OF THE PROJECT OR BUSINESS TO ASK FOR FUNDING ON THIS SITE.</p>
+        </div>
     </div>
 
-    <div class="boxtitle">COMPANY INFO</div>
     <div class="boxpanel">
         <div class="formitem">
             <label class="inputlabel" for="title">NAME</label>
@@ -122,8 +132,8 @@ THE BUSINESS TO ASK FOR FUNDING ON THIS SITE.
 
     <div>
         <div class="formitem clear">
-            <a href="#" id="nextbuttonlink">
-                <span class="push-13 span-3 inputbutton" id="nextbutton">
+            <a href="#" class="nextbuttonlink">
+                <span class="push-13 span-3 inputbutton">
                     NEXT
                 </span>
             </a>
@@ -135,16 +145,13 @@ THE BUSINESS TO ASK FOR FUNDING ON THIS SITE.
 <!-- right column -->
 <div class="span-8 last">
 
-    <div class="boxtitle">SUMMARY PREVIEW</div>
-    <div id="summarypreview"></div>
-
     <div class="boxtitle clear">TIPS</div>
     <div class="sidebox">
-        <p>NAME - short name for your company</p>
-        <p>CATEGORY - your company industry classification</p>
-        <p>MANTRA - tagline for your company, generally a single sentence, up to 140 characters</p>
-        <p>WEBSITE - your company website, if you don&rsquo;t have one then a link to your facebook page or google profile</p>
-        <p>FOUNDERS - the founders and co-founders of the company</p>
+        <p>NAME - short name for your project, product or company</p>
+        <p>CATEGORY - your project industry classification</p>
+        <p>MANTRA - tagline for your project, generally a single sentence, up to 140 characters</p>
+        <p>WEBSITE - your project website, if you don&rsquo;t have one then a link to your facebook page or google profile</p>
+        <p>FOUNDERS - the founders and co-founders of the project </p>
         <p>EMAIL - address where you want to be contacted by customers and investors</p>
         <p>LOCATION - e.g. 1 Infinite Loop, Cupertino, CA, USA, where your business is located, or has a nexus</p>
     </div>

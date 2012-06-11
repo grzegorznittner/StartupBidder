@@ -13,37 +13,53 @@ include(header.m4)
 <div class="container">
 
 <!-- begin banner -->
-    <div class="bannertextsmall">NEW COMPANY WIZARD - FINANCIALS</div>
+    <div class="bannertextsmall">NEW LISTING WIZARD - FINANCIALS</div>
 
-    <div class="boxstep last">
-        <a href="new-listing-basics-page.html"><span class="boxstep1"><div class="boxsteptext">BASICS</div></span></a>
-        <a href="new-listing-media-page.html"><span class="boxstep2"><div class="boxsteptext">MEDIA</div></span></a>
-        <a href="new-listing-bmc-page.html"><span class="boxstep3"><div class="boxsteptext">BMC</div></span></a>
-        <a href="new-listing-qa-page.html"><span class="boxstep4"><div class="boxsteptext">Q &amp; A</div></span></a>
-        <span class="boxstep5 boxstepcomplete"><div class="boxsteptext">FINANCIALS</div></span>
-        <a href="new-listing-submit-page.html"><span class="boxstep6"><div class="boxsteptext">SUBMIT</div></span></a>
+    <div class="span-16">
+        <div class="boxstep last">
+            <a href="new-listing-basics-page.html"><span class="boxstep1"><div class="boxsteptext">BASICS</div></span></a>
+            <a href="new-listing-media-page.html"><span class="boxstep2"><div class="boxsteptext">MEDIA</div></span></a>
+            <a href="new-listing-bmc-page.html"><span class="boxstep3"><div class="boxsteptext">BMC</div></span></a>
+            <a href="new-listing-qa-page.html"><span class="boxstep4"><div class="boxsteptext">Q &amp; A</div></span></a>
+            <span class="boxstep5 boxstepcomplete"><div class="boxsteptext">FINANCIALS</div></span>
+            <a href="new-listing-submit-page.html"><span class="boxstep6"><div class="boxsteptext">SUBMIT</div></span></a>
+        </div>
+        <div class="boxstep last">
+            <span class="boxstepn" id="boxstepn"></span>
+            <span class="boxsteptitle">YOU HAVE FILLED <span id="boxsteppct">0</span>% OF YOUR LISTING PROFILE</span>
+        </div>
+    </div>
+    <div class="span-8 last">
+        <a href="#" class="prevbuttonlink">
+            <span class="push-1 span-3 smallinputbutton titleprevnextbtn">
+                PREV
+            </span>
+        </a>
+        <a href="#" class="nextbuttonlink">
+            <span class="push-2 span-3 smallinputbutton titleprevnextbtn">
+                NEXT
+            </span>
+        </a>
     </div>
 
-    <div class="boxstep last">
-        <span class="boxstepn" id="boxstepn"></span>
-        <span class="boxsteptitle">YOU HAVE FILLED <span id="boxsteppct">0</span>% OF YOUR COMPANY PROFILE</span>
-    </div>
 <!-- end banner -->
 
 <!-- left column -->
 <div class="span-16">
 
-    <div class="boxtitle">INSTRUCTIONS</div>
-    <div class="boxpanel">
-    <p>
-Tell investors how much money you want to raise and how much of the company you
-want to offer for it.  Once your listing is approved, interested investors will
-contact you to make an offer.  Alternatively, at your option, you may post your
-listing without asking for any money.
-    </p>
+    <div class="boxtitle">
+        <span class="titletext">ASKING FOR INVESTMENT?</span>
+        <div class="titleinfobtn"></div>
+        <div class="titleinfo">
+            <label class="titleinfoheader">Instructions</label>
+            <p>
+            Tell investors how much money you want to raise and how much of the company or product you
+            want to offer for it.  Once your listing is approved, interested investors will
+            contact you to make an offer.  Alternatively, at your option, you may post your
+            listing without asking for any money.
+            </p>
+        </div>
     </div>
-
-    <div class="boxtitle">ASKING FOR INVESTMENT?</div>
     <div class="boxpanel">
         <div class="formitem clear">
             <span class="inputlabel">ALLOW BIDS</span>
@@ -55,7 +71,23 @@ listing without asking for any money.
     </div>
 
     <div class="offerwrapper offerwrapperdisplay" id="offerwrapper">
-    <div class="boxtitle">THE OFFER</div>
+    <div class="boxtitle">
+        <span class="titletext">THE OFFER</span>
+        <div class="titleinfobtn"></div>
+        <div class="titleinfo">
+            <label class="titleinfoheader">Instructions</label>
+            <p>
+            Tell investors how much money you want to raise and how much of the company or product you
+            want to offer for it.  The amount you want to raise is cash in US Dollars.  For a company,
+            the percentage offering is the percentage of common stock, fully-diluted post-money, you
+            are offering in exchange for the funding.  If you are listing a project, the percentage is
+            the gross royalty in perpetuity on worldwide sales you will pay the investor.  
+            The valuation is calculated by dividing the funding amount by the percentage of the
+            company or project being offered.
+            Once your listing is approved, interested investors will contact you to make an offer.
+            </p>
+        </div>
+    </div>
     <div class="boxpanel offerbox" id="offerpanel">
         <div class="formitem">
             <span class="inputlabel">ASKING</span>
@@ -87,7 +119,21 @@ listing without asking for any money.
     </div>
     </div>
 
-    <div class="boxtitle">OPTIONAL PRESENTATION</div>
+    <div class="boxtitle">
+        <span class="titletext">PRESENTATION - OPTIONAL</span>
+        <div class="titleinfobtn"></div>
+        <div class="titleinfo">
+            <label class="titleinfoheader">Instructions</label>
+            <p>
+            Giving investors insight into your company or project is a great way to get them over
+            the hurdle to actually winning their funding.  Especially if you are asking for significant
+            funding of $100,000 or more, investors will want to see a detailed business plan, an
+            investor-oriented presentation, and whatever existing financial statements you have.  Although
+            these documents are optional, including them will increase your chances of getting funding,
+            as well as exposing you to a higher calibur of investor.
+            </p>
+        </div>
+    </div>
     <div class="boxpanel">
         <div class="mediacol1">
             <a href="#" id="presentationlink">
@@ -126,7 +172,21 @@ listing without asking for any money.
         </div>
     </div>
 
-    <div class="boxtitle">OPTIONAL BUSINESS PLAN</div>
+    <div class="boxtitle">
+        <span class="titletext">BUSINESS PLAN - OPTIONAL</span>
+        <div class="titleinfobtn"></div>
+        <div class="titleinfo">
+            <label class="titleinfoheader">Instructions</label>
+            <p>
+            Giving investors insight into your company or project is a great way to get them over
+            the hurdle to actually winning their funding.  Especially if you are asking for significant
+            funding of $100,000 or more, investors will want to see a detailed business plan, an
+            investor-oriented presentation, and whatever existing financial statements you have.  Although
+            these documents are optional, including them will increase your chances of getting funding,
+            as well as exposing you to a higher calibur of investor.
+            </p>
+        </div>
+    </div>
     <div class="boxpanel">
         <div class="mediacol1">
             <a href="#" id="business_planlink">
@@ -165,7 +225,21 @@ listing without asking for any money.
         </div>
     </div>
 
-    <div class="boxtitle">OPTIONAL FINANCIALS</div>
+    <div class="boxtitle">
+        <span class="titletext">FINANCIAL STATEMENTS - OPTIONAL</span>
+        <div class="titleinfobtn"></div>
+        <div class="titleinfo">
+            <label class="titleinfoheader">Instructions</label>
+            <p>
+            Giving investors insight into your company or project is a great way to get them over
+            the hurdle to actually winning their funding.  Especially if you are asking for significant
+            funding of $100,000 or more, investors will want to see a detailed business plan, an
+            investor-oriented presentation, and whatever existing financial statements you have.  Although
+            these documents are optional, including them will increase your chances of getting funding,
+            as well as exposing you to a higher calibur of investor.
+            </p>
+        </div>
+    </div>
     <div class="boxpanel">
         <div class="mediacol1">
             <a href="#" id="financialslink">
@@ -209,13 +283,8 @@ listing without asking for any money.
             <span class="newlistingmsgsmall" id="newlistingmsg">&nbsp;</span>
         </div>
         <div class="formitem clear">
-            <a href="#" id="prevbuttonlink">
-                <span class="span-3 inputbutton" id="prevbutton">
-                    PREV
-                </span>
-            </a>
-            <a href="#" id="nextbuttonlink">
-                <span class="push-10 span-3 inputbutton" id="nextbutton">
+            <a href="#" class="nextbuttonlink">
+                <span class="push-13 span-3 inputbutton">
                     NEXT
                 </span>
             </a>
@@ -226,9 +295,6 @@ listing without asking for any money.
 
 <!-- right column -->
 <div class="span-8 last">
-
-    <div class="boxtitle">SUMMARY PREVIEW</div>
-    <div id="summarypreview"></div>
 
     <div class="boxtitle clear">TIPS</div>
     <div class="sidebox">
