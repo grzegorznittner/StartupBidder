@@ -388,14 +388,14 @@ public class DtoToVoConverter {
 			notif.setText3("In order to view comment(s) please visit <a href=\"" + listingLink + "\">company's page at startupbidder.com</a>.");
 			break;
 		case ASK_LISTING_OWNER:
-		    notif.setTitle("A question from " + notifDTO.fromUserNickname + " concerning listing " + notifDTO.listingName);
-            notif.setText1("Question about listing " + notifDTO.listingName + " has been posted by " + notifDTO.fromUserNickname + ":");
+		    notif.setTitle("Question for listing " + notifDTO.listingName);
+            notif.setText1("A question concerning listing " + notifDTO.listingName + " has been posted:");
 			notif.setText3("Please visit <a href=\"" + listingLink + "\">company's page at startupbidder.com</a>.");
 			notif.setText2(notifDTO.message);
 			break;
 		case PRIVATE_MESSAGE:
-		    notif.setTitle("Private message from " + notifDTO.fromUserNickname + " concerning listing " + notifDTO.listingName );
-		    notif.setText1("Private message from user " + notifDTO.fromUserNickname + ":");
+		    notif.setTitle("You've got private message");
+		    notif.setText1("Private message has been sent to you:");
 		    notif.setText2(notifDTO.message);
             notif.setText3("Please visit <a href=\"" + listingLink + "\">company's page at startupbidder.com</a>.");
 			break;
