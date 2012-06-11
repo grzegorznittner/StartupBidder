@@ -13,35 +13,50 @@ include(header.m4)
 <div class="container">
 
 <!-- begin banner -->
-    <div class="bannertextsmall">NEW COMPANY WIZARD - QUESTIONS &amp; ANSWERS</div>
+    <div class="bannertextsmall">NEW LISTING WIZARD - QUESTIONS &amp; ANSWERS</div>
 
-    <div class="boxstep last">
-        <a href="new-listing-basics-page.html"><span class="boxstep1"><div class="boxsteptext">BASICS</div></span></a>
-        <a href="new-listing-media-page.html"><span class="boxstep2"><div class="boxsteptext">MEDIA</div></span></a>
-        <a href="new-listing-bmc-page.html"><span class="boxstep3"><div class="boxsteptext">BMC</div></span></a>
-        <span class="boxstep4 boxstepcomplete"><div class="boxsteptext">Q &amp; A</div></span>
-        <a href="new-listing-financials-page.html"><span class="boxstep5"><div class="boxsteptext">FINANCIALS</div></span></a>
-        <a href="new-listing-submit-page.html"><span class="boxstep6"><div class="boxsteptext">SUBMIT</div></span></a>
+    <div class="span-16">
+        <div class="boxstep last">
+            <a href="new-listing-basics-page.html"><span class="boxstep1"><div class="boxsteptext">BASICS</div></span></a>
+            <a href="new-listing-media-page.html"><span class="boxstep2"><div class="boxsteptext">MEDIA</div></span></a>
+            <a href="new-listing-bmc-page.html"><span class="boxstep3"><div class="boxsteptext">BMC</div></span></a>
+            <span class="boxstep4 boxstepcomplete"><div class="boxsteptext">Q &amp; A</div></span>
+            <a href="new-listing-financials-page.html"><span class="boxstep5"><div class="boxsteptext">FINANCIALS</div></span></a>
+            <a href="new-listing-submit-page.html"><span class="boxstep6"><div class="boxsteptext">SUBMIT</div></span></a>
+        </div>
+        <div class="boxstep last">
+            <span class="boxstepn" id="boxstepn"></span>
+            <span class="boxsteptitle">YOU HAVE FILLED <span id="boxsteppct">0</span>% OF YOUR LISTING PROFILE</span>
+        </div>
+    </div>
+    <div class="span-8 last">
+        <a href="#" class="prevbuttonlink">
+            <span class="push-1 span-3 smallinputbutton titleprevnextbtn">
+                PREV
+            </span>
+        </a>
+        <a href="#" class="nextbuttonlink">
+            <span class="push-2 span-3 smallinputbutton titleprevnextbtn">
+                NEXT
+            </span>
+        </a>
     </div>
 
-    <div class="boxstep last">
-        <span class="boxstepn" id="boxstepn"></span>
-        <span class="boxsteptitle">YOU HAVE FILLED <span id="boxsteppct">0</span>% OF YOUR COMPANY PROFILE</span>
-    </div>
 <!-- end banner -->
 
 <!-- left column -->
 <div class="span-16">
 
-    <div class="boxtitle">INSTRUCTIONS</div>
-    <div class="boxpanel">
-    <p>Now we will construct an investor presentation using your existing information and answers to the questions below.
-        This will show investors and the startup community what your business is all about.</p>
-    <p>Enter the text for each section as you would like it to appear on the presentation.  Use lines starting with "*" for bullet points
-        and a blank line for extra space.  Enter a tab or click out of the field to update the presentation at the bottom of the page.</p>
-    </div>
-
-    <div class="boxtitlegap">INTRODUCTION
+    <div class="boxtitle">
+        <span class="titletext">INVESTOR PRESENTATION</span>
+        <div class="titleinfobtn"></div>
+        <div class="titleinfo">
+            <label class="titleinfoheader">Instructions</label>
+            <p>Now we will construct an investor presentation using your existing information and answers to the questions below.
+            This will show investors and the startup community what your business is all about.</p>
+            <p>Enter the text for each section as you would like it to appear on the presentation.  Use lines starting with "*" for bullet points
+            and a blank line for extra space.  Enter a tab or click out of the field to update the presentation at the bottom of the page.</p>
+        </div>
         <span class="newlistingtitlemsg" id="introductionmsg"></span>
     </div>
 
@@ -344,11 +359,11 @@ include(header.m4)
 
     <div class="boxpanel">
         <div class="formitem clear">
-            <span class="qalabel">OWNERS AND INVESTORS - WHO OWNS THE BUSINESS?</span>
+            <span class="qalabel">OWNERS AND INVESTORS - WHO OWNS WHAT?</span>
             <div class="qainfobtn"></div>
         </div>
         <div class="formitem clear">
-            <p class="qainfo">Who are the current owners of the business?  Which ones are employees of the company, directors, or purely investors?  Who has what percentage share in the capitalization table?  Common stock, preferred stock, notes, loans?  Are there any special debt or preferred arangements with dilution or control provisions?  What option plans if any currently exist and who are they for?</p>
+            <p class="qainfo">Who are the current owners of the business and project rights?  Which ones are employees of the company, directors, or purely investors?  Who has what percentage share in the capitalization table?  Common stock, preferred stock, notes, loans?  Are there any special debt or preferred arangements with dilution or control provisions?  What option plans if any currently exist and who are they for?</p>
         </div>
         <div class="formitem clear">
             <span class="inputfield">
@@ -388,7 +403,7 @@ include(header.m4)
             <div class="qainfobtn"></div>
         </div>
         <div class="formitem clear">
-            <p class="qainfo">What is your company timeline?  When did it start, how long has it been in operation, when did it become full time, when did you hire your first employee, get your first customer, raise your first investment?  What are your next key milestones?  Where are you going from here and what's you're timeline?  Give a summary of where you see the business in the future.</p>
+            <p class="qainfo">What is your company or project timeline?  When did it start, how long has it been in operation, when did it become full time, when did you hire your first employee, get your first customer, raise your first investment?  What are your next key milestones?  Where are you going from here and what's you're timeline?  Give a summary of where you see the business in the future.</p>
         </div>
         <div class="formitem clear">
             <span class="inputfield">
@@ -404,28 +419,10 @@ include(header.m4)
         <span class="inputmsg" id="newlistingmsg"></span>
     </div>
 
-    <div>
-        <div class="formitem clear">
-            <a href="#" id="prevbuttonlink">
-                <span class="span-3 inputbutton" id="prevbutton">
-                    PREV
-                </span>
-            </a>
-            <a href="#" id="nextbuttonlink">
-                <span class="push-10 span-3 inputbutton" id="nextbutton">
-                    NEXT
-                </span>
-            </a>
-        </div>
-    </div>
-
 </div> <!-- end left column -->
 
 <!-- right column -->
 <div class="span-8 last">
-
-    <div class="boxtitle">SUMMARY PREVIEW</div>
-    <div id="summarypreview"></div>
 
     <div class="boxtitle clear">TIPS</div>
     <div class="sidebox">
@@ -440,6 +437,16 @@ Your goal here is to present specific relevant detail that can help someone to e
 '
 include(ip.m4)
 `
+
+    <div>
+        <div class="formitem clear">
+            <a href="#" class="nextbuttonlink">
+                <span class="push-21 span-3 inputbutton">
+                    NEXT
+                </span>
+            </a>
+        </div>
+    </div>
 
 </div> <!-- end container -->
 </div> <!-- end main -->

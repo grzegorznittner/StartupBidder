@@ -169,7 +169,7 @@ pl.implement(NewListingBaseClass, {
         if (!self.prevPage) {
             return;
         }
-        pl('#prevbuttonlink').bind({
+        pl('.prevbuttonlink').bind({
             click: function() {
                 document.location = self.prevPage;
                 return false;
@@ -181,7 +181,7 @@ pl.implement(NewListingBaseClass, {
         if (!self.nextPage) {
             return;
         }
-        pl('#nextbuttonlink').bind({
+        pl('.nextbuttonlink').bind({
             click: function() {
                 var validmsgs = nextValidator ? nextValidator() : self.validate();
                 if (validmsgs.length > 0) {
@@ -242,6 +242,26 @@ pl.implement(NewListingBaseClass, {
             ajax.setPostData(data);
             ajax.call();
         };
+    },
+    hideAllInfo: function() {
+        pl('.titleinfo, .bmcinfo').removeClass('titleinfodisplay').removeClass('bmcinfodisplay').removeClass('bmcinfodisplayvaluepropositions');
+    },
+    bindTitleInfo: function() {
+        var self = this;
+        pl('.titleinfobtn').bind('click', function(e) {
+            var evt = new EventClass(e),
+                infoel = evt.target().nextSibling.nextSibling;
+            if (!(pl(infoel).hasClass('titleinfodisplay'))) {
+                self.hideAllInfo();
+                pl(infoel).addClass('titleinfodisplay');
+            }
+            else {
+                self.hideAllInfo();
+            }
+        })
+        pl('.titleinfo').bind('click', function() {
+            self.hideAllInfo();
+        });
     }
 });
 

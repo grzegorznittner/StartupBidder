@@ -359,7 +359,7 @@ pl.implement(HeaderClass, {
     },
     setLoggedIn: function(profile, logout_url) {
         var username = profile.username || 'You',
-            posttext = profile.edited_listing ? 'Finish New': 'Make New',
+            posttext = profile.edited_listing ? 'Submit New': 'Submit New',
             num_notifications = profile.num_notifications || 0,
             notificationlinktext = num_notifications ? num_notifications + ' unread notifications' : 'no unread notifications',
             newlistingurl = profile.edited_status === 'posted' ? 'new-listing-submitted-page.html' : 'new-listing-basics-page.html';
@@ -377,7 +377,7 @@ pl.implement(HeaderClass, {
     },
     setLoggedOut: function(login_url) {
         pl('#topheaderline').html('Want to raise money for startups or invest in one? <a href="/about-page.html" class="topheaderlink hoverlink">We&rsquo;ll tell you how!</a>');
-        pl('#posttext').html('List New');
+        pl('#posttext').html('Sign In to List');
         if (login_url) {
             pl('#postlink').attr({href: login_url});
             pl('#loginlink').attr({href: login_url});

@@ -90,6 +90,7 @@ pl.implement(NewListingBasicsClass, {
         this.addMap(this.genPlaceUpdater());
         this.bindAddressEnterSubmit();
         this.base.bindNavButtons();
+        this.base.bindTitleInfo();
     },
     bindAddressEnterSubmit: function() {
         var self = this;

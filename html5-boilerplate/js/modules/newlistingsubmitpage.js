@@ -92,6 +92,7 @@ pl.implement(NewListingSubmitClass, {
             previewurl = '/company-page.html?id=' + self.base.listing.listing_id + '&preview=true';
         pl('#previewiframe').attr({src: previewurl});
         this.base.bindNavButtons(submitValidator);
+        this.base.bindTitleInfo();
     }
 });
 
