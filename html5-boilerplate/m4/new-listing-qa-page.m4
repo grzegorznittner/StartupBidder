@@ -436,6 +436,7 @@ Your goal here is to present specific relevant detail that can help someone to e
 
 '
 include(ip.m4)
+include(ip-editable.m4)
 `
 
     <div>

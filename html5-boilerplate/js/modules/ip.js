@@ -1,7 +1,6 @@
 function IPClass() {
     this.page = 1;
     this.pagetotal = 20;
-    this.pagewidth = 938;
     this.bound = false;
 }
 pl.implement(IPClass, {
@@ -12,9 +11,6 @@ pl.implement(IPClass, {
             date = listing.created_date ? DateClass.prototype.format(listing.created_date) : DateClass.prototype.today(),
             mantra = listing.mantra || 'Company mantra here',
             name = listing.founders || 'Founders here',
-            // anti-spam
-            // contact_email = listing.contact_email || 'Email address here',
-            // contact_emaillink = contact_email ? 'mailto:' + contact_email :'',
             brief_address = listing.brief_address || 'Postal address here',
             website = listing.website || 'Website here',
             asking = listing.asked_fund
@@ -26,21 +22,16 @@ pl.implement(IPClass, {
             field,
             val,
             sel;
-        pl('#mantraip').text(mantra);
-        pl('#nameip,#name2ip').text(name);
-        // anti-spam
-        // pl('#contact_emailip,#contact_email2ip').text(contact_email);
-        // pl('#contact_emaillinkip,#contact_email2linkip').attr({href: contact_emaillink});
-        pl('#brief_addressip,#brief_address2ip').text(brief_address);
-        pl('#websiteip,#website2ip').text(website);
-        pl('#websitelinkip,#website2linkip').attr({href: website});
-        pl('#created_dateip').text(date);
-        pl('#askingip').text(asking);
-        pl('#ipcorp').text(corp);
-        pl('#ipdate,#ipdate2').text(date);
-        pl('#ippagetotal').text(self.pagetotal);
-        pl('#ippage').text(self.page);
-        pl('#iptitle1').text(corp);
+        pl('.mantraip').text(mantra);
+        pl('.nameip').text(name);
+        pl('.brief_addressip').text(brief_address);
+        pl('.websiteip').text(website);
+        pl('.websitelinkip').attr({href: website});
+        pl('.askingip').text(asking);
+        pl('.ipcorpname').text(corp);
+        pl('.ipdatetext').text(date);
+        pl('.ippagetotal').text(self.pagetotal);
+        pl('.ippagenum').text(self.page);
         pl('#summaryip').html(HTMLMarkup.prototype.stylize(listing.summary, 'ip'));
         for (i = m; i <= n; i++) {
             field = 'answer' + i;
@@ -48,10 +39,7 @@ pl.implement(IPClass, {
             val = listing[field];
             pl(sel).html(HTMLMarkup.prototype.stylize(val, 'ip'));
         }
-        for (i = 1; i <= self.pagetotal; i++) {
-            sel = '#iplogo' + i;
-            pl(sel).css({background: logo});
-        }
+        pl('.iplogo').css({background: logo});
     },
     pageRight: function() {
         var self = this,
@@ -69,23 +57,23 @@ pl.implement(IPClass, {
     },
     setPage: function(newpage) {
         var self = this,
-            left = (self.pagewidth * (1 - newpage)) + 'px';
+            left = (pl('.ipslide').css('width').replace('px','') * (1 - newpage)) + 'px';
         self.page = newpage;
-        pl('#ipslideset').css({left: left})
-        pl('#ippage').text(newpage);
+        pl('.ipslideset').css({left: left})
+        pl('.ippagenum').text(newpage);
         if (newpage > 1) {
-            pl('#ipleft').show();
-            pl('#ipfirst').show();
+            pl('.ipleft').show();
+            pl('.ipfirst').show();
         }
         else {
-            pl('#ipleft').hide();
-            pl('#ipfirst').hide();
+            pl('.ipleft').hide();
+            pl('.ipfirst').hide();
         }
         if (newpage < self.pagetotal) {
-            pl('#ipright').show();
+            pl('.ipright').show();
         }
         else {
-            pl('#ipright').hide();
+            pl('.ipright').hide();
         }
     },
     bindButtons: function() {
@@ -93,19 +81,19 @@ pl.implement(IPClass, {
         if (self.bound) {
             return;
         }
-        pl('#ipleft').bind({
+        pl('.ipleft').bind({
             click: function() {
                 self.pageLeft();
                 return false;
             }
         });
-        pl('#ipright').bind({
+        pl('.ipright').bind({
             click: function() {
                 self.pageRight();
                 return false;
             }
         });
-        pl('#ipfirst').bind({
+        pl('.ipfirst').bind({
             click: function() {
                 self.pageFirst();
                 return false;

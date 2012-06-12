@@ -335,8 +335,19 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .bidspacer { border: 2px solid #49515A; height: 20px; right: 5px; background: #efefef; font-weight: bold; clear: both; text-align: center; }
 .messagetextarea { color: white !important; background: #49515a !important; font-weight: bold; font-size: 14px !important; height: 60px; width: 540px !important; }
 .new_bid_textarea { color: white !important; background: #49515a !important; font-weight: bold; font-size: 14px !important; height: 60px; width: 420px !important; }
-.qatextarea { height: 65px; overflow: hidden; overflow-x: hidden; overflow-y: auto; font-weight: bold; color: white !important;
-                background: #49515a !important; font-size: 14px !important; margin: 0px 5px 5px 5px; width: 540px !important; }
+.qatextarea {
+    background: none;
+    border: none;
+    color: white !important;
+    font-size: 24px !important;
+    font-weight: bold;
+    line-height: 36px;
+    margin: 0;
+    overflow: hidden;
+    padding: 0;
+    height: 363px;
+    width: 740px !important;
+}
 .bmctextarea { height: 410px; overflow: hidden; overflow-x: hidden; overflow-y: hidden; font-weight: normal; color: black !important; padding: 0;
                 font-size: 14px !important; margin: 0; width: 175px !important; background: none !important; border: 0 !important; }
 .bmctextareashort { height: 175px; overflow: hidden; overflow-x: hidden; overflow-y: hidden; font-weight: normal; color: black !important; padding: 0;

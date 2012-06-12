@@ -28,6 +28,7 @@ pl.implement(NewListingQAClass, {
             this.bound = true;
         }
         this.ip.display(this.base.listing);
+        pl('#ip-editable').show();
     },
     bindEvents: function() {
         var textFields = ['summary'],
@@ -76,7 +77,23 @@ pl.implement(NewListingQAClass, {
         this.ip.bindButtons();
         this.base.bindNavButtons();
         this.base.bindTitleInfo();
+        this.bindEditButton();
+        this.bindPreviewButton();
         this.bindInfoButtons();
+    },
+    bindEditButton: function() {
+        pl('#ip-edit-btn').bind('click', function() {
+            pl('#ip').hide();
+            pl('#ip-editable').show();
+        }).show();
+    },
+    bindPreviewButton: function() {
+        var self = this;
+        pl('#ip-preview-btn').bind('click', function() {
+            pl('#ip-editable').hide();
+            pl('#ip').show();
+            self.base.hideAllInfo();
+        });
     },
     bindInfoButtons: function() {
         pl('.qainfobtn').bind({
