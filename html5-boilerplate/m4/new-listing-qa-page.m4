@@ -44,7 +44,7 @@ include(header.m4)
 
 <!-- end banner -->
 
-<!-- left column -->
+<!-- left column
 <div class="span-16">
 
     <div class="boxtitle">
@@ -60,35 +60,17 @@ include(header.m4)
         <span class="newlistingtitlemsg" id="introductionmsg"></span>
     </div>
 
-    <div class="boxpanel">
-        <div class="formitem clear">
-            <span class="qalabel">ELEVATOR PITCH - WHAT IS YOUR BUSINESS?</span>
-            <div class="qainfobtn"></div>
-        </div>
-        <div class="formitem clear">
-            <p class="qainfo">You have just stepped on the elevator with one of the leading Silicon Valley Venture Capitalists and you have 30 seconds to either get them interested enough to consider your idea, or step off and go back to sipping their latte.  What do you say?  Avoid jargon, be specific, be exciting.</p>
-        </div>
-        <div class="formitem clear">
-            <span class="inputfield">
-                <textarea class="qatextarea" cols="20" rows="5" name="summary" id="summary"></textarea>
-            </span>
-            <span class="topinputicon">
-                <div id="summaryicon"></div>
-            </span>
-        </div>
-    </div>
-
     <div class="boxtitlegap">PROBLEM AND SOLUTION
         <span class="newlistingtitlemsg" id="problemmsg"></span>
     </div>
 
     <div class="boxpanel">
         <div class="formitem clear">
-            <span class="qalabel">PROBLEM - WHAT'S THE PROBLEM CUSTOMERS HAVE NOW?</span>
+            <span class="qalabel">PROBLEM - WHAT&rsquo;S THE PROBLEM CUSTOMERS HAVE NOW?</span>
             <div class="qainfobtn"></div>
         </div>
         <div class="formitem clear">
-            <p class="qainfo">What's the problem your product solves?  What's the problem exactly and why isn't it met by the current solutions?  It it just an annoyance, or is it causing real harm?  What's the pain point that makes it worth the customer's time to go out of his way to get your product with his hard earned money?</p>
+            <p class="qainfo">What&rsquo;s the problem your product solves?  What&rsquo;s the problem exactly and why isn&rsquo;t it met by the current solutions?  It it just an annoyance, or is it causing real harm?  What&rsquo;s the pain point that makes it worth the customer&rsquo;s time to go out of his way to get your product with his hard earned money?</p>
         </div>
         <div class="formitem clear">
             <p class="qainfo"></p>
@@ -105,11 +87,11 @@ include(header.m4)
 
     <div class="boxpanel">
         <div class="formitem clear">
-            <span class="qalabel">SOLUTION - WHAT'S YOUR SOLUTION TO THE PROBLEM?</span>
+            <span class="qalabel">SOLUTION - WHAT&rsquo;S YOUR SOLUTION TO THE PROBLEM?</span>
             <div class="qainfobtn"></div>
         </div>
         <div class="formitem clear">
-            <p class="qainfo">What's the solution?  What did they do before your product came along and how is your solution different?  What makes this solution so much better than the current ones?  What about this solution is worth the money and makes people come back for more?  How is it going to change their life?  Where did the idea come from?</p>
+            <p class="qainfo">What&rsquo;s the solution?  What did they do before your product came along and how is your solution different?  What makes this solution so much better than the current ones?  What about this solution is worth the money and makes people come back for more?  How is it going to change their life?  Where did the idea come from?</p>
         </div>
         <div class="formitem clear">
             <span class="inputfield">
@@ -145,7 +127,7 @@ include(header.m4)
             <div class="qainfobtn"></div>
         </div>
         <div class="formitem clear">
-            <p class="qainfo">What have you achieved so far?  What customers do you have, contracts signed, milestones reached, products developed?  What do you have in progress, near completion, still a pipe dream?  What's your sales pipeline look like so far?  Is it growing, shrinking, stayed steady?</p>
+            <p class="qainfo">What have you achieved so far?  What customers do you have, contracts signed, milestones reached, products developed?  What do you have in progress, near completion, still a pipe dream?  What&rsquo;s your sales pipeline look like so far?  Is it growing, shrinking, stayed steady?</p>
         </div>
         <div class="formitem clear">
             <span class="inputfield">
@@ -225,7 +207,7 @@ include(header.m4)
             <div class="qainfobtn"></div>
         </div>
         <div class="formitem clear">
-            <p class="qainfo">How does your offering compare to the competition's?  How do your features stack up against theirs?  How is your product better?  How is it worse?  Is it cheaper, faster, higher quality, stronger?  What's going to make someone chose you over someone else?  Is the competition larger, better captialized, dumping products at low prices?  Do you have something no one else does?</p>
+            <p class="qainfo">How does your offering compare to the competition&rsquo;s?  How do your features stack up against theirs?  How is your product better?  How is it worse?  Is it cheaper, faster, higher quality, stronger?  What&rsquo;s going to make someone chose you over someone else?  Is the competition larger, better captialized, dumping products at low prices?  Do you have something no one else does?</p>
         </div>
         <div class="formitem clear">
             <span class="inputfield">
@@ -265,7 +247,7 @@ include(header.m4)
             <div class="qainfobtn"></div>
         </div>
         <div class="formitem clear">
-            <p class="qainfo">What's your plan for reaching new customers, how are you going to get the message out? Where do they frequent to see display advertisements?  What websites do they use to connect via sponsored blogging?  What does he search for where keyword ads can be used?  What could be targeted via social media ads?  What TV shows and sports venues could he be shown ads on?</p>
+            <p class="qainfo">What&rsquo;s your plan for reaching new customers, how are you going to get the message out? Where do they frequent to see display advertisements?  What websites do they use to connect via sponsored blogging?  What does he search for where keyword ads can be used?  What could be targeted via social media ads?  What TV shows and sports venues could he be shown ads on?</p>
         </div>
         <div class="formitem clear">
             <span class="inputfield">
@@ -287,7 +269,7 @@ include(header.m4)
             <div class="qainfobtn"></div>
         </div>
         <div class="formitem clear">
-            <p class="qainfo">Who's your team?  Names, previous products, companies, innovations.  Be specific.  It's not 'three guys with an idea'.  It's Cindy, a brand executive from Toledo, Ohio who took a new brand at a major consumer goods company from $0 to $100m in sales, and has been running her own brand consulting firm for the past two years.  She likes cats, hates dogs, and enjoys BarCamps.</p>
+            <p class="qainfo">Who&rsquo;s your team?  Names, previous products, companies, innovations.  Be specific.  It&rsquo;s not "three guys with an idea".  It&rsquo;s Cindy, a brand executive from Toledo, Ohio who took a new brand at a major consumer goods company from $0 to $100m in sales, and has been running her own brand consulting firm for the past two years.  She likes cats, hates dogs, and enjoys BarCamps.</p>
         </div>
         <div class="formitem clear">
             <span class="inputfield">
@@ -381,7 +363,7 @@ include(header.m4)
             <div class="qainfobtn"></div>
         </div>
         <div class="formitem clear">
-            <p class="qainfo">You just might get a big chunk of money from investors or customers.  What are you going to do with it?  What are you doing with the money you have now?  Is it enough to grow your business?  Is it enough to survive?  If not why not?  How is more money going to help?  What is the payback time going to be?  What's the upside?</p>
+            <p class="qainfo">You just might get a big chunk of money from investors or customers.  What are you going to do with it?  What are you doing with the money you have now?  Is it enough to grow your business?  Is it enough to survive?  If not why not?  How is more money going to help?  What is the payback time going to be?  What&rsquo;s the upside?</p>
         </div>
         <div class="formitem clear">
             <span class="inputfield">
@@ -403,7 +385,7 @@ include(header.m4)
             <div class="qainfobtn"></div>
         </div>
         <div class="formitem clear">
-            <p class="qainfo">What is your company or project timeline?  When did it start, how long has it been in operation, when did it become full time, when did you hire your first employee, get your first customer, raise your first investment?  What are your next key milestones?  Where are you going from here and what's you're timeline?  Give a summary of where you see the business in the future.</p>
+            <p class="qainfo">What is your company or project timeline?  When did it start, how long has it been in operation, when did it become full time, when did you hire your first employee, get your first customer, raise your first investment?  What are your next key milestones?  Where are you going from here and what&rsquo;s your timeline?  Give a summary of where you see the business in the future.</p>
         </div>
         <div class="formitem clear">
             <span class="inputfield">
@@ -419,20 +401,18 @@ include(header.m4)
         <span class="inputmsg" id="newlistingmsg"></span>
     </div>
 
-</div> <!-- end left column -->
+</div>
 
-<!-- right column -->
 <div class="span-8 last">
 
     <div class="boxtitle clear">TIPS</div>
     <div class="sidebox">
 <p>
-Your goal here is to present specific relevant detail that can help someone to evaluate your idea.  Picture the life of a typical junior analyst at a venture firm.  They receive dozens, if not hundreds of these startup applications each week.  They have only a short time to glance over each one and see if it merits further investigation.  You want to show that you have a vision, with a definite plan, and the right team to execute it.  Avoid platitudes.  Avoid generalizations.  Talk about your market, your product, your price, your strategy, and just for kicks, how you're going to change the world.
 </p>
     </div>
 
 </div>
-<!-- end right column -->
+end right column -->
 
 '
 include(ip.m4)

@@ -6,10 +6,17 @@
         <div class="titleinfobtn"></div>
         <div class="titleinfo">
             <label class="titleinfoheader">Instructions</label>
-            <p>Now we will construct an investor presentation using your existing information and answers to the questions below.
-            This will show investors and the startup community what your business is all about.</p>
-            <p>Enter the text for each section as you would like it to appear on the presentation.  Use lines starting with "*" for bullet points
-            and a blank line for extra space.  Enter a tab or click out of the field to update the presentation at the bottom of the page.</p>
+            <p>
+Your goal is to present specific relevant detail that can help someone to
+evaluate your idea.  Picture someone reviewing dozens of startup applications
+each week, with only a short time to glance at each.  Show you have a vision,
+with a definite plan, and the right team to execute it.  Avoid platitudes and
+generalizations.  Talk about your market, your product, your price, your
+strategy, and how you are going to change the world.
+            </p>
+            <p>
+            Use lines starting with "*" for bullet points and a blank line for extra space.
+            </p>
         </div>
         <span class="span-3 smallinputbutton darkblue bmctitlebtn hoverlink" id="ip-preview-btn">PREVIEW</span>
         <span class="bmctitleboxbtn"><div id="ipfieldicon"></div></span>
@@ -41,11 +48,21 @@
 
             <div class="ipslide ipslide2">
                 <div class="ipheader">
+                    <p class="bmcinfo ipinfoelevatorpitch">
+                        <label class="bmcinfoheader">Elevator Pitch</label>
+                        <br />
+You have just stepped on the elevator with one of the leading Silicon Valley
+Venture Capitalists and you have 30 seconds to either get them interested
+enough to consider your idea, or step off and go back to sipping their latte.
+What do you say?  Avoid jargon, be specific, be exciting.
+                    </p>
                     <div class="iplogo"></div>
-                    <div class="iptitle">Elevator Pitch</div>
+                    <label class="iptitle" for="summary">Elevator Pitch</label>
                 </div>
                 <div class="ipline"></div>
-                <div class="ipcontent"></div> <!-- summary textarea goes here -->
+                <div class="ipcontent">
+                    <textarea class="qatextarea" cols="20" rows="5" name="summary" id="summary">What is your business?</textarea>
+                </div>
             </div>
 
             <div class="ipslide ipslide3">

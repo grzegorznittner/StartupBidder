@@ -396,6 +396,8 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
     padding: 10px;
     border: 2px solid #999999;
 }
+.ipinfoelevatorpitch { top: 5px; left: 20px; }
+
 .offerbox { width: 622px; height: 141px; }
 .offerwrapper { width: 640px; height: 0px; overflow: hidden;
     -moz-transition: height 300ms;
@@ -790,7 +792,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
  
 .ipheader { height: 145px; margin: 15px; }
 .iplogo { float: left; height: 146px; width: 146px; background-image: url(../img/noimage_146x146.jpg); margin-right: 15px; }
-.iptitle { float: left; font-size: 48px; font-weight: bold; width: 747px; margin-top: 93px; height: 68px; color: #32aff6; overflow:hidden; }
+.iptitle { float: left; font-size: 48px; font-weight: bold; width: 747px; margin-top: 93px; height: 68px; color: #32aff6; display: block; overflow:hidden; }
 .ipline {
     margin: 0 15px 0 15px; height: 4px;
     background: #e2e2e2;
