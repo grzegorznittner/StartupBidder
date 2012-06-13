@@ -19,11 +19,11 @@ pl.implement(QuestionClass, {
                 self.display(json);
             },
             ajax = new AjaxClass('/listings/questions_answers/' + this.listing_id, 'qandamsg', complete);
-        ajax.setGetData({ max_results: 20 });
+        ajax.setGetData({ max_results: 6 });
         ajax.call();
     },
     store: function(json) {
-        this.questionlist = json || [];
+        this.questionlist = json.questions_answers || [];
     },
     display: function(json) {
         if (json) {
