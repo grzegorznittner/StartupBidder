@@ -441,6 +441,11 @@ include(api-banner.m4)
                 <li><code class="apiprop">.business_plan_id</code> business plan download ID for this listing via the File API</li>
                 <li><code class="apiprop">.presentation_id</code> presentation download ID for this listing via the File API</li>
                 <li><code class="apiprop">.financials_id</code> financial statement download ID for this listing via the File API</li>
+                <li><code class="apiprop">.pic1</code> if this property is defined, you can use this picture number as an image src or div background url as per the <var>/listing/picture</var> method</li>
+                <li><code class="apiprop">.pic2</code> same as pic1</li>
+                <li><code class="apiprop">.pic3</code> same as pic1</li>
+                <li><code class="apiprop">.pic4</code> same as pic1</li>
+                <li><code class="apiprop">.pic5</code> same as pic1</li>
                 <li><code class="apiprop">.video</code> embed url for a video about this listing from youtube, dailymotion, or vidmeo</li>
                 <li><code class="apiprop">.business_plan_upload</code> one-time URL for uploading a business plan document via the File API</li>
                 <li><code class="apiprop">.presentation_upload</code> one-time URL for uploading a presentation document via the File API</li>

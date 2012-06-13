@@ -383,6 +383,7 @@ function BaseListClass(kvlist, id, over, type) {
     this.msgid = id + 'msg';
     this.col1id = id + 'divcol1';
     this.col2id = id + 'divcol2';
+    this.wrapperid = id + 'wrapper';
     this.over = over ? over : 1;
     this.type = type;
 }
@@ -411,6 +412,7 @@ pl.implement(BaseListClass, {
         else {
             lc.spreadOverOneCol(list, '#'+self.col1id, this.type);
         }
+        pl('#' + this.wrapperid).show();
     }
 });
 
