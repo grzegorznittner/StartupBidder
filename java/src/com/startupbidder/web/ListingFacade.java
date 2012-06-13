@@ -1,6 +1,8 @@
 package com.startupbidder.web;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.ByteBuffer;
@@ -16,6 +18,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
@@ -24,22 +27,27 @@ import java.util.logging.Logger;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.math.RandomUtils;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.joda.time.DateMidnight;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 import com.google.appengine.api.blobstore.BlobInfo;
 import com.google.appengine.api.blobstore.BlobInfoFactory;
+import com.google.appengine.api.blobstore.BlobKey;
+import com.google.appengine.api.blobstore.BlobstoreFailureException;
 import com.google.appengine.api.blobstore.BlobstoreService;
 import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
 import com.google.appengine.api.files.AppEngineFile;
 import com.google.appengine.api.files.FileService;
 import com.google.appengine.api.files.FileServiceFactory;
 import com.google.appengine.api.files.FileWriteChannel;
+import com.google.appengine.api.files.FinalizationException;
+import com.google.appengine.api.files.LockException;
 import com.google.appengine.api.images.Image;
 import com.google.appengine.api.images.ImagesService;
 import com.google.appengine.api.images.ImagesServiceFactory;
@@ -86,6 +94,16 @@ public class ListingFacade {
 	
 	public static enum UpdateReason {NEW_BID, BID_UPDATE, NEW_COMMENT, DELETE_COMMENT, NEW_MONITOR, DELETE_MONITOR, QUESTION_ANSWERED, NONE};
 	public static final String MEMCACHE_ALL_LISTING_LOCATIONS = "AllListingLocations";
+
+	private final static byte[] JPEG = {(byte)0xff, (byte)0xd8, (byte)0xff, (byte)0xe0};
+	private final static byte[] GIF = {0x47, 0x49, 0x46, 0x38};
+	private final static byte[] PNG = {(byte)0x89, 0x50, 0x4e, 0x47};
+	
+	private final static int PICTURE_HEIGHT = 452;
+	private final static int PICTURE_WIDTH = 622;
+	private final static int LOGO_HEIGHT = 146;
+	private final static int LOGO_WIDTH = 146;
+	
 	/**
 	 * Delay for listing stats task execution.
 	 */
@@ -98,6 +116,15 @@ public class ListingFacade {
 	private DateTimeFormatter timeStampFormatter = DateTimeFormat.forPattern("yyyyMMdd_HHmmss_SSS");
 	private static ListingFacade instance;
 	
+    private static class PictureData {
+    	PictureData(String mimeType, byte data[]) {
+    		this.mimeType = mimeType;
+    		this.data = data;
+    	}
+    	byte data[];
+    	String mimeType;
+    }
+
 	public static ListingFacade instance() {
 		if (instance == null) {
 			instance = new ListingFacade();
@@ -350,24 +377,26 @@ public class ListingFacade {
 	private ListingDoc fetchAndUpdateListingDoc(Listing listing, ListingPropertyVO prop) {
 		byte[] docBytes = null;
 		String mimeType = null;
+		String propName = prop.getPropertyName();
+		String propValue = prop.getPropertyValue();
 		try {
 			boolean isDevEnvironment = com.google.appengine.api.utils.SystemProperty.environment.value() == com.google.appengine.api.utils.SystemProperty.Environment.Value.Development;
 			String url = prop.getPropertyValue();
 			if(!url.startsWith("http") && isDevEnvironment && new File("./test-docs").exists()) {
-				docBytes = FileUtils.readFileToByteArray(new File(prop.getPropertyValue()));
-				if (prop.getPropertyValue().endsWith(".gif")) {
+				docBytes = FileUtils.readFileToByteArray(new File(propValue));
+				if (propValue.endsWith(".gif")) {
 					mimeType = "image/gif";
-				} else if (prop.getPropertyValue().endsWith(".jpg")) {
+				} else if (propValue.endsWith(".jpg")) {
 					mimeType = "image/jpeg";
-				} else if (prop.getPropertyValue().endsWith(".png")) {
+				} else if (propValue.endsWith(".png")) {
 					mimeType = "image/png";
-				} else if (prop.getPropertyValue().endsWith(".doc")) {
+				} else if (propValue.endsWith(".doc")) {
 					mimeType = "application/msword";
-				} else if (prop.getPropertyValue().endsWith(".ppt")) {
+				} else if (propValue.endsWith(".ppt")) {
 					mimeType = "application/vnd.ms-powerpoint";
-				} else if (prop.getPropertyValue().endsWith(".xls")) {
+				} else if (propValue.endsWith(".xls")) {
 					mimeType = "application/vnd.ms-excel";
-				} else if (prop.getPropertyValue().endsWith(".pdf")) {
+				} else if (propValue.endsWith(".pdf")) {
 					mimeType = "application/pdf";
 				}
 			} else {
@@ -376,30 +405,30 @@ public class ListingFacade {
 				mimeType = con.getContentType();
 			}
 			log.info("Fetched " + docBytes.length + " bytes, content type '" + mimeType
-					+ "', from '" + prop.getPropertyValue() + "'");
+					+ "', from '" + propValue + "'");
 		} catch (Exception e) {
-			log.log(Level.WARNING, "Error while fetching document from " + prop.getPropertyValue(), e);
+			log.log(Level.WARNING, "Error while fetching document from " + propValue, e);
 			return null;
 		}
-		if (prop.getPropertyName().equalsIgnoreCase("logo_url") && setLogoBase64(listing, docBytes) == null) {
+		if (propName.equalsIgnoreCase("logo_url") && setLogoBase64(listing, docBytes) == null) {
 			log.log(Level.WARNING, "Image conversion error");
 			return null;
 		}
-
-		try {
-			FileService fileService = FileServiceFactory.getFileService();
-			AppEngineFile file = fileService.createNewBlobFile(mimeType);
-			FileWriteChannel writeChannel = fileService.openWriteChannel(file, true);
-			writeChannel.write(ByteBuffer.wrap(docBytes));
-			writeChannel.closeFinally();
-
-			ListingDoc doc = new ListingDoc();
-			doc.blob = fileService.getBlobKey(file);
-			if (doc.blob == null) {
-				log.warning("Blob not created for file " + file);
+		if (propName.equalsIgnoreCase("pic1_url") || propName.equalsIgnoreCase("pic2_url") || propName.equalsIgnoreCase("pic3_url")
+				|| propName.equalsIgnoreCase("pic4_url") || propName.equalsIgnoreCase("pic5_url")) {
+			PictureData result = convertPicture(docBytes);
+			if (result == null) {
+				log.log(Level.WARNING, "Image conversion error");
 				return null;
 			}
-			doc.type = getListingDocTypeFromPropertyName(prop.getPropertyName());
+			docBytes = result.data;
+		}
+
+		try {
+			Type type = getListingDocTypeFromPropertyName(propName);
+			ListingDoc doc = new ListingDoc();
+			doc.blob = createBlob(docBytes, type, mimeType);
+			doc.type = type;
 			getDAO().createListingDocument(doc);
 			return doc;
 		} catch (Exception e) {
@@ -408,6 +437,21 @@ public class ListingFacade {
 		}
 	}
 
+	private BlobKey createBlob(byte[] docBytes, Type type, String mimeType)
+			throws IOException, FileNotFoundException, FinalizationException, LockException {
+		FileService fileService = FileServiceFactory.getFileService();
+		AppEngineFile file = fileService.createNewBlobFile(mimeType);
+		FileWriteChannel writeChannel = fileService.openWriteChannel(file, true);
+		writeChannel.write(ByteBuffer.wrap(docBytes));
+		writeChannel.closeFinally();
+		BlobKey key = fileService.getBlobKey(file);
+		if (key == null) {
+			log.warning("Blob not created for file " + file);
+			return null;
+		}
+		return key;
+	}
+	
 	private Type getListingDocTypeFromPropertyName(String propertyName) {
 		if (propertyName.equalsIgnoreCase("business_plan_url")) {
 			return ListingDoc.Type.BUSINESS_PLAN;
@@ -417,6 +461,16 @@ public class ListingFacade {
 			return ListingDoc.Type.FINANCIALS;
 		} else if (propertyName.equalsIgnoreCase("logo_url")) {
 			return ListingDoc.Type.LOGO;
+		} else if (propertyName.equalsIgnoreCase("pic1_url")) {
+			return ListingDoc.Type.PIC1;
+		} else if (propertyName.equalsIgnoreCase("pic2_url")) {
+			return ListingDoc.Type.PIC2;
+		} else if (propertyName.equalsIgnoreCase("pic3_url")) {
+			return ListingDoc.Type.PIC3;
+		} else if (propertyName.equalsIgnoreCase("pic4_url")) {
+			return ListingDoc.Type.PIC4;
+		} else if (propertyName.equalsIgnoreCase("pic5_url")) {
+			return ListingDoc.Type.PIC5;
 		}
 		log.warning("Not recognized property '" + propertyName + "', defaulting to LOGO");
 		return ListingDoc.Type.LOGO;
@@ -1472,7 +1526,8 @@ public class ListingFacade {
 		}
 		long editedListingId = BaseVO.toKeyId(loggedInUser.getEditedListing());
 		Listing listing = getDAO().getListing(editedListingId);
-		if (ListingDoc.Type.valueOf(doc.getType()) == ListingDoc.Type.LOGO) {
+		ListingDoc.Type docType = ListingDoc.Type.valueOf(doc.getType());
+		if (docType == ListingDoc.Type.LOGO) {
 			BlobInfo logoInfo = new BlobInfoFactory().loadBlobInfo(doc.getBlob());
 			byte logo[] = blobstoreService.fetchData(doc.getBlob(), 0, logoInfo.getSize() - 1);
 			if (setLogoBase64(listing, logo) == null) {
@@ -1482,6 +1537,26 @@ public class ListingFacade {
 				return doc;
 			}
 		}
+		if (docType == ListingDoc.Type.PIC1 || docType == ListingDoc.Type.PIC2 || docType == ListingDoc.Type.PIC3
+				|| docType == ListingDoc.Type.PIC4 || docType == ListingDoc.Type.PIC5) {
+			BlobInfo logoInfo = new BlobInfoFactory().loadBlobInfo(doc.getBlob());
+			byte logo[] = blobstoreService.fetchData(doc.getBlob(), 0, logoInfo.getSize() - 1);
+			PictureData convertedData = convertPicture(logo);
+			if (convertedData == null) {
+				deleteBlob(blobstoreService, doc.getBlob());
+				doc.setErrorCode(ErrorCodes.ENTITY_VALIDATION);
+				doc.setErrorMessage("Image conversion error.");
+				return doc;
+			}
+			deleteBlob(blobstoreService, doc.getBlob());
+			try {
+				doc.setBlob(createBlob(convertedData.data, docType, convertedData.mimeType));
+				log.info("New Blob for converted image created: " + doc.getBlob());
+			} catch (Exception e) {
+				log.log(Level.WARNING, "Error storing doc as blob", e);
+				return null;
+			}
+		}
 		ListingDoc docDTO = VoToModelConverter.convert(doc);
 		docDTO = getDAO().createListingDocument(docDTO);
 		doc = DtoToVoConverter.convert(docDTO);
@@ -1489,6 +1564,14 @@ public class ListingFacade {
 		updateListingDoc(listing, docDTO);
 		
 		return doc;
+	}
+
+	private void deleteBlob(BlobstoreService blobstoreService, BlobKey blobToDelete) {
+		try {
+			blobstoreService.delete(blobToDelete);
+		} catch (BlobstoreFailureException e) {
+			log.log(Level.WARNING, "Error deleting blob", e);
+		}
 	}
 
 	private Listing updateListingDoc(Listing listing, ListingDoc docDTO) {
@@ -1511,6 +1594,26 @@ public class ListingFacade {
 			replacedDocId = listing.logoId;
 			listing.logoId = new Key<ListingDoc>(ListingDoc.class, docDTO.id);
 			break;
+		case PIC1:
+			replacedDocId = listing.pic1Id;
+			listing.pic1Id = new Key<ListingDoc>(ListingDoc.class, docDTO.id);
+			break;
+		case PIC2:
+			replacedDocId = listing.pic2Id;
+			listing.pic2Id = new Key<ListingDoc>(ListingDoc.class, docDTO.id);
+			break;
+		case PIC3:
+			replacedDocId = listing.pic3Id;
+			listing.pic3Id = new Key<ListingDoc>(ListingDoc.class, docDTO.id);
+			break;
+		case PIC4:
+			replacedDocId = listing.pic4Id;
+			listing.pic4Id = new Key<ListingDoc>(ListingDoc.class, docDTO.id);
+			break;
+		case PIC5:
+			replacedDocId = listing.pic5Id;
+			listing.pic5Id = new Key<ListingDoc>(ListingDoc.class, docDTO.id);
+			break;
 		}
 		listing = getDAO().storeListing(listing);
 		
@@ -1531,7 +1634,7 @@ public class ListingFacade {
 	private Listing setLogoBase64(Listing listing, byte[] logo) {
 		String logoBase64 = convertLogoToBase64(logo);
 		if (logoBase64 != null) {
-			listing.logoBase64 = convertLogoToBase64(logo);
+			listing.logoBase64 = logoBase64;
 			return listing;
 		} else {
 			return null;
@@ -1539,10 +1642,6 @@ public class ListingFacade {
 	}
 	
 	public String convertLogoToBase64(byte[] logo) {
-		final byte[] JPEG = {(byte)0xff, (byte)0xd8, (byte)0xff, (byte)0xe0};
-		final byte[] GIF = {0x47, 0x49, 0x46, 0x38};
-		final byte[] PNG = {(byte)0x89, 0x50, 0x4e, 0x47};
-		
 		byte[] magicNumber = ArrayUtils.subarray(logo, 0, 4);
 		String format = "";
 		if (ArrayUtils.isEquals(magicNumber, JPEG)) {
@@ -1557,7 +1656,7 @@ public class ListingFacade {
 		}
 		ImagesService imagesService = ImagesServiceFactory.getImagesService();
         Image originalImage = ImagesServiceFactory.makeImage(logo);
-		log.info("Original image: " + originalImage.getWidth() + " x " + originalImage.getHeight());
+		log.info("Original image: " + originalImage.getWidth() + " x " + originalImage.getHeight() + " " + format);
         Image newImage = null;
         if (originalImage.getWidth() != originalImage.getHeight()) {
         	Transform crop = null;
@@ -1574,8 +1673,8 @@ public class ListingFacade {
         } else {
         	newImage = originalImage;
         }
-        if (newImage.getWidth() != 146) {
-        	Transform resize = ImagesServiceFactory.makeResize(146, 146);
+        if (newImage.getWidth() != LOGO_WIDTH) {
+        	Transform resize = ImagesServiceFactory.makeResize(LOGO_WIDTH, LOGO_HEIGHT);
         	newImage = imagesService.applyTransform(resize, newImage);
     		log.info("Resized image: " + newImage.getWidth() + " x " + newImage.getHeight());
         }
@@ -1584,6 +1683,35 @@ public class ListingFacade {
 		String logo64 = Base64.encodeBase64String(newImageData);
 		log.info("Data uri for logo has " + logo64.length() + " bytes");
 		return "data:" + format + ";base64," + logo64;
+	}
+
+	public PictureData convertPicture(byte[] picture) {
+		byte[] magicNumber = ArrayUtils.subarray(picture, 0, 4);
+		String format = "";
+		if (ArrayUtils.isEquals(magicNumber, JPEG)) {
+			format = "image/jpeg";
+		} else if (ArrayUtils.isEquals(magicNumber, GIF)) {
+			format = "image/gif";
+		} else if (ArrayUtils.isEquals(magicNumber, PNG)) {
+			format = "image/png";
+		} else {
+			log.warning("Image not recognized as JPG, GIF or PNG. Magic number was: " + ToStringBuilder.reflectionToString(magicNumber));
+			return null;
+		}
+		ImagesService imagesService = ImagesServiceFactory.getImagesService();
+        Image originalImage = ImagesServiceFactory.makeImage(picture);
+		log.info("Original image: " + originalImage.getWidth() + " x " + originalImage.getHeight() + " " + format);
+        Image newImage = null;
+        if (originalImage.getWidth() > PICTURE_WIDTH || originalImage.getHeight() > PICTURE_HEIGHT) {
+        	// we need to shrink image based on horizontal difference
+        	Transform resize = ImagesServiceFactory.makeResize(PICTURE_WIDTH, PICTURE_HEIGHT);
+        	newImage = imagesService.applyTransform(resize, originalImage);
+        } else {
+        	newImage = originalImage;
+        }
+    	log.info("Resized image: " + newImage.getWidth() + " x " + newImage.getHeight());
+        byte[] newImageData = newImage.getImageData();
+		return new PictureData(format, newImageData);
 	}
 
 	public ListingAndUserVO deleteListingFile(UserVO loggedInUser, String listingId, ListingDoc.Type docType) {
@@ -1625,6 +1753,26 @@ public class ListingFacade {
 			docToDelete = listing.logoId;
 			listing.logoId = null;
 			listing.logoBase64 = null;
+			break;
+		case PIC1:
+			docToDelete = listing.pic1Id;
+			listing.pic1Id = null;
+			break;
+		case PIC2:
+			docToDelete = listing.pic2Id;
+			listing.pic2Id = null;
+			break;
+		case PIC3:
+			docToDelete = listing.pic3Id;
+			listing.pic3Id = null;
+			break;
+		case PIC4:
+			docToDelete = listing.pic4Id;
+			listing.pic4Id = null;
+			break;
+		case PIC5:
+			docToDelete = listing.pic5Id;
+			listing.pic5Id = null;
 			break;
 		}
 		// we need to update listing just in case logoBase64 is filled but logoId not
@@ -1732,8 +1880,8 @@ public class ListingFacade {
 
     private String[] randomizeLocation(ListingLocation loc, DecimalFormat df) {
     	log.info("Randomizing: " + loc);
-		return new String[] {df.format(loc.latitude + ((double)RandomUtils.nextInt(100)) * 0.000001),
-				df.format(loc.longitude + ((double)RandomUtils.nextInt(100)) * 0.000001)};
+		return new String[] {df.format(loc.latitude + ((double)new Random().nextInt(100)) * 0.000001),
+				df.format(loc.longitude + ((double)new Random().nextInt(100)) * 0.000001)};
 	}
 
 	public void updateMockListingImages(long listingId) {
@@ -1775,5 +1923,81 @@ public class ListingFacade {
         }
 		getDAO().storeListing(listing);
 	}
+    
+    public Pair<BlobKey, Listing.State> getPictureBlob(String listingId, int picNr) {
+    	Listing listing = ObjectifyDatastoreDAO.getInstance().getListing(BaseVO.toKeyId(listingId));
+		if (listing == null) {
+			log.log(Level.INFO, "Listing not found!");
+			return null;
+		}
+		Pair<ListingDoc.Type, Key<ListingDoc>> docKey = getPictureKey(listing, picNr);
+		ListingDoc doc = ObjectifyDatastoreDAO.getInstance().getListingDocument(docKey.getRight());
+		if (doc.blob != null) {
+			return new ImmutablePair<BlobKey, Listing.State>(doc.blob, listing.state);
+		} else {
+			return null;
+		}
+    }
+    
+	public boolean swapPictures(String listingId, int picFromNr, int picToNr) {
+		Listing listing = getDAO().getListing(BaseVO.toKeyId(listingId));
+		if (listing == null) {
+			log.log(Level.INFO, "Listing not found!");
+			return false;
+		}
+		Pair<ListingDoc.Type, Key<ListingDoc>> docFromKey = getPictureKey(listing, picFromNr);
+		Pair<ListingDoc.Type, Key<ListingDoc>> docToKey = getPictureKey(listing, picToNr);
+		ListingDoc docFrom = getDAO().getListingDocument(docFromKey.getRight());
+		ListingDoc docTo = getDAO().getListingDocument(docToKey.getRight());
+		log.info("Swaping pictures " + docFrom + " <-> " + docTo);
+		
+		setPictureKey(listing, picToNr, docFrom == null ? null : docFrom.getKey());
+		setPictureKey(listing, picFromNr, docTo == null ? null : docTo.getKey());
+		if (docFrom != null) {
+			docFrom.type = docToKey.getKey();
+		}
+		if (docTo != null) {
+			docTo.type = docFromKey.getKey();
+		}
+		getDAO().storeListingAndDocs(listing, docFrom, docTo);
+		return true;
+	}
 
+	private Pair<ListingDoc.Type, Key<ListingDoc>> getPictureKey(Listing listing, int picNr) {
+		switch(picNr) {
+		case 5:
+			return new ImmutablePair<ListingDoc.Type, Key<ListingDoc>>(ListingDoc.Type.PIC5, listing.pic5Id);
+		case 4:
+			return new ImmutablePair<ListingDoc.Type, Key<ListingDoc>>(ListingDoc.Type.PIC4, listing.pic4Id);
+		case 3:
+			return new ImmutablePair<ListingDoc.Type, Key<ListingDoc>>(ListingDoc.Type.PIC3, listing.pic3Id);
+		case 2:
+			return new ImmutablePair<ListingDoc.Type, Key<ListingDoc>>(ListingDoc.Type.PIC2, listing.pic2Id);
+		case 1:
+		default:
+			return new ImmutablePair<ListingDoc.Type, Key<ListingDoc>>(ListingDoc.Type.PIC1, listing.pic1Id);
+		}
+	}
+
+	private void setPictureKey(Listing listing, int picNr, Key<ListingDoc> docKey) {
+		switch(picNr) {
+		case 5:
+			listing.pic5Id = docKey;
+			break;
+		case 4:
+			listing.pic4Id = docKey;
+			break;
+		case 3:
+			listing.pic3Id = docKey;
+			break;
+		case 2:
+			listing.pic2Id = docKey;
+			break;
+		case 1:
+			listing.pic1Id = docKey;
+			break;
+		default:
+			throw new IllegalArgumentException("Invalid picture index " + picNr);
+		}
+	}
 }

@@ -9,7 +9,7 @@ import java.util.Date;
 import javax.persistence.Id;
 import javax.persistence.PrePersist;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.annotation.Cached;

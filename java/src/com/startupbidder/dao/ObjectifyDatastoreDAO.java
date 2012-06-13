@@ -1,18 +1,15 @@
 package com.startupbidder.dao;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.math.RandomUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
@@ -123,7 +120,7 @@ public class ObjectifyDatastoreDAO {
 	}
 
 	public SBUser createUser(String email, String nickname) {
-        String userEmail = StringUtils.isNotEmpty(email) ? email : "anonymous" + String.valueOf(RandomUtils.nextInt(1000000000)) + "@startupbidder.com";
+        String userEmail = StringUtils.isNotEmpty(email) ? email : "anonymous" + String.valueOf(new Random().nextInt(1000000000)) + "@startupbidder.com";
         SBUser user = getUserByEmail(userEmail);
         if (user != null) {
             log.warning("User with email '" + userEmail + "' already exists, cannot create user.");
@@ -131,7 +128,7 @@ public class ObjectifyDatastoreDAO {
         }
         String userNickname = (StringUtils.isNotEmpty(nickname) && !nickname.equalsIgnoreCase(email))
                     ? nickname
-                    : (userEmail.contains("@") ? email.substring(0, email.indexOf("@")) : "anonymous" + String.valueOf(RandomUtils.nextInt(1000000000)));
+                    : (userEmail.contains("@") ? email.substring(0, email.indexOf("@")) : "anonymous" + String.valueOf(new Random().nextInt(1000000000)));
         user = getUserByNickname(userNickname);
         if (user != null) {
             log.warning("User with nickname " + userNickname + " already exists, cannot create user.");
@@ -149,13 +146,13 @@ public class ObjectifyDatastoreDAO {
 	}
 	
 	public SBUser createUser(String email, String password, String authCookie, String name, String location, boolean investor) {
-        String userEmail = StringUtils.isNotEmpty(email) ? email : "anonymous" + String.valueOf(RandomUtils.nextInt(1000000000)) + "@startupbidder.com";
+        String userEmail = StringUtils.isNotEmpty(email) ? email : "anonymous" + String.valueOf(new Random().nextInt(1000000000)) + "@startupbidder.com";
         SBUser user = getUserByEmail(email);
         if (user != null) {
             log.warning("User with email '" + userEmail + "' already exists, cannot create user.");
             return null;
         }
-        String userNickname = userEmail.contains("@") ? email.substring(0, email.indexOf("@")) : "anonymous" + String.valueOf(RandomUtils.nextInt(1000000000));
+        String userNickname = userEmail.contains("@") ? email.substring(0, email.indexOf("@")) : "anonymous" + String.valueOf(new Random().nextInt(1000000000));
         user = getUserByNickname(userNickname);
         if (user != null) {
             log.warning("User with nickname matching '" + userNickname + "' case insensitive already exists, cannot create user.");
@@ -985,6 +982,14 @@ public class ObjectifyDatastoreDAO {
 	public ListingDoc getListingDocument(long docId) {
 		return getOfy().find(ListingDoc.class, docId);
 	}
+	
+	public ListingDoc getListingDocument(Key<ListingDoc> docKey) {
+		if (docKey != null) {
+			return getOfy().find(ListingDoc.class, docKey.getId());
+		} else {
+			return null;
+		}
+	}
 
 	public List<ListingDoc> getAllListingDocuments() {
 		QueryResultIterable<Key<ListingDoc>> docsIt = getOfy().query(ListingDoc.class).fetchKeys();
@@ -996,7 +1001,17 @@ public class ObjectifyDatastoreDAO {
 		log.info("Deleting document id = " + docId);
 		getOfy().delete(ListingDoc.class, docId);
 	}
-
+	
+	public void storeListingAndDocs(Listing listing, ListingDoc doc1, ListingDoc doc2) {
+		if (doc2 == null) {
+			getOfy().put(listing, doc1);
+		} else if (doc1 == null) {
+			getOfy().put(listing, doc2);
+		} else {
+			getOfy().put(listing, doc1, doc2);
+		}
+	}
+	
 	public Monitor getListingMonitor(long userId, long listingId) {
 		return getListingMonitor(new Key<SBUser>(SBUser.class, userId), new Key<Listing>(Listing.class, listingId));
 	}

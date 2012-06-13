@@ -5,6 +5,7 @@
 package com.startupbidder.datamodel;
 
 import java.util.Date;
+import java.util.Random;
 
 import javax.persistence.Id;
 import javax.persistence.PrePersist;
@@ -15,7 +16,6 @@ import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Indexed;
 import com.googlecode.objectify.annotation.Unindexed;
 import com.googlecode.objectify.condition.IfNotNull;
-import org.apache.commons.lang.math.RandomUtils;
 
 /**
  * @author "Grzegorz Nittner" <grzegorz.nittner@gmail.com>
@@ -75,7 +75,7 @@ public class SBUser extends BaseObject<SBUser> {
         this(
                 email,
                 name,
-                (email.contains("@") ? email.substring(0, email.indexOf("@")) : "anonymous" + String.valueOf(RandomUtils.nextInt(1000000000))),
+                (email.contains("@") ? email.substring(0, email.indexOf("@")) : "anonymous" + String.valueOf(new Random().nextInt(1000000000))),
                 phone,
                 location,
                 admin,

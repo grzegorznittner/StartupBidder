@@ -6,9 +6,7 @@ import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.logging.Logger;
 
 import org.junit.After;
@@ -16,13 +14,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.google.appengine.api.users.User;
-import com.google.appengine.api.users.UserService;
-import com.google.appengine.api.users.UserServiceFactory;
-import com.googlecode.objectify.Key;
-import com.googlecode.objectify.Objectify;
-import com.googlecode.objectify.ObjectifyService;
 import com.startupbidder.dao.ObjectifyDatastoreDAO;
-import com.startupbidder.datamodel.Listing;
 import com.startupbidder.datamodel.SBUser;
 import com.startupbidder.vo.ErrorCodes;
 import com.startupbidder.vo.UserAndUserVO;

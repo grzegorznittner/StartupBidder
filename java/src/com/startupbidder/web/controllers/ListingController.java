@@ -14,15 +14,19 @@ import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ArrayNode;
 
+import com.google.appengine.api.blobstore.BlobKey;
 import com.startupbidder.dao.ObjectifyDatastoreDAO;
 import com.startupbidder.datamodel.Listing;
+import com.startupbidder.datamodel.Listing.State;
 import com.startupbidder.datamodel.ListingDoc;
 import com.startupbidder.vo.BaseVO;
 import com.startupbidder.vo.BidListVO;
@@ -110,6 +114,8 @@ public class ListingController extends ModelDrivenController {
 				return listingComments(request);
 			} else if ("logo".equalsIgnoreCase(getCommand(1))) {
 				return logo(request);
+			} else if ("picture".equalsIgnoreCase(getCommand(1))) {
+				return picture(request);
 			}
 		} else if ("POST".equalsIgnoreCase(request.getMethod())) {
 			if ("create".equalsIgnoreCase(getCommand(1))) {
@@ -144,6 +150,8 @@ public class ListingController extends ModelDrivenController {
 				return deleteComment(request);
 			} else if("make_bid".equalsIgnoreCase(getCommand(1))) {
                 return makeBid(request);
+			} else if("swap_pictures".equalsIgnoreCase(getCommand(1))) {
+                return swapPictures(request);
 			}
 		}
 
@@ -595,16 +603,70 @@ public class ListingController extends ModelDrivenController {
 		String listingId = getCommandOrParameter(request, 2, "id");
 
 		Listing listing = ObjectifyDatastoreDAO.getInstance().getListing(BaseVO.toKeyId(listingId));
+		if (listing == null) {
+			log.log(Level.INFO, "Listing not found!");
+			headers.setStatus(500);
+			return headers;
+		}
 		ListingDoc doc = ObjectifyDatastoreDAO.getInstance().getListingDocument(listing.logoId.getId());
 		log.log(Level.INFO, "Sending back logo: " + doc);
 		if (doc != null && doc.blob != null) {
-			headers.addHeader("Cache-Control", "public, max-age=3600");
+			headers.addHeader("Cache-Control", "public, max-age=86400");
 			headers.setBlobKey(doc.blob);
 		} else {
 			log.log(Level.INFO, "Document not found or blob not available!");
 			headers.setStatus(500);
 		}
 		
+		return headers;
+	}
+	
+	private HttpHeaders picture(HttpServletRequest request) {
+		HttpHeaders headers = new HttpHeadersImpl("picture");
+		
+		String listingId = getCommandOrParameter(request, 2, "id");
+		String picNrStr = getCommandOrParameter(request, 3, "nr");
+		int picNr = NumberUtils.toInt(picNrStr, 0);
+		if (picNr < 1 || picNr > 5) {
+			log.log(Level.INFO, "Wrong picture number, picNr=" + picNr);
+			headers.setStatus(500);
+			return headers;
+		}
+
+		Pair<BlobKey, Listing.State> pictureBlob = ListingFacade.instance().getPictureBlob(listingId, picNr);
+		log.log(Level.INFO, "Sending back picture: " + pictureBlob);
+		if (pictureBlob != null) {
+			if (pictureBlob.getRight() == State.ACTIVE) {
+				headers.addHeader("Cache-Control", "public, max-age=86400");
+			}
+			headers.setBlobKey(pictureBlob.getLeft());
+		} else {
+			log.log(Level.INFO, "Picture not found or blob not available!");
+			headers.setStatus(500);
+		}
+		
+		return headers;
+	}
+
+	private HttpHeaders swapPictures(HttpServletRequest request) {
+		HttpHeaders headers = new HttpHeadersImpl("swap_pictures");
+		
+		String listingId = getCommandOrParameter(request, 2, "id");
+		String picFromNrStr = getCommandOrParameter(request, 3, "from");
+		String picToNrStr = getCommandOrParameter(request, 4, "to");
+		int picFromNr = NumberUtils.toInt(picFromNrStr, 0);
+		int picToNr = NumberUtils.toInt(picToNrStr, 0);
+		if (picFromNr < 1 || picFromNr > 5 || picToNr < 1 || picToNr > 5) {
+			log.log(Level.INFO, "Wrong picture number(s), picFromNr=" + picFromNr + ", picToNr=" + picToNr);
+			headers.setStatus(500);
+			return headers;
+		}
+		if (!ListingFacade.instance().swapPictures(listingId, picFromNr, picToNr)) {
+			log.log(Level.INFO, "Picture swap error!");
+			headers.setStatus(500);
+			return headers;
+		}
+		model = "Swaped " + picFromNr + " <->" + picToNr;
 		return headers;
 	}
 	
@@ -615,7 +677,7 @@ public class ListingController extends ModelDrivenController {
         	listingProperties.setMaxResults(20);
 		}
         model = ServiceFacade.instance().getQuestionsAndAnswers(getLoggedInUser(), listingId, listingProperties);
-        return new HttpHeadersImpl("questions_and_answers").disableCaching();
+        return new HttpHeadersImpl("questions_answers").disableCaching();
     }
     
     // GET /listings/ask_owner

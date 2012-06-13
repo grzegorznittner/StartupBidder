@@ -24,8 +24,6 @@ public class UserBasicVO extends BaseVO {
 	@JsonProperty("edited_listing") private String editedListing;
 	@JsonProperty("edited_status")	@JsonSerialize(using=LowecaseSerializer.class) private String editedStatus;
 	@JsonProperty("num_notifications") private long numberOfNotifications;
-	@JsonProperty("votable") private boolean votable;
-	@JsonProperty("mockData") private boolean mockData;
 	@JsonProperty("admin") private boolean admin;
 	public UserBasicVO() {
 	}
@@ -38,9 +36,7 @@ public class UserBasicVO extends BaseVO {
 		this.editedListing = user.getEditedListing();
 		this.editedStatus = user.getEditedStatus();
 		this.numberOfNotifications = user.getNumberOfNotifications();
-		this.votable = user.isVotable();
 		this.admin = user.isAdmin();
-		this.mockData = user.isMockData();
 	}
 	public String getId() {
 		return id;
@@ -77,18 +73,6 @@ public class UserBasicVO extends BaseVO {
 	}
 	public void setNumberOfNotifications(long numberOfNotifications) {
 		this.numberOfNotifications = numberOfNotifications;
-	}
-	public boolean isVotable() {
-		return votable;
-	}
-	public void setVotable(boolean votable) {
-		this.votable = votable;
-	}
-	public boolean isMockData() {
-		return mockData;
-	}
-	public void setMockData(boolean mockData) {
-		this.mockData = mockData;
 	}
 	public String getEditedListing() {
 		return editedListing;

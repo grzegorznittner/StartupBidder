@@ -42,14 +42,14 @@ public class UserVO extends BaseVO {
 	@JsonProperty("num_listings") private long numberOfListings;
 	@JsonProperty("num_bids") private long numberOfBids;
 	@JsonProperty("num_accepted_bids") private long numberOfAcceptedBids;
-	@JsonProperty("num_payed_bids") private long numberOfFundedBids;
+	private long numberOfFundedBids;
 	@JsonProperty("num_comments") private long numberOfComments;
-	@JsonProperty("num_votes") private long numberOfVotes;
+	private long numberOfVotes;
 	@JsonProperty("num_notifications") private long numberOfNotifications;
 	@JsonProperty("status")
 	@JsonSerialize(using=LowecaseSerializer.class) private String status;
-	@JsonProperty("votable") private boolean votable;
-	@JsonProperty("mockData") private boolean mockData;
+	private boolean votable;
+	private boolean mockData;
 	@JsonProperty("admin") private boolean admin;
 	
 	public UserVO() {

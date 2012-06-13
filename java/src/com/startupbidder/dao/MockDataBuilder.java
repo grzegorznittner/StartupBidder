@@ -23,9 +23,8 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.RandomStringUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.math.RandomUtils;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -1203,8 +1202,8 @@ public class MockDataBuilder {
                         AngelListing result = reader.readValue(angelListCache.json);
                         //SBUser user = users.get(RandomUtils.nextInt(users.size()));
                         String type = bestGuessListingType(result.name, result.high_concept, result.product_desc);
-                        int askamt = RandomUtils.nextInt(100)*1000;
-                        int askpct = 5 + 5*RandomUtils.nextInt(9);
+                        int askamt = new Random().nextInt(100)*1000;
+                        int askpct = 5 + 5*new Random().nextInt(9);
                         DateTime createdAt = new DateTime(result.created_at);
                         DateTime modifiedAt = new DateTime(result.updated_at);
                         String address = null;
@@ -1412,8 +1411,8 @@ public class MockDataBuilder {
                         else {
                             String type = bestGuessListingType(name, industries, description);
                             //log.info("Matched name:[" + name + "] address:["+address + "] website:["+website + "] logo:["+logo + "] industries:["+industries+"] mantra:["+mantra+"] description:["+description+"]");
-                            int askamt = 5*RandomUtils.nextInt(20)*1000;
-                            int askpct = 5 + 5*RandomUtils.nextInt(9);
+                            int askamt = 5*new Random().nextInt(20)*1000;
+                            int askpct = 5 + 5*new Random().nextInt(9);
                             if (askamt < 10000) {
                                 askamt = 0;
                             }
@@ -1478,7 +1477,7 @@ public class MockDataBuilder {
 		bp.category = category;
 		bp.state = state;
 
- 		int hours = RandomUtils.nextInt(500) + 80;
+ 		int hours = new Random().nextInt(500) + 80;
 		DateTime createdTime = createdAt != null ? createdAt : new DateTime().minusHours(hours);
 		if (modifiedAt != null) {
             bp.modified = modifiedAt.toDate();
@@ -1505,7 +1504,7 @@ public class MockDataBuilder {
 			bp.closingOn = createdTime.plusHours(hours * 6 / 10).plusDays(30).toDate();
 			break;
 		case CLOSED:
-			hours = RandomUtils.nextInt(500) + 33 * 24;
+			hours = new Random().nextInt(500) + 33 * 24;
 			createdTime = new DateTime().minusHours(hours);
 			bp.created = createdTime.toDate();
 			bp.posted = createdTime.plusHours(24).toDate();
@@ -1769,7 +1768,7 @@ public class MockDataBuilder {
             }
             a.set(0, source.get(0));
             for (int i = 1; i < n - 1; i++) {
-                int j = RandomUtils.nextInt(i+1);
+                int j = new Random().nextInt(i+1);
                 a.set(i, a.get(j));
                 a.set(j, source.get(i));
             }
@@ -1781,7 +1780,7 @@ public class MockDataBuilder {
 	}
 		
 	private String getVideo() {
-		return videos[RandomUtils.nextInt(videos.length)];
+		return videos[new Random().nextInt(videos.length)];
 	}
 	
 	private String[] videos = {
@@ -1809,7 +1808,7 @@ public class MockDataBuilder {
 	};
 	
 	private String getWebsite() {
-		return websites[RandomUtils.nextInt(websites.length)];
+		return websites[new Random().nextInt(websites.length)];
 	}
 	
 	private String[] websites = {
@@ -1834,7 +1833,7 @@ public class MockDataBuilder {
 	};
 	
 	public String getBusinessPlan() {
-        int r = RandomUtils.nextInt(10);
+        int r = new Random().nextInt(10);
 		if (r < 1) {
 			return getTestDataPath() + "refcardz.pdf";
 		} else if (r < 2) {
@@ -1845,7 +1844,7 @@ public class MockDataBuilder {
 	}
 	
 	public String getFinancials() {
-		if (RandomUtils.nextInt(10) < 1) {
+		if (new Random().nextInt(10) < 1) {
 			return null;
 		} else {
 			return getTestDataPath() + "calc.xls";
@@ -1853,7 +1852,7 @@ public class MockDataBuilder {
 	}
 	
 	public String getPresentation() {
-		if (RandomUtils.nextInt(10) < 1) {
+		if (new Random().nextInt(10) < 1) {
 			return null;
 		} else {
 			return getTestDataPath() + "business_plan.ppt";
@@ -1896,10 +1895,10 @@ public class MockDataBuilder {
 	};
 	
 	private String getFounders(String name) {
-		if (RandomUtils.nextInt(4) < 2) {
+		if (new Random().nextInt(4) < 2) {
 			return name;
 		} else {
-			return founders[RandomUtils.nextInt(founders.length)];
+			return founders[new Random().nextInt(founders.length)];
 		}
 	}
 	
@@ -1917,14 +1916,14 @@ public class MockDataBuilder {
 	};
 	
 	private String getQuote() {
-		return quotes[RandomUtils.nextInt(quotes.length)];
+		return quotes[new Random().nextInt(quotes.length)];
 	}
 	
 	private String getQuoteWithNulls() {
-		if (RandomUtils.nextInt(4) < 3) {
+		if (new Random().nextInt(4) < 3) {
 			return null;
 		} else {
-			return quotes[RandomUtils.nextInt(quotes.length)];
+			return quotes[new Random().nextInt(quotes.length)];
 		}
 	}
 	

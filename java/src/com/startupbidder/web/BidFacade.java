@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import com.startupbidder.dao.BidObjectifyDatastoreDAO;
 import com.startupbidder.dao.ObjectifyDatastoreDAO;

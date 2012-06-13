@@ -25,7 +25,7 @@ public class ListingVO extends ListingTileVO {
             "answer24", "answer25", "answer26"
     });
 	public static final List<String> FETCHED_PROPERTIES = Arrays.asList(new String[] {"business_plan_url", 
-			"presentation_url", "financials_url", "logo_url"});
+			"presentation_url", "financials_url", "logo_url", "pic1_url", "pic2_url", "pic3_url", "pic4_url", "pic5_url"});
 	
 	@JsonProperty("previous_val") private int previousValuation;
 	@JsonProperty("valuation") private int valuation;

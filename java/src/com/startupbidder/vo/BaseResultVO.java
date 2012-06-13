@@ -1,11 +1,9 @@
 package com.startupbidder.vo;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.codehaus.jackson.annotate.JsonAutoDetect;
-import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
-
-import com.google.appengine.api.utils.SystemProperty;
+import org.codehaus.jackson.annotate.JsonProperty;
 
 /**
  * Base class for VO classes contains some common objects always send to the client.

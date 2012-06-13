@@ -7,14 +7,12 @@ import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.math.NumberUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 
 import com.startupbidder.dao.NotificationObjectifyDatastoreDAO;
-import com.startupbidder.dao.ObjectifyDatastoreDAO;
-import com.startupbidder.datamodel.Listing;
 import com.startupbidder.datamodel.Notification;
 import com.startupbidder.vo.BaseVO;
 import com.startupbidder.vo.DtoToVoConverter;

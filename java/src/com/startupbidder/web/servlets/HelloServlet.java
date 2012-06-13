@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
@@ -62,6 +62,8 @@ public class HelloServlet extends HttpServlet {
 	static {
 		new FrontController ();
 	}
+	
+	DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy/MM/dd HH:mm");
 	
 	public void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws IOException {
@@ -150,19 +152,37 @@ public class HelloServlet extends HttpServlet {
 				out.println("<p>Updatable field names: " + ListingVO.UPDATABLE_PROPERTIES + "</p>");
 				out.println("<p>Fields which can be set by fetching external resource: " + ListingVO.FETCHED_PROPERTIES + "</p>");
 
-				String[] urls = service.createUploadUrls(currentUser, "/file/upload", 4);
-				out.println("<form action=\"" + urls[0] + "\" method=\"post\" enctype=\"multipart/form-data\">"
+				String[] urls = service.createUploadUrls(currentUser, "/file/upload", 9);
+				out.println("<table width=\"100%\">");
+				out.println("<tr><td><form action=\"" + urls[0] + "\" method=\"post\" enctype=\"multipart/form-data\">"
 						+ "<input type=\"file\" name=\"" + ListingDoc.Type.BUSINESS_PLAN.toString() + "\"/>"
-						+ "<input type=\"submit\" value=\"Upload business plan\"/></form>");
-				out.println("<form action=\"" + urls[1] + "\" method=\"post\" enctype=\"multipart/form-data\">"
+						+ "<input type=\"submit\" value=\"Upload business plan\"/></form></td>");
+				out.println("<td><form action=\"" + urls[1] + "\" method=\"post\" enctype=\"multipart/form-data\">"
 						+ "<input type=\"file\" name=\"" + ListingDoc.Type.PRESENTATION.toString() + "\"/>"
-						+ "<input type=\"submit\" value=\"Upload presentation\"/></form>");
-				out.println("<form action=\"" + urls[2] + "\" method=\"post\" enctype=\"multipart/form-data\">"
+						+ "<input type=\"submit\" value=\"Upload presentation\"/></form></td></tr>");
+				out.println("<tr><td><form action=\"" + urls[2] + "\" method=\"post\" enctype=\"multipart/form-data\">"
 						+ "<input type=\"file\" name=\"" + ListingDoc.Type.FINANCIALS.toString() + "\"/>"
-						+ "<input type=\"submit\" value=\"Upload financials\"/></form>");
-				out.println("<form action=\"" + urls[3] + "\" method=\"post\" enctype=\"multipart/form-data\">"
+						+ "<input type=\"submit\" value=\"Upload financials\"/></form></td>");
+				out.println("<td><form action=\"" + urls[3] + "\" method=\"post\" enctype=\"multipart/form-data\">"
 						+ "<input type=\"file\" name=\"" + ListingDoc.Type.LOGO.toString() + "\"/>"
-						+ "<input type=\"submit\" value=\"Upload logo\"/></form>");
+						+ "<input type=\"submit\" value=\"Upload logo\"/></form></td></tr>");
+				out.println("<tr><td><form action=\"" + urls[4] + "\" method=\"post\" enctype=\"multipart/form-data\">"
+						+ "<input type=\"file\" name=\"" + ListingDoc.Type.PIC1.toString() + "\"/>"
+						+ "<input type=\"submit\" value=\"Upload picture 1\"/></form></td>");
+				out.println("<td><form action=\"" + urls[5] + "\" method=\"post\" enctype=\"multipart/form-data\">"
+						+ "<input type=\"file\" name=\"" + ListingDoc.Type.PIC2.toString() + "\"/>"
+						+ "<input type=\"submit\" value=\"Upload picture 2\"/></form></td></tr>");
+				out.println("<tr><td><form action=\"" + urls[6] + "\" method=\"post\" enctype=\"multipart/form-data\">"
+						+ "<input type=\"file\" name=\"" + ListingDoc.Type.PIC3.toString() + "\"/>"
+						+ "<input type=\"submit\" value=\"Upload picture 3\"/></form></td>");
+				out.println("<td><form action=\"" + urls[7] + "\" method=\"post\" enctype=\"multipart/form-data\">"
+						+ "<input type=\"file\" name=\"" + ListingDoc.Type.PIC4.toString() + "\"/>"
+						+ "<input type=\"submit\" value=\"Upload picture 4\"/></form></td></tr>");
+				out.println("<tr><td><form action=\"" + urls[8] + "\" method=\"post\" enctype=\"multipart/form-data\">"
+						+ "<input type=\"file\" name=\"" + ListingDoc.Type.PIC5.toString() + "\"/>"
+						+ "<input type=\"submit\" value=\"Upload picture 5\"/></form></td></tr>");
+				out.println("</table>");
+				printListingDocs(out, currentUser, editedListing.getListing(), fmt);
 			} else {
 				out.println("<div><b>Listing doesn't exist.</b> Be aware that this page is calling automatically create method, so edited listing should be always available.</div>");
 			}
@@ -336,7 +356,6 @@ public class HelloServlet extends HttpServlet {
 	}
 
 	private void printActiveListings(PrintWriter out, UserVO currentUser, List<ListingVO> activeListings) {
-		DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy/MM/dd HH:mm");
 		out.println("<table border=\"1\" width=\"100%\">");
 		out.println("<tr><td colspan=\"3\"><b>Active listings</b></td>");
 		
@@ -443,32 +462,7 @@ public class HelloServlet extends HttpServlet {
 			
 			out.println("</td><td>");
 			if (count < 5) {
-				List<ListingDocumentVO> docs = getListingDocs(currentUser, listing);
-				if (docs != null && !docs.isEmpty()) {
-					BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
-					
-					out.println("<table border=\"1\"><tr><td colspan=\"2\">Uploaded documents</td></tr>");
-					for (ListingDocumentVO doc : docs) {
-						out.println("<tr>");
-						out.println("<td>");
-						if (ListingDoc.Type.LOGO.toString().equalsIgnoreCase(doc.getType())) {
-							BlobInfo logoInfo = new BlobInfoFactory().loadBlobInfo(doc.getBlob());
-							if (logoInfo != null) {
-								byte logo[] = blobstoreService.fetchData(doc.getBlob(), 0, logoInfo.getSize() - 1);
-								out.println("<img src=\"" + ListingFacade.instance().convertLogoToBase64(logo) + "\"/>");
-							}
-						}
-						out.println("<a href=\"/listing/logo/" + listing.getId() + ".json?\">View logo</a></td>");
-						out.println("<a href=\"/file/download/" + doc.getId() + ".json\">Download "
-								+ doc.getType() + " uploaded " + fmt.print(doc.getCreated().getTime()) + ", type: " + doc.getType() + "</a></td>");
-						out.println("<td><form method=\"POST\" action=\"/listing/delete_file/.json?id="
-								+ listing.getId() + "&type=" + doc.getType() + "\"><input type=\"submit\" value=\"Delete\"/></form>");
-						out.println("</td></tr>");
-					}
-					out.println("</table>");
-				} else {
-					out.println("No documents uploaded");
-				}
+				printListingDocs(out, currentUser, listing, fmt);
 			} else {
 				out.println("Documents won't be displayed.");
 			}
@@ -476,6 +470,61 @@ public class HelloServlet extends HttpServlet {
 			out.println("</tr>");
 		}
 		out.println("</table>");
+	}
+
+	private void printListingDocs(PrintWriter out, UserVO currentUser, ListingVO listing, DateTimeFormatter fmt) {
+		List<ListingDocumentVO> docs = getListingDocs(currentUser, listing);
+		if (docs != null && !docs.isEmpty()) {
+			BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
+			
+			out.println("<table border=\"1\"><tr><td colspan=\"2\">Uploaded documents for edited listing</td></tr>");
+			for (ListingDocumentVO doc : docs) {
+				ListingDoc.Type docType = ListingDoc.Type.valueOf(doc.getType());
+				out.println("<tr>");
+				out.println("<td>");
+				if (ListingDoc.Type.LOGO == docType) {
+					BlobInfo logoInfo = new BlobInfoFactory().loadBlobInfo(doc.getBlob());
+					if (logoInfo != null) {
+						byte logo[] = blobstoreService.fetchData(doc.getBlob(), 0, logoInfo.getSize() - 1);
+						out.println("<img src=\"" + ListingFacade.instance().convertLogoToBase64(logo) + "\"/>");
+					}
+					out.println("<a href=\"/listing/logo/" + listing.getId() + ".json?\">View logo</a></td>");
+				}
+				if (ListingDoc.Type.PIC1 == docType) {
+					out.println("<a href=\"/listing/picture/" + listing.getId() + "/1.json?\">View pic 1</a>");
+					out.println("<form method=\"POST\" action=\"/listing/swap_pictures/" + listing.getId() + "/1/2.json\">" +
+							"<input type=\"submit\" value=\"Swap 1 <-> 2\"/></form>");
+				}
+				if (ListingDoc.Type.PIC2 == docType) {
+					out.println("<a href=\"/listing/picture/" + listing.getId() + "/2.json?\">View pic 2</a>");
+					out.println("<form method=\"POST\" action=\"/listing/swap_pictures/" + listing.getId() + "/2/3.json\">" +
+							"<input type=\"submit\" value=\"Swap 2 <-> 3\"/></form>");
+				}
+				if (ListingDoc.Type.PIC3 == docType) {
+					out.println("<a href=\"/listing/picture/" + listing.getId() + "/3.json?\">View pic 3</a>");
+					out.println("<form method=\"POST\" action=\"/listing/swap_pictures/" + listing.getId() + "/3/4.json\">" +
+							"<input type=\"submit\" value=\"Swap 3 <-> 4\"/></form>");
+				}
+				if (ListingDoc.Type.PIC4 == docType) {
+					out.println("<a href=\"/listing/picture/" + listing.getId() + "/4.json?\">View pic 4</a>");
+					out.println("<form method=\"POST\" action=\"/listing/swap_pictures/" + listing.getId() + "/4/5.json\">" +
+							"<input type=\"submit\" value=\"Swap 4 <-> 5\"/></form>");
+				}
+				if (ListingDoc.Type.PIC5 == docType) {
+					out.println("<a href=\"/listing/picture/" + listing.getId() + "/5.json?\">View pic 5</a>");
+					out.println("<form method=\"POST\" action=\"/listing/swap_pictures/" + listing.getId() + "/5/1.json\">" +
+							"<input type=\"submit\" value=\"Swap 5 <-> 1\"/></form>");
+				}
+				out.println("<a href=\"/file/download/" + doc.getId() + ".json\">Download "
+						+ doc.getType() + " uploaded " + fmt.print(doc.getCreated().getTime()) + ", type: " + doc.getType() + "</a></td>");
+				out.println("<td><form method=\"POST\" action=\"/listing/delete_file/.json?id="
+						+ listing.getId() + "&type=" + doc.getType() + "\"><input type=\"submit\" value=\"Delete\"/></form>");
+				out.println("</td></tr>");
+			}
+			out.println("</table>");
+		} else {
+			out.println("No documents uploaded");
+		}
 	}
 
 	private void printFrozenListings(PrintWriter out, UserVO currentUser, List<ListingVO> frozenListings) {
@@ -547,6 +596,21 @@ public class HelloServlet extends HttpServlet {
 		}
 		if (listing.logoId != null) {
 			list.add(ListingFacade.instance().getListingDocument(loggedInUser, listing.logoId.getString()));
+		}
+		if (listing.pic1Id != null) {
+			list.add(ListingFacade.instance().getListingDocument(loggedInUser, listing.pic1Id.getString()));
+		}
+		if (listing.pic2Id != null) {
+			list.add(ListingFacade.instance().getListingDocument(loggedInUser, listing.pic2Id.getString()));
+		}
+		if (listing.pic3Id != null) {
+			list.add(ListingFacade.instance().getListingDocument(loggedInUser, listing.pic3Id.getString()));
+		}
+		if (listing.pic4Id != null) {
+			list.add(ListingFacade.instance().getListingDocument(loggedInUser, listing.pic4Id.getString()));
+		}
+		if (listing.pic5Id != null) {
+			list.add(ListingFacade.instance().getListingDocument(loggedInUser, listing.pic5Id.getString()));
 		}
 		return list;
 	}
