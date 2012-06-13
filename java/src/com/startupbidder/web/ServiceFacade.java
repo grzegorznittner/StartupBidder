@@ -323,6 +323,8 @@ public class ServiceFacade {
 					getDAO().getQuestionAnswersForUser(VoToModelConverter.convert(loggedInUser), listing, listProperties)));
 		}
 		result.setQuestionAnswersProperties(listProperties);
+		result.setListing(DtoToVoConverter.convert(listing));
+		result.setUser(loggedInUser != null ? new UserBasicVO(loggedInUser) : null);
 		return result;
 	}
 

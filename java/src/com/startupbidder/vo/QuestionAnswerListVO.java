@@ -15,6 +15,8 @@ import org.codehaus.jackson.annotate.JsonProperty;
 public class QuestionAnswerListVO extends BaseResultVO {
 	@JsonProperty("questions_answers") private List<QuestionAnswerVO> questionAnswers;
 	@JsonProperty("questions_answers_props")	private ListPropertiesVO questionAnswersProperties;
+	@JsonProperty("listing") private ListingVO listing;
+	@JsonProperty("profile") private UserBasicVO user;
 	public List<QuestionAnswerVO> getQuestionAnswers() {
 		return questionAnswers;
 	}
@@ -27,5 +29,17 @@ public class QuestionAnswerListVO extends BaseResultVO {
 	public void setQuestionAnswersProperties(
 			ListPropertiesVO questionAnswersProperties) {
 		this.questionAnswersProperties = questionAnswersProperties;
+	}
+	public ListingVO getListing() {
+		return listing;
+	}
+	public void setListing(ListingVO listing) {
+		this.listing = listing;
+	}
+	public UserBasicVO getUser() {
+		return user;
+	}
+	public void setUser(UserBasicVO user) {
+		this.user = user;
 	}
 }

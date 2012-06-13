@@ -13,14 +13,11 @@ import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 @JsonAutoDetect(getterVisibility=Visibility.NONE, setterVisibility=Visibility.NONE,
 		fieldVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE)
 public class CommentListVO extends BaseResultVO {
-	@JsonProperty("comments")
-	private List<CommentVO> comments;
+	@JsonProperty("comments") private List<CommentVO> comments;
 	// not returned in JSON
 	private ListPropertiesVO commentsProperties;
-	@JsonProperty("listing")
-	private ListingVO listing;
-	@JsonProperty("profile")
-	private UserBasicVO user;
+	@JsonProperty("listing") private ListingVO listing;
+	@JsonProperty("profile") private UserBasicVO user;
 
 	public List<CommentVO> getComments() {
 		return comments;
