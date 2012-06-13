@@ -37,7 +37,8 @@ body.nearby-page > #wrap > #main > div.container > div.nearbywrapper { height: 1
 body { font-size: 14px; font-weight: normal; background: #f2f2f2; }
 
 .curvedborder, .sidebox, .sideboxbutton, .sideboxbuttoninterior, .tile, .companybannertile, .companyhalftile, .boxpanel, .boxstep, .boxselected,
-.inputbutton, .smallinputbutton, .sideboxselected, .banner, .bmcborder, .bmcinfodisplay, .bmcinfodisplayvaluepropositions, .titleinfodisplay
+    .inputbutton, .smallinputbutton, .sideboxselected, .banner, .bmcborder,
+    .bmcinfodisplay, .bmcinfodisplayvaluepropositions, .titleinfodisplay, qainfodisplay
 {
   -moz-border-radius: 5px;
   -webkit-border-radius: 5px;
@@ -75,7 +76,9 @@ a:link, a:visited { text-decoration: none; color: #4083a9; }
 .welcometext { color: #4083a9; }
 
 /* gradients */
-.buttonbg, .sideboxbutton, .sideboxbuttoninterior, .smallbuttonbg, .inputbutton, .smallinputbutton, .bmcinfodisplay, .bmcinfodisplayvaluepropositions, .titleinfodisplay {
+.buttonbg, .sideboxbutton, .sideboxbuttoninterior, .smallbuttonbg, .inputbutton, .smallinputbutton,
+    .bmcinfodisplay, .bmcinfodisplayvaluepropositions, .titleinfodisplay, .qainfodisplay
+{
 background: #999999;
 background: -moz-linear-gradient(top, #e2e2e2 0%, #d1d1d1 49%, #dbdbdb 50%, #999999 100%);
 background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#e2e2e2), color-stop(49%,#d1d1d1), color-stop(50%,#dbdbdb), color-stop(100%,#999999));
@@ -340,7 +343,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
     border: none;
     color: white !important;
     font-size: 24px !important;
-    font-weight: bold;
+    font-weight: normal !important;
     line-height: 36px;
     margin: 0;
     overflow: hidden;
@@ -396,7 +399,25 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
     padding: 10px;
     border: 2px solid #999999;
 }
-.ipinfoelevatorpitch { top: 5px; left: 20px; }
+
+.ipinfo { color: #4083a9; margin: 0; overflow: hidden; height: 0; position: absolute;
+    font-size: 14px; font-weight: bold; background: #e3e3e3;
+    top: 5px;
+    left: 5px;
+    width: 905px;
+    -moz-transition: height 300ms;
+    -webkit-transition: height 300ms;
+    -o-transition: height 300ms;
+    -ms-transition: height 300ms;
+    transition: height 300ms;
+    z-index: 100;
+}
+.ipinfodisplay {
+    height: 150px;
+    padding: 10px;
+    border: 2px solid #999999;
+}
+.ipinfoheader { font-size: 18px; font-weight: bold; color: black; line-height: 30px; }
 
 .offerbox { width: 622px; height: 141px; }
 .offerwrapper { width: 640px; height: 0px; overflow: hidden;

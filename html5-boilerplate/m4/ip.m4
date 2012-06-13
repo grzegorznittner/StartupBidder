@@ -2,7 +2,7 @@
 <div class="span-24 last initialhidden" id="ip">
 
     <div class="boxtitle bmctitle">
-        <span class="bmctitletext">INVESTOR PRESENTATION</span>
+        <span class="titletext">INVESTOR PRESENTATION</span>
         <span class="span-3 smallinputbutton darkblue bmctitlebtn hoverlink initialhidden" id="ip-edit-btn">EDIT</span>
         <span class="bmctitlemsg" id="ipmsg"></span>
     </div>
@@ -69,7 +69,7 @@
             <div class="ipslide ipslide6">
                 <div class="ipheader">
                     <div class="iplogo"></div>
-                    <div class="iptitle">Company Status</div>
+                    <div class="iptitle">Current Status</div>
                 </div>
                 <div class="ipline"></div>
                 <div class="ipcontent" id="answer13ip"></div>
@@ -87,7 +87,7 @@
             <div class="ipslide ipslide8">
                 <div class="ipheader">
                     <div class="iplogo"></div>
-                    <div class="iptitle">Typical Customer</div>
+                    <div class="iptitle">The Customer</div>
                 </div>
                 <div class="ipline"></div>
                 <div class="ipcontent" id="answer15ip"></div>
@@ -132,7 +132,7 @@
             <div class="ipslide ipslide13">
                 <div class="ipheader">
                     <div class="iplogo"></div>
-                    <div class="iptitle">Team</div>
+                    <div class="iptitle">The Team</div>
                 </div>
                 <div class="ipline"></div>
                 <div class="ipcontent" id="answer20ip"></div>
@@ -141,7 +141,7 @@
             <div class="ipslide ipslide14">
                 <div class="ipheader">
                     <div class="iplogo"></div>
-                    <div class="iptitle">Team Values</div>
+                    <div class="iptitle">Values and Methods</div>
                 </div>
                 <div class="ipline"></div>
                 <div class="ipcontent" id="answer21ip"></div>
@@ -168,7 +168,7 @@
             <div class="ipslide ipslide17">
                 <div class="ipheader">
                     <div class="iplogo"></div>
-                    <div class="iptitle">Owners and Cap Table</div>
+                    <div class="iptitle">Current Ownership</div>
                 </div>
                 <div class="ipline"></div>
                 <div class="ipcontent" id="answer24ip"></div>
@@ -177,7 +177,7 @@
             <div class="ipslide ipslide18">
                 <div class="ipheader">
                     <div class="iplogo"></div>
-                    <div class="iptitle">Investment Plan</div>
+                    <div class="iptitle">Use of Proceeds</div>
                 </div>
                 <div class="ipline"></div>
                 <div class="ipcontent" id="answer25ip"></div>
@@ -186,7 +186,7 @@
             <div class="ipslide ipslide19">
                 <div class="ipheader">
                     <div class="iplogo"></div>
-                    <div class="iptitle">Timeline and Wrapup</div>
+                    <div class="iptitle">Conclusion</div>
                 </div>
                 <div class="ipline"></div>
                 <div class="ipcontent" id="answer26ip"></div>

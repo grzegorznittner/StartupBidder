@@ -14,7 +14,7 @@ pl.implement(IPClass, {
             brief_address = listing.brief_address || 'Postal address here',
             website = listing.website || 'Website here',
             asking = listing.asked_fund
-                ? 'Asking ' + CurrencyClass.prototype.format(listing.suggested_amt) + ' for ' + PercentClass.prototype.format(listing.suggested_pct)
+                ? 'Asking ' + CurrencyClass.prototype.format(listing.suggested_amt) + ' for ' + PercentClass.prototype.format(listing.suggested_pct) + '%'
                 : 'Not asking for funds at this time.',
             m = 10,
             n = 26,
