@@ -54,7 +54,29 @@ pl.implement(ListingClass, {
     },
 
     displayBasics: function() {
-        pl('#videopresentation').attr({src: this.video});
+        var numpics = 5,
+            pic,
+            url,
+            firstpic,
+            i;
+        for (i = 1; i <= numpics; i++) {
+            pic = 'pic' + i;
+            if (this[pic]) {
+                url = '/listing/picture/' + this.listing_id + '/' + i;
+                pl('#' + pic + 'nav').removeClass('dotnavempty');
+                pl('#' + pic).css({ 'background-image': 'url(' + url + ')' });
+                if (!firstpic) {
+                    firstpic = pic;
+                }
+            }
+        }
+        if (firstpic) {
+            pl('#' + firstpic + 'nav').addClass('dotnavfilled');
+            // go to firstpic
+        }
+        if (this.video) {
+            pl('#videopresentation').attr({src: this.video});
+        }
         pl('#summary').text(this.summary || 'Listing summary goes here');
         pl('#basicswrapper').show();
     },
