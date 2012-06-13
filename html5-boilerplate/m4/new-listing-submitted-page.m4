@@ -26,7 +26,7 @@ include(header.m4)
 <!-- left column -->
 <div class="span-16">
 
-    <div class="boxtitle">INSTRUCTIONS</div>
+    <div class="boxtitle">DETAILS</div>
     <div class="boxpanel">
     <p>
 Your listing has now been submitted to startupbidder.  We will review the listing,

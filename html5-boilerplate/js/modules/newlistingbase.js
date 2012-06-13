@@ -244,7 +244,7 @@ pl.implement(NewListingBaseClass, {
         };
     },
     hideAllInfo: function() {
-        pl('.titleinfo, .bmcinfo').removeClass('titleinfodisplay').removeClass('bmcinfodisplay').removeClass('bmcinfodisplayvaluepropositions');
+        pl('.titleinfo, .bmcinfo, .ipinfo').removeClass('titleinfodisplay').removeClass('bmcinfodisplay').removeClass('bmcinfodisplayvaluepropositions').removeClass('ipinfodisplay');
     },
     bindTitleInfo: function() {
         var self = this;

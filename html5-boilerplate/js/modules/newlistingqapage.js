@@ -82,11 +82,11 @@ pl.implement(NewListingQAClass, {
                 var evt = new EventClass(e),
                     infoel = evt.target().parentNode.previousSibling.previousSibling.previousSibling.previousSibling.childNodes[1];
                 self.base.hideAllInfo();
-                pl(infoel).addClass('bmcinfodisplay');
+                pl(infoel).addClass('ipinfodisplay');
             },
             blur: self.base.hideAllInfo
         });
-        pl('.bmcinfo, .ipleft, .ipright, .ipfirst').bind('click', self.base.hideAllInfo);
+        pl('.ipinfo, .ipleft, .ipright, .ipfirst').bind('click', self.base.hideAllInfo);
     }
 });
 
