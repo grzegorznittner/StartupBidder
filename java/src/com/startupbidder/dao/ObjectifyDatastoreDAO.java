@@ -1192,6 +1192,7 @@ public class ObjectifyDatastoreDAO {
 			keyList.addAll(new CursorHandler<QuestionAnswer>().handleQuery(listProperties, query));
 		}
 		List<QuestionAnswer> qandas = new ArrayList<QuestionAnswer>(getOfy().get(keyList).values());
+		listProperties.setNumberOfResults(qandas.size());
 		return qandas;
 	}
 

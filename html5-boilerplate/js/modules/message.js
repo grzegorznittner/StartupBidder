@@ -47,7 +47,7 @@ pl.implement(MessageListClass, {
         self.otheruserprofileid = json && json.other_user_profile && json.other_user_profile.profile_id ? json.other_user_profile.profile_id : '',
         self.messages = [];
         if (jsonlist.length) {
-            for (i = 0; i < jsonlist.length; i++) {
+            for (i = jsonlist.length - 1; i >= 0 ; i--) {
                 message = new MessageClass(this);
                 message.store(jsonlist[i]);
                 self.messages.push(message);
@@ -124,7 +124,7 @@ pl.implement(MessageListClass, {
                     },
                     text = SafeStringClass.prototype.clean(pl('#messagetext').attr('value') || ''),
                     data = {
-                        send: {
+                        message: {
                             profile_id: self.otheruserprofileid,
                             text: text
                         }
@@ -134,11 +134,6 @@ pl.implement(MessageListClass, {
                     return false;
                 }
                 ajax.setPostData(data);
-                ajax.mock({
-                    direction: 'sent',
-                    text: data.send.text,
-                    create_date: DateClass.prototype.now()
-                }); // FIXME
                 ajax.call();
                 return false;
             }
