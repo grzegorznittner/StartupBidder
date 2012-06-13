@@ -18,7 +18,7 @@ pl.implement(QuestionClass, {
                 companybanner.display(json);
                 self.display(json);
             },
-            ajax = new AjaxClass('/listings/questions_and_answers/' + this.listing_id, 'qandamsg', complete);
+            ajax = new AjaxClass('/listings/questions_answers/' + this.listing_id, 'qandamsg', complete);
         ajax.setGetData({ max_results: 20 });
         ajax.call();
     },
@@ -39,7 +39,7 @@ pl.implement(QuestionClass, {
         else {
             pl('#addqandabox').before('<div class="messageline"><p style="font-weight: bold;">Login to ask a question</p></div>');
         }
-        pl('#qandaswrapper').show();        
+        pl('#qandaswrapper').show();
     },
     bindAddQuestionBox: function() {
         var self = this;

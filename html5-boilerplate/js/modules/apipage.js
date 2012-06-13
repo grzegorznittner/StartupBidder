@@ -39,7 +39,7 @@ pl.implement(APIPageClass, {
                     listingajax = listingid && new AjaxClass('/listing/get/' + listingid, 'loadmsg', listingfunc),
                     createajax = listingid && new AjaxClass('/listing/create', 'loadmsg', createfunc),
                     commentsajax = listingid && new AjaxClass('/listing/comments/' + listingid, 'loadmsg', commentsfunc),
-                    questionsajax = listingid && new AjaxClass('/listing/questions_and_answers/' + listingid, 'loadmsg', questionsfunc);
+                    questionsajax = listingid && new AjaxClass('/listing/questions_answers/' + listingid, 'loadmsg', questionsfunc);
                 header.setLogin(json);
                 pl('#loadmsg').html('');
                 if (listingid) {
