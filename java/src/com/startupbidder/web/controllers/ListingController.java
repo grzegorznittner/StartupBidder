@@ -59,7 +59,7 @@ public class ListingController extends ModelDrivenController {
 			// GET method handler
 			
 			if("edited".equalsIgnoreCase(getCommand(1))) {
-				if (getCommand(2) != null) {
+				if (!StringUtils.isEmpty(getCommand(2))) {
 					return getEditedListingDoc(request, getCommand(2));
 				} else {
 					return startEditing(request);
@@ -212,12 +212,8 @@ public class ListingController extends ModelDrivenController {
 		} else {
 			// setting upload urls for documents not yet uploaded
 			ListingVO l = listing.getListing();
-			String[] url = ServiceFacade.instance().createUploadUrls(getLoggedInUser(), "/file/upload", 4);
-			
-			l.setBuinessPlanUpload(url[0]);
-			l.setFinancialsUpload(url[1]);
-			l.setPresentationUpload(url[2]);
-			l.setLogoUpload(url[3]);
+			String[] url = ServiceFacade.instance().createUploadUrls(getLoggedInUser(), "/file/upload", 1);
+			l.setUploadUrl(url[0]);
 		}
 		model = listing;
 
@@ -236,7 +232,12 @@ public class ListingController extends ModelDrivenController {
 			ListingVO l = listing.getListing();
 			String[] url = ServiceFacade.instance().createUploadUrls(getLoggedInUser(), "/file/upload", 1);
 			String returnValue = "<upload_url>" + url[0] + "</upload_url><value>";
-			ListingDoc.Type type = ListingDoc.Type.valueOf(docType);
+			ListingDoc.Type type = null;
+			try {
+				type = ListingDoc.Type.valueOf(docType);
+			} catch (Exception e) {
+				log.log(Level.WARNING, "DocType not recognized: " + docType, e);
+			}
 			switch (type) {
 			case BUSINESS_PLAN:
 				returnValue += l.getBuinessPlanId();
@@ -280,11 +281,8 @@ public class ListingController extends ModelDrivenController {
 			log.log(Level.INFO, "Updating listing: " + properties);
 			ListingAndUserVO listing = ListingFacade.instance().updateListingProperties(getLoggedInUser(), properties);
 			if (listing != null && listing.getListing() != null) {
-				String[] url = ServiceFacade.instance().createUploadUrls(getLoggedInUser(), "/file/upload", 4);
-				listing.getListing().setBuinessPlanUpload(url[0]);
-				listing.getListing().setFinancialsUpload(url[1]);
-				listing.getListing().setPresentationUpload(url[2]);
-				listing.getListing().setLogoUpload(url[3]);
+				String[] url = ServiceFacade.instance().createUploadUrls(getLoggedInUser(), "/file/upload", 1);
+				listing.getListing().setUploadUrl(url[0]);
 			}
 			model = listing;
 		} else {
@@ -350,11 +348,8 @@ public class ListingController extends ModelDrivenController {
 			log.log(Level.INFO, "Updating listing address: " + properties);
 			ListingAndUserVO listing = ListingFacade.instance().updateListingAddressProperties(getLoggedInUser(), properties);
 			if (listing != null && listing.getListing() != null) {
-				String[] url = ServiceFacade.instance().createUploadUrls(getLoggedInUser(), "/file/upload", 4);
-				listing.getListing().setBuinessPlanUpload(url[0]);
-				listing.getListing().setFinancialsUpload(url[1]);
-				listing.getListing().setPresentationUpload(url[2]);
-				listing.getListing().setLogoUpload(url[3]);
+				String[] url = ServiceFacade.instance().createUploadUrls(getLoggedInUser(), "/file/upload", 1);
+				listing.getListing().setUploadUrl(url[0]);
 			}
 			model = listing;
 		} else {

@@ -44,11 +44,13 @@ public class ListingVO extends ListingTileVO {
 	@JsonProperty("business_plan_id") private String buinessPlanId;
 	@JsonProperty("presentation_id") private String presentationId;
 	@JsonProperty("financials_id") private String financialsId;
-	@JsonProperty("video")	private String video;
-	@JsonProperty("business_plan_upload") private String buinessPlanUpload;
-	@JsonProperty("presentation_upload") private String presentationUpload;
-	@JsonProperty("financials_upload") private String financialsUpload;
-	@JsonProperty("logo_upload") private String logoUpload;
+	@JsonProperty("video") private String video;
+	@JsonProperty("pic1") private String pic1;
+	@JsonProperty("pic2") private String pic2;
+	@JsonProperty("pic3") private String pic3;
+	@JsonProperty("pic4") private String pic4;
+	@JsonProperty("pic5") private String pic5;
+	@JsonProperty("upload_url") private String uploadUrl;
 	@JsonProperty("answer1") private String answer1;
 	@JsonProperty("answer2") private String answer2;
 	@JsonProperty("answer3") private String answer3;
@@ -620,36 +622,12 @@ public class ListingVO extends ListingTileVO {
 		this.logo = logo;
 	}
 
-	public String getBuinessPlanUpload() {
-		return buinessPlanUpload;
+	public String getUploadUrl() {
+		return uploadUrl;
 	}
 
-	public void setBuinessPlanUpload(String buinessPlanUpload) {
-		this.buinessPlanUpload = buinessPlanUpload;
-	}
-
-	public String getPresentationUpload() {
-		return presentationUpload;
-	}
-
-	public void setPresentationUpload(String presentationUpload) {
-		this.presentationUpload = presentationUpload;
-	}
-
-	public String getFinancialsUpload() {
-		return financialsUpload;
-	}
-
-	public void setFinancialsUpload(String financialsUpload) {
-		this.financialsUpload = financialsUpload;
-	}
-
-	public String getLogoUpload() {
-		return logoUpload;
-	}
-
-	public void setLogoUpload(String logoUpload) {
-		this.logoUpload = logoUpload;
+	public void setUploadUrl(String uploadUrl) {
+		this.uploadUrl = uploadUrl;
 	}
 
 	public String getContactEmail() {
@@ -666,6 +644,46 @@ public class ListingVO extends ListingTileVO {
 
 	public void setVideo(String video) {
 		this.video = video;
+	}
+
+	public String getPic1() {
+		return pic1;
+	}
+
+	public void setPic1(String pic1) {
+		this.pic1 = pic1;
+	}
+
+	public String getPic2() {
+		return pic2;
+	}
+
+	public void setPic2(String pic2) {
+		this.pic2 = pic2;
+	}
+
+	public String getPic3() {
+		return pic3;
+	}
+
+	public void setPic3(String pic3) {
+		this.pic3 = pic3;
+	}
+
+	public String getPic4() {
+		return pic4;
+	}
+
+	public void setPic4(String pic4) {
+		this.pic4 = pic4;
+	}
+
+	public String getPic5() {
+		return pic5;
+	}
+
+	public void setPic5(String pic5) {
+		this.pic5 = pic5;
 	}
 
 	public Double getLatitude() {
