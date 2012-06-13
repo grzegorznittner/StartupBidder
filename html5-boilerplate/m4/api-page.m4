@@ -524,6 +524,44 @@ include(api-banner.m4)
             <iframe name="listing-logo"></iframe>
         </div>
 
+        <dt>GET /listing/picture/:id/:nr</dt>
+        <dd>
+            <p>
+            Return listing picture for a given listing id.
+            </p>
+        </dd>
+        <div class="apidetail">
+            <h4>Parameters</h4>
+            <ul>
+                <li><code>id</code> alphanumeric listing id as returned by the listing list and search API</li>
+                <li><code>nr</code> picture number, currently are supported numbers from 1 to 5</li>
+            </ul>
+            <h4>Response</h4>
+            <ul>
+                <li>returns an image binary</li>
+            </ul>
+            <h4>Test</h4>
+            <form method="GET" action="/listing/picture" target="listing-picture">
+                <div class="formitem">
+                    <label class="inputlabel" for="title">ID</label>
+                    <span class="inputfield">
+                        <input class="text inputwidetext listingid" type="text" name="id" value="0"></input>
+                    </span>
+                    <label class="inputlabel" for="title">Picture Number</label>
+                    <span class="inputfield">
+                        <input class="text inputwidetext listingnumber" type="text" name="nr" value="0"></input>
+                    </span>
+                </div>
+                <div class="formitem clear">
+                    <span class="inputlabel"></span>
+                    <span class="inputfield">
+                        <input type="submit" class="inputbutton" value="SUBMIT"></input>
+                    </span>
+                </div>
+            </form>
+            <iframe name="listing-picture"></iframe>
+        </div>
+
 
         <dt>POST /listing/create</dt>
         <dd>
@@ -570,7 +608,8 @@ include(api-banner.m4)
                     <code>listing</code>
                     The listing property json contains one or more field-value pairs which you wish to update.  Value meanings as are per the <var>/listing/get</var> method.
                     Note that by passing the URL valued properties
-                    <var>business_plan_url</var>, <var>presentation_url</var> or <var>financials_url</var>, the system will download the file at that url
+                    <var>business_plan_url</var>, <var>presentation_url</var>, <var>financials_url</var>, <var>logo_url</var>,
+                    <var>pic1_url</var>, <var>pic2_url</var>, <var>pic3_url</var>, <var>pic4_url</var>, <var>pic5_url</var>, the system will download the file at that url
                     and store it in the backend.  Listing property structure:
 <pre name="code" class="brush: js">
 {
@@ -744,6 +783,51 @@ include(api-banner.m4)
                 </div>
             </form>
             <iframe name="listing-withdraw"></iframe>
+        </div>
+
+        <dt>POST /listing/swap_pictures</dt>
+        <dd>
+            <p>
+            Swaps numbers of two pictures associated with the edited listing.
+            You must be logged in owner of the listing.
+            Function is available only for edited listing.
+            </p>
+        </dd>
+        <div class="apidetail">
+            <h4>Parameters</h4>
+            <ul>
+                <li><code>id</code> alphanumeric listing id as returned by the listing list and search API</li>
+                <li><code>nr_a</code> number of the first picture that will be swaped, currently are supported number from 1 to 5</li>
+                <li><code>nr_b</code> number of the second picture that will be swaped, currently are supported number from 1 to 5</li>
+            </ul>
+            <h4>Response</h4>
+            <ul>
+                <li> successful operation returns 200 code </li>
+            </ul>
+            <h4>Test</h4>
+            <form method="POST" action="/listing/swap_pictures" target="listing-swap-pictures">
+                <div class="formitem">
+                    <label class="inputlabel" for="title">ID</label>
+                    <span class="inputfield">
+                        <input class="text inputwidetext listingid" type="text" name="id" value="0"></input>
+                    </span>
+                    <label class="inputlabel" for="title">Picture A</label>
+                    <span class="inputfield">
+                        <input class="text inputwidetext nr_a" type="text" name="nr_a" value="0"></input>
+                    </span>
+                    <label class="inputlabel" for="title">Picture B</label>
+                    <span class="inputfield">
+                        <input class="text inputwidetext nr_b" type="text" name="nr_b" value="0"></input>
+                    </span>
+                </div>
+                <div class="formitem clear">
+                    <span class="inputlabel"></span>
+                    <span class="inputfield">
+                        <input type="submit" class="inputbutton" value="SUBMIT"></input>
+                    </span>
+                </div>
+            </form>
+            <iframe name="listing-swap-pictures"></iframe>
         </div>
 
     </div>
@@ -1640,6 +1724,7 @@ include(api-banner.m4)
                 <li><code>PRESENTATION</code> upload a product presentation, either a Powerpoint or PDF document</li>
                 <li><code>FINANCIALS</code> upload financial statements, either an Excel or PDF document</li>
                 <li><code>LOGO</code> upload a logo, must be of png, jpeg or gif format, resized and cropped to 146px by 146px</li>
+                <li><code>PIC1, PIC2, PIC3, PIC4, PIC5</code> upload a picture, must be of png, jpeg or gif format, resized to 622px by 452px (max)</li>
             </ul>
             <h4>Response</h4>
             <ul>

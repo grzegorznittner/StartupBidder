@@ -652,16 +652,11 @@ public class ListingController extends ModelDrivenController {
 		HttpHeaders headers = new HttpHeadersImpl("swap_pictures");
 		
 		String listingId = getCommandOrParameter(request, 2, "id");
-		String picFromNrStr = getCommandOrParameter(request, 3, "from");
-		String picToNrStr = getCommandOrParameter(request, 4, "to");
+		String picFromNrStr = getCommandOrParameter(request, 3, "nr_a");
+		String picToNrStr = getCommandOrParameter(request, 4, "nr_b");
 		int picFromNr = NumberUtils.toInt(picFromNrStr, 0);
 		int picToNr = NumberUtils.toInt(picToNrStr, 0);
-		if (picFromNr < 1 || picFromNr > 5 || picToNr < 1 || picToNr > 5) {
-			log.log(Level.INFO, "Wrong picture number(s), picFromNr=" + picFromNr + ", picToNr=" + picToNr);
-			headers.setStatus(500);
-			return headers;
-		}
-		if (!ListingFacade.instance().swapPictures(listingId, picFromNr, picToNr)) {
+		if (!ListingFacade.instance().swapPictures(getLoggedInUser(), listingId, picFromNr, picToNr)) {
 			log.log(Level.INFO, "Picture swap error!");
 			headers.setStatus(500);
 			return headers;

@@ -1939,10 +1939,26 @@ public class ListingFacade {
 		}
     }
     
-	public boolean swapPictures(String listingId, int picFromNr, int picToNr) {
+	public boolean swapPictures(UserVO loggedInUser, String listingId, int picFromNr, int picToNr) {
+		if (loggedInUser == null) {
+			log.log(Level.INFO, "User not logged in!");
+			return false;
+		}
 		Listing listing = getDAO().getListing(BaseVO.toKeyId(listingId));
 		if (listing == null) {
 			log.log(Level.INFO, "Listing not found!");
+			return false;
+		}
+		if (listing.owner.getId() != loggedInUser.toKeyId()) {
+			log.log(Level.INFO, "User is not an owner of the listing");
+			return false;
+		}
+		if (listing.state != Listing.State.NEW) {
+			log.log(Level.INFO, "Listing not in edit state.");
+			return false;
+		}
+		if (picFromNr < 1 || picFromNr > 5 || picToNr < 1 || picToNr > 5) {
+			log.log(Level.INFO, "Wrong picture number(s), picFromNr=" + picFromNr + ", picToNr=" + picToNr);
 			return false;
 		}
 		Pair<ListingDoc.Type, Key<ListingDoc>> docFromKey = getPictureKey(listing, picFromNr);
