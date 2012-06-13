@@ -7,19 +7,15 @@ import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
-import com.google.appengine.api.users.User;
-import com.google.appengine.api.users.UserService;
-import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gdata.client.docs.DocsService;
 import com.google.gdata.util.AuthenticationException;
 import com.startupbidder.dao.MockDataBuilder;
-import com.startupbidder.dao.ObjectifyDatastoreDAO;
 import com.startupbidder.datamodel.SystemProperty;
 import com.startupbidder.vo.SystemPropertyVO;
 import com.startupbidder.vo.UserVO;
@@ -27,7 +23,6 @@ import com.startupbidder.web.HttpHeaders;
 import com.startupbidder.web.HttpHeadersImpl;
 import com.startupbidder.web.ModelDrivenController;
 import com.startupbidder.web.ServiceFacade;
-import com.startupbidder.web.UserMgmtFacade;
 
 /**
  * 

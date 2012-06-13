@@ -7,8 +7,8 @@ import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.math.NumberUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 
@@ -120,33 +120,23 @@ public class FileController extends ModelDrivenController {
 		log.log(Level.INFO, "Got blobs : " + blobs);
 		ListingDocumentVO doc = null;
 		if (blobs.containsKey(ListingDoc.Type.BUSINESS_PLAN.toString())) {
-			BlobKey blobKey = blobs.get(ListingDoc.Type.BUSINESS_PLAN.toString());
-			doc = new ListingDocumentVO();
-			doc.setBlob(blobKey);
-			doc.setType(ListingDoc.Type.BUSINESS_PLAN.toString());
-			
-			blobs.remove(ListingDoc.Type.BUSINESS_PLAN.toString());
+			doc = handleBlobType(blobs, ListingDoc.Type.BUSINESS_PLAN);
 		} else if (blobs.containsKey(ListingDoc.Type.PRESENTATION.toString())) {
-			BlobKey blobKey = blobs.get(ListingDoc.Type.PRESENTATION.toString());
-			doc = new ListingDocumentVO();
-			doc.setBlob(blobKey);
-			doc.setType(ListingDoc.Type.PRESENTATION.toString());
-			
-			blobs.remove(ListingDoc.Type.PRESENTATION.toString());
+			doc = handleBlobType(blobs, ListingDoc.Type.PRESENTATION);
 		} else if (blobs.containsKey(ListingDoc.Type.FINANCIALS.toString())) {
-			BlobKey blobKey = blobs.get(ListingDoc.Type.FINANCIALS.toString());
-			doc = new ListingDocumentVO();
-			doc.setBlob(blobKey);
-			doc.setType(ListingDoc.Type.FINANCIALS.toString());
-			
-			blobs.remove(ListingDoc.Type.FINANCIALS.toString());
+			doc = handleBlobType(blobs, ListingDoc.Type.FINANCIALS);
 		} else if (blobs.containsKey(ListingDoc.Type.LOGO.toString())) {
-			BlobKey blobKey = blobs.get(ListingDoc.Type.LOGO.toString());
-			doc = new ListingDocumentVO();
-			doc.setBlob(blobKey);
-			doc.setType(ListingDoc.Type.LOGO.toString());
-			
-			blobs.remove(ListingDoc.Type.LOGO.toString());
+			doc = handleBlobType(blobs, ListingDoc.Type.LOGO);
+		} else if (blobs.containsKey(ListingDoc.Type.PIC1.toString())) {
+			doc = handleBlobType(blobs, ListingDoc.Type.PIC1);
+		} else if (blobs.containsKey(ListingDoc.Type.PIC2.toString())) {
+			doc = handleBlobType(blobs, ListingDoc.Type.PIC2);
+		} else if (blobs.containsKey(ListingDoc.Type.PIC3.toString())) {
+			doc = handleBlobType(blobs, ListingDoc.Type.PIC3);
+		} else if (blobs.containsKey(ListingDoc.Type.PIC4.toString())) {
+			doc = handleBlobType(blobs, ListingDoc.Type.PIC4);
+		} else if (blobs.containsKey(ListingDoc.Type.PIC5.toString())) {
+			doc = handleBlobType(blobs, ListingDoc.Type.PIC5);
 		}
 
 		// delete unwanted attachements
@@ -167,6 +157,17 @@ public class FileController extends ModelDrivenController {
 		headers.setStatus(500);
 
 		return headers;
+	}
+
+	private ListingDocumentVO handleBlobType(Map<String, BlobKey> blobs, ListingDoc.Type type) {
+		ListingDocumentVO doc;
+		BlobKey blobKey = blobs.get(type.toString());
+		doc = new ListingDocumentVO();
+		doc.setBlob(blobKey);
+		doc.setType(type.toString());
+		
+		blobs.remove(type.toString());
+		return doc;
 	}
 
 	@Override

@@ -1,7 +1,8 @@
 package com.startupbidder.dao;
 
+import java.util.Random;
+
 import com.googlecode.objectify.annotation.Unindexed;
-import org.apache.commons.lang.math.RandomUtils;
 
 import javax.persistence.Id;
 
@@ -39,7 +40,7 @@ public class GeocodeLocation {
         this.longitude = longitude;
     }
     public void randomize(double scaleFactor) {
-        latitude = (latitude != null ? latitude : 51.51406) + scaleFactor * (RandomUtils.nextDouble() - 0.5);
-        longitude = (longitude != null ? longitude : -0.08839) + scaleFactor * (RandomUtils.nextDouble() - 0.5);
+        latitude = (latitude != null ? latitude : 51.51406) + scaleFactor * (new Random().nextDouble() - 0.5);
+        longitude = (longitude != null ? longitude : -0.08839) + scaleFactor * (new Random().nextDouble() - 0.5);
     }
 }

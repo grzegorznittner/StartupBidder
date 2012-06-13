@@ -1,12 +1,11 @@
 package com.startupbidder.vo;
 
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.Date;
 
 import org.codehaus.jackson.annotate.JsonAutoDetect;
-import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
+import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 import com.startupbidder.util.DateSerializer;

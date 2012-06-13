@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
@@ -358,38 +358,38 @@ public class DtoToVoConverter {
 		notif.setLink(listingLink);
 		switch(notifDTO.type) {
 		case NEW_LISTING:
-			notif.setTitle("New listing " + notifDTO.listingName + " posted");
-			notif.setText1("A new listing " + notifDTO.listingName + " has been posted by " + notifDTO.listingOwner + " on startupbidder.com");
+			notif.setTitle("New listing '" + notifDTO.listingName + "' posted");
+			notif.setText1("A new listing '" + notifDTO.listingName + "' has been posted by '" + notifDTO.listingOwner + "' on startupbidder.com");
 			notif.setText3("Please visit <a href=\"" + listingLink + "\">company's page at startupbidder.com</a>.");
 			break;
 		case LISTING_ACTIVATED:
-			notif.setTitle("Listing " + notifDTO.listingName + " activated");
-			notif.setText1("Listing " + notifDTO.listingName + " has been activated by ADMINISTRATOR on startupbidder.com");
+			notif.setTitle("Listing '" + notifDTO.listingName + "' activated");
+			notif.setText1("Listing '" + notifDTO.listingName + "' has been activated by ADMINISTRATOR on startupbidder.com");
 			notif.setText3("Please visit <a href=\"" + listingLink + "\">company's page at startupbidder.com</a>.");
 			break;
 		case LISTING_FROZEN:
-			notif.setTitle("Listing " + notifDTO.listingName + " frozen");
-			notif.setText1("Listing " + notifDTO.listingName + " has been frozen by ADMINISTRATOR on startupbidder.com");
+			notif.setTitle("Listing '" + notifDTO.listingName + "' frozen");
+			notif.setText1("Listing '" + notifDTO.listingName + "' has been frozen by ADMINISTRATOR on startupbidder.com");
 			notif.setText3("Please visit <a href=\"" + listingLink + "\">company's page at startupbidder.com</a>.");
 			break;
 		case LISTING_WITHDRAWN:
-			notif.setTitle("Listing " + notifDTO.listingName + " withdrawn");
-			notif.setText1("Listing " + notifDTO.listingName + " has been withdrawn by on startupbidder.com");
+			notif.setTitle("Listing '" + notifDTO.listingName + "' withdrawn");
+			notif.setText1("Listing '" + notifDTO.listingName + "' has been withdrawn by owner on startupbidder.com");
 			notif.setText3("Please visit <a href=\"" + listingLink + "\">company's page at startupbidder.com</a>.");
 			break;
 		case NEW_COMMENT_FOR_MONITORED_LISTING:
-			notif.setTitle("New comment for listing " + notifDTO.listingName);
-			notif.setText1("Listing " + notifDTO.listingName + " has received a new comment.");
+			notif.setTitle("New comment for listing '" + notifDTO.listingName + "'");
+			notif.setText1("Listing " + notifDTO.listingName + "' has received a new comment.");
 			notif.setText3("In order to view comment(s) please visit <a href=\"" + listingLink + "\">company's page at startupbidder.com</a>.");
 			break;
 		case NEW_COMMENT_FOR_YOUR_LISTING:
-			notif.setTitle("New comment for listing " + notifDTO.listingName);
-			notif.setText1("Your listing \"" + notifDTO.listingName + "\" has received a new comment.");
+			notif.setTitle("New comment for listing '" + notifDTO.listingName + "'");
+			notif.setText1("Your listing '" + notifDTO.listingName + "' has received a new comment.");
 			notif.setText3("In order to view comment(s) please visit <a href=\"" + listingLink + "\">company's page at startupbidder.com</a>.");
 			break;
 		case ASK_LISTING_OWNER:
-		    notif.setTitle("Question for listing " + notifDTO.listingName);
-            notif.setText1("A question concerning listing " + notifDTO.listingName + " has been posted:");
+		    notif.setTitle("Question for listing '" + notifDTO.listingName + "'");
+            notif.setText1("A question concerning listing '" + notifDTO.listingName + "' has been posted:");
 			notif.setText3("Please visit <a href=\"" + listingLink + "\">company's page at startupbidder.com</a>.");
 			notif.setText2(notifDTO.message);
 			break;
@@ -400,33 +400,33 @@ public class DtoToVoConverter {
             notif.setText3("Please visit <a href=\"" + listingLink + "\">company's page at startupbidder.com</a>.");
 			break;
 		case NEW_BID_FOR_YOUR_LISTING:
-			notif.setTitle("New bid for your listing " + notifDTO.listingName);
-			notif.setText1("Your listing \"" + notifDTO.listingName + "\" has received a new bid.");
+			notif.setTitle("New bid for your listing '" + notifDTO.listingName + "'");
+			notif.setText1("Your listing '" + notifDTO.listingName + "' has received a new bid.");
 			notif.setText3("In order to view bid(s) please visit <a href=\"" + listingLink + "\">company's page at startupbidder.com</a>.");
 			break;
 		case YOUR_BID_WAS_COUNTERED:
-			notif.setTitle("Counter offer for listing " + notifDTO.listingName);
-			notif.setText1("Your listing \"" + notifDTO.listingName + "\" has got counter offer.");
+			notif.setTitle("Counter offer for listing '" + notifDTO.listingName + "'");
+			notif.setText1("Your listing '" + notifDTO.listingName + "' has got counter offer.");
 			notif.setText3("In order to view bid(s) please visit <a href=\"" + listingLink + "\">company's page at startupbidder.com</a>.");
 			break;
 		case YOU_ACCEPTED_BID:
-			notif.setTitle("You accepted bid for listing " + notifDTO.listingName);
-			notif.setText1("You acceped bid for listing \"" + notifDTO.listingName + "\".");
+			notif.setTitle("You accepted bid for listing '" + notifDTO.listingName + "'");
+			notif.setText1("You acceped bid for listing '" + notifDTO.listingName + "'.");
 			notif.setText3("In order to view bid(s) please visit <a href=\"" + listingLink + "\">company's page at startupbidder.com</a>.");
 			break;
 		case YOUR_BID_WAS_ACCEPTED:
-			notif.setTitle("Accepted bid for listing " + notifDTO.listingName);
-			notif.setText1("Your bid for listing \"" + notifDTO.listingName + "\" has been accepted.");
+			notif.setTitle("Accepted bid for listing '" + notifDTO.listingName + "'");
+			notif.setText1("Your bid for listing '" + notifDTO.listingName + "' has been accepted.");
 			notif.setText3("In order to view bid(s) please visit <a href=\"" + listingLink + "\">company's page at startupbidder.com</a>.");
 			break;
 		case BID_WAS_WITHDRAWN:
-			notif.setTitle("Withdrawn bid for listing " + notifDTO.listingName);
-			notif.setText1("Bid for listing \"" + notifDTO.listingName + "\" has been withdrawn.");
+			notif.setTitle("Withdrawn bid for listing '" + notifDTO.listingName + "'");
+			notif.setText1("Bid for listing '" + notifDTO.listingName + "' has been withdrawn.");
 			notif.setText3("In order to view bid(s) please visit <a href=\"" + listingLink + "\">company's page at startupbidder.com</a>.");
 			break;
 		case YOUR_BID_WAS_REJECTED:
-			notif.setTitle("Rejected bid for listing " + notifDTO.listingName);
-			notif.setText1("Bid for listing \"" + notifDTO.listingName + "\" has been rejected.");
+			notif.setTitle("Rejected bid for listing '" + notifDTO.listingName + "'");
+			notif.setText1("Bid for listing '" + notifDTO.listingName + "' has been rejected.");
 			notif.setText3("In order to view bid(s) please visit <a href=\"" + listingLink + "\">company's page at startupbidder.com</a>.");
 			break;
 		case YOU_PAID_BID:

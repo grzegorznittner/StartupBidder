@@ -1,7 +1,6 @@
 package com.startupbidder.cli;
 
 import java.io.IOException;
-import java.util.Scanner;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Handler;
 import java.util.logging.Level;
@@ -14,13 +13,12 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import com.google.appengine.tools.remoteapi.RemoteApiInstaller;
 import com.google.appengine.tools.remoteapi.RemoteApiOptions;
 import com.startupbidder.dao.MockDataBuilder;
 import com.startupbidder.vo.ListPropertiesVO;
-import com.startupbidder.vo.ListingPropertyVO;
 import com.startupbidder.web.FrontController;
 
 public class DataImport {

@@ -88,6 +88,7 @@ public class Listing extends BaseObject<Listing> {
 	public Key<ListingDoc> presentationId;
 	public Key<ListingDoc> financialsId;
 	public Key<ListingDoc> logoId;
+	public Key<ListingDoc> pic1Id, pic2Id, pic3Id, pic4Id, pic5Id;
 	public String logoBase64;
 	public String videoUrl;
 	

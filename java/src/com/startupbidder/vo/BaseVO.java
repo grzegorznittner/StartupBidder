@@ -1,6 +1,6 @@
 package com.startupbidder.vo;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import com.google.appengine.api.utils.SystemProperty;
 import com.googlecode.objectify.Key;
