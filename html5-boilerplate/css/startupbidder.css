@@ -335,8 +335,19 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .bidspacer { border: 2px solid #49515A; height: 20px; right: 5px; background: #efefef; font-weight: bold; clear: both; text-align: center; }
 .messagetextarea { color: white !important; background: #49515a !important; font-weight: bold; font-size: 14px !important; height: 60px; width: 540px !important; }
 .new_bid_textarea { color: white !important; background: #49515a !important; font-weight: bold; font-size: 14px !important; height: 60px; width: 420px !important; }
-.qatextarea { height: 65px; overflow: hidden; overflow-x: hidden; overflow-y: auto; font-weight: bold; color: white !important;
-                background: #49515a !important; font-size: 14px !important; margin: 0px 5px 5px 5px; width: 540px !important; }
+.qatextarea {
+    background: none;
+    border: none;
+    color: white !important;
+    font-size: 24px !important;
+    font-weight: bold;
+    line-height: 36px;
+    margin: 0;
+    overflow: hidden;
+    padding: 0;
+    height: 363px;
+    width: 740px !important;
+}
 .bmctextarea { height: 410px; overflow: hidden; overflow-x: hidden; overflow-y: hidden; font-weight: normal; color: black !important; padding: 0;
                 font-size: 14px !important; margin: 0; width: 175px !important; background: none !important; border: 0 !important; }
 .bmctextareashort { height: 175px; overflow: hidden; overflow-x: hidden; overflow-y: hidden; font-weight: normal; color: black !important; padding: 0;
@@ -385,6 +396,8 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
     padding: 10px;
     border: 2px solid #999999;
 }
+.ipinfoelevatorpitch { top: 5px; left: 20px; }
+
 .offerbox { width: 622px; height: 141px; }
 .offerwrapper { width: 640px; height: 0px; overflow: hidden;
     -moz-transition: height 300ms;
@@ -779,7 +792,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
  
 .ipheader { height: 145px; margin: 15px; }
 .iplogo { float: left; height: 146px; width: 146px; background-image: url(../img/noimage_146x146.jpg); margin-right: 15px; }
-.iptitle { float: left; font-size: 48px; font-weight: bold; width: 747px; margin-top: 93px; height: 68px; color: #32aff6; overflow:hidden; }
+.iptitle { float: left; font-size: 48px; font-weight: bold; width: 747px; margin-top: 93px; height: 68px; color: #32aff6; display: block; overflow:hidden; }
 .ipline {
     margin: 0 15px 0 15px; height: 4px;
     background: #e2e2e2;

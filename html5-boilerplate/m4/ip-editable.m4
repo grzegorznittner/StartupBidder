@@ -1,10 +1,26 @@
 `
-<div class="span-24 last initialhidden" id="ip">
+<div class="span-24 last initialhidden" id="ip-editable">
 
-    <div class="boxtitle bmctitle">
-        <span class="bmctitletext">INVESTOR PRESENTATION</span>
-        <span class="span-3 smallinputbutton darkblue bmctitlebtn hoverlink initialhidden" id="ip-edit-btn">EDIT</span>
-        <span class="bmctitlemsg" id="ipmsg"></span>
+    <div class="boxtitle">
+        <span class="titletext">INVESTOR PRESENTATION</span>
+        <div class="titleinfobtn"></div>
+        <div class="titleinfo">
+            <label class="titleinfoheader">Instructions</label>
+            <p>
+Your goal is to present specific relevant detail that can help someone to
+evaluate your idea.  Picture someone reviewing dozens of startup applications
+each week, with only a short time to glance at each.  Show you have a vision,
+with a definite plan, and the right team to execute it.  Avoid platitudes and
+generalizations.  Talk about your market, your product, your price, your
+strategy, and how you are going to change the world.
+            </p>
+            <p>
+            Use lines starting with "*" for bullet points and a blank line for extra space.
+            </p>
+        </div>
+        <span class="span-3 smallinputbutton darkblue bmctitlebtn hoverlink" id="ip-preview-btn">PREVIEW</span>
+        <span class="bmctitleboxbtn"><div id="ipfieldicon"></div></span>
+        <span class="bmctitlemsg" id="ip-editable-msg">Click a slide to edit the text</span>
     </div>
 
     <div class="bmcborder ipmain">
@@ -32,11 +48,21 @@
 
             <div class="ipslide ipslide2">
                 <div class="ipheader">
+                    <p class="bmcinfo ipinfoelevatorpitch">
+                        <label class="bmcinfoheader">Elevator Pitch</label>
+                        <br />
+You have just stepped on the elevator with one of the leading Silicon Valley
+Venture Capitalists and you have 30 seconds to either get them interested
+enough to consider your idea, or step off and go back to sipping their latte.
+What do you say?  Avoid jargon, be specific, be exciting.
+                    </p>
                     <div class="iplogo"></div>
-                    <div class="iptitle">Elevator Pitch</div>
+                    <label class="iptitle" for="summary">Elevator Pitch</label>
                 </div>
                 <div class="ipline"></div>
-                <div class="ipcontent" id="summaryip"></div>
+                <div class="ipcontent">
+                    <textarea class="qatextarea" cols="20" rows="5" name="summary" id="summary">What is your business?</textarea>
+                </div>
             </div>
 
             <div class="ipslide ipslide3">
@@ -45,7 +71,7 @@
                     <div class="iptitle">The Problem</div>
                 </div>
                 <div class="ipline"></div>
-                <div class="ipcontent" id="answer10ip"></div>
+                <div class="ipcontent"></div> <!-- answer10 -->
             </div>
 
             <div class="ipslide ipslide4">
@@ -54,7 +80,7 @@
                     <div class="iptitle">The Solution</div>
                 </div>
                 <div class="ipline"></div>
-                <div class="ipcontent" id="answer11ip"></div>
+                <div class="ipcontent"></div> <!-- answer11 -->
             </div>
 
             <div class="ipslide ipslide5">
@@ -63,7 +89,7 @@
                     <div class="iptitle">Features and Benefits</div>
                 </div>
                 <div class="ipline"></div>
-                <div class="ipcontent" id="answer12ip"></div>
+                <div class="ipcontent"></div> <!-- answer12 -->
             </div>
 
             <div class="ipslide ipslide6">
@@ -72,7 +98,7 @@
                     <div class="iptitle">Company Status</div>
                 </div>
                 <div class="ipline"></div>
-                <div class="ipcontent" id="answer13ip"></div>
+                <div class="ipcontent"></div> <!-- answer13 -->
             </div>
 
             <div class="ipslide ipslide7">
@@ -81,7 +107,7 @@
                     <div class="iptitle">The Market</div>
                 </div>
                 <div class="ipline"></div>
-                <div class="ipcontent" id="answer14ip"></div>
+                <div class="ipcontent"></div> <!-- answer14 -->
             </div>
 
             <div class="ipslide ipslide8">
@@ -90,7 +116,7 @@
                     <div class="iptitle">Typical Customer</div>
                 </div>
                 <div class="ipline"></div>
-                <div class="ipcontent" id="answer15ip"></div>
+                <div class="ipcontent"></div> <!-- answer15 -->
             </div>
 
             <div class="ipslide ipslide9">
@@ -99,7 +125,7 @@
                     <div class="iptitle">Competitors</div>
                 </div>
                 <div class="ipline"></div>
-                <div class="ipcontent" id="answer16ip"></div>
+                <div class="ipcontent"></div> <!-- answer16 -->
             </div>
 
             <div class="ipslide ipslide10">
@@ -108,7 +134,7 @@
                     <div class="iptitle">Competitive Comparison</div>
                 </div>
                 <div class="ipline"></div>
-                <div class="ipcontent" id="answer17ip"></div>
+                <div class="ipcontent"></div> <!-- answer17 -->
             </div>
 
             <div class="ipslide ipslide11">
@@ -117,7 +143,7 @@
                     <div class="iptitle">Business Model</div>
                 </div>
                 <div class="ipline"></div>
-                <div class="ipcontent" id="answer18ip"></div>
+                <div class="ipcontent"></div> <!-- answer18 -->
             </div>
 
             <div class="ipslide ipslide12">
@@ -126,7 +152,7 @@
                     <div class="iptitle">Marketing Plan</div>
                 </div>
                 <div class="ipline"></div>
-                <div class="ipcontent" id="answer19ip"></div>
+                <div class="ipcontent"></div> <!-- answer19 -->
             </div>
 
             <div class="ipslide ipslide13">
@@ -135,7 +161,7 @@
                     <div class="iptitle">Team</div>
                 </div>
                 <div class="ipline"></div>
-                <div class="ipcontent" id="answer20ip"></div>
+                <div class="ipcontent"></div> <!-- answer20 -->
             </div>
 
             <div class="ipslide ipslide14">
@@ -144,7 +170,7 @@
                     <div class="iptitle">Team Values</div>
                 </div>
                 <div class="ipline"></div>
-                <div class="ipcontent" id="answer21ip"></div>
+                <div class="ipcontent"></div> <!-- answer21 -->
             </div>
 
             <div class="ipslide ipslide15">
@@ -153,7 +179,7 @@
                     <div class="iptitle">Current Financials</div>
                 </div>
                 <div class="ipline"></div>
-                <div class="ipcontent" id="answer22ip"></div>
+                <div class="ipcontent"></div> <!-- answer22 -->
             </div>
 
             <div class="ipslide ipslide16">
@@ -162,7 +188,7 @@
                     <div class="iptitle">Financial Projections</div>
                 </div>
                 <div class="ipline"></div>
-                <div class="ipcontent" id="answer23ip"></div>
+                <div class="ipcontent"></div> <!-- answer23 -->
             </div>
 
             <div class="ipslide ipslide17">
@@ -171,7 +197,7 @@
                     <div class="iptitle">Owners and Cap Table</div>
                 </div>
                 <div class="ipline"></div>
-                <div class="ipcontent" id="answer24ip"></div>
+                <div class="ipcontent"></div> <!-- answer24 -->
             </div>
 
             <div class="ipslide ipslide18">
@@ -180,7 +206,7 @@
                     <div class="iptitle">Investment Plan</div>
                 </div>
                 <div class="ipline"></div>
-                <div class="ipcontent" id="answer25ip"></div>
+                <div class="ipcontent"></div> <!-- answer25 -->
             </div>
 
             <div class="ipslide ipslide19">
@@ -189,7 +215,7 @@
                     <div class="iptitle">Timeline and Wrapup</div>
                 </div>
                 <div class="ipline"></div>
-                <div class="ipcontent" id="answer26ip"></div>
+                <div class="ipcontent"></div> <!-- answer26 -->
             </div>
 
             <div class="ipslide ipslide20">

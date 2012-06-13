@@ -28,29 +28,10 @@ pl.implement(NewListingQAClass, {
             this.bound = true;
         }
         this.ip.display(this.base.listing);
+        pl('#ip-editable').show();
     },
     bindEvents: function() {
         var textFields = ['summary'],
-            msgFields = [
-                'introductionmsg',
-                'problemmsg',
-                'problemmsg',
-                'problemmsg',
-                'problemmsg',
-                'marketmsg',
-                'marketmsg',
-                'competitionmsg',
-                'competitionmsg',
-                'businessmodelmsg',
-                'businessmodelmsg',
-                'teammsg',
-                'teammsg',
-                'financialmsg',
-                'financialmsg',
-                'financialmsg',
-                'financialmsg',
-                'timelinemsg'
-            ],
             m = 10,
             n = 26,
             i,
@@ -63,45 +44,49 @@ pl.implement(NewListingQAClass, {
         }
         for (i = 0; i < textFields.length; i++) {
             id = textFields[i];
-            field = new TextFieldClass(id, this.base.listing[id], this.base.getUpdater(id, null, this.ip.getUpdater(id)), msgFields[i]);
+            field = new TextFieldClass(id, this.base.listing[id], this.base.getUpdater(id, null, this.ip.getUpdater(id)), 'ip-editable-msg');
     
             if (this.base.displayNameOverrides[id]) {
                 field.fieldBase.setDisplayName(this.base.displayNameOverrides[id]);
             }
             field.fieldBase.addValidator(ValidatorClass.prototype.makeLengthChecker(16, 1000));
             field.fieldBase.validator.postValidator = this.ip.genDisplay(field, this.base.genDisplayCalculatedIfValid(field));
-            field.bindEvents({noEnterKeySubmit: true});
+            field.bindEvents({noEnterKeySubmit: true, iconid: 'ipfieldicon'});
             this.base.fields.push(field);
         } 
         this.ip.bindButtons();
         this.base.bindNavButtons();
         this.base.bindTitleInfo();
+        this.bindEditButton();
+        this.bindPreviewButton();
         this.bindInfoButtons();
     },
-    bindInfoButtons: function() {
-        pl('.qainfobtn').bind({
-            click: function(e) {
-                var evt = new EventClass(e),
-                    tgt = evt.target(),
-                    nextsib = tgt.parentNode.nextSibling,
-                    infoel,
-                    classes;
-                if (nextsib.nodeType !== 1) {
-                    nextsib = nextsib.nextSibling;
-                }
-                infoel = nextsib.firstChild;
-                if (infoel.nodeType !== 1) {
-                    infoel = infoel.nextSibling;
-                }
-                classes = infoel.getAttribute('class');
-                if (classes.match('qainfodisplay')) {
-                    pl(infoel).removeClass('qainfodisplay');
-                }
-                else {
-                    infoel.setAttribute('class', classes + ' qainfodisplay');
-                }
-            }
+    bindEditButton: function() {
+        pl('#ip-edit-btn').bind('click', function() {
+            pl('#ip').hide();
+            pl('#ip-editable').show();
+        }).show();
+    },
+    bindPreviewButton: function() {
+        var self = this;
+        pl('#ip-preview-btn').bind('click', function() {
+            pl('#ip-editable').hide();
+            pl('#ip').show();
+            self.base.hideAllInfo();
         });
+    },
+    bindInfoButtons: function() {
+        var self = this;
+        pl('.qatextarea').bind({
+            focus: function(e) {
+                var evt = new EventClass(e),
+                    infoel = evt.target().parentNode.previousSibling.previousSibling.previousSibling.previousSibling.childNodes[1];
+                self.base.hideAllInfo();
+                pl(infoel).addClass('bmcinfodisplay');
+            },
+            blur: self.base.hideAllInfo
+        });
+        pl('.bmcinfo, .ipleft, .ipright, .ipfirst').bind('click', self.base.hideAllInfo);
     }
 });
 
