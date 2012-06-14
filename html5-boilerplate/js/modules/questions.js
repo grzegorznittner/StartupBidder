@@ -19,18 +19,21 @@ pl.implement(QuestionClass, {
                 self.display(json);
             },
             ajax = new AjaxClass('/listings/questions_answers/' + this.listing_id, 'qandamsg', complete);
-        ajax.setGetData({ max_results: 6 });
+        ajax.setGetData({ max_results: 3 });
         ajax.call();
     },
     store: function(json) {
         this.questionlist = json.questions_answers || [];
-        this.more_results_url = questionlist.length > 0 && json.questions_answers_props && json.questions_answers_props.more_results_url;
+        this.more_results_url = this.questionlist.length > 0 && json.questions_answers_props && json.questions_answers_props.more_results_url;
     },
     display: function(json) {
         if (json) {
             this.store(json);
         }
         this.displayQuestions();
+        if (this.more_results_url) {
+        	pl('#addqandabox').before('<div class="showmore hoverlink" id="moreresults"><span class="initialhidden" id="moreresultsurl">' + this.more_results_url + '</span><span id="moreresultsmsg">More...</span></div>\n');
+        }
         if (this.loggedin_profile_id && this.loggedin_profile_id !== this.listing_owner_id) {
             this.displayAddQuestionBox();
         }
@@ -41,7 +44,77 @@ pl.implement(QuestionClass, {
             pl('#addqandabox').before('<div class="messageline"><p style="font-weight: bold;">Login to ask a question</p></div>');
         }
         pl('#qandaswrapper').show();
+        if (this.more_results_url) {
+            this.bindMoreResults();
+        }
     },
+    // GREG START
+    bindMoreResults: function() {
+        var self = this;
+        pl('#moreresults').bind({
+            click: function() {
+                var completeFunc = function(json) {
+                        var header = new HeaderClass(),
+                            companybanner = new CompanyBannerClass('questions');
+                        if (!json.listing) {
+                            json.listing = {};
+                            json.listing.listing_id = self.listing_id;
+                        }
+                        var html = '',
+                        i,
+                        question,
+                        replyable,
+                        bindlist = [];
+                        questionlist = json.questions_answers || [];
+                        listing_owner_id = json.listing && json.listing.profile_id;
+                        loggedin_profile_id = json.loggedin_profile && json.loggedin_profile.profile_id;
+                        more_results_url = questionlist.length > 0 && json.questions_answers_props && json.questions_answers_props.more_results_url;
+                        
+                        if (questionlist.length === 0) {
+	                        return;
+	                    }
+	                    for (i = 0; i < questionlist.length; i++) {
+	                        question = questionlist[i];
+	                        replyable = loggedin_profile_id && loggedin_profile_id === listing_owner_id && !question.answer;
+	                        html += self.makeQuestion(question, replyable);
+	                        bindlist.push([question, replyable]);
+	                    }
+	                    if (html) {
+                            pl('#moreresults').before(html);
+                        }
+                        if (more_results_url) {
+                            pl('#moreresultsurl').text(more_results_url);
+                            pl('#moreresultsmsg').text('More...');
+                        }
+                        else {
+                            pl('#moreresultsmsg').text('');
+                            pl('#moreresults').removeClass('hoverlink').unbind();
+                        }
+	                    for (i = 0; i < bindlist.length; i++) {
+	                        question = bindlist[i][0];
+	                        replyable = bindlist[i][1];
+	                        if (replyable) {
+	                        	self.bindQuestion(question);
+	                        }
+	                    }
+                    },
+                    more_results_url = pl('#moreresultsurl').text(),
+                    ajax,
+                    data,
+                    i;
+                if (more_results_url) {
+                    ajax = new AjaxClass(more_results_url, 'moreresultsmsg', completeFunc);
+                    ajax.setGetData(data);
+                    ajax.call();
+                }
+                else {
+                    pl('#moreresultsmsg').text('');
+                    pl('#moreresults').removeClass('hoverlink').unbind();
+                }
+            }
+        });
+    },
+    // GREG END
     bindAddQuestionBox: function() {
         var self = this;
         pl('#addqandatext').bind({
