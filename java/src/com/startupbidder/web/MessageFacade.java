@@ -56,6 +56,10 @@ public class MessageFacade {
 		}
 		SBUser toUser = getUserDAO().getUser(userId);
 		SBUser fromUser = VoToModelConverter.convert(loggedInUser);
+		if (toUser.id == fromUser.id) {
+			log.warning("User is trying to send message to himself/herself.");
+			return null;
+		}
 		if (StringUtils.isEmpty(fromUser.nickname)) {
 			// in dev environment sometimes nickname is empty
 			fromUser = getUserDAO().getUser(fromUser.getWebKey());
