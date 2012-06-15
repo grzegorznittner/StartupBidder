@@ -504,6 +504,8 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .sideboxbutton { width: 310px; height: 50px; font-size: 34px; font-weight: bold; text-align: center; margin-bottom: 10px; }
 .sideboxbuttonsmall { width: 150px; height: 30px; font-size: 20px; }
 .sideboxbuttoninterior { width: 292px; height: 50px; font-size: 34px; font-weight: bold; text-align: center; margin: 0 5px 5px 5px; }
+.sideboxbutton:hover { opacity: 0.7; cursor: pointer }
+.sideboxbuttonsmall:hover { opacity: 0.7; cursor: pointer }
 .sideboxcompanylink { width: 298px; float: left; margin-left: 2px; }
 .sideboxcompanylink:hover { background: #f2f2f2; }
 .sideboxtitle { float: left; font-size: 24px; text-align: right; margin-left: 10px; margin-right: 10px; height: 43px; font-weight: bold; }
@@ -783,6 +785,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 }
 .ipslideset {
     position: absolute;
+    left: 0;
     -moz-transition: left 500ms;
     -webkit-transition: left 500ms;
     -o-transition: left 500ms;
@@ -845,6 +848,29 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .ipdata { left: 15px; }
 .ipcorp { margin-right: 20px; }
 .ippage { right: 15px; }
+
+.dotnavwrapper { width: 110px; margin: auto; }
+.dotnav { float: left; list-style-type: circle; margin: 0; }
+.dotnav:hover { cursor: pointer; opacity: 0.7 }
+.dotnavfilled { list-style-type: disc; }
+.dotnavempty { display: none }
+.dotnavplus { list-style-type: none; list-style-image: url(/img/icons/plus_16.png); padding-top: 3px; padding-left: 28px; }
+.piccontainer { position: relative; overflow: hidden; width: 622px; height: 452px; }
+.picslideset {
+    position: absolute;
+    left: 0;
+    -moz-transition: left 500ms;
+    -webkit-transition: left 500ms;
+    -o-transition: left 500ms;
+    -ms-transition: left 500ms;
+    transition: left 500ms;
+}
+.picslide { width: 622px; height: 452px; background: url(../img/noimage_146x146.jpg) no-repeat center; position: absolute; }
+.picslide1 { left: 0; }
+.picslide2 { left: 622px; }
+.picslide3 { left: 1244px; }
+.picslide4 { left: 1866px; }
+.picslide5 { left: 2488px; }
 
 .titleprevnextbtn { margin-top: 3px; }
 

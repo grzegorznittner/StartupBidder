@@ -6,7 +6,7 @@ function NewListingBaseClass() {
             'summary', 'answer11', 'answer12', 'answer13', 'answer14', 'answer15', 'answer16', 'answer17', 'answer18',
             'answer19', 'answer20', 'answer21', 'answer22', 'answer23', 'answer24', 'answer25', 'answer26',
 //            'presentation_id', 'business_plan_id', 'financials_id',
-            'logo', 'video'
+            'logo', 'pic1'
         ],
         proppage = {
             title: 'basics',
@@ -47,7 +47,7 @@ function NewListingBaseClass() {
 			business_plan_id: 'financials',
 			financials_id: 'financials',
             logo: 'media',
-			video: 'media'
+			pic1: 'media'
         },
         displayNameOverrides = {
             address: 'LOCATION',

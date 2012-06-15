@@ -31,7 +31,7 @@ include(header.m4)
     </div>
     <div class="span-8 last">
         <a href="#" class="nextbuttonlink">
-            <span class="push-5 span-3 smallinputbutton titleprevnextbtn">
+            <span class="push-5 span-3 smallinputbutton titleprevnextbtn hoverlink">
                 NEXT
             </span>
         </a>

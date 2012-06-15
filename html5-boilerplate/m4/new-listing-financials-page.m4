@@ -31,12 +31,12 @@ include(header.m4)
     </div>
     <div class="span-8 last">
         <a href="#" class="prevbuttonlink">
-            <span class="push-1 span-3 smallinputbutton titleprevnextbtn">
+            <span class="push-1 span-3 smallinputbutton titleprevnextbtn hoverlink">
                 PREV
             </span>
         </a>
         <a href="#" class="nextbuttonlink">
-            <span class="push-2 span-3 smallinputbutton titleprevnextbtn">
+            <span class="push-2 span-3 smallinputbutton titleprevnextbtn hoverlink">
                 NEXT
             </span>
         </a>

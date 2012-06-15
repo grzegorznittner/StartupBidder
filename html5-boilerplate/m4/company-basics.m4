@@ -6,20 +6,6 @@
         <div class="boxpanel summarypanel darkgrey">
             <p id="summary"></p>
     	</div>
-<style>
-.dotnavwrapper { width: 110px; margin: auto; }
-.dotnav { float: left; list-style-type: circle; margin: 0; }
-.dotnavfilled { list-style-type: disc; }
-.dotnavempty { display: none }
-.dotnavplus { list-style-type: none; list-style-image: url(/img/icons/plus_16.png); padding-top: 3px; padding-left: 28px; }
-.picimg { width: 622px; height: 452px; 
-    background: url(../img/noimage_146x146.jpg) no-repeat center;
-/*
-    background: url(http://1.bp.blogspot.com/-mWEP-CJqfBA/Th_E1HQOwGI/AAAAAAAABHg/Eayumcm1JY4/s1600/Kelly+Brook+looks+just+creamy+in+a+pale+bikini+in+the+Bay+Of+Naples.jpg) no-repeat fixed center;
-*/
-}
-</style>
-
         <div class="boxtitle">
             <div class="span-2">IMAGES</div>
             <div class="span-12">
@@ -33,17 +19,26 @@
             </div>
         </div>
         <div class="boxpanel">
-            <div class="videocontainer">
-                <div class="picimg" id="pic1"></div>
+            <div class="piccontainer">
+                <div class="picslideset" id="picslideset">
+                    <div class="picslide picslide1" id="pic1"></div>
+                    <div class="picslide picslide2" id="pic2"></div>
+                    <div class="picslide picslide3" id="pic3"></div>
+                    <div class="picslide picslide4" id="pic4"></div>
+                    <div class="picslide picslide5" id="pic5"></div>
+                </div>
             </div>
         </div>
 
-        <div class="boxtitle">VIDEO</div>
-        <div class="boxpanel">
-    	    <div class="videocontainer">
-          	    <iframe width="622" height="452" id="videopresentation" src="" frameborder="0" allowfullscreen></iframe> 
-    	    </div>
+        <div class="videowrapper initialhidden">
+            <div class="boxtitle">VIDEO</div>
+            <div class="boxpanel">
+        	    <div class="videocontainer">
+              	    <iframe width="622" height="452" id="videopresentation" src="" frameborder="0" allowfullscreen></iframe> 
+        	    </div>
+            </div>
         </div>
+
     </div>
 
     <div class="span-8 last">

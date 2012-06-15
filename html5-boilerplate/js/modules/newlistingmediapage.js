@@ -127,10 +127,10 @@ pl.implement(NewListingMediaClass, {
         return function() {
             var msgs = [];
             if (!self.base.listing.logo) {
-                msgs.push("LOGO: you must have a logo image.");
+                msgs.push("LOGO: you must upload a logo.");
             }
-            if (!self.base.listing.video) {
-                msgs.push("VIDEO: you must have a video presentation.");
+            if (!self.base.listing.pic1) {
+                msgs.push("IMAGES: you must upload at least one image.");
             }
             return msgs;
         };

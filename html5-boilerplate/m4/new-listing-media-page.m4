@@ -31,12 +31,12 @@ include(header.m4)
     </div>
     <div class="span-8 last">
         <a href="#" class="prevbuttonlink">
-            <span class="push-1 span-3 smallinputbutton titleprevnextbtn">
+            <span class="push-1 span-3 smallinputbutton titleprevnextbtn hoverlink">
                 PREV
             </span>
         </a>
         <a href="#" class="nextbuttonlink">
-            <span class="push-2 span-3 smallinputbutton titleprevnextbtn">
+            <span class="push-2 span-3 smallinputbutton titleprevnextbtn hoverlink">
                 NEXT
             </span>
         </a>
@@ -53,11 +53,11 @@ include(header.m4)
         <div class="titleinfo">
             <label class="titleinfoheader">Instructions</label>
             <p>
-Your logo and presentation video are your first and best way of capturing investor interest.
+Your logo and product images are your first and best way of capturing investor interest.
 Make sure they are professional and eye-catching.  If you do not have the budget or expertise
-for a professional logo, just make something simple with text, or use a picture of yourself, 
-the product, or a screenshot of your website.  Likewise if you do not have a video ready, just
-record a voiceover of a quick run through your slide deck.
+for a professional logo, just make something simple with text.  For images, upload product
+images, screenshots, store photographs, anything visual regarding your product or service.
+You may also optionally link to a video, such as a voiceover of a quick run through your slide deck.
             </p>
         </div>
    </div>
@@ -94,16 +94,13 @@ record a voiceover of a quick run through your slide deck.
     </div>
 
     <div class="boxtitle">
-        <span class="titletext">VIDEO</span>
+        <span class="titletext">VIDEO - OPTIONAL</span>
         <div class="titleinfobtn"></div>
         <div class="titleinfo">
             <label class="titleinfoheader">Instructions</label>
             <p>
-Your logo and presentation video are your first and best way of capturing investor interest.
-Make sure they are professional and eye-catching.  If you do not have the budget or expertise
-for a professional logo, just make something simple with text, or use a picture of yourself, 
-the product, or a screenshot of your website.  Likewise if you do not have a video ready, just
-record a voiceover of a quick run through your slide deck.
+Link to a youtube, vimeo, or dailymotion video presenting your product, service or company.
+If you do not have a video ready, just record a voiceover of a quick run through your slide deck.
             </p>
         </div>
     </div>

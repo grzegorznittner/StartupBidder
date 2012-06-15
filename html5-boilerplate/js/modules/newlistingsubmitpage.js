@@ -89,7 +89,7 @@ pl.implement(NewListingSubmitClass, {
                 }
                 return msgs;
             },
-            previewurl = '/company-page.html?id=' + self.base.listing.listing_id + '&preview=true';
+            previewurl = '/company-preview-page.html?id=' + self.base.listing.listing_id + '&preview=true';
         pl('#previewiframe').attr({src: previewurl});
         this.base.bindNavButtons(submitValidator);
         this.base.bindTitleInfo();
