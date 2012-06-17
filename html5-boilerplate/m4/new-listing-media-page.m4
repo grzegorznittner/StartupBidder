@@ -92,7 +92,9 @@ You may also optionally link to a video, such as a voiceover of a quick run thro
             </div>
         </div>
     </div>
-
+'
+include(images-panel.m4)
+`
     <div class="boxtitle">
         <span class="titletext">VIDEO - OPTIONAL</span>
         <div class="titleinfobtn"></div>
@@ -160,6 +162,7 @@ include(footer.m4)
   <script src="js/modules/base.js"></script>
   <script src="js/modules/companylist.js"></script>
   <script src="js/modules/forms.js"></script>
+  <script src="js/modules/imagepanel.js"></script>
   <script src="js/modules/newlistingbase.js"></script>
   <script src="js/modules/newlistingmediapage.js"></script>
   <script src="js/modules/tracker.js"></script>
