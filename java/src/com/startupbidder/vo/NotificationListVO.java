@@ -16,8 +16,6 @@ public class NotificationListVO extends BaseResultVO {
 	private List<NotificationVO> notifications;
 	@JsonProperty("notifications_props")
 	private ListPropertiesVO notificationsProperties;
-	@JsonProperty("profile")
-	private UserBasicVO user;
 	public List<NotificationVO> getNotifications() {
 		return notifications;
 	}
@@ -29,11 +27,5 @@ public class NotificationListVO extends BaseResultVO {
 	}
 	public void setNotificationsProperties(ListPropertiesVO notificationsProperties) {
 		this.notificationsProperties = notificationsProperties;
-	}
-	public UserBasicVO getUser() {
-		return user;
-	}
-	public void setUser(UserBasicVO user) {
-		this.user = user;
 	}
 }

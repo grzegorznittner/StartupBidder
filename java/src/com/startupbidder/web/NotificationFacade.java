@@ -33,7 +33,6 @@ import com.startupbidder.vo.ErrorCodes;
 import com.startupbidder.vo.ListPropertiesVO;
 import com.startupbidder.vo.NotificationListVO;
 import com.startupbidder.vo.NotificationVO;
-import com.startupbidder.vo.UserBasicVO;
 import com.startupbidder.vo.UserVO;
 
 /**
@@ -85,7 +84,6 @@ public class NotificationFacade {
 		notifProperties.setNumberOfResults(notifications.size());
 		list.setNotifications(notifications);
 		list.setNotificationsProperties(notifProperties);
-		list.setUser(new UserBasicVO(loggedInUser));
 		
 		return list;
 	}
@@ -105,7 +103,6 @@ public class NotificationFacade {
 		notifProperties.setTotalResults(notifications.size());
 		list.setNotifications(notifications);
 		list.setNotificationsProperties(notifProperties);
-		list.setUser(new UserBasicVO(loggedInUser));
 		
 		return list;
 	}
