@@ -56,18 +56,21 @@ pl.implement(ImagePanelClass, {
             setTimeout(function() { self.advanceSlideshow() }, 5000);
         }
     },
-   
-    advanceRight: function(picnum) {
-        console.log('advanceRight');
+  
+    advanceRight: function(picnum) {    
+        console.log('doAdvance');
         var left = 1 * pl('#picslideset').css('left').replace(/px/, ''),
             slidewidth = 1 * pl('#pic1').css('width').replace(/px/, ''),
             fullwidth = slidewidth * this.numPics,
             newleft = picnum ? slidewidth * ( 1 - picnum ) : Math.floor((left - slidewidth) % fullwidth),
             newleftpx = newleft + 'px',
-            newpicnum = picnum || (Math.floor(Math.abs(newleft) / slidewidth) + 1);
-        console.log(left, slidewidth, fullwidth, newleft, newpicnum);
-        pl('.dotnav').removeClass('dotnavfilled');
-        pl('#pic' + newpicnum + 'nav').addClass('dotnavfilled');
-        pl('#picslideset').css({left: newleftpx});
+            newpicnum = picnum || (Math.floor(Math.abs(newleft) / slidewidth) + 1),
+            onboundary = Math.floor(left % slidewidth) === 0;
+        console.log(left, slidewidth, fullwidth, newleft, newpicnum, onboundary);
+        if (onboundary) { // prevent in-transition movements
+            pl('.dotnav').removeClass('dotnavfilled');
+            pl('#pic' + newpicnum + 'nav').addClass('dotnavfilled');
+            pl('#picslideset').css({left: newleftpx});
+        }
     }
 });
