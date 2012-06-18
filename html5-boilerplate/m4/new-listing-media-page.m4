@@ -143,10 +143,31 @@ If you do not have a video ready, just record a voiceover of a quick run through
 
 <!-- right column -->
 <div class="span-8 last">
-    <div class="boxtitle clear">TIPS</div>
+
+    <div class="boxtitle picuploadtitle clear">UPLOAD IMAGE <span id="picnum">1</span></div>
     <div class="sidebox">
-        <p>LOGO - image displayed on the listing summary, can be your project or company logo or a product picture</p>
-        <p>VIDEO - public presentation of the project available on youtube, can be a live action blackboard talk, a product demonstration, or a powerpoint with voiceover</p>
+        <div class="formitem">
+            <span class="uploadinfo">Enter an image URL and press enter or upload a file.</span>
+        </div>
+        <div class="formitem clear">
+            <span class="inputfield">
+                <input class="text picinputlink" type="text" maxlength="255" name="pic_url" id="pic_url" value=""></input>
+            </span>
+            <span class="uploadinputicon">
+                <div id="pic_urlicon"></div>
+            </span>
+        </div>
+        <div class="formitem">
+            <span class="inputfield">
+                <form id="picuploadform" method="post" enctype="multipart/form-data" target="picuploadiframe" action="#">
+                    <input class="text uploadinputbutton" id="picuploadfile" name="PIC1" size="18" type="file"></input>
+                    <iframe id="picuploadiframe" name="picuploadiframe" src="" class="uploadiframe"></iframe>
+                </form>
+            </span>
+        </div>
+        <div class="formitem clear">
+            <span class="uploadinfo" id="picmsg">622px by 452px max JPG, PNG or GIF</span>
+        </div>
     </div>
 
 </div>

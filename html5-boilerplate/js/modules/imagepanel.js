@@ -1,4 +1,5 @@
-function ImagePanelClass() {
+function ImagePanelClass(options) {
+    this.options = options; // set options.editmode to true for an editable panel
 }
 
 pl.implement(ImagePanelClass, {
@@ -8,12 +9,12 @@ pl.implement(ImagePanelClass, {
     },
     display: function() {
         var self = this,
+            firstpic = this.options.editmode ? 'pic1' : undefined,
             numpics = 5,
+            slideshowstart = 1,
             pic,
             url,
-            firstpic,
-            i,
-            slideshowstart = 1;
+            i;
         self.runningSlideshow = false;
         self.numPics = 0;
         for (i = 1; i <= numpics; i++) {
@@ -26,6 +27,9 @@ pl.implement(ImagePanelClass, {
                     firstpic = pic;
                 }
                 self.numPics++;
+            }
+            else if (this.options.editmode) {
+                pl('#' + pic + 'nav').removeClass('dotnavempty');
             }
         }
         pl('.dotnav').bind('click', function() {
@@ -68,6 +72,11 @@ pl.implement(ImagePanelClass, {
             onboundary = Math.floor(left % slidewidth) === 0;
         console.log(left, slidewidth, fullwidth, newleft, newpicnum, onboundary);
         if (onboundary) { // prevent in-transition movements
+            if (this.options.editmode) {
+                pl('#picnum').text(newpicnum);
+                pl('#picuploadtype').attr({name: 'PIC' + newpicnum});
+            }
+            pl('#picuploadtype')
             pl('.dotnav').removeClass('dotnavfilled');
             pl('#pic' + newpicnum + 'nav').addClass('dotnavfilled');
             pl('#picslideset').css({left: newleftpx});

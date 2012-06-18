@@ -67,6 +67,7 @@ pl.implement(ListingClass, {
 
     displayVideo: function() {
         if (this.video) {
+        console.log('here');
             pl('#videopresentation').attr({src: this.video});
             pl('#videowrapper').show();
         }

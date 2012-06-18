@@ -1729,7 +1729,7 @@ include(api-banner.m4)
                 <li><code>PRESENTATION</code> upload a product presentation, either a Powerpoint or PDF document</li>
                 <li><code>FINANCIALS</code> upload financial statements, either an Excel or PDF document</li>
                 <li><code>LOGO</code> upload a logo, must be of png, jpeg or gif format, resized and cropped to 146px by 146px</li>
-                <li><code>PIC1, PIC2, PIC3, PIC4, PIC5</code> upload a picture, must be of png, jpeg or gif format, resized to 622px by 452px (max)</li>
+                <li><code>PIC1, PIC2, PIC3, PIC4, PIC5</code> upload a picture, must be of png, jpeg or gif format, max size of 622px by 452px</li>
             </ul>
             <h4>Response</h4>
             <ul>

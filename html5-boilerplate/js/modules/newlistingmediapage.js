@@ -3,7 +3,7 @@ function NewListingMediaClass() {
     base.prevPage = '/new-listing-basics-page.html';
     base.nextPage = '/new-listing-bmc-page.html';
     this.base = base;
-    this.imagepanel = new ImagePanelClass();
+    this.imagepanel = new ImagePanelClass({ editmode: true });
 }
 pl.implement(NewListingMediaClass, {
     load: function() {

@@ -10,7 +10,7 @@
 '
 include(images-panel.m4)
 `
-        <div class="videowrapper initialhidden">
+        <div class="initialhidden" id="videowrapper">
             <div class="boxtitle">VIDEO</div>
             <div class="boxpanel">
         	    <div class="videocontainer">
