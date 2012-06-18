@@ -1,8 +1,8 @@
 function MessagePageClass() {
     this.json = {};
     this.queryString = new QueryStringClass();
-    this.to_user = this.queryString.vars.to_user || '';
-    this.to_user_nickname = decodeURIComponent(this.queryString.vars.to_user_nickname || '');
+    this.from_user_id = this.queryString.vars.from_user_id || '';
+    this.from_user_nickname = decodeURIComponent(this.queryString.vars.from_user_nickname || '');
 };
 pl.implement(MessagePageClass,{
     loadPage: function() {
@@ -15,8 +15,8 @@ pl.implement(MessagePageClass,{
                 }
                 messageList.display(json);
              },
-             ajax = new AjaxClass('/user/messages/' + this.to_user, 'messagemsg', completeFunc);
-        pl('#from_user_nickname_upper').text(this.to_user_nickname.toUpperCase());
+             ajax = new AjaxClass('/user/messages/' + this.from_user_id, 'messagemsg', completeFunc);
+        pl('#from_user_nickname_upper').text(this.from_user_nickname.toUpperCase());
         ajax.call();
     }
 });
