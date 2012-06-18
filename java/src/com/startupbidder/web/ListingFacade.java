@@ -189,6 +189,8 @@ public class ListingFacade {
 				loggedInUser.setEditedListing(null);
 				loggedInUser.setEditedStatus(null);
 				return null;
+			} else {
+				loggedInUser.setEditedStatus(listing.state.toString());
 			}
 			ListingVO listingVO = DtoToVoConverter.convert(listing);
 			return listingVO;
