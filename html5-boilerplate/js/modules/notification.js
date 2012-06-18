@@ -81,7 +81,6 @@ pl.implement(NotifyListClass, {
         }
         self.more_results_url = self.notifications.length > 0 && json.notifications_props && json.notifications_props.more_results_url;
     },
-    // GREG START
     bindMoreResults: function() {
         var self = this;
         pl('#moreresults').bind({
@@ -105,7 +104,6 @@ pl.implement(NotifyListClass, {
 		                    notification.setEmpty();
 		                    self.notifications.push(notification);
 		                }
-		                console.log('notifications: ' + self.notifications);
 		                for (i = 0; i < self.notifications.length; i++) {
 		                    notification = self.notifications[i];
 		                    html += notification.makeHtml();
@@ -118,7 +116,6 @@ pl.implement(NotifyListClass, {
 		                self.more_results_url = self.notifications.length > 0 && json.notifications_props && json.notifications_props.more_results_url;
                         
 	                    if (html) {
-	                    	console.log('Showing more results');
                             pl('#moreresults').before(html);
                         }
                         if (self.more_results_url) {
@@ -146,7 +143,6 @@ pl.implement(NotifyListClass, {
             }
         });
     },
-    // GREG END
     display: function(json) {
         var self = this,
             html = '',

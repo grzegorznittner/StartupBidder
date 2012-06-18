@@ -13,6 +13,7 @@ pl.implement(NotificationPageClass,{
                 notifyList.display(json);
              },
             ajax = new AjaxClass('/notification/user', 'notificationsmsg', completeFunc);
+            ajax.setGetData({ max_results: 10 });
             ajax.call();
     }
 });
