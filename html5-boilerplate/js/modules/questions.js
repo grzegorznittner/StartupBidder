@@ -54,8 +54,6 @@ pl.implement(QuestionClass, {
         pl('#moreresults').bind({
             click: function() {
                 var completeFunc = function(json) {
-                        var header = new HeaderClass(),
-                            companybanner = new CompanyBannerClass('questions');
                         if (!json.listing) {
                             json.listing = {};
                             json.listing.listing_id = self.listing_id;
