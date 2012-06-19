@@ -107,9 +107,9 @@ public class Notification extends BaseObject<Notification> {
 		case YOU_PAID_BID:
 		case YOU_ACCEPTED_BID:
 			if (listingOwnerUser.getId() == user.getId()) {
-				link = "/company-owner-bids-page.html?id=" + this.listing.getString();
+				link = "/company-owner-investor-bids-page.html?id=" + this.listing.getString();
 			} else {
-				link = "/company-owner-bids-page.html?id=" + this.listing.getString();
+				link = "/company-investor-bids-page.html?id=" + this.listing.getString();
 			}
 		break;
 		case NEW_COMMENT_FOR_YOUR_LISTING:

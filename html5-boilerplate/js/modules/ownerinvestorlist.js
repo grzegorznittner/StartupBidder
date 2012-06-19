@@ -119,6 +119,7 @@ pl.implement(InvestorBidGroupListClass, {
             investor.setEmpty();
             this.investors.push(investor);
         }
+        this.more_results_url = this.investors.length > 0 && json.investors_props && json.investors_props.more_results_url;
     },
 
     display: function(json) {
@@ -139,8 +140,71 @@ pl.implement(InvestorBidGroupListClass, {
             investor.setEmpty();
             html += investor.makeHtml();
         }
+        if (this.more_results_url) {
+        	html += '<div class="showmore hoverlink" id="moreresults"><span class="initialhidden" id="moreresultsurl">' + self.more_results_url + '</span><span id="moreresultsmsg">More investors...</span></div>\n';
+        }
         pl('#investorgrouplist').html(html);
+        if (this.more_results_url) {
+            this.bindMoreResults();
+        }
         pl('#bidsownergroup').show();
+    },
+
+    bindMoreResults: function() {
+        var self = this;
+        pl('#moreresults').bind({
+            click: function() {
+		            	var completeFunc = function(json) {
+		            		var jsonlist = json && json.investors || [],
+		            		html = '',
+		                    investor,
+		                    i;
+		                this.investors = [];
+		                if (jsonlist.length) {
+		                    for (i = 0; i < jsonlist.length; i++) {
+		                        investor = new InvestorBidGroupClass(self);
+		                        investor.store(jsonlist[i]);
+		                        this.investors.push(investor);
+		                    }
+		                    for (i = 0; i < this.investors.length; i++) {
+		                        investor = this.investors[i];
+		                        html += investor.makeHtml();
+		                    }
+		                }
+		                else {
+		                    investor = new InvestorBidGroupClass(this);
+		                    investor.setEmpty();
+		                    this.investors.push(investor);
+		                }
+		                self.more_results_url = this.investors.length > 0 && json.investors_props && json.investors_props.more_results_url;
+                
+	                    if (html) {
+                            pl('#moreresults').before(html);
+                        }
+                        if (self.more_results_url) {
+                            pl('#moreresultsurl').text(self.more_results_url);
+                            pl('#moreresultsmsg').text('Earlier bids...');
+                        }
+                        else {
+                            pl('#moreresultsmsg').text('');
+                            pl('#moreresults').removeClass('hoverlink').unbind();
+                        }
+                    },
+                    more_results_url = pl('#moreresultsurl').text(),
+                    ajax,
+                    data,
+                    i;
+                if (self.more_results_url) {
+                    ajax = new AjaxClass(self.more_results_url, 'moreresultsmsg', completeFunc);
+                    ajax.setGetData(data);
+                    ajax.call();
+                }
+                else {
+                    pl('#moreresultsmsg').text('');
+                    pl('#moreresults').removeClass('hoverlink').unbind();
+                }
+            }
+        });
     },
 
     load: function() {
@@ -161,123 +225,8 @@ pl.implement(InvestorBidGroupListClass, {
             },
 
             ajax = new AjaxClass('/listing/investors/' + this.listing_id, 'bidstitlemsg', completeFunc);
-        //this.mock(ajax);
+        ajax.setGetData({ max_results: 20 });
         ajax.call();
-    },
-
-    mock: function(ajax) {
-        ajax.mock({ 
-    "login_url": null,
-    "logout_url": "/_ah/logout?continue=http%3A%2F%2Flocalhost%3A7777",
-    "loggedin_profile": {
-        "profile_id": "ag1zdGFydHVwYmlkZGVycg4LEgZTQlVzZXIY3pIBDA",
-        "username": "test",
-        "name": null,
-        "email": "test@example.com",
-        "investor": false,
-        "edited_listing": "ag1zdGFydHVwYmlkZGVycg8LEgdMaXN0aW5nGLqUAQw",
-        "edited_status": null,
-        "num_notifications": 0,
-        "votable": false,
-        "mockData": false,
-        "admin": false
-    },
-
-    "error_code": 0,
-    "error_msg": null,
-    "users": [
-        {
-            investor_id: 'abca89708a7oe0u',
-            investor_nickname: 'theotherguy',
-            last_amt: '20000',
-            last_pct: '5',
-            last_val: '400000',
-            last_type: 'investor_post',
-            last_text: "I'm not sure if this is the right investment for me, but I'll be in town next week, if we could meet that would be great.",
-            last_date: "20120428121845",
-            read: false
-        },
-
-        {
-            investor_id: 'def',
-            investor_nickname: 'fowler',
-            last_amt: '10000',
-            last_pct: '5',
-            last_val: '200000',
-            last_type: 'investor_counter',
-            last_text: "Do you have a method for increasing efficiency of TPS reports?  I need to know more before accepting.",
-            last_date: "20120324092322",
-            read: true
-        },
-
-        {
-            investor_id: ':uid',
-            investor_nickname: 'MadMax',
-            last_amt: '15000',
-            last_pct: '5',
-            last_val: '300000',
-            last_type: 'investor_accept',
-            last_text: "This idea you've got about bacon and martinis is so crazy that it just might work!  Count me in!",
-            last_date: "20120322072212",
-            read: true
-        },
-
-        {
-            investor_id: ':uid',
-            investor_nickname: 'jenny',
-            last_amt: '50000',
-            last_pct: '20',
-            last_val: '250000',
-            last_type: 'investor_withdraw',
-            last_text: "Would you like to discuss this further over dinner for two down at the shore?  Then perhaps I'll place a bid.",
-            last_date: "20120318172238",
-            read: true
-        },
-
-        {
-            investor_id: ':uid',
-            investor_nickname: 'arley',
-            last_amt: '10000',
-            last_pct: '5',
-            last_val: '200000',
-            last_type: 'investor_reject',
-            last_text: "Mr. Madison, what you've just said is one of the most insanely idiotic things I have ever heard. At no point in your rambling, incoherent response were you even close to anything that could be considered a rational thought. Everyone in this room is now dumber for having listened to it. I award you no points, and may God have mercy on your soul.",
-            last_date: "20120318164617",
-            read: true
-        },
-
-        {
-            investor_id: ':uid',
-            investor_nickname: 'The One',
-            last_amt: '20000',
-            last_pct: '5',
-            last_val: '400000',
-            last_type: 'owner_counter',
-            last_text: "Really I need more cash to get this idea off the ground, what do you say?",
-            last_date: "20120319164617",
-            read: true
-        }
-    ],
-    "users_props": {
-        "start_index": 1,
-        "max_results": 20,
-        "num_results": 5,
-        "more_results_url": null
-    },
-
-    "profile": {
-        "profile_id": "ag1zdGFydHVwYmlkZGVycg4LEgZTQlVzZXIY3pIBDA",
-        "username": "test",
-        "name": null,
-        "email": "test@example.com",
-        "investor": false,
-        "edited_listing": "ag1zdGFydHVwYmlkZGVycg8LEgdMaXN0aW5nGLqUAQw",
-        "edited_status": null,
-        "num_notifications": 0,
-        "votable": false,
-        "mockData": false,
-        "admin": false
-    }});
     }
 });
 

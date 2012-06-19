@@ -70,7 +70,6 @@ pl.implement(MessageListClass, {
         }
         pl('#myusername').text(self.myusername || 'You');
         if (self.more_results_url) {
-        	console.log('Adding more link');
         	html += '<div class="showmore hoverlink" id="moreresults"><span class="initialhidden" id="moreresultsurl">' + self.more_results_url + '</span><span id="moreresultsmsg">Earlier messages...</span></div>\n';
         }
         for (i = 0; i < self.messages.length; i++) {
