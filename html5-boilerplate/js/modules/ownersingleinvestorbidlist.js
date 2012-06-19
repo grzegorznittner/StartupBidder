@@ -109,101 +109,6 @@ function OwnerSingleInvestorBidListClass() {
     };
 }
 pl.implement(OwnerSingleInvestorBidListClass, {
-    mock: function(ajax) {
-        ajax.mock({
-bids:
-[
-    {
-        amt: '20000',
-        pct: '5',
-        val: '400000',
-        type: 'investor_post',
-        text: 'Is is a great idea, let us see if we can make it happen',
-        create_date: '20120528183623'
-    },
-
-    {
-        amt: '20000',
-        pct: '5',
-        val: '400000',
-        type: 'owner_reject',
-        text: 'Not enough money for me to proceed, but thank you for your interest',
-        create_date: '20120528191242'
-    },
-
-    {
-        amt: '40000',
-        pct: '10',
-        val: '400000',
-        type: 'investor_post',
-        text: 'Here is a little more money, naturally I will require more shares as part of the deal',
-        create_date: '20120528213422'
-    },
-
-    {
-        amt: '40000',
-        pct: '5',
-        val: '800000',
-        type: 'owner_counter',
-        text: 'Well not that much equity, but it is looking a little more in line with what I have been thinking.',
-        create_date: '20120528214814'
-    },
-
-    {
-        amt: '40000',
-        pct: '10',
-        val: '400000',
-        type: 'investor_counter',
-        text: 'It looks like the money is agreeable, however as I indicated before I need more equity upside to be compensated fairly',
-        create_date: '20120528231215'
-    },
-
-    {
-        amt: '40000',
-        pct: '10',
-        val: '400000',
-        type: 'owner_accept',
-        text: 'Okay I am comfortable with these terms, we have a deal',
-        create_date: '20120528232341'
-    }
-],
-
-bids_props: {
-     "start_index": 7,
-     "max_results": 0,
-     "num_results": 7,
-     "more_results_url": null
-},
-
-valid_actions: [ "owner_post", "owner_counter", "owner_reject", "owner_accept", "owner_withdraw" ]
-        });
-    },
-
-    mock_make_bid: function(ajax, data) {
-        ajax.mock({
-bids:
-[
-    {
-        amt: data.bid.amt,
-        pct: data.bid.pct,
-        val: data.bid.val,
-        type: data.bid.type,
-        text: data.bid.text,
-        create_date: DateClass.prototype.now()
-    }
-],
-
-bids_props: {
-     "start_index": 0,
-     "max_results": 1,
-     "num_results": 1,
-     "more_results_url": null
-},
-
-valid_actions: [ "owner_counter", "owner_reject", "owner_accept", "owner_withdraw" ]
-        });
-    },
-
     load: function() {
         var self = this,
             complete = function(json) {
@@ -221,7 +126,7 @@ valid_actions: [ "owner_counter", "owner_reject", "owner_accept", "owner_withdra
                 self.display(json);
             },
             ajax = new AjaxClass('/listing/bids/' + this.listing_id + '/' + this.investor_id, 'bidtitlemsg', complete);
-        //this.mock(ajax); // FIXME
+        ajax.setGetData({ max_results: 10 });
         ajax.call();
     },
 
@@ -248,6 +153,7 @@ valid_actions: [ "owner_counter", "owner_reject", "owner_accept", "owner_withdra
             bid.setEmpty();
             this.bids.push(bid);
         }
+        this.more_results_url = this.bids.length > 0 && json.bids_props && json.bids_props.more_results_url;
     },
 
     display: function(json) {
@@ -260,6 +166,9 @@ valid_actions: [ "owner_counter", "owner_reject", "owner_accept", "owner_withdra
         pl('#investor_nickname').text(this.investor_nickname.toUpperCase());
         if (this.bids.length) {
             html = BidClass.prototype.makeHeader();
+            if (this.more_results_url) {
+            	html += '<div class="showmore hoverlink" id="moreresults"><span class="initialhidden" id="moreresultsurl">' + self.more_results_url + '</span><span id="moreresultsmsg">Earlier bids...</span></div>\n';
+            }
             for (i = 0; i < this.bids.length; i++) {
                 bid = this.bids[i];
                 html += bid.makeHtml({ last: (i === this.bids.length - 1)});
@@ -272,7 +181,68 @@ valid_actions: [ "owner_counter", "owner_reject", "owner_accept", "owner_withdra
         }
         pl('#bidlistlast').before(html);
         this.bindBidBox();
+        if (this.more_results_url) {
+            this.bindMoreResults();
+        }
         pl('#bidsloggedin').show();
+    },
+
+    bindMoreResults: function() {
+        var self = this;
+        pl('#moreresults').bind({
+            click: function() {
+            	var completeFunc = function(json) {
+	            		var validactions = json && json.valid_actions || [],
+	                    bidsprops = json && json.bids_props || {},
+	                    jsonlist = json && json.bids || [],
+	                    html = '',
+	                    bid,
+	                    i;
+		                this.investor_nickname = json.investor && json.investor.username || 'Anonymous';
+		                this.bidsprops = bidsprops;
+		                this.validactions = validactions;
+		                this.bids = [];
+		                if (jsonlist.length) {
+		                    jsonlist.reverse(); // we want orderded by date
+		                    for (i = 0; i < jsonlist.length; i++) {
+		                        bid = new BidClass(self);
+		                        bid.store(jsonlist[i]);
+		                        this.bids.push(bid);
+		                    }
+		                    for (i = 0; i < this.bids.length; i++) {
+		                        bid = this.bids[i];
+		                        html += bid.makeHtml({ last: (i === this.bids.length - 1)});
+		                    }
+		                }
+		                self.more_results_url = this.bids.length > 0 && json.bids_props && json.bids_props.more_results_url;
+                
+	                    if (html) {
+                            pl('#moreresults').after(html);
+                        }
+                        if (self.more_results_url) {
+                            pl('#moreresultsurl').text(self.more_results_url);
+                            pl('#moreresultsmsg').text('Earlier bids...');
+                        }
+                        else {
+                            pl('#moreresultsmsg').text('');
+                            pl('#moreresults').removeClass('hoverlink').unbind();
+                        }
+                    },
+                    more_results_url = pl('#moreresultsurl').text(),
+                    ajax,
+                    data,
+                    i;
+                if (self.more_results_url) {
+                    ajax = new AjaxClass(self.more_results_url, 'moreresultsmsg', completeFunc);
+                    ajax.setGetData(data);
+                    ajax.call();
+                }
+                else {
+                    pl('#moreresultsmsg').text('');
+                    pl('#moreresults').removeClass('hoverlink').unbind();
+                }
+            }
+        });
     },
 
     displayCalculatedIfValid: function() {
