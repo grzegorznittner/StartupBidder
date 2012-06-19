@@ -85,7 +85,6 @@ pl.implement(MessageListClass, {
         self.bindAddBox();
         pl('#messagesend').before(html).show();
         if (self.more_results_url) {
-        	console.log('Binding more link');
             self.bindMoreResults();
         }
     },
@@ -136,7 +135,6 @@ pl.implement(MessageListClass, {
                     ajax,
                     data,
                     i;
-                console.log('click called');
                 if (more_results_url) {
                     ajax = new AjaxClass(more_results_url, 'moreresultsmsg', completeFunc);
                     ajax.setGetData(data);
