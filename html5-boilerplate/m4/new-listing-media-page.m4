@@ -44,6 +44,8 @@ include(header.m4)
 
 <!-- end banner -->
 
+<div class="initialhidden" id="newlistingmediawrapper">
+
 <!-- left column -->
 <div class="span-16">
 
@@ -82,7 +84,7 @@ You may also optionally link to a video, such as a voiceover of a quick run thro
             <div class="formitem">
                 <span class="inputfield">
                     <form id="logouploadform" method="post" enctype="multipart/form-data" target="logouploadiframe" action="#">
-                        <input class="text uploadinputbutton" id="LOGO" name="LOGO" size="18" type="file"></input>
+                        <input class="text uploadinputbutton" id="logouploadfile" name="LOGO" size="32" type="file"></input>
                         <iframe id="logouploadiframe" name="logouploadiframe" src="" class="uploadiframe"></iframe>
                     </form>
                 </span>
@@ -93,7 +95,7 @@ You may also optionally link to a video, such as a voiceover of a quick run thro
         </div>
     </div>
 '
-include(images-panel.m4)
+include(images-panel-editable.m4)
 `
     <div class="boxtitle">
         <span class="titletext">VIDEO - OPTIONAL</span>
@@ -160,7 +162,7 @@ If you do not have a video ready, just record a voiceover of a quick run through
         <div class="formitem">
             <span class="inputfield">
                 <form id="picuploadform" method="post" enctype="multipart/form-data" target="picuploadiframe" action="#">
-                    <input class="text uploadinputbutton" id="picuploadfile" name="PIC1" size="18" type="file"></input>
+                    <input class="text uploadinputbutton" id="picuploadfile" name="PIC1" size="16" type="file"></input>
                     <iframe id="picuploadiframe" name="picuploadiframe" src="" class="uploadiframe"></iframe>
                 </form>
             </span>
@@ -172,6 +174,8 @@ If you do not have a video ready, just record a voiceover of a quick run through
 
 </div>
 <!-- end right column -->
+
+</div>
 
 </div> <!-- end container -->
 </div> <!-- end main -->

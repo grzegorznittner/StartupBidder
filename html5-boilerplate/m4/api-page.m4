@@ -539,7 +539,7 @@ include(api-banner.m4)
             <h4>Parameters</h4>
             <ul>
                 <li><code>id</code> alphanumeric listing id as returned by the listing list and search API</li>
-                <li><code>nr</code> picture number, currently are supported numbers from 1 to 5</li>
+                <li><code>nr</code> picture number, an integer from 1 to 5</li>
             </ul>
             <h4>Response</h4>
             <ul>
@@ -552,9 +552,9 @@ include(api-banner.m4)
                     <span class="inputfield">
                         <input class="text inputwidetext listingid" type="text" name="id" value="0"></input>
                     </span>
-                    <label class="inputlabel" for="title">Picture Number</label>
+                    <label class="inputlabel clear" for="title">Picture Number</label>
                     <span class="inputfield">
-                        <input class="text inputwidetext listingnumber" type="text" name="nr" value="0"></input>
+                        <input class="text inputwidetext listingnumber" type="text" maxlength="1" name="nr" value="1"></input>
                     </span>
                 </div>
                 <div class="formitem clear">

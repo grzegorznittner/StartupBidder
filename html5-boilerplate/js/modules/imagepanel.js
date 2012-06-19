@@ -1,5 +1,6 @@
 function ImagePanelClass(options) {
     this.options = options || {}; // set options.editmode to true for an editable panel
+    this.listing = this.options.listing || {};
 }
 
 pl.implement(ImagePanelClass, {
@@ -7,22 +8,27 @@ pl.implement(ImagePanelClass, {
         this.listing = listing;
         return this;
     },
+    enableImage: function(i) {
+        var pic = 'pic' + i,
+            cachebust = pl('#' + pic + 'nav').hasClass('dotnavempty') ? '' : '?id=' + Math.floor(Math.random()*1000000000),
+            url = '/listing/picture/' + this.listing.listing_id + '/' + i + cachebust;
+        console.log(url);
+        pl('#' + pic + 'nav').removeClass('dotnavempty');
+        pl('#' + pic).css({ 'background-image': 'url(' + url + ')' });
+    },
     display: function() {
         var self = this,
             firstpic = this.options.editmode ? 'pic1' : undefined,
             numpics = 5,
             slideshowstart = 1,
             pic,
-            url,
             i;
         self.runningSlideshow = false;
         self.numPics = 0;
         for (i = 1; i <= numpics; i++) {
             pic = 'pic' + i;
             if (this.listing[pic]) {
-                url = '/listing/picture/' + this.listing.listing_id + '/' + i;
-                pl('#' + pic + 'nav').removeClass('dotnavempty');
-                pl('#' + pic).css({ 'background-image': 'url(' + url + ')' });
+                self.enableImage(i);
                 if (!firstpic) {
                     firstpic = pic;
                 }
@@ -30,6 +36,7 @@ pl.implement(ImagePanelClass, {
             }
             else if (this.options.editmode) {
                 pl('#' + pic + 'nav').removeClass('dotnavempty');
+                self.numPics++;
             }
         }
         pl('.dotnav').bind('click', function() {
@@ -44,11 +51,13 @@ pl.implement(ImagePanelClass, {
             self.runningSlideshow = false;
             self.advanceRight();
         });
-        if (firstpic) {
-        console.log('foo');
+        if (firstpic && !this.options.editmode) {
             pl('#' + firstpic + 'nav').addClass('dotnavfilled');
             self.runningSlideshow = true;
             setTimeout(function(){ self.advanceSlideshow(); }, 5000);
+        }
+        else { // default highlight first
+            pl('#pic1nav').addClass('dotnavfilled');
         }
     },
 
@@ -70,13 +79,12 @@ pl.implement(ImagePanelClass, {
             newleftpx = newleft + 'px',
             newpicnum = picnum || (Math.floor(Math.abs(newleft) / slidewidth) + 1),
             onboundary = Math.floor(left % slidewidth) === 0;
-        console.log(left, slidewidth, fullwidth, newleft, newpicnum, onboundary);
+        console.log('advanceRight(' + picnum + ')', left, slidewidth, fullwidth, newleft, newpicnum, onboundary);
         if (onboundary) { // prevent in-transition movements
             if (this.options.editmode) {
                 pl('#picnum').text(newpicnum);
-                pl('#picuploadtype').attr({name: 'PIC' + newpicnum});
+                pl('#picuploadfile').attr({name: 'PIC' + newpicnum});
             }
-            pl('#picuploadtype')
             pl('.dotnav').removeClass('dotnavfilled');
             pl('#pic' + newpicnum + 'nav').addClass('dotnavfilled');
             pl('#picslideset').css({left: newleftpx});
