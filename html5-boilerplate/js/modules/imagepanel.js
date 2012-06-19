@@ -1,5 +1,5 @@
 function ImagePanelClass(options) {
-    this.options = options; // set options.editmode to true for an editable panel
+    this.options = options || {}; // set options.editmode to true for an editable panel
 }
 
 pl.implement(ImagePanelClass, {

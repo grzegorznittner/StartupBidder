@@ -675,11 +675,11 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 
 /* submit page preview classes */
 .previewtext { z-index: 1000; position: absolute; background: rgba(0,0,0,0.6); left: 600px; font-size: 52px; color: white; font-weight: bold; padding: 10px 20px 10px 20px; border-radius: 25px;
-                top: 720px;
+                top: 20px;
 }
-.previewtext2 { top: 1480px; }
-.previewiframe { width: 100%; height: 1150px; }
-.previewoverlay { position: absolute; width: 100%; height: 1000px; top: 620px; z-index: 1000; }
+.previewtext2 { top: 780px; }
+.previewiframe { width: 100%; height: 1550px; }
+.previewoverlay { position: absolute; width: 100%; height: 100%; top: 0; left: 0; z-index: 1000; }
 
 /* img */
 .noimage { background: url(../img/noimage_146x146.jpg); border-radius: 3px; }

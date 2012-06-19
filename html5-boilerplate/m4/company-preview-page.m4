@@ -27,6 +27,7 @@ include(footer.m4)
   <script src="js/libs/prevel.min.js"></script>
   <script src="js/modules/base.js"></script>
   <script src="js/modules/companybanner.js"></script>
+  <script src="js/modules/imagepanel.js"></script>
   <script src="js/modules/listing.js"></script>
   <script src="js/modules/tracker.js"></script>
 '

@@ -94,13 +94,6 @@ on the site where it will appear as the latest listing.
 </div> <!-- end main -->
 </div> <!-- end wrap -->
 
-<!-- preview overlay text -->
-<div class="previewtext">PREVIEW</div>
-<div class="previewtext previewtext2">PREVIEW</div>
-
-<!-- preview overlay click disabler -->
-<div class="previewoverlay"></div>
-
 <!-- iframe preview -->
 <iframe class="previewiframe" id="previewiframe" allowtransparency="true" frameborder="0" sandbox="allow-same-origin allow-forms allow-scripts" scrolling="auto" src=""> 
 </iframe> 

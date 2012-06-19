@@ -17,7 +17,11 @@ pl.implement(ListingClass, {
         this.loggedin_profile_id = this.loggedin_profile && this.loggedin_profile.profile_id;
         this.listing_url = window.location.protocol + '//' + window.location.hostname + ':' + window.location.port + '/company_page.html?id=' + this.listing_id;
         this.listing_public_title = 'Startupbidder Listing: ' + this.title;
-    },
+        if (this.preview) {
+            pl('#header').hide();
+            pl('#footer').hide();
+        }
+     },
 
     load: function() {
         var self = this,
@@ -47,18 +51,21 @@ pl.implement(ListingClass, {
         this.displayMap();
         this.displayDocuments();
         this.displayFunding();
-        //this.displaySocial();
+        this.displaySocial();
         this.displayWithdraw();
         this.displayApprove();
         this.displaySendback();
         this.displayFreeze();
+        if (this.preview) {
+            pl('#previewoverlay').show();
+        }
+        pl('#basicswrapper').show();
     },
 
     displayBasics: function() {
         this.displayPics();
         this.displayVideo();
         pl('#summary').text(this.summary || 'Listing summary goes here');
-        pl('#basicswrapper').show();
     },
 
     displayPics: function() {
@@ -67,7 +74,6 @@ pl.implement(ListingClass, {
 
     displayVideo: function() {
         if (this.video) {
-        console.log('here');
             pl('#videopresentation').attr({src: this.video});
             pl('#videowrapper').show();
         }
@@ -167,7 +173,6 @@ pl.implement(ListingClass, {
         this.displayDocumentLink('presentationlink', 'presentationbtn', this.presentation_id);
         this.displayDocumentLink('businessplanlink', 'businessplanbtn', this.business_plan_id);
         this.displayDocumentLink('financialslink', 'financialsbtn', this.financials_id);
-        pl('#documentwrapper').show();
     },
 
     displayFunding: function() {
@@ -203,14 +208,14 @@ pl.implement(ListingClass, {
 
     displaySocial: function() {
         if (this.preview) { // their iframe usage busts during preview
-            pl('#socialsidewrapper').html('<p>Twitter, Facebook, and Google Plus buttons will be displayed here</p>');
+            pl('#socialsidebox').html('<p>Twitter, Facebook, and Google Plus buttons will be displayed here</p>');
+            console.log('here', pl('#socialsidebox'));
         }
         else {
             this.displayTwitter();
             this.displayFacebook();
             this.displayGooglePlus();
         }
-        pl('#socialsidewrapper').show();
     },
 
     displayTwitter: function() {

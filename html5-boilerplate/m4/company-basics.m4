@@ -1,6 +1,12 @@
 `
 <!-- begin basics wrapper -->
 <div class="basicswrapper" id="basicswrapper">
+    <!-- preview overlay click disabler -->
+    <div class="previewoverlay initialhidden" id="previewoverlay">
+        <div class="previewtext">PREVIEW</div>
+        <div class="previewtext previewtext2">PREVIEW</div>
+    </div>
+
     <div class="span-16">
         <div class="boxtitle">SUMMARY</div>
         <div class="boxpanel summarypanel darkgrey">
@@ -35,7 +41,6 @@ include(images-panel.m4)
      
         <div class="boxtitle">DOCUMENTS</div>
         <div class="sidebox documentbox" id="documentbox">
-            <div class="documentwrapper" id="documentwrapper">
                 <span class="doclabel clear">Presentation</span>
                 <span class="formlabelvalue formlink">
                     <div class="span-1 smallinputicon presentationicon"></div>
@@ -57,7 +62,6 @@ include(images-panel.m4)
                         <span class="hoverlink" id="financialsbtn"></span>
                     </a>
                 </span>
-            </div>
         </div>
     
         <div class="boxtitle">LOCATION</div>
@@ -69,9 +73,9 @@ include(images-panel.m4)
                 </a>
             </div>
         </div>
-    
+   
         <div class="boxtitle">SHARE</div>
-        <div class="sidebox socialsidebox">
+        <div class="sidebox socialsidebox" id="socialsidebox">
             <div class="twitterbanner" id="twitterbanner"></div>    
             <div class="facebookbanner" id="facebookbanner"></div>
             <div class="gplusbanner" id="gplusbanner"></div>
