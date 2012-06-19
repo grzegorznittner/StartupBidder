@@ -95,7 +95,7 @@ public class ListingFacade {
 	public static enum UpdateReason {NEW_BID, BID_UPDATE, NEW_COMMENT, DELETE_COMMENT, NEW_MONITOR, DELETE_MONITOR, QUESTION_ANSWERED, NONE};
 	public static final String MEMCACHE_ALL_LISTING_LOCATIONS = "AllListingLocations";
 
-	private final static byte[] JPEG = {(byte)0xff, (byte)0xd8, (byte)0xff, (byte)0xe0};
+	private final static byte[] JPEG = {(byte)0xff, (byte)0xd8 };
 	private final static byte[] GIF = {0x47, 0x49, 0x46, 0x38};
 	private final static byte[] PNG = {(byte)0x89, 0x50, 0x4e, 0x47};
 	
@@ -1644,9 +1644,10 @@ public class ListingFacade {
 	}
 	
 	public String convertLogoToBase64(byte[] logo) {
+		byte[] premagicNumber = ArrayUtils.subarray(logo, 0, 2);
 		byte[] magicNumber = ArrayUtils.subarray(logo, 0, 4);
 		String format = "";
-		if (ArrayUtils.isEquals(magicNumber, JPEG)) {
+		if (ArrayUtils.isEquals(premagicNumber, JPEG)) {
 			format = "image/jpeg";
 		} else if (ArrayUtils.isEquals(magicNumber, GIF)) {
 			format = "image/gif";
@@ -1688,9 +1689,10 @@ public class ListingFacade {
 	}
 
 	public PictureData convertPicture(byte[] picture) {
+		byte[] premagicNumber = ArrayUtils.subarray(picture, 0, 2);
 		byte[] magicNumber = ArrayUtils.subarray(picture, 0, 4);
 		String format = "";
-		if (ArrayUtils.isEquals(magicNumber, JPEG)) {
+		if (ArrayUtils.isEquals(premagicNumber, JPEG)) {
 			format = "image/jpeg";
 		} else if (ArrayUtils.isEquals(magicNumber, GIF)) {
 			format = "image/gif";
