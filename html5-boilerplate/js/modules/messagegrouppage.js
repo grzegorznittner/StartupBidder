@@ -13,6 +13,7 @@ pl.implement(MessageGroupPageClass,{
                 messageList.display(json);
              },
             ajax = new AjaxClass('/user/message_users', 'messagemsg', completeFunc);
+        ajax.setGetData({ max_results: 20 });
         ajax.call();
     }
 });

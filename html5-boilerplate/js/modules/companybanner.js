@@ -146,7 +146,7 @@ pl.implement(CompanyBannerClass, {
             pl('#num_bids').text('');
         }
         if (this.loggedin_profile && this.loggedin_profile_id !== this.profile_id) {
-            pl('#sendmessagelink').attr({href: '/messages-page.html?to_user=' + (this.profile_id || '') }).css({display: 'inline'});
+            pl('#sendmessagelink').attr({href: '/messages-page.html?to_user_id=' + (this.profile_id || '') }).css({display: 'inline'});
         }
         pl('#companynavcontainer').show();
     }

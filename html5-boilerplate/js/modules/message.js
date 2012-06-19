@@ -58,6 +58,7 @@ pl.implement(MessageListClass, {
             message.setEmpty();
             self.messages.push(message);
         }
+        self.more_results_url = self.messages.length > 0 && json.messages_props && json.messages_props.more_results_url;
     },
     display: function(json) {
         var self = this,
@@ -68,6 +69,10 @@ pl.implement(MessageListClass, {
             self.store(json);
         }
         pl('#myusername').text(self.myusername || 'You');
+        if (self.more_results_url) {
+        	console.log('Adding more link');
+        	html += '<div class="showmore hoverlink" id="moreresults"><span class="initialhidden" id="moreresultsurl">' + self.more_results_url + '</span><span id="moreresultsmsg">Earlier messages...</span></div>\n';
+        }
         for (i = 0; i < self.messages.length; i++) {
             message = self.messages[i];
             html += message.makeHtml();
@@ -79,6 +84,70 @@ pl.implement(MessageListClass, {
         }
         self.bindAddBox();
         pl('#messagesend').before(html).show();
+        if (self.more_results_url) {
+        	console.log('Binding more link');
+            self.bindMoreResults();
+        }
+    },
+    bindMoreResults: function() {
+        var self = this;
+        pl('#moreresults').bind({
+            click: function() {
+            	var completeFunc = function(json) {
+		            	var self = this,
+		                jsonlist = json && json.messages ? json.messages : [],
+		                html = '',
+		                message,
+		                i;
+			            self.myusername = json && json.loggedin_profile && json.loggedin_profile.username ? json.loggedin_profile.username : '',
+			            self.otherusername = json && json.other_user_profile && json.other_user_profile.username ? json.other_user_profile.username : '',
+			            self.otheruserprofileid = json && json.other_user_profile && json.other_user_profile.profile_id ? json.other_user_profile.profile_id : '',
+			            self.messages = [];
+			            if (jsonlist.length) {
+			                for (i = jsonlist.length - 1; i >= 0 ; i--) {
+			                    message = new MessageClass(this);
+			                    message.store(jsonlist[i]);
+			                    self.messages.push(message);
+			                }
+			            }
+			            else {
+			                message = new MessageClass(this);
+			                message.setEmpty();
+			                self.messages.push(message);
+			            }
+			            for (i = 0; i < self.messages.length; i++) {
+			                message = self.messages[i];
+			                html += message.makeHtml();
+			            }
+			            self.more_results_url = self.messages.length > 0 && json.messages_props && json.messages_props.more_results_url;
+	                    if (html) {
+                            pl('#moreresults').after(html);
+                        }
+                        if (self.more_results_url) {
+                            pl('#moreresultsurl').text(self.more_results_url);
+                            pl('#moreresultsmsg').text('Earlier messages...');
+                        }
+                        else {
+                            pl('#moreresultsmsg').text('');
+                            pl('#moreresults').removeClass('hoverlink').unbind();
+                        }
+                    },
+                    more_results_url = pl('#moreresultsurl').text(),
+                    ajax,
+                    data,
+                    i;
+                console.log('click called');
+                if (more_results_url) {
+                    ajax = new AjaxClass(more_results_url, 'moreresultsmsg', completeFunc);
+                    ajax.setGetData(data);
+                    ajax.call();
+                }
+                else {
+                    pl('#moreresultsmsg').text('');
+                    pl('#moreresults').removeClass('hoverlink').unbind();
+                }
+            }
+        });
     },
     bindAddBox: function() {
         var self = this;
