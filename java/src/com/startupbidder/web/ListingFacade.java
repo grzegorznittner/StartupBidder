@@ -153,10 +153,6 @@ public class ListingFacade {
 			log.log(Level.WARNING, "Only logged in user can create listing", new Exception("Not logged in"));
 			result.setErrorCode(ErrorCodes.NOT_LOGGED_IN);
 			result.setErrorMessage("Only logged in user can create listing");
-		} if (loggedInUser.getEditedListing() != null) {
-			log.log(Level.WARNING, "User is already editing listing");
-			result.setErrorCode(ErrorCodes.APPLICATION_ERROR);
-			result.setErrorMessage("User is already editing listing");
 		} else {
 			Listing l = new Listing();
 			l.state = Listing.State.NEW;
