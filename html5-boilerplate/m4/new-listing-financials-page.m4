@@ -45,7 +45,7 @@ include(header.m4)
 <!-- end banner -->
 
 <!-- left column -->
-<div class="span-16">
+<div class="span-16 initialhidden" id="newlistingfinancialswrapper">
 
     <div class="boxtitle">
         <span class="titletext">ASKING FOR INVESTMENT?</span>
@@ -62,16 +62,16 @@ include(header.m4)
     </div>
     <div class="boxpanel">
         <div class="formitem clear">
-            <span class="inputlabel">ALLOW BIDS</span>
-            <span class="inputfield">
-                <input class="checkbox inputcheckbox" type="checkbox" checked="checked" value="true" name="asked_fund" id="asked_fund"></input>
+            <label class="inputlabel" for="asked_fund">ALLOW BIDS</label>
+            <span class="inputcheckbox">
+                <div id="asked_fund"></div>
             </span>
             <span class="inputhelp inputmsg">Investors can place bids <span class="newlistingaskmsg" id="newlistingaskmsg">&nbsp;</span></span>
         </div>
     </div>
 
     <div class="offerwrapper offerwrapperdisplay" id="offerwrapper">
-    <div class="boxtitle">
+    <div class="boxtitle offertitle">
         <span class="titletext">THE OFFER</span>
         <div class="titleinfobtn"></div>
         <div class="titleinfo">
@@ -88,21 +88,33 @@ include(header.m4)
             </p>
         </div>
     </div>
-    <div class="boxpanel offerbox" id="offerpanel">
-        <div class="formitem">
-            <span class="inputlabel">ASKING</span>
+    <div class="boxpanel offerpanel" id="offerpanel">
+        <div class="formitem sideinfoitem clear">
+            <label class="inputlabel" for="suggested_amt">ASKING</label>
             <span class="inputfield">
                 <input class="text inputmedtext" type="text" name="suggested_amt" id="suggested_amt" maxlength="8"></input>
             </span>
+            <p class="sideinfo">
+                <label class="sideinfoheader">Asking</label>
+                <br />
+                The amount of money you want for investment, between $5,000 and $500,000 USD.  This is only a suggestion,
+                as the investor may make their own bid, which you may accept, reject, or counter.
+            </p>
             <span class="inputicon">
                 <div id="suggested_amticon"></div>
             </span>
         </div>
-        <div class="formitem clear">
-            <span class="inputlabel">FOR</span>
+        <div class="formitem sideinfoitem clear">
+            <label class="inputlabel" for="suggested_pct">FOR</label>
             <span class="inputfield">
-                <input class="text inputmedtext" type="text" name="suggested_pct" id="suggested_pct" maxlength="3"></input>
+                <input class="text inputmedtext" type="text" name="suggested_pct" id="suggested_pct" maxlength="3"></input>%
             </span>
+            <p class="sideinfo">
+                <label class="sideinfoheader">For</label>
+                <br />
+                For a company, how much fully diluted post-money common equity you are offering, from 5% to 50%.
+                For project investments, the royalty on gross worldwide sales for the investor.
+            </p>
             <span class="inputicon">
                 <div id="suggested_pcticon"></div>
             </span>
@@ -296,14 +308,11 @@ include(header.m4)
 <!-- right column -->
 <div class="span-8 last">
 
+<!--
     <div class="boxtitle clear">TIPS</div>
     <div class="sidebox">
-<p>ASKING - amount of money you want for investment, between $5,000 and $500,000 USD</p>
-<p>FOR - what percentage of common equity you are selling in exchange for the investment, between 5% and 50%</p>
-<p>PRESENTATION - your slide deck presentation to investors, a Powerpoint or PDF document, keep it short</p>
-<p>BUSINESS PLAN - your business plan, a Word or PDF document that describes your business in detail</p>
-<p>FINANCIALS - your most current financial statements, if you have no operating history, then list current capital and runway</p>
     </div>
+-->
 
 </div>
 <!-- end right column -->

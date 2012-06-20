@@ -245,7 +245,7 @@ pl.implement(NewListingBaseClass, {
         };
     },
     hideAllInfo: function() {
-        pl('.titleinfo, .bmcinfo, .ipinfo').removeClass('titleinfodisplay').removeClass('bmcinfodisplay').removeClass('bmcinfodisplayvaluepropositions').removeClass('ipinfodisplay');
+        pl('.titleinfo, .sideinfo, .bmcinfo, .ipinfo').removeClass('titleinfodisplay').removeClass('sideinfodisplay').removeClass('bmcinfodisplay').removeClass('bmcinfodisplayvaluepropositions').removeClass('ipinfodisplay');
     },
     bindTitleInfo: function() {
         var self = this;
@@ -263,6 +263,19 @@ pl.implement(NewListingBaseClass, {
         pl('.titleinfo').bind('click', function() {
             self.hideAllInfo();
         });
+    },
+    bindInfoButtons: function() {
+        var self = this;
+        pl('input.text, select.text, textarea.inputwidetext').bind({
+            focus: function(e) {
+                var evt = new EventClass(e),
+                    infoel = evt.target().parentNode.nextSibling.nextSibling;
+                self.hideAllInfo();
+                pl(infoel).addClass('sideinfodisplay');
+            },
+            blur: self.hideAllInfo
+        });
+        pl('.sideinfo').bind('click', self.hideAllInfo);
     }
 });
 

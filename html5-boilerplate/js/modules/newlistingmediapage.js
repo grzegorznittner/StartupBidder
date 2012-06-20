@@ -48,7 +48,7 @@ pl.implement(NewListingMediaClass, {
             pl('#videoiframe').attr({src: url});
         }
         else {
-            pl('#videoiframe').addClass('noimage');
+            pl('#videoiframe').addClass('novideo');
         }
     },
     bindEvents: function() {

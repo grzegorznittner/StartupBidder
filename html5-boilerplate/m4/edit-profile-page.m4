@@ -52,8 +52,8 @@ include(header.m4)
         </div>
         <div class="formitem clear">
             <span class="inputlabel">INVESTOR</span>
-            <span class="inputfield">
-                <input class="checkbox inputcheckbox" type="checkbox" name="investor" id="investor"></input>
+            <span class="inputcheckbox">
+                <div id="investor"></div>
             </span>
             <span class="inputhelp">Accredited investor in your jurisdiction</span>
         </div>
@@ -101,15 +101,15 @@ include(header.m4)
     <div class="boxpanel">
         <div class="formitem clear">
             <span class="inputlabel">INVESTOR</span>
-            <span class="inputfield">
-                <input class="checkbox inputcheckbox" type="checkbox" name="investor" id="investor"></input>
+            <span class="inputcheckbox">
+                <div class="investor"></div>
             </span>
             <span class="inputhelp">Accredited investor in your jurisdiction</span>
         </div>
         <div class="formitem clear">
             <span class="inputlabel">NOTIFY</span>
-            <span class="inputfield">
-                <input class="checkbox inputcheckbox" type="checkbox" name="notifyenabled" id="notifyenabled"></input>
+            <span class="inputcheckbox">
+                <div class="notifyenabled"></div>
             </span>
             <span class="inputhelp">Receive a copy of each notification via email</span>
         </div>
