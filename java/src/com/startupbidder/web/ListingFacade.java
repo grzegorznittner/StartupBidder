@@ -29,7 +29,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.joda.time.DateMidnight;
@@ -154,6 +153,10 @@ public class ListingFacade {
 			log.log(Level.WARNING, "Only logged in user can create listing", new Exception("Not logged in"));
 			result.setErrorCode(ErrorCodes.NOT_LOGGED_IN);
 			result.setErrorMessage("Only logged in user can create listing");
+		} if (loggedInUser.getEditedListing() != null) {
+			log.log(Level.WARNING, "User is already editing listing");
+			result.setErrorCode(ErrorCodes.APPLICATION_ERROR);
+			result.setErrorMessage("User is already editing listing");
 		} else {
 			Listing l = new Listing();
 			l.state = Listing.State.NEW;
@@ -166,6 +169,7 @@ public class ListingFacade {
 			l.created = new Date();
 			ListingVO newListing = DtoToVoConverter.convert(getDAO().createListing(l));
 			loggedInUser.setEditedListing(newListing.getId());
+			loggedInUser.setEditedStatus(Listing.State.NEW.toString());
 			
 			// at that stage listing is not yet active so there is no point of updating statistics
 			Monitor monitor = getDAO().getListingMonitor(loggedInUser.toKeyId(), newListing.toKeyId());
@@ -548,7 +552,7 @@ public class ListingFacade {
 		
 		ListingVO forUpdate = DtoToVoConverter.convert(dbListing);
 		Listing updatedListing = getDAO().updateListingStateAndDates(VoToModelConverter.convert(forUpdate));
-		if (updatedListing != null) {
+		if (updatedListing != null && updatedListing.state == Listing.State.ACTIVE) {
 			loggedInUser.setEditedListing(null);
 			loggedInUser.setEditedStatus(null);
 			scheduleUpdateOfListingStatistics(updatedListing.getWebKey(), UpdateReason.NONE);
@@ -605,6 +609,8 @@ public class ListingFacade {
 				}
 				scheduleUpdateOfListingStatistics(updatedListing.getWebKey(), UpdateReason.NONE);
 				NotificationFacade.instance().scheduleListingStateNotification(updatedListing);
+			} else {
+				loggedInUser.setEditedStatus(Listing.State.POSTED.toString());
 			}
 			ListingVO toReturn = DtoToVoConverter.convert(updatedListing);
 			Monitor monitor = getDAO().getListingMonitor(loggedInUser.toKeyId(), toReturn.toKeyId());
@@ -788,6 +794,8 @@ public class ListingFacade {
 				returnValue.setErrorMessage("Listing not updated");
 				returnValue.setErrorCode(ErrorCodes.DATASTORE_ERROR);
 			} else {
+				loggedInUser.setEditedListing(updatedListing.getWebKey());
+				loggedInUser.setEditedStatus(Listing.State.NEW.toString());
 				NotificationFacade.instance().scheduleListingStateNotification(updatedListing);
 				if (message == null) {
 					message = "Your listing has not been accepted. Please correct it.";
