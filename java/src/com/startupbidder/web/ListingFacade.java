@@ -1654,7 +1654,7 @@ public class ListingFacade {
 		} else if (ArrayUtils.isEquals(magicNumber, PNG)) {
 			format = "image/png";
 		} else {
-			log.warning("Image not recognized as JPG, GIF or PNG. Magic number was: " + ToStringBuilder.reflectionToString(magicNumber));
+			log.warning("Image not recognized as JPG, GIF or PNG. Magic number was: " + toHexString(magicNumber));
 			return null;
 		}
 		ImagesService imagesService = ImagesServiceFactory.getImagesService();
@@ -1699,7 +1699,7 @@ public class ListingFacade {
 		} else if (ArrayUtils.isEquals(magicNumber, PNG)) {
 			format = "image/png";
 		} else {
-			log.warning("Image not recognized as JPG, GIF or PNG. Magic number was: " + ToStringBuilder.reflectionToString(magicNumber));
+			log.warning("Image not recognized as JPG, GIF or PNG. Magic number was: " + toHexString(magicNumber));
 			return null;
 		}
 		ImagesService imagesService = ImagesServiceFactory.getImagesService();
@@ -1716,6 +1716,13 @@ public class ListingFacade {
     	log.info("Resized image: " + newImage.getWidth() + " x " + newImage.getHeight());
         byte[] newImageData = newImage.getImageData();
 		return new PictureData(format, newImageData);
+	}
+
+	private String toHexString(byte[] magicNumber) {
+		return "0x" + Integer.toHexString((0xF0 & magicNumber[0]) >>> 4) + Integer.toHexString(0x0F & magicNumber[0])
+				+ " 0x" + Integer.toHexString((0xF0 & magicNumber[1]) >>> 4) + Integer.toHexString(0x0F & magicNumber[1])
+				+ " 0x" + Integer.toHexString((0xF0 & magicNumber[2]) >>> 4) + Integer.toHexString(0x0F & magicNumber[2])
+				+ " 0x" + Integer.toHexString((0xF0 & magicNumber[3]) >>> 4) + Integer.toHexString(0x0F & magicNumber[3]);
 	}
 
 	public ListingAndUserVO deleteListingFile(UserVO loggedInUser, String listingId, ListingDoc.Type docType) {
