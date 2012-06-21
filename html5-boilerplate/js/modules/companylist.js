@@ -27,7 +27,14 @@ pl.implement(CompanyTileClass, {
         this.categoryUC = json.category ? json.category.toUpperCase() : 'OTHER';
         this.posted = json.posted_date ? DateClass.prototype.format(json.posted_date) : 'not posted';
         this.name = json.title || 'No Company Name';
-        this.brief_address = json.brief_address || 'No Address';
+        this.brief_address = json.brief_address
+            ? '<a class="hoverlink" href="/main-page.html?type=location&val=' + encodeURIComponent(json.brief_address) + '">'
+                + '<div class="locicon"></div><span class="loctext">' + json.brief_address + '</span></a>'
+            : '<span class="loctext">No Address</span>';
+        this.brief_address_inp = json.brief_address
+            ? '<a class="hoverlink" href="/main-page.html?type=location&val=' + encodeURIComponent(json.brief_address) + '">'
+                + '<img src="../img/icons/location_16x16.gif" class="lociconinp"></img>&nbsp;<span class="loctextinp">' + json.brief_address + '</span></a>'
+            : '<span class="loctext">No Address</span>';
         this.address = json.address || 'No Address';
         if (this.status && json.asked_fund && json.suggested_amt && json.suggested_pct) {
             this.suggested_amt = CurrencyClass.prototype.format(json.suggested_amt);
@@ -46,6 +53,7 @@ pl.implement(CompanyTileClass, {
             this.finance_line = '';
         }
         this.mantra = json.mantra || 'No Mantra';
+        this.mantraplussuggest = this.mantra + '<br/>' + this.suggested_text;
         this.founders = json.founders || 'No Founders';
         this.foundertext = json.founders ? 'Founded by ' + json.founders : '';
         if (this.status === 'new') {
@@ -70,11 +78,13 @@ pl.implement(CompanyTileClass, {
 ' + this.openanchor + '\
 <div class="tileimg hoverlink" style="' + this.imgStyle + '"></div>\
 ' + this.closeanchor + '\
+<!--\
 <div class="tiledays"></div>\
 <div class="tiledaystext">' + this.daystext + '</div>\
 <div class="tiletype"></div>\
 <div class="tiletypetext">' + this.categoryUC + '</div>\
 <div class="tilepoints"></div>\
+-->\
 <div class="tilepointstext">\
     <div class="tileposted">' + this.suggested_text + '</div>\
 </div>\
@@ -82,7 +92,7 @@ pl.implement(CompanyTileClass, {
 ' + this.openanchor + '\
     <span class="tilecompany hoverlink">' + this.name + '</span><br/>\
 ' + this.closeanchor + '\
-    <span class="tileloc">' + this.brief_address + '</span><br/>\
+    <span class="tileloc">' + this.brief_address_inp + '</span><br/>\
     <span class="tiledetails">' + this.mantra + '</span>\
 </p>\
 </div>\
@@ -119,8 +129,8 @@ pl.implement(CompanyTileClass, {
 ' + this.openanchor + '\
     <div class="companybannertitle hoverlink">' + this.name + '</div>\
 ' + this.closeanchor + '\
-    <div class="companybannertextgrey">\
-        ' + (this.category==='Other' ? 'A' : (this.category.match(/^[AEIOU]/) ? 'An '+this.category : 'A '+this.category)) +  ' company in ' + this.brief_address + '\
+    <div class="companybannertextgrey companybannermapline">\
+        <span class="loctext">' + (this.category==='Other' ? 'A' : (this.category.match(/^[AEIOU]/) ? 'An '+this.category : 'A '+this.category)) +  ' company in&nbsp;</span>' + this.brief_address + '\
     </div>\
     <div class="companybannertextgrey">' + this.foundertext + '</div>\
     <div class="companybannertextgrey">' + this.finance_line + '</div>\
@@ -133,10 +143,12 @@ pl.implement(CompanyTileClass, {
 <div class="companyhalftile' + (lastClass?' companyhalftilelast '+lastClass:'') + '">\
 ' + this.openanchor + '\
     <div class="companyhalflogo tileimg noimage hoverlink" style="' + this.imgStyle + '"></div>\
+<!--\
     <div class="halftiledays"></div>\
     <div class="halftiledaystext">' + this.daystext + '</div>\
     <div class="halftiletype"></div>\
     <div class="halftiletypetext">' + this.suggested_text + '</div>\
+-->\
 ' + this.closeanchor + '\
 ' + this.openanchor + '\
     <div class="companyhalftitle hoverlink">' + this.name + '</div>\
@@ -147,7 +159,7 @@ pl.implement(CompanyTileClass, {
     <div class="companyhalftext">\
         ' + this.brief_address + '\
     </div>\
-    <div class="companyhalfmantra">' + this.mantra + '</div>\
+    <div class="companyhalfmantra">' + this.mantraplussuggest + '</div>\
 </div>\
 ';
     },
@@ -217,7 +229,7 @@ pl.implement(CompanyListClass, {
             html += '<div class="showmore hoverlink" id="moreresults"><span class="initialhidden" id="moreresultsurl">' + more_results_url + '</span><span id="moreresultsmsg">More...</span></div>\n';
         }
         else if (seeall) {
-            html += '<div class="showmore"><a href="' + this.options.seeall + '">See all</a></div>\n';
+            html += '<div class="showmore"><a href="' + this.options.seeall + '">See all...</a></div>\n';
         }
         pl('#'+this.options.companydiv).html(html);
         if (more_results_url) {

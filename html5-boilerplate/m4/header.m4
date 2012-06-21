@@ -1,12 +1,14 @@
 `
+<!--
 <div class="topheader" id="topheader">
     <div class="container topheaderline" id="topheaderline"></div>
 </div>
+-->
 
 <div class="header" id="header">
   <div class="container headerrow">
     <div class="span-5 headerrow hoverlink">
-      <a href="discover-page.html"><span class="logotextblue">startup</span><span class="logotextgrey">bidder</span></a>
+      <a href="discover-page.html"><div class="startupbidderlogo headerlogo"></div></a>
     </div>
     <div class="span-9 headerrow">
       <a href="discover-page.html"><span class="headerlink hoverlink headerlinknoborder">Discover</span></a>
@@ -31,10 +33,14 @@
                 <div class="headericon headerlogout" title="Logout"></div>
             </a>
             <a href="/notifications-page.html">
-                <div class="headericon headernotifications" title="Notifications"></div>
+                <div class="headericon headernotifications" title="Notifications">
+                    <div class="headernum" id="headernumnotifications"></div>
+                </div>
             </a>
             <a href="/message-group-page.html">
-                <div class="headericon headermessages" title="Messages"></div>
+                <div class="headericon headermessages" title="Messages">
+                    <div class="headernum" id="headernummessages"></div>
+                </div>
             </a>
             <a href="/profile-page.html">
                 <span class="headerlink hoverlink headerlinkright" id="headerusername" title="Profile">You</span>

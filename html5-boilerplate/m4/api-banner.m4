@@ -1,5 +1,5 @@
 `
-<div class="banner crystalbluebg pull-15px">
+<div class="banner pull-15px">
     <span class="bannertext span-16 push-15px">
         <div id="welcometitle">API Documentation</div>
         <div class="welcometext" id="welcometext">
