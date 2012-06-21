@@ -21,8 +21,8 @@
         <div>
             <a id="loginlink" href="">
                 <div class="headericon headersignin"></div>
+                <span class="headerlink headerlinkright">Sign In with</span>
             </a>
-            <span class="headerlink headerlinkright">Sign In with</span>
         </div>
     </div>
 

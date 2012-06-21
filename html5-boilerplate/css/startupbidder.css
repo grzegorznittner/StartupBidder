@@ -18,11 +18,11 @@ body.nearby-page > #wrap > #main > div.container > div.nearbywrapper { height: 1
 .clearfix { display: inline-block; }
 * html .clearfix { height: 1%; }
 .clearfix { display: block; }
-.footercontainer { border-top: 2px solid grey; padding-top: 10px; }
-.footercol { border-right: 2px solid grey; padding-bottom: 5px; height: 130px; font-size: 14px; }
+.footercontainer { border-top: 2px solid #666; padding-top: 10px; }
+.footercol { border-right: 2px solid #666; padding-bottom: 5px; height: 130px; font-size: 14px; }
 .footercol a { display: block; }
 .footertext { position: relative; font-weight: bold; font-size: 12px; top: 10px; }
-.footerlink { font-size: 14px; }
+.footerlink { font-size: 12px; }
 .copyrighttext { font-size: 12px; position: absolute; right: 0; bottom: 0; }
 .attention { color: #8A1F11 !important; }
 .errorcolor { color: #8A1F11 !important; }
@@ -49,6 +49,7 @@ body { font-size: 14px; font-weight: normal; }
 a:link, a:visited { text-decoration: none; }
 a:focus, a:hover { cursor: pointer; }
 .headerrow a:hover { cursor: pointer; }
+.headerlink:hover { cursor: pointer; }
 .hoverlink:hover { cursor: pointer; }
 .inputbutton:hover { cursor: pointer; }
 .nohover:hover { cursor: default; }
@@ -64,9 +65,11 @@ a:focus, a:hover { cursor: pointer; }
 .darkgreybg { background: #49515a; }
 .aquamarine { color: #49a389; }
 .white { color: #ffffff; }
-.uneditabletext { color: #49515a; }
 
 /* font colors */
+.white,
+    .welcometitle, .welcometext, .welcometext a
+    { color: white; }
 .midgrey,
     .headertext, .headerlink
     { color: #cccccc }
@@ -79,9 +82,12 @@ a:focus, a:hover { cursor: pointer; }
     .sideboxlistname,
     .companyhalfmantra, .companyhalftext,
     .loctext, .loctextinp,
-    .bannertextsmall, .welcometext, #welcometitle, .sideboxbutton, .welcometext a, .showmore a,
+    .bannertextsmall, .sideboxbutton, .showmore a,
     .footerlink,
-    .boxpanel p
+    .boxpanel p,
+    .uneditabletext, .addresstext,
+    .doclabel, .aboutlabel,
+    .companynav, .companynavselected, .companybannerlink
     { color: #666666; }
 .darkblue,
     .tilecompany, .companybannertitle
@@ -119,8 +125,8 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .headersignintext { float: right; border-left: none; padding-right: 0px; }
 
 /* banner styles */
-.banner { width: 980px; height: 80px; margin-top: 10px; }
-.bannertext { font-size: 30px; font-weight: bold; top: 15px; position: relative; left: 15px; }
+.banner { width: 980px; height: 200px; margin-top: 10px; }
+.bannertext { font-size: 30px; font-weight: bold; top: 5px; height: 185px; }
 .bannersmall { width: 980px; height: 50px; margin-top: 10px; }
 .bannertextsmall { font-size: 30px; font-weight: bold; }
 .follow { top: 33px; position: relative; }
@@ -132,7 +138,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .pull-15px { left: -15px; position: relative; }
 .push-15px { left: 15px; position: relative; }
 .push-20px { left: 20px; position: relative; }
-.welcometext { font-size: 14px; font-weight: bold; }
+.welcometext { font-size: 16px; font-weight: bold; position: absolute; bottom: 0; right: 0; }
 /* .welcometext a { font-weight: bold; } */
 .socialsidebox { height: 80px; position: relative; }
 .socialbanner { height: 80px; position: relative; }
@@ -142,14 +148,14 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .facebookbanner div span iframe { height: 28px !important; }
 
 /* company banner styles */
-.companyheader { width: 100%; height: 150px; background:white; border-bottom: 2px solid grey; }
+.companyheader { width: 100%; height: 150px; border-bottom: 2px solid #666; }
 .companybanner { height: 150px; position: relative; }
 .companybannertile { height: 150px; width: 626px; position: relative; overflow: hidden; margin-bottom: 10px; }
 .companybannertilenoborder { height:150px;overflow:hidden;position:relative;top:-9px; }
 .companybannertitle { font-size: 26px; font-weight: bold; }
 .companybannertext { font-size: 14px; font-weight: bold; }
 .companybannertextlink { font-size: 14px; font-weight: bold; margin-left: 4px; }
-.companybannerlink { float: left; }
+.companybannerlink { float: left; margin-right: 5px; }
 .companybannertextgrey { font-size: 14px; width: 830px; }
 .companybannermapline { height: 21px; }
 .companybannerlogo { margin-top: 2px; width: 146px; height: 146px; margin-right: 10px; margin-left: 2px; float: left; }
@@ -159,7 +165,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .companynavcontainer { position: absolute; bottom:0; right: 0; height: 21px; }
 .companynav {
     float: left; padding: 0px 5px; margin-right: 10px; text-align: center; height: 19px;
-    font-size: 14px; font-weight: bold; color: grey;
+    font-size: 14px; font-weight: bold;
     border-radius: 5px 5px 0 0;
     border: 2px solid white;
     border-bottom: 0;
@@ -168,9 +174,8 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .companynavselected {
     background: #f2f2f2;
     border-radius: 5px 5px 0 0;
-    border: 2px solid grey;
+    border: 2px solid #666;
     border-bottom: 0;
-    color: black;
     height: 21px;
 }
 
@@ -256,7 +261,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .infowindow { font-weight: bold; font-size: 12px; line-height: 16px; }
 .infotitle { font-size: 20px; line-height: 20px; }
 /* .infomantra { color: #4083a9; } */
-.infomantra { color: grey; }
+.infomantra { color: #666; }
 .infolabel { font-weight: normal; }
 
 /* notification styles */
@@ -317,7 +322,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .companytitle { margin-right: 10px; }
 .profilebox { height: 146px; }
 .profileboxtitle { position: relative; }
-.profiletext { color: grey; }
+.profiletext { color: #666; }
 .formfull { float: left; height: 36px; }
 .formcol1 { width: 301px; padding-left: 5px; height: 63px; }
 .formcol2 { width: 306px; padding-top: 15px; }
@@ -353,8 +358,8 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .pctwide { width: 49px !important; }
 .inputtextareatwoline { height: 35px; overflow: hidden; overflow-x: hidden; overflow-y: auto; }
 .inputgooglesignin { float: left; margin-right: 10px; }
-.aboutlabel { float: left; margin-right: 10px; text-align: right; width: 106px; color: #49515a; font-weight: bold; }
-.doclabel { float: left; margin-right: 10px; text-align: right; width: 106px; color: #49515a; font-weight: bold; margin-top: 10px; }
+.aboutlabel { float: left; margin-right: 10px; text-align: right; width: 106px; font-weight: bold; }
+.doclabel { float: left; margin-right: 10px; text-align: right; width: 106px; font-weight: bold; margin-top: 10px; }
 .bidformtext { padding-top: 10px; font-weight: bold; }
 .bidvallabel { float: left; margin-right: 10px; width: 120px; padding-top: 3px; margin-left: 10px; font-weight: bold; }
 .bidformitem { float: left; }
@@ -579,7 +584,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .messagereplymsg { position: absolute; bottom: 0; left: 150px; }
 .messagereplyline { min-height: 100px; position: relative; }
 .addcommentbox { min-height: 100px; }
-.sideboxdate { font-size: 10px; color: grey; }
+.sideboxdate { font-size: 10px; color: #666; }
 .sideboxlisting { font-size: 10px; }
 .sideboxmap { width: 302px; height: 302px; }
 .orderbook { float: left; margin-right: 10px; }
@@ -625,7 +630,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .deactivatemsg { display: none; font-weight: bold; }
 .deactivatecancelbtn { display: none; margin-top: 10px; }
 .mapaddresstext { font-weight: bold; }
-.addresstext { font-weight: bold; color: gray; }
+.addresstext { font-weight: bold; }
 .summarypanel { min-height: 130px; }
 .sidebox, .askingbox { min-height: 21px; }
 .showmore { float: right; margin-right: 10px; font-weight: bold; margin-bottom: 10px; }
@@ -723,8 +728,8 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .groovepaper,
     .tile, .companybannertile, .companyhalftile, .boxpanel,
     .bmcinfo, .ipinfo, .tileinfo, .sideinfo, .bmcborder,
-    .bmcinfodisplay, .bmcinfodisplayvaluepropositions, .titleinfodisplay, qainfodisplay, .sideinfodisplay,
-    .banner
+    .bmcinfodisplay, .bmcinfodisplayvaluepropositions, .titleinfodisplay, .qainfodisplay, .sideinfodisplay,
+    .companyheader
     { background: url(../img/groovepaper.png) repeat; }
 .brushed_alu,
     body
@@ -737,6 +742,9 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
     .inputbutton, .smallinputbutton, .sideboxselected,
     .buttonbg, .smallbuttonbg
     { background: url(../img/light_alu.png) repeat; }
+.citynight2,
+    .banner
+    { background: url(../img/citynight2.jpg); background-position: 0px -350px; }
 
 /* BMC */
 /*
