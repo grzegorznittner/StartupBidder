@@ -1313,6 +1313,8 @@ public class ListingFacade {
 			} else {
 				log.info("Listing not added to results, listing: " + listing);
 			}
+		}
+		if (loggedInUser != null) {
 			listingsList.setUser(new UserBasicVO(loggedInUser));
 		}
 		listingsList.setListings(listings);

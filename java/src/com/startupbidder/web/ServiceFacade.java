@@ -318,8 +318,7 @@ public class ServiceFacade {
 		Listing listing = getDAO().getListing(BaseVO.toKeyId(listingId));
 		if (loggedInUser == null) {
 			result.setQuestionAnswers(DtoToVoConverter.convertQuestionAnswers(getDAO().getQuestionAnswers(listing, listProperties)));
-		}
-		if (loggedInUser.toKeyId() == listing.owner.getId()) {
+		} else if (loggedInUser.toKeyId() == listing.owner.getId()) {
 			result.setQuestionAnswers(DtoToVoConverter.convertQuestionAnswers(getDAO().getQuestionAnswersForListingOwner(listing, listProperties)));
 		} else {
 			result.setQuestionAnswers(DtoToVoConverter.convertQuestionAnswers(
