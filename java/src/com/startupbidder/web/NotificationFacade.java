@@ -275,11 +275,13 @@ public class NotificationFacade {
 		Listing listing = getListingDAO().getListing(bid.listing.getId());
 		SBUser listingOwner = getUserDAO().getUser(listing.owner.getString());
 		SBUser toUser = getUserDAO().getUser(bid.userB.getString());
+		SBUser investor = getUserDAO().getUser(bid.userA.equals(listing.owner) ? bid.userB.getString() : bid.userA.getString());
 		
 		Notification notification = new Notification(listing, listingOwner);
 		notification.user = toUser.getKey();
 		notification.userEmail = toUser.email;
 		notification.userNickname = toUser.nickname;
+		notification.investor = investor.getKey();
 		switch (bid.type) {
 		case INVESTOR_POST:
 			notification.type = Notification.Type.NEW_BID_FOR_YOUR_LISTING;

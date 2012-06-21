@@ -56,6 +56,7 @@ public class Notification extends BaseObject<Notification> {
     public String userNickname;
 	public String userEmail;
 	public String fromUserNickname;
+	public Key<SBUser> investor;
 	@Indexed public Type type;
 		
 	@Indexed public Key<Listing> listing;
@@ -107,7 +108,12 @@ public class Notification extends BaseObject<Notification> {
 		case YOU_PAID_BID:
 		case YOU_ACCEPTED_BID:
 			if (listingOwnerUser.getId() == user.getId()) {
-				link = "/company-owner-investor-bids-page.html?id=" + this.listing.getString();
+				if (this.investor != null) {
+					link = "/company-owner-investor-bids-page.html?id=" + this.listing.getString() + "&investor_id=" + this.investor.getString();
+				} else {
+					// workaround for old notifications without investor field
+					link = "/company-owner-bids-page.html?id=" + this.listing.getString();
+				}
 			} else {
 				link = "/company-investor-bids-page.html?id=" + this.listing.getString();
 			}
