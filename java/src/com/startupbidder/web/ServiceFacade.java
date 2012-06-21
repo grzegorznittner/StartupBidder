@@ -267,6 +267,9 @@ public class ServiceFacade {
 		}
 		log.info("User " + loggedInUser.getNickname() + " is asking question about listing '" + listing.name + "' onwed by user " + listingOwner.nickname);
 		QuestionAnswer qa = getDAO().askListingOwner(fromUser, listing, text);
+		if (qa != null) {
+			setListingMonitor(loggedInUser, listingId);
+		}
 		NotificationFacade.instance().scheduleQANotification(qa);
 		return DtoToVoConverter.convert(qa);
 	}

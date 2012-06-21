@@ -1,9 +1,7 @@
 package com.startupbidder.web.servlets;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -12,7 +10,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.io.FileUtils;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
@@ -63,11 +60,17 @@ public class SetupServlet extends HttpServlet {
 			if (currentUser == null) {
 				currentUser = UserMgmtFacade.instance().createUser(user);
 			}
-			//if (!currentUser.isAdmin()) {
-			//	out.println("<p>You're not authorized to use setup page! Only Admin users can access this page! </p>");
-			//	return;
-			//}
+			currentUser.setAdmin(userService.isUserAdmin());
+			if (!currentUser.isAdmin()) {
+				out.println("<p>You're not authorized to use setup page! Only Admin users can access this page! </p>");
+				return;
+			}
 
+			out.println("<h1>Migration</h1>");
+			
+			out.println("<form method=\"POST\" action=\"/system/migrate201205101249_to_20120620.html\">"
+					+ "<input type=\"submit\" value=\"Migrate version 201205101249 to 20120620xxxxxx\"/></form>");
+			
             out.println("<h1>Mock Data</h1>");
 
             out.println("Mock data files will be fetched from: " + new MockDataBuilder().getTestDataPath() + "</br>");

@@ -83,8 +83,14 @@ public abstract class ModelDrivenController {
 			}
 			Object model = getModel();
 			if (model instanceof BaseResultVO) {
-				String appHost = SystemProperty.environment.value() == SystemProperty.Environment.Value.Development ?
-						"http://localhost:" + request.getLocalPort() : "http://www.startupbidder.com";
+				String appHostName = request.getServerName();
+				int appPortNumber = request.getServerPort();
+				String appHost = null;
+				if (SystemProperty.environment.value() == SystemProperty.Environment.Value.Development) {
+					appHost = "http://localhost:" + request.getLocalPort();
+				} else {
+					appHost = "http://" + (appPortNumber != 80 ? appHostName + ":" + appPortNumber : appHostName);
+				}
 				if (loggedInUser != null) {
 					((BaseResultVO) model).setLoggedUser(loggedInUser);
 					((BaseResultVO) model).setLogoutUrl(userService.createLogoutURL(appHost));

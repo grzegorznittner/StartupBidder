@@ -105,6 +105,10 @@ public class BidFacade {
 		log.info("User '" + investor.nickname + "' is making '" + bidType + "' for listing '" + listing.name + "' owned by '" + owner.nickname + "'");
 		Bid bid = getDAO().makeBid(shorts, listing, owner, investor, bidType, amount, percentage, text);
 		NotificationFacade.instance().scheduleBidNotification(bid);
+		if (bid != null) {
+			ServiceFacade.instance().setListingMonitor(loggedInUser, listingId);
+		}
+		
 		List<BidVO> bids = new ArrayList<BidVO>();
 		bids.add(DtoToVoConverter.convert(bid));
 		result.setBids(bids);

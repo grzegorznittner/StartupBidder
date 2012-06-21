@@ -15,6 +15,7 @@ import org.joda.time.format.DateTimeFormatter;
 
 import com.google.gdata.client.docs.DocsService;
 import com.google.gdata.util.AuthenticationException;
+import com.startupbidder.dao.DatastoreMigration;
 import com.startupbidder.dao.MockDataBuilder;
 import com.startupbidder.datamodel.SystemProperty;
 import com.startupbidder.vo.SystemPropertyVO;
@@ -56,9 +57,21 @@ public class SystemController extends ModelDrivenController {
                 return importStartuplyData(request);
 			} else if("export-datastore".equalsIgnoreCase(getCommand(1))) {
 				return exportDatastore(request);
+			} else if("migrate201205101249_to_20120620".equalsIgnoreCase(getCommand(1))) {
+				return migrate201205101249_to_20120620(request);
 			}
 		}
 		return null;
+	}
+
+	private HttpHeaders migrate201205101249_to_20120620(HttpServletRequest request) {
+		HttpHeaders headers = new HttpHeadersImpl("set-property");
+		
+		UserVO loggedInUser = getLoggedInUser();
+		if (loggedInUser != null && loggedInUser.isAdmin()) {
+			model = DatastoreMigration.migrate201205101249_to_20120620();
+		}
+		return headers;
 	}
 
 	private HttpHeaders setProperty(HttpServletRequest request) {
