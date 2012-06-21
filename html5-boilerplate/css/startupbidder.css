@@ -38,7 +38,7 @@ body { font-size: 14px; font-weight: normal; background: #f2f2f2; }
 
 .curvedborder, .sidebox, .sideboxbutton, .sideboxbuttoninterior, .tile, .companybannertile, .companyhalftile, .boxpanel, .boxstep, .boxselected,
     .inputbutton, .smallinputbutton, .sideboxselected, .banner, .bmcborder,
-    .bmcinfodisplay, .bmcinfodisplayvaluepropositions, .titleinfodisplay, qainfodisplay
+    .bmcinfodisplay, .bmcinfodisplayvaluepropositions, .titleinfodisplay, qainfodisplay, .sideinfodisplay
 {
   -moz-border-radius: 5px;
   -webkit-border-radius: 5px;
@@ -77,7 +77,7 @@ a:link, a:visited { text-decoration: none; color: #4083a9; }
 
 /* gradients */
 .buttonbg, .sideboxbutton, .sideboxbuttoninterior, .smallbuttonbg, .inputbutton, .smallinputbutton,
-    .bmcinfodisplay, .bmcinfodisplayvaluepropositions, .titleinfodisplay, .qainfodisplay
+    .bmcinfodisplay, .bmcinfodisplayvaluepropositions, .titleinfodisplay, .qainfodisplay, .sideinfodisplay
 {
 background: #999999;
 background: -moz-linear-gradient(top, #e2e2e2 0%, #d1d1d1 49%, #dbdbdb 50%, #999999 100%);
@@ -222,6 +222,8 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .headerlogout { background: url(../img/icons/logout.png); }
 .headermessages { background: url(../img/icons/messages.png); }
 .headernotifications { background: url(../img/icons/notifications.png); }
+.checkboxcheckedicon { background: url(../img/icons/checkbox_24x48.png); height: 24px; width: 24px; }
+.checkboxuncheckedicon { background: url(../img/icons/checkbox_24x48.png); height: 24px; width: 24px; background-position: 0px -24px; }
 
 /* searchbar styles */
 .searchbar { height: 36px; margin-top: 4px; font-size: 14px !important; font-weight: bold; }
@@ -268,7 +270,6 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .inputtext, .inputtextpct, .inputwidetext, .inputfullwidetextshort, .sideinputtext, .sideinputtextarea,
 .inputselect, .inputmedselect, .narrowinputtext, .inputwidewithvalidate
     { font-size: 14px !important; }
-.inputcheckbox { font-weight: bold; color: white !important; background: #49515a !important; font-size: 14px !important; margin-top: 14px; height: 33px; }
 .inputwidetext { width: 420px !important; }
 .categoryselect { padding: 5px; width: 432px !important; }
 .inputmedtext { font-weight: bold; color: white !important; background: #49515a !important; font-size: 14px !important; width: 230px !important; }
@@ -279,6 +280,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .inputwidewithvalidate { width: 540px !important; }
 /* .inputselect { margin-top: 0px; height: 29px; }  */
 .inputhelp { padding-top: 10px; height: 33px; }
+.inputcheckbox { padding-right: 10px; padding-top: 10px; height: 33px; float: left; }
 .inputmsg { font-weight: bold; }
 .bidmsg { height: 20px; font-weight: bold; }
 .formlabelvalue { width: 180px; }
@@ -420,7 +422,8 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 }
 .ipinfoheader { font-size: 18px; font-weight: bold; color: black; line-height: 30px; }
 
-.offerbox { width: 622px; height: 141px; }
+.offertitle { height: 41px; }
+.offerpanel { width: 622px; height: 141px; overflow: visible !important; position: relative; }
 .offerwrapper { width: 640px; height: 0px; overflow: hidden;
     -moz-transition: height 300ms;
     -webkit-transition: height 300ms;
@@ -429,7 +432,8 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
     transition: height 300ms;
 }
 .offerwrapperdisplay {
-    height: 310px;
+    height: 190px;
+    overflow: visible;
 }
 .droptransition {
     overflow: hidden;
@@ -683,6 +687,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 
 /* img */
 .noimage { background: url(../img/noimage_146x146.jpg); border-radius: 3px; }
+.novideo { background: url(../img/no_video_300x243.gif) no-repeat center; }
 .missingimg { background: url(http://www.minimus.biz/img/Your%20Logo%20Here%20Black%202.jpg) -65px -55px; border-radius: 3px; height: 146px; width: 146px; }
 .presentationimg { background: url(../img/icons/presentation.png) no-repeat 1px 1px; border-radius: 3px; }
 .business_planimg { background: url(../img/icons/business_plan.png) no-repeat 0px 0px; border-radius: 3px; }
@@ -756,6 +761,27 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
     padding: 10px;
     border: 2px solid #999999;
 }
+
+.sideinfo { color: #4083a9; margin: 0; overflow: hidden; width: 330px; height: 0; position: absolute;
+    font-size: 14px; font-weight: bold; background: #e3e3e3;
+    -moz-transition: height 300ms;
+    -webkit-transition: height 300ms;
+    -o-transition: height 300ms;
+    -ms-transition: height 300ms;
+    transition: height 300ms;
+    z-index: 100;
+    left: 626px; 
+    top: -10px;
+}
+.sideinfodisplay {
+    height: 130px;
+    padding: 10px;
+    border: 2px solid #999999;
+}
+.sideinfoitem { position: relative; }
+.sideinfoheader { font-size: 18px; font-weight: bold; color: black; line-height: 30px; }
+.basicspanel { overflow: visible; height: 650px; }
+.basicstitle { height: 41px; }
 
 .bmcborder { border: 6px solid #999999; border-radius: 6px; margin-bottom: 10px; clear: both; position: relative; }
 .bmccontainer { overflow: hidden; }

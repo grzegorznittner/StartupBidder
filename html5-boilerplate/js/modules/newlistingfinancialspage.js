@@ -196,13 +196,21 @@ pl.implement(NewListingFinancialsClass, {
             uploadFields = ['presentation', 'business_plan', 'financials'],
             id,
             cleaner,
+            offerboxdisplay = function() {
+                self.displayOfferBox();
+            },
             field;
         self.base.fields = [];
         self.base.fieldMap = {};
         for (i = 0; i < textFields.length; i++) {
             id = textFields[i];
             cleaner = preValidators[id];
-            field = new (classes[id])(id, this.base.listing[id], this.base.getUpdater(id, cleaner), msgids[id]);
+            if (id === 'asked_fund') {
+                field = new (classes[id])(id, this.base.listing[id], this.base.getUpdater(id, cleaner, offerboxdisplay), msgids[id]);
+            }
+            else {
+                field = new (classes[id])(id, this.base.listing[id], this.base.getUpdater(id, cleaner), msgids[id]);
+            }
             field.fieldBase.setDisplayName(names[id]);
             field.fieldBase.addValidator(validators[id]);
             if (preValidators[id]) {
@@ -228,9 +236,11 @@ pl.implement(NewListingFinancialsClass, {
         this.base.fieldMap['suggested_amt'].validate();
         this.base.fieldMap['suggested_pct'].validate();
         this.displayCalculatedIfValid();
-        this.displayAskedEffects();
+        this.displayOfferBox();
         this.base.bindNavButtons(this.genNextValidator());
         this.base.bindTitleInfo();
+        this.base.bindInfoButtons();
+        pl('#newlistingfinancialswrapper').show();
     },
     genNextValidator: function() {
         var self = this;
@@ -256,19 +266,19 @@ pl.implement(NewListingFinancialsClass, {
         var self = this;
         return function(result) {
             f1();
-            self.displayAskedEffects();
+            self.displayOfferBox();
         }
     },
-    displayAskedEffects: function() {
-        var self = this,
-            fnd = pl('#asked_fund').attr('checked') ? true : false;
-        if (fnd && !pl('#offerwrapper').hasClass('offerwrapperdisplay')) {
+    displayOfferBox: function() {
+        var fnd = this.base.fieldMap.asked_fund.fieldBase.value;
+        console.log('displayAskedEffects:', fnd);
+        if (fnd) {
             pl('#offerwrapper').addClass('offerwrapperdisplay');
         }
-        if (!fnd && pl('#offerwrapper').hasClass('offerwrapperdisplay')) {
+        else {
             pl('#offerwrapper').removeClass('offerwrapperdisplay');
         }
-        self.displayCalculatedIfValid();
+        this.displayCalculatedIfValid();
     },
     genDisplayCalculatedIfValidAmt: function(field) {
         var self = this;
@@ -301,7 +311,7 @@ pl.implement(NewListingFinancialsClass, {
         }
     },
     displayCalculatedIfValid: function() {
-        var fnd = pl('#asked_fund').attr('checked') ? true : false,
+        var fnd = pl('#asked_fund').hasClass('checkboxcheckedicon') ? true : false,
             amt = CurrencyClass.prototype.clean(pl('#suggested_amt').attr('value')) || 0,
             pct = PercentClass.prototype.clean(pl('#suggested_pct').attr('value')) || 0,
             val = pct ? Math.floor(Math.floor(100 * amt / pct)) : 0,

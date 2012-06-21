@@ -39,10 +39,11 @@ include(header.m4)
 
 <!-- end banner -->
 
+<div class="initialhidden" id="newlistingbasicswrapper">
 <!-- left column -->
 <div class="span-16">
 
-    <div class="boxtitle">
+    <div class="boxtitle basicstitle">
         <span class="titletext">BASIC INFO</span>
         <div class="titleinfobtn"></div>
         <div class="titleinfo">
@@ -52,69 +53,105 @@ include(header.m4)
             suggest any changes before approving.</p>
             <p>NOTE THAT YOU MUST BE THE OWNER OR AN AUTHORIZED AGENT OF THE PROJECT OR BUSINESS TO ASK FOR FUNDING ON THIS SITE.</p>
         </div>
+        <span class="bmctitlemsg" id="newlistingmsg"></span>
     </div>
 
-    <div class="boxpanel">
-        <div class="formitem">
+    <div class="boxpanel basicspanel">
+        <div class="formitem sideinfoitem clear">
             <label class="inputlabel" for="title">NAME</label>
             <span class="inputfield">
                 <input class="text inputwidetext" type="text" name="title" id="title" value=""></input>
             </span>
+            <p class="sideinfo">
+                <label class="sideinfoheader">Name</label>
+                <br />
+                A short name for your project, product or company.  If a company, it should be the legal name of the company.
+            </p>
             <span class="inputicon">
                 <div id="titleicon"></div>
             </span>
         </div>
-        <div class="formitem clear">
+        <div class="formitem sideinfoitem clear">
             <label class="inputlabel" for="category">CATEGORY</label>
             <span class="inputfield">
                 <select id="category" class="text inputwidetext categoryselect">
                 </select>
             </span>
+            <p class="sideinfo">
+                <label class="sideinfoheader">Category</label>
+                <br />
+                The industry classification of your project or company, drawn from a list of common angel and venture investment categories.
+            </p>
             <span class="inputicon">
                 <div id="categoryicon"></div>
             </span>
         </div>
-        <div class="formitem clear">
+        <div class="formitem sideinfoitem clear">
             <label class="inputlabel" for="mantra">MANTRA</label>
             <span class="inputfield">
                 <textarea class="inputtextareatwoline inputwidetext" cols="20" rows="5" name="mantra" id="mantra" maxlength="140"></textarea>
             </span>
+            <p class="sideinfo">
+                <label class="sideinfoheader">Mantra</label>
+                <br />
+                A tagline for your project or company, a single phrase or sentence, up to 140 characters.  Make it short but descriptive.
+            </p>
             <span class="inputicon">
                 <div id="mantraicon"></div>
             </span>
         </div>
-        <div class="formitem clear">
+        <div class="formitem sideinfoitem clear">
             <label class="inputlabel" for="website">WEBSITE</label>
             <span class="inputfield">
                 <input class="text inputwidetext" type="text" name="website" id="website" value=""></input>
             </span>
+            <p class="sideinfo">
+                <label class="sideinfoheader">Website</label>
+                <br />
+                The website for your project or company, if you don't have one then link to your facebook page, google profile, or blog.
+            </p>
             <span class="inputicon">
                 <div id="websiteicon"></div>
             </span>
         </div>
-        <div class="formitem clear">
+        <div class="formitem sideinfoitem clear">
             <label class="inputlabel" for="founders">FOUNDERS</label>
             <span class="inputfield">
                 <input class="text inputwidetext" type="text" name="founders" id="founders" value=""></input>
             </span>
+            <p class="sideinfo">
+                <label class="sideinfoheader">Founders</label>
+                <br />
+                The full legal names of the founders and any co-founders of this project or company.
+            </p>
             <span class="inputicon">
                 <div id="foundersicon"></div>
             </span>
         </div>
-        <div class="formitem clear">
+        <div class="formitem sideinfoitem clear">
             <label class="inputlabel" for="contact_email">EMAIL</label>
             <span class="inputfield">
                 <input class="text inputwidetext" type="text" name="contact_email" id="contact_email" value=""></input>
             </span>
+            <p class="sideinfo">
+                <label class="sideinfoheader">Email</label>
+                <br />
+                Email address where you want to be contacted regarding this listing.
+            </p>
             <span class="inputicon">
                 <div id="contact_emailicon"></div>
             </span>
         </div>
-        <div class="formitem clear">
+        <div class="formitem sideinfoitem clear">
             <label class="inputlabel" for="address">LOCATION</label>
             <span class="inputfield">
                 <input class="text inputwidetext" type="text" name="address" id="address" value=""></input>
             </span>
+            <p class="sideinfo">
+                <label class="sideinfoheader">Location</label>
+                <br />
+                The full physical address of your company or where you are developing this project, e.g. 1 Infinite Loop, Cupertino, CA, USA.
+            </p>
             <span class="inputicon">
                 <div id="locationicon"></div>
             </span>
@@ -123,11 +160,6 @@ include(header.m4)
             <span class="inputlabel"></span>
             <span class="inputmap" id="addressmap"></span>
         </div>
-
-        <div class="formitem clear">
-            <span class="newlistingmsg" id="newlistingmsg">&nbsp;</span>
-        </div>
-
     </div>
 
     <div>
@@ -144,20 +176,15 @@ include(header.m4)
 
 <!-- right column -->
 <div class="span-8 last">
-
+<!--
     <div class="boxtitle clear">TIPS</div>
     <div class="sidebox">
-        <p>NAME - short name for your project, product or company</p>
-        <p>CATEGORY - your project industry classification</p>
-        <p>MANTRA - tagline for your project, generally a single sentence, up to 140 characters</p>
-        <p>WEBSITE - your project website, if you don&rsquo;t have one then a link to your facebook page or google profile</p>
-        <p>FOUNDERS - the founders and co-founders of the project </p>
-        <p>EMAIL - address where you want to be contacted by customers and investors</p>
-        <p>LOCATION - e.g. 1 Infinite Loop, Cupertino, CA, USA, where your business is located, or has a nexus</p>
     </div>
-
+-->
 </div>
 <!-- end right column -->
+
+</div>
 
 </div> <!-- end container -->
 </div> <!-- end main -->

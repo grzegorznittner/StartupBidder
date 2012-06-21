@@ -91,6 +91,8 @@ pl.implement(NewListingBasicsClass, {
         this.bindAddressEnterSubmit();
         this.base.bindNavButtons();
         this.base.bindTitleInfo();
+        this.base.bindInfoButtons();
+        pl('#newlistingbasicswrapper').show();
     },
     bindAddressEnterSubmit: function() {
         var self = this;

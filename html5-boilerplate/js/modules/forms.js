@@ -383,11 +383,15 @@ pl.implement(FieldBaseClass, {
             self.msg.show('attention', 'Error saving changes: ' + errorNum);
         };
     },
-    getSuccessFunc: function() {
+    getSuccessFunc: function(displayFunc) {
         var self = this;
         return function() {
             self.msg.show('successful', 'Saved changes');
             self.value = self.newval;
+            console.log('success:',self.value);
+            if (displayFunc) {
+                displayFunc();
+            }
             if (self.postSuccessFunc) {
                 self.postSuccessFunc(self.value);
             }
@@ -409,27 +413,29 @@ pl.implement(CheckboxFieldClass, {
     getDisplayFunc: function() {
         var self = this;
         return function() {
+            console.log('displayfunc',self.fieldBase,self.fieldBase.value);
             if (self.fieldBase.value) {
-                pl(self.fieldBase.sel).attr({checked: 'checked'});
+                pl(self.fieldBase.sel).removeClass('checkboxuncheckedicon').addClass('checkboxcheckedicon');
             }
             else {
-                pl(self.fieldBase.sel).removeAttr('checked');
+                pl(self.fieldBase.sel).removeClass('checkboxcheckedicon').addClass('checkboxuncheckedicon');
             }
         };
     },
     validate: function() {
-        var value = pl(this.fieldBase.sel).attr('checked');
+        var value = pl(this.fieldBase.sel).hasClass('checkboxcheckedicon');
         return this.fieldBase.validator.validate(value);
     },
     bindEvents: function() {
         var self = this;
         pl(self.fieldBase.sel).bind({
-            change: function() {
+            click: function() {
                 var changeKey = self.fieldBase.id,
-                    newval = pl(self.fieldBase.sel).attr('checked'),
+                    newval = pl(self.fieldBase.sel).hasClass('checkboxcheckedicon') ? false : true,
                     msg = self.fieldBase.validator.validate(newval);
                 if (msg === 0) {
-                    self.fieldBase.updateFunction({ changeKey: newval }, self.fieldBase.getLoadFunc(), self.fieldBase.getErrorFunc(self.getDisplayFunc()), self.fieldBase.getSuccessFunc());
+                    self.fieldBase.newval = newval;
+                    self.fieldBase.updateFunction({ changeKey: newval }, self.fieldBase.getLoadFunc(), self.fieldBase.getErrorFunc(self.getDisplayFunc()), self.fieldBase.getSuccessFunc(self.getDisplayFunc()));
                 }
                 else {
                     self.fieldBase.msg.show('attention', msg);
@@ -514,6 +520,7 @@ pl.implement(SelectFieldClass, {
                 if (!icon.isValid) {
                     icon.showValid();
                 }
+                self.fieldBase.newval = newval;
                 self.fieldBase.updateFunction({ changeKey: newval }, self.fieldBase.getLoadFunc(), self.fieldBase.getErrorFunc(self.getDisplayFunc()), self.fieldBase.getSuccessFunc());
                 return false;
             }
