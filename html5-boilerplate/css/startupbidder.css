@@ -18,11 +18,11 @@ body.nearby-page > #wrap > #main > div.container > div.nearbywrapper { height: 1
 .clearfix { display: inline-block; }
 * html .clearfix { height: 1%; }
 .clearfix { display: block; }
-.footercontainer { border-top: 2px solid grey; padding-top: 10px; }
-.footercol { border-right: 2px solid grey; padding-bottom: 5px; height: 130px; font-size: 14px; }
+.footercontainer { border-top: 2px solid #666; padding-top: 10px; }
+.footercol { border-right: 2px solid #666; padding-bottom: 5px; height: 130px; font-size: 14px; }
 .footercol a { display: block; }
 .footertext { position: relative; font-weight: bold; font-size: 12px; top: 10px; }
-.footerlink { font-size: 14px; }
+.footerlink { font-size: 12px; }
 .copyrighttext { font-size: 12px; position: absolute; right: 0; bottom: 0; }
 .attention { color: #8A1F11 !important; }
 .errorcolor { color: #8A1F11 !important; }
@@ -32,29 +32,27 @@ body.nearby-page > #wrap > #main > div.container > div.nearbywrapper { height: 1
 .emptyattention { color: #8A1F11; position: relative; top: 15px; }
 
 /* general styles */
-/* body { font-size: 14px; font-weight: bold; color: #4083a9; background: #f2f2f2; } */
-/* body { font-size: 14px; font-weight: normal; color: #4083a9; background: #f2f2f2; } */
-body { font-size: 14px; font-weight: normal; background: #f2f2f2; }
+body { font-size: 14px; font-weight: normal; }
 
 .curvedborder, .sidebox, .sideboxbutton, .sideboxbuttoninterior, .tile, .companybannertile, .companyhalftile, .boxpanel, .boxstep, .boxselected,
     .inputbutton, .smallinputbutton, .sideboxselected, .banner, .bmcborder,
-    .bmcinfodisplay, .bmcinfodisplayvaluepropositions, .titleinfodisplay, qainfodisplay, .sideinfodisplay
+    .bmcinfodisplay, .bmcinfodisplayvaluepropositions, .titleinfodisplay, .qainfodisplay, .sideinfodisplay,
+    .buttonbg, .smallbuttonbg 
 {
-  -moz-border-radius: 5px;
-  -webkit-border-radius: 5px;
-  border-radius: 5px;
-  -moz-box-shadow: 3px 3px 3px rgba(0,0,0,0.5);
-  -webkit-box-shadow: 3px 3px 3px rgba(0,0,0,0.5);
-  box-shadow: 3px 3px 3px rgba(0,0,0,0.5);
-  zoom: 1;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+    border: 2px solid #cccccc;
 }
 
 /* link styles */
-a:link, a:visited { text-decoration: none; color: #4083a9; }
-.headerrow a:hover { opacity: 1.0; }
-.hoverlink:hover { opacity: 0.7; cursor: pointer }
-.inputbutton:hover { opacity: 0.7; cursor: pointer }
-.nohover:hover { opacity: 1.0; cursor: default; }
+a:link, a:visited { text-decoration: none; }
+a:focus, a:hover { cursor: pointer; }
+.headerrow a:hover { cursor: pointer; }
+.headerlink:hover { cursor: pointer; }
+.hoverlink:hover { cursor: pointer; }
+.inputbutton:hover { cursor: pointer; }
+.nohover:hover { cursor: default; }
 
 /* colors */
 .crystalbluebg { background: #efffff; }
@@ -63,19 +61,40 @@ a:link, a:visited { text-decoration: none; color: #4083a9; }
 .lightgrey { color: #dcd8db; }
 .lightblue { color: #32aff6; }
 .pastelgrey { color: #999999; }
-.darkblue { color: #4083a9; }
 .darkgrey { color: #49515a; }
 .darkgreybg { background: #49515a; }
 .aquamarine { color: #49a389; }
-.smokegrey { color: #333333; }
 .white { color: #ffffff; }
-.uneditabletext { color: #49515a; }
 
-/* welcome */
-#welcometitle { color: #4083a9; }
-.welcometext { color: #4083a9; }
+/* font colors */
+.white,
+    .welcometitle, .welcometext, .welcometext a
+    { color: white; }
+.midgrey,
+    .headertext, .headerlink
+    { color: #cccccc }
+.smokegrey,
+    .infowindow, .boxtitle, .boxtitlegap, .boxsteptitle, .boxsteptext, .tileloc,
+    .sideboxlistnum
+    { color: #333333; }
+.nextgrey,
+    .companybannertextgrey, .companybannermantra, .tiledesc, .tilepointstext,
+    .sideboxlistname,
+    .companyhalfmantra, .companyhalftext,
+    .loctext, .loctextinp,
+    .bannertextsmall, .sideboxbutton, .showmore a,
+    .footerlink,
+    .boxpanel p,
+    .uneditabletext, .addresstext,
+    .doclabel, .aboutlabel,
+    .companynav, .companynavselected, .companybannerlink
+    { color: #666666; }
+.darkblue,
+    .tilecompany, .companybannertitle
+    { color: #4083a9; }
 
 /* gradients */
+/*
 .buttonbg, .sideboxbutton, .sideboxbuttoninterior, .smallbuttonbg, .inputbutton, .smallinputbutton,
     .bmcinfodisplay, .bmcinfodisplayvaluepropositions, .titleinfodisplay, .qainfodisplay, .sideinfodisplay
 {
@@ -87,6 +106,7 @@ background: -o-linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 1
 background: -ms-linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%);
 background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%);
 }
+*/
 
 /* header styles */
 .topheader { width: 100%; height: 26px; background: #32aff6; }
@@ -94,7 +114,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .topheaderlink { color: white !important; font-weight: bold; }
 .header { width: 100%; height: 55px; background: #49515a; }
 .headerrow { height: 55px; }
-.headertext, .headerlink { position: relative; font-weight: bold; font-size: 18px; top: 14px; color: white; padding: 5px 15px; border-left: 2px solid white; }
+.headertext, .headerlink { position: relative; font-weight: bold; font-size: 14px; top: 16px; padding: 5px 15px; }
 .headerlinknoborder { border-left: none; }
 .headerlinkright { border-left: none; padding-right: 0px; }
 .logotextblue { position: relative; font-weight: bold; font-size: 24px; top: 8px; color: #32aff6; }
@@ -105,10 +125,10 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .headersignintext { float: right; border-left: none; padding-right: 0px; }
 
 /* banner styles */
-.banner { width: 980px; height: 80px; margin-top: 10px; }
-.bannertext { font-size: 30px; font-weight: bold; top: 15px; position: relative; left: 15px; }
+.banner { width: 980px; height: 200px; margin-top: 10px; }
+.bannertext { font-size: 30px; font-weight: bold; top: 5px; height: 185px; }
 .bannersmall { width: 980px; height: 50px; margin-top: 10px; }
-.bannertextsmall { font-size: 30px; font-weight: bold; color: #333333; }
+.bannertextsmall { font-size: 30px; font-weight: bold; }
 .follow { top: 33px; position: relative; }
 .followpromo { top: 20px; position: relative; }
 .followimg { top: 20px; position: relative; }
@@ -118,7 +138,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .pull-15px { left: -15px; position: relative; }
 .push-15px { left: 15px; position: relative; }
 .push-20px { left: 20px; position: relative; }
-.welcometext { font-size: 14px; font-weight: bold; }
+.welcometext { font-size: 16px; font-weight: bold; position: absolute; bottom: 0; right: 0; }
 /* .welcometext a { font-weight: bold; } */
 .socialsidebox { height: 80px; position: relative; }
 .socialbanner { height: 80px; position: relative; }
@@ -128,23 +148,24 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .facebookbanner div span iframe { height: 28px !important; }
 
 /* company banner styles */
-.companyheader { width: 100%; height: 150px; background:white; border-bottom: 2px solid grey; }
+.companyheader { width: 100%; height: 150px; border-bottom: 2px solid #666; }
 .companybanner { height: 150px; position: relative; }
-.companybannertile { height: 150px; width: 626px; position: relative; border-radius: 5px; border: 2px solid #999999; overflow: hidden; margin-bottom: 10px; background: #e3e3e3; }
+.companybannertile { height: 150px; width: 626px; position: relative; overflow: hidden; margin-bottom: 10px; }
 .companybannertilenoborder { height:150px;overflow:hidden;position:relative;top:-9px; }
-.companybannertitle { font-size: 30px; font-weight: bold; }
+.companybannertitle { font-size: 26px; font-weight: bold; }
 .companybannertext { font-size: 14px; font-weight: bold; }
 .companybannertextlink { font-size: 14px; font-weight: bold; margin-left: 4px; }
-.companybannerlink { float: left; }
-.companybannertextgrey { font-size: 14px; font-weight: bold; color: grey; width: 830px; }
+.companybannerlink { float: left; margin-right: 5px; }
+.companybannertextgrey { font-size: 14px; width: 830px; }
+.companybannermapline { height: 21px; }
 .companybannerlogo { margin-top: 2px; width: 146px; height: 146px; margin-right: 10px; margin-left: 2px; float: left; }
-.companybannermantra { position: absolute; font-size: 14px; font-weight: bold; width: 830px; bottom:3px; padding-bottom: 18px; left:158px; color: grey; }
+.companybannermantra { position: absolute; font-size: 14px; width: 830px; bottom:3px; padding-bottom: 18px; left:158px; }
 .companybannerfollow { position: absolute; top: 0; right: -10px; }
 .companybannerfollowbtn { clear: both; float: right; }
 .companynavcontainer { position: absolute; bottom:0; right: 0; height: 21px; }
 .companynav {
     float: left; padding: 0px 5px; margin-right: 10px; text-align: center; height: 19px;
-    font-size: 14px; font-weight: bold; color: grey;
+    font-size: 14px; font-weight: bold;
     border-radius: 5px 5px 0 0;
     border: 2px solid white;
     border-bottom: 0;
@@ -153,22 +174,21 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .companynavselected {
     background: #f2f2f2;
     border-radius: 5px 5px 0 0;
-    border: 2px solid grey;
+    border: 2px solid #666;
     border-bottom: 0;
-    color: black;
     height: 21px;
 }
 
 /* company half styles */
 .companyhalf { height: 150px; position: relative; }
-.companyhalftile { height: 150px; width: 306px; position: relative; border-radius: 5px; border: 2px solid #999999; overflow: hidden; margin-bottom: 10px; background: #e3e3e3; float: left; margin-right: 10px; }
+.companyhalftile { height: 150px; width: 306px; position: relative; border-radius: 10px; border: 2px solid #cccccc; overflow: hidden; margin-bottom: 10px; background: #e3e3e3; float: left; margin-right: 10px; }
 .companyhalftilelast { margin-right: 0px; }
 .companyhalftitle { font-size: 16px; font-weight: bold; line-height: 18px; margin-bottom: 3px; margin-top: 3px; overflow: hidden; }
-.companyhalftext { font-size: 12px; font-weight: bold; color: grey; line-height: 14px; overflow: hidden; }
+.companyhalftext { font-size: 12px; line-height: 14px; overflow: hidden; }
 .companyhalflogo { margin-top: 2px; width: 146px; height: 146px; margin-right: 10px; margin-left: 2px; float: left; }
-.companyhalfmantra { position: absolute; font-size: 12px; font-weight: bold; width: 145px; bottom:3px; left:158px; line-height: 14px; color: grey; }
+.companyhalfmantra { position: absolute; font-size: 12px; width: 145px; bottom:3px; left:158px; line-height: 14px; }
 .halftiledays, .halftiledaystext, .halftiletype, .halftiletypetext { left: 2px; width: 146px; height: 30px; position: absolute; }
-.halftiledays, .halftiletype { opacity: 0.6; background-color: #000000; }
+.halftiledays, .halftiletype { cursor: pointer; background-color: #000000; }
 .halftiledaystext, .halftiletypetext { padding: 4px; color: white; font-weight: bold; }
 .halftiledays, .halftiledaystext { top: 2px; }
 .halftiletype, .halftiletypetext { top: 118px; }
@@ -213,6 +233,9 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .spreadsheeticon { width: 16px; height: 16px; background: url(../img/icons/spreadsheet.png); }
 .linkicon { width: 16px; height: 16px; background: url(../img/icons/jump.png); }
 .mapicon { width: 16px; height: 16px; background: url(../img/icons/map.png); }
+.locicon { width: 16px; height: 16px; background: url(../img/icons/location_16x16.gif); margin-right: 10px; float: left; }
+.lociconinp { width: 16px; height: 16px; }
+.loctext { float: left; }
 .bidactionicon { float: left; margin-left: 10px; margin-top: 5px; margin-right: 15px; }
 .bidactioniconnarrow { float: left; margin-left: 10px; margin-top: 5px; margin-right: 10px; }
 .bidactionbtn { text-align: left !important; }
@@ -220,8 +243,10 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .headericon { height: 32px; width: 32px; margin-left: 15px; float: right; position: relative; top: 12px; }
 .headersignin { background: url(../img/icons/google_signin.png); }
 .headerlogout { background: url(../img/icons/logout.png); }
-.headermessages { background: url(../img/icons/messages.png); }
-.headernotifications { background: url(../img/icons/notifications.png); }
+.headermessages { background: url(../img/icons/messages.png); height: 32px; width: 32px; position: relative; }
+.headernotifications { background: url(../img/icons/notifications.png); height: 32px; width: 32px; position: relative; }
+.headernum { height: 20px; text-align: center; position: absolute; top:-7px; right: -5px; color:white; background-color:red; font-weight:bold; font-size: 14px; }
+.headernumdisplay { padding-left: 3px; padding-right: 3px; }
 .checkboxcheckedicon { background: url(../img/icons/checkbox_24x48.png); height: 24px; width: 24px; }
 .checkboxuncheckedicon { background: url(../img/icons/checkbox_24x48.png); height: 24px; width: 24px; background-position: 0px -24px; }
 
@@ -233,15 +258,15 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 
 /* infowindow */
 .infowindowwrapper { min-height: 288px; background:white; padding:5px; }
-.infowindow { color: #333333; font-weight: bold; font-size: 12px; line-height: 16px; }
+.infowindow { font-weight: bold; font-size: 12px; line-height: 16px; }
 .infotitle { font-size: 20px; line-height: 20px; }
 /* .infomantra { color: #4083a9; } */
-.infomantra { color: grey; }
+.infomantra { color: #666; }
 .infolabel { font-weight: normal; }
 
 /* notification styles */
 .notificationtext a:link, .notificationtext a:visited { text-decoration: none; color: #4083a9; }
-.notificationtext a:hover { opacity: 0.7; cursor: pointer }
+.notificationtext a:hover { cursor: pointer }
 .
 /* form styles */
 .formitem { }
@@ -297,7 +322,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .companytitle { margin-right: 10px; }
 .profilebox { height: 146px; }
 .profileboxtitle { position: relative; }
-.profiletext { color: grey; }
+.profiletext { color: #666; }
 .formfull { float: left; height: 36px; }
 .formcol1 { width: 301px; padding-left: 5px; height: 63px; }
 .formcol2 { width: 306px; padding-top: 15px; }
@@ -333,8 +358,8 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .pctwide { width: 49px !important; }
 .inputtextareatwoline { height: 35px; overflow: hidden; overflow-x: hidden; overflow-y: auto; }
 .inputgooglesignin { float: left; margin-right: 10px; }
-.aboutlabel { float: left; margin-right: 10px; text-align: right; width: 106px; color: #49515a; font-weight: bold; }
-.doclabel { float: left; margin-right: 10px; text-align: right; width: 106px; color: #49515a; font-weight: bold; margin-top: 10px; }
+.aboutlabel { float: left; margin-right: 10px; text-align: right; width: 106px; font-weight: bold; }
+.doclabel { float: left; margin-right: 10px; text-align: right; width: 106px; font-weight: bold; margin-top: 10px; }
 .bidformtext { padding-top: 10px; font-weight: bold; }
 .bidvallabel { float: left; margin-right: 10px; width: 120px; padding-top: 3px; margin-left: 10px; font-weight: bold; }
 .bidformitem { float: left; }
@@ -360,7 +385,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
                 font-size: 14px !important; margin: 0; width: 175px !important; background: none !important; border: 0 !important; }
 .bmctextareawide { height: 120px; overflow: hidden; overflow-x: hidden; overflow-y: hidden; font-weight: normal; color: black !important; padding: 0;
                 font-size: 14px !important; margin: 0; width: 405px !important; background: none !important; border: 0 !important; }
-.qainfobtn:hover { opacity: 0.7; cursor: pointer; }
+.qainfobtn:hover { cursor: pointer; }
 .qainfo { margin: 0 10px 0 5px !important; overflow: hidden; height: 0px; 
     -moz-transition: height 300ms;
     -webkit-transition: height 300ms;
@@ -373,9 +398,9 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .bmcinfoheader { font-size: 18px; font-weight: bold; color: black; line-height: 30px; }
 .bmcinfobtnwrap { position: relative; }
 .bmcinfobtn { position: absolute; top: 0; right: 0; }
-.bmcinfobtn:hover { opacity: 0.7; cursor: pointer; }
+.bmcinfobtn:hover { cursor: pointer; }
 .bmcinfo { color: #4083a9; margin: 0; overflow: hidden; width: 530px; height: 0; position: absolute;
-    font-size: 14px; font-weight: bold; background: #e3e3e3;
+    font-size: 14px; font-weight: bold;
     -moz-transition: height 300ms;
     -webkit-transition: height 300ms;
     -o-transition: height 300ms;
@@ -395,16 +420,16 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .bmcinfodisplay {
     height: 220px;
     padding: 10px;
-    border: 2px solid #999999;
+    border: 2px solid #cccccc;
 }
 .bmcinfodisplayvaluepropositions {
     height: 300px;
     padding: 10px;
-    border: 2px solid #999999;
+    border: 2px solid #cccccc;
 }
 
 .ipinfo { color: #4083a9; margin: 0; overflow: hidden; height: 0; position: absolute;
-    font-size: 14px; font-weight: bold; background: #e3e3e3;
+    font-size: 14px; font-weight: bold;
     top: 5px;
     left: 5px;
     width: 905px;
@@ -418,7 +443,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .ipinfodisplay {
     height: 150px;
     padding: 10px;
-    border: 2px solid #999999;
+    border: 2px solid #cccccc;
 }
 .ipinfoheader { font-size: 18px; font-weight: bold; color: black; line-height: 30px; }
 
@@ -448,30 +473,30 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .remarkreplyshow { height: 150px; }
 
 /* box styles */
-.boxtitle { margin-top: 10px; color: #333333; font-weight: bold; clear: both; position: relative; }
-.boxtitlegap { margin-top: 20px; margin-bottom: 5px; color: #333333; font-weight: bold; position: relative; }
-.boxpanel, .boxstep { border: 2px solid #999999; padding: 2px; overflow: auto; background: #e3e3e3; margin-bottom: 10px; }
+.boxtitle { margin-top: 10px; font-weight: bold; clear: both; position: relative; }
+.boxtitlegap { margin-top: 20px; margin-bottom: 5px; font-weight: bold; position: relative; }
+.boxpanel, .boxstep { border: 2px solid #cccccc; padding: 2px; overflow: auto; background: #e3e3e3; margin-bottom: 10px; }
 /* .boxpanel { width: 622px; overflow: auto; position: relative; } */
 .boxpanel { width: 622px; overflow: hidden; position: relative; }
 .boxpanelfull { width: 940px; }
 .companylistingbox { width: 622px; height: 146px; }
 .addcommentmsg { height: 20px; margin-left: 5px; font-weight: bold; }
 .addmessagemsg { height: 20px; margin-left: 5px; font-weight: bold; }
-.addcommentbtn { opacity: 0.3; }
-.addcommentbtn:hover { opacity: 0.3; }
-.addcommentenabled { opacity: 1.0; }
-.addcommentenabled:hover { opacity: 0.8; }
+.addcommentbtn { }
+.addcommentbtn:hover { cursor: pointer; }
+.addcommentenabled { }
+.addcommentenabled:hover { cursor: pointer; }
 .commentdeleteicon { position: absolute; right: 139px; }
 .newlistingmsg { float: left; margin-right; 10px; padding-left: 116px; width: 420px; height: 85px; font-weight: bold; overflow: auto; }
 .newlistingtitlemsg { position: absolute; margin-right: 5px; right: 0; }
 .newlistingaskmsg { margin-left: 10px; }
 .newlistingmsgsmall { float: left; margin-right; 10px; padding-left: 116px; width: 420px; height: 25px; font-weight: bold; }
 .companylistingstats { position: absolute; bottom: 0; }
-.boxpanel p { margin: 5px 10px 10px 10px; text-indent: 0px; font-weight: bold; color: #4083a9; }
+.boxpanel p { margin: 5px 10px 10px 10px; text-indent: 0px; font-weight: normal; }
 .boxpanel dl dt { margin-left: 0; padding: 5px 10px; color: #333333; }
 .boxpanel dl dd { margin-left: 0; padding: 5px 10px; background: #f2f2f2; font-weight: normal; }
 .boxstep { width: 626px; padding: 0px; height: 30px; position: relative; }
-.boxsteptitle, .boxsteptext { padding-top: 5px; font-weight: bold; color: #333333; left: 0; text-align: center; position: absolute; }
+.boxsteptitle, .boxsteptext { padding-top: 5px; font-weight: bold; left: 0; text-align: center; position: absolute; }
 .boxsteptitle { padding-left: 5px; width: 617px; }
 .boxsteptext { width: 104px; } 
 .boxstepn { left: 0; position: absolute; height: 30px; width: 0px; background-color: #999999; }
@@ -489,7 +514,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .remarkdttitle { position: relative; height: 32px; }
 .remarkdttitleline { padding-top: 7px; }
 .remarkdelete { width: 32px; height: 32px; margin: 0; position: absolute; top: 0; right: 0; }
-.remarkdelete:hover { opacity: 0.7; cursor: pointer; }
+.remarkdelete:hover { cursor: pointer; }
 .remarkreplybtn { position:absolute; top:0px; right:5px; border-radius:3px; padding:0 5px 0 5px; height:21px;  }
 .boxoption { display: block; float: left; text-align: center; height: 25px; padding-top: 5px; margin-bottom: 5px; font-weight: bold; }
 .boxoption1 { width: 146px; }
@@ -497,7 +522,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .boxoption3 { width: 160px; }
 .boxselected { background: white; }
 .sideboxselected { background: white; !important}
-.sidebox { width: 302px; border: 2px solid #999999; padding: 2px; overflow: auto; background: #e3e3e3; margin-bottom: 10px; overflow: hidden; }
+.sidebox { width: 302px; border: 2px solid #cccccc; padding: 2px; overflow: auto; background: #e3e3e3; margin-bottom: 10px; overflow: hidden; }
 .sidebox p { margin: 5px 10px 10px 10px; text-indent: 0px; font-weight: normal; }
 .sideboxcol1 { width: 150px; float: left; margin-right: 0; }
 .sideboxcol2 { width: 150px; float: left; }
@@ -509,8 +534,8 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .sideboxbutton { width: 310px; height: 50px; font-size: 34px; font-weight: bold; text-align: center; margin-bottom: 10px; }
 .sideboxbuttonsmall { width: 150px; height: 30px; font-size: 20px; }
 .sideboxbuttoninterior { width: 292px; height: 50px; font-size: 34px; font-weight: bold; text-align: center; margin: 0 5px 5px 5px; }
-.sideboxbutton:hover { opacity: 0.7; cursor: pointer }
-.sideboxbuttonsmall:hover { opacity: 0.7; cursor: pointer }
+.sideboxbutton:hover { cursor: pointer }
+.sideboxbuttonsmall:hover { cursor: pointer }
 .sideboxcompanylink { width: 298px; float: left; margin-left: 2px; }
 .sideboxcompanylink:hover { background: #f2f2f2; }
 .sideboxtitle { float: left; font-size: 24px; text-align: right; margin-left: 10px; margin-right: 10px; height: 43px; font-weight: bold; }
@@ -559,7 +584,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .messagereplymsg { position: absolute; bottom: 0; left: 150px; }
 .messagereplyline { min-height: 100px; position: relative; }
 .addcommentbox { min-height: 100px; }
-.sideboxdate { font-size: 10px; color: grey; }
+.sideboxdate { font-size: 10px; color: #666; }
 .sideboxlisting { font-size: 10px; }
 .sideboxmap { width: 302px; height: 302px; }
 .orderbook { float: left; margin-right: 10px; }
@@ -605,7 +630,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .deactivatemsg { display: none; font-weight: bold; }
 .deactivatecancelbtn { display: none; margin-top: 10px; }
 .mapaddresstext { font-weight: bold; }
-.addresstext { font-weight: bold; color: gray; }
+.addresstext { font-weight: bold; }
 .summarypanel { min-height: 130px; }
 .sidebox, .askingbox { min-height: 21px; }
 .showmore { float: right; margin-right: 10px; font-weight: bold; margin-bottom: 10px; }
@@ -617,7 +642,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .apipanel dt i { display: none; }
 .apipanel dt form { display: none; }
 .apipanel dd { float: left; margin-right: 10px; width: 630px; margin-right: 0; padding-right: 0; } /* span-16 last */
-.apipanel dt:hover { opacity: 0.7; cursor: pointer; }
+.apipanel dt:hover { cursor: pointer; }
 .apipanel code { font-family: fixed; font-weight: bold; }
 .apidetail {
     padding-left: 10px;
@@ -661,21 +686,21 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .uploaditem { position: relative; }
 
 /* tiles */
-.tile { width: 146px; height: 296px; border: 2px solid #999999; border-radius: 5px; overflow: hidden; margin-bottom: 10px; position: relative; background: #e3e3e3; }
+.tile { width: 146px; height: 296px; border: 2px solid #cccccc; border-radius: 10px; overflow: hidden; margin-bottom: 10px; position: relative; }
 .tileimg { width: 146px; height: 146px; overflow: hidden; border-radius: 3px; }
-.tiledays, .tiledaystext, .tiletype, .tiletypetext, .tilepoints, .tilepointstext { width: 146px; height: 30px; position: absolute; }
-.tiledays, .tiletype, .tilepoints { opacity: 0.6; background-color: #000000; }
-.tiledaystext, .tiletypetext, .tilepointstext { padding: 4px; color: white; font-weight: bold; }
+.tiledays, .tiledaystext, .tiletype, .tiletypetext, .tilepoints { width: 146px; height: 30px; position: absolute; }
+.tiledays, .tiletype, .tilepoints { cursor: pointer; background-color: #000000; }
+.tiledaystext, .tiletypetext { padding: 4px; font-weight: bold; }
+.tilepointstext { font-weight: bold; width: 146px; position: absolute; bottom: 0; padding: 0 4px; }
 .tiledays, .tiledaystext { top: 0px; }
 .tiletype, .tiletypetext { top: 116px; }
-.tilepoints, .tilepointstext { top: 266px; }
-.tiledesc { width: 142px; height: 116px; position: absolute; top: 146px; padding: 0 2px 2px 2px; margin:0; overflow: hidden; font-weight: bold; }
-.tilecompany { font-size: 14px; line-height: 19px; color: #333333; font-weight: bold; }
-.tileloc { color: #333333; font-weight: bold; }
+.tilepoints { top: 266px; }
+.tiledesc { width: 142px; height: 116px; position: absolute; top: 146px; padding: 0 2px 2px 2px; margin:0; overflow: hidden; border-top: 2px solid #666666; }
+.tilecompany { font-size: 14px; line-height: 19px; font-weight: bold; }
 .tileloc, .tiledetails, .tiledesc { font-size: 12px; line-height: 16px; }
 .tilevotes, .tilevoteimg, { position: absolute; }
 .tilevotes { left: 30px; }
-.tileposted { font-size: 16px; line-height: 16px; position: absolute; top: 6px; font-weight: bold; }
+.tileposted { position: absolute; top: 6px; font-weight: bold; }
 
 /* submit page preview classes */
 .previewtext { z-index: 1000; position: absolute; background: rgba(0,0,0,0.6); left: 600px; font-size: 52px; color: white; font-weight: bold; padding: 10px 20px 10px 20px; border-radius: 25px;
@@ -685,7 +710,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .previewiframe { width: 100%; height: 1550px; }
 .previewoverlay { position: absolute; width: 100%; height: 100%; top: 0; left: 0; z-index: 1000; }
 
-/* img */
+/* images */
 .noimage { background: url(../img/noimage_146x146.jpg); border-radius: 3px; }
 .novideo { background: url(../img/no_video_300x243.gif) no-repeat center; }
 .missingimg { background: url(http://www.minimus.biz/img/Your%20Logo%20Here%20Black%202.jpg) -65px -55px; border-radius: 3px; height: 146px; width: 146px; }
@@ -694,10 +719,36 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .financialsimg { background: url(../img/icons/financials.png) no-repeat 0px 0px; border-radius: 3px; }
 .videoinputicon { float: left; padding-top: 7px; height: 32px; width: 32px; margin-right: 10px; }
 .videourl { padding-top: 8px !important; }
+.startupbidderlogo { background: url(../img/logo_161x28.gif) no-repeat; width: 161px; height: 28px; }
+.headerlogo { margin-top: 14px; }
+
+/* texture background images */
+.handmadepaper
+    { background: url(../img/handmadepaper.png) repeat; }
+.groovepaper,
+    .tile, .companybannertile, .companyhalftile, .boxpanel,
+    .bmcinfo, .ipinfo, .tileinfo, .sideinfo, .bmcborder,
+    .bmcinfodisplay, .bmcinfodisplayvaluepropositions, .titleinfodisplay, .qainfodisplay, .sideinfodisplay,
+    .companyheader
+    { background: url(../img/groovepaper.png) repeat; }
+.brushed_alu,
+    body
+    { background: url(../img/brushed_alu.png) repeat; }
+.brushed_alu_dark,
+    .header
+    { background: url(../img/brushed_alu_dark.png) repeat; }
+.light_alu,
+    .curvedborder, .sidebox, .sideboxbutton, .sideboxbuttoninterior, .boxstep, .boxselected,
+    .inputbutton, .smallinputbutton, .sideboxselected,
+    .buttonbg, .smallbuttonbg
+    { background: url(../img/light_alu.png) repeat; }
+.citynight2,
+    .banner
+    { background: url(../img/citynight2.jpg); background-position: 0px -350px; }
 
 /* BMC */
 /*
-.bmcborder { width:960px; height: 640px; border: 6px solid #999999; border-radius: 6px; }
+.bmcborder { width:960px; height: 640px; border: 6px solid #cccccc; border-radius: 6px; }
 .bmccell { padding: 5px; overflow: hidden; }
 .bmcsection { font-size: 18px; font-weight: bold; color: black; }
 .bmcicon { float: right; width: 48px; height: 48px; }
@@ -745,9 +796,9 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .titletext { float: left; padding-top: 15px; margin-right: 10px; }
 .titleinfobtn { float: left; margin-top: 14px; }
 .titleinfoheader { font-size: 18px; font-weight: bold; color: black; line-height: 30px; }
-.titleinfobtn:hover { opacity: 0.7; cursor: pointer; }
+.titleinfobtn:hover { cursor: pointer; }
 .titleinfo { color: #4083a9; margin: 0; overflow: hidden; width: 600px; height: 0;
-    font-size: 14px; font-weight: bold; background: #e3e3e3;
+    font-size: 14px; font-weight: bold;
     position: absolute; top: 45px; left: 10px;
     -moz-transition: height 300ms;
     -webkit-transition: height 300ms;
@@ -759,11 +810,11 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .titleinfodisplay {
     height: 220px;
     padding: 10px;
-    border: 2px solid #999999;
+    border: 2px solid #cccccc;
 }
 
 .sideinfo { color: #4083a9; margin: 0; overflow: hidden; width: 330px; height: 0; position: absolute;
-    font-size: 14px; font-weight: bold; background: #e3e3e3;
+    font-size: 14px; font-weight: bold;
     -moz-transition: height 300ms;
     -webkit-transition: height 300ms;
     -o-transition: height 300ms;
@@ -776,14 +827,14 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .sideinfodisplay {
     height: 130px;
     padding: 10px;
-    border: 2px solid #999999;
+    border: 2px solid #cccccc;
 }
 .sideinfoitem { position: relative; }
 .sideinfoheader { font-size: 18px; font-weight: bold; color: black; line-height: 30px; }
 .basicspanel { overflow: visible; height: 650px; }
 .basicstitle { height: 41px; }
 
-.bmcborder { border: 6px solid #999999; border-radius: 6px; margin-bottom: 10px; clear: both; position: relative; }
+.bmcborder { border: 6px solid #cccccc; border-radius: 10px; margin-bottom: 10px; clear: both; position: relative; }
 .bmccontainer { overflow: hidden; }
 .bmccell { padding: 5px; line-height: normal; }
 .bmcsection { font-size: 18px; font-weight: bold; color: black; }
@@ -867,7 +918,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
     transition: opacity 300ms;
 }
 .iparrow { position: absolute; width: 64px; height: 64px; }
-.iparrow:hover { opacity: 0.8; }
+.iparrow:hover { cursor: pointer; }
 .ipleft { top: 288px; left: 15px; background-image: url(../img/icons/ip_leftarrow_64.png); display: none; }
 .ipright { top: 288px; right: 15px; background-image: url(../img/icons/ip_rightarrow_64.png); }
 .ipfirst { top: 528px; left: 15px; background-image: url(../img/icons/ip_returnarrow_64.png); display: none; }
@@ -879,7 +930,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .dotnavwrapper { width: 110px; margin: auto; }
 .dotnaveditable { margin-top: 12px; }
 .dotnav { float: left; list-style-type: circle; margin: 0; }
-.dotnav:hover { cursor: pointer; opacity: 0.7 }
+.dotnav:hover { cursor: pointer; }
 .dotnavfilled { list-style-type: disc; }
 .dotnavempty { display: none }
 .dotnavplus { list-style-type: none; list-style-image: url(/img/icons/plus_16.png); padding-top: 3px; padding-left: 28px; }
