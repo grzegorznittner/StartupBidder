@@ -332,6 +332,7 @@ public class ListingFacade {
 			createMandatoryProperty(propsToUpdate, infos, properties, "LONG_country", "country");
 		}
 		createMandatoryProperty(propsToUpdate, infos, properties, "LONG_locality", "city");
+        
 		createMandatoryProperty(propsToUpdate, infos, properties, "formatted_address", "address");
 		
 		if (infos.length() > 0 ) {
@@ -358,6 +359,14 @@ public class ListingFacade {
 	private ListingPropertyVO createMandatoryProperty(List<ListingPropertyVO> propsToUpdate, StringBuffer infos, 
 			Map<String, String> properties, String name, String propertyName) {
 		String value = properties.get(name);
+        if (name.equals("LONG_locality") && value == null) { /* fallback */
+            value = properties.get("formatted_address");
+            int idx = value.indexOf(",");
+            if (value != null && idx >= 0) {
+                value = value.substring(0, idx);
+            }
+            log.warning("createMandatoryProperty could not find property: [" + name + "] thus falling back to: [" + (value != null ? value : "") + "]");
+        }
 		if (value != null) {
 			ListingPropertyVO prop = new ListingPropertyVO(propertyName, value);
 			propsToUpdate.add(prop);
