@@ -76,7 +76,7 @@ pl.implement(CompanyTileClass, {
 <span class="span-4 '+ (lastClass?lastClass:'') +'">\
 <div class="tile">\
 ' + this.openanchor + '\
-<div class="tileimg hoverlink" style="' + this.imgStyle + '"></div>\
+<div class="tileimg fourthtileimage hoverlink" style="' + this.imgStyle + '"></div>\
 ' + this.closeanchor + '\
 <!--\
 <div class="tiledays"></div>\
@@ -124,7 +124,7 @@ pl.implement(CompanyTileClass, {
         return '\
 <div class="' + this.companybannertileclass + ' last">\
 ' + this.openanchor + '\
-    <div class="companybannerlogo tileimg noimage hoverlink" style="' + this.imgStyle + '"></div>\
+    <div class="companybannerlogo tileimg fulltileimg noimage hoverlink" style="' + this.imgStyle + '"></div>\
 ' + this.closeanchor + '\
 ' + this.openanchor + '\
     <div class="companybannertitle hoverlink">' + this.name + '</div>\
@@ -142,7 +142,7 @@ pl.implement(CompanyTileClass, {
         return '\
 <div class="companyhalftile' + (lastClass?' companyhalftilelast '+lastClass:'') + '">\
 ' + this.openanchor + '\
-    <div class="companyhalflogo tileimg noimage hoverlink" style="' + this.imgStyle + '"></div>\
+    <div class="companyhalflogo tileimg halftileimg noimage hoverlink" style="' + this.imgStyle + '"></div>\
 <!--\
     <div class="halftiledays"></div>\
     <div class="halftiledaystext">' + this.daystext + '</div>\
@@ -327,26 +327,37 @@ pl.implement(BaseCompanyListPageClass,{
     },
     loadPage: function(completeFunc) {
         var titleroot = (this.type === 'category' || this.type === 'location') ? this.val.toUpperCase() : this.type.toUpperCase(),
-            title = this.type === 'keyword' ? 'SEARCH RESULTS' : ((this.type === 'location') ? 'COMPANIES IN ' + titleroot : titleroot + ' COMPANIES'),
+            title = this.type === 'keyword' ? 'SEARCH RESULTS' : ((this.type === 'location') ? 'LISTINGS IN ' + titleroot : titleroot + ' LISTINGS'),
             ajax;
         this.setListingSearch();
         ajax = new AjaxClass(this.url, 'companydiv', completeFunc);
         pl('#listingstitle').html(title);
-        if (this.type === 'valuation') {
+        if (this.type === 'top') {
+            pl('#banner').addClass('topbanner');
+            pl('#welcometitle').html('Only the best!');
+            pl('#welcometext').html('The highest ranking listings on startupbidder');
+        }
+        else if (this.type === 'valuation') {
+            pl('#banner').addClass('valuationbanner');
             pl('#welcometitle').html('Invest in a startup today!');
-            pl('#welcometext').html('The companies below are ready for investment and open for bidding');
-            pl('#investbox').hide();
+            pl('#welcometext').html('The listings below are ready for investment and open for bidding');
         }
-        if (this.type === 'category') {
-            pl('#welcometitle').html('Find companies in your industry!');
-            pl('#welcometext').html('Below are the top companies in the ' + this.val + ' industry');
-            pl('#investbox').hide();
+        else if (this.type === 'latest') {
+            pl('#banner').addClass('latestbanner');
+            pl('#welcometitle').html("What's fresh?");
+            pl('#welcometext').html('The most recent listings posted on startupbidder');
         }
-        if (this.type === 'location') {
-            pl('#welcometitle').html('Find companies in your area!');
-            pl('#welcometext').html('Below are the top companies in ' + this.val);
-            pl('#investbox').hide();
+        else if (this.type === 'category') {
+            pl('#banner').addClass('categorybanner');
+            pl('#welcometitle').html('Find opportunities in your industry!');
+            pl('#welcometext').html('Below are the top listings in the ' + this.val + ' industry');
         }
+        else if (this.type === 'location') {
+            pl('#banner').addClass('locationbanner');
+            pl('#welcometitle').html('Find a startup in your area!');
+            pl('#welcometext').html('Here you will find the top listings in ' + this.val);
+        }
+        // pl('#investbox').hide();
         ajax.ajaxOpts.data = this.data;
         ajax.call();
     }

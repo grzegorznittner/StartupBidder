@@ -1,11 +1,7 @@
 function MapPageClass() {}
 pl.implement(MapPageClass,{
     load: function(completeFunc) {
-        var title = 'NEARBY COMPANIES',
-            ajax = new AjaxClass('/listings/all-listing-locations/', 'listingsmsg', completeFunc);
-        pl('#listingstitle').html(title);
-        pl('#welcometitle').html('Find a startup near you!');
-        pl('#welcometext').html('Browse the map below to see companies nearby you and around the world');
+        var ajax = new AjaxClass('/listings/all-listing-locations/', 'listingsmsg', completeFunc);
         ajax.call();
     },
     store: function(json) {

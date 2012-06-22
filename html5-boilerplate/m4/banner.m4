@@ -1,5 +1,5 @@
 `
-<div class="banner pull-15px">
+<div class="banner pull-15px" id="banner">
     <span class="bannertext span-24 push-15px">
         <div class="welcometitle" id="welcometitle">Welcome to startupbidder!</div>
         <div class="welcometext" id="welcometext">

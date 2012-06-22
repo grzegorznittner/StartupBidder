@@ -34,6 +34,7 @@ body.nearby-page > #wrap > #main > div.container > div.nearbywrapper { height: 1
 /* general styles */
 body { font-size: 14px; font-weight: normal; }
 
+/* borders */
 .curvedborder, .sidebox, .sideboxbutton, .sideboxbuttoninterior, .tile, .companybannertile, .companyhalftile, .boxpanel, .boxstep, .boxselected,
     .inputbutton, .smallinputbutton, .sideboxselected, .banner, .bmcborder,
     .bmcinfodisplay, .bmcinfodisplayvaluepropositions, .titleinfodisplay, .qainfodisplay, .sideinfodisplay,
@@ -43,6 +44,23 @@ body { font-size: 14px; font-weight: normal; }
     -moz-border-radius: 10px;
     border-radius: 10px;
     border: 2px solid #cccccc;
+}
+.orderbookheader, .investorbidheader, .investorgroupheader
+{
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+}
+.fourthtileimage {
+    -webkit-border-radius: 7px 7px 0 0;
+    -moz-border-radius: 7px 7px 0 0;
+    border-radius: 7px 7px 0 0;
+}
+.fulltileimg, halftileimg
+{
+    -webkit-border-radius: 7px;
+    -moz-border-radius: 7px;
+    border-radius: 7px;
 }
 
 /* link styles */
@@ -687,7 +705,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 
 /* tiles */
 .tile { width: 146px; height: 296px; border: 2px solid #cccccc; border-radius: 10px; overflow: hidden; margin-bottom: 10px; position: relative; }
-.tileimg { width: 146px; height: 146px; overflow: hidden; border-radius: 3px; }
+.tileimg { width: 146px; height: 146px; overflow: hidden; }
 .tiledays, .tiledaystext, .tiletype, .tiletypetext, .tilepoints { width: 146px; height: 30px; position: absolute; }
 .tiledays, .tiletype, .tilepoints { cursor: pointer; background-color: #000000; }
 .tiledaystext, .tiletypetext { padding: 4px; font-weight: bold; }
@@ -711,7 +729,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .previewoverlay { position: absolute; width: 100%; height: 100%; top: 0; left: 0; z-index: 1000; }
 
 /* images */
-.noimage { background: url(../img/noimage_146x146.jpg); border-radius: 3px; }
+.noimage { background: url(../img/noimage_146x146.jpg) no-repeat center; }
 .novideo { background: url(../img/no_video_300x243.gif) no-repeat center; }
 .missingimg { background: url(http://www.minimus.biz/img/Your%20Logo%20Here%20Black%202.jpg) -65px -55px; border-radius: 3px; height: 146px; width: 146px; }
 .presentationimg { background: url(../img/icons/presentation.png) no-repeat 1px 1px; border-radius: 3px; }
@@ -722,7 +740,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .startupbidderlogo { background: url(../img/logo_161x28.gif) no-repeat; width: 161px; height: 28px; }
 .headerlogo { margin-top: 14px; }
 
-/* texture background images */
+/* texture background images textures */
 .handmadepaper
     { background: url(../img/handmadepaper.png) repeat; }
 .groovepaper,
@@ -745,6 +763,28 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .citynight2,
     .banner
     { background: url(../img/citynight2.jpg); background-position: 0px -350px; }
+.airportsign,
+    .locationbanner
+    { background: url(../img/airportsign.jpg); background-position: -16px -460px; }
+.chemicalplant,
+    .categorybanner
+    { background: url(../img/chemicalplant.jpg); background-position: -15px -137px; }
+.neonchange,
+    .valuationbanner
+    { background: url(../img/neonchange.jpg); background-position: -25px -125px; }
+.flowers,
+    .latestbanner
+    { background: url(../img/flowers.jpg); background-position: -10px -340px; }
+.racehorse,
+    .topbanner
+    { background: url(../img/racehorse.jpg); background-position: -38px -55px; }
+.fusebox,
+    .apibanner
+    { background: url(../img/fusebox.jpg); background-position: -10px -295px; }
+.neighborhood,
+    .nearbybanner
+    { background: url(../img/neighborhood.jpg); background-position: 0 0; }
+
 
 /* BMC */
 /*
@@ -953,7 +993,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .picuploadtitle { margin-top: 225px; }
 
 
-.titleprevnextbtn { margin-top: 3px; }
+.titleprevnextbtn { margin-top: 3px; color: #4083a9; }
 
 input[disabled] { color: #999 !important; }
 textarea[disabled] { color: #999 !important; }

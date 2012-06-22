@@ -13,10 +13,10 @@ include(header.m4)
 `
 <div class="container">
 '
-include(banner.m4)
+include(nearby-banner.m4)
 `
 <div class="span-24 nearbywrapper">
-    <div class="boxtitle smokegrey" id="listingstitle"></div>
+    <div class="boxtitle smokegrey" id="listingstitle">NEARBY LISTINGS</div>
 
     <div id="mappanel" class="boxpanel nearbypanel">
         <div id="map" class="nearbymap"></div>
