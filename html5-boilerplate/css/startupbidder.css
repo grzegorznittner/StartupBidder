@@ -865,6 +865,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .sideinfoitem { position: relative; }
 .sideinfoheader { font-size: 18px; font-weight: bold; line-height: 30px; }
 .basicspanel { overflow: visible; height: 650px; }
+.editprofilepanel { overflow: visible; height: 169px; }
 .basicstitle { height: 41px; }
 
 .bmcborder { border: 6px solid #cccccc; border-radius: 10px; margin-bottom: 10px; clear: both; position: relative; }

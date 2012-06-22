@@ -119,7 +119,7 @@ pl.implement(EditProfileClass, {
                             var icon = new ValidIconClass('usernameicon');
                             if (json) {
                                 icon.showValid();
-                                pl('#personalinfomsg').text();
+                                pl('#personalinfomsg').text('');
                             }
                             else {
                                 icon.showInvalid();
@@ -185,7 +185,25 @@ pl.implement(EditProfileClass, {
         });
         confirmPassword.bindEvents();
  */
+        this.bindInfoButtons();
         self.displayDeactivate();
+        pl('#personalcolumn').show();
+    },
+    hideAllInfo: function() {
+        pl('.sideinfo').removeClass('sideinfodisplay');
+    },
+    bindInfoButtons: function() {
+        var self = this;
+        pl('input.text, select.text, textarea.inputwidetext').bind({
+            focus: function(e) {
+                var evt = new EventClass(e),
+                    infoel = evt.target().parentNode.nextSibling.nextSibling;
+                self.hideAllInfo();
+                pl(infoel).addClass('sideinfodisplay');
+            },
+            blur: self.hideAllInfo
+        });
+        pl('.sideinfo').bind('click', self.hideAllInfo);
     }
 });
 
