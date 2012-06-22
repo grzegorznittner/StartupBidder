@@ -106,7 +106,7 @@ a:focus, a:hover { cursor: pointer; }
     .uneditabletext, .addresstext,
     .doclabel, .aboutlabel,
     .companynav, .companynavselected, .companybannerlink,
-    .notifylink, .messagelink,
+    .notifylink, .messagelink, .profilelink,
     .titleinfo, .sideinfo, .bmcinfo, .ipinfo
     { color: #666666; }
 .darkblue,

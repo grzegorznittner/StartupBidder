@@ -20,8 +20,8 @@ include(header.m4)
         <div class="boxtitle smokegrey">YOUR LISTINGS</div>
         <div class="boxpanel">
             You currently have no listings.
-            <a href="/new-listing-basics-page.html" class="inputmsg hoverlink">Post</a> a new listing or
-            <a href="/main-page.html?type=valuation" class="inputmsg hoverlink">invest</a> in one today!
+            <a href="/new-listing-basics-page.html" class="inputmsg hoverlink profilelink">Post</a> a new listing or
+            <a href="/main-page.html?type=valuation" class="inputmsg hoverlink profilelink">invest</a> in one today!
         </div>
     </div>
 
