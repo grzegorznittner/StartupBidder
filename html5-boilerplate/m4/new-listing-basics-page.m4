@@ -53,10 +53,10 @@ include(header.m4)
         <div class="titleinfobtn"></div>
         <div class="titleinfo">
             <label class="titleinfoheader">Instructions</label>
-            <p> List your project or company here on startupbidder and submit a funding
+            <p> List your product or company here on startupbidder and submit a funding
             request to your choice of investors.  Startupbidder will review the listing and
             suggest any changes before approving.</p>
-            <p>NOTE THAT YOU MUST BE THE OWNER OR AN AUTHORIZED AGENT OF THE PROJECT OR BUSINESS TO ASK FOR FUNDING ON THIS SITE.</p>
+            <p>NOTE THAT YOU MUST BE THE OWNER OR AN AUTHORIZED AGENT OF THE PRODUCT OR BUSINESS TO ASK FOR FUNDING ON THIS SITE.</p>
         </div>
         <span class="bmctitlemsg" id="newlistingbasicsmsg"></span>
     </div>
@@ -70,7 +70,7 @@ include(header.m4)
             <p class="sideinfo">
                 <label class="sideinfoheader">Name</label>
                 <br />
-                A short name for your project, product or company.  If a company, it should be the legal name of the company.
+                A short name for your product or company.  If a company, it should be the legal name of the company.
             </p>
             <span class="inputicon">
                 <div id="titleicon"></div>
@@ -85,7 +85,7 @@ include(header.m4)
             <p class="sideinfo">
                 <label class="sideinfoheader">Category</label>
                 <br />
-                The industry classification of your project or company, drawn from a list of common angel and venture investment categories.
+                The industry classification of your product or company, drawn from a list of common angel and venture investment categories.
             </p>
             <span class="inputicon">
                 <div id="categoryicon"></div>
@@ -99,7 +99,7 @@ include(header.m4)
             <p class="sideinfo">
                 <label class="sideinfoheader">Mantra</label>
                 <br />
-                A tagline for your project or company, a single phrase or sentence, up to 140 characters.  Make it short but descriptive.
+                A tagline for your product or company, a single phrase or sentence, up to 140 characters.  Make it short but descriptive.
             </p>
             <span class="inputicon">
                 <div id="mantraicon"></div>
@@ -113,7 +113,7 @@ include(header.m4)
             <p class="sideinfo">
                 <label class="sideinfoheader">Website</label>
                 <br />
-                The website for your project or company, if you don't have one then link to your facebook page, google profile, or blog.
+                The website for your product or company, if you don't have one then link to your facebook page, google profile, or blog.
             </p>
             <span class="inputicon">
                 <div id="websiteicon"></div>
@@ -127,7 +127,7 @@ include(header.m4)
             <p class="sideinfo">
                 <label class="sideinfoheader">Founders</label>
                 <br />
-                The full legal names of the founders and any co-founders of this project or company.
+                The full legal names of the founders and any co-founders of this product or company.
             </p>
             <span class="inputicon">
                 <div id="foundersicon"></div>
@@ -155,7 +155,7 @@ include(header.m4)
             <p class="sideinfo">
                 <label class="sideinfoheader">Location</label>
                 <br />
-                The full physical address of your company or where you are developing this project, e.g. 1 Infinite Loop, Cupertino, CA, USA.
+                The full physical address of your company or where you are developing this product, e.g. 1 Infinite Loop, Cupertino, CA, USA.
             </p>
             <span class="inputicon">
                 <div id="locationicon"></div>

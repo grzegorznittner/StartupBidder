@@ -80,10 +80,10 @@ include(header.m4)
             Tell investors how much money you want to raise and how much of the company or product you
             want to offer for it.  The amount you want to raise is cash in US Dollars.  For a company,
             the percentage offering is the percentage of common stock, fully-diluted post-money, you
-            are offering in exchange for the funding.  If you are listing a project, the percentage is
+            are offering in exchange for the funding.  If you are listing a product, the percentage is
             the gross royalty in perpetuity on worldwide sales you will pay the investor.  
             The valuation is calculated by dividing the funding amount by the percentage of the
-            company or project being offered.
+            company or product being offered.
             Once your listing is approved, interested investors will contact you to make an offer.
             </p>
         </div>
@@ -113,7 +113,7 @@ include(header.m4)
                 <label class="sideinfoheader">For</label>
                 <br />
                 For a company, how much fully diluted post-money common equity you are offering, from 5% to 50%.
-                For project investments, the royalty on gross worldwide sales for the investor.
+                For product investments, the royalty on gross worldwide sales for the investor.
             </p>
             <span class="inputicon">
                 <div id="suggested_pcticon"></div>
@@ -137,7 +137,7 @@ include(header.m4)
         <div class="titleinfo">
             <label class="titleinfoheader">Instructions</label>
             <p>
-            Giving investors insight into your company or project is a great way to get them over
+            Giving investors insight into your company or product is a great way to get them over
             the hurdle to actually winning their funding.  Especially if you are asking for significant
             funding of $100,000 or more, investors will want to see a detailed business plan, an
             investor-oriented presentation, and whatever existing financial statements you have.  Although
@@ -190,7 +190,7 @@ include(header.m4)
         <div class="titleinfo">
             <label class="titleinfoheader">Instructions</label>
             <p>
-            Giving investors insight into your company or project is a great way to get them over
+            Giving investors insight into your company or product is a great way to get them over
             the hurdle to actually winning their funding.  Especially if you are asking for significant
             funding of $100,000 or more, investors will want to see a detailed business plan, an
             investor-oriented presentation, and whatever existing financial statements you have.  Although
@@ -243,7 +243,7 @@ include(header.m4)
         <div class="titleinfo">
             <label class="titleinfoheader">Instructions</label>
             <p>
-            Giving investors insight into your company or project is a great way to get them over
+            Giving investors insight into your company or product is a great way to get them over
             the hurdle to actually winning their funding.  Especially if you are asking for significant
             funding of $100,000 or more, investors will want to see a detailed business plan, an
             investor-oriented presentation, and whatever existing financial statements you have.  Although

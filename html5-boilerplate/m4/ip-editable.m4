@@ -130,7 +130,7 @@ what your business really provides and why it provides it.
                         <br />
 What&rsquo;s the status of your product or service now, is it just a concept,
 in prototype, in active use?  When and where did you start the company or
-project?  What have you achieved so far?  What customers do you have, contracts
+product?  What have you achieved so far?  What customers do you have, contracts
 signed, milestones reached, products developed?  What do you have in progress,
 near completion, still a pipe dream?  What&rsquo;s your sales pipeline look
 like so far?  Is it growing, shrinking, stable?

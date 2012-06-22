@@ -2152,7 +2152,7 @@ include(api-banner.m4)
                 <li><code>.listing_id</code> the listing this bid is for</li>
                 <li><code>.investor_id</code> <var>OPTIONAL</var> the profile_id of the investor who placed the bid, only passed when logged in listing owner making a bid action</li>
                 <li><code>.amt</code> amount of cash being offered by the investor, e.g. 20000</li>
-                <li><code>.pct</code> percentage of the company/project being demanded by the investor, e.g. 5</li>
+                <li><code>.pct</code> percentage of the company equity or product royalty being demanded by the investor, e.g. 5</li>
                 <li><code>.type</code>
                     one of INVESTOR_POST, INVESTOR_COUNTER, INVESTOR_ACCEPT, INVESTOR_REJECT, INVESTOR_WITHDRAW, OWNER_ACCEPT, OWNER_REJECT, OWNER_COUNTER, OWNER_WITHDRAW</li>
                 <li><code>.text</code> note attached to this bid, may describe additional conditions</li>
