@@ -58,7 +58,7 @@ pl.implement(BidClass, {
     },
 
     makeHtml: function(options) {
-        var addnote = options && options.last ? this.bidslist.makeAddNote() : '';
+        var addnote = options && options.last ? this.bidslist.makeAddNote() : ''; // removing note from accept/reject/withdraw actions
             addbuttons = options && options.last ? this.bidslist.makeAddButtons() : '';
             amtidattr = options && options.last ? ' id="existing_bid_amt"' : '';
             pctidattr = options && options.last ? ' id="existing_bid_pct"' : '';
@@ -72,7 +72,6 @@ pl.implement(BidClass, {
             <p class="span-3"' + validattr + '>' + this.valtext + '</p>\
             <p class="span-9 investorbidnote">' + this.bidtext + '</p>\
             <p class="investorbiddate">' + this.datetext + '</p>\
-        ' + addnote + '\
         ' + addbuttons + '\
         </div>\
         ';

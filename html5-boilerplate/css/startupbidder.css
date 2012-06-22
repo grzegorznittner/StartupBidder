@@ -37,7 +37,7 @@ body { font-size: 14px; font-weight: normal; }
 /* borders */
 .curvedborder, .sidebox, .sideboxbutton, .sideboxbuttoninterior, .tile, .companybannertile, .companyhalftile, .boxpanel, .boxstep, .boxselected,
     .inputbutton, .smallinputbutton, .sideboxselected, .banner, .bmcborder,
-    .bmcinfodisplay, .bmcinfodisplayvaluepropositions, .titleinfodisplay, .qainfodisplay, .sideinfodisplay,
+    .bmcinfodisplay, .bmcinfodisplayvaluepropositions, .titleinfodisplay, .sideinfodisplay,
     .buttonbg, .smallbuttonbg 
 {
     -webkit-border-radius: 10px;
@@ -93,7 +93,7 @@ a:focus, a:hover { cursor: pointer; }
     { color: #cccccc }
 .smokegrey,
     .infowindow, .boxtitle, .boxtitlegap, .boxsteptitle, .boxsteptext, .tileloc,
-    .sideboxlistnum
+    .sideboxlistnum, .titleinfoheader, .sideinfoheader, .bmcinfoheader, .ipinfoheader
     { color: #333333; }
 .nextgrey,
     .companybannertextgrey, .companybannermantra, .tiledesc, .tilepointstext,
@@ -105,16 +105,18 @@ a:focus, a:hover { cursor: pointer; }
     .boxpanel p,
     .uneditabletext, .addresstext,
     .doclabel, .aboutlabel,
-    .companynav, .companynavselected, .companybannerlink
+    .companynav, .companynavselected, .companybannerlink,
+    .notifylink, .messagelink,
+    .titleinfo, .sideinfo, .bmcinfo, .ipinfo
     { color: #666666; }
 .darkblue,
-    .tilecompany, .companybannertitle
+    .tilecompany, .companybannertitle, .companyhalftitle, .companybannertextlink, .formlink, .smallinputbutton
     { color: #4083a9; }
 
 /* gradients */
 /*
 .buttonbg, .sideboxbutton, .sideboxbuttoninterior, .smallbuttonbg, .inputbutton, .smallinputbutton,
-    .bmcinfodisplay, .bmcinfodisplayvaluepropositions, .titleinfodisplay, .qainfodisplay, .sideinfodisplay
+    .bmcinfodisplay, .bmcinfodisplayvaluepropositions, .titleinfodisplay, .sideinfodisplay
 {
 background: #999999;
 background: -moz-linear-gradient(top, #e2e2e2 0%, #d1d1d1 49%, #dbdbdb 50%, #999999 100%);
@@ -241,7 +243,6 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .ask_listing_ownericon { width: 20px; height: 20px; background: url(../img/icons/info_20.png); }
 .private_messageicon { width: 20px; height: 20px; background: url(../img/icons/email_20x20.png); }
 .notificationicon { width: 20px; height: 20px; background: url(../img/icons/notification_20.png); }
-.qainfobtn { height: 20px; width: 20px; background: url(../img/icons/info_20.png); float: right; }
 .bmcinfobtn { height: 20px; width: 20px; background: url(../img/icons/info_20.png); }
 .titleinfobtn { height: 20px; width: 20px; background: url(../img/icons/info_20.png); }
 .checkboxgreenicon { width: 32px; height: 32px; background: url(../img/icons/checkbox_green_32x32.png); }
@@ -403,21 +404,12 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
                 font-size: 14px !important; margin: 0; width: 175px !important; background: none !important; border: 0 !important; }
 .bmctextareawide { height: 120px; overflow: hidden; overflow-x: hidden; overflow-y: hidden; font-weight: normal; color: black !important; padding: 0;
                 font-size: 14px !important; margin: 0; width: 405px !important; background: none !important; border: 0 !important; }
-.qainfobtn:hover { cursor: pointer; }
-.qainfo { margin: 0 10px 0 5px !important; overflow: hidden; height: 0px; 
-    -moz-transition: height 300ms;
-    -webkit-transition: height 300ms;
-    -o-transition: height 300ms;
-    -ms-transition: height 300ms;
-    transition: height 300ms;
-}
-.qainfodisplay { height: 110px; }
 
-.bmcinfoheader { font-size: 18px; font-weight: bold; color: black; line-height: 30px; }
+.bmcinfoheader { font-size: 18px; font-weight: bold; line-height: 30px; }
 .bmcinfobtnwrap { position: relative; }
 .bmcinfobtn { position: absolute; top: 0; right: 0; }
 .bmcinfobtn:hover { cursor: pointer; }
-.bmcinfo { color: #4083a9; margin: 0; overflow: hidden; width: 530px; height: 0; position: absolute;
+.bmcinfo { margin: 0; overflow: hidden; width: 530px; height: 0; position: absolute;
     font-size: 14px; font-weight: bold;
     -moz-transition: height 300ms;
     -webkit-transition: height 300ms;
@@ -446,7 +438,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
     border: 2px solid #cccccc;
 }
 
-.ipinfo { color: #4083a9; margin: 0; overflow: hidden; height: 0; position: absolute;
+.ipinfo { margin: 0; overflow: hidden; height: 0; position: absolute;
     font-size: 14px; font-weight: bold;
     top: 5px;
     left: 5px;
@@ -463,7 +455,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
     padding: 10px;
     border: 2px solid #cccccc;
 }
-.ipinfoheader { font-size: 18px; font-weight: bold; color: black; line-height: 30px; }
+.ipinfoheader { font-size: 18px; font-weight: bold; line-height: 30px; }
 
 .offertitle { height: 41px; }
 .offerpanel { width: 622px; height: 141px; overflow: visible !important; position: relative; }
@@ -614,8 +606,9 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 /* .nearbymap { width: 946px; height: 946px; } */
 .nearbymap { height: 100%; width: 100%; }
 .listingbox { display: none; }
-.documentbox { height: 114px; }
+.documentbox { height: 126px; }
 .documentwrapper { display: none; }
+.videocontainer { margin-top: 5px; }
 .withdrawtitle { display: none; }
 .bidboxtitle { display: none; }
 .bidbox { display: none; }
@@ -746,7 +739,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .groovepaper,
     .tile, .companybannertile, .companyhalftile, .boxpanel,
     .bmcinfo, .ipinfo, .tileinfo, .sideinfo, .bmcborder,
-    .bmcinfodisplay, .bmcinfodisplayvaluepropositions, .titleinfodisplay, .qainfodisplay, .sideinfodisplay,
+    .bmcinfodisplay, .bmcinfodisplayvaluepropositions, .titleinfodisplay, .sideinfodisplay,
     .companyheader
     { background: url(../img/groovepaper.png) repeat; }
 .brushed_alu,
@@ -835,9 +828,9 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .bmctitlebtn { float: right; margin-left: 20px; }
 .titletext { float: left; padding-top: 15px; margin-right: 10px; }
 .titleinfobtn { float: left; margin-top: 14px; }
-.titleinfoheader { font-size: 18px; font-weight: bold; color: black; line-height: 30px; }
+.titleinfoheader { font-size: 18px; font-weight: bold; line-height: 30px; }
 .titleinfobtn:hover { cursor: pointer; }
-.titleinfo { color: #4083a9; margin: 0; overflow: hidden; width: 600px; height: 0;
+.titleinfo { margin: 0; overflow: hidden; width: 600px; height: 0;
     font-size: 14px; font-weight: bold;
     position: absolute; top: 45px; left: 10px;
     -moz-transition: height 300ms;
@@ -853,7 +846,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
     border: 2px solid #cccccc;
 }
 
-.sideinfo { color: #4083a9; margin: 0; overflow: hidden; width: 330px; height: 0; position: absolute;
+.sideinfo { margin: 0; overflow: hidden; width: 330px; height: 0; position: absolute;
     font-size: 14px; font-weight: bold;
     -moz-transition: height 300ms;
     -webkit-transition: height 300ms;
@@ -870,7 +863,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
     border: 2px solid #cccccc;
 }
 .sideinfoitem { position: relative; }
-.sideinfoheader { font-size: 18px; font-weight: bold; color: black; line-height: 30px; }
+.sideinfoheader { font-size: 18px; font-weight: bold; line-height: 30px; }
 .basicspanel { overflow: visible; height: 650px; }
 .basicstitle { height: 41px; }
 

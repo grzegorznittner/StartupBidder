@@ -9,7 +9,7 @@ pl.implement(MessageGroupClass, {
         self.messageclass = self.read ? '' : ' inputmsg'; // unread
         self.datetext = self.last_date ? DateClass.prototype.format(self.last_date) : '';
         self.url = self.from_user_id ? '/messages-page.html?from_user_id=' + self.from_user_id + '&from_user_nickname=' + encodeURIComponent(self.from_user_nickname) : '';
-        self.openanchor = self.url ? '<a href="' + self.url + '" class="hoverlink' + self.messageclass + '">' : '';
+        self.openanchor = self.url ? '<a href="' + self.url + '" class="hoverlink messagelink' + self.messageclass + '">' : '';
         self.closeanchor = self.from_user_id ? '</a>' : '';
     },
     setEmpty: function() {
@@ -28,7 +28,7 @@ pl.implement(MessageGroupClass, {
         return '\
         <div class="messageline">\
             <p class="messageuser span-4">' + self.from_user_nickname + '</p>\
-            <p class="messagetext span-14 darkblue">\
+            <p class="messagetext span-14">\
                 '+self.openanchor+'\
                 '+self.messagetext+'\
                 '+self.closeanchor+'\

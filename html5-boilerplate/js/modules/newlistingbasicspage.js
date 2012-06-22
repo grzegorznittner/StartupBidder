@@ -74,7 +74,7 @@ pl.implement(NewListingBasicsClass, {
         for (i = 0; i < textFields.length; i++) {
             id = textFields[i];
             updater = this.base.getUpdater(id);
-            field = new (classes[id])(id, this.base.listing[id], updater, 'newlistingmsg');
+            field = new (classes[id])(id, this.base.listing[id], updater, 'newlistingbasicsmsg');
             if (this.base.displayNameOverrides[id]) {
                 field.fieldBase.setDisplayName(this.base.displayNameOverrides[id]);
             }
@@ -109,7 +109,7 @@ pl.implement(NewListingBasicsClass, {
                             self.genPlaceUpdater()(results[0]);
                         }
                         else {
-                            pl('#newlistingmsg').html('<span class="attention">Could not geocode results: ' + status + '</span>');
+                            pl('#newlistingbasicsmsg').html('<span class="attention">Could not geocode results: ' + status + '</span>');
                         }
                     });
                     return false;
@@ -137,7 +137,7 @@ pl.implement(NewListingBasicsClass, {
                 data = { listing: {
                         update_address: place
                        } },
-                ajax = new AjaxClass('/listing/update_address', 'newlistingmsg', completeFunc);
+                ajax = new AjaxClass('/listing/update_address', 'newlistingbasicsmsg', completeFunc);
             ajax.setPostData(data);
             ajax.call();
         };

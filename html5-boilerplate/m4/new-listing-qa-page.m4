@@ -40,6 +40,11 @@ include(header.m4)
             </span>
         </a>
     </div>
+<div class="span-16">
+    <div class="formitem clear">
+        <span class="inputmsg" id="newlistingmsg"></span>
+    </div>
+</div>
 
 '
 include(ip.m4)

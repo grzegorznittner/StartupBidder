@@ -30,6 +30,7 @@ pl.implement(CommentClass, {
         else {
             pl('#addcommentbox').before('<div class="messageline"><p style="font-weight: bold;">Login to post a comment</p></div>');
         }
+        pl('#commentswrapper').show();
     },
     bindAddCommentBox: function() {
         var self = this;
@@ -127,7 +128,6 @@ pl.implement(CommentClass, {
             comment = bindlist[i];
             self.bindComment(comment);
         }
-        pl('#commentswrapper').show();
     },
     makeComment: function(comment) {
         var text = SafeStringClass.prototype.htmlEntities(comment.text),

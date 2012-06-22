@@ -26,7 +26,7 @@ pl.implement(NotificationClass, {
             self.type = 'notification';
         }
         self.datetext = self.create_date ? DateClass.prototype.format(self.create_date) : '';
-        self.openanchor = self.link ? '<a href="' + self.link + '" class="hoverlink' + self.messageclass + '">' : '';
+        self.openanchor = self.link ? '<a href="' + self.link + '" class="hoverlink notifylink' + self.messageclass + '">' : '';
         self.closeanchor = self.link ? '</a>' : '';
     },
     setEmpty: function() {

@@ -299,7 +299,7 @@ pl.implement(QuestionClass, {
             questiondateclass = question.answer ? 'messagedate' : 'messagedate questiondate';
         return '\
         <div class="messageline" id="qanda_' + question.question_id + '">\
-            <p class="messageuser span-4">Asked by ' + question.user_nickname + '</p>\
+            <p class="messageuser span-4">Asked by ' + question.from_user_nickname + '</p>\
             <span class="messagetext span-15">\
                 ' + questiontext + '\
                 ' + unansweredblock + '\

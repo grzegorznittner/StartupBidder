@@ -545,7 +545,10 @@ pl.implement(TextFieldClass, {
     },
     validate: function() {
         var self = this,
-            value = pl(self.fieldBase.sel).attr('value');
+            el = pl(self.fieldBase.sel).get(0),
+            currentValue = pl(el).attr('value'),
+            value = (el.tagName.toLowerCase() === 'textarea' && currentValue === el.defaultValue) ? '' : currentValue;
+        console.log('validate', self.fieldBase.sel, el, currentValue);
         return self.fieldBase.validator.validate(value);
     },
     bindEvents: function(optionsparam) {

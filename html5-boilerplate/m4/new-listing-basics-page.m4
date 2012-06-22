@@ -36,6 +36,11 @@ include(header.m4)
             </span>
         </a>
     </div>
+<div class="span-16">
+    <div class="formitem clear">
+        <span class="inputmsg" id="newlistingmsg"></span>
+    </div>
+</div>
 
 <!-- end banner -->
 
@@ -53,7 +58,7 @@ include(header.m4)
             suggest any changes before approving.</p>
             <p>NOTE THAT YOU MUST BE THE OWNER OR AN AUTHORIZED AGENT OF THE PROJECT OR BUSINESS TO ASK FOR FUNDING ON THIS SITE.</p>
         </div>
-        <span class="bmctitlemsg" id="newlistingmsg"></span>
+        <span class="bmctitlemsg" id="newlistingbasicsmsg"></span>
     </div>
 
     <div class="boxpanel basicspanel">
