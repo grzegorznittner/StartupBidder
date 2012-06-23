@@ -32,10 +32,10 @@ include(images-panel.m4)
         <div class="sidebox uneditabletext askingbox">
             <div class="sideboxdesc suggestedmsg" id="suggestedmsg"></div>
             <div class="suggestedinfo" id="suggestedinfo">
-                <div class="sideboxtitlecompact" id="suggested_amt"></div>
-                <div class="sideboxdesc">FOR <span id="suggested_pct"></span>% EQUITY</div>
-                <div class="sideboxdesc">OWNER VALUATION IS <span id="suggested_val"></span></div>
-                <div class="sideboxdesc">TOTAL RAISED IS <span id="total_raised">$0</span></div>
+                <div class="sideboxtitlecompact sideboxnum" id="suggested_amt"></div>
+                <div class="sideboxdesc">FOR <span class="sideboxnum" id="suggested_pct"></span><span class="sideboxnum">%</span> EQUITY</div>
+                <div class="sideboxdesc">OWNER VALUATION IS <span class="sideboxnum" id="suggested_val"></span></div>
+                <div class="sideboxdesc">TOTAL RAISED IS <span class="sideboxnum" id="total_raised">$0</span></div>
             </div>
         </div>
      

@@ -45,12 +45,6 @@ body { font-size: 14px; font-weight: normal; }
     border-radius: 10px;
     border: 2px solid #cccccc;
 }
-.orderbookheader, .investorbidheader, .investorgroupheader
-{
-    -webkit-border-radius: 5px;
-    -moz-border-radius: 5px;
-    border-radius: 5px;
-}
 .fourthtileimage {
     -webkit-border-radius: 7px 7px 0 0;
     -moz-border-radius: 7px 7px 0 0;
@@ -93,8 +87,10 @@ a:focus, a:hover { cursor: pointer; }
     { color: #cccccc }
 .smokegrey,
     .infowindow, .boxtitle, .boxtitlegap, .boxsteptitle, .boxsteptext, .tileloc,
-    .sideboxlistnum, .titleinfoheader, .sideinfoheader, .bmcinfoheader, .ipinfoheader
+    .sideboxnum, .sideboxlistnum, .titleinfoheader, .sideinfoheader, .bmcinfoheader, .ipinfoheader,
+    .orderbook, .orderbookline p, .bidline p, .investorbidline p
     { color: #333333; }
+.sideboxnum { color: #333333 !important }
 .nextgrey,
     .companybannertextgrey, .companybannermantra, .tiledesc, .tilepointstext,
     .sideboxlistname,
@@ -107,10 +103,13 @@ a:focus, a:hover { cursor: pointer; }
     .doclabel, .aboutlabel,
     .companynav, .companynavselected, .companybannerlink,
     .notifylink, .messagelink, .profilelink,
-    .titleinfo, .sideinfo, .bmcinfo, .ipinfo
+    .titleinfo, .sideinfo, .bmcinfo, .ipinfo,
+    .sidebox,
+    .orderbookheader p, .bidheader p, .investorbidheader p,
+    .orderbookdate, .biddate, .investorbiddate, .lastdate
     { color: #666666; }
 .darkblue,
-    .tilecompany, .companybannertitle, .companyhalftitle, .companybannertextlink, .formlink, .smallinputbutton
+    .tilecompany, .companybannertitle, .companyhalftitle, .companybannertextlink, .formlink, .inputbutton, .smallinputbutton
     { color: #4083a9; }
 
 /* gradients */
@@ -334,7 +333,6 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .inputbutton, .smallinputbutton { text-align: center; margin-top: 5px; font-weight: bold; } 
 .doclinkmsg { text-align: center; margin-top: 5px; font-weight: bold; font-size: 14px; height: 26px; padding-top: 2px; margin-bottom: 5px; font-weight: bold; } 
 .inputbutton { font-size: 18px; height: 33px; padding-top: 4px; margin-bottom: 10px; } 
-.inputbutton { color: #4083a9; }
 .smallinputbutton { font-size: 14px; height: 26px; padding-top: 2px; margin-bottom: 5px; } 
 .formtitle { font-size: 24px; padding-left: 5px; }
 .formtitlefourth { font-size: 24px; padding-left: 0; }
@@ -544,10 +542,10 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .sideboxbutton { width: 310px; height: 50px; font-size: 34px; font-weight: bold; text-align: center; margin-bottom: 10px; }
 .sideboxbuttonsmall { width: 150px; height: 30px; font-size: 20px; }
 .sideboxbuttoninterior { width: 292px; height: 50px; font-size: 34px; font-weight: bold; text-align: center; margin: 0 5px 5px 5px; }
-.sideboxbutton:hover { cursor: pointer }
-.sideboxbuttonsmall:hover { cursor: pointer }
+.sideboxbutton:hover { cursor: pointer; }
+.sideboxbuttonsmall:hover { cursor: pointer; }
 .sideboxcompanylink { width: 298px; float: left; margin-left: 2px; }
-.sideboxcompanylink:hover { background: #f2f2f2; }
+.sideboxcompanylink:hover { cursor: pointer; }
 .sideboxtitle { float: left; font-size: 24px; text-align: right; margin-left: 10px; margin-right: 10px; height: 43px; font-weight: bold; }
 .sideboxtitledetail { float: left; padding-top: 11px; font-weight: bold; }
 .sideboxtitlecompact { font-size: 24px; margin-left: 5px; margin-right: 10px; font-weight: bold; }
@@ -556,11 +554,11 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .sideboxicon { width: 26px; margin-right: 10px; float: left; }
 /* .sideboxnotifytext { float: left; width: 266px; font-weight: normal; } */
 .notifyline { clear: both; padding: 5px; overflow: auto; }
-.notifyline:nth-child(2n) { background: #f2f2f2; }
+.notifyline:nth-child(2n+1) { background: #e8e8e8; }
 .notifytext { float: left; font-weight: normal; }
 .notifydate { float: right; font-size: 12px; padding-top: 2px; color: gray; margin-right: 10px; }
 .messageline { clear: both; padding: 5px; overflow: auto; position: relative; }
-.messageline:nth-child(2n) { background: #f2f2f2; }
+.messageline:nth-child(2n+1) { background: #e8e8e8; }
 .messageline p { font-weight: normal; margin: 0; text-indent: 0; }
 .messageline p.messageuser { font-weight: bold; }
 .messageline p.answerdate { font-weight: bold; }
@@ -583,12 +581,6 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .newbidactionline { clear: both; overflow: auto; }
 .bidactionbutton { float: right; }
 .bidconfirmmessage { padding-top: 14px; padding-right: 10px; text-align: right; font-weight: bold; color: #49515a; float: right; }
-.investorbidheader { background: #49515a !important; }
-.investorbidheader p { color: white; font-weight: bold !important; text-align: center; }
-.investorbidline p { font-weight: bold; text-align: center; }
-.investorbidnote { text-align: left !important; font-weight: normal !important; }
-.investorbiddateheader { float: left; width: 140px; }
-.investorbiddate { float: left; width: 140px; text-align: right; font-size: 12px; padding-top: 2px; }
 .messagereplytextarea { position: absolute; left: 150px; bottom: 18px; width: 640px !important; }
 .messagereplybutton { position: absolute; right: 0; top: 40px; }
 .messagereplymsg { position: absolute; bottom: 0; left: 150px; }
@@ -599,7 +591,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .sideboxmap { width: 302px; height: 302px; }
 .orderbook { float: left; margin-right: 10px; }
 .orderbooklast { float: left; margin-right: 0; }
-.lastorder { text-align:center; font-weight: bold; }
+.lastorder { text-align:center; }
 .lastorderamt { font-size: 32px; }
 .bidpanel { padding-top: 5px; }
 /* .nearbypanel { width: 946px; height: 946px; } */
@@ -645,6 +637,26 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .summarypanel { min-height: 130px; }
 .sidebox, .askingbox { min-height: 21px; }
 .showmore { float: right; margin-right: 10px; font-weight: bold; margin-bottom: 10px; }
+
+/* bids */
+.bidheader { }
+.bidheader p { font-weight: bold !important; text-align: center; }
+.bidline p { font-weight: normal; text-align: center; }
+.bidnote { text-align: left !important; font-weight: normal !important; }
+.biddateheader { float: left; width: 140px; }
+.biddate { float: left; width: 140px; text-align: right; font-size: 10px; padding-top: 2px; color: #666666 !important; }
+.investorbidheader { }
+.investorbidheader p { font-weight: bold !important; text-align: center; }
+.investorbidline p { font-weight: normal; text-align: center; }
+.investorbidnote { text-align: left !important; font-weight: normal !important; }
+.investorbiddateheader { float: left; width: 140px; }
+.investorbiddate { float: left; width: 140px; text-align: right; font-size: 10px; padding-top: 2px; color: #666666 !important; }
+.orderbookheader { }
+.orderbookheader p { font-weight: bold !important; text-align: center; }
+.orderbookline p { font-weight: normal; text-align: center; }
+.orderbookdateheader { float: left; width: 80px; }
+.orderbookdate { float: left; width: 80px; text-align: right; font-size: 10px; padding-top: 2px; color: #666666 !important; }
+.lastdate { font-size: 10px; }
 
 /* api */
 .apipanel { width: 950px; margin-right: 0; }

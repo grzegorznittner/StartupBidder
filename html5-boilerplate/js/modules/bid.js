@@ -20,7 +20,7 @@ pl.implement(BidClass, {
             self[k] = json[k];
         }
         self.amttext = self.amt ? CurrencyClass.prototype.format(self.amt) : '';
-        self.pcttext = self.pct ? PercentClass.prototype.format(self.pct) : '';
+        self.pcttext = self.pct ? PercentClass.prototype.format(self.pct) + '%' : '';
         self.valtext = self.val ? CurrencyClass.prototype.format(self.val) : '';
         self.typetext = self.type ? self.type.replace(/(investor_|owner_)/, '') : '';
         self.bidtext = self.text ? SafeStringClass.prototype.htmlEntities(self.text) : '&nbsp;';
@@ -46,14 +46,6 @@ pl.implement(BidClass, {
 
     makeHeader: function() {
         return '\
-        <style>\
-            .bidheader { background: #49515a !important; }\
-            .bidheader p { color: white; font-weight: bold !important; text-align: center; }\
-            .bidline p { font-weight: bold; text-align: center; }\
-            .bidnote { text-align: left !important; font-weight: normal !important; }\
-            .biddateheader { float: left; width: 140px; }\
-            .biddate { float: left; width: 140px; text-align: right; font-size: 12px; padding-top: 2px; }\
-        </style>\
         <div class="messageline bidheader">\
             <p class="span-2">Actor</p>\
             <p class="span-2">Action</p>\
@@ -72,9 +64,9 @@ pl.implement(BidClass, {
         <div class="messageline bidline ' + self.typeclass + '">\
             <p class="span-2">' + self.usertext + '</p>\
             <p class="span-2">' + self.typetext + '</p>\
-            <p class="span-3">' + self.amttext + '</p>\
-            <p class="span-2">' + self.pcttext + '</p>\
-            <p class="span-3">' + self.valtext + '</p>\
+            <p class="span-3 sideboxnum">' + self.amttext + '</p>\
+            <p class="span-2 sideboxnum">' + self.pcttext + '</p>\
+            <p class="span-3 sideboxnum">' + self.valtext + '</p>\
             <p class="span-9 bidnote">\
                 '+self.bidtext+'\
             </p>\

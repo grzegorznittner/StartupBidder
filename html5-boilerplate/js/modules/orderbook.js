@@ -30,7 +30,8 @@ pl.implement(PublicBidClass, {
         this.pcttext = this.pct ? PercentClass.prototype.format(this.pct) : '';
         this.valtext = this.val ? CurrencyClass.prototype.format(this.val) : '';
         this.datetext = this.create_date ? DateClass.prototype.format(this.create_date) : '';
-        this.bidclass = this.typeclassmap[this.type] || '';
+        this.bidclass = '';
+        //this.bidclass = this.typeclassmap[this.type] || '';
         return this;
     },
 
@@ -46,13 +47,6 @@ pl.implement(PublicBidClass, {
 
     makeHeader: function() {
         return '\
-        <style>\
-            .orderbookheader { background: #49515a !important; }\
-            .orderbookheader p { color: white; font-weight: bold !important; text-align: center; }\
-            .orderbookline p { font-weight: bold; text-align: center; }\
-            .orderbookdateheader { float: left; width: 80px; }\
-            .orderbookdate { float: left; width: 80px; text-align: right; font-size: 12px; padding-top: 2px; }\
-        </style>\
         <div class="messageline orderbookheader">\
             <p class="span-2">' + this.amttitle + '</p>\
             <p class="span-2">Equity</p>\
@@ -232,12 +226,13 @@ accepted_bids: [
             pl('#orderbook_' + bidprop).html(html);
 
             if (!this.bids[bidprop].length) {
-                pl('#last_' + bidprop + '_amt').addClass('errorcolor').text(this.nobidsmap[bidprop]);
+                //pl('#last_' + bidprop + '_amt').addClass('errorcolor').text(this.nobidsmap[bidprop]);
+                pl('#last_' + bidprop + '_amt').text(this.nobidsmap[bidprop]);
             }
             else {
                 bid = this.bids[bidprop][0];
                 pl('#last_' + bidprop + '_amt').addClass(bid.bidclass).text(bid.amttext);
-                pl('#last_' + bidprop + '_details').text('for ' + bid.pcttext + '% valued at ' + bid.valtext);
+                pl('#last_' + bidprop + '_details').html('for <span class="sideboxnum">' + bid.pcttext + '%</span> valued at <span class="sideboxnum">' + bid.valtext + "</span>");
                 pl('#last_' + bidprop + '_date').text(bid.datetext);
             }
         }

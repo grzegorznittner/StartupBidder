@@ -2,13 +2,13 @@
 <div class="span-24 last initialhidden" id="ip-editable">
 
     <div class="boxtitle">
-        <span class="titletext">INVESTOR PRESENTATION</span>
+        <span class="titletext">PRESENTATION</span>
         <div class="titleinfobtn"></div>
         <div class="titleinfo">
             <label class="titleinfoheader">Instructions</label>
             <p>
 Your goal is to present specific relevant detail that can help someone to
-evaluate your idea.  Picture someone reviewing dozens of startup applications
+evaluate your idea.  Picture someone reviewing dozens of startups
 each week, with only a short time to glance at each.  Show you have a vision,
 with a definite plan, and the right team to execute it.  Avoid platitudes and
 generalizations.  Talk about your market, your product, your price, your

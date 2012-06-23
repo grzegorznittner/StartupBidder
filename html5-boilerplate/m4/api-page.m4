@@ -396,7 +396,7 @@ include(api-banner.m4)
             </ul>
             <h4>Response</h4>
                 <p>NOTE: fields answer1 through answer10 are used for the Business Model Canvas construction, fields
-                answer 11 through answer 26 are used for the Investor Presentation construction</p>
+                answer 11 through answer 26 are used for presentation construction</p>
             <ul>
                 <li><code>login_url</code> URL to use for site login action</li>
                 <li><code>logout_url</code> URL to use for site logout action</li>

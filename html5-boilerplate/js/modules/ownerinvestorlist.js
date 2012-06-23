@@ -34,7 +34,8 @@ pl.implement(InvestorBidGroupClass, {
         this.bidtext = this.last_text ? SafeStringClass.prototype.htmlEntities(this.last_text) : 'None';
         this.datetext = this.last_date ? DateClass.prototype.format(this.last_date) : '';
         this.usertext = this.investor_nickname + countertext;
-        this.typeclass = this.typeclassmap[this.last_type] || '';
+        this.typeclass = '';
+        //this.typeclass = this.typeclassmap[this.last_type] || '';
         this.url = this.investor_id ? '/company-owner-investor-bids-page.html'
             + '?id=' + this.listing_id
             + '&investor_id=' + this.investor_id : '#';

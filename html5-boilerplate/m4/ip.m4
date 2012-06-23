@@ -2,7 +2,7 @@
 <div class="span-24 last initialhidden" id="ip">
 
     <div class="boxtitle bmctitle">
-        <span class="titletext">INVESTOR PRESENTATION</span>
+        <span class="titletext">PRESENTATION</span>
         <span class="span-3 smallinputbutton darkblue bmctitlebtn hoverlink initialhidden" id="ip-edit-btn">EDIT</span>
         <span class="bmctitlemsg" id="ipmsg"></span>
     </div>

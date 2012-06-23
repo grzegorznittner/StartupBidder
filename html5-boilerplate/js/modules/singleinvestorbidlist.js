@@ -21,13 +21,14 @@ pl.implement(BidClass, {
             this[k] = json[k];
         }
         this.amttext = this.amt ? CurrencyClass.prototype.format(this.amt) : '';
-        this.pcttext = this.pct ? PercentClass.prototype.format(this.pct) : '';
+        this.pcttext = this.pct ? PercentClass.prototype.format(this.pct) + '%' : '';
         this.valtext = this.val ? CurrencyClass.prototype.format(this.val) : '';
         this.typetext = this.type ? this.type.replace(/(investor_|owner_)/, '') : '';
         this.bidtext = this.text ? SafeStringClass.prototype.htmlEntities(this.text) : 'None';
         this.datetext = this.create_date ? DateClass.prototype.format(this.create_date) : '';
         this.usertext = this.type && this.type.match(/investor/) ? 'You' : 'Owner';
-        this.typeclass = this.typeclassmap[this.type] || '';
+        this.typeclass = '';
+        //this.typeclass = this.typeclassmap[this.type] || '';
         return this;
     },
 
@@ -67,9 +68,9 @@ pl.implement(BidClass, {
         <div class="messageline investorbidline ' + this.typeclass + '">\
             <p class="span-2">' + this.usertext + '</p>\
             <p class="span-2">' + this.typetext + '</p>\
-            <p class="span-3"' + amtidattr + '>' + this.amttext + '</p>\
-            <p class="span-2"' + pctidattr + '>' + this.pcttext + '</p>\
-            <p class="span-3"' + validattr + '>' + this.valtext + '</p>\
+            <p class="span-3 sideboxnum"' + amtidattr + '>' + this.amttext + '</p>\
+            <p class="span-2 sideboxnum"' + pctidattr + '>' + this.pcttext + '</p>\
+            <p class="span-3 sideboxnum"' + validattr + '>' + this.valtext + '</p>\
             <p class="span-9 investorbidnote">' + this.bidtext + '</p>\
             <p class="investorbiddate">' + this.datetext + '</p>\
         ' + addbuttons + '\

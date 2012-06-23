@@ -25,7 +25,8 @@ pl.implement(NotificationClass, {
         else {
             self.type = 'notification';
         }
-        self.datetext = self.create_date ? DateClass.prototype.format(self.create_date) : '';
+        self.date = self.create_date || self.sent_date;
+        self.datetext = self.date ? DateClass.prototype.format(self.date) : '';
         self.openanchor = self.link ? '<a href="' + self.link + '" class="hoverlink notifylink' + self.messageclass + '">' : '';
         self.closeanchor = self.link ? '</a>' : '';
     },
@@ -36,6 +37,7 @@ pl.implement(NotificationClass, {
                 title: 'You currently have no notifications.',
                 text_1: null,
                 create_date: null,
+                sent_date: null,
                 read: true,
                 link: null
             };
