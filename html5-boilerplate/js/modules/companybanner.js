@@ -30,7 +30,8 @@ pl.implement(CompanyBannerClass, {
             founderstext = (this.founders ? ' founded by ' + this.founders : ''),
             status = this.status || 'new',
             website = this.website || '#',
-            listingdatetext = SafeStringClass.prototype.ucfirst(status) + ' listing' + (this.listing_date ? ' from ' + DateClass.prototype.format(this.listing_date) : ' not yet listed') + ' at ';
+            listingdatetext = '<span class="inputmsg">' + SafeStringClass.prototype.ucfirst(status) + '</span> listing'
+                + (this.listing_date ? ' from ' + DateClass.prototype.format(this.listing_date) : ' not yet listed') + ' at ';
         if (logobg) {
             pl('#companylogo').removeClass('noimage').css({background: logobg});
         }
@@ -43,7 +44,7 @@ pl.implement(CompanyBannerClass, {
         }
         pl('#categoryaddresstext').text(categoryaddresstext);
         pl('#founderstext').text(founderstext);
-        pl('#listing_date_text').text(listingdatetext);
+        pl('#listing_date_text').html(listingdatetext);
         pl('#websitelink').attr({href: website});
         if (url) {
             pl('#domainname').text(url.getHostname());

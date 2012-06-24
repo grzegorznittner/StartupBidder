@@ -278,11 +278,11 @@ pl.implement(ListingClass, {
         pl('#withdrawbtn').bind({
             click: function() {
                 var complete = function() {
-                        self.status = 'withdrawn';
-                        pl('#withdrawmsg').addClass('successful').html('LISTING WITHDRAWN');
                         pl('#withdrawbtn, #withdrawcancelbtn').hide();
-                        pl('#companystatus').html('Listing is ' + self.status).addClass('attention');
-                        window.location.reload();
+                        pl('#withdrawmsg').text('Listing withdrawn, reloading...').show();
+                        setTimeout(function() {
+                            window.location.reload();
+                        }, 3000);
                     },
 
                     url = '/listing/withdraw/' + self.listing_id,
@@ -318,7 +318,11 @@ pl.implement(ListingClass, {
         pl('#approvebtn').bind({
             click: function() {
                 var complete = function() {
-                        window.location.reload();
+                        pl('#approvebtn, #approvecancelbtn').hide();
+                        pl('#approvemsg').text('Listing approved, reloading...').show();
+                        setTimeout(function() {
+                            window.location.reload();
+                        }, 3000);
                     },
 
                     url = '/listing/activate/' + self.listing_id;
@@ -354,16 +358,30 @@ pl.implement(ListingClass, {
         pl('#sendbackbtn').bind({
             click: function() {
                 var complete = function() {
-                        window.location.reload();
+                        pl('#sendbackbtn, #sendbackcancelbtn').hide();
+                        pl('#sendbackmsg').text('Listing sent back, reloading...').show();
+                        setTimeout(function() {
+                            window.location.reload();
+                        }, 3000);
                     },
-
-                    url = '/listing/send_back/' + self.listing_id;
+                    data = {
+                        listing: {
+                            id: self.listing_id,
+                            message: pl('#sendbacktext').attr('value')
+                        }
+                    },
+                    url = '/listing/send_back/' + self.listing_id,
                     ajax = new AjaxClass(url, 'sendbackmsg', complete);
-                if (pl('#sendbackcancelbtn').css('display') === 'none') { // first call
-                    pl('#sendbackmsg, #sendbackcancelbtn').show();
+                if (pl('#sendbackmsg').text() && pl('#sendbackmsg').text().indexOf('Error') !== -1) {
+                    pl('#sendbackbtn').hide();
+                }
+                else if (pl('#sendbackcancelbtn').css('display') === 'none') { // first call
+                    pl('#sendbackmsg').text('Are you sure?').show();
+                    pl('#sendbackcancelbtn').show();
+                    pl('#sendbacktext').attr({disabled: 'disabled'});
                 }
                 else {
-                    ajax.setPost();
+                    ajax.setPostData(data);
                     ajax.call();
                 }
                 return false;
@@ -371,7 +389,10 @@ pl.implement(ListingClass, {
         });
         pl('#sendbackcancelbtn').bind({
             click: function() {
-                pl('#sendbackmsg, #sendbackcancelbtn').hide();
+                pl('#sendbackcancelbtn').hide();
+                pl('#sendbackmsg').text('').show();
+                pl('#sendbackbtn').show();
+                pl('#sendbacktext').removeAttr('disabled');
                 return false;
             }
         });
@@ -390,16 +411,30 @@ pl.implement(ListingClass, {
         pl('#freezebtn').bind({
             click: function() {
                 var complete = function() {
-                        window.location.reload();
+                        pl('#freezebtn, #freezecancelbtn').hide();
+                        pl('#freezemsg').text('Listing frozen, reloading...').show();
+                        setTimeout(function() {
+                            window.location.reload();
+                        }, 3000);
                     },
-
-                    url = '/listing/freeze/' + self.listing_id;
+                    data = {
+                        listing: {
+                            id: self.listing_id,
+                            message: pl('#freezetext').attr('value')
+                        }
+                    },
+                    url = '/listing/freeze/' + self.listing_id,
                     ajax = new AjaxClass(url, 'freezemsg', complete);
-                if (pl('#freezecancelbtn').css('display') === 'none') { // first call
-                    pl('#freezemsg, #freezecancelbtn').show();
+                if (pl('#freezemsg').text() && pl('#freezemsg').text().indexOf('Error') !== -1) {
+                    pl('#freezebtn').hide();
+                }
+                else if (pl('#freezecancelbtn').css('display') === 'none') { // first call
+                    pl('#freezemsg').text('Are you sure?').show();
+                    pl('#freezecancelbtn').show();
+                    pl('#freezetext').attr({disabled: 'disabled'});
                 }
                 else {
-                    ajax.setPost();
+                    ajax.setPostData(data);
                     ajax.call();
                 }
                 return false;
@@ -407,7 +442,10 @@ pl.implement(ListingClass, {
         });
         pl('#freezecancelbtn').bind({
             click: function() {
-                pl('#freezemsg, #freezecancelbtn').hide();
+                pl('#freezecancelbtn').hide();
+                pl('#freezemsg').text('').show();
+                pl('#freezebtn').show();
+                pl('#freezetext').removeAttr('disabled');
                 return false;
             }
         });

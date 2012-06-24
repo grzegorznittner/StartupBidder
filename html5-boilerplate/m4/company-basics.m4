@@ -97,6 +97,7 @@ include(images-panel.m4)
     
         <div id="sendbackbox" class="sendbackbox">
         <div class="boxtitle">SEND BACK POST</div>
+        <input class="text sideinputtext" type="text" name="sendbacktext" id="sendbacktext" value="" length="35" maxlength="100"></input>
         <div class="sendbackmsg attention" id="sendbackmsg">Are you sure?</div>
         <a href="#" id="sendbackbtn"><div class="sideboxbutton sideboxbuttonsmall hoverlink">SEND BACK</div></a>
         <a href="#" class="sendbackcancelbtn" id="sendbackcancelbtn"><div class="sideboxbutton sideboxbuttonsmall hoverlink">CANCEL</div></a>
@@ -104,6 +105,7 @@ include(images-panel.m4)
     
         <div id="freezebox" class="freezebox">
         <div class="boxtitle">FREEZE POST</div>
+        <input class="text sideinputtext" type="text" name="freezetext" id="freezetext" value="" length="35" maxlength="100"></input>
         <div class="freezemsg attention" id="freezemsg">Are you sure?</div>
         <a href="#" id="freezebtn"><div class="sideboxbutton sideboxbuttonsmall hoverlink">FREEZE</div></a>
         <a href="#" class="freezecancelbtn" id="freezecancelbtn"><div class="sideboxbutton sideboxbuttonsmall hoverlink">CANCEL</div></a>
