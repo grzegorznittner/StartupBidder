@@ -14,6 +14,7 @@ import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.startupbidder.vo.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -28,16 +29,6 @@ import com.startupbidder.dao.ObjectifyDatastoreDAO;
 import com.startupbidder.datamodel.Listing;
 import com.startupbidder.datamodel.Listing.State;
 import com.startupbidder.datamodel.ListingDoc;
-import com.startupbidder.vo.BaseVO;
-import com.startupbidder.vo.BidListVO;
-import com.startupbidder.vo.BidUserListVO;
-import com.startupbidder.vo.CommentVO;
-import com.startupbidder.vo.ListPropertiesVO;
-import com.startupbidder.vo.ListingAndUserVO;
-import com.startupbidder.vo.ListingPropertyVO;
-import com.startupbidder.vo.ListingVO;
-import com.startupbidder.vo.OrderBook;
-import com.startupbidder.vo.QuestionAnswerVO;
 import com.startupbidder.web.BidFacade;
 import com.startupbidder.web.HttpHeaders;
 import com.startupbidder.web.HttpHeadersImpl;
@@ -204,8 +195,9 @@ public class ListingController extends ModelDrivenController {
     // POST /listing/create
 	private HttpHeaders startEditing(HttpServletRequest request) throws JsonParseException, JsonMappingException, IOException {
 		HttpHeaders headers = new HttpHeadersImpl("create");
-		
-		ListingAndUserVO listing = ListingFacade.instance().createListing(getLoggedInUser());
+
+        UserVO u = getLoggedInUser();
+		ListingAndUserVO listing = ListingFacade.instance().createListing(u);
 		if (listing == null) {
 			log.log(Level.WARNING, "Listing not created!");
 			headers.setStatus(500);
@@ -214,7 +206,9 @@ public class ListingController extends ModelDrivenController {
 			ListingVO l = listing.getListing();
 			String[] url = ServiceFacade.instance().createUploadUrls(getLoggedInUser(), "/file/upload", 1);
 			l.setUploadUrl(url[0]);
-		}
+            u.setEditedListing(l.getId());
+            u.setEditedStatus(l.getState()); // reset in case listing state is not NEW
+        }
 		model = listing;
 
 		return headers;
