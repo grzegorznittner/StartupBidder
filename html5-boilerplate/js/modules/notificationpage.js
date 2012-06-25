@@ -11,6 +11,8 @@ pl.implement(NotificationPageClass,{
                     window.location = '/';
                 }
                 notifyList.display(json);
+                pl('.preloader').hide();
+                pl('.wrapper').show();
              },
             ajax = new AjaxClass('/notification/user', 'notificationsmsg', completeFunc);
             ajax.setGetData({ max_results: 10 });

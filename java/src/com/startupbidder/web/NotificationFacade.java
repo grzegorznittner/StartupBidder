@@ -88,24 +88,43 @@ public class NotificationFacade {
 		return list;
 	}
 
-	public NotificationListVO getNotificationsForUser(UserVO loggedInUser, ListPropertiesVO notifProperties) {
-		NotificationListVO list = new NotificationListVO();
-		if (loggedInUser == null) {
-			list.setErrorCode(ErrorCodes.NOT_LOGGED_IN);
-			list.setErrorMessage("User not logged in.");
-			log.log(Level.WARNING, "User not logged in!");
-			return list;
-		}
-		List<NotificationVO> notifications = null;
+    public NotificationListVO getNotificationsForUser(UserVO loggedInUser, ListPropertiesVO notifProperties) {
+        NotificationListVO list = new NotificationListVO();
+        if (loggedInUser == null) {
+            list.setErrorCode(ErrorCodes.NOT_LOGGED_IN);
+            list.setErrorMessage("User not logged in.");
+            log.log(Level.WARNING, "User not logged in!");
+            return list;
+        }
+        List<NotificationVO> notifications = null;
 
-		notifications = DtoToVoConverter.convertNotifications(
-				getDAO().getAllUserNotifications(VoToModelConverter.convert(loggedInUser), notifProperties));
-		notifProperties.setTotalResults(notifications.size());
-		list.setNotifications(notifications);
-		list.setNotificationsProperties(notifProperties);
-		
-		return list;
-	}
+        notifications = DtoToVoConverter.convertNotifications(
+                getDAO().getAllUserNotifications(VoToModelConverter.convert(loggedInUser), notifProperties));
+        notifProperties.setTotalResults(notifications.size());
+        list.setNotifications(notifications);
+        list.setNotificationsProperties(notifProperties);
+
+        return list;
+    }
+
+    public NotificationListVO getNotificationsForUserAndMarkRead(UserVO loggedInUser, ListPropertiesVO notifProperties) {
+        NotificationListVO list = new NotificationListVO();
+        if (loggedInUser == null) {
+            list.setErrorCode(ErrorCodes.NOT_LOGGED_IN);
+            list.setErrorMessage("User not logged in.");
+            log.log(Level.WARNING, "User not logged in!");
+            return list;
+        }
+        List<NotificationVO> notifications = null;
+
+        notifications = DtoToVoConverter.convertNotifications(
+                getDAO().getAllUserNotificationsAndMarkRead(VoToModelConverter.convert(loggedInUser), notifProperties));
+        notifProperties.setTotalResults(notifications.size());
+        list.setNotifications(notifications);
+        list.setNotificationsProperties(notifProperties);
+
+        return list;
+    }
 
 	public NotificationVO getNotification(UserVO loggedInUser, String notifId) {
 		Notification notification = getDAO().getNotification(BaseVO.toKeyId(notifId));

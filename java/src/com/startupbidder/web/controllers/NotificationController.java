@@ -54,7 +54,7 @@ public class NotificationController extends ModelDrivenController {
 		HttpHeaders headers = new HttpHeadersImpl("user");
 		
 		ListPropertiesVO notifProperties = getListProperties(request);
-		model = NotificationFacade.instance().getNotificationsForUser(getLoggedInUser(), notifProperties);
+		model = NotificationFacade.instance().getNotificationsForUserAndMarkRead(getLoggedInUser(), notifProperties);
 		
 		return headers;
 	}
