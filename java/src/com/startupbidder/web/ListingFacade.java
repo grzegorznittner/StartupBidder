@@ -1316,7 +1316,7 @@ public class ListingFacade {
 			if (Listing.State.ACTIVE.toString().equalsIgnoreCase(listing.getState())) {
 				log.info("Active listing added to keyword search results " + listing);
 				listings.add(listing);
-			} else if (loggedInUser.getId().equals(listing.getOwner())) {
+			} else if (loggedInUser != null && loggedInUser.getId().equals(listing.getOwner())) {
 				log.info("Owned listing added to keyword search results " + listing);
 				listings.add(listing);
 			} else {
