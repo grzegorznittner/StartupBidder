@@ -5,7 +5,7 @@
         <div class="welcometext" id="welcometext">
             Explore our <a href="latest-companies.html" class="hoverlink">latest</a> listings,
             <a href="#" id="postnowtextlink" class="hoverlink">post</a> your own company,
-            and <a href="main-page?type=valuation" class="hoverlink">invest</a> in startups worldwide
+            and bid on <a href="main-page?type=top" class="hoverlink">top startups</a> worldwide
         </div>
     </span>
 </div> <!-- end banner -->

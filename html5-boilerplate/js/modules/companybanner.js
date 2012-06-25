@@ -139,6 +139,7 @@ pl.implement(CompanyBannerClass, {
             url = '/' + page + '?id=' + self.listing_id;
             pl(this).attr({href: url});
         });
+        /*
         pl('#num_comments').text(this.num_comments || 0);
         pl('#num_qandas').text(this.num_qandas || 0);
         if (this.loggedin_profile_id && this.loggedin_profile_id === this.profile_id) {
@@ -146,6 +147,10 @@ pl.implement(CompanyBannerClass, {
         }
         else {
             pl('#num_bids').text('');
+        }
+        */
+        if (!this.asked_fund) {
+            pl('#bidstab').hide();
         }
         if (this.loggedin_profile && this.loggedin_profile_id !== this.profile_id) {
             pl('#sendmessagelink').attr({href: '/messages-page.html?to_user_id=' + (this.profile_id || '') }).css({display: 'inline'});

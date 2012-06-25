@@ -70,6 +70,7 @@ include(header.m4)
                 <div id="nameicon"></div>
             </span>
         </div>
+<!--
         <div class="formitem clear">
             <span class="inputlabel">INVESTOR</span>
             <span class="inputcheckbox">
@@ -77,7 +78,6 @@ include(header.m4)
             </span>
             <span class="inputhelp">You are an accredited investor in your jurisdiction</span>
         </div>
-<!--
         <div class="formitem clear">
             <span class="inputlabel">TITLE</span>
             <span class="inputfield">

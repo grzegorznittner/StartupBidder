@@ -41,6 +41,8 @@ public class ListingStats extends BaseObject<ListingStats> {
 	
 	public Date created;
 
+    public boolean askedForFunding;
+    
 	public double valuation;
 	public double previousValuation;
 	public Date previousValuationDate;

@@ -336,6 +336,8 @@ public class ObjectifyDatastoreDAO {
 		double score = (listingStats.numberOfMonitors + listingStats.numberOfComments + 100*listingStats.numberOfBids + 10*listingStats.numberOfQuestions + (median/1000)) / timeFactor;
 		listingStats.score = score;
 		
+        listingStats.askedForFunding = listing.askedForFunding;
+        
 		listingStats.created = new Date();
 		log.info("listing: " + listingId + ", statistics: " + listingStats);
 		getOfy().put(listingStats);
@@ -630,7 +632,8 @@ public class ObjectifyDatastoreDAO {
 
 	public List<Listing> getTopListings(ListPropertiesVO listingProperties) {
 		Query<ListingStats> query = getOfy().query(ListingStats.class)
-				.filter("state", Listing.State.ACTIVE)
+				.filter("state =", Listing.State.ACTIVE)
+                .filter("askedForFunding =", true)
 				.order("-score")
                 .chunkSize(listingProperties.getMaxResults())
                 .prefetchSize(listingProperties.getMaxResults());

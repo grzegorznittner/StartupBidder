@@ -209,10 +209,10 @@ pl.implement(QuestionClass, {
                 click: function(event) {
                     var val = pl(textsel).attr('value'),
                         completeFunc = function(json) {
-                            var numitems = 1 * pl('#num_qandas').text(),
-                                answer = SafeStringClass.prototype.htmlEntities(json.answer),
+                            //var numitems = 1 * pl('#num_qandas').text(),
+                            var answer = SafeStringClass.prototype.htmlEntities(json.answer),
                                 answerdate = DateClass.prototype.format(json.answer_date);
-                            pl('#num_qandas').addClass('successful').text(numitems + 1);
+                            //pl('#num_qandas').addClass('successful').text(numitems + 1);
                             pl('#qandatitlemsg').text('question posted');
                             pl('#qanda_answertext_' + json.question_id).text(answer);
                             pl('#qanda_answerdate_' + json.question_id).text(answerdate);

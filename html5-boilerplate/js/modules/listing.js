@@ -178,12 +178,12 @@ pl.implement(ListingClass, {
     },
 
     displayFunding: function() {
-        var total_raised = this.total_raised && this.total_raised > 0 ? CurrencyClass.prototype.format(this.total_raised) : '$0';
+//        var total_raised = this.total_raised && this.total_raised > 0 ? CurrencyClass.prototype.format(this.total_raised) : '$0';
         if (this.asked_fund) {
             pl('#suggested_amt').text(CurrencyClass.prototype.format(this.suggested_amt));
             pl('#suggested_pct').text(this.suggested_pct);
             pl('#suggested_val').text(CurrencyClass.prototype.format(this.suggested_val));
-            pl('#total_raised').text(total_raised);
+//            pl('#total_raised').text(total_raised);
 /*
             if (this.num_bids && this.num_bids > 0) {
                 this.best_bid_pct = 10 + 5*Math.floor(8*Math.random()); // FIXME

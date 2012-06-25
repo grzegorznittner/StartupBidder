@@ -1,11 +1,12 @@
 <!-- right column -->
 <div class="span-8 last">
+
     <div class="boxtitle">ADD YOUR STARTUP</div>
     <a href="#" id="postnowbtnlink"><div class="sideboxbutton hoverlink">POST NOW</div></a>
 
     <div id="investbox">
         <div class="boxtitle">FUND A STARTUP</div>
-        <a href="main-page.html?type=valuation"><div class="sideboxbutton hoverlink">INVEST NOW</div></a>
+        <a href="main-page.html?type=top"><div class="sideboxbutton hoverlink">INVEST NOW</div></a>
     </div>
 
     <div class="initialhidden" id="categorywrapper">

@@ -70,12 +70,12 @@ pl.implement(CommentClass, {
         pl('#addcommentbtn').bind({
             click: function(event) {
                 var completeFunc = function(json) {
-                        var numcomments = 1 * pl('#num_comments').text(),
-                            comment = json;
+                        // var numcomments = 1 * pl('#num_comments').text(),
+                        var comment = json;
                         pl('#addcommenttext').removeClass('edited').attr({value: 'Put your comment here...'});
                         pl('#addcommentbtn').removeClass('editenabled');
                         pl('#commentmsg').html('Comment posted');
-                        pl('#num_comments').text(numcomments + 1);
+                        // pl('#num_comments').text(numcomments + 1);
                         pl('#addcommentbox').before(self.makeComment(comment));
                         self.bindComment(comment);
                     },
@@ -152,12 +152,12 @@ pl.implement(CommentClass, {
     deleteComment: function() {
         var commentid = this.id.replace('comment_delete_', '');
             completefunc = function(json) {
-                var numcomments = pl('#num_comments').text() - 1;
+                // var numcomments = pl('#num_comments').text() - 1;
                 pl('#comment_'+commentid).remove();
-                pl('#num_comments').text(numcomments);
-                if (numcomments === 0) {
-                    pl('#commentmsg').html('<p>Be the first to comment!</p>');
-                }
+                // pl('#num_comments').text(numcomments);
+                //if (numcomments === 0) {
+                //    pl('#commentmsg').html('<p>Be the first to comment!</p>');
+                //}
             },
             url = '/listing/delete_comment?id=' + commentid,
             deletemsgid = 'comment_delete_msg_' + commentid,

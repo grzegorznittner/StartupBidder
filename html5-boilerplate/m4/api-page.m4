@@ -194,6 +194,8 @@ include(api-banner.m4)
             <p>
             Returns the top ranked listings on startupbidder.  The algorithm used is fully explained in the FAQ, it functions as an exponentially time-decayed
             score similar to Hacker News.
+            Note that this method only returns listings which are open for bidding, that is, where <var>asked_fund</var> is <var>true</var>.
+            Thus, this is a good method to display for users who are looking for investments.
             If more listings are available, they can be obtained by the <code>more_results_url</code> property of the <code>listings_props</code> in the response.
             </p>
         </dd>
@@ -230,6 +232,7 @@ include(api-banner.m4)
             <iframe name="listing-top"></iframe>
         </div>
 
+<!--
         <dt>GET /listing/valuation</dt>
         <dd>
             <p>
@@ -269,7 +272,7 @@ include(api-banner.m4)
             </form>
             <iframe name="listing-valuation"></iframe>
         </div>
-
+-->
         <dt>GET /listing/latest</dt>
         <dd>
             <p>
@@ -440,10 +443,12 @@ include(api-banner.m4)
                 <li><code class="apiprop">.founders</code> comma-separated string of the company founders</li>
                 <li><code class="apiprop">.contact_email</code> public contact email for the company</li>
                 <li><code class="apiprop">.address</code> full google maps readable business address for this listing</li>
+<!--
                 <li><code class="apiprop">.num_comments</code> number of comments for this listing</li>
                 <li><code class="apiprop">.num_bids</code> number of bids made on this listing</li>
-                <li><code class="apiprop">.total_raised</code> total amount of accepted bids for this listing</li>
                 <li><code class="apiprop">.num_qandas</code> number of questions asked about this listing, only counts answered questions</li>
+                <li><code class="apiprop">.total_raised</code> total amount of accepted bids for this listing</li>
+-->
                 <li><code class="apiprop">.days_ago</code> number of days that have elapsed since this listing was posted, rounded down</li>
                 <li><code class="apiprop">.monitored</code> <var>true</var> if logged in user is watching this listing, <var>false</var> otherwise</li>
                 <li><code class="apiprop">.business_plan_id</code> business plan download ID for this listing via the File API</li>
@@ -2250,11 +2255,13 @@ include(api-banner.m4)
                 <li><code>joined_date</code> date user signed up in YYYYMMDD format</li>
                 <li><code>last_login</code> date of last user login in YYYYMMDD format</li>
                 <li><code>modified</code> date user last modified their profile in YYYYMMDD format</li>
+<!--
                 <li><code>num_listings</code> total user listing count, all statuses included </li>
                 <li><code>num_bids</code> total user bid count, all statuses included</li>
                 <li><code>num_accepted_bids</code> total number of bids placed by this user which have been accepted by the listing owner</li>
                 <li><code>num_payed_bids</code> total number of bids placed by this user which have been paid for</li>
-                <li><code>num_comments</code> total number of comments placed by this user</li>
+                <li><code>num_comments</code> total number of comments placed by this user</li> -->
+-->
                 <li><code>num_notifications</code> current number of unread notifications for this user</li>
                 <li><code>status</code> <var>active</var> iff user is enabled on the system</li>
                 <li><code>admin</code> <var>true</var> iff this user is a startupbidder administrator</li>
