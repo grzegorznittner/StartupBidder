@@ -47,6 +47,14 @@ include(api-banner.m4)
     <div class="boxpanel apipanel">
     <p>Get a list of companies depending on the category, ranking, or user criteria.</p>
 
+    <div id="loadmsg">
+        <div class="inputmsg">Loading API test data...</div>
+        <div class="span-24 preloadershort">
+            <div class="preloaderfloater"></div>
+            <div class="preloadericon"></div>
+        </div>
+    </div>
+
         <dt>GET /listing/discover</dt>
         <dd>
             <p>
@@ -2580,8 +2588,6 @@ include(api-banner.m4)
         </div>
 
     </div>
-
-<div id="loadmsg"></div>
 
 </div> <!-- end container -->
 </div> <!-- end main -->

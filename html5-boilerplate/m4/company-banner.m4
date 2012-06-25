@@ -2,8 +2,16 @@ define(`companybannermacro', `
 <div class="companyheader">
     <div class="container">
         <div class="companybanner span-24">
-            <div class="companybannerlogo tileimg noimage" id="companylogo"></div>
-            <div class="initialhidden" id="listingdata">
+
+            <div class="span-24 preloadercompanybanner">
+                <div class="preloaderfloater"></div>
+                <div class="preloadericon"></div>
+            </div>
+
+            <div class="initialhidden companybannerwrapper">
+
+                <div class="companybannerlogo tileimg noimage" id="companylogo"></div>
+    
                 <div class="companybannertitle aquamarine" id="title"></div>
                 <div class="companybannertextgrey">
                     <span id="categoryaddresstext"></span><span> </span><span id="founderstext"></span>
@@ -17,12 +25,15 @@ define(`companybannermacro', `
                     <div class="span-1 linkicon"></div>
                 </div>
                 <div class="companybannermantra" id="mantra"></div>
+    
+                <div class="companybannerfollow">
+                    <div class="inputmsg inputfield last followmsg initialhidden" id="followtext">You are following this listing</div>
+                    <div class="companybannerfollowbtn smallinputbutton span-3 darkblue hoverlink initialhidden" id="followbtn"></div>
+                    <div class="inputmsg inputfield last" id="followmsg"></div>
+                </div>
+    
             </div>
-            <div class="companybannerfollow">
-                <div class="inputmsg inputfield last followmsg initialhidden" id="followtext">You are following this listing</div>
-                <div class="companybannerfollowbtn smallinputbutton span-3 darkblue hoverlink initialhidden" id="followbtn"></div>
-                <div class="inputmsg inputfield last" id="followmsg"></div>
-            </div>
+
             <div class="companynavcontainer initialhidden" id="companynavcontainer">
                 <a class="hoverlink companynavlink" href="#" id="basicstab">
                     <div class="companynav hoverlink $1">

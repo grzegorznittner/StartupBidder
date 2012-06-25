@@ -7,6 +7,8 @@ pl.implement(EditProfilePageClass,{
                 header.setLogin(json);
                 editProfile.setProfile(json);
                 pl('#personalinfomsg').text('');
+                pl('.preloader').hide();
+                pl('.wrapper').show();
             },
             ajax = new AjaxClass('/user/loggedin', 'personalinfomsg', completeFunc);
         ajax.call();

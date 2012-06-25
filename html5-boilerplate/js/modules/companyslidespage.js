@@ -13,7 +13,8 @@ pl.implement(SlidesPageClass,{
                 companybanner.display(json);
                 ip.display(json.listing);
                 ip.bindButtons();
-                pl('#ip, #slideswrapper').show();
+                pl('.preloader').hide();
+                pl('#ip, .wrapper').show();
             },
             ajax = new AjaxClass('/listing/get/' + this.listing_id, 'ipmsg', complete);
         ajax.call();

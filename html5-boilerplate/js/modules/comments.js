@@ -11,6 +11,8 @@ pl.implement(CommentClass, {
                 header.setLogin(json);
                 companybanner.display(json);
                 self.display(json);
+                pl('.preloader').hide();
+                pl('.wrapper').show();
             },
             ajax = new AjaxClass('/listing/comments/' + this.listing_id, 'commentmsg', complete);
         ajax.call();

@@ -14,6 +14,8 @@ pl.implement(DiscoverPageClass,{
                     categoryList = new BaseListClass(categories, 'category', 2, 'category'),
                     locationList = new BaseListClass(locations, 'location', 2, 'location');
                 header.setLogin(json);
+                pl('.preloader').hide();
+                pl('.wrapper').show();
                 categoryList.display();
                 locationList.display();
                 searchbox.bindEvents();

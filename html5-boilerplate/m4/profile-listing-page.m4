@@ -10,20 +10,17 @@ include(head.m4)
 '
 include(header.m4)
 `
-<div class="container">
+<div class="container preloader">
+    <div class="preloaderfloater"></div>
+    <div class="preloadericon"></div>
+</div>
+<div class="container initialhidden wrapper">
 
 <!-- left column -->
 <div class="span-16">
     <div id="profilemsg"></div>
-
     <div class="boxtitle smokegrey" id="listingstitle"></div>
-
-    <!-- companydiv -->
-    <div id="companydiv">
-        loading...
-    </div>
-    <!-- end companydiv -->
-
+    <div id="companydiv"></div>
 </div>
 <!-- end left column -->
 '

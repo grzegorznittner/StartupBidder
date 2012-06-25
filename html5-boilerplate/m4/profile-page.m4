@@ -10,7 +10,11 @@ include(head.m4)
 '
 include(header.m4)
 `
-<div class="container">
+<div class="container preloader">
+    <div class="preloaderfloater"></div>
+    <div class="preloadericon"></div>
+</div>
+<div class="container initialhidden wrapper">
 
 <!-- left column -->
 <div class="span-16">

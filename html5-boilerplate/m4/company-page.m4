@@ -13,7 +13,13 @@ include(header.m4)
 include(company-banner.m4)
 companybannermacro(`companynavselected', `', `', `', `', `')
 `
-<div class="container">
+
+<div class="container preloader">
+     <div class="preloaderfloater"></div>
+     <div class="preloadericon"></div>
+</div>
+
+<div class="container initialhidden wrapper">
 '
 include(company-basics.m4)
 `

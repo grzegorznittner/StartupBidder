@@ -267,6 +267,16 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .headernumdisplay { padding-left: 3px; padding-right: 3px; }
 .checkboxcheckedicon { background: url(../img/icons/checkbox_24x48.png); height: 24px; width: 24px; }
 .checkboxuncheckedicon { background: url(../img/icons/checkbox_24x48.png); height: 24px; width: 24px; background-position: 0px -24px; }
+.preloadericon { width: 32px; height: 32px; background: url(../img/icons/preloader_32.gif); margin: auto; }
+
+/* preloader */
+
+.preloader { height: 300px; }
+.preloaderside { height: 200px; }
+.preloadershort ( height: 50px; }
+.preloadermap { height: 100%; }
+.preloadercompanybanner { height: 150px; }
+.preloaderfloater { height: 50%; margin-bottom: -16px; }
 
 /* searchbar styles */
 .searchbar { height: 36px; margin-top: 4px; font-size: 14px !important; font-weight: bold; }

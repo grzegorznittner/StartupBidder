@@ -14,6 +14,8 @@ pl.implement(MainPageClass,{
                 locationList.display();
                 searchbox.bindEvents();
                 companyList.storeList(json);
+                pl('.preloader').hide();
+                pl('.wrapper').show();
             },
             basePage = new BaseCompanyListPageClass();
         basePage.loadPage(completeFunc);

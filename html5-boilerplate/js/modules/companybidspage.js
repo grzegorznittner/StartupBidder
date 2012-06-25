@@ -12,6 +12,8 @@ pl.implement(BidsPageClass,{
                 header.setLogin(json);
                 companybanner.display(json);
                 orderbook.display(json);
+                pl('.preloader').hide();
+                pl('.wrapper').show();
             },
             ajax = new AjaxClass('/listing/order_book/' + this.listing_id, 'orderbooktitlemsg', complete);
         ajax.call();

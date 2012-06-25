@@ -12,8 +12,13 @@ include(header.m4)
 `
 <div class="container">
 
+    <div class="span-24 preloader preloadershort">
+        <div class="preloaderfloater"></div>
+        <div class="preloadericon"></div>
+    </div>
+
 <!-- left column -->
-<div class="span-24">
+<div class="span-24 initialhidden wrapper">
 
     <div id="messagesmsg"></div>
 

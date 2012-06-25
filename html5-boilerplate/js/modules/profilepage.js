@@ -62,6 +62,8 @@ pl.implement(ProfilePageClass,{
                     pl('#no_listings_wrapper').show();
                 }
                 pl('#editprofilebutton').show();
+                pl('.preloader').hide();
+                pl('.wrapper').show();
              },
             ajax = new AjaxClass('/listings/discover_user/', 'profilemsg', completeFunc);
         ajax.call();

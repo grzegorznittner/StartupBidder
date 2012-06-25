@@ -84,6 +84,10 @@ accredited investor, you can bid for a piece of the action.
 
     <!-- companydiv -->
     <div id="companydiv">
+        <div class="span-8 preloaderside">
+            <div class="preloaderfloater"></div>
+            <div class="preloadericon"></div>
+        </div>
     </div>
     <!-- end companydiv -->
 

@@ -20,6 +20,8 @@ pl.implement(CompanyBannerClass, {
         this.displayBanner();
         this.displayFollow();
         this.displayTabs();
+        pl('.preloadercompanybanner').hide();
+        pl('.companybannerwrapper').show();
     },
 
     displayBanner: function() {
@@ -49,7 +51,6 @@ pl.implement(CompanyBannerClass, {
         if (url) {
             pl('#domainname').text(url.getHostname());
         }
-        pl('#listingdata').show();
     },
 
     bindFollow: function() {

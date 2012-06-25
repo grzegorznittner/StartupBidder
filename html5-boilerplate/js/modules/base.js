@@ -291,7 +291,8 @@ function AjaxClass(url, statusId, completeFunc, successFunc, loadFunc, errorFunc
         pl(self.statusSel).text('');
         self.completeFunc(json);
     };
-    this.loadFunc = loadFunc || function() { pl(self.statusSel).html('<span class="inprogress">Loading...</span>'); };
+    // this.loadFunc = loadFunc || function() { pl(self.statusSel).html('<span class="inprogress">Loading...</span>'); };
+    this.loadFunc = loadFunc || function() { };
     this.errorFunc = errorFunc || function(errorNum, json) {
         var errorStr = (json && json.error_msg) ? 'Error: ' + json.error_msg : 'Error from server: ' + errorNum;
         pl(self.statusSel).html('<span class="attention">' + errorStr + '</span>');

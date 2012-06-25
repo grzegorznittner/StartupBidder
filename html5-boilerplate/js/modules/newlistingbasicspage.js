@@ -15,6 +15,8 @@ pl.implement(NewListingBasicsClass, {
                 self.base.store(listing);
                 self.storeCategories(categories);
                 self.display();
+                pl('.preloader').hide();
+                pl('.wrapper').show();
             },
         ajax = new AjaxClass('/listings/create', 'newlistingmsg', completeFunc);
         ajax.setPost();

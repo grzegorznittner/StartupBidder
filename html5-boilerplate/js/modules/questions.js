@@ -17,6 +17,8 @@ pl.implement(QuestionClass, {
                 self.loggedin_profile_id = json.loggedin_profile && json.loggedin_profile.profile_id;
                 companybanner.display(json);
                 self.display(json);
+                pl('.preloader').hide();
+                pl('.wrapper').show();
             },
             ajax = new AjaxClass('/listings/questions_answers/' + this.listing_id, 'qandamsg', complete);
         ajax.setGetData({ max_results: 3 });

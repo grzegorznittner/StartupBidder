@@ -12,8 +12,12 @@ include(header.m4)
 `
 <div class="container">
 
-<!-- left column -->
-<div class="span-24">
+<div class="span-24 preloader">
+    <div class="preloaderfloater"></div>
+    <div class="preloadericon"></div>
+</div>
+
+<div class="span-24 initialhidden wrapper">
 
     <div class="boxtitle smokegrey clear">YOUR CONVERSATION WITH <span id="from_user_nickname_upper"></span></div>
     <div class="boxpanel boxpanelfull">
@@ -25,7 +29,7 @@ include(header.m4)
         </div>
     </div>
 
-</div> <!-- end left column -->
+</div>
 </div> <!-- end container -->
 </div> <!-- end main -->
 </div> <!-- end wrap -->

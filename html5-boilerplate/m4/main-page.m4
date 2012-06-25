@@ -14,23 +14,25 @@ include(header.m4)
 <div class="container">
 '
 include(banner.m4)
+`
+<div class="span-24 preloader">
+    <div class="preloaderfloater"></div>
+    <div class="preloadericon"></div>
+</div>
+<div class="initialhidden wrapper">
+'
 include(searchbox.m4)
 `
 <!-- left column -->
 <div class="span-16">
     <div class="boxtitle smokegrey" id="listingstitle"></div>
-
-    <!-- companydiv -->
-    <div id="companydiv">
-        loading...
-    </div>
-    <!-- end companydiv -->
-
+    <div id="companydiv"></div>
 </div>
 <!-- end left column -->
 '
 include(main-rightcol.m4)
 `
+</div>
 </div> <!-- end container -->
 </div> <!-- end main -->
 </div> <!-- end wrap -->

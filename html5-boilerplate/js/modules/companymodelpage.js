@@ -12,7 +12,8 @@ pl.implement(ModelPageClass,{
                 header.setLogin(json);
                 companybanner.display(json);
                 bmc.display(json.listing);
-                pl('#modelwrapper').show();
+                pl('.preloader').hide();
+                pl('.wrapper').show();
             },
             ajax = new AjaxClass('/listing/get/' + this.listing_id, 'bmcmsg', complete);
         ajax.call();

@@ -125,6 +125,8 @@ pl.implement(SingleInvestorBidListClass, {
                 companybanner.display(json);
                 orderbook.display(json);
                 self.display(json);
+                pl('.preloader').hide();
+                pl('.wrapper').show();
             },
             ajax = new AjaxClass('/listing/bids/' + this.listing_id, 'bidtitlemsg', complete);
         ajax.setGetData({ max_results: 10 });

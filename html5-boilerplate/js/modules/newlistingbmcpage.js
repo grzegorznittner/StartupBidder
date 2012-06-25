@@ -15,6 +15,8 @@ pl.implement(NewListingBMCClass, {
                 self.base.store(listing);
                 self.bmc.store(listing);
                 self.display();
+                pl('.preloader').hide();
+                pl('.wrapper').show();
             };
         ajax = new AjaxClass('/listings/create', 'newlistingmsg', completeFunc);
         ajax.setPost();

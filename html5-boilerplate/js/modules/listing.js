@@ -37,6 +37,8 @@ pl.implement(ListingClass, {
                 }
                 companybanner.display(json);
                 self.display(json);
+                pl('.preloader').hide();
+                pl('.wrapper').show();
             },
             ajax = new AjaxClass('/listings/get/' + this.listing_id, 'listingstatus', complete);
         ajax.call();

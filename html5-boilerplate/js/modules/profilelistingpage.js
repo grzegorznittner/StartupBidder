@@ -31,6 +31,8 @@ pl.implement(ProfileListingPageClass,{
                 pl('#listingstitle').text(self.title);
                 companyList.storeList(json);
                 pl('#editprofilebutton').show();
+                pl('.preloader').hide();
+                pl('.wrapper').show();
              },
              ajax = new AjaxClass(self.url, 'companydiv', completeFunc);
         ajax.setGetData(this.data);

@@ -223,6 +223,8 @@ pl.implement(InvestorBidGroupListClass, {
                 companybanner.display(json);
                 orderbook.display(json);
                 self.display(json); 
+                pl('.preloader').hide();
+                pl('.wrapper').show();
             },
 
             ajax = new AjaxClass('/listing/investors/' + this.listing_id, 'bidstitlemsg', completeFunc);

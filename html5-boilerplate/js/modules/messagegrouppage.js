@@ -11,6 +11,8 @@ pl.implement(MessageGroupPageClass,{
                     window.location = '/';
                 }
                 messageList.display(json);
+                pl('.preloader').hide();
+                pl('.wrapper').show();
              },
             ajax = new AjaxClass('/user/message_users', 'messagemsg', completeFunc);
         ajax.setGetData({ max_results: 20 });

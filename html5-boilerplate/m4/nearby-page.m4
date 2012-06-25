@@ -19,7 +19,12 @@ include(nearby-banner.m4)
     <div class="boxtitle smokegrey" id="listingstitle">NEARBY LISTINGS</div>
 
     <div id="mappanel" class="boxpanel nearbypanel">
-        <div id="map" class="nearbymap"></div>
+        <div id="map" class="nearbymap">
+            <div class="span-24 preloadermap">
+                <div class="preloaderfloater"></div>
+                <div class="preloadericon"></div>
+            </div>
+        </div>
     </div>
 </div>
 

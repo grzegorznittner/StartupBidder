@@ -15,6 +15,8 @@ pl.implement(MessagePageClass,{
                     window.location = '/';
                 }
                 messageList.display(json);
+                pl('.preloader').hide();
+                pl('.wrapper').show();
              },
              ajax = new AjaxClass('/user/messages/' + this.from_user_id, 'messagemsg', completeFunc);
         pl('#from_user_nickname_upper').text(this.from_user_nickname.toUpperCase());

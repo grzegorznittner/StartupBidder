@@ -14,6 +14,14 @@ include(header.m4)
 <div class="container">
 '
 include(banner.m4)
+`
+<div class="span-24 preloader">
+    <div class="preloaderfloater"></div>
+    <div class="preloadericon"></div>
+</div>
+
+<div class="initialhidden wrapper">
+'
 include(searchbox.m4)
 `
 <!-- left column -->
@@ -47,6 +55,8 @@ include(searchbox.m4)
 '
 include(main-rightcol.m4)
 `
+</div> <!-- end wrapper -->
+
 </div> <!-- end container -->
 </div> <!-- end main -->
 </div> <!-- end wrap -->
