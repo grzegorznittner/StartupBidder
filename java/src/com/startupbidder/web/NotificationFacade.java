@@ -349,6 +349,7 @@ public class NotificationFacade {
 		notification.userEmail = message.userBEmail;
 		notification.userNickname = message.userBNickname;
 		notification.type = Type.PRIVATE_MESSAGE;
+        notification.investor = message.userA;
 		notification.fromUserNickname = message.userANickname;
 		notification.message = message.text;
 		notification.read = false;

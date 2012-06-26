@@ -109,25 +109,25 @@ public class NotificationObjectifyDatastoreDAO {
 		return notifs;
 	}
 
-	public Notification[] storeNotification(Notification ... notifications) {
-		getOfy().put(notifications);
-        updateUserStatsForNotifications(notifications);
-		return notifications;
-	}
-
-	public Notification[] storeNotifications(List<Notification> notifications) {
-		getOfy().put(notifications);
-        updateUserStatsForNotifications(notifications);
-		return notifications.toArray(new Notification[]{});
-	}
-    
-    private void updateUserStatsForNotifications(Notification[] notificationsArray) {
+	public Notification[] storeNotification(Notification ... notificationsArray) {
         List<Notification> notifications = new ArrayList<Notification>();
         for (Notification notification : notificationsArray) {
             notifications.add(notification);
         }
+        return storeNotifications(notifications);
+	}
+
+	public Notification[] storeNotifications(List<Notification> notifications) {
+        // check for missing create dates
+        for (Notification notification : notifications) {
+            if (notification.created == null) {
+                notification.created = new Date();
+            }
+        }
+		getOfy().put(notifications);
         updateUserStatsForNotifications(notifications);
-    }
+		return notifications.toArray(new Notification[]{});
+	}
     
     private void updateUserStatsForNotifications(List<Notification> notifications) {
         // first find unique users

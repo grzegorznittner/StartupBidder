@@ -4,6 +4,8 @@
  */
 package com.startupbidder.datamodel;
 
+import java.net.URI;
+import java.net.URL;
 import java.util.Date;
 
 import javax.persistence.Id;
@@ -129,19 +131,23 @@ public class Notification extends BaseObject<Notification> {
 		case LISTING_ACTIVATED:
 		case LISTING_FROZEN:
 		case LISTING_WITHDRAWN:
-		case LISTING_SENT_BACK:
 		case NEW_LISTING:
 			// link to listing
 			link = "/company-page.html?id=" + this.listing.getString();
 		break;
         case LISTING_SENT_BACK:
             link = "/new-listing-basics-page.html";
-        break;
+        break;                                                                                                                                        
 		case ASK_LISTING_OWNER:
 			link = "/company-questions-page.html?id=" + this.listing.getString();
 		break;
 		case PRIVATE_MESSAGE:
-			link = "/message-group-page.html";
+            if (this.investor != null && this.fromUserNickname != null) {
+                link = "/messages-page.html?from_user_id=" + this.investor.getString() + "&from_user_nickname=" + this.fromUserNickname;
+            }
+            else {
+                link = "/message-group-page.html";
+            }
 		break;
 		default:
 			link = "not_recognized";
