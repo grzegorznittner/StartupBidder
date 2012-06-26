@@ -273,7 +273,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 
 .preloader { height: 300px; }
 .preloaderside { height: 200px; }
-.preloadershort ( height: 50px; }
+.preloadershort { height: 50px; }
 .preloadermap { height: 100%; }
 .preloadercompanybanner { height: 150px; }
 .preloaderfloater { height: 50%; margin-bottom: -16px; }
