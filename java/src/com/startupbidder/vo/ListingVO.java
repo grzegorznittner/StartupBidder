@@ -86,6 +86,7 @@ public class ListingVO extends ListingTileVO {
 		appendText(buf, name);
 		appendText(buf, mantra);
 		appendText(buf, summary);
+		appendText(buf, category);
 		appendText(buf, website);
 		appendText(buf, ownerName);
 		appendText(buf, founders);

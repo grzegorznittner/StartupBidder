@@ -84,6 +84,7 @@ import com.startupbidder.vo.ListingPropertyVO;
 import com.startupbidder.vo.ListingTileVO;
 import com.startupbidder.vo.ListingVO;
 import com.startupbidder.vo.NotificationVO;
+import com.startupbidder.vo.UserAndUserVO;
 import com.startupbidder.vo.UserBasicVO;
 import com.startupbidder.vo.UserListingsVO;
 import com.startupbidder.vo.UserVO;
@@ -781,6 +782,13 @@ public class ListingFacade {
 			return returnValue;
 		}
 		
+		UserAndUserVO userVO = UserMgmtFacade.instance().getUser(null, dbListing.owner.getString());
+		if (userVO == null) {
+			log.warning("Listing owner " + dbListing.owner + " cannot be found!");
+			returnValue.setErrorMessage("Listing owner cannot be found");
+			returnValue.setErrorCode(ErrorCodes.ENTITY_VALIDATION);
+			return returnValue;
+		}
 		if (dbListing.state == Listing.State.POSTED || dbListing.state == Listing.State.FROZEN) {
 			List<Listing> newOrPosted = getDAO().getUserNewOrPostedListings(dbListing.owner.getId());
         	if (newOrPosted != null && newOrPosted.size() > 0) { // convoluted, but basically you should be able to send back a listing if user has submitted but you haven't approved
@@ -800,6 +808,14 @@ public class ListingFacade {
 				    return returnValue;
                 }
 			}
+			if (dbListing.state == Listing.State.POSTED && newOrPosted != null && newOrPosted.size() > 0
+					&& newOrPosted.get(0).state == Listing.State.NEW) {
+                String errorStr = "Listing owner with nickname '" + loggedInUser.getNickname() + "' already has a new listing, cannot send back. This should not happen!!!";
+				log.warning(errorStr);
+				returnValue.setErrorMessage(errorStr);
+				returnValue.setErrorCode(ErrorCodes.OPERATION_NOT_ALLOWED);
+				return returnValue;
+			}
 			
 			ListingVO forUpdate = DtoToVoConverter.convert(dbListing);
 			forUpdate.setState(Listing.State.NEW.toString());
@@ -809,8 +825,8 @@ public class ListingFacade {
 				returnValue.setErrorMessage("Listing not updated");
 				returnValue.setErrorCode(ErrorCodes.DATASTORE_ERROR);
 			} else {
-				loggedInUser.setEditedListing(updatedListing.getWebKey());
-				loggedInUser.setEditedStatus(Listing.State.NEW.toString());
+				userVO.getUser().setEditedListing(updatedListing.getWebKey());
+				userVO.getUser().setEditedStatus(Listing.State.NEW.toString());
 				NotificationFacade.instance().scheduleListingStateNotification(updatedListing);
 				if (message == null) {
 					message = "Your listing has not been accepted. Please correct it.";
@@ -823,7 +839,7 @@ public class ListingFacade {
 			returnValue.setListing(toReturn);
 			return returnValue;
 		}
-		returnValue.setErrorMessage("Only active listings can be send back for update to owner");
+		returnValue.setErrorMessage("Only posted or frozen listings can be send back for update to owner");
 		returnValue.setErrorCode(ErrorCodes.ENTITY_VALIDATION);
 		return returnValue;
 	}

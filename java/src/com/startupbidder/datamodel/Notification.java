@@ -98,6 +98,9 @@ public class Notification extends BaseObject<Notification> {
 	}
 	public String getTargetLink() {
 		String link = "";
+		if (type == null) {
+			return "/company-page.html?id=" + this.listing.getString();
+		}
 		switch (type) {
 		case BID_PAID_FOR_YOUR_LISTING:
 		case BID_WAS_WITHDRAWN:
@@ -126,6 +129,7 @@ public class Notification extends BaseObject<Notification> {
 		case LISTING_ACTIVATED:
 		case LISTING_FROZEN:
 		case LISTING_WITHDRAWN:
+		case LISTING_SENT_BACK:
 		case NEW_LISTING:
 			// link to listing
 			link = "/company-page.html?id=" + this.listing.getString();
