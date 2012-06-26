@@ -115,12 +115,17 @@ public class NotificationFacade {
             log.log(Level.WARNING, "User not logged in!");
             return list;
         }
-        List<NotificationVO> notifications = null;
 
-        notifications = DtoToVoConverter.convertNotifications(
-                getDAO().getAllUserNotificationsAndMarkRead(VoToModelConverter.convert(loggedInUser), notifProperties));
-        notifProperties.setTotalResults(notifications.size());
-        list.setNotifications(notifications);
+        SBUser user = VoToModelConverter.convert(loggedInUser);
+        List<Notification> notifications = getDAO().getAllUserNotificationsAndMarkRead(user, notifProperties);
+        if (notifications != null && notifications.size() > 0) {
+            List<NotificationVO> notificationVOs = DtoToVoConverter.convertNotifications(notifications);
+            notifProperties.setTotalResults(notificationVOs.size());
+            list.setNotifications(notificationVOs);
+        }
+        else {
+            list.setNotifications(null);
+        }
         list.setNotificationsProperties(notifProperties);
 
         return list;
@@ -186,6 +191,7 @@ public class NotificationFacade {
 		switch (listing.state) {
 		case NEW:
 			notification.message = "Listing has been sent back for correction";
+            notification.type = Notification.Type.LISTING_SENT_BACK;
 			break;
 		case POSTED:
 			notification.message = "Listing has been posted by an owner";

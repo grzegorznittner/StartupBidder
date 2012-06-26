@@ -357,6 +357,9 @@ public class DtoToVoConverter {
 		notif.setListingMantra(notifDTO.listingMantra);
 		notif.setListingCategory(notifDTO.listingCategory);
 		notif.setListingBriefAddress(notifDTO.listingBriefAddress);
+        if (notifDTO.type == null) { // guard against code not specifying type
+            notifDTO.type = Notification.Type.PRIVATE_MESSAGE;
+        }
 		notif.setType(notifDTO.type.toString());
 		notif.setRead(notifDTO.read);
 		String listingLink = notifDTO.getTargetLink();
@@ -375,13 +378,20 @@ public class DtoToVoConverter {
 		case LISTING_FROZEN:
 			notif.setTitle("Listing '" + notifDTO.listingName + "' frozen");
 			notif.setText1("Listing '" + notifDTO.listingName + "' has been frozen by ADMINISTRATOR on startupbidder.com");
-			notif.setText3("Please visit <a href=\"" + listingLink + "\">company's page at startupbidder.com</a>.");
+            notif.setText2(notifDTO.message);
+            notif.setText3("Please visit <a href=\"" + listingLink + "\">company's page at startupbidder.com</a>.");
 			break;
 		case LISTING_WITHDRAWN:
 			notif.setTitle("Listing '" + notifDTO.listingName + "' withdrawn");
 			notif.setText1("Listing '" + notifDTO.listingName + "' has been withdrawn by owner on startupbidder.com");
 			notif.setText3("Please visit <a href=\"" + listingLink + "\">company's page at startupbidder.com</a>.");
 			break;
+        case LISTING_SENT_BACK:
+            notif.setTitle("Listing '" + notifDTO.listingName + "' sent back");
+            notif.setText1("Listing '" + notifDTO.listingName + "' has been sent back by ADMINISTRATOR on startupbidder.com");
+            notif.setText2(notifDTO.message);
+            notif.setText3("Please visit <a href=\"" + listingLink + "\">your new listing page at startupbidder.com</a>.");
+            break;
 		case NEW_COMMENT_FOR_MONITORED_LISTING:
 			notif.setTitle("New comment for listing '" + notifDTO.listingName + "'");
 			notif.setText1("Listing " + notifDTO.listingName + "' has received a new comment.");
@@ -465,7 +475,7 @@ public class DtoToVoConverter {
 			notif.setTitle("New listing " + notifDTO.listingName + " posted");
 			notif.setText1("A new listing " + notifDTO.listingName + " has been posted by " + notifDTO.listingOwner + " on startupbidder.com");
 			break;
-		case ASK_LISTING_OWNER:
+        case ASK_LISTING_OWNER:
 		    notif.setTitle("A question from " + notifDTO.fromUserNickname + " concerning listing " + notifDTO.listingName);
             notif.setText1("Question about listing " + notifDTO.listingName + " has been posted by " + notifDTO.fromUserNickname + ":");
 			break;

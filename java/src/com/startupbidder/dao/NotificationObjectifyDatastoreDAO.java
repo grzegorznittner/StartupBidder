@@ -73,12 +73,13 @@ public class NotificationObjectifyDatastoreDAO {
                 markedRead.add(notification);
             }
         }
-        getOfy().put(notifications); // toss to DB
-        UserMgmtFacade.instance().calculateUserStatistics(user.getKey().getString()); // update stats so num_notifications is correct
-        
-        // now flip back so user knows what was unread before
-        for (Notification notification : markedRead) {
-            notification.read = false; // object pointer should cause this to update the notifications list
+        if (markedRead.size() > 0) {
+            getOfy().put(notifications); // toss to DB
+            UserMgmtFacade.instance().calculateUserStatistics(user.getKey().getString()); // update stats so num_notifications is correct
+            // now flip back so user knows what was unread before
+            for (Notification notification : markedRead) {
+                notification.read = false; // object pointer should cause this to update the notifications list
+            }
         }
         return notifications;
     }

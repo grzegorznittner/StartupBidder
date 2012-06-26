@@ -783,12 +783,22 @@ public class ListingFacade {
 		
 		if (dbListing.state == Listing.State.POSTED || dbListing.state == Listing.State.FROZEN) {
 			List<Listing> newOrPosted = getDAO().getUserNewOrPostedListings(dbListing.owner.getId());
-			if (newOrPosted != null && newOrPosted.size() > 0) {
-                String errorStr = "Listing owner with nickname '" + loggedInUser.getNickname() + "' already has an in-progress listing, cannot send back";
-				log.warning(errorStr);
-				returnValue.setErrorMessage(errorStr);
-				returnValue.setErrorCode(ErrorCodes.OPERATION_NOT_ALLOWED);
-				return returnValue;
+        	if (newOrPosted != null && newOrPosted.size() > 0) { // convoluted, but basically you should be able to send back a listing if user has submitted but you haven't approved
+                boolean isThisListingNewOrPosted = false;
+                for (Listing listing : newOrPosted) {
+                    if (listing.id.equals(dbListing.id)) {
+                        isThisListingNewOrPosted = true;
+                    }
+                }
+                if (!isThisListingNewOrPosted) {
+                    SBUser user = getDAO().getUser(dbListing.owner.getString());
+                    String nickname = user != null ? user.nickname : "unknown";
+                    String errorStr = "Listing owner with nickname '" + nickname + "' already has an in-progress listing, cannot send back";
+				    log.warning(errorStr);
+				    returnValue.setErrorMessage(errorStr);
+				    returnValue.setErrorCode(ErrorCodes.OPERATION_NOT_ALLOWED);
+				    return returnValue;
+                }
 			}
 			
 			ListingVO forUpdate = DtoToVoConverter.convert(dbListing);

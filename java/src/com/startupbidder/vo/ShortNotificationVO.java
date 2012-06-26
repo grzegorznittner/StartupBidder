@@ -73,12 +73,12 @@ public class ShortNotificationVO extends BaseVO {
 		case YOU_PAID_BID:
 		case YOU_ACCEPTED_BID:
 			// link to bid page
-			link += "/company-page.html?page=bids&id=" + this.listing;
+			link += "/company-page.html?id=" + this.listing;
 		break;
 		case NEW_COMMENT_FOR_YOUR_LISTING:
 		case NEW_COMMENT_FOR_MONITORED_LISTING:
 			// link to comment page
-			link += "/company-page.html?page=comments&id=" + this.listing;
+			link += "/company-page.html?id=" + this.listing;
 		break;
 		case NEW_LISTING:
 		case ASK_LISTING_OWNER:
@@ -90,5 +90,8 @@ public class ShortNotificationVO extends BaseVO {
 			// will point to main page
 		}
 		return link;
+
+
+
 	}
 }
