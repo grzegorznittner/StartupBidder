@@ -25,7 +25,7 @@ import com.googlecode.objectify.annotation.Unindexed;
 public class Notification extends BaseObject<Notification> {
 	public static enum Type {NEW_BID_FOR_YOUR_LISTING, YOUR_BID_WAS_REJECTED, YOUR_BID_WAS_COUNTERED,
 		YOUR_BID_WAS_ACCEPTED, YOU_ACCEPTED_BID, YOU_PAID_BID, BID_PAID_FOR_YOUR_LISTING, BID_WAS_WITHDRAWN,
-		NEW_LISTING, LISTING_ACTIVATED, LISTING_FROZEN, LISTING_WITHDRAWN,
+		NEW_LISTING, LISTING_ACTIVATED, LISTING_FROZEN, LISTING_WITHDRAWN, LISTING_SENT_BACK,
 		NEW_COMMENT_FOR_YOUR_LISTING, NEW_COMMENT_FOR_MONITORED_LISTING,
 		PRIVATE_MESSAGE, ASK_LISTING_OWNER};
 
@@ -98,6 +98,9 @@ public class Notification extends BaseObject<Notification> {
 	}
 	public String getTargetLink() {
 		String link = "";
+		if (type == null) {
+			return "/company-page.html?id=" + this.listing.getString();
+		}
 		switch (type) {
 		case BID_PAID_FOR_YOUR_LISTING:
 		case BID_WAS_WITHDRAWN:
@@ -126,6 +129,7 @@ public class Notification extends BaseObject<Notification> {
 		case LISTING_ACTIVATED:
 		case LISTING_FROZEN:
 		case LISTING_WITHDRAWN:
+		case LISTING_SENT_BACK:
 		case NEW_LISTING:
 			// link to listing
 			link = "/company-page.html?id=" + this.listing.getString();

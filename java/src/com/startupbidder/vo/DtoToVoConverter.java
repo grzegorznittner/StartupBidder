@@ -357,6 +357,10 @@ public class DtoToVoConverter {
 		notif.setListingMantra(notifDTO.listingMantra);
 		notif.setListingCategory(notifDTO.listingCategory);
 		notif.setListingBriefAddress(notifDTO.listingBriefAddress);
+		// at some point send back generated empty notificaiton type
+		if (notifDTO.type == null) {
+			notifDTO.type = Notification.Type.LISTING_SENT_BACK;
+		}
 		notif.setType(notifDTO.type.toString());
 		notif.setRead(notifDTO.read);
 		String listingLink = notifDTO.getTargetLink();
@@ -380,6 +384,11 @@ public class DtoToVoConverter {
 		case LISTING_WITHDRAWN:
 			notif.setTitle("Listing '" + notifDTO.listingName + "' withdrawn");
 			notif.setText1("Listing '" + notifDTO.listingName + "' has been withdrawn by owner on startupbidder.com");
+			notif.setText3("Please visit <a href=\"" + listingLink + "\">company's page at startupbidder.com</a>.");
+			break;
+		case LISTING_SENT_BACK:
+			notif.setTitle("Listing '" + notifDTO.listingName + "' sent back for correction");
+			notif.setText1("A listing '" + notifDTO.listingName + "' has been sent back for correction by StartupBidder Admins");
 			notif.setText3("Please visit <a href=\"" + listingLink + "\">company's page at startupbidder.com</a>.");
 			break;
 		case NEW_COMMENT_FOR_MONITORED_LISTING:

@@ -186,6 +186,7 @@ public class NotificationFacade {
 		switch (listing.state) {
 		case NEW:
 			notification.message = "Listing has been sent back for correction";
+			notification.type = Notification.Type.LISTING_SENT_BACK;
 			break;
 		case POSTED:
 			notification.message = "Listing has been posted by an owner";
