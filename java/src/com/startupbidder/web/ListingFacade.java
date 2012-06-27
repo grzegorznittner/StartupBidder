@@ -791,26 +791,17 @@ public class ListingFacade {
 		}
 		if (dbListing.state == Listing.State.POSTED || dbListing.state == Listing.State.FROZEN) {
 			List<Listing> newOrPosted = getDAO().getUserNewOrPostedListings(dbListing.owner.getId());
-        	if (newOrPosted != null && newOrPosted.size() > 0) { // convoluted, but basically you should be able to send back a listing if user has submitted but you haven't approved
-                boolean isThisListingNewOrPosted = false;
-                for (Listing listing : newOrPosted) {
-                    if (listing.id.equals(dbListing.id)) {
-                        isThisListingNewOrPosted = true;
-                    }
-                }
-                if (!isThisListingNewOrPosted) {
-                    SBUser user = getDAO().getUser(dbListing.owner.getString());
-                    String nickname = user != null ? user.nickname : "unknown";
-                    String errorStr = "Listing owner with nickname '" + nickname + "' already has an in-progress listing, cannot send back";
-				    log.warning(errorStr);
-				    returnValue.setErrorMessage(errorStr);
-				    returnValue.setErrorCode(ErrorCodes.OPERATION_NOT_ALLOWED);
-				    return returnValue;
-                }
+            SBUser user = getDAO().getUser(dbListing.owner.getString());
+            String nickname = user != null ? user.nickname : "unknown";
+            Listing.State listingState = (newOrPosted != null && newOrPosted.size() > 0 && newOrPosted.get(0) != null) ? newOrPosted.get(0).state : null;
+            String errorStr = null;
+			if (listingState == Listing.State.NEW) {
+                errorStr = "Listing owner with nickname '" + nickname + "' already has a new listing, cannot send back.";
+            }
+            else if (listingState == Listing.State.POSTED && dbListing.state == Listing.State.FROZEN) {
+                errorStr = "Listing owner with nickname '" + nickname + "' already has an in-progress listing, cannot send back";
 			}
-			if (dbListing.state == Listing.State.POSTED && newOrPosted != null && newOrPosted.size() > 0
-					&& newOrPosted.get(0).state == Listing.State.NEW) {
-                String errorStr = "Listing owner with nickname '" + loggedInUser.getNickname() + "' already has a new listing, cannot send back. This should not happen!!!";
+            if (errorStr != null) {
 				log.warning(errorStr);
 				returnValue.setErrorMessage(errorStr);
 				returnValue.setErrorCode(ErrorCodes.OPERATION_NOT_ALLOWED);
@@ -822,14 +813,19 @@ public class ListingFacade {
 			
 			Listing updatedListing = getDAO().updateListingStateAndDates(VoToModelConverter.convert(forUpdate));
 			if (updatedListing == null) {
+                log.severe("Could not update listing in datastore to NEW status: " + forUpdate.getId());
 				returnValue.setErrorMessage("Listing not updated");
 				returnValue.setErrorCode(ErrorCodes.DATASTORE_ERROR);
-			} else {
-				userVO.getUser().setEditedListing(updatedListing.getWebKey());
-				userVO.getUser().setEditedStatus(Listing.State.NEW.toString());
+			}
+            else {
+                user.editedListing = dbListing.getKey();
+                getDAO().updateUser(user);
+                if (user.getWebKey().equals(loggedInUser.getId())) {
+
+                }
 				NotificationFacade.instance().scheduleListingStateNotification(updatedListing);
 				if (message == null) {
-					message = "Your listing has not been accepted. Please correct it.";
+					message = "Your listing has been send back for revision, please see the private administrator message for details.";
 				}
 				MessageFacade.instance().sendPrivateMessage(loggedInUser, updatedListing.owner.getString(), message);
 			}
@@ -858,8 +854,8 @@ public class ListingFacade {
 		
 		Listing dbListing = getDAO().getListing(BaseVO.toKeyId(listingId));
 		if (dbListing == null || dbListing.state == Listing.State.NEW || dbListing.state == Listing.State.POSTED) {
-			log.warning("Listing not exists or is not yet activated. Listing: " + dbListing);
-			returnValue.setErrorMessage("Listing not exists or is not yet activated");
+			log.warning("Listing does not exist or is not yet activated. Listing: " + dbListing);
+			returnValue.setErrorMessage("Listing does not exist or is not yet activated");
 			returnValue.setErrorCode(ErrorCodes.ENTITY_VALIDATION);
 			return returnValue;
 		}
@@ -877,7 +873,7 @@ public class ListingFacade {
 			} else {
 				NotificationFacade.instance().scheduleListingStateNotification(updatedListing);
 				if (message == null) {
-					message = "Your listing has been frozen. An administrator will contact you soon.";
+					message = "Your listing has been frozen. An administrator will contact you via private message.";
 				}
 				MessageFacade.instance().sendPrivateMessage(loggedInUser, updatedListing.owner.getString(), message);
 			}
@@ -888,7 +884,7 @@ public class ListingFacade {
 			returnValue.setListing(toReturn);
 			return returnValue;
 		}
-		returnValue.setErrorMessage("NEW or POSTED listings cannot be send back for update to owner");
+		returnValue.setErrorMessage("NEW or POSTED listings cannot be frozen as they are not yet active.");
 		returnValue.setErrorCode(ErrorCodes.ENTITY_VALIDATION);
 		return returnValue;
 	}

@@ -70,9 +70,11 @@ pl.implement(EditProfileClass, {
         pl('#deactivatebtn').bind({
             click: function() {
                 var completeFunc = function() {
-                        pl('#deactivatemsg').addClass('successful').html('DEACTIVATED, GOING HOME...');
+                        pl('#deactivatemsg').addClass('successful').html('DEACTIVATED, LOGGING OUT...');
                         pl('#deactivatebtn, #deactivatecancelbtn').hide();
-                        setTimeout(function(){window.location='/';}, 4000);
+                        setTimeout(function() {
+                            window.location = pl('#logoutlink').attr('href');
+                        }, 3000);
                     },
                     url = '/user/deactivate/' + self.profile_id,
                     ajax = new AjaxClass(url, 'deactivatemsg', completeFunc);

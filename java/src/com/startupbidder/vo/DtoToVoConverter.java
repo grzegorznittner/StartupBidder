@@ -409,8 +409,9 @@ public class DtoToVoConverter {
 			notif.setText2(notifDTO.message);
 			break;
 		case PRIVATE_MESSAGE:
-		    notif.setTitle("You've received a private message");
-		    notif.setText1("A private message has been sent to you:");
+            String fromTitle = StringUtils.isEmpty(notifDTO.fromUserNickname) ? "" : " from " + notifDTO.fromUserNickname;
+		    notif.setTitle("You've received a private message" + fromTitle);
+            notif.setText1("A private message has been sent to you:");
 		    notif.setText2(notifDTO.message);
             notif.setText3("Please visit <a href=\"" + listingLink + "\">company's page at startupbidder.com</a>.");
 			break;

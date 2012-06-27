@@ -366,7 +366,8 @@ public class ObjectifyDatastoreDAO {
 			user.notifyEnabled = newUser.notifyEnabled;
 			user.password = newUser.password;
 			user.authCookie = newUser.authCookie;
-			
+            user.editedListing = newUser.editedListing;
+
 			getOfy().put(user);
 			
 			log.log(Level.INFO, "Updated user: " + user);

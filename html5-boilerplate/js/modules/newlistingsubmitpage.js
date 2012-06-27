@@ -86,7 +86,7 @@ pl.implement(NewListingSubmitClass, {
                     msgs.push('Missing info: ' + msg);
                 }
                 else {
-                    msgs.push('Submitting listing...');
+                    pl('#newlistingmsg').removeClass('errorcolor').addClass('inprogress').text('Submitting listing...');
                     self.postListing();
                 }
                 return msgs;

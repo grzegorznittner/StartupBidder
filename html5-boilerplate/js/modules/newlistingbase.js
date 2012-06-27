@@ -185,9 +185,7 @@ pl.implement(NewListingBaseClass, {
             click: function() {
                 var validmsgs = nextValidator ? nextValidator() : self.validate();
                 if (validmsgs.length > 0) {
-                    if (!pl('#newlistingmsg').hasClass('errorcolor')) {
-                        pl('#newlistingmsg').addClass('errorcolor');
-                    }
+                    pl('#newlistingmsg').addClass('errorcolor');
                     pl('#newlistingmsg').html('Please correct: ' + validmsgs.join(' '));
                 }
                 else {
