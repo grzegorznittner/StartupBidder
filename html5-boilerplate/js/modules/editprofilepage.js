@@ -10,7 +10,7 @@ pl.implement(EditProfilePageClass,{
                 pl('.preloader').hide();
                 pl('.wrapper').show();
             },
-            ajax = new AjaxClass('/user/loggedin', 'personalinfomsg', completeFunc);
+            ajax = new AjaxClass('/listings/discover_user', 'personalinfomsg', completeFunc);
         ajax.call();
     }
 });

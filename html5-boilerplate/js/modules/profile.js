@@ -87,9 +87,10 @@ pl.implement(EditProfileClass, {
             }
         });
     },
-    setProfile: function(json) {
+    setProfile: function(discoverjson) {
         //properties = ['profile_id', 'status', 'name', 'username', 'open_id', 'profilestatus', 'title', 'organization', 'email', 'phone', 'address'];
         var self = this,
+            json = discoverjson && discoverjson.loggedin_profile || {},
             properties = ['profile_id', 'username', 'email', 'name'],
             textFields = ['username', 'name'],
             i, property, textFields, textFieldId, textFieldObj, investorCheckbox; 
@@ -141,7 +142,7 @@ pl.implement(EditProfileClass, {
                     return 0;
                 });
                 textFieldObj.fieldBase.postSuccessFunc = function(newval) {
-                    pl('#logintext').text(newval);
+                    pl('#headerusername').text(newval);
                 };
             }
             if (textFieldId === 'name') {
