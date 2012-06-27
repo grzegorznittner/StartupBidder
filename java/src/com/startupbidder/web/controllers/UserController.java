@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.google.gdata.model.gd.Email;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.JsonNode;
@@ -141,28 +142,18 @@ public class UserController extends ModelDrivenController {
 			ObjectMapper mapper = new ObjectMapper();
 			@SuppressWarnings("unchecked")
 			Map<String, Object> user = mapper.readValue(profileString, Map.class);
-			if (!user.containsKey("profile_id")) {
-				log.log(Level.WARNING, "User autosave called but user id not provided.");
-				headers.setStatus(501);
-			} else {
-				log.log(Level.INFO, "Autosaving user: " + user);
-				String id = (String)user.get("profile_id");
-				if (!StringUtils.equals(id, getLoggedInUser().getId())) {
-					log.log(Level.WARNING, "User is not updating his own profile.");
-				} else {
-					String name = (String)user.get("name");
-					String nickname = (String)user.get("nickname");
-					String phone = (String)user.get("phone");
-					String location = (String)user.get("location");
-					Boolean investor = BooleanUtils.toBooleanObject((String)user.get("investor"));
-					Boolean notifyEnabled = BooleanUtils.toBooleanObject((String)user.get("notify_enabled"));
-					model = UserMgmtFacade.instance().updateUser(getLoggedInUser(), 
-							name, nickname, location, phone, investor, notifyEnabled);
-				}
-				if (model == null) {
-					log.log(Level.WARNING, "User autosave error!");
-					headers.setStatus(500);
-				}
+			log.log(Level.INFO, "Autosaving user: " + user);
+			String name = (String)user.get("name");
+			String nickname = (String)user.get("nickname");
+			String phone = (String)user.get("phone");
+			String location = (String)user.get("location");
+			Boolean investor = BooleanUtils.toBooleanObject((String)user.get("investor"));
+			Boolean notifyEnabled = BooleanUtils.toBooleanObject((String)user.get("notify_enabled"));
+			model = UserMgmtFacade.instance().updateUser(getLoggedInUser(),
+					name, nickname, location, phone, investor, notifyEnabled);
+			if (model == null) {
+				log.log(Level.WARNING, "User autosave error!");
+				headers.setStatus(500);
 			}
 		} else {
 			log.log(Level.WARNING, "Parameter 'profile' is empty!");

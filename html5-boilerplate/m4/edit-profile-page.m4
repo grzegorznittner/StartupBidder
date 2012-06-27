@@ -29,6 +29,17 @@ include(header.m4)
 
     <div class="boxpanel editprofilepanel">
         <div class="formitem sideinfoitem clear">
+            <span class="inputlabel">EMAIL</span>
+            <span class="inputfield">
+                <div class="inputhelp inputmsg" id="email"></div>
+            </span>
+            <p class="sideinfo">
+                <label class="sideinfoheader">Email</label>
+                <br />
+                Your private email address on startupbidder, never shown on the site, only used to notify you for personal communications.
+            </p>
+        </div>
+        <div class="formitem sideinfoitem clear">
             <span class="inputlabel">NICKNAME</span>
             <span class="inputfield">
                 <input class="text inputwidetext" type="text" name="username" id="username" value=""></input>
@@ -40,20 +51,6 @@ include(header.m4)
             </p>
             <span class="inputicon">
                 <div id="usernameicon"></div>
-            </span>
-        </div>
-        <div class="formitem sideinfoitem clear">
-            <span class="inputlabel">EMAIL</span>
-            <span class="inputfield">
-                <input class="text inputwidetext" type="text" name="email" id="email" value=""></input>
-            </span>
-            <p class="sideinfo">
-                <label class="sideinfoheader">Email</label>
-                <br />
-                Your private email address on startupbidder, never shown on the site, only used to notify you for personal communications.
-            </p>
-            <span class="inputicon">
-                <div id="emailicon"></div>
             </span>
         </div>
         <div class="formitem sideinfoitem clear">

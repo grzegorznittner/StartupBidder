@@ -230,7 +230,7 @@ public class UserMgmtFacade {
             else {
 				oldUser.nickname = nickname;
 			}
-		}
+        }
 		if (StringUtils.isNotEmpty(name)) {
 			if (name.length() < 3) {
 				log.warning("New user name '" + name + "' must be at least 3 characters");

@@ -1,28 +1,23 @@
 function ProfileClass() {}
 pl.implement(ProfileClass, {
     setProfile: function(json) {
-        var investor = json.investor ? 'Accredited Investor' : 'Entrepreneur';
-/*
+/*        var investor = json.investor ? 'Accredited Investor' : 'Entrepreneur';
             date = new DateClass(),
             joindate = json.joined_date ? date.format(json.joined_date) : 'unknown';
         pl('#profilestatus').html('');
-*/
-        pl('#username').html(json.username || 'anonymous');
-        pl('#email').html(json.email || 'no email address');
-        pl('#name').html(json.name || '');
-/*
         pl('#title').html(json.title);
         pl('#organization').html(json.organization);
         pl('#phone').html(json.phone || '');
         pl('#address').html(json.address || '');
         pl('#joineddate').html(joindate);
-*/
         pl('#investor').html(investor);
-/*
         pl('#notifyenabled').html(json.notifyenabled ? 'enabled' : 'disabled');
         pl('#mylistingscount').html(json.posted ? json.posted.length : 0);
         pl('#biddedoncount').html(json.bidon ? json.bidon.length : 0);
 */
+        pl('#username').text(json.username || 'anonymous');
+        pl('#email').text(json.email || 'No email address');
+        pl('#name').text(json.name || 'Anon Anonymous');
     }
 });
 
@@ -33,16 +28,13 @@ pl.implement(EditProfileClass, {
         return function(newdata, loadFunc, errorFunc, successFunc) {
             var data, field, ajax;
             data = { profile: {
-                profile_id: self.profile_id,
+                name: pl('#name').attr('value'),
+                nickname: pl('#username').attr('value')
                 /*
+                profile_id: self.profile_id,
                 status: self.status,
                 open_id: self.open_id,
-                */
-                username: pl('#username').attr('value'),
-                email: pl('#email').attr('value'),
-                name: pl('#name').attr('value'),
                 investor: pl('#investor').attr('value') ? 'true' : 'false'
-                /*
                 title: pl('#title').attr('value'),
                 organization: pl('#organization').attr('value'),
                 facebook:'',
@@ -53,7 +45,7 @@ pl.implement(EditProfileClass, {
             for (field in newdata) {
                 data.profile[field] = newdata[field];
             }
-            ajax = new AjaxClass(self.updateUrl, '', null, successFunc, loadFunc, errorFunc);
+            ajax = new AjaxClass('/user/autosave', '', null, successFunc, loadFunc, errorFunc);
             ajax.setPostData(data);
             ajax.call();
         };
@@ -99,7 +91,7 @@ pl.implement(EditProfileClass, {
         //properties = ['profile_id', 'status', 'name', 'username', 'open_id', 'profilestatus', 'title', 'organization', 'email', 'phone', 'address'];
         var self = this,
             properties = ['profile_id', 'username', 'email', 'name'],
-            textFields = ['username', 'email', 'name'],
+            textFields = ['username', 'name'],
             i, property, textFields, textFieldId, textFieldObj, investorCheckbox; 
         self.profile_id = json.profile_id;
         self.admin = json.admin;
@@ -112,9 +104,11 @@ pl.implement(EditProfileClass, {
             textFieldId = textFields[i];
             textFieldObj = new TextFieldClass(textFieldId, json[textFieldId], self.getUpdater(), 'personalinfomsg');
             textFieldObj.fieldBase.addValidator(textFieldObj.fieldBase.validator.isNotEmpty);
+/*
             if (textFieldId === 'email') {
                 textFieldObj.fieldBase.addValidator(textFieldObj.fieldBase.validator.isEmail);
             }
+*/
             if (textFieldId === 'username') {
                 textFieldObj.fieldBase.addValidator(function(username) {
                     var successFunc = function(json) {
@@ -155,9 +149,10 @@ pl.implement(EditProfileClass, {
             }
             textFieldObj.bindEvents();
         }
+/*
         investorCheckbox = new CheckboxFieldClass('investor', json.investor, self.getUpdater(), 'personalinfomsg');
         investorCheckbox.bindEvents();
-/*
+
         notifyCheckbox = new CheckboxFieldClass('notifyenabled', json.notifyenabled, self.getUpdater(), 'settingsmsg');
         notifyCheckbox.bindEvents();
         newPassword = new TextFieldClass('newpassword', '', function(){}, 'passwordmsg');
@@ -187,6 +182,7 @@ pl.implement(EditProfileClass, {
         });
         confirmPassword.bindEvents();
  */
+        pl('#email').text(json.email || 'No email address');
         this.bindInfoButtons();
         self.displayDeactivate();
         pl('#personalcolumn').show();

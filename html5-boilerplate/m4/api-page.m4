@@ -2378,6 +2378,58 @@ include(api-banner.m4)
             <iframe name="user-check-user-name"></iframe>
         </div>
 
+        <dt>POST /user/autosave</dt>
+        <dd>
+            <p>
+            Updates a field for the currently logged in user. Multiple fields can be passed at once for efficient update.
+            Updatable fields keys are detailed in the parameter section.
+            </p>
+        </dd>
+        <div class="apidetail">
+            <h4>Parameters</h4>
+            <ul>
+                <li>
+                    <code>profile</code>
+                    The profile property json contains one or more field-value pairs which you wish to update.  Value meanings as are per the <var>/user/get</var> method.
+                    Listing property structure:
+<pre name="code" class="brush: js">
+{
+    name: :name,
+    nickname: :nickname
+}
+</pre>
+                </li>
+            </ul>
+            <h4>Response</h4>
+            <ul>
+                <li><code>login_url</code> URL to use for site login action</li>
+                <li><code>logout_url</code> URL to use for site logout action</li>
+                <li><code>loggedin_profile</code> private user profile object, see User API for profile object details</li>
+                <li><code>error_code</code> error status for this call, 0 on success</li>
+                <li><code>error_msg</code> error message for this call, null on success</li>
+                <li><code>profile</code> listing object as per <var>/user/get</var> method</li>
+            </ul>
+            <h4>Test</h4>
+            <form method="POST" action="/user/autosave" target="user-autosave">
+
+                <div class="formitem">
+                    <label class="inputlabel" for="title">USER</label>
+                    <span class="inputfield">
+                        <input class="text inputwidetext" type="text" name="profile" value="{ name: &rsquo;Caesar Augustus&rsquo;, nickname: &rsquo;caesar32ad&rsquo; }"></input>
+                    </span>
+                </div>
+
+                <div class="formitem clear">
+                    <span class="inputlabel"></span>
+                    <span class="inputfield">
+                        <input type="submit" class="inputbutton" value="SUBMIT"></input>
+                    </span>
+                </div>
+
+            </form>
+            <iframe name="user-autosave"></iframe>
+        </div>
+
     </div>
 
     <div class="boxtitle">ADMIN API</div>
