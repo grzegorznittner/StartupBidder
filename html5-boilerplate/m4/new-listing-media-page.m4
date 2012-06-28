@@ -166,7 +166,7 @@ If you do not have a video ready, just record a voiceover of a quick run through
         <div class="formitem">
             <span class="inputfield">
                 <form id="picuploadform" method="post" enctype="multipart/form-data" target="picuploadiframe" action="#">
-                    <input class="text uploadinputbutton" id="picuploadfile" name="PIC1" size="16" type="file"></input>
+                    <input class="text picinputlink" id="picuploadfile" name="PIC1" size="16" type="file"></input>
                     <iframe id="picuploadiframe" name="picuploadiframe" src="" class="uploadiframe"></iframe>
                 </form>
             </span>

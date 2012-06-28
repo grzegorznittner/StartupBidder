@@ -3,7 +3,6 @@ function MessagePageClass() {
     this.queryString = new QueryStringClass();
     this.from_user_id = this.queryString.vars.from_user_id || this.queryString.vars.to_user_id || '';
     this.from_user_nickname = decodeURIComponent(this.queryString.vars.from_user_nickname || this.queryString.vars.to_user_nickname || '');
-    console.log('this.from_user_id: ' + this.from_user_id);
 };
 pl.implement(MessagePageClass,{
     loadPage: function() {

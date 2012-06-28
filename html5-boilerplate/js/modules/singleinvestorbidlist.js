@@ -454,9 +454,7 @@ pl.implement(SingleInvestorBidListClass, {
             },
 
             ajax = new AjaxClass('/listing/make_bid', 'investor_' + neworexisting + '_msg', complete);
-        console.log(data);
         ajax.setPostData(data);
-        //self.mock_make_bid(ajax, data); // FIXME
         ajax.call();
     },
 

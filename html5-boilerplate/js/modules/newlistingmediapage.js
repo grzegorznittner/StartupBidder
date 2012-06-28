@@ -70,10 +70,10 @@ pl.implement(NewListingMediaClass, {
                 }
                 pl('#logo_url, #logouploadfile').attr({value: ''});
                 if (success) {
-                    pl('#logomsg').removeClass('errorcolor').addClass('successful').text('Logo uploaded');
+                    pl('#logomsg').removeClass('errorcolor').removeClass('inprogress').addClass('successful').text('Logo uploaded');
                 }
                 else {
-                    pl('#logomsg').removeClass('errorcolor').addClass('successful').text('Unable to upload logo');
+                    pl('#logomsg').addClass('errorcolor').text('Unable to upload logo');
                 }
             },
             postPic = function(json) { // FIXME
@@ -89,10 +89,10 @@ pl.implement(NewListingMediaClass, {
                 }
                 pl('#pic_url, #picuploadfile').attr({value: ''});
                 if (success) {
-                    pl('#picmsg').removeClass('errorcolor').addClass('successful').text('Image uploaded');
+                    pl('#picmsg').removeClass('errorcolor').removeClass('inprogress').addClass('successful').text('Image uploaded');
                 }
                 else {
-                    pl('#picmsg').removeClass('successful').addClass('errorcolor').text('Could not upload image');
+                    pl('#picmsg').addClass('errorcolor').text('Could not upload image');
                 }
             },
             postVideo = function(json) {
@@ -112,60 +112,65 @@ pl.implement(NewListingMediaClass, {
         pl('#pic_url, #picuploadfile').bind('click', function() { self.imagepanel.runningSlideshow = false; });
         pl('#logouploadiframe').bind({
             load: function() {
-                var iframe = pl('#logouploadiframe').get(0).contentDocument.body.innerHTML,
-                    uploadurlmatch = iframe.match(/upload_url&gt;(.*)&lt;\/upload_url/),
+                var iframe = pl('#logouploadiframe').get(0),
+                    iframehtml = iframe && iframe.contentDocument && iframe.contentDocument.body ? iframe.contentDocument.body.innerHTML : '',
+                    uploadurlmatch = iframehtml.match(/upload_url&gt;(.*)&lt;\/upload_url/),
                     uploadurl = uploadurlmatch && uploadurlmatch.length === 2 ? uploadurlmatch[1] : null,
-                    dataurimatch = iframe.match(/value&gt;(.*)&lt;\/value/),
-                    datauri = dataurimatch && dataurimatch.length === 2 ? dataurimatch[1] : null;
+                    dataurimatch = iframehtml.match(/value&gt;(.*)&lt;\/value/),
+                    datauri = dataurimatch && dataurimatch.length === 2 ? dataurimatch[1] : null,
+                    iframeloc = iframe.contentWindow.location,
+                    errorMsg = iframeloc && iframeloc.search && iframeloc.search ? decodeURIComponent(iframeloc.search.replace(/^[?]errorMsg=/, '')) : null;
                 if (uploadurl && uploadurl !== 'null') {
                     self.base.listing.upload_url = uploadurl;
                     self.setUploadUrls();
                 }
-                console.log('#logouploadiframe:load', uploadurlmatch, uploadurl, dataurimatch, datauri, iframe);
-                if (datauri && datauri !== 'null') {
+                if (uploadurl && datauri && !errorMsg) {
                     self.base.listing.logo = datauri;
                     self.displayLogo(datauri);
                     self.base.displayCalculated();
-                    pl('#logomsg').removeClass('errorcolor').addClass('successful').text('Logo uploaded');
+                    pl('#logomsg').removeClass('errorcolor').removeClass('inprogress').addClass('successful').text('Logo uploaded');
                 }
                 else {
-                    pl('#logomsg').removeClass('successful').addClass('errorcolor').text('Unable to upload logo');
+                    pl('#logomsg').addClass('errorcolor').text(errorMsg || 'Unable to upload logo');
                 }
                 pl('#logo_url, #logouploadfile').attr({value: ''});
             }
         });
         pl('#picuploadiframe').bind({
             load: function() {
-                var iframe = pl('#picuploadiframe').get(0).contentDocument.body.innerHTML,
-                    uploadurlmatch = iframe.match(/upload_url&gt;(.*)&lt;\/upload_url/),
+                var iframe = pl('#picuploadiframe').get(0),
+                    iframehtml = iframe && iframe.contentDocument && iframe.contentDocument.body ? iframe.contentDocument.body.innerHTML : '',
+                    uploadurlmatch = iframehtml.match(/upload_url&gt;(.*)&lt;\/upload_url/),
                     uploadurl = uploadurlmatch && uploadurlmatch.length === 2 ? uploadurlmatch[1] : null,
                     picnum = pl('#picnum').text(),
-                    picurl = '/listing/picture/' + self.base.listing.listing_id + '/' + picnum;
+                    picurl = '/listing/picture/' + self.base.listing.listing_id + '/' + picnum,
+                    iframeloc = iframe.contentWindow.location,
+                    errorMsg = iframeloc && iframeloc.search && iframeloc.search ? decodeURIComponent(iframeloc.search.replace(/^[?]errorMsg=/, '')) : null;
                 if (uploadurl && uploadurl !== 'null') {
                     self.base.listing.upload_url = uploadurl;
                     self.setUploadUrls();
                 }
-                if (uploadurl && picurl) {
+                if (uploadurl && picurl && !errorMsg) {
                     self.base.listing['pic' + picnum] = true;
                     self.imagepanel.enableImage(picnum);
-                    pl('#picmsg').removeClass('errorcolor').addClass('successful').text('Image uploaded');
+                    pl('#picmsg').removeClass('errorcolor').removeClass('inprogress').addClass('successful').text('Image uploaded');
                 }
                 else {
-                    pl('#picmsg').removeClass('successful').addClass('errorcolor').text('Unable to upload image');
+                    pl('#picmsg').addClass('errorcolor').text(errorMsg || 'Unable to upload image');
                 }
                 pl('#pic_url, #picuploadfile').attr({value: ''});
             }
         });
         pl('#logouploadfile').bind({
             change: function() {
-                pl('#logomsg').removeClass('inprogress').addClass('inprogress').text('Uploading...');
+                pl('#logomsg').removeClass('errorcolor').addClass('inprogress').text('Uploading...');
                 pl('#logouploadform').get(0).submit();
                 return false;
             }
         });
         pl('#picuploadfile').bind({
             change: function() {
-                pl('#picmsg').removeClass('inprogress').addClass('inprogress').text('Uploading...');
+                pl('#picmsg').removeClass('errorcolor').addClass('inprogress').text('Uploading...');
                 pl('#picuploadform').get(0).submit();
                 return false;
             }

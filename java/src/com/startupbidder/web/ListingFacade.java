@@ -251,26 +251,34 @@ public class ListingFacade {
 			String propertyName = prop.getPropertyName().toLowerCase();
 			if (ListingVO.UPDATABLE_PROPERTIES.contains(propertyName)) {
 				propsToUpdate.add(prop);
-			} else if (ListingVO.FETCHED_PROPERTIES.contains(propertyName)) {
-				ListingDoc doc = fetchAndUpdateListingDoc(listing, prop);
-				if (doc != null) {
-					Listing updatedlisting = updateListingDoc(listing, doc);
-					if (updatedlisting != null) {
-						listing = updatedlisting;
-						fetchedDoc = true;
-					} else {
-						result.setErrorCode(ErrorCodes.DATASTORE_ERROR);
-						result.setErrorMessage("Error updating listing. " + infos.toString());
-						fetchError = true;
-						break;
-					}
-				} else {
-					result.setErrorCode(ErrorCodes.APPLICATION_ERROR);
-					result.setErrorMessage("Error while fetching/converting external resource. " + infos.toString());
+			}
+            else if (ListingVO.FETCHED_PROPERTIES.contains(propertyName)) {
+                ListingDocumentVO doc = fetchAndUpdateListingDoc(listing, prop);
+                if (doc == null) {
+                    result.setErrorCode(ErrorCodes.DATASTORE_ERROR);
+                    result.setErrorMessage("Unable to fetch listing document");
+                    return result;
+                }
+                if (doc.getErrorCode() != ErrorCodes.OK) {
+                    String errorMsg = doc.getErrorMessage() != null ? doc.getErrorMessage() : "Unable to fetch listing document";
+                    result.setErrorCode(doc.getErrorCode());
+                    result.setErrorMessage(errorMsg);
+                    return result;
+                }
+                ListingDoc listingDoc = VoToModelConverter.convert(doc);
+    			Listing updatedlisting = updateListingDoc(listing, listingDoc);
+				if (updatedlisting != null) {
+					listing = updatedlisting;
+					fetchedDoc = true;
+				}
+                else {
+					result.setErrorCode(ErrorCodes.DATASTORE_ERROR);
+					result.setErrorMessage("Error updating listing. " + infos.toString());
 					fetchError = true;
 					break;
 				}
-			} else {
+			}
+            else {
 				infos.append("Removed field '" + propertyName + "' as it's not updatable. ");
 			}
 		}
@@ -386,7 +394,9 @@ public class ListingFacade {
 		return null;
 	}
 
-	private ListingDoc fetchAndUpdateListingDoc(Listing listing, ListingPropertyVO prop) {
+	private ListingDocumentVO fetchAndUpdateListingDoc(Listing listing, ListingPropertyVO prop) {
+        ListingDocumentVO doc = new ListingDocumentVO();
+        doc.setErrorCode(ErrorCodes.OK);
 		byte[] docBytes = null;
 		String mimeType = null;
 		String propName = prop.getPropertyName();
@@ -419,33 +429,49 @@ public class ListingFacade {
 			log.info("Fetched " + docBytes.length + " bytes, content type '" + mimeType
 					+ "', from '" + propValue + "'");
 		} catch (Exception e) {
-			log.log(Level.WARNING, "Error while fetching document from " + propValue, e);
-			return null;
+            String errorMsg = "Error while fetching document from " + propValue;
+            log.log(Level.WARNING, errorMsg, e);
+			doc.setErrorCode(ErrorCodes.ENTITY_VALIDATION);
+			doc.setErrorMessage(errorMsg);
+			return doc;
 		}
-		if (propName.equalsIgnoreCase("logo_url") && setLogoBase64(listing, docBytes) == null) {
-			log.log(Level.WARNING, "Image conversion error");
-			return null;
+		if (propName.equalsIgnoreCase("logo_url")) {
+            String errorMsg = setLogoBase64(listing, docBytes);
+            if (errorMsg != null) {
+                log.log(Level.WARNING, "fetchAndUpdateListingDoc: " + errorMsg);
+                doc.setErrorCode(ErrorCodes.ENTITY_VALIDATION);
+                doc.setErrorMessage(errorMsg);
+                return doc;
+            }
 		}
 		if (propName.equalsIgnoreCase("pic1_url") || propName.equalsIgnoreCase("pic2_url") || propName.equalsIgnoreCase("pic3_url")
 				|| propName.equalsIgnoreCase("pic4_url") || propName.equalsIgnoreCase("pic5_url")) {
-			PictureData result = convertPicture(docBytes);
-			if (result == null) {
-				log.log(Level.WARNING, "Image conversion error");
-				return null;
+            PictureData convertedData = convertPicture(docBytes);
+            if (convertedData == null || convertedData.data == null) {
+                String errorMsg = convertedData != null ? convertedData.mimeType : "Image conversion error";
+                log.warning("fetchAndUpdateListingDoc: " + errorMsg);
+                doc.setErrorCode(ErrorCodes.ENTITY_VALIDATION);
+                doc.setErrorMessage(errorMsg);
+                return doc;
 			}
-			docBytes = result.data;
+			docBytes = convertedData.data;
 		}
 
 		try {
 			Type type = getListingDocTypeFromPropertyName(propName);
-			ListingDoc doc = new ListingDoc();
-			doc.blob = createBlob(docBytes, type, mimeType);
-			doc.type = type;
-			getDAO().createListingDocument(doc);
+			ListingDoc listingDoc = new ListingDoc();
+			listingDoc.blob = createBlob(docBytes, type, mimeType);
+			listingDoc.type = type;
+			getDAO().createListingDocument(listingDoc);
+            doc = DtoToVoConverter.convert(listingDoc);
+            doc.setErrorCode(ErrorCodes.OK);
 			return doc;
 		} catch (Exception e) {
-			log.log(Level.WARNING, "Error storing doc as blob", e);
-			return null;
+            String errorMsg = "Error storing document";
+            log.warning("fetchAndUpdateListingDoc: " + errorMsg);
+            doc.setErrorCode(ErrorCodes.ENTITY_VALIDATION);
+            doc.setErrorMessage(errorMsg);
+            return doc;
 		}
 	}
 
@@ -1569,22 +1595,26 @@ public class ListingFacade {
 		if (docType == ListingDoc.Type.LOGO) {
 			BlobInfo logoInfo = new BlobInfoFactory().loadBlobInfo(doc.getBlob());
 			byte logo[] = blobstoreService.fetchData(doc.getBlob(), 0, logoInfo.getSize() - 1);
-			if (setLogoBase64(listing, logo) == null) {
+            String errorMsg = setLogoBase64(listing, logo);
+            if (errorMsg != null) {
+                log.warning("createListingDocument: " + errorMsg);
 				blobstoreService.delete(doc.getBlob());
 				doc.setErrorCode(ErrorCodes.ENTITY_VALIDATION);
-				doc.setErrorMessage("Image conversion error.");
+				doc.setErrorMessage(errorMsg);
 				return doc;
 			}
 		}
 		if (docType == ListingDoc.Type.PIC1 || docType == ListingDoc.Type.PIC2 || docType == ListingDoc.Type.PIC3
 				|| docType == ListingDoc.Type.PIC4 || docType == ListingDoc.Type.PIC5) {
-			BlobInfo logoInfo = new BlobInfoFactory().loadBlobInfo(doc.getBlob());
-			byte logo[] = blobstoreService.fetchData(doc.getBlob(), 0, logoInfo.getSize() - 1);
-			PictureData convertedData = convertPicture(logo);
-			if (convertedData == null) {
+			BlobInfo picInfo = new BlobInfoFactory().loadBlobInfo(doc.getBlob());
+			byte pic[] = blobstoreService.fetchData(doc.getBlob(), 0, picInfo.getSize() - 1);
+			PictureData convertedData = convertPicture(pic);
+			if (convertedData == null || convertedData.data == null) {
+                String errorMsg = convertedData != null ? convertedData.mimeType : "Image conversion error";
+                log.warning(errorMsg);
 				deleteBlob(blobstoreService, doc.getBlob());
 				doc.setErrorCode(ErrorCodes.ENTITY_VALIDATION);
-				doc.setErrorMessage("Image conversion error.");
+				doc.setErrorMessage(errorMsg);
 				return doc;
 			}
 			deleteBlob(blobstoreService, doc.getBlob());
@@ -1670,14 +1700,22 @@ public class ListingFacade {
 		return listing;
 	}
 	
-	private Listing setLogoBase64(Listing listing, byte[] logo) {
+	private String setLogoBase64(Listing listing, byte[] logo) {
 		String logoBase64 = convertLogoToBase64(logo);
-		if (logoBase64 != null) {
-			listing.logoBase64 = logoBase64;
-			return listing;
-		} else {
-			return null;
+        String errorMsg = null;
+        if (logoBase64 != null && logoBase64.indexOf("data:") == 0) {
+            listing.logoBase64 = logoBase64;
+        }
+        else if (logoBase64 != null) {
+            errorMsg = logoBase64;
+        }
+        else {
+            errorMsg = "Could not convert image data to logo";
 		}
+        if (errorMsg != null) {
+            log.warning("setLogoBase64: " + errorMsg);
+        }
+        return errorMsg;
 	}
 	
 	public String convertLogoToBase64(byte[] logo) {
@@ -1692,7 +1730,7 @@ public class ListingFacade {
 			format = "image/png";
 		} else {
 			log.warning("Image not recognized as JPG, GIF or PNG. Magic number was: " + toHexString(magicNumber));
-			return null;
+            return "Image not recognized as JPG, GIF or PNG.";
 		}
 		ImagesService imagesService = ImagesServiceFactory.getImagesService();
         Image originalImage = ImagesServiceFactory.makeImage(logo);
@@ -1736,8 +1774,10 @@ public class ListingFacade {
 		} else if (ArrayUtils.isEquals(magicNumber, PNG)) {
 			format = "image/png";
 		} else {
-			log.warning("Image not recognized as JPG, GIF or PNG. Magic number was: " + toHexString(magicNumber));
-			return null;
+            String errorStr = "Image not recognized as JPG, GIF or PNG.";
+            PictureData pd = new PictureData(errorStr, null);
+			log.warning(errorStr + " Magic number was: " + toHexString(magicNumber));
+			return pd;
 		}
 		ImagesService imagesService = ImagesServiceFactory.getImagesService();
         Image originalImage = ImagesServiceFactory.makeImage(picture);
@@ -1953,9 +1993,10 @@ public class ListingFacade {
                 if (prop.getPropertyValue() == null) {
                     continue;
                 }
-                ListingDoc doc = fetchAndUpdateListingDoc(listing, prop);
-                if (doc != null) {
-                    Listing updatedlisting = updateListingDoc(listing, doc);
+                ListingDocumentVO doc = fetchAndUpdateListingDoc(listing, prop);
+                if (doc != null && doc.getErrorCode() == ErrorCodes.OK) {
+                    ListingDoc listingDoc = VoToModelConverter.convert(doc);
+                    Listing updatedlisting = updateListingDoc(listing, listingDoc);
                     if (updatedlisting != null) {
                         listing = updatedlisting;
                     } else {

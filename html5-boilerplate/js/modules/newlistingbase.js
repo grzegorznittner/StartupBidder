@@ -269,7 +269,9 @@ pl.implement(NewListingBaseClass, {
                 var evt = new EventClass(e),
                     infoel = evt.target().parentNode.nextSibling.nextSibling;
                 self.hideAllInfo();
-                pl(infoel).addClass('sideinfodisplay');
+                if (infoel) {
+                    pl(infoel).addClass('sideinfodisplay');
+                }
             },
             blur: self.hideAllInfo
         });

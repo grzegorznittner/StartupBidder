@@ -39,8 +39,7 @@ pl.implement(NewListingFinancialsClass, {
             linksel = '#' + id + 'link',
             downloadsel = '#' + id + 'downloadbg, #' + id + 'downloadtext',
             deletesel = '#' + id + 'deletelink span',
-            uploadfield = id + '_upload',
-            uploadurl = this.base.listing[uploadfield],
+            uploadurl = this.base.listing.upload_url,
             linkurl = val ? '/file/download/' + val : '';
         if (val) {
             pl(downloadsel).show();
@@ -84,9 +83,8 @@ pl.implement(NewListingFinancialsClass, {
                             return false;
                         }
                     });
-                    //pl('#' + id + 'uploadform').action
-                    pl('#' + id.toUpperCase()).removeAttr('value');
-                    pl('#' + id + 'msg').removeClass('successful').addClass('successful').text('Document deleted');
+                    pl('#' + id + 'uploadfile').removeAttr('value');
+                    pl('#' + id + 'msg').removeClass('errorcolor').removeClass('inprogress').addClass('successful').text('Document deleted');
                 };
                 ajax = new AjaxClass('/listings/delete_file/?type='+id.toUpperCase(), id+'msg', completeFunc);
                 ajax.setPost();
@@ -97,26 +95,30 @@ pl.implement(NewListingFinancialsClass, {
     },
     bindUploadField: function(id) {
         var self = this;
-            uploadfield = id + '_upload',
             iframesel = '#' + id + 'uploadiframe',
-            browsesel = '#' + id.toUpperCase(),
+            browsesel = '#' + id + 'uploadfile',
             displayname = id.toUpperCase().replace('_',' ') + ' URL',
             urlid = id + '_url',
             msgid = id + 'msg',
             genPostUpload = function(id) {
                 var fieldname = id + '_id',
-                    uploadId = id,
-                    uploadfield = id + '_upload';
+                    fieldurl = id + '_url',
+                    uploadId = id;
                 return function(json) {
-                    var val = json && json.listing && json.listing[fieldname] ? json.listing[fieldname] : null,
-                        uploadval = json && json.listing && json.listing[uploadfield] ? json.listing[uploadfield] : null;
-                    if (uploadval) {
-                        self.base.listing[uploadfield] = uploadval;
+                    var uploadurl = json && json.listing && json.listing.upload_url || null,
+                        val = json && json.listing && json.listing[fieldname] ? json.listing[fieldname] : null;
+                    if (uploadurl) {
+                        self.base.listing.upload_url = uploadurl;
+                        self.setUploadUrls();
                     }
                     if (val) {
+                        console.log('here');
                         self.base.listing[fieldname] = val;
                         self.displayUpload(uploadId);
                         self.base.displayCalculated();
+                        console.log(fieldurl);
+                        pl('#' + fieldurl).attr({value: ''});
+                        pl('#' + id + 'msg').removeClass('errorcolor').removeClass('inprogress').addClass('successful').text('Document uploaded');
                     }
                 };
             },
@@ -125,26 +127,30 @@ pl.implement(NewListingFinancialsClass, {
             genIframeLoad = function(id) {
                 var iframesel = '#' + id + 'uploadiframe',
                     formsel = '#' + id + 'uploadform',
-                    fieldname = id + '_id',
-                    uploadfield = id + '_upload';
+                    fieldname = id + '_id';
                 return function() {
-                    var iframe = pl(iframesel).get(0).contentDocument.body.innerHTML,
-                        uploadurlmatch = iframe.match(/upload_url&gt;(.*)&lt;\/upload_url/),
+                    var iframe = pl(iframesel).get(0),
+                        iframehtml = iframe && iframe.contentDocument && iframe.contentDocument.body ? iframe.contentDocument.body.innerHTML : '',
+                        uploadurlmatch = iframehtml.match(/upload_url&gt;(.*)&lt;\/upload_url/),
                         uploadurl = uploadurlmatch && uploadurlmatch.length === 2 ? uploadurlmatch[1] : null,
-                        valmatch = iframe.match(/value&gt;(.*)&lt;\/value/),
-                        val = valmatch && valmatch.length === 2 ? valmatch[1] : null;
-                    if (uploadurl) {
-                        self.base.listing[uploadfield] = uploadurl;
+                        valmatch = iframehtml.match(/value&gt;(.*)&lt;\/value/),
+                        val = valmatch && valmatch.length === 2 ? valmatch[1] : null,
+                        iframeloc = iframe.contentWindow.location,
+                        errorMsg = iframeloc && iframeloc.search && iframeloc.search ? decodeURIComponent(iframeloc.search.replace(/^[?]errorMsg=/, '')) : null;
+                    if (uploadurl && uploadurl !== 'null') {
+                        self.base.listing.upload_url = uploadurl;
+                        self.setUploadUrls();
                     }
-                    if (val) {
+                    if (uploadurl && val && !errorMsg) {
                         self.base.listing[fieldname] = val;
-                        pl('#'+id+'msg').removeClass('successful').addClass('successful').text('Document uploaded');
+                        pl('#'+id+'msg').removeClass('errorcolor').removeClass('inprogress').addClass('successful').text('Document uploaded');
+                        pl('#'+id+'_url, #'+id+'uploadfile').attr({value: ''});
                         self.displayUpload(id);
                         self.base.displayCalculated();
                     }
                     else {
                         self.base.listing[fieldname] = null;
-                        pl('#'+id+'msg').removeClass('errorcolor').addClass('errorcolor').text('Unable to upload document');
+                        pl('#'+id+'msg').addClass('errorcolor').text(errorMsg || 'Unable to upload document');
                     }
                 };
             },
@@ -273,7 +279,6 @@ pl.implement(NewListingFinancialsClass, {
     },
     displayOfferBox: function() {
         var fnd = this.base.fieldMap.asked_fund.fieldBase.value;
-        console.log('displayAskedEffects:', fnd);
         if (fnd) {
             pl('#offerwrapper').addClass('offerwrapperdisplay');
         }
@@ -320,6 +325,9 @@ pl.implement(NewListingFinancialsClass, {
             cur = CurrencyClass.prototype.format(CurrencyClass.prototype.clean(val)),
             dis = fnd && cur ? cur : '';
         pl('#suggested_val').text(dis);
+    },
+    setUploadUrls: function() {
+        pl('#presentationuploadform, #business_planuploadform, #financialsuploadform').attr({action: this.base.listing.upload_url});
     }
 });
 

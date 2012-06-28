@@ -211,7 +211,6 @@ pl.implement(ListingClass, {
     displaySocial: function() {
         if (this.preview) { // their iframe usage busts during preview
             pl('#socialsidebox').html('<p>Twitter, Facebook, and Google Plus buttons will be displayed here</p>');
-            console.log('here', pl('#socialsidebox'));
         }
         else {
             this.displayTwitter();

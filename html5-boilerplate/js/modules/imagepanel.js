@@ -12,7 +12,6 @@ pl.implement(ImagePanelClass, {
         var pic = 'pic' + i,
             cachebust = pl('#' + pic + 'nav').hasClass('dotnavempty') ? '' : '?id=' + Math.floor(Math.random()*1000000000),
             url = '/listing/picture/' + this.listing.listing_id + '/' + i + cachebust;
-        console.log(url);
         pl('#' + pic + 'nav').removeClass('dotnavempty');
         pl('#' + pic).css({ 'background-image': 'url(' + url + ')' });
     },
@@ -43,7 +42,6 @@ pl.implement(ImagePanelClass, {
             var ul = pl(this).hasClass('dotnav') ? this : this.parentNode,
                 navid = ul.id,
                 picnum = navid.replace(/pic|nav/g, '');
-            console.log(picnum);
             self.runningSlideshow = false;
             self.advanceRight(picnum);
         });
@@ -63,7 +61,6 @@ pl.implement(ImagePanelClass, {
 
     advanceSlideshow: function() {
         var self = this;
-        console.log('advanceSlideshow', self, self.runningSlideshow);
         if (self.runningSlideshow) {
             self.advanceRight();
             setTimeout(function() { self.advanceSlideshow() }, 5000);
@@ -71,7 +68,6 @@ pl.implement(ImagePanelClass, {
     },
   
     advanceRight: function(picnum) {    
-        console.log('doAdvance');
         var left = 1 * pl('#picslideset').css('left').replace(/px/, ''),
             slidewidth = 1 * pl('#pic1').css('width').replace(/px/, ''),
             fullwidth = slidewidth * this.numPics,
@@ -79,7 +75,6 @@ pl.implement(ImagePanelClass, {
             newleftpx = newleft + 'px',
             newpicnum = picnum || (Math.floor(Math.abs(newleft) / slidewidth) + 1),
             onboundary = Math.floor(left % slidewidth) === 0;
-        console.log('advanceRight(' + picnum + ')', left, slidewidth, fullwidth, newleft, newpicnum, onboundary);
         if (onboundary) { // prevent in-transition movements
             if (this.options.editmode) {
                 pl('#picnum').text(newpicnum);

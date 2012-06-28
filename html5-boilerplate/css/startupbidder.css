@@ -30,6 +30,7 @@ body.nearby-page > #wrap > #main > div.container > div.nearbywrapper { height: 1
 .attention { color: #8A1F11 !important; }
 .notice { position: relative; top: 15px; }
 .emptyattention { color: #8A1F11; position: relative; top: 15px; }
+.dummy { position: absolute; height: 0; width: 0; display: none; }
 
 /* general styles */
 body { font-size: 14px; font-weight: normal; }
@@ -714,7 +715,8 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .uploadinputicon { float: left; padding-top: 6px; height: 32px; width: 32px; }
 .uploadinfo { font-weight: bold; margin-left: 4px; }
 .uploadurlbutton { margin-left: 4px; }
-.uploadinputbutton { font-weight: bold; color: white !important; background: #49515a !important; font-size: 14px !important; height: 33px !important; margin-left: 4px !important; }
+.uploadinputbutton { font-weight: bold; color: white !important; background: #49515a !important; font-size: 14px !important; margin-left: 4px !important; width: 383px !important; }
+.uploadinputbuttonshort { width: 300px !important; }
 .uploaddelete { position: absolute; top: 43px; right: 0px; display: none; }
 .uploaditem { position: relative; }
 

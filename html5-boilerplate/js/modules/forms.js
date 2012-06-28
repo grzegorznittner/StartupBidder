@@ -378,9 +378,10 @@ pl.implement(FieldBaseClass, {
     },
     getErrorFunc: function(displayFunc) {
         var self = this;
-        return function(errorNum) {
+        return function(errorNum, json) {
+            var errorStr = (json && json.error_msg) ? 'Error: ' + json.error_msg : 'Error from server: ' + errorNum;
             displayFunc();
-            self.msg.show('attention', 'Error saving changes: ' + errorNum);
+            self.msg.show('attention', errorStr);
         };
     },
     getSuccessFunc: function(displayFunc) {
@@ -388,7 +389,6 @@ pl.implement(FieldBaseClass, {
         return function() {
             self.msg.show('successful', 'Saved changes');
             self.value = self.newval;
-            console.log('success:',self.value);
             if (displayFunc) {
                 displayFunc();
             }
@@ -413,7 +413,6 @@ pl.implement(CheckboxFieldClass, {
     getDisplayFunc: function() {
         var self = this;
         return function() {
-            console.log('displayfunc',self.fieldBase,self.fieldBase.value);
             if (self.fieldBase.value) {
                 pl(self.fieldBase.sel).removeClass('checkboxuncheckedicon').addClass('checkboxcheckedicon');
             }
@@ -548,7 +547,6 @@ pl.implement(TextFieldClass, {
             el = pl(self.fieldBase.sel).get(0),
             currentValue = pl(el).attr('value'),
             value = (el.tagName.toLowerCase() === 'textarea' && currentValue === el.defaultValue) ? '' : currentValue;
-        console.log('validate', self.fieldBase.sel, el, currentValue);
         return self.fieldBase.validator.validate(value);
     },
     bindEvents: function(optionsparam) {

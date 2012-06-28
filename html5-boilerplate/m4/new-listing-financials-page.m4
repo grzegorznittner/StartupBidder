@@ -167,6 +167,7 @@ include(header.m4)
                 <span class="inputfield">
                     <input class="text mediainputlink" type="text" maxlength="255" name="presentation_url" id="presentation_url" value=""></input>
                 </span>
+                <p class="dummy"></p>
                 <span class="uploadinputicon">
                     <div id="presentation_urlicon"></div>
                 </span>
@@ -174,7 +175,7 @@ include(header.m4)
             <div class="formitem uploaditem">
                 <span class="inputfield">
                     <form id="presentationuploadform" method="post" enctype="multipart/form-data" target="presentationuploadiframe" action="#">
-                        <input class="text uploadinputbutton" id="PRESENTATION" name="PRESENTATION" size="18" type="file"></input>
+                        <input class="text uploadinputbutton uploadinputbuttonshort" id="presentationuploadfile" name="PRESENTATION" size="18" type="file"></input>
                         <iframe id="presentationuploadiframe" name="presentationuploadiframe" src="" class="uploadiframe"></iframe>
                     </form>
                 </span>
@@ -220,6 +221,7 @@ include(header.m4)
                 <span class="inputfield">
                     <input class="text mediainputlink" type="text" maxlength="255" name="business_plan_url" id="business_plan_url" value=""></input>
                 </span>
+                <p class="dummy"></p>
                 <span class="uploadinputicon">
                     <div id="business_plan_urlicon"></div>
                 </span>
@@ -227,7 +229,7 @@ include(header.m4)
             <div class="formitem uploaditem">
                 <span class="inputfield">
                     <form id="business_planuploadform" method="post" enctype="multipart/form-data" target="business_planuploadiframe" action="#">
-                        <input class="text uploadinputbutton" id="BUSINESS_PLAN" name="BUSINESS_PLAN" size="18" type="file"></input>
+                        <input class="text uploadinputbutton uploadinputbuttonshort" id="business_planuploadfile" name="BUSINESS_PLAN" size="18" type="file"></input>
                         <iframe id="business_planuploadiframe" name="business_planuploadiframe" src="" class="uploadiframe"></iframe>
                     </form>
                 </span>
@@ -273,6 +275,7 @@ include(header.m4)
                 <span class="inputfield">
                     <input class="text mediainputlink" type="text" maxlength="255" name="financials_url" id="financials_url" value=""></input>
                 </span>
+                <p class="dummy"></p>
                 <span class="uploadinputicon">
                     <div id="financials_urlicon"></div>
                 </span>
@@ -280,7 +283,7 @@ include(header.m4)
             <div class="formitem uploaditem">
                 <span class="inputfield">
                     <form id="financialsuploadform" method="post" enctype="multipart/form-data" target="financialsuploadiframe" action="#">
-                        <input class="text uploadinputbutton" id="FINANCIALS" name="FINANCIALS" size="18" type="file"></input>
+                        <input class="text uploadinputbutton uploadinputbuttonshort" id="financialsuploadfile" name="FINANCIALS" size="18" type="file"></input>
                         <iframe id="financialsuploadiframe" name="financialsuploadiframe" src="" class="uploadiframe"></iframe>
                     </form>
                 </span>
