@@ -316,7 +316,118 @@ include(api-banner.m4)
 
     <div class="boxtitle">SEARCH API</div>
     <div class="boxpanel apipanel">
-    <p>Search for a set of listings using keywords, location, and category matches</p>
+    <p>Search for a set of listings using category, location, and keyword matches.</p>
+
+        <dt>GET /listing/category</dt>
+        <dd>
+            <p>
+            Returns listings on startupbidder matching a given category.  The most recently posted listings are returned first.
+            If more listings are available, they can be obtained by the <code>more_results_url</code> property of the <code>listings_props</code> in the response.
+            </p>
+        </dd>
+        <div class="apidetail">
+            <h4>Parameters</h4>
+            <ul>
+                <li>
+                    <code>category</code> match by category as per returned category from call <var>/listing/categories</var>
+                </li>
+                <li style="clear:both;"><code>max_results</code> OPTIONAL for the max number of results to return, default 5, up to 20</li>
+            </ul>
+            <h4>Response</h4>
+            <ul>
+                <li><code>login_url</code> URL to use for site login action</li>
+                <li><code>logout_url</code> URL to use for site logout action</li>
+                <li><code>loggedin_profile</code> private user profile object, see User API for profile object details</li>
+                <li><code>error_code</code> error status for this call, 0 on success</li>
+                <li><code>error_msg</code> error message for this call, null on success</li>
+                <li><code>listings</code> list of listings matching this request, up to the <var>max_results</var>, or an empty list if nothing is found</li>
+                <li><code>listings_props</code> list properties, call <var>more_results_url</var> in AJAX for more, structure:
+<pre name="code" class="brush: js">
+{
+    start_index: :index,
+    max_results: :max,
+    num_results: :n,
+    more_results_url: :url
+}
+</pre>
+                </li>
+                <li><code>categories</code> map of listing categories, same as for <var>/listing/discover</var></li>
+                <li><code>top_locations</code> map of top locations, same as for <var>/listing/discover</var></li>
+            </ul>
+            <h4>Test</h4>
+            <form method="GET" action="/listing/category" target="listing-category">
+                <div class="formitem">
+                    <label class="inputlabel" for="title">CATEGORY</label>
+                    <span class="inputfield">
+                        <input class="text inputwidetext" type="text" name="category" value="Software"></input>
+                    </span>
+                </div>
+                <div class="formitem clear">
+                    <span class="inputlabel"></span>
+                    <span class="inputfield">
+                        <input type="submit" class="inputbutton" value="SUBMIT"></input>
+                    </span>
+                </div>
+
+            </form>
+            <iframe name="listing-category"></iframe>
+        </div>
+
+
+        <dt>GET /listing/location</dt>
+        <dd>
+            <p>
+            Returns listings on startupbidder matching a given location.  The most recently posted listings are returned first.
+            If more listings are available, they can be obtained by the <code>more_results_url</code> property of the <code>listings_props</code> in the response.
+            </p>
+        </dd>
+        <div class="apidetail">
+            <h4>Parameters</h4>
+            <ul>
+                <li>
+                    <code>location</code> match by location as per returned location from call <var>/listing/locations</var>
+                </li>
+                <li style="clear:both;"><code>max_results</code> OPTIONAL for the max number of results to return, default 5, up to 20</li>
+            </ul>
+            <h4>Response</h4>
+            <ul>
+                <li><code>login_url</code> URL to use for site login action</li>
+                <li><code>logout_url</code> URL to use for site logout action</li>
+                <li><code>loggedin_profile</code> private user profile object, see User API for profile object details</li>
+                <li><code>error_code</code> error status for this call, 0 on success</li>
+                <li><code>error_msg</code> error message for this call, null on success</li>
+                <li><code>listings</code> list of listings matching this request, up to the <var>max_results</var>, or an empty list if nothing is found</li>
+                <li><code>listings_props</code> list properties, call <var>more_results_url</var> in AJAX for more, structure:
+<pre name="code" class="brush: js">
+{
+    start_index: :index,
+    max_results: :max,
+    num_results: :n,
+    more_results_url: :url
+}
+</pre>
+                </li>
+                <li><code>categories</code> map of listing categories, same as for <var>/listing/discover</var></li>
+                <li><code>top_locations</code> map of top locations, same as for <var>/listing/discover</var></li>
+            </ul>
+            <h4>Test</h4>
+            <form method="GET" action="/listing/location" target="listing-location">
+                <div class="formitem">
+                    <label class="inputlabel" for="title">LOCATION</label>
+                    <span class="inputfield">
+                        <input class="text inputwidetext" type="text" name="location" value="London, United Kingdom"></input>
+                    </span>
+                </div>
+                <div class="formitem clear">
+                    <span class="inputlabel"></span>
+                    <span class="inputfield">
+                        <input type="submit" class="inputbutton" value="SUBMIT"></input>
+                    </span>
+                </div>
+
+            </form>
+            <iframe name="listing-location"></iframe>
+        </div>
 
         <dt>GET /listing/keyword</dt>
         <dd>

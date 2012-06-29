@@ -307,21 +307,15 @@ function BaseCompanyListPageClass() {
 };
 pl.implement(BaseCompanyListPageClass,{
     setListingSearch: function() {
-        var searchtype = 'top';
-        if (this.type === 'category') {
-            searchtype = 'keyword';
-            this.data.text = 'category:' + this.val;
-        }
-        else if (this.type === 'location') {
-            searchtype = 'keyword';
-            this.data.text = 'location:' + this.val;
-        }
-        else if (this.type === 'keyword') {
-            searchtype = 'keyword';
+        var searchtype = this.type;
+        if (this.type === 'keyword') {
             this.data.text = this.searchtext;
         }
-        else {
-            searchtype = this.type;
+        else if (this.type === 'category') {
+            this.data.category = this.val;
+        }
+        else if (this.type === 'location') {
+            this.data.location = this.val;
         }
         this.url = '/listings/' + searchtype;
     },
@@ -334,13 +328,18 @@ pl.implement(BaseCompanyListPageClass,{
         pl('#listingstitle').html(title);
         if (this.type === 'top') {
             pl('#banner').addClass('topbanner');
-            pl('#welcometitle').html('Only the best!');
+            pl('#welcometitle').html('Only the best');
             pl('#welcometext').html('The highest ranking listings on startupbidder');
         }
         else if (this.type === 'valuation') {
             pl('#banner').addClass('valuationbanner');
-            pl('#welcometitle').html('Invest in a startup today!');
+            pl('#welcometitle').html('Invest in a startup today');
             pl('#welcometext').html('The listings below are ready for investment and open for bidding');
+        }
+        else if (this.type === 'keyword') {
+            pl('#banner').addClass('keywordbanner');
+            pl('#welcometitle').html('Search for a startup');
+            pl('#welcometext').html('Listings matching your query are displayed below');
         }
         else if (this.type === 'latest') {
             pl('#banner').addClass('latestbanner');
@@ -349,15 +348,14 @@ pl.implement(BaseCompanyListPageClass,{
         }
         else if (this.type === 'category') {
             pl('#banner').addClass('categorybanner');
-            pl('#welcometitle').html('Find opportunities in your industry!');
-            pl('#welcometext').html('Below are the top listings in the ' + this.val + ' industry');
+            pl('#welcometitle').html('Startups in your industry');
+            pl('#welcometext').html('Latest listings in the ' + this.val + ' industry');
         }
         else if (this.type === 'location') {
             pl('#banner').addClass('locationbanner');
-            pl('#welcometitle').html('Find a startup in your area!');
-            pl('#welcometext').html('Here you will find the top listings in ' + this.val);
+            pl('#welcometitle').html('Startups in your area');
+            pl('#welcometext').html('Latest listings from ' + this.val);
         }
-        // pl('#investbox').hide();
         ajax.ajaxOpts.data = this.data;
         ajax.call();
     }

@@ -631,6 +631,40 @@ public class ObjectifyDatastoreDAO {
 		return listings;
 	}
 
+    public List<Listing> getListingsForCategory(String category, ListPropertiesVO listingProperties) {
+        Query<Listing> query = getOfy().query(Listing.class)
+            .filter("state =", Listing.State.ACTIVE)
+            .order("-listedOn")
+            .chunkSize(listingProperties.getMaxResults())
+            .prefetchSize(listingProperties.getMaxResults());
+        if (category != null) {
+            query = query.filter("category =", category);
+        }
+        List<Key<Listing>> keyList = new CursorHandler<Listing>().handleQuery(listingProperties, query);
+        List<Listing> listings = new ArrayList<Listing>(getOfy().get(keyList).values());
+        return listings;
+    }
+
+    public List<Listing> getListingsForLocation(String country, String state, String city, ListPropertiesVO listingProperties) {
+        Query<Listing> query = getOfy().query(Listing.class)
+            .filter("state =", Listing.State.ACTIVE)
+            .order("-listedOn")
+            .chunkSize(listingProperties.getMaxResults())
+            .prefetchSize(listingProperties.getMaxResults());
+        if (country != null) {
+            query = query.filter("country =", country);
+        }
+        if (state != null) {
+            query = query.filter("usState =", state);
+        }
+        if (city != null) {
+            query = query.filter("city =", city);
+        }
+        List<Key<Listing>> keyList = new CursorHandler<Listing>().handleQuery(listingProperties, query);
+        List<Listing> listings = new ArrayList<Listing>(getOfy().get(keyList).values());
+        return listings;
+    }
+
 	public List<Listing> getTopListings(ListPropertiesVO listingProperties) {
 		Query<ListingStats> query = getOfy().query(ListingStats.class)
 				.filter("state =", Listing.State.ACTIVE)

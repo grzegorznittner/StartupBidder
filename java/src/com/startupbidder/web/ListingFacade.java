@@ -1324,6 +1324,45 @@ public class ListingFacade {
 		return list;
 	}
 
+    public ListingListVO getListingsForCategory(String categoryString, ListPropertiesVO listingProperties) {
+        ListingListVO list = new ListingListVO();
+        if (StringUtils.isEmpty(categoryString)) {
+            return list;
+        }
+        List<Listing> categoryListings = getDAO().getListingsForCategory(categoryString, listingProperties);
+        log.info("Category search for '" + categoryString + "' returned " + categoryListings.size() + " items.");
+        List<ListingTileVO> listings = DtoToVoConverter.convertListingTiles(categoryListings);
+        int index = listingProperties.getStartIndex() > 0 ? listingProperties.getStartIndex() : 1;
+        for (ListingTileVO listing : listings) {
+            listing.setOrderNumber(index++);
+        }
+        list.setListings(listings);
+        list.setListingsProperties(listingProperties);
+        list.setCategories(getTopCategories());
+        list.setTopLocations(getTopLocations());
+        return list;
+    }
+
+    public ListingListVO getListingsForLocation(String locationString, ListPropertiesVO listingProperties) {
+        ListingListVO list = new ListingListVO();
+        if (StringUtils.isEmpty(locationString)) {
+            return list;
+        }
+        String[] location = splitLocationString(locationString);
+        List<Listing> locationListings = getDAO().getListingsForLocation(location[2], location[1], location[0], listingProperties);
+        log.info("Location search for '" + Arrays.toString(location) + "' returned " + locationListings.size() + " items.");
+        List<ListingTileVO> listings = DtoToVoConverter.convertListingTiles(locationListings);
+        int index = listingProperties.getStartIndex() > 0 ? listingProperties.getStartIndex() : 1;
+        for (ListingTileVO listing : listings) {
+            listing.setOrderNumber(index++);
+        }
+        list.setListings(listings);
+        list.setListingsProperties(listingProperties);
+        list.setCategories(getTopCategories());
+        list.setTopLocations(getTopLocations());
+        return list;
+    }
+
 	public ListingListVO listingKeywordSearch(UserVO loggedInUser, String text, ListPropertiesVO listingProperties) {
 		ListingListVO listingsList = new ListingListVO();
 		List<ListingTileVO> listings = new ArrayList<ListingTileVO>();

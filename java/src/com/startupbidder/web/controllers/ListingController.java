@@ -71,8 +71,12 @@ public class ListingController extends ModelDrivenController {
 				return popular(request);
 			} else if("discussed".equalsIgnoreCase(getCommand(1))) {
 				return discussed(request);
-			} else if("latest".equalsIgnoreCase(getCommand(1))) {
-				return latest(request);
+            } else if("category".equalsIgnoreCase(getCommand(1))) {
+                return category(request);
+            } else if("location".equalsIgnoreCase(getCommand(1))) {
+                return location(request);
+            } else if("latest".equalsIgnoreCase(getCommand(1))) {
+                return latest(request);
 			} else if("closing".equalsIgnoreCase(getCommand(1))) {
 				return closing(request);
 			} else if("monitored".equalsIgnoreCase(getCommand(1))) {
@@ -408,6 +412,30 @@ public class ListingController extends ModelDrivenController {
 		ListPropertiesVO listingProperties = getListProperties(request);
     	model = ListingFacade.instance().getLatestActiveListings(getLoggedInUser(), listingProperties);
         return new HttpHeadersImpl("latest").disableCaching();
+	}
+
+	// GET /listings/category
+	private HttpHeaders category(HttpServletRequest request) {
+		ListPropertiesVO listingProperties = getListProperties(request);
+        try {
+            String categoryString = URLDecoder.decode(getCommandOrParameter(request, 2, "category"), "UTF-8");
+            model = ListingFacade.instance().getListingsForCategory(categoryString, listingProperties);
+        } catch (UnsupportedEncodingException e) {
+            log.log(Level.SEVERE, "Parameter decoding error", e);
+        }
+        return new HttpHeadersImpl("category").disableCaching();
+	}
+
+	// GET /listings/location
+	private HttpHeaders location(HttpServletRequest request) {
+		ListPropertiesVO listingProperties = getListProperties(request);
+        try {
+            String locationString = URLDecoder.decode(getCommandOrParameter(request, 2, "location"), "UTF-8");
+            model = ListingFacade.instance().getListingsForLocation(locationString, listingProperties);
+        } catch (UnsupportedEncodingException e) {
+            log.log(Level.SEVERE, "Parameter decoding error", e);
+        }
+        return new HttpHeadersImpl("location").disableCaching();
 	}
 
 	// GET /listings/discussed
