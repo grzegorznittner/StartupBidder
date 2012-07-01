@@ -168,7 +168,7 @@ public class DocService {
 		return updatedDocs;
 	}
 	
-	public List<Long> fullTextSearch(String searchText, ListPropertiesVO listingProperties) {
+	public List<Long> fullTextSearch(String searchText, int limitSize) {
 		List<Long> list = new ArrayList<Long>();
 		
 		if (StringUtils.isEmpty(searchText)) {
@@ -183,7 +183,7 @@ public class DocService {
 			URL feedUri = new URL("https://docs.google.com/feeds/default/private/full/");
 			DocumentQuery query = new DocumentQuery(feedUri);
 			query.setFullTextQuery(searchText);
-			query.setMaxResults(listingProperties.getMaxResults() * 2);
+			query.setMaxResults(limitSize);
 			DocumentListFeed feed = client.getFeed(query, DocumentListFeed.class);
 			for (DocumentListEntry entry : feed.getEntries()) {
 				String title = entry.getTitle().getPlainText();

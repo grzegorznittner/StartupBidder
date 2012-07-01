@@ -1367,11 +1367,20 @@ public class ListingFacade {
 		ListingListVO listingsList = new ListingListVO();
 		List<ListingTileVO> listings = new ArrayList<ListingTileVO>();
 		String[] keywords = splitSearchKeywords(text);
-		
+        
+        // rational inits
+        listingProperties.setStartIndex(listingProperties.getStartIndex() >= 1 ? listingProperties.getStartIndex() : 1);
+        listingProperties.setMaxResults(listingProperties.getMaxResults() >= 1 && listingProperties.getMaxResults() <= 20 ? listingProperties.getMaxResults() : 20);
+        int limitSize = listingProperties.getStartIndex() + listingProperties.getMaxResults(); // always ask for one more than max to check for more
+		log.info("Ready to query for keywords=[" + keywords[0] + "] with limitSize = [" + limitSize + "]");
+        
 		List<Long> results = null;
 		if (!StringUtils.isEmpty(keywords[0])) {
-			results = DocService.instance().fullTextSearch(keywords[0], listingProperties);
+			results = DocService.instance().fullTextSearch(keywords[0], limitSize);
 		}
+        log.info("Got back results size=[" + results.size() + "]");
+        // use dedicated /listing/category and /listing/location searches instead 
+        /*
 		if (!StringUtils.isEmpty(keywords[1])) {
 			List<Long> categoryResults = getDAO().getListingsIdsForCategory(keywords[1], listingProperties);
 			log.info("Category search for '" + keywords[1] + "' returned " + categoryResults.size()
@@ -1393,28 +1402,46 @@ public class ListingFacade {
 				results = locationResults;
 			}
 		}
-		results = results.subList(0, listingProperties.getMaxResults() > results.size() ? results.size() : listingProperties.getMaxResults());
-		log.info("Combined results contains " + results.size() + " items. Items: " + Arrays.toString(results.toArray()));
+		*/
+
+        // excess result calculations
+        int numNewResults = results.size() - (listingProperties.getStartIndex() - 1);
+        int numResults = Math.min(numNewResults, listingProperties.getMaxResults());
+        boolean moreResults = numNewResults > listingProperties.getMaxResults();
+        listingProperties.setNumberOfResults(numResults);
+        if (moreResults) {
+            listingProperties.updateMoreResultsUrl();
+        }
+        log.info("Calculated numNewResults=[" + numNewResults + "] and numResults=[" + numResults + "] with moreResults=[" + moreResults + "] and moreResultsUrl=[" + listingProperties.getMoreResultsUrl() + "]");
+        
+        // limit results returned
+		results = results.subList(listingProperties.getStartIndex() - 1, listingProperties.getStartIndex() - 1 + numResults);
+		log.info("Results to be returned contains " + results.size() + " items. Items: " + Arrays.toString(results.toArray()));
 		
 		List<Listing> listingList = getDAO().getListings(results);
 		for (Listing listingDAO : listingList) {
 			ListingTileVO listing = DtoToVoConverter.convertTile(listingDAO);
 			listing.setOrderNumber(listings.size() + 1);
-			if (Listing.State.ACTIVE.toString().equalsIgnoreCase(listing.getState())) {
+			if (Listing.State.ACTIVE.toString().equalsIgnoreCase(listing.getState())) { // should always be the case
 				log.info("Active listing added to keyword search results " + listing);
 				listings.add(listing);
-			} else if (loggedInUser != null && loggedInUser.getId().equals(listing.getOwner())) {
+			}
+            /* don't think we want to support that
+            else if (loggedInUser != null && loggedInUser.getId().equals(listing.getOwner())) {
 				log.info("Owned listing added to keyword search results " + listing);
 				listings.add(listing);
-			} else {
+			}
+			*/
+            else {
 				log.info("Listing not added to results, listing: " + listing);
 			}
 		}
+
+
 		if (loggedInUser != null) {
 			listingsList.setUser(new UserBasicVO(loggedInUser));
 		}
 		listingsList.setListings(listings);
-		listingProperties.setNumberOfResults(listings.size());
 		listingsList.setListingsProperties(listingProperties);
 		listingsList.setCategories(getTopCategories());
 		listingsList.setTopLocations(getTopLocations());
