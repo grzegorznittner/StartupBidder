@@ -1371,7 +1371,7 @@ public class ListingFacade {
         // rational inits
         listingProperties.setStartIndex(listingProperties.getStartIndex() >= 1 ? listingProperties.getStartIndex() : 1);
         listingProperties.setMaxResults(listingProperties.getMaxResults() >= 1 && listingProperties.getMaxResults() <= 20 ? listingProperties.getMaxResults() : 20);
-        int limitSize = listingProperties.getStartIndex() + listingProperties.getMaxResults(); // always ask for one more than max to check for more
+        int limitSize = listingProperties.getStartIndex() + 2*listingProperties.getMaxResults(); // always ask for extra since there may be sent back/frozen/withdrawn before google docs is updated
 		log.info("Ready to query for keywords=[" + keywords[0] + "] with limitSize = [" + limitSize + "]");
         
 		List<Long> results = null;
@@ -1404,39 +1404,48 @@ public class ListingFacade {
 		}
 		*/
 
-        // excess result calculations
-        int numNewResults = results.size() - (listingProperties.getStartIndex() - 1);
-        int numResults = Math.min(numNewResults, listingProperties.getMaxResults());
-        boolean moreResults = numNewResults > listingProperties.getMaxResults();
-        listingProperties.setNumberOfResults(numResults);
-        if (moreResults) {
-            listingProperties.updateMoreResultsUrl();
-        }
-        log.info("Calculated numNewResults=[" + numNewResults + "] and numResults=[" + numResults + "] with moreResults=[" + moreResults + "] and moreResultsUrl=[" + listingProperties.getMoreResultsUrl() + "]");
-        
         // limit results returned
-		results = results.subList(listingProperties.getStartIndex() - 1, listingProperties.getStartIndex() - 1 + numResults);
+        if (results.size() > 0) {
+		    results = results.subList(listingProperties.getStartIndex() - 1, results.size());
+        }
 		log.info("Results to be returned contains " + results.size() + " items. Items: " + Arrays.toString(results.toArray()));
 		
+        // get our final list of listings, and construct more results cursor if necessary along the way
+        boolean moreResults = false;
 		List<Listing> listingList = getDAO().getListings(results);
 		for (Listing listingDAO : listingList) {
+            boolean potentialAdd = false;
 			ListingTileVO listing = DtoToVoConverter.convertTile(listingDAO);
-			listing.setOrderNumber(listings.size() + 1);
 			if (Listing.State.ACTIVE.toString().equalsIgnoreCase(listing.getState())) { // should always be the case
-				log.info("Active listing added to keyword search results " + listing);
-				listings.add(listing);
-			}
-            /* don't think we want to support that
+				log.info("Active listing potentially added to keyword search results " + listing);
+                potentialAdd = true;
+            }
             else if (loggedInUser != null && loggedInUser.getId().equals(listing.getOwner())) {
-				log.info("Owned listing added to keyword search results " + listing);
+				log.info("Owned listing potentially added to keyword search results " + listing);
+                potentialAdd = true;
 				listings.add(listing);
 			}
-			*/
             else {
 				log.info("Listing not added to results, listing: " + listing);
 			}
+            if (potentialAdd) {
+                if (listings.size() == listingProperties.getMaxResults()) { // too big, can't add, but have more results
+                    moreResults = true;
+                    break;
+                }
+                else {
+                    listing.setOrderNumber(listings.size() + 1);
+                    listings.add(listing);
+                }
+            }
 		}
 
+        // excess result calculations
+        listingProperties.setNumberOfResults(listings.size());
+        if (moreResults) {
+            listingProperties.updateMoreResultsUrl();
+        }
+        log.info("Calculated numResults=[" + listings.size() + "] with moreResults=[" + moreResults + "] and moreResultsUrl=[" + listingProperties.getMoreResultsUrl() + "]");
 
 		if (loggedInUser != null) {
 			listingsList.setUser(new UserBasicVO(loggedInUser));
