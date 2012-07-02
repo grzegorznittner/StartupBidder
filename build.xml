@@ -198,6 +198,7 @@
         <arg value="--jvm_flag=-Dhttps.proxyPort=${https_proxy_port}"/>
         <arg value="--jvm_flag=-Dhttp.nonProxyHosts=local*|127*"/>         
         <arg value="--address=${env.APPENGINE_ADDRESS}"/>         
+        <arg value="--disable_update_check"/>         
       </options>
     </dev_appserver>
   </target>
