@@ -22,7 +22,7 @@ include(header.m4)
                 <input class="text inputwidetext" type="text" name="question" id="question"></input>
             </span>
             <span class="inputicon">
-                <div class="checkboxredicon"></div>
+                <div id="questioncheckboxicon"></div>
             </span>
         </div>
         <div class="formitem clear">
@@ -31,9 +31,10 @@ include(header.m4)
                 <textarea class="textarea inputwidetext" cols="20" rows="5" name="details" id="details"></textarea>
             </span>
             <span class="inputicon">
-                <div class="checkboxredicon"></div>
+                <div id="detailscheckboxicon"></div>
             </span>
         </div>
+<!--
         <div class="formitem clear">
             <span class="inputlabel">LINK</span>
             <span class="inputfield">
@@ -43,10 +44,11 @@ include(header.m4)
                 <div class="checkboxredicon"></div>
             </span>
         </div>
-        <!-- recaptcha section
+
+        recaptcha section
             public key: 6LdaiMsSAAAAAM1nDtyXO1iXqRc15_qZ0D81_s0K
             private key: 6LdaiMsSAAAAAC3TK-RYDijl_mYCfeWsdIP-JZ02
-        -->
+
         <div class="formitem clear">
             <span class="inputlabel"></span>
             <span class="inputcaptcha">
@@ -58,11 +60,18 @@ include(header.m4)
             </noscript>
             </span>
 	    </div>
+
+-->
+
         <div class="formitem clear">
 	        <span class="inputlabel"></span>
-            <span class="push-9 span-3 inputbutton" id="submitbutton">
-                SUBMIT
-            </span>
+            <span class="span-9 inputmsg" id="submitmsg">&nbsp;</span>
+            <span class="span-3 inputbutton" id="submitbutton">SUBMIT</span>
+            <span class="span-6 inprogress inputmsg initialhidden" id="confirmmsg">Send message?</span>
+            <a href="#" id="sendbuttonlink">
+                <span class="span-3 inputbutton initialhidden" id="sendbutton">SEND</span>
+            </a>
+            <span class="span-3 inputbutton initialhidden" id="cancelbutton">CANCEL</span>
         </div>
     </div>
 
@@ -103,7 +112,7 @@ include(footer.m4)
   <script src="js/libs/prevel.min.js"></script>
   <script src="js/modules/base.js"></script>
   <script src="js/modules/companylist.js"></script>
-  <script src="js/modules/infopage.js"></script>
+  <script src="js/modules/contactpage.js"></script>
   <script src="js/modules/tracker.js"></script>
 '
 include(promptie.m4)
