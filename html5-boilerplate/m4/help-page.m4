@@ -12,6 +12,13 @@ include(header.m4)
 `
 <div class="container">
 
+<div class="banner pull-15px helpbanner">
+    <span class="bannertext span-24 push-15px">
+        <div class="welcometitle">Get help</div>
+        <div class="welcometext">Find the help you need on using startupbidder</div>
+    </span>
+</div>
+
 <!-- left column -->
 <div class="span-16">
     <div class="boxtitle">HELP AND FAQ</div>
@@ -26,7 +33,7 @@ include(header.m4)
             <dt>Who runs Startupbidder?</dt>
             <dd>
                         Greg Nittner and John Arley Burns, two guys who wanted to bring more visibility to the otherwise opaque world of
-                        startup business plan valuation.  We've run startups, worked for startups, invested in startups, received investment
+                        startup business plan valuation.  We&rsquo;ve run startups, worked for startups, invested in startups, received investment
                         for startups, and we felt there had to be a better way.  So this is our shot at trying to improve the startup
                         community, specifically the early-stage exposure and funding.
             </dd>
@@ -96,6 +103,12 @@ they were able to implement and execute on existing ideas in a new and better
 way.  And this site is aimed to help you do just that.
 
             </dd>
+
+            <dt>I don&rsquo;t see my question answered here, what do I do?</dt>
+            <dd>
+                        Please contact us at <a href="contact-page.html">contact page</a> and we&rsquo;ll get to your question right away.
+            </dd>
+
  
         </dl>
     </div>

@@ -80,15 +80,17 @@ pl.implement(ContactPageClass,{
         });
     },
     loadPage: function() {
-        var completeFunc, basePage;
-        completeFunc = function(json) {
+        var self = this,
+            completeFunc = function(json) {
             var header = new HeaderClass(),
                 companyList = new CompanyListClass({ colsPerRow: 2});
-            header.setLogin(json);
-            companyList.storeList(json);
-        };
-        this.bindMailto();
-        basePage = new BaseCompanyListPageClass({ max_results: 2 });
+                header.setLogin(json);
+                companyList.storeList(json);
+                self.bindMailto();
+                pl('.preloader').hide();
+                pl('.wrapper').show();
+            },
+            basePage = new BaseCompanyListPageClass({ max_results: 2 });
         basePage.loadPage(completeFunc);
     }
 });

@@ -802,6 +802,18 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .neighborhood,
     .nearbybanner
     { background: url(../img/neighborhood.jpg); background-position: 0 0; }
+.foo,
+    .aboutbanner
+    { background: url(../img/neighborhood.jpg); background-position: 0 0; }
+.foo2,
+    .helpbanner
+    { background: url(../img/neighborhood.jpg); background-position: 0 0; }
+.foo3,
+    .termsbanner
+    { background: url(../img/neighborhood.jpg); background-position: 0 0; }
+.foo4,
+    .contactbanner
+    { background: url(../img/neighborhood.jpg); background-position: 0 0; }
 
 
 /* BMC */

@@ -12,6 +12,19 @@ include(header.m4)
 `
 <div class="container">
 
+<div class="banner pull-15px contactbanner">
+    <span class="bannertext span-24 push-15px">
+        <div class="welcometitle">Contact us</div>
+        <div class="welcometext">Tell us What you need and we&rsquo;ll help you out</div>
+    </span>
+</div>
+
+<div class="span-24 preloader">
+    <div class="preloaderfloater"></div>
+    <div class="preloadericon"></div>
+</div>
+<div class="initialhidden wrapper">
+
 <!-- left column -->
 <div class="span-16">
     <div class="boxtitle">CONACT US</div>
@@ -101,6 +114,7 @@ accredited investor, you can bid for a piece of the action.
     <!-- end companydiv -->
 
 </div> <!-- end right column -->
+</div> <!-- end wrapper -->
 
 </div> <!-- end container -->
 </div> <!-- end main -->

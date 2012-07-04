@@ -12,6 +12,13 @@ include(header.m4)
 `
 <div class="container">
 
+<div class="banner pull-15px aboutbanner">
+    <span class="bannertext span-24 push-15px">
+        <div class="welcometitle">About startupbidder</div>
+        <div class="welcometext">What we do, how to post, and how to bid</div>
+    </span>
+</div>
+
 <!-- left column -->
 <div class="span-16">
     <div class="boxtitle">WHAT WE DO</div>
