@@ -1,15 +1,22 @@
 function ContactPageClass() {}
 pl.implement(ContactPageClass,{
+    checkRed: function(sel) {
+        pl(sel).removeClass('checkboxgreenicon').addClass('checkboxredicon');
+    },
+    checkGreen: function(sel) {
+        pl(sel).removeClass('checkboxredicon').addClass('checkboxgreenicon');
+    },
     bindMailto: function() {
+        var self = this;
         pl('#question').bind('blur', function() {
             var question = pl('#question').attr('value'),
                 msg = '';
             if (!question) {
                 msg += 'Please fill in QUESTION. ';
-                pl('#questioncheckboxicon').attr({class: 'checkboxredicon'});
+                self.checkRed('#questioncheckboxicon');
             }
             else {
-                pl('#questioncheckboxicon').attr({class: 'checkboxgreenicon'});
+                self.checkGreen('#questioncheckboxicon');
             }
             pl('#submitmsg').addClass('errorcolor').html(msg || '&nbsp;');
         });
@@ -18,10 +25,10 @@ pl.implement(ContactPageClass,{
                 msg = '';
             if (!details) {
                 msg += 'Please fill in DETAILS. ';
-                pl('#detailscheckboxicon').attr({class: 'checkboxredicon'});
+                self.checkRed('#detailscheckboxicon');
             }
             else {
-                pl('#detailscheckboxicon').attr({class: 'checkboxgreenicon'});
+                self.checkGreen('#detailscheckboxicon');
             }
             pl('#submitmsg').addClass('errorcolor').html(msg || '&nbsp;');
         });
@@ -33,17 +40,17 @@ pl.implement(ContactPageClass,{
                 msg = '';
             if (!question) {
                 msg += 'Please fill in QUESTION. ';
-                pl('#questioncheckboxicon').attr({class: 'checkboxredicon'});
+                self.checkRed('#questioncheckboxicon');
             }
             else {
-                pl('#questioncheckboxicon').attr({class: 'checkboxgreenicon'});
+                self.checkGreen('#questioncheckboxicon');
             }
             if (!details) {
                 msg += 'Please fill in DETAILS. ';
-                pl('#detailscheckboxicon').attr({class: 'checkboxredicon'});
+                self.checkRed('#detailscheckboxicon');
             }
             else {
-                pl('#detailscheckboxicon').attr({class: 'checkboxgreenicon'});
+                self.checkGreen('#detailscheckboxicon');
             }
             if (msg) {
                 pl('#submitmsg').addClass('errorcolor').text(msg);
@@ -81,7 +88,7 @@ pl.implement(ContactPageClass,{
             companyList.storeList(json);
         };
         this.bindMailto();
-        basePage = new BaseCompanyListPageClass();
+        basePage = new BaseCompanyListPageClass({ max_results: 2 });
         basePage.loadPage(completeFunc);
     }
 });

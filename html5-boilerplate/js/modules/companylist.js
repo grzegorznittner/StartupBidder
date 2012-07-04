@@ -297,12 +297,14 @@ pl.implement(CompanyListClass, {
     }
 });
 
-function BaseCompanyListPageClass() {
+function BaseCompanyListPageClass(options) {
+    this.options = options || {};
     this.queryString = new QueryStringClass();
     this.type = this.queryString.vars.type || 'top';
     this.val = this.queryString.vars.val ? decodeURIComponent(this.queryString.vars.val) : '';
     this.searchtext = this.queryString.vars.searchtext ? decodeURIComponent(this.queryString.vars.searchtext) : '';
-    this.data = { max_results: 20 };
+    this.options.max_results = this.options.max_results || 20;
+    this.data = { max_results: this.options.max_results };
     this.setListingSearch();
 };
 pl.implement(BaseCompanyListPageClass,{
