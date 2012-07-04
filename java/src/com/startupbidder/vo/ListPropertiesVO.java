@@ -27,8 +27,11 @@ public class ListPropertiesVO {
 	@JsonProperty("more_results_url") private String moreResultsUrl;
 	private String requestPathInfo;
 	private Map<String, String> parameters = new HashMap<String, String>();
-	
-	public void updateMoreResultsUrl() {
+
+    public void updateMoreResultsUrl() {
+        updateMoreResultsUrl(startIndex + numberOfResults);
+    }
+	public void updateMoreResultsUrl(int nextStartIndex) {
 		StringBuffer url = new StringBuffer();
 		url.append(requestPathInfo).append("?");
 		for (Map.Entry<String, String> param : parameters.entrySet()) {
@@ -38,7 +41,7 @@ public class ListPropertiesVO {
 			url.append(param.getKey()).append("=").append(param.getValue()).append("&");
 		}
 		url.append("next_cursor=").append(nextCursor).append("&");
-		url.append("start_index=").append(startIndex + numberOfResults);
+		url.append("start_index=").append(nextStartIndex);
 		moreResultsUrl = url.toString();
 	}
 	public void setRequestData(HttpServletRequest request) {

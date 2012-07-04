@@ -1412,6 +1412,7 @@ public class ListingFacade {
 		
         // get our final list of listings, and construct more results cursor if necessary along the way
         boolean moreResults = false;
+        int nextStartIndex = listingProperties.getStartIndex();
 		List<Listing> listingList = getDAO().getListings(results);
 		for (Listing listingDAO : listingList) {
             boolean potentialAdd = false;
@@ -1438,12 +1439,13 @@ public class ListingFacade {
                     listings.add(listing);
                 }
             }
+            nextStartIndex++;
 		}
 
         // excess result calculations
         listingProperties.setNumberOfResults(listings.size());
         if (moreResults) {
-            listingProperties.updateMoreResultsUrl();
+            listingProperties.updateMoreResultsUrl(nextStartIndex);
         }
         log.info("Calculated numResults=[" + listings.size() + "] with moreResults=[" + moreResults + "] and moreResultsUrl=[" + listingProperties.getMoreResultsUrl() + "]");
 
