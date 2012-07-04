@@ -540,6 +540,7 @@ Except to the extent that liability under any applicable law or regulation canno
 
 <!-- right column -->
 <div class="span-8 last">
+<!--
     <div class="boxtitle">A PIECE OF THE ACTION</div>
     <div class="sidebox">
         <p>
@@ -549,7 +550,7 @@ entrepreneuer, getting feedback and exposure to investors worldwide.  As an
 accredited investor, you can bid for a piece of the action. 
         </p>
     </div>
-
+-->
     <div class="boxtitle" id="listingstitle"></div>
 
     <!-- companydiv -->

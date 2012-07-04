@@ -15,7 +15,7 @@ include(header.m4)
 <div class="banner pull-15px contactbanner">
     <span class="bannertext span-24 push-15px">
         <div class="welcometitle">Contact us</div>
-        <div class="welcometext">Tell us What you need and we&rsquo;ll help you out</div>
+        <div class="welcometext">We&rsquo;ll help you out</div>
     </span>
 </div>
 
@@ -92,6 +92,7 @@ include(header.m4)
 
 <!-- right column -->
 <div class="span-8 last">
+<!--
     <div class="boxtitle">A PIECE OF THE ACTION</div>
     <div class="sidebox">
         <p>
@@ -101,7 +102,7 @@ entrepreneuer, getting feedback and exposure to investors worldwide.  As an
 accredited investor, you can bid for a piece of the action. 
         </p>
     </div>
-
+-->
     <div class="boxtitle" id="listingstitle"></div>
 
     <!-- companydiv -->

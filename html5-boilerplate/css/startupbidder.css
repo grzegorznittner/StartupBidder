@@ -782,39 +782,44 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
     { background: url(../img/citynight2.jpg); background-position: 0px -350px; }
 .airportsign,
     .locationbanner
-    { background: url(../img/airportsign.jpg); background-position: -16px -460px; }
+    { background: url(../img/airportsign.jpg); background-position: -16px -485px; }
 .chemicalplant,
     .categorybanner
-    { background: url(../img/chemicalplant.jpg); background-position: -15px -137px; }
+    { background: url(../img/chemicalplant.jpg); background-position: -28px -137px; }
+.categorybanner .welcometext { right: 25px; bottom: -5px; }
 .neonchange,
     .valuationbanner,
     .keywordbanner
-    { background: url(../img/neonchange.jpg); background-position: -25px -125px; }
-.flowers,
+    { background: url(../img/neonchange.jpg); background-position: -20px -80px; }
+.keywordbanner .welcometext { right: 170px; bottom: 40px; }
+.clock,
     .latestbanner
-    { background: url(../img/flowers.jpg); background-position: -10px -340px; }
+    { background: url(../img/clock.jpg); background-position: -0px -555px; }
 .racehorse,
     .topbanner
     { background: url(../img/racehorse.jpg); background-position: -38px -55px; }
+.topbanner .welcometext { right: 255px; }
 .fusebox,
     .apibanner
-    { background: url(../img/fusebox.jpg); background-position: -10px -295px; }
+    { background: url(../img/fusebox.jpg); background-position: -10px -282px; }
+.apibanner .welcometext { right: 10px; }
 .neighborhood,
     .nearbybanner
-    { background: url(../img/neighborhood.jpg); background-position: 0 0; }
-.foo,
+    { background: url(../img/neighborhood.jpg); background-position: 0 -55px; }
+.metaldoors,
     .aboutbanner
-    { background: url(../img/neighborhood.jpg); background-position: 0 0; }
-.foo2,
+    { background: url(../img/metaldoors.jpg); background-position: -30px -75px; }
+.aboutbanner .welcometext { right: 5px; }
+.exitsign,
     .helpbanner
-    { background: url(../img/neighborhood.jpg); background-position: 0 0; }
-.foo3,
+    { background: url(../img/exitsign.jpg); background-position: -45px -275px; }
+.gauges,
     .termsbanner
-    { background: url(../img/neighborhood.jpg); background-position: 0 0; }
-.foo4,
+    { background: url(../img/gauges.jpg); background-position: -40px -355px; }
+.oldphone,
     .contactbanner
-    { background: url(../img/neighborhood.jpg); background-position: 0 0; }
-
+    { background: url(../img/oldphone.jpg); background-position: -130px -568px; }
+.contactbanner .welcometext { right: 178px; }
 
 /* BMC */
 /*

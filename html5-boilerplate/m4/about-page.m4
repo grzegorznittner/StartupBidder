@@ -21,6 +21,13 @@ include(header.m4)
 
 <!-- left column -->
 <div class="span-16">
+    <div class="boxtitle">TWO MINUTE INTRO</div>
+    <div class="boxpanel">
+	    <div class="videocontainer">
+      	    <iframe width="622" height="452" src="http://www.youtube.com/embed/tQlsXFfSuZU" frameborder="0" allowfullscreen></iframe> 
+	    </div>
+    </div>
+
     <div class="boxtitle">WHAT WE DO</div>
     <div class="boxpanel">
     <p>
@@ -41,13 +48,6 @@ the company.  Those more of the armchair-quarterback variety can sit back, ask
 questions, make comments, and see how the startup progresses.  Startupbidder is
 the brave new world of startup financing.
     </p>
-    </div>
-
-    <div class="boxtitle">USING STARTUPBIDDER</div>
-    <div class="boxpanel">
-	    <div class="videocontainer">
-      	    <iframe width="622" height="452" src="http://www.youtube.com/embed/tQlsXFfSuZU" frameborder="0" allowfullscreen></iframe> 
-	    </div>
     </div>
 
     <div class="boxtitle">HOW TO POST</div>

@@ -15,7 +15,7 @@ include(header.m4)
 <div class="banner pull-15px helpbanner">
     <span class="bannertext span-24 push-15px">
         <div class="welcometitle">Get help</div>
-        <div class="welcometext">Find the help you need on using startupbidder</div>
+        <div class="welcometext" style="right: 50px">View our FAQ or contact us for assistance</div>
     </span>
 </div>
 
@@ -117,6 +117,7 @@ way.  And this site is aimed to help you do just that.
 
 <!-- right column -->
 <div class="span-8 last">
+<!--
     <div class="boxtitle">A PIECE OF THE ACTION</div>
     <div class="sidebox">
         <p>
@@ -126,7 +127,7 @@ entrepreneuer, getting feedback and exposure to investors worldwide.  As an
 accredited investor, you can bid for a piece of the action. 
         </p>
     </div>
-
+-->
     <div class="boxtitle" id="listingstitle"></div>
 
     <!-- companydiv -->

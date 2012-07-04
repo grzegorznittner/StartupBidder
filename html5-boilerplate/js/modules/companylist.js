@@ -341,21 +341,21 @@ pl.implement(BaseCompanyListPageClass,{
         else if (this.type === 'keyword') {
             pl('#banner').addClass('keywordbanner');
             pl('#welcometitle').html('Search for a startup');
-            pl('#welcometext').html('Listings matching your query are displayed below');
+            pl('#welcometext').html('Matching listings');
         }
         else if (this.type === 'latest') {
             pl('#banner').addClass('latestbanner');
             pl('#welcometitle').html("What's fresh?");
-            pl('#welcometext').html('The most recent listings posted on startupbidder');
+            pl('#welcometext').html('The most recent listings on startupbidder');
         }
         else if (this.type === 'category') {
             pl('#banner').addClass('categorybanner');
-            pl('#welcometitle').html('Startups in your industry');
+            pl('#welcometitle').html('Industry');
             pl('#welcometext').html('Latest listings in the ' + this.val + ' industry');
         }
         else if (this.type === 'location') {
             pl('#banner').addClass('locationbanner');
-            pl('#welcometitle').html('Startups in your area');
+            pl('#welcometitle').html('Location');
             pl('#welcometext').html('Latest listings from ' + this.val);
         }
         ajax.ajaxOpts.data = this.data;
