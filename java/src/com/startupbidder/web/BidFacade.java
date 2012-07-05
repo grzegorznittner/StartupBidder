@@ -59,6 +59,12 @@ public class BidFacade {
 			result.setErrorMessage("User not logged in");
 			return result;
 		}
+		if (!SBUser.Status.ACTIVE.toString().equals(loggedInUser.getStatus())) {
+			log.warning("User is not active.");
+			result.setErrorCode(ErrorCodes.OPERATION_NOT_ALLOWED);
+			result.setErrorMessage("User not active!");
+			return result;
+		}
 		SBUser investor = VoToModelConverter.convert(loggedInUser);
 		if (StringUtils.isEmpty(investor.nickname)) {
 			// in dev environment sometimes nickname is empty

@@ -255,22 +255,30 @@ indexes:
 - kind: ListingStats
   ancestor: no
   properties:
-    - name: status
+    - name: state
     - name: numberOfBids
       direction: desc
 
 - kind: ListingStats
   ancestor: no
   properties:
-    - name: status
+    - name: state
     - name: numberOfComments
       direction: desc
 
 - kind: ListingStats
   ancestor: no
   properties:
-    - name: status
+    - name: state
     - name: valuation
+      direction: desc
+
+- kind: ListingStats
+  ancestor: no
+  properties:
+    - name: askedForFunding
+    - name: state
+    - name: score
       direction: desc
 
 - kind: Monitor
