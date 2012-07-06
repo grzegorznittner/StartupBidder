@@ -1573,9 +1573,9 @@ public class ListingFacade {
     public String updateAllListingDocuments() {
         List<Listing> listings = getDAO().getAllListingsInternal();
         log.log(Level.INFO, "Starting doc update for " + listings.size() + " listings.");
-        int updatedDocs = DocService.instance().updateListingData(listings);
-        log.log(Level.INFO, "Updated docs for " + updatedDocs + " listings.");
-        return "Updated docs for " + updatedDocs + " listings.";
+        int updatedDocs = DocService.instance().updateAllListingsData(listings);
+        log.log(Level.INFO, "Scheduled google doc update for " + updatedDocs + " listings.");
+        return "Scheduled google doc update for " + updatedDocs + " listings.";
     }
     
 	public void applyListingData(UserVO loggedInUser, ListingVO listing, Monitor monitor) {

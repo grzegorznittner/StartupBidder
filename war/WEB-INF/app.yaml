@@ -1,5 +1,5 @@
 application: startupbidder
-version: 201206291753
+version: 201207051222
 runtime: java
 
 static_files:
@@ -26,3 +26,5 @@ handlers:
 welcome_files:
   - discover-page.html
 
+inbound_services:
+- warmup

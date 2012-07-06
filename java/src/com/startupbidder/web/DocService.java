@@ -17,7 +17,12 @@ import net.sf.jsr107cache.CacheManager;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.datanucleus.util.StringUtils;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
+import com.google.appengine.api.taskqueue.Queue;
+import com.google.appengine.api.taskqueue.QueueFactory;
+import com.google.appengine.api.taskqueue.TaskOptions;
 import com.google.gdata.client.DocumentQuery;
 import com.google.gdata.client.docs.DocsService;
 import com.google.gdata.data.PlainTextConstruct;
@@ -133,7 +138,7 @@ public class DocService {
 		}
 	}
 	
-	public int updateListingData(List<Listing> listings) {
+	public int updateAllListingsData(List<Listing> listings) {
 		DocsService client = getDocsService();
 		if (client == null) {
 			return 0;
@@ -146,26 +151,57 @@ public class DocService {
 			return 0;
 		}
 
+		DateTimeFormatter timeStampFormatter = DateTimeFormat.forPattern("yyyyMMdd_HHmmss_SSS");
 		int updatedDocs = 0;
 		for (Listing listing : listings) {
-			try {
-				DocumentListEntry newDocument = new DocumentEntry();
-				newDocument.setTitle(new PlainTextConstruct("" + listing.id));
-				// Prevent collaborators from sharing the document with others?
-				newDocument.setWritersCanInvite(false);
-				newDocument = client.insert(new URL("https://docs.google.com/feeds/default/private/full/" + summaryId + "/contents"), newDocument);
-
-				byte[] bytes = DtoToVoConverter.convert(listing).dataForSearch().getBytes();
-				newDocument.setEtag("*");
-				newDocument.setMediaSource(new MediaByteArraySource(bytes,
-						DocumentListEntry.MediaType.TXT.getMimeType()));
-				newDocument.updateMedia(true);
-				updatedDocs++;
-			} catch (Exception e) {
-				log.log(Level.WARNING, "Error while creating document for listing '" + listing.id + "'", e);
+			if (updatedDocs == 0) {
+				updateListingData(client, summaryId, listing);
+			} else {
+				// scheduling update of other listings
+				String taskName = timeStampFormatter.print(new Date().getTime()) + "updating_listing_doc_" + listing.id;
+				Queue queue = QueueFactory.getDefaultQueue();
+				queue.add(TaskOptions.Builder.withUrl("/task/update-listing-doc").param("id", "" + listing.getWebKey())
+						.taskName(taskName));
 			}
+			updatedDocs++;
 		}
 		return updatedDocs;
+	}
+
+	public String updateListingData(Listing listing) {
+		DocsService client = getDocsService();
+		if (client == null) {
+			log.severe("Cannot get DocService client");
+			return "ERROR";
+		}
+
+		String summaryId = getFolder(client, Folder.SUMMARY);
+		if (summaryId == null) {
+			log.severe("Cannot get folder " + Folder.SUMMARY);
+			return "ERROR";
+		}
+
+		return updateListingData(client, summaryId, listing);
+	}
+	
+	private String updateListingData(DocsService client, String summaryId, Listing listing) {
+		try {
+			DocumentListEntry newDocument = new DocumentEntry();
+			newDocument.setTitle(new PlainTextConstruct("" + listing.id));
+			// Prevent collaborators from sharing the document with others?
+			newDocument.setWritersCanInvite(false);
+			newDocument = client.insert(new URL("https://docs.google.com/feeds/default/private/full/" + summaryId + "/contents"), newDocument);
+
+			byte[] bytes = DtoToVoConverter.convert(listing).dataForSearch().getBytes();
+			newDocument.setEtag("*");
+			newDocument.setMediaSource(new MediaByteArraySource(bytes,
+					DocumentListEntry.MediaType.TXT.getMimeType()));
+			newDocument.updateMedia(true);
+			return "OK";
+		} catch (Exception e) {
+			log.log(Level.WARNING, "Error while creating document for listing '" + listing.id + "'", e);
+			return "ERROR";
+		}
 	}
 	
 	public List<Long> fullTextSearch(String searchText, int limitSize) {

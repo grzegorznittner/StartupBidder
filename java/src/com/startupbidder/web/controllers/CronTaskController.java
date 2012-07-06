@@ -8,13 +8,14 @@ import javax.servlet.http.HttpServletRequest;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 
+import com.startupbidder.dao.ObjectifyDatastoreDAO;
+import com.startupbidder.datamodel.Listing;
+import com.startupbidder.vo.ListingVO;
 import com.startupbidder.web.DocService;
 import com.startupbidder.web.HttpHeaders;
 import com.startupbidder.web.HttpHeadersImpl;
 import com.startupbidder.web.ListingFacade;
 import com.startupbidder.web.ModelDrivenController;
-import com.startupbidder.web.ServiceFacade;
-import com.startupbidder.web.UserMgmtFacade;
 
 /**
  * 
@@ -33,11 +34,9 @@ public class CronTaskController extends ModelDrivenController {
 
         if("update-aggregate-stats".equalsIgnoreCase(getCommand(1))) {
             return updateAggregateStats(request);
-        }
-        else if("update-listing-stats".equalsIgnoreCase(getCommand(1))) {
+        } else if("update-listing-stats".equalsIgnoreCase(getCommand(1))) {
             return updateListingStats(request);
-        }
-        else if("update-listing-docs".equalsIgnoreCase(getCommand(1))) {
+        } else if("update-listing-docs".equalsIgnoreCase(getCommand(1))) {
             return updateListingDocs(request);
         }
 

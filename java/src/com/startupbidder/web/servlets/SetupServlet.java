@@ -68,8 +68,8 @@ public class SetupServlet extends HttpServlet {
 
 			out.println("<h1>Migration</h1>");
 			
-			out.println("<form method=\"POST\" action=\"/system/migrate201205101249_to_20120620.html\">"
-					+ "<input type=\"submit\" value=\"Migrate version 201205101249 to 20120620xxxxxx\"/></form>");
+			out.println("<form method=\"POST\" action=\"/system/migrate201207051222_to_current.html\">"
+					+ "<input type=\"submit\" value=\"Migrate version 201207051222_to_current\"/></form>");
 			
             out.println("<h1>Mock Data</h1>");
 
@@ -132,6 +132,11 @@ public class SetupServlet extends HttpServlet {
 
             out.println("<h1>System Settings</h1>");
 
+            out.println("<p>Available system properties:");
+            out.println("<ul><li>notification_real_receivers - if true then notification emails are sent to real receivers");
+            out.println("<li>notification_no_bcc_admins - if empty or false then notification emails are BCC to admins. Only when notification_real_receivers = true");
+            out.println("</ul></p>");
+            
 			out.println("<p>Set system property:</p>");
 			out.println("<form method=\"POST\" action=\"/system/set-property/.html\">"
 					+ "Name: <input name=\"name\" type=\"text\" value=\"\"/></br>"

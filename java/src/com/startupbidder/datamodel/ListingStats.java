@@ -8,7 +8,6 @@ import java.util.Date;
 
 import javax.persistence.Id;
 import javax.persistence.PrePersist;
-import javax.persistence.Transient;
 
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.annotation.Cached;

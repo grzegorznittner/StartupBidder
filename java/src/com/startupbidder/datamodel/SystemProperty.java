@@ -39,6 +39,13 @@ public class SystemProperty {
 		this.modified = new Date();
 	}
 	
+	public boolean booleanValue() {
+		if (value == null) {
+			return false;
+		}
+		return new Boolean(value);
+	}
+	
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this);
 	}

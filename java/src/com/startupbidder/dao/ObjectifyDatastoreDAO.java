@@ -140,6 +140,7 @@ public class ObjectifyDatastoreDAO {
         user.nicknameLower = userNickname.toLowerCase();
 	    user.modified = user.lastLoggedIn = user.joined = new Date();
 		user.status = SBUser.Status.ACTIVE;
+		user.notifyEnabled = true;
 		getOfy().put(user);
         log.info("Created user with nickname " + user.nickname + " as " + user);
 		return user;
