@@ -13,7 +13,10 @@ import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 
 import com.startupbidder.dao.NotificationObjectifyDatastoreDAO;
+import com.startupbidder.dao.ObjectifyDatastoreDAO;
+import com.startupbidder.datamodel.Listing;
 import com.startupbidder.datamodel.Notification;
+import com.startupbidder.datamodel.SBUser;
 import com.startupbidder.vo.BaseVO;
 import com.startupbidder.vo.DtoToVoConverter;
 import com.startupbidder.vo.ListingVO;
@@ -70,7 +73,9 @@ public class TaskController extends ModelDrivenController {
 			return scheduleListingNotifications(request);
 		} else if("schedule-bid-notifications".equalsIgnoreCase(getCommand(1))) {
 			return scheduleBidNotifications(request);
-		}
+		} else if("update-listing-doc".equalsIgnoreCase(getCommand(1))) {
+            return updateListingDoc(request);
+        }
 		return null;
 	}
 
@@ -118,13 +123,18 @@ public class TaskController extends ModelDrivenController {
 		model = DtoToVoConverter.convert(notification);
 
 		if (!notification.read) {
-			log.info("Sending notification: " + notification);
-			if (EmailService.instance().sendListingNotification(DtoToVoConverter.convert(notification))) {
-				notification.sentDate = new Date();
-				NotificationObjectifyDatastoreDAO.getInstance().storeNotification(notification);
+			SBUser receiver = ObjectifyDatastoreDAO.getInstance().getUserByEmail(notification.userEmail);
+			if (receiver.notifyEnabled) {
+				log.info("Sending notification: " + notification);
+				if (EmailService.instance().sendListingNotification(DtoToVoConverter.convert(notification))) {
+					notification.sentDate = new Date();
+					NotificationObjectifyDatastoreDAO.getInstance().storeNotification(notification);
+				}
+			} else {
+				log.info("User doesn't have enabled notifications. " + notification);
 			}
 		} else {
-			log.info("Notification email was already sent for " + notification);
+			log.info("Notification has been already read. " + notification);
 		}
 		
 		return headers;
@@ -165,6 +175,18 @@ public class TaskController extends ModelDrivenController {
 		return headers;
 	}
 	
+    private HttpHeaders updateListingDoc(HttpServletRequest request) {
+        HttpHeaders headers = new HttpHeadersImpl("update-listing-doc");
+        String listingId = getCommandOrParameter(request, 2, "id");
+        if (listingId == null) {
+        	log.severe("Listing doc update not scheduled correctly, listing id is null!");
+        	return headers;
+        }
+        Listing listing = ObjectifyDatastoreDAO.getInstance().getListing(ListingVO.toKeyId(listingId));
+        model = DocService.instance().updateListingData(listing);
+        return headers;
+    }
+
 	@Override
 	public Object getModel() {
 		return model;

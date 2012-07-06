@@ -23,7 +23,6 @@ import com.startupbidder.datamodel.SBUser;
 import com.startupbidder.datamodel.UserStats;
 import com.startupbidder.vo.BaseVO;
 import com.startupbidder.vo.DtoToVoConverter;
-import com.startupbidder.vo.NotificationListVO;
 import com.startupbidder.vo.UserAndUserVO;
 import com.startupbidder.vo.UserListVO;
 import com.startupbidder.vo.UserVO;

@@ -163,6 +163,10 @@ public class NotificationVO extends BaseVO {
 		return link;
 	}
 	public void setLink(String link) {
-		this.link = link;
+		if (link != null && !link.startsWith("http")) {
+			this.link = getServiceLocation() + link;
+		} else {
+			this.link = link;
+		}
 	}
 }

@@ -30,6 +30,41 @@ public class DatastoreMigration {
 		return ofy;
 	}
 	
+	public static String migrate201207051222_to_current() {
+		StringBuffer report = new StringBuffer();
+		
+		/* migrating SBUser
+		 * old users get notifyEnabled=false
+		 * new users get notifyEnabled=true
+		 */
+		Calendar listingUpdateDate = Calendar.getInstance();
+		listingUpdateDate.set(2012, 7, 5);
+		report.append("SBUser's migration:<br/>\n<ul>\n");
+		QueryResultIterable<Key<SBUser>> u = getOfy().query(SBUser.class).fetchKeys();
+		Map<Key<SBUser>, SBUser> users = getOfy().get(u);
+		List<SBUser> userMigration = new ArrayList<SBUser>();
+		for (SBUser user : users.values()) {
+			if ("grzegorz.nittner@gmail.com".equalsIgnoreCase(user.email)
+					|| "johnarleyburns@gmail.com".equalsIgnoreCase(user.email)
+					|| "johnbettiol@googlemail.com".equalsIgnoreCase(user.email)) {
+				report.append("<li>enabling notifications for " + user.nickname);
+				user.notifyEnabled = true;
+			} else if (user.joined != null && user.joined.after(listingUpdateDate.getTime())) {
+				report.append("<li>enabling notifications for " + user.nickname + " - new user");
+				user.notifyEnabled = true;
+			} else {
+				report.append("<li>disabling notifications for " + user.nickname + " - old user");
+				user.notifyEnabled = false;
+			}
+			userMigration.add(user);
+		}
+		getOfy().put(userMigration);
+		report.append("<br/>\n</ul>\n");
+		
+		return report.toString();
+	}
+
+	
 	public static String migrate201205101249_to_20120620() {
 		StringBuffer report = new StringBuffer();
 		

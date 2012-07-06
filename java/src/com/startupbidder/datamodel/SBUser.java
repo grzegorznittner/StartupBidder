@@ -54,7 +54,7 @@ public class SBUser extends BaseObject<SBUser> {
 	public String location;
 	@Indexed public String country;
 	
-	public boolean notifyEnabled;
+	public boolean notifyEnabled = true;
 
 	public String password;
 	@Indexed(IfNotNull.class) public String activationCode;

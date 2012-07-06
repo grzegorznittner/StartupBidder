@@ -61,7 +61,7 @@ public class EmailService {
 		MimeMessage message = new MimeMessage(session);
 		message.setFrom(new InternetAddress(from));
 		message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
-		message.addRecipient(Message.RecipientType.CC, new InternetAddress("admins"));
+		message.addRecipient(Message.RecipientType.BCC, new InternetAddress("admins"));
 		message.setSubject(subject);
 
 		Multipart multipart = new MimeMultipart();
@@ -81,8 +81,8 @@ public class EmailService {
 			Map<String, String> props = prepareProperties(notification);
 			String htmlTemplate = FileUtils.readFileToString(new File(htmlTemplateFile), "UTF-8");
 			String htmlBody = applyProperties(htmlTemplate, props);
-			String subject = props.get(NOTIFICATION_TITLE) + " real addressee " + notification.getUserEmail();
-			send("admin@startupbidder.com", "grzegorz.nittner@vodafone.com", subject, htmlBody);
+			String subject = props.get(NOTIFICATION_TITLE);
+			send("admin@startupbidder.com", notification.getUserEmail(), subject, htmlBody);
 			return true;
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "Error sending notification email", e);

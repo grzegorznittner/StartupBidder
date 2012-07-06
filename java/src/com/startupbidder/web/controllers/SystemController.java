@@ -57,19 +57,19 @@ public class SystemController extends ModelDrivenController {
                 return importStartuplyData(request);
 			} else if("export-datastore".equalsIgnoreCase(getCommand(1))) {
 				return exportDatastore(request);
-			} else if("migrate201205101249_to_20120620".equalsIgnoreCase(getCommand(1))) {
-				return migrate201205101249_to_20120620(request);
+			} else if("migrate201207051222_to_current".equalsIgnoreCase(getCommand(1))) {
+				return migrate201207051222_to_current(request);
 			}
 		}
 		return null;
 	}
 
-	private HttpHeaders migrate201205101249_to_20120620(HttpServletRequest request) {
-		HttpHeaders headers = new HttpHeadersImpl("set-property");
+	private HttpHeaders migrate201207051222_to_current(HttpServletRequest request) {
+		HttpHeaders headers = new HttpHeadersImpl("migrate201207051222_to_current");
 		
 		UserVO loggedInUser = getLoggedInUser();
 		if (loggedInUser != null && loggedInUser.isAdmin()) {
-			model = DatastoreMigration.migrate201205101249_to_20120620();
+			model = DatastoreMigration.migrate201207051222_to_current();
 		}
 		return headers;
 	}
