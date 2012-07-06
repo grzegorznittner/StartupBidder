@@ -26,3 +26,5 @@ handlers:
 welcome_files:
   - discover-page.html
 
+inbound_services:
+- warmup

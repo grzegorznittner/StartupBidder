@@ -22,6 +22,8 @@ import javax.mail.internet.MimeMultipart;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import com.startupbidder.dao.ObjectifyDatastoreDAO;
+import com.startupbidder.datamodel.SystemProperty;
 import com.startupbidder.vo.NotificationVO;
 
 /**
@@ -55,14 +57,26 @@ public class EmailService {
 	}
 		
 	public void send(String from, String to, String subject, String htmlBody) throws AddressException, MessagingException {
+		SystemProperty noBccAdmins = ObjectifyDatastoreDAO.getInstance().getSystemProperty("notification_no_bcc_admins");
+		SystemProperty realReceivers = ObjectifyDatastoreDAO.getInstance().getSystemProperty("notification_real_receivers");
+		
 		Properties props = new Properties();
         Session session = Session.getDefaultInstance(props, null);
         
 		MimeMessage message = new MimeMessage(session);
 		message.setFrom(new InternetAddress(from));
-		message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
-		message.addRecipient(Message.RecipientType.BCC, new InternetAddress("admins"));
-		message.setSubject(subject);
+		if (realReceivers != null && realReceivers.booleanValue()) {
+			// notification_real_receivers == true
+			message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
+			if (noBccAdmins == null || (noBccAdmins !=null && !noBccAdmins.booleanValue())) {
+				// notification_no_bcc_admins == null OR notification_no_bcc_admins == false
+				message.addRecipient(Message.RecipientType.BCC, new InternetAddress("admins"));
+			}
+			message.setSubject(subject);
+		} else {
+			message.addRecipient(Message.RecipientType.TO, new InternetAddress("admins"));
+			message.setSubject(subject + " real addressee " + to);
+		}
 
 		Multipart multipart = new MimeMultipart();
 		BodyPart htmlPart = new MimeBodyPart();

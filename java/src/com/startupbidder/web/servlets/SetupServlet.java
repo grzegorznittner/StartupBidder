@@ -132,6 +132,11 @@ public class SetupServlet extends HttpServlet {
 
             out.println("<h1>System Settings</h1>");
 
+            out.println("<p>Available system properties:");
+            out.println("<ul><li>notification_real_receivers - if true then notification emails are sent to real receivers");
+            out.println("<li>notification_no_bcc_admins - if empty or false then notification emails are BCC to admins. Only when notification_real_receivers = true");
+            out.println("</ul></p>");
+            
 			out.println("<p>Set system property:</p>");
 			out.println("<form method=\"POST\" action=\"/system/set-property/.html\">"
 					+ "Name: <input name=\"name\" type=\"text\" value=\"\"/></br>"
