@@ -10,14 +10,18 @@ include(head.m4)
 '
 include(header.m4)
 `
+
+<div class="container">
 <div class="bannersmall">
     <span class="bannertextsmall span-16">EDITING YOUR PROFILE</span>
 </div> <!-- end banner -->
+</div>
 
 <div class="container preloader">
     <div class="preloaderfloater"></div>
     <div class="preloadericon"></div>
 </div>
+
 <div class="container">
 
 <!-- left column -->

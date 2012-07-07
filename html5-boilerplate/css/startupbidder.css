@@ -160,6 +160,9 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .push-20px { left: 20px; position: relative; }
 .welcometext { font-size: 16px; font-weight: bold; position: absolute; bottom: 0; right: 0; }
 /* .welcometext a { font-weight: bold; } */
+.welcomevideo { position: relative; }
+.welcomevideoclosex { position: absolute; right: 20px; top: 10px; }
+.welcomevideocontainer { margin: 10px 50px 0px 50px; }
 .socialsidebox { height: 80px; position: relative; }
 .socialbanner { height: 80px; position: relative; }
 .twitterbanner { height: 23px; top: 4px; position: absolute; }
@@ -269,6 +272,8 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .checkboxcheckedicon { background: url(../img/icons/checkbox_24x48.png); height: 24px; width: 24px; }
 .checkboxuncheckedicon { background: url(../img/icons/checkbox_24x48.png); height: 24px; width: 24px; background-position: 0px -24px; }
 .preloadericon { width: 32px; height: 32px; background: url(../img/icons/preloader_32.gif); margin: auto; }
+.closexicon { height: 20px; width: 20px; background: url(../img/icons/closex_20.gif); }
+.closexicon:hover { opacity: 0.7; }
 
 /* preloader */
 
@@ -280,10 +285,10 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .preloaderfloater { height: 50%; margin-bottom: -16px; }
 
 /* searchbar styles */
-.searchbar { height: 36px; margin-top: 4px; font-size: 14px !important; font-weight: bold; }
-.searchtext { padding-top: 10px; height: 18px; width: 570px !important; }
-.searchbutton { height: 20px; padding-top: 10px; margin-left: -10px; }
-.searchbutton:hover { cursor: pointer; }
+.searchbar { height: 36px; margin-top: 4px; font-size: 14px !important; font-weight: bold; position: relative; }
+.searchtext { padding-top: 10px; height: 18px; width: 900px !important; }
+.searchbutton { position: absolute; top: 10px; right: 0; }
+.searchbutton:hover { cursor: pointer; opacity: 0.7; }
 
 /* infowindow */
 .infowindowwrapper { min-height: 288px; background:white; padding:5px; }

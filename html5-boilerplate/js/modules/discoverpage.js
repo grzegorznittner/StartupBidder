@@ -34,7 +34,20 @@ pl.implement(DiscoverPageClass,{
                 topListings.storeList(json);
                 latestListings.storeList(json);
             },
-            ajax = new AjaxClass('/listings/discover/', 'top_listings', completeFunc);
+            ajax = new AjaxClass('/listings/discover/', 'top_listings', completeFunc),
+            cookie = CookieClass.prototype.readCookie('hideWelcomeVideo');
+        console.log('cookie:', cookie);
+        if (cookie) {
+            pl('#welcomevideo').hide();
+        }
+        else {
+            pl('#closexicon').bind('click', function() {
+                var domain = document.location.hostname === 'localhost' ? undefined : 'startupbidder.com';
+                CookieClass.prototype.createCookie('hideWelcomeVideo', 'true', 1000, domain);
+                pl('#welcomevideo').hide();
+            });
+            pl('#welcomevideo').show();
+        }
         ajax.call();
     }
 });

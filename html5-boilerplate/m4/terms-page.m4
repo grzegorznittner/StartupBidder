@@ -84,7 +84,7 @@ Startupbidder reserves the right to cancel, interrupt or suspend a listing at an
 <br/>
 7. Fees and Payments
 <br/>
-Joining Startupbidder is free. However, we do charge fees for certain services. All fees are collected for Startupbidder by Paypal. When you use a service that has a fee you have an opportunity to review and accept the fees that you will be charged, which we may change from time to time. Changes to that Policy are effective after we provide you with notice by posting the changes on the Sites. We may choose to temporarily change the fees for our services for promotional events (for example, free listing days) or new services, and such changes are effective when we post the temporary promotional event or new service on the Sites.
+Joining Startupbidder is free. However, we do charge fees for certain services. All fees are collected for Startupbidder by Google Payments. When you use a service that has a fee you have an opportunity to review and accept the fees that you will be charged, which we may change from time to time. Changes to that Policy are effective after we provide you with notice by posting the changes on the Sites. We may choose to temporarily change the fees for our services for promotional events (for example, free listing days) or new services, and such changes are effective when we post the temporary promotional event or new service on the Sites.
 <br/>
 You are responsible for paying all fees and applicable taxes associated with your use of the site. In the event a listing is removed from the Service for violating the Terms of Use, all fees paid will be non-refundable, unless in its sole discretion Startupbidder determines that a refund is appropriate.
 <br/>

@@ -20,12 +20,20 @@ include(banner.m4)
     <div class="preloadericon"></div>
 </div>
 
+<div class="span-24 initialhidden welcomevideo" id="welcomevideo">
+    <div class="welcomevideoclosex closexicon" id="closexicon"></div>
+    <div class="welcomevideocontainer">
+        <iframe width="853" height="510" src="http://www.youtube.com/embed/hq5gaQ1FtAU" frameborder="0" allowfullscreen></iframe> 
+    </div>
+</div>
+
 <div class="initialhidden wrapper">
 '
 include(searchbox.m4)
 `
 <!-- left column -->
 <div class="span-16">
+
     <div id="edited_listing_wrapper" class="initialhidden">
         <div class="boxtitle smokegrey">YOUR IN-PROGRESS LISTING</div>
         <div id="edited_listing"></div>

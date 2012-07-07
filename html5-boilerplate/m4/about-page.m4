@@ -24,7 +24,7 @@ include(header.m4)
     <div class="boxtitle">TWO MINUTE INTRO</div>
     <div class="boxpanel">
 	    <div class="videocontainer">
-      	    <iframe width="622" height="452" src="http://www.youtube.com/embed/tQlsXFfSuZU" frameborder="0" allowfullscreen></iframe> 
+      	    <iframe width="622" height="380" src="http://www.youtube.com/embed/hq5gaQ1FtAU" frameborder="0" allowfullscreen></iframe> 
 	    </div>
     </div>
 

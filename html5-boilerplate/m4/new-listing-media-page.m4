@@ -127,7 +127,7 @@ If you do not have a video ready, just record a voiceover of a quick run through
             </span>
         </div>
 	    <div class="videocontainer">
-      	    <iframe width="622" height="452" id="videoiframe" src="" frameborder="0" allowfullscreen></iframe> 
+      	    <iframe width="622" height="350" id="videoiframe" src="" frameborder="0" allowfullscreen></iframe> 
 	    </div>
     </div>
 

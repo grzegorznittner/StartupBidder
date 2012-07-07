@@ -20,7 +20,7 @@ include(images-panel.m4)
             <div class="boxtitle">VIDEO</div>
             <div class="boxpanel">
         	    <div class="videocontainer">
-              	    <iframe width="622" height="452" id="videopresentation" src="" frameborder="0" allowfullscreen></iframe> 
+              	    <iframe width="622" height="350" id="videopresentation" src="" frameborder="0" allowfullscreen></iframe> 
         	    </div>
             </div>
         </div>
