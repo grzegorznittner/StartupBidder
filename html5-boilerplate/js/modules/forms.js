@@ -25,7 +25,7 @@ pl.implement(VideoCheckClass, {
     preformat: function(str) {
         var matcher = {
                 yahoo: {
-                    regex: /(https?:\/\/)?[^\/]*youtube.com\/(embed\/|.*v=)([^\/&]*)/,
+                    regex: /(https?:\/\/)?[^\/]*(youtube.com|youtu.be)\/(embed\/|.*v=)?([^\/&]*)/,
                     prefix: 'http://www.youtube.com/embed/',
                     postfix: ''
                 },

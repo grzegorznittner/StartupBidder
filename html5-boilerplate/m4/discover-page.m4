@@ -15,16 +15,17 @@ include(header.m4)
 '
 include(banner.m4)
 `
+<div class="span-24 initialhidden welcomevideo" id="welcomevideo">
+    <div class="welcomevideoclosex closexicon" id="closexicon"></div>
+    <div class="boxtitle">WELCOME VIDEO <a href="http://youtu.be/hq5gaQ1FtAU">(VIEW DIRECT ON YOUTUBE)</a></div>
+    <div class="welcomevideocontainer">
+       <iframe width="950" height="570" src="http://www.youtube.com/embed/hq5gaQ1FtAU" frameborder="0" allowfullscreen></iframe>
+    </div>
+</div>
+
 <div class="span-24 preloader">
     <div class="preloaderfloater"></div>
     <div class="preloadericon"></div>
-</div>
-
-<div class="span-24 initialhidden welcomevideo" id="welcomevideo">
-    <div class="welcomevideoclosex closexicon" id="closexicon"></div>
-    <div class="welcomevideocontainer">
-        <iframe width="853" height="510" src="http://www.youtube.com/embed/hq5gaQ1FtAU" frameborder="0" allowfullscreen></iframe> 
-    </div>
 </div>
 
 <div class="initialhidden wrapper">

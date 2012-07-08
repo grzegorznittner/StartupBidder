@@ -161,8 +161,8 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .welcometext { font-size: 16px; font-weight: bold; position: absolute; bottom: 0; right: 0; }
 /* .welcometext a { font-weight: bold; } */
 .welcomevideo { position: relative; }
-.welcomevideoclosex { position: absolute; right: 20px; top: 10px; }
-.welcomevideocontainer { margin: 10px 50px 0px 50px; }
+.welcomevideoclosex { position: absolute; right: 0; top: 10px; }
+.welcomevideocontainer { margin: 10px 0; }
 .socialsidebox { height: 80px; position: relative; }
 .socialbanner { height: 80px; position: relative; }
 .twitterbanner { height: 23px; top: 4px; position: absolute; }
