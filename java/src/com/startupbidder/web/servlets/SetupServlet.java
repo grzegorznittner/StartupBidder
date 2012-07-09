@@ -70,6 +70,8 @@ public class SetupServlet extends HttpServlet {
 			
 			out.println("<form method=\"POST\" action=\"/system/migrate201207051222_to_current.html\">"
 					+ "<input type=\"submit\" value=\"Migrate version 201207051222_to_current\"/></form>");
+			out.println("<form method=\"POST\" action=\"/system/associate_mock_images.html\">"
+					+ "<input type=\"submit\" value=\"Associate mock images\"/></form>");
 			
             out.println("<h1>Mock Data</h1>");
 

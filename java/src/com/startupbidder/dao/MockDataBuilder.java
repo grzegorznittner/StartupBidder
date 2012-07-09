@@ -1991,7 +1991,7 @@ public class MockDataBuilder {
             "Your will and your foot which has a will to go over and beyond yourselves — that shall constitute your new honor."
 	};
 
-	public String getTestDataPath() {
+	public static String getTestDataPath() {
 		if(com.google.appengine.api.utils.SystemProperty.environment.value() == com.google.appengine.api.utils.SystemProperty.Environment.Value.Development
 				&& new File("./test-docs").exists()) {
 			return "./test-docs/";

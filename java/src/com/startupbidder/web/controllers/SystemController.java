@@ -59,9 +59,21 @@ public class SystemController extends ModelDrivenController {
 				return exportDatastore(request);
 			} else if("migrate201207051222_to_current".equalsIgnoreCase(getCommand(1))) {
 				return migrate201207051222_to_current(request);
+			} else if("associate_mock_images".equalsIgnoreCase(getCommand(1))) {
+				return associateMockImages(request);
 			}
 		}
 		return null;
+	}
+
+	private HttpHeaders associateMockImages(HttpServletRequest request) {
+		HttpHeaders headers = new HttpHeadersImpl("associate_mock_images");
+		
+		UserVO loggedInUser = getLoggedInUser();
+		if (loggedInUser != null && loggedInUser.isAdmin()) {
+			model = DatastoreMigration.associateImages();
+		}
+		return headers;
 	}
 
 	private HttpHeaders migrate201207051222_to_current(HttpServletRequest request) {

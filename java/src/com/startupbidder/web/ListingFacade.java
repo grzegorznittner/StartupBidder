@@ -2090,6 +2090,38 @@ public class ListingFacade {
 		getDAO().storeListing(listing);
 	}
     
+    public void updateMockListingPictures(Listing listing, String imageUrls[]) {
+		MockDataBuilder mock = new MockDataBuilder();
+		
+        try {
+        	int index = 1;
+            for (String imageUrl : imageUrls) {
+            	if (index > 5) {
+            		// we support only 5 images
+            		break;
+            	}
+            	ListingPropertyVO prop = new ListingPropertyVO("pic" + index++ + "_url", imageUrl);
+                ListingDocumentVO doc = fetchAndUpdateListingDoc(listing, prop);
+                if (doc != null && doc.getErrorCode() == ErrorCodes.OK) {
+                    ListingDoc listingDoc = VoToModelConverter.convert(doc);
+                    Listing updatedlisting = updateListingDoc(listing, listingDoc);
+                    if (updatedlisting != null) {
+                        listing = updatedlisting;
+                    } else {
+                        log.warning("Error updating listing. " + listing);
+                    }
+                } else {
+                    log.warning("Error while fetching/converting external resource. " + prop);
+                }
+                
+            }
+        }
+        catch (Exception e) {
+            log.log(Level.WARNING, "Exception while updating mock pictures for listing: " + listing, e);
+        }
+		getDAO().storeListing(listing);
+	}
+    
     public Pair<BlobKey, Listing.State> getPictureBlob(String listingId, int picNr) {
     	Listing listing = ObjectifyDatastoreDAO.getInstance().getListing(BaseVO.toKeyId(listingId));
 		if (listing == null) {
