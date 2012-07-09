@@ -87,7 +87,7 @@ public class DatastoreMigration {
 		for (SBUser user : users.values()) {
 			if ("grzegorz.nittner@gmail.com".equalsIgnoreCase(user.email)
 					|| "johnarleyburns@gmail.com".equalsIgnoreCase(user.email)
-					|| "johnbettiol@googlemail.com".equalsIgnoreCase(user.email)) {
+					|| "johnbettiol@gmail.com".equalsIgnoreCase(user.email)) {
 				report.append("<li>enabling notifications for " + user.nickname);
 				user.notifyEnabled = true;
 			} else if (user.joined != null && user.joined.after(listingUpdateDate.getTime())) {
