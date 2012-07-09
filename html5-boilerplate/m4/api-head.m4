@@ -26,6 +26,6 @@
   <link rel="stylesheet" href="css/style.css" type="text/css" />
   <!-- end CSS-->
 
-  <link rel="canonical" href="http://startupbidder.appspot.com"/>
+  <link rel="canonical" href="http://startupbidder.com"/>
 </head>
 '

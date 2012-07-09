@@ -59,11 +59,11 @@ pl.implement(BidClass, {
     },
 
     makeHtml: function(options) {
-        var addnote = options && options.last ? this.bidslist.makeAddNote() : ''; // removing note from accept/reject/withdraw actions
-            addbuttons = options && options.last ? this.bidslist.makeAddButtons() : '';
-            amtidattr = options && options.last ? ' id="existing_bid_amt"' : '';
-            pctidattr = options && options.last ? ' id="existing_bid_pct"' : '';
-            validattr = options && options.last ? ' id="existing_bid_val"' : '';
+        var addnote    = options && options.last && this.bidslist.listing.status === 'active' ? this.bidslist.makeAddNote() : ''; // removing note from accept/reject/withdraw actions
+            addbuttons = options && options.last && this.bidslist.listing.status === 'active' ? this.bidslist.makeAddButtons() : '';
+            amtidattr  = options && options.last && this.bidslist.listing.status === 'active' ? ' id="existing_bid_amt"' : '';
+            pctidattr  = options && options.last && this.bidslist.listing.status === 'active' ? ' id="existing_bid_pct"' : '';
+            validattr  = options && options.last && this.bidslist.listing.status === 'active' ? ' id="existing_bid_val"' : '';
         return '\
         <div class="messageline investorbidline ' + this.typeclass + '">\
             <p class="span-2">' + this.usertext + '</p>\
@@ -138,6 +138,7 @@ pl.implement(OwnerSingleInvestorBidListClass, {
             jsonlist = json && json.bids || [],
             bid,
             i;
+        this.listing = json.listing || {};
         this.investor_nickname = json.investor && json.investor.username || 'Anonymous';
         this.bidsprops = bidsprops;
         this.validactions = validactions;
@@ -182,7 +183,9 @@ pl.implement(OwnerSingleInvestorBidListClass, {
             html += bid.makeHtml({ last: true });
         }
         pl('#bidlistlast').before(html);
-        this.bindBidBox();
+        if (this.listing.status === 'active') {
+            this.bindBidBox();
+        }
         if (this.more_results_url) {
             this.bindMoreResults();
         }

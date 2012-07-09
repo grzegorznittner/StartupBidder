@@ -33,7 +33,8 @@ pl.implement(NewListingQAClass, {
         pl('#ip-editable').show();
     },
     bindEvents: function() {
-        var textFields = ['summary'],
+        var self = this,
+            textFields = ['summary'],
             m = 10,
             n = 26,
             i,
@@ -53,7 +54,19 @@ pl.implement(NewListingQAClass, {
             }
             field.fieldBase.addValidator(ValidatorClass.prototype.makeLengthChecker(16, 1000));
             field.fieldBase.validator.postValidator = this.ip.genDisplay(field, this.base.genDisplayCalculatedIfValid(field));
-            field.bindEvents({noEnterKeySubmit: true, iconid: 'ipfieldicon'});
+            field.bindEvents({noEnterKeySubmit: true, iconid: 'ipfieldicon', customTabKey: function(e) { // tab has problems with auto-scroll
+                /*
+                var id = e && e.target && e.target.id || '',
+                    num = id === 'summary' ? 2 : 1 * (id.replace(/answer/,'') || 10) - 7;
+                console.log('here');
+                console.log(id);
+                console.log(num);
+                setTimeout(function() {
+                    self.ip.setPage(num);
+                }, 500);
+                */
+                return false;
+            }});
             this.base.fields.push(field);
         } 
         this.ip.bindButtons();

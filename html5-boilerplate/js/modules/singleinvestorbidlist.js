@@ -59,11 +59,11 @@ pl.implement(BidClass, {
     },
 
     makeHtml: function(options) {
-        var addnote = options && options.last ? this.bidslist.makeAddNote() : ''; // removing note from accept/reject/withdraw actions
-            addbuttons = options && options.last ? this.bidslist.makeAddButtons() : '';
-            amtidattr = options && options.last ? ' id="existing_bid_amt"' : '';
-            pctidattr = options && options.last ? ' id="existing_bid_pct"' : '';
-            validattr = options && options.last ? ' id="existing_bid_val"' : '';
+        var addnote    = options && options.last && this.bidslist.listing.status === 'active' ? this.bidslist.makeAddNote() : ''; // removing note from accept/reject/withdraw actions
+            addbuttons = options && options.last && this.bidslist.listing.status === 'active' ? this.bidslist.makeAddButtons() : '';
+            amtidattr  = options && options.last && this.bidslist.listing.status === 'active' ? ' id="existing_bid_amt"' : '';
+            pctidattr  = options && options.last && this.bidslist.listing.status === 'active' ? ' id="existing_bid_pct"' : '';
+            validattr  = options && options.last && this.bidslist.listing.status === 'active' ? ' id="existing_bid_val"' : '';
         return '\
         <div class="messageline investorbidline ' + this.typeclass + '">\
             <p class="span-2">' + this.usertext + '</p>\
@@ -142,6 +142,7 @@ pl.implement(SingleInvestorBidListClass, {
         this.bidsprops = bidsprops;
         this.validactions = validactions;
         this.bids = [];
+        this.listing = json.listing || {};
         if (jsonlist.length) {
             jsonlist.reverse(); // we want orderdd by date
             for (i = 0; i < jsonlist.length; i++) {
@@ -181,7 +182,9 @@ pl.implement(SingleInvestorBidListClass, {
             html += bid.makeHtml({ last: true });
         }
         pl('#bidlistlast').before(html);
-        this.bindBidBox();
+        if (this.listing.status === 'active') {
+            this.bindBidBox();
+        }
         if (this.more_results_url) {
             this.bindMoreResults();
         }

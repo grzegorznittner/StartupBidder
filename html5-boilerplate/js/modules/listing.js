@@ -15,7 +15,7 @@ pl.implement(ListingClass, {
         }
         this.loggedin_profile = json && json.loggedin_profile;
         this.loggedin_profile_id = this.loggedin_profile && this.loggedin_profile.profile_id;
-        this.listing_url = window.location.protocol + '//' + window.location.hostname + ':' + window.location.port + '/company_page.html?id=' + this.listing_id;
+        this.listing_url = 'http://starutpbidder.com/company-page.html?id=' + this.listing_id;
         this.listing_public_title = 'Startupbidder Listing: ' + this.title;
         if (this.preview) {
             pl('#header').hide();
@@ -220,7 +220,6 @@ pl.implement(ListingClass, {
     },
 
     displayTwitter: function() {
-        pl('#twitterbanner').html('<a href="https://twitter.com/share" class="twitter-share-button" data-url="' + this.listing_url + '" data-text="' + this.listing_public_title + '" data-via="startupbidder" data-related="startupbidder" data-hashtags="startupbidder">Tweet</a>');
         !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");
     },
 
@@ -229,7 +228,7 @@ pl.implement(ListingClass, {
             'og:title': this.listing_public_title,
             'og:type': 'company',
             'og:url': this.listing_url,
-            'og:image': 'https://fbcdn-profile-a.akamaihd.net/hprofile-ak-snc4/41604_200032480112098_936268874_n.jpg', // FIXME
+            'og:image': 'http://startupbidder.com/listing/logo/' + this.listing_id,
             'og:site_name': 'startupbidder',
             'fb:app_id': '3063944677997'
         });
@@ -247,7 +246,7 @@ pl.implement(ListingClass, {
         this.addMetaTags('itemprop', {
             'name': this.listing_public_title,
             'description': this.summary,
-            'image': 'https://fbcdn-profile-a.akamaihd.net/hprofile-ak-snc4/41604_200032480112098_936268874_n.jpg'
+            'og:image': 'http://startupbidder.com/listing/logo/' + this.listing_id,
         });
         pl('#gplusbanner').html('<g:plusone size="medium" annotation="inline" width="290" href="' + this.listing_url + '"></g:plusone>');
   (function() {

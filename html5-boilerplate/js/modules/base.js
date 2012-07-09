@@ -390,10 +390,11 @@ pl.implement(HeaderClass, {
         pl('#headerloggedin').show();
     },
     setLoggedOut: function(login_url) {
+        var post_login_url = login_url + encodeURIComponent('/new-listing-basics-page.html');
         // pl('#topheaderline').html('Want to raise money for startups or invest in one? <a href="/about-page.html" class="topheaderlink hoverlink">We&rsquo;ll tell you how!</a>');
         pl('#posttext').html('Login to Post');
         if (login_url) {
-            pl('#postlink').attr({href: login_url});
+            pl('#postlink').attr({href: post_login_url});
             pl('#loginlink').attr({href: login_url});
         }
         pl('#headernotloggedin').show();
@@ -424,8 +425,6 @@ CookieClass.prototype.eraseCookie = function(name) {
     createCookie(name,"",-1);
 }
 
-
-
 function ScriptClass() {}
 ScriptClass.prototype.load = function(url, callback) {
     var script = document.createElement("script")
@@ -449,3 +448,5 @@ ScriptClass.prototype.load = function(url, callback) {
     script.src = url;
     document.getElementsByTagName("head")[0].appendChild(script);
 } 
+
+
