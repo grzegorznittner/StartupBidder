@@ -31,6 +31,8 @@ import com.startupbidder.vo.BaseVO;
 import com.startupbidder.vo.DtoToVoConverter;
 import com.startupbidder.vo.ErrorCodes;
 import com.startupbidder.vo.ListPropertiesVO;
+import com.startupbidder.vo.ListingVO;
+import com.startupbidder.vo.NotificationAndUserVO;
 import com.startupbidder.vo.NotificationListVO;
 import com.startupbidder.vo.NotificationVO;
 import com.startupbidder.vo.UserVO;
@@ -131,15 +133,24 @@ public class NotificationFacade {
         return list;
     }
 
-	public NotificationVO getNotification(UserVO loggedInUser, String notifId) {
+	public NotificationAndUserVO getNotification(UserVO loggedInUser, String notifId) {
+		NotificationAndUserVO result = new NotificationAndUserVO();
 		Notification notification = getDAO().getNotification(BaseVO.toKeyId(notifId));
 		if (notification == null) {
 			log.warning("Notification with id '" + notifId + "' not found!");
+			result.setErrorCode(ErrorCodes.APPLICATION_ERROR);
+			result.setErrorMessage("Notification doesn't exist");
+			return result;
 		}
 		notification.read = true;
 		getDAO().storeNotification(notification);
+		if (notification.listing != null) {
+			ListingVO listing = DtoToVoConverter.convert(getListingDAO().getListing(notification.listing.getId()));
+			result.setListing(listing);
+		}
 		NotificationVO notificationVO = DtoToVoConverter.convert(notification);
-		return notificationVO;
+		result.setNotification(notificationVO);
+		return result;
 	}
 
 	public void scheduleCommentNotification(Comment comment) {
