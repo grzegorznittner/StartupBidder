@@ -36,7 +36,6 @@ pl.implement(DiscoverPageClass,{
             },
             ajax = new AjaxClass('/listings/discover/', 'top_listings', completeFunc),
             cookie = CookieClass.prototype.readCookie('hideWelcomeVideo');
-        console.log('cookie:', cookie);
         if (cookie) {
             pl('#welcomevideo').hide();
         }

@@ -2,7 +2,9 @@
 <!-- begin bmc -->
 <div class="span-24 last initialhidden" id="bmc-editable">
 <div class="boxtitle bmctitle">
-    <span class="titletext">BUSINESS MODEL CANVAS</span>
+    <span class="titletext">BUSINESS MODEL CANVAS
+        <a href="http://www.youtube.com/watch?v=QoAOzMTLP5s">(SEE THE BMC TUTORIAL ON YOUTUBE)</a></div>
+    </span>
     <div class="titleinfobtn"></div>
     <div class="titleinfo">
         <label class="titleinfoheader">Instructions</label>

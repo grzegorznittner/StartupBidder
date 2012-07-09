@@ -76,7 +76,10 @@ include(images-panel.m4)
    
         <div class="boxtitle">SHARE</div>
         <div class="sidebox socialsidebox" id="socialsidebox">
-            <div class="twitterbanner" id="twitterbanner"></div>    
+           
+            <div class="twitterbanner" id="twitterbanner">
+                <a href="https://twitter.com/share" class="twitter-share-button" data-via="startupbidder">Tweet</a>
+            </div>
             <div class="facebookbanner" id="facebookbanner"></div>
             <div class="gplusbanner" id="gplusbanner"></div>
         </div>

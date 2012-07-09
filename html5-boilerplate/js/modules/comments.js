@@ -19,6 +19,7 @@ pl.implement(CommentClass, {
     },
     store: function(json) {
         this.loggedin_profile_id = json.loggedin_profile && json.loggedin_profile.profile_id;
+        this.listing = json.listing || {};
         this.commentlist = json.comments || [];
     },
     display: function(json) {
@@ -26,8 +27,11 @@ pl.implement(CommentClass, {
             this.store(json);
         }
         this.displayComments();
-        if (this.loggedin_profile_id) {
+        if (this.loggedin_profile_id && this.listing.status === 'active') {
             this.displayAddCommentBox();
+        }
+        else if (this.listing.status !== 'active') {
+            pl('#addcommentbox').before('<div class="messageline"><p style="font-weight: bold;">Comments can only be made on active listings</p></div>');
         }
         else {
             pl('#addcommentbox').before('<div class="messageline"><p style="font-weight: bold;">Login to post a comment</p></div>');

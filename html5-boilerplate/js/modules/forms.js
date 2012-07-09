@@ -603,6 +603,13 @@ pl.implement(TextFieldClass, {
                 }
                 return false;
             },
+            keydown: function(e) {
+                var evt = new EventClass(e);
+                if (evt.keyCode() === 9 && self.options.customTabKey) {
+                    self.options.customTabKey();
+                    return false;
+                }
+            },
             keyup: function(e) {
                 var evt = new EventClass(e);
                 if (evt.keyCode() === 13 && !self.options.noEnterKeySubmit) {

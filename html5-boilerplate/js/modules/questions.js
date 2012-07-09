@@ -26,6 +26,7 @@ pl.implement(QuestionClass, {
     },
     store: function(json) {
         this.questionlist = json.questions_answers || [];
+        this.listing = json.listing || {};
         this.more_results_url = this.questionlist.length > 0 && json.questions_answers_props && json.questions_answers_props.more_results_url;
     },
     display: function(json) {
@@ -36,8 +37,11 @@ pl.implement(QuestionClass, {
         if (this.more_results_url) {
         	pl('#addqandabox').before('<div class="showmore hoverlink" id="moreresults"><span class="initialhidden" id="moreresultsurl">' + this.more_results_url + '</span><span id="moreresultsmsg">More...</span></div>\n');
         }
-        if (this.loggedin_profile_id && this.loggedin_profile_id !== this.listing_owner_id) {
+        if (this.loggedin_profile_id && this.loggedin_profile_id !== this.listing_owner_id && this.listing.status === 'active') {
             this.displayAddQuestionBox();
+        }
+        else if (this.listing.status !== 'active') {
+            pl('#addqandabox').before('<div class="messageline"><p style="font-weight: bold;">Questions can only be asked or answered for active listings</p></div>');
         }
         else if (this.loggedin_profile_id && this.loggedin_profile_id === this.listing_owner_id) {
             pl('#addqandabox').before('<div class="messageline"><p style="font-weight: bold;">Questions are private until answered, then they are displayed pubilcly</p></div>');
