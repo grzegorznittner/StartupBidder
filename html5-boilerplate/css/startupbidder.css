@@ -84,7 +84,7 @@ a:focus, a:hover { cursor: pointer; }
     .welcometitle, .welcometext, .welcometext a
     { color: white; }
 .midgrey,
-    .headertext, .headerlink
+    .headertext, .headerlink, .notificationtitle
     { color: #cccccc }
 .smokegrey,
     .infowindow, .boxtitle, .boxtitlegap, .boxsteptitle, .boxsteptext, .tileloc,
@@ -301,7 +301,12 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 /* notification styles */
 .notificationtext a:link, .notificationtext a:visited { text-decoration: none; color: #4083a9; }
 .notificationtext a:hover { cursor: pointer }
-.
+.notificationtitle { font-size: 36px; font-weight: bold; text-align: center; margin: 20px 0; padding: 10px 0; }
+.notificationmessage { font-size: 16px; font-weight: bold; text-align: center; margin: 0 0 10px 0; }
+.notificationview { font-size: 14px; font-weight: bold; margin: 0 0 10px 0; }
+.notificationlistingheader { border-bottom: none !important; background: none !important; margin-bottom: 10px; }
+.notificationlistingbanner { }
+
 /* form styles */
 .formitem { }
 .valuationfield { height: 43px; }
@@ -769,13 +774,14 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
     .tile, .companybannertile, .companyhalftile, .boxpanel,
     .bmcinfo, .ipinfo, .tileinfo, .sideinfo, .bmcborder,
     .bmcinfodisplay, .bmcinfodisplayvaluepropositions, .titleinfodisplay, .sideinfodisplay,
-    .companyheader
+    .companyheader, .notificationlistingbanner
     { background: url(../img/groovepaper.png) repeat; }
 .brushed_alu,
     body
     { background: url(../img/brushed_alu.png) repeat; }
 .brushed_alu_dark,
-    .header
+    .header,
+    .notificationtitle
     { background: url(../img/brushed_alu_dark.png) repeat; }
 .light_alu,
     .curvedborder, .sidebox, .sideboxbutton, .sideboxbuttoninterior, .boxstep, .boxselected,

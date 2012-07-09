@@ -112,11 +112,9 @@ pl.implement(NewListingFinancialsClass, {
                         self.setUploadUrls();
                     }
                     if (val) {
-                        console.log('here');
                         self.base.listing[fieldname] = val;
                         self.displayUpload(uploadId);
                         self.base.displayCalculated();
-                        console.log(fieldurl);
                         pl('#' + fieldurl).attr({value: ''});
                         pl('#' + id + 'msg').removeClass('errorcolor').removeClass('inprogress').addClass('successful').text('Document uploaded');
                     }
