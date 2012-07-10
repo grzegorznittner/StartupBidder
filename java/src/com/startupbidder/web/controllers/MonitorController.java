@@ -28,9 +28,9 @@ public class MonitorController extends ModelDrivenController {
 	protected HttpHeaders executeAction(HttpServletRequest request) throws JsonParseException, JsonMappingException, IOException {
 		if ("GET".equalsIgnoreCase(request.getMethod())) {
 			// GET method handler			
-			if("active-for-listing".equalsIgnoreCase(getCommand(1))) {
+			if("active_for_listing".equalsIgnoreCase(getCommand(1))) {
 				return activeForObject(request);
-			} else if("active-for-user".equalsIgnoreCase(getCommand(1))) {
+			} else if("active_for_user".equalsIgnoreCase(getCommand(1))) {
 				return activeForUser(request);
 			}
 		} else if ("POST".equalsIgnoreCase(request.getMethod())) {
@@ -87,11 +87,11 @@ public class MonitorController extends ModelDrivenController {
     public static final int MAX_RESULTS = 20;
 
 	/*
-	 * GET /monitor/active-for-user?type=<type name>
+	 * GET /monitor/active_for_user?type=<type name>
 	 * type name := ()
 	 */
 	private HttpHeaders activeForUser(HttpServletRequest request) {
-		HttpHeaders headers = new HttpHeadersImpl("active-for-user");
+		HttpHeaders headers = new HttpHeadersImpl("active_for_user");
 		ListPropertiesVO listProperties = getListProperties(request);
 		model = ServiceFacade.instance().getMonitorsForUser(getLoggedInUser(), listProperties);
 		

@@ -135,7 +135,7 @@ pl.implement(EditProfileClass, {
                         return 'Nickname must be no more than 30 characters';
                     }
                     else {
-                        ajax = new AjaxClass('/user/check-user-name', 'personalinfomsg', null, successFunc);
+                        ajax = new AjaxClass('/user/check_user_name', 'personalinfomsg', null, successFunc);
                         ajax.setGetData({ name: username });
                         ajax.call();
                     }

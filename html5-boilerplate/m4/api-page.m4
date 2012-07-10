@@ -996,7 +996,7 @@ include(api-banner.m4)
             <iframe name="listing-locations"></iframe>
         </div>
 
-        <dt>GET /listing/all-listing-locations</dt>
+        <dt>GET /listing/all_listing_locations</dt>
         <dd>
             <p>
             Return all locations for all listings in startupbidder in an abbreviated format.  Suitable for efficient display of all
@@ -1026,10 +1026,10 @@ include(api-banner.m4)
                 </li>
             </ul>
             <h4>Test</h4>
-            <form method="GET" action="/listing/all-listing-locations" target="listing-all-listing-locations">
+            <form method="GET" action="/listing/all_listing_locations" target="listing-all_listing_locations">
                 <input type="submit" class="inputbutton" value="SUBMIT"></input>
             </form>
-            <iframe name="listing-all-listing-locations"></iframe>
+            <iframe name="listing-all_listing_locations"></iframe>
         </div>
     </div>
 
@@ -1283,7 +1283,7 @@ include(api-banner.m4)
     <div class="boxpanel apipanel">
     <p>Watch listings and be automatically notified of bids, comments, and other changes to the listing</p>
 
-        <dt>GET /monitor/active-for-user</dt>
+        <dt>GET /monitor/active_for_user</dt>
         <dd>
             <p>
             Returns list of active monitors for logged in user.  Monitors are used for watching listings.
@@ -1331,13 +1331,13 @@ include(api-banner.m4)
                 </li>
             </ul>
             <h4>Test</h4>
-            <form method="GET" action="/monitor/active-for-user" target="monitors-active-for-user">
+            <form method="GET" action="/monitor/active_for_user" target="monitors-active_for_user">
                 <input type="submit" class="inputbutton" value="SUBMIT"></input>
             </form>
-            <iframe name="monitors-active-for-user"></iframe>
+            <iframe name="monitors-active_for_user"></iframe>
         </div>
 
-        <dt>GET /monitors/active-for-listing/:id</dt>
+        <dt>GET /monitors/active_for_listing/:id</dt>
         <dd>
             <p>
             Returns list of active monitors for the given listing.  This can be used to find the users which are watching a given listing.
@@ -1384,7 +1384,7 @@ include(api-banner.m4)
                 </li>
             </ul>
             <h4>Test</h4>
-            <form method="GET" action="/monitor/active-for-listing" target="monitors-active-for-listing">
+            <form method="GET" action="/monitor/active_for_listing" target="monitors-active_for_listing">
                 <div class="formitem">
                     <label class="inputlabel" for="title">LISTING ID</label>
                     <span class="inputfield">
@@ -1398,7 +1398,7 @@ include(api-banner.m4)
                     </span>
                 </div>
             </form>
-            <iframe name="monitors-active-for-listing"></iframe>
+            <iframe name="monitors-active_for_listing"></iframe>
         </div>
 
         <dt>POST /monitor/set
@@ -2524,7 +2524,7 @@ include(api-banner.m4)
             <iframe name="user-deactivate"></iframe>
         </div>
 
-        <dt>GET /user/check-user-name</dt>
+        <dt>GET /user/check_user_name</dt>
         <dd>
             <p>
             Checks if the given username is currently taken.  If it is available, returns <var>true</var>.  If the name is already taken, returns <var>false</var>.
@@ -2541,7 +2541,7 @@ include(api-banner.m4)
                 <li><var>true</var> if the passed username can be used as a new name on the system, <var>false</var> if it is already taken or otherwise invalid</li>
             </ul>
             <h4>Test</h4>
-            <form method="GET" action="/user/check-user-name" target="user-check-user-name">
+            <form method="GET" action="/user/check_user_name" target="user-check_user_name">
                 <div class="formitem">
                     <label class="inputlabel" for="title">USERNAME</label>
                     <span class="inputfield">
@@ -2555,7 +2555,7 @@ include(api-banner.m4)
                     </span>
                 </div>
             </form>
-            <iframe name="user-check-user-name"></iframe>
+            <iframe name="user-check_user_name"></iframe>
         </div>
 
         <dt>POST /user/autosave</dt>

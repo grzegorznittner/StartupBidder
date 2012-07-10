@@ -1,7 +1,7 @@
 function MapPageClass() {}
 pl.implement(MapPageClass,{
     load: function(completeFunc) {
-        var ajax = new AjaxClass('/listings/all-listing-locations/', 'listingsmsg', completeFunc);
+        var ajax = new AjaxClass('/listings/all_listing_locations/', 'listingsmsg', completeFunc);
         ajax.call();
     },
     store: function(json) {

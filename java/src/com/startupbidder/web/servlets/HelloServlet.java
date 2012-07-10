@@ -115,7 +115,7 @@ public class HelloServlet extends HttpServlet {
 			out.println("<form method=\"POST\" action=\"/user/activate/" + currentUser.getId() + "/.json\"><input type=\"submit\" value=\"Activates logged in user\"/></form>");
 			out.println("<form method=\"POST\" action=\"/user/deactivate/" + currentUser.getId() + "/.json\"><input type=\"submit\" value=\"Deactivates logged in user\"/></form>");
 			out.println("<a href=\"/user/votes/" + currentUser.getId() + "/.json\">Logged in user votes</a><br/>");
-			out.println("<form method=\"GET\" action=\"/user/check-user-name/.json\"><input name=\"name\" type=\"text\" value=\"greg\"/>"
+			out.println("<form method=\"GET\" action=\"/user/check_user_name/.json\"><input name=\"name\" type=\"text\" value=\"greg\"/>"
 					+ "<input type=\"submit\" value=\"Check user name\"/></form>");
 			
 			out.println("<p style=\"background: none repeat scroll 0% 0% rgb(187, 187, 187);\">Listings API:</p>");
@@ -127,7 +127,7 @@ public class HelloServlet extends HttpServlet {
 			out.println("<br/><a href=\"/listings/categories/.json\">All categories</a><br/>");
 			out.println("<br/><a href=\"/listings/used_categories/.json\">Used categories</a><br/>");
 			out.println("<br/><a href=\"/listings/locations/.json\">Top locations</a><br/>");
-			out.println("<br/><a href=\"/listings/all-listing-locations/.json\">All listing locations</a><br/><br/>");
+			out.println("<br/><a href=\"/listings/all_listing_locations/.json\">All listing locations</a><br/><br/>");
 			out.println("<form method=\"POST\" action=\"/listing/create/.json\"><input type=\"submit\" value=\"Creates NEW listing\"/></form>");
 			out.println("<form method=\"POST\" action=\"/listing/delete/.json\"><input type=\"submit\" value=\"Deletes edited (NEW) listing\"/></form>");
 			
@@ -261,8 +261,8 @@ public class HelloServlet extends HttpServlet {
 			
 			out.println("<p style=\"background: none repeat scroll 0% 0% rgb(187, 187, 187);\">Monitor API:</p>");
 			out.println("Examples for setting and deactivating monitors you'll find in active listing section.<br/>");
-			out.println("<a href=\"/monitors/active-for-user/.json?\">Active monitors for logged in user</a><br/>");
-			out.println("<a href=\"/monitors/active-for-listing/?id=" + topListing.getWebKey() + "\">Monitors for top listing</a><br/>");
+			out.println("<a href=\"/monitors/active_for_user/.json?\">Active monitors for logged in user</a><br/>");
+			out.println("<a href=\"/monitors/active_for_listing/?id=" + topListing.getWebKey() + "\">Monitors for top listing</a><br/>");
 			
 			out.println("<p style=\"background: none repeat scroll 0% 0% rgb(187, 187, 187);\">File API:</p>");
 			out.println("<a href=\"/file/get-upload-url/2/.json\">Get upload URL(s)</a><br/>");

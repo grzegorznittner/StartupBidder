@@ -52,7 +52,7 @@ public class UserController extends ModelDrivenController {
 				return topInvestor(request);
 			} else if("loggedin".equalsIgnoreCase(getCommand(1))) {
 				return loggedin(request);
-			} else if("check-user-name".equalsIgnoreCase(getCommand(1))) {
+			} else if("check_user_name".equalsIgnoreCase(getCommand(1))) {
 				return checkUserName(request);
 			} else {
 				return index(request);
@@ -233,7 +233,7 @@ public class UserController extends ModelDrivenController {
     	String userName = getCommandOrParameter(request, 2, "name");
     	model = UserMgmtFacade.instance().checkUserNameIsValid(getLoggedInUser(), userName);
 
-    	HttpHeaders headers = new HttpHeadersImpl("check-user-name");
+    	HttpHeaders headers = new HttpHeadersImpl("check_user_name");
 		return headers;
 	}
 

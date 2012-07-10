@@ -95,7 +95,7 @@ public class ListingController extends ModelDrivenController {
 				return getUsedCategories(request);
 			} else if("locations".equalsIgnoreCase(getCommand(1))) {
 				return getLocations(request);
-			} else if("all-listing-locations".equalsIgnoreCase(getCommand(1))) {
+			} else if("all_listing_locations".equalsIgnoreCase(getCommand(1))) {
 				return getAllListingLocations(request);
             } else if("questions_answers".equalsIgnoreCase(getCommand(1))) {
                 return questionsAndAnswers(request);
@@ -608,10 +608,10 @@ public class ListingController extends ModelDrivenController {
         return new HttpHeadersImpl("locations").disableCaching();
     }
 
-    // GET /listings/all-listing-locations
+    // GET /listings/all_listing_locations
     private HttpHeaders getAllListingLocations(HttpServletRequest request) {
     	model = ListingFacade.instance().getAllListingLocations();
-        return new HttpHeadersImpl("all-listing-locations").disableCaching();
+        return new HttpHeadersImpl("all_listing_locations").disableCaching();
     }
 
 	private HttpHeaders logo(HttpServletRequest request) {
