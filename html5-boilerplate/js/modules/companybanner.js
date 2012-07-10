@@ -13,6 +13,15 @@ pl.implement(CompanyBannerClass, {
         this.loggedin_profile_id = this.loggedin_profile && this.loggedin_profile.profile_id;
     },
 
+    displayMinimal: function(json) {
+        if (json) {
+            this.store(json);
+        }
+        this.displayBanner();
+        pl('.preloadercompanybanner').hide();
+        pl('.companybannerwrapper').show();
+    },
+
     display: function(json) {
         if (json) {
             this.store(json);
@@ -31,9 +40,10 @@ pl.implement(CompanyBannerClass, {
                 + ' company' + (this.brief_address ? ' in ' + this.brief_address : ''),
             founderstext = (this.founders ? ' founded by ' + this.founders : ''),
             status = this.status || 'new',
-            website = this.website || '#',
+            website = this.website || '/company-page.html?id=' + this.listing_id,
             listingdatetext = '<span class="inputmsg">' + SafeStringClass.prototype.ucfirst(status) + '</span> listing'
-                + (this.listing_date ? ' from ' + DateClass.prototype.format(this.listing_date) : ' not yet listed') + ' at ';
+                + (this.listing_date ? ' from ' + DateClass.prototype.format(this.listing_date) : (this.status === 'new' ? ' not yet listed' : ''))
+                + (this.website ? ' at ' : '');
         if (logobg) {
             pl('#companylogo').removeClass('noimage').css({background: logobg});
         }
@@ -50,6 +60,9 @@ pl.implement(CompanyBannerClass, {
         pl('#websitelink').attr({href: website});
         if (url) {
             pl('#domainname').text(url.getHostname());
+        }
+        else {
+            pl('#domainname').text('visit listing page');
         }
     },
 

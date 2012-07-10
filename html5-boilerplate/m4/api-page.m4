@@ -1802,12 +1802,23 @@ include(api-banner.m4)
 <pre name="code" class="brush: js">
 [
     {
+        notify_id: :id,
         notify_type: :type, /* "notification", "bid", "comment", "ask_listing_owner" or "private_message" */
+        user_id: :id,
+        user_nickname: :name,
+        listing_id: :id,
+        listing_name: :name,
+        listing_owner: :owner_name,
+        listing_category: :category,
+        listing_brief_address: :address,
+        listing_mantra: :mantra,
+        listing_logo_url: :url, /* for jpeg image of logo */
         title: :title_text,
         text_1: :notification_text,
-        create_date: :date_yyyymmddhh24mmss,
-        read: :true_or_false, /* whether message has been read */
         link: :url /* link for underlying content to which notification refers, may be listing url, etc. */
+        create_date: :date_yyyymmddhh24mmss,
+        sent_date: :date_yyyymmddhh24mmss, /* date sent via email */
+        read: :true_or_false /* whether message has been read */
     }
 ]
 </pre>
@@ -1830,7 +1841,65 @@ include(api-banner.m4)
             <iframe name="notification-user"></iframe>
         </div>
 
-     </div>
+        <dt>GET /notification/get/:id</dt>
+        <dd>
+            <p>Get a single notification for a user.  Only necessary in situations where information was not previously retrieved from call <var>/notification/user</var>, such as when doing email notification links.</p>
+        </dd>
+        <div class="apidetail">
+            <h4>Parameters</h4>
+            <ul>
+                <li><code>id</code> notification ID to get</li>
+            </ul>
+            <h4>Response</h4>
+            <ul>
+                <li><code>login_url</code> URL to use for site login action</li>
+                <li><code>logout_url</code> URL to use for site logout action</li>
+                <li><code>loggedin_profile</code> private user profile object, see User API for profile object details</li>
+                <li><code>error_code</code> error status for this call, 0 on success</li>
+                <li><code>error_msg</code> error message for this call, null on success</li>
+                <li><code>listing</code> listing for notification, may be null</li>
+                <li><code>notification</code> list of user notifications in descending date order, structure:
+<pre name="code" class="brush: js">
+{
+    notify_id: :id,
+    notify_type: :type, /* "notification", "bid", "comment", "ask_listing_owner" or "private_message" */
+    user_id: :id,
+    user_nickname: :name,
+    listing_id: :id,
+    listing_name: :name,
+    listing_owner: :owner_name,
+    listing_category: :category,
+    listing_brief_address: :address,
+    listing_mantra: :mantra,
+    listing_logo_url: :url, /* for jpeg image of logo */
+    title: :title_text,
+    text_1: :notification_text,
+    link: :url /* link for underlying content to which notification refers, may be listing url, etc. */
+    create_date: :date_yyyymmddhh24mmss,
+    sent_date: :date_yyyymmddhh24mmss, /* date sent via email */
+    read: :true_or_false /* whether message has been read */
+}
+</pre>
+                </li>
+            </ul>
+            <h4>Test</h4>
+            <form method="GET" action="/notification/get" target="notification-get">
+                <div class="formitem">
+                    <label class="inputlabel" for="title">NOTIFICATION ID</label>
+                    <span class="inputfield">
+                        <input class="text inputwidetext notificationid" type="text" name="id" value="0"></input>
+                    </span>
+                </div>
+                <div class="formitem clear">
+                    <span class="inputlabel"></span>
+                    <span class="inputfield">
+                        <input type="submit" class="inputbutton" value="SUBMIT"></input>
+                    </span>
+                </div>
+            </form>
+            <iframe name="notification-get"></iframe>
+        </div>
+    </div>
 
     <div class="boxtitle">FILE API</div>
     <div class="boxpanel apipanel">

@@ -58,9 +58,6 @@ pl.implement(NewListingQAClass, {
                 /*
                 var id = e && e.target && e.target.id || '',
                     num = id === 'summary' ? 2 : 1 * (id.replace(/answer/,'') || 10) - 7;
-                console.log('here');
-                console.log(id);
-                console.log(num);
                 setTimeout(function() {
                     self.ip.setPage(num);
                 }, 500);
