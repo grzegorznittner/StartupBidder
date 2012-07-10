@@ -31,6 +31,8 @@ import com.startupbidder.vo.BaseVO;
 import com.startupbidder.vo.DtoToVoConverter;
 import com.startupbidder.vo.ErrorCodes;
 import com.startupbidder.vo.ListPropertiesVO;
+import com.startupbidder.vo.ListingVO;
+import com.startupbidder.vo.NotificationAndUserVO;
 import com.startupbidder.vo.NotificationListVO;
 import com.startupbidder.vo.NotificationVO;
 import com.startupbidder.vo.UserVO;
@@ -131,15 +133,24 @@ public class NotificationFacade {
         return list;
     }
 
-	public NotificationVO getNotification(UserVO loggedInUser, String notifId) {
+	public NotificationAndUserVO getNotification(UserVO loggedInUser, String notifId) {
+		NotificationAndUserVO result = new NotificationAndUserVO();
 		Notification notification = getDAO().getNotification(BaseVO.toKeyId(notifId));
 		if (notification == null) {
 			log.warning("Notification with id '" + notifId + "' not found!");
+			result.setErrorCode(ErrorCodes.APPLICATION_ERROR);
+			result.setErrorMessage("Notification doesn't exist");
+			return result;
 		}
 		notification.read = true;
 		getDAO().storeNotification(notification);
+		if (notification.listing != null) {
+			ListingVO listing = DtoToVoConverter.convert(getListingDAO().getListing(notification.listing.getId()));
+			result.setListing(listing);
+		}
 		NotificationVO notificationVO = DtoToVoConverter.convert(notification);
-		return notificationVO;
+		result.setNotification(notificationVO);
+		return result;
 	}
 
 	public void scheduleCommentNotification(Comment comment) {
@@ -214,13 +225,35 @@ public class NotificationFacade {
 			break;
 		}
 		
+		List<String> skipEmails = new ArrayList<String>();
 		if (listing.state == State.NEW || listing.state == State.ACTIVE || listing.state == State.FROZEN) {
 			Notification ownerNotif = (Notification)notification.copy();
 			ownerNotif.user = listingOwner.getKey();
 			ownerNotif.userEmail = listingOwner.email;
 			ownerNotif.userNickname = listingOwner.nickname;
 			log.info("Creating notification: " + ownerNotif);
+			skipEmails.add(ownerNotif.userEmail);
 			toStore.add(ownerNotif);
+		}
+		if (listing.state == State.POSTED) {
+			SBUser admin1 = getUserDAO().getUserByEmail("grzegorz.nittner@gmail.com");
+			SBUser admin2 = getUserDAO().getUserByEmail("johnarleyburns@gmail.com");
+			
+			Notification adminNotif = (Notification)notification.copy();
+			adminNotif.user = admin1.getKey();
+			adminNotif.userEmail = admin1.email;
+			adminNotif.userNickname = admin1.nickname;
+			log.info("Creating admin notification: " + adminNotif);
+			skipEmails.add(adminNotif.userEmail);
+			toStore.add(adminNotif);
+			
+			adminNotif = (Notification)notification.copy();
+			adminNotif.user = admin2.getKey();
+			adminNotif.userEmail = admin2.email;
+			adminNotif.userNickname = admin2.nickname;
+			log.info("Creating admin notification: " + adminNotif);
+			skipEmails.add(adminNotif.userEmail);
+			toStore.add(adminNotif);
 		}
 
 		if (listing.state == State.FROZEN || listing.state == State.ACTIVE 
@@ -229,7 +262,7 @@ public class NotificationFacade {
 			ListPropertiesVO props = new ListPropertiesVO();
 			props.setMaxResults(1000);
 			for (Monitor monitor : getListingDAO().getMonitorsForListing(listing.id, props)) {
-				if (monitor.userEmail != null) {
+				if (monitor.userEmail != null && !skipEmails.contains(monitor.userEmail)) {
 					monitoredNotif = (Notification)notification.copy();
 					monitoredNotif.user = monitor.user;
 					monitoredNotif.userEmail = monitor.userEmail;
@@ -255,9 +288,12 @@ public class NotificationFacade {
 		Comment comment = getListingDAO().getComment(BaseVO.toKeyId(commentId));
 		Listing listing = getListingDAO().getListing(comment.listing.getId());
 		SBUser listingOwner = getUserDAO().getUser(listing.owner.getString());
+		SBUser commenter = getUserDAO().getUser(comment.user.getString());
 		Notification notification = new Notification(listing, listingOwner);
 		List<Notification> toStore = new ArrayList<Notification>();
 		
+		List<String> skipEmails = new ArrayList<String>();
+		skipEmails.add(commenter.email);
 		if (listing.owner.getId() != comment.user.getId()) {
 			// comment from user, we need to notify monitoring users and owner
 			Notification ownerNotif = (Notification)notification.copy();
@@ -267,6 +303,7 @@ public class NotificationFacade {
 			ownerNotif.userEmail = listingOwner.email;
 			ownerNotif.userNickname = listingOwner.nickname;
 			log.info("Creating notification: " + ownerNotif);
+			skipEmails.add(listingOwner.email);
 			toStore.add(ownerNotif);
 		}
 		
@@ -274,7 +311,7 @@ public class NotificationFacade {
 		ListPropertiesVO props = new ListPropertiesVO();
 		props.setMaxResults(1000);
 		for (Monitor monitor : getListingDAO().getMonitorsForListing(listing.id, props)) {
-			if (monitor.userEmail != null) {
+			if (monitor.userEmail != null && !skipEmails.contains(monitor.userEmail)) {
 				monitoredNotif = (Notification)notification.copy();
 				monitoredNotif.type = Notification.Type.NEW_COMMENT_FOR_MONITORED_LISTING;
 				monitoredNotif.message = comment.comment;
