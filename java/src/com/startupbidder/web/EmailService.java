@@ -34,6 +34,7 @@ public class EmailService {
 	
 	private static final String LINK_TO_VIEW_ON_STARTUPBIDDER = "##NOTIFICATION_LINK_TO_VIEW_ON_STARTUPBIDDER##";
 	private static final String NOTIFICATION_TITLE = "##NOTIFICATION_TITLE##";
+	private static final String NOTIFICATION_TITLE_ESCAPED = "##NOTIFICATION_TITLE_ESCAPED##";
 	private static final String TEXT_NO_LINK = "##NOTIFICATION_TEXT_NO_LINK##";
 	private static final String VISIT_LISTING_TEXT = "##NOTIFICATION_VISIT_LISTING_TEXT##";
 	private static final String LINK_TO_LISTING = "##NOTIFICATION_LINK_TO_LISTING##";
@@ -104,24 +105,26 @@ public class EmailService {
 		}
 	}
 	
-	private Map<String, String> prepareProperties(NotificationVO notification) {
+	public Map<String, String> prepareProperties(NotificationVO notification) {
 		Map<String, String> props = new HashMap<String, String>();
 		
 		props.put(LINK_TO_VIEW_ON_STARTUPBIDDER, "http://www.startupbidder.com/notification-page.html?id=" + notification.getId());
 		props.put(NOTIFICATION_TITLE, notification.getTitle());
-		props.put(TEXT_NO_LINK, notification.getText1() + " <br/> <i>" + notification.getText2() + "</i>");
+		props.put(NOTIFICATION_TITLE_ESCAPED, notification.getTitle().replaceAll("\\.", "<span>.</span>"));
+		props.put(TEXT_NO_LINK, notification.getText1().replaceAll("\\.", "<span>.</span>") + " <br/> <i>"
+				+ notification.getText2().replaceAll("\\.", "<span>.</span>") + "</i>");
 		props.put(VISIT_LISTING_TEXT, notification.getText3());
 		props.put(LINK_TO_LISTING, notification.getLink());
 		props.put(LINK_TO_LISTING_LOGO, notification.getListingLogoLink());
-		props.put(LISTING_NAME, notification.getListingName());
+		props.put(LISTING_NAME, notification.getListingName().replaceAll("\\.", "<span>.</span>"));
 		props.put(LISTING_CATEGORY_LOCATION, notification.getListingCategory() + " <br/>" + notification.getListingBriefAddress());
-		props.put(LISTING_MANTRA, notification.getListingMantra());
+		props.put(LISTING_MANTRA, notification.getListingMantra().replaceAll("\\.", "<span>.</span>"));
 		props.put(COPYRIGHT_TEXT, "2012 startupbidder.com");
 		props.put(LINK_TO_UPDATE_PROFILE_PAGE, "http://www.startupbidder.com/edit-profile-page.html");
 		return props;
 	}
 
-	private String applyProperties(String htmlTemplate, Map<String, String> props) {
+	public String applyProperties(String htmlTemplate, Map<String, String> props) {
 		for (Map.Entry<String, String> entry : props.entrySet()) {
 			htmlTemplate = StringUtils.replace(htmlTemplate, entry.getKey(), entry.getValue());
 		}
