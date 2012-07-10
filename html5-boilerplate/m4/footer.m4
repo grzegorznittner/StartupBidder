@@ -14,6 +14,7 @@
         <a href="main-page.html?type=top"><span class="footerlink hoverlink">Top</span></a>
         <a href="main-page.html?type=latest"><span class="footerlink hoverlink">Latest</span></a>
 <!--        <a href="main-page.html?type=valuation"><span class="footerlink hoverlink">Highest Valuation</span></a> -->
+        <a href="nearby-page.html"><span class="footerlink hoverlink">Nearby</span></a>
         <div class="footerlink">&nbsp;</div>
     </div>
     <div class="span-4 footercol">
