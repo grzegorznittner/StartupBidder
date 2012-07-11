@@ -174,11 +174,11 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .logotextgrey { position: relative; font-weight: bold; font-size: 24px; top: 8px; color: white; }
 .headerprofile { float: right; text-align: right; }
 .loginspan { text-align: right; margin-left: 10px; }
-.logout { positon:relative; margin-top:6px; display: none; }
+.logout { position: relative; margin-top:6px; display: none; }
 .headersignintext { float: right; border-left: none; padding-right: 0px; }
 
 /* banner styles */
-.banner { width: 100%; height: 200px; width: 100%; }
+.banner { width: 100%; height: 200px; }
 .bannertext { font-size: 30px; font-weight: bold; top: 5px; height: 185px; }
 .bannersmall { width: 980px; height: 50px; margin-top: 10px; }
 .bannertextsmall { font-size: 30px; font-weight: bold; }
@@ -194,7 +194,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .welcometext { font-size: 16px; font-weight: bold; position: absolute; bottom: 0; right: 0; }
 /* .welcometext a { font-weight: bold; } */
 .welcomevideo { position: relative; }
-.welcomevideoclosex { position: absolute; right: 6px; top: 0px; z-index: 1000; }
+.welcomevideoclosex { position: absolute; right: 6px; top: 0; z-index: 1000; }
 .welcomevideocontainer { margin: 10px 0; }
 .socialsidebox { height: 80px; position: relative; }
 .socialbanner { height: 80px; position: relative; }
@@ -269,7 +269,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .twitter { width: 32px; height: 32px; background: url(../img/icons/twitter.png); }
 .googleplus { width: 32px; height: 32px; background: url(../img/icons/google_plus.png); background-position: 1px 1px; }
 .google { width: 32px; height: 32px; background: url(../img/icons/google_32.png); }
-.searchimg { width: 32px; height: 32px; background: url(../img/icons/search2.png; }
+.searchimg { width: 32px; height: 32px; background: url(../img/icons/search2.png); }
 .thumbup { width: 20px; height: 20px; background: url(../img/icons/thumbs_up.png); }
 .bidaccepticon { width: 20px; height: 20px; background: url(../img/icons/thumbs_up.png); }
 .bidacceptedicon { width: 20px; height: 20px; background: url(../img/icons/thumbs_up.png); }
@@ -377,7 +377,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .inputwidetext { width: 420px !important; }
 .categoryselect { padding: 5px; width: 432px !important; }
 .inputmedtext { font-weight: bold; color: white !important; background: #49515a !important; font-size: 14px !important; width: 230px !important; }
-.medtext { font-weight: bold; font-size: 14px; width; 230px; height: 21px; padding-top: 10px; margin-right: 10px; }
+.medtext { font-weight: bold; font-size: 14px; width: 230px; height: 21px; padding-top: 10px; margin-right: 10px; }
 .inputmedselect { width: 242px !important; }
 .inputfullwidetextshort, .inputwidewithvalidate { margin: 0px 5px 5px 5px; height: 60px; }
 .inputfullwidetextshort { width: 600px !important; }
@@ -506,7 +506,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .bmcinfokeyresources { top: 240px; left: 380px; }
 .bmcinfovaluepropositions { top: 5px; left: 570px; width: 340px; }
 .bmcinfocustomerrelationships { top: 5px; left: 5px; }
-.bmcinfochannels { top: 240px; left: 5px; width: }
+.bmcinfochannels { top: 240px; left: 5px; }
 .bmcinfocustomersegments { top: 5px; left: 195px; }
 .bmcinfocoststructure { top: 475px; left: 475px; width: 435px; }
 .bmcinforevenuestreams { top: 475px; left: 5px; width: 435px; }
@@ -590,10 +590,10 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .addcommentenabled { }
 .addcommentenabled:hover { cursor: pointer; }
 .commentdeleteicon { position: absolute; right: 139px; }
-.newlistingmsg { float: left; margin-right; 10px; padding-left: 116px; width: 420px; height: 85px; font-weight: bold; overflow: auto; }
+.newlistingmsg { float: left; margin-right: 10px; padding-left: 116px; width: 420px; height: 85px; font-weight: bold; overflow: auto; }
 .newlistingtitlemsg { position: absolute; margin-right: 5px; right: 0; }
 .newlistingaskmsg { margin-left: 10px; }
-.newlistingmsgsmall { float: left; margin-right; 10px; padding-left: 116px; width: 420px; height: 25px; font-weight: bold; }
+.newlistingmsgsmall { float: left; margin-right: 10px; padding-left: 116px; width: 420px; height: 25px; font-weight: bold; }
 .companylistingstats { position: absolute; bottom: 0; }
 .boxpanel p { text-indent: 0px; font-weight: normal; }
 .boxpanel dl dt { margin-left: 0; padding: 5px 10px; color: #333333; }
@@ -623,8 +623,8 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .boxoption1 { width: 146px; }
 .boxoption2 { width: 160px; }
 .boxoption3 { width: 160px; }
-.boxselected { background: white; }
-.sideboxselected { background: white; !important}
+.boxselected { background: #fff; }
+.sideboxselected { background: #fff !important; }
 .sidebox {
     width: 302px;
     border: 2px solid #cccccc;
@@ -698,8 +698,8 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
     margin-left: -15px;
     margin-bottom: -10px;
 }
-.orderbook { float: left; margin-right: 10px; padding-left: 0px; }
-.orderbooklast { float: left; margin-right: 0; padding-left: 0px; }
+.orderbook { float: left; margin-right: 10px; padding-left: 0px; min-height: 105px; }
+.orderbooklast { float: left; margin-right: 0; padding-left: 0px; min-height: 105px; }
 .lastorder { text-align:center; }
 .lastorderamt { font-size: 32px; }
 .bidpanel { padding-top: 5px; }
@@ -830,7 +830,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .tiledesc { width: 142px; height: 116px; position: absolute; top: 146px; padding: 0 2px 2px 2px; margin:0; overflow: hidden; border-top: 2px solid #666666; }
 .tilecompany { font-size: 14px; line-height: 19px; font-weight: bold; }
 .tileloc, .tiledetails, .tiledesc { font-size: 12px; line-height: 16px; }
-.tilevotes, .tilevoteimg, { position: absolute; }
+.tilevotes, .tilevoteimg { position: absolute; }
 .tilevotes { left: 30px; }
 .tileposted { position: absolute; top: 6px; font-weight: bold; }
 
@@ -875,7 +875,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
     .header,
     .notificationtitle
     { background: #444; }
-.light_alu,
+.light_alu
     { background: url(../img/light_alu.png) repeat; }
     .curvedborder, .sidebox, .sideboxbutton, .sideboxbuttoninterior, .boxstep, .boxselected,
     .sideboxselected,
@@ -1036,7 +1036,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 /* IP */
 .ipmain {
     position: relative; color: white; width: 938px; height: 625px; font-size: 24px; overflow: hidden;
-    background: #222222;
+    background: #222;
     -moz-linear-gradient(left top , #222222 0%, #888888 100%) repeat scroll 0 0 transparent;
     -webkit-linear-gradient(left top , #222222 0%, #888888 100%) repeat scroll 0 0 transparent;
     -o-linear-gradient(left top , #222222 0%, #888888 100%) repeat scroll 0 0 transparent;
@@ -1143,7 +1143,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
     font-size: 30px;
     padding-top: 5px;
     text-align: center;
-    font-weight: 900px;
+    font-weight: 900;
 }
 .addlistingbutton {
     margin-top: 53px;
