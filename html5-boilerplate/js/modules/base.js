@@ -348,7 +348,6 @@ pl.implement(SearchBoxClass, {
             val = (qs && qs.vars && qs.vars.searchtext) ? qs.vars.searchtext : 'Search',
             displayVal = decodeURIComponent(val).replace(/\+/g, ' ');
         pl('#searchtext').attr({value: displayVal});
-        console.log(val, displayVal);
         pl('#searchtext').bind({
             focus: function() {
                 if (pl('#searchtext').attr('value') === 'Search') {

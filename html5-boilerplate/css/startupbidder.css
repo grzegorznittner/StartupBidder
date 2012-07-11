@@ -85,7 +85,10 @@ body { font-size: 14px; font-weight: normal; }
 */
 
 /* link styles */
-a:link, a:visited { text-decoration: none; }
+a:link, a:visited {
+    text-decoration: none;
+    color: #55a4f2;
+}
 a:focus, a:hover { cursor: pointer; }
 .headerrow a:hover { cursor: pointer; }
 .headerlink:hover { cursor: pointer; }
@@ -93,6 +96,7 @@ a:focus, a:hover { cursor: pointer; }
 .inputbutton:hover { cursor: pointer; }
 .smallinputbutton:hover { cursor: pointer; }
 .investbutton:hover { cursor: pointer; }
+.welcomevideoclosex:hover { cursor: pointer; }
 .nohover:hover { cursor: default; }
 
 /* colors */
@@ -125,7 +129,7 @@ a:focus, a:hover { cursor: pointer; }
     .sideboxlistname,
     .companyhalfmantra, .companyhalftext,
     .loctext, .loctextinp,
-    .bannertextsmall, .sideboxbutton, .showmore a,
+    .bannertextsmall, .sideboxbutton,
     .boxpanel p,
     .uneditabletext,
     .doclabel, .aboutlabel,
@@ -137,7 +141,7 @@ a:focus, a:hover { cursor: pointer; }
     .orderbookdate, .biddate, .investorbiddate, .lastdate
     { color: #666; }
 .darkblue
-    .tilecompany, .companyhalftitle, .companybannertextlink, .formlink, .inputbutton, .smallinputbutton, .footerlink
+    .tilecompany, .companyhalftitle, .companybannertextlink, .formlink, .inputbutton, .smallinputbutton, .footerlink, .loctextinp, .loctext, .showmore a
     { color: #55a4f2; }
 .companybannertitle
     { color: #444; }
@@ -190,7 +194,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .welcometext { font-size: 16px; font-weight: bold; position: absolute; bottom: 0; right: 0; }
 /* .welcometext a { font-weight: bold; } */
 .welcomevideo { position: relative; }
-.welcomevideoclosex { position: absolute; right: 0; top: 10px; }
+.welcomevideoclosex { position: absolute; right: 6px; top: 0px; z-index: 1000; }
 .welcomevideocontainer { margin: 10px 0; }
 .socialsidebox { height: 80px; position: relative; }
 .socialbanner { height: 80px; position: relative; }

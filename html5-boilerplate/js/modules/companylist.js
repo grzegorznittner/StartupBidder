@@ -7,6 +7,10 @@ function CompanyTileClass(options) {
 }
 pl.implement(CompanyTileClass, {
     store: function(json) {
+        var cat,
+            catprefix,
+            catlink,
+            addr;
         this.status = json.status;
         if (!this.status) {
             this.daystext = '';
@@ -23,10 +27,17 @@ pl.implement(CompanyTileClass, {
         }
         this.imgClass = json.logo ? '' : 'noimage';
         this.imgStyle = json.logo ? 'background: url(' + json.logo + ') no-repeat scroll left top' : '';
-        this.category = json.category || 'Other';
-        this.categoryUC = json.category ? json.category.toUpperCase() : 'OTHER';
         this.posted = json.posted_date ? DateClass.prototype.format(json.posted_date) : 'not posted';
         this.name = json.title || 'No Company Name';
+
+        this.category = json.category || 'Other';
+        this.categoryUC = json.category ? json.category.toUpperCase() : 'OTHER';
+        cat = this.category || '';
+        catprefix = !cat || (cat !== 'Other' && !cat.match(/^[AEIOU]/)) ? 'A' : 'An';
+        catlink = cat && cat !== 'Other' ? '<a href="/main-page.html?type=category&val=' + encodeURIComponent(cat) + '">' + cat + '</a>' : '';
+        this.catlinked = catprefix + ' ' + catlink + ' company';
+
+        addr = json.brief_address;
         this.brief_address = json.brief_address
             ? '<a class="hoverlink" href="/main-page.html?type=location&val=' + encodeURIComponent(json.brief_address) + '">'
                 + '<div class="locicon"></div><span class="loctext">' + json.brief_address + '</span></a>'
@@ -36,6 +47,9 @@ pl.implement(CompanyTileClass, {
                 + '<img src="../img/icons/location_16x16.gif" class="lociconinp"></img>&nbsp;<span class="loctextinp">' + json.brief_address + '</span></a>'
             : '<span class="loctext">No Address</span>';
         this.address = json.address || 'No Address';
+        this.addrlinked = !addr ? '' : ' in <a href="/main-page.html?type=location&val=' + encodeURIComponent(addr) + '">' + addr + '</a>';
+        this.categoryaddresstext = this.catlinked + this.addrlinked;
+
         if (this.status && json.asked_fund && json.suggested_amt && json.suggested_pct) {
             this.suggested_amt = CurrencyClass.prototype.format(json.suggested_amt);
             this.suggested_pct = PercentClass.prototype.format(json.suggested_pct) + '%';
@@ -92,6 +106,7 @@ pl.implement(CompanyTileClass, {
 ' + this.openanchor + '\
     <span class="tilecompany hoverlink">' + this.name + '</span><br/>\
 ' + this.closeanchor + '\
+    <span class="tileloc">' + this.catlinked + '</span><br/>\
     <span class="tileloc">' + this.brief_address_inp + '</span><br/>\
     <span class="tiledetails">' + this.mantra + '</span>\
 </p>\
@@ -130,7 +145,7 @@ pl.implement(CompanyTileClass, {
     <div class="companybannertitle hoverlink">' + this.name + '</div>\
 ' + this.closeanchor + '\
     <div class="companybannertextgrey companybannermapline">\
-        <span class="loctext">' + (this.category==='Other' ? 'A' : (this.category.match(/^[AEIOU]/) ? 'An '+this.category : 'A '+this.category)) +  ' company in&nbsp;</span>' + this.brief_address + '\
+        ' + this.categoryaddresstext + '\
     </div>\
     <div class="companybannertextgrey">' + this.foundertext + '</div>\
     <div class="companybannertextgrey">' + this.finance_line + '</div>\
@@ -154,12 +169,12 @@ pl.implement(CompanyTileClass, {
     <div class="companyhalftitle hoverlink">' + this.name + '</div>\
 ' + this.closeanchor + '\
     <div class="companyhalftext">\
-        ' + (this.category==='Other' ? '' : (this.category.match(/^[AEIOU]/) ? 'An '+this.category+' company' : 'A '+this.category+' company')) +  '\
+        ' + this.catlinked +  '\
     </div>\
     <div class="companyhalftext">\
-        ' + this.brief_address + '\
+        ' + this.brief_address_inp + '\
     </div>\
-    <div class="companyhalfmantra">' + this.mantraplussuggest + '</div>\
+    <div class="companyhalftext">' + this.mantraplussuggest + '</div>\
 </div>\
 ';
     },
