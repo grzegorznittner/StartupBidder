@@ -1,5 +1,5 @@
 application: startupbidder
-version: 201207101218
+version: 201207111219
 runtime: java
 
 static_files:

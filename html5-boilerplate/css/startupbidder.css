@@ -1,5 +1,5 @@
 /* layout styles */
-* { margin: 0; padding: 0; font-family: Arial, Helvetica, sans-serif !important; }
+* { margin: 0; padding: 0; font-family: "Helvetica Neue",Helvetica,Arial,sans-serif !important; }
 html, body, #wrap { height: 100%; }
 body { margin: 0; }
 body > #wrap { height: auto; min-height: 100%; }
@@ -10,19 +10,39 @@ body.nearby-page > #wrap > #main > div.container { height: 100%; }
 body.nearby-page > #wrap > #main > div.container > div.nearbywrapper { height: 100%; width: 100%; padding-bottom: 55px; }
 #mappanel { height: 100%; width: 100%; }
 #map { height: 100%; width: 100%; }
-#main { padding-bottom: 170px; }
-#newlistingmain { padding-bottom: 170px; }
+#main { padding-bottom: 220px; }
+#newlistingmain { padding-bottom: 220px; }
 #newlistingsubmitmain { padding-bottom: 10px; }
-#footer { position: relative; margin-top: -170px; height: 170px; clear: both; width: 100%; }
+#footer {
+    background: #ddd;
+    border-top: 2px solid #ccc;
+    clear: both;
+    height: 210px;
+    margin-top: -210px;
+    position: relative;
+    width: 100%;
+}
 .clearfix:after { content: "."; display: block; height: 0; clear: both; visibility: hidden; }
 .clearfix { display: inline-block; }
 * html .clearfix { height: 1%; }
 .clearfix { display: block; }
-.footercontainer { border-top: 2px solid #666; padding-top: 10px; }
-.footercol { border-right: 2px solid #666; padding-bottom: 5px; height: 130px; font-size: 14px; }
+.footercontainer { padding-top: 10px; }
+.footercol {
+    color: #444 !important;
+    font-size: 14px;
+    height: 130px;
+    padding-top: 20px;
+    width: 200px;
+}
 .footercol a { display: block; }
-.footertext { position: relative; font-weight: bold; font-size: 12px; top: 10px; }
-.footerlink { font-size: 12px; }
+.footertext { position: relative; font-weight: bold; font-size: 12px; top: 5px; }
+.footerlink {
+    display: block;
+    font-size: 14px;
+    font-weight: normal;
+    margin-top: 5px;
+}
+.footerlinkheader { margin-bottom: 10px; }
 .copyrighttext { font-size: 12px; position: absolute; right: 0; bottom: 0; }
 .successful { color: #009900 !important; }
 .inprogress { color: #8F8A11 !important; }
@@ -36,6 +56,7 @@ body.nearby-page > #wrap > #main > div.container > div.nearbywrapper { height: 1
 body { font-size: 14px; font-weight: normal; }
 
 /* borders */
+/*
 .curvedborder, .sidebox, .sideboxbutton, .sideboxbuttoninterior, .tile, .companybannertile, .companyhalftile, .boxpanel, .boxstep, .boxselected,
     .inputbutton, .smallinputbutton, .sideboxselected, .banner, .bmcborder,
     .bmcinfodisplay, .bmcinfodisplayvaluepropositions, .titleinfodisplay, .sideinfodisplay,
@@ -57,6 +78,7 @@ body { font-size: 14px; font-weight: normal; }
     -moz-border-radius: 7px;
     border-radius: 7px;
 }
+*/
 
 /* link styles */
 a:link, a:visited { text-decoration: none; }
@@ -65,6 +87,7 @@ a:focus, a:hover { cursor: pointer; }
 .headerlink:hover { cursor: pointer; }
 .hoverlink:hover { cursor: pointer; }
 .inputbutton:hover { cursor: pointer; }
+.smallinputbutton:hover { cursor: pointer; }
 .nohover:hover { cursor: default; }
 
 /* colors */
@@ -85,7 +108,7 @@ a:focus, a:hover { cursor: pointer; }
     { color: white; }
 .midgrey,
     .headertext, .headerlink, .notificationtitle
-    { color: #cccccc }
+    { color: #eee; }
 .smokegrey,
     .infowindow, .boxtitle, .boxtitlegap, .boxsteptitle, .boxsteptext, .tileloc,
     .sideboxnum, .sideboxlistnum, .titleinfoheader, .sideinfoheader, .bmcinfoheader, .ipinfoheader,
@@ -98,9 +121,8 @@ a:focus, a:hover { cursor: pointer; }
     .companyhalfmantra, .companyhalftext,
     .loctext, .loctextinp,
     .bannertextsmall, .sideboxbutton, .showmore a,
-    .footerlink,
     .boxpanel p,
-    .uneditabletext, .addresstext,
+    .uneditabletext,
     .doclabel, .aboutlabel,
     .companynav, .companynavselected, .companybannerlink,
     .notifylink, .messagelink, .profilelink,
@@ -108,10 +130,12 @@ a:focus, a:hover { cursor: pointer; }
     .sidebox,
     .orderbookheader p, .bidheader p, .investorbidheader p,
     .orderbookdate, .biddate, .investorbiddate, .lastdate
-    { color: #666666; }
-.darkblue,
-    .tilecompany, .companybannertitle, .companyhalftitle, .companybannertextlink, .formlink, .inputbutton, .smallinputbutton
-    { color: #4083a9; }
+    { color: #666; }
+.darkblue
+    .tilecompany, .companyhalftitle, .companybannertextlink, .formlink, .inputbutton, .smallinputbutton, .footerlink
+    { color: #55a4f2; }
+.companybannertitle
+    { color: #444; }
 
 /* gradients */
 /*
@@ -136,11 +160,11 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .headerrow { height: 55px; }
 .headertext, .headerlink { position: relative; font-weight: bold; font-size: 14px; top: 16px; padding: 5px 15px; }
 .headerlinknoborder { border-left: none; }
-.headerlinkright { border-left: none; padding-right: 0px; }
+.headerlinkright { border-left: none; padding-right: 5px; }
 .logotextblue { position: relative; font-weight: bold; font-size: 24px; top: 8px; color: #32aff6; }
 .logotextgrey { position: relative; font-weight: bold; font-size: 24px; top: 8px; color: white; }
 .headerprofile { float: right; text-align: right; }
-.loginspan { text-align: right; }
+.loginspan { text-align: right; margin-left: 10px; }
 .logout { positon:relative; margin-top:6px; display: none; }
 .headersignintext { float: right; border-left: none; padding-right: 0px; }
 
@@ -171,40 +195,53 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .facebookbanner div span iframe { height: 28px !important; }
 
 /* company banner styles */
-.companyheader { width: 100%; height: 150px; border-bottom: 2px solid #666; }
+.companyheader { width: 100%; height: 150px; border-bottom: 2px solid #ccc; padding: 20px 0; }
 .companybanner { height: 150px; position: relative; }
 .companybannertile { height: 150px; width: 626px; position: relative; overflow: hidden; margin-bottom: 10px; }
 .companybannertilenoborder { height:150px;overflow:hidden;position:relative;top:-9px; }
-.companybannertitle { font-size: 26px; font-weight: bold; }
+.companybannertitle { font-size: 43px; font-weight: normal; margin-bottom: -15px; position: relative; top: -11px; }
 .companybannertext { font-size: 14px; font-weight: bold; }
 .companybannertextlink { font-size: 14px; font-weight: bold; margin-left: 4px; }
 .companybannerlink { float: left; margin-right: 5px; }
 .companybannertextgrey { font-size: 14px; width: 830px; }
 .companybannermapline { height: 21px; }
-.companybannerlogo { margin-top: 2px; width: 146px; height: 146px; margin-right: 10px; margin-left: 2px; float: left; }
+.companybannerlogo { margin-top: 2px; width: 146px; height: 146px; margin-right: 10px; margin-left: 2px; float: left; margin-right: 20px; }
 .companybannermantra { position: absolute; font-size: 14px; width: 830px; bottom:3px; padding-bottom: 18px; left:158px; }
-.companybannerfollow { position: absolute; top: 0; right: -10px; }
+.companybannerfollow { position: absolute; top: 0; left: 832px; }
 .companybannerfollowbtn { clear: both; float: right; }
-.companynavcontainer { position: absolute; bottom:0; right: 0; height: 21px; }
+.companynavcontainer {
+    position: absolute;
+    bottom: 0; 
+    height: 21px;
+    left: 225px;
+    width: 760px;
+}
 .companynav {
-    float: left; padding: 0px 5px; margin-right: 10px; text-align: center; height: 19px;
-    font-size: 14px; font-weight: bold;
-    border-radius: 5px 5px 0 0;
-    border: 2px solid white;
-    border-bottom: 0;
+    background: #e4e4e4;
+    border: 2px solid #ddd;
+    color: #777;
+    float: left;
+    font-size: 14px;
+    font-weight: bold;
+    height: 29px;
+    margin-right: 10px;
+    padding: 10px 5px 0;
+    text-align: center;
+    width: 100px;
+    border-bottom: 2px solid #ccc;
 }
 .companynavlast { margin-right: 0; }
 .companynavselected {
-    background: #f2f2f2;
-    border-radius: 5px 5px 0 0;
-    border: 2px solid #666;
-    border-bottom: 0;
-    height: 21px;
+    background: #fff !important;
+    border: 2px solid #ccc;
+    border-width: 2px 2px 0;
+    color: #444;
+    height: 31px;
 }
 
 /* company half styles */
 .companyhalf { height: 150px; position: relative; }
-.companyhalftile { height: 150px; width: 306px; position: relative; border-radius: 10px; border: 2px solid #cccccc; overflow: hidden; margin-bottom: 10px; background: #e3e3e3; float: left; margin-right: 10px; }
+.companyhalftile { height: 150px; width: 306px; position: relative; border: 2px solid #cccccc; overflow: hidden; margin-bottom: 10px; background: #e3e3e3; float: left; margin-right: 10px; }
 .companyhalftilelast { margin-right: 0px; }
 .companyhalftitle { font-size: 16px; font-weight: bold; line-height: 18px; margin-bottom: 3px; margin-top: 3px; overflow: hidden; }
 .companyhalftext { font-size: 12px; line-height: 14px; overflow: hidden; }
@@ -244,8 +281,8 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .bidcountericon { width: 20px; height: 20px; background: url(../img/icons/counter.png); }
 .bidcounteredicon { width: 20px; height: 20px; background: url(../img/icons/counter.png); }
 .ask_listing_ownericon { width: 20px; height: 20px; background: url(../img/icons/info_20.png); }
-.private_messageicon { width: 20px; height: 20px; background: url(../img/icons/email_20x20.png); }
-.notificationicon { width: 20px; height: 20px; background: url(../img/icons/notification_20.png); }
+.private_messageicon { width: 32px; height: 32px; background: url(../img/icons/email.png); }
+.notificationicon { width: 32px; height: 32px; background: url(../img/icons/world.png); }
 .bmcinfobtn { height: 20px; width: 20px; background: url(../img/icons/info_20.png); }
 .titleinfobtn { height: 20px; width: 20px; background: url(../img/icons/info_20.png); }
 .checkboxgreenicon { width: 32px; height: 32px; background: url(../img/icons/checkbox_green_32x32.png); }
@@ -263,10 +300,10 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .bidactionbtn { text-align: left !important; }
 .normalicon { float: left; margin-right: 5px; }
 .headericon { height: 32px; width: 32px; margin-left: 15px; float: right; position: relative; top: 12px; }
-.headersignin { background: url(../img/icons/google_signin.png); }
-.headerlogout { background: url(../img/icons/logout.png); }
-.headermessages { background: url(../img/icons/messages.png); height: 32px; width: 32px; position: relative; }
-.headernotifications { background: url(../img/icons/notifications.png); height: 32px; width: 32px; position: relative; }
+.headersignin { background: url(../img/icons/icon_grey_google.png); }
+.headerlogout { background: url(../img/icons/logout3.png); }
+.headermessages { background: url(../img/icons/email2.png); height: 32px; width: 32px; position: relative; top: 14px; }
+.headernotifications { background: url(../img/icons/world2.png); height: 32px; width: 32px; position: relative; top: 11px; }
 .headernum { height: 20px; text-align: center; position: absolute; top:-7px; right: -5px; color:white; background-color:red; font-weight:bold; font-size: 14px; }
 .headernumdisplay { padding-left: 3px; padding-right: 3px; }
 .checkboxcheckedicon { background: url(../img/icons/checkbox_24x48.png); height: 24px; width: 24px; }
@@ -351,10 +388,8 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .inputicon { padding-top: 6px; }
 .inputlink { padding-top: 10px; height: 33px; }
 .inputimgbutton { margin-top: 5px; }
-.inputbutton, .smallinputbutton { text-align: center; margin-top: 5px; font-weight: bold; } 
 .doclinkmsg { text-align: center; margin-top: 5px; font-weight: bold; font-size: 14px; height: 26px; padding-top: 2px; margin-bottom: 5px; font-weight: bold; } 
-.inputbutton { font-size: 18px; height: 33px; padding-top: 4px; margin-bottom: 10px; } 
-.smallinputbutton { font-size: 14px; height: 26px; padding-top: 2px; margin-bottom: 5px; } 
+.inputbutton, .smallinputbutton { text-align: center; font-weight: bold; font-size: 14px; height: 26px; border: 2px solid #ddd; color: #666; display: block; margin: 0; padding: 14px 6px 10px; }
 .formtitle { font-size: 24px; padding-left: 5px; }
 .formtitlefourth { font-size: 24px; padding-left: 0; }
 .companytitle { margin-right: 10px; }
@@ -397,7 +432,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .inputtextareatwoline { height: 35px; overflow: hidden; overflow-x: hidden; overflow-y: auto; }
 .inputgooglesignin { float: left; margin-right: 10px; }
 .aboutlabel { float: left; margin-right: 10px; text-align: right; width: 106px; font-weight: bold; }
-.doclabel { float: left; margin-right: 10px; text-align: right; width: 106px; font-weight: bold; margin-top: 10px; }
+.doclabel { float: left; margin-right: 10px; text-align: left; width: 106px; font-weight: bold; margin-top: 10px; }
 .bidformtext { padding-top: 10px; font-weight: bold; }
 .bidvallabel { float: left; margin-right: 10px; width: 120px; padding-top: 3px; margin-left: 10px; font-weight: bold; }
 .bidformitem { float: left; }
@@ -502,11 +537,21 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .remarkreplyshow { height: 150px; }
 
 /* box styles */
-.boxtitle { margin-top: 10px; font-weight: bold; clear: both; position: relative; }
-.boxtitlegap { margin-top: 20px; margin-bottom: 5px; font-weight: bold; position: relative; }
-.boxpanel, .boxstep { border: 2px solid #cccccc; padding: 2px; overflow: auto; background: #e3e3e3; margin-bottom: 10px; }
-/* .boxpanel { width: 622px; overflow: auto; position: relative; } */
-.boxpanel { width: 622px; overflow: hidden; position: relative; }
+.boxtitle, .boxtitlegap {
+    clear: both;
+    font-weight: bold;
+    margin-bottom: 2px;
+    margin-top: 30px;
+    position: relative;
+}
+.boxstep { border: 2px solid #cccccc; padding: 2px; overflow: auto; background: #e3e3e3; margin-bottom: 10px; }
+.boxpanel {
+    background: none;
+    margin-top: 10px;
+    overflow: hidden;
+    position: relative;
+    width: 622px;
+}
 .boxpanelfull { width: 940px; }
 .companylistingbox { width: 622px; height: 146px; }
 .addcommentmsg { height: 20px; margin-left: 5px; font-weight: bold; }
@@ -521,7 +566,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .newlistingaskmsg { margin-left: 10px; }
 .newlistingmsgsmall { float: left; margin-right; 10px; padding-left: 116px; width: 420px; height: 25px; font-weight: bold; }
 .companylistingstats { position: absolute; bottom: 0; }
-.boxpanel p { margin: 5px 10px 10px 10px; text-indent: 0px; font-weight: normal; }
+.boxpanel p { text-indent: 0px; font-weight: normal; }
 .boxpanel dl dt { margin-left: 0; padding: 5px 10px; color: #333333; }
 .boxpanel dl dd { margin-left: 0; padding: 5px 10px; background: #f2f2f2; font-weight: normal; }
 .boxstep { width: 626px; padding: 0px; height: 30px; position: relative; }
@@ -544,14 +589,23 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .remarkdttitleline { padding-top: 7px; }
 .remarkdelete { width: 32px; height: 32px; margin: 0; position: absolute; top: 0; right: 0; }
 .remarkdelete:hover { cursor: pointer; }
-.remarkreplybtn { position:absolute; top:0px; right:5px; border-radius:3px; padding:0 5px 0 5px; height:21px;  }
+.remarkreplybtn { position:absolute; top:0px; right:5px; padding:0 5px 0 5px; height:21px;  }
 .boxoption { display: block; float: left; text-align: center; height: 25px; padding-top: 5px; margin-bottom: 5px; font-weight: bold; }
 .boxoption1 { width: 146px; }
 .boxoption2 { width: 160px; }
 .boxoption3 { width: 160px; }
 .boxselected { background: white; }
 .sideboxselected { background: white; !important}
-.sidebox { width: 302px; border: 2px solid #cccccc; padding: 2px; overflow: auto; background: #e3e3e3; margin-bottom: 10px; overflow: hidden; }
+.sidebox {
+    width: 302px;
+    border: 2px solid #cccccc;
+    background: none;
+    margin-bottom: 10px;
+    overflow: hidden;
+    min-height: 21px;
+    padding-bottom: 10px;
+    padding-left: 15px;
+}
 .sidebox p { margin: 5px 10px 10px 10px; text-indent: 0px; font-weight: normal; }
 .sideboxcol1 { width: 150px; float: left; margin-right: 0; }
 .sideboxcol2 { width: 150px; float: left; }
@@ -569,8 +623,8 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .sideboxcompanylink:hover { cursor: pointer; }
 .sideboxtitle { float: left; font-size: 24px; text-align: right; margin-left: 10px; margin-right: 10px; height: 43px; font-weight: bold; }
 .sideboxtitledetail { float: left; padding-top: 11px; font-weight: bold; }
-.sideboxtitlecompact { font-size: 24px; margin-left: 5px; margin-right: 10px; font-weight: bold; }
-.sideboxdesc { margin-left: 5px; font-weight: bold; }
+.sideboxtitlecompact { font-size: 48px; font-weight: 900; margin-right: 10px; }
+.sideboxdesc { color: #444; margin-bottom: 5px; }
 /* .sideboxnotify { float: left; width: 302px; } */
 .sideboxicon { width: 26px; margin-right: 10px; float: left; }
 /* .sideboxnotifytext { float: left; width: 266px; font-weight: normal; } */
@@ -609,7 +663,12 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .addcommentbox { min-height: 100px; }
 .sideboxdate { font-size: 10px; color: #666; }
 .sideboxlisting { font-size: 10px; }
-.sideboxmap { width: 302px; height: 302px; }
+.sideboxmap {
+    height: 319px;
+    width: 320px;
+    margin-left: -15px;
+    margin-bottom: -10px;
+}
 .orderbook { float: left; margin-right: 10px; }
 .orderbooklast { float: left; margin-right: 0; }
 .lastorder { text-align:center; }
@@ -654,9 +713,8 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .deactivatemsg { display: none; font-weight: bold; }
 .deactivatecancelbtn { display: none; margin-top: 10px; }
 .mapaddresstext { font-weight: bold; }
-.addresstext { font-weight: bold; }
-.summarypanel { min-height: 130px; }
-.sidebox, .askingbox { min-height: 21px; }
+.addresstext { color: #555; font-size: 12px; font-weight: normal; padding-bottom: 8px; padding-top: 3px; }
+/* .summarypanel { min-height: 130px; } */
 .showmore { float: right; margin-right: 10px; font-weight: bold; margin-bottom: 10px; }
 
 /* bids */
@@ -731,7 +789,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .uploaditem { position: relative; }
 
 /* tiles */
-.tile { width: 146px; height: 296px; border: 2px solid #cccccc; border-radius: 10px; overflow: hidden; margin-bottom: 10px; position: relative; }
+.tile { width: 146px; height: 296px; border: 2px solid #cccccc; overflow: hidden; margin-bottom: 10px; position: relative; }
 .tileimg { width: 146px; height: 146px; overflow: hidden; }
 .tiledays, .tiledaystext, .tiletype, .tiletypetext, .tilepoints { width: 146px; height: 30px; position: absolute; }
 .tiledays, .tiletype, .tilepoints { cursor: pointer; background-color: #000000; }
@@ -748,7 +806,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .tileposted { position: absolute; top: 6px; font-weight: bold; }
 
 /* submit page preview classes */
-.previewtext { z-index: 1000; position: absolute; background: rgba(0,0,0,0.6); left: 600px; font-size: 52px; color: white; font-weight: bold; padding: 10px 20px 10px 20px; border-radius: 25px;
+.previewtext { z-index: 1000; position: absolute; background: rgba(0,0,0,0.6); left: 600px; font-size: 52px; color: white; font-weight: bold; padding: 10px 20px 10px 20px; 
                 top: 20px;
 }
 .previewtext2 { top: 780px; }
@@ -758,10 +816,10 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 /* images */
 .noimage { background: url(../img/noimage_146x146.jpg) no-repeat center; }
 .novideo { background: url(../img/no_video_300x243.gif) no-repeat center; }
-.missingimg { background: url(http://www.minimus.biz/img/Your%20Logo%20Here%20Black%202.jpg) -65px -55px; border-radius: 3px; height: 146px; width: 146px; }
-.presentationimg { background: url(../img/icons/presentation.png) no-repeat 1px 1px; border-radius: 3px; }
-.business_planimg { background: url(../img/icons/business_plan.png) no-repeat 0px 0px; border-radius: 3px; }
-.financialsimg { background: url(../img/icons/financials.png) no-repeat 0px 0px; border-radius: 3px; }
+.missingimg { background: url(http://www.minimus.biz/img/Your%20Logo%20Here%20Black%202.jpg) -65px -55px; height: 146px; width: 146px; }
+.presentationimg { background: url(../img/icons/presentation.png) no-repeat 1px 1px; }
+.business_planimg { background: url(../img/icons/business_plan.png) no-repeat 0px 0px; }
+.financialsimg { background: url(../img/icons/financials.png) no-repeat 0px 0px; }
 .videoinputicon { float: left; padding-top: 7px; height: 32px; width: 32px; margin-right: 10px; }
 .videourl { padding-top: 8px !important; }
 .startupbidderlogo { background: url(../img/logo_161x28.gif) no-repeat; width: 161px; height: 28px; }
@@ -770,24 +828,32 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 /* texture background images textures */
 .handmadepaper
     { background: url(../img/handmadepaper.png) repeat; }
-.groovepaper,
+.groovepaper
+    { background: url(../img/groovepaper.png) repeat; }
     .tile, .companybannertile, .companyhalftile, .boxpanel,
     .bmcinfo, .ipinfo, .tileinfo, .sideinfo, .bmcborder,
     .bmcinfodisplay, .bmcinfodisplayvaluepropositions, .titleinfodisplay, .sideinfodisplay,
-    .companyheader, .notificationlistingbanner
-    { background: url(../img/groovepaper.png) repeat; }
-.brushed_alu,
-    body
+    .notificationlistingbanner
+    { background: #fff; }
+.companyheader
+    { background: #eee; }
+.brushed_alu
     { background: url(../img/brushed_alu.png) repeat; }
-.brushed_alu_dark,
+    body
+    { background: #fff; }
+.brushed_alu_dark
+    { background: url(../img/brushed_alu_dark.png) repeat; }
     .header,
     .notificationtitle
-    { background: url(../img/brushed_alu_dark.png) repeat; }
+    { background: #444; }
 .light_alu,
-    .curvedborder, .sidebox, .sideboxbutton, .sideboxbuttoninterior, .boxstep, .boxselected,
-    .inputbutton, .smallinputbutton, .sideboxselected,
-    .buttonbg, .smallbuttonbg
     { background: url(../img/light_alu.png) repeat; }
+    .curvedborder, .sidebox, .sideboxbutton, .sideboxbuttoninterior, .boxstep, .boxselected,
+    .inputbutton, .sideboxselected,
+    .buttonbg, .smallbuttonbg
+    { background: #fff; }
+.smallinputbutton
+    { background: #e4e4e4; }
 .citynight2,
     .banner
     { background: url(../img/citynight2.jpg); background-position: 0px -350px; }
@@ -921,7 +987,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .editprofilepanel { overflow: visible; height: 169px; }
 .basicstitle { height: 41px; }
 
-.bmcborder { border: 6px solid #cccccc; border-radius: 10px; margin-bottom: 10px; clear: both; position: relative; }
+.bmcborder { border: 6px solid #cccccc; margin-bottom: 10px; clear: both; position: relative; }
 .bmccontainer { overflow: hidden; }
 .bmccell { padding: 5px; line-height: normal; }
 .bmcsection { font-size: 18px; font-weight: bold; color: black; }
@@ -1039,6 +1105,25 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .picslide5 { left: 2488px; }
 .picuploadtitle { margin-top: 225px; }
 
+/* tim improvements */
+.investbutton {
+    background: #87c442;
+    border: 1px solid #7fbf3f !important;
+    color: #fff;
+    margin-top: 35px;
+    font-size: 30px;
+    padding-top: 5px;
+    text-align: center;
+    font-weight: 900px;
+}
+.boxtitleside {
+    margin-bottom: 2px;
+    padding-left: 15px;
+    clear: both;
+    font-weight: bold;
+    margin-top: 30px;
+    position: relative;
+}
 
 .titleprevnextbtn { margin-top: 3px; color: #4083a9; }
 

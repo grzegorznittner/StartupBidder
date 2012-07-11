@@ -199,6 +199,9 @@ pl.implement(CurrencyClass, {
     format: function(num) {
         return NumberClass.prototype.formatText(num, '$');
     },
+    formatNoSymbol: function(num) {
+        return NumberClass.prototype.formatText(num, '');
+    },
     clean: function(num) {
         return NumberClass.prototype.clean(num);
     },
@@ -360,7 +363,6 @@ pl.implement(HeaderClass, {
     },
     setLoggedIn: function(profile, logout_url) {
         var username = profile.username || 'You',
-            posttext = profile.edited_listing ? (profile.edited_status === 'new' ? 'In-Progress Listing' : 'Pending Approval') : 'Post New Listing',
             num_notifications = profile.num_notifications || 0,
             num_messages = profile.num_messages || 0,
             notificationlinktext = num_notifications ? num_notifications + ' unread notifications' : 'no unread notifications',
@@ -379,7 +381,6 @@ pl.implement(HeaderClass, {
             pl('#headernumnotifications').text('').removeClass('headernumdisplay');
         }
         pl('#postlink').attr('href', newlistingurl);
-        pl('#posttext').html(posttext);
         if (profile.admin) {
             pl('#adminsetup,#adminhello').css({visibility:'visible'});
         }
@@ -392,7 +393,6 @@ pl.implement(HeaderClass, {
     setLoggedOut: function(login_url) {
         var post_login_url = login_url + encodeURIComponent('/new-listing-basics-page.html');
         // pl('#topheaderline').html('Want to raise money for startups or invest in one? <a href="/about-page.html" class="topheaderlink hoverlink">We&rsquo;ll tell you how!</a>');
-        pl('#posttext').html('Login to Post');
         if (login_url) {
             pl('#postlink').attr({href: post_login_url});
             pl('#loginlink').attr({href: login_url});
