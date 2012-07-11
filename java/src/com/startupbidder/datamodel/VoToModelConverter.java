@@ -142,6 +142,10 @@ public class VoToModelConverter {
 			listing.country = property.getPropertyValue();
 		} else if (name.equalsIgnoreCase("state")) {
 			listing.usState = property.getPropertyValue();
+		} else if (name.equalsIgnoreCase("type")) {
+			listing.type = Listing.Type.valueOf(property.getPropertyValue().toUpperCase());
+		} else if (name.equalsIgnoreCase("platform")) {
+			listing.platform = property.getPropertyValue().toUpperCase();
 		} else if (name.equalsIgnoreCase("city")) {
 			listing.city = property.getPropertyValue();
 		} else if (name.equalsIgnoreCase("asked_fund")) {

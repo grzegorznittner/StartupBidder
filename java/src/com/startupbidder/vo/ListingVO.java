@@ -8,6 +8,9 @@ import org.codehaus.jackson.annotate.JsonAutoDetect;
 import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+
+import com.startupbidder.util.LowecaseSerializer;
 
 /**
  * 
@@ -34,7 +37,7 @@ public class ListingVO extends ListingTileVO {
 	@JsonProperty("founders") private String founders;
 	@JsonProperty("contact_email") private String contactEmail;
 	@JsonProperty("address") private String address;
-	@JsonProperty("platform") private String platform;
+	@JsonProperty("platform") @JsonSerialize(using=LowecaseSerializer.class) private String platform;
 	@JsonProperty("num_comments") private long numberOfComments;
 	@JsonProperty("num_bids") private long numberOfBids;
     @JsonProperty("num_qandas") private long numberOfQuestions;
