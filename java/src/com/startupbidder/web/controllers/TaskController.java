@@ -111,7 +111,7 @@ public class TaskController extends ModelDrivenController {
 		HttpHeaders headers = new HttpHeadersImpl("update-mock-listing-images");
 		
 		String listingId = getCommandOrParameter(request, 2, "id");
-		ListingFacade.instance().updateMockListingImages(ListingVO.toKeyId(listingId));
+		
 		model = listingId;
 		
 		return headers;
@@ -121,6 +121,8 @@ public class TaskController extends ModelDrivenController {
 		HttpHeaders headers = new HttpHeadersImpl("update-mock-listing-pictures");
 		
 		String listingId = getCommandOrParameter(request, 2, "id");
+		ListingFacade.instance().updateMockListingImages(ListingVO.toKeyId(listingId));
+		
 		Listing listing = ObjectifyDatastoreDAO.getInstance().getListing(ListingVO.toKeyId(listingId));
 		ListingFacade.instance().updateMockListingPictures(listing, new MockDataBuilder().picUrls.get(listing.name));
 		model = listingId;
