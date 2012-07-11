@@ -134,7 +134,7 @@ pl.implement(CompanyTileClass, {
     </div>\
     <div class="companybannertextgrey">' + this.foundertext + '</div>\
     <div class="companybannertextgrey">' + this.finance_line + '</div>\
-    <div class="companybannermantra">' + this.mantra + '</div>\
+    <div class="companybannertextgrey">' + this.mantra + '</div>\
 </div>\
 ';
     },

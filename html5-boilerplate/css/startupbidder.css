@@ -56,6 +56,10 @@ body.nearby-page > #wrap > #main > div.container > div.nearbywrapper { height: 1
 body { font-size: 14px; font-weight: normal; }
 
 /* borders */
+.tile, .companybannertile, .companyhalftile
+{
+    border: 2px solid #cccccc;
+}
 /*
 .curvedborder, .sidebox, .sideboxbutton, .sideboxbuttoninterior, .tile, .companybannertile, .companyhalftile, .boxpanel, .boxstep, .boxselected,
     .inputbutton, .smallinputbutton, .sideboxselected, .banner, .bmcborder,
