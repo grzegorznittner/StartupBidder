@@ -2,7 +2,7 @@
 <div class="span-8 last">
 
 <!--    <div class="boxtitle boxtitleside">ADD YOUR STARTUP</div> -->
-    <a href="#" id="postnowbtnlink"><div class="sidebox investbutton hoverlink">ADD LISTING</div></a>
+    <a href="#" id="postnowbtnlink"><div class="sidebox investbutton hoverlink addlistingbutton">ADD LISTING</div></a>
 
     <div id="investbox">
 <!--        <div class="boxtitle boxtitleside">FUND A STARTUP</div> -->

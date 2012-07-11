@@ -7,7 +7,7 @@ body.nearby-page { height: 100%; }
 body.nearby-page > #wrap { height: 100%; }
 body.nearby-page > #wrap > #main { height: 100%; }
 body.nearby-page > #wrap > #main > div.container { height: 100%; }
-body.nearby-page > #wrap > #main > div.container > div.nearbywrapper { height: 100%; width: 100%; padding-bottom: 55px; }
+body.nearby-page > #wrap > #main > div.container > div.nearbywrapper { height: 100%; width: 100%; padding-bottom: 115px; }
 #mappanel { height: 100%; width: 100%; }
 #map { height: 100%; width: 100%; }
 #main { padding-bottom: 220px; }
@@ -88,6 +88,7 @@ a:focus, a:hover { cursor: pointer; }
 .hoverlink:hover { cursor: pointer; }
 .inputbutton:hover { cursor: pointer; }
 .smallinputbutton:hover { cursor: pointer; }
+.investbutton:hover { cursor: pointer; }
 .nohover:hover { cursor: default; }
 
 /* colors */
@@ -158,7 +159,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .topheaderlink { color: white !important; font-weight: bold; }
 .header { width: 100%; height: 55px; background: #49515a; }
 .headerrow { height: 55px; }
-.headertext, .headerlink { position: relative; font-weight: bold; font-size: 14px; top: 16px; padding: 5px 15px; }
+.headertext, .headerlink { position: relative; font-weight: bold; font-size: 14px; top: 16px; padding: 5px 10px; }
 .headerlinknoborder { border-left: none; }
 .headerlinkright { border-left: none; padding-right: 5px; }
 .logotextblue { position: relative; font-weight: bold; font-size: 24px; top: 8px; color: #32aff6; }
@@ -169,7 +170,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .headersignintext { float: right; border-left: none; padding-right: 0px; }
 
 /* banner styles */
-.banner { width: 980px; height: 200px; margin-top: 10px; }
+.banner { width: 100%; height: 200px; width: 100%; }
 .bannertext { font-size: 30px; font-weight: bold; top: 5px; height: 185px; }
 .bannersmall { width: 980px; height: 50px; margin-top: 10px; }
 .bannertextsmall { font-size: 30px; font-weight: bold; }
@@ -207,7 +208,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .companybannermapline { height: 21px; }
 .companybannerlogo { margin-top: 2px; width: 146px; height: 146px; margin-right: 10px; margin-left: 2px; float: left; margin-right: 20px; }
 .companybannermantra { position: absolute; font-size: 14px; width: 830px; bottom:3px; padding-bottom: 18px; left:158px; }
-.companybannerfollow { position: absolute; top: 0; left: 832px; }
+.companybannerfollow { position: absolute; top: 0; left: 845px; }
 .companybannerfollowbtn { clear: both; float: right; }
 .companynavcontainer {
     position: absolute;
@@ -260,7 +261,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .twitter { width: 32px; height: 32px; background: url(../img/icons/twitter.png); }
 .googleplus { width: 32px; height: 32px; background: url(../img/icons/google_plus.png); background-position: 1px 1px; }
 .google { width: 32px; height: 32px; background: url(../img/icons/google_32.png); }
-.searchimg { width: 29px; height: 24px; background: url(../img/icons/search.gif); }
+.searchimg { width: 32px; height: 32px; background: url(../img/icons/search2.png; }
 .thumbup { width: 20px; height: 20px; background: url(../img/icons/thumbs_up.png); }
 .bidaccepticon { width: 20px; height: 20px; background: url(../img/icons/thumbs_up.png); }
 .bidacceptedicon { width: 20px; height: 20px; background: url(../img/icons/thumbs_up.png); }
@@ -282,7 +283,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .bidcounteredicon { width: 20px; height: 20px; background: url(../img/icons/counter.png); }
 .ask_listing_ownericon { width: 20px; height: 20px; background: url(../img/icons/info_20.png); }
 .private_messageicon { width: 32px; height: 32px; background: url(../img/icons/email.png); }
-.notificationicon { width: 32px; height: 32px; background: url(../img/icons/world.png); }
+.notificationicon { width: 32px; height: 32px; background: url(../img/icons/world2.png); }
 .bmcinfobtn { height: 20px; width: 20px; background: url(../img/icons/info_20.png); }
 .titleinfobtn { height: 20px; width: 20px; background: url(../img/icons/info_20.png); }
 .checkboxgreenicon { width: 32px; height: 32px; background: url(../img/icons/checkbox_green_32x32.png); }
@@ -320,12 +321,6 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .preloadermap { height: 100%; }
 .preloadercompanybanner { height: 150px; }
 .preloaderfloater { height: 50%; margin-bottom: -16px; }
-
-/* searchbar styles */
-.searchbar { height: 36px; margin-top: 4px; font-size: 14px !important; font-weight: bold; position: relative; }
-.searchtext { padding-top: 10px; height: 18px; width: 900px !important; }
-.searchbutton { position: absolute; top: 10px; right: 0; }
-.searchbutton:hover { cursor: pointer; opacity: 0.7; }
 
 /* infowindow */
 .infowindowwrapper { min-height: 288px; background:white; padding:5px; }
@@ -389,7 +384,16 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .inputlink { padding-top: 10px; height: 33px; }
 .inputimgbutton { margin-top: 5px; }
 .doclinkmsg { text-align: center; margin-top: 5px; font-weight: bold; font-size: 14px; height: 26px; padding-top: 2px; margin-bottom: 5px; font-weight: bold; } 
-.inputbutton, .smallinputbutton { text-align: center; font-weight: bold; font-size: 14px; height: 26px; border: 2px solid #ddd; color: #666; display: block; margin: 0; padding: 14px 6px 10px; }
+.inputbutton, .smallinputbutton {
+    text-align: center;
+    font-weight: bold;
+    font-size: 14px;
+    height: 26px;
+    border: 2px solid #ddd;
+    display: block;
+    margin: 0;
+    padding: 14px 0px 10px;
+}
 .formtitle { font-size: 24px; padding-left: 5px; }
 .formtitlefourth { font-size: 24px; padding-left: 0; }
 .companytitle { margin-right: 10px; }
@@ -452,6 +456,23 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
     height: 363px;
     width: 740px !important;
 }
+
+/* searchbar styles */
+/* .searchbar { height: 36px; margin-top: 4px; font-size: 14px !important; font-weight: bold; position: relative; } */
+.searchtext {
+    width: 250px !important;
+    float: left;
+    margin-top: 12px !important;
+    margin-right: 10px !important;
+    font-weight: normal !important;
+}
+.searchbutton {
+    float: left;
+    margin-top: 12px;
+}
+.searchbutton:hover { cursor: pointer; }
+
+/* bmc styles */
 .bmctextarea { height: 410px; overflow: hidden; overflow-x: hidden; overflow-y: hidden; font-weight: normal; color: black !important; padding: 0;
                 font-size: 14px !important; margin: 0; width: 175px !important; background: none !important; border: 0 !important; }
 .bmctextareashort { height: 175px; overflow: hidden; overflow-x: hidden; overflow-y: hidden; font-weight: normal; color: black !important; padding: 0;
@@ -669,8 +690,8 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
     margin-left: -15px;
     margin-bottom: -10px;
 }
-.orderbook { float: left; margin-right: 10px; }
-.orderbooklast { float: left; margin-right: 0; }
+.orderbook { float: left; margin-right: 10px; padding-left: 0px; }
+.orderbooklast { float: left; margin-right: 0; padding-left: 0px; }
 .lastorder { text-align:center; }
 .lastorderamt { font-size: 32px; }
 .bidpanel { padding-top: 5px; }
@@ -849,10 +870,10 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .light_alu,
     { background: url(../img/light_alu.png) repeat; }
     .curvedborder, .sidebox, .sideboxbutton, .sideboxbuttoninterior, .boxstep, .boxselected,
-    .inputbutton, .sideboxselected,
+    .sideboxselected,
     .buttonbg, .smallbuttonbg
     { background: #fff; }
-.smallinputbutton
+.inputbutton, .smallinputbutton
     { background: #e4e4e4; }
 .citynight2,
     .banner
@@ -1115,6 +1136,9 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
     padding-top: 5px;
     text-align: center;
     font-weight: 900px;
+}
+.addlistingbutton {
+    margin-top: 53px;
 }
 .boxtitleside {
     margin-bottom: 2px;

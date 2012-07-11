@@ -3,7 +3,6 @@ pl.implement(MainPageClass,{
     loadPage: function() {
         var completeFunc = function(json) {
                 var header = new HeaderClass(),
-                    searchbox = new SearchBoxClass(),
                     companyList = new CompanyListClass(),
                     categories = json.categories || {},
                     locations = json.top_locations || {},
@@ -12,7 +11,6 @@ pl.implement(MainPageClass,{
                 header.setLogin(json);
                 categoryList.display();
                 locationList.display();
-                searchbox.bindEvents();
                 companyList.storeList(json);
                 pl('.preloader').hide();
                 pl('.wrapper').show();

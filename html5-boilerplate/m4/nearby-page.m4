@@ -10,11 +10,9 @@ include(mainhead.m4)
 <div id="main">
 '
 include(header.m4)
-`
-<div class="container">
-'
 include(nearby-banner.m4)
 `
+<div class="container">
 <div class="span-24 nearbywrapper">
     <div class="boxtitle smokegrey" id="listingstitle">NEARBY LISTINGS</div>
 

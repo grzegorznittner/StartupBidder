@@ -10,11 +10,10 @@ include(api-head.m4)
 <div id="main">
 '
 include(header.m4)
-`
-<div class="container">
-'
 include(api-banner.m4)
 `
+<div class="container">
+
 <div class="boxtitle">CONNECT TO STARTUPBIDDER</div>
 <div class="boxpanel apipanel">
         <p>

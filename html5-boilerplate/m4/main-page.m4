@@ -10,19 +10,15 @@ include(mainhead.m4)
 <div id="main">
 '
 include(header.m4)
-`
-<div class="container">
-'
 include(banner.m4)
 `
+<div class="container">
 <div class="span-24 preloader">
     <div class="preloaderfloater"></div>
     <div class="preloadericon"></div>
 </div>
 <div class="initialhidden wrapper">
-'
-include(searchbox.m4)
-`
+
 <!-- left column -->
 <div class="span-16">
     <div class="boxtitle smokegrey" id="listingstitle"></div>

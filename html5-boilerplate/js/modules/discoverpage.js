@@ -3,7 +3,6 @@ pl.implement(DiscoverPageClass,{
     loadPage: function() {
         var completeFunc = function(json) {
                 var header = new HeaderClass(),
-                    searchbox = new SearchBoxClass(),
                     editedListing = new CompanyListClass({ propertykey: 'edited_listing', propertyissingle: true, companydiv: 'edited_listing', fullWidth: true }),
                     usersListings = new CompanyListClass({ propertykey: 'users_listings', companydiv: 'users_listings', seeall: '/profile-listing-page.html?type=active' }),
                     monitoredListings = new CompanyListClass({ propertykey: 'monitored_listings', companydiv: 'monitored_listings', seeall: '/profile-listing-page.html?type=monitored' }),
@@ -18,7 +17,6 @@ pl.implement(DiscoverPageClass,{
                 pl('.wrapper').show();
                 categoryList.display();
                 locationList.display();
-                searchbox.bindEvents();
                 if (json.edited_listing) {
                     pl('#edited_listing_wrapper').show();
                     editedListing.storeList(json);

@@ -10,11 +10,9 @@ include(mainhead.m4)
 <div id="main">
 '
 include(header.m4)
-`
-<div class="container">
-'
 include(banner.m4)
 `
+<div class="container">
 <div class="span-24 initialhidden welcomevideo" id="welcomevideo">
     <div class="welcomevideoclosex closexicon" id="closexicon"></div>
     <div class="boxtitle">WELCOME VIDEO <a href="http://youtu.be/hq5gaQ1FtAU">(VIEW DIRECT ON YOUTUBE)</a></div>
@@ -29,9 +27,7 @@ include(banner.m4)
 </div>
 
 <div class="initialhidden wrapper">
-'
-include(searchbox.m4)
-`
+
 <!-- left column -->
 <div class="span-16">
 

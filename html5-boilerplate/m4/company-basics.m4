@@ -28,7 +28,7 @@ include(images-panel.m4)
     </div>
 
     <div class="span-8 last">
-        <div class="sidebox investbutton">INVEST</div>
+        <div class="sidebox investbutton" id="investbutton">INVEST</div>
 
         <div class="boxtitle boxtitleside">ASKING</div>
         <div class="sidebox uneditabletext askingbox">

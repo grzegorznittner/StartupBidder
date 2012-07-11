@@ -340,11 +340,45 @@ pl.implement(AjaxClass, {
         }
     }
 });
+
+function SearchBoxClass() {}
+pl.implement(SearchBoxClass, {
+    bindEvents: function() {
+        var qs = new QueryStringClass(),
+            val = (qs && qs.vars && qs.vars.searchtext) ? qs.vars.searchtext : 'Search',
+            displayVal = decodeURIComponent(val).replace(/\+/g, ' ');
+        pl('#searchtext').attr({value: displayVal});
+        console.log(val, displayVal);
+        pl('#searchtext').bind({
+            focus: function() {
+                if (pl('#searchtext').attr('value') === 'Search') {
+                    pl('#searchtext').attr({value: ''});
+                }
+            },
+            keyup: function(e) {
+                var evt = new EventClass(e);
+                if (evt.keyCode() === 13) {
+                    pl('#searchform').get(0).submit();
+                    return false;
+                }
+                return true;
+            }
+        });
+/*
+        pl('#searchbutton').bind({
+            click: function() {
+                pl('#searchform').get(0).submit();
+            }
+        });
+*/
+    }
+});
  
 function HeaderClass() {}
 pl.implement(HeaderClass, {
     setLogin: function(json) {
-        var profile = null;
+        var profile = null,
+            searchbox = new SearchBoxClass();
         if (json && json.loggedin_profile) {
             profile = json.loggedin_profile;
         }
@@ -352,6 +386,7 @@ pl.implement(HeaderClass, {
             profile = json;
         }
         this.setHeader(profile, json.login_url, json.logout_url);
+        searchbox.bindEvents();
     },
     setHeader: function(profile, login_url, logout_url) {
         if (profile) {
@@ -362,7 +397,8 @@ pl.implement(HeaderClass, {
         }
     },
     setLoggedIn: function(profile, logout_url) {
-        var username = profile.username || 'You',
+        // var username = profile.username || 'You',
+        var username = 'You',
             num_notifications = profile.num_notifications || 0,
             num_messages = profile.num_messages || 0,
             notificationlinktext = num_notifications ? num_notifications + ' unread notifications' : 'no unread notifications',

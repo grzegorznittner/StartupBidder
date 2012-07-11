@@ -50,6 +50,7 @@ pl.implement(ListingClass, {
         }
         this.displayBasics();
         this.displayFollow();
+        this.displayInvest();
         this.displayMap();
         this.displayDocuments();
         this.displayFunding();
@@ -118,6 +119,30 @@ pl.implement(ListingClass, {
             ajax = new AjaxClass('/monitor/set/' + self.listing_id, 'followmsg', complete);
         ajax.setPost();
         ajax.call();
+    },
+
+    displayInvest: function() {
+        var self = this;
+        if (self.loggedin_profile && self.loggedin_profile.profile_id === self.profile_id) { // owner
+            pl('#investbutton').text('INVESTMENTS');
+        }
+        pl('#investbutton').bind('click', function() {
+            var page, url;
+            if (self.loggedin_profile) {
+                if (self.loggedin_profile.profile_id === self.profile_id) { // owner
+                    pl('#investbutton').text('INVESTMENTS');
+                    page = 'company-owner-bids-page.html';
+                }
+                else { // logged in user
+                    page = 'company-investor-bids-page.html';
+                }
+            }
+            else {
+                page = 'company-bids-page.html';
+            }
+            url = '/' + page + '?id=' + self.listing_id;
+            document.location = url;
+        });
     },
 
     displayFollow: function() {
