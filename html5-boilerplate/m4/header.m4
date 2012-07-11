@@ -6,14 +6,16 @@
 -->
 
 <div class="header" id="header">
-  <div class="container headerrow">
+  <div class="container headerrow" style="width: 960px;">
     <div class="span-5 headerrow hoverlink">
-      <a href="discover-page.html"><div class="startupbidderlogo headerlogo"></div></a>
+        <a href="discover-page.html">
+            <div style="font-size:24px; padding-top: 7px;"><span style="color:#45a9e6;">startup</span><span style="color:#eee">bidder</span></div>
+        </a>
     </div>
     <div class="span-9 headerrow">
       <a href="discover-page.html"><span class="headerlink hoverlink headerlinknoborder">Discover</span></a>
       <a href="nearby-page.html"><span class="headerlink"><span class="hoverlink">Nearby</span></span></a>
-      <a id="postlink" href=""><span class="headerlink"><span class="hoverlink" id="posttext"></span></span></a>
+      <a id="postlink" href="#"><span class="headerlink"><span class="hoverlink" id="posttext">Add Listing</span></span></a>
     </div>
 
 <!-- not logged in -->

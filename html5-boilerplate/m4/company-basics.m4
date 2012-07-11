@@ -28,18 +28,20 @@ include(images-panel.m4)
     </div>
 
     <div class="span-8 last">
-        <div class="boxtitle">ASKING</div>
+        <div class="sidebox investbutton">INVEST</div>
+
+        <div class="boxtitle boxtitleside">ASKING</div>
         <div class="sidebox uneditabletext askingbox">
             <div class="sideboxdesc suggestedmsg" id="suggestedmsg"></div>
             <div class="suggestedinfo" id="suggestedinfo">
                 <div class="sideboxtitlecompact sideboxnum" id="suggested_amt"></div>
-                <div class="sideboxdesc">FOR <span class="sideboxnum" id="suggested_pct"></span><span class="sideboxnum">%</span> EQUITY</div>
-                <div class="sideboxdesc">OWNER VALUATION IS <span class="sideboxnum" id="suggested_val"></span></div>
-<!--                <div class="sideboxdesc">TOTAL RAISED IS <span class="sideboxnum" id="total_raised">$0</span></div> -->
+                <div class="sideboxdesc">For <span class="sideboxnum" id="suggested_pct"></span><span class="sideboxnum">%</span> equity</div>
+                <div class="sideboxdesc">Owner valuation is <span class="sideboxnum" id="suggested_val"></span></div>
+<!--                <div class="sideboxdesc">Total raised is <span class="sideboxnum" id="total_raised">$0</span></div> -->
             </div>
         </div>
      
-        <div class="boxtitle">DOCUMENTS</div>
+        <div class="boxtitle boxtitleside">DOCUMENTS</div>
         <div class="sidebox documentbox" id="documentbox">
                 <span class="doclabel clear">Presentation</span>
                 <span class="formlabelvalue formlink">
@@ -64,7 +66,7 @@ include(images-panel.m4)
                 </span>
         </div>
     
-        <div class="boxtitle">LOCATION</div>
+        <div class="boxtitle boxtitleside">LOCATION</div>
         <div class="sidebox">
             <div class="addresstext darkgrey" id="fulladdress"></div>
             <div class="sideboxmap">
@@ -74,7 +76,7 @@ include(images-panel.m4)
             </div>
         </div>
    
-        <div class="boxtitle">SHARE</div>
+        <div class="boxtitle boxtitleside">SHARE</div>
         <div class="sidebox socialsidebox" id="socialsidebox">
            
             <div class="twitterbanner" id="twitterbanner">
@@ -85,21 +87,21 @@ include(images-panel.m4)
         </div>
     
         <div id="withdrawbox" class="withdrawbox">
-        <div class="boxtitle">WITHDRAW POST</div>
+        <div class="boxtitle boxtitleside">WITHDRAW POST</div>
         <div class="withdrawmsg attention" id="withdrawmsg">Are you sure?<br/>This cannot be undone.</div>
         <a href="#" id="withdrawbtn"><div class="sideboxbutton sideboxbuttonsmall hoverlink">WITHDRAW</div></a>
         <a href="#" class="withdrawcancelbtn" id="withdrawcancelbtn"><div class="sideboxbutton sideboxbuttonsmall hoverlink">CANCEL</div></a>
         </div>
     
         <div id="approvebox" class="approvebox">
-        <div class="boxtitle">ACTIVATE POST</div>
+        <div class="boxtitle boxtitleside">ACTIVATE POST</div>
         <div class="approvemsg attention" id="approvemsg">Are you sure?</div>
         <a href="#" id="approvebtn"><div class="sideboxbutton sideboxbuttonsmall hoverlink">ACTIVATE</div></a>
         <a href="#" class="approvecancelbtn" id="approvecancelbtn"><div class="sideboxbutton sideboxbuttonsmall hoverlink">CANCEL</div></a>
         </div>
     
         <div id="sendbackbox" class="sendbackbox">
-        <div class="boxtitle">SEND BACK POST</div>
+        <div class="boxtitle boxtitleside">SEND BACK POST</div>
         <input class="text sideinputtext" type="text" name="sendbacktext" id="sendbacktext" value="" length="35" maxlength="100"></input>
         <div class="sendbackmsg attention" id="sendbackmsg">Are you sure?</div>
         <a href="#" id="sendbackbtn"><div class="sideboxbutton sideboxbuttonsmall hoverlink">SEND BACK</div></a>
@@ -107,7 +109,7 @@ include(images-panel.m4)
         </div>
     
         <div id="freezebox" class="freezebox">
-        <div class="boxtitle">FREEZE POST</div>
+        <div class="boxtitle boxtitleside">FREEZE POST</div>
         <input class="text sideinputtext" type="text" name="freezetext" id="freezetext" value="" length="35" maxlength="100"></input>
         <div class="freezemsg attention" id="freezemsg">Are you sure?</div>
         <a href="#" id="freezebtn"><div class="sideboxbutton sideboxbuttonsmall hoverlink">FREEZE</div></a>

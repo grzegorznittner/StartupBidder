@@ -12,19 +12,19 @@ define(`companybannermacro', `
 
                 <div class="companybannerlogo tileimg noimage" id="companylogo"></div>
     
-                <div class="companybannertitle aquamarine" id="title"></div>
+                <div class="companybannertitle" id="title"></div>
                 <div class="companybannertextgrey">
                     <span id="categoryaddresstext"></span><span> </span><span id="founderstext"></span>
-                    <a class="companybannertextlink hoverlink initialhidden" href="" id="sendmessagelink">send private message</a>
+                    <a class="companybannertextlink hoverlink initialhidden" href="" id="sendmessagelink"><span style="color:#666;">&middot;</span> send message</a>
                 </div>
                 <div class="companybannertextgrey">
-                    <span id="listing_date_text" class="inputfield"></span>
+                    <span id="listing_date_text" class="inputfield" style="margin-right: 1px;"></span>
                     &nbsp;<a class="companybannertextlink" href="#" target="_blank" id="websitelink">
-                        <span id="domainname" class="companybannerlink"></span>
+                        <span id="domainname" class="companybannertextlink" style="float:left;"></span>
                     </a>
                     <div class="span-1 linkicon"></div>
                 </div>
-                <div class="companybannermantra" id="mantra"></div>
+                <div class="companybannertextgrey" id="mantra"></div>
     
                 <div class="companybannerfollow">
                     <div class="inputmsg inputfield last followmsg initialhidden" id="followtext">You are following this listing</div>
