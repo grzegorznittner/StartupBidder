@@ -30,6 +30,14 @@ include(images-panel.m4)
     <div class="span-8 last">
         <div class="sidebox investbutton" id="investbutton">INVEST</div>
 
+        <a href="#" id="gotobusinessmodellink">
+            <div class="sidebox investbutton gotobutton">Go To Business Model</div>
+        </a>
+
+        <a href="#" id="gotopresentationlink">
+            <div class="sidebox investbutton gotobutton">Go To Presentation</div>
+        </a>
+
         <div class="boxtitle boxtitleside">ASKING</div>
         <div class="sidebox uneditabletext askingbox">
             <div class="sideboxdesc suggestedmsg" id="suggestedmsg"></div>
@@ -40,32 +48,31 @@ include(images-panel.m4)
 <!--                <div class="sideboxdesc">Total raised is <span class="sideboxnum" id="total_raised">$0</span></div> -->
             </div>
         </div>
-     
-        <div class="boxtitle boxtitleside">DOCUMENTS</div>
-        <div class="sidebox documentbox" id="documentbox">
-                <span class="doclabel clear">Presentation</span>
-                <span class="formlabelvalue formlink">
-                    <div class="span-1 smallinputicon presentationicon"></div>
-                    <a href="#" id="presentationlink">
-                        <span class="hoverlink" id="presentationbtn"></span>
-                    </a>
-                </span>
-                <span class="doclabel">Business Plan</span>
-                <span class="formlabelvalue formlink">
-                    <div class="span-1 smallinputicon documenticon"></div>
-                    <a href="#" id="businessplanlink">
-                        <span class="hoverlink" id="businessplanbtn"></span>
-                    </a>
-                </span>
-                <span class="doclabel clear">Financials</span>
-                <span class="formlabelvalue formlink">
-                    <div class="span-1 smallinputicon spreadsheeticon"></div>
-                    <a href="#" id="financialslink">
-                        <span class="hoverlink" id="financialsbtn"></span>
-                    </a>
-                </span>
-        </div>
     
+        <div class="initialhidden" id="documentboxwrapper"> 
+        <div class="boxtitle boxtitleside">DOCUMENTS</div>
+        <div class="sidebox" id="documentbox">
+                <div class="downloadline hoverlink initialhidden" id="presentationwrapper">
+                    <a href="#" id="presentationlink">
+                        <div class="downloadicon"></div>
+                        <div class="downloadtext">Download Presentation</div>
+                    </a>
+                </div>
+                <div class="downloadline hoverlink initialhidden" id="businessplanwrapper">
+                    <a href="#" id="businessplanlink">
+                        <div class="downloadicon"></div>
+                        <div class="downloadtext">Download Business Plan</div>
+                    </a>
+                </div>
+                <div class="downloadline hoverlink initialhidden" id="financialswrapper">
+                    <a href="#" id="financialslink">
+                        <div class="downloadicon"></div>
+                        <div class="downloadtext">Download Financials</div>
+                    </a>
+                </div>
+        </div>
+        </div>
+   
         <div class="boxtitle boxtitleside">LOCATION</div>
         <div class="sidebox">
             <div class="addresstext darkgrey" id="fulladdress"></div>

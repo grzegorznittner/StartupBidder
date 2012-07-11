@@ -11,20 +11,17 @@
 
     <div class="initialhidden" id="categorywrapper">
     <div class="boxtitle boxtitleside">CATEGORIES</div>
-    <div class="sidebox">
+    <div class="sidebox frontsidebox">
         <span class="attention" id="categorymsg"></span>
-        <span class="sideboxcol1 clear">
+        <span class="sideboxcolfull clear">
             <ul class="sideboxlist" id="categorydivcol1"></ul>
-        </span>
-        <span class="sideboxcol2">
-            <ul class="sideboxlist" id="categorydivcol2"></ul>
         </span>
     </div>
     </div>
     
     <div class="initialhidden" id="locationwrapper"> 
     <div class="boxtitle boxtitleside">LOCATIONS</div>
-    <div class="sidebox">
+    <div class="sidebox frontsidebox">
         <span class="attention" id="locationmsg"></span>
         <span class="sideboxcolfull clear">
             <ul class="sideboxlist" id="locationdivcol1"></ul>

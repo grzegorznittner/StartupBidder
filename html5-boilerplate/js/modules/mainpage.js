@@ -6,7 +6,7 @@ pl.implement(MainPageClass,{
                     companyList = new CompanyListClass(),
                     categories = json.categories || {},
                     locations = json.top_locations || {},
-                    categoryList = new BaseListClass(categories, 'category', 2, 'category'),
+                    categoryList = new BaseListClass(categories, 'category', 1, 'category'),
                     locationList = new BaseListClass(locations, 'location', 1, 'location');
                 header.setLogin(json);
                 categoryList.display();

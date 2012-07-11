@@ -10,8 +10,8 @@ pl.implement(DiscoverPageClass,{
                     latestListings = new CompanyListClass({ propertykey: 'latest_listings', companydiv: 'latest_listings', seeall: '/main-page.html?type=latest' }),
                     categories = json.categories || {},
                     locations = json.top_locations || {},
-                    categoryList = new BaseListClass(categories, 'category', 2, 'category'),
-                    locationList = new BaseListClass(locations, 'location', 2, 'location');
+                    categoryList = new BaseListClass(categories, 'category', 1, 'category'),
+                    locationList = new BaseListClass(locations, 'location', 1, 'location');
                 header.setLogin(json);
                 pl('.preloader').hide();
                 pl('.wrapper').show();

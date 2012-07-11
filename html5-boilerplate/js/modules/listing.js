@@ -51,6 +51,7 @@ pl.implement(ListingClass, {
         this.displayBasics();
         this.displayFollow();
         this.displayInvest();
+        this.displayGoto();
         this.displayMap();
         this.displayDocuments();
         this.displayFunding();
@@ -159,6 +160,13 @@ pl.implement(ListingClass, {
         }
     },
 
+    displayGoto: function() {
+        var bmcurl = '/company-model-page.html?id=' + this.listing_id,
+            presurl = '/company-slides-page.html?id=' + this.listing_id;
+        pl('#gotobusinessmodellink').attr({href: bmcurl});
+        pl('#gotopresentationlink').attr({href: presurl});
+    },
+
     displayFollowing: function() {
             pl('#followbtn').text('UNFOLLOW');
             pl('#followtext, #followbtn').show();
@@ -182,24 +190,24 @@ pl.implement(ListingClass, {
         pl('#mapimg').attr({src: this.mapurl});
     },
 
-    displayDocumentLink: function(linkId, btnId, docId) {
-        var url;
+    displayDocumentLink: function(type, docId) {
+        var linkId = type + 'link',
+            wrapperId = type + 'wrapper',
+            url;
         if (docId) {
             url = '/file/download/' + docId;
-            pl('#'+btnId).addClass('span-3 smallinputbutton').html('DOWNLOAD');
             pl('#'+linkId).attr({href: url});
-            
-        }
-        else {
-            pl('#'+btnId).addClass('span-3 doclinkmsg attention').html('NONE');
-            pl('#'+linkId).attr({href: '#'}).addClass('nohover').bind({click: function() { return false; }});
+            pl('#'+wrapperId).show();
         }
     },
 
     displayDocuments: function() {
-        this.displayDocumentLink('presentationlink', 'presentationbtn', this.presentation_id);
-        this.displayDocumentLink('businessplanlink', 'businessplanbtn', this.business_plan_id);
-        this.displayDocumentLink('financialslink', 'financialsbtn', this.financials_id);
+        if (this.presentation_id || this.business_plan_id || this.financials_id) {
+            this.displayDocumentLink('presentation', this.presentation_id);
+            this.displayDocumentLink('businessplan', this.business_plan_id);
+            this.displayDocumentLink('financials', this.financials_id);
+            pl('#documentboxwrapper').show();
+        }
     },
 
     displayFunding: function() {

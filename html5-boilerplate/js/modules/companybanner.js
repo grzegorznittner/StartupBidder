@@ -40,9 +40,8 @@ pl.implement(CompanyBannerClass, {
             addr = this.brief_address,
             catprefix = !cat || (cat !== 'Other' && !cat.match(/^[AEIOU]/)) ? 'A' : 'An',
             catlink = cat && cat !== 'Other' ? '<a href="/main-page.html?type=category&val=' + encodeURIComponent(cat) + '">' + cat + '</a>' : '',
-            catlinked = catprefix + ' ' + catlink + ' company',
-            addrtext = (addr ? ' in ' + addr : ''),
-            addrlinked = !addr ? '' : '<a href="/main-page.html?type=location&val=' + encodeURIComponent(addr) + '">' + addrtext + '</a>',
+            catlinked = catprefix + ' ' + catlink + ' listing',
+            addrlinked = !addr ? '' : ' in <a href="/main-page.html?type=location&val=' + encodeURIComponent(addr) + '">' + addr + '</a>',
             categoryaddresstext = catlinked + addrlinked,
             founderstext = (this.founders ? ' founded by ' + this.founders : ''),
             status = this.status || 'new',
@@ -53,8 +52,8 @@ pl.implement(CompanyBannerClass, {
         if (logobg) {
             pl('#companylogo').removeClass('noimage').css({background: logobg});
         }
-        pl('#title').text(this.title || 'Company Name Here');
-        pl('title').text('Startupbidder Listing: ' + (this.title || 'Company Name Here'));
+        pl('#title').text(this.title || 'Listing Name Here');
+        pl('title').text('Startupbidder Listing: ' + (this.title || 'Listing Name Here'));
         pl('#mantra').text(this.mantra || 'Mantra here');
         pl('#companystatus').text('Listing is ' + status);
         if (status === 'withdrawn') {

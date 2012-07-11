@@ -400,7 +400,6 @@ pl.implement(ListClass, {
             htmlCol1 +=
                  '<a href="' + itemurl + '" class="hoverlink">'
                 +   '<li>'
-                +     '<span class="sideboxlistnum span-1">' + count + '</span>'
                 +     '<span class="sideboxlistname last">' + name + '</span>'
                 +   '</li>'
                 + '</a>';
@@ -431,19 +430,26 @@ pl.implement(BaseListClass, {
             list = [], 
             lc = new ListClass({type: self.type}),
             k,
-            v;
+            v,
+            keys = [];
         for (k in self.kvlist) {
             v = self.kvlist[k];
             list.push([k, v]);
+            keys.push(k);
         }
         list.sort(function(a, b) {
-            if (a[1] === b[1]) {
-                return a[0] - b[0];
+            if (a[0] === b[0]) {
+                return 0;
+            }
+            else if (a[0] < b[0]) {
+                return -1;
             }
             else {
-                return b[1] - a[1];
+                return 1;
             }
         });
+        keys.sort();
+        console.log(keys, list);
         if (self.over === 2) {
             lc.spreadOverTwoCols(list, '#'+self.col1id, '#'+self.col2id);
         }

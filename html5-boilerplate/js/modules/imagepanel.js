@@ -38,18 +38,24 @@ pl.implement(ImagePanelClass, {
                 self.numPics++;
             }
         }
-        pl('.dotnav').bind('click', function() {
-            var ul = pl(this).hasClass('dotnav') ? this : this.parentNode,
-                navid = ul.id,
-                picnum = navid.replace(/pic|nav/g, '');
-            self.runningSlideshow = false;
-            self.advanceRight(picnum);
-        });
-        pl('.picslide').bind('click', function() {
-            self.runningSlideshow = false;
-            self.advanceRight();
-        });
-        if (firstpic && !this.options.editmode) {
+        if (!(firstpic && !this.options.editmode && self.numPics <= 1)) {
+            pl('.dotnav').bind('click', function() {
+                var ul = pl(this).hasClass('dotnav') ? this : this.parentNode,
+                    navid = ul.id,
+                    picnum = navid.replace(/pic|nav/g, '');
+                self.runningSlideshow = false;
+                self.advanceRight(picnum);
+            });
+            pl('.picslide').bind('click', function() {
+                self.runningSlideshow = false;
+                self.advanceRight();
+            });
+        }
+        if (firstpic && !this.options.editmode && self.numPics <= 1) {
+            pl('#imagetitle').text('IMAGE');
+            pl('.dotnavwrapper').hide();
+        }
+        else if (firstpic && !this.options.editmode) {
             pl('#' + firstpic + 'nav').addClass('dotnavfilled');
             self.runningSlideshow = true;
             setTimeout(function(){ self.advanceSlideshow(); }, 5000);

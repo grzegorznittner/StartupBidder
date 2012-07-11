@@ -126,7 +126,6 @@ a:focus, a:hover { cursor: pointer; }
 .sideboxnum { color: #333333 !important }
 .nextgrey,
     .companybannertextgrey, .companybannermantra, .tiledesc, .tilepointstext,
-    .sideboxlistname,
     .companyhalfmantra, .companyhalftext,
     .loctext, .loctextinp,
     .bannertextsmall, .sideboxbutton,
@@ -141,7 +140,8 @@ a:focus, a:hover { cursor: pointer; }
     .orderbookdate, .biddate, .investorbiddate, .lastdate
     { color: #666; }
 .darkblue
-    .tilecompany, .companyhalftitle, .companybannertextlink, .formlink, .inputbutton, .smallinputbutton, .footerlink, .loctextinp, .loctext, .showmore a
+    .tilecompany, .companyhalftitle, .companybannertextlink, .formlink, .inputbutton, .smallinputbutton, .footerlink, .loctextinp, .loctext, .showmore a,
+    .sideboxlistname
     { color: #55a4f2; }
 .companybannertitle
     { color: #444; }
@@ -196,11 +196,11 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .welcomevideo { position: relative; }
 .welcomevideoclosex { position: absolute; right: 6px; top: 0; z-index: 1000; }
 .welcomevideocontainer { margin: 10px 0; }
-.socialsidebox { height: 80px; position: relative; }
+.socialsidebox { height: 95px; position: relative; }
 .socialbanner { height: 80px; position: relative; }
-.twitterbanner { height: 23px; top: 4px; position: absolute; }
-.gplusbanner { height: 20px; top: 27px; position: absolute; }
-.facebookbanner { height: 28px; top: 51px; position: absolute; }
+.twitterbanner { height: 23px; top: 14px; position: absolute; }
+.gplusbanner { height: 20px; top: 37px; position: absolute; }
+.facebookbanner { height: 28px; top: 61px; position: absolute; }
 .facebookbanner div span iframe { height: 28px !important; }
 
 /* company banner styles */
@@ -635,6 +635,9 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
     padding-bottom: 10px;
     padding-left: 15px;
 }
+.frontsidebox {
+    padding-top: 8px;
+}
 .sidebox p { margin: 5px 10px 10px 10px; text-indent: 0px; font-weight: normal; }
 .sideboxcol1 { width: 150px; float: left; margin-right: 0; }
 .sideboxcol2 { width: 150px; float: left; }
@@ -642,7 +645,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .sideboxlist { list-style: none; list-style-position: inside; margin: 0; padding: 0; font-weight: bold; }
 .sideboxlist li { margin-left: 10px; text-indent: -10px; }
 .sideboxlistnum { font-size: 18px; line-height: 27px; clear: both; }
-.sideboxlistname { line-height: 27px; }
+.sideboxlistname { line-height: 27px; font-weight: normal; }
 .sideboxbutton { width: 310px; height: 50px; font-size: 34px; font-weight: bold; text-align: center; margin-bottom: 10px; }
 .sideboxbuttonsmall { width: 150px; height: 30px; font-size: 20px; }
 .sideboxbuttoninterior { width: 292px; height: 50px; font-size: 34px; font-weight: bold; text-align: center; margin: 0 5px 5px 5px; }
@@ -742,7 +745,7 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .deactivatemsg { display: none; font-weight: bold; }
 .deactivatecancelbtn { display: none; margin-top: 10px; }
 .mapaddresstext { font-weight: bold; }
-.addresstext { color: #555; font-size: 12px; font-weight: normal; padding-bottom: 8px; padding-top: 3px; }
+.addresstext { color: #555; font-size: 12px; font-weight: normal; padding-bottom: 8px; padding-top: 3px; margin-left: -2px; }
 /* .summarypanel { min-height: 130px; } */
 .showmore { float: right; margin-right: 10px; font-weight: bold; margin-bottom: 10px; }
 
@@ -827,9 +830,10 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 .tiledays, .tiledaystext { top: 0px; }
 .tiletype, .tiletypetext { top: 116px; }
 .tilepoints { top: 266px; }
-.tiledesc { width: 142px; height: 116px; position: absolute; top: 146px; padding: 0 2px 2px 2px; margin:0; overflow: hidden; border-top: 2px solid #666666; }
+.tiledesc { width: 142px; height: 116px; position: absolute; top: 146px; padding: 0 2px 2px 2px; margin:0; overflow: hidden; border-top: 2px solid #ddd; }
 .tilecompany { font-size: 14px; line-height: 19px; font-weight: bold; }
 .tileloc, .tiledetails, .tiledesc { font-size: 12px; line-height: 16px; }
+.tileloc, .tiledetails { line-height: 20px; }
 .tilevotes, .tilevoteimg { position: absolute; }
 .tilevotes { left: 30px; }
 .tileposted { position: absolute; top: 6px; font-weight: bold; }
@@ -1137,11 +1141,11 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
 /* tim improvements */
 .investbutton {
     background: #87c442;
-    border: 1px solid #7fbf3f !important;
+    border: 2px solid #70b030 !important;
     color: #fff;
     margin-top: 35px;
     font-size: 30px;
-    padding-top: 5px;
+    padding-top: 10px;
     text-align: center;
     font-weight: 900;
 }
@@ -1156,6 +1160,14 @@ background: linear-gradient(top, #e2e2e2 0%,#d1d1d1 49%,#dbdbdb 50%,#999999 100%
     margin-top: 30px;
     position: relative;
 }
+
+/* downloads */
+.downloadline { padding-top: 10px; clear: both; }
+.downloadicon { background: url(/img/icons/upcoming-work.png); width: 32px; height: 32px; float: left; margin-right: 10px; }
+.downloadtext { padding-top: 5px; float: left; }
+
+.gotobutton { background: #eee; color: #666; border: 2px solid #ddd !important; font-size: 16px; margin-top: 20px; font-weight: normal; }
+
 
 .titleprevnextbtn { margin-top: 3px; color: #4083a9; }
 
