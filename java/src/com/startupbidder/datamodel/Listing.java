@@ -32,6 +32,15 @@ public class Listing extends BaseObject<Listing> {
 	 * CLOSED - automatic action done after certain time or when bid was accepted
 	 */
 	public enum State {NEW, POSTED, ACTIVE, CLOSED, WITHDRAWN, FROZEN};
+	/**
+	 * Determines type of the listing.
+	 */
+	public enum Type {APPLICATION, COMPANY};
+	/**
+	 * List of available values for platform property.
+	 * It's not verified now.
+	 */
+	public enum Platform {IOS, ANDROID, WINDOWS_PHONE, DESKTOP, OTHER};
 
 	public Key<Listing> getKey() {
 		return new Key<Listing>(Listing.class, id);
@@ -63,6 +72,11 @@ public class Listing extends BaseObject<Listing> {
 	
 	/** Category of the listing */
 	@Indexed public String category;
+	@Indexed public Type type = Type.APPLICATION;
+	public String platform;
+	
+	/** Notes stored by system */
+	public String notes;
 	
 	@Indexed public Date  created;
 	@Indexed public Date  posted;
@@ -91,7 +105,7 @@ public class Listing extends BaseObject<Listing> {
 	public Key<ListingDoc> pic1Id, pic2Id, pic3Id, pic4Id, pic5Id;
 	public String logoBase64;
 	public String videoUrl;
-	
+		
 	/** Answers for standard questions */
 	public String answer1;
 	public String answer2;

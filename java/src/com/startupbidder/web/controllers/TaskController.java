@@ -12,6 +12,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 
+import com.startupbidder.dao.MockDataBuilder;
 import com.startupbidder.dao.NotificationObjectifyDatastoreDAO;
 import com.startupbidder.dao.ObjectifyDatastoreDAO;
 import com.startupbidder.datamodel.Listing;
@@ -59,8 +60,10 @@ public class TaskController extends ModelDrivenController {
 			return calculateUserStats(request);
 		} else if("calculate-listing-stats".equalsIgnoreCase(getCommand(1))) {
 			return calculateListingStats(request);
-		}  else if("update-mock-listing-images".equalsIgnoreCase(getCommand(1))) {
+		} else if("update-mock-listing-images".equalsIgnoreCase(getCommand(1))) {
 			return updateMockListingImages(request);
+		} else if("update-mock-listing-pictures".equalsIgnoreCase(getCommand(1))) {
+			return updateMockListingPictures(request);
 		} else if("send-notification".equalsIgnoreCase(getCommand(1))) {
 			return sendNotification(request);
 		} else if("schedule-comment-notifications".equalsIgnoreCase(getCommand(1))) {
@@ -109,6 +112,17 @@ public class TaskController extends ModelDrivenController {
 		
 		String listingId = getCommandOrParameter(request, 2, "id");
 		ListingFacade.instance().updateMockListingImages(ListingVO.toKeyId(listingId));
+		model = listingId;
+		
+		return headers;
+	}
+
+	private HttpHeaders updateMockListingPictures(HttpServletRequest request) {
+		HttpHeaders headers = new HttpHeadersImpl("update-mock-listing-pictures");
+		
+		String listingId = getCommandOrParameter(request, 2, "id");
+		Listing listing = ObjectifyDatastoreDAO.getInstance().getListing(ListingVO.toKeyId(listingId));
+		ListingFacade.instance().updateMockListingPictures(listing, new MockDataBuilder().picUrls.get(listing.name));
 		model = listingId;
 		
 		return headers;

@@ -18,7 +18,7 @@ import org.codehaus.jackson.annotate.JsonProperty;
 @JsonIgnoreProperties(ignoreUnknown=true)
 public class ListingVO extends ListingTileVO {
 	public static final List<String> UPDATABLE_PROPERTIES = Arrays.asList(new String[] {
-			"title", "mantra", "summary", "contact_email", "founders", "website", "category",
+			"title", "mantra", "summary", "contact_email", "founders", "website", "category", "type", "platform",
 			"asked_fund", "suggested_amt", "suggested_pct", "video", "answer1", "answer2", "answer3",
 			"answer4", "answer5", "answer6", "answer7", "answer8", "answer9", "answer10", "answer11", "answer12", "answer13",
 			"answer14", "answer15", "answer16", "answer17", "answer18", "answer19", "answer20", "answer21", "answer22", "answer23",
@@ -34,6 +34,7 @@ public class ListingVO extends ListingTileVO {
 	@JsonProperty("founders") private String founders;
 	@JsonProperty("contact_email") private String contactEmail;
 	@JsonProperty("address") private String address;
+	@JsonProperty("platform") private String platform;
 	@JsonProperty("num_comments") private long numberOfComments;
 	@JsonProperty("num_bids") private long numberOfBids;
     @JsonProperty("num_qandas") private long numberOfQuestions;
@@ -77,6 +78,7 @@ public class ListingVO extends ListingTileVO {
 	@JsonProperty("answer24") private String answer24;
 	@JsonProperty("answer25") private String answer25;
 	@JsonProperty("answer26") private String answer26;
+	@JsonProperty("notes") private String notes;
 	
 	public ListingVO() {
 	}
@@ -717,5 +719,21 @@ public class ListingVO extends ListingTileVO {
 
 	public void setFounders(String founders) {
 		this.founders = founders;
+	}
+
+	public String getPlatform() {
+		return platform;
+	}
+
+	public void setPlatform(String platform) {
+		this.platform = platform;
+	}
+
+	public String getNotes() {
+		return notes;
+	}
+
+	public void setNotes(String notes) {
+		this.notes = notes;
 	}
 }

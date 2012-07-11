@@ -151,6 +151,8 @@ public class DtoToVoConverter {
 		listing.setSuggestedAmount(listingDTO.suggestedAmount);
 		listing.setSuggestedPercentage(listingDTO.suggestedPercentage);
 		listing.setState(listingDTO.state.toString());
+		listing.setType(listingDTO.type.toString());
+		listing.setPlatform(listingDTO.platform);
 		listing.setPresentationId(keyToString(listingDTO.presentationId));
 		listing.setBuinessPlanId(keyToString(listingDTO.businessPlanId));
 		listing.setFinancialsId(keyToString(listingDTO.financialsId));
@@ -247,6 +249,7 @@ public class DtoToVoConverter {
 		listing.setMantra(listingDTO.mantra);
 		listing.setWebsite(listingDTO.website);
 		listing.setCategory(listingDTO.category);
+		listing.setType(listingDTO.type.toString());
 
 		listing.setLatitude(listingDTO.latitude);
 		listing.setLongitude(listingDTO.longitude);

@@ -36,6 +36,7 @@ public class ListingTileVO extends BaseVO {
 	@JsonProperty("summary") protected String summary;
 	@JsonProperty("website") protected String website;
 	@JsonProperty("category") protected String category;
+	@JsonProperty("type") protected String type;
 	@JsonProperty("profile_id") protected String owner;
 	@JsonProperty("profile_username") protected String ownerName;
 	@JsonProperty("brief_address") protected String briefAddress;
@@ -229,5 +230,13 @@ public class ListingTileVO extends BaseVO {
 
 	public void setBriefAddress(String briefAddress) {
 		this.briefAddress = briefAddress;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
 	}
 }

@@ -203,9 +203,13 @@ public class ListingFacade {
 		long id = 0;
 		try {
 			id = BaseVO.toKeyId(listingId);
-			ListingVO listing = DtoToVoConverter.convert(getDAO().getListing(id));
+			Listing listingDTO = getDAO().getListing(id);
+			ListingVO listing = DtoToVoConverter.convert(listingDTO);
 			
 			if (listing != null) {
+				if (loggedInUser != null && loggedInUser.isAdmin()) {
+					listing.setNotes(listingDTO.notes);
+				}
 				Monitor monitor = loggedInUser != null ? getDAO().getListingMonitor(loggedInUser.toKeyId(), listing.toKeyId()) : null;
 				applyListingData(loggedInUser, listing, monitor);
 				listingAndUser.setListing(listing);
@@ -2092,7 +2096,9 @@ public class ListingFacade {
     
     public void updateMockListingPictures(Listing listing, String imageUrls[]) {
 		MockDataBuilder mock = new MockDataBuilder();
-		
+		if (imageUrls == null) {
+			return;
+		}
         try {
         	int index = 1;
             for (String imageUrl : imageUrls) {

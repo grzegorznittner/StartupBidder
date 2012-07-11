@@ -6,7 +6,7 @@ package com.startupbidder.dao;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -35,23 +35,8 @@ public class DatastoreMigration {
 	public static String associateImages() {
 		StringBuffer report = new StringBuffer();
 		report.append("Listing's migration:<br/>\n<ul>\n");
-		String dataPath = MockDataBuilder.getTestDataPath() + "pics/";
 		
-		Map<String, String[]> picMap = new HashMap<String, String[]>();
-		picMap.put("Semantic Search", new String[] {dataPath + "semantic_1.jpg", dataPath + "semantic_2.jpg"});
-		picMap.put("Local news sites", new String[] {dataPath + "localnews_1.jpg", dataPath + "localnews_2.jpg"});
-		picMap.put("MisLead", new String[] {dataPath + "mislead_1.jpg", dataPath + "mislead_2.jpg"});
-		picMap.put("Micropayments", new String[] {dataPath + "micropayments_1.jpg", dataPath + "micropayments_2.png", dataPath + "micropayments_3.png", dataPath + "micropayments_4.jpg"});
-		picMap.put("Flight twitter", new String[] {dataPath + "flight_1.jpg", dataPath + "flight_2.jpg"});
-		picMap.put("Better company car", new String[] {dataPath + "car_1.jpg", dataPath + "car_2.jpg", dataPath + "car_3.jpg", dataPath + "car_4.jpg", dataPath + "car_5.jpg"});
-		picMap.put("On-the-fly conference", new String[] {dataPath + "conference_1.jpg", dataPath + "conference_2.jpg", dataPath + "conference_3.jpg"});
-		picMap.put("Computer Training Camp", new String[] {dataPath + "training_1.jpg", dataPath + "training_2.jpg", dataPath + "training_3.jpg"});
-		picMap.put("Village rainwater", new String[] {dataPath + "village_1.jpg", dataPath + "village_2.jpg", dataPath + "village_3.jpg"});
-		picMap.put("De Vegetarische Slager", new String[] {dataPath + "vegetarian_1.jpg", dataPath + "vegetarian_2.jpg", dataPath + "vegetarian_3.jpg"});
-		picMap.put("Social recommendations", new String[] {dataPath + "recommendations_1.png", dataPath + "recommendations_2.jpg", dataPath + "recommendations_3.jpg", dataPath + "recommendations_4.jpg"});
-		picMap.put("Panty by Post", new String[] {dataPath + "panty_1.jpg", dataPath + "panty_2.jpg"});
-		picMap.put("Computer Upgrading Service", new String[] {dataPath + "computer_1.jpg", dataPath + "computer_2.jpg"});
-		
+		Map<String, String[]> picMap = new MockDataBuilder().picUrls;
 		QueryResultIterable<Key<Listing>> l = getOfy().query(Listing.class).fetchKeys();
 		Map<Key<Listing>, Listing> listings = getOfy().get(l);
 		
@@ -71,6 +56,39 @@ public class DatastoreMigration {
 		return report.toString();
 	}
 	
+	public static String migrate201207101218_to_current() {
+		StringBuffer report = new StringBuffer();
+		
+		/* migrating Listings
+		 * - property type set to COMPANY since we don't have any APPLICATIONs yet
+		 * - platform set to null as it's only valid for APPLICATIONs
+		 * - notes set to "Migrated on DATE - updated properties type, platform and notes".
+		 */
+		report.append("Listing migration:<br/>\n<ul>\n");
+		Calendar listingUpdateDate = Calendar.getInstance();
+		listingUpdateDate.set(2012, 7, 12);
+		
+		QueryResultIterable<Key<Listing>> l = getOfy().query(Listing.class).fetchKeys();
+		Map<Key<Listing>, Listing> listings = getOfy().get(l);
+		List<Listing> listingMigration = new ArrayList<Listing>();
+		
+		for (Listing listing : listings.values()) {
+			if (listing.created.before(listingUpdateDate.getTime())) {
+				listing.type = Listing.Type.COMPANY;
+				listing.platform = null;
+				listing.notes = "Migrated on " + new Date() + " - updated properties type, platform and notes.\n";
+				listingMigration.add(listing);
+				report.append("<li>migrating listing " + listing.name);
+			} else {
+				report.append("<li>listing " + listing.name + " not migrated");
+			}
+		}
+		getOfy().put(listingMigration);
+		report.append("<br/>\n</ul>\n");
+		
+		return report.toString();
+	}
+
 	public static String migrate201207051222_to_current() {
 		StringBuffer report = new StringBuffer();
 		

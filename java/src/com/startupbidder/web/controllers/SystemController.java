@@ -57,8 +57,8 @@ public class SystemController extends ModelDrivenController {
                 return importStartuplyData(request);
 			} else if("export-datastore".equalsIgnoreCase(getCommand(1))) {
 				return exportDatastore(request);
-			} else if("migrate201207051222_to_current".equalsIgnoreCase(getCommand(1))) {
-				return migrate201207051222_to_current(request);
+			} else if("migrate201207101218_to_current".equalsIgnoreCase(getCommand(1))) {
+				return migrate201207101218_to_current(request);
 			} else if("associate_mock_images".equalsIgnoreCase(getCommand(1))) {
 				return associateMockImages(request);
 			}
@@ -76,12 +76,12 @@ public class SystemController extends ModelDrivenController {
 		return headers;
 	}
 
-	private HttpHeaders migrate201207051222_to_current(HttpServletRequest request) {
-		HttpHeaders headers = new HttpHeadersImpl("migrate201207051222_to_current");
+	private HttpHeaders migrate201207101218_to_current(HttpServletRequest request) {
+		HttpHeaders headers = new HttpHeadersImpl("migrate201207101218_to_current");
 		
 		UserVO loggedInUser = getLoggedInUser();
 		if (loggedInUser != null && loggedInUser.isAdmin()) {
-			model = DatastoreMigration.migrate201207051222_to_current();
+			model = DatastoreMigration.migrate201207101218_to_current();
 		}
 		return headers;
 	}

@@ -72,7 +72,7 @@ import com.startupbidder.web.controllers.ListingController;
 public class MockDataBuilder {
 	private static final Logger log = Logger.getLogger(MockDataBuilder.class.getName());
 	static ObjectifyDatastoreDAO instance;
-
+	
 	public UserVO GREG;
 	public UserVO JOHN;
 	public UserVO AHMED;
@@ -100,7 +100,34 @@ public class MockDataBuilder {
 	private long id = 2000L;
 
     private static Map<Long, String> logoUrls = new ConcurrentHashMap<Long, String>();
+	public Map<String, String[]> picUrls = new HashMap<String, String[]>();
 
+
+    public MockDataBuilder() {
+    	initPicsUrls();
+    }
+    
+    private void initPicsUrls() {
+    	String dataPath = MockDataBuilder.getTestDataPath() + "pics/";
+    	picUrls.put("Semantic Search", new String[] {dataPath + "semantic_1.jpg", dataPath + "semantic_2.jpg"});
+    	picUrls.put("Local news sites", new String[] {dataPath + "localnews_1.jpg", dataPath + "localnews_2.jpg"});
+    	picUrls.put("MisLead", new String[] {dataPath + "mislead_1.jpg", dataPath + "mislead_2.jpg"});
+    	picUrls.put("Micropayments", new String[] {dataPath + "micropayments_1.jpg", dataPath + "micropayments_2.png", dataPath + "micropayments_3.png", dataPath + "micropayments_4.jpg"});
+    	picUrls.put("Flight twitter", new String[] {dataPath + "flight_1.jpg", dataPath + "flight_2.jpg"});
+    	picUrls.put("Better company car", new String[] {dataPath + "car_1.jpg", dataPath + "car_2.jpg", dataPath + "car_3.jpg", dataPath + "car_4.jpg", dataPath + "car_5.jpg"});
+    	picUrls.put("On-the-fly conference", new String[] {dataPath + "conference_1.jpg", dataPath + "conference_2.jpg", dataPath + "conference_3.jpg"});
+    	picUrls.put("Computer Training Camp", new String[] {dataPath + "training_1.jpg", dataPath + "training_2.jpg", dataPath + "training_3.jpg"});
+    	picUrls.put("Village rainwater", new String[] {dataPath + "village_1.jpg", dataPath + "village_2.jpg", dataPath + "village_3.jpg"});
+    	picUrls.put("De Vegetarische Slager", new String[] {dataPath + "vegetarian_1.jpg", dataPath + "vegetarian_2.jpg", dataPath + "vegetarian_3.jpg"});
+    	picUrls.put("Social recommendations", new String[] {dataPath + "recommendations_1.png", dataPath + "recommendations_2.jpg", dataPath + "recommendations_3.jpg", dataPath + "recommendations_4.jpg"});
+    	picUrls.put("Panty by Post", new String[] {dataPath + "panty_1.jpg", dataPath + "panty_2.jpg"});
+    	picUrls.put("Computer Upgrading Service", new String[] {dataPath + "computer_1.jpg", dataPath + "computer_2.jpg"});
+    	picUrls.put("Eyewear for $99", new String[] {dataPath + "eyewear_1.jpg", dataPath + "eyewear_2.jpg"});
+    	picUrls.put("MysticTea", new String[] {dataPath + "tea_1.jpg", dataPath + "tea_2.jpg"});
+    	picUrls.put("New Century Wines", new String[] {dataPath + "wines_1.jpg", dataPath + "wines_2.jpg"});
+    	picUrls.put("PartyFinder", new String[] {dataPath + "party_1.jpg", dataPath + "party_2.jpg"});
+    }
+    
 	private long id() {
         if (!isIdInitialized) {
             try {
@@ -254,6 +281,11 @@ public class MockDataBuilder {
 					String taskName = new Date().getTime() + "_mock_listing_file_update_" + listing.getWebKey();
 					Queue queue = QueueFactory.getDefaultQueue();
 					queue.add(TaskOptions.Builder.withUrl("/task/update-mock-listing-images").param("id", listing.getWebKey())
+							.taskName(taskName).countdownMillis(10000));
+					
+					taskName = new Date().getTime() + "_mock_listing_pics_update_" + listing.getWebKey();
+					queue = QueueFactory.getDefaultQueue();
+					queue.add(TaskOptions.Builder.withUrl("/task/update-mock-listing-pictures").param("id", listing.getWebKey())
 							.taskName(taskName).countdownMillis(10000));
 				}
 			}
@@ -604,6 +636,7 @@ public class MockDataBuilder {
 		user.joined = new Date(System.currentTimeMillis() - 22 * 24 * 60 * 60 * 1000);
 		user.status = SBUser.Status.DEACTIVATED;
 		user.lastLoggedIn = new Date();
+		user.notifyEnabled = false;
         user.genNicknameLower();
 		AHMED = DtoToVoConverter.convert(user);
 		users.add(user); // 0
@@ -618,6 +651,7 @@ public class MockDataBuilder {
 		user.joined = new Date(System.currentTimeMillis() - 23 * 24 * 60 * 60 * 1000);
 		user.status = SBUser.Status.ACTIVE;
 		user.lastLoggedIn = new Date();
+		user.notifyEnabled = false;
         user.genNicknameLower();
         JACOB = DtoToVoConverter.convert(user);
 		users.add(user); // 1
@@ -631,6 +665,7 @@ public class MockDataBuilder {
 		user.openId = user.email;
 		user.joined = new Date(System.currentTimeMillis() - 31 * 24 * 60 * 60 * 1000);
 		user.status = SBUser.Status.ACTIVE;
+		user.notifyEnabled = false;
         user.genNicknameLower();
         INSIDER = DtoToVoConverter.convert(user);
 		users.add(user); // 2
@@ -646,6 +681,7 @@ public class MockDataBuilder {
 		user.status = SBUser.Status.ACTIVE;
 		user.lastLoggedIn = new Date();
 		user.investor = true;
+		user.notifyEnabled = false;
         user.genNicknameLower();
         DRAGON = DtoToVoConverter.convert(user);
 		users.add(user); // 3
@@ -661,6 +697,7 @@ public class MockDataBuilder {
 		user.status = SBUser.Status.ACTIVE;
 		user.investor = true;
 		user.lastLoggedIn = new Date();
+		user.notifyEnabled = false;
         user.genNicknameLower();
         MADMAX = DtoToVoConverter.convert(user);
 		users.add(user); // 4
@@ -676,6 +713,7 @@ public class MockDataBuilder {
 		user.status = SBUser.Status.DEACTIVATED;
 		user.investor = true;
 		user.lastLoggedIn = new Date();
+		user.notifyEnabled = false;
         user.genNicknameLower();
         THEONE = DtoToVoConverter.convert(user);
 		users.add(user); // 5
@@ -691,6 +729,7 @@ public class MockDataBuilder {
 		user.status = SBUser.Status.DEACTIVATED;
 		user.investor = true;
 		user.lastLoggedIn = new Date();
+		user.notifyEnabled = false;
         user.genNicknameLower();
         JENNY = DtoToVoConverter.convert(user);
 		users.add(user); // 6
@@ -706,6 +745,7 @@ public class MockDataBuilder {
 		user.status = SBUser.Status.DEACTIVATED;
 		user.investor = true;
 		user.lastLoggedIn = new Date();
+		user.notifyEnabled = false;
         user.genNicknameLower();
         EMPEROR = DtoToVoConverter.convert(user);
 		users.add(user); // 7
@@ -721,6 +761,7 @@ public class MockDataBuilder {
 		user.status = SBUser.Status.DEACTIVATED;
 		user.investor = true;
 		user.lastLoggedIn = new Date();
+		user.notifyEnabled = false;
         user.genNicknameLower();
         BURNTSKY = DtoToVoConverter.convert(user);
 		users.add(user); // 8
@@ -737,6 +778,7 @@ public class MockDataBuilder {
 		user.status = SBUser.Status.ACTIVE;
 		user.investor = true;
 		user.lastLoggedIn = new Date();
+		user.notifyEnabled = true;
         user.genNicknameLower();
 		users.add(user);
         JOHN = DtoToVoConverter.convert(user); // 9
@@ -753,10 +795,10 @@ public class MockDataBuilder {
         user.status = SBUser.Status.ACTIVE;
         user.investor = true;
         user.lastLoggedIn = new Date();
+        user.notifyEnabled = true;
         user.genNicknameLower();
         users.add(user); // 9
         GREG = DtoToVoConverter.convert(user);
-
 
         user = new SBUser();
 		user.id = id();
@@ -770,6 +812,7 @@ public class MockDataBuilder {
 		user.status = SBUser.Status.CREATED;
 		user.investor = false;
 		user.lastLoggedIn = null;
+		user.notifyEnabled = false;
         user.genNicknameLower();
         users.add(user); // 10
         NOT_ACTIVATED = DtoToVoConverter.convert(user);
@@ -1469,6 +1512,8 @@ public class MockDataBuilder {
 		bp.owner = new Key<SBUser>(SBUser.class, owner.toKeyId());
 		bp.contactEmail = owner.getEmail();
 		bp.founders = getFounders(owner.getName());
+		bp.type = Listing.Type.COMPANY;
+		bp.notes = "Mock listing.\n";
 
 		bp.askedForFunding = amount > 0;
 		bp.suggestedAmount = amount;

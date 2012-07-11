@@ -82,6 +82,11 @@ public class VoToModelConverter {
 		listing.mantra = listingVO.getMantra();
 		listing.website = listingVO.getWebsite();
 		listing.category = listingVO.getCategory();
+		if (!StringUtils.isEmpty(listingVO.getType())) {
+			listing.type = Listing.Type.valueOf(StringUtils.upperCase(listingVO.getType()));
+		}
+		listing.platform = listingVO.getPlatform();
+		listing.notes = listingVO.getNotes();
 		listing.address = listingVO.getAddress();
 		listing.latitude = listingVO.getLatitude();
 		listing.longitude = listingVO.getLongitude();
