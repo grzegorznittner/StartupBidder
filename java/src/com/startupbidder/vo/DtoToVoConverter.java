@@ -146,6 +146,7 @@ public class DtoToVoConverter {
 		listing.setOwner(keyToString(listingDTO.owner));
 		listing.setContactEmail(listingDTO.contactEmail);
 		listing.setFounders(listingDTO.founders);
+		listing.setCurrency(listingDTO.currency.toString());
 		listing.setAskedForFunding(listingDTO.askedForFunding);
 		listing.setSuggestedValuation(listingDTO.suggestedValuation);
 		listing.setSuggestedAmount(listingDTO.suggestedAmount);
@@ -239,6 +240,7 @@ public class DtoToVoConverter {
 		listing.setPostedOn(listingDTO.posted);
 		listing.setName(listingDTO.name);
 		listing.setOwner(keyToString(listingDTO.owner));
+		listing.setCurrency(listingDTO.currency.toString());
 		listing.setAskedForFunding(listingDTO.askedForFunding);
 		listing.setSuggestedValuation(listingDTO.suggestedValuation);
 		listing.setSuggestedAmount(listingDTO.suggestedAmount);

@@ -41,6 +41,10 @@ public class Listing extends BaseObject<Listing> {
 	 * It's not verified now.
 	 */
 	public enum Platform {IOS, ANDROID, WINDOWS_PHONE, DESKTOP, OTHER};
+	/**
+	 * List of supported listing currencies.
+	 */
+	public enum Currency {US_DOLLAR, EURO, UK_POUND};
 
 	public Key<Listing> getKey() {
 		return new Key<Listing>(Listing.class, id);
@@ -98,6 +102,7 @@ public class Listing extends BaseObject<Listing> {
 	public int   suggestedValuation;
 	public int   suggestedPercentage;
 	public int   suggestedAmount;
+	public Currency currency = Currency.US_DOLLAR;
 	public Key<ListingDoc> businessPlanId;
 	public Key<ListingDoc> presentationId;
 	public Key<ListingDoc> financialsId;

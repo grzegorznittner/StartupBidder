@@ -418,7 +418,7 @@ public class ObjectifyDatastoreDAO {
 		}
 	}
 
-	public Listing updateListingStateAndDates(Listing newListing) {
+	public Listing updateListingStateAndDates(Listing newListing, String note) {
 		try {
 			Listing listing = getOfy().get(new Key<Listing>(Listing.class, newListing.id));
 			Listing.State oldState = listing.state;
@@ -427,6 +427,7 @@ public class ObjectifyDatastoreDAO {
 			listing.listedOn = newListing.listedOn;
 			listing.created = newListing.created;
 			listing.posted = newListing.posted;
+			listing.notes += note + "\n";
 			getOfy().put(listing);
 			
 			// listing activation should allow for editing new listing by the owner

@@ -535,7 +535,8 @@ public class ListingFacade {
 		if (dbListing.state == Listing.State.NEW || dbListing.state == Listing.State.ACTIVE) {
 			ListingVO forUpdate = DtoToVoConverter.convert(dbListing);
 			
-			Listing updatedListing = getDAO().updateListingStateAndDates(VoToModelConverter.convert(forUpdate));
+			Listing updatedListing = getDAO().updateListingStateAndDates(VoToModelConverter.convert(forUpdate),
+					"Listing updated as a whole object on " + new Date() + " by " + loggedInUser.getNickname());
 			if (updatedListing != null && updatedListing.state == Listing.State.ACTIVE) {
 				scheduleUpdateOfListingStatistics(updatedListing.getWebKey(), UpdateReason.NONE);
 			}
@@ -587,7 +588,8 @@ public class ListingFacade {
 		dbListing.state = Listing.State.ACTIVE;
 		
 		ListingVO forUpdate = DtoToVoConverter.convert(dbListing);
-		Listing updatedListing = getDAO().updateListingStateAndDates(VoToModelConverter.convert(forUpdate));
+		Listing updatedListing = getDAO().updateListingStateAndDates(VoToModelConverter.convert(forUpdate),
+				"Listing activated on " + new Date() + " by " + loggedInUser.getNickname());
 		if (updatedListing != null && updatedListing.state == Listing.State.ACTIVE) {
 			loggedInUser.setEditedListing(null);
 			loggedInUser.setEditedStatus(null);
@@ -637,7 +639,8 @@ public class ListingFacade {
 			forUpdate.setPostedOn(new Date());
 			forUpdate.setState(Listing.State.POSTED.toString());
 			
-			Listing updatedListing = getDAO().updateListingStateAndDates(VoToModelConverter.convert(forUpdate));
+			Listing updatedListing = getDAO().updateListingStateAndDates(VoToModelConverter.convert(forUpdate),
+					"Listing posted on " + new Date() + " by " + loggedInUser.getNickname());
 			if (updatedListing != null) {
 				if (StringUtils.equals(updatedListing.owner.getString(), loggedInUser.getId())) {
 					loggedInUser.setEditedListing(null);
@@ -778,7 +781,8 @@ public class ListingFacade {
 
 			forUpdate.setState(Listing.State.WITHDRAWN.toString());
 			
-			Listing updatedListing = getDAO().updateListingStateAndDates(VoToModelConverter.convert(forUpdate));
+			Listing updatedListing = getDAO().updateListingStateAndDates(VoToModelConverter.convert(forUpdate),
+					"Listing withdrawn on " + new Date() + " by " + loggedInUser.getNickname());
 			if (updatedListing != null) {
 				scheduleUpdateOfListingStatistics(updatedListing.getWebKey(), UpdateReason.NONE);
 				NotificationFacade.instance().scheduleListingStateNotification(updatedListing);
@@ -841,7 +845,8 @@ public class ListingFacade {
 			ListingVO forUpdate = DtoToVoConverter.convert(dbListing);
 			forUpdate.setState(Listing.State.NEW.toString());
 			
-			Listing updatedListing = getDAO().updateListingStateAndDates(VoToModelConverter.convert(forUpdate));
+			Listing updatedListing = getDAO().updateListingStateAndDates(VoToModelConverter.convert(forUpdate),
+					"Listing sent back on " + new Date() + " by " + loggedInUser.getNickname());
 			if (updatedListing == null) {
                 log.severe("Could not update listing in datastore to NEW status: " + forUpdate.getId());
 				returnValue.setErrorMessage("Listing not updated");
@@ -896,7 +901,8 @@ public class ListingFacade {
 	
 			forUpdate.setState(Listing.State.FROZEN.toString());
 			
-			Listing updatedListing = getDAO().updateListingStateAndDates(VoToModelConverter.convert(forUpdate));
+			Listing updatedListing = getDAO().updateListingStateAndDates(VoToModelConverter.convert(forUpdate),
+					"Listing frozen on " + new Date() + " by " + loggedInUser.getNickname());
 			if (updatedListing == null) {
 				returnValue.setErrorMessage("Listing not updated");
 				returnValue.setErrorCode(ErrorCodes.DATASTORE_ERROR);
