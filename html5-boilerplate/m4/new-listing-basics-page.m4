@@ -82,7 +82,7 @@ include(header.m4)
                 <select id="platform" class="text inputwidetext categoryselect">
                     <option value="ios">iPhone / iPad</option>
                     <option value="android">Android Mobile / Tablet</option>
-                    <option value="windows_phone">Windows Mobile / Tablet</option>
+                    <option value="windows_phone">Windows Phone / Tablet</option>
                     <option value="desktop">Desktop</option>
                     <option value="website">Website</option>
                     <option value="other" selected="selected">Other</option>
