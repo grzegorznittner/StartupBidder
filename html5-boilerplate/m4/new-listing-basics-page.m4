@@ -32,7 +32,7 @@ include(header.m4)
 <div class="span-16">
 
     <div class="boxtitle basicstitle">
-        <span class="titletext">BASIC INFO</span>
+        <span class="titletext">MANDATORY INFO</span>
         <div class="titleinfobtn"></div>
         <div class="titleinfo">
             <label class="titleinfoheader">Instructions</label>

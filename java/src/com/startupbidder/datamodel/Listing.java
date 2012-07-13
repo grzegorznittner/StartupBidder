@@ -40,7 +40,7 @@ public class Listing extends BaseObject<Listing> {
 	 * List of available values for platform property.
 	 * It's not verified now.
 	 */
-	public enum Platform {IOS, ANDROID, WINDOWS_PHONE, DESKTOP, OTHER};
+	public enum Platform {IOS, ANDROID, WINDOWS_PHONE, DESKTOP, WEBSITE, OTHER};
 	/**
 	 * List of supported listing currencies.
 	 */
