@@ -71,6 +71,9 @@ public class VoToModelConverter {
 		listing.suggestedValuation = listingVO.getSuggestedValuation();
 		listing.suggestedPercentage = listingVO.getSuggestedPercentage();
 		listing.suggestedAmount = listingVO.getSuggestedAmount();
+		if (!StringUtils.isEmpty(listingVO.getCurrency())) {
+			listing.currency = Listing.Currency.valueOf(StringUtils.upperCase(listingVO.getCurrency()));
+		}
 		if (!StringUtils.isEmpty(listingVO.getState())) {
 			listing.state = Listing.State.valueOf(StringUtils.upperCase(listingVO.getState()));
 		}
@@ -148,6 +151,8 @@ public class VoToModelConverter {
 			listing.platform = property.getPropertyValue().toUpperCase();
 		} else if (name.equalsIgnoreCase("city")) {
 			listing.city = property.getPropertyValue();
+		} else if (name.equalsIgnoreCase("currency")) {
+			listing.currency = Listing.Currency.valueOf(property.getPropertyValue().toUpperCase());
 		} else if (name.equalsIgnoreCase("asked_fund")) {
 			listing.askedForFunding = BooleanUtils.toBoolean(property.getPropertyValue());
 		} else if (name.equalsIgnoreCase("suggested_amt")) {

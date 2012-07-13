@@ -37,11 +37,14 @@ public class ListingStats extends BaseObject<ListingStats> {
 	
 	public Key<Listing> listing;
 	public Listing.State state;
+	public Listing.Type type;
+	public String platform;
 	
 	public Date created;
 
     public boolean askedForFunding;
     
+	public Listing.Currency currency;
 	public double valuation;
 	public double previousValuation;
 	public Date previousValuationDate;

@@ -178,6 +178,50 @@ public class ListingFacade {
 	}
 
 	/**
+	 * Imports listing data from external resources.
+	 * Sets loggedin user as the owner of the listing.
+	 * Sets listing's state to NEW.
+	 */
+	public ListingAndUserVO importListing(UserVO loggedInUser, String type, String id) {
+		ListingAndUserVO result = new ListingAndUserVO();
+		if (loggedInUser == null) {
+			log.log(Level.WARNING, "Only logged in user can create listing", new Exception("Not logged in"));
+			result.setErrorCode(ErrorCodes.NOT_LOGGED_IN);
+			result.setErrorMessage("Only logged in user can create listing");
+		} else {
+			Listing newListing = null;
+			if (loggedInUser.getEditedListing() != null) {
+				newListing = getDAO().getListing(ListingVO.toKeyId(loggedInUser.getEditedListing()));
+				if (newListing.state != Listing.State.NEW) {
+					loggedInUser.setEditedListing(null);
+					loggedInUser.setEditedStatus(null);
+					result.setErrorCode(ErrorCodes.OPERATION_NOT_ALLOWED);
+					result.setErrorMessage("User has already posted listing");
+					return null;
+				}
+			} else {
+				newListing = new Listing();
+				newListing.state = Listing.State.NEW;
+				newListing.owner = new Key<SBUser>(loggedInUser.getId());
+				newListing.contactEmail = loggedInUser.getEmail();
+				newListing.founders = !StringUtils.isEmpty(loggedInUser.getName()) ? loggedInUser.getName() : loggedInUser.getNickname();
+				newListing.askedForFunding = false;
+				newListing.created = new Date();
+				loggedInUser.setEditedListing(newListing.getWebKey());
+				loggedInUser.setEditedStatus(Listing.State.NEW.toString());
+			}
+			
+			// at that stage listing is not yet active so there is no point of updating statistics
+			Monitor monitor = getDAO().getListingMonitor(loggedInUser.toKeyId(), newListing.id);
+			ListingVO listing = DtoToVoConverter.convert(newListing);
+			applyListingData(loggedInUser, listing, monitor);
+			result.setListing(listing);
+			result.setCategories(getCategories());
+		}
+		return result;
+	}
+
+	/**
 	 * Returns edited/posted listing.
 	 */
 	public ListingVO editedListing(UserVO loggedInUser) {
@@ -535,7 +579,8 @@ public class ListingFacade {
 		if (dbListing.state == Listing.State.NEW || dbListing.state == Listing.State.ACTIVE) {
 			ListingVO forUpdate = DtoToVoConverter.convert(dbListing);
 			
-			Listing updatedListing = getDAO().updateListingStateAndDates(VoToModelConverter.convert(forUpdate));
+			Listing updatedListing = getDAO().updateListingStateAndDates(VoToModelConverter.convert(forUpdate),
+					"Listing updated as a whole object on " + new Date() + " by " + loggedInUser.getNickname());
 			if (updatedListing != null && updatedListing.state == Listing.State.ACTIVE) {
 				scheduleUpdateOfListingStatistics(updatedListing.getWebKey(), UpdateReason.NONE);
 			}
@@ -587,7 +632,8 @@ public class ListingFacade {
 		dbListing.state = Listing.State.ACTIVE;
 		
 		ListingVO forUpdate = DtoToVoConverter.convert(dbListing);
-		Listing updatedListing = getDAO().updateListingStateAndDates(VoToModelConverter.convert(forUpdate));
+		Listing updatedListing = getDAO().updateListingStateAndDates(VoToModelConverter.convert(forUpdate),
+				"Listing activated on " + new Date() + " by " + loggedInUser.getNickname());
 		if (updatedListing != null && updatedListing.state == Listing.State.ACTIVE) {
 			loggedInUser.setEditedListing(null);
 			loggedInUser.setEditedStatus(null);
@@ -637,7 +683,8 @@ public class ListingFacade {
 			forUpdate.setPostedOn(new Date());
 			forUpdate.setState(Listing.State.POSTED.toString());
 			
-			Listing updatedListing = getDAO().updateListingStateAndDates(VoToModelConverter.convert(forUpdate));
+			Listing updatedListing = getDAO().updateListingStateAndDates(VoToModelConverter.convert(forUpdate),
+					"Listing posted on " + new Date() + " by " + loggedInUser.getNickname());
 			if (updatedListing != null) {
 				if (StringUtils.equals(updatedListing.owner.getString(), loggedInUser.getId())) {
 					loggedInUser.setEditedListing(null);
@@ -778,7 +825,8 @@ public class ListingFacade {
 
 			forUpdate.setState(Listing.State.WITHDRAWN.toString());
 			
-			Listing updatedListing = getDAO().updateListingStateAndDates(VoToModelConverter.convert(forUpdate));
+			Listing updatedListing = getDAO().updateListingStateAndDates(VoToModelConverter.convert(forUpdate),
+					"Listing withdrawn on " + new Date() + " by " + loggedInUser.getNickname());
 			if (updatedListing != null) {
 				scheduleUpdateOfListingStatistics(updatedListing.getWebKey(), UpdateReason.NONE);
 				NotificationFacade.instance().scheduleListingStateNotification(updatedListing);
@@ -841,7 +889,8 @@ public class ListingFacade {
 			ListingVO forUpdate = DtoToVoConverter.convert(dbListing);
 			forUpdate.setState(Listing.State.NEW.toString());
 			
-			Listing updatedListing = getDAO().updateListingStateAndDates(VoToModelConverter.convert(forUpdate));
+			Listing updatedListing = getDAO().updateListingStateAndDates(VoToModelConverter.convert(forUpdate),
+					"Listing sent back on " + new Date() + " by " + loggedInUser.getNickname());
 			if (updatedListing == null) {
                 log.severe("Could not update listing in datastore to NEW status: " + forUpdate.getId());
 				returnValue.setErrorMessage("Listing not updated");
@@ -896,7 +945,8 @@ public class ListingFacade {
 	
 			forUpdate.setState(Listing.State.FROZEN.toString());
 			
-			Listing updatedListing = getDAO().updateListingStateAndDates(VoToModelConverter.convert(forUpdate));
+			Listing updatedListing = getDAO().updateListingStateAndDates(VoToModelConverter.convert(forUpdate),
+					"Listing frozen on " + new Date() + " by " + loggedInUser.getNickname());
 			if (updatedListing == null) {
 				returnValue.setErrorMessage("Listing not updated");
 				returnValue.setErrorCode(ErrorCodes.DATASTORE_ERROR);

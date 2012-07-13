@@ -33,6 +33,7 @@ import com.startupbidder.web.BidFacade;
 import com.startupbidder.web.HttpHeaders;
 import com.startupbidder.web.HttpHeadersImpl;
 import com.startupbidder.web.ListingFacade;
+import com.startupbidder.web.ListingImportService;
 import com.startupbidder.web.ModelDrivenController;
 import com.startupbidder.web.ServiceFacade;
 
@@ -111,10 +112,14 @@ public class ListingController extends ModelDrivenController {
 				return logo(request);
 			} else if ("picture".equalsIgnoreCase(getCommand(1))) {
 				return picture(request);
+			} else if ("query_import".equalsIgnoreCase(getCommand(1))) {
+				return queryImport(request);
 			}
 		} else if ("POST".equalsIgnoreCase(request.getMethod())) {
 			if ("create".equalsIgnoreCase(getCommand(1))) {
 				return startEditing(request);
+			} else if ("import".equalsIgnoreCase(getCommand(1))) {
+				return importListing(request);
 			} else if ("update_field".equalsIgnoreCase(getCommand(1))) {
 				return updateField(request);
 			} else if ("update_address".equalsIgnoreCase(getCommand(1))) {
@@ -212,6 +217,45 @@ public class ListingController extends ModelDrivenController {
 			l.setUploadUrl(url[0]);
             u.setEditedListing(l.getId());
             u.setEditedStatus(l.getState()); // reset in case listing state is not NEW
+        }
+		model = listing;
+
+		return headers;
+	}
+	
+    // GET /listing/query_import
+	private HttpHeaders queryImport(HttpServletRequest request) {
+		HttpHeaders headers = new HttpHeadersImpl("query_import");
+
+		log.log(Level.INFO, "Parameters: " + request.getParameterMap());
+		String type = request.getParameter("type");
+		String query = request.getParameter("query");
+		model = ListingImportService.instance().getImportSuggestions(getLoggedInUser(), type, query);
+		
+		return headers;
+	}
+	
+    // PUT /listing/listing
+    // POST /listing/listing
+	private HttpHeaders importListing(HttpServletRequest request) throws JsonParseException, JsonMappingException, IOException {
+		HttpHeaders headers = new HttpHeadersImpl("import");
+
+		log.log(Level.INFO, "Parameters: " + request.getParameterMap());
+		String type = request.getParameter("type");
+		String id = request.getParameter("id");
+		
+        UserVO user = getLoggedInUser();
+		ListingAndUserVO listing = ListingFacade.instance().importListing(user, type, id);
+		if (listing == null) {
+			log.log(Level.WARNING, "Listing not imported!");
+			headers.setStatus(500);
+		} else {
+			// setting upload urls for documents not yet uploaded
+			ListingVO l = listing.getListing();
+			String[] url = ServiceFacade.instance().createUploadUrls(getLoggedInUser(), "/file/upload", 1);
+			l.setUploadUrl(url[0]);
+            user.setEditedListing(l.getId());
+            user.setEditedStatus(l.getState()); // reset in case listing state is not NEW
         }
 		model = listing;
 

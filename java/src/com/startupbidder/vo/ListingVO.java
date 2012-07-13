@@ -22,7 +22,7 @@ import com.startupbidder.util.LowecaseSerializer;
 public class ListingVO extends ListingTileVO {
 	public static final List<String> UPDATABLE_PROPERTIES = Arrays.asList(new String[] {
 			"title", "mantra", "summary", "contact_email", "founders", "website", "category", "type", "platform",
-			"asked_fund", "suggested_amt", "suggested_pct", "video", "answer1", "answer2", "answer3",
+			"currency", "asked_fund", "suggested_amt", "suggested_pct", "video", "answer1", "answer2", "answer3",
 			"answer4", "answer5", "answer6", "answer7", "answer8", "answer9", "answer10", "answer11", "answer12", "answer13",
 			"answer14", "answer15", "answer16", "answer17", "answer18", "answer19", "answer20", "answer21", "answer22", "answer23",
             "answer24", "answer25", "answer26"

@@ -131,6 +131,13 @@ public class HelloServlet extends HttpServlet {
 			out.println("<form method=\"POST\" action=\"/listing/create/.json\"><input type=\"submit\" value=\"Creates NEW listing\"/></form>");
 			out.println("<form method=\"POST\" action=\"/listing/delete/.json\"><input type=\"submit\" value=\"Deletes edited (NEW) listing\"/></form>");
 			
+			out.println("<p style=\"background: none repeat scroll 0% 0% rgb(187, 187, 187);\">Import listing data</p>");
+			out.println("<form method=\"GET\" action=\"/listing/query_import/.json\"><textarea name=\"query\" rows=\"1\" cols=\"100\">"
+					+ ""
+					+ "</textarea>"
+					+ "<select name=\"type\" size=\"1\"><option>AppStore</option><option>GooglePlay</option><option>AngelList</option><option>Startuply</option></select>"
+					+ "<input type=\"submit\" value=\"Submit query\"/></form>");
+			
 			out.println("<p style=\"background: none repeat scroll 0% 0% rgb(187, 187, 187);\">Editing new listing. Update methods:</p>");
 			ListingAndUserVO editedListing = ListingFacade.instance().createListing(currentUser);
 			if (editedListing.getListing() != null) {

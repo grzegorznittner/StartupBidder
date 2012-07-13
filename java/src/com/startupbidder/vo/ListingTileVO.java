@@ -26,6 +26,7 @@ public class ListingTileVO extends BaseVO {
 	@JsonProperty("suggested_amt") protected int suggestedAmount;
 	@JsonProperty("suggested_pct") protected int suggestedPercentage;
 	@JsonProperty("suggested_val") protected int suggestedValuation;
+	@JsonProperty("currency") @JsonSerialize(using=LowecaseSerializer.class) protected String currency;
 	@JsonProperty("modified_date") @JsonSerialize(using=DateSerializer.class) protected Date  modified;
 	@JsonProperty("created_date") @JsonSerialize(using=DateSerializer.class) protected Date  created;
 	@JsonProperty("posted_date") @JsonSerialize(using=DateSerializer.class) protected Date  postedOn;
@@ -238,5 +239,13 @@ public class ListingTileVO extends BaseVO {
 
 	public void setType(String type) {
 		this.type = type;
+	}
+
+	public String getCurrency() {
+		return currency;
+	}
+
+	public void setCurrency(String currency) {
+		this.currency = currency;
 	}
 }
