@@ -13,7 +13,7 @@ include(header.m4)
 
 <div class="banner aboutbanner">
     <div class="container">
-        <span class="bannertext span-24 push-15px">
+        <span class="bannertext span-24">
             <div class="welcometitle">About startupbidder</div>
             <div class="welcometext">What we do, how to post, and how to bid</div>
         </span>

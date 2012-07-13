@@ -10,14 +10,16 @@ include(head.m4)
 '
 include(header.m4)
 `
-<div class="container">
-
-<div class="banner pull-15px termsbanner">
-    <span class="bannertext span-24 push-15px">
-        <div class="welcometitle">Our Terms</div>
-        <div class="welcometext">What you need to know about using startupbidder</div>
-    </span>
+<div class="banner termsbanner">
+    <div class="container">
+        <span class="bannertext span-24">
+            <div class="welcometitle">Our Terms</div>
+            <div class="welcometext">What you need to know about using startupbidder</div>
+        </span>
+    </div>
 </div>
+
+<div class="container">
 
 <!-- left column -->
 <div class="span-16">

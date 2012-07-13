@@ -450,6 +450,24 @@ function SelectFieldClass(id, value, updateFunction, msgId) {
     this.getDisplayFunc()();
 }
 pl.implement(SelectFieldClass, {
+    setOptionsWithValues: function(options) {
+        var self = this,
+            field = pl(self.fieldBase.sel).get(0),
+            opts = options || [],
+            val = self.fieldBase.value,
+            i,
+            opt,
+            optval,
+            optdisplay;
+        field.options.length = 0;
+        field.options[0] = new Option('Select...', 'Select...', true, false);
+        for (i = 0; i < opts.length; i++) {
+            opt = opts[i];
+            optval = opt[0];
+            optdisplay = opt[1];
+            field.options[i+1] = new Option(optdisplay, optval, false, (val === optval ? true : false));
+        }
+    },
     setOptions: function(options) {
         var self = this,
             field = pl(self.fieldBase.sel).get(0),

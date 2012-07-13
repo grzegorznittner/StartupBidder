@@ -10,14 +10,16 @@ include(head.m4)
 '
 include(header.m4)
 `
-<div class="container">
-
-<div class="banner pull-15px contactbanner">
-    <span class="bannertext span-24 push-15px">
-        <div class="welcometitle">Contact us</div>
-        <div class="welcometext">We&rsquo;ll help you out</div>
-    </span>
+<div class="banner contactbanner">
+    <div class="container">
+        <span class="bannertext span-24">
+            <div class="welcometitle">Contact us</div>
+            <div class="welcometext">We&rsquo;ll help you out</div>
+        </span>
+    </div>
 </div>
+
+<div class="container">
 
 <div class="span-24 preloader">
     <div class="preloaderfloater"></div>

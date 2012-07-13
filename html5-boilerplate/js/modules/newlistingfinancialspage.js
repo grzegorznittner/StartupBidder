@@ -1,8 +1,5 @@
 function NewListingFinancialsClass() {
-    var base = new NewListingBaseClass();
-    base.prevPage = '/new-listing-qa-page.html';
-    base.nextPage = '/new-listing-submit-page.html';
-    this.base = base;
+    this.base = new NewListingBaseClass();
 }
 pl.implement(NewListingFinancialsClass, {
     load: function() {
@@ -21,8 +18,9 @@ pl.implement(NewListingFinancialsClass, {
         ajax.call();
     },
     display: function() {
-        if (this.base.listing.status !== 'new') {
-            document.location = 'new-listing-submitted-page.html';
+        var status = this.base.listing.status;
+        if (status !== 'new' && status !== 'posted') {
+            document.location = '/company-page.html?id=' + this.base.listing.id;
         }
         if (!this.bound) {
             this.bindEvents();

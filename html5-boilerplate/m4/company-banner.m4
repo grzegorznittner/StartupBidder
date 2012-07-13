@@ -27,7 +27,6 @@ define(`companybannermacro', `
                 <div class="companybannertextgrey" id="mantra"></div>
     
                 <div class="companybannerfollow">
-                    <div class="inputmsg inputfield last followmsg initialhidden" id="followtext">You are following this listing</div>
                     <div class="companybannerfollowbtn smallinputbutton span-3 darkblue hoverlink initialhidden" id="followbtn"></div>
                     <div class="inputmsg inputfield last" id="followmsg"></div>
                 </div>

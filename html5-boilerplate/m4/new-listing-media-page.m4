@@ -20,28 +20,9 @@ include(header.m4)
     <div class="bannertextsmall">NEW LISTING WIZARD - MEDIA</div>
 
     <div class="span-16">
-        <div class="boxstep last">
-            <a href="new-listing-basics-page.html"><span class="boxstep1"><div class="boxsteptext">BASICS</div></span></a>
-            <span class="boxstep2 boxstepcomplete"><div class="boxsteptext">MEDIA</div></span>
-            <a href="new-listing-bmc-page.html"><span class="boxstep3"><div class="boxsteptext">MODEL</div></span></a>
-            <a href="new-listing-qa-page.html"><span class="boxstep4"><div class="boxsteptext">SLIDES</div></span></a>
-            <a href="new-listing-financials-page.html"><span class="boxstep5"><div class="boxsteptext">FINANCIALS</div></span></a>
-            <a href="new-listing-submit-page.html"><span class="boxstep6"><div class="boxsteptext">SUBMIT</div></span></a>
-        </div>
-        <div class="boxstep last">
-            <span class="boxstepn" id="boxstepn"></span>
-            <span class="boxsteptitle">YOU HAVE FILLED <span id="boxsteppct">0</span>% OF YOUR LISTING PROFILE</span>
-        </div>
-    </div>
-    <div class="span-8 last">
-        <a href="#" class="prevbuttonlink">
-            <span class="push-1 span-3 smallinputbutton titleprevnextbtn hoverlink">
-                PREV
-            </span>
-        </a>
-        <a href="#" class="nextbuttonlink">
-            <span class="push-2 span-3 smallinputbutton titleprevnextbtn hoverlink">
-                NEXT
+        <a href="#" class="backbuttonlink">
+            <span class="push-1 span-3 inputbutton backbutton">
+                << BACK
             </span>
         </a>
     </div>
@@ -67,7 +48,7 @@ You may also optionally link to a video, such as a voiceover of a quick run thro
             </p>
         </div>
    </div>
-   <div class="boxpanel">
+   <div class="boxpanel newlistingpanel">
         <div class="mediacol1">
             <div class="tileimg" id="logoimgwrapper">
                 <img class="tileimg" id="logoimg" src=""></img>
@@ -112,7 +93,7 @@ If you do not have a video ready, just record a voiceover of a quick run through
             </p>
         </div>
     </div>
-    <div class="boxpanel">
+    <div class="boxpanel newlistingpanel">
         <div class="formitem">
             <span class="inputfield">
                 <input class="text mediainputlink videourl" type="text" maxlength="255" name="video" id="video" value=""></input>

@@ -70,15 +70,7 @@ pl.implement(CompanyTileClass, {
         this.mantraplussuggest = this.mantra + '<br/>' + this.suggested_text;
         this.founders = json.founders || 'No Founders';
         this.foundertext = json.founders ? 'Founded by ' + json.founders : '';
-        if (this.status === 'new') {
-            this.url = '/new-listing-submit-page.html';
-        }
-        else if (this.status === 'posted' && !this.options.admin) {
-            this.url = '/new-listing-submitted-page.html';
-        }
-        else {
-            this.url = '/company-page.html?id=' + json.listing_id;
-        }
+        this.url = '/company-page.html?id=' + json.listing_id;
         this.websitelink = json.website || '#';
         this.websiteurl = json.website ? new URLClass(json.website) : null;
         this.websitedomain = this.websiteurl ? this.websiteurl.getHostname() : 'No Website';
@@ -449,7 +441,6 @@ pl.implement(BaseListClass, {
             }
         });
         keys.sort();
-        console.log(keys, list);
         if (self.over === 2) {
             lc.spreadOverTwoCols(list, '#'+self.col1id, '#'+self.col2id);
         }
