@@ -17,29 +17,8 @@ include(header.m4)
 <div class="container initialhidden wrapper">
 
 <!-- begin banner -->
-    <div class="bannertextsmall">NEW LISTING WIZARD - BASICS</div>
+    <div class="bannertextsmall">NEW LISTING WIZARD</div>
 
-    <div class="span-16">
-        <div class="boxstep last">
-            <span class="boxstep1 boxstepcomplete"><div class="boxsteptext">BASICS</div></span>
-            <a href="new-listing-media-page.html"><span class="boxstep2"><div class="boxsteptext">MEDIA</div></span></a>
-            <a href="new-listing-bmc-page.html"><span class="boxstep3"><div class="boxsteptext">MODEL</div></span></a>
-            <a href="new-listing-qa-page.html"><span class="boxstep4"><div class="boxsteptext">SLIDES</div></span></a>
-            <a href="new-listing-financials-page.html"><span class="boxstep5"><div class="boxsteptext">FINANCIALS</div></span></a>
-            <a href="new-listing-submit-page.html"><span class="boxstep6"><div class="boxsteptext">SUBMIT</div></span></a>
-        </div>
-        <div class="boxstep last">
-            <span class="boxstepn" id="boxstepn"></span>
-            <span class="boxsteptitle">YOU HAVE FILLED <span id="boxsteppct">0</span>% OF YOUR LISTING PROFILE</span>
-        </div>
-    </div>
-    <div class="span-8 last">
-        <a href="#" class="nextbuttonlink">
-            <span class="push-5 span-3 smallinputbutton titleprevnextbtn hoverlink">
-                NEXT
-            </span>
-        </a>
-    </div>
 <div class="span-16">
     <div class="formitem clear">
         <span class="inputmsg" id="newlistingmsg"></span>
@@ -65,7 +44,7 @@ include(header.m4)
         <span class="bmctitlemsg" id="newlistingbasicsmsg"></span>
     </div>
 
-    <div class="boxpanel basicspanel">
+    <div class="boxpanel newlistingpanel">
         <div class="formitem sideinfoitem clear">
             <label class="inputlabel" for="title">NAME</label>
             <span class="inputfield">
@@ -78,6 +57,45 @@ include(header.m4)
             </p>
             <span class="inputicon">
                 <div id="titleicon"></div>
+            </span>
+        </div>
+        <div class="formitem sideinfoitem clear">
+            <label class="inputlabel" for="type">TYPE</label>
+            <span class="inputfield">
+                <select id="type" class="text inputwidetext categoryselect">
+                    <option value="application">Application</option>
+                    <option value="company" selected="selected">Company</option>
+                </select>
+            </span>
+            <p class="sideinfo">
+                <label class="sideinfoheader">Type</label>
+                <br />
+                The type of listing, either "Application" for mobile, tablet, or desktop software applications, or "Company" for startup companies.
+            </p>
+            <span class="inputicon">
+                <div id="typeicon"></div>
+            </span>
+        </div>
+        <div class="formitem sideinfoitem clear">
+            <label class="inputlabel" for="platform">PLATFORM</label>
+            <span class="inputfield">
+                <select id="platform" class="text inputwidetext categoryselect">
+                    <option value="ios">iPhone / iPad</option>
+                    <option value="android">Android Mobile / Tablet</option>
+                    <option value="windows_phone">Windows Mobile / Tablet</option>
+                    <option value="desktop">Desktop</option>
+                    <option value="website">Website</option>
+                    <option value="other" selected="selected">Other</option>
+                </select>
+            </span>
+            <p class="sideinfo">
+                <label class="sideinfoheader">Platform</label>
+                <br />
+                The platform your application supports.  If you support multiple platforms, list your primary platform, and create another listing for your additional platform.
+                If you are not listing an application company, leave this as Other.
+            </p>
+            <span class="inputicon">
+                <div id="platformicon"></div>
             </span>
         </div>
         <div class="formitem sideinfoitem clear">
@@ -96,47 +114,34 @@ include(header.m4)
             </span>
         </div>
         <div class="formitem sideinfoitem clear">
-            <label class="inputlabel" for="mantra">MANTRA</label>
-            <span class="inputfield">
-                <textarea class="inputtextareatwoline inputwidetext" cols="20" rows="5" name="mantra" id="mantra" maxlength="140"></textarea>
-            </span>
-            <p class="sideinfo">
-                <label class="sideinfoheader">Mantra</label>
-                <br />
-                A tagline for your product or company, a single phrase or sentence, up to 140 characters.  Make it short but descriptive.
-            </p>
-            <span class="inputicon">
-                <div id="mantraicon"></div>
-            </span>
-        </div>
-        <div class="formitem sideinfoitem clear">
-            <label class="inputlabel" for="website">WEBSITE</label>
+            <label class="inputlabel" for="website">LINK</label>
             <span class="inputfield">
                 <input class="text inputwidetext" type="text" name="website" id="website" value=""></input>
             </span>
             <p class="sideinfo">
-                <label class="sideinfoheader">Website</label>
+                <label class="sideinfoheader">Link</label>
                 <br />
-                The website for your product or company, if you don't have one then link to your facebook page, google profile, or blog.
+                A link to the website for your application or company, or if you don't have one, then a link to your facebook page, twitter page, google profile, or blog.
             </p>
             <span class="inputicon">
                 <div id="websiteicon"></div>
             </span>
         </div>
         <div class="formitem sideinfoitem clear">
-            <label class="inputlabel" for="founders">FOUNDERS</label>
+            <label class="inputlabel" for="founders">OWNERS</label>
             <span class="inputfield">
                 <input class="text inputwidetext" type="text" name="founders" id="founders" value=""></input>
             </span>
             <p class="sideinfo">
-                <label class="sideinfoheader">Founders</label>
+                <label class="sideinfoheader">Owners</label>
                 <br />
-                The full legal names of the founders and any co-founders of this product or company.
+                The full legal names of all owners of this application or company.
             </p>
             <span class="inputicon">
                 <div id="foundersicon"></div>
             </span>
         </div>
+<!--
         <div class="formitem sideinfoitem clear">
             <label class="inputlabel" for="contact_email">EMAIL</label>
             <span class="inputfield">
@@ -151,6 +156,7 @@ include(header.m4)
                 <div id="contact_emailicon"></div>
             </span>
         </div>
+-->
         <div class="formitem sideinfoitem clear">
             <label class="inputlabel" for="address">LOCATION</label>
             <span class="inputfield">
@@ -165,19 +171,51 @@ include(header.m4)
                 <div id="locationicon"></div>
             </span>
         </div>
-        <div class="formitem clean">
+        <div class="formitem clear">
             <span class="inputlabel"></span>
             <span class="inputmap" id="addressmap"></span>
         </div>
+        <div class="formitem sideinfoitem clear">
+            <label class="inputlabel" for="mantra">MANTRA</label>
+            <span class="inputfield">
+                <textarea class="inputtextareatwoline inputwidetext" cols="20" rows="5" name="mantra" id="mantra" maxlength="140"></textarea>
+            </span>
+            <p class="sideinfo">
+                <label class="sideinfoheader">Mantra</label>
+                <br />
+                A tagline for your product or company, a single phrase or sentence, up to 140 characters.  Make it short but descriptive.
+            </p>
+            <span class="inputicon">
+                <div id="mantraicon"></div>
+            </span>
+        </div>
+        <div class="formitem sideinfoitem clear">
+            <label class="inputlabel" for="summary">ELEVATOR PITCH</label>
+            <span class="inputfield">
+                <textarea class="inputtextareatwoline inputwidetext inputelevatorpitch" cols="20" rows="5" name="summary" id="summary" maxlength="2000"></textarea>
+            </span>
+            <p class="sideinfo">
+                <label class="sideinfoheader">Elevator Pitch</label>
+                <br />
+                A one paragraph summary description of your application or company.  Should be short and descriptive.  Make it your 30-second elevator pitch.
+            </p>
+            <span class="inputicon">
+                <div id="summaryicon"></div>
+            </span>
+        </div>
+        <div class="formitem sideinfoitem clear">
+        </div>
+    </div>
+
+    <div class="formitem clear">
+        <span class="inputmsg" id="submiterrormsg"></span>
     </div>
 
     <div>
         <div class="formitem clear">
-            <a href="#" class="nextbuttonlink">
-                <span class="push-13 span-3 inputbutton">
-                    NEXT
-                </span>
-            </a>
+            <span class="span-3 inputbutton submitbutton" id="submitbutton">
+                SUBMIT
+            </span>
         </div>
     </div>
 
@@ -185,11 +223,35 @@ include(header.m4)
 
 <!-- right column -->
 <div class="span-8 last">
-<!--
-    <div class="boxtitle clear">TIPS</div>
-    <div class="sidebox">
-    </div>
--->
+
+        <a href="/new-listing-financials-page.html">
+            <div class="sidebox investbutton askfundingbutton">ASK FOR FUNDING</div>
+        </a>
+
+        <a href="/new-listing-media-page.html">
+            <div class="sidebox investbutton">ADD LOGO</div>
+        </a>
+
+        <a href="/new-listing-media-page.html">
+            <div class="sidebox investbutton">ADD IMAGES</div>
+        </a>
+
+        <a href="/new-listing-media-page.html">
+            <div class="sidebox investbutton">ADD VIDEO</div>
+        </a>
+
+        <a href="/new-listing-bmc-page.html">
+            <div class="sidebox investbutton">ADD MODEL</div>
+        </a>
+
+        <a href="/new-listing-qa-page.html">
+            <div class="sidebox investbutton">ADD SLIDES</div>
+        </a>
+
+        <a href="/new-listing-financials-page.html">
+            <div class="sidebox investbutton">ADD DOCUMENT</div>
+        </a>
+
 </div>
 <!-- end right column -->
 

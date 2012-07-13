@@ -20,28 +20,9 @@ include(header.m4)
     <div class="bannertextsmall">NEW LISTING WIZARD - FINANCIALS</div>
 
     <div class="span-16">
-        <div class="boxstep last">
-            <a href="new-listing-basics-page.html"><span class="boxstep1"><div class="boxsteptext">BASICS</div></span></a>
-            <a href="new-listing-media-page.html"><span class="boxstep2"><div class="boxsteptext">MEDIA</div></span></a>
-            <a href="new-listing-bmc-page.html"><span class="boxstep3"><div class="boxsteptext">MODEL</div></span></a>
-            <a href="new-listing-qa-page.html"><span class="boxstep4"><div class="boxsteptext">SLIDES</div></span></a>
-            <span class="boxstep5 boxstepcomplete"><div class="boxsteptext">FINANCIALS</div></span>
-            <a href="new-listing-submit-page.html"><span class="boxstep6"><div class="boxsteptext">SUBMIT</div></span></a>
-        </div>
-        <div class="boxstep last">
-            <span class="boxstepn" id="boxstepn"></span>
-            <span class="boxsteptitle">YOU HAVE FILLED <span id="boxsteppct">0</span>% OF YOUR LISTING PROFILE</span>
-        </div>
-    </div>
-    <div class="span-8 last">
-        <a href="#" class="prevbuttonlink">
-            <span class="push-1 span-3 smallinputbutton titleprevnextbtn hoverlink">
-                PREV
-            </span>
-        </a>
-        <a href="#" class="nextbuttonlink">
-            <span class="push-2 span-3 smallinputbutton titleprevnextbtn hoverlink">
-                NEXT
+        <a href="#" class="backbuttonlink">
+            <span class="push-1 span-3 inputbutton backbutton">
+                << BACK
             </span>
         </a>
     </div>
@@ -64,7 +45,7 @@ include(header.m4)
             </p>
         </div>
     </div>
-    <div class="boxpanel">
+    <div class="boxpanel newlistingpanel">
         <div class="formitem clear">
             <label class="inputlabel" for="asked_fund">ALLOW BIDS</label>
             <span class="inputcheckbox">
@@ -92,7 +73,7 @@ include(header.m4)
             </p>
         </div>
     </div>
-    <div class="boxpanel offerpanel" id="offerpanel">
+    <div class="boxpanel offerpanel newlistingpanel" id="offerpanel">
         <div class="formitem sideinfoitem clear">
             <label class="inputlabel" for="suggested_amt">ASKING</label>
             <span class="inputfield">
@@ -150,7 +131,7 @@ include(header.m4)
             </p>
         </div>
     </div>
-    <div class="boxpanel">
+    <div class="boxpanel newlistingpanel">
         <div class="mediacol1">
             <a href="#" id="presentationlink">
                 <div class="tileimg noimage" id="presentationimg">
@@ -204,7 +185,7 @@ include(header.m4)
             </p>
         </div>
     </div>
-    <div class="boxpanel">
+    <div class="boxpanel newlistingpanel">
         <div class="mediacol1">
             <a href="#" id="business_planlink">
                 <div class="tileimg noimage" id="business_planimg">
@@ -258,7 +239,7 @@ include(header.m4)
             </p>
         </div>
     </div>
-    <div class="boxpanel">
+    <div class="boxpanel newlistingpanel">
         <div class="mediacol1">
             <a href="#" id="financialslink">
                 <div class="tileimg noimage" id="financialsimg">

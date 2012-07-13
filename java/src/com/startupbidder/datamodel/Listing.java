@@ -40,7 +40,7 @@ public class Listing extends BaseObject<Listing> {
 	 * List of available values for platform property.
 	 * It's not verified now.
 	 */
-	public enum Platform {IOS, ANDROID, WINDOWS_PHONE, DESKTOP, OTHER};
+	public enum Platform {IOS, ANDROID, WINDOWS_MOBILE, DESKTOP, WEBSITE, OTHER};
 
 	public Key<Listing> getKey() {
 		return new Key<Listing>(Listing.class, id);

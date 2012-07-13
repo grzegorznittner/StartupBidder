@@ -49,7 +49,7 @@ pl.implement(ListingClass, {
             this.store(json);
         }
         this.displayBasics();
-        this.displayFollow();
+        this.displayEdit();
         this.displayInvest();
         this.displayGoto();
         this.displayMap();
@@ -83,47 +83,19 @@ pl.implement(ListingClass, {
         }
     },
 
-    bindFollow: function() {
+    displayEdit: function() {
         var self = this;
-        pl('#followbtn').bind({
-            click: function() {
-            var following = self.monitored;
-            if (following) {
-                self.unfollow();
-                }
-                else {
-                    self.follow();
-                }
-            }
-        });
-    },
-
-    unfollow: function() {
-        var self = this,
-            complete = function(json) {
-                self.monitored = false;
-                self.displayFollow();
-            },
-
-            ajax = new AjaxClass('/monitor/deactivate/' + self.listing_id, 'followmsg', complete);
-        ajax.setPost();
-        ajax.call();
-    },
-
-    follow: function() {
-        var self = this,
-            complete = function(json) {
-                self.monitored = true;
-                self.displayFollow();
-            },
-
-            ajax = new AjaxClass('/monitor/set/' + self.listing_id, 'followmsg', complete);
-        ajax.setPost();
-        ajax.call();
+        if (self.loggedin_profile && self.loggedin_profile.profile_id === self.profile_id && (self.status === 'new' || self.status === 'posted')) { // owner
+            pl('#editbutton').show();
+        }
     },
 
     displayInvest: function() {
         var self = this;
+        if (self.status === 'new' || self.status === 'posted') {
+            pl('#investbutton').hide();
+            return;
+        }
         if (self.loggedin_profile && self.loggedin_profile.profile_id === self.profile_id) { // owner
             pl('#investbutton').text('INVESTMENTS');
         }
@@ -146,35 +118,11 @@ pl.implement(ListingClass, {
         });
     },
 
-    displayFollow: function() {
-        var self = this,
-            following = self.monitored;
-        if (self.loggedin_profile && self.loggedin_profile.profile_id !== self.profile_id) {
-            if (following) {
-                self.displayFollowing();
-            }
-            else {
-                self.displayNotFollowing();
-            }
-            self.bindFollow();
-        }
-    },
-
     displayGoto: function() {
         var bmcurl = '/company-model-page.html?id=' + this.listing_id,
             presurl = '/company-slides-page.html?id=' + this.listing_id;
         pl('#gotobusinessmodellink').attr({href: bmcurl});
         pl('#gotopresentationlink').attr({href: presurl});
-    },
-
-    displayFollowing: function() {
-            pl('#followbtn').text('UNFOLLOW');
-            pl('#followtext, #followbtn').show();
-    },
-
-    displayNotFollowing: function() {
-            pl('#followtext').hide();
-            pl('#followbtn').text('FOLLOW').show();
     },
 
     displayMap: function() {

@@ -1,14 +1,12 @@
 `
 <div class="banner" id="banner">
     <div class="container">
-        <span class="bannertext span-24 push-15px">
-            <div class="welcometitle" id="welcometitle">Welcome to startupbidder!</div>
-            <div class="welcometext" id="welcometext">Getting startups funded.
-    <!--
-                Explore our <a href="latest-companies.html" class="hoverlink">latest</a> listings,
-                <a href="#" id="postnowtextlink" class="hoverlink">post</a> your own company,
-                and bid on <a href="main-page?type=top" class="hoverlink">top startups</a> worldwide
-    -->
+        <span class="bannertext span-24">
+            <div class="welcometitle" id="welcometitle">
+                <div>Getting startups funded</div>
+            </div> 
+            <div class="welcometext" id="welcometext">
+                <a href="/about-page.html" class="welcomelink">Learn more...</a>
             </div>
         </span>
     </div>

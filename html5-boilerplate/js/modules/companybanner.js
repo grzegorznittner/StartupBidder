@@ -27,7 +27,9 @@ pl.implement(CompanyBannerClass, {
             this.store(json);
         }
         this.displayBanner();
-        this.displayFollow();
+        if (this.status !== 'new' && this.status !== 'posted') {
+            this.displayFollow();
+        }
         this.displayTabs();
         pl('.preloadercompanybanner').hide();
         pl('.companybannerwrapper').show();
@@ -125,11 +127,10 @@ pl.implement(CompanyBannerClass, {
 
     displayFollowing: function() {
             pl('#followbtn').text('UNFOLLOW');
-            pl('#followtext, #followbtn').show();
+            pl('#followbtn').show();
     },
 
     displayNotFollowing: function() {
-            pl('#followtext').hide();
             pl('#followbtn').text('FOLLOW').show();
     },
 

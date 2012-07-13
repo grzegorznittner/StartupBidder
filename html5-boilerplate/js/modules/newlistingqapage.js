@@ -1,8 +1,5 @@
 function NewListingQAClass() {
-    var base = new NewListingBaseClass();
-    base.prevPage = '/new-listing-bmc-page.html';
-    base.nextPage = '/new-listing-financials-page.html';
-    this.base = base;
+    this.base = new NewListingBaseClass();
     this.ip = new IPClass();
 }
 pl.implement(NewListingQAClass, {
@@ -22,8 +19,9 @@ pl.implement(NewListingQAClass, {
         ajax.call();
     },
     display: function() {
-        if (this.base.listing.status !== 'new') {
-            document.location = 'new-listing-submitted-page.html';
+        var status = this.base.listing.status;
+        if (status !== 'new' && status !== 'posted') {
+            document.location = '/company-page.html?id=' + this.base.listing.listing_id;
         }
         if (!this.bound) {
             this.bindEvents();

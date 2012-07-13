@@ -1,17 +1,22 @@
 function NewListingBaseClass() {
     var pages = [ 'basics', 'bmc', 'qa', 'financials', 'media', 'submit' ],
-        editableprops = [
-            'title', 'category', 'mantra', 'website', 'founders', 'contact_email', 'address',
-            'answer1', 'answer2', 'answer3', 'answer4', 'answer5', 'answer6', 'answer7', 'answer8', 'answer9', 'answer10',
-            'summary', 'answer11', 'answer12', 'answer13', 'answer14', 'answer15', 'answer16', 'answer17', 'answer18',
-            'answer19', 'answer20', 'answer21', 'answer22', 'answer23', 'answer24', 'answer25', 'answer26',
+        mandatoryprops = [
+            'title', 'type', 'platform', 'category',
+            'founders', 'website', 'address', 'mantra', 'summary'
+//            'website', 'contact_email',
+//            'answer1', 'answer2', 'answer3', 'answer4', 'answer5', 'answer6', 'answer7', 'answer8', 'answer9', 'answer10',
+//            'summary', 'answer11', 'answer12', 'answer13', 'answer14', 'answer15', 'answer16', 'answer17', 'answer18',
+//            'answer19', 'answer20', 'answer21', 'answer22', 'answer23', 'answer24', 'answer25', 'answer26',
 //            'presentation_id', 'business_plan_id', 'financials_id',
-            'logo', 'pic1'
+//            'logo', 'pic1'
         ],
         proppage = {
             title: 'basics',
+            type: 'basics',
+            platform: 'basics',
             category: 'basics',
             mantra: 'basics',
+            summary: 'basics',
 			website: 'basics',
 			founders: 'basics',
 			contact_email: 'basics',
@@ -26,7 +31,6 @@ function NewListingBaseClass() {
 			answer8: 'bmc',
 			answer9: 'bmc',
 			answer10: 'bmc',
-            summary: 'qa',
 			answer11: 'qa',
 			answer12: 'qa',
 			answer13: 'qa',
@@ -50,6 +54,8 @@ function NewListingBaseClass() {
 			pic1: 'media'
         },
         displayNameOverrides = {
+            website: 'LINK',
+            founders: 'OWNERS',
             address: 'LOCATION',
             contact_email: 'EMAIL',
             summary: 'ELEVATOR PITCH',
@@ -85,7 +91,7 @@ function NewListingBaseClass() {
         },
         companyTile = new CompanyTileClass({preview: true});
     this.pages = pages;
-    this.editableprops = editableprops;
+    this.mandatoryprops = mandatoryprops;
     this.proppage = proppage;
     this.displayNameOverrides = displayNameOverrides;
     this.companyTile = companyTile;
@@ -105,7 +111,7 @@ pl.implement(NewListingBaseClass, {
         }
     },
     displayCalculated: function() {
-        this.displayPctComplete();
+        //this.displayPctComplete();
         this.displaySummaryPreview();
     },
     genDisplayCalculatedIfValid: function(field) {
@@ -120,14 +126,14 @@ pl.implement(NewListingBaseClass, {
     },
     pctComplete: function() {
         var self = this,
-            numprops = this.editableprops.length,
+            numprops = this.mandatoryprops.length,
             filledprops = 0,
             missingprops = [],
             pctcomplete,
             i,
             k;
         for (i = 0; i < numprops; i++) {
-            k = this.editableprops[i];
+            k = this.mandatoryprops[i];
             if (this.listing[k]) {
                 filledprops++
             }
@@ -160,9 +166,19 @@ pl.implement(NewListingBaseClass, {
         return validmsgs;
     },
     bindNavButtons: function(nextValidator) {
-        this.bindPrevButton();
-        this.bindNextButton(nextValidator);
+        this.bindBackButton();
+        //this.bindPrevButton();
+        //this.bindNextButton(nextValidator);
         this.bindWithdrawButton();
+    },
+    bindBackButton: function() {
+        var self = this;
+        pl('.backbuttonlink').bind({
+            click: function() {
+                document.location = '/new-listing-basics-page.html';
+                return false;
+            }
+        });
     },
     bindPrevButton: function() {
         var self = this;
@@ -270,7 +286,7 @@ pl.implement(NewListingBaseClass, {
                     infoel = evt.target().parentNode.nextSibling.nextSibling;
                 self.hideAllInfo();
                 if (infoel) {
-                    pl(infoel).addClass('sideinfodisplay');
+                    pl(infoel).addClass('sideinfodisplay').css({'z-index': 10000});
                 }
             },
             blur: self.hideAllInfo

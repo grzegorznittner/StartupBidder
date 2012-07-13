@@ -363,13 +363,6 @@ pl.implement(SearchBoxClass, {
                 return true;
             }
         });
-/*
-        pl('#searchbutton').bind({
-            click: function() {
-                pl('#searchform').get(0).submit();
-            }
-        });
-*/
     }
 });
  
@@ -401,7 +394,7 @@ pl.implement(HeaderClass, {
             num_notifications = profile.num_notifications || 0,
             num_messages = profile.num_messages || 0,
             notificationlinktext = num_notifications ? num_notifications + ' unread notifications' : 'no unread notifications',
-            newlistingurl = (!profile.edited_listing || profile.edited_status === 'new') ? 'new-listing-basics-page.html' : 'new-listing-submitted-page.html';
+            newlistingurl = (!profile.edited_listing || profile.edited_status === 'new') ? 'new-listing-basics-page.html' : 'company-page.html?id=' + profile.edited_listing;
         // pl('#topheaderline').html('You have <a href="/notifications-page.html" class="topheaderlink hoverlink">' + notificationlinktext + '</a>');
         if (num_messages) {
             pl('#headernummessages').text(num_messages).addClass('headernumdisplay');

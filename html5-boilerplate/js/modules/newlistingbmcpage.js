@@ -1,7 +1,5 @@
 function NewListingBMCClass() {
     var base = new NewListingBaseClass();
-    base.prevPage = '/new-listing-media-page.html';
-    base.nextPage = '/new-listing-qa-page.html';
     this.base = base;
     this.bmc = new BMCClass();
 }
@@ -23,8 +21,9 @@ pl.implement(NewListingBMCClass, {
         ajax.call();
     },
     display: function() {
-        if (this.base.listing.status !== 'new') {
-            document.location = 'new-listing-submitted-page.html';
+        var status = this.base.listing.status;
+        if (status !== 'new' && status !== 'posted') {
+            document.location = '/company-page.html?id=' + this.base.listing.listing_id;
         }
         if (!this.bound) {
             this.bindEvents();

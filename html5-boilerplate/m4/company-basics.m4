@@ -28,6 +28,10 @@ include(images-panel.m4)
     </div>
 
     <div class="span-8 last">
+        <a href="/new-listing-basics-page.html">
+            <div class="sidebox investbutton initialhidden" id="editbutton">EDIT LISTING</div>
+        </a>
+
         <div class="sidebox investbutton" id="investbutton">INVEST</div>
 
         <a href="#" id="gotobusinessmodellink">
@@ -94,33 +98,29 @@ include(images-panel.m4)
         </div>
     
         <div id="withdrawbox" class="withdrawbox">
-        <div class="boxtitle boxtitleside">WITHDRAW POST</div>
         <div class="withdrawmsg attention" id="withdrawmsg">Are you sure?<br/>This cannot be undone.</div>
-        <a href="#" id="withdrawbtn"><div class="sideboxbutton sideboxbuttonsmall hoverlink">WITHDRAW</div></a>
-        <a href="#" class="withdrawcancelbtn" id="withdrawcancelbtn"><div class="sideboxbutton sideboxbuttonsmall hoverlink">CANCEL</div></a>
+        <a href="#" id="withdrawbtn"><div class="sideboxbutton hoverlink">WITHDRAW</div></a>
+        <a href="#" class="withdrawcancelbtn" id="withdrawcancelbtn"><div class="sideboxbutton hoverlink">CANCEL</div></a>
         </div>
     
         <div id="approvebox" class="approvebox">
-        <div class="boxtitle boxtitleside">ACTIVATE POST</div>
         <div class="approvemsg attention" id="approvemsg">Are you sure?</div>
-        <a href="#" id="approvebtn"><div class="sideboxbutton sideboxbuttonsmall hoverlink">ACTIVATE</div></a>
-        <a href="#" class="approvecancelbtn" id="approvecancelbtn"><div class="sideboxbutton sideboxbuttonsmall hoverlink">CANCEL</div></a>
+        <a href="#" id="approvebtn"><div class="sideboxbutton hoverlink">ACTIVATE</div></a>
+        <a href="#" class="approvecancelbtn" id="approvecancelbtn"><div class="sideboxbutton hoverlink">CANCEL</div></a>
         </div>
     
         <div id="sendbackbox" class="sendbackbox">
-        <div class="boxtitle boxtitleside">SEND BACK POST</div>
         <input class="text sideinputtext" type="text" name="sendbacktext" id="sendbacktext" value="" length="35" maxlength="100"></input>
         <div class="sendbackmsg attention" id="sendbackmsg">Are you sure?</div>
-        <a href="#" id="sendbackbtn"><div class="sideboxbutton sideboxbuttonsmall hoverlink">SEND BACK</div></a>
-        <a href="#" class="sendbackcancelbtn" id="sendbackcancelbtn"><div class="sideboxbutton sideboxbuttonsmall hoverlink">CANCEL</div></a>
+        <a href="#" id="sendbackbtn"><div class="sideboxbutton hoverlink">SEND BACK</div></a>
+        <a href="#" class="sendbackcancelbtn" id="sendbackcancelbtn"><div class="sideboxbutton hoverlink">CANCEL</div></a>
         </div>
     
         <div id="freezebox" class="freezebox">
-        <div class="boxtitle boxtitleside">FREEZE POST</div>
         <input class="text sideinputtext" type="text" name="freezetext" id="freezetext" value="" length="35" maxlength="100"></input>
         <div class="freezemsg attention" id="freezemsg">Are you sure?</div>
-        <a href="#" id="freezebtn"><div class="sideboxbutton sideboxbuttonsmall hoverlink">FREEZE</div></a>
-        <a href="#" class="freezecancelbtn" id="freezecancelbtn"><div class="sideboxbutton sideboxbuttonsmall hoverlink">CANCEL</div></a>
+        <a href="#" id="freezebtn"><div class="sideboxbutton hoverlink">FREEZE</div></a>
+        <a href="#" class="freezecancelbtn" id="freezecancelbtn"><div class="sideboxbutton hoverlink">CANCEL</div></a>
         </div>
     
     </div>

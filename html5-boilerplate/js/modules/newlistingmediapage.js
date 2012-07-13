@@ -1,8 +1,5 @@
 function NewListingMediaClass() {
-    var base = new NewListingBaseClass();
-    base.prevPage = '/new-listing-basics-page.html';
-    base.nextPage = '/new-listing-bmc-page.html';
-    this.base = base;
+    this.base = new NewListingBaseClass();
     this.imagepanel = new ImagePanelClass({ editmode: true });
 }
 pl.implement(NewListingMediaClass, {
@@ -22,8 +19,9 @@ pl.implement(NewListingMediaClass, {
         ajax.call();
     },
     display: function() {
-        if (this.base.listing.status !== 'new') {
-            document.location = 'new-listing-submitted-page.html';
+        var status = this.base.listing.status;
+        if (status !== 'new' && status !== 'posted') {
+            document.location = '/company-page.html?id=' + this.base.listing.listing_id;
         }
         if (!this.bound) {
             this.bindEvents();

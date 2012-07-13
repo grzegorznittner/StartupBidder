@@ -1,8 +1,5 @@
 function NewListingBasicsClass() {
-    var base = new NewListingBaseClass();
-    base.prevPage = '',
-    base.nextPage = '/new-listing-media-page.html';
-    this.base = base;
+    this.base = new NewListingBaseClass();
 }
 pl.implement(NewListingBasicsClass, {
     load: function() {
@@ -38,8 +35,9 @@ pl.implement(NewListingBasicsClass, {
         self.base.fieldMap['category'].setOptions(options);
     },
     display: function() {
-        if (this.base.listing.status !== 'new') {
-            document.location = 'new-listing-submitted-page.html';
+        var status = this.base.listing.status;
+        if (status !== 'new' && status !== 'posted') {
+            document.location = '/company-page.html?id=' + this.base.listing.listing_id;
         }
         if (!this.bound) {
             this.bindEvents();
@@ -47,25 +45,41 @@ pl.implement(NewListingBasicsClass, {
         }
     },
     bindEvents: function() {
-        var textFields = ['title', 'category', 'mantra', 'website', 'founders', 'contact_email', 'address'],
+        var textFields = ['title', 'type', 'platform', 'category', 'website', 'founders', 'address', 'mantra', 'summary'],
+//        var textFields = ['title', 'type', 'platform', 'category', 'mantra', 'summary', 'website', 'founders', 'contact_email', 'address'],
             validators = {
                 title: ValidatorClass.prototype.isNotEmpty,
+                type: ValidatorClass.prototype.isSelected,
+                platform: ValidatorClass.prototype.isSelected,
                 category: ValidatorClass.prototype.isSelected,
                 mantra: ValidatorClass.prototype.makeLengthChecker(5, 140),
+                summary: ValidatorClass.prototype.makeLengthChecker(15, 2000),
                 website: ValidatorClass.prototype.isURL,
                 founders: ValidatorClass.prototype.makeLengthChecker(5, 256),
-                contact_email: ValidatorClass.prototype.isEmail,
+//                contact_email: ValidatorClass.prototype.isEmail,
                 address: ValidatorClass.prototype.isNotEmpty
             },
             classes = {
                 title: TextFieldClass,
+                type: SelectFieldClass,
+                platform: SelectFieldClass,
                 category: SelectFieldClass,
                 mantra: TextFieldClass,
+                summary: TextFieldClass,
                 website: TextFieldClass,
                 founders: TextFieldClass,
-                contact_email: TextFieldClass,
+//                contact_email: TextFieldClass,
                 address: TextFieldClass
             },
+            typeOptions = [ ['application', 'Application'], ['company', 'Company'] ],
+            platformOptions = [
+                ['ios', 'iPhone / iPad'],
+                ['android', 'Android Phone / Tablet'],
+                ['windows_mobile', 'Windows Mobile / Tablet'],
+                ['desktop', 'Desktop'],
+                ['website', 'Website'],
+                ['other', 'Other']
+            ],
             i,
             id,
             field,
@@ -88,13 +102,81 @@ pl.implement(NewListingBasicsClass, {
             this.base.fields.push(field);
             this.base.fieldMap[id] = field;
         } 
+        console.log(this.base.fieldMap);
+        this.base.fieldMap['type'].setOptionsWithValues(typeOptions);
+        this.base.fieldMap['platform'].setOptionsWithValues(platformOptions);
         this.displayCategories();
         this.addMap(this.genPlaceUpdater());
         this.bindAddressEnterSubmit();
-        this.base.bindNavButtons();
+        this.bindSubmitButton();
         this.base.bindTitleInfo();
         this.base.bindInfoButtons();
         pl('#newlistingbasicswrapper').show();
+    },
+    bindSubmitButton: function() {
+        var self = this,
+            submitValidator = function() {
+                var msg,
+                    msgs = [],
+                    pctcomplete = self.base.pctComplete();
+                if (pctcomplete !== 100) {
+                    msg = self.highlightMissing();
+                    msgs.push('Missing info: ' + msg);
+                }
+                return msgs;
+            };
+        pl('#submitbutton').bind({
+            click: function() {
+                var validmsgs = submitValidator();
+                if (validmsgs.length > 0) {
+                    pl('#submiterrormsg').addClass('errorcolor');
+                    pl('#submiterrormsg').html('Please correct: ' + validmsgs.join(' '));
+                }
+                else {
+                    pl('#submiterrormsg').removeClass('errorcolor').addClass('inprogress').text('Submitting listing...');
+                    self.postListing();
+                }
+                return false;
+            }
+        });
+    },
+    postListing: function() {
+        var self = this,
+            completeFunc = function(json) {
+                document.location = '/company-page.html?id=' + self.base.listing.listing_id;
+            },
+            ajax = new AjaxClass('/listing/post', 'newlistingmsg', completeFunc);
+        ajax.setPost();
+        ajax.call();
+    },
+    highlightMissing: function() {
+        var self = this,
+            msg = '',
+            msgs = [],
+            errorpages = {},
+            missing,
+            displayName,
+            page,
+            i;
+        for (i = 0; i < self.base.missingprops.length; i++) {
+            missing = self.base.missingprops[i];
+            page = self.base.proppage[missing];
+            if (!errorpages[page]) {
+                errorpages[page] = [];
+            }
+            displayName = self.base.displayNameOverrides[missing] || missing.toUpperCase();
+            errorpages[page].push(displayName);
+        }
+        for (i = 0; i < self.base.pages.length; i++ ) {
+            page = self.base.pages[i];
+            //self.highlightPage(page, errorpages[page]);
+        }
+        for (page in errorpages) {
+            //msg = page.toUpperCase() + ' page: ' + errorpages[page].join(', ');
+            msg = errorpages[page].join(', ');
+            msgs.push(msg);
+        }
+        return msgs.join('; ');
     },
     bindAddressEnterSubmit: function() {
         var self = this;

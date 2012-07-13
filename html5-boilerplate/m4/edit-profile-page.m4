@@ -170,8 +170,8 @@ include(header.m4)
     <div id="deactivatebox" class="deactivatebox">
     <div class="boxtitle">DEACTIVATE ACCOUNT</div>
     <div class="deactivatemsg attention" id="deactivatemsg">Are you sure?<br/>This cannot be undone.</div>
-    <a href="#" id="deactivatebtn"><div class="sideboxbutton sideboxbuttonsmall">DEACTIVATE</div></a>
-    <a href="#" class="deactivatecancelbtn" id="deactivatecancelbtn"><div class="sideboxbutton sideboxbuttonsmall">CANCEL</div></a>
+    <a href="#" id="deactivatebtn"><div class="sideboxbutton">DEACTIVATE</div></a>
+    <a href="#" class="deactivatecancelbtn" id="deactivatecancelbtn"><div class="sideboxbutton">CANCEL</div></a>
     </div>
 
 </div> <!-- end left column -->
