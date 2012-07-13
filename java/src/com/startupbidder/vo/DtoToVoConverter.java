@@ -147,6 +147,8 @@ public class DtoToVoConverter {
 		listing.setContactEmail(listingDTO.contactEmail);
 		listing.setFounders(listingDTO.founders);
 		listing.setCurrency(listingDTO.currency.toString());
+		listing.setHasBmc(listingDTO.hasBmc);
+		listing.setHasIp(listingDTO.hasIp);
 		listing.setAskedForFunding(listingDTO.askedForFunding);
 		listing.setSuggestedValuation(listingDTO.suggestedValuation);
 		listing.setSuggestedAmount(listingDTO.suggestedAmount);

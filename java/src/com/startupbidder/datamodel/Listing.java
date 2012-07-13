@@ -98,6 +98,10 @@ public class Listing extends BaseObject<Listing> {
 	public Double latitude;
 	public Double longitude;
 	
+	/* Has business model canvas */
+	public boolean hasBmc;
+	/* Has investor presentation */
+	public boolean hasIp;
 	public boolean askedForFunding;
 	public int   suggestedValuation;
 	public int   suggestedPercentage;

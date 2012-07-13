@@ -153,6 +153,10 @@ public class VoToModelConverter {
 			listing.city = property.getPropertyValue();
 		} else if (name.equalsIgnoreCase("currency")) {
 			listing.currency = Listing.Currency.valueOf(property.getPropertyValue().toUpperCase());
+		} else if (name.equalsIgnoreCase("has_bmc")) {
+			listing.hasBmc = BooleanUtils.toBoolean(property.getPropertyValue());
+		} else if (name.equalsIgnoreCase("has_ip")) {
+			listing.hasIp = BooleanUtils.toBoolean(property.getPropertyValue());
 		} else if (name.equalsIgnoreCase("asked_fund")) {
 			listing.askedForFunding = BooleanUtils.toBoolean(property.getPropertyValue());
 		} else if (name.equalsIgnoreCase("suggested_amt")) {
