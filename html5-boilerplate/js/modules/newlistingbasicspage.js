@@ -75,7 +75,7 @@ pl.implement(NewListingBasicsClass, {
             platformOptions = [
                 ['ios', 'iPhone / iPad'],
                 ['android', 'Android Phone / Tablet'],
-                ['windows_mobile', 'Windows Mobile / Tablet'],
+                ['windows_phone', 'Windows Phone / Tablet'],
                 ['desktop', 'Desktop'],
                 ['website', 'Website'],
                 ['other', 'Other']

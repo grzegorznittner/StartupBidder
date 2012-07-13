@@ -44,19 +44,19 @@ Your logo and product images are your first and best way of capturing investor i
 Make sure they are professional and eye-catching.  If you do not have the budget or expertise
 for a professional logo, just make something simple with text.  For images, upload product
 images, screenshots, store photographs, anything visual regarding your product or service.
-You may also optionally link to a video, such as a voiceover of a quick run through your slide deck.
+You may also link to a video, such as a voiceover of a quick run through your slide deck.
             </p>
         </div>
    </div>
-   <div class="boxpanel newlistingpanel">
-        <div class="mediacol1">
+   <div class="boxpanel">
+        <div class="mediacol1 clear">
             <div class="tileimg" id="logoimgwrapper">
-                <img class="tileimg" id="logoimg" src=""></img>
+                <img class="tileimg" id="logoimg" src="/img/noimage_with_border_146x146.jpg"></img>
             </div>
         </div>
         <div class="mediacol2">
             <div class="formitem">
-                <span class="uploadinfo">Enter an image URL and press enter or upload a file.</span>
+                <span class="uploadinfo">Enter an image URL and press enter or upload a file</span>
             </div>
             <div class="formitem clear">
                 <span class="inputfield">
@@ -75,7 +75,7 @@ You may also optionally link to a video, such as a voiceover of a quick run thro
                 </span>
             </div>
             <div class="formitem clear">
-                <span class="uploadinfo" id="logomsg">146x146 PNG, JPG, or GIF, cropped and resized</span>
+                <span class="uploadinfo" id="logomsg">146x146 PNG, JPG, or GIF, automatically cropped and resized</span>
             </div>
         </div>
     </div>
@@ -83,7 +83,7 @@ You may also optionally link to a video, such as a voiceover of a quick run thro
 include(images-panel-editable.m4)
 `
     <div class="boxtitle">
-        <span class="titletext">VIDEO - OPTIONAL</span>
+        <span class="titletext">VIDEO</span>
         <div class="titleinfobtn"></div>
         <div class="titleinfo">
             <label class="titleinfoheader">Instructions</label>
@@ -93,7 +93,7 @@ If you do not have a video ready, just record a voiceover of a quick run through
             </p>
         </div>
     </div>
-    <div class="boxpanel newlistingpanel">
+    <div class="boxpanel">
         <div class="formitem">
             <span class="inputfield">
                 <input class="text mediainputlink videourl" type="text" maxlength="255" name="video" id="video" value=""></input>
@@ -104,7 +104,7 @@ If you do not have a video ready, just record a voiceover of a quick run through
         </div>
         <div class="formitem clear">
             <span class="uploadinfo" id="videomsg">
-                Enter a url youtube, vimeo, or dailymotion with your presentation.
+                Enter a link to your youtube, vimeo or dailymotion video
             </span>
         </div>
 	    <div class="videocontainer">
@@ -131,10 +131,10 @@ If you do not have a video ready, just record a voiceover of a quick run through
 <!-- right column -->
 <div class="span-8 last">
 
-    <div class="boxtitle picuploadtitle clear">UPLOAD IMAGE <span id="picnum">1</span></div>
-    <div class="sidebox">
+    <div class="boxtitle boxtitleside picuploadtitle clear">UPLOAD IMAGE <span id="picnum">1</span></div>
+    <div class="sidebox uploadbox">
         <div class="formitem">
-            <span class="uploadinfo">Enter an image URL and press enter or upload a file.</span>
+            <span class="uploadinfo">Enter an image URL and press enter or upload a file</span>
         </div>
         <div class="formitem clear">
             <span class="inputfield">

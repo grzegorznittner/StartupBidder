@@ -45,7 +45,7 @@ include(header.m4)
             </p>
         </div>
     </div>
-    <div class="boxpanel newlistingpanel">
+    <div class="boxpanel">
         <div class="formitem clear">
             <label class="inputlabel" for="asked_fund">ALLOW BIDS</label>
             <span class="inputcheckbox">
@@ -73,7 +73,7 @@ include(header.m4)
             </p>
         </div>
     </div>
-    <div class="boxpanel offerpanel newlistingpanel" id="offerpanel">
+    <div class="boxpanel offerpanel" id="offerpanel">
         <div class="formitem sideinfoitem clear">
             <label class="inputlabel" for="suggested_amt">ASKING</label>
             <span class="inputfield">
@@ -117,7 +117,7 @@ include(header.m4)
     </div>
 
     <div class="boxtitle">
-        <span class="titletext">PRESENTATION - OPTIONAL</span>
+        <span class="titletext">PRESENTATION</span>
         <div class="titleinfobtn"></div>
         <div class="titleinfo">
             <label class="titleinfoheader">Instructions</label>
@@ -131,7 +131,7 @@ include(header.m4)
             </p>
         </div>
     </div>
-    <div class="boxpanel newlistingpanel">
+    <div class="boxpanel">
         <div class="mediacol1">
             <a href="#" id="presentationlink">
                 <div class="tileimg noimage" id="presentationimg">
@@ -171,7 +171,7 @@ include(header.m4)
     </div>
 
     <div class="boxtitle">
-        <span class="titletext">BUSINESS PLAN - OPTIONAL</span>
+        <span class="titletext">BUSINESS PLAN</span>
         <div class="titleinfobtn"></div>
         <div class="titleinfo">
             <label class="titleinfoheader">Instructions</label>
@@ -185,7 +185,7 @@ include(header.m4)
             </p>
         </div>
     </div>
-    <div class="boxpanel newlistingpanel">
+    <div class="boxpanel">
         <div class="mediacol1">
             <a href="#" id="business_planlink">
                 <div class="tileimg noimage" id="business_planimg">
@@ -225,7 +225,7 @@ include(header.m4)
     </div>
 
     <div class="boxtitle">
-        <span class="titletext">FINANCIAL STATEMENTS - OPTIONAL</span>
+        <span class="titletext">FINANCIAL STATEMENTS</span>
         <div class="titleinfobtn"></div>
         <div class="titleinfo">
             <label class="titleinfoheader">Instructions</label>
@@ -239,7 +239,7 @@ include(header.m4)
             </p>
         </div>
     </div>
-    <div class="boxpanel newlistingpanel">
+    <div class="boxpanel">
         <div class="mediacol1">
             <a href="#" id="financialslink">
                 <div class="tileimg noimage" id="financialsimg">
