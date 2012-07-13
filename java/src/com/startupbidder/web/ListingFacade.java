@@ -178,6 +178,50 @@ public class ListingFacade {
 	}
 
 	/**
+	 * Imports listing data from external resources.
+	 * Sets loggedin user as the owner of the listing.
+	 * Sets listing's state to NEW.
+	 */
+	public ListingAndUserVO importListing(UserVO loggedInUser, String type, String id) {
+		ListingAndUserVO result = new ListingAndUserVO();
+		if (loggedInUser == null) {
+			log.log(Level.WARNING, "Only logged in user can create listing", new Exception("Not logged in"));
+			result.setErrorCode(ErrorCodes.NOT_LOGGED_IN);
+			result.setErrorMessage("Only logged in user can create listing");
+		} else {
+			Listing newListing = null;
+			if (loggedInUser.getEditedListing() != null) {
+				newListing = getDAO().getListing(ListingVO.toKeyId(loggedInUser.getEditedListing()));
+				if (newListing.state != Listing.State.NEW) {
+					loggedInUser.setEditedListing(null);
+					loggedInUser.setEditedStatus(null);
+					result.setErrorCode(ErrorCodes.OPERATION_NOT_ALLOWED);
+					result.setErrorMessage("User has already posted listing");
+					return null;
+				}
+			} else {
+				newListing = new Listing();
+				newListing.state = Listing.State.NEW;
+				newListing.owner = new Key<SBUser>(loggedInUser.getId());
+				newListing.contactEmail = loggedInUser.getEmail();
+				newListing.founders = !StringUtils.isEmpty(loggedInUser.getName()) ? loggedInUser.getName() : loggedInUser.getNickname();
+				newListing.askedForFunding = false;
+				newListing.created = new Date();
+				loggedInUser.setEditedListing(newListing.getWebKey());
+				loggedInUser.setEditedStatus(Listing.State.NEW.toString());
+			}
+			
+			// at that stage listing is not yet active so there is no point of updating statistics
+			Monitor monitor = getDAO().getListingMonitor(loggedInUser.toKeyId(), newListing.id);
+			ListingVO listing = DtoToVoConverter.convert(newListing);
+			applyListingData(loggedInUser, listing, monitor);
+			result.setListing(listing);
+			result.setCategories(getCategories());
+		}
+		return result;
+	}
+
+	/**
 	 * Returns edited/posted listing.
 	 */
 	public ListingVO editedListing(UserVO loggedInUser) {
