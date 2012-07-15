@@ -64,6 +64,8 @@ public class TaskController extends ModelDrivenController {
 			return updateMockListingImages(request);
 		} else if("update-mock-listing-pictures".equalsIgnoreCase(getCommand(1))) {
 			return updateMockListingPictures(request);
+		} else if("fetch-listing-doc".equalsIgnoreCase(getCommand(1))) {
+			return fetchListingDoc(request);
 		} else if("send-notification".equalsIgnoreCase(getCommand(1))) {
 			return sendNotification(request);
 		} else if("schedule-comment-notifications".equalsIgnoreCase(getCommand(1))) {
@@ -111,7 +113,6 @@ public class TaskController extends ModelDrivenController {
 		HttpHeaders headers = new HttpHeadersImpl("update-mock-listing-images");
 		
 		String listingId = getCommandOrParameter(request, 2, "id");
-		
 		model = listingId;
 		
 		return headers;
@@ -126,6 +127,18 @@ public class TaskController extends ModelDrivenController {
 		Listing listing = ObjectifyDatastoreDAO.getInstance().getListing(ListingVO.toKeyId(listingId));
 		ListingFacade.instance().updateMockListingPictures(listing, new MockDataBuilder().picUrls.get(listing.name));
 		model = listingId;
+		
+		return headers;
+	}
+
+	private HttpHeaders fetchListingDoc(HttpServletRequest request) {
+		HttpHeaders headers = new HttpHeadersImpl("fetch-listing-doc");
+		
+		String listingId = getCommandOrParameter(request, 2, "id");
+		String indexStr = getCommandOrParameter(request, 3, "index");
+		int index = NumberUtils.toInt(indexStr, 1);
+		Listing listing = ListingFacade.instance().importListingPictures(listingId, index);
+		model = DtoToVoConverter.convert(listing);
 		
 		return headers;
 	}

@@ -114,6 +114,8 @@ public class ListingController extends ModelDrivenController {
 				return picture(request);
 			} else if ("query_import".equalsIgnoreCase(getCommand(1))) {
 				return queryImport(request);
+			} else if ("import_types".equalsIgnoreCase(getCommand(1))) {
+				return importTypes(request);
 			}
 		} else if ("POST".equalsIgnoreCase(request.getMethod())) {
 			if ("create".equalsIgnoreCase(getCommand(1))) {
@@ -231,6 +233,15 @@ public class ListingController extends ModelDrivenController {
 		String type = request.getParameter("type");
 		String query = request.getParameter("query");
 		model = ListingImportService.instance().getImportSuggestions(getLoggedInUser(), type, query);
+		
+		return headers;
+	}
+	
+    // GET /listing/import_types
+	private HttpHeaders importTypes(HttpServletRequest request) {
+		HttpHeaders headers = new HttpHeadersImpl("import_types");
+
+		model = ListingImportService.instance().availableImportTypes(getLoggedInUser());
 		
 		return headers;
 	}

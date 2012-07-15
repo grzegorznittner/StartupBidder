@@ -69,6 +69,7 @@ import com.startupbidder.datamodel.ListingLocation;
 import com.startupbidder.datamodel.ListingStats;
 import com.startupbidder.datamodel.Location;
 import com.startupbidder.datamodel.Monitor;
+import com.startupbidder.datamodel.PictureImport;
 import com.startupbidder.datamodel.SBUser;
 import com.startupbidder.datamodel.VoToModelConverter;
 import com.startupbidder.vo.BaseVO;
@@ -207,10 +208,19 @@ public class ListingFacade {
 				newListing.founders = !StringUtils.isEmpty(loggedInUser.getName()) ? loggedInUser.getName() : loggedInUser.getNickname();
 				newListing.askedForFunding = false;
 				newListing.created = new Date();
-				loggedInUser.setEditedListing(newListing.getWebKey());
-				loggedInUser.setEditedStatus(Listing.State.NEW.toString());
 			}
 			
+			newListing = ListingImportService.instance().importListing(loggedInUser, type, newListing, id);
+
+			ListingVO newListingVO;
+			if (loggedInUser.getEditedListing() != null) {
+				newListingVO = DtoToVoConverter.convert(getDAO().storeListing(newListing));
+			} else {
+				newListingVO = DtoToVoConverter.convert(getDAO().createListing(newListing));
+			}
+			loggedInUser.setEditedListing(newListingVO.getId());
+			loggedInUser.setEditedStatus(newListingVO.getState());
+
 			// at that stage listing is not yet active so there is no point of updating statistics
 			Monitor monitor = getDAO().getListingMonitor(loggedInUser.toKeyId(), newListing.id);
 			ListingVO listing = DtoToVoConverter.convert(newListing);
@@ -442,7 +452,7 @@ public class ListingFacade {
 		return null;
 	}
 
-	private ListingDocumentVO fetchAndUpdateListingDoc(Listing listing, ListingPropertyVO prop) {
+	public ListingDocumentVO fetchAndUpdateListingDoc(Listing listing, ListingPropertyVO prop) {
         ListingDocumentVO doc = new ListingDocumentVO();
         doc.setErrorCode(ErrorCodes.OK);
 		byte[] docBytes = null;
@@ -562,6 +572,28 @@ public class ListingFacade {
 		return ListingDoc.Type.LOGO;
 	}
 
+	public Listing importListingPictures(String listingId, int index) {
+		Listing listing = getDAO().getListing(ListingVO.toKeyId(listingId));
+		PictureImport picture = getDAO().getFirstPictureImport(listing.getKey());
+		if (picture != null) {
+			log.info("Importing picture for listing '" + listing.getWebKey() + "' from url " + picture.url);
+			String propertyName = "pic" + index + "_url";
+			ListingPropertyVO prop = new ListingPropertyVO(propertyName, picture.url);
+			ListingDocumentVO doc = ListingFacade.instance().fetchAndUpdateListingDoc(listing, prop);
+	        if (doc != null && doc.getErrorCode() == ErrorCodes.OK) {
+	            ListingDoc listingDoc = VoToModelConverter.convert(doc);
+	            updateListingDoc(listing, listingDoc);
+	            NotificationFacade.instance().schedulePictureImport(listing, index + 1);
+	        } else {
+	        	log.warning("Error fetching '" + propertyName + "' from " + picture.url);
+	        	NotificationFacade.instance().schedulePictureImport(listing, index);
+	        }
+		} else {
+			log.info("No more pictures to import for listing " + listing.getWebKey());
+		}
+        return listing;
+	}
+	
 	public ListingVO updateListing(UserVO loggedInUser, ListingVO listing) {
 		Listing dbListing = getDAO().getListing(listing.toKeyId());
 		// listing should exist, user should be logged in and an owner of the listing or admin

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -33,6 +34,7 @@ import com.startupbidder.datamodel.ListingStats;
 import com.startupbidder.datamodel.Location;
 import com.startupbidder.datamodel.Monitor;
 import com.startupbidder.datamodel.Notification;
+import com.startupbidder.datamodel.PictureImport;
 import com.startupbidder.datamodel.QuestionAnswer;
 import com.startupbidder.datamodel.SBUser;
 import com.startupbidder.datamodel.SystemProperty;
@@ -1257,5 +1259,24 @@ public class ObjectifyDatastoreDAO {
                 .filter("published =", true)
                 .fetchKeys();
         return CollectionUtils.size(questionIt.iterator());
+    }
+    
+    public void storePictureImports(PictureImport ... pics) {
+    	getOfy().put(pics);
+    }
+    
+    public PictureImport getFirstPictureImport(Key<Listing> listingKey) {
+    	try {
+    		PictureImport pic = getOfy().query(PictureImport.class).filter("listing =", listingKey).fetch().iterator().next();
+    		if (pic != null) {
+    			getOfy().delete(pic);
+    		}
+    		return pic;
+    	} catch(NoSuchElementException nsee) {
+    		return null;
+    	} catch (Exception e) {
+    		log.log(Level.WARNING, "Error fetching PictureImport", e);
+    		return null;
+    	}
     }
 }

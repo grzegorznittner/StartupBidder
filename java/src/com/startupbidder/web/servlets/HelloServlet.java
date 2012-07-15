@@ -132,9 +132,13 @@ public class HelloServlet extends HttpServlet {
 			out.println("<form method=\"POST\" action=\"/listing/delete/.json\"><input type=\"submit\" value=\"Deletes edited (NEW) listing\"/></form>");
 			
 			out.println("<p style=\"background: none repeat scroll 0% 0% rgb(187, 187, 187);\">Import listing data</p>");
+			out.println("<br/><a href=\"/listing/import_types/.json\">Available import types</a><br/>");
 			out.println("<form method=\"GET\" action=\"/listing/query_import/.json\"><textarea name=\"query\" rows=\"1\" cols=\"100\">"
-					+ ""
+					+ "Football"
 					+ "</textarea>"
+					+ "<select name=\"type\" size=\"1\"><option>AppStore</option><option>GooglePlay</option><option>AngelList</option><option>Startuply</option></select>"
+					+ "<input type=\"submit\" value=\"Submit query\"/></form>");
+			out.println("<form method=\"POST\" action=\"/listing/import/.json\"><input name=\"id\" type=\"text\" size=\"50\"/>"
 					+ "<select name=\"type\" size=\"1\"><option>AppStore</option><option>GooglePlay</option><option>AngelList</option><option>Startuply</option></select>"
 					+ "<input type=\"submit\" value=\"Submit query\"/></form>");
 			

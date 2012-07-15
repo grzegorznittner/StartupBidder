@@ -25,6 +25,7 @@ import com.startupbidder.datamodel.ListingStats;
 import com.startupbidder.datamodel.Location;
 import com.startupbidder.datamodel.Monitor;
 import com.startupbidder.datamodel.Notification;
+import com.startupbidder.datamodel.PictureImport;
 import com.startupbidder.datamodel.PrivateMessage;
 import com.startupbidder.datamodel.PrivateMessageUser;
 import com.startupbidder.datamodel.QuestionAnswer;
@@ -74,6 +75,7 @@ public class FrontController extends HttpServlet {
         ObjectifyService.register(AngelListCache.class);
         ObjectifyService.register(GeocodeLocation.class);
         ObjectifyService.register(StartuplyCache.class);
+        ObjectifyService.register(PictureImport.class);
 	}
 	
 	@Override

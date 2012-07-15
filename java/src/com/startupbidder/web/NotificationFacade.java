@@ -193,6 +193,15 @@ public class NotificationFacade {
 				.taskName(taskName));
 	}
 
+	public void schedulePictureImport(Listing listing, int index) {
+		String taskName = timeStampFormatter.print(new Date().getTime()) + "schedule_picture_to_fetch_" + listing.getWebKey();
+		Queue queue = QueueFactory.getDefaultQueue();
+		queue.add(TaskOptions.Builder.withUrl("/task/fetch-listing-doc")
+				.param("id", "" + listing.getWebKey())
+				.param("index", "" + index)
+				.taskName(taskName));
+	}
+
 	public List<NotificationVO> createListingStateNotification(String listingId) {
 		Listing listing = getListingDAO().getListing(BaseVO.toKeyId(listingId));
 		SBUser listingOwner = getUserDAO().getUser(listing.owner.getString());
