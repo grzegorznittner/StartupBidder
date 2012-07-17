@@ -28,16 +28,14 @@ import org.joda.time.format.DateTimeFormatter;
 import com.gc.android.market.api.MarketSession;
 import com.gc.android.market.api.MarketSession.Callback;
 import com.gc.android.market.api.model.Market.App;
-import com.gc.android.market.api.model.Market.AppType;
 import com.gc.android.market.api.model.Market.AppsRequest;
 import com.gc.android.market.api.model.Market.AppsResponse;
 import com.gc.android.market.api.model.Market.GetImageRequest;
+import com.gc.android.market.api.model.Market.GetImageRequest.AppImageUsage;
 import com.gc.android.market.api.model.Market.GetImageRequest.Builder;
 import com.gc.android.market.api.model.Market.ResponseContext;
-import com.gc.android.market.api.model.Market.GetImageRequest.AppImageUsage;
 import com.google.appengine.api.blobstore.BlobstoreService;
 import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
-import com.google.protobuf.Descriptors;
 import com.googlecode.objectify.Key;
 import com.startupbidder.dao.ObjectifyDatastoreDAO;
 import com.startupbidder.datamodel.Listing;
@@ -76,6 +74,7 @@ public class ListingImportService {
 		
 		importMap.put("AppStore", new AppStoreImport());
 		importMap.put("GooglePlay", new AndroidStoreImport());
+		importMap.put("CrunchBase", new CrunchBaseImport());
 	}
 	
 	private static ObjectifyDatastoreDAO getDAO() {
@@ -98,6 +97,30 @@ public class ListingImportService {
 		return nodeItem.get(name) != null ? nodeItem.get(name).getValueAsText() : null;
 	}
 	
+	private static void fetchLogo(Listing listing, String logoUrl) {
+		ListingPropertyVO prop = new ListingPropertyVO("logo_url", logoUrl);
+		ListingDocumentVO doc = ListingFacade.instance().fetchAndUpdateListingDoc(listing, prop);
+        if (doc != null && doc.getErrorCode() == ErrorCodes.OK) {
+            ListingDoc listingDoc = VoToModelConverter.convert(doc);
+            Key<ListingDoc> replacedDocId = listing.logoId;
+            // logo data uri has been stored in fetchAndUpdateListingDoc method call
+            listing.logoId = new Key<ListingDoc>(ListingDoc.class, listingDoc.id);
+			if (replacedDocId != null) {
+				try {
+					log.info("Deleting doc previously associated with listing " + replacedDocId);
+					ListingDoc docToDelete = getDAO().getListingDocument(replacedDocId.getId());
+					BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
+					blobstoreService.delete(docToDelete.blob);
+					ObjectifyDatastoreDAO.getInstance().deleteDocument(replacedDocId.getId());
+				} catch (Exception e) {
+					log.log(Level.WARNING, "Error while deleting old document " + replacedDocId + " of listing " + listing.id, e);
+				}
+			}
+        } else {
+        	log.warning("Error fetching logo from " + logoUrl);
+        }
+	}	
+
 	private static void setCredentials(MarketSession session) {
 		String user = (String)cache.get(SystemProperty.GOOGLEDOC_USER);
 		if (user == null) {
@@ -403,7 +426,10 @@ public class ListingImportService {
 							logoNode = nodeItem.get("artworkUrl60");
 						}
 					}
-					fetchImages(listing, logoNode, nodeItem.get("screenshotUrls"), nodeItem.get("ipadScreenshotUrls"));
+					if (logoNode != null) {
+						fetchLogo(listing, logoNode.getValueAsText());
+					}
+					fetchImages(listing, nodeItem.get("screenshotUrls"), nodeItem.get("ipadScreenshotUrls"));
 					
 					listing.notes += "Imported from AppStore url=" + queryString + ", trackName=" + listing.name
 							+ ", artistName=" + listing.founders
@@ -419,33 +445,7 @@ public class ListingImportService {
 			return listing;
 		}
 		
-		void fetchImages(Listing listing, JsonNode logoNode, JsonNode screenshotNode, JsonNode ipadScreenshotNode) {
-			if (logoNode != null) {
-				ListingPropertyVO prop = new ListingPropertyVO("logo_url", logoNode.getValueAsText());
-				ListingDocumentVO doc = ListingFacade.instance().fetchAndUpdateListingDoc(listing, prop);
-	            if (doc != null && doc.getErrorCode() == ErrorCodes.OK) {
-	                ListingDoc listingDoc = VoToModelConverter.convert(doc);
-	                Key<ListingDoc> replacedDocId = listing.logoId;
-	                // logo data uri has been stored in fetchAndUpdateListingDoc method call
-	                listing.logoId = new Key<ListingDoc>(ListingDoc.class, listingDoc.id);
-					if (replacedDocId != null) {
-						try {
-							log.info("Deleting doc previously associated with listing " + replacedDocId);
-							ListingDoc docToDelete = getDAO().getListingDocument(replacedDocId.getId());
-							BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
-							blobstoreService.delete(docToDelete.blob);
-							ObjectifyDatastoreDAO.getInstance().deleteDocument(replacedDocId.getId());
-						} catch (Exception e) {
-							log.log(Level.WARNING, "Error while deleting old document " + replacedDocId + " of listing " + listing.id, e);
-						}
-					}
-	            } else {
-	            	log.warning("Error fetching logo from " + logoNode.getValueAsText());
-	            }
-			} else {
-				log.info("Logo node not available");
-			}
-			
+		void fetchImages(Listing listing, JsonNode screenshotNode, JsonNode ipadScreenshotNode) {
 			List<String> urls = new ArrayList<String>();
 
 			if (ipadScreenshotNode != null) {
@@ -475,7 +475,7 @@ public class ListingImportService {
 				NotificationFacade.instance().schedulePictureImport(listing, 1);
 			}
 		}
-		
+
 		String extractMantra(String description) {
 			StringBuffer mantra = new StringBuffer();
 			for (String sentence : description.split("\\.")) {
@@ -489,6 +489,163 @@ public class ListingImportService {
 				}
 			}
 			return mantra.toString();
+		}
+	}
+	
+	static class CrunchBaseImport implements ImportSource {
+		String prepareQueryString(String query) {
+			StringBuffer crunchbaseQuery = new StringBuffer();
+			crunchbaseQuery.append("query=");
+			StringTokenizer tokenizer = new StringTokenizer(query);
+			boolean tokenAdded = false;
+			for (String token; tokenizer.hasMoreTokens();) {
+				token = tokenizer.nextToken();
+				if (!(token.contains("=") || token.contains("&") || token.contains("?"))) {
+					if (tokenAdded) {
+						crunchbaseQuery.append("+");
+					}
+					crunchbaseQuery.append(token);
+					tokenAdded = true;
+				}
+			}
+			return "http://api.crunchbase.com/v/1/search.js?" + crunchbaseQuery.toString();
+		}
+
+		@Override
+		public Map<String, String> getImportSuggestions(UserVO loggedInUser, String query) {
+			String queryString = prepareQueryString(query);
+			byte[] response = fetchBytes(queryString);
+			if (response == null) {
+				return null;
+			}
+			try {
+				int numberOfResults = -1;
+				ObjectMapper mapper = new ObjectMapper();
+				JsonNode rootNode = mapper.readValue(response, JsonNode.class);
+				if (rootNode.get("total") != null) {
+					numberOfResults = rootNode.get("total").getValueAsInt(-1);
+					log.info("Fetched " + numberOfResults + " items from " + queryString);
+				}
+				if (rootNode.get("results") != null) {
+					Map<String, String> result = new LinkedHashMap<String, String>();
+					Iterator<JsonNode> nodeIt = rootNode.get("results").getElements();
+					for (JsonNode nodeItem; nodeIt.hasNext();) {
+						nodeItem = nodeIt.next();
+						String trackId = getJsonNodeValue(nodeItem, "permalink");
+						String trackName = getJsonNodeValue(nodeItem, "name");
+						String overview = getJsonNodeValue(nodeItem, "overview");
+						
+						if (trackId != null && trackName != null) {
+							StringBuffer desc = new StringBuffer();
+							desc.append(trackName);
+							if (StringUtils.isNotEmpty(overview)) {
+								desc.append(" - ").append(StringUtils.left(overview, 50)).append("...");
+							}
+							result.put(trackId, desc.toString());
+						}
+					}
+					return result;
+				} else {
+					log.warning("Attribute 'results' not present in the response");
+					return null;
+				}
+			} catch (Exception e) {
+				log.log(Level.WARNING, "Error parsing/loading CrunchBase response", e);
+				return null;
+			}
+		}
+
+		@Override
+		public Listing importListing(UserVO loggedInUser, Listing listing, String id) {
+			String queryString = "http://api.crunchbase.com/v/1/company/" + id + ".js";
+			byte[] response = fetchBytes(queryString);
+			if (response == null) {
+				return listing;
+			}
+			try {
+				ObjectMapper mapper = new ObjectMapper();
+				JsonNode rootNode = mapper.readValue(response, JsonNode.class);
+				if (rootNode.has("permalink")) {
+					listing.name = getJsonNodeValue(rootNode, "name");
+					listing.founders = getFunders(rootNode.get("relationships"));
+					listing.type = Listing.Type.COMPANY;
+					listing.category = "Software";
+					listing.platform = Listing.Platform.IOS.toString();
+					listing.summary = getJsonNodeValue(rootNode, "overview");
+					listing.mantra = getJsonNodeValue(rootNode, "description");
+					listing.website = getJsonNodeValue(rootNode, "homepage_url");
+					
+					JsonNode logoNode = rootNode.get("image");
+					if (logoNode != null && logoNode.has("available_sizes")) {
+						JsonNode sizes = logoNode.get("available_sizes");
+						JsonNode largestSize = sizes.get(sizes.size() - 1);
+						fetchLogo(listing, "http://www.crunchbase.com/" + largestSize.get(1).getValueAsText());
+					}
+					fetchImages(listing, rootNode.get("screenshots"));
+					
+					listing.notes += "Imported from CrunchBase url=" + queryString + ", name=" + listing.name
+							+ ", founders=" + listing.founders
+							+ ", homepage_url=" + getJsonNodeValue(rootNode, "artistViewUrl")
+							+ ", description=" + listing.mantra + "\n";
+				} else {
+					log.warning("Attribute 'permalink' not present in the response");
+				}
+			} catch (Exception e) {
+				log.log(Level.WARNING, "Error parsing/loading CrunchBase response", e);
+			}
+			return listing;
+		}
+		
+		String getFunders(JsonNode relationships) {
+			if (relationships == null) {
+				return null;
+			}
+			StringBuffer buf = new StringBuffer();
+			Iterator<JsonNode> it = relationships.getElements();
+			for (JsonNode relation; it.hasNext(); ) {
+				relation = it.next();
+				if (relation.has("title") && StringUtils.contains(relation.get("title").getValueAsText(), "Founder")) {
+					JsonNode person = relation.get("person");
+					if (person != null && person.has("first_name") && person.has("last_name")) {
+						if (buf.length() > 0) {
+							buf.append(", ");
+						}
+						buf.append(getJsonNodeValue(person, "first_name")).append(" ").append(getJsonNodeValue(person, "last_name"));
+					}
+				}
+			}
+			return buf.toString();
+		}
+		
+		void fetchImages(Listing listing, JsonNode screenshotNode) {
+			List<String> urls = new ArrayList<String>();
+
+			if (screenshotNode != null) {
+				Iterator<JsonNode> elemIter = screenshotNode.getElements();
+				for (; urls.size() < 5 && elemIter.hasNext(); ) {
+					JsonNode screenshot = elemIter.next();
+					if (screenshot.has("available_sizes")) {
+						JsonNode sizes = screenshot.get("available_sizes");
+						JsonNode largestSize = sizes.get(sizes.size() - 1);
+						
+						urls.add("http://www.crunchbase.com/" + largestSize.get(1).getValueAsText());
+					}
+				}
+			}
+
+			if (urls.size() > 0) {
+				List<PictureImport> picImportList = new ArrayList<PictureImport>();
+				for (String url : urls) {
+					log.info("Scheduling picture to import from " + url);
+					PictureImport pic = new PictureImport();
+					pic.listing = listing.getKey();
+					pic.url = url;
+					picImportList.add(pic);
+				}
+				getDAO().storePictureImports(picImportList.toArray(new PictureImport[]{}));
+				
+				NotificationFacade.instance().schedulePictureImport(listing, 1);
+			}
 		}
 	}
 }
