@@ -27,7 +27,6 @@ import java.util.logging.Logger;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -72,6 +71,8 @@ import com.startupbidder.datamodel.Monitor;
 import com.startupbidder.datamodel.PictureImport;
 import com.startupbidder.datamodel.SBUser;
 import com.startupbidder.datamodel.VoToModelConverter;
+import com.startupbidder.util.GetImageResponseCallback;
+import com.startupbidder.util.ImageHelper;
 import com.startupbidder.vo.BaseVO;
 import com.startupbidder.vo.DiscoverListingsVO;
 import com.startupbidder.vo.DtoToVoConverter;
@@ -96,10 +97,6 @@ public class ListingFacade {
 	public static enum UpdateReason {NEW_BID, BID_UPDATE, NEW_COMMENT, DELETE_COMMENT, NEW_MONITOR, DELETE_MONITOR, QUESTION_ANSWERED, NONE};
 	public static final String MEMCACHE_ALL_LISTING_LOCATIONS = "AllListingLocations";
 
-	private final static byte[] JPEG = {(byte)0xff, (byte)0xd8 };
-	private final static byte[] GIF = {0x47, 0x49, 0x46, 0x38};
-	private final static byte[] PNG = {(byte)0x89, 0x50, 0x4e, 0x47};
-	
 	private final static int PICTURE_HEIGHT = 452;
 	private final static int PICTURE_WIDTH = 622;
 	private final static int LOGO_HEIGHT = 146;
@@ -451,7 +448,7 @@ public class ListingFacade {
 		}
 		return null;
 	}
-
+	
 	public ListingDocumentVO fetchAndUpdateListingDoc(Listing listing, ListingPropertyVO prop) {
         ListingDocumentVO doc = new ListingDocumentVO();
         doc.setErrorCode(ErrorCodes.OK);
@@ -462,22 +459,16 @@ public class ListingFacade {
 		try {
 			boolean isDevEnvironment = com.google.appengine.api.utils.SystemProperty.environment.value() == com.google.appengine.api.utils.SystemProperty.Environment.Value.Development;
 			String url = prop.getPropertyValue();
-			if(!url.startsWith("http") && isDevEnvironment && new File("./test-docs").exists()) {
+			if(!url.startsWith("http") && !url.startsWith("android") && isDevEnvironment && new File("./test-docs").exists()) {
 				docBytes = FileUtils.readFileToByteArray(new File(propValue));
-				if (propValue.endsWith(".gif")) {
-					mimeType = "image/gif";
-				} else if (propValue.endsWith(".jpg")) {
-					mimeType = "image/jpeg";
-				} else if (propValue.endsWith(".png")) {
-					mimeType = "image/png";
-				} else if (propValue.endsWith(".doc")) {
-					mimeType = "application/msword";
-				} else if (propValue.endsWith(".ppt")) {
-					mimeType = "application/vnd.ms-powerpoint";
-				} else if (propValue.endsWith(".xls")) {
-					mimeType = "application/vnd.ms-excel";
-				} else if (propValue.endsWith(".pdf")) {
-					mimeType = "application/pdf";
+				mimeType = ImageHelper.getMimeTypeFromFileName(propValue);
+			} else if (url.startsWith("android")) {
+				GetImageResponseCallback result = ListingImportService.fetchImageFromGooglePlayStore(propName, propValue);
+				if (result != null) {
+					docBytes = result.getResult();
+					mimeType = result.getMimeType();
+				} else {
+					throw new IllegalStateException("Error fetching image from Google Play store");
 				}
 			} else {
 				URLConnection con = new URL(url).openConnection();
@@ -1882,18 +1873,12 @@ public class ListingFacade {
 	}
 	
 	public String convertLogoToBase64(byte[] logo) {
-		byte[] premagicNumber = ArrayUtils.subarray(logo, 0, 2);
-		byte[] magicNumber = ArrayUtils.subarray(logo, 0, 4);
-		String format = "";
-		if (ArrayUtils.isEquals(premagicNumber, JPEG)) {
-			format = "image/jpeg";
-		} else if (ArrayUtils.isEquals(magicNumber, GIF)) {
-			format = "image/gif";
-		} else if (ArrayUtils.isEquals(magicNumber, PNG)) {
-			format = "image/png";
-		} else {
-			log.warning("Image not recognized as JPG, GIF or PNG. Magic number was: " + toHexString(magicNumber));
-            return "Image not recognized as JPG, GIF or PNG.";
+		String format = null;
+		try {
+			format = ImageHelper.checkMagicNumber(logo);
+		} catch (ImageHelper.ImageFormatException e) {
+			log.log(Level.WARNING, "Not recognized logo format", e);
+			return e.getMessage();
 		}
 		ImagesService imagesService = ImagesServiceFactory.getImagesService();
         Image originalImage = ImagesServiceFactory.makeImage(logo);
@@ -1927,19 +1912,12 @@ public class ListingFacade {
 	}
 
 	public PictureData convertPicture(byte[] picture) {
-		byte[] premagicNumber = ArrayUtils.subarray(picture, 0, 2);
-		byte[] magicNumber = ArrayUtils.subarray(picture, 0, 4);
-		String format = "";
-		if (ArrayUtils.isEquals(premagicNumber, JPEG)) {
-			format = "image/jpeg";
-		} else if (ArrayUtils.isEquals(magicNumber, GIF)) {
-			format = "image/gif";
-		} else if (ArrayUtils.isEquals(magicNumber, PNG)) {
-			format = "image/png";
-		} else {
+		String format = null;
+		try {
+			format = ImageHelper.checkMagicNumber(picture);
+		} catch (ImageHelper.ImageFormatException e) {
             String errorStr = "Image not recognized as JPG, GIF or PNG.";
             PictureData pd = new PictureData(errorStr, null);
-			log.warning(errorStr + " Magic number was: " + toHexString(magicNumber));
 			return pd;
 		}
 		ImagesService imagesService = ImagesServiceFactory.getImagesService();
@@ -1956,13 +1934,6 @@ public class ListingFacade {
     	log.info("Resized image: " + newImage.getWidth() + " x " + newImage.getHeight());
         byte[] newImageData = newImage.getImageData();
 		return new PictureData(format, newImageData);
-	}
-
-	private String toHexString(byte[] magicNumber) {
-		return "0x" + Integer.toHexString((0xF0 & magicNumber[0]) >>> 4) + Integer.toHexString(0x0F & magicNumber[0])
-				+ " 0x" + Integer.toHexString((0xF0 & magicNumber[1]) >>> 4) + Integer.toHexString(0x0F & magicNumber[1])
-				+ " 0x" + Integer.toHexString((0xF0 & magicNumber[2]) >>> 4) + Integer.toHexString(0x0F & magicNumber[2])
-				+ " 0x" + Integer.toHexString((0xF0 & magicNumber[3]) >>> 4) + Integer.toHexString(0x0F & magicNumber[3]);
 	}
 
 	public ListingAndUserVO deleteListingFile(UserVO loggedInUser, String listingId, ListingDoc.Type docType) {

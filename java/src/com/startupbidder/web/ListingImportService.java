@@ -3,6 +3,7 @@ package com.startupbidder.web;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -12,31 +13,51 @@ import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import net.sf.jsr107cache.Cache;
+import net.sf.jsr107cache.CacheException;
+import net.sf.jsr107cache.CacheFactory;
+import net.sf.jsr107cache.CacheManager;
+
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import com.gc.android.market.api.MarketSession;
+import com.gc.android.market.api.MarketSession.Callback;
+import com.gc.android.market.api.model.Market.App;
+import com.gc.android.market.api.model.Market.AppType;
+import com.gc.android.market.api.model.Market.AppsRequest;
+import com.gc.android.market.api.model.Market.AppsResponse;
+import com.gc.android.market.api.model.Market.GetImageRequest;
+import com.gc.android.market.api.model.Market.GetImageRequest.Builder;
+import com.gc.android.market.api.model.Market.ResponseContext;
+import com.gc.android.market.api.model.Market.GetImageRequest.AppImageUsage;
 import com.google.appengine.api.blobstore.BlobstoreService;
 import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
+import com.google.protobuf.Descriptors;
 import com.googlecode.objectify.Key;
 import com.startupbidder.dao.ObjectifyDatastoreDAO;
 import com.startupbidder.datamodel.Listing;
 import com.startupbidder.datamodel.ListingDoc;
 import com.startupbidder.datamodel.PictureImport;
+import com.startupbidder.datamodel.SystemProperty;
 import com.startupbidder.datamodel.VoToModelConverter;
+import com.startupbidder.util.GetImageResponseCallback;
 import com.startupbidder.vo.ErrorCodes;
 import com.startupbidder.vo.ListingDocumentVO;
 import com.startupbidder.vo.ListingPropertyVO;
 import com.startupbidder.vo.UserVO;
 
 public class ListingImportService {
-	private static final Logger log = Logger.getLogger(ListingImportService.class.getName());
+	static final Logger log = Logger.getLogger(ListingImportService.class.getName());
 	
 	private DateTimeFormatter timeStampFormatter = DateTimeFormat.forPattern("yyyyMMdd_HHmmss_SSS");
 	private static ListingImportService instance;
 	private static Map<String, ImportSource> importMap = new HashMap<String, ImportSource>();
+	private static Cache cache;
 	
 	public static ListingImportService instance() {
 		if (instance == null) {
@@ -46,7 +67,15 @@ public class ListingImportService {
 	}
 	
 	private ListingImportService() {
+		try {
+            CacheFactory cacheFactory = CacheManager.getInstance().getCacheFactory();
+            cache = cacheFactory.createCache(Collections.emptyMap());
+        } catch (CacheException e) {
+            log.log(Level.SEVERE, "Cache couldn't be created!!!");
+        }
+		
 		importMap.put("AppStore", new AppStoreImport());
+		importMap.put("GooglePlay", new AndroidStoreImport());
 	}
 	
 	private static ObjectifyDatastoreDAO getDAO() {
@@ -67,6 +96,56 @@ public class ListingImportService {
 	
 	private static String getJsonNodeValue(JsonNode nodeItem, String name) {
 		return nodeItem.get(name) != null ? nodeItem.get(name).getValueAsText() : null;
+	}
+	
+	private static void setCredentials(MarketSession session) {
+		String user = (String)cache.get(SystemProperty.GOOGLEDOC_USER);
+		if (user == null) {
+			SystemProperty userProp = ServiceFacade.instance().getDAO().getSystemProperty(SystemProperty.GOOGLEDOC_USER);
+			if (userProp != null) {
+				user = userProp.value;
+				cache.put(SystemProperty.GOOGLEDOC_USER, user);
+			}
+		}
+		String pass = (String)cache.get(SystemProperty.GOOGLEDOC_PASSWORD);
+		if (pass == null) {
+			SystemProperty passProp = ServiceFacade.instance().getDAO().getSystemProperty(SystemProperty.GOOGLEDOC_PASSWORD);
+			if (passProp != null) {
+				pass = passProp.value;
+				cache.put(SystemProperty.GOOGLEDOC_PASSWORD, pass);
+			}
+		}
+		if (user == null || pass == null) {
+			log.severe("Google Doc credentials not set up!");
+			return;
+		}
+		session.login(user, pass);
+	}
+	
+	public static GetImageResponseCallback fetchImageFromGooglePlayStore(String propName, String propValue) {
+		String[] tokens = propValue.split("#");
+		if (tokens.length == 4 && "android".equals(tokens[0])) {
+			// android URI is in format: android#<app id>#<pic or icon>#<pic number>
+			String appId = tokens[1];
+			String type = tokens[2];
+			String number = tokens[3];
+			MarketSession session = new MarketSession();
+			setCredentials(session);
+			Builder builder = GetImageRequest.newBuilder().setAppId(appId);
+			if ("pic".equals(type)) {
+				builder = builder.setImageUsage(AppImageUsage.SCREENSHOT).setImageId(number);
+			} else {
+				builder = builder.setImageUsage(AppImageUsage.ICON).setImageId(number);
+			}
+			GetImageRequest imgReq = builder.build();
+			GetImageResponseCallback result = new GetImageResponseCallback(propValue);
+			session.append(imgReq, result);
+			session.flush();
+			return result;
+		} else {
+			log.warning("URI is not android format: " + propValue);
+			return null;
+		}
 	}
 
 	/**
@@ -115,6 +194,105 @@ public class ListingImportService {
 		 * Provided id must uniquely identify data to import.
 		 */
 		Listing importListing(UserVO loggedInUser, Listing listing, String id);
+	}
+	
+	static class AndroidStoreImport implements ImportSource {
+		@Override
+		public Map<String, String> getImportSuggestions(UserVO loggedInUser, final String query) {
+			MarketSession session = new MarketSession();
+			setCredentials(session);
+
+			AppsRequest appsRequest = AppsRequest.newBuilder().setQuery(query)
+					.setStartIndex(0).setEntriesCount(5)
+					.setWithExtendedInfo(true).build();
+			final Map<String, String> result = new LinkedHashMap<String, String>();
+			log.info("Searching Android Market for " + query);
+			session.append(appsRequest, new Callback<AppsResponse>() {
+				@Override
+				public void onResult(ResponseContext context, AppsResponse response) {
+					log.info("Query for '" + query + "' returned " + response.getAppList().size());
+					for (App app : response.getAppList()) {
+						result.put(app.getId(), app.getTitle() + " by " + app.getCreator()
+										+ " version " + app.getVersion());
+					}
+				}
+			});
+			session.flush();
+
+			return result;
+		}
+
+		@Override
+		public Listing importListing(UserVO loggedInUser, final Listing listing, final String id) {
+			MarketSession session = new MarketSession();
+			setCredentials(session);
+
+			AppsRequest appsRequest = AppsRequest.newBuilder().setAppId(id)
+					.setWithExtendedInfo(true).build();
+			log.info("Searching Android Market for application " + id);
+			session.append(appsRequest, new Callback<AppsResponse>() {
+				@Override
+				public void onResult(ResponseContext context, AppsResponse response) {
+					log.info("Query for '" + id + "' returned " + response.getAppList().size());
+					App app = response.getApp(0);
+
+					listing.name = app.getTitle();
+					listing.founders = app.getCreator();
+					listing.type = Listing.Type.APPLICATION;
+					listing.category = "Software";
+					listing.platform = Listing.Platform.ANDROID.toString();
+					listing.summary = app.getExtendedInfo().getDescription();
+					listing.mantra = StringUtils.left(app.getExtendedInfo().getPromoText(), 100);
+					listing.website = app.getExtendedInfo().getContactWebsite();
+					listing.videoUrl = app.getExtendedInfo().getPromotionalVideo();
+					listing.notes += "Imported from GooglePlay id=" + id
+							+ ", creator=" + listing.founders
+							+ ", creatorId=" + app.getCreatorId()
+							+ ", version=" + app.getVersion() + "\n";
+					fetchLogo(listing, id);
+					if (app.getExtendedInfo().hasScreenshotsCount() && app.getExtendedInfo().getScreenshotsCount() > 0) {
+						List<PictureImport> picImportList = new ArrayList<PictureImport>();
+						int count = app.getExtendedInfo().getScreenshotsCount();
+						for (int screenshot = 1; screenshot <= count; screenshot++) {
+							PictureImport pic = new PictureImport();
+							pic.listing = listing.getKey();
+							pic.url = "android#" + id + "#pic#" + screenshot;
+							picImportList.add(pic);
+							log.info("Scheduling picture to import from " + pic.url);
+						}
+						getDAO().storePictureImports(picImportList.toArray(new PictureImport[]{}));
+						
+						NotificationFacade.instance().schedulePictureImport(listing, 1);
+					}
+				}
+			});
+			session.flush();
+			return listing;
+		}
+		
+		private void fetchLogo(Listing listing, String appId) {
+			ListingPropertyVO prop = new ListingPropertyVO("logo_url", "android#" + appId + "#logo#1");
+			ListingDocumentVO doc = ListingFacade.instance().fetchAndUpdateListingDoc(listing, prop);
+            if (doc != null && doc.getErrorCode() == ErrorCodes.OK) {
+                ListingDoc listingDoc = VoToModelConverter.convert(doc);
+                Key<ListingDoc> replacedDocId = listing.logoId;
+                // logo data uri has been stored in fetchAndUpdateListingDoc method call
+                listing.logoId = new Key<ListingDoc>(ListingDoc.class, listingDoc.id);
+				if (replacedDocId != null) {
+					try {
+						log.info("Deleting doc previously associated with listing " + replacedDocId);
+						ListingDoc docToDelete = getDAO().getListingDocument(replacedDocId.getId());
+						BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
+						blobstoreService.delete(docToDelete.blob);
+						ObjectifyDatastoreDAO.getInstance().deleteDocument(replacedDocId.getId());
+					} catch (Exception e) {
+						log.log(Level.WARNING, "Error while deleting old document " + replacedDocId + " of listing " + listing.id, e);
+					}
+				}
+            } else {
+            	log.warning("Error fetching logo from " + prop.getPropertyValue());
+            }
+		}
 	}
 	
 	static class AppStoreImport implements ImportSource {
