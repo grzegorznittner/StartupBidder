@@ -40,23 +40,21 @@ public class SetupServlet extends HttpServlet {
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		UserService userService = UserServiceFactory.getUserService();
 		User user = userService.getCurrentUser();
-		
-		if (user != null) {
-			resp.setContentType("text/html");
-		} else {
-			resp.sendRedirect(userService.createLoginURL(req.getRequestURI()));
-		}
-		
+				
 		ServiceFacade service = ServiceFacade.instance();
 		PrintWriter out = resp.getWriter();
 		
+		if (user == null) {
+			out.println("Only users logged in via Google can see that page");
+		}
+
 		try {
 			out.println("<html><head><title>StartupBidder setup page</title></head><body>");
             out.println("<h1>User Info</h1>");
 			out.println("<p>Hello, " + user.getNickname() + " ..................................");
 			out.println("<a href=\"" + userService.createLogoutURL("/hello") + "\">logout</a></p>");
 			
-			UserVO currentUser = UserMgmtFacade.instance().getLoggedInUserData(user);
+			UserVO currentUser = UserMgmtFacade.instance().getLoggedInUser(user);
 			if (currentUser == null) {
 				currentUser = UserMgmtFacade.instance().createUser(user);
 			}
@@ -135,6 +133,8 @@ public class SetupServlet extends HttpServlet {
             out.println("<h1>System Settings</h1>");
 
             out.println("<p>Available system properties:");
+            out.println("<ul><li>twitter.consumer.key - Twitter's OAuth Consumer key");
+            out.println("<ul><li>twitter.consumer.secret - Twitter's OAuth Consumer secret");
             out.println("<ul><li>notification_real_receivers - if true then notification emails are sent to real receivers");
             out.println("<li>notification_no_bcc_admins - if empty or false then notification emails are BCC to admins. Only when notification_real_receivers = true");
             out.println("</ul></p>");

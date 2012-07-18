@@ -22,7 +22,10 @@ import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.appengine.api.utils.SystemProperty;
+import com.startupbidder.dao.ObjectifyDatastoreDAO;
+import com.startupbidder.util.TwitterHelper;
 import com.startupbidder.vo.BaseResultVO;
+import com.startupbidder.vo.DtoToVoConverter;
 import com.startupbidder.vo.ErrorCodes;
 import com.startupbidder.vo.ListPropertiesVO;
 import com.startupbidder.vo.UserVO;
@@ -56,21 +59,37 @@ public abstract class ModelDrivenController {
 		UserService userService = UserServiceFactory.getUserService();
 		User user = userService.getCurrentUser();
 		if (user != null) {
-			loggedInUser = UserMgmtFacade.instance().getLoggedInUserData(user);
+			// logged in via Google
+			loggedInUser = UserMgmtFacade.instance().getLoggedInUser(user);
 			if (loggedInUser == null) {
 				// first time logged in
 				loggedInUser = UserMgmtFacade.instance().createUser(user);
 			}
 			if (loggedInUser != null) {
 				loggedInUser.setAdmin(userService.isUserAdmin());
-				if (!StringUtils.isEmpty(loggedInUser.getEditedListing())) {
-					// calling this method checks also if listing is in valid state
-					ListingFacade.instance().editedListing(loggedInUser);
+			}
+		} else if (request.getSession().getAttribute(TwitterHelper.SESSION_TWITTER_USER) != null) {
+			// login via Twitter
+			twitter4j.User twitterUser = TwitterHelper.getTwitterUser(request);
+			log.info("Logged in via Twitter as " + twitterUser.getScreenName());
+			loggedInUser = UserMgmtFacade.instance().getLoggedInUser(twitterUser);
+			if (loggedInUser == null) {
+				log.info("User not found via twitter id " + twitterUser.getId() + ", screen name '" + twitterUser.getScreenName() + "'");
+				if (twitterUser.getScreenName().equals("GregNittner")) {
+					loggedInUser = DtoToVoConverter.convert(ObjectifyDatastoreDAO.getInstance()
+							.setTwitterForEmailAccount("grzegorz.nittner@gmail.com", twitterUser.getId(), twitterUser.getScreenName()));
+				} else {
+					loggedInUser = UserMgmtFacade.instance().createUser(twitterUser);
 				}
 			}
 		} else {
 			// not logged in
 			loggedInUser = null;
+		}
+
+		if (loggedInUser != null && !StringUtils.isEmpty(loggedInUser.getEditedListing())) {
+			// calling this method checks also if listing is in valid state
+			ListingFacade.instance().editedListing(loggedInUser);
 		}
 		
 		command = decomposeRequest(request.getPathInfo());
@@ -92,13 +111,24 @@ public abstract class ModelDrivenController {
 					appHost = "http://" + (appPortNumber != 80 ? appHostName + ":" + appPortNumber : appHostName);
 				}
 				if (loggedInUser != null) {
-					((BaseResultVO) model).setLoggedUser(loggedInUser);
-					((BaseResultVO) model).setLogoutUrl(userService.createLogoutURL(appHost));
+					if (request.getSession().getAttribute(TwitterHelper.SESSION_TWITTER_USER) != null) {
+						// handling twitter logins
+						twitter4j.User twitterUser = TwitterHelper.getTwitterUser(request);
+						loggedInUser.setNickname(twitterUser.getScreenName());
+						((BaseResultVO) model).setLoggedUser(loggedInUser);
+						((BaseResultVO) model).setLogoutUrl(appHost + "/twitter_logout");
+					} else {
+						((BaseResultVO) model).setLoggedUser(loggedInUser);
+						((BaseResultVO) model).setLogoutUrl(userService.createLogoutURL(appHost));
+					}
 				} else {
 					((BaseResultVO) model).setLoginUrl(userService.createLoginURL(appHost, "startupbidder.com"));
 				}
 				if (((BaseResultVO) model).getErrorCode() != ErrorCodes.OK) {
 					headers.setStatus(500);
+				}
+				if (TwitterHelper.configureTwitterFactory() != null) {
+					((BaseResultVO) model).setTwitterLoginAvailable(true);
 				}
 			}
 		} catch (Exception e) {

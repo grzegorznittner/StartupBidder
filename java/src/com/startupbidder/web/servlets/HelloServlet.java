@@ -30,6 +30,7 @@ import com.startupbidder.datamodel.Monitor;
 import com.startupbidder.datamodel.PrivateMessageUser;
 import com.startupbidder.datamodel.SBUser;
 import com.startupbidder.datamodel.VoToModelConverter;
+import com.startupbidder.util.TwitterHelper;
 import com.startupbidder.vo.BidListVO;
 import com.startupbidder.vo.BidUserListVO;
 import com.startupbidder.vo.BidUserVO;
@@ -70,34 +71,43 @@ public class HelloServlet extends HttpServlet {
 			throws IOException {
 		UserService userService = UserServiceFactory.getUserService();
 		User user = userService.getCurrentUser();
-
-		if (user != null) {
-			resp.setContentType("text/html");
-		} else {
-			resp.sendRedirect(userService.createLoginURL(req.getRequestURI()));
-		}
+		twitter4j.User twitterUser = TwitterHelper.getTwitterUser(req);
+		
+		resp.setContentType("text/html");
 		
 		ServiceFacade service = ServiceFacade.instance();
 		ObjectifyDatastoreDAO datastore = ServiceFacade.instance().getDAO();
 		
 		PrintWriter out = resp.getWriter();
-		try {
+		try {			
 			out.println("<html><head><title>StartupBidder test page</title></head><body>");
-			out.println("<p>Hello, " + user.getNickname() + " ..................................");
-			out.println("<a href=\"" + userService.createLogoutURL("/hello") + "\">logout</a></p>");
+			if (user == null && twitterUser == null) {
+				out.println("<p>User need to be logged in!</p>");
+				return;
+			}
+			
+			UserVO currentUser = null;
+			if (user != null) {
+				out.println("<p>Hello, " + user.getNickname() + " ..................................");
+				out.println("<a href=\"" + userService.createLogoutURL("/hello") + "\">logout</a></p>");
+
+				currentUser = UserMgmtFacade.instance().getLoggedInUser(user);
+				if (currentUser == null) {
+					currentUser = UserMgmtFacade.instance().createUser(user);
+				}
+				currentUser.setAdmin(userService.isUserAdmin());
+			}
+			if (twitterUser != null) {
+				out.println("<p>Hello, " + user.getNickname() + ", you're logged in via Twitter");
+				out.println("<a href=\"" + userService.createLogoutURL("/twitter_logout") + "\">twitter logout</a></p>");
+			}
 			
 //			if (!(user.getNickname().contains("grzegorz.nittner") || user.getNickname().contains("johnarleyburns"))) {
 //				out.println("<p>Sorry, you're not authorized to view contents!!!</p>");
 //				return;
 //			}
 			out.println("<a href=\"/setup/\">Setup page</a></p>");
-			
-			UserVO currentUser = UserMgmtFacade.instance().getLoggedInUserData(user);
-			if (currentUser == null) {
-				currentUser = UserMgmtFacade.instance().createUser(user);
-			}
-			currentUser.setAdmin(userService.isUserAdmin());
-			
+						
 			ListPropertiesVO listProperties = new ListPropertiesVO();
 			listProperties.setMaxResults(1);
 			List<Listing> listings = datastore.getAllListings();

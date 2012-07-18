@@ -1,5 +1,6 @@
 package com.startupbidder.web;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
@@ -213,11 +214,38 @@ public class ServiceFacade {
 	}
 
 	public SystemPropertyVO getSystemProperty(UserVO loggedInUser, String name) {
-		return DtoToVoConverter.convert(getDAO().getSystemProperty(name));
+		if (loggedInUser == null || !loggedInUser.isAdmin()) {
+			return null;
+		}
+		SystemPropertyVO prop = DtoToVoConverter.convert(getDAO().getSystemProperty(name));
+		if (prop != null && (StringUtils.contains(prop.getName(), "password")
+				|| StringUtils.contains(prop.getName(), "secret"))) {
+			String value = prop.getValue();
+			if (value.length() < 5) {
+				prop.setValue("*****");
+			} else {
+				prop.setValue(value.substring(0, 4) + "*****");
+			}
+		}
+		return prop;
 	}
 
 	public List<SystemPropertyVO> getSystemProperties(UserVO loggedInUser) {
-		return DtoToVoConverter.convertSystemProperties(getDAO().getSystemProperties());
+		if (loggedInUser == null || !loggedInUser.isAdmin()) {
+			return new ArrayList<SystemPropertyVO>();
+		}
+		List<SystemPropertyVO> result = DtoToVoConverter.convertSystemProperties(getDAO().getSystemProperties());
+		for (SystemPropertyVO prop : result) {
+			if (StringUtils.contains(prop.getName(), "password") || StringUtils.contains(prop.getName(), "secret")) {
+				String value = prop.getValue();
+				if (value.length() < 5) {
+					prop.setValue("*****");
+				} else {
+					prop.setValue(value.substring(0, 4) + "*****");
+				}
+			}
+		}
+		return result;
 	}
 
 	public SystemPropertyVO setSystemProperty(UserVO loggedInUser, SystemPropertyVO property) {
@@ -229,6 +257,9 @@ public class ServiceFacade {
 	}
 
 	public ListingDocumentVO deleteDocument(UserVO loggedInUser, String docId) {
+		if (loggedInUser == null) {
+			return null;
+		}
 		getDAO().deleteDocument(BaseVO.toKeyId(docId));
 		return null;
 	}

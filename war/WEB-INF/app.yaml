@@ -1,5 +1,5 @@
 application: startupbidder
-version: 201207131521
+version: 201207181557
 runtime: java
 
 static_files:
@@ -18,13 +18,35 @@ handlers:
     servlet: com.startupbidder.web.servlets.HelloServlet
   - url: /setup/*
     servlet: com.startupbidder.web.servlets.SetupServlet
+  - url: /twitter_login
+    servlet: com.startupbidder.web.servlets.TwitterLoginServlet
+  - url: /twitter_logout
+    servlet: com.startupbidder.web.servlets.TwitterLogoutServlet
+  - url: /twitter_callback
+    servlet: com.startupbidder.web.servlets.TwitterCallbackServlet
   - url: /*
     servlet: com.startupbidder.web.FrontController
   - url: /remote_api
     servlet: com.google.apphosting.utils.remoteapi.RemoteApiServlet
 
+listeners:
+   - com.startupbidder.web.servlets.WarmupListener
+
 welcome_files:
   - discover-page.html
 
 inbound_services:
-- warmup
+  - warmup
+
+admin_console:
+  pages:
+  - name: StartupBidder Test Page
+    url: /hello
+  - name: StartupBidder Setup Page
+    url: /setup
+
+sessions_enabled: true
+
+threadsafe: true
+
+  

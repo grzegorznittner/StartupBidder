@@ -10,6 +10,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
@@ -108,6 +109,12 @@ public class ObjectifyDatastoreDAO {
         return user;
     }
 
+    public SBUser getUserByTwitter(long twitterId) {
+        SBUser user = getOfy().query(SBUser.class).filter("twitterId =", twitterId).get();
+        log.info("Existing user for email " + twitterId + " is " + user);
+        return user;
+    }
+
     public SBUser getUserByNickname(String nickname) {
         String nicknameLower = nickname.toLowerCase();
         SBUser user = getOfy().query(SBUser.class).filter("nicknameLower =", nicknameLower).get();
@@ -148,6 +155,27 @@ public class ObjectifyDatastoreDAO {
 		return user;
 	}
 	
+	public SBUser createUser(long twitterId, String twitterScreenName) {
+        SBUser user = getUserByTwitter(twitterId);
+        if (user != null) {
+            log.warning("User with twitterId '" + twitterId + "' already exists, cannot create user.");
+            return null;
+        }
+    	user = new SBUser();
+    	user.twitterEmail = "not set";
+    	user.twitterId = twitterId;
+    	user.twitterScreenName = twitterScreenName;
+        user.email = "<twitter_login>";
+        user.nickname = twitterScreenName;
+        user.nicknameLower = twitterScreenName.toLowerCase();
+	    user.modified = user.lastLoggedIn = user.joined = new Date();
+		user.status = SBUser.Status.CREATED;
+		user.notifyEnabled = false;
+		getOfy().put(user);
+        log.info("Created user with twitter id " + twitterId + " as " + user);
+		return user;
+	}
+	
 	public SBUser createUser(String email, String password, String authCookie, String name, String location, boolean investor) {
         String userEmail = StringUtils.isNotEmpty(email) ? email : "anonymous" + String.valueOf(new Random().nextInt(1000000000)) + "@startupbidder.com";
         SBUser user = getUserByEmail(email);
@@ -178,7 +206,7 @@ public class ObjectifyDatastoreDAO {
         log.info("Created user with defaulted nickname " + user.nickname + " as " + user);
 		return user;
 	}
-
+	
 	public UserStats updateUserStatistics(long userId) {
 		SBUser user = null;
 		try {
@@ -370,6 +398,9 @@ public class ObjectifyDatastoreDAO {
 			user.password = newUser.password;
 			user.authCookie = newUser.authCookie;
             user.editedListing = newUser.editedListing;
+            user.twitterId = newUser.twitterId;
+            user.twitterScreenName = newUser.twitterScreenName;
+            user.twitterEmail = newUser.twitterEmail;
 
 			getOfy().put(user);
 			
@@ -380,6 +411,40 @@ public class ObjectifyDatastoreDAO {
 			return null;
 		}
 	}
+
+	public SBUser prepareUpdateUsersEmailByTwitter(SBUser twitterUser, String email) {
+		twitterUser.twitterEmail = email;
+		twitterUser.activationCode = RandomStringUtils.randomAlphanumeric(30);
+		getOfy().put(twitterUser);
+		log.log(Level.INFO, "Updated user: " + twitterUser);
+		return twitterUser;
+	}
+	
+	public SBUser updateUsersEmailByTwitter(SBUser twitterUser, String email) {
+		twitterUser.email = email;
+		twitterUser.twitterEmail = email;
+		twitterUser.activationCode = null;
+		getOfy().put(twitterUser);
+		log.log(Level.INFO, "Updated user: " + twitterUser);
+		return twitterUser;
+	}
+	
+	public SBUser setTwitterForEmailAccount(String email, long twitterId, String twitterScreenName) {
+		try {
+			SBUser userByEmail = getUserByEmail(email);
+			if (userByEmail != null) {
+				userByEmail.twitterId = twitterId;
+				userByEmail.twitterScreenName = twitterScreenName;
+				userByEmail.twitterEmail = email;
+				getOfy().put(userByEmail);
+				log.log(Level.INFO, "Updated user: " + userByEmail);
+			}
+			return userByEmail;
+		} catch (Exception e) {
+			log.log(Level.WARNING, "User with email '" + email + "' not found", e);
+			return null;
+		}
+	}	
 
 	public List<SBUser> getAllUsers() {
 		QueryResultIterable<Key<SBUser>> usersIt = getOfy().query(SBUser.class)
@@ -1010,7 +1075,7 @@ public class ObjectifyDatastoreDAO {
 
 	public List<SystemProperty> getSystemProperties() {
 		QueryResultIterable<Key<SystemProperty>> propsIt = getOfy().query(SystemProperty.class)
-				.order("+name").fetchKeys();
+				.fetchKeys();
 		List<SystemProperty> props = new ArrayList<SystemProperty>(getOfy().get(propsIt).values());
 		return props;
 	}

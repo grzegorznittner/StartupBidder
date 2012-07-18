@@ -217,6 +217,8 @@ public class ListingFacade {
 			}
 			loggedInUser.setEditedListing(newListingVO.getId());
 			loggedInUser.setEditedStatus(newListingVO.getState());
+			
+			NotificationFacade.instance().schedulePictureImport(newListing, 1);
 
 			// at that stage listing is not yet active so there is no point of updating statistics
 			Monitor monitor = getDAO().getListingMonitor(loggedInUser.toKeyId(), newListing.id);

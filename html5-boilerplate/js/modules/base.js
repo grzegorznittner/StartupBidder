@@ -178,7 +178,7 @@ pl.implement(NumberClass, {
 		}
         text = prefix + x1 + x2 + postfix;
 		return text;
-    }, 
+    },
     format: function(num) {
         return NumberClass.prototype.clean(num);
     },
@@ -365,11 +365,12 @@ pl.implement(SearchBoxClass, {
         });
     }
 });
- 
+
 function HeaderClass() {}
 pl.implement(HeaderClass, {
     setLogin: function(json) {
         var profile = null,
+            twitter_login_available = false,
             searchbox = new SearchBoxClass();
         if (json && json.loggedin_profile) {
             profile = json.loggedin_profile;
@@ -377,15 +378,18 @@ pl.implement(HeaderClass, {
         else if (json && json.profile_id) {
             profile = json;
         }
-        this.setHeader(profile, json.login_url, json.logout_url);
+        if (json && json.tl_available) {
+            twitter_login_available = true;
+        }
+        this.setHeader(profile, json.login_url, json.logout_url, twitter_login_available);
         searchbox.bindEvents();
     },
-    setHeader: function(profile, login_url, logout_url) {
+    setHeader: function(profile, login_url, logout_url, twitter_login_available) {
         if (profile) {
             this.setLoggedIn(profile, logout_url);
         }
         else {
-            this.setLoggedOut(login_url);
+            this.setLoggedOut(login_url, twitter_login_available);
         }
     },
     setLoggedIn: function(profile, logout_url) {
@@ -418,12 +422,18 @@ pl.implement(HeaderClass, {
         }
         pl('#headerloggedin').show();
     },
-    setLoggedOut: function(login_url) {
+    setLoggedOut: function(login_url, twitter_login_available) {
         var post_login_url = login_url + encodeURIComponent('/new-listing-basics-page.html');
         // pl('#topheaderline').html('Want to raise money for startups or invest in one? <a href="/about-page.html" class="topheaderlink hoverlink">We&rsquo;ll tell you how!</a>');
         if (login_url) {
             pl('#postlink').attr({href: post_login_url});
             pl('#loginlink').attr({href: login_url});
+            if (twitter_login_available) {
+                pl('#twitter_loginlink').attr({href: "/twitter_login"});
+                pl('#twitter_loginlink').show();
+            } else {
+                pl('#twitter_loginlink').hide();
+            }
         }
         pl('#headernotloggedin').show();
     }
@@ -475,6 +485,6 @@ ScriptClass.prototype.load = function(url, callback) {
 
     script.src = url;
     document.getElementsByTagName("head")[0].appendChild(script);
-} 
+}
 
 

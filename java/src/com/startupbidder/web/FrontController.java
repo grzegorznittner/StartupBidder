@@ -4,36 +4,11 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.googlecode.objectify.ObjectifyService;
-import com.startupbidder.dao.AngelListCache;
-import com.startupbidder.dao.GeocodeLocation;
-import com.startupbidder.dao.StartuplyCache;
-import com.startupbidder.datamodel.Bid;
-import com.startupbidder.datamodel.BidUser;
-import com.startupbidder.datamodel.Category;
-import com.startupbidder.datamodel.Comment;
-import com.startupbidder.datamodel.Listing;
-import com.startupbidder.datamodel.ListingDoc;
-import com.startupbidder.datamodel.ListingLocation;
-import com.startupbidder.datamodel.ListingStats;
-import com.startupbidder.datamodel.Location;
-import com.startupbidder.datamodel.Monitor;
-import com.startupbidder.datamodel.Notification;
-import com.startupbidder.datamodel.PictureImport;
-import com.startupbidder.datamodel.PrivateMessage;
-import com.startupbidder.datamodel.PrivateMessageUser;
-import com.startupbidder.datamodel.QuestionAnswer;
-import com.startupbidder.datamodel.Rank;
-import com.startupbidder.datamodel.SBUser;
-import com.startupbidder.datamodel.SystemProperty;
-import com.startupbidder.datamodel.UserStats;
-import com.startupbidder.datamodel.Vote;
 import com.startupbidder.web.controllers.CommentController;
 import com.startupbidder.web.controllers.CronTaskController;
 import com.startupbidder.web.controllers.FileController;
@@ -52,37 +27,6 @@ import com.startupbidder.web.controllers.UserController;
 public class FrontController extends HttpServlet {
 	private static final Logger log = Logger.getLogger(FrontController.class.getName());
 	
-	static {
-		ObjectifyService.register(SBUser.class);
-		ObjectifyService.register(Listing.class);
-		ObjectifyService.register(UserStats.class);
-		ObjectifyService.register(Comment.class);
-		ObjectifyService.register(ListingDoc.class);
-		ObjectifyService.register(ListingStats.class);
-		ObjectifyService.register(Monitor.class);
-		ObjectifyService.register(Notification.class);
-		ObjectifyService.register(QuestionAnswer.class);
-		ObjectifyService.register(PrivateMessage.class);
-		ObjectifyService.register(PrivateMessageUser.class);
-		ObjectifyService.register(Bid.class);
-		ObjectifyService.register(BidUser.class);
-		ObjectifyService.register(Rank.class);
-		ObjectifyService.register(SystemProperty.class);
-		ObjectifyService.register(Vote.class);
-		ObjectifyService.register(Category.class);
-		ObjectifyService.register(Location.class);
-		ObjectifyService.register(ListingLocation.class);
-        ObjectifyService.register(AngelListCache.class);
-        ObjectifyService.register(GeocodeLocation.class);
-        ObjectifyService.register(StartuplyCache.class);
-        ObjectifyService.register(PictureImport.class);
-	}
-	
-	@Override
-	public void init(ServletConfig config) throws ServletException {
-		//String mappings = config.getInitParameter("mappings");
-	}
-
 	@Override
 	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String pathInfo = request.getPathInfo();

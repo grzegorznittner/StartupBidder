@@ -25,13 +25,16 @@
             <input type="image" class="searchbutton" alt="search" src="/img/icons/search2.png" width="32" height="32"></input>
         </form>
     </div>
-    
+
     <!-- not logged in -->
     <div class="span-5 last loginspan headerrow initialhidden" id="headernotloggedin">
         <div>
+            <span class="headerlink headerlinkright">Sign In with</span>
             <a id="loginlink" href="">
                 <div class="headericon headersignin"></div>
-                <span class="headerlink headerlinkright">Sign In with</span>
+            </a>
+            <a id="twitter_loginlink" href="">
+                <div class="headericon headertwittersignin"></div>
             </a>
         </div>
     </div>

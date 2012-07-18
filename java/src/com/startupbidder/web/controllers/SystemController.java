@@ -100,7 +100,7 @@ public class SystemController extends ModelDrivenController {
 			model = ServiceFacade.instance().setSystemProperty(getLoggedInUser(), property);
 	
 			String name1 = request.getParameter("name.1");
-			if (!StringUtils.isEmpty(name)) {
+			if (!StringUtils.isEmpty(name1)) {
 				String value1 = request.getParameter("value.1");
 				property = new SystemPropertyVO();
 				property.setName(name1);

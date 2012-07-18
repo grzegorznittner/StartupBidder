@@ -9,6 +9,7 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -50,7 +51,7 @@ public class UserMgmtFacade {
 		return ObjectifyDatastoreDAO.getInstance();
 	}
 
-	public UserVO getLoggedInUserData(User loggedInUser) {
+	public UserVO getLoggedInUser(User loggedInUser) {
 		if (loggedInUser == null) {
 			return null;
 		}
@@ -66,6 +67,74 @@ public class UserMgmtFacade {
 		}
 		applyUserStatistics(user, user);
 		return user;
+	}
+	
+	public UserVO getLoggedInUser(String email) {
+		if (email == null) {
+			return null;
+		}
+		UserVO user = DtoToVoConverter.convert(getDAO().getUserByEmail(email));
+		if (user == null) {
+			return null;
+		}
+		applyUserStatistics(user, user);
+		return user;
+	}
+
+	public UserVO getLoggedInUser(twitter4j.User twitterUser) {
+		if (twitterUser == null) {
+			return null;
+		}
+		UserVO user = DtoToVoConverter.convert(getDAO().getUserByTwitter(twitterUser.getId()));
+		if (user == null) {
+			return null;
+		}
+		applyUserStatistics(user, user);
+		return user;
+	}
+
+	public UserVO requestEmailUpdate(twitter4j.User twitterUser, String email) {
+		if (twitterUser == null) {
+			return null;
+		}
+		SBUser userByTwitter = getDAO().getUserByTwitter(twitterUser.getId());
+		if (userByTwitter == null) {
+			log.warning("User with twitter id " + twitterUser.getId() + " doesn't exist!");
+			return null;
+		}
+		if (!StringUtils.isEmpty(userByTwitter.email)) {
+			log.warning("User with twitter id " + twitterUser.getId() + " has already set email. User: " + userByTwitter);
+			return null;
+		}
+		SBUser userByEmail = getDAO().getUserByEmail(email);
+		if (userByEmail != null) {
+			log.warning("User with email " + email + " doesn't exist! Cannot be associated with twitter user " + twitterUser);
+			return null;
+		}
+		userByTwitter = getDAO().updateUsersEmailByTwitter(userByTwitter, email);		
+		// send verification email with link /user/confirm_user_email?id=<twitter_id>&token=<token>
+		
+		return DtoToVoConverter.convert(userByTwitter);
+	}
+
+	public UserVO confirmEmailUpdate(String twitterIdString, String token) {
+		if (StringUtils.isEmpty(twitterIdString) || StringUtils.isEmpty(token)) {
+			return null;
+		}
+		long twitterId = Long.parseLong(twitterIdString);
+		SBUser twitterUser = getDAO().getUserByTwitter(twitterId);
+		if (twitterUser != null) {
+			if (StringUtils.equals(token, twitterUser.activationCode)) {
+				twitterUser = getDAO().updateUsersEmailByTwitter(twitterUser, twitterUser.twitterEmail);
+				return DtoToVoConverter.convert(twitterUser);
+			} else {
+				log.warning("Confirmation token provided for Twitter user is not valid. Token: " + token
+						+ " User: " + twitterUser);
+			}
+		} else {
+			log.warning("Twitter user " + twitterId + " not found in datastore!");
+		}
+		return null;
 	}
 
 	/**
@@ -96,6 +165,20 @@ public class UserMgmtFacade {
 		}
 		
 		UserVO user = DtoToVoConverter.convert(getDAO().createUser(loggedInUser.getEmail(), loggedInUser.getNickname()));
+		applyUserStatistics(user, user);
+		return user;
+	}
+	
+	/**
+	 * Creates new user based on Twitter user object.
+	 * Should only be used to log in via twitter account.
+	 */
+	public UserVO createUser(twitter4j.User twitterUser) {
+		if (twitterUser == null) {
+			return null;
+		}
+		
+		UserVO user = DtoToVoConverter.convert(getDAO().createUser(twitterUser.getId(), twitterUser.getScreenName()));
 		applyUserStatistics(user, user);
 		return user;
 	}
@@ -304,14 +387,6 @@ public class UserMgmtFacade {
 
     public void applyUserStatistics(UserVO loggedInUser, UserVO user) {
 		if (user != null && user.getId() != null) {
-            /*
-			if (loggedInUser != null) {
-				user.setVotable(getDAO().userCanVoteForUser(loggedInUser.toKeyId(), user.toKeyId()));
-			} else {
-				user.setVotable(false);
-			}
-			*/
-            
 			UserStats userStats = getUserStatistics(user.getId());
 			if (userStats != null) {
 				//user.setNumberOfBids(userStats.numberOfBids);
@@ -327,14 +402,6 @@ public class UserMgmtFacade {
 		}
 	}
 	
-    /*
-	public UserVO getTopInvestor(UserVO loggedInUser) {
-		UserVO user = DtoToVoConverter.convert(getDAO().getTopInvestor());
-		applyUserStatistics(loggedInUser, user);
-		return user;
-	}
-	*/
-
 	public UserVO activateUser(String userId, String activationCode) {
 		UserVO user = DtoToVoConverter.convert(getDAO().activateUser(BaseVO.toKeyId(userId), activationCode));
 		if (user != null) {

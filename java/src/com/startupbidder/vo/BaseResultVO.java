@@ -16,6 +16,8 @@ public class BaseResultVO {
 	@JsonProperty("login_url") private String loginUrl;
 	@JsonProperty("logout_url") private String logoutUrl;
 	@JsonProperty("loggedin_profile") private UserBasicVO loggedUser;
+	@JsonProperty("tl_available") private boolean twitterLoginAvailable = false;
+	@JsonProperty("fb_available") private boolean facebookLoginAvailable = false;
 	
 	@JsonProperty("error_code") private int errorCode = ErrorCodes.OK;
 	@JsonProperty("error_msg") private String errorMessage;
@@ -55,5 +57,17 @@ public class BaseResultVO {
 	}
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this);
+	}
+	public boolean isTwitterLoginAvailable() {
+		return twitterLoginAvailable;
+	}
+	public void setTwitterLoginAvailable(boolean twitterLoginAvailable) {
+		this.twitterLoginAvailable = twitterLoginAvailable;
+	}
+	public boolean isFacebookLoginAvailable() {
+		return facebookLoginAvailable;
+	}
+	public void setFacebookLoginAvailable(boolean facebookLoginAvailable) {
+		this.facebookLoginAvailable = facebookLoginAvailable;
 	}
 }

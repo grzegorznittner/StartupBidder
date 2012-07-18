@@ -28,7 +28,12 @@ public class SystemProperty {
 	public static final String GOOGLEDOC_USER = "googledoc.user";
 	public static final String GOOGLEDOC_PASSWORD = "googledoc.password";
 	public static final String GOOGLEPLACES_API_KEY = "googleplaces.apikey";
-	
+
+	public static final String TWITTER_CONSUMER_KEY = "twitter.consumer.key";
+	public static final String TWITTER_CONSUMER_SECRET = "twitter.consumer.secret";
+	public static final String TWITTER_ACCESS_TOKEN = "twitter.access.token";
+	public static final String TWITTER_ACCESS_TOKEN_SECRET = "twitter.access.token.secret";
+
 	@Id public String name;
 	public String value;
 	@Indexed public Date created;

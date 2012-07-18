@@ -284,8 +284,6 @@ public class ListingImportService {
 							log.info("Scheduling picture to import from " + pic.url);
 						}
 						getDAO().storePictureImports(picImportList.toArray(new PictureImport[]{}));
-						
-						NotificationFacade.instance().schedulePictureImport(listing, 1);
 					}
 				}
 			});
@@ -471,8 +469,6 @@ public class ListingImportService {
 					picImportList.add(pic);
 				}
 				getDAO().storePictureImports(picImportList.toArray(new PictureImport[]{}));
-				
-				NotificationFacade.instance().schedulePictureImport(listing, 1);
 			}
 		}
 
@@ -643,8 +639,6 @@ public class ListingImportService {
 					picImportList.add(pic);
 				}
 				getDAO().storePictureImports(picImportList.toArray(new PictureImport[]{}));
-				
-				NotificationFacade.instance().schedulePictureImport(listing, 1);
 			}
 		}
 	}

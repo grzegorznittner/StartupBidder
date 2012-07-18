@@ -7,7 +7,6 @@ import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.google.gdata.model.gd.Email;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.JsonNode;
@@ -15,6 +14,7 @@ import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 
+import com.startupbidder.util.TwitterHelper;
 import com.startupbidder.vo.ListPropertiesVO;
 import com.startupbidder.vo.PrivateMessageListVO;
 import com.startupbidder.vo.PrivateMessageUserListVO;
@@ -48,12 +48,12 @@ public class UserController extends ModelDrivenController {
 				return messageUsers(request);
 			} else if("messages".equalsIgnoreCase(getCommand(1))) {
 				return messages(request);
-			} else if("topinvestor".equalsIgnoreCase(getCommand(1))) {
-				return topInvestor(request);
 			} else if("loggedin".equalsIgnoreCase(getCommand(1))) {
 				return loggedin(request);
 			} else if("check_user_name".equalsIgnoreCase(getCommand(1))) {
 				return checkUserName(request);
+			} else if("confirm_update_email".equalsIgnoreCase(getCommand(1))) {
+				return confirmEmailUpdate(request);
 			} else {
 				return index(request);
 			}
@@ -72,6 +72,8 @@ public class UserController extends ModelDrivenController {
 				return delete(request);
 			} else if("send_message".equalsIgnoreCase(getCommand(1))) {
 				return sendMessage(request);
+			} else if("request_update_email".equalsIgnoreCase(getCommand(1))) {
+				return requestEmailUpdate(request);
 			}
 		}
 		return null;
@@ -169,13 +171,6 @@ public class UserController extends ModelDrivenController {
 		return headers;
 	}
 
-	private HttpHeaders topInvestor(HttpServletRequest request) {
-		throw new java.lang.RuntimeException("User statistics are not implemented so top investor not available");
-
-//		model = UserMgmtFacade.instance().getTopInvestor(getLoggedInUser());
-//        return new HttpHeadersImpl("index").disableCaching();
-	}
-
 	private HttpHeaders loggedin(HttpServletRequest request) {
 		model = getLoggedInUser();
         return new HttpHeadersImpl("loggedin").disableCaching();
@@ -216,19 +211,6 @@ public class UserController extends ModelDrivenController {
 		return headers;
 	}
 
-    /*
-	private HttpHeaders votes(HttpServletRequest request) {
-    	String userId = getCommandOrParameter(request, 2, "id");
-    	if (userId == null) {
-    		userId = getLoggedInUser().getId();
-    	}
-    	model = UserMgmtFacade.instance().userVotes(getLoggedInUser(), userId);
-
-		HttpHeaders headers = new HttpHeadersImpl("deactivate");
-		return headers;
-	}
-    */
-
 	private HttpHeaders checkUserName(HttpServletRequest request) {
     	String userName = getCommandOrParameter(request, 2, "name");
     	model = UserMgmtFacade.instance().checkUserNameIsValid(getLoggedInUser(), userName);
@@ -236,19 +218,6 @@ public class UserController extends ModelDrivenController {
     	HttpHeaders headers = new HttpHeadersImpl("check_user_name");
 		return headers;
 	}
-
-    /*
-	private HttpHeaders up(HttpServletRequest request) {
-    	String userId = getCommandOrParameter(request, 2, "id");
-    	if (userId == null) {
-    		userId = getLoggedInUser().getId();
-    	}
-    	model = UserMgmtFacade.instance().valueUpUser(getLoggedInUser(), userId);
-
-    	HttpHeaders headers = new HttpHeadersImpl("up");
-		return headers;
-	}
-    */
 
     // POST /user/send_message
     private HttpHeaders sendMessage(HttpServletRequest request) throws JsonParseException, JsonMappingException, IOException {
@@ -299,6 +268,30 @@ public class UserController extends ModelDrivenController {
 		String userId = getCommandOrParameter(request, 2, "id");
 		PrivateMessageListVO result = MessageFacade.instance().getPrivateMessages(getLoggedInUser(), userId, listProperties);
 		model = result;
+		return headers;
+	}
+
+	private HttpHeaders requestEmailUpdate(HttpServletRequest request) {
+		HttpHeaders headers = new HttpHeadersImpl("request_update_email");
+		
+		String email = getCommandOrParameter(request, 2, "email");
+		twitter4j.User twitterUser = TwitterHelper.getTwitterUser(request);
+		if (twitterUser != null) {
+			model = UserMgmtFacade.instance().requestEmailUpdate(twitterUser, email);
+		} else {
+			log.warning("User not logged in via Twitter while trying to update email: " + email);
+		}
+		
+		return headers;
+	}
+
+	private HttpHeaders confirmEmailUpdate(HttpServletRequest request) {
+		HttpHeaders headers = new HttpHeadersImpl("confirm_update_email");
+		
+		String id = getCommandOrParameter(request, 2, "id");
+		String token = getCommandOrParameter(request, 3, "token");
+		model = UserMgmtFacade.instance().confirmEmailUpdate(id, token);
+		
 		return headers;
 	}
 

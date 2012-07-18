@@ -38,7 +38,7 @@ public class UserMgmtFacadeTest extends BaseFacadeAbstractTest {
 	@Test
 	public void testGetLoggedInUserData() {
 		log.info("google user: " + googleUser);
-		UserVO user2 = UserMgmtFacade.instance().getLoggedInUserData(googleUser);
+		UserVO user2 = UserMgmtFacade.instance().getLoggedInUser(googleUser);
 		assertEquals("Same user should be returned", mocks.JACOB.getId(), user2.getId());
 	}
 
@@ -78,7 +78,7 @@ public class UserMgmtFacadeTest extends BaseFacadeAbstractTest {
 		assertNull("Activation code should be null for google account", newSBUser.activationCode);
 		assertEquals("User's status should be ACTIVE for google account", SBUser.Status.ACTIVE, newSBUser.status);
 
-		UserVO createdUser2 = UserMgmtFacade.instance().createUser(null);
+		UserVO createdUser2 = UserMgmtFacade.instance().createUser((User)null);
 		assertNull("createUser should return null", createdUser2);
 		
 		UserVO notCreated = UserMgmtFacade.instance().createUser(newUser);
