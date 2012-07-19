@@ -16,16 +16,12 @@ import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
-//import org.datanucleus.util.StringUtils;
 
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
-import com.google.appengine.api.utils.SystemProperty;
-import com.startupbidder.dao.ObjectifyDatastoreDAO;
 import com.startupbidder.util.TwitterHelper;
 import com.startupbidder.vo.BaseResultVO;
-import com.startupbidder.vo.DtoToVoConverter;
 import com.startupbidder.vo.ErrorCodes;
 import com.startupbidder.vo.ListPropertiesVO;
 import com.startupbidder.vo.UserVO;
@@ -75,12 +71,12 @@ public abstract class ModelDrivenController {
 			loggedInUser = UserMgmtFacade.instance().getLoggedInUser(twitterUser);
 			if (loggedInUser == null) {
 				log.info("User not found via twitter id " + twitterUser.getId() + ", screen name '" + twitterUser.getScreenName() + "'");
-				if (twitterUser.getScreenName().equals("GregNittner")) {
-					loggedInUser = DtoToVoConverter.convert(ObjectifyDatastoreDAO.getInstance()
-							.setTwitterForEmailAccount("grzegorz.nittner@gmail.com", twitterUser.getId(), twitterUser.getScreenName()));
-				} else {
+//				if (twitterUser.getScreenName().equals("GregNittner")) {
+//					loggedInUser = DtoToVoConverter.convert(ObjectifyDatastoreDAO.getInstance()
+//							.setTwitterForEmailAccount("grzegorz.nittner@gmail.com", twitterUser.getId(), twitterUser.getScreenName()));
+//				} else {
 					loggedInUser = UserMgmtFacade.instance().createUser(twitterUser);
-				}
+//				}
 			}
 		} else {
 			// not logged in
@@ -102,21 +98,14 @@ public abstract class ModelDrivenController {
 			}
 			Object model = getModel();
 			if (model instanceof BaseResultVO) {
-				String appHostName = request.getServerName();
-				int appPortNumber = request.getServerPort();
-				String appHost = null;
-				if (SystemProperty.environment.value() == SystemProperty.Environment.Value.Development) {
-					appHost = "http://localhost:" + request.getLocalPort();
-				} else {
-					appHost = "http://" + (appPortNumber != 80 ? appHostName + ":" + appPortNumber : appHostName);
-				}
+				String appHost = TwitterHelper.getApplicationUrl(request);
 				if (loggedInUser != null) {
 					if (request.getSession().getAttribute(TwitterHelper.SESSION_TWITTER_USER) != null) {
 						// handling twitter logins
 						twitter4j.User twitterUser = TwitterHelper.getTwitterUser(request);
 						loggedInUser.setNickname(twitterUser.getScreenName());
 						((BaseResultVO) model).setLoggedUser(loggedInUser);
-						((BaseResultVO) model).setLogoutUrl(appHost + "/twitter_logout");
+						((BaseResultVO) model).setLogoutUrl(TwitterHelper.getLogoutUrl(request));
 					} else {
 						((BaseResultVO) model).setLoggedUser(loggedInUser);
 						((BaseResultVO) model).setLogoutUrl(userService.createLogoutURL(appHost));
@@ -128,7 +117,7 @@ public abstract class ModelDrivenController {
 					headers.setStatus(500);
 				}
 				if (TwitterHelper.configureTwitterFactory() != null) {
-					((BaseResultVO) model).setTwitterLoginAvailable(true);
+					((BaseResultVO) model).setTwitterLoginUrl(TwitterHelper.getLoginUrl(request));
 				}
 			}
 		} catch (Exception e) {
