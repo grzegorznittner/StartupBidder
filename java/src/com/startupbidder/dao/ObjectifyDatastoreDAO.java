@@ -421,11 +421,28 @@ public class ObjectifyDatastoreDAO {
 	}
 	
 	public SBUser updateUsersEmailByTwitter(SBUser twitterUser, String email) {
-		twitterUser.email = email;
-		twitterUser.twitterEmail = email;
-		twitterUser.activationCode = null;
-		getOfy().put(twitterUser);
-		log.log(Level.INFO, "Updated user: " + twitterUser);
+		SBUser userByEmail = getUserByEmail(email);
+		if (userByEmail != null) {
+			log.info("There is existing user with email address " + email + ". "
+					+ "Old twitter account will be deactivated and twitter data associated with user identified by email.");
+			userByEmail.twitterId = twitterUser.twitterId;
+			userByEmail.twitterScreenName = twitterUser.twitterScreenName;
+			userByEmail.twitterEmail = email;
+			twitterUser.status = SBUser.Status.DEACTIVATED;
+			twitterUser.activationCode = "Activated for " + email + ". Twitter id: " + twitterUser.twitterId;
+			twitterUser.twitterId = 0;
+			twitterUser.email = null;
+			getOfy().put(userByEmail, twitterUser);
+			log.log(Level.INFO, "Updated user identified by email: " + userByEmail
+					+ " Deactivated twitter user: " + twitterUser);
+		} else {
+			twitterUser.email = email;
+			twitterUser.twitterEmail = email;
+			twitterUser.notifyEnabled = true;
+			twitterUser.activationCode = null;
+			getOfy().put(twitterUser);
+			log.log(Level.INFO, "Updated twitter user: " + twitterUser);
+		}
 		return twitterUser;
 	}
 	

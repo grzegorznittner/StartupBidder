@@ -106,12 +106,7 @@ public class UserMgmtFacade {
 			log.warning("User with twitter id " + twitterUser.getId() + " has already set email. User: " + userByTwitter);
 			return null;
 		}
-		SBUser userByEmail = getDAO().getUserByEmail(email);
-		if (userByEmail != null) {
-			log.warning("User with email " + email + " doesn't exist! Cannot be associated with twitter user " + twitterUser);
-			return null;
-		}
-		userByTwitter = getDAO().updateUsersEmailByTwitter(userByTwitter, email);		
+		userByTwitter = getDAO().prepareUpdateUsersEmailByTwitter(userByTwitter, email);
 		// send verification email with link /user/confirm_user_email?id=<twitter_id>&token=<token>
 		
 		return DtoToVoConverter.convert(userByTwitter);
