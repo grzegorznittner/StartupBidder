@@ -33,6 +33,9 @@ public class SystemProperty {
 	public static final String TWITTER_CONSUMER_SECRET = "twitter.consumer.secret";
 	public static final String TWITTER_ACCESS_TOKEN = "twitter.access.token";
 	public static final String TWITTER_ACCESS_TOKEN_SECRET = "twitter.access.token.secret";
+	
+	public static final String FACEBOOK_CLIENT_ID = "facebook.client.id";
+	public static final String FACEBOOK_CLIENT_SECRET = "facebook.client.secret";
 
 	@Id public String name;
 	public String value;

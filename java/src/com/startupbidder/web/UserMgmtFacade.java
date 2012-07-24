@@ -22,6 +22,7 @@ import com.google.appengine.api.users.UserServiceFactory;
 import com.startupbidder.dao.ObjectifyDatastoreDAO;
 import com.startupbidder.datamodel.SBUser;
 import com.startupbidder.datamodel.UserStats;
+import com.startupbidder.util.FacebookUser;
 import com.startupbidder.vo.BaseVO;
 import com.startupbidder.vo.DtoToVoConverter;
 import com.startupbidder.vo.UserAndUserVO;
@@ -74,6 +75,18 @@ public class UserMgmtFacade {
 			return null;
 		}
 		UserVO user = DtoToVoConverter.convert(getDAO().getUserByEmail(email));
+		if (user == null) {
+			return null;
+		}
+		applyUserStatistics(user, user);
+		return user;
+	}
+
+	public UserVO getLoggedInUser(FacebookUser fbUser) {
+		if (fbUser == null) {
+			return null;
+		}
+		UserVO user = DtoToVoConverter.convert(getDAO().getUserByEmail(fbUser.getEmail()));
 		if (user == null) {
 			return null;
 		}
@@ -160,6 +173,21 @@ public class UserMgmtFacade {
 		}
 		
 		UserVO user = DtoToVoConverter.convert(getDAO().createUser(loggedInUser.getEmail(), loggedInUser.getNickname()));
+		applyUserStatistics(user, user);
+		return user;
+	}
+	
+	/**
+	 * Creates new user based on Facebook user object.
+	 */
+	public UserVO createUser(FacebookUser fbUser) {
+		if (fbUser == null) {
+			return null;
+		}
+		
+		String fullName = fbUser.getFirstName() + " " + fbUser.getLastName();
+		UserVO user = DtoToVoConverter.convert(getDAO().createUser(
+				fbUser.getEmail(), fbUser.getFirstName(), fullName.trim()));
 		applyUserStatistics(user, user);
 		return user;
 	}

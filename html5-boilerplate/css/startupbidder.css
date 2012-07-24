@@ -275,6 +275,7 @@ a:focus, a:hover { cursor: pointer; }
 .headericon { height: 32px; width: 32px; margin-left: 15px; float: right; position: relative; top: 12px; }
 .headersignin { background: url(../img/icons/icon_grey_google.png); }
 .headertwittersignin { background: url(../img/icons/icon_grey_twitter.png); }
+.headerfbsignin { background: url(../img/icons/icon_grey_facebook.png); }
 .headerlogout { background: url(../img/icons/logout3.png); }
 .headermessages { background: url(../img/icons/email2.png); height: 32px; width: 32px; position: relative; top: 14px; }
 .headernotifications { background: url(../img/icons/world2.png); height: 32px; width: 32px; position: relative; top: 11px; }

@@ -1,5 +1,5 @@
 application: startupbidder
-version: 201207191013
+version: 201207241029
 runtime: java
 
 static_files:
@@ -24,6 +24,12 @@ handlers:
     servlet: com.startupbidder.web.servlets.TwitterLogoutServlet
   - url: /twitter_callback
     servlet: com.startupbidder.web.servlets.TwitterCallbackServlet
+  - url: /facebook_login
+    servlet: com.startupbidder.web.servlets.FacebookLoginServlet
+  - url: /facebook_logout
+    servlet: com.startupbidder.web.servlets.FacebookLogoutServlet
+  - url: /facebook_callback
+    servlet: com.startupbidder.web.servlets.FacebookCallbackServlet
   - url: /*
     servlet: com.startupbidder.web.FrontController
   - url: /remote_api

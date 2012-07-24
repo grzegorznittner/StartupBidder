@@ -36,6 +36,9 @@
             <a id="twitter_loginlink" href="">
                 <div class="headericon headertwittersignin"></div>
             </a>
+            <a id="fb_loginlink" href="">
+                <div class="headericon headerfbsignin"></div>
+            </a>
         </div>
     </div>
 

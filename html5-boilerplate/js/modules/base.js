@@ -370,7 +370,6 @@ function HeaderClass() {}
 pl.implement(HeaderClass, {
     setLogin: function(json) {
         var profile = null,
-            twitter_login_available = false,
             searchbox = new SearchBoxClass();
         if (json && json.loggedin_profile) {
             profile = json.loggedin_profile;
@@ -378,18 +377,15 @@ pl.implement(HeaderClass, {
         else if (json && json.profile_id) {
             profile = json;
         }
-        if (json && json.tl_available) {
-            twitter_login_available = true;
-        }
-        this.setHeader(profile, json.login_url, json.logout_url, twitter_login_available);
+        this.setHeader(profile, json.login_url, json.logout_url, json.twitter_login_url, json.fb_login_url);
         searchbox.bindEvents();
     },
-    setHeader: function(profile, login_url, logout_url, twitter_login_available) {
+    setHeader: function(profile, login_url, logout_url, twitter_login_url, fb_login_url) {
         if (profile) {
             this.setLoggedIn(profile, logout_url);
         }
         else {
-            this.setLoggedOut(login_url, twitter_login_available);
+            this.setLoggedOut(login_url, twitter_login_url, fb_login_url);
         }
     },
     setLoggedIn: function(profile, logout_url) {
@@ -422,17 +418,23 @@ pl.implement(HeaderClass, {
         }
         pl('#headerloggedin').show();
     },
-    setLoggedOut: function(login_url, twitter_login_available) {
+    setLoggedOut: function(login_url, twitter_login_url, fb_login_url) {
         var post_login_url = login_url + encodeURIComponent('/new-listing-basics-page.html');
         // pl('#topheaderline').html('Want to raise money for startups or invest in one? <a href="/about-page.html" class="topheaderlink hoverlink">We&rsquo;ll tell you how!</a>');
         if (login_url) {
             pl('#postlink').attr({href: post_login_url});
             pl('#loginlink').attr({href: login_url});
-            if (twitter_login_available) {
-                pl('#twitter_loginlink').attr({href: "/twitter_login"});
+            if (twitter_login_url) {
+                pl('#twitter_loginlink').attr({href: twitter_login_url});
                 pl('#twitter_loginlink').show();
             } else {
                 pl('#twitter_loginlink').hide();
+            }
+            if (fb_login_url) {
+                pl('#fb_loginlink').attr({href: fb_login_url});
+                pl('#fb_loginlink').show();
+            } else {
+                pl('#fb_loginlink').hide();
             }
         }
         pl('#headernotloggedin').show();

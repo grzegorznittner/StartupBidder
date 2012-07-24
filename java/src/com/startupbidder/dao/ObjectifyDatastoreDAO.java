@@ -129,6 +129,10 @@ public class ObjectifyDatastoreDAO {
 	}
 
 	public SBUser createUser(String email, String nickname) {
+		return createUser(email, nickname, null);
+	}
+
+	public SBUser createUser(String email, String nickname, String name) {
         String userEmail = StringUtils.isNotEmpty(email) ? email : "anonymous" + String.valueOf(new Random().nextInt(1000000000)) + "@startupbidder.com";
         SBUser user = getUserByEmail(userEmail);
         if (user != null) {
@@ -147,6 +151,7 @@ public class ObjectifyDatastoreDAO {
         user.email = userEmail;
         user.nickname = userNickname;
         user.nicknameLower = userNickname.toLowerCase();
+    	user.name = name;
 	    user.modified = user.lastLoggedIn = user.joined = new Date();
 		user.status = SBUser.Status.ACTIVE;
 		user.notifyEnabled = true;

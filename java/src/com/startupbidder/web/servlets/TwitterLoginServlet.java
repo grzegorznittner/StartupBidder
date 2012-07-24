@@ -27,12 +27,10 @@ public class TwitterLoginServlet extends HttpServlet {
             Twitter twitter = tf.getInstance();
             request.getSession().setAttribute(SESSION_TWITTER_OBJECT, twitter);
             
-            StringBuffer callbackURL = request.getRequestURL();
-            int index = callbackURL.lastIndexOf("/");
-            callbackURL.replace(index, callbackURL.length(), "").append(SERVLET_TWITTER_CALLBACK);
+            String callbackURL = TwitterHelper.getCallbackUrl(request);
 
             log.info("Requesting token for callback url " + callbackURL);
-            RequestToken requestToken = twitter.getOAuthRequestToken(callbackURL.toString());
+            RequestToken requestToken = twitter.getOAuthRequestToken(callbackURL);
             request.getSession().setAttribute(SESSION_TWITTER_REQUEST_TOKEN, requestToken);
             String authUrl = requestToken.getAuthenticationURL();
             log.info("Sending redirection to " + authUrl);

@@ -20,6 +20,8 @@ import org.codehaus.jackson.map.ObjectMapper;
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
+import com.startupbidder.util.FacebookHelper;
+import com.startupbidder.util.FacebookUser;
 import com.startupbidder.util.TwitterHelper;
 import com.startupbidder.vo.BaseResultVO;
 import com.startupbidder.vo.ErrorCodes;
@@ -54,6 +56,9 @@ public abstract class ModelDrivenController {
 	public final HttpHeaders execute(HttpServletRequest request) {
 		UserService userService = UserServiceFactory.getUserService();
 		User user = userService.getCurrentUser();
+		FacebookUser fbUser = FacebookHelper.getFacebookUser(request);
+		twitter4j.User twitterUser = TwitterHelper.getTwitterUser(request);
+
 		if (user != null) {
 			// logged in via Google
 			loggedInUser = UserMgmtFacade.instance().getLoggedInUser(user);
@@ -64,9 +69,16 @@ public abstract class ModelDrivenController {
 			if (loggedInUser != null) {
 				loggedInUser.setAdmin(userService.isUserAdmin());
 			}
-		} else if (request.getSession().getAttribute(TwitterHelper.SESSION_TWITTER_USER) != null) {
+		} else if (fbUser != null) {
+			// login via Facebook
+			log.info("Logged in via Facebook as " + fbUser.getId() + ", email: " + fbUser.getEmail());
+			loggedInUser = UserMgmtFacade.instance().getLoggedInUser(fbUser);
+			if (loggedInUser == null) {
+				log.info("User not found via facebook id " + fbUser.getId() + ", email: " + fbUser.getEmail());
+				loggedInUser = UserMgmtFacade.instance().createUser(fbUser);
+			}
+		} else if (twitterUser != null) {
 			// login via Twitter
-			twitter4j.User twitterUser = TwitterHelper.getTwitterUser(request);
 			log.info("Logged in via Twitter as " + twitterUser.getScreenName());
 			loggedInUser = UserMgmtFacade.instance().getLoggedInUser(twitterUser);
 			if (loggedInUser == null) {
@@ -100,25 +112,28 @@ public abstract class ModelDrivenController {
 			if (model instanceof BaseResultVO) {
 				String appHost = TwitterHelper.getApplicationUrl(request);
 				if (loggedInUser != null) {
-					if (request.getSession().getAttribute(TwitterHelper.SESSION_TWITTER_USER) != null) {
-						// handling twitter logins
-						twitter4j.User twitterUser = TwitterHelper.getTwitterUser(request);
-						loggedInUser.setNickname(twitterUser.getScreenName());
-						((BaseResultVO) model).setLoggedUser(loggedInUser);
-						((BaseResultVO) model).setLogoutUrl(TwitterHelper.getLogoutUrl(request));
-					} else {
-						((BaseResultVO) model).setLoggedUser(loggedInUser);
+					((BaseResultVO) model).setLoggedUser(loggedInUser);
+					if (user != null) {
 						((BaseResultVO) model).setLogoutUrl(userService.createLogoutURL(appHost));
+					} else if (fbUser != null) {
+						((BaseResultVO) model).setLogoutUrl(FacebookHelper.getLogoutUrl(request));
+					} else if (twitterUser != null) {
+						loggedInUser.setNickname(twitterUser.getScreenName());
+						((BaseResultVO) model).setLogoutUrl(TwitterHelper.getLogoutUrl(request));
 					}
 				} else {
-					((BaseResultVO) model).setLoginUrl(userService.createLoginURL(appHost, "startupbidder.com"));
+					((BaseResultVO) model).setLoginUrl(userService.createLoginURL(appHost, "startupbidder.com"));					
+					if (FacebookHelper.getFacebookAuthParams() != null) {
+						((BaseResultVO) model).setFacebookLoginUrl(FacebookHelper.getLoginUrl(request));
+					}
+					if (TwitterHelper.configureTwitterFactory() != null) {
+						((BaseResultVO) model).setTwitterLoginUrl(TwitterHelper.getLoginUrl(request));
+					}
 				}
+				
 				if (((BaseResultVO) model).getErrorCode() != ErrorCodes.OK) {
 					headers.setStatus(500);
-				}
-				if (TwitterHelper.configureTwitterFactory() != null) {
-					((BaseResultVO) model).setTwitterLoginUrl(TwitterHelper.getLoginUrl(request));
-				}
+				}				
 			}
 		} catch (Exception e) {
 			headers = new HttpHeadersImpl();

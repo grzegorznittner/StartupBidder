@@ -133,8 +133,10 @@ public class SetupServlet extends HttpServlet {
             out.println("<h1>System Settings</h1>");
 
             out.println("<p>Available system properties:");
-            out.println("<ul><li>twitter.consumer.key - Twitter's OAuth Consumer key");
-            out.println("<ul><li>twitter.consumer.secret - Twitter's OAuth Consumer secret");
+            out.println("<ul><li>twitter.consumer.key - Twitter's OAuth Consumer Key");
+            out.println("<ul><li>twitter.consumer.secret - Twitter's OAuth Consumer Secret");
+            out.println("<ul><li>facebook.client.id - Facebook's OAuth Client Id");
+            out.println("<ul><li>facebook.client.secret - Twitter's OAuth Client Secret");
             out.println("<ul><li>notification_real_receivers - if true then notification emails are sent to real receivers");
             out.println("<li>notification_no_bcc_admins - if empty or false then notification emails are BCC to admins. Only when notification_real_receivers = true");
             out.println("</ul></p>");

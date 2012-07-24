@@ -12,12 +12,15 @@ import twitter4j.conf.ConfigurationBuilder;
 import com.google.appengine.api.memcache.Expiration;
 import com.google.appengine.api.memcache.MemcacheService;
 import com.google.appengine.api.memcache.MemcacheServiceFactory;
+import com.google.appengine.api.utils.SystemProperty.Environment;
 import com.startupbidder.dao.ObjectifyDatastoreDAO;
 import com.startupbidder.datamodel.SystemProperty;
 
 public class TwitterHelper {
 	public static final String CACHE_TWITTER_FACTORY_PARAMS = "twitter_factory_params";
 	
+	public static final String SERVLET_TWITTER_LOGIN = "/twitter_login";
+	public static final String SERVLET_TWITTER_LOGOUT = "/twitter_logout";
 	public static final String SERVLET_TWITTER_CALLBACK = "/twitter_callback";
 	
 	public static final String SESSION_TWITTER_REQUEST_TOKEN = "twitter_requestToken";
@@ -28,18 +31,12 @@ public class TwitterHelper {
 	
 	@SuppressWarnings("serial")
 	public static class TwitterParams implements Serializable {
-		TwitterParams(SystemProperty cKey, SystemProperty cSecret, SystemProperty aToken, SystemProperty aSecret) {
-			consumerKey = cKey.value;
-			consumerSecret = cSecret.value;
-			accessToken = aToken.value;
-			accessTokenSecret = aSecret.value;
-		}
 		TwitterParams(SystemProperty cKey, SystemProperty cSecret) {
 			consumerKey = cKey.value;
 			consumerSecret = cSecret.value;
 		}
 		
-		String consumerKey, consumerSecret, accessToken, accessTokenSecret;
+		String consumerKey, consumerSecret;
 	}
 	
 	public static User getTwitterUser(HttpServletRequest request) {
@@ -57,12 +54,6 @@ public class TwitterHelper {
 		if (params == null) {
 			SystemProperty consumerKey = ObjectifyDatastoreDAO.getInstance().getSystemProperty(SystemProperty.TWITTER_CONSUMER_KEY);
 			SystemProperty consumerSecret = ObjectifyDatastoreDAO.getInstance().getSystemProperty(SystemProperty.TWITTER_CONSUMER_SECRET);
-//			SystemProperty accessToken = ObjectifyDatastoreDAO.getInstance().getSystemProperty(SystemProperty.TWITTER_ACCESS_TOKEN);
-//			SystemProperty accessTokenSecret = ObjectifyDatastoreDAO.getInstance().getSystemProperty(SystemProperty.TWITTER_ACCESS_TOKEN_SECRET);
-//			if (consumerKey != null && consumerSecret != null && accessToken != null && accessTokenSecret != null) {
-//				params = new TwitterParams(consumerKey, consumerSecret, accessToken, accessTokenSecret);
-//				mem.put(CACHE_TWITTER_FACTORY_PARAMS, params, Expiration.byDeltaSeconds(10 * 60));
-//			}
 			if (consumerKey != null && consumerSecret != null) {
 				params = new TwitterParams(consumerKey, consumerSecret);
 				mem.put(CACHE_TWITTER_FACTORY_PARAMS, params, Expiration.byDeltaSeconds(10 * 60));
@@ -73,12 +64,46 @@ public class TwitterHelper {
 			ConfigurationBuilder cb = new ConfigurationBuilder();
 			cb.setDebugEnabled(true)
 			  .setOAuthConsumerKey(params.consumerKey)
-			  .setOAuthConsumerSecret(params.consumerSecret)
-			  .setOAuthAccessToken(params.accessToken)
-			  .setOAuthAccessTokenSecret(params.accessTokenSecret);
+			  .setOAuthConsumerSecret(params.consumerSecret);
 			return new TwitterFactory(cb.build());
 		}
 		return null;
 	}
 	
+	public static String getApplicationUrl(HttpServletRequest request) {
+		String appHostName = request.getServerName();
+		int appPortNumber = request.getServerPort();
+		if (com.google.appengine.api.utils.SystemProperty.environment.value() == Environment.Value.Development) {
+			return "http://localhost:" + request.getLocalPort();
+		} else {
+			return "http://" + (appPortNumber != 80 ? appHostName + ":" + appPortNumber : appHostName);
+		}
+	}
+
+	public static String getLoginUrl(HttpServletRequest request) {
+		String appUrl = getApplicationUrl(request);
+		if (appUrl.contains("alocalhost")) {
+			return null;
+		} else {
+			return appUrl + SERVLET_TWITTER_LOGIN;
+		}
+	}
+	
+	public static String getLogoutUrl(HttpServletRequest request) {
+		String appUrl = getApplicationUrl(request);
+		if (appUrl.contains("alocalhost")) {
+			return null;
+		} else {
+			return appUrl + SERVLET_TWITTER_LOGOUT;
+		}
+	}
+
+	public static String getCallbackUrl(HttpServletRequest request) {
+		String appUrl = getApplicationUrl(request);
+		if (appUrl.contains("alocalhost")) {
+			return null;
+		} else {
+			return appUrl + SERVLET_TWITTER_CALLBACK;
+		}
+	}
 }
