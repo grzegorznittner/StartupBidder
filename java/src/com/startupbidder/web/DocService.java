@@ -14,9 +14,9 @@ import net.sf.jsr107cache.CacheException;
 import net.sf.jsr107cache.CacheFactory;
 import net.sf.jsr107cache.CacheManager;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.datanucleus.util.StringUtils;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
@@ -35,7 +35,6 @@ import com.google.gdata.util.AuthenticationException;
 import com.startupbidder.datamodel.Listing;
 import com.startupbidder.datamodel.SystemProperty;
 import com.startupbidder.vo.DtoToVoConverter;
-import com.startupbidder.vo.ListPropertiesVO;
 import com.startupbidder.vo.ListingDocumentVO;
 import com.startupbidder.vo.ListingVO;
 import com.startupbidder.web.ListingFacade.UpdateReason;
