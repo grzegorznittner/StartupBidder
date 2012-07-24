@@ -1,9 +1,12 @@
 package com.startupbidder.web;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -12,6 +15,10 @@ import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import net.sf.jsr107cache.Cache;
 import net.sf.jsr107cache.CacheException;
@@ -24,6 +31,10 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 import com.gc.android.market.api.MarketSession;
 import com.gc.android.market.api.MarketSession.Callback;
@@ -52,7 +63,7 @@ import com.startupbidder.vo.UserVO;
 public class ListingImportService {
 	static final Logger log = Logger.getLogger(ListingImportService.class.getName());
 	
-	private DateTimeFormatter timeStampFormatter = DateTimeFormat.forPattern("yyyyMMdd_HHmmss_SSS");
+	private static DateTimeFormatter timeStampFormatter = DateTimeFormat.forPattern("yyyyMMdd_HHmmss_SSS");
 	private static ListingImportService instance;
 	private static Map<String, ImportSource> importMap = new HashMap<String, ImportSource>();
 	private static Cache cache;
@@ -74,6 +85,7 @@ public class ListingImportService {
 		
 		importMap.put("AppStore", new AppStoreImport());
 		importMap.put("GooglePlay", new AndroidStoreImport());
+		importMap.put("WindowsMarketplace", new WindowsMarketplaceImport());
 		importMap.put("CrunchBase", new CrunchBaseImport());
 	}
 	
@@ -171,6 +183,39 @@ public class ListingImportService {
 		}
 	}
 
+	private static String extractMantra(String description) {
+		StringBuffer mantra = new StringBuffer();
+		for (String sentence : description.split("\\.")) {
+			if (mantra.length() + sentence.length() < 100) {
+				mantra.append(sentence);
+			} else if (mantra.length() < 10) {
+				mantra.append(sentence.substring(0, sentence.length() < 100 ? sentence.length() : 99));
+				break;
+			} else {
+				break;
+			}
+		}
+		return mantra.toString();
+	}
+	
+	private static void schedulePictureImport(Listing listing, List<String> urls) {
+		if (urls.size() > 0) {
+			List<PictureImport> picImportList = new ArrayList<PictureImport>();
+			for (String url : urls) {
+				if (picImportList.size() == 5) {
+					break;
+				}
+				log.info("Scheduling picture to import from " + url);
+				PictureImport pic = new PictureImport();
+				pic.listing = listing.getKey();
+				pic.url = url;
+				picImportList.add(pic);
+			}
+			getDAO().storePictureImports(picImportList.toArray(new PictureImport[]{}));
+		}
+	}
+
+	
 	/**
 	 * Returns map of pairs <id, description> which defines list of available import items for given query.
 	 */
@@ -271,19 +316,16 @@ public class ListingImportService {
 					listing.notes += "Imported from GooglePlay id=" + id
 							+ ", creator=" + listing.founders
 							+ ", creatorId=" + app.getCreatorId()
-							+ ", version=" + app.getVersion() + "\n";
+							+ ", version=" + app.getVersion()
+							+ " on " + timeStampFormatter.print(new Date().getTime()) + "\n";
 					fetchLogo(listing, id);
 					if (app.getExtendedInfo().hasScreenshotsCount() && app.getExtendedInfo().getScreenshotsCount() > 0) {
-						List<PictureImport> picImportList = new ArrayList<PictureImport>();
+						List<String> urls = new ArrayList<String>();
 						int count = app.getExtendedInfo().getScreenshotsCount();
 						for (int screenshot = 1; screenshot <= count; screenshot++) {
-							PictureImport pic = new PictureImport();
-							pic.listing = listing.getKey();
-							pic.url = "android#" + id + "#pic#" + screenshot;
-							picImportList.add(pic);
-							log.info("Scheduling picture to import from " + pic.url);
+							urls.add("android#" + id + "#pic#" + screenshot);
 						}
-						getDAO().storePictureImports(picImportList.toArray(new PictureImport[]{}));
+						schedulePictureImport(listing, urls);
 					}
 				}
 			});
@@ -406,8 +448,6 @@ public class ListingImportService {
 				if (rootNode.get("results") != null) {
 					Iterator<JsonNode> nodeIt = rootNode.get("results").getElements();
 					JsonNode nodeItem = nodeIt.next();
-					String trackId = getJsonNodeValue(nodeItem, "trackId");
-					
 					listing.name = getJsonNodeValue(nodeItem, "trackName");
 					listing.founders = getJsonNodeValue(nodeItem, "artistName");
 					listing.type = Listing.Type.APPLICATION;
@@ -433,7 +473,8 @@ public class ListingImportService {
 							+ ", artistName=" + listing.founders
 							+ ", artistViewUrl=" + getJsonNodeValue(nodeItem, "artistViewUrl")
 							+ ", version=" + getJsonNodeValue(nodeItem, "version")
-							+ ", releaseDate=" + getJsonNodeValue(nodeItem, "releaseDate") + "\n";
+							+ ", releaseDate=" + getJsonNodeValue(nodeItem, "releaseDate")
+							+ " on " + timeStampFormatter.print(new Date().getTime()) + "\n";
 				} else {
 					log.warning("Attribute 'results' not present in the response");
 				}
@@ -459,32 +500,151 @@ public class ListingImportService {
 				}
 			}
 
-			if (urls.size() > 0) {
-				List<PictureImport> picImportList = new ArrayList<PictureImport>();
-				for (String url : urls) {
-					log.info("Scheduling picture to import from " + url);
-					PictureImport pic = new PictureImport();
-					pic.listing = listing.getKey();
-					pic.url = url;
-					picImportList.add(pic);
+			schedulePictureImport(listing, urls);
+		}
+	}
+	
+	static class WindowsMarketplaceImport implements ImportSource {
+		String prepareQueryString(String query) {
+			StringBuffer marketplaceQuery = new StringBuffer();
+			StringTokenizer tokenizer = new StringTokenizer(query);
+			boolean tokenAdded = false;
+			for (String token; tokenizer.hasMoreTokens();) {
+				token = tokenizer.nextToken();
+				if (!(token.contains("=") || token.contains("&") || token.contains("?"))) {
+					if (tokenAdded) {
+						marketplaceQuery.append("%20");
+					}
+					marketplaceQuery.append(token);
+					tokenAdded = true;
 				}
-				getDAO().storePictureImports(picImportList.toArray(new PictureImport[]{}));
+			}
+			return "http://catalog.zune.net/v3.2/en-US/apps?clientType=WinMobile%207.1&store=zest&q="
+				+ marketplaceQuery.toString();
+		}
+		
+		@Override
+		public Map<String, String> getImportSuggestions(UserVO loggedInUser, String query) {
+			Map<String, String> result = new LinkedHashMap<String, String>();
+			String queryString = prepareQueryString(query);
+			log.info("Calling " + queryString);
+			
+			byte[] response = fetchBytes(queryString);
+			
+			try {
+				Element rootElem = getRootElement(response);
+				NodeList nl = rootElem.getElementsByTagName("a:entry");
+				log.info("Received " + nl.getLength() + " entries in result");
+				for (int index = 0; index < nl.getLength(); index++) {
+					Element entry = (Element)nl.item(index);
+					String id = getText(entry, "a:id");
+					String title = getText(entry, "a:title");
+					String released = getText(entry, "releaseDate");
+					Element publisher = getFirstElement(entry, "publisher");
+					log.info("id: " + id + ". Title: " + title + ". Released: " + released
+							+ ". Publisher: " + publisher);
+					
+					if (id != null && title != null && released != null && publisher != null) {
+						String publisherName = getText(publisher, "name");
+						id = trimId(id);
+						result.put(id, "'" + title + "' by " + publisherName + " on " + released);
+						log.info(id + ": " + result.get(id));
+					}
+				}
+				
+			} catch (Exception e) {
+				log.log(Level.WARNING, "Error parsing/loading Windows Marketplace response", e);
+				return null;
+			}
+			return result;
+		}
+
+		@Override
+		public Listing importListing(UserVO loggedInUser, Listing listing, String id) {
+			String queryString = "http://catalog.zune.net/v3.2/en-US/apps/" + id
+				+ "/?version=latest&clientType=CLIENT_TYPE&store=Zest&client";
+			log.info("Calling " + queryString);			
+			byte[] response = fetchBytes(queryString);
+			
+			try {
+				Element rootElem = getRootElement(response);
+				
+				listing.name = getText(rootElem, "a:title");
+				listing.founders = getText(rootElem, "publisher");
+				listing.type = Listing.Type.APPLICATION;
+				listing.category = "Software";
+				listing.platform = Listing.Platform.WINDOWS_PHONE.toString();
+				listing.summary = getText(rootElem, "a:content");
+				listing.mantra = extractMantra(listing.summary);
+				listing.website = "http://www.windowsphone.com/en-US/apps/" + id;
+				
+				Element logoNode = getFirstElement(rootElem, "image");
+				if (logoNode != null) {
+					String logoId = getText(logoNode, "id");
+					fetchLogo(listing, "http://image.catalog.zune.net/v3.2/en-US/image/"
+						+ trimId(logoId) + "?width=240&height=240");
+				}
+				
+				Element picsNode = getFirstElement(rootElem, "screenshots");
+				if (picsNode != null) {
+					List<String> urls = new ArrayList<String>();
+					
+					NodeList pics = picsNode.getElementsByTagName("screenshot");
+					for (int index = 0; index < pics.getLength(); index++) {
+						Element screenshot = (Element)pics.item(index);
+						String screenshotId = getText(screenshot, "id");
+						if (!StringUtils.isEmpty(screenshotId)) {
+							urls.add("http://image.catalog.zune.net/v3.2/en-US/image/"
+								+ trimId(screenshotId) + "?width=480&height=480");
+						}
+					}
+					
+					schedulePictureImport(listing, urls);
+				}
+				
+				listing.notes += "Imported from WindowsMarketplace " + queryString
+					 	+ ", name=" + listing.name
+						+ ", founders=" + listing.founders
+						+ ", description=" + listing.mantra
+						+ " on " + timeStampFormatter.print(new Date().getTime()) + "\n";
+				return listing;
+			} catch (Exception e) {
+				log.log(Level.WARNING, "Error parsing/loading Windows Marketplace response", e);
+				return null;
 			}
 		}
 
-		String extractMantra(String description) {
-			StringBuffer mantra = new StringBuffer();
-			for (String sentence : description.split("\\.")) {
-				if (mantra.length() + sentence.length() < 100) {
-					mantra.append(sentence);
-				} else if (mantra.length() < 10) {
-					mantra.append(sentence.substring(0, sentence.length() < 100 ? sentence.length() : 99));
-					break;
-				} else {
-					break;
-				}
+		private String trimId(String id) {
+			if (id.startsWith("urn:uuid:")) {
+				id = id.substring(9);
 			}
-			return mantra.toString();
+			return id;
+		}
+
+		private Element getRootElement(byte[] response)
+				throws ParserConfigurationException, SAXException, IOException, UnsupportedEncodingException {
+			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+			DocumentBuilder db = dbf.newDocumentBuilder();
+			Document dom = db.parse(IOUtils.toInputStream(new String(response, "UTF-8")));
+			return dom.getDocumentElement();
+		}
+		
+		Element getFirstElement(Element entry, String name) {
+			NodeList nl = entry.getElementsByTagName(name);
+			if (nl.getLength() > 0) {
+				return (Element)nl.item(0);
+			} else {
+				return null;
+			}
+		}
+		
+		String getText(Element parent, String elementName) {
+			Element elem = getFirstElement(parent, elementName);
+			if (elem != null) {
+				return elem.getTextContent();
+			} else {
+				return null;
+			}
 		}
 	}
 	
@@ -582,7 +742,8 @@ public class ListingImportService {
 					listing.notes += "Imported from CrunchBase url=" + queryString + ", name=" + listing.name
 							+ ", founders=" + listing.founders
 							+ ", homepage_url=" + getJsonNodeValue(rootNode, "artistViewUrl")
-							+ ", description=" + listing.mantra + "\n";
+							+ ", description=" + listing.mantra
+							+ " on " + timeStampFormatter.print(new Date().getTime()) + "\n";
 				} else {
 					log.warning("Attribute 'permalink' not present in the response");
 				}
@@ -629,17 +790,8 @@ public class ListingImportService {
 				}
 			}
 
-			if (urls.size() > 0) {
-				List<PictureImport> picImportList = new ArrayList<PictureImport>();
-				for (String url : urls) {
-					log.info("Scheduling picture to import from " + url);
-					PictureImport pic = new PictureImport();
-					pic.listing = listing.getKey();
-					pic.url = url;
-					picImportList.add(pic);
-				}
-				getDAO().storePictureImports(picImportList.toArray(new PictureImport[]{}));
-			}
+			schedulePictureImport(listing, urls);
 		}
+
 	}
 }
