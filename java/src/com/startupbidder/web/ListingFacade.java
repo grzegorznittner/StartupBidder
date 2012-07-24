@@ -71,7 +71,6 @@ import com.startupbidder.datamodel.Monitor;
 import com.startupbidder.datamodel.PictureImport;
 import com.startupbidder.datamodel.SBUser;
 import com.startupbidder.datamodel.VoToModelConverter;
-import com.startupbidder.util.GetImageResponseCallback;
 import com.startupbidder.util.ImageHelper;
 import com.startupbidder.vo.BaseVO;
 import com.startupbidder.vo.DiscoverListingsVO;
@@ -464,14 +463,6 @@ public class ListingFacade {
 			if(!url.startsWith("http") && !url.startsWith("android") && isDevEnvironment && new File("./test-docs").exists()) {
 				docBytes = FileUtils.readFileToByteArray(new File(propValue));
 				mimeType = ImageHelper.getMimeTypeFromFileName(propValue);
-			} else if (url.startsWith("android")) {
-				GetImageResponseCallback result = ListingImportService.fetchImageFromGooglePlayStore(propName, propValue);
-				if (result != null) {
-					docBytes = result.getResult();
-					mimeType = result.getMimeType();
-				} else {
-					throw new IllegalStateException("Error fetching image from Google Play store");
-				}
 			} else {
 				URLConnection con = new URL(url).openConnection();
 				docBytes = IOUtils.toByteArray(con.getInputStream());

@@ -36,10 +36,25 @@ public class ImageHelper {
 	}
 	
 	public static String toHexString(byte[] magicNumber) {
-		return "0x" + Integer.toHexString((0xF0 & magicNumber[0]) >>> 4) + Integer.toHexString(0x0F & magicNumber[0])
-				+ " 0x" + Integer.toHexString((0xF0 & magicNumber[1]) >>> 4) + Integer.toHexString(0x0F & magicNumber[1])
-				+ " 0x" + Integer.toHexString((0xF0 & magicNumber[2]) >>> 4) + Integer.toHexString(0x0F & magicNumber[2])
-				+ " 0x" + Integer.toHexString((0xF0 & magicNumber[3]) >>> 4) + Integer.toHexString(0x0F & magicNumber[3]);
+		StringBuffer buf = new StringBuffer();
+		for (byte b : magicNumber) {
+			buf.append("0x").append(Integer.toHexString((0xF0 & b) >>> 4)).append(Integer.toHexString(0x0F & b)).append(" ");
+		}
+		return buf.toString();
+	}
+	
+	public static String toByteDefinition(byte[] magicNumber) {
+		StringBuffer buf = new StringBuffer();
+		buf.append("new byte[] {");
+		int index = 0;
+		for (byte b : magicNumber) {
+			if ((index++) > 0) {
+				buf.append(", ");
+			}
+			buf.append("(byte)0x").append(Integer.toHexString((0xF0 & b) >>> 4)).append(Integer.toHexString(0x0F & b)).append(" ");
+		}
+		buf.append("}");
+		return buf.toString();
 	}
 
 	public static String getMimeTypeFromFileName(String propValue) {

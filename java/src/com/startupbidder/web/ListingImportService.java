@@ -1,11 +1,11 @@
 package com.startupbidder.web;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -15,15 +15,14 @@ import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import net.sf.jsr107cache.Cache;
-import net.sf.jsr107cache.CacheException;
-import net.sf.jsr107cache.CacheFactory;
-import net.sf.jsr107cache.CacheManager;
+import net.htmlparser.jericho.HTMLElementName;
+import net.htmlparser.jericho.Source;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -36,15 +35,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import com.gc.android.market.api.MarketSession;
-import com.gc.android.market.api.MarketSession.Callback;
-import com.gc.android.market.api.model.Market.App;
-import com.gc.android.market.api.model.Market.AppsRequest;
-import com.gc.android.market.api.model.Market.AppsResponse;
-import com.gc.android.market.api.model.Market.GetImageRequest;
-import com.gc.android.market.api.model.Market.GetImageRequest.AppImageUsage;
-import com.gc.android.market.api.model.Market.GetImageRequest.Builder;
-import com.gc.android.market.api.model.Market.ResponseContext;
 import com.google.appengine.api.blobstore.BlobstoreService;
 import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
 import com.googlecode.objectify.Key;
@@ -52,9 +42,7 @@ import com.startupbidder.dao.ObjectifyDatastoreDAO;
 import com.startupbidder.datamodel.Listing;
 import com.startupbidder.datamodel.ListingDoc;
 import com.startupbidder.datamodel.PictureImport;
-import com.startupbidder.datamodel.SystemProperty;
 import com.startupbidder.datamodel.VoToModelConverter;
-import com.startupbidder.util.GetImageResponseCallback;
 import com.startupbidder.vo.ErrorCodes;
 import com.startupbidder.vo.ListingDocumentVO;
 import com.startupbidder.vo.ListingPropertyVO;
@@ -66,7 +54,6 @@ public class ListingImportService {
 	private static DateTimeFormatter timeStampFormatter = DateTimeFormat.forPattern("yyyyMMdd_HHmmss_SSS");
 	private static ListingImportService instance;
 	private static Map<String, ImportSource> importMap = new HashMap<String, ImportSource>();
-	private static Cache cache;
 	
 	public static ListingImportService instance() {
 		if (instance == null) {
@@ -75,14 +62,7 @@ public class ListingImportService {
 		return instance;
 	}
 	
-	private ListingImportService() {
-		try {
-            CacheFactory cacheFactory = CacheManager.getInstance().getCacheFactory();
-            cache = cacheFactory.createCache(Collections.emptyMap());
-        } catch (CacheException e) {
-            log.log(Level.SEVERE, "Cache couldn't be created!!!");
-        }
-		
+	private ListingImportService() {		
 		importMap.put("AppStore", new AppStoreImport());
 		importMap.put("GooglePlay", new AndroidStoreImport());
 		importMap.put("WindowsMarketplace", new WindowsMarketplaceImport());
@@ -131,56 +111,22 @@ public class ListingImportService {
         } else {
         	log.warning("Error fetching logo from " + logoUrl);
         }
-	}	
-
-	private static void setCredentials(MarketSession session) {
-		String user = (String)cache.get(SystemProperty.GOOGLEDOC_USER);
-		if (user == null) {
-			SystemProperty userProp = ServiceFacade.instance().getDAO().getSystemProperty(SystemProperty.GOOGLEDOC_USER);
-			if (userProp != null) {
-				user = userProp.value;
-				cache.put(SystemProperty.GOOGLEDOC_USER, user);
-			}
-		}
-		String pass = (String)cache.get(SystemProperty.GOOGLEDOC_PASSWORD);
-		if (pass == null) {
-			SystemProperty passProp = ServiceFacade.instance().getDAO().getSystemProperty(SystemProperty.GOOGLEDOC_PASSWORD);
-			if (passProp != null) {
-				pass = passProp.value;
-				cache.put(SystemProperty.GOOGLEDOC_PASSWORD, pass);
-			}
-		}
-		if (user == null || pass == null) {
-			log.severe("Google Doc credentials not set up!");
-			return;
-		}
-		session.login(user, pass);
 	}
 	
-	public static GetImageResponseCallback fetchImageFromGooglePlayStore(String propName, String propValue) {
-		String[] tokens = propValue.split("#");
-		if (tokens.length == 4 && "android".equals(tokens[0])) {
-			// android URI is in format: android#<app id>#<pic or icon>#<pic number>
-			String appId = tokens[1];
-			String type = tokens[2];
-			String number = tokens[3];
-			MarketSession session = new MarketSession();
-			setCredentials(session);
-			Builder builder = GetImageRequest.newBuilder().setAppId(appId);
-			if ("pic".equals(type)) {
-				builder = builder.setImageUsage(AppImageUsage.SCREENSHOT).setImageId(number);
-			} else {
-				builder = builder.setImageUsage(AppImageUsage.ICON).setImageId(number);
-			}
-			GetImageRequest imgReq = builder.build();
-			GetImageResponseCallback result = new GetImageResponseCallback(propValue);
-			session.append(imgReq, result);
-			session.flush();
-			return result;
-		} else {
-			log.warning("URI is not android format: " + propValue);
-			return null;
+	private static String removeTag(String text, String tag) {
+		String tagStart = "<" + tag;
+		String tagEnd = "</" + tag + ">";
+		String converted = "";
+		int search = text.indexOf(tagStart);
+		while (search > 0) {
+			converted += text.substring(0, search);
+			int last = text.indexOf(tagEnd, search + 1);
+			text = text.substring(last + tagEnd.length());
+			log.info("Removed " + (last - search) + " bytes");
+			search = text.indexOf(tagStart);
 		}
+		converted += text;
+		return converted;
 	}
 
 	private static String extractMantra(String description) {
@@ -265,96 +211,136 @@ public class ListingImportService {
 	}
 	
 	static class AndroidStoreImport implements ImportSource {
+		String prepareQueryString(String query) {
+			StringBuffer appStoreQuery = new StringBuffer();
+			StringTokenizer tokenizer = new StringTokenizer(query);
+			boolean tokenAdded = false;
+			for (String token; tokenizer.hasMoreTokens();) {
+				token = tokenizer.nextToken();
+				if (!(token.contains("=") || token.contains("&") || token.contains("?"))) {
+					if (tokenAdded) {
+						appStoreQuery.append("+");
+					}
+					appStoreQuery.append(token);
+					tokenAdded = true;
+				}
+			}
+			return "https://play.google.com/store/search?c=apps&hl=en&q=" + appStoreQuery.toString();
+		}
+		
 		@Override
 		public Map<String, String> getImportSuggestions(UserVO loggedInUser, final String query) {
-			MarketSession session = new MarketSession();
-			setCredentials(session);
-
-			AppsRequest appsRequest = AppsRequest.newBuilder().setQuery(query)
-					.setStartIndex(0).setEntriesCount(5)
-					.setWithExtendedInfo(true).build();
-			final Map<String, String> result = new LinkedHashMap<String, String>();
-			log.info("Searching Android Market for " + query);
-			session.append(appsRequest, new Callback<AppsResponse>() {
-				@Override
-				public void onResult(ResponseContext context, AppsResponse response) {
-					log.info("Query for '" + query + "' returned " + response.getAppList().size());
-					for (App app : response.getAppList()) {
-						result.put(app.getId(), app.getTitle() + " by " + app.getCreator()
-										+ " version " + app.getVersion());
+			try {
+				byte bytes[] = fetchBytes(prepareQueryString(query));
+				String converted = removeTag(new String(bytes, "UTF-8"), "style");
+				converted = removeTag(converted, "script");
+				
+				Source source = new Source(IOUtils.toInputStream(converted));
+				List<net.htmlparser.jericho.Element> elemList = source.getAllElements(HTMLElementName.LI);
+				int index = 1;
+				Map<String, String> result = new LinkedHashMap<String, String>();
+				for (net.htmlparser.jericho.Element elem : elemList) {
+					if (index > 20) {
+						break;
+					}
+					String docId = elem.getAttributeValue("data-docid");
+					if (!StringUtils.isEmpty(docId)) {
+						index++;
+						String name = null;
+						String author = null;
+						List<net.htmlparser.jericho.Element> aList = elem.getAllElements(HTMLElementName.A);
+						for (net.htmlparser.jericho.Element aElem : aList) {
+							String classAttr = aElem.getAttributeValue("class");
+							if (StringUtils.equals(classAttr, "title")) {
+								name = aElem.getAttributeValue("title");
+							} else if (StringUtils.equals(classAttr, "goog-inline-block")) {
+								author = aElem.getContent().toString().trim();
+							}
+						}
+						if (name != null && author != null) {
+							result.put(docId, "'" + name + "' by " + author);
+						}
 					}
 				}
-			});
-			session.flush();
-
-			return result;
+				return result;
+			} catch (Exception e) {
+				log.log(Level.WARNING, "Error parsing/loading AppStore response", e);
+				return null;
+			}
 		}
 
 		@Override
 		public Listing importListing(UserVO loggedInUser, final Listing listing, final String id) {
-			MarketSession session = new MarketSession();
-			setCredentials(session);
-
-			AppsRequest appsRequest = AppsRequest.newBuilder().setAppId(id)
-					.setWithExtendedInfo(true).build();
 			log.info("Searching Android Market for application " + id);
-			session.append(appsRequest, new Callback<AppsResponse>() {
-				@Override
-				public void onResult(ResponseContext context, AppsResponse response) {
-					log.info("Query for '" + id + "' returned " + response.getAppList().size());
-					App app = response.getApp(0);
-
-					listing.name = app.getTitle();
-					listing.founders = app.getCreator();
-					listing.type = Listing.Type.APPLICATION;
-					listing.category = "Software";
-					listing.platform = Listing.Platform.ANDROID.toString();
-					listing.summary = app.getExtendedInfo().getDescription();
-					listing.mantra = StringUtils.left(app.getExtendedInfo().getPromoText(), 100);
-					listing.website = app.getExtendedInfo().getContactWebsite();
-					listing.videoUrl = app.getExtendedInfo().getPromotionalVideo();
-					listing.notes += "Imported from GooglePlay id=" + id
-							+ ", creator=" + listing.founders
-							+ ", creatorId=" + app.getCreatorId()
-							+ ", version=" + app.getVersion()
-							+ " on " + timeStampFormatter.print(new Date().getTime()) + "\n";
-					fetchLogo(listing, id);
-					if (app.getExtendedInfo().hasScreenshotsCount() && app.getExtendedInfo().getScreenshotsCount() > 0) {
-						List<String> urls = new ArrayList<String>();
-						int count = app.getExtendedInfo().getScreenshotsCount();
-						for (int screenshot = 1; screenshot <= count; screenshot++) {
-							urls.add("android#" + id + "#pic#" + screenshot);
+			String appUrl = "https://play.google.com/store/apps/details?feature=search_result&hl=en&id=" + id;
+			try {
+				byte bytes[] = fetchBytes(appUrl);
+				String converted = removeTag(new String(bytes, "UTF-8"), "style");
+				converted = removeTag(converted, "script");
+				
+				listing.type = Listing.Type.APPLICATION;
+				listing.category = "Software";
+				listing.platform = Listing.Platform.ANDROID.toString();
+	
+				Source source = new Source(IOUtils.toInputStream(converted));
+				for (net.htmlparser.jericho.Element tag : source.getAllElements("class", Pattern.compile("doc-banner-title"))) {
+					if (tag.getName().equalsIgnoreCase("h1")) {
+						listing.name = tag.getContent().toString().trim();
+					}
+				}
+				for (net.htmlparser.jericho.Element tag : source.getAllElements("class", Pattern.compile("doc-header-link"))) {
+					if (tag.getName().equalsIgnoreCase("a")) {
+						listing.founders = tag.getContent().toString().trim();
+					}
+				}
+				net.htmlparser.jericho.Element descTag = source.getElementById("doc-original-text");
+				if (descTag != null) {
+					listing.summary = descTag.getContent().toString().trim();
+					listing.mantra = extractMantra(listing.summary);
+				}
+				net.htmlparser.jericho.Element categoryTag = source.getFirstElement("href", Pattern.compile("/store/apps/category.*"));
+				if (categoryTag != null) {
+					log.info("Category: " + categoryTag.getContent().toString().trim()
+							+ ", id: " + categoryTag.getAttributeValue("href"));
+				}
+				for (net.htmlparser.jericho.Element tag : source.getAllElements("class", Pattern.compile("doc-banner-icon"))) {
+					if (tag.getName().equalsIgnoreCase("div")) {
+						net.htmlparser.jericho.Element img = tag.getFirstElement("img");
+						if (img != null && img.getAttributeValue("src") != null) {
+							fetchLogo(listing, img.getAttributeValue("src"));
 						}
-						schedulePictureImport(listing, urls);
 					}
 				}
-			});
-			session.flush();
+				
+				List<String> urls = new ArrayList<String>();
+				net.htmlparser.jericho.Element bannerTag = source.getFirstElement("class", Pattern.compile("doc-banner-image-container"));
+				if (bannerTag != null) {
+					net.htmlparser.jericho.Element bannerImgTag = bannerTag.getFirstElement("img");
+					if (bannerImgTag != null) {
+						String src = bannerImgTag.getAttributeValue("src");
+						if (src != null && src.startsWith("http")) {
+							urls.add(src);
+						}
+					}
+				}
+				for (net.htmlparser.jericho.Element tag : source.getAllElements("itemprop", Pattern.compile("screenshots"))) {
+					if (tag.getName().equalsIgnoreCase("img")) {
+						String src = tag.getAttributeValue("src");
+						if (src != null && src.startsWith("http")) {
+							urls.add(src);
+						}
+					}
+				}
+				schedulePictureImport(listing, urls);
+				
+				listing.website = appUrl;
+				listing.notes += "Imported from GooglePlay " + appUrl
+						+ ", creator=" + listing.founders
+						+ " on " + timeStampFormatter.print(new Date().getTime()) + "\n";
+			} catch (Exception e) {
+				log.log(Level.WARNING, "Error parsing/loading AppStore response", e);
+			}
 			return listing;
-		}
-		
-		private void fetchLogo(Listing listing, String appId) {
-			ListingPropertyVO prop = new ListingPropertyVO("logo_url", "android#" + appId + "#logo#1");
-			ListingDocumentVO doc = ListingFacade.instance().fetchAndUpdateListingDoc(listing, prop);
-            if (doc != null && doc.getErrorCode() == ErrorCodes.OK) {
-                ListingDoc listingDoc = VoToModelConverter.convert(doc);
-                Key<ListingDoc> replacedDocId = listing.logoId;
-                // logo data uri has been stored in fetchAndUpdateListingDoc method call
-                listing.logoId = new Key<ListingDoc>(ListingDoc.class, listingDoc.id);
-				if (replacedDocId != null) {
-					try {
-						log.info("Deleting doc previously associated with listing " + replacedDocId);
-						ListingDoc docToDelete = getDAO().getListingDocument(replacedDocId.getId());
-						BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
-						blobstoreService.delete(docToDelete.blob);
-						ObjectifyDatastoreDAO.getInstance().deleteDocument(replacedDocId.getId());
-					} catch (Exception e) {
-						log.log(Level.WARNING, "Error while deleting old document " + replacedDocId + " of listing " + listing.id, e);
-					}
-				}
-            } else {
-            	log.warning("Error fetching logo from " + prop.getPropertyValue());
-            }
 		}
 	}
 	
@@ -625,7 +611,9 @@ public class ListingImportService {
 				throws ParserConfigurationException, SAXException, IOException, UnsupportedEncodingException {
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 			DocumentBuilder db = dbf.newDocumentBuilder();
-			Document dom = db.parse(IOUtils.toInputStream(new String(response, "UTF-8")));
+			String responseText = new String(response, "UTF-8");
+			responseText = responseText.substring(responseText.indexOf("<"));
+			Document dom = db.parse(IOUtils.toInputStream(responseText));
 			return dom.getDocumentElement();
 		}
 		
@@ -793,5 +781,76 @@ public class ListingImportService {
 			schedulePictureImport(listing, urls);
 		}
 
+	}
+
+	public static void main(String args[]) throws FileNotFoundException, IOException {
+		byte bytes[] = fetchBytes("https://play.google.com/store/search?c=apps&hl=en&q=kids+quiz");
+		String result = new String(bytes, "UTF-8");
+		String converted = removeTag(result, "style");
+		converted = removeTag(converted, "script");		
+		converted = converted.replace(">", ">\n");
+		
+		Source source = new Source(IOUtils.toInputStream(converted));
+		List<net.htmlparser.jericho.Element> elemList = source.getAllElements(HTMLElementName.LI);
+		int index = 1;
+		for (net.htmlparser.jericho.Element elem : elemList) {
+			String docId = elem.getAttributeValue("data-docid");
+			if (!StringUtils.isEmpty(docId)) {
+				System.out.println("" + index + ". " + docId);
+				index++;
+				List<net.htmlparser.jericho.Element> aList = elem.getAllElements(HTMLElementName.A);
+				for (net.htmlparser.jericho.Element aElem : aList) {
+					String classAttr = aElem.getAttributeValue("class");
+					if (StringUtils.equals(classAttr, "thumbnail")) {
+						System.out.println("    link: " + aElem.getAttributeValue("href"));
+					} else if (StringUtils.equals(classAttr, "title")) {
+						System.out.println("    name: " + aElem.getAttributeValue("title"));
+					} else if (StringUtils.equals(classAttr, "goog-inline-block")) {
+						System.out.println("    author: " + aElem.getContent().toString().trim());
+					}
+				}
+			}
+		}
+		
+		bytes = fetchBytes("https://play.google.com/store/apps/details?feature=search_result&hl=en&id=mpem.info.lite");
+		converted = removeTag(new String(bytes, "UTF-8"), "style");
+		converted = removeTag(converted, "script");
+		converted = converted.replace(">", ">\n");
+		
+		source = new Source(IOUtils.toInputStream(converted));
+		for (net.htmlparser.jericho.Element tag : source.getAllElements("class", Pattern.compile("doc-banner-title"))) {
+			if (tag.getName().equalsIgnoreCase("h1")) {
+				System.out.println("    name: " + tag.getContent().toString().trim());
+			}
+		}
+		for (net.htmlparser.jericho.Element tag : source.getAllElements("class", Pattern.compile("doc-header-link"))) {
+			if (tag.getName().equalsIgnoreCase("a")) {
+				System.out.println("    author: " + tag.getContent().toString().trim());
+			}
+		}
+		net.htmlparser.jericho.Element descTag = source.getElementById("doc-original-text");
+		if (descTag != null) {
+			System.out.println("    description: " + descTag.getContent().toString().trim());
+		}
+		net.htmlparser.jericho.Element categoryTag = source.getFirstElement("href", Pattern.compile("/store/apps/category.*"));
+		if (categoryTag != null) {
+			System.out.println("    category: " + categoryTag.getContent().toString().trim());
+			System.out.println("    category id: " + categoryTag.getAttributeValue("href"));
+		}
+		for (net.htmlparser.jericho.Element tag : source.getAllElements("class", Pattern.compile("doc-banner-icon"))) {
+			if (tag.getName().equalsIgnoreCase("div")) {
+				net.htmlparser.jericho.Element img = tag.getFirstElement("img");
+				if (img != null && img.getAttributeValue("src") != null) {
+					System.out.println("    logo url: " + img.getAttributeValue("src"));
+				}
+			}
+		}
+		for (net.htmlparser.jericho.Element tag : source.getAllElements("itemprop", Pattern.compile("screenshots"))) {
+			if (tag.getName().equalsIgnoreCase("img")) {
+				System.out.println("    image url: " + tag.getAttributeValue("src"));
+			}
+		}
+		
+		//IOUtils.write(converted, new FileOutputStream("e://projects//startupbidder//google-play-game.txt"));
 	}
 }

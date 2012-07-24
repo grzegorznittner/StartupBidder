@@ -46,6 +46,7 @@
     <fileset dir="${env.APPENGINE_HOME}/lib">
       <include name="shared/**/*.jar" />
       <exclude name="**/repackaged-appengine-ant*.jar"/>
+      <exclude name="**/datanucleus-*.jar"/>
     </fileset>
     <fileset dir="lib">
       <include name="**/*.jar" />
@@ -58,6 +59,7 @@
         flatten="true">
       <fileset dir="${env.APPENGINE_HOME}/lib/user">
         <include name="**/*.jar" />
+        <exclude name="**/datanucleus-*.jar"/>
       </fileset>
     </copy>
   </target>
