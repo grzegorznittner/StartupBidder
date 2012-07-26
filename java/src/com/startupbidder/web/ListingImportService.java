@@ -1,6 +1,5 @@
 package com.startupbidder.web;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
@@ -68,6 +67,7 @@ public class ListingImportService {
 		importMap.put("WindowsMarketplace", new WindowsMarketplaceImport());
 		importMap.put("CrunchBase", new CrunchBaseImport());
 		importMap.put("Startuply", new StartuplyImport());
+		importMap.put("AngelCo", new AngelCoImport());
 	}
 	
 	private static ObjectifyDatastoreDAO getDAO() {
@@ -944,114 +944,112 @@ public class ListingImportService {
 		}
 	}
 
+	static class AngelCoImport implements ImportSource {
+		String prepareQueryString(String query) {
+			StringBuffer appStoreQuery = new StringBuffer();
+			appStoreQuery.append("query=");
+			StringTokenizer tokenizer = new StringTokenizer(query);
+			boolean tokenAdded = false;
+			for (String token; tokenizer.hasMoreTokens();) {
+				token = tokenizer.nextToken();
+				if (!(token.contains("=") || token.contains("&") || token.contains("?"))) {
+					if (tokenAdded) {
+						appStoreQuery.append("+");
+					}
+					appStoreQuery.append(token);
+					tokenAdded = true;
+				}
+			}
+			appStoreQuery.append("&type=Startup");
+			return "https://api.angel.co/1/search?" + appStoreQuery.toString();
+		}
 
-	public static void main(String args[]) throws FileNotFoundException, IOException {
-		byte bytes[] = fetchBytes("http://www.startuply.com/Startups/Default.aspx?s=fire");
-		String result = new String(bytes, "UTF-8");
-		String converted = removeTag(result, "style");
-		converted = removeTag(converted, "script");
-		
-		Source source = new Source(IOUtils.toInputStream(converted));
-		net.htmlparser.jericho.Element resultsPanel = source.getElementById("resultPanel");
-		List<net.htmlparser.jericho.Element> links = resultsPanel.getAllElements("href", Pattern.compile("/Companies/.*aspx"));
-		int index = 1;
-		for (net.htmlparser.jericho.Element elem : links) {
-			String docId = elem.getAttributeValue("href");
-			if (!StringUtils.isEmpty(docId)) {
-				index++;
-				String name = elem.getContent().toString().trim();
-				String id = docId.substring(docId.lastIndexOf("/") + 1, docId.lastIndexOf("."));
-				System.out.println("" + index + ". " + id);
-				System.out.println("    name: " + name);
+		@Override
+		public Map<String, String> getImportSuggestions(UserVO loggedInUser, String query) {
+			String queryString = prepareQueryString(query);
+			byte[] response = fetchBytes(queryString);
+			if (response == null) {
+				return null;
 			}
-		}
-		
-		bytes = fetchBytes("http://www.startuply.com/Companies/Central_Desktop_Inc_259.aspx");
-		// http://www.startuply.com/Companies/Central_Desktop_Inc_259.aspx
-		converted = removeTag(new String(bytes, "UTF-8"), "style");
-		converted = removeTag(converted, "script");
-		
-		source = new Source(IOUtils.toInputStream(converted));
-		
-		net.htmlparser.jericho.Element name = source.getElementById("companyNameHeader");
-		if (name != null) {
-			System.out.println("    name: " + name.getContent().toString().trim());
-		}
-		net.htmlparser.jericho.Element contentTag = source.getElementById("ContentPanel");
-		if (contentTag != null) {
-			net.htmlparser.jericho.Element tableTag = contentTag.getFirstElement("table");
-			List<net.htmlparser.jericho.Element> nameTds = tableTag.getAllElements("td");
-			net.htmlparser.jericho.Element wwwTd = nameTds.get(1);
-			net.htmlparser.jericho.Element wwwTag = wwwTd.getFirstElement("a");
-			System.out.println("    www: " + wwwTag.getAttributeValue("href"));
-			
-			net.htmlparser.jericho.Element firstH1Tag = null;
-			for (net.htmlparser.jericho.Element tag : contentTag.getAllElements("h1")) {
-				if (StringUtils.contains(tag.getContent().toString().toLowerCase(), "mission")) {
-					firstH1Tag = tag;
-					break;
-				}
-			}
-			String mantra = null;
-			String description = null;
-			String team = null;
-			if (firstH1Tag != null) {
-				net.htmlparser.jericho.Element descTag = source.getEnclosingElement(firstH1Tag.getBegin() - 20);
-				String groupName = null;
-				for (net.htmlparser.jericho.Element tag : descTag.getChildElements()) {
-					if (StringUtils.equalsIgnoreCase(tag.getName(), "h1")) {
-						groupName = tag.getContent().toString().trim();
-					} else {
-						if (StringUtils.containsIgnoreCase(groupName, "mission")) {
-							mantra = tag.getContent().toString().trim();
-						} else if (StringUtils.containsIgnoreCase(groupName, "our products")) {
-							description = tag.getContent().toString().trim();
-						} else if (StringUtils.containsIgnoreCase(groupName, "our team")) {
-							team = tag.getContent().toString().trim();
-						}
+			try {
+				int numberOfResults = 0;
+				ObjectMapper mapper = new ObjectMapper();
+				JsonNode rootNode = mapper.readValue(response, JsonNode.class);
+				Map<String, String> result = new LinkedHashMap<String, String>();
+				
+				Iterator<JsonNode> nodeIt = rootNode.getElements();
+				for (JsonNode nodeItem = null; nodeIt.hasNext();) {
+					if (numberOfResults > 20) {
+						break;
+					}
+					nodeItem = nodeIt.next();
+					String id = getJsonNodeValue(nodeItem, "id");
+					String name = getJsonNodeValue(nodeItem, "name");
+					
+					if (id != null && name != null) {
+						numberOfResults++;
+						result.put(id, name);
 					}
 				}
-				if (description == null) {
-					description = mantra;
-					mantra = extractMantra(description);
+				return result;
+			} catch (Exception e) {
+				log.log(Level.WARNING, "Error parsing/loading AngelCo response", e);
+				return null;
+			}
+		}
+
+		@Override
+		public Listing importListing(UserVO loggedInUser, Listing listing, String id) {
+			String queryString = "http://api.angel.co/1/startups/" + id;
+			byte[] response = fetchBytes(queryString);
+			if (response == null) {
+				return listing;
+			}
+			try {
+				ObjectMapper mapper = new ObjectMapper();
+				JsonNode rootNode = mapper.readValue(response, JsonNode.class);
+				if (rootNode != null) {
+					listing.name = getJsonNodeValue(rootNode, "name");
+					listing.type = Listing.Type.COMPANY;
+					listing.category = "Software";
+					listing.summary = getJsonNodeValue(rootNode, "product_desc");
+					listing.mantra = getJsonNodeValue(rootNode, "high_concept");
+					listing.website = getJsonNodeValue(rootNode, "company_url");
+					listing.videoUrl = getJsonNodeValue(rootNode, "video_url");
+					if (StringUtils.isEmpty(listing.videoUrl)) {
+						listing.videoUrl = null;
+					}
+
+					String logoUrl = getJsonNodeValue(rootNode, "logo_url");
+					if (logoUrl != null) {
+						fetchLogo(listing, logoUrl);
+					}
+					fetchImages(listing, rootNode.get("screenshots"));
+					
+					listing.notes += "Imported from AngelCo url=" + queryString + ", name=" + listing.name
+							+ " on " + timeStampFormatter.print(new Date().getTime()) + "\n";
 				} else {
-					mantra = extractMantra(mantra);
+					log.warning("No JSON response");
 				}
+			} catch (Exception e) {
+				log.log(Level.WARNING, "Error parsing/loading AngelCo response", e);
 			}
-			System.out.println("    mantra: " + mantra);
-			System.out.println("    description: " + description);
-			System.out.println("    team: " + team);
-		}
-		net.htmlparser.jericho.Element descTag = source.getElementById("branchTable");
-		if (descTag != null && StringUtils.equalsIgnoreCase(descTag.getName(), "table")) {
-			for (net.htmlparser.jericho.Element tag : descTag.getAllElements("tr")) {
-				List<net.htmlparser.jericho.Element> addressTds = tag.getAllElements("td");
-				if (addressTds.size() >= 2) {
-					if (StringUtils.equalsIgnoreCase(addressTds.get(0).getContent().toString().trim(), "Headquarters")) {
-						System.out.println("    address: " + addressTds.get(1).getContent().toString().trim());
-					}
-				}
-			}
-		}
-		for (net.htmlparser.jericho.Element tag : source.getAllElements("src", Pattern.compile("/UserUploads/CompanyLogo/.*"))) {
-			if (tag.getName().equalsIgnoreCase("img")) {
-				System.out.println("    logo url: http://www.startuply.com" + tag.getAttributeValue("src"));
-			}
-		}
-		net.htmlparser.jericho.Element photoPanel = source.getElementById("photoPanel");
-		if (photoPanel != null) {
-			for (net.htmlparser.jericho.Element tag : photoPanel.getAllElements("src", Pattern.compile("../UserUploads/PhotoStorage/.*"))) {
-				if (tag.getName().equalsIgnoreCase("img")) {
-					String src = tag.getAttributeValue("src");
-					if (src.startsWith("..")) {
-						src = src.substring(2);
-					}
-					src = src.replaceAll("_thumb", "");
-					System.out.println("    image url: http://www.startuply.com" + src);
-				}
-			}
+			return listing;
 		}
 		
-		//IOUtils.write(converted, new FileOutputStream("e://projects//startupbidder//google-play-game.txt"));
+		void fetchImages(Listing listing, JsonNode screenshotNode) {
+			List<String> urls = new ArrayList<String>();
+
+			if (screenshotNode != null) {
+				Iterator<JsonNode> elemIter = screenshotNode.getElements();
+				for (String url = null; elemIter.hasNext(); ) {
+					url = getJsonNodeValue(elemIter.next(), "original");
+					if (url != null && url.startsWith("http")) {
+						urls.add(url);
+					}
+				}
+			}
+			schedulePictureImport(listing, urls);
+		}
 	}
 }
