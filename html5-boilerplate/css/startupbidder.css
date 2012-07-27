@@ -134,11 +134,11 @@ a:focus, a:hover { cursor: pointer; }
 .headerrowcenter { margin-left: 10px; }
 .headertext, .headerlink { position: relative; font-weight: bold; font-size: 14px; top: 16px; padding: 5px 10px; }
 .headerlinknoborder { border-left: none; }
-.headerlinkright { border-left: none; padding-right: 5px; }
+.headerlinkright { border-left: none; padding-left: 0; padding-right: 0; }
 .logotextblue { position: relative; font-weight: bold; font-size: 24px; top: 8px; color: #32aff6; }
 .logotextgrey { position: relative; font-weight: bold; font-size: 24px; top: 8px; color: white; }
 .headerprofile { float: right; text-align: right; }
-.loginspan { text-align: right; margin-left: 10px; }
+.loginspan { text-align: right; margin-left: 0; }
 .logout { position: relative; margin-top:6px; display: none; }
 .headersignintext { float: right; border-left: none; padding-right: 0px; }
 
@@ -274,7 +274,7 @@ a:focus, a:hover { cursor: pointer; }
 .bidactioniconnarrow { float: left; margin-left: 10px; margin-top: 5px; margin-right: 10px; }
 .bidactionbtn { text-align: left !important; }
 .normalicon { float: left; margin-right: 5px; }
-.headericon { height: 32px; width: 32px; margin-left: 15px; float: right; position: relative; top: 12px; }
+.headericon { height: 32px; width: 32px; margin-left: 10px; float: right; position: relative; top: 12px; }
 .headersignin { background: url(../img/icons/icon_grey_google.png); }
 .headertwittersignin { background: url(../img/icons/icon_grey_twitter.png); }
 .headerfbsignin { background: url(../img/icons/icon_grey_facebook.png); }
