@@ -12,7 +12,7 @@
             <div style="font-size:24px; padding-top: 7px;"><span style="color:#45a9e6;">startup</span><span style="color:#eee">bidder</span></div>
         </a>
     </div>
-    <div class="span-7 headerrow">
+    <div class="span-7 headerrow headerrowcenter last">
       <a href="discover-page.html"><span class="headerlink hoverlink headerlinknoborder">Discover</span></a>
       <a href="nearby-page.html"><span class="headerlink"><span class="hoverlink">Nearby</span></span></a>
       <a id="postlink" href="#"><span class="headerlink"><span class="hoverlink" id="posttext">Add Listing</span></span></a>
@@ -29,7 +29,7 @@
     <!-- not logged in -->
     <div class="span-5 last loginspan headerrow initialhidden" id="headernotloggedin">
         <div>
-            <span class="headerlink headerlinkright">Sign In with</span>
+            <span class="headerlink headerlinkright">Sign In</span>
             <a id="loginlink" href="">
                 <div class="headericon headersignin"></div>
             </a>

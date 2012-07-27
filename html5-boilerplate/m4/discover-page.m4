@@ -16,7 +16,7 @@ include(banner.m4)
 
 <!-- left column -->
 <div class="span-16">
-
+<!--
     <div class="initialhidden welcomevideo" id="welcomevideo">
         <div class="welcomevideoclosex closexicon" id="closexicon"></div>
         <div class="boxtitle">WELCOME VIDEO <a href="http://youtu.be/hq5gaQ1FtAU">(VIEW DIRECT ON YOUTUBE)</a></div>
@@ -24,7 +24,7 @@ include(banner.m4)
             <iframe width="622" height="350" src="http://www.youtube.com/embed/hq5gaQ1FtAU" frameborder="0" allowfullscreen></iframe>
         </div>
     </div>
-
+-->
     <div class="span-16 preloader">
         <div class="preloaderfloater"></div>
         <div class="preloadericon"></div>

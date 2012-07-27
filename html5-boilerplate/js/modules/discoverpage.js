@@ -6,7 +6,7 @@ pl.implement(DiscoverPageClass,{
                     editedListing = new CompanyListClass({ propertykey: 'edited_listing', propertyissingle: true, companydiv: 'edited_listing', fullWidth: true }),
                     usersListings = new CompanyListClass({ propertykey: 'users_listings', companydiv: 'users_listings', seeall: '/profile-listing-page.html?type=active' }),
                     monitoredListings = new CompanyListClass({ propertykey: 'monitored_listings', companydiv: 'monitored_listings', seeall: '/profile-listing-page.html?type=monitored' }),
-                    topListings = new CompanyListClass({ propertykey: 'top_listings', companydiv: 'top_listings', seeall: '/main-page.html?type=top' }),
+                    topListings = new CompanyListClass({ propertykey: 'top_listings', companydiv: 'top_listings', seeall: '/main-page.html?type=top', exponential: true }),
                     latestListings = new CompanyListClass({ propertykey: 'latest_listings', companydiv: 'latest_listings', seeall: '/main-page.html?type=latest' }),
                     categories = json.categories || {},
                     locations = json.top_locations || {},
@@ -32,7 +32,8 @@ pl.implement(DiscoverPageClass,{
                 topListings.storeList(json);
                 latestListings.storeList(json);
             },
-            ajax = new AjaxClass('/listings/discover/', 'top_listings', completeFunc),
+            ajax = new AjaxClass('/listings/discover/', 'top_listings', completeFunc);
+/*
             cookie = CookieClass.prototype.readCookie('hideWelcomeVideo');
         if (cookie) {
             pl('#welcomevideo').hide();
@@ -45,6 +46,7 @@ pl.implement(DiscoverPageClass,{
             });
             pl('#welcomevideo').show();
         }
+*/
         ajax.call();
     }
 });

@@ -134,7 +134,7 @@ pl.implement(CompanyTileClass, {
     <div class="companybannerlogo tileimg fulltileimg noimage hoverlink" style="' + this.imgStyle + '"></div>\
 ' + this.closeanchor + '\
 ' + this.openanchor + '\
-    <div class="companybannertitle hoverlink">' + this.name + '</div>\
+    <div class="companybannertitle companybannertiletitle hoverlink">' + this.name + '</div>\
 ' + this.closeanchor + '\
     <div class="companybannertextgrey companybannermapline">\
         ' + this.categoryaddresstext + '\
@@ -208,28 +208,38 @@ pl.implement(CompanyListClass, {
             pl('#'+this.options.companydiv).html('<span class="attention">No companies found</span>');
             return;
         }
+        if (this.options.exponential) { // display full width, then two half width, then the rest single width
+        }
         for (i = 0; i < companies.length; i++) {
             company = companies[i];
             tile  = new CompanyTileClass(tileoptions);
             tile.store(company);
-            if (this.options.fullWidth || (this.options.colsPerRow === 4 && companies.length === 1)) {
+            if (this.options.fullWidth || this.options.colsPerRow === 4 && companies.length === 1 || this.options.exponential && i === 0) {
                 html += tile.makeFullWidthHtml();
             }
-            else if (this.options.colsPerRow === 4 && companies.length === 2 && i === 0) {
+            else if (this.options.colsPerRow === 4 && companies.length === 2 && i === 0 || this.options.exponential && i === 1) {
                 html += tile.makeHalfWidthHtml();
             }
-            else if (this.options.colsPerRow === 4 && companies.length === 2 && i === 1) {
+            else if (this.options.colsPerRow === 4 && companies.length === 2 && i === 1 || this.options.exponential && i === 2) {
                 html += tile.makeHalfWidthHtml('last');
             }
-            else if (this.options.colsPerRow === 4 && companies.length === 3 && i < 2) {
+            else if (this.options.colsPerRow === 4 && companies.length === 3 && i < 2 && !this.options.exponential) {
                 html += tile.makeHtml();
             }
-            else if (this.options.colsPerRow === 4 && companies.length === 3 && i === 2) {
+            else if (this.options.colsPerRow === 4 && companies.length === 3 && i === 2 && !this.options.exponential) {
                 html += tile.makeHalfWidthHtml('last');
             }
+            else if ((i+1) % this.options.colsPerRow === 0 && !this.options.exponential) {
+                html += tile.makeHtml('last');
+            }
+            else if (this.options.exponential && this.options.propertykey === 'top_listings' && companies.length === 4 && i >= 3) {
+                // ignore so we don't have blank space
+            }
+            else if ((i+2) % this.options.colsPerRow === 0 && this.options.exponential) {
+                html += tile.makeHtml('last');
+            }
             else {
-                last = (i+1) % this.options.colsPerRow === 0 ? 'last' : '';
-                html += tile.makeHtml(last);
+                html += tile.makeHtml();
             }
         }
         if (more_results_url) {
@@ -336,32 +346,32 @@ pl.implement(BaseCompanyListPageClass,{
         ajax = new AjaxClass(this.url, 'companydiv', completeFunc);
         pl('#listingstitle').html(title);
         if (this.type === 'top') {
-            pl('#banner').addClass('topbanner');
+            //pl('#banner').addClass('topbanner');
             pl('#welcometitle').html('Only the best');
             pl('#welcometext').html('The highest ranking listings on startupbidder');
         }
         else if (this.type === 'valuation') {
-            pl('#banner').addClass('valuationbanner');
+            //pl('#banner').addClass('valuationbanner');
             pl('#welcometitle').html('Invest in a startup today');
             pl('#welcometext').html('The listings below are ready for investment and open for bidding');
         }
         else if (this.type === 'keyword') {
-            pl('#banner').addClass('keywordbanner');
+            //pl('#banner').addClass('keywordbanner');
             pl('#welcometitle').html('Search for a startup');
             pl('#welcometext').html('Matching listings');
         }
         else if (this.type === 'latest') {
-            pl('#banner').addClass('latestbanner');
+            //pl('#banner').addClass('latestbanner');
             pl('#welcometitle').html("What's fresh?");
             pl('#welcometext').html('The most recent listings on startupbidder');
         }
         else if (this.type === 'category') {
-            pl('#banner').addClass('categorybanner');
+            //pl('#banner').addClass('categorybanner');
             pl('#welcometitle').html('Industry');
             pl('#welcometext').html('Latest listings in the ' + this.val + ' industry');
         }
         else if (this.type === 'location') {
-            pl('#banner').addClass('locationbanner');
+            //pl('#banner').addClass('locationbanner');
             pl('#welcometitle').html('Location');
             pl('#welcometext').html('Latest listings from ' + this.val);
         }

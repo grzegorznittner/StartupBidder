@@ -1,5 +1,5 @@
 /* layout styles */
-* { margin: 0; padding: 0; font-family: "Helvetica Neue",Helvetica,Arial,sans-serif !important; }
+* { margin: 0; padding: 0; font-family: "Adelle","Helvetica Neue",Helvetica,Arial,sans-serif !important; }
 html, body, #wrap { height: 100%; }
 body { margin: 0; }
 body > #wrap { height: auto; min-height: 100%; }
@@ -131,6 +131,7 @@ a:focus, a:hover { cursor: pointer; }
 .topheaderlink { color: white !important; font-weight: bold; }
 .header { width: 100%; height: 55px; background: #49515a; }
 .headerrow { height: 55px; }
+.headerrowcenter { margin-left: 10px; }
 .headertext, .headerlink { position: relative; font-weight: bold; font-size: 14px; top: 16px; padding: 5px 10px; }
 .headerlinknoborder { border-left: none; }
 .headerlinkright { border-left: none; padding-right: 5px; }
@@ -142,8 +143,8 @@ a:focus, a:hover { cursor: pointer; }
 .headersignintext { float: right; border-left: none; padding-right: 0px; }
 
 /* banner styles */
-.banner { width: 100%; height: 200px; }
-.bannertext { font-size: 30px; font-weight: bold; top: 5px; height: 185px; position: relative; }
+.banner { width: 100%; height: 55px; background: #45a9e6; }
+.bannertext { font-size: 30px; font-weight: bold; top: 5px; height: 40px; position: relative; }
 .bannersmall { width: 980px; height: 50px; margin-top: 10px; }
 .bannertextsmall { font-size: 30px; font-weight: bold; margin-top: 20px; }
 .follow { top: 33px; position: relative; }
@@ -161,7 +162,7 @@ a:focus, a:hover { cursor: pointer; }
 .welcomevideoclosex { position: absolute; right: 6px; top: 0; z-index: 1000; }
 .welcomevideocontainer { margin: 10px 0; }
 .socialsidebox { height: 95px; position: relative; }
-.socialbanner { height: 80px; position: relative; }
+.socialbanner { height: 100px; position: relative; top: -10px; }
 .twitterbanner { height: 23px; top: 14px; position: absolute; }
 .gplusbanner { height: 20px; top: 37px; position: absolute; }
 .facebookbanner { height: 28px; top: 61px; position: absolute; }
@@ -173,6 +174,7 @@ a:focus, a:hover { cursor: pointer; }
 .companybannertile { height: 150px; width: 626px; position: relative; overflow: hidden; margin-bottom: 10px; }
 .companybannertilenoborder { height:150px;overflow:hidden;position:relative;top:-9px; }
 .companybannertitle { font-size: 43px; font-weight: normal; margin-bottom: -15px; position: relative; top: -11px; }
+.companybannertiletitle { font-size: 36px; top: -7px; }
 .companybannertext { font-size: 14px; font-weight: bold; }
 .companybannertextlink { font-size: 14px; font-weight: bold; margin-left: 4px; }
 .companybannerlink { float: left; margin-right: 5px; }
@@ -186,8 +188,8 @@ a:focus, a:hover { cursor: pointer; }
     position: absolute;
     bottom: 0;
     height: 21px;
-    left: 225px;
-    width: 760px;
+    left: 168px;
+    width: 810px;
 }
 .companynav {
     background: #e4e4e4;
@@ -200,8 +202,8 @@ a:focus, a:hover { cursor: pointer; }
     margin-right: 10px;
     padding: 10px 5px 0;
     text-align: center;
-    width: 100px;
-    border-bottom: 2px solid #ccc;
+    width: 110px;
+    border-bottom: none;
 }
 .companynavlast { margin-right: 0; }
 .companynavselected {
@@ -846,6 +848,7 @@ a:focus, a:hover { cursor: pointer; }
     { background: #fff; }
 .inputbutton, .smallinputbutton
     { background: #e4e4e4; }
+/*
 .citynight2,
     .banner
     { background: url(../img/citynight2.jpg); background-position: 0px -350px; }
@@ -889,6 +892,7 @@ a:focus, a:hover { cursor: pointer; }
     .contactbanner
     { background: url(../img/oldphone.jpg); background-position: -130px -568px; }
 .contactbanner .welcometext { right: 178px; }
+*/
 
 /* BMC */
 .bmcwidth { width: 938px; }
@@ -1088,6 +1092,50 @@ a:focus, a:hover { cursor: pointer; }
     margin-top: 30px;
     position: relative;
 }
+/* tim part two */
+.investbutton {
+/*
+#65a9d7
+#3e779d
+#28597a
+#1b435e
+30 30 30
+#87c442
+#579412
+#377402
+#276400
+#70b030
+*/
+   border-top: 1px solid #70b030;
+   background: #87c442;
+   background: -webkit-gradient(linear, left top, left bottom, from(#579412), to(#87c442));
+   background: -webkit-linear-gradient(top, #579412, #87c442);
+   background: -moz-linear-gradient(top, #579412, #87c442);
+   background: -ms-linear-gradient(top, #579412, #87c442);
+   background: -o-linear-gradient(top, #579412, #87c442);
+   /* padding: 5px 10px; */
+   -webkit-border-radius: 2px;
+   -moz-border-radius: 2px;
+   border-radius: 2px;
+   -webkit-box-shadow: rgba(0,0,0,1) 0 1px 0;
+   -moz-box-shadow: rgba(0,0,0,1) 0 1px 0;
+   box-shadow: rgba(0,0,0,1) 0 1px 0;
+   text-shadow: rgba(0,0,0,.4) 0 1px 0;
+   color: white;
+   /* font-size: 14px; */
+   font-family: Georgia, serif;
+   text-decoration: none;
+   vertical-align: middle;
+   }
+.investbutton:hover {
+   border-top-color: #377402;
+   background: #377402;
+   color: #ccc;
+   }
+.investbutton:active {
+   border-top-color: #276400;
+   background: #276400;
+   }
 
 /* downloads */
 .downloadline { padding-top: 10px; clear: both; }
