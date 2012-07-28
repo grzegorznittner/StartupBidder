@@ -32,6 +32,8 @@ include(footer.m4)
   <!-- JavaScript at the bottom for fast page loading -->
   <script src="js/libs/prevel.min.js"></script>
   <script src="js/modules/base.js"></script>
+  <script src="js/modules/companylist.js"></script>
+  <script src="js/modules/newlistingbase.js"></script>
   <script src="js/modules/companybanner.js"></script>
   <script src="js/modules/imagepanel.js"></script>
   <script src="js/modules/listing.js"></script>

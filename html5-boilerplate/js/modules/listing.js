@@ -4,6 +4,7 @@ function ListingClass() {
     this.listing_id = this.id;
     this.preview = queryString.vars.preview;
     this.imagepanel = new ImagePanelClass();
+    this.base = new NewListingBaseClass();
 };
 pl.implement(ListingClass, {
     store: function(json) {
@@ -35,7 +36,8 @@ pl.implement(ListingClass, {
                 else {
                     header.setLogin(json);
                 }
-                companybanner.display(json);
+                self.base.store(json && json.listing || {});
+                companybanner.display(json, self.base);
                 self.display(json);
                 pl('.preloader').hide();
                 pl('.wrapper').show();
@@ -56,6 +58,7 @@ pl.implement(ListingClass, {
         this.displayDocuments();
         this.displayFunding();
         this.displaySocial();
+        this.displayDelete();
         this.displayWithdraw();
         this.displayApprove();
         this.displaySendback();
@@ -85,7 +88,7 @@ pl.implement(ListingClass, {
 
     displayEdit: function() {
         var self = this;
-        if (self.loggedin_profile && self.loggedin_profile.profile_id === self.profile_id && (self.status === 'new' || self.status === 'posted')) { // owner
+        if (self.loggedin_profile && self.loggedin_profile.profile_id === self.profile_id && self.status === 'new') { // owner
             pl('#editbutton').show();
         }
     },
@@ -252,8 +255,49 @@ pl.implement(ListingClass, {
         }
     },
 
+    displayDelete: function() {
+        var deletable = (this.status === 'active' || this.status === 'posted')
+            && (this.loggedin_profile && this.loggedin_profile.profile_id === this.profile_id);
+        if (deletable) {
+            this.bindDeleteButton();
+        }
+    },
+
+    bindDeleteButton: function() {
+        var self = this;
+        pl('#deletebox').show();
+        pl('#deletebtn').bind({
+            click: function() {
+                var complete = function() {
+                        pl('#deletebtn, #deletecancelbtn').hide();
+                        pl('#deletemsg').text('Listing deleted, going home...').show();
+                        setTimeout(function() {
+                            window.location = '/';
+                        }, 3000);
+                    },
+
+                    url = '/listing/delete',
+                    ajax = new AjaxClass(url, 'deletemsg', complete);
+                if (pl('#deletecancelbtn').css('display') === 'none') { // first call
+                    pl('#deletemsg, #deletecancelbtn').show();
+                }
+                else {
+                    ajax.setPost();
+                    ajax.call();
+                }
+                return false;
+            }
+        });
+        pl('#deletecancelbtn').bind({
+            click: function() {
+                pl('#deletemsg, #deletecancelbtn').hide();
+                return false;
+            }
+        });
+    },
+
     displayWithdraw: function() {
-        var withdrawable = this.status === 'active' && (this.loggedin_profile && this.loggedin_profile.profile_id === this.profile_id);
+        var withdrawable = this.status === 'active' && this.loggedin_profile && this.loggedin_profile.profile_id === this.profile_id;
         if (withdrawable) {
             this.bindWithdrawButton();
         }

@@ -2,34 +2,36 @@ function CompanyBannerClass(tab) {
     this.tab = tab || 'basics';
 };
 pl.implement(CompanyBannerClass, {
-    store: function(json) {
+    store: function(json, base) {
         var key;
-        if (json && json.listing && json.listing.listing_id) {
+        if (!json) {
+            return;
+        }
+        if (base) {
+            this.base = base;
+        }
+        if (json.listing && json.listing.listing_id) {
             for (key in json.listing) {
                 this[key] = json.listing[key];
             }
         }
-        this.loggedin_profile = json && json.loggedin_profile;
+        this.loggedin_profile = json.loggedin_profile;
         this.loggedin_profile_id = this.loggedin_profile && this.loggedin_profile.profile_id;
     },
 
-    displayMinimal: function(json) {
-        if (json) {
-            this.store(json);
-        }
+    displayMinimal: function(json, base) {
+        this.store(json, base);
         this.displayBanner();
         pl('.preloadercompanybanner').hide();
         pl('.companybannerwrapper').show();
     },
 
-    display: function(json) {
-        if (json) {
-            this.store(json);
-        }
+    display: function(json, base) {
+        this.store(json, base);
         this.displayBanner();
-        if (this.status !== 'new' && this.status !== 'posted') {
-            this.displayFollow();
-        }
+        this.displayStatusNotification();
+        this.displaySubmit();
+        this.displayFollow();
         this.displayTabs();
         pl('.preloadercompanybanner').hide();
         pl('.companybannerwrapper').show();
@@ -48,19 +50,15 @@ pl.implement(CompanyBannerClass, {
             founderstext = (this.founders ? ' founded by ' + this.founders : ''),
             status = this.status || 'new',
             website = this.website || '/company-page.html?id=' + this.listing_id,
-            listingdatetext = '<span class="inputmsg">' + SafeStringClass.prototype.ucfirst(status) + '</span> listing'
-                + (this.listing_date ? ' from ' + DateClass.prototype.format(this.listing_date) : (this.status === 'new' ? ' not yet listed' : ''))
-                + (this.website ? ' at ' : '');
+            listingdatetext = 'Listed'
+                + (this.listing_date ? ' on ' + DateClass.prototype.format(this.listing_date) : (this.status === 'new' ? ' not yet listed' : ''))
+                + (this.website ? ' from ' : '');
         if (logobg) {
             pl('#companylogo').removeClass('noimage').css({background: logobg});
         }
         pl('#title').text(this.title || 'Listing Name Here');
         pl('title').text('Startupbidder Listing: ' + (this.title || 'Listing Name Here'));
         pl('#mantra').text(this.mantra || 'Mantra here');
-        pl('#companystatus').text('Listing is ' + status);
-        if (status === 'withdrawn') {
-            pl('#companystatus').addClass('attention');
-        }
         pl('#categoryaddresstext').html(categoryaddresstext);
         pl('#founderstext').text(founderstext);
         pl('#listing_date_text').html(listingdatetext);
@@ -70,6 +68,124 @@ pl.implement(CompanyBannerClass, {
         }
         else {
             pl('#domainname').text('visit listing page');
+        }
+    },
+
+    displayStatusNotification: function() {
+        var statusmsg = '';
+        if (this.loggedin_profile && this.loggedin_profile_id === this.profile_id) {
+            if (this.status === 'new') {
+                statusmsg = '<span class="normal">An admin will review your listing after submit</span>';
+            }
+            else if (this.status === 'posted') {
+                statusmsg = '<span class="inprogress">An admin is reviewing your listing for activation</span>';
+            }
+            else if (this.status === 'withdrawn') {
+                statusmsg = '<span class="errorcolor">Your listing is withdrawn and no longer active</span>';
+            }
+            else if (this.status === 'frozen') {
+                statusmsg = '<span class="errorcolor">An admin has frozen your listing pending review</span>';
+            }
+            /*
+            else if (this.status === 'active') {
+                statusmsg = '<span class="normal">Your listing is active</span>';
+            }
+            */
+        }
+        else {
+            if (this.status === 'new') {
+                statusmsg = '<span class="normal">An admin will review this listing after submission</span>';
+            }
+            else if (this.status === 'posted') {
+                statusmsg = '<span class="inprogress">An admin is reviewing this listing for activation</span>';
+            }
+            else if (this.status === 'withdrawn') {
+                statusmsg = '<span class="errorcolor">This listing is withdrawn and no longer active</span>';
+            }
+            else if (this.status === 'frozen') {
+                statusmsg = '<span class="errorcolor">An admin has frozen this listing pending review</span>';
+            }
+            /*
+            else if (this.status === 'active') {
+                statusmsg = '<span class="normal">This listing is active</span>';
+            }
+            */
+        }
+        pl('#submiterrormsg').html(statusmsg);
+    },
+            
+    postListing: function() {
+        var self = this,
+            completeFunc = function(json) {
+                document.location = '/company-page.html?id=' + self.base.listing.listing_id;
+            },
+            ajax = new AjaxClass('/listing/post', 'newlistingmsg', completeFunc);
+        ajax.setPost();
+        ajax.call();
+    },
+
+    highlightMissing: function() {
+        var self = this,
+            msg = '',
+            msgs = [],
+            errorpages = {},
+            missing,
+            displayName,
+            page,
+            i;
+        for (i = 0; i < self.base.missingprops.length; i++) {
+            missing = self.base.missingprops[i];
+            page = self.base.proppage[missing];
+            if (!errorpages[page]) {
+                errorpages[page] = [];
+            }
+            displayName = self.base.displayNameOverrides[missing] || missing.toUpperCase();
+            errorpages[page].push(displayName);
+        }
+        for (i = 0; i < self.base.pages.length; i++ ) {
+            page = self.base.pages[i];
+            //self.highlightPage(page, errorpages[page]);
+        }
+        for (page in errorpages) {
+            //msg = page.toUpperCase() + ' page: ' + errorpages[page].join(', ');
+            msg = errorpages[page].join(', ');
+            msgs.push(msg);
+        }
+        return msgs.join('; ');
+    },
+
+    bindSubmitButton: function() {
+        var self = this,
+            submitValidator = function() {
+                var msg,
+                    msgs = [],
+                    pctcomplete = self.base.pctComplete();
+                if (pctcomplete !== 100) {
+                    msg = self.highlightMissing();
+                    msgs.push('Missing info: ' + msg);
+                }
+                return msgs;
+            };
+        pl('#submitbutton').bind({
+            click: function() {
+                var validmsgs = submitValidator();
+                if (validmsgs.length > 0) {
+                    pl('#submiterrormsg').addClass('errorcolor');
+                    pl('#submiterrormsg').html('Please correct: ' + validmsgs.join(' '));
+                }
+                else {
+                    pl('#submiterrormsg').removeClass('errorcolor').addClass('inprogress').text('Submitting listing...');
+                    self.postListing();
+                }
+                return false;
+            }
+        }).show();
+    },
+
+    displaySubmit: function() {
+        var self = this;
+        if (self.loggedin_profile && self.loggedin_profile.profile_id === self.profile_id && self.status === 'new') { // owner
+            this.bindSubmitButton();
         }
     },
 
@@ -114,7 +230,7 @@ pl.implement(CompanyBannerClass, {
 
     displayFollow: function() {
         var following = this.monitored;
-        if (this.loggedin_profile && this.loggedin_profile.profile_id !== this.profile_id) {
+        if (this.loggedin_profile && this.loggedin_profile.profile_id !== this.profile_id && this.status === 'active') {
             if (following) {
                 this.displayFollowing();
             }

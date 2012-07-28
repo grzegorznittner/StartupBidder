@@ -848,7 +848,8 @@ include(api-banner.m4)
         <dt>POST /listing/delete</dt>
         <dd>
             <p>
-            Deletes the user&rsquo;s new listing.  This only works for a listing which has not yet been approved.  To delete a listing which has already been approved,
+            Deletes the user&rsquo;s new listing.  This only works for a listing which has not yet been approved.
+            To remove a listing which has already been approved,
             call the withdraw method.  You must be the logged in listing owner in order to delete the listing.
             </p>
         </dd>

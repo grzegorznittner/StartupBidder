@@ -213,8 +213,8 @@ include(header.m4)
 
     <div>
         <div class="formitem clear">
-            <span class="span-3 inputbutton submitbutton" id="submitbutton">
-                SUBMIT
+            <span class="span-3 inputbutton submitbutton investbutton investbuttonsmall" id="previewbutton">
+                PREVIEW
             </span>
         </div>
     </div>

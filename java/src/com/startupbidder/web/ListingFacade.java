@@ -835,8 +835,8 @@ public class ListingFacade {
 			return returnValue;
 		}
 		
-		// only ACTIVE and POSTED listings can be WITHDRAWN
-		if (dbListing.state != Listing.State.CLOSED && dbListing.state != Listing.State.WITHDRAWN) {
+		// only ACTIVE listings can be WITHDRAWN
+		if (dbListing.state == Listing.State.ACTIVE) {
 			ListingVO forUpdate = DtoToVoConverter.convert(dbListing);
 
 			forUpdate.setState(Listing.State.WITHDRAWN.toString());
@@ -851,9 +851,11 @@ public class ListingFacade {
 				returnValue.setErrorCode(ErrorCodes.DATASTORE_ERROR);
 			}
 			ListingVO toReturn = DtoToVoConverter.convert(updatedListing);
-			Monitor monitor = getDAO().getListingMonitor(loggedInUser.toKeyId(), toReturn.toKeyId());
-			applyListingData(loggedInUser, toReturn, monitor);
-			returnValue.setListing(toReturn);
+            if (toReturn != null) {
+			    Monitor monitor = getDAO().getListingMonitor(loggedInUser.toKeyId(), toReturn.toKeyId());
+			    applyListingData(loggedInUser, toReturn, monitor);
+			    returnValue.setListing(toReturn);
+            }
 			return returnValue;
 		}
 		log.log(Level.WARNING, "CLOSED or WITHDRAWN listings cannot be withdrawn (state was " + dbListing.state + ")", new Exception("Not valid state"));

@@ -97,6 +97,12 @@ include(images-panel.m4)
             <div class="gplusbanner" id="gplusbanner"></div>
         </div>
     
+        <div id="deletebox" class="deletebox">
+        <div class="deletemsg attention" id="deletemsg">Are you sure?<br/>This cannot be undone.</div>
+        <a href="#" id="deletebtn"><div class="sideboxbutton hoverlink">DELETE</div></a>
+        <a href="#" class="deletecancelbtn" id="deletecancelbtn"><div class="sideboxbutton hoverlink">CANCEL</div></a>
+        </div>
+
         <div id="withdrawbox" class="withdrawbox">
         <div class="withdrawmsg attention" id="withdrawmsg">Are you sure?<br/>This cannot be undone.</div>
         <a href="#" id="withdrawbtn"><div class="sideboxbutton hoverlink">WITHDRAW</div></a>

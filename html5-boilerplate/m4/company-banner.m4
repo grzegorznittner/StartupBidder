@@ -24,11 +24,16 @@ define(`companybannermacro', `
                     </a>
                     <div class="span-1 linkicon"></div>
                 </div>
-                <div class="companybannertextgrey" id="mantra"></div>
+                <div class="companybannertextgrey companybannermantra2" id="mantra"></div>
     
                 <div class="companybannerfollow">
                     <div class="companybannerfollowbtn smallinputbutton span-3 darkblue hoverlink initialhidden" id="followbtn"></div>
-                    <div class="inputmsg inputfield last" id="followmsg"></div>
+                    <div class="inputmsg inputfield last companybannerfollowmsg" id="followmsg"></div>
+                </div>
+
+                <div class="companybannerfollow">
+                    <div class="companybannerfollowbtn span-3 inputbutton submitbutton investbutton investbuttonsmall initialhidden" id="submitbutton">SUBMIT</div>
+                    <div class="inputmsg last companybannerfollowmsg clear" id="submiterrormsg"></div>
                 </div>
     
             </div>

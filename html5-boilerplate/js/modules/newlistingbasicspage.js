@@ -9,6 +9,7 @@ pl.implement(NewListingBasicsClass, {
                     categories = json && json.categories ? json.categories : {},
                     header = new HeaderClass();
                 header.setLogin(json);
+                console.log(listing);
                 self.base.store(listing);
                 self.storeCategories(categories);
                 self.display();
@@ -36,7 +37,7 @@ pl.implement(NewListingBasicsClass, {
     },
     display: function() {
         var status = this.base.listing.status;
-        if (status !== 'new' && status !== 'posted') {
+        if (status !== 'new') {
             document.location = '/company-page.html?id=' + this.base.listing.listing_id;
         }
         if (!this.bound) {
@@ -107,77 +108,20 @@ pl.implement(NewListingBasicsClass, {
         this.base.fieldMap['platform'].setOptionsWithValues(platformOptions);
         this.displayCategories();
         this.addMap(this.genPlaceUpdater());
+        this.bindPreview();
         this.bindAddressEnterSubmit();
-        this.bindSubmitButton();
         this.base.bindTitleInfo();
         this.base.bindInfoButtons();
         pl('#newlistingbasicswrapper').show();
     },
-    bindSubmitButton: function() {
-        var self = this,
-            submitValidator = function() {
-                var msg,
-                    msgs = [],
-                    pctcomplete = self.base.pctComplete();
-                if (pctcomplete !== 100) {
-                    msg = self.highlightMissing();
-                    msgs.push('Missing info: ' + msg);
-                }
-                return msgs;
-            };
-        pl('#submitbutton').bind({
-            click: function() {
-                var validmsgs = submitValidator();
-                if (validmsgs.length > 0) {
-                    pl('#submiterrormsg').addClass('errorcolor');
-                    pl('#submiterrormsg').html('Please correct: ' + validmsgs.join(' '));
-                }
-                else {
-                    pl('#submiterrormsg').removeClass('errorcolor').addClass('inprogress').text('Submitting listing...');
-                    self.postListing();
-                }
-                return false;
-            }
+
+    bindPreview: function() {
+        var self = this;
+        pl('#previewbutton').bind('click', function() {
+            document.location = '/company-page.html?id=' + self.base.listing.listing_id;
         });
     },
-    postListing: function() {
-        var self = this,
-            completeFunc = function(json) {
-                document.location = '/company-page.html?id=' + self.base.listing.listing_id;
-            },
-            ajax = new AjaxClass('/listing/post', 'newlistingmsg', completeFunc);
-        ajax.setPost();
-        ajax.call();
-    },
-    highlightMissing: function() {
-        var self = this,
-            msg = '',
-            msgs = [],
-            errorpages = {},
-            missing,
-            displayName,
-            page,
-            i;
-        for (i = 0; i < self.base.missingprops.length; i++) {
-            missing = self.base.missingprops[i];
-            page = self.base.proppage[missing];
-            if (!errorpages[page]) {
-                errorpages[page] = [];
-            }
-            displayName = self.base.displayNameOverrides[missing] || missing.toUpperCase();
-            errorpages[page].push(displayName);
-        }
-        for (i = 0; i < self.base.pages.length; i++ ) {
-            page = self.base.pages[i];
-            //self.highlightPage(page, errorpages[page]);
-        }
-        for (page in errorpages) {
-            //msg = page.toUpperCase() + ' page: ' + errorpages[page].join(', ');
-            msg = errorpages[page].join(', ');
-            msgs.push(msg);
-        }
-        return msgs.join('; ');
-    },
+
     bindAddressEnterSubmit: function() {
         var self = this;
         pl('#address').bind({

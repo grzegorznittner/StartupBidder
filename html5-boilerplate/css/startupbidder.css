@@ -1,5 +1,5 @@
 /* layout styles */
-* { margin: 0; padding: 0; font-family: "Adelle","Helvetica Neue",Helvetica,Arial,sans-serif !important; }
+* { margin: 0; padding: 0; font-family: "Helvetica Neue",Helvetica,Arial,sans-serif; }
 html, body, #wrap { height: 100%; }
 body { margin: 0; }
 body > #wrap { height: auto; min-height: 100%; }
@@ -15,7 +15,8 @@ body.nearby-page > #wrap > #main > div.container > div.nearbywrapper { height: 1
 #newlistingsubmitmain { padding-bottom: 10px; }
 #footer {
     background: #ddd;
-    border-top: 2px solid #ccc;
+    border-top: 1px solid #ccc;
+    border-style: dashed;
     clear: both;
     height: 210px;
     margin-top: -210px;
@@ -44,6 +45,7 @@ body.nearby-page > #wrap > #main > div.container > div.nearbywrapper { height: 1
 }
 .footerlinkheader { margin-bottom: 10px; }
 .copyrighttext { font-size: 12px; position: absolute; right: 0; bottom: 0; }
+.normal { color: #666 !important; }
 .successful { color: #009900 !important; }
 .inprogress { color: #8F8A11 !important; }
 .errorcolor { color: #8A1F11 !important; }
@@ -58,7 +60,7 @@ body { font-size: 14px; font-weight: normal; }
 /* borders */
 .tile, .companybannertile, .companyhalftile
 {
-    border: 2px solid #cccccc;
+    border: 1px solid #cccccc;
 }
 
 /* link styles */
@@ -169,7 +171,7 @@ a:focus, a:hover { cursor: pointer; }
 .facebookbanner div span iframe { height: 28px !important; }
 
 /* company banner styles */
-.companyheader { width: 100%; height: 150px; border-bottom: 2px solid #ccc; padding: 20px 0; }
+.companyheader { width: 100%; height: 150px; border-bottom: 1px solid #ccc; padding: 20px 0; }
 .companybanner { height: 150px; position: relative; }
 .companybannertile { height: 150px; width: 626px; position: relative; overflow: hidden; margin-bottom: 10px; }
 .companybannertilenoborder { height:150px;overflow:hidden;position:relative;top:-9px; }
@@ -182,8 +184,10 @@ a:focus, a:hover { cursor: pointer; }
 .companybannermapline { height: 21px; }
 .companybannerlogo { margin-top: 2px; width: 146px; height: 146px; margin-right: 10px; margin-left: 2px; float: left; margin-right: 20px; }
 .companybannermantra { position: absolute; font-size: 14px; width: 830px; bottom:3px; padding-bottom: 18px; left:158px; }
-.companybannerfollow { position: absolute; top: 0; left: 845px; }
-.companybannerfollowbtn { clear: both; float: right; }
+.companybannerfollow { position: absolute; top: 0; right: 0; }
+.companybannerfollowbtn { clear: both; float: right; margin-left: 10px !important; }
+.companybannerfollowmsg { padding-top: 16px; }
+.companybannermantra2 { font-style: italic; }
 .companynavcontainer {
     position: absolute;
     bottom: 0;
@@ -193,7 +197,7 @@ a:focus, a:hover { cursor: pointer; }
 }
 .companynav {
     background: #e4e4e4;
-    border: 2px solid #ddd;
+    border: 1px solid #ddd;
     color: #777;
     float: left;
     font-size: 14px;
@@ -208,15 +212,15 @@ a:focus, a:hover { cursor: pointer; }
 .companynavlast { margin-right: 0; }
 .companynavselected {
     background: #fff !important;
-    border: 2px solid #ccc;
-    border-width: 2px 2px 0;
+    border: 1px solid #ccc;
+    border-width: 1px 1px 0;
     color: #444;
     height: 31px;
 }
 
 /* company half styles */
 .companyhalf { height: 150px; position: relative; }
-.companyhalftile { height: 150px; width: 306px; position: relative; border: 2px solid #cccccc; overflow: hidden; margin-bottom: 10px; background: #e3e3e3; float: left; margin-right: 10px; }
+.companyhalftile { height: 150px; width: 306px; position: relative; border: 1px solid #cccccc; overflow: hidden; margin-bottom: 10px; background: #e3e3e3; float: left; margin-right: 10px; }
 .companyhalftilelast { margin-right: 0px; }
 .companyhalftitle { font-size: 16px; font-weight: bold; line-height: 18px; margin-bottom: 3px; margin-top: 3px; overflow: hidden; }
 .companyhalftext { font-size: 12px; line-height: 14px; overflow: hidden; }
@@ -364,7 +368,7 @@ a:focus, a:hover { cursor: pointer; }
     font-weight: bold;
     font-size: 14px;
     height: 26px;
-    border: 2px solid #ddd;
+    border: 1px solid #ddd;
     display: block;
     margin: 0;
     padding: 14px 0px 10px;
@@ -593,7 +597,7 @@ a:focus, a:hover { cursor: pointer; }
 .sideboxselected { background: #fff !important; }
 .sidebox {
     width: 302px;
-    border: 2px solid #cccccc;
+    border: 1px solid #cccccc;
     background: none;
     margin-bottom: 10px;
     overflow: hidden;
@@ -686,6 +690,9 @@ a:focus, a:hover { cursor: pointer; }
 .bidsummary { font-size: 10px; }
 .newwithdrawmsg { display: none; font-weight: bold; }
 .newwithdrawcancelbtn { display: none; margin-top: 10px; }
+.deletebox { display: none; }
+.deletemsg { display: none; font-weight: bold; }
+.deletecancelbtn { display: none; margin-top: 10px; }
 .withdrawbox { display: none; }
 .withdrawmsg { display: none; font-weight: bold; }
 .withdrawcancelbtn { display: none; margin-top: 10px; }
@@ -763,7 +770,7 @@ a:focus, a:hover { cursor: pointer; }
 .apidetail ul li code { width: 280px; float: left; margin-right: 10px; }
 .apidetail h4 { display: block; margin: 0; font-weight: bold; }
 .apidetailframe { height: 400px !important; overflow: auto !important; }
-.apidetaildisplay { height: 100%; border-bottom: 2px solid gray; }
+.apidetaildisplay { height: 100%; border-bottom: 1px solid gray; }
 .apiprop { padding-left: 20px; }
 
 /* upload */
@@ -778,7 +785,7 @@ a:focus, a:hover { cursor: pointer; }
 .uploadbox { padding-top: 10px; }
 
 /* tiles */
-.tile { width: 146px; height: 296px; border: 2px solid #cccccc; overflow: hidden; margin-bottom: 10px; position: relative; }
+.tile { width: 146px; height: 296px; border: 1px solid #cccccc; overflow: hidden; margin-bottom: 10px; position: relative; }
 .tileimg { width: 146px; height: 146px; overflow: hidden; }
 .tiledays, .tiledaystext, .tiletype, .tiletypetext, .tilepoints { width: 146px; height: 30px; position: absolute; }
 .tiledays, .tiletype, .tilepoints { cursor: pointer; background-color: #000000; }
@@ -787,7 +794,7 @@ a:focus, a:hover { cursor: pointer; }
 .tiledays, .tiledaystext { top: 0px; }
 .tiletype, .tiletypetext { top: 116px; }
 .tilepoints { top: 266px; }
-.tiledesc { width: 142px; height: 116px; position: absolute; top: 146px; padding: 0 2px 2px 2px; margin:0; overflow: hidden; border-top: 2px solid #ddd; }
+.tiledesc { width: 142px; height: 116px; position: absolute; top: 146px; padding: 0 2px 2px 2px; margin:0; overflow: hidden; border-top: 1px solid #ddd; }
 .tilecompany { font-size: 14px; line-height: 19px; font-weight: bold; }
 .tileloc, .tiledetails, .tiledesc { font-size: 12px; line-height: 16px; }
 .tileloc, .tiledetails { line-height: 20px; }
@@ -927,7 +934,7 @@ a:focus, a:hover { cursor: pointer; }
 .titleinfodisplay {
     height: 220px;
     padding: 10px;
-    border: 2px solid #cccccc;
+    border: 1px solid #cccccc;
 }
 
 .sideinfo { margin: 0; overflow: hidden; width: 330px; height: 0; position: absolute;
@@ -944,7 +951,7 @@ a:focus, a:hover { cursor: pointer; }
 .sideinfodisplay {
     height: 130px;
     padding: 10px;
-    border: 2px solid #cccccc;
+    border: 1px solid #cccccc;
 }
 .sideinfoitem { position: relative; }
 .sideinfoheader { font-size: 18px; font-weight: bold; line-height: 30px; }
@@ -1073,13 +1080,19 @@ a:focus, a:hover { cursor: pointer; }
 /* tim improvements */
 .investbutton {
     background: #87c442;
-    border: 2px solid #70b030 !important;
+    border: 1px solid #70b030 !important;
     color: #fff;
     margin-top: 35px;
     font-size: 30px;
     padding-top: 10px;
     text-align: center;
     font-weight: 900;
+}
+.investbuttonsmall {
+    font-size: 14px;
+    margin-top: 0;
+    font-weight: 700;
+    padding: 14px 0 10px;
 }
 .addlistingbutton {
     margin-top: 53px;
@@ -1123,7 +1136,7 @@ a:focus, a:hover { cursor: pointer; }
    text-shadow: rgba(0,0,0,.4) 0 1px 0;
    color: white;
    /* font-size: 14px; */
-   font-family: Georgia, serif;
+   /* font-family: Georgia, serif; */
    text-decoration: none;
    vertical-align: middle;
    }
@@ -1136,13 +1149,17 @@ a:focus, a:hover { cursor: pointer; }
    border-top-color: #276400;
    background: #276400;
    }
+/* tim fonts */
+.companybannertitle, .companybannertiletitle, .welcometitle, .bannertextsmall {
+    font-family: "Adelle","Helvetica Neue",Helvetica,Arial,sans-serif;
+}
 
 /* downloads */
 .downloadline { padding-top: 10px; clear: both; }
 .downloadicon { background: url(/img/icons/upcoming-work.png); width: 32px; height: 32px; float: left; margin-right: 10px; }
 .downloadtext { padding-top: 5px; float: left; }
 
-.gotobutton { background: #eee; color: #666; border: 2px solid #ddd !important; font-size: 16px; margin-top: 20px; font-weight: normal; }
+.gotobutton { background: #eee; color: #666; border: 1px solid #ddd !important; font-size: 16px; margin-top: 20px; font-weight: normal; }
 
 
 .titleprevnextbtn { margin-top: 3px; color: #4083a9; }
@@ -1161,7 +1178,7 @@ textarea[disabled] { color: #999 !important; }
     margin-top: 0;
     margin-left: 433px;
     background: #87c442;
-    border: 2px solid #70b030;
+    border: 1px solid #70b030;
     color: #fff;
 }
 .backbutton {
@@ -1178,7 +1195,7 @@ textarea[disabled] { color: #999 !important; }
 .sideboxbutton {
     margin-top: 10px;
     background: #87c442;
-    border: 2px solid #70b030;
+    border: 1px solid #70b030;
     color: #fff;
     width: 150px;
     height: 30px;
