@@ -55,7 +55,7 @@ include(images-panel.m4)
     
         <div class="initialhidden" id="documentboxwrapper"> 
         <div class="boxtitle boxtitleside">DOCUMENTS</div>
-        <div class="sidebox" id="documentbox">
+        <div class="sidebox documentbox" id="documentbox">
                 <div class="downloadline hoverlink initialhidden" id="presentationwrapper">
                     <a href="#" id="presentationlink">
                         <div class="downloadicon"></div>

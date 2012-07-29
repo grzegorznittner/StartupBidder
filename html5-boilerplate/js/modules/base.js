@@ -394,8 +394,10 @@ pl.implement(HeaderClass, {
             num_notifications = profile.num_notifications || 0,
             num_messages = profile.num_messages || 0,
             notificationlinktext = num_notifications ? num_notifications + ' unread notifications' : 'no unread notifications',
-            newlistingurl = (!profile.edited_listing || profile.edited_status === 'new') ? 'new-listing-basics-page.html' : 'company-page.html?id=' + profile.edited_listing;
+            newlistingurl = (!profile.edited_listing || profile.edited_status === 'new') ? 'new-listing-basics-page.html' : 'company-page.html?id=' + profile.edited_listing,
+            posttext = profile.edited_listing ? 'Pending' : 'Add Listing';
         // pl('#topheaderline').html('You have <a href="/notifications-page.html" class="topheaderlink hoverlink">' + notificationlinktext + '</a>');
+        pl('#posttext').text(posttext);
         if (num_messages) {
             pl('#headernummessages').text(num_messages).addClass('headernumdisplay');
         }

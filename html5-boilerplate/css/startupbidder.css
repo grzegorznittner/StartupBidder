@@ -117,6 +117,7 @@ a:focus, a:hover { cursor: pointer; }
     .notifylink, .messagelink, .profilelink,
     .titleinfo, .sideinfo, .bmcinfo, .ipinfo,
     .sidebox,
+    .uploadbox,
     .orderbookheader p, .bidheader p, .investorbidheader p,
     .orderbookdate, .biddate, .investorbiddate, .lastdate
     { color: #666; }
@@ -158,12 +159,11 @@ a:focus, a:hover { cursor: pointer; }
 .pull-15px { left: -15px; position: relative; }
 .push-15px { left: 15px; position: relative; }
 .push-20px { left: 20px; position: relative; }
-.welcometext { font-size: 16px; font-weight: bold; position: absolute; bottom: 0; right: 0; }
+.welcometext { font-size: 16px; font-weight: bold; position: absolute; bottom: 0; right: 10px; }
 /* .welcometext a { font-weight: bold; } */
 .welcomevideo { position: relative; }
 .welcomevideoclosex { position: absolute; right: 6px; top: 0; z-index: 1000; }
 .welcomevideocontainer { margin: 10px 0; }
-.socialsidebox { height: 95px; position: relative; }
 .socialbanner { height: 100px; position: relative; top: -10px; }
 .twitterbanner { height: 23px; top: 14px; position: absolute; }
 .gplusbanner { height: 20px; top: 37px; position: absolute; }
@@ -184,7 +184,7 @@ a:focus, a:hover { cursor: pointer; }
 .companybannermapline { height: 21px; }
 .companybannerlogo { margin-top: 2px; width: 146px; height: 146px; margin-right: 10px; margin-left: 2px; float: left; margin-right: 20px; }
 .companybannermantra { position: absolute; font-size: 14px; width: 830px; bottom:3px; padding-bottom: 18px; left:158px; }
-.companybannerfollow { position: absolute; top: 0; right: 0; }
+.companybannerfollow { position: absolute; top: 0; right: 10px; }
 .companybannerfollowbtn { clear: both; float: right; margin-left: 10px !important; }
 .companybannerfollowmsg { padding-top: 16px; }
 .companybannermantra2 { font-style: italic; }
@@ -202,8 +202,8 @@ a:focus, a:hover { cursor: pointer; }
     float: left;
     font-size: 14px;
     font-weight: bold;
-    height: 29px;
-    margin-right: 10px;
+    height: 30px;
+    margin-right: 9px;
     padding: 10px 5px 0;
     text-align: center;
     width: 110px;
@@ -216,6 +216,8 @@ a:focus, a:hover { cursor: pointer; }
     border-width: 1px 1px 0;
     color: #444;
     height: 31px;
+    padding-left: 4px;
+    padding-right: 4px;
 }
 
 /* company half styles */
@@ -234,7 +236,6 @@ a:focus, a:hover { cursor: pointer; }
 .halftiletypetext { font-size: 16px; }
 
 /* icons */
-.spritebg { width: 32px; height: 32px; background: url(../img/icons/spritebg.gif); }
 .facebook { background-position: 0px 0px; }
 .twitter { width: 32px; height: 32px; background: url(../img/icons/twitter.png); }
 .googleplus { width: 32px; height: 32px; background: url(../img/icons/google_plus.png); background-position: 1px 1px; }
@@ -347,7 +348,7 @@ a:focus, a:hover { cursor: pointer; }
 .inputselect, .inputmedselect, .narrowinputtext, .inputwidewithvalidate
     { font-size: 14px !important; }
 .inputwidetext { width: 420px !important; }
-.categoryselect { padding: 5px; width: 432px !important; }
+.categoryselect { padding: 5px; width: 432px !important; height: 29px; }
 .inputmedtext { font-weight: bold; color: white !important; background: #49515a !important; font-size: 14px !important; width: 230px !important; }
 .medtext { font-weight: bold; font-size: 14px; width: 230px; height: 21px; padding-top: 10px; margin-right: 10px; }
 .inputmedselect { width: 242px !important; }
@@ -410,9 +411,9 @@ a:focus, a:hover { cursor: pointer; }
 .bidinputselect { margin: 0 0 0 0 !important; height: 38px !important; font-weight: bold; color: white !important; background: #49515a !important; font-size: 22px !important; padding-top: 5px !important;}
 .bidinputtextpct  { font-weight: bold; color: white !important; background: #49515a !important; font-size: 22px !important; width: 45px !important; margin: 0 0 0 0 !important; }
 .mediainputlink  { margin-left: 0px !important; font-weight: bold; color: white !important; background: #49515a !important; font-size: 14px !important; width: 383px !important; }
-.picinputlink  { margin-left: 0px !important; font-weight: bold; color: white !important; background: #49515a !important; font-size: 14px !important; width: 240px !important; }
+.picinputlink  { margin-left: 0px !important; font-weight: bold; color: white !important; background: #49515a !important; font-size: 14px !important; width: 237px !important; }
 .pctwide { width: 49px !important; }
-.inputtextareatwoline { height: 35px; overflow: hidden; overflow-x: hidden; overflow-y: auto; }
+.inputtextareatwoline { height: 37px; overflow: hidden; overflow-x: hidden; overflow-y: auto; }
 .inputgooglesignin { float: left; margin-right: 10px; }
 .aboutlabel { float: left; margin-right: 10px; text-align: right; width: 106px; font-weight: bold; }
 .doclabel { float: left; margin-right: 10px; text-align: left; width: 106px; font-weight: bold; margin-top: 10px; }
@@ -602,13 +603,15 @@ a:focus, a:hover { cursor: pointer; }
     margin-bottom: 10px;
     overflow: hidden;
     min-height: 21px;
-    padding-bottom: 10px;
-    padding-left: 15px;
 }
 .frontsidebox {
+    width: 287px;
     padding-top: 8px;
+    padding-left: 15px;
+    padding-bottom: 8px;
 }
 .sidebox p { margin: 5px 10px 10px 10px; text-indent: 0px; font-weight: normal; }
+.uploadbox p { margin: 5px 10px 10px 10px; text-indent: 0px; font-weight: normal; }
 .sideboxcol1 { width: 150px; float: left; margin-right: 0; }
 .sideboxcol2 { width: 150px; float: left; }
 .sideboxcolfull { width: 292px; float: left; margin-right: 10px; }
@@ -659,12 +662,12 @@ a:focus, a:hover { cursor: pointer; }
 .sideboxdate { font-size: 10px; color: #666; }
 .sideboxlisting { font-size: 10px; }
 .sideboxmap {
-    height: 319px;
-    width: 320px;
-    margin-left: -15px;
-    margin-bottom: -10px;
+    height: 302px;
+    width: 302px;
+    margin-left: 0;
+    margin-bottom: 0;
 }
-.orderbook { float: left; margin-right: 10px; padding-left: 0px; min-height: 105px; }
+.orderbook { float: left; margin-right: 15px; padding-left: 0px; min-height: 105px; }
 .orderbooklast { float: left; margin-right: 0; padding-left: 0px; min-height: 105px; }
 .lastorder { text-align:center; }
 .lastorderamt { font-size: 32px; }
@@ -709,7 +712,7 @@ a:focus, a:hover { cursor: pointer; }
 .deactivatemsg { display: none; font-weight: bold; }
 .deactivatecancelbtn { display: none; margin-top: 10px; }
 .mapaddresstext { font-weight: bold; }
-.addresstext { color: #555; font-size: 12px; font-weight: normal; padding-bottom: 8px; padding-top: 3px; margin-left: -2px; }
+.addresstext { color: #555; font-size: 12px; font-weight: normal; padding-bottom: 8px; padding-top: 8px; margin-left: 13px; }
 .showmore { float: right; margin-right: 10px; font-weight: bold; margin-bottom: 10px; }
 
 /* bids */
@@ -782,7 +785,17 @@ a:focus, a:hover { cursor: pointer; }
 .uploadinputbuttonshort { width: 300px !important; }
 .uploaddelete { position: absolute; top: 43px; right: 0px; display: none; }
 .uploaditem { position: relative; }
-.uploadbox { padding-top: 10px; }
+.uploadbox {
+    width: 292px;
+    border: 1px solid #cccccc;
+    background: none;
+    margin-bottom: 10px;
+    overflow: hidden;
+    min-height: 21px;
+    padding-top: 10px;
+    padding-left: 10px;
+    padding-bottom: 15px;
+}
 
 /* tiles */
 .tile { width: 146px; height: 296px; border: 1px solid #cccccc; overflow: hidden; margin-bottom: 10px; position: relative; }
@@ -813,7 +826,6 @@ a:focus, a:hover { cursor: pointer; }
 /* images */
 .noimage { background: url(../img/noimage_146x146.jpg) no-repeat center; }
 .novideo { background: url(../img/novideo_622x350.jpg) no-repeat center; }
-.missingimg { background: url(http://www.minimus.biz/img/Your%20Logo%20Here%20Black%202.jpg) -65px -55px; height: 146px; width: 146px; }
 .presentationimg { background: url(../img/icons/presentation.png) no-repeat 1px 1px; }
 .business_planimg { background: url(../img/icons/business_plan.png) no-repeat 0px 0px; }
 .financialsimg { background: url(../img/icons/financials.png) no-repeat 0px 0px; }
@@ -827,79 +839,29 @@ a:focus, a:hover { cursor: pointer; }
 .headerlogo { margin-top: 14px; }
 
 /* texture background images textures */
-.handmadepaper
-    { background: url(../img/handmadepaper.png) repeat; }
-.groovepaper
-    { background: url(../img/groovepaper.png) repeat; }
+body,
     .tile, .companybannertile, .companyhalftile, .boxpanel,
     .bmcinfo, .ipinfo, .tileinfo, .sideinfo, .bmcborder,
     .bmcinfodisplay, .bmcinfodisplayvaluepropositions, .titleinfodisplay, .sideinfodisplay,
-    .notificationlistingbanner
-    { background: #fff; }
-.companyheader
-    { background: #eee; }
-.brushed_alu
-    { background: url(../img/brushed_alu.png) repeat; }
-    body
-    { background: #fff; }
-.brushed_alu_dark
-    { background: url(../img/brushed_alu_dark.png) repeat; }
-    .header,
-    .notificationtitle
-    { background: #444; }
-.light_alu
-    { background: url(../img/light_alu.png) repeat; }
-    .curvedborder, .sidebox, .boxstep, .boxselected,
+    .notificationlistingbanner,
+    .curvedborder, .sidebox, .uploadbox, .boxstep, .boxselected,
     .sideboxselected,
     .buttonbg, .smallbuttonbg
-    { background: #fff; }
+{
+    background: #fff;
+}
+.companyheader
+{
+    background: #eee;
+}
+.header, .notificationtitle
+{
+     background: #444;
+}
 .inputbutton, .smallinputbutton
-    { background: #e4e4e4; }
-/*
-.citynight2,
-    .banner
-    { background: url(../img/citynight2.jpg); background-position: 0px -350px; }
-.airportsign,
-    .locationbanner
-    { background: url(../img/airportsign.jpg); background-position: -16px -485px; }
-.chemicalplant,
-    .categorybanner
-    { background: url(../img/chemicalplant.jpg); background-position: -28px -137px; }
-.categorybanner .welcometext { right: 25px; bottom: -5px; }
-.neonchange,
-    .valuationbanner,
-    .keywordbanner
-    { background: url(../img/neonchange.jpg); background-position: -20px -80px; }
-.keywordbanner .welcometext { right: 170px; bottom: 40px; }
-.clock,
-    .latestbanner
-    { background: url(../img/clock.jpg); background-position: -0px -555px; }
-.racehorse,
-    .topbanner
-    { background: url(../img/racehorse.jpg); background-position: -38px -55px; }
-.topbanner .welcometext { right: 255px; }
-.fusebox,
-    .apibanner
-    { background: url(../img/fusebox.jpg); background-position: -10px -282px; }
-.apibanner .welcometext { right: 10px; }
-.neighborhood,
-    .nearbybanner
-    { background: url(../img/neighborhood.jpg); background-position: 0 -55px; }
-.metaldoors,
-    .aboutbanner
-    { background: url(../img/metaldoors.jpg); background-position: -30px -75px; }
-.aboutbanner .welcometext { right: 5px; }
-.exitsign,
-    .helpbanner
-    { background: url(../img/exitsign.jpg); background-position: -45px -275px; }
-.gauges,
-    .termsbanner
-    { background: url(../img/gauges.jpg); background-position: -40px -355px; }
-.oldphone,
-    .contactbanner
-    { background: url(../img/oldphone.jpg); background-position: -130px -568px; }
-.contactbanner .welcometext { right: 178px; }
-*/
+{
+    background: #e4e4e4;
+}
 
 /* BMC */
 .bmcwidth { width: 938px; }
@@ -1075,7 +1037,6 @@ a:focus, a:hover { cursor: pointer; }
 .picslide3 { left: 1244px; }
 .picslide4 { left: 1866px; }
 .picslide5 { left: 2488px; }
-.picuploadtitle { margin-top: 255px; }
 
 /* tim improvements */
 .investbutton {
@@ -1087,6 +1048,7 @@ a:focus, a:hover { cursor: pointer; }
     padding-top: 10px;
     text-align: center;
     font-weight: 900;
+    padding-bottom: 10px;
 }
 .investbuttonsmall {
     font-size: 14px;
@@ -1184,11 +1146,38 @@ textarea[disabled] { color: #999 !important; }
 .backbutton {
     margin-top: 20px;
 }
+.mapsidebox {
+    margin-top: 35px;
+}
 .askfundingbutton {
     margin-top: 58px;
 }
 .inputelevatorpitch {
-    height: 195px !important;
+    height: 223px !important;
+    margin-bottom: 21px;
+}
+.logopanel {
+    height: 168px;
+}
+.locationpanel {
+    margin-top: 45px;
+}
+.askingbox {
+    width: 292px;
+    padding-left: 10px;
+}
+.documentbox {
+    width: 292px;
+    padding-left: 10px;
+}
+.socialsidebox {
+    width: 292px;
+    height: 100px;
+    padding-left: 10px;
+    position: relative;
+}
+.previewbutton {
+    margin-bottom: 25px;
 }
 
 /* sideboxbutton */

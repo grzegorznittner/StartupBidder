@@ -113,20 +113,7 @@ include(header.m4)
                 <div id="categoryicon"></div>
             </span>
         </div>
-        <div class="formitem sideinfoitem clear">
-            <label class="inputlabel" for="website">LINK</label>
-            <span class="inputfield">
-                <input class="text inputwidetext" type="text" name="website" id="website" value=""></input>
-            </span>
-            <p class="sideinfo">
-                <label class="sideinfoheader">Link</label>
-                <br />
-                A link to the website for your application or company, or if you don't have one, then a link to your facebook page, twitter page, google profile, or blog.
-            </p>
-            <span class="inputicon">
-                <div id="websiteicon"></div>
-            </span>
-        </div>
+<!--
         <div class="formitem sideinfoitem clear">
             <label class="inputlabel" for="founders">OWNERS</label>
             <span class="inputfield">
@@ -141,6 +128,7 @@ include(header.m4)
                 <div id="foundersicon"></div>
             </span>
         </div>
+-->
 <!--
         <div class="formitem sideinfoitem clear">
             <label class="inputlabel" for="contact_email">EMAIL</label>
@@ -157,24 +145,6 @@ include(header.m4)
             </span>
         </div>
 -->
-        <div class="formitem sideinfoitem clear">
-            <label class="inputlabel" for="address">LOCATION</label>
-            <span class="inputfield">
-                <input class="text inputwidetext" type="text" name="address" id="address" value=""></input>
-            </span>
-            <p class="sideinfo">
-                <label class="sideinfoheader">Location</label>
-                <br />
-                The full physical address of your company or where you are developing this product, e.g. 1 Infinite Loop, Cupertino, CA, USA.
-            </p>
-            <span class="inputicon">
-                <div id="locationicon"></div>
-            </span>
-        </div>
-        <div class="formitem clear">
-            <span class="inputlabel"></span>
-            <span class="inputmap" id="addressmap"></span>
-        </div>
         <div class="formitem sideinfoitem clear">
             <label class="inputlabel" for="mantra">MANTRA</label>
             <span class="inputfield">
@@ -197,10 +167,65 @@ include(header.m4)
             <p class="sideinfo">
                 <label class="sideinfoheader">Elevator Pitch</label>
                 <br />
-                A one paragraph summary description of your application or company.  Should be short and descriptive.  Make it your 30-second elevator pitch.
+
+A short summary of your application or company between 30 and 60 seconds in
+length.  This is between 50 and 100 words read at presentation speed, or
+between 200 and 500 characters.  Make it compelling and enthusiastic, but
+without flashy openers, which turn off experienced investors.  Make each
+sentence unique and engaging.  Tailor the pitch to the audience in easily
+understood language without jargon, as this is a sure way to loose interest.
+Stick to facts without broad exaggerations, instilling credibility into you and
+your message.
+
             </p>
             <span class="inputicon">
                 <div id="summaryicon"></div>
+            </span>
+        </div>
+        <div class="formitem sideinfoitem clear">
+        </div>
+    </div>
+
+   <div class="boxpanel logopanel">
+        <div class="formitem sideinfoitem clear">
+            <label class="inputlabel" for="address">LOGO</label>
+            <span class="inputfield">
+                <div class="tileimg" id="logoimgwrapper">
+                    <img class="tileimg" id="logoimg" src="/img/noimage_with_border_146x146.jpg"></img>
+                </div>
+            </span>
+            <p class="sideinfo">
+                <label class="sideinfoheader">Logo</label>
+Your logo is often the first thing people will see about your product.
+Make sure it is professional and eye-catching.  If you do not have the budget or expertise
+for a professional logo, just make something simple with text.
+                <br />
+            </p>
+            <span class="inputicon">
+                <div id="locationicon"></div>
+            </span>
+        </div>
+        <div class="formitem sideinfoitem clear">
+        </div>
+    </div>
+
+'
+include(images-panel-editable.m4)
+`
+
+    <div class="boxpanel newlistingpanel locationpanel">
+        <div class="formitem sideinfoitem clear">
+            <label class="inputlabel" for="address">LOCATION</label>
+            <span class="inputfield">
+                <input class="text inputwidetext" type="text" name="address" id="address" value=""></input>
+            </span>
+            <p class="sideinfo">
+                <label class="sideinfoheader">Location</label>
+                <br />
+                The full physical address of your company or where you are developing this product, e.g. 1 Infinite Loop, Cupertino, CA, USA.
+            </p>
+            <span class="inputicon">
+                <div id="locationicon"></div>
             </span>
         </div>
         <div class="formitem sideinfoitem clear">
@@ -211,46 +236,88 @@ include(header.m4)
         <span class="inputmsg" id="submiterrormsg"></span>
     </div>
 
-    <div>
-        <div class="formitem clear">
-            <span class="span-3 inputbutton submitbutton investbutton investbuttonsmall" id="previewbutton">
-                PREVIEW
-            </span>
-        </div>
-    </div>
-
 </div> <!-- end left column -->
 
 <!-- right column -->
 <div class="span-8 last">
 
-        <a href="/new-listing-financials-page.html">
-            <div class="sidebox investbutton askfundingbutton">ASK FOR FUNDING</div>
-        </a>
+    <a href="/new-listing-financials-page.html">
+        <div class="sidebox investbutton askfundingbutton">ASK FOR FUNDING</div>
+    </a>
 
-        <a href="/new-listing-media-page.html">
-            <div class="sidebox investbutton">ADD LOGO</div>
-        </a>
+    <a href="/new-listing-media-page.html">
+        <div class="sidebox investbutton">ADD VIDEO</div>
+    </a>
 
-        <a href="/new-listing-media-page.html">
-            <div class="sidebox investbutton">ADD IMAGES</div>
-        </a>
+    <a href="/new-listing-bmc-page.html">
+        <div class="sidebox investbutton">ADD MODEL</div>
+    </a>
 
-        <a href="/new-listing-media-page.html">
-            <div class="sidebox investbutton">ADD VIDEO</div>
-        </a>
+    <a href="/new-listing-qa-page.html">
+        <div class="sidebox investbutton">ADD SLIDES</div>
+    </a>
 
-        <a href="/new-listing-bmc-page.html">
-            <div class="sidebox investbutton">ADD MODEL</div>
-        </a>
+    <a href="/new-listing-financials-page.html">
+        <div class="sidebox investbutton">ADD DOCUMENT</div>
+    </a>
 
-        <a href="/new-listing-qa-page.html">
-            <div class="sidebox investbutton">ADD SLIDES</div>
-        </a>
+    <div class="boxtitle boxtitleside clear">UPLOAD LOGO</span></div>
+    <div class="uploadbox">
+        <div class="formitem">
+            <span class="uploadinfo">Enter an image URL and press enter or upload a local file</span>
+        </div>
+        <div class="formitem clear">
+            <span class="inputfield">
+                <input class="text picinputlink" type="text" maxlength="255" name="logo_url" id="logo_url" value=""></input>
+            </span>
+            <span class="uploadinputicon">
+                <div id="logo_urlicon"></div>
+            </span>
+        </div>
+        <div class="formitem">
+            <span class="inputfield">
+                <form id="logouploadform" method="post" enctype="multipart/form-data" target="logouploadiframe" action="#">
+                    <input class="text picinputlink" id="logouploadfile" name="LOGO" size="16" type="file"></input>
+                    <iframe id="logouploadiframe" name="logouploadiframe" src="" class="uploadiframe"></iframe>
+                </form>
+            </span>
+        </div>
+        <div class="formitem clear">
+            <span class="uploadinfo" id="logomsg">146x146 JPG, PNG or GIF, autosized</span>
+        </div>
+    </div>
 
-        <a href="/new-listing-financials-page.html">
-            <div class="sidebox investbutton">ADD DOCUMENT</div>
-        </a>
+    <div class="boxtitle boxtitleside clear">UPLOAD IMAGE <span id="picnum">1</span></div>
+    <div class="uploadbox">
+        <div class="formitem">
+            <span class="uploadinfo">Enter an image URL and press enter or upload a local file</span>
+        </div>
+        <div class="formitem clear">
+            <span class="inputfield">
+                <input class="text picinputlink" type="text" maxlength="255" name="pic_url" id="pic_url" value=""></input>
+            </span>
+            <span class="uploadinputicon">
+                <div id="pic_urlicon"></div>
+            </span>
+        </div>
+        <div class="formitem">
+            <span class="inputfield">
+                <form id="picuploadform" method="post" enctype="multipart/form-data" target="picuploadiframe" action="#">
+                    <input class="text picinputlink" id="picuploadfile" name="PIC1" size="16" type="file"></input>
+                    <iframe id="picuploadiframe" name="picuploadiframe" src="" class="uploadiframe"></iframe>
+                </form>
+            </span>
+        </div>
+        <div class="formitem clear">
+            <span class="uploadinfo" id="picmsg">622x452 JPG, PNG or GIF, autosized</span>
+        </div>
+    </div>
+
+    <div class="sidebox mapsidebox">
+        <span class="inputmap" id="addressmap"></span>
+    </div>
+
+    <div class="sidebox investbutton previewbutton" id="previewbutton">PREVIEW &gt;&gt;</div>
 
 </div>
 <!-- end right column -->
@@ -268,6 +335,7 @@ include(footer.m4)
   <script src="js/modules/base.js"></script>
   <script src="js/modules/companylist.js"></script>
   <script src="js/modules/forms.js"></script>
+  <script src="js/modules/imagepanel.js"></script>
   <script src="js/modules/newlistingbase.js"></script>
   <script src="js/modules/newlistingbasicspage.js"></script>
   <script src="js/modules/tracker.js"></script>

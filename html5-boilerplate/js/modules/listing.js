@@ -135,7 +135,7 @@ pl.implement(ListingClass, {
         this.latitude = this.latitude || '51.499117116569';
         this.longitude = this.longitude || '-0.12359619140625';
         //this.mapurl = 'http://ojw.dev.openstreetmap.org/StaticMap/?lat=' + this.latitude + '&lon=' + this.longitude + '&z=5&show=1&fmt=png&w=302&h=302&att=none';
-        this.mapurl = 'http://maps.googleapis.com/maps/api/staticmap?center=' + this.latitude + ',' + this.longitude + '&zoom=7&size=320x319&maptype=roadmap&markers=color:blue%7Clabel:' + encodeURI(this.title) + '%7C' + encodeURI(this.address) + '&sensor=false';
+        this.mapurl = 'http://maps.googleapis.com/maps/api/staticmap?center=' + this.latitude + ',' + this.longitude + '&zoom=7&size=302x302&maptype=roadmap&markers=color:blue%7Clabel:' + encodeURI(this.title) + '%7C' + encodeURI(this.address) + '&sensor=false';
         pl('#fulladdress').html(this.address || 'Unknown Address');
         pl('#addresslink').attr({href: this.addressurl});
         pl('#mapimg').attr({src: this.mapurl});

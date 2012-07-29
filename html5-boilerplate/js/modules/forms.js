@@ -173,7 +173,7 @@ pl.implement(ValidatorClass, {
                 return "Must be at least " + min + " characters.";
             }
             if (max > 0 && str.length > max) {
-                return "Must be no mare than " + max + " characters.";
+                return "Must be no more than " + max + " characters.";
             }
             return 0;
         }

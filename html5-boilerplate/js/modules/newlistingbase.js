@@ -1,9 +1,8 @@
 function NewListingBaseClass() {
     var pages = [ 'basics', 'bmc', 'qa', 'financials', 'media', 'submit' ],
         mandatoryprops = [
-            'title', 'type', 'platform', 'category',
-            'founders', 'website', 'address', 'mantra', 'summary'
-//            'website', 'contact_email',
+            'title', 'type', 'platform', 'category', 'address', 'mantra', 'summary'
+//            'founders', 'website', 'contact_email',
 //            'answer1', 'answer2', 'answer3', 'answer4', 'answer5', 'answer6', 'answer7', 'answer8', 'answer9', 'answer10',
 //            'summary', 'answer11', 'answer12', 'answer13', 'answer14', 'answer15', 'answer16', 'answer17', 'answer18',
 //            'answer19', 'answer20', 'answer21', 'answer22', 'answer23', 'answer24', 'answer25', 'answer26',
@@ -17,10 +16,11 @@ function NewListingBaseClass() {
             category: 'basics',
             mantra: 'basics',
             summary: 'basics',
-			website: 'basics',
-			founders: 'basics',
-			contact_email: 'basics',
+			//founders: 'basics',
 			address: 'basics',
+            logo: 'basics',
+			pic1: 'basics',
+			//contact_email: 'basics',
             answer1: 'bmc',
 			answer2: 'bmc',
 			answer3: 'bmc',
@@ -50,11 +50,12 @@ function NewListingBaseClass() {
             presentation_id: 'financials',
 			business_plan_id: 'financials',
 			financials_id: 'financials',
-            logo: 'media',
-			pic1: 'media'
+			website: 'media',
+            video: 'media'
         },
+
         displayNameOverrides = {
-            website: 'LINK',
+            website: 'WEBSITE',
             founders: 'OWNERS',
             address: 'LOCATION',
             contact_email: 'EMAIL',
@@ -88,13 +89,15 @@ function NewListingBaseClass() {
             presentation_id: 'PRESENTATION',
             business_plan_id: 'BUSINESS_PLAN',
             financials: 'FINANCIALS'
-        },
-        companyTile = new CompanyTileClass({preview: true});
+        };
+
+        //companyTile = new CompanyTileClass({preview: true});
+
     this.pages = pages;
     this.mandatoryprops = mandatoryprops;
     this.proppage = proppage;
     this.displayNameOverrides = displayNameOverrides;
-    this.companyTile = companyTile;
+    //this.companyTile = companyTile;
     this.listing = {};
     this.fields = [];
     this.fieldMap = {};
@@ -110,10 +113,12 @@ pl.implement(NewListingBaseClass, {
             this.displayCalculated();
         }
     },
+
     displayCalculated: function() {
         //this.displayPctComplete();
-        this.displaySummaryPreview();
+        //this.displaySummaryPreview();
     },
+
     genDisplayCalculatedIfValid: function(field) {
         var self = this;
         return function(result, val) {
@@ -124,6 +129,7 @@ pl.implement(NewListingBaseClass, {
             }
         };
     },
+
     pctComplete: function() {
         var self = this,
             numprops = this.mandatoryprops.length,
@@ -145,12 +151,14 @@ pl.implement(NewListingBaseClass, {
         pctcomplete = Math.floor(100 * filledprops / numprops);
         return pctcomplete;
     },
+
     displayPctComplete: function() {
         var pctcomplete = this.pctComplete(),
             pctwidth = Math.floor(626 * pctcomplete / 100) + 'px';
         pl('#boxsteppct').text(pctcomplete);
         pl('#boxstepn').css({width: pctwidth});
     },
+
     validate: function() {
         var validmsg = 0,
             validmsgs = [],
@@ -165,12 +173,14 @@ pl.implement(NewListingBaseClass, {
         }
         return validmsgs;
     },
+
     bindNavButtons: function(nextValidator) {
         this.bindBackButton();
         //this.bindPrevButton();
         //this.bindNextButton(nextValidator);
         this.bindWithdrawButton();
     },
+
     bindBackButton: function() {
         var self = this;
         pl('.backbuttonlink').bind({
@@ -180,6 +190,7 @@ pl.implement(NewListingBaseClass, {
             }
         });
     },
+
     bindPrevButton: function() {
         var self = this;
         if (!self.prevPage) {
@@ -192,6 +203,7 @@ pl.implement(NewListingBaseClass, {
             }
         });
     },
+
     bindNextButton: function(nextValidator) {
         var self = this;
         if (!self.nextPage) {
@@ -211,12 +223,14 @@ pl.implement(NewListingBaseClass, {
             }
         });
     },
+
     bindWithdrawButton: function() {
         pl('#newwithdrawbtn').bind({
             click: function() {
                 var completeFunc = function() {
                         document.location = '/';
                     },
+
                     ajax = new AjaxClass('/listing/delete', 'newwithdrawmsg', completeFunc);
                 if (pl('#newwithdrawcancelbtn').css('display') === 'none') { // first call
                     pl('#newwithdrawmsg, #newwithdrawcancelbtn').show();
@@ -235,9 +249,11 @@ pl.implement(NewListingBaseClass, {
             }
         });
     },
-    displaySummaryPreview: function() {
-        this.companyTile.display(this.listing, 'summarypreview');
-    },
+
+    //displaySummaryPreview: function() {
+    //    this.companyTile.display(this.listing, 'summarypreview');
+    //},
+
     getUpdater: function(fieldName, cleaner, postSuccessFunc, updateUrl, updateFieldNameFunc) {
         var self = this;
         return function(newdata, loadFunc, errorFunc, successFunc) {
@@ -250,6 +266,7 @@ pl.implement(NewListingBaseClass, {
                         postSuccessFunc(json);
                     }
                 },
+
                 url = updateUrl || '/listing/update_field',
                 ajax = new AjaxClass(url, '', null, pctSuccessFunc, loadFunc, errorFunc),
                 updateFieldName = updateFieldNameFunc ? updateFieldNameFunc() : fieldName;
@@ -258,9 +275,11 @@ pl.implement(NewListingBaseClass, {
             ajax.call();
         };
     },
+
     hideAllInfo: function() {
         pl('.titleinfo, .sideinfo, .bmcinfo, .ipinfo').removeClass('titleinfodisplay').removeClass('sideinfodisplay').removeClass('bmcinfodisplay').removeClass('bmcinfodisplayvaluepropositions').removeClass('ipinfodisplay');
     },
+
     bindTitleInfo: function() {
         var self = this;
         pl('.titleinfobtn').bind('click', function(e) {
@@ -278,6 +297,7 @@ pl.implement(NewListingBaseClass, {
             self.hideAllInfo();
         });
     },
+
     bindInfoButtons: function() {
         var self = this;
         pl('input.text, select.text, textarea.inputwidetext').bind({
@@ -289,6 +309,7 @@ pl.implement(NewListingBaseClass, {
                     pl(infoel).addClass('sideinfodisplay').css({'z-index': 10000});
                 }
             },
+
             blur: self.hideAllInfo
         });
         pl('.sideinfo').bind('click', self.hideAllInfo);
