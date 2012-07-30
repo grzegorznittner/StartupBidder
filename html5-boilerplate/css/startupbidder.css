@@ -176,7 +176,7 @@ a:focus, a:hover { cursor: pointer; }
 .companybannertile { height: 150px; width: 626px; position: relative; overflow: hidden; margin-bottom: 10px; }
 .companybannertilenoborder { height:150px;overflow:hidden;position:relative;top:-9px; }
 .companybannertitle { font-size: 43px; font-weight: normal; margin-bottom: -15px; position: relative; top: -11px; }
-.companybannertiletitle { font-size: 36px; top: -7px; }
+.companybannertiletitle { font-size: 36px; height: 48px; top: 0; margin-bottom: 0; overflow: hidden; }
 .companybannertext { font-size: 14px; font-weight: bold; }
 .companybannertextlink { font-size: 14px; font-weight: bold; margin-left: 4px; }
 .companybannerlink { float: left; margin-right: 5px; }

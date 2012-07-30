@@ -42,22 +42,31 @@ pl.implement(CompanyBannerClass, {
             url = this.website ? new URLClass(this.website) : null,
             cat = this.category || '',
             addr = this.brief_address,
-            catprefix = !cat || (cat !== 'Other' && !cat.match(/^[AEIOU]/)) ? 'A' : 'An',
+            catprefix = !cat || (cat !== 'Other' && !cat.match(/^[aeiou]/i)) ? 'A' : 'An',
             catlink = cat && cat !== 'Other' ? '<a href="/main-page.html?type=category&val=' + encodeURIComponent(cat) + '">' + cat + '</a>' : '',
-            catlinked = catprefix + ' ' + catlink + ' listing',
-            addrlinked = !addr ? '' : ' in <a href="/main-page.html?type=location&val=' + encodeURIComponent(addr) + '">' + addr + '</a>',
+            type = this.type || 'venture',
+            platform = this.platform && this.platform !== 'other' ? PlatformClass.prototype.displayName(this.platform) + ' ' : '',
+            categorytext = this.platform && this.platform !== 'other' && this.category === 'Software' ? '' : catprefix + ' ' + catlink + ' ',
+            platformprefix = categorytext ? '' : (platform.match(/^[aeiou]/i) ? 'An ' : 'A '),
+            catlinked = categorytext + platformprefix + platform + type,
+
+            locprefix  = type === 'company' ? 'in' : 'from',
+            addrlinked = !addr ? '' : ' ' + locprefix + ' <a href="/main-page.html?type=location&val=' + encodeURIComponent(addr) + '">' + addr + '</a>',
             categoryaddresstext = catlinked + addrlinked,
-            founderstext = (this.founders ? ' founded by ' + this.founders : ''),
+            founderstext = this.founders ? ' founded by ' + this.founders : '',
             status = this.status || 'new',
             website = this.website || '/company-page.html?id=' + this.listing_id,
-            listingdatetext = 'Listed'
-                + (this.listing_date ? ' on ' + DateClass.prototype.format(this.listing_date) : (this.status === 'new' ? ' not yet listed' : ''))
+            listingdatetext = 
+                (this.listing_date
+                    ? 'Listed on ' + DateClass.prototype.format(this.listing_date)
+                    : (this.status === 'new' || this.status === 'posted' ? 'Not yet listed' : '')
+                )
                 + (this.website ? ' from ' : '');
         if (logobg) {
             pl('#companylogo').removeClass('noimage').css({background: logobg});
         }
-        pl('#title').text(this.title || 'Listing Name Here');
-        pl('title').text('Startupbidder Listing: ' + (this.title || 'Listing Name Here'));
+        pl('#title').text(this.title || 'Company or App Name Here');
+        pl('title').text('Startupbidder Listing: ' + (this.title || 'Company or App Name Here'));
         pl('#mantra').text(this.mantra || 'Mantra here');
         pl('#categoryaddresstext').html(categoryaddresstext);
         pl('#founderstext').text(founderstext);
@@ -65,9 +74,13 @@ pl.implement(CompanyBannerClass, {
         pl('#websitelink').attr({href: website});
         if (url) {
             pl('#domainname').text(url.getHostname());
+            pl('#websitelinkicon').bind('click', function() {
+                window.open(website);
+            });
         }
         else {
-            pl('#domainname').text('visit listing page');
+            pl('#domainname').text('');
+            pl('#websitelinkicon').hide();
         }
     },
 

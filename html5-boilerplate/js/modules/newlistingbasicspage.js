@@ -73,14 +73,9 @@ pl.implement(NewListingBasicsClass, {
                 address: TextFieldClass
             },
             typeOptions = [ ['application', 'Application'], ['company', 'Company'] ],
-            platformOptions = [
-                ['ios', 'iPhone / iPad'],
-                ['android', 'Android Phone / Tablet'],
-                ['windows_phone', 'Windows Phone / Tablet'],
-                ['desktop', 'Desktop'],
-                ['website', 'Website'],
-                ['other', 'Other']
-            ],
+            platforms = [ 'ios', 'android', 'windows_phone', 'desktop', 'website', 'other' ],
+            platformOptions = [],
+            platform,
             i,
             id,
             field,
@@ -88,6 +83,10 @@ pl.implement(NewListingBasicsClass, {
             updater;
         this.base.fields = [];
         this.base.fieldMap = {};
+        for (i = 0; i < platforms.length; i++) {
+            platform = platforms[i];
+            platformOptions.push([ platform, PlatformClass.prototype.displayName(platform) ]);
+        }
         for (i = 0; i < textFields.length; i++) {
             id = textFields[i];
             updater = this.base.getUpdater(id);

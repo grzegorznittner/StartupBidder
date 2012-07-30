@@ -80,9 +80,9 @@ include(header.m4)
             <label class="inputlabel" for="platform">PLATFORM</label>
             <span class="inputfield">
                 <select id="platform" class="text inputwidetext categoryselect">
-                    <option value="ios">iPhone / iPad</option>
-                    <option value="android">Android Mobile / Tablet</option>
-                    <option value="windows_phone">Windows Phone / Tablet</option>
+                    <option value="ios">iOS</option>
+                    <option value="android">Android</option>
+                    <option value="windows_phone">Windows Phone</option>
                     <option value="desktop">Desktop</option>
                     <option value="website">Website</option>
                     <option value="other" selected="selected">Other</option>
@@ -113,22 +113,6 @@ include(header.m4)
                 <div id="categoryicon"></div>
             </span>
         </div>
-<!--
-        <div class="formitem sideinfoitem clear">
-            <label class="inputlabel" for="founders">OWNERS</label>
-            <span class="inputfield">
-                <input class="text inputwidetext" type="text" name="founders" id="founders" value=""></input>
-            </span>
-            <p class="sideinfo">
-                <label class="sideinfoheader">Owners</label>
-                <br />
-                The full legal names of all owners of this application or company.
-            </p>
-            <span class="inputicon">
-                <div id="foundersicon"></div>
-            </span>
-        </div>
--->
 <!--
         <div class="formitem sideinfoitem clear">
             <label class="inputlabel" for="contact_email">EMAIL</label>

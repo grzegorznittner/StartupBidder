@@ -1,14 +1,6 @@
 function NewListingBaseClass() {
     var pages = [ 'basics', 'bmc', 'qa', 'financials', 'media', 'submit' ],
-        mandatoryprops = [
-            'title', 'type', 'platform', 'category', 'address', 'mantra', 'summary'
-//            'founders', 'website', 'contact_email',
-//            'answer1', 'answer2', 'answer3', 'answer4', 'answer5', 'answer6', 'answer7', 'answer8', 'answer9', 'answer10',
-//            'summary', 'answer11', 'answer12', 'answer13', 'answer14', 'answer15', 'answer16', 'answer17', 'answer18',
-//            'answer19', 'answer20', 'answer21', 'answer22', 'answer23', 'answer24', 'answer25', 'answer26',
-//            'presentation_id', 'business_plan_id', 'financials_id',
-//            'logo', 'pic1'
-        ],
+        mandatoryprops = [ 'title', 'type', 'platform', 'category', 'address', 'mantra', 'summary', 'logo', 'pic1' ],
         proppage = {
             title: 'basics',
             type: 'basics',
@@ -16,7 +8,6 @@ function NewListingBaseClass() {
             category: 'basics',
             mantra: 'basics',
             summary: 'basics',
-			//founders: 'basics',
 			address: 'basics',
             logo: 'basics',
 			pic1: 'basics',
@@ -47,6 +38,9 @@ function NewListingBaseClass() {
 			answer24: 'qa',
 			answer25: 'qa',
 			answer26: 'qa',
+            suggested_amt: 'financials',
+            suggested_pct: 'financials',
+			founders: 'financials',
             presentation_id: 'financials',
 			business_plan_id: 'financials',
 			financials_id: 'financials',
@@ -56,7 +50,7 @@ function NewListingBaseClass() {
 
         displayNameOverrides = {
             website: 'WEBSITE',
-            founders: 'OWNERS',
+            founders: 'FOUNDERS',
             address: 'LOCATION',
             contact_email: 'EMAIL',
             summary: 'ELEVATOR PITCH',
@@ -86,6 +80,8 @@ function NewListingBaseClass() {
             answer24: 'OWNERS',
             answer25: 'INVESTMENT',
             answer26: 'TIMELINE AND WRAPUP',
+            suggested_amt: 'AMOUNT',
+            suggested_pct: 'PERCENT',
             presentation_id: 'PRESENTATION',
             business_plan_id: 'BUSINESS_PLAN',
             financials: 'FINANCIALS'

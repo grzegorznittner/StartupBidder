@@ -467,6 +467,19 @@ CookieClass.prototype.eraseCookie = function(name) {
     createCookie(name,"",-1);
 }
 
+function PlatformClass() {}
+PlatformClass.prototype.displayName = function(platform) {
+    var map = {
+        ios: 'iOS',
+        android: 'Android',
+        windows_phone: 'Windows Phone',
+        desktop: 'Desktop',
+        website: 'Website',
+        other: 'Other'
+    };
+    return map[platform];
+}
+
 function ScriptClass() {}
 ScriptClass.prototype.load = function(url, callback) {
     var script = document.createElement("script")

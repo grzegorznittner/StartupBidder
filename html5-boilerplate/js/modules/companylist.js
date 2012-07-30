@@ -10,6 +10,10 @@ pl.implement(CompanyTileClass, {
         var cat,
             catprefix,
             catlink,
+            platform,
+            categorytext,
+            platformprefix,
+            locprefix,
             addr;
         this.status = json.status;
         if (!this.status) {
@@ -28,14 +32,20 @@ pl.implement(CompanyTileClass, {
         this.imgClass = json.logo ? '' : 'noimage';
         this.imgStyle = json.logo ? 'background: url(' + json.logo + ') no-repeat scroll left top' : '';
         this.posted = json.posted_date ? DateClass.prototype.format(json.posted_date) : 'not posted';
-        this.name = json.title || 'No Company Name';
-
+        this.name = json.title || 'No Company or App Name';
+    
+        this.type = json.type || 'venture';
         this.category = json.category || 'Other';
         this.categoryUC = json.category ? json.category.toUpperCase() : 'OTHER';
         cat = this.category || '';
-        catprefix = !cat || (cat !== 'Other' && !cat.match(/^[AEIOU]/)) ? 'A' : 'An';
+        catprefix = !cat || (cat !== 'Other' && !cat.match(/^[aeiou]/i)) ? 'A' : 'An';
         catlink = cat && cat !== 'Other' ? '<a href="/main-page.html?type=category&val=' + encodeURIComponent(cat) + '">' + cat + '</a>' : '';
-        this.catlinked = catprefix + ' ' + catlink + ' company';
+
+        platform = json.platform || '',
+        platformtext = platform && platform !== 'other' ? PlatformClass.prototype.displayName(platform) + ' ' : '',
+        categorytext = platform && platform !== 'other' && cat === 'Software' ? '' : catprefix + ' ' + catlink + ' ',
+        platformprefix = categorytext ? '' : (platform.match(/^[aeiou]/i) ? 'An ' : 'A '),
+        this.catlinked = categorytext + platformprefix + platformtext + this.type,
 
         addr = json.brief_address;
         this.brief_address = json.brief_address
@@ -47,7 +57,8 @@ pl.implement(CompanyTileClass, {
                 + '<img src="../img/icons/location_16x16.gif" class="lociconinp"></img>&nbsp;<span class="loctextinp">' + json.brief_address + '</span></a>'
             : '<span class="loctext">No Address</span>';
         this.address = json.address || 'No Address';
-        this.addrlinked = !addr ? '' : ' in <a href="/main-page.html?type=location&val=' + encodeURIComponent(addr) + '">' + addr + '</a>';
+        locprefix = this.type === 'company' ? 'in' : 'from';
+        this.addrlinked = !addr ? '' : ' ' + locprefix + ' <a href="/main-page.html?type=location&val=' + encodeURIComponent(addr) + '">' + addr + '</a>';
         this.categoryaddresstext = this.catlinked + this.addrlinked;
 
         if (this.status && json.asked_fund && json.suggested_amt && json.suggested_pct) {
@@ -68,8 +79,8 @@ pl.implement(CompanyTileClass, {
         }
         this.mantra = json.mantra || 'No Mantra';
         this.mantraplussuggest = this.mantra + '<br/>' + this.suggested_text;
-        this.founders = json.founders || 'No Founders';
-        this.foundertext = json.founders ? 'Founded by ' + json.founders : '';
+        this.founders = json.founders || '';
+        this.founderstext = json.founders ? 'Founded by ' + json.founders : '';
         this.url = '/company-page.html?id=' + json.listing_id;
         this.websitelink = json.website || '#';
         this.websiteurl = json.website ? new URLClass(json.website) : null;
@@ -139,7 +150,7 @@ pl.implement(CompanyTileClass, {
     <div class="companybannertextgrey companybannermapline">\
         ' + this.categoryaddresstext + '\
     </div>\
-    <div class="companybannertextgrey">' + this.foundertext + '</div>\
+    <div class="companybannertextgrey">' + this.founderstext + '</div>\
     <div class="companybannertextgrey">' + this.finance_line + '</div>\
     <div class="companybannertextgrey">' + this.mantra + '</div>\
 </div>\

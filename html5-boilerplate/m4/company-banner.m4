@@ -22,7 +22,7 @@ define(`companybannermacro', `
                     &nbsp;<a class="companybannertextlink" href="#" target="_blank" id="websitelink">
                         <span id="domainname" class="companybannertextlink" style="float:left;"></span>
                     </a>
-                    <div class="span-1 linkicon"></div>
+                    <div class="span-1 linkicon" id="websitelinkicon"></div>
                 </div>
                 <div class="companybannertextgrey companybannermantra2" id="mantra"></div>
     

@@ -116,6 +116,26 @@ include(header.m4)
     </div>
     </div>
 
+    <div class="boxpanel newlistingpanel">
+        <div class="formitem sideinfoitem clear">
+            <label class="inputlabel" for="founders">FOUNDERS</label>
+            <span class="inputfield">
+                <input class="text inputwidetext" type="text" name="founders" id="founders" value=""></input>
+            </span>
+            <p class="sideinfo">
+                <label class="sideinfoheader">Founders</label>
+                <br />
+                The full legal names of all individual authors of this application or founders of the company.
+            </p>
+            <span class="inputicon">
+                <div id="foundersicon"></div>
+            </span>
+        </div>
+        <div class="formitem clear">
+            <span class="newlistingmsgsmall" id="newlistingfoundersmsg">&nbsp;</span>
+        </div>
+    </div>
+
     <div class="boxtitle">
         <span class="titletext">PRESENTATION</span>
         <div class="titleinfobtn"></div>
