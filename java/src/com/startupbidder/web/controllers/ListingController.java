@@ -326,13 +326,19 @@ public class ListingController extends ModelDrivenController {
 			}
 			List<ListingPropertyVO> properties = new ArrayList<ListingPropertyVO>();
 			
+			String listingId = null;
 			Iterator<Entry<String, JsonNode>> fields = rootNode.getFields();
 			for (Entry<String, JsonNode> node; fields.hasNext();) {
 				node = fields.next();
-				properties.add(new ListingPropertyVO(node.getKey(), node.getValue().getValueAsText()));
+				String key = node.getKey();
+				if (StringUtils.equals("id", key)) {
+					listingId = node.getValue().getValueAsText();
+				} else {
+					properties.add(new ListingPropertyVO(key, node.getValue().getValueAsText()));
+				}
 			}
-			log.log(Level.INFO, "Updating listing: " + properties);
-			ListingAndUserVO listing = ListingFacade.instance().updateListingProperties(getLoggedInUser(), properties);
+			log.log(Level.INFO, "Updating listing: " + properties + ". Provided id: " + listingId);
+			ListingAndUserVO listing = ListingFacade.instance().updateListingProperties(getLoggedInUser(), listingId, properties);
 			if (listing != null && listing.getListing() != null) {
 				String[] url = ServiceFacade.instance().createUploadUrls(getLoggedInUser(), "/file/upload", 1);
 				listing.getListing().setUploadUrl(url[0]);

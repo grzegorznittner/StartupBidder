@@ -23,7 +23,6 @@ import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.startupbidder.dao.MessageObjectifyDatastoreDAO;
 import com.startupbidder.dao.ObjectifyDatastoreDAO;
-import com.startupbidder.datamodel.Comment;
 import com.startupbidder.datamodel.Listing;
 import com.startupbidder.datamodel.ListingDoc;
 import com.startupbidder.datamodel.Monitor;
@@ -115,8 +114,6 @@ public class HelloServlet extends HttpServlet {
 
 			List<SBUser> users = datastore.getAllUsers();
 
-			List<Listing> usersListings = datastore.getUserActiveListings(currentUser.toKeyId(), listProperties);
-			
 			//testMockDatastore(user, datastore, out);
 			out.println("<p style=\"background: none repeat scroll 0% 0% rgb(187, 187, 187);\">User API:</p>");
 			out.println("<a href=\"/user/topinvestor/.json\">Top investor data</a><br/>");
@@ -490,6 +487,9 @@ public class HelloServlet extends HttpServlet {
 					+ "\"amt\":\"10000\", \"pct\":\"5\", \"type\":\"INVESTOR_POST\" }"
 					+ "</textarea><input type=\"submit\" value=\"Make bid\"/></form>");
 			}
+			out.println("<form method=\"POST\" action=\"/listing/update_field/.json\"><textarea name=\"listing\" rows=\"1\" cols=\"50\">"
+					+ "{\"id\":\"" + listing.getId() + "\", \"website\":\"" + listing.getWebsite() + "\"}"
+					+ "</textarea><input type=\"submit\" value=\"Update listing\"/></form>");
 			
 			out.println("</td><td>");
 			if (count < 5) {

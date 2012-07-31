@@ -1051,5 +1051,5 @@ public class ListingImportService {
 			}
 			schedulePictureImport(listing, urls);
 		}
-	}
+	}	
 }

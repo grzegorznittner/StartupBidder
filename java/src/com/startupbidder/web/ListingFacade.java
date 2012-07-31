@@ -278,24 +278,54 @@ public class ListingFacade {
 	}
 	
 	public ListingAndUserVO updateListingProperties(UserVO loggedInUser, List<ListingPropertyVO> properties) {
+		return updateListingProperties(loggedInUser, null, properties);
+	}
+	
+	public ListingAndUserVO updateListingProperties(UserVO loggedInUser, String listingId, List<ListingPropertyVO> properties) {
 		ListingAndUserVO result = new ListingAndUserVO();
 
-		if (loggedInUser == null || loggedInUser.getEditedListing() == null) {
-			result.setErrorCode(ErrorCodes.OPERATION_NOT_ALLOWED);
-			result.setErrorMessage("User is not logged in or is not editing any listing");
+		if (loggedInUser == null) {
+			result.setErrorCode(ErrorCodes.NOT_LOGGED_IN);
+			result.setErrorMessage("User is not logged in");
 			return result;
 		}
-		// retrieving edited listing
-		Listing listing = getDAO().getListing(BaseVO.toKeyId(loggedInUser.getEditedListing()));
-		if (listing == null) {
+		if (listingId == null && loggedInUser.getEditedListing() == null) {
 			result.setErrorCode(ErrorCodes.OPERATION_NOT_ALLOWED);
 			result.setErrorMessage("User is not editing any listing");
 			return result;
 		}
-		if (listing.state != Listing.State.NEW) {
+		String editedListingId = loggedInUser.getEditedListing();
+		if (!StringUtils.isEmpty(listingId)) {
+			editedListingId = listingId;
+		}
+		// retrieving edited listing
+		Listing listing = getDAO().getListing(BaseVO.toKeyId(editedListingId));
+		if (listing == null) {
 			result.setErrorCode(ErrorCodes.OPERATION_NOT_ALLOWED);
-			result.setErrorMessage("Listing is not in NEW state");
+			result.setErrorMessage("Listing doesn't exist");
 			return result;
+		}
+		if (!(loggedInUser.isAdmin() || listing.owner.getId() == loggedInUser.toKeyId())) {
+			result.setErrorCode(ErrorCodes.OPERATION_NOT_ALLOWED);
+			result.setErrorMessage("User is not an owner of the listing");
+			return result;
+		}
+		if (listing.state != Listing.State.NEW) {
+			// in not NEW state only certain properties are updatable
+			List<ListingPropertyVO> propsToUpdate = new ArrayList<ListingPropertyVO>();
+			for (ListingPropertyVO prop : properties) {
+				String propertyName = prop.getPropertyName().toLowerCase();
+				if (ListingVO.ACTIVE_UPDATABLE_PROPERTIES.contains(propertyName)) {
+					propsToUpdate.add(prop);
+				}
+			}
+
+			if (propsToUpdate.isEmpty()) {
+				result.setErrorCode(ErrorCodes.OPERATION_NOT_ALLOWED);
+				result.setErrorMessage("Listing properties not updatable in state " + listing.state);
+				return result;
+			}
+			properties = propsToUpdate;
 		}
 		boolean fetchedDoc = false;
 		boolean fetchError = false;
