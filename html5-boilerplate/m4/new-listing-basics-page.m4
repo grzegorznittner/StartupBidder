@@ -226,23 +226,23 @@ include(images-panel-editable.m4)
 <div class="span-8 last">
 
     <a href="/new-listing-financials-page.html">
-        <div class="sidebox investbutton askfundingbutton">ASK FOR FUNDING</div>
+        <div class="sidebox investbutton askfundingbutton" id="askfundingbutton">ASK FOR FUNDING</div>
     </a>
 
     <a href="/new-listing-media-page.html">
-        <div class="sidebox investbutton">ADD VIDEO</div>
+        <div class="sidebox investbutton" id="videobutton">ADD VIDEO</div>
     </a>
 
     <a href="/new-listing-bmc-page.html">
-        <div class="sidebox investbutton">ADD MODEL</div>
+        <div class="sidebox investbutton" id="modelbutton">ADD MODEL</div>
     </a>
 
     <a href="/new-listing-qa-page.html">
-        <div class="sidebox investbutton">ADD SLIDES</div>
+        <div class="sidebox investbutton" id="presentationbutton">PRESENTATION</div>
     </a>
 
-    <a href="/new-listing-financials-page.html">
-        <div class="sidebox investbutton">ADD DOCUMENT</div>
+    <a href="/new-listing-financials-page.html#documents">
+        <div class="sidebox investbutton" id="documentbutton">ADD DOCUMENT</div>
     </a>
 
     <div class="boxtitle boxtitleside clear">UPLOAD LOGO</span></div>

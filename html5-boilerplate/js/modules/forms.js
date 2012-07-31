@@ -50,7 +50,13 @@ pl.implement(VideoCheckClass, {
             matches = str ? str.match(serviceopts.regex) : [];
             if (matches && matches.length === 4) {
                 videoid = matches[3];
+            }
+            else if (matches && matches.length === 5) {
+                videoid = matches[4];
+            }
+            if (videoid) {
                 url = serviceopts.prefix + videoid + serviceopts.postfix;
+                console.log(videoid, url);
                 break;
             }
         }

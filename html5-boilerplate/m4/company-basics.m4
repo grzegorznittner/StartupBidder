@@ -32,14 +32,12 @@ include(images-panel.m4)
             <div class="sidebox investbutton initialhidden" id="editbutton">EDIT LISTING</div>
         </a>
 
-        <div class="sidebox investbutton" id="investbutton">INVEST</div>
+        <div class="sidebox investbutton initialhidden" id="investbutton">INVEST</div>
 
-        <a href="#" id="gotobusinessmodellink">
-            <div class="sidebox investbutton gotobutton">Go To Business Model</div>
-        </a>
+        <div class="sidebox investbutton gotobutton" id="modelbutton">Go To Business Model</div>
 
         <a href="#" id="gotopresentationlink">
-            <div class="sidebox investbutton gotobutton">Go To Presentation</div>
+            <div class="sidebox investbutton gotobutton" id="presentationbutton">Go To Presentation</div>
         </a>
 
         <div class="boxtitle boxtitleside">ASKING</div>

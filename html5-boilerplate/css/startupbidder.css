@@ -1165,6 +1165,7 @@ textarea[disabled] { color: #999 !important; }
 .askingbox {
     width: 292px;
     padding-left: 10px;
+    padding-top: 8px;
 }
 .documentbox {
     width: 292px;

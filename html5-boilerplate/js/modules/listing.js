@@ -14,6 +14,7 @@ pl.implement(ListingClass, {
                 this[key] = json.listing[key];
             }
         }
+        this.login_url = json && json.login_url;
         this.loggedin_profile = json && json.loggedin_profile;
         this.loggedin_profile_id = this.loggedin_profile && this.loggedin_profile.profile_id;
         this.listing_url = 'http://startupbidder.com/company-page.html?id=' + this.listing_id;
@@ -96,7 +97,6 @@ pl.implement(ListingClass, {
     displayInvest: function() {
         var self = this;
         if (self.status === 'new' || self.status === 'posted') {
-            pl('#investbutton').hide();
             return;
         }
         if (self.loggedin_profile && self.loggedin_profile.profile_id === self.profile_id) { // owner
@@ -118,14 +118,146 @@ pl.implement(ListingClass, {
             }
             url = '/' + page + '?id=' + self.listing_id;
             document.location = url;
-        });
+        }).show();
     },
 
     displayGoto: function() {
-        var bmcurl = '/company-model-page.html?id=' + this.listing_id,
-            presurl = '/company-slides-page.html?id=' + this.listing_id;
-        pl('#gotobusinessmodellink').attr({href: bmcurl});
-        pl('#gotopresentationlink').attr({href: presurl});
+        this.displayModelButton();
+        this.displayPresentationButton();
+    },
+
+    displayModelButton: function() {
+        var self = this,
+            hasBmc = MicroListingClass.prototype.getHasBmc(this),
+            text,
+            ajax,
+            url;
+        if (this.status === 'new') {
+            if (hasBmc) {
+                text = 'Edit Business Model';
+            }
+            else {
+                text = 'Add Business Model';
+            }
+            url = '/new-listing-bmc-page.html';
+        }
+        else if (this.status === 'active') {
+            if (hasBmc) {
+                text = 'Go To Business Model';
+                url = '/company-model-page.html?id=' + this.listing_id;
+            }
+            else {
+                if (this.loggedin_profile) {
+                    if (this.loggedin_profile.profile_id === this.profile_id) {
+                        text = 'Add Business Model';
+                        url = '/active-listing-bmc-page.html?id=' + this.listing_id;
+                    }
+                    else {
+                        text = 'Request Business Model';
+                        ajax = new AjaxClass('/listing/ask_owner', 'modelbutton', function() {
+                            document.location = '/company-questions-page.html?id=' + self.listing_id;
+                        });
+                        ajax.setPostData({
+                            message: {
+                                listing_id: this.listing_id,
+                                text: 'Could you please add a business model canvas for this listing?  Thanks.'
+                            }
+                        })
+                    }
+                }
+                else {
+                    if (this.login_url) {
+                        text = 'Login to Request Business Model';
+                        url = this.login_url + encodeURIComponent('/company-page.html?id=' + this.listing_id);
+                    }
+                    else {
+                        text = 'No Business Model';
+                    }
+                }
+            }
+        }
+        else {
+            text = 'No Business Model';
+        }
+        pl('#modelbutton').text(text);
+        if (ajax) {
+            pl('#modelbutton').bind('click', function() {
+                pl('#modelbutton').unbind();
+                ajax.call();
+            });
+        }
+        else if (url) {
+            pl('#modelbutton').bind('click', function() {
+                document.location = url;
+            });
+        }
+    },
+
+    displayPresentationButton: function() {
+        var self = this,
+            hasIp = MicroListingClass.prototype.getHasIp(this),
+            text,
+            ajax,
+            url;
+        if (this.status === 'new') {
+            if (hasIp) {
+                text = 'Edit Presentation';
+            }
+            else {
+                text = 'Add Presentation';
+            }
+            url = '/new-listing-qa-page.html';
+        }
+        else if (this.status === 'active') {
+            if (hasIp) {
+                text = 'Go To Presentation';
+                url = '/company-slides-page.html?id=' + this.listing_id;
+            }
+            else {
+                if (this.loggedin_profile) {
+                    if (this.loggedin_profile.profile_id === this.profile_id) {
+                        text = 'Add Presentation';
+                        url = '/active-listing-qa-page.html?id=' + this.listing_id;
+                    }
+                    else {
+                        text = 'Request Presentation';
+                        ajax = new AjaxClass('/listing/ask_owner', 'modelbutton', function() {
+                            document.location = '/company-questions-page.html?id=' + self.listing_id;
+                        });
+                        ajax.setPostData({
+                            message: {
+                                listing_id: this.listing_id,
+                                text: 'Could you please add a presentation for this listing?  Thanks.'
+                            }
+                        })
+                    }
+                }
+                else {
+                    if (this.login_url) {
+                        text = 'Login to Request Presentation';
+                        url = this.login_url + encodeURIComponent('/company-page.html?id=' + this.listing_id);
+                    }
+                    else {
+                        text = 'No Presentation';
+                    }
+                }
+            }
+        }
+        else {
+            text = 'No Presentation';
+        }
+        pl('#presentationbutton').text(text);
+        if (ajax) {
+            pl('#presentationbutton').bind('click', function() {
+                pl('#presentationbutton').unbind();
+                ajax.call();
+            });
+        }
+        else if (url) {
+            pl('#presentationbutton').bind('click', function() {
+                document.location = url;
+            });
+        }
     },
 
     displayMap: function() {

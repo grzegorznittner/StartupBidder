@@ -136,6 +136,7 @@ include(header.m4)
         </div>
     </div>
 
+    <a name="documents"></a>
     <div class="boxtitle">
         <span class="titletext">PRESENTATION</span>
         <div class="titleinfobtn"></div>

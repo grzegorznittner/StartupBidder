@@ -49,9 +49,9 @@ define(`companybannermacro', `
                         MODEL
                     </div>
                 </a>
-                <a class="hoverlink companynavlink" href="#" id="slidestab">
-                    <div class="companynav hoverlink $3" id="slidestab">
-                        SLIDES
+                <a class="hoverlink companynavlink" href="#" id="presentationtab">
+                    <div class="companynav hoverlink $3" id="presentationtab">
+                        PRESENTATION
                     </div>
                 </a>
                 <a class="hoverlink companynavlink" href="#" id="bidstab">

@@ -45,11 +45,17 @@ If you do not have a video ready, just record a voiceover of a quick run through
             </p>
         </div>
     </div>
-    <div class="boxpanel">
-        <div class="formitem">
+    <div class="boxpanel newlistingpanel">
+        <div class="formitem sideinfoitem clear">
             <span class="inputfield">
                 <input class="text mediainputlink videourl" style="width: 568px !important" type="text" maxlength="255" name="video" id="video" value=""></input>
             </span>
+            <p class="sideinfo">
+                <label class="sideinfoheader">Video</label>
+                <br />
+Link to a youtube, vimeo, or dailymotion video presenting your product, service or company.
+If you do not have a video ready, just record a voiceover of a quick run through your slide deck.
+            </p>
             <span class="videoinputicon">
                 <div id="videoicon"></div>
             </span>

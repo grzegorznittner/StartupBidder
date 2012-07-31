@@ -300,9 +300,11 @@ pl.implement(NewListingBaseClass, {
             focus: function(e) {
                 var evt = new EventClass(e),
                     infoel = evt.target().parentNode.nextSibling.nextSibling;
-                self.hideAllInfo();
-                if (infoel) {
-                    pl(infoel).addClass('sideinfodisplay').css({'z-index': 10000});
+                if (pl(infoel).hasClass('sideinfo')) {
+                    self.hideAllInfo();
+                    if (infoel) {
+                        pl(infoel).addClass('sideinfodisplay').css({'z-index': 10000});
+                    }
                 }
             },
 
@@ -310,5 +312,6 @@ pl.implement(NewListingBaseClass, {
         });
         pl('.sideinfo').bind('click', self.hideAllInfo);
     }
+
 });
 

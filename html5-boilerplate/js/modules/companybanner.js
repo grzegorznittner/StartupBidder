@@ -300,6 +300,12 @@ pl.implement(CompanyBannerClass, {
         if (!this.asked_fund) {
             pl('#bidstab').hide();
         }
+        if (!MicroListingClass.prototype.getHasBmc(this)) {
+            pl('#modeltab').hide();
+        }
+        if (!MicroListingClass.prototype.getHasIp(this)) {
+            pl('#presentationtab').hide();
+        }
         if (this.loggedin_profile && this.loggedin_profile_id !== this.profile_id) {
             pl('#sendmessagelink').attr({href: '/messages-page.html?to_user_id=' + (this.profile_id || '') }).css({display: 'inline'});
         }
