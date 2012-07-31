@@ -43,7 +43,6 @@ public class ListingVO extends ListingTileVO {
 	@JsonProperty("founders") private String founders;
 	@JsonProperty("contact_email") private String contactEmail;
 	@JsonProperty("address") private String address;
-	@JsonProperty("platform") @JsonSerialize(using=LowecaseSerializer.class) private String platform;
 	@JsonProperty("num_comments") private long numberOfComments;
 	@JsonProperty("num_bids") private long numberOfBids;
     @JsonProperty("num_qandas") private long numberOfQuestions;
@@ -730,14 +729,6 @@ public class ListingVO extends ListingTileVO {
 
 	public void setFounders(String founders) {
 		this.founders = founders;
-	}
-
-	public String getPlatform() {
-		return platform;
-	}
-
-	public void setPlatform(String platform) {
-		this.platform = platform;
 	}
 
 	public String getNotes() {
