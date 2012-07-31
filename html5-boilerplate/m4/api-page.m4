@@ -2430,7 +2430,7 @@ include(api-banner.m4)
                 <li><code>phone</code> numeric phone number of user including prefixed country code</li>
                 <li><code>investor</code> <var>true</var> iff the user is an accredited, professional, or sophisticated investor</li>
                 <li><code>notify_enabled</code> <var>true</var> iff the user has email notificaitons enabled</li>
-                <li><code>edited_listing</code> the listing id of the user&rsquo;s in-progress listing, null otherwise</li>
+                <li><code>edited_listing</code> the listing id of the user&rsquo;s new or pending listing, null otherwise</li>
                 <li><code>edited_status</code> edited listing status, <var>new</var> if being edited, <var>posted</var> if submitted but not yet approved</li>
                 <li><code>joined_date</code> date user signed up in YYYYMMDD format</li>
                 <li><code>last_login</code> date of last user login in YYYYMMDD format</li>

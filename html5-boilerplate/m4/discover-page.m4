@@ -33,7 +33,7 @@ include(banner.m4)
     <div class="initialhidden wrapper">
 
         <div id="edited_listing_wrapper" class="initialhidden">
-            <div class="boxtitle smokegrey">YOUR IN-PROGRESS LISTING</div>
+            <div class="boxtitle smokegrey">YOUR PENDING LISTING</div>
             <div id="edited_listing"></div>
         </div>
     

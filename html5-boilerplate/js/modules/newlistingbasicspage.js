@@ -12,7 +12,6 @@ pl.implement(NewListingBasicsClass, {
                     categories = json && json.categories ? json.categories : {},
                     header = new HeaderClass();
                 header.setLogin(json);
-                console.log(listing);
                 self.base.store(listing);
                 self.storeCategories(categories);
                 self.display();
@@ -47,8 +46,47 @@ pl.implement(NewListingBasicsClass, {
             document.location = '/company-page.html?id=' + this.base.listing.listing_id;
         }
         if (!this.bound) {
+            this.displayButtons();
             this.bindEvents();
             this.bound = true;
+        }
+    },
+
+    displayButtons: function() {
+        this.displayAskFundingButton();
+        this.displayVideoButton();
+        this.displayModelButton();
+        this.displayPresentationButton();
+        this.displayDocumentButton();
+    },
+
+    displayAskFundingButton: function() {
+        if (this.base.listing.asked_fund) {
+            pl('#askfundingbutton').text('EDIT FUNDING');
+        }
+    },
+
+    displayVideoButton: function() {
+        if (this.base.listing.video) {
+            pl('#videobutton').text('EDIT VIDEO');
+        }
+    },
+
+    displayModelButton: function() {
+        if (MicroListingClass.prototype.getHasBmc(this.base.listing)) {
+            pl('#modelbutton').text('EDIT MODEL');
+        }
+    },
+
+    displayPresentationButton: function() {
+        if (MicroListingClass.prototype.getHasIp(this.base.listing)) {
+            pl('#presentationbutton').text('PRESENTATION');
+        }
+    },
+
+    displayDocumentButton: function() {
+        if (MicroListingClass.prototype.getHasDoc(this.base.listing)) {
+            pl('#documentbutton').text('EDIT DOCUMENTS');
         }
     },
 
@@ -73,14 +111,9 @@ pl.implement(NewListingBasicsClass, {
                 address: TextFieldClass
             },
             typeOptions = [ ['application', 'Application'], ['company', 'Company'] ],
-            platformOptions = [
-                ['ios', 'iPhone / iPad'],
-                ['android', 'Android Phone / Tablet'],
-                ['windows_phone', 'Windows Phone / Tablet'],
-                ['desktop', 'Desktop'],
-                ['website', 'Website'],
-                ['other', 'Other']
-            ],
+            platforms = [ 'ios', 'android', 'windows_phone', 'desktop', 'website', 'other' ],
+            platformOptions = [],
+            platform,
             i,
             id,
             field,
@@ -88,6 +121,10 @@ pl.implement(NewListingBasicsClass, {
             updater;
         this.base.fields = [];
         this.base.fieldMap = {};
+        for (i = 0; i < platforms.length; i++) {
+            platform = platforms[i];
+            platformOptions.push([ platform, PlatformClass.prototype.displayName(platform) ]);
+        }
         for (i = 0; i < textFields.length; i++) {
             id = textFields[i];
             updater = this.base.getUpdater(id);
@@ -151,7 +188,6 @@ pl.implement(NewListingBasicsClass, {
                     datauri = dataurimatch && dataurimatch.length === 2 ? dataurimatch[1] : null,
                     iframeloc = iframe.contentWindow.location,
                     errorMsg = iframeloc && iframeloc.search && iframeloc.search ? decodeURIComponent(iframeloc.search.replace(/^[?]errorMsg=/, '')) : null;
-                console.log(uploadurl);
                 if (uploadurl && uploadurl !== 'null') {
                     self.base.listing.upload_url = uploadurl;
                     self.setUploadUrls();

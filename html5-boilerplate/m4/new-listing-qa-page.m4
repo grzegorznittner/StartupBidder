@@ -16,7 +16,7 @@ include(header.m4)
 </div>
 <div class="container initialhidden wrapper">
 
-    <div class="bannertextsmall">NEW LISTING WIZARD - SLIDES</div>
+    <div class="bannertextsmall">NEW LISTING WIZARD - PRESENTATION</div>
 
     <div class="span-16">
         <a href="#" class="backbuttonlink">

@@ -172,26 +172,30 @@ pl.implement(NewListingFinancialsClass, {
     },
     bindEvents: function() {
         var self = this,
-            textFields = ['asked_fund', 'suggested_amt', 'suggested_pct'],
+            textFields = ['asked_fund', 'suggested_amt', 'suggested_pct', 'founders'],
             msgids = {
                 asked_fund: 'newlistingaskmsg',
                 suggested_amt: 'newlistingoffermsg',
-                suggested_pct: 'newlistingoffermsg'
+                suggested_pct: 'newlistingoffermsg',
+                founders: 'newlistingfoundersmsg'
             },
             validators = {
                 asked_fund: ValidatorClass.prototype.isCheckedVal,
                 suggested_amt: ValidatorClass.prototype.genIsNumberBetween(1000, 500000),
-                suggested_pct: ValidatorClass.prototype.genIsNumberBetween(1, 50)
+                suggested_pct: ValidatorClass.prototype.genIsNumberBetween(1, 50),
+                founders: ValidatorClass.prototype.isNotEmpty
             },
             classes = {
                 asked_fund: CheckboxFieldClass,
                 suggested_amt: TextFieldClass,
-                suggested_pct: TextFieldClass
+                suggested_pct: TextFieldClass,
+                founders: TextFieldClass
             },
             names = {
                 asked_fund: 'ALLOW BIDS',
                 suggested_amt: 'ASKING',
-                suggested_pct: 'PERCENT'
+                suggested_pct: 'PERCENT',
+                founders: 'FOUNDERS'
             },
             preValidators = {
                 suggested_amt: CurrencyClass.prototype.clean,
@@ -212,8 +216,11 @@ pl.implement(NewListingFinancialsClass, {
             if (id === 'asked_fund') {
                 field = new (classes[id])(id, this.base.listing[id], this.base.getUpdater(id, cleaner, offerboxdisplay), msgids[id]);
             }
-            else {
+            else if (cleaner) {
                 field = new (classes[id])(id, this.base.listing[id], this.base.getUpdater(id, cleaner), msgids[id]);
+            }
+            else {
+                field = new (classes[id])(id, this.base.listing[id], this.base.getUpdater(id), msgids[id]);
             }
             field.fieldBase.setDisplayName(names[id]);
             field.fieldBase.addValidator(validators[id]);
@@ -226,7 +233,7 @@ pl.implement(NewListingFinancialsClass, {
             else if (id === 'suggested_amt') {
                 field.fieldBase.validator.postValidator = this.genDisplayCalculatedIfValidAmt(field);
             }
-            else {
+            else if (id === 'suggested_pct') {
                 field.fieldBase.validator.postValidator = this.genDisplayCalculatedIfValidPct(field);
             }
             field.bindEvents();

@@ -439,6 +439,7 @@ pl.implement(HeaderClass, {
                 pl('#fb_loginlink').hide();
             }
         }
+        pl('#posttext').text('Add Listing');
         pl('#headernotloggedin').show();
     }
 });
@@ -467,6 +468,19 @@ CookieClass.prototype.eraseCookie = function(name) {
     createCookie(name,"",-1);
 }
 
+function PlatformClass() {}
+PlatformClass.prototype.displayName = function(platform) {
+    var map = {
+        ios: 'iOS',
+        android: 'Android',
+        windows_phone: 'Windows Phone',
+        desktop: 'Desktop',
+        website: 'Website',
+        other: 'Other'
+    };
+    return map[platform];
+}
+
 function ScriptClass() {}
 ScriptClass.prototype.load = function(url, callback) {
     var script = document.createElement("script")
@@ -491,4 +505,54 @@ ScriptClass.prototype.load = function(url, callback) {
     document.getElementsByTagName("head")[0].appendChild(script);
 }
 
+function MicroListingClass() {}
+pl.implement(MicroListingClass, {
+    getHasBmc: function(listing) {
+        var bmcFields = [ 'answer1', 'answer2', 'answer3', 'answer4', 'answer5', 'answer6', 'answer7', 'answer8', 'answer9' ],
+            hasBmc = false,
+            fieldName,
+            i;
+        for (i = 0; i < bmcFields.length; i++) {
+            fieldName = bmcFields[i];
+            if (listing[fieldName]) {
+                hasBmc = true;
+                break;
+            }
+        }
+        return hasBmc;
+    },
+
+    getHasIp: function(listing) {
+        var ipFields = [
+                'answer10', 'answer11', 'answer12', 'answer13', 'answer14', 'answer15', 'answer16', 'answer17', 'answer18', 'answer19',
+                'answer20', 'answer21', 'answer22', 'answer23', 'answer24', 'answer25', 'answer26'
+            ],
+            hasIp = false,
+            fieldName,
+            i;
+        for (i = 0; i < ipFields.length; i++) {
+            fieldName = ipFields[i];
+            if (listing[fieldName]) {
+                hasIp = true;
+                break;
+            }
+        }
+        return hasIp;
+    },
+
+    getHasDoc: function(listing) {
+        var docFields = [ 'presentation_id', 'business_plan_id', 'financials_id' ],
+            hasDoc = false,
+            fieldName,
+            i;
+        for (i = 0; i < docFields.length; i++) {
+            fieldName = docFields[i];
+            if (listing[fieldName]) {
+                hasDoc = true;
+                break;
+            }
+        }
+        return hasDoc;
+    }
+});
 

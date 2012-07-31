@@ -38,6 +38,7 @@ public class ListingTileVO extends BaseVO {
 	@JsonProperty("website") protected String website;
 	@JsonProperty("category") protected String category;
 	@JsonProperty("type") @JsonSerialize(using=LowecaseSerializer.class) protected String type;
+	@JsonProperty("platform") @JsonSerialize(using=LowecaseSerializer.class) protected String platform;
 	@JsonProperty("profile_id") protected String owner;
 	@JsonProperty("profile_username") protected String ownerName;
 	@JsonProperty("brief_address") protected String briefAddress;
@@ -239,6 +240,14 @@ public class ListingTileVO extends BaseVO {
 
 	public void setType(String type) {
 		this.type = type;
+	}
+
+	public String getPlatform() {
+		return platform;
+	}
+
+	public void setPlatform(String platform) {
+		this.platform = platform;
 	}
 
 	public String getCurrency() {

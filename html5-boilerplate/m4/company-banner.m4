@@ -22,7 +22,7 @@ define(`companybannermacro', `
                     &nbsp;<a class="companybannertextlink" href="#" target="_blank" id="websitelink">
                         <span id="domainname" class="companybannertextlink" style="float:left;"></span>
                     </a>
-                    <div class="span-1 linkicon"></div>
+                    <div class="span-1 linkicon" id="websitelinkicon"></div>
                 </div>
                 <div class="companybannertextgrey companybannermantra2" id="mantra"></div>
     
@@ -49,9 +49,9 @@ define(`companybannermacro', `
                         MODEL
                     </div>
                 </a>
-                <a class="hoverlink companynavlink" href="#" id="slidestab">
-                    <div class="companynav hoverlink $3" id="slidestab">
-                        SLIDES
+                <a class="hoverlink companynavlink" href="#" id="presentationtab">
+                    <div class="companynav hoverlink $3" id="presentationtab">
+                        PRESENTATION
                     </div>
                 </a>
                 <a class="hoverlink companynavlink" href="#" id="bidstab">

@@ -254,6 +254,7 @@ public class DtoToVoConverter {
 		listing.setWebsite(listingDTO.website);
 		listing.setCategory(listingDTO.category);
 		listing.setType(listingDTO.type.toString());
+        listing.setPlatform(listingDTO.platform != null ? listingDTO.platform.toString() : null);
 
 		listing.setLatitude(listingDTO.latitude);
 		listing.setLongitude(listingDTO.longitude);

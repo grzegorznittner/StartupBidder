@@ -80,9 +80,9 @@ include(header.m4)
             <label class="inputlabel" for="platform">PLATFORM</label>
             <span class="inputfield">
                 <select id="platform" class="text inputwidetext categoryselect">
-                    <option value="ios">iPhone / iPad</option>
-                    <option value="android">Android Mobile / Tablet</option>
-                    <option value="windows_phone">Windows Phone / Tablet</option>
+                    <option value="ios">iOS</option>
+                    <option value="android">Android</option>
+                    <option value="windows_phone">Windows Phone</option>
                     <option value="desktop">Desktop</option>
                     <option value="website">Website</option>
                     <option value="other" selected="selected">Other</option>
@@ -113,22 +113,6 @@ include(header.m4)
                 <div id="categoryicon"></div>
             </span>
         </div>
-<!--
-        <div class="formitem sideinfoitem clear">
-            <label class="inputlabel" for="founders">OWNERS</label>
-            <span class="inputfield">
-                <input class="text inputwidetext" type="text" name="founders" id="founders" value=""></input>
-            </span>
-            <p class="sideinfo">
-                <label class="sideinfoheader">Owners</label>
-                <br />
-                The full legal names of all owners of this application or company.
-            </p>
-            <span class="inputicon">
-                <div id="foundersicon"></div>
-            </span>
-        </div>
--->
 <!--
         <div class="formitem sideinfoitem clear">
             <label class="inputlabel" for="contact_email">EMAIL</label>
@@ -242,23 +226,23 @@ include(images-panel-editable.m4)
 <div class="span-8 last">
 
     <a href="/new-listing-financials-page.html">
-        <div class="sidebox investbutton askfundingbutton">ASK FOR FUNDING</div>
+        <div class="sidebox investbutton askfundingbutton" id="askfundingbutton">ASK FOR FUNDING</div>
     </a>
 
     <a href="/new-listing-media-page.html">
-        <div class="sidebox investbutton">ADD VIDEO</div>
+        <div class="sidebox investbutton" id="videobutton">ADD VIDEO</div>
     </a>
 
     <a href="/new-listing-bmc-page.html">
-        <div class="sidebox investbutton">ADD MODEL</div>
+        <div class="sidebox investbutton" id="modelbutton">ADD MODEL</div>
     </a>
 
     <a href="/new-listing-qa-page.html">
-        <div class="sidebox investbutton">ADD SLIDES</div>
+        <div class="sidebox investbutton" id="presentationbutton">PRESENTATION</div>
     </a>
 
-    <a href="/new-listing-financials-page.html">
-        <div class="sidebox investbutton">ADD DOCUMENT</div>
+    <a href="/new-listing-financials-page.html#documents">
+        <div class="sidebox investbutton" id="documentbutton">ADD DOCUMENT</div>
     </a>
 
     <div class="boxtitle boxtitleside clear">UPLOAD LOGO</span></div>

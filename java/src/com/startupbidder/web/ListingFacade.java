@@ -157,7 +157,7 @@ public class ListingFacade {
 			l.owner = new Key<SBUser>(loggedInUser.getId());
 			l.contactEmail = loggedInUser.getEmail();
 			l.founders = !StringUtils.isEmpty(loggedInUser.getName()) ? loggedInUser.getName() : loggedInUser.getNickname();
-			l.askedForFunding = true;
+			l.askedForFunding = false; // by default don't ask for funding
 			l.suggestedAmount = 20000;
 			l.suggestedPercentage = 5;
 			l.created = new Date();
