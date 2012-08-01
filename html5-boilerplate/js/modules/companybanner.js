@@ -281,6 +281,9 @@ pl.implement(CompanyBannerClass, {
                     page = 'company-investor-bids-page.html';
                 }
             }
+            else if (tab === 'presentation') {
+                page = 'company-slides-page.html';
+            }
             else {
                 page = 'company-' + tab + '-page.html';
             }

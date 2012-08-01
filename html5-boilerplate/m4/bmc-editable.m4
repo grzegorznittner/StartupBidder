@@ -3,7 +3,7 @@
 <div class="span-24 last initialhidden" id="bmc-editable">
 <div class="boxtitle bmctitle">
     <span class="titletext">BUSINESS MODEL CANVAS
-        <a href="http://www.youtube.com/watch?v=QoAOzMTLP5s">(SEE THE BMC TUTORIAL ON YOUTUBE)</a></div>
+        <a href="http://www.youtube.com/watch?v=QoAOzMTLP5s">(SEE THE BMC TUTORIAL)</a></div>
     </span>
     <div class="titleinfobtn"></div>
     <div class="titleinfo">
@@ -30,6 +30,7 @@
         </p>
 -->
     </div>
+    <span class="span-3 smallinputbutton darkblue bmctitlebtn hoverlink" id="bmc-activate-deactivate-btn"></span>
     <span class="span-3 smallinputbutton darkblue bmctitlebtn hoverlink" id="bmc-preview-btn">PREVIEW</span>
     <span class="bmctitleboxbtn"><div id="bmcfieldicon"></div></span>
     <span class="bmctitlemsg" id="bmc-editable-msg">Click a section to edit the text</span>

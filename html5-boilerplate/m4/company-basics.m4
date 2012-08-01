@@ -36,9 +36,7 @@ include(images-panel.m4)
 
         <div class="sidebox investbutton gotobutton" id="modelbutton">Go To Business Model</div>
 
-        <a href="#" id="gotopresentationlink">
-            <div class="sidebox investbutton gotobutton" id="presentationbutton">Go To Presentation</div>
-        </a>
+        <div class="sidebox investbutton gotobutton" id="presentationbutton">Go To Presentation</div>
 
         <div class="boxtitle boxtitleside">ASKING</div>
         <div class="sidebox uneditabletext askingbox">
@@ -74,6 +72,11 @@ include(images-panel.m4)
                 </div>
         </div>
         </div>
+
+        <div class="sidebox investbutton gotobutton initialhidden" id="adddocumentbutton">Add Document</div>
+        <div class="sidebox investbutton gotobutton initialhidden" id="requestpresentationbutton">Request Powerpoint/PDF Presentation</div>
+        <div class="sidebox investbutton gotobutton initialhidden" id="requestbusinessplanbutton">Request Business Plan</div>
+        <div class="sidebox investbutton gotobutton initialhidden" id="requestfinancialsbutton">Request Financial Statements</div>
    
         <div class="boxtitle boxtitleside">LOCATION</div>
         <div class="sidebox">

@@ -181,7 +181,10 @@ pl.implement(NewListingBaseClass, {
         var self = this;
         pl('.backbuttonlink').bind({
             click: function() {
-                document.location = '/new-listing-basics-page.html';
+                var url = self.listing.status === 'new'
+                    ? '/new-listing-basics-page.html'
+                    : '/company-page.html?id=' + self.listing.listing_id;
+                document.location = url;
                 return false;
             }
         });
@@ -253,7 +256,11 @@ pl.implement(NewListingBaseClass, {
     getUpdater: function(fieldName, cleaner, postSuccessFunc, updateUrl, updateFieldNameFunc) {
         var self = this;
         return function(newdata, loadFunc, errorFunc, successFunc) {
-            var data = { listing: {} },
+            var data = {
+                    listing: {
+                        id: self.listing.listing_id
+                    }
+                },
                 newval = (newdata ? (cleaner ? cleaner(newdata.changeKey) : newdata.changeKey) : undefined),
                 pctSuccessFunc = function(json) {
                     successFunc(json);
@@ -280,13 +287,16 @@ pl.implement(NewListingBaseClass, {
         var self = this;
         pl('.titleinfobtn').bind('click', function(e) {
             var evt = new EventClass(e),
-                infoel = evt.target().nextSibling.nextSibling;
-            if (!(pl(infoel).hasClass('titleinfodisplay'))) {
-                self.hideAllInfo();
-                pl(infoel).addClass('titleinfodisplay');
-            }
-            else {
-                self.hideAllInfo();
+                tgt = evt.target(),
+                infoel = tgt && tgt.nextSibling && tgt.nextSibling.nextSibling;
+            if (infoel && pl(infoel).hasClass('titleinfo')) {
+                if (!(pl(infoel).hasClass('titleinfodisplay'))) {
+                    self.hideAllInfo();
+                    pl(infoel).addClass('titleinfodisplay');
+                }
+                else {
+                    self.hideAllInfo();
+                }
             }
         })
         pl('.titleinfo').bind('click', function() {
@@ -299,8 +309,9 @@ pl.implement(NewListingBaseClass, {
         pl('input.text, select.text, textarea.inputwidetext').bind({
             focus: function(e) {
                 var evt = new EventClass(e),
-                    infoel = evt.target().parentNode.nextSibling.nextSibling;
-                if (pl(infoel).hasClass('sideinfo')) {
+                    tgt = evt.target(),
+                    infoel = tgt && tgt.parentNode && tgt.parentNode.nextSibling && tgt.parentNode.nextSibling.nextSibling;
+                if (infoel && pl(infoel).hasClass('sideinfo')) {
                     self.hideAllInfo();
                     if (infoel) {
                         pl(infoel).addClass('sideinfodisplay').css({'z-index': 10000});

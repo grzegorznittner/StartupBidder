@@ -1,11 +1,16 @@
 function NewListingBMCClass() {
-    var base = new NewListingBaseClass();
-    this.base = base;
+    var queryString = new QueryStringClass();
+    this.id = queryString.vars.id;
+    this.listing_id = this.id;
+    this.base = new NewListingBaseClass();
     this.bmc = new BMCClass();
 }
 pl.implement(NewListingBMCClass, {
     load: function() {
         var self = this,
+            url = this.id
+                ? '/listing/get/' + this.id
+                : '/listings/create',
             completeFunc = function(json) {
                 var listing = json && json.listing ? json.listing : {},
                     header = new HeaderClass();
@@ -16,13 +21,15 @@ pl.implement(NewListingBMCClass, {
                 pl('.preloader').hide();
                 pl('.wrapper').show();
             };
-        ajax = new AjaxClass('/listings/create', 'newlistingmsg', completeFunc);
-        ajax.setPost();
+        ajax = new AjaxClass(url, 'newlistingmsg', completeFunc);
+        if (url === '/listings/create') {
+            ajax.setPost();
+        }
         ajax.call();
     },
     display: function() {
         var status = this.base.listing.status;
-        if (status !== 'new' && status !== 'posted') {
+        if (status !== 'new' && status !== 'posted' && status !== 'active') {
             document.location = '/company-page.html?id=' + this.base.listing.listing_id;
         }
         if (!this.bound) {
@@ -57,6 +64,7 @@ pl.implement(NewListingBMCClass, {
         this.base.bindNavButtons();
         this.base.bindTitleInfo();
         this.bindEditButton();
+        this.bindActivateDeactivateButton();
         this.bindPreviewButton();
         this.bindInfoButtons();
     },
@@ -66,6 +74,55 @@ pl.implement(NewListingBMCClass, {
             pl('#bmc-editable').show();
         }).show();
     },
+
+    bindActivateDeactivateButton: function() {
+        var self = this,
+            text = this.base.listing.has_bmc ? 'DEACTIVATE' : 'ACTIVATE';
+        pl('#bmc-activate-deactivate-btn').text(text).bind('click', function() {
+            if (self.base.listing.has_bmc) {
+                self.deactivate();
+            }
+            else {
+                self.activate();
+            }
+        });
+    },
+
+    activate: function() {
+        var self = this,
+            complete = function(json) {
+                self.base.listing.has_bmc = json.listing.has_bmc;
+                pl('#bmc-editable-msg').html('<span class="successful">Business model activated</span>');
+                pl('#bmc-activate-deactivate-btn').text('DEACTIVATE');
+            },
+            data = {
+                listing: {
+                    id: this.base.listing.listing_id,
+                    has_bmc: true
+                }
+            },
+            ajax = new AjaxClass('/listing/update_field', 'bmc-editable-msg', complete);
+        ajax.setPostData(data);
+        ajax.call();
+    },
+
+    deactivate: function() {
+        var self = this,
+            complete = function(json) {
+                self.base.listing.has_bmc = json.listing.has_bmc;
+                pl('#bmc-editable-msg').html('<span class="successful">Business model deactivated</span>');
+            },
+            data = {
+                listing: {
+                    id: this.base.listing.listing_id,
+                    has_bmc: false
+                }
+            },
+            ajax = new AjaxClass('/listing/update_field', 'bmc-editable-msg', complete);
+        ajax.setPostData(data);
+        ajax.call();
+    },
+
     bindPreviewButton: function() {
         var self = this;
         pl('#bmc-preview-btn').bind('click', function() {

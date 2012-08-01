@@ -124,6 +124,8 @@ pl.implement(ListingClass, {
     displayGoto: function() {
         this.displayModelButton();
         this.displayPresentationButton();
+        this.displayAddDocumentButton();
+        this.displayRequestDocumentButtons();
     },
 
     displayModelButton: function() {
@@ -141,10 +143,16 @@ pl.implement(ListingClass, {
             }
             url = '/new-listing-bmc-page.html';
         }
-        else if (this.status === 'active') {
+        else if (this.status === 'posted' || this.status === 'active') {
             if (hasBmc) {
-                text = 'Go To Business Model';
-                url = '/company-model-page.html?id=' + this.listing_id;
+                if (this.loggedin_profile && this.loggedin_profile.profile_id === this.profile_id) {
+                    text = 'Edit Business Model';
+                    url = '/active-listing-bmc-page.html?id=' + this.listing_id;
+                }
+                else {
+                    text = 'Go To Business Model';
+                    url = '/company-model-page.html?id=' + this.listing_id;
+                }
             }
             else {
                 if (this.loggedin_profile) {
@@ -208,10 +216,16 @@ pl.implement(ListingClass, {
             }
             url = '/new-listing-qa-page.html';
         }
-        else if (this.status === 'active') {
+        else if (this.status === 'posted' || this.status === 'active') {
             if (hasIp) {
-                text = 'Go To Presentation';
-                url = '/company-slides-page.html?id=' + this.listing_id;
+                if (this.loggedin_profile && this.loggedin_profile.profile_id === this.profile_id) {
+                    text = 'Edit Presentation';
+                    url = '/active-listing-qa-page.html?id=' + this.listing_id;
+                }
+                else {
+                    text = 'Go To Presentation';
+                    url = '/company-slides-page.html?id=' + this.listing_id;
+                }
             }
             else {
                 if (this.loggedin_profile) {
@@ -257,6 +271,72 @@ pl.implement(ListingClass, {
             pl('#presentationbutton').bind('click', function() {
                 document.location = url;
             });
+        }
+    },
+
+    displayAddDocumentButton: function() {
+        var url;
+        if (this.loggedin_profile && this.loggedin_profile.profile_id === this.profile_id) {
+            if (this.status === 'new') {
+                url = '/new-listing-documents-page.html';
+            }
+            else if (this.status === 'posted' || this.status === 'active') {
+                url = '/active-listing-documents-page.html?id=' + this.listing_id;
+            }
+            if (url) {
+                pl('#adddocumentbutton').bind('click', function() {
+                    document.location = url;
+                }).show();
+            }
+        }
+    },
+
+    displayRequestDocumentButtons: function() {
+        var self = this;
+        if (this.loggedin_profile && this.loggedin_profile.profile_id !== this.profile_id && this.status === 'active' && !this.presentation_id) {
+            pl('#requestpresentationbutton').bind('click', function() {
+                var ajax = new AjaxClass('/listing/ask_owner', 'requestpresentationbutton', function() {
+                        document.location = '/company-questions-page.html?id=' + self.listing_id;
+                    });
+                ajax.setPostData({
+                    message: {
+                        listing_id: self.listing_id,
+                        text: 'Could you please upload a PowerPoint or PDF Presentation document for this listing?  Thanks.'
+                    }
+                });
+                pl('#requestpresentationbutton').unbind();
+                ajax.call();
+            }).show();
+        }
+        if (this.loggedin_profile && this.loggedin_profile.profile_id !== this.profile_id && this.status === 'active' && !this.business_plan_id) {
+            pl('#requestbusinessplanbutton').bind('click', function() {
+                var ajax = new AjaxClass('/listing/ask_owner', 'requestbusinessplanbutton', function() {
+                        document.location = '/company-questions-page.html?id=' + self.listing_id;
+                    });
+                ajax.setPostData({
+                    message: {
+                        listing_id: self.listing_id,
+                        text: 'Could you please upload a Business Plan document for this listing?  Thanks.'
+                    }
+                });
+                pl('#requestbusinessplanbutton').unbind();
+                ajax.call();
+            }).show();
+        }
+        if (this.loggedin_profile && this.loggedin_profile.profile_id !== this.profile_id && this.status === 'active' && !this.financials_id) {
+            pl('#requestfinancialsbutton').bind('click', function() {
+                var ajax = new AjaxClass('/listing/ask_owner', 'requestfinancialsbutton', function() {
+                        document.location = '/company-questions-page.html?id=' + self.listing_id;
+                    });
+                ajax.setPostData({
+                    message: {
+                        listing_id: self.listing_id,
+                        text: 'Could you please upload the most recent Financial Statements for this listing?  Thanks.'
+                    }
+                });
+                pl('#requestfinancialsbutton').unbind();
+                ajax.call();
+            }).show();
         }
     },
 
@@ -388,7 +468,7 @@ pl.implement(ListingClass, {
     },
 
     displayDelete: function() {
-        var deletable = (this.status === 'active' || this.status === 'posted')
+        var deletable = (this.status === 'new' || this.status === 'posted')
             && (this.loggedin_profile && this.loggedin_profile.profile_id === this.profile_id);
         if (deletable) {
             this.bindDeleteButton();

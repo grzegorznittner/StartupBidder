@@ -16,7 +16,7 @@ include(header.m4)
 </div>
 <div class="container initialhidden wrapper">
 
-    <div class="bannertextsmall">NEW LISTING WIZARD - BUSINESS MODEL CANVAS</div>
+    <div class="bannertextsmall">BUSINESS MODEL CANVAS</div>
 
     <div class="span-16">
         <a href="#" class="backbuttonlink">

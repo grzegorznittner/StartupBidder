@@ -1,10 +1,16 @@
 function NewListingQAClass() {
+    var queryString = new QueryStringClass();
+    this.id = queryString.vars.id;
+    this.listing_id = this.id;
     this.base = new NewListingBaseClass();
     this.ip = new IPClass();
 }
 pl.implement(NewListingQAClass, {
     load: function() {
         var self = this,
+            url = this.id
+                ? '/listing/get/' + this.id
+                : '/listings/create',
             completeFunc = function(json) {
                 var listing = json && json.listing ? json.listing : {},
                     header = new HeaderClass();
@@ -14,13 +20,15 @@ pl.implement(NewListingQAClass, {
                 pl('.preloader').hide();
                 pl('.wrapper').show();
             };
-        ajax = new AjaxClass('/listings/create', 'newlistingmsg', completeFunc);
-        ajax.setPost();
+        ajax = new AjaxClass(url, 'newlistingmsg', completeFunc);
+        if (url === '/listings/create') {
+            ajax.setPost();
+        }
         ajax.call();
     },
     display: function() {
         var status = this.base.listing.status;
-        if (status !== 'new' && status !== 'posted') {
+        if (status !== 'new' && status !== 'posted' && status !== 'active') {
             document.location = '/company-page.html?id=' + this.base.listing.listing_id;
         }
         if (!this.bound) {
@@ -68,15 +76,66 @@ pl.implement(NewListingQAClass, {
         this.base.bindNavButtons();
         this.base.bindTitleInfo();
         this.bindEditButton();
+        this.bindActivateDeactivateButton();
         this.bindPreviewButton();
         this.bindInfoButtons();
     },
+
     bindEditButton: function() {
         pl('#ip-edit-btn').bind('click', function() {
             pl('#ip').hide();
             pl('#ip-editable').show();
         }).show();
     },
+
+    bindActivateDeactivateButton: function() {
+        var self = this,
+            text = this.base.listing.has_ip ? 'DEACTIVATE' : 'ACTIVATE';
+        pl('#ip-activate-deactivate-btn').text(text).bind('click', function() {
+            if (self.base.listing.has_ip) {
+                self.deactivate();
+            }
+            else {
+                self.activate();
+            }
+        });
+    },
+
+    activate: function() {
+        var self = this,
+            complete = function(json) {
+                self.base.listing.has_ip = json.listing.has_ip;
+                pl('#ip-editable-msg').html('<span class="successful">Presentation activated</span>');
+                pl('#ip-activate-deactivate-btn').text('DEACTIVATE');
+            },
+            data = {
+                listing: {
+                    id: this.base.listing.listing_id,
+                    has_ip: true
+                }
+            },
+            ajax = new AjaxClass('/listing/update_field', 'ip-editable-msg', complete);
+        ajax.setPostData(data);
+        ajax.call();
+    },
+
+    deactivate: function() {
+        var self = this,
+            complete = function(json) {
+                self.base.listing.has_ip = json.listing.has_ip;
+                pl('#ip-editable-msg').html('<span class="successful">Presentation deactivated</span>');
+            },
+            data = {
+                listing: {
+                    id: this.base.listing.listing_id,
+                    has_ip: false
+                }
+            },
+            ajax = new AjaxClass('/listing/update_field', 'ip-editable-msg', complete);
+        ajax.setPostData(data);
+        ajax.call();
+    },
+
     bindPreviewButton: function() {
         var self = this;
         pl('#ip-preview-btn').bind('click', function() {

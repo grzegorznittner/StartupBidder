@@ -674,7 +674,6 @@ a:focus, a:hover { cursor: pointer; }
 .bidpanel { padding-top: 5px; }
 .nearbymap { height: 100%; width: 100%; }
 .listingbox { display: none; }
-.documentbox { height: 126px; }
 .documentwrapper { display: none; }
 .videocontainer { margin-top: 5px; }
 .withdrawtitle { display: none; }
@@ -682,7 +681,7 @@ a:focus, a:hover { cursor: pointer; }
 .bidbox { display: none; }
 .bidboxstatus { display: none; }
 .bidboxinfo { display: none; }
-.suggestedmsg { display: none; font-weight: bold; }
+.suggestedmsg { display: none; font-weight: bold; padding-bottom: 3px; }
 .suggestedinfo { display: none; }
 .new_bid_boxtitle { display: none; }
 .new_bid_box { display: none; }
@@ -1135,6 +1134,7 @@ textarea[disabled] { color: #999 !important; }
     overflow: visible;
     padding-top: 0px;
     padding-bottom: 15px;
+    margin-top: 0;
 }
 .submitbutton {
     margin-top: 0;
@@ -1150,17 +1150,18 @@ textarea[disabled] { color: #999 !important; }
     margin-top: 35px;
 }
 .askfundingbutton {
-    margin-top: 58px;
+    margin-top: 50px;
 }
 .inputelevatorpitch {
     height: 223px !important;
     margin-bottom: 21px;
 }
 .logopanel {
-    height: 168px;
+    height: 157px;
+    margin-top: 17px;
 }
 .locationpanel {
-    margin-top: 45px;
+    margin-top: 34px;
 }
 .askingbox {
     width: 292px;
@@ -1170,6 +1171,7 @@ textarea[disabled] { color: #999 !important; }
 .documentbox {
     width: 292px;
     padding-left: 10px;
+    padding-bottom: 10px;
 }
 .socialsidebox {
     width: 292px;

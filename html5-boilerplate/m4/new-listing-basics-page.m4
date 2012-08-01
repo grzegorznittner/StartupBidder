@@ -241,7 +241,7 @@ include(images-panel-editable.m4)
         <div class="sidebox investbutton" id="presentationbutton">PRESENTATION</div>
     </a>
 
-    <a href="/new-listing-financials-page.html#documents">
+    <a href="/new-listing-documents-page.html">
         <div class="sidebox investbutton" id="documentbutton">ADD DOCUMENT</div>
     </a>
 

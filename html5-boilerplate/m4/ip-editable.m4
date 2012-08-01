@@ -18,6 +18,7 @@ strategy, and how you are going to change the world.
             Use lines starting with "*" for bullet points and a blank line for extra space.
             </p>
         </div>
+        <span class="span-3 smallinputbutton darkblue bmctitlebtn hoverlink" id="ip-activate-deactivate-btn"></span>
         <span class="span-3 smallinputbutton darkblue bmctitlebtn hoverlink" id="ip-preview-btn">PREVIEW</span>
         <span class="bmctitleboxbtn"><div id="ipfieldicon"></div></span>
         <span class="bmctitlemsg" id="ip-editable-msg">Click a slide to edit the text</span>

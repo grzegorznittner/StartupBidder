@@ -34,7 +34,7 @@ include(header.m4)
 <!-- left column -->
 <div class="span-16">
 
-    <div class="boxtitle">
+    <div class="boxtitle basicstitle">
         <span class="titletext">VIDEO</span>
         <div class="titleinfobtn"></div>
         <div class="titleinfo">

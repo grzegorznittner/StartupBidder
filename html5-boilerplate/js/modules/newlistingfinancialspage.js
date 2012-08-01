@@ -27,149 +27,6 @@ pl.implement(NewListingFinancialsClass, {
             this.bound = true;
         }
     },
-    displayUpload: function(id) {
-        var self = this,
-            fieldname = id + '_id',
-            val = this.base.listing[fieldname],
-            imgclass = id + 'img',
-            imgsel = '#' + imgclass,
-            formsel = '#' + id + 'uploadform',
-            linksel = '#' + id + 'link',
-            downloadsel = '#' + id + 'downloadbg, #' + id + 'downloadtext',
-            deletesel = '#' + id + 'deletelink span',
-            uploadurl = this.base.listing.upload_url,
-            linkurl = val ? '/file/download/' + val : '';
-        if (val) {
-            pl(downloadsel).show();
-            pl(deletesel).show();
-            pl(imgsel).attr({'class': 'tileimg ' + imgclass});
-            pl(linksel).unbind().attr({href: linkurl});
-            self.bindDelete(id, val);
-        }
-        else {
-            pl(downloadsel).hide();
-            pl(deletesel).hide();
-            pl(imgsel).attr({'class': 'tileimg noimage'});
-            pl(linksel).unbind().attr({href: ''}).bind({
-                click: function() {
-                    return false;
-                }
-            });
-        }
-        if (uploadurl) {
-            pl(formsel).attr({action: uploadurl});
-        }
-    },
-    bindDelete: function(id, val) {
-        var self = this,
-            deletesel = '#' + id + 'deletelink';
-        pl(deletesel).unbind('click').bind({
-            click: function() {
-                var completeFunc = function() {
-                    var fieldname = id + '_id',
-                        imgclass = id + 'img',
-                        imgsel = '#' + imgclass,
-                        linksel = '#' + id + 'link',
-                        deletesel = '#' + id + 'deletelink span',
-                        downloadsel = '#' + id + 'downloadbg, #' + id + 'downloadtext';
-                    self.base.listing[fieldname] = null;
-                    pl(downloadsel).hide();
-                    pl(deletesel).hide();
-                    pl(imgsel).attr({'class': 'tileimg noimage'});
-                    pl(linksel).unbind().attr({href: ''}).bind({
-                        click: function() {
-                            return false;
-                        }
-                    });
-                    pl('#' + id + 'uploadfile').removeAttr('value');
-                    pl('#' + id + 'msg').removeClass('errorcolor').removeClass('inprogress').addClass('successful').text('Document deleted');
-                };
-                ajax = new AjaxClass('/listings/delete_file/?type='+id.toUpperCase(), id+'msg', completeFunc);
-                ajax.setPost();
-                ajax.call();
-                return false;
-            }
-        });
-    },
-    bindUploadField: function(id) {
-        var self = this;
-            iframesel = '#' + id + 'uploadiframe',
-            browsesel = '#' + id + 'uploadfile',
-            displayname = id.toUpperCase().replace('_',' ') + ' URL',
-            urlid = id + '_url',
-            msgid = id + 'msg',
-            genPostUpload = function(id) {
-                var fieldname = id + '_id',
-                    fieldurl = id + '_url',
-                    uploadId = id;
-                return function(json) {
-                    var uploadurl = json && json.listing && json.listing.upload_url || null,
-                        val = json && json.listing && json.listing[fieldname] ? json.listing[fieldname] : null;
-                    if (uploadurl) {
-                        self.base.listing.upload_url = uploadurl;
-                        self.setUploadUrls();
-                    }
-                    if (val) {
-                        self.base.listing[fieldname] = val;
-                        self.displayUpload(uploadId);
-                        self.base.displayCalculated();
-                        pl('#' + fieldurl).attr({value: ''});
-                        pl('#' + id + 'msg').removeClass('errorcolor').removeClass('inprogress').addClass('successful').text('Document uploaded');
-                    }
-                };
-            },
-            updater = self.base.getUpdater(urlid, null, genPostUpload(id)),
-            field = new TextFieldClass(urlid, null, updater, msgid),
-            genIframeLoad = function(id) {
-                var iframesel = '#' + id + 'uploadiframe',
-                    formsel = '#' + id + 'uploadform',
-                    fieldname = id + '_id';
-                return function() {
-                    var iframe = pl(iframesel).get(0),
-                        iframehtml = iframe && iframe.contentDocument && iframe.contentDocument.body ? iframe.contentDocument.body.innerHTML : '',
-                        uploadurlmatch = iframehtml.match(/upload_url&gt;(.*)&lt;\/upload_url/),
-                        uploadurl = uploadurlmatch && uploadurlmatch.length === 2 ? uploadurlmatch[1] : null,
-                        valmatch = iframehtml.match(/value&gt;(.*)&lt;\/value/),
-                        val = valmatch && valmatch.length === 2 ? valmatch[1] : null,
-                        iframeloc = iframe.contentWindow.location,
-                        errorMsg = iframeloc && iframeloc.search && iframeloc.search ? decodeURIComponent(iframeloc.search.replace(/^[?]errorMsg=/, '')) : null;
-                    if (uploadurl && uploadurl !== 'null') {
-                        self.base.listing.upload_url = uploadurl;
-                        self.setUploadUrls();
-                    }
-                    if (uploadurl && val && !errorMsg) {
-                        self.base.listing[fieldname] = val;
-                        pl('#'+id+'msg').removeClass('errorcolor').removeClass('inprogress').addClass('successful').text('Document uploaded');
-                        pl('#'+id+'_url, #'+id+'uploadfile').attr({value: ''});
-                        self.displayUpload(id);
-                        self.base.displayCalculated();
-                    }
-                    else {
-                        self.base.listing[fieldname] = null;
-                        pl('#'+id+'msg').addClass('errorcolor').text(errorMsg || 'Unable to upload document');
-                    }
-                };
-            },
-            genBrowseChange = function(id) {
-                var formsel = '#' + id + 'uploadform';
-                return function() {
-                    pl('#' + id + 'msg').removeClass('inprogress').addClass('inprogress').text('Uploading...');
-                    pl(formsel).get(0).submit();
-                    return false;
-                };
-            };
-        pl(iframesel).bind({
-            load: genIframeLoad(id)
-        });
-        pl(browsesel).bind({
-            change: genBrowseChange(id)
-        });
-        field.fieldBase.setDisplayName(displayname);
-        field.fieldBase.addValidator(ValidatorClass.prototype.isURLEmptyOk);
-        field.fieldBase.isEmptyNoUpdate = true;
-        field.bindEvents();
-        self.displayUpload(id);
-    },
     bindEvents: function() {
         var self = this,
             textFields = ['asked_fund', 'suggested_amt', 'suggested_pct', 'founders'],
@@ -201,7 +58,6 @@ pl.implement(NewListingFinancialsClass, {
                 suggested_amt: CurrencyClass.prototype.clean,
                 suggested_pct: PercentClass.prototype.clean
             },
-            uploadFields = ['presentation', 'business_plan', 'financials'],
             id,
             cleaner,
             offerboxdisplay = function() {
@@ -240,10 +96,6 @@ pl.implement(NewListingFinancialsClass, {
             this.base.fields.push(field);
             this.base.fieldMap[id] = field;
         } 
-        for (i = 0; i < uploadFields.length; i++) {
-            id = uploadFields[i];
-            this.bindUploadField(id);
-        }
         this.base.fieldMap['suggested_amt'].validate();
         this.base.fieldMap['suggested_pct'].validate();
         this.displayCalculatedIfValid();
@@ -328,9 +180,6 @@ pl.implement(NewListingFinancialsClass, {
             cur = CurrencyClass.prototype.format(CurrencyClass.prototype.clean(val)),
             dis = fnd && cur ? cur : '';
         pl('#suggested_val').text(dis);
-    },
-    setUploadUrls: function() {
-        pl('#presentationuploadform, #business_planuploadform, #financialsuploadform').attr({action: this.base.listing.upload_url});
     }
 });
 

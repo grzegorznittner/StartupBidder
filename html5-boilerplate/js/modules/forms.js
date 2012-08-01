@@ -56,7 +56,6 @@ pl.implement(VideoCheckClass, {
             }
             if (videoid) {
                 url = serviceopts.prefix + videoid + serviceopts.postfix;
-                console.log(videoid, url);
                 break;
             }
         }
