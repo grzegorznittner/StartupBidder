@@ -690,7 +690,6 @@ include(api-banner.m4)
             <iframe name="listing-picture"></iframe>
         </div>
 
-
         <dt>POST /listing/create</dt>
         <dd>
             <p>
@@ -721,6 +720,7 @@ include(api-banner.m4)
             </form>
             <iframe name="listing-create"></iframe>
         </div>
+
 
         <dt>POST /listing/update_field</dt>
         <dd>
@@ -959,6 +959,116 @@ include(api-banner.m4)
             <iframe name="listing-swap-pictures"></iframe>
         </div>
 
+    </div>
+
+
+    <div class="boxtitle">IMPORT API</div>
+    <div class="boxpanel apipanel">
+    <p>Import a listing from a supported site.  Supported sites for importing applications are the App Store, Google Play, and Windows Marketplace.
+      Supported sites for importing companies are CrunchBase, Angelco and Startuply.</p>
+
+        <dt>GET /listing/query_import</dt>
+        <dd>
+            <p>
+            Return matching applications or companies for the query which can then be imported using the <var>/listing/import</var> method.
+            Designed for the user to be presented with a selection of supported sites and a freeform text string for searching,
+            whereby <var>/listing/query_import</var> is called.  Then the returned results are displayed to the user in a list, from which
+            they can select the desired application or company to import.  This is accomplished by finding the id selected by the user
+            and then passing it to the <var>/listing/import</var> method which will create the new listing from the imported data.
+            </p>
+        </dd>
+        <div class="apidetail">
+            <h4>Parameters</h4>
+            <ul>
+                <li><code>type</code> the supported import site, one of: AppStore, GooglePlay, WindowsMarketplace, CrunchBase, Angelco or Startuply.
+                <li><code>query</code> freeform text field to search the supported site for a matching company or application</li>
+            </ul>
+            <h4>Response</h4>
+                <p>NOTE: <var>query_results</var> will be empty if no matching companies or applications are found</p>
+            <ul>
+                <li><code>login_url</code> URL to use for site login action</li>
+                <li><code>logout_url</code> URL to use for site logout action</li>
+                <li><code>loggedin_profile</code> private user profile object, see User API for profile object details</li>
+                <li><code>error_code</code> error status for this call, 0 on success</li>
+                <li><code>error_msg</code> error message for this call, null on success</li>
+                <li><code>query_results</code> map of results for this listing, may be empty:
+                <li><code class="apiprop"><i>key</i></code> alphanumeric import id, to be used in <var>/listing/import</var> method</li>
+                <li><code class="apiprop"><i>value</i></code> freeform text describing the matching importable companies or applications, should be displayed to user for selection</li>
+            </ul>
+            <h4>Test</h4>
+            <form method="GET" action="/listing/query_import" target="listing-query_import">
+                <div class="formitem">
+                    <label class="inputlabel" for="title">TYPE</label>
+                    <span class="inputfield">
+                        <input class="text inputwidetext importtype" type="text" name="type" value="AppStore"></input>
+                    </span>
+                </div>
+                <div class="formitem clear">
+                    <label class="inputlabel" for="title">QUERY</label>
+                    <span class="inputfield">
+                        <input class="text inputwidetext importquery" type="text" name="query" value="Mircea Pop"></input>
+                    </span>
+                </div>
+                <div class="formitem clear">
+                    <span class="inputlabel"></span>
+                    <span class="inputfield">
+                        <input type="submit" class="inputbutton" value="SUBMIT"></input>
+                    </span>
+                </div>
+            </form>
+            <iframe name="listing-query_import"></iframe>
+        </div>
+
+        <dt>POST /listing/import</dt>
+        <dd>
+            <p>
+            Creates a new listing for the currently logged in user via an import from a supported site.
+            Currently supported sites are the AppStore, GooglePlay, WindowsMarketplace, CrunchBase, Angelco, and Startuply.
+            Designed to be used by first calling method <var>/listing/query_import</var> to get the list of matching importable
+            applications or companies, then letting the user select an item to import.  Then this selected id should be passed in
+            to the <var>/listing/import</var> method.  If the user already has a new listing which has not yet been approved,
+            the existing listing is overwritten by the new import.
+            </p>
+        </dd>
+        <div class="apidetail">
+            <h4>Parameters</h4>
+            <ul>
+                <li><code>type</code> the import site used in the <var>/listing/query_import</var> method, one of: AppStore, GooglePlay, WindowsMarketplace, CrunchBase, AngelCo, or Startuply</li>
+                <li><code>id</code> alphanumeric import id as returned by method <var>/listing/query_import</var> and selected by the user</li>
+            </ul>
+            <h4>Response</h4>
+            <ul>
+                <li><code>login_url</code> URL to use for site login action</li>
+                <li><code>logout_url</code> URL to use for site logout action</li>
+                <li><code>loggedin_profile</code> private user profile object, see User API for profile object details</li>
+                <li><code>error_code</code> error status for this call, 0 on success</li>
+                <li><code>error_msg</code> error message for this call, null on success</li>
+                <li><code>listing</code> the standard listing object as returned by the <var>/listing/get</var> method</li>
+                <li><code>categories</code> list of all available industry categories the listing <var>category</var> can be set to</li>
+            </ul>
+            <h4>Test</h4>
+            <form method="POST" action="/listing/import" target="listing-import">
+                <div class="formitem">
+                    <label class="inputlabel" for="title">TYPE</label>
+                    <span class="inputfield">
+                        <input class="text inputwidetext importtype" type="text" name="type" value="AppStore"></input>
+                    </span>
+                </div>
+                <div class="formitem clear">
+                    <label class="inputlabel" for="title">ID</label>
+                    <span class="inputfield">
+                        <input class="text inputwidetext importid" type="text" name="id" value="477847514"></input>
+                    </span>
+                </div>
+                <div class="formitem clear">
+                    <span class="inputlabel"></span>
+                    <span class="inputfield">
+                        <input type="submit" class="inputbutton" value="SUBMIT"></input>
+                    </span>
+                </div>
+            </form>
+            <iframe name="listing-import"></iframe>
+        </div>
     </div>
 
     <div class="boxtitle">LOCATIONS API</div>
