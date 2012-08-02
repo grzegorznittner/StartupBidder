@@ -262,6 +262,10 @@ public class ListingFacade {
 				if (loggedInUser != null && loggedInUser.isAdmin()) {
 					listing.setNotes(listingDTO.notes);
 				}
+		    	if (loggedInUser != null && StringUtils.equals(loggedInUser.getId(), listingDTO.owner.getString())) {
+		    		String[] url = ServiceFacade.instance().createUploadUrls(loggedInUser, "/file/upload/" + listing.getId() + "/", 1);
+		    		listing.setUploadUrl(url[0]);
+		    	}
 				Monitor monitor = loggedInUser != null ? getDAO().getListingMonitor(loggedInUser.toKeyId(), listing.toKeyId()) : null;
 				applyListingData(loggedInUser, listing, monitor);
 				listingAndUser.setListing(listing);
@@ -1754,7 +1758,7 @@ public class ListingFacade {
 		}
 	}
 
-	public ListingDocumentVO createListingDocument(UserVO loggedInUser, ListingDocumentVO doc) {
+	public ListingDocumentVO createListingDocument(UserVO loggedInUser, String listingId, ListingDocumentVO doc) {
 		BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
 		if (SystemProperty.environment.value() == SystemProperty.Environment.Value.Production && loggedInUser == null) {
 			blobstoreService.delete(doc.getBlob());
@@ -1762,14 +1766,32 @@ public class ListingFacade {
 			doc.setErrorMessage("Only logged in users can upload documents");
 			return doc;
 		}
-		if (loggedInUser != null && loggedInUser.getEditedListing() == null) {
+		if (loggedInUser == null) {
+			blobstoreService.delete(doc.getBlob());
+			doc.setErrorCode(ErrorCodes.NOT_LOGGED_IN);
+			doc.setErrorMessage("User is not logged in");
+			return doc;
+		}
+		long editedListingId = -1;
+		if (listingId != null) {
+			// if listingId was provided that means that user is admin or owner and
+			// he tries to upload doc for non NEW listing
+			editedListingId = BaseVO.toKeyId(listingId);
+		} else if (loggedInUser.getEditedListing() != null) {
+			editedListingId = BaseVO.toKeyId(loggedInUser.getEditedListing());
+		} else {
 			blobstoreService.delete(doc.getBlob());
 			doc.setErrorCode(ErrorCodes.OPERATION_NOT_ALLOWED);
 			doc.setErrorMessage("User is not editing listing");
 			return doc;
 		}
-		long editedListingId = BaseVO.toKeyId(loggedInUser.getEditedListing());
 		Listing listing = getDAO().getListing(editedListingId);
+		if (!(loggedInUser.isAdmin() || StringUtils.equals(loggedInUser.getId(), listing.owner.getString()))) {
+			blobstoreService.delete(doc.getBlob());
+			doc.setErrorCode(ErrorCodes.OPERATION_NOT_ALLOWED);
+			doc.setErrorMessage("User is not an owner of the listing");
+			return doc;
+		}
 		ListingDoc.Type docType = ListingDoc.Type.valueOf(doc.getType());
 		if (docType == ListingDoc.Type.LOGO) {
 			BlobInfo logoInfo = new BlobInfoFactory().loadBlobInfo(doc.getBlob());

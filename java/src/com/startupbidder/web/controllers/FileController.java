@@ -115,6 +115,7 @@ public class FileController extends ModelDrivenController {
 	
 	private HttpHeaders upload(HttpServletRequest request) {
 		HttpHeadersImpl headers = new HttpHeadersImpl("upload");
+		String listingId = getCommandOrParameter(request, 2, "id");
 		
 		BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
 		Map<String, BlobKey> blobs = blobstoreService.getUploadedBlobs(request);
@@ -149,7 +150,7 @@ public class FileController extends ModelDrivenController {
 
 		if (doc != null) {
 			log.log(Level.INFO, "Storing document: " + doc);
-			doc = ListingFacade.instance().createListingDocument(getLoggedInUser(), doc);
+			doc = ListingFacade.instance().createListingDocument(getLoggedInUser(), listingId, doc);
 			if (doc != null) {
                 String errorMsg = doc.getErrorCode() != ErrorCodes.OK ? "?errorMsg=" + doc.getErrorMessage() : "";
 				headers.setRedirectUrl("/listing/edited/" + doc.getType() + "/" + errorMsg);
