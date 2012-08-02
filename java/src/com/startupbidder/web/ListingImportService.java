@@ -43,6 +43,7 @@ import com.startupbidder.datamodel.ListingDoc;
 import com.startupbidder.datamodel.PictureImport;
 import com.startupbidder.datamodel.VoToModelConverter;
 import com.startupbidder.vo.ErrorCodes;
+import com.startupbidder.vo.ImportQueryResultsVO;
 import com.startupbidder.vo.ListingDocumentVO;
 import com.startupbidder.vo.ListingPropertyVO;
 import com.startupbidder.vo.UserVO;
@@ -166,14 +167,17 @@ public class ListingImportService {
 	/**
 	 * Returns map of pairs <id, description> which defines list of available import items for given query.
 	 */
-	public Map<String, String> getImportSuggestions(UserVO loggedInUser, String type, String query) {
+	public ImportQueryResultsVO getImportSuggestions(UserVO loggedInUser, String type, String query) {
+		ImportQueryResultsVO results = new ImportQueryResultsVO();
 		ImportSource importClass = importMap.get(type);
 		if (importClass != null) {
-			return importClass.getImportSuggestions(loggedInUser, query);
+			results.setQueryResults(importClass.getImportSuggestions(loggedInUser, query));
 		} else {
 			log.warning("Import type '" + type + "' not available!");
-			return null;
+			results.setErrorCode(ErrorCodes.APPLICATION_ERROR);
+			results.setErrorMessage("Import type '" + type + "' not available!");
 		}
+		return results;
 	}
 	
 	/**
