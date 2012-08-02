@@ -524,7 +524,7 @@ include(api-banner.m4)
                 <li><code>loggedin_profile</code> private user profile object, see User API for profile object details</li>
                 <li><code>error_code</code> error status for this call, 0 on success</li>
                 <li><code>error_msg</code> error message for this call, null on success</li>
-                <li><code>listing</code> data object for this listing, properties detailed below:
+                <li><code>listing</code> data object for this listing, properties detailed below:</li>
                 <li><code class="apiprop">.listing_id</code> alphanumeric listing id</li>
                 <li><code class="apiprop">.title</code> name of the company, partnership, or other business entity</li>
                 <li><code class="apiprop">.asked_fund</code> <var>true</var> if the listing is asking for funding, <var>false</var> otherwise</li>
@@ -991,9 +991,9 @@ include(api-banner.m4)
                 <li><code>loggedin_profile</code> private user profile object, see User API for profile object details</li>
                 <li><code>error_code</code> error status for this call, 0 on success</li>
                 <li><code>error_msg</code> error message for this call, null on success</li>
-                <li><code>query_results</code> map of results for this listing, may be empty:
+                <li><code>query_results</code> map of results for this listing, may be empty:</li>
                 <li><code class="apiprop"><i>key</i></code> alphanumeric import id, to be used in <var>/listing/import</var> method</li>
-                <li><code class="apiprop"><i>value</i></code> freeform text describing the matching importable companies or applications, should be displayed to user for selection</li>
+                <li><code class="apiprop"><i>value</i></code> text describing the matching importable companies or applications, should be displayed to user for selection</li>
             </ul>
             <h4>Test</h4>
             <form method="GET" action="/listing/query_import" target="listing-query_import">

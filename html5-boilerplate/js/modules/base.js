@@ -393,11 +393,12 @@ pl.implement(HeaderClass, {
         var username = 'You',
             num_notifications = profile.num_notifications || 0,
             num_messages = profile.num_messages || 0,
-            notificationlinktext = num_notifications ? num_notifications + ' unread notifications' : 'no unread notifications',
-            newlistingurl = (!profile.edited_listing || profile.edited_status === 'new') ? '/new-listing-basics-page.html' : 'company-page.html?id=' + profile.edited_listing,
-            posttext = profile && profile.edited_listing ? 'Pending' : 'Add Listing';
+            notificationlinktext = num_notifications ? num_notifications + ' unread notifications' : 'no unread notifications';
+            //newlistingurl = (!profile.edited_listing || profile.edited_status === 'new') ? '/new-listing-basics-page.html' : 'company-page.html?id=' + profile.edited_listing,
+            //posttext = profile && profile.edited_listing ? 'Pending' : 'Add Listing';
         // pl('#topheaderline').html('You have <a href="/notifications-page.html" class="topheaderlink hoverlink">' + notificationlinktext + '</a>');
-        pl('#posttext').text(posttext);
+        //pl('#posttext').text(posttext);
+        //pl('#postlink').attr('href', newlistingurl);
         if (num_messages) {
             pl('#headernummessages').text(num_messages).addClass('headernumdisplay');
         }
@@ -410,7 +411,6 @@ pl.implement(HeaderClass, {
         else {
             pl('#headernumnotifications').text('').removeClass('headernumdisplay');
         }
-        pl('#postlink').attr('href', newlistingurl);
         if (profile.admin) {
             pl('#adminsetup,#adminhello').css({visibility:'visible'});
         }
@@ -421,25 +421,23 @@ pl.implement(HeaderClass, {
         pl('#headerloggedin').show();
     },
     setLoggedOut: function(login_url, twitter_login_url, fb_login_url) {
-        var post_login_url = login_url + encodeURIComponent('/new-listing-basics-page.html');
+        //var post_login_url = login_url + encodeURIComponent('/new-listing-basics-page.html');
         // pl('#topheaderline').html('Want to raise money for startups or invest in one? <a href="/about-page.html" class="topheaderlink hoverlink">We&rsquo;ll tell you how!</a>');
         if (login_url) {
-            pl('#postlink').attr({href: post_login_url});
+            //pl('#postlink').attr({href: post_login_url});
             pl('#loginlink').attr({href: login_url});
             if (twitter_login_url) {
-                pl('#twitter_loginlink').attr({href: twitter_login_url});
-                pl('#twitter_loginlink').show();
+                pl('#twitter_loginlink').attr({href: twitter_login_url}).show();
             } else {
                 pl('#twitter_loginlink').hide();
             }
             if (fb_login_url) {
-                pl('#fb_loginlink').attr({href: fb_login_url});
-                pl('#fb_loginlink').show();
+                pl('#fb_loginlink').attr({href: fb_login_url}).show();
             } else {
                 pl('#fb_loginlink').hide();
             }
         }
-        pl('#posttext').text('Add Listing');
+        //pl('#posttext').text('Add Listing');
         pl('#headernotloggedin').show();
     }
 });

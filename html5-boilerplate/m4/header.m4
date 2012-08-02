@@ -15,7 +15,7 @@
     <div class="span-7 headerrow headerrowcenter last">
       <a href="discover-page.html"><span class="headerlink hoverlink headerlinknoborder">Discover</span></a>
       <a href="nearby-page.html"><span class="headerlink"><span class="hoverlink">Nearby</span></span></a>
-      <a id="postlink" href="#"><span class="headerlink"><span class="hoverlink" id="posttext"></span></span></a>
+      <a href="add-listing-page.html"><span class="headerlink"><span class="hoverlink">Add Listing</span></span></a>
     </div>
 
     <div class="span-8 headerrow">
