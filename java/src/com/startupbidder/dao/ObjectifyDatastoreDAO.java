@@ -545,6 +545,7 @@ public class ObjectifyDatastoreDAO {
 			// storing location data
 			ListingLocation loc = new ListingLocation(listing);
 			getOfy().put(loc);
+			@SuppressWarnings("unchecked")
 			List<Object[]> result = (List<Object[]>)mem.get(ListingFacade.MEMCACHE_ALL_LISTING_LOCATIONS);
 			if (result != null) {
 				result.add(new Object[]{loc.getWebKey(), loc.latitude, loc.longitude});
@@ -559,13 +560,16 @@ public class ObjectifyDatastoreDAO {
 		}
 		if (listing.state == Listing.State.CLOSED || listing.state == Listing.State.WITHDRAWN) {
 			getOfy().delete(new ListingLocation(listing));
+			@SuppressWarnings("unchecked")
 			List<Object[]> result = (List<Object[]>)mem.get(ListingFacade.MEMCACHE_ALL_LISTING_LOCATIONS);
-			Object[] array = null;
-			for (int i = 0; i < result.size(); i++) {
-				array = result.get(i);
-				if (listing.getWebKey().equals(array[0])) {
-					result.remove(i);
-					break;
+			if (result != null) {
+				Object[] array = null;
+				for (int i = 0; i < result.size(); i++) {
+					array = result.get(i);
+					if (listing.getWebKey().equals(array[0])) {
+						result.remove(i);
+						break;
+					}
 				}
 			}
 			// updating category
