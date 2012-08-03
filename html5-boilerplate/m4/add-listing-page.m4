@@ -4,7 +4,7 @@
 '
 include(head.m4)
 `
-<body class="new-listing-basics-page">
+<body class="add-listing-page">
 <div id="wrap">
 <div id="newlistingmain">
 '
@@ -26,41 +26,8 @@ include(header.m4)
 
 <div class="span-24">
 
-<style>
-.addlistingtitle { 
-    font-family: "Adelle","Helvetica Neue",Helvetica,Arial,sans-serif;
-    text-align: center;
-    color: #666;
-    font-size: 30px;
-    margin-top: 20px;
-}
-.addlistingbutton {
-    text-align: center;
-    width: 300px;
-    margin: 20px auto;
-}
-.addlistingmsg {
-    text-align: center;
-    font-size: 30px;
-    margin-top: 10px;
-}
-.addlistinglogin {
-    float: left;
-}
-.addlistingbottom {
-    margin-bottom: 35px;
-}
-.addlistingbuttonrow { }
-.addlistingbuttoncol { }
-.addlistingloginrow {
-    width: 120px;
-    margin: 25px auto;
-    padding-bottom: 40px;
-}
-</style>
-
     <div class="initialhidden" id="notloggedin">
-        <div class="addlistingtitle">Log in to add a listing to startupbidder.</div>
+        <div class="addlistingtitle">Sign in to add a listing to startupbidder</div>
 
         <div class="addlistingloginrow">
             <a id="google_login" href="">
@@ -73,8 +40,6 @@ include(header.m4)
                 <div class="addlistinglogin headericon headerfbsignin"></div>
             </a>
         </div>
-
-        <div class="clear addlistingtitle addlistingbottom">You will be redirected afterwards to the add listing page.</div>
     </div>
 
     <div class="initialhidden" id="existinglisting">
@@ -99,13 +64,13 @@ include(header.m4)
         <div class="addlistingtitle">Import your application from</div>
     
         <div class="addlistingbuttonrow">
-            <a href="/import-query.html?type=AppStore">
+            <a href="/import-listing-page.html?type=AppStore">
                 <div class="addlistingbutton addlistingbuttoncol investbutton">App Store</div>
             </a>
-            <a href="/import-query.html?type=GooglePlay">
+            <a href="/import-listing-page.html?type=GooglePlay">
                 <div class="addlistingbutton addlistingbuttoncol investbutton">Google Play</div>
             </a>
-            <a href="/import-query.html?type=WindowsMarketplace">
+            <a href="/import-listing-page.html?type=WindowsMarketplace">
                 <div class="addlistingbutton addlistingbuttoncol investbutton">Windows Marketplace</div>
             </a>
         </div>
@@ -115,13 +80,13 @@ include(header.m4)
         <div class="addlistingtitle">Import your company from</div>
     
         <div class="addlistingbuttonrow">
-            <a href="/import-query.html?type=CrunchBase">
+            <a href="/import-listing-page.html?type=CrunchBase">
                 <div class="addlistingbutton addlistingbuttoncol investbutton">CrunchBase</div>
             </a>
-            <a href="/import-query.html?type=Angelco">
+            <a href="/import-listing-page.html?type=Angelco">
                 <div class="addlistingbutton addlistingbuttoncol investbutton">Angel.co</div>
             </a>
-            <a href="/import-query.html?type=Startuply">
+            <a href="/import-listing-page.html?type=Startuply">
                 <div class="addlistingbutton addlistingbuttoncol investbutton">Startuply</div>
             </a>
         </div>

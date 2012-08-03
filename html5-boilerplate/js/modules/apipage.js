@@ -14,6 +14,7 @@ pl.implement(APIPageClass, {
                             pl('.fileid').attr({value: fileid});
                         }
                     },
+/*
                     createfunc = function(json) {
                         var listing = json.listing,
                             uploadurl = listing && (listing.business_plan_upload || listing.presentation_upload || listing.financials_upload);
@@ -21,6 +22,7 @@ pl.implement(APIPageClass, {
                             pl('.uploadurl').attr({action: uploadurl});
                         }
                     },
+*/
                     commentsfunc = function(json) {
                         var comment = json.comments && json.comments[0],
                             commentid = comment && comment.comment_id;
@@ -37,7 +39,7 @@ pl.implement(APIPageClass, {
                         }
                     },
                     listingajax = listingid && new AjaxClass('/listing/get/' + listingid, 'loadmsg', listingfunc),
-                    createajax = listingid && new AjaxClass('/listing/create', 'loadmsg', createfunc),
+//                    createajax = listingid && profileid && new AjaxClass('/listing/create', 'loadmsg', createfunc),
                     commentsajax = listingid && new AjaxClass('/listing/comments/' + listingid, 'loadmsg', commentsfunc),
                     questionsajax = listingid && new AjaxClass('/listing/questions_answers/' + listingid, 'loadmsg', questionsfunc);
                 header.setLogin(json);
@@ -80,8 +82,8 @@ pl.implement(APIPageClass, {
                 listingajax.call();
                 commentsajax.call();
                 questionsajax.call();
-                createajax.setPostData();
-                createajax.call();
+                //createajax.setPostData();
+                //createajax.call();
             },
             ajax = new AjaxClass('/listing/top/', 'loadmsg', completeFunc);
         ajax.ajaxOpts.data = { max_results: 1 };

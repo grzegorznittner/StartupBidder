@@ -8,14 +8,14 @@
 <div class="header" id="header">
   <div class="container headerrow" style="width: 960px;">
     <div class="span-4 headerrow hoverlink">
-        <a href="discover-page.html">
+        <a href="home-page.html">
             <div style="font-size:24px; padding-top: 7px;"><span style="color:#45a9e6;">startup</span><span style="color:#eee">bidder</span></div>
         </a>
     </div>
     <div class="span-7 headerrow headerrowcenter last">
-      <a href="discover-page.html"><span class="headerlink hoverlink headerlinknoborder">Discover</span></a>
+      <a href="discover-page.html"><span class="headerlink hoverlink headerlinknoborder">Find</span></a>
       <a href="nearby-page.html"><span class="headerlink"><span class="hoverlink">Nearby</span></span></a>
-      <a href="add-listing-page.html"><span class="headerlink"><span class="hoverlink">Add Listing</span></span></a>
+      <a href="add-listing-page.html"><span class="headerlink"><span class="hoverlink">Add</span></span></a>
     </div>
 
     <div class="span-8 headerrow">

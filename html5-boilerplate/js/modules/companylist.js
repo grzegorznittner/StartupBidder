@@ -382,13 +382,13 @@ pl.implement(BaseCompanyListPageClass,{
         }
         else if (this.type === 'category') {
             //pl('#banner').addClass('categorybanner');
-            pl('#welcometitle').html('Industry');
-            pl('#welcometext').html('Latest listings in the ' + this.val + ' industry');
+            pl('#welcometitle').html(this.val);
+            pl('#welcometext').html('The latest listings in this industry');
         }
         else if (this.type === 'location') {
             //pl('#banner').addClass('locationbanner');
-            pl('#welcometitle').html('Location');
-            pl('#welcometext').html('Latest listings from ' + this.val);
+            pl('#welcometitle').html(this.val);
+            pl('#welcometext').html('The latest listings from this location');
         }
         ajax.ajaxOpts.data = this.data;
         ajax.call();

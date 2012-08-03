@@ -1,6 +1,4 @@
-function AddListingClass() {
-    this.loggedin_profile = {};
-}
+function AddListingClass() { }
 
 pl.implement(AddListingClass, {
 
@@ -13,8 +11,8 @@ pl.implement(AddListingClass, {
                 pl('.preloader').hide();
                 pl('.wrapper').show();
             },
-        // ajax = new AjaxClass('/user/loggedin', 'addlistingmsg', completeFunc); // once greg fixes
-        ajax = new AjaxClass('/listing/discover', 'addlistingmsg', completeFunc);
+            // ajax = new AjaxClass('/user/loggedin', 'addlistingmsg', completeFunc); // once greg fixes
+            ajax = new AjaxClass('/listing/discover', 'addlistingmsg', completeFunc);
         ajax.call();
     },
 
