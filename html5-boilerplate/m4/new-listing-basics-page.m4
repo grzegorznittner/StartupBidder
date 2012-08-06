@@ -17,7 +17,7 @@ include(header.m4)
 <div class="container initialhidden wrapper">
 
 <!-- begin banner -->
-    <div class="bannertextsmall">NEW LISTING WIZARD</div>
+    <div class="bannertextsmall" id="newlistingbanner">NEW LISTING WIZARD</div>
 
 <div class="span-16">
     <div class="formitem clear">

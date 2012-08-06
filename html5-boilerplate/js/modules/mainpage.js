@@ -3,7 +3,7 @@ pl.implement(MainPageClass,{
     loadPage: function() {
         var completeFunc = function(json) {
                 var header = new HeaderClass(),
-                    companyList = new CompanyListClass(),
+                    companyList = new CompanyListClass({ fullWidth: true }),
                     categories = json.categories || {},
                     locations = json.top_locations || {},
                     categoryList = new BaseListClass(categories, 'category', 1, 'category'),

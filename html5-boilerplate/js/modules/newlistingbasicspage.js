@@ -1,4 +1,8 @@
 function NewListingBasicsClass() {
+    var qs = new QueryStringClass();
+    this.importtype = qs.vars.importtype;
+    this.importid = qs.vars.importid;
+    console.log('[' + this.importtype + '] [' + this.importid + ']');
     this.base = new NewListingBaseClass();
     this.imagepanel = new ImagePanelClass({ editmode: true });
 }
@@ -7,6 +11,8 @@ pl.implement(NewListingBasicsClass, {
 
     load: function() {
         var self = this,
+            url = this.importtype && this.importid ? '/listing/import' : '/listing/create',
+            data = this.importtype && this.importid ? { type: this.importtype, id: this.importid } : null,
             completeFunc = function(json) {
                 var listing = json && json.listing ? json.listing : {},
                     categories = json && json.categories ? json.categories : {},
@@ -18,7 +24,11 @@ pl.implement(NewListingBasicsClass, {
                 pl('.preloader').hide();
                 pl('.wrapper').show();
             },
-        ajax = new AjaxClass('/listings/create', 'newlistingmsg', completeFunc);
+        ajax = new AjaxClass(url, 'newlistingmsg', completeFunc);
+        if (data) {
+            pl('#newlistingbanner').text('LISTING IMPORTED FROM ' + this.importtype.toUpperCase());
+            ajax.ajaxOpts.data = data;
+        }
         ajax.setPost();
         ajax.call();
     },

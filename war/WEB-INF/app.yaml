@@ -1,5 +1,5 @@
 application: startupbidder
-version: 201208021745
+version: 201208052242
 runtime: java
 
 static_files:
@@ -39,7 +39,7 @@ listeners:
    - com.startupbidder.web.servlets.WarmupListener
 
 welcome_files:
-  - discover-page.html
+  - home-page.html
 
 inbound_services:
   - warmup
