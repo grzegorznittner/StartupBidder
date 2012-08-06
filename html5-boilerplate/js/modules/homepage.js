@@ -73,7 +73,7 @@ pl.implement(HomePageClass, {
     displayExistingListing: function() {
         var self = this;
         pl('#editlisting').bind('click', function() {
-            var url = this.loggedin_profile && this.loggedin_profile.edited_status === 'new'
+            var url = self.loggedin_profile && self.loggedin_profile.edited_status === 'new'
                 ? '/new-listing-basics-page.html'
                 : '/company-page.html?id=' + self.loggedin_profile.edited_listing;
             document.location = url;
