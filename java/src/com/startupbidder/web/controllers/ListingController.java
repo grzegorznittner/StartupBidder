@@ -260,7 +260,7 @@ public class ListingController extends ModelDrivenController {
 		} else {
 			// setting upload urls for documents not yet uploaded
 			ListingVO l = listing.getListing();
-			String[] url = ServiceFacade.instance().createUploadUrls(getLoggedInUser(), "/file/upload", 1);
+			String[] url = ServiceFacade.instance().createUploadUrls(getLoggedInUser(), "/file/upload/" + l.getId() + "/", 1);
 			l.setUploadUrl(url[0]);
             user.setEditedListing(l.getId());
             user.setEditedStatus(l.getState()); // reset in case listing state is not NEW
@@ -343,7 +343,7 @@ public class ListingController extends ModelDrivenController {
 			log.log(Level.INFO, "Updating listing: " + properties + ". Provided id: " + listingId);
 			ListingAndUserVO listing = ListingFacade.instance().updateListingProperties(getLoggedInUser(), listingId, properties);
 			if (listing != null && listing.getListing() != null) {
-				String[] url = ServiceFacade.instance().createUploadUrls(getLoggedInUser(), "/file/upload", 1);
+				String[] url = ServiceFacade.instance().createUploadUrls(getLoggedInUser(), "/file/upload/" + listing.getListing().getId() + "/", 1);
 				listing.getListing().setUploadUrl(url[0]);
 			}
 			model = listing;
@@ -410,7 +410,7 @@ public class ListingController extends ModelDrivenController {
 			log.log(Level.INFO, "Updating listing address: " + properties);
 			ListingAndUserVO listing = ListingFacade.instance().updateListingAddressProperties(getLoggedInUser(), properties);
 			if (listing != null && listing.getListing() != null) {
-				String[] url = ServiceFacade.instance().createUploadUrls(getLoggedInUser(), "/file/upload", 1);
+				String[] url = ServiceFacade.instance().createUploadUrls(getLoggedInUser(), "/file/upload/" + listing.getListing().getId() + "/", 1);
 				listing.getListing().setUploadUrl(url[0]);
 			}
 			model = listing;

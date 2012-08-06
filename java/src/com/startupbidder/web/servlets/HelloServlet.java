@@ -180,7 +180,7 @@ public class HelloServlet extends HttpServlet {
 				out.println("<p>Updatable field names: " + ListingVO.UPDATABLE_PROPERTIES + "</p>");
 				out.println("<p>Fields which can be set by fetching external resource: " + ListingVO.FETCHED_PROPERTIES + "</p>");
 
-				String[] urls = service.createUploadUrls(currentUser, "/file/upload", 9);
+				String[] urls = service.createUploadUrls(currentUser, "/file/upload/" + editedListing.getListing().getId() + "/", 9);
 				out.println("<table width=\"100%\">");
 				out.println("<tr><td><form action=\"" + urls[0] + "\" method=\"post\" enctype=\"multipart/form-data\">"
 						+ "<input type=\"file\" name=\"" + ListingDoc.Type.BUSINESS_PLAN.toString() + "\"/>"
