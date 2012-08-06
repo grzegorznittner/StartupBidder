@@ -8,6 +8,7 @@ pl.implement(QuestionClass, {
             complete = function(json) {
                 var header = new HeaderClass(),
                     companybanner = new CompanyBannerClass('questions');
+                CollectionsClass.prototype.merge(self, json);
                 if (!json.listing) {
                     json.listing = {};
                     json.listing.listing_id = self.listing_id;
@@ -41,19 +42,56 @@ pl.implement(QuestionClass, {
             this.displayAddQuestionBox();
         }
         else if (this.listing.status !== 'active') {
-            pl('#addqandabox').before('<div class="messageline"><p style="font-weight: bold;">Questions can only be asked or answered for active listings</p></div>');
+            pl('#addqandabox').before('<div class="messageline"><p style="font-weight: bold;">Questions cannot be asked or answered for this listing as it is not active</p></div>');
         }
         else if (this.loggedin_profile_id && this.loggedin_profile_id === this.listing_owner_id) {
-            pl('#addqandabox').before('<div class="messageline"><p style="font-weight: bold;">Questions are private until answered, then they are displayed pubilcly</p></div>');
+//            pl('#addqandabox').before('<div class="messageline"><p style="font-weight: bold;">As the owner you may answer the questions above</p></div>');
         }
         else {
-            pl('#addqandabox').before('<div class="messageline"><p style="font-weight: bold;">Login to ask a question</p></div>');
+            pl('#addqandabox').before('\
+    <div class="messageline"><p style="font-weight: bold;">Sign in to ask a question</p></div>\
+    <div class="addlistingloginrow">\
+        <a id="google_login" href="">\
+            <div class="addlistinglogin headericon headersignin"></div>\
+        </a>\
+        <a id="twitter_login" href="">\
+            <div class="addlistinglogin headericon headertwittersignin"></div>\
+        </a>\
+        <a id="fb_login" href="">\
+            <div class="addlistinglogin headericon headerfbsignin"></div>\
+        </a>\
+    </div>\
+            ');
+            this.displayLoggedOut();
         }
         pl('#qandaswrapper').show();
         if (this.more_results_url) {
             this.bindMoreResults();
         }
     },
+
+    displayLoggedOut: function() {
+        var nexturl = '/company-questions-page.html?id=' + this.listing_id;
+            login_url = this.login_url,
+            twitter_login_url = this.twitter_login_url,
+            fb_login_url = this.fb_login_url;
+        if (login_url) {
+            pl('#google_login').attr({href: login_url + encodeURIComponent(nexturl)});
+        } else {
+            pl('#google_login').hide();
+        }
+        if (twitter_login_url) {
+            pl('#twitter_login').attr({href: twitter_login_url + '?url=' + encodeURIComponent(nexturl)}).show();
+        } else {
+            pl('#twitter_login').hide();
+        }
+        if (fb_login_url) {
+            pl('#fb_login').attr({href: fb_login_url + '?url=' + encodeURIComponent(nexturl)}).show();
+        } else {
+            pl('#fb_login').hide();
+        }
+    },
+
     // GREG START
     bindMoreResults: function() {
         var self = this;
@@ -213,14 +251,9 @@ pl.implement(QuestionClass, {
                 click: function(event) {
                     var val = pl(textsel).attr('value'),
                         completeFunc = function(json) {
-                            //var numitems = 1 * pl('#num_qandas').text(),
-                            var answer = SafeStringClass.prototype.htmlEntities(json.answer),
-                                answerdate = DateClass.prototype.format(json.answer_date);
-                            //pl('#num_qandas').addClass('successful').text(numitems + 1);
+                            var answer = SafeStringClass.prototype.htmlEntities(json.answer);
                             pl('#qandatitlemsg').text('question posted');
-                            pl('#qanda_answertext_' + json.question_id).text(answer);
-                            pl('#qanda_answerdate_' + json.question_id).text(answerdate);
-                            pl('#qanda_answerbox_' + json.question_id).show();
+                            pl('#qanda_replyanswer_' + json.question_id).text(answer);
                             pl('#qanda_replybox_' + json.question_id).remove();
                         },
                         data = {
@@ -279,11 +312,10 @@ pl.implement(QuestionClass, {
     },
     makeQuestion: function(question, replyable) {
         var self = this,
+            usertext = '<span class="messageusername">' + question.from_user_nickname + '</span>',
+            datetext = '<span class="messageinlinedate">' + (question.ago_text || DateClass.prototype.agoText(question.create_date)) + '</span>',
             questionreplybtn = replyable ? '<div class="inputbutton darkblue questionreplybtn span-3 hoverlink" id="qanda_replybtn_' + question.question_id + '">ANSWER</div>' : '',
-            questiondate = DateClass.prototype.format(question.create_date),
-            answerdate = DateClass.prototype.format(question.answer_date),
-            questiontext = SafeStringClass.prototype.htmlEntities(question.question),
-            answertext = SafeStringClass.prototype.htmlEntities(question.answer),
+            questiontext = '<span class="messagequestion">' + SafeStringClass.prototype.htmlEntities(question.question) + '</span>',
             questionreplybox = replyable ? '\
                 <div class="questionreplyline droptransition" id="qanda_replybox_' + question.question_id + '">\
                     <p class="messageuser messagereplyuser span-4"></p>\
@@ -293,29 +325,21 @@ pl.implement(QuestionClass, {
                     <p class="messagereplymsg inputmsg successful" id="qanda_replymsg_' + question.question_id + '"></p>\
                 </div>\
             ' : '',
-            questiondateblock = '<div>' + questiondate + '</div>',
-            questionblock = '<p>' + questiontext + '</p>',
-            answerblock = '<div class="questionanswerline' + (question.answer ? '' : ' initialhidden')  + '" id="qanda_answerbox_' + question.question_id + '">'
-                + '<p class="messageuser messagereplyuser span-4">Answered by owner</p>'
-                + '<span class="messagetext span-15" id="qanda_answertext_' + question.question_id + '">' + answertext + '</span>'
-                + '<span class="messagedate" id="qanda_answerdate_' + question.question_id + '">' + answerdate + '</span>'
-                + '</div>',
-            unansweredblock = question.answer ? '' : '<p class="answerdate" id="qanda_replyanswerdate_' + question.question_id + '">Not yet answered by owner</p>'
-                + '<p id="qanda_replyanswer_' + question.question_id + '"></p>',
-            questiondateclass = question.answer ? 'messagedate' : 'messagedate questiondate';
+            replyblock = question.answer
+                ? '<span class="messageanswer">' + SafeStringClass.prototype.htmlEntities(question.answer) + '</span>'
+                : '<span class="messageanswer" id="qanda_replyanswer_' + question.question_id + '">Not yet answered by owner</span>';
         return '\
         <div class="messageline" id="qanda_' + question.question_id + '">\
-            <p class="messageuser span-4">Asked by ' + question.from_user_nickname + '</p>\
-            <span class="messagetext span-15">\
-                ' + questiontext + '\
-                ' + unansweredblock + '\
-            </span>\
-            <span class="' + questiondateclass + '">\
-                ' + questiondateblock + '\
-                ' + questionreplybtn + '\
-            </span>\
+            <p class="messagetext">'
+                + usertext
+                + ' ' + datetext
+                + '<br/>'
+                + questiontext
+                + '<br/>'
+                + replyblock + '\
+            </p>\
+            ' + questionreplybtn + '\
             ' + questionreplybox + '\
-            ' + answerblock + '\
         </div>\
         ';
     },
@@ -323,7 +347,7 @@ pl.implement(QuestionClass, {
         var questionid = this.id.replace('qanda_replybtn_', '');
         pl('#qanda_replybox_' + questionid).addClass('questionreplylineshow');
         pl('#qanda_replybtn_' + questionid).hide();
-        pl('#qanda_replyanswerdate_' + questionid).text('');
+        pl('#qanda_replyanswer_' + questionid).text('');
     },
     bindQuestion: function(question) {
         pl('#qanda_replybtn_' + question.question_id).bind('click', this.showReplyBox);

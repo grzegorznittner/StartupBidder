@@ -21,7 +21,7 @@ pl.implement(ProfileListingPageClass,{
             completeFunc = function(json) {
                 var header = new HeaderClass(),
                     profile = new ProfileClass(),
-                    companyList = new CompanyListClass();
+                    companyList = new CompanyListClass({ fullWidth: true });
                 self.json = json;
                 header.setLogin(json);
                 if (!json.loggedin_profile) { // must be logged in for this page

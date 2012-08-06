@@ -8,6 +8,7 @@ pl.implement(CommentClass, {
             complete = function(json) {
                 var header = new HeaderClass(),
                     companybanner = new CompanyBannerClass('comments');
+                CollectionsClass.prototype.merge(self, json);
                 header.setLogin(json);
                 companybanner.display(json);
                 self.display(json);
@@ -31,13 +32,50 @@ pl.implement(CommentClass, {
             this.displayAddCommentBox();
         }
         else if (this.listing.status !== 'active') {
-            pl('#addcommentbox').before('<div class="messageline"><p style="font-weight: bold;">Comments can only be made on active listings</p></div>');
+            pl('#addcommentbox').before('<div class="messageline"><p style="font-weight: bold;">Comments cannot be adding to this listing as it is not active</p></div>');
         }
         else {
-            pl('#addcommentbox').before('<div class="messageline"><p style="font-weight: bold;">Login to post a comment</p></div>');
+            pl('#addcommentbox').before('\
+    <div class="messageline"><p style="font-weight: bold;">Sign in to post a comment</p></div>\
+    <div class="addlistingloginrow">\
+        <a id="google_login" href="">\
+            <div class="addlistinglogin headericon headersignin"></div>\
+        </a>\
+        <a id="twitter_login" href="">\
+            <div class="addlistinglogin headericon headertwittersignin"></div>\
+        </a>\
+        <a id="fb_login" href="">\
+            <div class="addlistinglogin headericon headerfbsignin"></div>\
+        </a>\
+    </div>\
+            ');
+            this.displayLoggedOut();
         }
         pl('#commentswrapper').show();
     },
+
+    displayLoggedOut: function() {
+        var nexturl = '/company-comments-page.html?id=' + this.listing_id;
+            login_url = this.login_url,
+            twitter_login_url = this.twitter_login_url,
+            fb_login_url = this.fb_login_url;
+        if (login_url) {
+            pl('#google_login').attr({href: login_url + encodeURIComponent(nexturl)});
+        } else {
+            pl('#google_login').hide();
+        }
+        if (twitter_login_url) {
+            pl('#twitter_login').attr({href: twitter_login_url + '?url=' + encodeURIComponent(nexturl)}).show();
+        } else {
+            pl('#twitter_login').hide();
+        }
+        if (fb_login_url) {
+            pl('#fb_login').attr({href: fb_login_url + '?url=' + encodeURIComponent(nexturl)}).show();
+        } else {
+            pl('#fb_login').hide();
+        }
+    },
+
     bindAddCommentBox: function() {
         var self = this;
         if (pl('#addcommentbox').hasClass('bound')) {
@@ -136,32 +174,32 @@ pl.implement(CommentClass, {
         }
     },
     makeComment: function(comment) {
-        var text = SafeStringClass.prototype.htmlEntities(comment.text),
-            datetext = DateClass.prototype.format(comment.comment_date),
+        var isowner = comment.profile_id === this.listing.profile_id,
+            ownermarker = isowner ? '<span class="messageowner">Owner</span> ' : '',
+            usertext = '<span class="messageusername">' + comment.profile_username + '</span>',
+            datetext = '<span class="messageinlinedate">' + (comment.ago_text || DateClass.prototype.agoText(comment.comment_date)) + '</span>',
             deletable = comment.profile_id === this.loggedin_profile_id,
             deletemsgspan = deletable ? ' <span id="comment_delete_msg_' + comment.comment_id + '" class="push-4 span-14 messagetext inputmsg successful"></span>' : '',
-            deleteicon = deletable ? '<div id="comment_delete_' + comment.comment_id + '" class="commentdeleteicon checkboxredicon hoverlink"></div>' : '';
+            deleteicon = deletable ? '<div id="comment_delete_' + comment.comment_id + '" class="commentdeleteicon checkboxredicon hoverlink"></div>' : '',
+            text = SafeStringClass.prototype.htmlEntities(comment.text);
         return '\
         <div class="messageline" id="comment_' + comment.comment_id + '">\
-            <p class="messageuser span-4">' + comment.profile_username + '</p>\
-            <p class="messagetext span-14">\
-                ' + text + '\
+            <p class="messagetext">'
+                  + ownermarker
+                  + usertext
+                  + ' ' + datetext
+                  + deleteicon
+                  + deletemsgspan
+                  + '<br/>'
+                  + text + '\
             </p>\
-            <p class="messagedate">'+  datetext + '</p>\
-                ' + deleteicon + '\
-                ' + deletemsgspan + '\
         </div>\
         ';
     },
     deleteComment: function() {
         var commentid = this.id.replace('comment_delete_', '');
             completefunc = function(json) {
-                // var numcomments = pl('#num_comments').text() - 1;
                 pl('#comment_'+commentid).remove();
-                // pl('#num_comments').text(numcomments);
-                //if (numcomments === 0) {
-                //    pl('#commentmsg').html('<p>Be the first to comment!</p>');
-                //}
             },
             url = '/listing/delete_comment?id=' + commentid,
             deletemsgid = 'comment_delete_msg_' + commentid,

@@ -53,7 +53,8 @@ pl.implement(CompanyBannerClass, {
             locprefix  = type === 'company' ? 'in' : 'from',
             addrlinked = !addr ? '' : ' ' + locprefix + ' <a href="/main-page.html?type=location&val=' + encodeURIComponent(addr) + '">' + addr + '</a>',
             categoryaddresstext = catlinked + addrlinked,
-            founderstext = this.founders ? ' founded by ' + this.founders : '',
+            // founderstext = this.founders ? ' founded by ' + this.founders : '', // too long
+            founderstext = '',
             status = this.status || 'new',
             website = this.website || '/company-page.html?id=' + this.listing_id,
             listingdatetext = 

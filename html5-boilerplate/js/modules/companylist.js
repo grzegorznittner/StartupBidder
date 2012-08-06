@@ -196,10 +196,6 @@ function CompanyListClass(options) {
 pl.implement(CompanyListClass, {
     storeList: function(json) {
         var companiesval = json && json[this.options.propertykey],
-            postnowlink = json && json.loggedin_profile
-                ? (json.loggedin_profile.edited_status === 'posted' ? '/company-page.html?id=' + json.loggedin_profile.edited_listing : '/new-listing-basics-page.html')
-                : json.login_url + encodeURIComponent('/new-listing-basics-page.html'),
-            posttext = json && json.loggedin_profile && json.loggedin_profile.edited_listing ? 'EDIT PENDING' : 'ADD LISTING',
             isadmin = json && json.loggedin_profile && json.loggedin_profile.admin,
             tileoptions = { admin: isadmin },
             more_results_url = json.listings_props && json.listings_props.more_results_url,
@@ -216,9 +212,7 @@ pl.implement(CompanyListClass, {
         else {
             companies = companiesval || [];
         }
-        seeall = this.options.seeall && companies && (companies.length >= this.options.colsPerRow),
-        pl('#postnowbtnlink div').text(posttext);
-        pl('#postnowtextlink,#postnowbtnlink').attr({href: postnowlink});
+        seeall = this.options.seeall && companies && (companies.length >= this.options.colsPerRow);
         if (!companies.length) {
             pl('#'+this.options.companydiv).html('<span class="attention">No companies found</span>');
             return;

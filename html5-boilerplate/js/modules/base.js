@@ -129,6 +129,16 @@ pl.implement(DateClass, {
             dd = yyyymmdd.substr(6,2);
         return new Date(yyyy, mm, dd);
     },
+    dateFromYYYYMMDDHHMMSS: function(yyyymmddhhmmss) {
+        var yyyy = yyyymmddhhmmss.substr(0,4),
+            mo = yyyymmddhhmmss.substr(4,2) - 1,
+            dd = yyyymmddhhmmss.substr(6,2),
+            hh = yyyymmddhhmmss.substr(8,2),
+            mm = yyyymmddhhmmss.substr(10,2),
+            ss = yyyymmddhhmmss.substr(12,2),
+            date = new Date(yyyy, mo, dd, hh, mm, ss);
+        return date;
+    },
     today: function() {
         var today = new Date();
         return DateClass.prototype.formatDate(today);
@@ -136,6 +146,11 @@ pl.implement(DateClass, {
     now: function() {
         var now = new Date();
         return DateClass.prototype.formatDatetime(now);
+    },
+    nowUTC: function() {
+        var now = new Date(),
+            now_utc = new Date(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(),  now.getUTCHours(), now.getUTCMinutes(), now.getUTCSeconds());
+        return now_utc;
     },
     todayPlus: function(days) {
         var today = new Date();
@@ -154,6 +169,23 @@ pl.implement(DateClass, {
         var d1num = DateClass.prototype.formatDate(d1),
             d2num = DateClass.prototype.formatDate(d2);
         return Math.floor(d2num - d1num);
+    },
+    agoText: function(yyyymmsshhmmss) { // assumed UTC passed in
+        var date = DateClass.prototype.dateFromYYYYMMDDHHMMSS(yyyymmsshhmmss),
+            today = DateClass.prototype.nowUTC(),
+            dateTime = date.getTime(),
+            todayTime = today.getTime(),
+            diffTime = todayTime - dateTime,
+            diffDays = Math.floor(diffTime / 86400000),
+            diffHours = Math.floor(diffTime / 3600000),
+            diffMinutes = Math.floor(diffTime / 60000),
+            agoText = diffDays
+                ? diffDays + ' day' + (diffDays > 1 ? 's' : '') + ' ago'
+                : ( diffHours
+                    ? diffHours + ' hour' + (diffHours > 1 ? 's' : '') + ' ago'
+                    : ( diffMinutes
+                        ? diffMinutes + ' minute' + (diffMinutes > 1 ? 's' : '') + ' ago' : 'just now'));
+        return agoText;
     }
 });
 

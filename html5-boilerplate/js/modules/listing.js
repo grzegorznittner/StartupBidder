@@ -175,8 +175,8 @@ pl.implement(ListingClass, {
                 }
                 else {
                     if (this.login_url) {
-                        text = 'Login to Request Business Model';
-                        url = this.login_url + encodeURIComponent('/company-page.html?id=' + this.listing_id);
+                        text = 'Sign In to Request Business Model';
+                        url = '/login-page.html?url=' + encodeURIComponent('/company-page.html?id=' + this.listing_id);
                     }
                     else {
                         text = 'No Business Model';
@@ -248,8 +248,8 @@ pl.implement(ListingClass, {
                 }
                 else {
                     if (this.login_url) {
-                        text = 'Login to Request Presentation';
-                        url = this.login_url + encodeURIComponent('/company-page.html?id=' + this.listing_id);
+                        text = 'Sign In to Request Presentation';
+                        url = '/login-page.html?url=' + encodeURIComponent('/company-page.html?id=' + this.listing_id);
                     }
                     else {
                         text = 'No Presentation';

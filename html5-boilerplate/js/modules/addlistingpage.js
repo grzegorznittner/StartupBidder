@@ -42,19 +42,18 @@ pl.implement(AddListingClass, {
             login_url = this.login_url,
             twitter_login_url = this.twitter_login_url,
             fb_login_url = this.fb_login_url;
-            //var post_login_url = login_url + encodeURIComponent('/new-listing-basics-page.html');
         if (login_url) {
             pl('#google_login').attr({href: login_url + encodeURIComponent(nexturl)});
         } else {
             pl('#google_login').hide();
         }
         if (twitter_login_url) {
-            pl('#twitter_login').attr({href: twitter_login_url + encodeURIComponent(nexturl)}).show();
+            pl('#twitter_login').attr({href: twitter_login_url + '?url=' + encodeURIComponent(nexturl)}).show();
         } else {
             pl('#twitter_login').hide();
         }
         if (fb_login_url) {
-            pl('#fb_login').attr({href: fb_login_url + encodeURIComponent(nexturl)}).show();
+            pl('#fb_login').attr({href: fb_login_url + '?url=' + encodeURIComponent(nexturl)}).show();
         } else {
             pl('#fb_login').hide();
         }

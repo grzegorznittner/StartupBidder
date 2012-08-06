@@ -560,7 +560,7 @@ position: relative;
 .addcommentbtn:hover { cursor: pointer; }
 .addcommentenabled { }
 .addcommentenabled:hover { cursor: pointer; }
-.commentdeleteicon { position: absolute; right: 139px; }
+.commentdeleteicon { position: absolute; right: 5px; }
 .newlistingmsg { float: left; margin-right: 10px; padding-left: 116px; width: 420px; height: 85px; font-weight: bold; overflow: auto; }
 .newlistingtitlemsg { position: absolute; margin-right: 5px; right: 0; }
 .newlistingaskmsg { margin-left: 10px; }
@@ -630,19 +630,24 @@ width: 287px;
 .notifyline:nth-child(2n+1) { background: #e8e8e8; }
 .notifytext { float: left; font-weight: normal; }
 .notifydate { float: right; font-size: 12px; padding-top: 2px; color: gray; margin-right: 10px; }
-.messageline { clear: both; padding: 5px; overflow: auto; position: relative; }
+.messageline { clear: both; padding: 5px; overflow: auto; position: relative; margin-bottom: 10px; }
 .messageline:nth-child(2n+1) { background: #e8e8e8; }
 .messageline p { font-weight: normal; margin: 0; text-indent: 0; }
 .messageline p.messageuser { font-weight: bold; }
 .messageline p.answerdate { font-weight: bold; }
 .messagetext { float: left; font-weight: normal; }
+.messageowner { background:#aaa; padding:2px 5px; font-size:12px; font-weight: bold; color:white; } 
+.messageusername { font-weight: bold; }
 .messagedate { float: right; font-size: 12px; padding-top: 2px; color: gray; margin-right: 10px; font-weight: bold; }
+.messageinlinedate { font-size: 12px; padding-left: 5px; }
+.messageanswer { margin-left: 40px; margin-top: 15px; }
+.messagequestion { font-style: italic; }
 .questionanswerline { clear: both; position: relative; overflow: auto; }
 .questionanswerline .messagetext { padding-top: 10px; }
 .questiondate { min-height: 60px; }
 .questionreplyline { clear: both; padding: 5px; position: relative; }
 .questionreplylineshow { height: 100px; }
-.questionreplybtn { position: absolute; right: 7px; }
+.questionreplybtn { position: absolute; right: 7px; bottom: 7px; }
 .messagereplyuser { position: relative; top: 10px; }
 .questionaskline { position: relative; min-height: 100px; }
 .new_bid_line { position: relative; min-height: 185px; }

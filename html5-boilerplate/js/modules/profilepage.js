@@ -35,12 +35,12 @@ pl.implement(ProfilePageClass,{
                     ],
                     options = {
                         edited_listing: { propertyissingle: true, fullWidth: true },
-                        active_listings: { seeall: '/profile-listing-page.html?type=active' },
-                        monitored_listings: { seeall: '/profile-listing-page.html?type=monitored' },
-                        withdrawn_listings: { seeall: '/profile-listing-page.html?type=withdrawn' },
-                        frozen_listings: { seeall: '/profile-listing-page.html?type=frozen' },
-                        admin_posted_listings: { seeall: '/profile-listing-page.html?type=admin_posted' },
-                        admin_frozen_listings: { seeall: '/profile-listing-page.html?type=admin_frozen' }
+                        active_listings: { seeall: '/profile-listing-page.html?type=active', fullWidth: true },
+                        monitored_listings: { seeall: '/profile-listing-page.html?type=monitored', fullWidth: true },
+                        withdrawn_listings: { seeall: '/profile-listing-page.html?type=withdrawn', fullWidth: true },
+                        frozen_listings: { seeall: '/profile-listing-page.html?type=frozen', fullWidth: true },
+                        admin_posted_listings: { seeall: '/profile-listing-page.html?type=admin_posted', fullWidth: true },
+                        admin_frozen_listings: { seeall: '/profile-listing-page.html?type=admin_frozen', fullWidth: true }
                     },
                     listingfound = false,
                     propertykey,
