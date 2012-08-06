@@ -213,10 +213,7 @@ public class ListingController extends ModelDrivenController {
 			log.log(Level.WARNING, "Listing not created!");
 			headers.setStatus(500);
 		} else {
-			// setting upload urls for documents not yet uploaded
 			ListingVO l = listing.getListing();
-			String[] url = ServiceFacade.instance().createUploadUrls(getLoggedInUser(), "/file/upload", 1);
-			l.setUploadUrl(url[0]);
             u.setEditedListing(l.getId());
             u.setEditedStatus(l.getState()); // reset in case listing state is not NEW
         }

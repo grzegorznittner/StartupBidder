@@ -170,6 +170,9 @@ public class ListingFacade {
 			applyListingData(loggedInUser, newListing, monitor);
 			result.setListing(newListing);
 			result.setCategories(getCategories());
+			
+    		String[] url = ServiceFacade.instance().createUploadUrls(loggedInUser, "/file/upload/" + newListing.getId() + "/", 1);
+    		newListing.setUploadUrl(url[0]);
 		}
 		return result;
 	}

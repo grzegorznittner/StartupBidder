@@ -36,7 +36,7 @@ public class FileController extends ModelDrivenController {
 	@Override
 	protected HttpHeaders executeAction(HttpServletRequest request) throws JsonParseException, JsonMappingException, IOException {
 		if ("GET".equalsIgnoreCase(request.getMethod())) {
-			if("get-upload-url".equalsIgnoreCase(getCommand(1))) {
+			if("get_upload_url".equalsIgnoreCase(getCommand(1))) {
 				return getUploadUrl(request);
 			} else if("return-document".equalsIgnoreCase(getCommand(1))) {
 				return returnDoc(request);
@@ -52,15 +52,16 @@ public class FileController extends ModelDrivenController {
 	}
 
 	private HttpHeaders getUploadUrl(HttpServletRequest request) {
-		HttpHeaders headers = new HttpHeadersImpl("get-upload-url");
+		HttpHeaders headers = new HttpHeadersImpl("get_upload_url");
 		
+		String listingId = getCommandOrParameter(request, 2, "id");
 		int numOfUrls = 1;
-		String number = getCommandOrParameter(request, 2, "number");
+		String number = getCommandOrParameter(request, 3, "number");
 		if (StringUtils.isNotEmpty(number)) {
 			numOfUrls = NumberUtils.createLong(number).intValue();
 		}
 
-		model = ServiceFacade.instance().createUploadUrls(getLoggedInUser(), "/file/upload", numOfUrls);
+		model = ServiceFacade.instance().createUploadUrls(getLoggedInUser(), "/file/upload/" + listingId + "/", numOfUrls);
 		log.log(Level.INFO, "Returning " + numOfUrls + " upload urls: " + model);
 		
 		return headers;
