@@ -75,12 +75,14 @@ pl.implement(NewListingMediaClass, {
         var self = this;
         return function() {
             var msgs = [];
+            /*
             if (!self.base.listing.logo) {
                 msgs.push("LOGO: you must upload a logo.");
             }
             if (!self.base.listing.pic1) {
                 msgs.push("IMAGES: you must upload at least one image.");
             }
+            */
             return msgs;
         };
     }
