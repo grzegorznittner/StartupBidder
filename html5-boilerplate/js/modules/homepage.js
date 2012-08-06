@@ -53,8 +53,13 @@ pl.implement(HomePageClass, {
     }, 
 
     displayListings: function() {
-        var usersListings = new CompanyListClass({ propertykey: 'users_listings', companydiv: 'users_listings', seeall: '/profile-listing-page.html?type=active', fullWidth: true }),
+        var editedListing = new CompanyListClass({ propertykey: 'edited_listing', propertyissingle: true, companydiv: 'edited_listing', fullWidth: true }),
+            usersListings = new CompanyListClass({ propertykey: 'users_listings', companydiv: 'users_listings', seeall: '/profile-listing-page.html?type=active', fullWidth: true }),
             monitoredListings = new CompanyListClass({ propertykey: 'monitored_listings', companydiv: 'monitored_listings', seeall: '/profile-listing-page.html?type=monitored', fullWidth: true });
+        if (this.edited_listing) {
+            pl('#edited_listing_wrapper').show();
+            editedListing.storeList(this);
+        }
         if (this.users_listings && this.users_listings.length > 0) {
             pl('#users_listings_wrapper').show();
             usersListings.storeList(this);

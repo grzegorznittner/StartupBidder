@@ -37,7 +37,12 @@ include(banner.m4)
         </div>
 
         <div class="span-16">
-            <div id="users_listings_wrapper" class="initialhidden">
+            <div id="edited_listing_wrapper" class="initialhidden">
+                <div class="boxtitle smokegrey">YOUR PENDING LISTING</div>
+                <div id="edited_listing"></div>
+            </div>
+
+             <div id="users_listings_wrapper" class="initialhidden">
                 <div class="boxtitle smokegrey">YOUR LISTINGS</div>
                 <div id="users_listings"></div>
             </div>
