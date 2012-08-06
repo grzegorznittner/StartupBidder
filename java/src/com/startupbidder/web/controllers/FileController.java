@@ -7,8 +7,6 @@ import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.google.appengine.api.taskqueue.TaskQueuePb;
-import com.startupbidder.vo.ErrorCodes;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.codehaus.jackson.JsonParseException;
@@ -18,6 +16,7 @@ import com.google.appengine.api.blobstore.BlobKey;
 import com.google.appengine.api.blobstore.BlobstoreService;
 import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
 import com.startupbidder.datamodel.ListingDoc;
+import com.startupbidder.vo.ErrorCodes;
 import com.startupbidder.vo.ListingDocumentVO;
 import com.startupbidder.web.HttpHeaders;
 import com.startupbidder.web.HttpHeadersImpl;
@@ -154,7 +153,7 @@ public class FileController extends ModelDrivenController {
 			doc = ListingFacade.instance().createListingDocument(getLoggedInUser(), listingId, doc);
 			if (doc != null) {
                 String errorMsg = doc.getErrorCode() != ErrorCodes.OK ? "?errorMsg=" + doc.getErrorMessage() : "";
-				headers.setRedirectUrl("/listing/edited/" + doc.getType() + "/" + errorMsg);
+				headers.setRedirectUrl("/listing/edited/" + doc.getType() + "/" + listingId + "/" + errorMsg);
 			}
             else {
                 log.warning("Document upload error");

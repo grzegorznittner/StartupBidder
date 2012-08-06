@@ -52,7 +52,7 @@ public class ListingController extends ModelDrivenController {
 			
 			if("edited".equalsIgnoreCase(getCommand(1))) {
 				if (!StringUtils.isEmpty(getCommand(2))) {
-					return getEditedListingDoc(request, getCommand(2));
+					return getEditedListingDoc(request, getCommand(2), getCommand(3));
 				} else {
 					return startEditing(request);
 				}
@@ -271,16 +271,22 @@ public class ListingController extends ModelDrivenController {
 	}
 	
     // POST /listing/edited
-	private HttpHeaders getEditedListingDoc(HttpServletRequest request, String docType) throws JsonParseException, JsonMappingException, IOException {
+	private HttpHeaders getEditedListingDoc(HttpServletRequest request, String docType, String listingId) throws JsonParseException, JsonMappingException, IOException {
 		HttpHeaders headers = new HttpHeadersImpl("edited");
 		
-		ListingAndUserVO listing = ListingFacade.instance().createListing(getLoggedInUser());
+		ListingAndUserVO listing = null;
+		if (StringUtils.isEmpty(listingId)) {
+			listing = ListingFacade.instance().createListing(getLoggedInUser());
+		} else {
+			listing = ListingFacade.instance().getListing(getLoggedInUser(), listingId);
+		}
+		
 		if (listing == null) {
-			log.log(Level.WARNING, "Listing not created!");
+			log.log(Level.WARNING, "Listing not available!");
 			headers.setStatus(500);
 		} else {
 			ListingVO l = listing.getListing();
-			String[] url = ServiceFacade.instance().createUploadUrls(getLoggedInUser(), "/file/upload", 1);
+			String[] url = ServiceFacade.instance().createUploadUrls(getLoggedInUser(), "/file/upload/" + listingId + "/", 1);
 			String returnValue = "<upload_url>" + url[0] + "</upload_url><value>";
 			ListingDoc.Type type = null;
 			try {
