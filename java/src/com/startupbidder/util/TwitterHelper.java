@@ -24,6 +24,7 @@ public class TwitterHelper {
 	public static final String SERVLET_TWITTER_CALLBACK = "/twitter_callback";
 	
 	public static final String SESSION_TWITTER_REQUEST_TOKEN = "twitter_requestToken";
+	public static final String SESSION_TWITTER_TARGET_URL = "twitter_targetUrl";
 	public static final String SESSION_TWITTER_OBJECT = "twitter_object";
 	public static final String SESSION_TWITTER_USER = "twitter_user";
 	

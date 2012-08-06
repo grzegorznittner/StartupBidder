@@ -39,6 +39,7 @@ public class FacebookHelper {
 	public static final String SERVLET_FACEBOOK_CALLBACK = "/facebook_callback";
 	
 	public static final String SESSION_FACEBOOK_ACCESS_TOKEN = "facebook_accessToken";
+	public static final String SESSION_FACEBOOK_TARGET_URL = "facebook_targetUrl";
 	public static final String SESSION_FACEBOOK_USER = "facebook_user";
 	
 	public static final String PARAM_FACEBOOK_CODE = "code";

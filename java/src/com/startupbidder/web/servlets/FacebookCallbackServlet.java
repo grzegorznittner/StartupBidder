@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import com.startupbidder.util.FacebookHelper;
 import com.startupbidder.util.FacebookUser;
@@ -44,10 +45,16 @@ public class FacebookCallbackServlet extends HttpServlet {
                     }
                 }
             }
-            // getting facebook user data and storing it in seesion
+            // getting facebook user data and storing it in session
             FacebookUser facebookUser = FacebookHelper.authorizeUser(request, accessToken, expires);
     		log.info("Logged in with Facebook, user: " + facebookUser);
-    		response.sendRedirect(request.getContextPath());
+    		
+            String targetUrl = (String)request.getSession().getAttribute(FacebookHelper.SESSION_FACEBOOK_TARGET_URL);
+            request.getSession().removeAttribute(FacebookHelper.SESSION_FACEBOOK_TARGET_URL);
+            if (StringUtils.isEmpty(targetUrl)) {
+            	targetUrl = "/";
+            }
+            response.sendRedirect(request.getContextPath() + targetUrl);
         } catch (Exception e) {
         	log.log(Level.WARNING, "Facebook login error", e);
             response.sendRedirect(request.getContextPath() + "/login_error.html");

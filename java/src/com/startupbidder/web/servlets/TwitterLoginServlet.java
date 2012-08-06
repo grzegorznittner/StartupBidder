@@ -1,5 +1,8 @@
 package com.startupbidder.web.servlets;
 
+import static com.startupbidder.util.TwitterHelper.SESSION_TWITTER_OBJECT;
+import static com.startupbidder.util.TwitterHelper.SESSION_TWITTER_REQUEST_TOKEN;
+
 import java.io.IOException;
 import java.util.logging.Logger;
 
@@ -8,14 +11,14 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.startupbidder.util.TwitterHelper;
-
-import static com.startupbidder.util.TwitterHelper.*;
+import org.apache.commons.lang3.StringUtils;
 
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.auth.RequestToken;
+
+import com.startupbidder.util.TwitterHelper;
 
 @SuppressWarnings("serial")
 public class TwitterLoginServlet extends HttpServlet {
@@ -23,6 +26,13 @@ public class TwitterLoginServlet extends HttpServlet {
 	
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
+        	String targetUrl = request.getParameter("url");
+        	if (!StringUtils.isEmpty(targetUrl)) {
+        		request.getSession().setAttribute(TwitterHelper.SESSION_TWITTER_TARGET_URL, targetUrl);
+        	} else {
+        		request.getSession().setAttribute(TwitterHelper.SESSION_TWITTER_TARGET_URL, "/");
+        	}
+
         	TwitterFactory tf = TwitterHelper.configureTwitterFactory();
             Twitter twitter = tf.getInstance();
             request.getSession().setAttribute(SESSION_TWITTER_OBJECT, twitter);
