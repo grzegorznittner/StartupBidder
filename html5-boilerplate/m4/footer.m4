@@ -25,24 +25,29 @@
         <span class="footerlink hoverlink">&nbsp;</span>
     </div>
     <div class="span-8 footercol">
-        <div class="footerlinkheader">CONNECT</div>
-        <span class="span-8 socialbanner">
-            <div class="twitterbanner">
-              <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://www.startupbidder.com" data-text="startupbidder" data-via="startupbidder" data-related="startupbidder" data-hashtags="startupbidder">Tweet</a>
-            </div>    
-            <div class="gplusbanner">
-                <g:plusone size="medium" annotation="inline" width="310" href="http://www.startupbidder.com"></g:plusone>
-            </div>
-            <div class="facebookbanner">
-                <div class="fb-like" data-href="http://www.startupbidder.com" data-send="false" data-width="310" data-show-faces="false" data-font="arial"></div>
-            </div>
-        </span>
-    </div>
+        <div class="footerlinkheader">FOLLOW US</div>
+        <a href="https://twitter.com/startupbidder">
+            <span class="footericonlink hoverlink">
+                <div class="footericon headertwittersignin"></div>
+                <span class="footericonlabel">Twitter</span>
+            </span>
+        </a>
+        <a href="https://www.facebook.com/startupbidder">
+            <span class="footericonlink hoverlink">
+                <div class="footericon headerfbsignin"></div>
+                <span class="footericonlabel">Facebook</span>
+            </span>
+        </a>
+        <a href="https://plus.google.com/b/107382337795789732554/107382337795789732554/posts">
+            <span class="footericonlink hoverlink">
+                <div class="footericon headersignin"></div>
+                <span class="footericonlabel">Google Plus</span>
+            </span>
+        </a>
 <!--
-    <div class="span-8">  
-        <span class="copyrighttext">&copy; 2012 Startupbidder LLC</span>
-    </div>
+        <span class="footericonlink copyrighttext">&copy; 2012 Startupbidder LLC</span>
 -->
+    </div>
   </div>
 </div>
 '

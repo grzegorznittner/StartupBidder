@@ -40,7 +40,7 @@
 
 <div class="bmctallcolumnonedge bmcthreefourthsheight bmcfifthwidthminushalfbar bmccontainer">
     <div class="bmccell">
-        <div class="bmcicon" style="background: url(img/icons/bmc_kp_48.png);"></div>
+        <div class="bmcicon bmc_kp_48"></div>
         <div class="bmcsection">
             <label for="answer3">Key Partners</label>
             <p class="bmcinfo bmcinfokeypartners">
@@ -57,7 +57,7 @@ Who are your vendors?  Who are you buying products and services from?  Who will 
 <div class="bmctallcolumn bmcthreefourthsheight bmcfifthwidthminusbar">
     <div class="bmcshortcolumn bmcfifthwidthminusbar bmcthreeeighthsheightminushalfbar bmccontainer">
         <div class="bmccell">
-            <div class="bmcicon" style="background: url(img/icons/bmc_ka_48.png);"></div>
+            <div class="bmcicon bmc_ka_48"></div>
             <div class="bmcsection">
                 <label for="answer1">Key Activities</label>
                 <p class="bmcinfo bmcinfokeyactivities">
@@ -71,7 +71,7 @@ What does your business do? What are the key activities of your business?  How a
     <div class="bmchorizontalbarshort bmcbarheight bmcfifthwidthminusbar" style="background-color: olivedrab;"></div>
     <div class="bmcshortcolumn bmcfifthwidthminusbar bmcthreeeighthsheightminushalfbar bmccontainer">
         <div class="bmccell">
-            <div class="bmcicon" style="background: url(img/icons/bmc_kr_48.png);"></div>
+            <div class="bmcicon bmc_kr_48"></div>
             <div class="bmcsection">
                 <label for="answer2">Key Resources</label>
                 <p class="bmcinfo bmcinfokeyresources">
@@ -88,7 +88,7 @@ What assets and IP distinguish you?  How are you going to protect your idea?  Do
 
 <div class="bmctallcolumn bmcthreefourthsheight bmcfifthwidthminusbar bmccontainer">
     <div class="bmccell">
-        <div class="bmcicon" style="background: url(img/icons/bmc_vp_48.png);"></div>
+        <div class="bmcicon bmc_vp_48"></div>
         <div class="bmcsection">
             <label for="answer4">Value Propositions</label>
             <p class="bmcinfo bmcinfovaluepropositions">
@@ -105,7 +105,7 @@ What&rsquo;s the solution?  What did they do before your product came along and 
 <div class="bmctallcolumn bmcthreefourthsheight bmcfifthwidthminusbar">
     <div class="bmcshortcolumn bmcfifthwidthminusbar bmcthreeeighthsheightminushalfbar bmccontainer">
         <div class="bmccell">
-            <div class="bmcicon" style="background: url(img/icons/bmc_cr_48.png);"></div>
+            <div class="bmcicon bmc_cr_48"></div>
             <div class="bmcsection">
                 <label for="answer7">Customer Relationships</label>
                 <p class="bmcinfo bmcinfocustomerrelationships">
@@ -119,7 +119,7 @@ Is the customer tied in to your solution?  Can they easily take their business s
     <div class="bmchorizontalbarshort bmcbarheight bmcfifthwidthminusbar" style="background-color: dodgerblue;"></div>
     <div class="bmcshortcolumn bmcfifthwidthminusbar bmcthreeeighthsheightminushalfbar bmccontainer">
         <div class="bmccell">
-            <div class="bmcicon" style="background: url(img/icons/bmc_ch_48.png);"></div>
+            <div class="bmcicon bmc_ch_48"></div>
             <div class="bmcsection">
                 <label for="answer6">Channels</label>
                 <p class="bmcinfo bmcinfochannels">
@@ -136,7 +136,7 @@ How do you reach the customer?  Is there a web site, app market, catalog, pyrami
 
 <div class="bmctallcolumnonedge bmcthreefourthsheight bmcfifthwidthminushalfbar bmccontainer">
     <div class="bmccell">
-        <div class="bmcicon" style="background: url(img/icons/bmc_cs_48.png);"></div>
+        <div class="bmcicon bmc_cs_48"></div>
         <div class="bmcsection">
             <label for="answer5">Customer Segments</label>
             <p class="bmcinfo bmcinfocustomersegments">
@@ -153,7 +153,7 @@ What different customer groups do you have?  What do all the customers have in c
 
 <div class="bmcwidecolumn bmcthreefourthsheightminushalfbar bmchalfwidthminushalfbar bmccontainer" style="clear: both;">
     <div class="bmccell">
-        <div class="bmcicon" style="background: url(img/icons/bmc_co_48.png);"></div>
+        <div class="bmcicon bmc_co_48"></div>
         <div class="bmcsection">
             <label for="answer8">Cost Structure</label>
             <p class="bmcinfo bmcinfocoststructure">
@@ -169,7 +169,7 @@ What goes into providing the product?  How much does it cost you?  How much is f
 
 <div class="bmcwidecolumn bmcthreefourthsheightminushalfbar bmchalfwidthminushalfbar bmccontainer">
     <div class="bmccell">
-        <div class="bmcicon" style="background: url(img/icons/bmc_rs_48.png);"></div>
+        <div class="bmcicon bmc_rs_48"></div>
         <div class="bmcsection">
             <label for="answer9">Revenue Streams</label>
             <p class="bmcinfo bmcinforevenuestreams">

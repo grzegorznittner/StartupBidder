@@ -39,30 +39,32 @@ pl.implement(NewListingDocumentsClass, {
         var self = this,
             fieldname = id + '_id',
             val = this.base.listing[fieldname],
-            imgclass = id + 'img',
-            imgsel = '#' + imgclass,
+            //imgclass = id + 'img',
+            //imgsel = '#' + imgclass,
             formsel = '#' + id + 'uploadform',
-            linksel = '#' + id + 'link',
-            downloadsel = '#' + id + 'downloadbg, #' + id + 'downloadtext',
+            //linksel = '#' + id + 'link',
+            //downloadsel = '#' + id + 'downloadbg, #' + id + 'downloadtext',
             deletesel = '#' + id + 'deletelink span',
-            uploadurl = this.base.listing.upload_url,
-            linkurl = val ? '/file/download/' + val : '';
+            uploadurl = this.base.listing.upload_url;
+            //linkurl = val ? '/file/download/' + val : '';
         if (val) {
-            pl(downloadsel).show();
+            //pl(downloadsel).show();
             pl(deletesel).show();
-            pl(imgsel).attr({'class': 'tileimg ' + imgclass});
-            pl(linksel).unbind().attr({href: linkurl});
+            //pl(imgsel).attr({'class': 'tileimg ' + imgclass});
+            //pl(linksel).unbind().attr({href: linkurl});
             self.bindDelete(id, val);
         }
         else {
-            pl(downloadsel).hide();
+            //pl(downloadsel).hide();
             pl(deletesel).hide();
-            pl(imgsel).attr({'class': 'tileimg noimage'});
+            //pl(imgsel).attr({'class': 'tileimg noimage'});
+            /*
             pl(linksel).unbind().attr({href: ''}).bind({
                 click: function() {
                     return false;
                 }
             });
+            */
         }
         if (uploadurl) {
             pl(formsel).attr({action: uploadurl});
@@ -75,20 +77,22 @@ pl.implement(NewListingDocumentsClass, {
             click: function() {
                 var completeFunc = function() {
                     var fieldname = id + '_id',
-                        imgclass = id + 'img',
-                        imgsel = '#' + imgclass,
-                        linksel = '#' + id + 'link',
-                        deletesel = '#' + id + 'deletelink span',
-                        downloadsel = '#' + id + 'downloadbg, #' + id + 'downloadtext';
+                        //imgclass = id + 'img',
+                        //imgsel = '#' + imgclass,
+                        //linksel = '#' + id + 'link',
+                        deletesel = '#' + id + 'deletelink span';
+                        //downloadsel = '#' + id + 'downloadbg, #' + id + 'downloadtext';
                     self.base.listing[fieldname] = null;
-                    pl(downloadsel).hide();
+                    //pl(downloadsel).hide();
                     pl(deletesel).hide();
-                    pl(imgsel).attr({'class': 'tileimg noimage'});
+                    //pl(imgsel).attr({'class': 'tileimg noimage'});
+                    /*
                     pl(linksel).unbind().attr({href: ''}).bind({
                         click: function() {
                             return false;
                         }
                     });
+                    */
                     pl('#' + id + 'uploadfile').removeAttr('value');
                     pl('#' + id + 'msg').removeClass('errorcolor').removeClass('inprogress').addClass('successful').text('Document deleted');
                 };

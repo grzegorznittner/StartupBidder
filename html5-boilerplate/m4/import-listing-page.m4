@@ -31,7 +31,7 @@ include(header.m4)
     <div class="addlistinginput">
         <div class="addlistingsearchcontainer">
             <input class="text addlistingsearch" type="text" name="query" id="importquery" value="Search"></input>
-            <input class="addlistingsearchbutton" width="32px" type="image" height="32px" src="/img/icons/search2.png" alt="search" id="importbutton">
+            <input class="addlistingsearchbutton" width="32px" type="image" height="32px" src="/img/icons/search-inverted-32.png" alt="search" id="importbutton">
         </div>
     </div>
 

@@ -28,11 +28,11 @@ include(images-panel.m4)
     </div>
 
     <div class="span-8 last">
-        <a href="/new-listing-basics-page.html">
-            <div class="sidebox investbutton initialhidden" id="editbutton">EDIT LISTING</div>
-        </a>
-
         <div class="sidebox investbutton initialhidden" id="investbutton">INVEST</div>
+
+        <a href="/new-listing-basics-page.html">
+            <div class="sidebox investbutton gotobutton initialhidden" id="editbutton">&lt;&lt; Edit Basic Info</div>
+        </a>
 
         <div class="sidebox investbutton gotobutton" id="modelbutton">Go To Business Model</div>
 

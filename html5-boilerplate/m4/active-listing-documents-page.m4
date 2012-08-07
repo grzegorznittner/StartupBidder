@@ -48,14 +48,6 @@ include(header.m4)
         </div>
     </div>
     <div class="boxpanel">
-        <div class="mediacol1">
-            <a href="#" id="presentationlink">
-                <div class="tileimg noimage" id="presentationimg">
-                    <div class="tiletype initialhidden" id="presentationdownloadbg"></div>
-                    <div class="tiletypetext initialhidden" id="presentationdownloadtext">DOWNLOAD</div>
-                </div>
-            </a>
-        </div>
         <div class="mediacol2">
             <div class="formitem">
                 <span class="uploadinfo">Enter a URL or upload from your computer.</span>
@@ -102,14 +94,6 @@ include(header.m4)
         </div>
     </div>
     <div class="boxpanel">
-        <div class="mediacol1">
-            <a href="#" id="business_planlink">
-                <div class="tileimg noimage" id="business_planimg">
-                    <div class="tiletype initialhidden" id="business_plandownloadbg"></div>
-                    <div class="tiletypetext initialhidden" id="business_plandownloadtext">DOWNLOAD</div>
-                </div>
-            </a>
-        </div>
         <div class="mediacol2">
             <div class="formitem">
                 <span class="uploadinfo">Enter a URL or upload from your computer.</span>
@@ -156,14 +140,6 @@ include(header.m4)
         </div>
     </div>
     <div class="boxpanel">
-        <div class="mediacol1">
-            <a href="#" id="financialslink">
-                <div class="tileimg noimage" id="financialsimg">
-                    <div class="tiletype initialhidden" id="financialsdownloadbg"></div>
-                    <div class="tiletypetext initialhidden" id="financialsdownloadtext">DOWNLOAD</div>
-                </div>
-            </a>
-        </div>
         <div class="mediacol2">
             <div class="formitem">
                 <span class="uploadinfo">Enter a URL or upload from your computer.</span>

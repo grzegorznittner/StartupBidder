@@ -54,7 +54,7 @@ pl.implement(CompanyTileClass, {
             : '<span class="loctext">No Address</span>';
         this.brief_address_inp = json.brief_address
             ? '<a class="hoverlink" href="/main-page.html?type=location&val=' + encodeURIComponent(json.brief_address) + '">'
-                + '<img src="../img/icons/location_16x16.gif" class="lociconinp"></img>&nbsp;<span class="loctextinp">' + json.brief_address + '</span></a>'
+                + '<img src="../img/icons/location-16.gif" class="lociconinp"></img>&nbsp;<span class="loctextinp">' + json.brief_address + '</span></a>'
             : '<span class="loctext">No Address</span>';
         this.address = json.address || 'No Address';
         locprefix = this.type === 'company' ? 'in' : 'from';

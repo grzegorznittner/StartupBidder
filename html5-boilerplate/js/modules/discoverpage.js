@@ -33,20 +33,6 @@ pl.implement(DiscoverPageClass,{
                 latestListings.storeList(json);
             },
             ajax = new AjaxClass('/listings/discover/', 'top_listings', completeFunc);
-/*
-            cookie = CookieClass.prototype.readCookie('hideWelcomeVideo');
-        if (cookie) {
-            pl('#welcomevideo').hide();
-        }
-        else {
-            pl('#closexicon').bind('click', function() {
-                var domain = document.location.hostname === 'localhost' ? undefined : 'startupbidder.com';
-                CookieClass.prototype.createCookie('hideWelcomeVideo', 'true', 1000, domain);
-                pl('#welcomevideo').hide();
-            });
-            pl('#welcomevideo').show();
-        }
-*/
         ajax.call();
     }
 });

@@ -14,7 +14,7 @@
         </div>
         <div>
             <a href="edit-profile-page.html">
-                <span class="push-4 span-3 inputbutton hoverlink initialhidden" id="editprofilebutton">
+                <span class="editprofilebtn span-3 inputbutton hoverlink initialhidden" id="editprofilebutton">
                     EDIT
                 </span>
             </a>

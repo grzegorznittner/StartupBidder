@@ -24,7 +24,7 @@ include(header.m4)
         <div class="boxtitle smokegrey">YOUR LISTINGS</div>
         <div class="boxpanel">
             You currently have no listings.
-            <a href="/new-listing-basics-page.html" class="inputmsg hoverlink profilelink">Post</a> a new listing or
+            <a href="/add-listing-page.html" class="inputmsg hoverlink profilelink">Add</a> a listing or
             <a href="/main-page.html?type=top" class="inputmsg hoverlink profilelink">invest</a> in one today!
         </div>
     </div>

@@ -324,11 +324,11 @@ function UserMessageClass(id) {
 pl.implement(UserMessageClass, {
     show: function(cssClass, text) {
         this.isClear = false;
-        pl(this.sel).html('').removeClass('attention').removeClass('inprogress').removeClass('successful').addClass(cssClass).html(text);
+        pl(this.sel).html('').removeClass('attention').removeClass('errorcolor').removeClass('inprogress').removeClass('successful').addClass(cssClass).html(text);
     },
     clear: function() {
         this.isClear = true;
-        pl(this.sel).html('').removeClass('attention').removeClass('inprogress').removeClass('successful');
+        pl(this.sel).html('').removeClass('attention').removeClass('errorcolor').removeClass('inprogress').removeClass('successful');
     }
 });
 

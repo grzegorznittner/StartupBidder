@@ -22,7 +22,7 @@
         <form id="searchform" action="/main-page.html">
             <input type="hidden" name="type" value="keyword"></input>
             <input type="text" class="text inputtext searchtext" name="searchtext" id="searchtext" value=""></input>
-            <input type="image" class="searchbutton" alt="search" src="/img/icons/search2.png" width="32" height="32"></input>
+            <input type="image" class="searchbutton" alt="search" src="/img/icons/search-inverted-32.png" width="32" height="32"></input>
         </form>
     </div>
 

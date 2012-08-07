@@ -21,8 +21,8 @@ define(`companybannermacro', `
                     <span id="listing_date_text" class="inputfield" style="margin-right: 1px;"></span>
                     &nbsp;<a class="companybannertextlink" href="#" target="_blank" id="websitelink">
                         <span id="domainname" class="companybannertextlink" style="float:left;"></span>
+                        <div class="span-1 linkicon" id="websitelinkicon"></div>
                     </a>
-                    <div class="span-1 linkicon" id="websitelinkicon"></div>
                 </div>
                 <div class="companybannertextgrey companybannermantra2" id="mantra"></div>
     
@@ -32,7 +32,7 @@ define(`companybannermacro', `
                 </div>
 
                 <div class="companybannerfollow">
-                    <div class="companybannerfollowbtn span-3 inputbutton submitbutton investbutton investbuttonsmall initialhidden" id="submitbutton">SUBMIT</div>
+                    <div class="companybannersubmitbtn span-5 investbutton initialhidden" id="submitbutton">SUBMIT &gt;&gt;</div>
                     <div class="inputmsg last companybannerfollowmsg clear" id="submiterrormsg"></div>
                 </div>
     

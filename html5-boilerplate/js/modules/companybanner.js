@@ -89,7 +89,7 @@ pl.implement(CompanyBannerClass, {
         var statusmsg = '';
         if (this.loggedin_profile && this.loggedin_profile_id === this.profile_id) {
             if (this.status === 'new') {
-                statusmsg = '<span class="normal">An admin will review your listing after submit</span>';
+                statusmsg = '<span class="normal">Your listing will be public after submit</span>';
             }
             else if (this.status === 'posted') {
                 statusmsg = '<span class="inprogress">An admin is reviewing your listing for activation</span>';
@@ -108,7 +108,7 @@ pl.implement(CompanyBannerClass, {
         }
         else {
             if (this.status === 'new') {
-                statusmsg = '<span class="normal">An admin will review this listing after submission</span>';
+                statusmsg = '<span class="normal">This listing will be public after submit</span>';
             }
             else if (this.status === 'posted') {
                 statusmsg = '<span class="inprogress">An admin is reviewing this listing for activation</span>';

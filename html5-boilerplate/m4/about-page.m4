@@ -24,11 +24,9 @@ include(header.m4)
 
 <!-- left column -->
 <div class="span-16">
-    <div class="boxtitle">TWO MINUTE INTRO</div>
-    <div class="boxpanel">
-	    <div class="videocontainer">
-      	    <iframe width="622" height="380" src="http://www.youtube.com/embed/hq5gaQ1FtAU" frameborder="0" allowfullscreen></iframe> 
-	    </div>
+    <div class="boxtitle">HOW IT WORKS <a href="http://youtu.be/hq5gaQ1FtAU">(VIEW ON YOUTUBE)</a></div>
+    <div>
+   	    <iframe width="622" height="380" src="http://www.youtube.com/embed/hq5gaQ1FtAU" frameborder="0" allowfullscreen></iframe> 
     </div>
 
     <div class="boxtitle">WHAT WE DO</div>
