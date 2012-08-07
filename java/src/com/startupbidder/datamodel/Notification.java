@@ -4,8 +4,6 @@
  */
 package com.startupbidder.datamodel;
 
-import java.net.URI;
-import java.net.URL;
 import java.util.Date;
 
 import javax.persistence.Id;
@@ -29,7 +27,8 @@ public class Notification extends BaseObject<Notification> {
 		YOUR_BID_WAS_ACCEPTED, YOU_ACCEPTED_BID, YOU_PAID_BID, BID_PAID_FOR_YOUR_LISTING, BID_WAS_WITHDRAWN,
 		NEW_LISTING, LISTING_ACTIVATED, LISTING_FROZEN, LISTING_WITHDRAWN, LISTING_SENT_BACK,
 		NEW_COMMENT_FOR_YOUR_LISTING, NEW_COMMENT_FOR_MONITORED_LISTING,
-		PRIVATE_MESSAGE, ASK_LISTING_OWNER};
+		PRIVATE_MESSAGE, ASK_LISTING_OWNER,
+		ADMIN_REQUEST_TO_BECOME_DRAGON};
 
 	public Notification() {
 	}

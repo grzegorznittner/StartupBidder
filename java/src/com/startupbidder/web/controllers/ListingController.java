@@ -36,6 +36,7 @@ import com.startupbidder.web.ListingFacade;
 import com.startupbidder.web.ListingImportService;
 import com.startupbidder.web.ModelDrivenController;
 import com.startupbidder.web.ServiceFacade;
+import com.startupbidder.web.UserMgmtFacade;
 
 /**
  * 
@@ -562,7 +563,15 @@ public class ListingController extends ModelDrivenController {
 
     // GET /listings/discover_user
     private HttpHeaders discoverUser(HttpServletRequest request) {
-    	model = ListingFacade.instance().getDiscoverUserListings(getLoggedInUser());
+    	UserVO loggedIn = getLoggedInUser();
+    	if (loggedIn != null && loggedIn.isAdmin()) {
+    		String userId = getCommandOrParameter(request, 2, "id");
+    		UserAndUserVO userData = UserMgmtFacade.instance().getUser(getLoggedInUser(), userId);
+    		if (userData != null && userData.getUser() != null) {
+    			loggedIn = userData.getUser();
+    		}
+    	}
+    	model = ListingFacade.instance().getDiscoverUserListings(loggedIn);
         return new HttpHeadersImpl("discover_user").disableCaching();
     }
 

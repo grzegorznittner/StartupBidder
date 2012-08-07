@@ -471,6 +471,14 @@ public class DtoToVoConverter {
 		case BID_PAID_FOR_YOUR_LISTING:
 			// payments are not handled yet
 			break;
+		case ADMIN_REQUEST_TO_BECOME_DRAGON:
+			notif.setTitle("User '" + notifDTO.listingOwner + "' requested Dragon status");
+			notif.setText1("User");
+			notif.setText2("sent request to become a Dragon on startupbidder.com");
+			notif.setText3("To be a dragon you must have founded a startup, be a corporate or venture capital executive, "
+					+ "or have invested in a startup. aybe only dragons are allowed to invest.");
+			notif.setLink("/listings/discover_user/" + notifDTO.listingOwnerUser.getString() + ".json");
+			break;
 		}
 
 		return notif;

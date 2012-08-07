@@ -447,4 +447,41 @@ public class NotificationFacade {
 		return DtoToVoConverter.convert(notification);
 	}
 
+	public List<NotificationVO> scheduleUserDragonRequestNotification(SBUser user) {
+		List<Notification> toStore = new ArrayList<Notification>();
+		
+		Notification notification = new Notification();
+		notification.message = "User '" + user.nickname + "' sent request to become dragon";
+		notification.listingOwner = user.nickname;
+		notification.listingOwnerUser = user.getKey();
+        notification.type = Notification.Type.ADMIN_REQUEST_TO_BECOME_DRAGON;
+		
+		SBUser admin1 = getUserDAO().getUserByEmail("grzegorz.nittner@gmail.com");
+		SBUser admin2 = getUserDAO().getUserByEmail("johnarleyburns@gmail.com");
+		
+		Notification adminNotif = (Notification)notification.copy();
+		adminNotif.user = admin1.getKey();
+		adminNotif.userEmail = admin1.email;
+		adminNotif.userNickname = admin1.nickname;
+		log.info("Creating admin notification: " + adminNotif);
+		toStore.add(adminNotif);
+		
+		adminNotif = (Notification)notification.copy();
+		adminNotif.user = admin2.getKey();
+		adminNotif.userEmail = admin2.email;
+		adminNotif.userNickname = admin2.nickname;
+		log.info("Creating admin notification: " + adminNotif);
+		toStore.add(adminNotif);
+		
+		if (!toStore.isEmpty()) {
+			for (Notification notif : getDAO().storeNotifications(toStore)) {
+				String taskName = timeStampFormatter.print(new Date().getTime()) + "send_notification_" + notif.type + "_" + notif.user.getId();
+				Queue queue = QueueFactory.getDefaultQueue();
+				queue.add(TaskOptions.Builder.withUrl("/task/send-admin-notification").param("id", "" + notif.getWebKey())
+						.taskName(taskName));
+			}
+		}
+		return DtoToVoConverter.convertNotifications(toStore);
+	}
+
 }

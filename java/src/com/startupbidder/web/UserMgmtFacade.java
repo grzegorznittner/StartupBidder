@@ -24,6 +24,7 @@ import com.startupbidder.datamodel.UserStats;
 import com.startupbidder.util.FacebookUser;
 import com.startupbidder.vo.BaseVO;
 import com.startupbidder.vo.DtoToVoConverter;
+import com.startupbidder.vo.ErrorCodes;
 import com.startupbidder.vo.UserAndUserVO;
 import com.startupbidder.vo.UserListVO;
 import com.startupbidder.vo.UserVO;
@@ -305,21 +306,42 @@ public class UserMgmtFacade {
 		}
 	}
 	
-	public UserVO promoteToDragon(UserVO loggedInUser, String userId) {
+	public UserAndUserVO promoteToDragon(UserVO loggedInUser, String userId) {
+		UserAndUserVO result = new UserAndUserVO();
 		if (loggedInUser == null || !loggedInUser.isAdmin()) {
 			log.warning("User not logged in or is not an admin");
-			return null;
+			result.setErrorCode(ErrorCodes.NOT_LOGGED_IN);
+			result.setErrorMessage("User not logged in or is not an admin");
+			return result;
 		}
 		SBUser user = getDAO().getUser(userId);
 		if (user == null) {
 			log.warning("User with id '" + userId + "' not found");
-			return null;
+			result.setErrorCode(ErrorCodes.ENTITY_VALIDATION);
+			result.setErrorMessage("User not found");
+			return result;
 		}
 		user.dragon = true;
 		user = getDAO().updateUser(user);
 		log.info("Promoted to Dragon: " + user);
 		
-		return DtoToVoConverter.convert(user);
+		result.setUser(DtoToVoConverter.convert(user));
+		return result;
+	}
+	
+	public UserAndUserVO requestDragon(UserVO loggedInUser) {
+		UserAndUserVO result = new UserAndUserVO();
+		if (loggedInUser == null) {
+			log.warning("User not logged in");
+			result.setErrorCode(ErrorCodes.NOT_LOGGED_IN);
+			result.setErrorMessage("User not logged in or is not an admin");
+			return result;
+		}
+		SBUser user = getDAO().getUser(loggedInUser.getId());
+		NotificationFacade.instance().scheduleUserDragonRequestNotification(user);
+		
+		result.setUser(DtoToVoConverter.convert(user));
+		return result;
 	}
 	
 	/**

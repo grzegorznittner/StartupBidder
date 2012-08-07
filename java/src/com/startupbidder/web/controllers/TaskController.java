@@ -68,6 +68,8 @@ public class TaskController extends ModelDrivenController {
 			return fetchListingDoc(request);
 		} else if("send-notification".equalsIgnoreCase(getCommand(1))) {
 			return sendNotification(request);
+		} else if("send-admin-notification".equalsIgnoreCase(getCommand(1))) {
+			return sendAdminNotification(request);
 		} else if("schedule-comment-notifications".equalsIgnoreCase(getCommand(1))) {
 			return scheduleCommentNotifications(request);
 		} else if("schedule-qa-notifications".equalsIgnoreCase(getCommand(1))) {
@@ -155,7 +157,7 @@ public class TaskController extends ModelDrivenController {
 			SBUser receiver = ObjectifyDatastoreDAO.getInstance().getUserByEmail(notification.userEmail);
 			if (receiver.notifyEnabled) {
 				log.info("Sending notification: " + notification);
-				if (EmailService.instance().sendListingNotification(DtoToVoConverter.convert(notification))) {
+				if (EmailService.instance().sendNotificationEmail(DtoToVoConverter.convert(notification))) {
 					notification.sentDate = new Date();
 					NotificationObjectifyDatastoreDAO.getInstance().storeNotification(notification);
 				}
@@ -164,6 +166,23 @@ public class TaskController extends ModelDrivenController {
 			}
 		} else {
 			log.info("Notification has been already read. " + notification);
+		}
+		
+		return headers;
+	}
+	
+	private HttpHeaders sendAdminNotification(HttpServletRequest request) {
+		HttpHeaders headers = new HttpHeadersImpl("send-admin-notification");
+		
+		String notifId = getCommandOrParameter(request, 2, "id");
+		
+		Notification notification = NotificationObjectifyDatastoreDAO.getInstance().getNotification(BaseVO.toKeyId(notifId));
+		model = DtoToVoConverter.convert(notification);
+
+		log.info("Sending notification: " + notification);
+		if (EmailService.instance().sendNotificationEmail(DtoToVoConverter.convert(notification))) {
+			notification.sentDate = new Date();
+			NotificationObjectifyDatastoreDAO.getInstance().storeNotification(notification);
 		}
 		
 		return headers;

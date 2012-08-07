@@ -23,6 +23,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import com.startupbidder.dao.ObjectifyDatastoreDAO;
+import com.startupbidder.datamodel.Notification;
 import com.startupbidder.datamodel.SystemProperty;
 import com.startupbidder.vo.NotificationVO;
 
@@ -44,7 +45,13 @@ public class EmailService {
 	private static final String LISTING_MANTRA = "##NOTIFICATION_LISTING_MANTRA##";
 	private static final String COPYRIGHT_TEXT = "##NOTIFICATION_COPYRIGHT_TEXT##";
 	private static final String LINK_TO_UPDATE_PROFILE_PAGE = "##LINK_TO_UPDATE_PROFILE_PAGE##";
-	
+
+	private static final String NOTIFICATION_TEXT_1 = "##NOTIFICATION_TEXT_1##";
+	private static final String NOTIFICATION_TEXT_2 = "##NOTIFICATION_TEXT_2##";
+	private static final String NOTIFICATION_TEXT_3 = "##NOTIFICATION_TEXT_3##";
+	private static final String NOTIFICATION_LINK_TEXT = "##NOTIFICATION_LINK_TEXT##";
+	private static final String NOTIFICATION_LINK_HREF = "##NOTIFICATION_LINK_HREF##";
+
 	private static EmailService instance = null;
 	
 	public static EmailService instance() {
@@ -56,8 +63,30 @@ public class EmailService {
 	
 	private EmailService() {
 	}
+	
+	public void sendAdmin(String from, String to, String subject, String htmlBody) throws AddressException, MessagingException {
+		log.info("Email to: " + to + " subject:" + subject + " body:" + htmlBody);
+		Properties props = new Properties();
+        Session session = Session.getDefaultInstance(props, null);
+        
+		MimeMessage message = new MimeMessage(session);
+		message.setFrom(new InternetAddress(from));
+		message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
+		message.setSubject(subject);
+
+		Multipart multipart = new MimeMultipart();
+		BodyPart htmlPart = new MimeBodyPart();
+		htmlPart.setContent(htmlBody, "text/html");
+		htmlPart.setDisposition(BodyPart.INLINE);
+		multipart.addBodyPart(htmlPart);
+
+		message.setContent(multipart);
+
+		Transport.send(message, message.getAllRecipients());
+	}
 		
 	public void send(String from, String to, String subject, String htmlBody) throws AddressException, MessagingException {
+		log.info("Email to: " + to + " subject:" + subject + " body:" + htmlBody);
 		SystemProperty noBccAdmins = ObjectifyDatastoreDAO.getInstance().getSystemProperty("notification_no_bcc_admins");
 		SystemProperty realReceivers = ObjectifyDatastoreDAO.getInstance().getSystemProperty("notification_real_receivers");
 		
@@ -89,11 +118,19 @@ public class EmailService {
 
 		Transport.send(message, message.getAllRecipients());
 	}
+	
+	public boolean sendNotificationEmail(NotificationVO notification) {
+		if (Notification.Type.ADMIN_REQUEST_TO_BECOME_DRAGON.toString().equalsIgnoreCase(notification.getType())) {
+			return sendAdminNotification(notification);
+		} else {
+			return sendListingNotification(notification);
+		}
+	}
 
-	public boolean sendListingNotification(NotificationVO notification) {
+	private boolean sendListingNotification(NotificationVO notification) {
 		String htmlTemplateFile = "./WEB-INF/email-templates/notification.html";
 		try {
-			Map<String, String> props = prepareProperties(notification);
+			Map<String, String> props = prepareListingNotificationProps(notification);
 			String htmlTemplate = FileUtils.readFileToString(new File(htmlTemplateFile), "UTF-8");
 			String htmlBody = applyProperties(htmlTemplate, props);
 			String subject = props.get(NOTIFICATION_TITLE);
@@ -105,7 +142,7 @@ public class EmailService {
 		}
 	}
 	
-	public Map<String, String> prepareProperties(NotificationVO notification) {
+	public Map<String, String> prepareListingNotificationProps(NotificationVO notification) {
 		Map<String, String> props = new HashMap<String, String>();
 		
 		props.put(LINK_TO_VIEW_ON_STARTUPBIDDER, "http://www.startupbidder.com/notification-page.html?id=" + notification.getId());
@@ -121,6 +158,64 @@ public class EmailService {
 		props.put(LISTING_MANTRA, notification.getListingMantra().replaceAll("\\.", "<span>.</span>"));
 		props.put(COPYRIGHT_TEXT, "2012 startupbidder.com");
 		props.put(LINK_TO_UPDATE_PROFILE_PAGE, "http://www.startupbidder.com/edit-profile-page.html");
+		return props;
+	}
+
+	private boolean sendAdminNotification(NotificationVO notification) {
+		String htmlTemplateFile = "./WEB-INF/email-templates/access-email.html";
+		try {
+			Map<String, String> props = prepareAdminNotificationProps(notification);
+			String htmlTemplate = FileUtils.readFileToString(new File(htmlTemplateFile), "UTF-8");
+			String htmlBody = applyProperties(htmlTemplate, props);
+			String subject = props.get(NOTIFICATION_TITLE);
+			sendAdmin("admin@startupbidder.com", notification.getUserEmail(), subject, htmlBody);
+			return true;
+		} catch (Exception e) {
+			log.log(Level.SEVERE, "Error sending notification email", e);
+			return false;
+		}
+	}
+	
+	public Map<String, String> prepareAdminNotificationProps(NotificationVO notification) {
+		Map<String, String> props = new HashMap<String, String>();
+		
+		props.put(NOTIFICATION_TITLE, notification.getTitle());
+		props.put(NOTIFICATION_TITLE_ESCAPED, notification.getTitle().replaceAll("\\.", "<span>.</span>"));
+		props.put(NOTIFICATION_TEXT_1, notification.getText1().replaceAll("\\.", "<span>.</span>"));
+		props.put(NOTIFICATION_TEXT_2, notification.getText2().replaceAll("\\.", "<span>.</span>"));
+		props.put(NOTIFICATION_TEXT_3, notification.getText3().replaceAll("\\.", "<span>.</span>"));
+		props.put(NOTIFICATION_LINK_HREF, notification.getLink());
+		props.put(NOTIFICATION_LINK_TEXT, notification.getListingOwner());
+		props.put(COPYRIGHT_TEXT, "2012 startupbidder.com");
+		return props;
+	}
+
+	public boolean sendAccessEmail(String receiverEmail, String accessUrl) {
+		String htmlTemplateFile = "./WEB-INF/email-templates/access-email.html";
+		try {
+			Map<String, String> props = prepareAccessEmailProps(receiverEmail, accessUrl);
+			String htmlTemplate = FileUtils.readFileToString(new File(htmlTemplateFile), "UTF-8");
+			String htmlBody = applyProperties(htmlTemplate, props);
+			String subject = props.get(NOTIFICATION_TITLE);
+			send("admin@startupbidder.com", receiverEmail, subject, htmlBody);
+			return true;
+		} catch (Exception e) {
+			log.log(Level.SEVERE, "Error sending notification email", e);
+			return false;
+		}
+	}
+	
+	public Map<String, String> prepareAccessEmailProps(String receiverEmail, String accessUrl) {
+		Map<String, String> props = new HashMap<String, String>();
+		
+		props.put(NOTIFICATION_TITLE, "You requested access to startupbidder.com");
+		props.put(NOTIFICATION_TITLE_ESCAPED, "You requested access to startupbidder<span>.</span>com");
+		props.put(NOTIFICATION_TEXT_1, "Please");
+		props.put(NOTIFICATION_LINK_HREF, accessUrl);
+		props.put(NOTIFICATION_LINK_TEXT, "click on the link");
+		props.put(NOTIFICATION_TEXT_2, "to access startupbidder.com");
+		props.put(NOTIFICATION_TEXT_3, "Access is granted for limited time and for the browser window you'll open above link.");
+		props.put(COPYRIGHT_TEXT, "2012 startupbidder.com");
 		return props;
 	}
 

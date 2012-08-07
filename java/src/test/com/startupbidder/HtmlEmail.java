@@ -147,7 +147,7 @@ public class HtmlEmail {
 		NotificationVO notification = prepareNotificaiton();
 		String htmlTemplateFile = "E:/projects/startupbidder/war/WEB-INF/email-templates/notification.html";
 		try {
-			Map<String, String> props = EmailService.instance().prepareProperties(notification);
+			Map<String, String> props = EmailService.instance().prepareListingNotificationProps(notification);
 			String htmlTemplate = FileUtils.readFileToString(new File(htmlTemplateFile), "UTF-8");
 			String htmlBody = EmailService.instance().applyProperties(htmlTemplate, props);
 			String subject = props.get("##NOTIFICATION_TITLE##");
