@@ -1842,6 +1842,7 @@ public class ListingFacade {
 				doc.setErrorMessage(errorMsg);
 				return doc;
 			}
+            // storing logo immediatelly as it could be overwritten by other listing updates
             getDAO().storeListing(listing);
 		} else if (docType == ListingDoc.Type.PIC1 || docType == ListingDoc.Type.PIC2 || docType == ListingDoc.Type.PIC3
 				|| docType == ListingDoc.Type.PIC4 || docType == ListingDoc.Type.PIC5) {
@@ -1883,7 +1884,7 @@ public class ListingFacade {
 	}
 
 	private Listing updateListingDoc(Listing listing, ListingDoc docDTO) {
-		//listing = getDAO().getListing(listing.id);
+		listing = getDAO().getListing(listing.id);
 		Key<ListingDoc> replacedDocId = null;
 		switch(docDTO.type) {
 		case BUSINESS_PLAN:
