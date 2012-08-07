@@ -25,6 +25,7 @@ public class UserBasicVO extends BaseVO {
 	@JsonProperty("edited_status")	@JsonSerialize(using=LowecaseSerializer.class) private String editedStatus;
 	@JsonProperty("num_notifications") private long numberOfNotifications;
 	@JsonProperty("admin") private boolean admin;
+	@JsonProperty("dragon") private boolean dragon;
 	public UserBasicVO() {
 	}
 	public UserBasicVO(UserVO user) {
@@ -37,6 +38,7 @@ public class UserBasicVO extends BaseVO {
 		this.editedStatus = user.getEditedStatus();
 		this.numberOfNotifications = user.getNumberOfNotifications();
 		this.admin = user.isAdmin();
+		this.dragon = user.isDragon();
 	}
 	public String getId() {
 		return id;
@@ -91,5 +93,11 @@ public class UserBasicVO extends BaseVO {
 	}
 	public void setAdmin(boolean admin) {
 		this.admin = admin;
+	}
+	public boolean isDragon() {
+		return dragon;
+	}
+	public void setDragon(boolean dragon) {
+		this.dragon = dragon;
 	}
 }

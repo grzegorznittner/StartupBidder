@@ -9,7 +9,6 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -304,6 +303,23 @@ public class UserMgmtFacade {
 			log.warning("User '" + email + "' tried to change password but provided wrong existing password");
 			return null;
 		}
+	}
+	
+	public UserVO promoteToDragon(UserVO loggedInUser, String userId) {
+		if (loggedInUser == null || !loggedInUser.isAdmin()) {
+			log.warning("User not logged in or is not an admin");
+			return null;
+		}
+		SBUser user = getDAO().getUser(userId);
+		if (user == null) {
+			log.warning("User with id '" + userId + "' not found");
+			return null;
+		}
+		user.dragon = true;
+		user = getDAO().updateUser(user);
+		log.info("Promoted to Dragon: " + user);
+		
+		return DtoToVoConverter.convert(user);
 	}
 	
 	/**

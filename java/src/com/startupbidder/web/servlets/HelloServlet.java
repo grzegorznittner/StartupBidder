@@ -125,6 +125,8 @@ public class HelloServlet extends HttpServlet {
 			out.println("<a href=\"/user/votes/" + currentUser.getId() + "/.json\">Logged in user votes</a><br/>");
 			out.println("<form method=\"GET\" action=\"/user/check_user_name/.json\"><input name=\"name\" type=\"text\" value=\"greg\"/>"
 					+ "<input type=\"submit\" value=\"Check user name\"/></form>");
+			out.println("<form method=\"POST\" action=\"/user/promote_to_dragon/.json\"><textarea name=\"id\" rows=\"1\" cols=\"50\">"
+					+ currentUser.getId() + "</textarea><input type=\"submit\" value=\"Promote user to Dragon\"/></form>");
 			
 			out.println("<p style=\"background: none repeat scroll 0% 0% rgb(187, 187, 187);\">Listings API:</p>");
 			out.println("<a href=\"/listings/discover/.json\">Discover listings</a><br/>");

@@ -54,6 +54,8 @@ public class SBUser extends BaseObject<SBUser> {
 	public String location;
 	@Indexed public String country;
 	
+	@Indexed public boolean dragon = false;
+	
 	public boolean notifyEnabled = true;
 
 	@Indexed(IfNotNull.class) public long twitterId;

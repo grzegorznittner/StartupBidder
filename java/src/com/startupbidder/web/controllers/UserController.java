@@ -74,6 +74,8 @@ public class UserController extends ModelDrivenController {
 				return sendMessage(request);
 			} else if("request_update_email".equalsIgnoreCase(getCommand(1))) {
 				return requestEmailUpdate(request);
+			} else if("promote_to_dragon".equalsIgnoreCase(getCommand(1))) {
+				return promoteToDragon(request);
 			}
 		}
 		return null;
@@ -291,6 +293,15 @@ public class UserController extends ModelDrivenController {
 		String id = getCommandOrParameter(request, 2, "id");
 		String token = getCommandOrParameter(request, 3, "token");
 		model = UserMgmtFacade.instance().confirmEmailUpdate(id, token);
+		
+		return headers;
+	}
+
+	private HttpHeaders promoteToDragon(HttpServletRequest request) {
+		HttpHeaders headers = new HttpHeadersImpl("promote_to_dragon");
+		
+		String userId = getCommandOrParameter(request, 2, "id");
+		model = UserMgmtFacade.instance().promoteToDragon(getLoggedInUser(), userId);
 		
 		return headers;
 	}

@@ -274,6 +274,7 @@ public class VoToModelConverter {
 		user.mockData = userVO.isMockData();
 		user.admin = userVO.isAdmin();
 		user.investor = userVO.isAccreditedInvestor();
+		user.dragon = userVO.isDragon();
 		user.email = userVO.getEmail();
 		user.name = userVO.getName();
 		user.joined = userVO.getJoined();

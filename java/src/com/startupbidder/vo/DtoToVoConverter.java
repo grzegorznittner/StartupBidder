@@ -314,6 +314,7 @@ public class DtoToVoConverter {
 		user.setMockData(userDTO.mockData);
 		user.setAdmin(userDTO.admin);
 		user.setAccreditedInvestor(userDTO.investor);
+		user.setDragon(userDTO.dragon);
 		user.setEmail(userDTO.email);
 		user.setName(userDTO.name);
 		user.setJoined(userDTO.joined);
@@ -325,7 +326,6 @@ public class DtoToVoConverter {
 		user.setStatus(userDTO.status.toString());
 		user.setNotifyEnabled(userDTO.notifyEnabled);
 		user.setEditedListing(keyToString(userDTO.editedListing));
-		//user.set(userDTO.notifyEnabled);
 		return user;
 	}
 	
