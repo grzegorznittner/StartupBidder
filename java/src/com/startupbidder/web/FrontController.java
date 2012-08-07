@@ -9,6 +9,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.startupbidder.web.controllers.CommentController;
 import com.startupbidder.web.controllers.CronTaskController;
 import com.startupbidder.web.controllers.FileController;
@@ -30,7 +32,16 @@ public class FrontController extends HttpServlet {
 	@Override
 	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String pathInfo = request.getPathInfo();
-		//log.log(Level.INFO, "pathInfo=" + pathInfo);
+		if ("GET".equals(request.getMethod()) && "startupbidder.appspot.com".equals(request.getServerName())) {
+			String redirectUrl = request.getScheme() + "://www.startupbidder.com" + request.getServletPath();
+			String queryString = request.getQueryString();
+			if (StringUtils.isNotEmpty(queryString)) {
+				redirectUrl += "?" + queryString;
+			}
+			log.info("Got request to startupbidder.appspot.com, redirecting to: " + redirectUrl);
+			response.sendRedirect(redirectUrl);
+			return;
+		}
 		
 		ModelDrivenController controller = null;
 		HttpHeaders headers = null;
@@ -57,11 +68,8 @@ public class FrontController extends HttpServlet {
 		}
 		
 		if (controller != null) {
-			//log.log(Level.INFO, "Created controller: " + controller.getClass().getCanonicalName());
 			headers = ((ModelDrivenController)controller).execute(request);
 			if (controller.getModel() != null) {
-				//log.log(Level.INFO, "Returned object class: " + controller.getModel().getClass().getCanonicalName());
-				//log.log(Level.INFO, "Returned object: " + controller.getModel().toString());
 			} else {
 				log.log(Level.SEVERE, "Returned object is NULL");
 			}
