@@ -583,10 +583,10 @@ public class ObjectifyDatastoreDAO {
 		}
 	}
 	
-	public Listing storeListing(Listing newListing) {
-		log.info("Storing " + newListing);
-		getOfy().put(newListing);
-		return newListing;
+	public Listing storeListing(Listing listing) {
+		getOfy().put(listing);
+		log.info("Put into datastore " + listing);
+		return listing;
 	}
 
 	public Listing getListing(long listingId) {

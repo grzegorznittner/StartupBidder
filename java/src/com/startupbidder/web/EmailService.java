@@ -199,7 +199,7 @@ public class EmailService {
 					"http://localhost:7777" : "http://www.startupbidder.com";
 			activationUrl += "/user/confirm_user_email?id=" + userByTwitter.twitterId + "&token=" +userByTwitter.activationCode;
 			
-			Map<String, String> props = prepareAccessEmailProps(userByTwitter.twitterEmail, activationUrl);
+			Map<String, String> props = prepareEmailVerificationProps(userByTwitter.twitterEmail, activationUrl);
 			String htmlTemplate = FileUtils.readFileToString(new File(htmlTemplateFile), "UTF-8");
 			String htmlBody = applyProperties(htmlTemplate, props);
 			String subject = props.get(NOTIFICATION_TITLE);

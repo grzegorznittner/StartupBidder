@@ -211,6 +211,9 @@ public class ListingFacade {
 				newListing.founders = !StringUtils.isEmpty(loggedInUser.getName()) ? loggedInUser.getName() : loggedInUser.getNickname();
 				newListing.askedForFunding = false;
 				newListing.created = new Date();
+				newListing = getDAO().createListing(newListing);
+				loggedInUser.setEditedListing(newListing.getWebKey());
+				loggedInUser.setEditedStatus(newListing.state.toString());
 			}
 			
 			newListing = ListingImportService.instance().importListing(loggedInUser, type, newListing, id);
@@ -1817,7 +1820,7 @@ public class ListingFacade {
 		} else {
 			blobstoreService.delete(doc.getBlob());
 			doc.setErrorCode(ErrorCodes.OPERATION_NOT_ALLOWED);
-			doc.setErrorMessage("User is not editing listing");
+			doc.setErrorMessage("User is not allowed to upload file");
 			return doc;
 		}
 		Listing listing = getDAO().getListing(editedListingId);
@@ -1839,8 +1842,8 @@ public class ListingFacade {
 				doc.setErrorMessage(errorMsg);
 				return doc;
 			}
-		}
-		if (docType == ListingDoc.Type.PIC1 || docType == ListingDoc.Type.PIC2 || docType == ListingDoc.Type.PIC3
+            getDAO().storeListing(listing);
+		} else if (docType == ListingDoc.Type.PIC1 || docType == ListingDoc.Type.PIC2 || docType == ListingDoc.Type.PIC3
 				|| docType == ListingDoc.Type.PIC4 || docType == ListingDoc.Type.PIC5) {
 			BlobInfo picInfo = new BlobInfoFactory().loadBlobInfo(doc.getBlob());
 			byte pic[] = blobstoreService.fetchData(doc.getBlob(), 0, picInfo.getSize() - 1);
@@ -1880,7 +1883,7 @@ public class ListingFacade {
 	}
 
 	private Listing updateListingDoc(Listing listing, ListingDoc docDTO) {
-		log.info("Updating listing document " + docDTO);
+		//listing = getDAO().getListing(listing.id);
 		Key<ListingDoc> replacedDocId = null;
 		switch(docDTO.type) {
 		case BUSINESS_PLAN:
@@ -1920,6 +1923,7 @@ public class ListingFacade {
 			listing.pic5Id = new Key<ListingDoc>(ListingDoc.class, docDTO.id);
 			break;
 		}
+		log.info("Setting " + docDTO + " for " + listing.id);
 		listing = getDAO().storeListing(listing);
 		
 		if (replacedDocId != null) {

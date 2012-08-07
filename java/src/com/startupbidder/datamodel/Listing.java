@@ -8,12 +8,15 @@ import java.util.Date;
 import javax.persistence.Id;
 import javax.persistence.PrePersist;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.annotation.Cached;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Indexed;
 import com.googlecode.objectify.annotation.Unindexed;
 import com.googlecode.objectify.condition.IfNotNull;
+import com.startupbidder.util.ListingToStringStyle;
 
 /**
  * @author "Grzegorz Nittner" <grzegorz.nittner@gmail.com>
@@ -147,4 +150,7 @@ public class Listing extends BaseObject<Listing> {
 		return new Key<Listing>(Listing.class, id).getString();
 	}
 	
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this, ListingToStringStyle.instance);
+	}
 }

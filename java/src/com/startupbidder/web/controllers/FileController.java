@@ -142,12 +142,6 @@ public class FileController extends ModelDrivenController {
 			doc = handleBlobType(blobs, ListingDoc.Type.PIC5);
 		}
 
-		// delete unwanted attachements
-		log.log(Level.INFO, "Deleting remaining (unhandled) blobs: " + blobs);
-		for (BlobKey blobKey : blobs.values()) {
-			blobstoreService.delete(blobKey);
-		}
-
 		if (doc != null) {
 			log.log(Level.INFO, "Storing document: " + doc);
 			doc = ListingFacade.instance().createListingDocument(getLoggedInUser(), listingId, doc);
@@ -159,11 +153,16 @@ public class FileController extends ModelDrivenController {
                 log.warning("Document upload error");
                 headers.setStatus(500);
             }
-		}
-        else {
+		} else {
 		    log.log(Level.INFO, "No docs to store!");
 		    headers.setStatus(500);
         }
+		
+		// delete unwanted attachements
+		log.log(Level.INFO, "Deleting remaining (unhandled) blobs: " + blobs);
+		for (BlobKey blobKey : blobs.values()) {
+			blobstoreService.delete(blobKey);
+		}
 
 		return headers;
 	}
