@@ -54,6 +54,8 @@ public class UserController extends ModelDrivenController {
 				return checkUserName(request);
 			} else if("confirm_update_email".equalsIgnoreCase(getCommand(1))) {
 				return confirmEmailUpdate(request);
+			} else if("request_email_access".equalsIgnoreCase(getCommand(1))) {
+				return requestEmailAccess(request);
 			} else {
 				return index(request);
 			}
@@ -312,6 +314,16 @@ public class UserController extends ModelDrivenController {
 		HttpHeaders headers = new HttpHeadersImpl("request_dragon");
 		
 		model = UserMgmtFacade.instance().requestDragon(getLoggedInUser());
+		
+		return headers;
+	}
+
+	private HttpHeaders requestEmailAccess(HttpServletRequest request) {
+		HttpHeaders headers = new HttpHeadersImpl("request_email_access");
+		String email = getCommandOrParameter(request, 2, "email");
+		String url = getCommandOrParameter(request, 3, "url");
+		
+		model = UserMgmtFacade.instance().requestEmailAccess(getLoggedInUser(), email, url);
 		
 		return headers;
 	}

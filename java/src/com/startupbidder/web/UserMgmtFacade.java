@@ -120,7 +120,7 @@ public class UserMgmtFacade {
 			return null;
 		}
 		userByTwitter = getDAO().prepareUpdateUsersEmailByTwitter(userByTwitter, email);
-		// send verification email with link /user/confirm_user_email?id=<twitter_id>&token=<token>
+		EmailService.instance().sendEmailVerification(userByTwitter);
 		
 		return DtoToVoConverter.convert(userByTwitter);
 	}
@@ -549,5 +549,16 @@ public class UserMgmtFacade {
 		}
 		
 		return list;
+	}
+
+	public Object verifyEmail(UserVO loggedInUser, String email) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Object requestEmailAccess(UserVO loggedInUser, String email,
+			String url) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

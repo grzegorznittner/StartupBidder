@@ -50,6 +50,7 @@ import com.google.appengine.api.images.Image;
 import com.google.appengine.api.images.ImagesService;
 import com.google.appengine.api.images.ImagesServiceFactory;
 import com.google.appengine.api.images.Transform;
+import com.google.appengine.api.memcache.Expiration;
 import com.google.appengine.api.memcache.MemcacheService;
 import com.google.appengine.api.memcache.MemcacheServiceFactory;
 import com.google.appengine.api.taskqueue.Queue;
@@ -95,6 +96,9 @@ public class ListingFacade {
 	
 	public static enum UpdateReason {NEW_BID, BID_UPDATE, NEW_COMMENT, DELETE_COMMENT, NEW_MONITOR, DELETE_MONITOR, QUESTION_ANSWERED, NONE};
 	public static final String MEMCACHE_ALL_LISTING_LOCATIONS = "AllListingLocations";
+	public static final String MEMCACHE_TOP_LISTINGS_TILES = "TopListingsTiles";
+	public static final String MEMCACHE_CLOSING_LISTINGS_TILES = "ClosingListingsTiles";
+	public static final String MEMCACHE_LATEST_LISTINGS_TILES = "LatestListingsTiles";
 
 	private final static int PICTURE_HEIGHT = 452;
 	private final static int PICTURE_WIDTH = 622;
@@ -1046,33 +1050,61 @@ public class ListingFacade {
 		return result;
 	}
 	
+	private List<ListingTileVO> getTopListingsTiles() {
+		MemcacheService mem = MemcacheServiceFactory.getMemcacheService();
+		@SuppressWarnings("unchecked")
+		List<ListingTileVO> data = (List<ListingTileVO>)mem.get(MEMCACHE_TOP_LISTINGS_TILES);
+		if (data == null) {
+			ListPropertiesVO props = new ListPropertiesVO();
+			props.setMaxResults(4);
+			data = prepareListingList(getDAO().getTopListings(props));
+			mem.put(MEMCACHE_TOP_LISTINGS_TILES, data, Expiration.byDeltaSeconds(15 * 60));
+		}
+		return data;
+	}
+	
+	private List<ListingTileVO> getClosingListingsTiles() {
+		MemcacheService mem = MemcacheServiceFactory.getMemcacheService();
+		@SuppressWarnings("unchecked")
+		List<ListingTileVO> data = (List<ListingTileVO>)mem.get(MEMCACHE_CLOSING_LISTINGS_TILES);
+		if (data == null) {
+			ListPropertiesVO props = new ListPropertiesVO();
+			props.setMaxResults(4);
+			data = prepareListingList(getDAO().getClosingListings(props));
+			mem.put(MEMCACHE_CLOSING_LISTINGS_TILES, data, Expiration.byDeltaSeconds(15 * 60));
+		}
+		return data;
+	}
+	
+	private List<ListingTileVO> getLatestListingsTiles() {
+		MemcacheService mem = MemcacheServiceFactory.getMemcacheService();
+		@SuppressWarnings("unchecked")
+		List<ListingTileVO> data = (List<ListingTileVO>)mem.get(MEMCACHE_LATEST_LISTINGS_TILES);
+		if (data == null) {
+			ListPropertiesVO props = new ListPropertiesVO();
+			props.setMaxResults(4);
+			data = prepareListingList(getDAO().getLatestListings(props));
+			mem.put(MEMCACHE_LATEST_LISTINGS_TILES, data, Expiration.byDeltaSeconds(15 * 60));
+		}
+		return data;
+	}
+	
 	public DiscoverListingsVO getDiscoverListingList(UserVO loggedInUser) {
 		DiscoverListingsVO result = new DiscoverListingsVO();
 		
-		ListPropertiesVO props = new ListPropertiesVO();
-		props.setMaxResults(4);
-		List<ListingTileVO> list = prepareListingList(loggedInUser, getDAO().getTopListings(props));
-		result.setTopListings(list);
-
-		props = new ListPropertiesVO();
-		props.setMaxResults(4);
-		list = prepareListingList(loggedInUser, getDAO().getClosingListings(props));
-		result.setClosingListings(list);
-
-		props = new ListPropertiesVO();
-		props.setMaxResults(4);
-		list = prepareListingList(loggedInUser, getDAO().getLatestListings(props));
-		result.setLatestListings(list);
+		result.setTopListings(getTopListingsTiles());
+		result.setClosingListings(getClosingListingsTiles());
+		result.setLatestListings(getLatestListingsTiles());
 		
 		if (loggedInUser != null) {
-			props = new ListPropertiesVO();
+			ListPropertiesVO props = new ListPropertiesVO();
 			props.setMaxResults(4);
-			list = prepareListingList(loggedInUser, getDAO().getUserActiveListings(loggedInUser.toKeyId(), props));
+			List<ListingTileVO> list = prepareListingList(getDAO().getUserListings(loggedInUser.toKeyId(), Listing.State.ACTIVE, props));
 			result.setUsersListings(list);
 			
 			props = new ListPropertiesVO();
 			props.setMaxResults(4);
-			list = prepareListingList(loggedInUser, getDAO().getMonitoredListings(loggedInUser.toKeyId(), props));
+			list = prepareListingList(getDAO().getMonitoredListings(loggedInUser.toKeyId(), props));
 			result.setMonitoredListings(list);
 			
 			if (loggedInUser.getEditedListing() != null) {
@@ -1097,19 +1129,19 @@ public class ListingFacade {
 		}
 		ListPropertiesVO props = new ListPropertiesVO();
 		props.setMaxResults(4);
-		List<ListingTileVO> activeListings = prepareListingList(loggedInUser,
+		List<ListingTileVO> activeListings = prepareListingList(
 				getDAO().getUserListings(loggedInUser.toKeyId(), Listing.State.ACTIVE, props));
 		props = new ListPropertiesVO();
 		props.setMaxResults(4);
-		List<ListingTileVO> withdrawnListings = prepareListingList(loggedInUser,
+		List<ListingTileVO> withdrawnListings = prepareListingList(
 				getDAO().getUserListings(loggedInUser.toKeyId(), Listing.State.WITHDRAWN, props));
 		props = new ListPropertiesVO();
 		props.setMaxResults(4);
-		List<ListingTileVO> frozenListings = prepareListingList(loggedInUser,
+		List<ListingTileVO> frozenListings = prepareListingList(
 				getDAO().getUserListings(loggedInUser.toKeyId(), Listing.State.FROZEN, props));
 		props = new ListPropertiesVO();
 		props.setMaxResults(4);
-		List<ListingTileVO> closedListings = prepareListingList(loggedInUser,
+		List<ListingTileVO> closedListings = prepareListingList(
 				getDAO().getUserListings(loggedInUser.toKeyId(), Listing.State.CLOSED, props));
 
 		if (activeListings.size() > 0) {
@@ -1133,7 +1165,7 @@ public class ListingFacade {
 		props = new ListPropertiesVO();
 		props.setMaxResults(4);
 		List<Listing> monitoredListing = getDAO().getMonitoredListings(loggedInUser.toKeyId(), props);
-		List<ListingTileVO> list = prepareListingList(loggedInUser, monitoredListing);
+		List<ListingTileVO> list = prepareListingList(monitoredListing);
 		result.setCommentedListings(list);
 		
 		props = new ListPropertiesVO();
@@ -1146,13 +1178,13 @@ public class ListingFacade {
 			props = new ListPropertiesVO();
 			props.setMaxResults(4);
 			List<Listing> adminFrozenListing = getDAO().getFrozenListings(props);
-			list = prepareListingList(loggedInUser, adminFrozenListing);
+			list = prepareListingList(adminFrozenListing);
 			result.setAdminFrozenListings(list);
 
 			props = new ListPropertiesVO();
 			props.setMaxResults(4);
 			List<Listing> adminPostedListing = getDAO().getPostedListings(props);
-			list = prepareListingList(loggedInUser, adminPostedListing);
+			list = prepareListingList(adminPostedListing);
 			result.setAdminPostedListings(list);
 		}
 		
@@ -1162,7 +1194,7 @@ public class ListingFacade {
 		return result;
 	}
 
-	private List<ListingTileVO> prepareListingList(UserVO loggedInUser, List<Listing> listings) {
+	private List<ListingTileVO> prepareListingList(List<Listing> listings) {
 		ListingTileVO listingVO = null;
 		int index = 1;
 		List<ListingTileVO> list = new ArrayList<ListingTileVO>();
@@ -1362,7 +1394,7 @@ public class ListingFacade {
 		ListPropertiesVO props = new ListPropertiesVO();
 		props.setMaxResults(4);
 		List<Listing> monitoredListing = getDAO().getMonitoredListings(loggedInUser.toKeyId(), props);
-		List<ListingTileVO> monitored = prepareListingList(loggedInUser, monitoredListing);
+		List<ListingTileVO> monitored = prepareListingList(monitoredListing);
 		list.setMonitoredListings(monitored);
 	}
 	
