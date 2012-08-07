@@ -24,6 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.startupbidder.dao.ObjectifyDatastoreDAO;
 import com.startupbidder.datamodel.Notification;
+import com.startupbidder.datamodel.SBUser;
 import com.startupbidder.datamodel.SystemProperty;
 import com.startupbidder.vo.NotificationVO;
 
@@ -190,6 +191,40 @@ public class EmailService {
 		return props;
 	}
 
+	public boolean sendEmailVerification(SBUser userByTwitter) {
+		String htmlTemplateFile = "./WEB-INF/email-templates/access-email.html";
+		try {
+			// send verification email with link /user/confirm_user_email?id=<twitter_id>&token=<token>
+			String activationUrl = com.google.appengine.api.utils.SystemProperty.environment.value() == com.google.appengine.api.utils.SystemProperty.Environment.Value.Development ?
+					"http://localhost:7777" : "http://www.startupbidder.com";
+			activationUrl += "/user/confirm_user_email?id=" + userByTwitter.twitterId + "&token=" +userByTwitter.activationCode;
+			
+			Map<String, String> props = prepareAccessEmailProps(userByTwitter.twitterEmail, activationUrl);
+			String htmlTemplate = FileUtils.readFileToString(new File(htmlTemplateFile), "UTF-8");
+			String htmlBody = applyProperties(htmlTemplate, props);
+			String subject = props.get(NOTIFICATION_TITLE);
+			send("admin@startupbidder.com", userByTwitter.twitterEmail, subject, htmlBody);
+			return true;
+		} catch (Exception e) {
+			log.log(Level.SEVERE, "Error sending email verification email", e);
+			return false;
+		}
+	}
+
+	public Map<String, String> prepareEmailVerificationProps(String receiverEmail, String accessUrl) {
+		Map<String, String> props = new HashMap<String, String>();
+		
+		props.put(NOTIFICATION_TITLE, "Email address verification");
+		props.put(NOTIFICATION_TITLE_ESCAPED, "Email address verification");
+		props.put(NOTIFICATION_TEXT_1, "By clicking on ");
+		props.put(NOTIFICATION_LINK_HREF, accessUrl);
+		props.put(NOTIFICATION_LINK_TEXT, "verification link");
+		props.put(NOTIFICATION_TEXT_2, "you confirm that email address " + receiverEmail + " belongs to you.");
+		props.put(NOTIFICATION_TEXT_3, "If you already logged in to startupbidder<span>.</span>com with Facebook or Google your account will be merged.");
+		props.put(COPYRIGHT_TEXT, "2012 startupbidder.com");
+		return props;
+	}
+
 	public boolean sendAccessEmail(String receiverEmail, String accessUrl) {
 		String htmlTemplateFile = "./WEB-INF/email-templates/access-email.html";
 		try {
@@ -225,5 +260,4 @@ public class EmailService {
 		}
 		return htmlTemplate;
 	}
-
 }

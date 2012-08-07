@@ -1,5 +1,6 @@
 package com.startupbidder.vo;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import org.codehaus.jackson.annotate.JsonAutoDetect;
@@ -18,7 +19,9 @@ import com.startupbidder.util.LowecaseSerializer;
 @JsonAutoDetect(getterVisibility=Visibility.NONE, setterVisibility=Visibility.NONE,
 		fieldVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE)
 @JsonIgnoreProperties(ignoreUnknown=true)
-public class ListingTileVO extends BaseVO {	
+public class ListingTileVO extends BaseVO implements Serializable {	
+	private static final long serialVersionUID = 454597852345456L;
+	
 	@JsonProperty("num") protected int orderNumber;
 	@JsonProperty("listing_id")	protected String id;
 	@JsonProperty("title") protected String name;
