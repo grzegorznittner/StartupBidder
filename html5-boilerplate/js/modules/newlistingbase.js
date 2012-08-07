@@ -49,6 +49,8 @@ function NewListingBaseClass() {
         },
 
         displayNameOverrides = {
+            logo: 'LOGO IMAGE',
+            pic1: 'UPLOADED IMAGE 1'
             website: 'WEBSITE',
             founders: 'FOUNDERS',
             address: 'LOCATION',
