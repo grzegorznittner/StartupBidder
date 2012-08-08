@@ -101,7 +101,7 @@ public abstract class ModelDrivenController {
 			// calling this method checks also if listing is in valid state
 			ListingFacade.instance().editedListing(loggedInUser);
 		}
-		if (loggedInUser != null) {
+		if (loggedInUser != null && StringUtils.isNotEmpty(request.getHeader("X-AppEngine-Country"))) {
 			Map<String, String> locationHeaders = new HashMap<String, String>();
 			locationHeaders.put("X-AppEngine-Country", request.getHeader("X-AppEngine-Country"));
 			locationHeaders.put("X-AppEngine-Region", request.getHeader("X-AppEngine-Region"));

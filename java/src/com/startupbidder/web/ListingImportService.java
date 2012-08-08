@@ -130,6 +130,19 @@ public class ListingImportService {
 		converted += text;
 		return converted;
 	}
+	
+	private static void fillMantraAndSummary(Listing listing, String mantra, String summary) {
+		if (!StringUtils.isEmpty(mantra)) {
+			listing.mantra = mantra;
+		} else {
+			listing.mantra = extractMantra(summary);
+		}
+		listing.summary = summary;
+	}
+	
+	private static String fixNewLines(String text) {
+		return StringUtils.replace(text, "\\n", "\n");
+	}
 
 	private static String extractMantra(String description) {
 		StringBuffer mantra = new StringBuffer();
@@ -322,8 +335,7 @@ public class ListingImportService {
 				}
 				net.htmlparser.jericho.Element descTag = source.getElementById("doc-original-text");
 				if (descTag != null) {
-					listing.summary = descTag.getContent().toString().trim();
-					listing.mantra = extractMantra(listing.summary);
+					fillMantraAndSummary(listing, null, descTag.getContent().toString().trim());
 				}
 				net.htmlparser.jericho.Element categoryTag = source.getFirstElement("href", Pattern.compile("/store/apps/category.*"));
 				if (categoryTag != null) {
@@ -466,8 +478,7 @@ public class ListingImportService {
 					listing.type = Listing.Type.APPLICATION;
 					listing.category = "Software";
 					listing.platform = Listing.Platform.IOS.toString();
-					listing.summary = getJsonNodeValue(nodeItem, "description");
-					listing.mantra = extractMantra(listing.summary);
+					fillMantraAndSummary(listing, null, getJsonNodeValue(nodeItem, "description"));
 					listing.website = getJsonNodeValue(nodeItem, "sellerUrl");
 					
 					JsonNode logoNode = nodeItem.get("artworkUrl512");
@@ -587,8 +598,7 @@ public class ListingImportService {
 				listing.type = Listing.Type.APPLICATION;
 				listing.category = "Software";
 				listing.platform = Listing.Platform.WINDOWS_PHONE.toString();
-				listing.summary = getText(rootElem, "a:content");
-				listing.mantra = extractMantra(listing.summary);
+				fillMantraAndSummary(listing, null, getText(rootElem, "a:content"));
 				listing.website = "http://www.windowsphone.com/en-US/apps/" + id;
 				
 				Element logoNode = getFirstElement(rootElem, "image");
@@ -740,10 +750,11 @@ public class ListingImportService {
 					listing.name = getJsonNodeValue(rootNode, "name");
 					listing.founders = getFunders(rootNode.get("relationships"));
 					listing.type = Listing.Type.COMPANY;
+					listing.platform = Listing.Platform.OTHER.toString();
 					listing.category = "Software";
 					listing.platform = Listing.Platform.IOS.toString();
-					listing.summary = getJsonNodeValue(rootNode, "overview");
-					listing.mantra = getJsonNodeValue(rootNode, "description");
+					fillMantraAndSummary(listing, getJsonNodeValue(rootNode, "description"),
+							getJsonNodeValue(rootNode, "overview"));
 					listing.website = getJsonNodeValue(rootNode, "homepage_url");
 					
 					JsonNode logoNode = rootNode.get("image");
@@ -872,6 +883,7 @@ public class ListingImportService {
 				converted = removeTag(converted, "script");
 				
 				listing.type = Listing.Type.COMPANY;
+				listing.platform = Listing.Platform.OTHER.toString();
 				listing.category = "Software";
 				listing.platform = null;
 	
@@ -922,8 +934,7 @@ public class ListingImportService {
 							mantra = extractMantra(mantra);
 						}
 					}
-					listing.mantra = mantra;
-					listing.summary = description;
+					fillMantraAndSummary(listing, mantra, description);
 					// listing.answer10 = team; not sure which question is about team
 				}
 				/*
@@ -1037,9 +1048,10 @@ public class ListingImportService {
 				if (rootNode != null) {
 					listing.name = getJsonNodeValue(rootNode, "name");
 					listing.type = Listing.Type.COMPANY;
+					listing.platform = Listing.Platform.OTHER.toString();
 					listing.category = "Software";
-					listing.summary = getJsonNodeValue(rootNode, "product_desc");
-					listing.mantra = getJsonNodeValue(rootNode, "high_concept");
+					fillMantraAndSummary(listing, getJsonNodeValue(rootNode, "high_concept"),
+							getJsonNodeValue(rootNode, "product_desc"));
 					listing.website = getJsonNodeValue(rootNode, "company_url");
 					listing.videoUrl = getJsonNodeValue(rootNode, "video_url");
 					if (StringUtils.isEmpty(listing.videoUrl)) {

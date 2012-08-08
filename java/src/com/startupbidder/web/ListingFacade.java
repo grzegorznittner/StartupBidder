@@ -403,6 +403,7 @@ public class ListingFacade {
 		
 		if (!propsToUpdate.isEmpty()) {
 			for (ListingPropertyVO prop : propsToUpdate) {
+				log.info(prop.getPropertyName() + ": " + ImageHelper.printStringAsHex(prop.getPropertyValue()));
 				VoToModelConverter.updateListingProperty(listing, prop);
 			}
 			log.info("Updating listing: " + listing);
@@ -2389,10 +2390,17 @@ public class ListingFacade {
 	}
 
 	public void prefillLocation(Listing listing, Map<String, String> locationHeaders) {
+		if (locationHeaders == null) {
+			locationHeaders = new HashMap<String, String>();
+			locationHeaders.put("X-AppEngine-Country", "DE");
+			locationHeaders.put("X-AppEngine-Region", "");
+			locationHeaders.put("X-AppEngine-City", "dusseldorf");
+			locationHeaders.put("X-AppEngine-CityLatLong", "51.224942,6.775652");
+		}
 		String country = locationHeaders.get("X-AppEngine-Country");
 		String region = locationHeaders.get("X-AppEngine-Region");
 		String city = locationHeaders.get("X-AppEngine-City");
-		String longLat = locationHeaders.get("X-AppEngine-CityLatLong");
+		String latLong = locationHeaders.get("X-AppEngine-CityLatLong");
 		
 		Locale currentLocale = null;
 		Locale locales[] = Locale.getAvailableLocales();
@@ -2412,11 +2420,13 @@ public class ListingFacade {
 			countryName = "usa";
 			stateName = StringUtils.lowerCase(region);
 		}
-		String cityName = city.toLowerCase();
-		String briefAddress = countryName + (stateName != null ? ", " + stateName : "") + ", " + cityName;
-		String longLatStr[] = longLat.split(",");
-		Double longitude = NumberUtils.toDouble(longLatStr[0]);
-		Double latitude = NumberUtils.toDouble(longLatStr[1]);
+		String cityName = StringUtils.lowerCase(city);
+		String briefAddress = StringUtils.capitalize(countryName)
+				+ (stateName != null ? ", " + stateName.toUpperCase() : "") + ", "
+				+ StringUtils.capitalize(cityName);
+		String latLongStr[] = latLong != null ? latLong.split(",") : new String[]{"", ""};
+		Double latitude = NumberUtils.toDouble(latLongStr[0]);
+		Double longitude = NumberUtils.toDouble(latLongStr[1]);
 		
 		listing.country = countryName;
 		listing.usState = stateName;

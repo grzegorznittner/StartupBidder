@@ -3,6 +3,7 @@ package com.startupbidder.util;
 import java.util.logging.Logger;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 
 public class ImageHelper {
 	private static final Logger log = Logger.getLogger(ImageHelper.class.getName());
@@ -33,6 +34,18 @@ public class ImageHelper {
             throw new ImageFormatException("Image not recognized as JPG, GIF or PNG. Magic number was: " + toHexString(magicNumber));
 		}
 		return format;
+	}
+	
+	public static String printStringAsHex(String text) {
+		text = StringUtils.substring(text, 0, 32);
+		StringBuffer buf = new StringBuffer();
+		buf.append("Hex output:\n");
+		for (int i = 0; i < text.length(); i++) {
+			buf.append(text.charAt(i)).append("    ");
+		}
+		buf.append("\n");
+		buf.append(toHexString(text.getBytes()));
+		return buf.toString();
 	}
 	
 	public static String toHexString(byte[] magicNumber) {
