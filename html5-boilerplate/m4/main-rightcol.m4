@@ -3,7 +3,7 @@
 
     <div class="initialhidden" id="categorywrapper">
     <div class="boxtitle boxtitleside">CATEGORIES</div>
-    <div class="sidebox frontsidebox">
+    <div class="sidebox frontsidebox categorysidebox">
         <span class="attention" id="categorymsg"></span>
         <span class="sideboxcolfull clear">
             <ul class="sideboxlist" id="categorydivcol1"></ul>
