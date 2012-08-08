@@ -3,7 +3,9 @@ package com.startupbidder.web;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -98,6 +100,14 @@ public abstract class ModelDrivenController {
 		if (loggedInUser != null && !StringUtils.isEmpty(loggedInUser.getEditedListing())) {
 			// calling this method checks also if listing is in valid state
 			ListingFacade.instance().editedListing(loggedInUser);
+		}
+		if (loggedInUser != null) {
+			Map<String, String> locationHeaders = new HashMap<String, String>();
+			locationHeaders.put("X-AppEngine-Country", request.getHeader("X-AppEngine-Country"));
+			locationHeaders.put("X-AppEngine-Region", request.getHeader("X-AppEngine-Region"));
+			locationHeaders.put("X-AppEngine-City", request.getHeader("X-AppEngine-City"));
+			locationHeaders.put("X-AppEngine-CityLatLong", request.getHeader("X-AppEngine-CityLatLong"));
+			loggedInUser.setLocationHeaders(locationHeaders);
 		}
 		
 		command = decomposeRequest(request.getPathInfo());

@@ -3,6 +3,7 @@ package com.startupbidder.vo;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.codehaus.jackson.annotate.JsonAutoDetect;
 import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
@@ -52,6 +53,7 @@ public class UserVO extends BaseVO {
 	private boolean votable;
 	private boolean mockData;
 	@JsonProperty("admin") private boolean admin;
+	private Map<String, String> locationHeaders;
 	
 	public UserVO() {
 	}
@@ -221,5 +223,11 @@ public class UserVO extends BaseVO {
 	}
 	public void setDragon(boolean dragon) {
 		this.dragon = dragon;
+	}
+	public Map<String, String> getLocationHeaders() {
+		return locationHeaders;
+	}
+	public void setLocationHeaders(Map<String, String> locationHeaders) {
+		this.locationHeaders = locationHeaders;
 	}
 }

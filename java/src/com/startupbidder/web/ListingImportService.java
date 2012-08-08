@@ -157,6 +157,28 @@ public class ListingImportService {
 				PictureImport pic = new PictureImport();
 				pic.listing = listing.getKey();
 				pic.url = url;
+				switch (picImportList.size()) {
+				case 0:
+					pic.previousDoc = listing.pic1Id;
+					listing.pic1Id = new Key<ListingDoc>(ListingDoc.class, 666);
+					break;
+				case 1:
+					pic.previousDoc = listing.pic2Id;
+					listing.pic2Id = new Key<ListingDoc>(ListingDoc.class, 666);
+					break;
+				case 2:
+					pic.previousDoc = listing.pic3Id;
+					listing.pic3Id = new Key<ListingDoc>(ListingDoc.class, 666);
+					break;
+				case 3:
+					pic.previousDoc = listing.pic4Id;
+					listing.pic4Id = new Key<ListingDoc>(ListingDoc.class, 666);
+					break;
+				case 4:
+					pic.previousDoc = listing.pic5Id;
+					listing.pic5Id = new Key<ListingDoc>(ListingDoc.class, 666);
+					break;
+				}
 				picImportList.add(pic);
 			}
 			getDAO().storePictureImports(picImportList.toArray(new PictureImport[]{}));

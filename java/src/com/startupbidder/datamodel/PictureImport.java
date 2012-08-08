@@ -27,6 +27,7 @@ import com.googlecode.objectify.annotation.Unindexed;
 public class PictureImport {
 	@Id public Long id;
 	@Indexed public Key<Listing> listing;
+	public Key<ListingDoc> previousDoc;
 	public String url;
 
 	public Date modified;

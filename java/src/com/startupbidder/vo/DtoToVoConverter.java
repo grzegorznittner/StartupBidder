@@ -40,6 +40,17 @@ public class DtoToVoConverter {
 		}
 	}
 	
+	private static String keyToString666(Key<?> key) {
+		if (key != null) {
+			if (key.getId() == 666) {
+				return "importing";
+			}
+			return key.getString();
+		} else {
+			return null;
+		}
+	}
+	
 	public static PrivateMessageVO convert(PrivateMessage msgDTO) {
 		if (msgDTO == null) {
 			return null;
@@ -161,11 +172,11 @@ public class DtoToVoConverter {
 		listing.setFinancialsId(keyToString(listingDTO.financialsId));
 		listing.setLogo(listingDTO.logoBase64);
 		listing.setVideo(listingDTO.videoUrl);
-		listing.setPic1(keyToString(listingDTO.pic1Id));
-		listing.setPic2(keyToString(listingDTO.pic2Id));
-		listing.setPic3(keyToString(listingDTO.pic3Id));
-		listing.setPic4(keyToString(listingDTO.pic4Id));
-		listing.setPic5(keyToString(listingDTO.pic5Id));
+		listing.setPic1(keyToString666(listingDTO.pic1Id));
+		listing.setPic2(keyToString666(listingDTO.pic2Id));
+		listing.setPic3(keyToString666(listingDTO.pic3Id));
+		listing.setPic4(keyToString666(listingDTO.pic4Id));
+		listing.setPic5(keyToString666(listingDTO.pic5Id));
 		listing.setSummary(listingDTO.summary);
 		listing.setMantra(listingDTO.mantra);
 		listing.setWebsite(listingDTO.website);

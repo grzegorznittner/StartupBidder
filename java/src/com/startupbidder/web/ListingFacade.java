@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
@@ -28,6 +29,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.joda.time.DateMidnight;
@@ -164,6 +166,7 @@ public class ListingFacade {
 			l.askedForFunding = false; // by default don't ask for funding
 			l.suggestedAmount = 20000;
 			l.suggestedPercentage = 5;
+			prefillLocation(l, loggedInUser.getLocationHeaders());
 			l.created = new Date();
 			ListingVO newListing = DtoToVoConverter.convert(getDAO().createListing(l));
 			loggedInUser.setEditedListing(newListing.getId());
@@ -180,7 +183,7 @@ public class ListingFacade {
 		}
 		return result;
 	}
-
+	
 	/**
 	 * Imports listing data from external resources.
 	 * Sets loggedin user as the owner of the listing.
@@ -195,14 +198,12 @@ public class ListingFacade {
 		} else {
 			Listing newListing = null;
 			if (loggedInUser.getEditedListing() != null) {
+				// if there is already edited listing we just return it
+				// most likely user pressed refresh in the browser window
 				newListing = getDAO().getListing(ListingVO.toKeyId(loggedInUser.getEditedListing()));
-				if (newListing.state != Listing.State.NEW) {
-					loggedInUser.setEditedListing(null);
-					loggedInUser.setEditedStatus(null);
-					result.setErrorCode(ErrorCodes.OPERATION_NOT_ALLOWED);
-					result.setErrorMessage("User has already posted listing");
-					return null;
-				}
+				loggedInUser.setEditedStatus(newListing.state.toString());
+				result.setListing(DtoToVoConverter.convert(newListing));
+				return result;
 			} else {
 				newListing = new Listing();
 				newListing.state = Listing.State.NEW;
@@ -216,6 +217,7 @@ public class ListingFacade {
 				loggedInUser.setEditedStatus(newListing.state.toString());
 			}
 			
+			prefillLocation(newListing, loggedInUser.getLocationHeaders());
 			newListing = ListingImportService.instance().importListing(loggedInUser, type, newListing, id);
 
 			ListingVO newListingVO;
@@ -248,12 +250,17 @@ public class ListingFacade {
 			return null;
 		} else {
 			Listing listing = getDAO().getListing(ListingVO.toKeyId(loggedInUser.getEditedListing()));
-			if (listing.state != Listing.State.NEW && listing.state != Listing.State.POSTED) {
+			if (listing != null) {
+				if (listing.state != Listing.State.NEW && listing.state != Listing.State.POSTED) {
+					loggedInUser.setEditedListing(null);
+					loggedInUser.setEditedStatus(null);
+					return null;
+				} else {
+					loggedInUser.setEditedStatus(listing.state.toString());
+				}
+			} else {
 				loggedInUser.setEditedListing(null);
 				loggedInUser.setEditedStatus(null);
-				return null;
-			} else {
-				loggedInUser.setEditedStatus(listing.state.toString());
 			}
 			ListingVO listingVO = DtoToVoConverter.convert(listing);
 			return listingVO;
@@ -617,6 +624,25 @@ public class ListingFacade {
 	        	NotificationFacade.instance().schedulePictureImport(listing, index);
 	        }
 		} else {
+			for (int i = index; i <= 5; i++) {
+				switch (i) {
+				case 0:
+					listing.pic1Id = null;
+					break;
+				case 1:
+					listing.pic2Id = null;
+					break;
+				case 2:
+					listing.pic3Id = null;
+					break;
+				case 3:
+					listing.pic4Id = null;
+					break;
+				case 4:
+					listing.pic5Id = null;
+					break;
+				}
+			}
 			log.info("No more pictures to import for listing " + listing.getWebKey());
 		}
         return listing;
@@ -1927,7 +1953,8 @@ public class ListingFacade {
 		log.info("Setting " + docDTO + " for " + listing.id);
 		listing = getDAO().storeListing(listing);
 		
-		if (replacedDocId != null) {
+		// docs of id 0 are fake docs created during import
+		if (replacedDocId != null && replacedDocId.getId() != 666) {
 			try {
 				log.info("Deleting doc previously associated with listing " + replacedDocId);
 				ListingDoc docToDelete = getDAO().getListingDocument(replacedDocId.getId());
@@ -2276,7 +2303,7 @@ public class ListingFacade {
 		}
 		Pair<ListingDoc.Type, Key<ListingDoc>> docKey = getPictureKey(listing, picNr);
 		ListingDoc doc = ObjectifyDatastoreDAO.getInstance().getListingDocument(docKey.getRight());
-		if (doc.blob != null) {
+		if (doc != null && doc.id != 666 && doc.blob != null) {
 			return new ImmutablePair<BlobKey, Listing.State>(doc.blob, listing.state);
 		} else {
 			return null;
@@ -2359,5 +2386,46 @@ public class ListingFacade {
 		default:
 			throw new IllegalArgumentException("Invalid picture index " + picNr);
 		}
+	}
+
+	public void prefillLocation(Listing listing, Map<String, String> locationHeaders) {
+		String country = locationHeaders.get("X-AppEngine-Country");
+		String region = locationHeaders.get("X-AppEngine-Region");
+		String city = locationHeaders.get("X-AppEngine-City");
+		String longLat = locationHeaders.get("X-AppEngine-CityLatLong");
+		
+		Locale currentLocale = null;
+		Locale locales[] = Locale.getAvailableLocales();
+		for (Locale locale : locales) {
+			if (StringUtils.equalsIgnoreCase(country, locale.getCountry())) {
+				currentLocale = locale;
+				break;
+			}
+		}
+		if (currentLocale == null) {
+			log.warning("Cannot determine locale by country header: " + country);
+			return;
+		}
+		String countryName = currentLocale.getDisplayCountry().toLowerCase();
+		String stateName = null;
+		if (StringUtils.equals("US", country)) {
+			countryName = "usa";
+			stateName = StringUtils.lowerCase(region);
+		}
+		String cityName = city.toLowerCase();
+		String briefAddress = countryName + (stateName != null ? ", " + stateName : "") + ", " + cityName;
+		String longLatStr[] = longLat.split(",");
+		Double longitude = NumberUtils.toDouble(longLatStr[0]);
+		Double latitude = NumberUtils.toDouble(longLatStr[1]);
+		
+		listing.country = countryName;
+		listing.usState = stateName;
+		listing.city = cityName;
+		listing.address = listing.briefAddress = briefAddress;
+		listing.latitude = latitude;
+		listing.longitude = longitude;
+		
+		log.info("Prefilling location. Country name: " + countryName + ", state: " + stateName + ", city: " + cityName
+				+ ", brief address: " + briefAddress + ", long: " + longitude + ", lat: " + latitude);
 	}
 }
