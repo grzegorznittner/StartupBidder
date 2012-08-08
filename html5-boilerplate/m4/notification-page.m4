@@ -41,12 +41,11 @@ companybannermacro(`', `', `', `', `', `')
 '
 include(footer.m4)
 `
-  <script src="js/libs/prevel.min.js"></script>
-  <script src="js/modules/base.js"></script>
-  <script src="js/modules/companybanner.js"></script>
-  <script src="js/modules/notification.js"></script>
-  <script src="js/modules/singlenotificationpage.js"></script>
-  <script src="js/modules/tracker.js"></script>
+<script src="js/modules/base.js"></script>
+<script src="js/modules/notification.js"></script>
+<script>
+(new SingleNotificationPageClass()).loadPage();
+</script>
 '
 include(promptie.m4)
 `

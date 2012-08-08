@@ -10,17 +10,29 @@ include(mainhead.m4)
 <div id="main">
 '
 include(header.m4)
-include(banner.m4)
 `
+<div class="banner" id="banner">
+    <div class="container">
+        <span class="bannertext span-24">
+            <div class="welcometitle" id="welcometitle">
+                <div>Find a startup and invest</div>
+            </div> 
+            <div class="welcometext" id="welcometext">
+                <a href="/about-page.html" class="welcomelink">Learn more...</a>
+            </div>
+        </span>
+    </div>
+</div> <!-- end banner -->
+
 <div class="container">
+
+<div class="span-24 preloader">
+    <div class="preloaderfloater"></div>
+    <div class="preloadericon"></div>
+</div>
 
 <!-- left column -->
 <div class="span-16">
-    <div class="span-16 preloader">
-        <div class="preloaderfloater"></div>
-        <div class="preloadericon"></div>
-    </div>
-
     <div class="initialhidden wrapper">
 
         <div class="boxtitle smokegrey">TOP LISTINGS</div>
@@ -54,12 +66,10 @@ include(main-rightcol.m4)
 '
 include(footer.m4)
 `
-  <!-- JavaScript at the bottom for fast page loading -->
-  <script src="js/libs/prevel.min.js"></script>
-  <script src="js/modules/base.js"></script>
-  <script src="js/modules/companylist.js"></script>
-  <script src="js/modules/discoverpage.js"></script>
-  <script src="js/modules/tracker.js"></script>
+<script src="js/modules/base.js"></script>
+<script>
+(new DiscoverPageClass()).loadPage();
+</script>
 '
 include(promptie.m4)
 `

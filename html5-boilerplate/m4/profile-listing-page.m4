@@ -32,12 +32,11 @@ include(profilerightbar.m4)
 '
 include(footer.m4)
 `
-  <script src="js/libs/prevel.min.js"></script>
-  <script src="js/modules/base.js"></script>
-  <script src="js/modules/companylist.js"></script>
-  <script src="js/modules/profile.js"></script>
-  <script src="js/modules/profilelistingpage.js"></script>
-  <script src="js/modules/tracker.js"></script>
+<script src="js/modules/base.js"></script>
+<script src="js/modules/profile.js"></script>
+<script>
+(new ProfileListingPageClass()).loadPage();
+</script>
 '
 include(promptie.m4)
 `

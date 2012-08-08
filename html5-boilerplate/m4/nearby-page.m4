@@ -10,8 +10,16 @@ include(mainhead.m4)
 <div id="main">
 '
 include(header.m4)
-include(nearby-banner.m4)
 `
+<div class="banner nearbybanner" id="banner">
+    <div class="container">
+        <span class="bannertext span-24">
+            <div class="welcometitle" id="welcometitle">Find a startup near you!</div>
+            <div class="welcometext" id="welcometext">...and around the world</div>
+        </span>
+    </div>
+</div> <!-- end banner -->
+
 <div class="container">
 <div class="span-24 nearbywrapper">
     <div class="boxtitle smokegrey" id="listingstitle">NEARBY LISTINGS</div>
@@ -32,13 +40,10 @@ include(nearby-banner.m4)
 '
 include(footer.m4)
 `
-  <script src="http://maps.googleapis.com/maps/api/js?libraries=maps&sensor=true&language=en-GB"></script>
-  <script src="http://google-maps-utility-library-v3.googlecode.com/svn/trunk/markerclusterer/src/markerclusterer.js"></script>
-  <script src="js/libs/prevel.min.js"></script>
-  <script src="js/modules/base.js"></script>
-  <script src="js/modules/companylist.js"></script>
-  <script src="js/modules/nearbypage.js"></script>
-  <script src="js/modules/tracker.js"></script>
+<script src="http://maps.googleapis.com/maps/api/js?libraries=maps&sensor=true&language=en-GB"></script>
+<script src="http://google-maps-utility-library-v3.googlecode.com/svn/trunk/markerclusterer/src/markerclusterer.js"></script>
+<script src="js/modules/base.js"></script>
+<script src="js/modules/nearbypage.js"></script>
 '
 include(promptie.m4)
 `

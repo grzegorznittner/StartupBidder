@@ -21,6 +21,120 @@ pl.implement(ProfileClass, {
     }
 });
 
+function ProfilePageClass() {
+    this.json = {};
+};
+pl.implement(ProfilePageClass,{
+    storeListings: function(propertykey, _options) {
+        var self = this,
+            options = _options || {},
+            wrappersel = '#' + propertykey + '_wrapper',
+            listings = self.json[propertykey],
+            listingfound = false,
+            companylist;
+        options.propertykey = propertykey;
+        options.companydiv = propertykey;
+        if (listings && (options.propertyissingle || listings.length > 0)) {
+            pl(wrappersel).show();
+            companylist = new CompanyListClass(options);
+            companylist.storeList(self.json);
+            listingfound = true;
+        }
+        return listingfound;
+    },
+    loadPage: function() {
+        var self = this,
+            completeFunc = function(json) {
+                var header = new HeaderClass(),
+                    profile = new ProfileClass(),
+                    //notifyList = new NotifyListClass(),
+                    listprops = [ 'edited_listing',
+                        'active_listings',
+                        'admin_posted_listings',
+                        'admin_frozen_listings',
+                        'monitored_listings',
+                        'withdrawn_listings',
+                        'frozen_listings'
+                    ],
+                    options = {
+                        edited_listing: { propertyissingle: true, fullWidth: true },
+                        active_listings: { seeall: '/profile-listing-page.html?type=active', fullWidth: true },
+                        monitored_listings: { seeall: '/profile-listing-page.html?type=monitored', fullWidth: true },
+                        withdrawn_listings: { seeall: '/profile-listing-page.html?type=withdrawn', fullWidth: true },
+                        frozen_listings: { seeall: '/profile-listing-page.html?type=frozen', fullWidth: true },
+                        admin_posted_listings: { seeall: '/profile-listing-page.html?type=admin_posted', fullWidth: true },
+                        admin_frozen_listings: { seeall: '/profile-listing-page.html?type=admin_frozen', fullWidth: true }
+                    },
+                    listingfound = false,
+                    propertykey,
+                    i;
+                self.json = json;
+                header.setLogin(json);
+                if (!json.loggedin_profile) { // must be logged in for this page
+                    window.location = '/';
+                }
+                profile.setProfile(json.loggedin_profile);
+                //notifyList.display(json);
+                for (i = 0; i < listprops.length; i++) {
+                    propertykey = listprops[i];
+                    if (self.storeListings(propertykey, options[propertykey])) {
+                        listingfound = true;
+                    }
+                }
+                if (!listingfound) {
+                    pl('#no_listings_wrapper').show();
+                }
+                pl('#editprofilebutton').show();
+                pl('.preloader').hide();
+                pl('.wrapper').show();
+             },
+            ajax = new AjaxClass('/listings/discover_user', 'profilemsg', completeFunc);
+        ajax.call();
+    }
+});
+
+function ProfileListingPageClass() {
+    this.json = {};
+    this.queryString = new QueryStringClass();
+    this.type = this.queryString.vars.type || 'active';
+    this.data = { max_results: 20 };
+    this.urlmap = {
+        active: '/listings/user/active',
+        monitored: '/listings/monitored',
+        withdrawn: '/listings/user/withdrawn',
+        frozen: '/listings/user/frozen',
+        admin_posted: '/listings/posted',
+        admin_frozen: '/listings/frozen'
+    };
+    this.url = this.urlmap[this.type] || this.urlmap['active'];
+    this.isadmin = this.type === 'admin_posted' || this.type === 'admin_frozen';
+    this.title = (this.isadmin ? 'YOUR ' : '') + this.type.toUpperCase() + ' LISTINGS';
+};
+pl.implement(ProfileListingPageClass,{
+    loadPage: function() {
+        var self = this,
+            completeFunc = function(json) {
+                var header = new HeaderClass(),
+                    profile = new ProfileClass(),
+                    companyList = new CompanyListClass({ fullWidth: true });
+                self.json = json;
+                header.setLogin(json);
+                if (!json.loggedin_profile) { // must be logged in for this page
+                    window.location = '/';
+                }
+                profile.setProfile(json.loggedin_profile);
+                pl('#listingstitle').text(self.title);
+                companyList.storeList(json);
+                pl('#editprofilebutton').show();
+                pl('.preloader').hide();
+                pl('.wrapper').show();
+             },
+             ajax = new AjaxClass(self.url, 'companydiv', completeFunc);
+        ajax.setGetData(this.data);
+        ajax.call();
+    }
+});
+
 function EditProfileClass() {}
 pl.implement(EditProfileClass, {
     getUpdater: function() {
@@ -203,6 +317,23 @@ pl.implement(EditProfileClass, {
             blur: self.hideAllInfo
         });
         pl('.sideinfo').bind('click', self.hideAllInfo);
+    }
+});
+
+function EditProfilePageClass() {}
+pl.implement(EditProfilePageClass,{
+    loadPage: function() {
+        var completeFunc = function(json) {
+                var header = new HeaderClass(),
+                    editProfile = new EditProfileClass();
+                header.setLogin(json);
+                editProfile.setProfile(json);
+                pl('#personalinfomsg').text('');
+                pl('.preloader').hide();
+                pl('.wrapper').show();
+            },
+            ajax = new AjaxClass('/listings/discover_user', 'personalinfomsg', completeFunc);
+        ajax.call();
     }
 });
 

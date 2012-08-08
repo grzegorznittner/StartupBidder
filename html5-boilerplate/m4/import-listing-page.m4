@@ -31,7 +31,8 @@ include(header.m4)
     <div class="addlistinginput">
         <div class="addlistingsearchcontainer">
             <input class="text addlistingsearch" type="text" name="query" id="importquery" value="Search"></input>
-            <input class="addlistingsearchbutton" width="32px" type="image" height="32px" src="/img/icons/search-inverted-32.png" alt="search" id="importbutton">
+            <div class="addlistingsearchbutton" id="importbutton"></div>
+<!--            <input class="addlistingsearchbutton" width="32px" type="image" height="32px" src="/img/icons/search-inverted-32.png" alt="search" id="importbutton"> -->
         </div>
     </div>
 
@@ -54,11 +55,8 @@ include(header.m4)
 '
 include(footer.m4)
 `
-  <script src="http://maps.googleapis.com/maps/api/js?libraries=places&sensor=true&language=en-GB"></script>
-  <script src="js/libs/prevel.min.js"></script>
-  <script src="js/modules/base.js"></script>
-  <script src="js/modules/importlistingpage.js"></script>
-  <script src="js/modules/tracker.js"></script>
+<script src="js/modules/base.js"></script>
+<script src="js/modules/importlistingpage.js"></script>
 '
 include(promptie.m4)
 `

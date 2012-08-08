@@ -17,7 +17,7 @@
 include(images-panel.m4)
 `
         <div class="initialhidden" id="videowrapper">
-            <div class="boxtitle">VIDEO</div>
+            <div class="boxtitle">VIDEO <a href="#" id="videolink">(VIEW ON YOUTUBE)</a></div>
             <div class="boxpanel">
         	    <div class="videocontainer">
               	    <iframe width="622" height="350" id="videopresentation" src="" frameborder="0" allowfullscreen></iframe> 

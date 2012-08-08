@@ -108,11 +108,10 @@ include(header.m4)
 '
 include(footer.m4)
 `
-  <script src="http://maps.googleapis.com/maps/api/js?libraries=places&sensor=true&language=en-GB"></script>
-  <script src="js/libs/prevel.min.js"></script>
-  <script src="js/modules/base.js"></script>
-  <script src="js/modules/addlistingpage.js"></script>
-  <script src="js/modules/tracker.js"></script>
+<script src="js/modules/base.js"></script>
+<script>
+(new AddListingClass()).load();
+</script>
 '
 include(promptie.m4)
 `

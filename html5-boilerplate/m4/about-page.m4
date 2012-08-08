@@ -202,12 +202,10 @@ accredited investor, you can bid for a piece of the action.
 '
 include(footer.m4)
 `
-  <script src="js/libs/prevel.min.js"></script>
-  <script src="js/modules/base.js"></script>
-  <script src="js/modules/companylist.js"></script>
-  <script src="js/modules/infopage.js"></script>
-
-  <script src="js/modules/tracker.js"></script>
+<script src="js/modules/base.js"></script>
+<script>
+(new InformationPageClass()).loadPage();
+</script>
 '
 include(promptie.m4)
 `

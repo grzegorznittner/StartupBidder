@@ -2,7 +2,6 @@ function NewListingBasicsClass() {
     var qs = new QueryStringClass();
     this.importtype = qs.vars.importtype;
     this.importid = qs.vars.importid;
-    console.log('[' + this.importtype + '] [' + this.importid + ']');
     this.base = new NewListingBaseClass();
     this.imagepanel = new ImagePanelClass({ editmode: true });
 }
@@ -294,10 +293,12 @@ pl.implement(NewListingBasicsClass, {
     displayLogo: function(dataurl) {
         var url = dataurl && dataurl.indexOf('data:') === 0 ? dataurl : null;
         if (url) {
-            pl('#logoimg').attr({src: url});
+            pl('#logoimgwrapper').removeClass('noimage');
+            pl('#logoimg').attr({src: url}).show();
         }
         else {
             pl('#logoimgwrapper').addClass('noimage');
+            pl('#logoimg').hide();
         }
     },
 

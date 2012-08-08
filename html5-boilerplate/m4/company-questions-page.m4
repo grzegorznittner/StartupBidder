@@ -28,12 +28,11 @@ include(company-questions.m4)
 '
 include(footer.m4)
 `
-  <!-- JavaScript at the bottom for fast page loading -->
-  <script src="js/libs/prevel.min.js"></script>
-  <script src="js/modules/base.js"></script>
-  <script src="js/modules/companybanner.js"></script>
-  <script src="js/modules/questions.js"></script>
-  <script src="js/modules/tracker.js"></script>
+<script src="js/modules/base.js"></script>
+<script src="js/modules/questions.js"></script>
+<script>
+(new QuestionClass()).load();
+</script>
 '
 include(promptie.m4)
 `

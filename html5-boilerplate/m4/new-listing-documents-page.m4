@@ -189,13 +189,10 @@ include(header.m4)
 '
 include(footer.m4)
 `
-  <script src="js/libs/prevel.min.js"></script>
-  <script src="js/modules/base.js"></script>
-  <script src="js/modules/companylist.js"></script>
-  <script src="js/modules/forms.js"></script>
-  <script src="js/modules/newlistingbase.js"></script>
-  <script src="js/modules/newlistingdocumentspage.js"></script>
-  <script src="js/modules/tracker.js"></script>
+<script src="js/modules/base.js"></script>
+<script src="js/modules/forms.js"></script>
+<script src="js/modules/newlistingbase.js"></script>
+<script src="js/modules/newlistingdocumentspage.js"></script>
 '
 include(promptie.m4)
 `

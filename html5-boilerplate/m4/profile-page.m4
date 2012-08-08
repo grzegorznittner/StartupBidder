@@ -74,13 +74,11 @@ include(profilerightbar.m4)
 '
 include(footer.m4)
 `
-  <script src="js/libs/prevel.min.js"></script>
-  <script src="js/modules/base.js"></script>
-  <script src="js/modules/companylist.js"></script>
-  <script src="js/modules/profile.js"></script>
-  <script src="js/modules/notification.js"></script>
-  <script src="js/modules/profilepage.js"></script>
-  <script src="js/modules/tracker.js"></script>
+<script src="js/modules/base.js"></script>
+<script src="js/modules/profile.js"></script>
+<script>
+(new ProfilePageClass()).loadPage();
+</script>
 '
 include(promptie.m4)
 `

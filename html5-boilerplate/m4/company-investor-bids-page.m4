@@ -91,14 +91,12 @@ include(company-order-book.m4)
 '
 include(footer.m4)
 `
-  <!-- JavaScript at the bottom for fast page loading -->
-  <script src="js/libs/prevel.min.js"></script>
-  <script src="js/modules/base.js"></script>
-  <script src="js/modules/forms.js"></script>
-  <script src="js/modules/companybanner.js"></script>
-  <script src="js/modules/orderbook.js"></script>
-  <script src="js/modules/singleinvestorbidlist.js"></script>
-  <script src="js/modules/tracker.js"></script>
+<script src="js/modules/base.js"></script>
+<script src="js/modules/forms.js"></script>
+<script src="js/modules/bids.js"></script>
+<script>
+(new SingleInvestorBidListClass()).load();
+</script>
 '
 include(promptie.m4)
 `

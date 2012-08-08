@@ -2,7 +2,7 @@
 <!doctype html>
 <html lang="en">
 '
-include(api-head.m4)
+include(head.m4)
 `
 <body class="api-page">
 <div id="fb-root"></div> <!-- for fb like button -->
@@ -10,8 +10,18 @@ include(api-head.m4)
 <div id="main">
 '
 include(header.m4)
-include(api-banner.m4)
 `
+<div class="banner apibanner" id="banner">
+    <div class="container">
+        <span class="bannertext span-24">
+            <div class="welcometitle" id="welcometitle">API Documentation</div>
+            <div class="welcometext" id="welcometext">
+                Interact with startupbidder&rsquo;s data through our public API
+            </div>
+        </span>
+    </div>
+</div> <!-- end banner -->
+
 <div class="container">
 
 <div class="boxtitle">CONNECT TO STARTUPBIDDER</div>
@@ -2944,13 +2954,8 @@ include(api-banner.m4)
 '
 include(footer.m4)
 `
-  <!-- JavaScript at the bottom for fast page loading -->
-  <script src="http://alexgorbatchev.com/pub/sh/current/scripts/shCore.js" type="text/javascript"></script>
-  <script src="http://alexgorbatchev.com/pub/sh/current/scripts/shBrushJScript.js" type="text/javascript"></script>
-  <script src="js/libs/prevel.min.js"></script>
-  <script src="js/modules/base.js"></script>
-  <script src="js/modules/apipage.js"></script>
-  <script src="js/modules/tracker.js"></script>
+<script src="js/modules/base.js"></script>
+<script src="js/modules/apipage.js"></script>
 '
 include(promptie.m4)
 `

@@ -36,11 +36,11 @@ include(header.m4)
 '
 include(footer.m4)
 `
-  <script src="js/libs/prevel.min.js"></script>
-  <script src="js/modules/base.js"></script>
-  <script src="js/modules/message.js"></script>
-  <script src="js/modules/messagepage.js"></script>
-  <script src="js/modules/tracker.js"></script>
+<script src="js/modules/base.js"></script>
+<script src="js/modules/messages.js"></script>
+<script>
+(new MessagePageClass()).loadPage();
+</script>
 '
 include(promptie.m4)
 `

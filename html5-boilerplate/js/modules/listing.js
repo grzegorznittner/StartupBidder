@@ -4,7 +4,6 @@ function ListingClass() {
     this.listing_id = this.id;
     this.preview = queryString.vars.preview;
     this.imagepanel = new ImagePanelClass();
-    this.base = new NewListingBaseClass();
 };
 pl.implement(ListingClass, {
     store: function(json) {
@@ -37,8 +36,7 @@ pl.implement(ListingClass, {
                 else {
                     header.setLogin(json);
                 }
-                self.base.store(json && json.listing || {});
-                companybanner.display(json, self.base);
+                companybanner.display(json);
                 self.display(json);
                 pl('.preloader').hide();
                 pl('.wrapper').show();
@@ -71,9 +69,10 @@ pl.implement(ListingClass, {
     },
 
     displayBasics: function() {
+        var html = this.summary ? HTMLMarkup.prototype.stylize(this.summary) : 'Listing summary goes here';
         this.displayPics();
         this.displayVideo();
-        pl('#summary').text(this.summary || 'Listing summary goes here');
+        pl('#summary').html(html);
     },
 
     displayPics: function() {
@@ -82,6 +81,7 @@ pl.implement(ListingClass, {
 
     displayVideo: function() {
         if (this.video) {
+            pl('#videolink').attr({href: this.video});
             pl('#videopresentation').attr({src: this.video});
             pl('#videowrapper').show();
         }
@@ -695,5 +695,4 @@ pl.implement(ListingClass, {
     }
 
 });
-(new ListingClass()).load();
 

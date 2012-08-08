@@ -33,12 +33,11 @@ include(header.m4)
 '
 include(footer.m4)
 `
-  <script src="js/libs/prevel.min.js"></script>
-  <script src="js/modules/base.js"></script>
-  <script src="js/modules/companylist.js"></script>
-  <script src="js/modules/notification.js"></script>
-  <script src="js/modules/notificationpage.js"></script>
-  <script src="js/modules/tracker.js"></script>
+<script src="js/modules/base.js"></script>
+<script src="js/modules/notifications.js"></script>
+<script>
+(new NotificationPageClass()).loadPage();
+</script>
 '
 include(promptie.m4)
 `

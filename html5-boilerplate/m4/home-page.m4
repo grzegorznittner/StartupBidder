@@ -9,8 +9,20 @@ include(head.m4)
 <div id="newlistingmain">
 '
 include(header.m4)
-include(banner.m4)
 `
+<div class="banner" id="banner">
+    <div class="container">
+        <span class="bannertext span-24">
+            <div class="welcometitle" id="welcometitle">
+                <div>Getting startups funded</div>
+            </div> 
+            <div class="welcometext" id="welcometext">
+                <a href="/about-page.html" class="welcomelink">Learn more...</a>
+            </div>
+        </span>
+    </div>
+</div> <!-- end banner -->
+
 <div class="container preloader">
     <div class="preloaderfloater"></div>
     <div class="preloadericon"></div>
@@ -42,13 +54,13 @@ include(banner.m4)
                 <div id="edited_listing"></div>
             </div>
 
-             <div id="users_listings_wrapper" class="initialhidden">
-                <div class="boxtitle smokegrey">YOUR LISTINGS</div>
-                <div id="users_listings"></div>
+             <div id="active_listings_wrapper" class="initialhidden">
+                <div class="boxtitle smokegrey">YOUR ACTIVE LISTINGS</div>
+                <div id="active_listings"></div>
             </div>
         
             <div id="monitored_listings_wrapper" class="initialhidden">
-                <div class="boxtitle smokegrey">YOUR PORTFOLIO</div>
+                <div class="boxtitle smokegrey">WATCHING</div>
                 <div id="monitored_listings"></div>
             </div>
          
@@ -96,12 +108,10 @@ include(banner.m4)
 '
 include(footer.m4)
 `
-  <script src="http://maps.googleapis.com/maps/api/js?libraries=places&sensor=true&language=en-GB"></script>
-  <script src="js/libs/prevel.min.js"></script>
-  <script src="js/modules/base.js"></script>
-  <script src="js/modules/companylist.js"></script>
-  <script src="js/modules/homepage.js"></script>
-  <script src="js/modules/tracker.js"></script>
+<script src="js/modules/base.js"></script>
+<script>
+(new HomePageClass()).load();
+</script>
 '
 include(promptie.m4)
 `

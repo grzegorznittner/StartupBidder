@@ -34,7 +34,9 @@ pl.implement(QuestionClass, {
         if (json) {
             this.store(json);
         }
+        console.log('foo');
         this.displayQuestions();
+        console.log('bar');
         if (this.more_results_url) {
         	pl('#addqandabox').before('<div class="showmore hoverlink" id="moreresults"><span class="initialhidden" id="moreresultsurl">' + this.more_results_url + '</span><span id="moreresultsmsg">More...</span></div>\n');
         }
@@ -45,7 +47,7 @@ pl.implement(QuestionClass, {
             pl('#addqandabox').before('<div class="messageline"><p style="font-weight: bold;">Questions cannot be asked or answered for this listing as it is not active</p></div>');
         }
         else if (this.loggedin_profile_id && this.loggedin_profile_id === this.listing_owner_id) {
-//            pl('#addqandabox').before('<div class="messageline"><p style="font-weight: bold;">As the owner you may answer the questions above</p></div>');
+            pl('#addqandabox').before('<div class="messageline"><p style="font-weight: bold;">As the owner you may answer questions users ask concerning your listing</p></div>');
         }
         else {
             pl('#addqandabox').before('\
@@ -291,6 +293,7 @@ pl.implement(QuestionClass, {
             question,
             replyable,
             bindlist = [];
+        console.log('len', this.questionlist);
         if (this.questionlist.length === 0) {
             this.displayNoComments();
             return;
@@ -355,4 +358,3 @@ pl.implement(QuestionClass, {
     }
 });
 
-(new QuestionClass()).load();

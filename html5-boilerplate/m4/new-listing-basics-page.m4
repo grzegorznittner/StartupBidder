@@ -175,7 +175,7 @@ your message.
             <label class="inputlabel" for="address">LOGO</label>
             <span class="inputfield">
                 <div class="tileimg" id="logoimgwrapper">
-                    <img class="tileimg" id="logoimg" src="/img/noimage_with_border_146x146.jpg"></img>
+                    <img class="tileimg initialhidden" id="logoimg" src="#"></img>
                 </div>
             </span>
             <p class="sideinfo">
@@ -314,15 +314,11 @@ include(images-panel-editable.m4)
 '
 include(footer.m4)
 `
-  <script src="http://maps.googleapis.com/maps/api/js?libraries=places&sensor=true&language=en-GB"></script>
-  <script src="js/libs/prevel.min.js"></script>
-  <script src="js/modules/base.js"></script>
-  <script src="js/modules/companylist.js"></script>
-  <script src="js/modules/forms.js"></script>
-  <script src="js/modules/imagepanel.js"></script>
-  <script src="js/modules/newlistingbase.js"></script>
-  <script src="js/modules/newlistingbasicspage.js"></script>
-  <script src="js/modules/tracker.js"></script>
+<script src="http://maps.googleapis.com/maps/api/js?libraries=places&sensor=true&language=en-GB"></script>
+<script src="js/modules/base.js"></script>
+<script src="js/modules/forms.js"></script>
+<script src="js/modules/newlistingbase.js"></script>
+<script src="js/modules/newlistingbasicspage.js"></script>
 '
 include(promptie.m4)
 `

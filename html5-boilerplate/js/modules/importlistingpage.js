@@ -29,7 +29,7 @@ pl.implement(ImportListingClass, {
                 pl('.wrapper').show();
             },
             // ajax = new AjaxClass('/user/loggedin', 'importlistingmsg', completeFunc); // once greg fixes
-            ajax = new AjaxClass('/listing/discover', 'importlistingmsg', completeFunc);
+            ajax = new AjaxClass('/listing/discover_user', 'importlistingmsg', completeFunc);
         ajax.call();
     },
 
