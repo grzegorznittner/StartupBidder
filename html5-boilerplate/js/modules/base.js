@@ -510,7 +510,7 @@ PlatformClass.prototype.displayName = function(platform) {
         android: 'Android',
         windows_phone: 'Windows Phone',
         desktop: 'Desktop',
-        website: 'Website',
+        website: 'Web',
         other: 'Other'
     };
     return map[platform];
@@ -1468,6 +1468,7 @@ pl.implement(CompanyBannerClass, {
 function ImagePanelClass(options) {
     this.options = options || {}; // set options.editmode to true for an editable panel
     this.listing = this.options.listing || {};
+    this.runningSlideshow = false;
 }
 
 pl.implement(ImagePanelClass, {
@@ -1480,7 +1481,13 @@ pl.implement(ImagePanelClass, {
             cachebust = pl('#' + pic + 'nav').hasClass('dotnavempty') ? '' : '?id=' + Math.floor(Math.random()*1000000000),
             url = '/listing/picture/' + this.listing.listing_id + '/' + i + cachebust;
         pl('#' + pic + 'nav').removeClass('dotnavempty');
-        pl('#' + pic).css({ 'background-image': 'url(' + url + ')' });
+        pl('#' + pic + ' div').remove();
+        pl('#' + pic).removeClass('picblank').css({ 'background-image': 'url(' + url + ')' });
+    },
+    enableImageLoading: function(i) {
+        var pic = 'pic' + i;
+        pl('#' + pic + 'nav').removeClass('dotnavempty');
+        pl('#' + pic).addClass('picblank').html('<div class="preloaderfloater"></div><div class="preloadericon"></div>');
     },
     display: function() {
         var self = this,
@@ -1488,13 +1495,19 @@ pl.implement(ImagePanelClass, {
             numpics = 5,
             slideshowstart = 1,
             pic,
+            picval,
             i;
-        self.runningSlideshow = false;
         self.numPics = 0;
         for (i = 1; i <= numpics; i++) {
             pic = 'pic' + i;
-            if (this.listing[pic]) {
-                self.enableImage(i);
+            picval = this.listing[pic];
+            if (picval) {
+                if (picval === 'importing') {
+                    self.enableImageLoading(i);
+                }
+                else {
+                    self.enableImage(i);
+                }
                 if (!firstpic) {
                     firstpic = pic;
                 }
@@ -1506,14 +1519,14 @@ pl.implement(ImagePanelClass, {
             }
         }
         if (!(firstpic && !this.options.editmode && self.numPics <= 1)) {
-            pl('.dotnav').bind('click', function() {
+            pl('.dotnav').unbind().bind('click', function() {
                 var ul = pl(this).hasClass('dotnav') ? this : this.parentNode,
                     navid = ul.id,
                     picnum = navid.replace(/pic|nav/g, '');
                 self.runningSlideshow = false;
                 self.advanceRight(picnum);
             });
-            pl('.picslide').bind('click', function() {
+            pl('.picslide').unbind().bind('click', function() {
                 self.runningSlideshow = false;
                 self.advanceRight();
             });
@@ -1524,11 +1537,28 @@ pl.implement(ImagePanelClass, {
         }
         else if (firstpic && !this.options.editmode) {
             pl('#' + firstpic + 'nav').addClass('dotnavfilled');
-            self.runningSlideshow = true;
-            setTimeout(function(){ self.advanceSlideshow(); }, 5000);
+            if (!self.runningSlideshow) {
+                self.runningSlideshow = true;
+                setTimeout(function(){ self.advanceSlideshow(); }, 5000);
+            }
         }
         else { // default highlight first
             pl('#pic1nav').addClass('dotnavfilled');
+        }
+
+        if (pl('#picslideset .picblank').len()) {
+            setTimeout(function(){
+                var complete = function(json) {
+                        var i, pic;
+                        for (i = 1; i <= 5; i++) {
+                            pic = 'pic' + i;
+                            self.listing[pic] = json.listing[pic];
+                        }
+                        self.display();
+                    },
+                    ajax = new AjaxClass('/listing/get/' + self.listing.listing_id, 'picmsg', complete);
+                ajax.call();
+            }, 5000);
         }
     },
 
@@ -1776,7 +1806,6 @@ pl.implement(AddListingClass, {
         });
         pl('#deletebtn').bind('click', function() {
             var complete = function() {
-                    pl('#deletebtn').unbind();
                     pl('#deletebtn, #deletecancelbtn').hide();
                     pl('#deletemsg').text('Listing deleted, reloading...').show();
                     setTimeout(function() {
@@ -1786,6 +1815,7 @@ pl.implement(AddListingClass, {
                 url = '/listing/delete',
                 ajax = new AjaxClass(url, 'deletemsg', complete);
             if (pl('#deletecancelbtn').css('display') === 'none') { // first call
+                pl('#editblock, #editblock2').hide();
                 pl('#deletemsg, #deletecancelbtn').show();
             }
             else {
@@ -1796,6 +1826,7 @@ pl.implement(AddListingClass, {
         });
         pl('#deletecancelbtn').bind('click', function() {
             pl('#deletemsg, #deletecancelbtn').hide();
+            pl('#editblock, #editblock2').show();
             return false;
         });
         pl('#existinglisting').show();

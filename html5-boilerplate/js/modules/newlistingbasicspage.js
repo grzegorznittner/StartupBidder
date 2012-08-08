@@ -120,7 +120,7 @@ pl.implement(NewListingBasicsClass, {
                 address: TextFieldClass
             },
             typeOptions = [ ['application', 'Application'], ['company', 'Company'] ],
-            platforms = [ 'ios', 'android', 'windows_phone', 'desktop', 'website', 'other' ],
+            platforms = [ 'ios', 'android', 'windows_phone', 'website', 'desktop', 'other' ],
             platformOptions = [],
             platform,
             i,

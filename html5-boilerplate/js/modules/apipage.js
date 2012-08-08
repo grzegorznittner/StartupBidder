@@ -76,9 +76,11 @@ pl.implement(APIPageClass, {
                         pl(iframe).addClass('apidetailframe');
                     }
                 });
+                /*
                 if (SyntaxHighlighter) {
                     SyntaxHighlighter.all()
                 }
+                */
                 listingajax.call();
                 commentsajax.call();
                 questionsajax.call();

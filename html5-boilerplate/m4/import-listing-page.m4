@@ -36,6 +36,8 @@ include(header.m4)
         </div>
     </div>
 
+    <div class="addlistingtitle initialhidden" id="importsfoundtitle">Click your <span id="importcorporapp2"></span> below to import</div>
+
     <div class="addlistingcontainer initialhidden" id="importcontainer">
         <div class="addlistinglist" id="importlist"></div> 
     </div>

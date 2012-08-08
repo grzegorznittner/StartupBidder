@@ -47,7 +47,7 @@ pl.implement(ImportListingClass, {
             document.location = '/add-listing-page.html';
         }
         pl('#importtype').text(this.displaytype);
-        pl('#importcorporapp').text(this.corporapp);
+        pl('#importcorporapp, #importcorporapp2').text(this.corporapp);
         this.bindSearch();
     },
 
@@ -108,6 +108,8 @@ pl.implement(ImportListingClass, {
                 <div class="preloadericon"></div>\
             </div>\
             ';
+        pl('#importcontainer').removeClass('addlistingcontainerfilled');
+        pl('#importsfoundtitle').hide();
         pl('#importlist').html(listhtml);
         pl('#importcontainer').show();
     },
@@ -119,6 +121,8 @@ pl.implement(ImportListingClass, {
                 <p class="messagetext"><span class="errorcolor">' + error + '</span></p>\
             </div>\
             ';
+        pl('#importcontainer').removeClass('addlistingcontainerfilled');
+        pl('#importsfoundtitle').hide();
         pl('#importlist').html(listhtml);
     },
 
@@ -128,6 +132,8 @@ pl.implement(ImportListingClass, {
                 <p class="messagetext"><i>No results found</i></p>\
             </div>\
             ';
+        pl('#importcontainer').removeClass('addlistingcontainerfilled');
+        pl('#importsfoundtitle').hide();
         pl('#importlist').html(listhtml);
     },
 
@@ -153,6 +159,8 @@ pl.implement(ImportListingClass, {
             listhtml += this.makeListItem(listitem);
         }
         if (listhtml) {
+            pl('#importcontainer').addClass('addlistingcontainerfilled');
+            pl('#importsfoundtitle').show();
             pl('#importlist').html(listhtml);
         }
         else {

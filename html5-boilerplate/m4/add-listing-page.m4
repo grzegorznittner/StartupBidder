@@ -43,17 +43,17 @@ include(header.m4)
     </div>
 
     <div class="initialhidden" id="existinglisting">
-        <div class="addlistingtitle">You have a pending listing on startupbidder.</div>
+        <div id="editblock">
+            <div class="addlistingtitle">You have a pending listing on startupbidder.</div>
+            <div class="addlistingbutton investbutton" id="editlisting">EDIT LISTING</div>
+            <div class="addlistingtitle">or</div>
+        </div>
 
-        <div class="addlistingbutton investbutton" id="editlisting">EDIT LISTING</div>
-
-        <div class="addlistingtitle">or</div>
-
-        <div class="addlistingmsg deletemsg attention" id="deletemsg">Are you sure?<br/>This cannot be undone.</div>
+        <div class="addlistingmsg deletemsg attention" id="deletemsg">DELETE LISTING<br/>Are you sure?<br/>This cannot be undone.</div>
         <div class="addlistingbutton investbutton" id="deletebtn">DELETE</div>
         <div class="addlistingbutton investbutton initialhidden" id="deletecancelbtn">CANCEL</div>
 
-        <div class="addlistingtitle addlistingbottom">and start over</div>
+        <div class="addlistingtitle addlistingbottom" id="editblock2">and start over</div>
 
         </div>
     </div>
