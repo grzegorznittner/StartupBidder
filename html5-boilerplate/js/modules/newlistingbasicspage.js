@@ -107,7 +107,7 @@ pl.implement(NewListingBasicsClass, {
                 platform: ValidatorClass.prototype.isSelected,
                 category: ValidatorClass.prototype.isSelected,
                 mantra: ValidatorClass.prototype.makeLengthChecker(5, 140),
-                summary: ValidatorClass.prototype.makeLengthChecker(200, 500),
+                summary: ValidatorClass.prototype.makeLengthChecker(50, 500),
                 address: ValidatorClass.prototype.isNotEmpty
             },
             classes = {

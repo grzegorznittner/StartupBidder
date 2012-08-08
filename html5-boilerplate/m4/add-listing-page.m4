@@ -84,7 +84,7 @@ include(header.m4)
                 <div class="addlistingbutton addlistingbuttoncol investbutton">CrunchBase</div>
             </a>
             <a href="/import-listing-page.html?type=Angelco">
-                <div class="addlistingbutton addlistingbuttoncol investbutton">Angel.co</div>
+                <div class="addlistingbutton addlistingbuttoncol investbutton">AngelList</div>
             </a>
             <a href="/import-listing-page.html?type=Startuply">
                 <div class="addlistingbutton addlistingbuttoncol investbutton">Startuply</div>

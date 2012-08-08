@@ -9,7 +9,7 @@ function ImportListingClass() {
         'GooglePlay': 'Google Play',
         'WindowsMarketplace': 'Windows Marketplace',
         'CrunchBase': 'CrunchBase',
-        'Angelco': 'Angel.co',
+        'Angelco': 'AngelList',
         'Startuply': 'Startuply'
     };
     this.type = (new QueryStringClass()).vars.type || 'AppStore';
