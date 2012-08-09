@@ -683,7 +683,11 @@ public class ListingController extends ModelDrivenController {
 
     // GET /listings/all_listing_locations
     private HttpHeaders getAllListingLocations(HttpServletRequest request) {
-    	model = ListingFacade.instance().getAllListingLocations();
+    	String latLong = request.getHeader("X-AppEngine-CityLatLong");
+    	if (StringUtils.isEmpty(latLong)) {
+    		latLong = "51.224942,6.775652";
+    	}
+    	model = ListingFacade.instance().getAllListingLocations(latLong);
         return new HttpHeadersImpl("all_listing_locations").disableCaching();
     }
 

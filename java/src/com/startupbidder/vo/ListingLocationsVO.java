@@ -14,6 +14,8 @@ import org.codehaus.jackson.annotate.JsonProperty;
 		fieldVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE)
 public class ListingLocationsVO extends BaseResultVO {
 	@JsonProperty("map_listings") private List<Object[]> listings;
+	@JsonProperty("current_lat") private Double currentLatitude;
+	@JsonProperty("current_long") private Double currentLongitude;
 	@JsonProperty("listings_props")	private ListPropertiesVO listingsProperties;
 	@JsonProperty("profile") private UserBasicVO user;
 
@@ -34,5 +36,17 @@ public class ListingLocationsVO extends BaseResultVO {
 	}
 	public UserBasicVO getUser() {
 		return user;
+	}
+	public Double getCurrentLatitude() {
+		return currentLatitude;
+	}
+	public void setCurrentLatitude(Double currentLatitude) {
+		this.currentLatitude = currentLatitude;
+	}
+	public Double getCurrentLongitude() {
+		return currentLongitude;
+	}
+	public void setCurrentLongitude(Double currentLongitude) {
+		this.currentLongitude = currentLongitude;
 	}
 }

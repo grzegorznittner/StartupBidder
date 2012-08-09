@@ -2178,8 +2178,9 @@ public class ListingFacade {
 		return result;
 	}
 
-	public ListingLocationsVO getAllListingLocations() {
+	public ListingLocationsVO getAllListingLocations(String latLong) {
 		MemcacheService mem = MemcacheServiceFactory.getMemcacheService();
+		@SuppressWarnings("unchecked")
 		List<Object[]> data = (List<Object[]>)mem.get(MEMCACHE_ALL_LISTING_LOCATIONS);
 		if (data == null) {
 			List<ListingLocation> locations = getDAO().getAllListingLocations();
@@ -2205,6 +2206,11 @@ public class ListingFacade {
 		}
 		ListingLocationsVO result = new ListingLocationsVO();
 		result.setListings(data);
+		if (latLong != null) {
+			String latLongStr[] = latLong.split(",");
+			result.setCurrentLatitude(NumberUtils.toDouble(latLongStr[0]));
+			result.setCurrentLongitude(NumberUtils.toDouble(latLongStr[1]));
+		}
 
 		ListPropertiesVO props = new ListPropertiesVO();
 		props.setMaxResults(data.size());
