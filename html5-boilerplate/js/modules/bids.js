@@ -584,8 +584,8 @@ pl.implement(SingleInvestorBidListClass, {
             pctfield = new TextFieldClass('new_bid_pct', null, this.getUpdater('new_bid_pct', PercentClass.prototype.clean), 'new_bid_msg');
         amtfield.fieldBase.setDisplayName('AMOUNT');
         pctfield.fieldBase.setDisplayName('PERCENT');
-        amtfield.fieldBase.addValidator(ValidatorClass.prototype.genIsNumberBetween(1000, 500000));
-        pctfield.fieldBase.addValidator(ValidatorClass.prototype.genIsNumberBetween(1, 50));
+        amtfield.fieldBase.addValidator(ValidatorClass.prototype.genIsNumberBetween(100, 500000));
+        pctfield.fieldBase.addValidator(ValidatorClass.prototype.genIsNumberBetween(1, 100));
         amtfield.fieldBase.validator.preValidateTransform = CurrencyClass.prototype.clean;
         pctfield.fieldBase.validator.preValidateTransform = PercentClass.prototype.clean;
         amtfield.fieldBase.validator.postValidator = this.genDisplayCalculatedIfValidAmt(amtfield);
@@ -1321,8 +1321,8 @@ pl.implement(OwnerSingleInvestorBidListClass, {
             pctfield = new TextFieldClass('new_bid_pct', null, this.getUpdater('new_bid_pct', PercentClass.prototype.clean), 'new_bid_msg');
         amtfield.fieldBase.setDisplayName('AMOUNT');
         pctfield.fieldBase.setDisplayName('PERCENT');
-        amtfield.fieldBase.addValidator(ValidatorClass.prototype.genIsNumberBetween(1000, 500000));
-        pctfield.fieldBase.addValidator(ValidatorClass.prototype.genIsNumberBetween(1, 50));
+        amtfield.fieldBase.addValidator(ValidatorClass.prototype.genIsNumberBetween(100, 500000));
+        pctfield.fieldBase.addValidator(ValidatorClass.prototype.genIsNumberBetween(1, 100));
         amtfield.fieldBase.validator.preValidateTransform = CurrencyClass.prototype.clean;
         pctfield.fieldBase.validator.preValidateTransform = PercentClass.prototype.clean;
         amtfield.fieldBase.validator.postValidator = this.genDisplayCalculatedIfValidAmt(amtfield);

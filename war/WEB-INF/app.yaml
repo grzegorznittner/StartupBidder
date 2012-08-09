@@ -1,5 +1,5 @@
 application: startupbidder
-version: 201208082159
+version: 201208091016
 runtime: java
 
 static_files:
@@ -54,5 +54,3 @@ admin_console:
 sessions_enabled: true
 
 threadsafe: true
-
-  
