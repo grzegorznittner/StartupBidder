@@ -208,15 +208,17 @@ public class ListingController extends ModelDrivenController {
 	private HttpHeaders startEditing(HttpServletRequest request) throws JsonParseException, JsonMappingException, IOException {
 		HttpHeaders headers = new HttpHeadersImpl("create");
 
-        UserVO u = getLoggedInUser();
-		ListingAndUserVO listing = ListingFacade.instance().createListing(u);
+        UserVO loggedInUser = getLoggedInUser();
+		ListingAndUserVO listing = ListingFacade.instance().createListing(loggedInUser);
 		if (listing == null) {
 			log.log(Level.WARNING, "Listing not created!");
 			headers.setStatus(500);
 		} else {
 			ListingVO l = listing.getListing();
-            u.setEditedListing(l.getId());
-            u.setEditedStatus(l.getState()); // reset in case listing state is not NEW
+			if (loggedInUser != null) {
+				loggedInUser.setEditedListing(l.getId());
+				loggedInUser.setEditedStatus(l.getState()); // reset in case listing state is not NEW
+			}
         }
 		model = listing;
 
@@ -566,9 +568,11 @@ public class ListingController extends ModelDrivenController {
     	UserVO loggedIn = getLoggedInUser();
     	if (loggedIn != null && loggedIn.isAdmin()) {
     		String userId = getCommandOrParameter(request, 2, "id");
-    		UserAndUserVO userData = UserMgmtFacade.instance().getUser(getLoggedInUser(), userId);
-    		if (userData != null && userData.getUser() != null) {
-    			loggedIn = userData.getUser();
+    		if (StringUtils.isNotEmpty(userId)) {
+	    		UserAndUserVO userData = UserMgmtFacade.instance().getUser(getLoggedInUser(), userId);
+	    		if (userData != null && userData.getUser() != null) {
+	    			loggedIn = userData.getUser();
+	    		}
     		}
     	}
     	model = ListingFacade.instance().getDiscoverUserListings(loggedIn);

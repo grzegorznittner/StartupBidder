@@ -71,10 +71,10 @@ public class FrontController extends HttpServlet {
 			headers = ((ModelDrivenController)controller).execute(request);
 			if (controller.getModel() != null) {
 			} else {
-				log.log(Level.SEVERE, "Returned object is NULL");
+				log.log(Level.WARNING, "Returned object is NULL");
 			}
 		} else {
-			log.log(Level.INFO, request.getMethod() + " " + request.getPathInfo() + " is not supported!");
+			log.log(Level.WARNING, request.getMethod() + " " + request.getPathInfo() + " is not supported!");
 			response.setStatus(501);
 			return;
 		}

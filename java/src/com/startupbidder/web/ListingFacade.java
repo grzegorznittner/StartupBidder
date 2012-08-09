@@ -154,7 +154,7 @@ public class ListingFacade {
 	public ListingAndUserVO createListing(UserVO loggedInUser) {
 		ListingAndUserVO result = new ListingAndUserVO();
 		if (loggedInUser == null) {
-			log.log(Level.WARNING, "Only logged in user can create listing", new Exception("Not logged in"));
+			log.log(Level.WARNING, "Only logged in user can create listing");
 			result.setErrorCode(ErrorCodes.NOT_LOGGED_IN);
 			result.setErrorMessage("Only logged in user can create listing");
 		} else {
