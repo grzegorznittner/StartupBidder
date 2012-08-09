@@ -5,13 +5,23 @@ pl.implement(MapPageClass,{
         ajax.call();
     },
     store: function(json) {
+        if (json && json.current_lat && json.current_long) {
+            this.current_lat = json.current_lat;
+            this.current_long = json.current_long;
+            this.current_zoom = 6;
+        }
+        else {
+            this.current_lat = 20;
+            this.current_long = 0;
+            this.current_zoom = 2;
+        }
         this.maplistings = (json && json.map_listings) ? json.map_listings : [];
     },
     display: function() {
         var self = this,
-            defaultCenter = new google.maps.LatLng(20, 0),
-            defaultZoom = 2;
-        this.displayMap(defaultCenter, defaultZoom);
+            center = new google.maps.LatLng(this.current_lat, this.current_long);
+        this.displayMap(center, this.current_zoom);
+/*
         if (navigator && navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
                 function(position) {
@@ -27,6 +37,7 @@ pl.implement(MapPageClass,{
                 }
             );
         }
+*/
     },
     displayMap: function(center, zoom) {
         var map = new google.maps.Map(pl('#map').get(0), {

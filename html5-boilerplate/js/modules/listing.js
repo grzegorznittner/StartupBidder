@@ -398,9 +398,19 @@ pl.implement(ListingClass, {
             pl('#bidbox').show();
 */
             pl('#suggestedinfo').show();
+            pl('#fundingbutton').text('Revise Funding');
         }
         else {
             pl('#suggestedmsg').html('NOT SEEKING FUNDING').show();
+            pl('#fundingbutton').text('Ask For Funding');
+        }
+        if (this.status === 'new' || this.status === 'posted') {
+            if (this.asked_fund) {
+                pl('#fundingbutton').text('Revise Funding').show();
+            }
+            else {
+                pl('#fundingbutton').text('Ask For Funding').show();
+            }
         }
     },
 

@@ -100,6 +100,7 @@ pl.implement(NewListingFinancialsClass, {
         this.base.fieldMap['suggested_pct'].validate();
         this.displayCalculatedIfValid();
         this.displayOfferBox();
+        this.bindAskingButtons();
         this.base.bindNavButtons(this.genNextValidator());
         this.base.bindTitleInfo();
         this.base.bindInfoButtons();
@@ -135,9 +136,11 @@ pl.implement(NewListingFinancialsClass, {
     displayOfferBox: function() {
         var fnd = this.base.fieldMap.asked_fund.fieldBase.value;
         if (fnd) {
+            pl('#askfundstatus').text('Currently you are asking for funds');
             pl('#offerwrapper').addClass('offerwrapperdisplay');
         }
         else {
+            pl('#askfundstatus').text('Currently you are not asking for funds');
             pl('#offerwrapper').removeClass('offerwrapperdisplay');
         }
         this.displayCalculatedIfValid();
@@ -169,7 +172,7 @@ pl.implement(NewListingFinancialsClass, {
     displayIfValidPct: function(result, val) {
         var fmt = PercentClass.prototype.format(val);
         if (result === 0) {
-            pl('#suggested_pct').attr({value: fmt});
+            pl('#suggested_pct').attr({value: fmt + '%'});
         }
     },
     displayCalculatedIfValid: function() {
@@ -180,7 +183,25 @@ pl.implement(NewListingFinancialsClass, {
             cur = CurrencyClass.prototype.format(CurrencyClass.prototype.clean(val)),
             dis = fnd && cur ? cur : '';
         pl('#suggested_val').text(dis);
+    },
+    bindAskingButtons: function() {
+        var self = this;
+        pl('.askingamtbtn').bind('click', function(e) {
+            var amt = e.target && pl(e.target).text();
+            if (amt) {
+                pl('#suggested_amt').attr('value', amt);
+                self.base.fieldMap.suggested_amt.update()
+            }
+        });
+        pl('.askingpctbtn').bind('click', function(e) {
+            var pct = e.target && pl(e.target).text();
+            if (pct) {
+                pl('#suggested_pct').attr('value', pct);
+                self.base.fieldMap.suggested_pct.update()
+            }
+        });
     }
+
 });
 
 function NewListingPageClass() {};

@@ -29,7 +29,9 @@
     <!-- not logged in -->
     <div class="span-5 last loginspan headerrow initialhidden" id="headernotloggedin">
         <div>
-            <span class="headerlink headerlinkright">Sign In</span>
+            <a href="/login-page.html">
+                <span class="headerlink headerlinkright">Sign In</span>
+            </a>
             <a id="loginlink" href="">
                 <div class="headericon headersignin"></div>
             </a>

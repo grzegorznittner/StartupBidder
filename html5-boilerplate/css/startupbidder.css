@@ -64,9 +64,9 @@ body.nearby-page > #wrap > #main > div.container > div.nearbywrapper { height: 1
     height: 32px;
     margin-bottom: 10px;
 }
-.copyrighttext { font-size: 12px; color: #000 !important; }
+.copyrighttext { font-size: 12px; color: #130f30 !important; }
 .normal { color: #666 !important; }
-.successful { color: #009900 !important; }
+.successful { color: #129906 !important; }
 .inprogress { color: #8F8A11 !important; }
 .errorcolor { color: #8A1F11 !important; }
 .attention { color: #8A1F11 !important; }
@@ -262,7 +262,7 @@ a:focus, a:hover { cursor: pointer; }
 .companyhalflogo { margin-top: 2px; width: 146px; height: 146px; margin-right: 10px; margin-left: 2px; float: left; }
 .companyhalfmantra { position: absolute; font-size: 12px; width: 145px; bottom:3px; left:158px; line-height: 14px; }
 .halftiledays, .halftiledaystext, .halftiletype, .halftiletypetext { left: 2px; width: 146px; height: 30px; position: absolute; }
-.halftiledays, .halftiletype { cursor: pointer; background-color: #000000; }
+.halftiledays, .halftiletype { cursor: pointer; background-color: #130f30; }
 .halftiledaystext, .halftiletypetext { padding: 4px; color: white; font-weight: bold; }
 .halftiledays, .halftiledaystext { top: 2px; }
 .halftiletype, .halftiletypetext { top: 118px; }
@@ -329,7 +329,7 @@ background-repeat: no-repeat;
 background-image: url(data:image/png;base64,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);
 }
 
-.checkboxgreenicon /* { width: 32px; height: 32px; background: url(../img/icons/check-32.png); } */
+.checkboxgreenicon, .checkboxcheckedicon /* { width: 32px; height: 32px; background: url(../img/icons/check-32.png); } */
 {
 width: 32px;
 height: 32px;
@@ -441,19 +441,35 @@ background-image: url(data:image/gif;base64,R0lGODlhIAAgAKUAAAQCBISChMTCxERCROTi
 }
 
 .checkboxcheckedicon /* { background: url(../img/icons/checkbox_24x48.png); height: 24px; width: 24px; } */
+/*
 {
 width: 24px;
 height: 24px;
 background-repeat: no-repeat;
 background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAMAAADXqc3KAAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAAgdQTFRFAAAAkZGRSkpKQUFBXFxcf39/Ozs7IiIiVFRaIiVCEBU8DhM3jYZzDQgwAAATAAAUAAA5c3NzWFhYbmllNSUcHQoJHQkIHgoJMyQcbGhkVVVVPT09OTk56enpd3d3aGholJSUn5+fOjo6QUFB1dXVysvZU1mgJzOQJjKQJzORJzKQIy6FBAYlDg8jh4eRQFGchp7L0ePz0ePybneAMjg8LzpOQFCaADKWYaXbrc7trc/urc/tjarDJzI7KTQ9SIi5ADOWADybWKPdpMvso8rrosjpPU1bJTI7YXmNU6HdAz6cAkWhVaLffqPBLTxJLT1JcZKumsbrm8fraIagIzA7M0RSlb/jVKLfCkijBk+oV6PflMPqUGyDIS86KztIirbcibTaJzZDIC85dJq6lMLqVqLeEFGpD1muXKbga67kZqfbIDpQFCg4NFl2Nlt5FSk5NVx5FluwFWK1YanheLXoYpS+GSs6GSs5Giw6IDZHcavaebboeLboYKfgHGS2Gmu7Z63khL3shb7tTG+MHC07HS47YIuuZazjI268HXPAaq7kkMbykMfzi8DqMkdYP1pvkMXyaq7lKHjDJHzGb7Hmms34gazQirjfmcz3mc34b7LmLIHJX5XGmMz5vOv/vOr/vev/nM35bJ3Jk56oqM7kzfz/zPz/rNDkmKGqzs7OioqKiYmJ////bK+B5gAAAB10Uk5TAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADjVkI7AAAAAWJLR0SsV2XyiwAAAAlwSFlzAAAOwwAADsMBx2+oZAAAASNJREFUKM9jYCAWMDIxs2CVYGViY0fwODi5oIBbVk5eASHBw8sHBPxALKCopKyCkFBVU1dX19DUUlfX1tHVE0RI6BsYGhoaGQGxsYmpmRBCwtzC0sra0tra2sbWzt4BySmOTs7OLkDo6ubu4emFJOHt4+vnHxAYFBwSGhYegSQRGRUdExsXn5CYlJySmoYkkZ6RmZWdk5uXX5CZmVGIJFFUXFJSWlZeUVlVXVNbhyRR39DY2NTc0trW2NTU3oEk0dnV3d3T29c/obunZ+IkJInJU6YCwbTpM2ZOnTFrNpLEnLnz5s+bt2DBvPkLFixchCSxeMnSpcuWQsDyFUgSKxVWrV4FQkCssBJJQlhEVExcVExUFIglJJEkpKRl4EBaioHKAACmSlgaHNFVXwAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAxMi0wOC0wOFQwODo1NjowNy0wNDowMJRNUSkAAAAldEVYdGRhdGU6bW9kaWZ5ADIwMTItMDgtMDhUMDg6NTY6MDctMDQ6MDDlEOmVAAAAGnRFWHRTb2Z0d2FyZQBQYWludC5ORVQgdjMuNS4xMDD0cqEAAAAASUVORK5CYII=);
 }
+*/
+{
+    width: 32px;
+    height: 32px;
+    border: 2px solid #013420;
+}
+
 
 .checkboxuncheckedicon /* { background: url(../img/icons/checkbox_24x48.png); height: 24px; width: 24px; background-position: 0px -24px; } */
+/*
 {
 width: 24px;
 height: 24px;
 background-repeat: no-repeat;
 background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAMAAADXqc3KAAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAAMxQTFRFAAAAUVFRLS0tIyMjLi4uenp6DAwMDg4OY2NjEBAQYmJiNjY2MTExxcXFbm5uVFRUb29vYmJiv7+/////vL29Y2NjWlpa4ODg+Pj43NzcW1tbZmZm9fb22tvaZ2dncnJy3Nvb8/Pzc3NzfX193d3d8PDwfn5+iYmJ3t7e4+Pj397eioqKlZWV39/f6OjolpaWoaGh4eHh6+vroqKira2t4uLirq6uuLi45OTk9PT0urq6ubm58fHx8vLyvLy8l5eXmJiYw8PDgoKCd3d3lCHFkwAAAA10Uk5TAAAAAAAAAAAAAAAAAO1IeEgAAAABYktHRBMMu1yWAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAAmUlEQVQoz63SRxKCQBCFYUZFRcScxoTZMaCiopgF738nd2/eAfhXXfUtpqa6DSPhRCqNMoLAzOo5ZxI4pTKqOATVWh01mgStdgfJLkFP9tFgSOCOxkhOCKazOZILgqVaofWGYOvtkLcnOPhH5J8IzoF+I7gQXMMbCu8Ej6f++etN8FEa1Jcgin8ojgjylp6tAi/KLiJbJH0Gf7CyHRfTySPUAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDEyLTA4LTA4VDA4OjU3OjM4LTA0OjAwA0hNHQAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxMi0wOC0wOFQwODo1NzozOC0wNDowMHIV9aEAAAAadEVYdFNvZnR3YXJlAFBhaW50Lk5FVCB2My41LjEwMPRyoQAAAABJRU5ErkJggg==);
+}
+*/
+{
+    width: 32px;
+    height: 32px;
+    border: 2px solid #013420;
+    background: none;
 }
 
 /* header num */
@@ -522,7 +538,7 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAMA
 .inputfullwidetextshort { width: 600px !important; }
 .inputwidewithvalidate { width: 540px !important; }
 .inputhelp { padding-top: 10px; height: 33px; }
-.inputcheckbox { padding-right: 10px; padding-top: 10px; height: 33px; float: left; }
+.inputcheckbox { margin-right: 10px; height: 36px; float: left; }
 .inputmsg { font-weight: bold; }
 .bidmsg { height: 20px; font-weight: bold; }
 .formlabelvalue { width: 180px; }
@@ -614,11 +630,14 @@ float: left;
 .searchbutton:hover { cursor: pointer; }
 
 /* bmc styles */
-.bmctextarea { height: 410px; overflow: hidden; overflow-x: hidden; overflow-y: hidden; font-weight: normal; color: black !important; padding: 0;
+.bmctextarea, .bmctextareashort, .bmctextareawide, .bmcsection {
+    color: #130f30 !important;
+}
+.bmctextarea { height: 410px; overflow: hidden; overflow-x: hidden; overflow-y: hidden; font-weight: normal; padding: 0;
         font-size: 14px !important; margin: 0; width: 175px !important; background: none !important; border: 0 !important; }
-.bmctextareashort { height: 175px; overflow: hidden; overflow-x: hidden; overflow-y: hidden; font-weight: normal; color: black !important; padding: 0;
+.bmctextareashort { height: 175px; overflow: hidden; overflow-x: hidden; overflow-y: hidden; font-weight: normal; padding: 0;
         font-size: 14px !important; margin: 0; width: 175px !important; background: none !important; border: 0 !important; }
-.bmctextareawide { height: 120px; overflow: hidden; overflow-x: hidden; overflow-y: hidden; font-weight: normal; color: black !important; padding: 0;
+.bmctextareawide { height: 120px; overflow: hidden; overflow-x: hidden; overflow-y: hidden; font-weight: normal; padding: 0;
         font-size: 14px !important; margin: 0; width: 405px !important; background: none !important; border: 0 !important; }
 .bmcinfoheader { font-size: 18px; font-weight: bold; line-height: 30px; }
 .bmcinfo { margin: 0; overflow: hidden; width: 530px; height: 0; position: absolute;
@@ -966,7 +985,7 @@ overflow: hidden;
 .tile { width: 146px; height: 296px; border: 1px solid #cccccc; overflow: hidden; margin-bottom: 10px; position: relative; }
 .tileimg { width: 146px; height: 146px; overflow: hidden; }
 .tiledays, .tiledaystext, .tiletype, .tiletypetext, .tilepoints { width: 146px; height: 30px; position: absolute; }
-.tiledays, .tiletype, .tilepoints { cursor: pointer; background-color: #000000; }
+.tiledays, .tiletype, .tilepoints { cursor: pointer; background-color: #130f30; }
 .tiledaystext, .tiletypetext { padding: 4px; font-weight: bold; }
 .tilepointstext { font-weight: bold; width: 146px; position: absolute; bottom: 0; padding: 0 4px; }
 .tiledays, .tiledaystext { top: 0px; }
@@ -1195,7 +1214,7 @@ border: 1px solid #cccccc;
 .bmcborder { border: 6px solid #cccccc; margin-bottom: 10px; clear: both; position: relative; }
 .bmccontainer { overflow: hidden; }
 .bmccell { padding: 5px; line-height: normal; }
-.bmcsection { font-size: 18px; font-weight: bold; color: black; }
+.bmcsection { font-size: 18px; font-weight: bold; }
 .bmcicon { float: right; width: 48px; height: 48px; }
 .bmcverticalbar { float: left; }
 .bmctallcolumn { float: left; }
@@ -1440,7 +1459,7 @@ height: 157px;
         margin-top: 17px;
 }
 .locationpanel {
-        margin-top: 34px;
+        margin-top: 45px;
 }
 .askingbox {
 width: 292px;
@@ -1582,6 +1601,35 @@ margin: 20px auto;
 .firstsidebox {
     margin-top: 53px;
 }
+
+/* new listing financial page */
+
+.firstinputitem {
+    margin-top: 10px;
+}
+.askinginputtext {
+    font-weight: bold; color: white !important; background: #49515a !important; font-size: 30px !important; width: 140px !important;
+    text-align: right;
+    margin-bottom: 10px;
+}
+.askingamtbtn, .askingpctbtn {
+    float: left; margin-top: 10px; margin-bottom: 10px; margin-right: 10px;
+}
+.valuationfield {
+}
+.valuationtext {
+    width: 140px;
+    font-size: 30px;
+    text-align: right; 
+    font-weight: bold;
+}
+.newlistingoffermsg {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-left: 37px;
+}
+
+
 
 .initialhidden { display: none; }
 

@@ -17,7 +17,7 @@ include(header.m4)
 <div class="container initialhidden wrapper">
 
 <!-- begin banner -->
-    <div class="bannertextsmall">NEW LISTING WIZARD - FINANCIALS</div>
+    <div class="bannertextsmall">CHOOSE THE FUNDING THAT&rsquo;S RIGHT FOR YOU</div>
 
     <div class="span-16">
         <a href="#" class="backbuttonlink">
@@ -29,11 +29,10 @@ include(header.m4)
 
 <!-- end banner -->
 
-<!-- left column -->
 <div class="span-16 initialhidden" id="newlistingfinancialswrapper">
 
     <div class="boxtitle">
-        <span class="titletext">ASKING FOR INVESTMENT?</span>
+        <span class="titletext">ASKING FOR FUNDING?</span>
         <div class="titleinfobtn"></div>
         <div class="titleinfo">
             <label class="titleinfoheader">Instructions</label>
@@ -46,12 +45,12 @@ include(header.m4)
         </div>
     </div>
     <div class="boxpanel">
-        <div class="formitem clear">
+        <div class="formitem clear firstinputitem">
             <label class="inputlabel" for="asked_fund">ALLOW BIDS</label>
             <span class="inputcheckbox">
                 <div id="asked_fund"></div>
             </span>
-            <span class="inputhelp inputmsg">Investors can place bids <span class="newlistingaskmsg" id="newlistingaskmsg">&nbsp;</span></span>
+            <span class="inputhelp inputmsg"><span id="askfundstatus"></span><span class="newlistingaskmsg" id="newlistingaskmsg">&nbsp;</span></span>
         </div>
     </div>
 
@@ -74,15 +73,28 @@ include(header.m4)
             </p>
         </div>
     </div>
-    <div class="boxpanel offerpanel" id="offerpanel">
-        <div class="formitem sideinfoitem clear">
+
+    <div class="boxpanelfull offerpanel" id="offerpanel">
+
+        <div class="formitem clear firstinputitem">
             <label class="inputlabel" for="suggested_amt">ASKING</label>
             <span class="inputfield">
-                <input class="text inputmedtext" type="text" name="suggested_amt" id="suggested_amt" maxlength="8"></input>
+                <div class="span-4 investbutton askingamtbtn">$1,000</div>
+                <div class="span-4 investbutton askingamtbtn">$5,000</div>
+                <div class="span-4 investbutton askingamtbtn">$10,000</div>
+                <div class="span-4 investbutton askingamtbtn">$25,000</div>
+                <div class="span-4 investbutton askingamtbtn">$50,000</div>
+            </span>
+        </div>
+
+        <div class="formitem sideinfoitem clear">
+            <span class="inputlabel">&nbsp;</span>
+            <span class="inputfield">
+                <input class="text askinginputtext" type="text" name="suggested_amt" id="suggested_amt" maxlength="8"></input>
             </span>
             <p class="sideinfo">
                 <label class="sideinfoheader">Asking</label>
-                <br />
+                <br/>
                 The amount of money you want for investment, between $100 and $500,000 USD.  This is only a suggestion,
                 as the investor may make their own bid, which you may accept, reject, or counter.
             </p>
@@ -90,14 +102,26 @@ include(header.m4)
                 <div id="suggested_amticon"></div>
             </span>
         </div>
-        <div class="formitem sideinfoitem clear">
+
+        <div class="formitem clear">
             <label class="inputlabel" for="suggested_pct">FOR</label>
             <span class="inputfield">
-                <input class="text inputmedtext" type="text" name="suggested_pct" id="suggested_pct" maxlength="3"></input>%
+                <div class="span-4 investbutton askingpctbtn">5%</div>
+                <div class="span-4 investbutton askingpctbtn">10%</div>
+                <div class="span-4 investbutton askingpctbtn">25%</div>
+                <div class="span-4 investbutton askingpctbtn">50%</div>
+                <div class="span-4 investbutton askingpctbtn">100%</div>
+            </span>
+        </div>
+
+        <div class="formitem sideinfoitem clear">
+            <span class="inputlabel">&nbsp;</span>
+            <span class="inputfield">
+                <input class="text askinginputtext" type="text" name="suggested_pct" id="suggested_pct" maxlength="3"></input>
             </span>
             <p class="sideinfo">
                 <label class="sideinfoheader">For</label>
-                <br />
+                <br/>
                 For a company, how much fully diluted post-money common equity you are offering, from 1% to 100%.
                 For product investments, the tenancy in common ownership interest in the application.
             </p>
@@ -105,16 +129,20 @@ include(header.m4)
                 <div id="suggested_pcticon"></div>
             </span>
         </div>
+
         <div class="formitem clear">
             <span class="inputlabel">VALUATION</span>
             <span class="inputfield valuationfield">
-                <div class="medtext successful" id="suggested_val"></div>
+                <div class="successful valuationtext" id="suggested_val"></div>
             </span>
         </div>
+
         <div class="formitem clear">
-            <span class="newlistingmsgsmall" id="newlistingoffermsg">&nbsp;</span>
+            <span class="newlistingmsgsmall newlistingoffermsg" id="newlistingoffermsg">&nbsp;</span>
         </div>
+
     </div>
+
     </div>
 
     <div class="boxtitle offertitle">
@@ -123,20 +151,20 @@ include(header.m4)
         <div class="titleinfo">
             <label class="titleinfoheader">Ownership</label>
             <p>
-            Who founded your company?  Who owns it now?  List all applicable owners including employees, corporations and investors, if any.
+            Who owns your company or application?  List all applicable owners including founders, employees, corporations and investors, if any.
             </p>
         </div>
     </div>
     <div class="boxpanel newlistingpanel">
-        <div class="formitem sideinfoitem clear">
-            <label class="inputlabel" for="founders">FOUNDERS</label>
+        <div class="formitem sideinfoitem clear firstinputitem">
+            <label class="inputlabel" for="founders">OWNERS</label>
             <span class="inputfield">
                 <input class="text inputwidetext" type="text" name="founders" id="founders" value=""></input>
             </span>
             <p class="sideinfo">
-                <label class="sideinfoheader">Founders</label>
-                <br />
-                The full legal names of all individual authors of this application or founders of the company.
+                <label class="sideinfoheader">Owners</label>
+                <br/>
+                The full legal names of all individual authors of this application or owners of the company.
             </p>
             <span class="inputicon">
                 <div id="foundersicon"></div>
@@ -153,12 +181,7 @@ include(header.m4)
         </div>
     </div>
 
-</div> <!-- end left column -->
-
-<!-- right column -->
-<div class="span-8 last">
 </div>
-<!-- end right column -->
 
 </div> <!-- end container -->
 </div> <!-- end main -->

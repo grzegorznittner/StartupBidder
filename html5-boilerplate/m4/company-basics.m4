@@ -31,7 +31,7 @@ include(images-panel.m4)
         <div class="sidebox investbutton initialhidden" id="investbutton">INVEST</div>
 
         <a href="/new-listing-basics-page.html">
-            <div class="sidebox investbutton gotobutton initialhidden" id="editbutton">&lt;&lt; Edit Basic Info</div>
+            <div class="sidebox investbutton gotobutton initialhidden" id="editbutton">&lt;&lt; Revise Info</div>
         </a>
 
         <div class="sidebox investbutton gotobutton" id="modelbutton">Go To Business Model</div>
@@ -48,6 +48,10 @@ include(images-panel.m4)
 <!--                <div class="sideboxdesc">Total raised is <span class="sideboxnum" id="total_raised">$0</span></div> -->
             </div>
         </div>
+
+        <a href="/new-listing-financials-page.html">
+            <div class="sidebox investbutton gotobutton initialhidden" id="fundingbutton">Ask for Funding</div>
+        </a>
     
         <div class="initialhidden" id="documentboxwrapper"> 
         <div class="boxtitle boxtitleside">DOCUMENTS</div>
