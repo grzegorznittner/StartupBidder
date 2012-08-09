@@ -1,5 +1,6 @@
 package com.startupbidder.web;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -9,8 +10,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import com.google.apphosting.utils.servlet.WarmupServlet;
 import com.startupbidder.web.controllers.CommentController;
 import com.startupbidder.web.controllers.CronTaskController;
 import com.startupbidder.web.controllers.FileController;
@@ -20,6 +23,7 @@ import com.startupbidder.web.controllers.NotificationController;
 import com.startupbidder.web.controllers.SystemController;
 import com.startupbidder.web.controllers.TaskController;
 import com.startupbidder.web.controllers.UserController;
+import com.startupbidder.web.servlets.WarmupListener;
 
 /**
  * 
@@ -41,6 +45,23 @@ public class FrontController extends HttpServlet {
 			log.info("Got request to startupbidder.appspot.com, redirecting to: " + redirectUrl);
 			response.sendRedirect(redirectUrl);
 			return;
+		}
+		
+		if (StringUtils.endsWith(pathInfo, ".css")) {
+			response.setContentType("text/css");
+			IOUtils.copy(new FileInputStream(WarmupListener.MAIN_CSS_FILE), response.getOutputStream());
+			return;
+		} else if (StringUtils.endsWith(pathInfo, ".js")) {
+			response.setContentType("text/javascript");
+			if (StringUtils.countMatches(pathInfo, "/") == 2) {
+				IOUtils.copy(new FileInputStream(WarmupListener.MAIN_JS_FILE), response.getOutputStream());
+				return;
+			} else {
+				String parts[] = pathInfo.split("/");
+				String jsName = parts[parts.length - 1];
+				IOUtils.copy(new FileInputStream(WarmupListener.JS_FOLDER + "/" + jsName), response.getOutputStream());
+				return;
+			}
 		}
 		
 		ModelDrivenController controller = null;

@@ -4,6 +4,9 @@
  */
 package com.startupbidder.web.servlets;
 
+import java.io.File;
+import java.util.logging.Logger;
+
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
@@ -39,6 +42,12 @@ import com.startupbidder.web.ListingFacade;
  *
  */
 public class WarmupListener implements ServletContextListener {
+	private static final Logger log = Logger.getLogger(WarmupListener.class.getName());
+	
+	public static String MAIN_CSS_FILE;
+	public static String MAIN_JS_FILE;
+	public static String JS_FOLDER;
+	
 	static {
 		ObjectifyService.register(SBUser.class);
 		ObjectifyService.register(Listing.class);
@@ -68,6 +77,28 @@ public class WarmupListener implements ServletContextListener {
 	public void contextInitialized(ServletContextEvent event) {
 		// This will be invoked as part of a warmup request, or the first user
 		// request if no warmup request was invoked.
+		
+		File css = new File("./css");
+		if (css.exists()) {
+			File csses[] = css.listFiles();
+			if (csses.length > 0) {
+				MAIN_CSS_FILE = "./css/" + csses[0].getName();
+			}
+		}
+		File js = new File("./js");
+		if (js.exists()) {
+			for(File jsFile : js.listFiles()) {
+				if (jsFile.isDirectory()) {
+					JS_FOLDER = "./js/" + jsFile.getName();
+				}
+				if (jsFile.isFile()) {
+					MAIN_JS_FILE = "./js/" + jsFile.getName();
+				}
+			}
+		}
+		log.info("MAIN_CSS_FILE = " + MAIN_CSS_FILE);
+		log.info("MAIN_JS_FILE = " + MAIN_JS_FILE);
+		log.info("JS_FOLDER = " + JS_FOLDER);
 		
 		TwitterHelper.configureTwitterFactory();
 		ListingFacade.instance().getDiscoverListingList(null);
