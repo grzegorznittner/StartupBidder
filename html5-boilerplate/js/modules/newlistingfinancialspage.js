@@ -38,8 +38,8 @@ pl.implement(NewListingFinancialsClass, {
             },
             validators = {
                 asked_fund: ValidatorClass.prototype.isCheckedVal,
-                suggested_amt: ValidatorClass.prototype.genIsNumberBetween(1000, 500000),
-                suggested_pct: ValidatorClass.prototype.genIsNumberBetween(1, 50),
+                suggested_amt: ValidatorClass.prototype.genIsNumberBetween(100, 500000),
+                suggested_pct: ValidatorClass.prototype.genIsNumberBetween(1, 100),
                 founders: ValidatorClass.prototype.isNotEmpty
             },
             classes = {

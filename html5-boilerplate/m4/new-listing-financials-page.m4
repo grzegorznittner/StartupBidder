@@ -66,7 +66,8 @@ include(header.m4)
             want to offer for it.  The amount you want to raise is cash in US Dollars.  For a company,
             the percentage offering is the percentage of common stock, fully-diluted post-money, you
             are offering in exchange for the funding.  If you are listing a product, the percentage is
-            the gross royalty in perpetuity on worldwide sales you will pay the investor.  
+            the tenancy in common of the application, including but not limited to all copyrights,
+            patents, trademarks, and trade secrets.
             The valuation is calculated by dividing the funding amount by the percentage of the
             company or product being offered.
             Once your listing is approved, interested investors will contact you to make an offer.
@@ -82,7 +83,7 @@ include(header.m4)
             <p class="sideinfo">
                 <label class="sideinfoheader">Asking</label>
                 <br />
-                The amount of money you want for investment, between $5,000 and $500,000 USD.  This is only a suggestion,
+                The amount of money you want for investment, between $100 and $500,000 USD.  This is only a suggestion,
                 as the investor may make their own bid, which you may accept, reject, or counter.
             </p>
             <span class="inputicon">
@@ -97,8 +98,8 @@ include(header.m4)
             <p class="sideinfo">
                 <label class="sideinfoheader">For</label>
                 <br />
-                For a company, how much fully diluted post-money common equity you are offering, from 5% to 50%.
-                For product investments, the royalty on gross worldwide sales for the investor.
+                For a company, how much fully diluted post-money common equity you are offering, from 1% to 100%.
+                For product investments, the tenancy in common ownership interest in the application.
             </p>
             <span class="inputicon">
                 <div id="suggested_pcticon"></div>
