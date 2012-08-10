@@ -21,7 +21,12 @@ pl.implement(QuestionClass, {
                 pl('.preloader').hide();
                 pl('.wrapper').show();
             },
-            ajax = new AjaxClass('/listings/questions_answers/' + this.listing_id, 'qandamsg', complete);
+            error = function(errornum, json) {
+                (new HeaderClass()).setLogin(json);
+                pl('.preloader').hide();
+                pl('.errorwrapper').show();
+            },
+            ajax = new AjaxClass('/listings/questions_answers/' + this.listing_id, 'qandamsg', complete, null, null, error);
         ajax.setGetData({ max_results: 3 });
         ajax.call();
     },
@@ -34,9 +39,7 @@ pl.implement(QuestionClass, {
         if (json) {
             this.store(json);
         }
-        console.log('foo');
         this.displayQuestions();
-        console.log('bar');
         if (this.more_results_url) {
         	pl('#addqandabox').before('<div class="showmore hoverlink" id="moreresults"><span class="initialhidden" id="moreresultsurl">' + this.more_results_url + '</span><span id="moreresultsmsg">More...</span></div>\n');
         }
@@ -293,7 +296,6 @@ pl.implement(QuestionClass, {
             question,
             replyable,
             bindlist = [];
-        console.log('len', this.questionlist);
         if (this.questionlist.length === 0) {
             this.displayNoComments();
             return;

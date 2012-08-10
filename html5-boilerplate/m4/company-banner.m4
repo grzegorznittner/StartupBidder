@@ -3,7 +3,7 @@ define(`companybannermacro', `
     <div class="container">
         <div class="companybanner span-24">
 
-            <div class="span-24 preloadercompanybanner">
+            <div class="span-24 preloader preloadercompanybanner">
                 <div class="preloaderfloater"></div>
                 <div class="preloadericon"></div>
             </div>

@@ -4,7 +4,7 @@ function NewListingFinancialsClass() {
 pl.implement(NewListingFinancialsClass, {
     load: function() {
         var self = this,
-            completeFunc = function(json) {
+            complete = function(json) {
                 var listing = json && json.listing ? json.listing : {},
                     header = new HeaderClass();
                 header.setLogin(json);
@@ -12,8 +12,13 @@ pl.implement(NewListingFinancialsClass, {
                 self.display();
                 pl('.preloader').hide();
                 pl('.wrapper').show();
-            };
-        ajax = new AjaxClass('/listings/create', 'newlistingmsg', completeFunc);
+            },
+            error = function(errornum, json) {
+                (new HeaderClass()).setLogin(json);
+                pl('.preloader').hide();
+                pl('.errorwrapper').show();
+            },
+            ajax = new AjaxClass('/listings/create', 'newlistingmsg', complete, null, null, error);
         ajax.setPost();
         ajax.call();
     },

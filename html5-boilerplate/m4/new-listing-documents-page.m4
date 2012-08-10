@@ -9,6 +9,7 @@ include(head.m4)
 <div id="newlistingmain">
 '
 include(header.m4)
+include(company-not-found.m4)
 `
 <div class="container preloader">
     <div class="preloaderfloater"></div>
@@ -17,7 +18,7 @@ include(header.m4)
 <div class="container initialhidden wrapper">
 
 <!-- begin banner -->
-    <div class="bannertextsmall">NEW LISTING WIZARD - DOCUMENTS</div>
+    <div class="bannertextsmall">ADD DOCUMENTS TO YOUR LISTING</div>
 
     <div class="span-16">
         <a href="#" class="backbuttonlink">

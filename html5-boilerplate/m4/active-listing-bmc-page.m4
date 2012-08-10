@@ -9,6 +9,7 @@ include(head.m4)
 <div id="newlistingmain">
 '
 include(header.m4)
+include(company-not-found.m4)
 `
 <div class="container preloader">
     <div class="preloaderfloater"></div>

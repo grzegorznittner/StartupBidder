@@ -41,7 +41,12 @@ pl.implement(ListingClass, {
                 pl('.preloader').hide();
                 pl('.wrapper').show();
             },
-            ajax = new AjaxClass('/listings/get/' + this.listing_id, 'listingstatus', complete);
+            error = function(errornum, json) {
+                (new HeaderClass()).setLogin(json);
+                pl('.preloader').hide();
+                pl('.errorwrapper').show();
+            },
+            ajax = new AjaxClass('/listings/get/' + this.listing_id, 'listingstatus', complete, null, null, error);
         ajax.call();
     },
 

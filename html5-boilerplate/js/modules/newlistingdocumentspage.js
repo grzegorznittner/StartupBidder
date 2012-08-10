@@ -10,7 +10,7 @@ pl.implement(NewListingDocumentsClass, {
             url = this.id
                 ? '/listing/get/' + this.id
                 : '/listings/create',
-            completeFunc = function(json) {
+            complete = function(json) {
                 var listing = json && json.listing ? json.listing : {},
                     header = new HeaderClass();
                 header.setLogin(json);
@@ -18,8 +18,13 @@ pl.implement(NewListingDocumentsClass, {
                 self.display();
                 pl('.preloader').hide();
                 pl('.wrapper').show();
-            };
-        ajax = new AjaxClass(url, 'newlistingmsg', completeFunc);
+            },
+            error = function(errornum, json) {
+                (new HeaderClass()).setLogin(json);
+                pl('.preloader').hide();
+                pl('.errorwrapper').show();
+            },
+            ajax = new AjaxClass(url, 'newlistingmsg', complete, null, null, error);
         if (url === '/listings/create') {
             ajax.setPost();
         }

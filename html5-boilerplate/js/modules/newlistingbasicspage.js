@@ -12,7 +12,7 @@ pl.implement(NewListingBasicsClass, {
         var self = this,
             url = this.importtype && this.importid ? '/listing/import' : '/listing/create',
             data = this.importtype && this.importid ? { type: this.importtype, id: this.importid } : null,
-            completeFunc = function(json) {
+            complete = function(json) {
                 var listing = json && json.listing ? json.listing : {},
                     categories = json && json.categories ? json.categories : {},
                     header = new HeaderClass();
@@ -23,7 +23,12 @@ pl.implement(NewListingBasicsClass, {
                 pl('.preloader').hide();
                 pl('.wrapper').show();
             },
-        ajax = new AjaxClass(url, 'newlistingmsg', completeFunc);
+            error = function(errornum, json) {
+                (new HeaderClass()).setLogin(json);
+                pl('.preloader').hide();
+                pl('.errorwrapper').show();
+            },
+            ajax = new AjaxClass(url, 'newlistingmsg', complete, null, null, error);
         if (data) {
             pl('#newlistingbanner').text('LISTING IMPORTED FROM ' + this.importtype.toUpperCase());
             ajax.ajaxOpts.data = data;

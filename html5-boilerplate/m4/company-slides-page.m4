@@ -10,6 +10,7 @@ include(head.m4)
 <div id="main">
 '
 include(header.m4)
+include(company-not-found.m4)
 include(company-banner.m4)
 companybannermacro(`', `', `companynavselected', `', `', `')
 `

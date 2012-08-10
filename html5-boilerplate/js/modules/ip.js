@@ -137,7 +137,12 @@ pl.implement(SlidesPageClass,{
                 pl('.preloader').hide();
                 pl('#ip, .wrapper').show();
             },
-            ajax = new AjaxClass('/listing/get/' + this.listing_id, 'ipmsg', complete);
+            error = function(errornum, json) {
+                (new HeaderClass()).setLogin(json);
+                pl('.preloader').hide();
+                pl('.errorwrapper').show();
+            },
+            ajax = new AjaxClass('/listing/get/' + this.listing_id, 'ipmsg', complete, null, null, error);
         ajax.call();
     }
 });
