@@ -95,8 +95,8 @@ public class FrontController extends HttpServlet {
 				log.log(Level.WARNING, "Returned object is NULL");
 			}
 		} else {
-			log.log(Level.WARNING, request.getMethod() + " " + request.getPathInfo() + " is not supported!");
-			response.setStatus(501);
+			log.log(Level.WARNING, request.getMethod() + " " + request.getPathInfo() + " is not supported!  Redirecting to error page.");
+			response.sendRedirect("/error-page.html");
 			return;
 		}
 		

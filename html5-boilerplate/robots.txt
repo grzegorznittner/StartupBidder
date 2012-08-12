@@ -2,4 +2,27 @@
 # www.google.com/support/webmasters/bin/answer.py?hl=en&answer=156449
 
 User-agent: *
+Disallow: /user/
+Disallow: /users/
+Disallow: /listing/
+Disallow: /listings/
+Disallow: /comment/
+Disallow: /comments/
+Disallow: /system/
+Disallow: /systems/
+Disallow: /file/
+Disallow: /files/
+Disallow: /task/
+Disallow: /tasks/
+Disallow: /notification/
+Disallow: /notifications/
+Disallow: /monitor/
+Disallow: /monitors/
+Disallow: /cron/
+Disallow: /crons/
+Disallow: /bid/
+Disallow: /bids/
+Disallow: /setup/
+Disallow: /hello/
+Disallow: /_ah/
 

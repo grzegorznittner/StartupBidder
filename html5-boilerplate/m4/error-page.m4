@@ -17,12 +17,7 @@ include(header.m4)
     <div class="boxtitle">NOT FOUND</div>
     <div class="boxpanel">
 	       <p>Sorry, but the page you were trying to view does not exist.</p>
-	       <p>It looks like this was the result of either:</p>
-	       <ul>
-		   <li>a mistyped address</li>
-		   <li>an out-of-date link</li>
-	       </ul>
-           <p>Return <a href="/">home</p>.</p>
+           <p>Return <a href="/">home</a>.</p>
     </div>
 </div> <!-- end left column -->
 

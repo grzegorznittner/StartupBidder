@@ -1,5 +1,5 @@
 application: startupbidder
-version: 201208100054
+version: 201208121720
 runtime: java
 
 static_files:
@@ -54,3 +54,23 @@ admin_console:
 sessions_enabled: true
 
 threadsafe: true
+
+error_handlers:
+  - file: error-page.html
+
+  - error_code: over_quota
+    file: error-page.html
+
+  - error_code: dos_api_denial
+    file: error-page.html
+
+  - error_code: timeout
+    file: error-page.html
+
+admin_console:
+  pages:
+  - name: Setup Config
+    url: /setup
+  - name: Hello Test Page
+    url: /hello
+
