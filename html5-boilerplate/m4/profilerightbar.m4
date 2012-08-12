@@ -2,7 +2,7 @@
 <!-- right column -->
 <div class="span-8 last">
 
-    <div class="boxtitle">YOUR PROFILE</div>
+    <div class="boxtitle boxtitleside"><span class="titleperson">YOUR</span> PROFILE</div>
     <div class="sidebox profilebox">
         <div class="formfull">
             <span class="formtitle" id="username"></span>

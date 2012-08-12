@@ -138,8 +138,7 @@ pl.implement(ImportListingClass, {
     },
 
     displayList: function(results) {
-        var results = results,
-            sorter = function(a, b) {
+        var sorter = function(a, b) {
                 return a[1].localeCompare(b[1]);
             },
             list = [],

@@ -2946,6 +2946,38 @@ include(header.m4)
             <iframe name="listing-send_back"></iframe>
         </div>
 
+        <dt>GET /user/all</dt>
+        <dd>
+            <p>
+            Get the list of all startupbidder users.  Can only be called by admins.
+            </p>
+        </dd>
+        <div class="apidetail">
+            <h4>Parameters</h4>
+            <ul>
+                <li><i>none</i></li>
+            </ul>
+            <h4>Response</h4>
+            <ul>
+                <li><code>login_url</code> URL to use for site login action</li>
+                <li><code>logout_url</code> URL to use for site logout action</li>
+                <li><code>loggedin_profile</code> private user profile object, see User API for profile object details</li>
+                <li><code>error_code</code> error status for this call, 0 on success</li>
+                <li><code>error_msg</code> error message for this call, null on success</li>
+                <li><code>users</code> list of user objects as described in method <var>/user/loggedin</var></li>
+            </ul>
+            <h4>Test</h4>
+            <form method="GET" action="/user/all" target="user-all">
+                <div class="formitem clear">
+                    <span class="inputlabel"></span>
+                    <span class="inputfield">
+                        <input type="submit" class="inputbutton" value="SUBMIT"></input>
+                    </span>
+                </div>
+            </form>
+            <iframe name="user-all"></iframe>
+        </div>
+
     </div>
 
 </div> <!-- end container -->

@@ -471,7 +471,7 @@ public class ObjectifyDatastoreDAO {
 
 	public List<SBUser> getAllUsers() {
 		QueryResultIterable<Key<SBUser>> usersIt = getOfy().query(SBUser.class)
-				.order("email").fetchKeys();
+				.order("nicknameLower").fetchKeys();
 		List<SBUser> users = new ArrayList<SBUser>(getOfy().get(usersIt).values());
 		return users;
 	}

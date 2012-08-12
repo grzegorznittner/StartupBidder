@@ -21,21 +21,21 @@ include(header.m4)
     <div id="profilemsg"></div>
 
     <div id="no_listings_wrapper" class="initialhidden">
-        <div class="boxtitle smokegrey">YOUR LISTINGS</div>
+        <div class="boxtitle smokegrey"><span class="titleperson">YOUR</span> LISTINGS</div>
         <div class="boxpanel">
-            You currently have no listings.
+            Currently there are no listings added or invested in by <span class="titleperson">you</span>.
             <a href="/add-listing-page.html" class="inputmsg hoverlink profilelink">Add</a> a listing or
             <a href="/main-page.html?type=top" class="inputmsg hoverlink profilelink">invest</a> in one today!
         </div>
     </div>
 
     <div id="edited_listing_wrapper" class="initialhidden">
-        <div class="boxtitle smokegrey">YOUR PENDING LISTING</div>
+        <div class="boxtitle smokegrey"><span class="titleperson">YOUR</span> PENDING LISTING</div>
         <div id="edited_listing"></div>
     </div>
 
     <div id="active_listings_wrapper" class="initialhidden">
-        <div class="boxtitle smokegrey">YOUR ACTIVE LISTINGS</div>
+        <div class="boxtitle smokegrey"><span class="titleperson">YOUR</span> ACTIVE LISTINGS</div>
         <div id="active_listings"></div>
     </div>
 
@@ -50,17 +50,17 @@ include(header.m4)
     </div>
 
     <div id="monitored_listings_wrapper" class="initialhidden">
-        <div class="boxtitle smokegrey">YOUR WATCHED LISTINGS</div>
+        <div class="boxtitle smokegrey"><span class="titleperson">YOUR</span> WATCHED LISTINGS</div>
         <div id="monitored_listings"></div>
     </div>
 
     <div id="withdrawn_listings_wrapper" class="initialhidden">
-        <div class="boxtitle smokegrey">YOUR WITHDRAWN LISTINGS</div>
+        <div class="boxtitle smokegrey"><span class="titleperson">YOUR</span> WITHDRAWN LISTINGS</div>
         <div id="withdrawn_listings"></div>
     </div>
 
     <div id="frozen_listings_wrapper" class="initialhidden">
-        <div class="boxtitle smokegrey">YOUR FROZEN LISTINGS</div>
+        <div class="boxtitle smokegrey"><span class="titleperson">YOUR</span> FROZEN LISTINGS</div>
         <div id="frozen_listings"></div>
     </div>
 

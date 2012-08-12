@@ -20,8 +20,9 @@
     <div class="span-4 footercol">
         <div class="footerlinkheader">ADMIN</div>
         <a href="contact-page.html"><span class="footerlink hoverlink">Contact</span></a>
-        <a href="/setup" id="adminsetup" style="visibility: hidden;"><span class="footerlink hoverlink">Setup</span></a>
-        <a href="/hello" id="adminhello" style="visibility: hidden;"><span class="footerlink hoverlink">Hello</span></a>
+        <a href="/setup" id="adminsetup" class="initialhidden"><span class="footerlink hoverlink">Setup</span></a>
+        <a href="/hello" id="adminhello" class="initialhidden"><span class="footerlink hoverlink">Hello</span></a>
+        <a href="profile-list-page.html" id="adminhello" class="initialhidden"><span class="footerlink hoverlink">Users</span></a>
         <span class="footerlink hoverlink">&nbsp;</span>
     </div>
     <div class="span-8 footercol">

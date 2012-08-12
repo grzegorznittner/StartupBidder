@@ -1495,7 +1495,15 @@ position: relative;
     right: 10px;
     bottom: 10px;
 }
-
+.profilelistusername { padding-left: 5px; font-size: 18px; font-weight: bold; color: #55a4f2; }
+.profilelistemail { padding-left: 10px; color: #666; }
+.profileliststatus { padding-left: 10px; color: #666; font-style: italic; }
+.profilelistadmin { padding-left: 10px; color: #666; font-weight: bold; }
+.profilelistdragon { color: #666; font-weight: bold; }
+.profilelistdetails { padding-left: 40px !important; text-indent: 0 !important; }
+.profilelistlastlogin { padding-left: 10px; }
+.profilelistpending { color: #55a4f2; }
+  
 /* sideboxbutton */
 .sideboxbutton {
         margin-top: 10px;

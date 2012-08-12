@@ -84,7 +84,12 @@ pl.implement(ProfilePageClass,{
                 if (!listingfound) {
                     pl('#no_listings_wrapper').show();
                 }
-                pl('#editprofilebutton').show();
+                if (json.loggedin_profile.admin) {
+                    pl('.titleperson').text('USER');
+                }
+                else {
+                    pl('#editprofilebutton').show();
+                }
                 pl('.preloader').hide();
                 pl('.wrapper').show();
              },
@@ -333,6 +338,111 @@ pl.implement(EditProfilePageClass,{
                 pl('.wrapper').show();
             },
             ajax = new AjaxClass('/listings/discover_user', 'personalinfomsg', completeFunc);
+        ajax.call();
+    }
+});
+
+function ProfileListClass() {}
+pl.implement(ProfileListClass, {
+    store: function(json) {
+        if (json) {
+            CollectionsClass.prototype.merge(this, json);
+        }
+    },
+   
+    display: function(json) {
+        if (json) {
+            this.store(json);
+        }
+        if (!this.loggedin_profile) {
+            document.location = '/';
+        }
+        this.displayList(json.users);
+    },
+
+    displayEmptyList: function() {
+        var listhtml = '\
+            <div class="messageline">\
+                <p class="messagetext"><i>No results found</i></p>\
+            </div>\
+            ';
+        pl('#profilelistcontainer').removeClass('addlistingcontainerfilled');
+        pl('#profilelist').html(listhtml);
+    },
+
+    displayList: function(results) {
+        var list = results || [],
+            listhtml = '',
+            listitem,
+            i;
+        for (i = 0; i < list.length; i++) {
+            listitem = list[i];
+            listhtml += this.makeListItem(listitem);
+        }
+        if (listhtml) {
+            pl('#profilelistcontainer').addClass('addlistingcontainerfilled');
+            pl('#profilelist').html(listhtml);
+        }
+        else {
+            this.displayEmptyList();
+        }
+    },
+
+    makeListItem: function(listitem) {
+        var url = '/profile-page.html?id=' + listitem.profile_id,
+			statustext =  listitem.status !== 'active'
+                ? '<span class="profileliststatus">' + listitem.status + '</span>'
+                : '',
+			admintext =  listitem.admin ? '<span class="profilelistadmin">ADMIN</span>' : '',
+			dragontext =  listitem.dragon ? '<span class="profilelistdragon">DRAGON</span>' : '',
+            nametext = listitem.name
+                ? 'Name:<span class="profilelistlastlogin">'
+                    + SafeStringClass.prototype.htmlEntities(listitem.name) + '</span></br>'
+                : '',
+            locationtext = listitem.location
+                ? 'Name:<span class="profilelistlastlogin">'
+                    + SafeStringClass.prototype.htmlEntities(listitem.location) + '</span></br>'
+                : '',
+            lastlogintext = listitem.last_login
+                ? 'Last Login:<span class="profilelistlastlogin">'
+                    + DateClass.prototype.format(listitem.last_login) + '</span></br>'
+                : '',
+			pendingtext =  listitem.edited_listing
+                ? '<a href="/company-page.html?id=' + listitem.edited_listing + '">'
+                    + '<span class="profilelistpending">pending listing</span>'
+                    + '</a><br/>'
+                : '',
+            html = '\
+            <div class="messageline">\
+                <p class="messagetext">\
+                    <a href="' + url + '">\
+			            <span class="profilelistusername">' + listitem.username + '</span>\
+                    </a>\
+			        <span class="profilelistemail">' + listitem.email+ '</span>\
+                    ' + statustext + '\
+                    ' + admintext + '\
+                </p>\
+                <p class="messagetext profilelistdetails">\
+                    ' + nametext + '\
+                    ' + locationtext + '\
+                    ' + lastlogintext + '\
+                    ' + pendingtext + '\
+                </p>\
+            </div>\
+            ';
+        return html;
+    },
+
+    loadPage: function() {
+        var self = this,
+            complete = function(json) {
+                (new HeaderClass()).setLogin(json);
+                self.display(json);
+                pl('#profilelistmsg').text('');
+                pl('.preloader').hide();
+                pl('.wrapper').show();
+            },
+            ajax = new AjaxClass('/user/all', 'profilelistmsg', complete);
         ajax.call();
     }
 });
