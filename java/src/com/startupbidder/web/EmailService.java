@@ -66,7 +66,7 @@ public class EmailService {
 	}
 	
 	public void sendAdmin(String from, String to, String subject, String htmlBody) throws AddressException, MessagingException {
-		log.info("Email to: " + to + " subject:" + subject + " body:" + htmlBody);
+		log.info("Email to: " + to + " subject:" + subject);
 		Properties props = new Properties();
         Session session = Session.getDefaultInstance(props, null);
         
@@ -87,7 +87,7 @@ public class EmailService {
 	}
 		
 	public void send(String from, String to, String subject, String htmlBody) throws AddressException, MessagingException {
-		log.info("Email to: " + to + " subject:" + subject + " body:" + htmlBody);
+		log.info("Email to: " + to + " subject:" + subject);
 		SystemProperty noBccAdmins = ObjectifyDatastoreDAO.getInstance().getSystemProperty("notification_no_bcc_admins");
 		SystemProperty realReceivers = ObjectifyDatastoreDAO.getInstance().getSystemProperty("notification_real_receivers");
 		
