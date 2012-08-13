@@ -19,14 +19,18 @@ import com.google.appengine.api.taskqueue.TaskOptions;
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.startupbidder.dao.ObjectifyDatastoreDAO;
+import com.startupbidder.datamodel.Listing;
 import com.startupbidder.datamodel.SBUser;
 import com.startupbidder.datamodel.UserStats;
 import com.startupbidder.util.FacebookUser;
 import com.startupbidder.vo.BaseVO;
 import com.startupbidder.vo.DtoToVoConverter;
 import com.startupbidder.vo.ErrorCodes;
+import com.startupbidder.vo.ListPropertiesVO;
+import com.startupbidder.vo.ListingTileVO;
 import com.startupbidder.vo.UserAndUserVO;
 import com.startupbidder.vo.UserListVO;
+import com.startupbidder.vo.UserListingsForAdminVO;
 import com.startupbidder.vo.UserVO;
 
 public class UserMgmtFacade {
@@ -151,16 +155,61 @@ public class UserMgmtFacade {
 	 * @param userId User identifier
 	 * @return User data as JsonNode
 	 */
-	public UserAndUserVO getUser(UserVO loggedInUser, String userId) {
+	public UserListingsForAdminVO getUser(UserVO loggedInUser, String userId) {
+		UserListingsForAdminVO result = new UserListingsForAdminVO();
+		if (loggedInUser == null || !loggedInUser.isAdmin()) {
+			result.setErrorCode(ErrorCodes.NOT_AN_ADMIN);
+			result.setErrorMessage("User is not an admin!");
+			log.info("User not logged in or not an admin.");
+			return result;
+		}
+		
 		UserVO user = DtoToVoConverter.convert(getDAO().getUser(userId));
 		if (user == null) {
-			return null;
+			result.setErrorCode(ErrorCodes.APPLICATION_ERROR);
+			result.setErrorMessage("User with id '" + userId + "' doesn't exist!");
+			log.info("User with id '" + userId + "' doesn't exist!");
+			return result;
 		}
-		applyUserStatistics(loggedInUser, user);
+		ListPropertiesVO props = new ListPropertiesVO();
+		props.setMaxResults(4);
+		List<ListingTileVO> activeListings = ListingFacade.instance().prepareListingList(
+				getDAO().getUserListings(user.toKeyId(), Listing.State.ACTIVE, props));
+		props = new ListPropertiesVO();
+		props.setMaxResults(4);
+		List<ListingTileVO> withdrawnListings = ListingFacade.instance().prepareListingList(
+				getDAO().getUserListings(user.toKeyId(), Listing.State.WITHDRAWN, props));
+		props = new ListPropertiesVO();
+		props.setMaxResults(4);
+		List<ListingTileVO> frozenListings = ListingFacade.instance().prepareListingList(
+				getDAO().getUserListings(user.toKeyId(), Listing.State.FROZEN, props));
+		props = new ListPropertiesVO();
+		props.setMaxResults(4);
+		List<ListingTileVO> closedListings = ListingFacade.instance().prepareListingList(
+				getDAO().getUserListings(user.toKeyId(), Listing.State.CLOSED, props));
 
-		UserAndUserVO userAndUser = new UserAndUserVO();
-		userAndUser.setUser(user);
-		return userAndUser;
+		if (activeListings.size() > 0) {
+			result.setActiveListings(activeListings);
+		}
+		if (withdrawnListings.size() > 0) {
+			result.setWithdrawnListings(withdrawnListings);
+		}
+		if (frozenListings.size() > 0) {
+			result.setFrozenListings(frozenListings);
+		}
+		if (closedListings.size() > 0) {
+			result.setClosedListings(closedListings);
+		}
+
+		if (user.getEditedListing() != null) {
+			Listing editedListing = getDAO().getListing(BaseVO.toKeyId(user.getEditedListing()));
+			result.setEditedListing(DtoToVoConverter.convert(editedListing));
+		}
+
+		applyUserStatistics(loggedInUser, loggedInUser);
+
+		result.setUser(user);
+		return result;
 	}
 	
 	/**
@@ -556,8 +605,7 @@ public class UserMgmtFacade {
 		return null;
 	}
 
-	public Object requestEmailAccess(UserVO loggedInUser, String email,
-			String url) {
+	public Object requestEmailAccess(UserVO loggedInUser, String email, String url) {
 		// TODO Auto-generated method stub
 		return null;
 	}

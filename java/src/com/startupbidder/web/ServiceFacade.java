@@ -93,7 +93,7 @@ public class ServiceFacade {
 	public CommentListVO getCommentsForUser(UserVO loggedInUser, String userId, ListPropertiesVO commentProperties) {
 		CommentListVO list = new CommentListVO();
 
-		UserVO user = UserMgmtFacade.instance().getUser(loggedInUser, userId).getUser();
+		UserVO user = DtoToVoConverter.convert(getDAO().getUser(userId));
 		if (user == null) {
 			log.log(Level.WARNING, "User '" + userId + "' not found");
 			commentProperties.setNumberOfResults(0);

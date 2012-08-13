@@ -88,7 +88,6 @@ import com.startupbidder.vo.ListingPropertyVO;
 import com.startupbidder.vo.ListingTileVO;
 import com.startupbidder.vo.ListingVO;
 import com.startupbidder.vo.NotificationVO;
-import com.startupbidder.vo.UserAndUserVO;
 import com.startupbidder.vo.UserBasicVO;
 import com.startupbidder.vo.UserListingsVO;
 import com.startupbidder.vo.UserVO;
@@ -949,8 +948,8 @@ public class ListingFacade {
 			return returnValue;
 		}
 		
-		UserAndUserVO userVO = UserMgmtFacade.instance().getUser(null, dbListing.owner.getString());
-		if (userVO == null) {
+		SBUser user = getDAO().getUser(dbListing.owner.getString());
+		if (user == null) {
 			log.warning("Listing owner " + dbListing.owner + " cannot be found!");
 			returnValue.setErrorMessage("Listing owner cannot be found");
 			returnValue.setErrorCode(ErrorCodes.ENTITY_VALIDATION);
@@ -958,7 +957,6 @@ public class ListingFacade {
 		}
 		if (dbListing.state == Listing.State.POSTED || dbListing.state == Listing.State.FROZEN) {
 			List<Listing> newOrPosted = getDAO().getUserNewOrPostedListings(dbListing.owner.getId());
-            SBUser user = getDAO().getUser(dbListing.owner.getString());
             String nickname = user != null ? user.nickname : "unknown";
             Listing.State listingState = (newOrPosted != null && newOrPosted.size() > 0 && newOrPosted.get(0) != null) ? newOrPosted.get(0).state : null;
             String errorStr = null;
@@ -984,8 +982,7 @@ public class ListingFacade {
                 log.severe("Could not update listing in datastore to NEW status: " + forUpdate.getId());
 				returnValue.setErrorMessage("Listing not updated");
 				returnValue.setErrorCode(ErrorCodes.DATASTORE_ERROR);
-			}
-            else {
+			} else {
                 user.editedListing = dbListing.getKey();
                 getDAO().updateUser(user);
                 if (user.getWebKey().equals(loggedInUser.getId())) {
@@ -1224,7 +1221,7 @@ public class ListingFacade {
 		return result;
 	}
 
-	private List<ListingTileVO> prepareListingList(List<Listing> listings) {
+	List<ListingTileVO> prepareListingList(List<Listing> listings) {
 		ListingTileVO listingVO = null;
 		int index = 1;
 		List<ListingTileVO> list = new ArrayList<ListingTileVO>();
@@ -2057,15 +2054,15 @@ public class ListingFacade {
 		Listing listing = getDAO().getListing(BaseVO.toKeyId(listingId));
 		if (!loggedInUser.isAdmin() && !StringUtils.equals(listing.owner.getString(), loggedInUser.getId())) {
 			result.setErrorCode(ErrorCodes.NOT_AN_OWNER);
-			result.setErrorMessage("User '" + loggedInUser.getName() + "' is not an owner of listing.");
+			result.setErrorMessage("User '" + loggedInUser.getNickname() + "' is not an owner of listing.");
 			return result;
 		}
-		if (!loggedInUser.isAdmin() && (listing.state == Listing.State.ACTIVE
-				|| listing.state == Listing.State.FROZEN || listing.state == Listing.State.POSTED)) {
-			result.setErrorCode(ErrorCodes.NOT_AN_ADMIN);
-			result.setErrorMessage("User '" + loggedInUser.getName() + "' cannot modify this listing.");
-			return result;
-		}
+//		if (!loggedInUser.isAdmin() && (listing.state == Listing.State.ACTIVE
+//				|| listing.state == Listing.State.FROZEN || listing.state == Listing.State.POSTED)) {
+//			result.setErrorCode(ErrorCodes.NOT_AN_ADMIN);
+//			result.setErrorMessage("User '" + loggedInUser.getNickname() + "' cannot modify this listing.");
+//			return result;
+//		}
 		if (listing.state == Listing.State.CLOSED || listing.state == Listing.State.WITHDRAWN) {
 			result.setErrorCode(ErrorCodes.OPERATION_NOT_ALLOWED);
 			result.setErrorMessage("Listing in state " + listing.state + " cannot be edited.");

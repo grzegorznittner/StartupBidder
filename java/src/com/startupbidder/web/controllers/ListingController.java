@@ -566,15 +566,6 @@ public class ListingController extends ModelDrivenController {
     // GET /listings/discover_user
     private HttpHeaders discoverUser(HttpServletRequest request) {
     	UserVO loggedIn = getLoggedInUser();
-    	if (loggedIn != null && loggedIn.isAdmin()) {
-    		String userId = getCommandOrParameter(request, 2, "id");
-    		if (StringUtils.isNotEmpty(userId)) {
-	    		UserAndUserVO userData = UserMgmtFacade.instance().getUser(getLoggedInUser(), userId);
-	    		if (userData != null && userData.getUser() != null) {
-	    			loggedIn = userData.getUser();
-	    		}
-    		}
-    	}
     	model = ListingFacade.instance().getDiscoverUserListings(loggedIn);
         return new HttpHeadersImpl("discover_user").disableCaching();
     }

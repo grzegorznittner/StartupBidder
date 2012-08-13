@@ -26,7 +26,7 @@ import com.startupbidder.vo.ListingAndUserVO;
 import com.startupbidder.vo.ListingListVO;
 import com.startupbidder.vo.ListingTileVO;
 import com.startupbidder.vo.ListingVO;
-import com.startupbidder.vo.UserAndUserVO;
+import com.startupbidder.vo.UserListingsForAdminVO;
 import com.startupbidder.web.ListingFacade;
 import com.startupbidder.web.UserMgmtFacade;
 
@@ -86,7 +86,7 @@ public class AdminListingFacadeTest extends AdminFacadeAbstractTest {
 		assertEquals(listing.getBuinessPlanId(), activatedListing.getListing().getBuinessPlanId());
 		assertEquals(listing.getFinancialsId(), activatedListing.getListing().getFinancialsId());
 		
-		UserAndUserVO owner = UserMgmtFacade.instance().getUser(mocks.GREG, listing.getOwner());
+		UserListingsForAdminVO owner = UserMgmtFacade.instance().getUser(mocks.GREG, listing.getOwner());
 		assertNotNull("Owner user should exist", owner.getUser());
 		assertNull("After activation owner should have empty edited listing", owner.getUser().getEditedListing());
 

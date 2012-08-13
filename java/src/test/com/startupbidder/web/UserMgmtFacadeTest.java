@@ -17,8 +17,8 @@ import com.google.appengine.api.users.User;
 import com.startupbidder.dao.ObjectifyDatastoreDAO;
 import com.startupbidder.datamodel.SBUser;
 import com.startupbidder.vo.ErrorCodes;
-import com.startupbidder.vo.UserAndUserVO;
 import com.startupbidder.vo.UserListVO;
+import com.startupbidder.vo.UserListingsForAdminVO;
 import com.startupbidder.vo.UserVO;
 import com.startupbidder.web.UserMgmtFacade;
 
@@ -44,16 +44,16 @@ public class UserMgmtFacadeTest extends BaseFacadeAbstractTest {
 
 	@Test
 	public void testGetUser() {
-		UserAndUserVO returnedUser = UserMgmtFacade.instance().getUser(mocks.DRAGON, mocks.JACOB.getId());
+		UserListingsForAdminVO returnedUser = UserMgmtFacade.instance().getUser(mocks.DRAGON, mocks.JACOB.getId());
 		assertEquals("Id should be the same", mocks.JACOB.getId(), returnedUser.getUser().getId());
 		assertEquals("Id should be the same", mocks.JACOB.getName(), returnedUser.getUser().getName());
 		
 		// different user gets the same user data
-		UserAndUserVO returnedUser2 = UserMgmtFacade.instance().getUser(mocks.GREG, mocks.JACOB.getId());
+		UserListingsForAdminVO returnedUser2 = UserMgmtFacade.instance().getUser(mocks.GREG, mocks.JACOB.getId());
 		assertNotSame("Id should be different", returnedUser2.getUser().getId(), returnedUser.getUser().getId());
 		assertNotSame("Name should be different", returnedUser2.getUser().getName(), returnedUser.getUser().getName());
 		
-		UserAndUserVO returnedUser3 = UserMgmtFacade.instance().getUser(mocks.DRAGON, "fakekey");
+		UserListingsForAdminVO returnedUser3 = UserMgmtFacade.instance().getUser(mocks.DRAGON, "fakekey");
 		assertNull("User should be empty for non existing web key", returnedUser3);
 	}
 
