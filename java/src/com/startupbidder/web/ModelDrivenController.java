@@ -85,12 +85,7 @@ public abstract class ModelDrivenController {
 			loggedInUser = UserMgmtFacade.instance().getLoggedInUser(twitterUser);
 			if (loggedInUser == null) {
 				log.info("User not found via twitter id " + twitterUser.getId() + ", screen name '" + twitterUser.getScreenName() + "'");
-//				if (twitterUser.getScreenName().equals("GregNittner")) {
-//					loggedInUser = DtoToVoConverter.convert(ObjectifyDatastoreDAO.getInstance()
-//							.setTwitterForEmailAccount("grzegorz.nittner@gmail.com", twitterUser.getId(), twitterUser.getScreenName()));
-//				} else {
-					loggedInUser = UserMgmtFacade.instance().createUser(twitterUser);
-//				}
+				loggedInUser = UserMgmtFacade.instance().createUser(twitterUser);
 			}
 		} else {
 			// not logged in

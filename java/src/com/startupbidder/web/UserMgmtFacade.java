@@ -70,6 +70,14 @@ public class UserMgmtFacade {
 		if (user == null) {
 			return null;
 		}
+		if (StringUtils.isEmpty(user.getName())) {
+			String parts[] = StringUtils.split(user.getEmail(), "@");
+			if (parts != null && parts.length > 0) {
+				user.setName(parts[0]);
+			} else {
+				user.setName("not provided");
+			}
+		}
 		applyUserStatistics(user, user);
 		return user;
 	}
