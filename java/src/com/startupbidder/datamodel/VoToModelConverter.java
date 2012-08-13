@@ -8,7 +8,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import com.googlecode.objectify.Key;
-import com.startupbidder.util.ImageHelper;
 import com.startupbidder.vo.CommentVO;
 import com.startupbidder.vo.ListingDocumentVO;
 import com.startupbidder.vo.ListingPropertyVO;
@@ -275,7 +274,7 @@ public class VoToModelConverter {
 		user.mockData = userVO.isMockData();
 		user.admin = userVO.isAdmin();
 		user.investor = userVO.isAccreditedInvestor();
-		user.dragon = userVO.isDragon();
+		user.userClass = userVO.getUserClass();
 		user.email = userVO.getEmail();
 		user.name = userVO.getName();
 		user.joined = userVO.getJoined();

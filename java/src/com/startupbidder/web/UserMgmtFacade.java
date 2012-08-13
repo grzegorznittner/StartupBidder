@@ -378,7 +378,7 @@ public class UserMgmtFacade {
 			result.setErrorMessage("User not found");
 			return result;
 		}
-		user.dragon = true;
+		user.userClass = "dragon";
 		user = getDAO().updateUser(user);
 		log.info("Promoted to Dragon: " + user);
 		
@@ -395,8 +395,19 @@ public class UserMgmtFacade {
 			return result;
 		}
 		SBUser user = getDAO().getUser(loggedInUser.getId());
-		NotificationFacade.instance().scheduleUserDragonRequestNotification(user);
+		if (!StringUtils.contains(user.userClass, "dragon")) {
+			user.userClass = "requested_dragon";
+			user = getDAO().updateUser(user);
+			loggedInUser.setUserClass(user.userClass);
 		
+			NotificationFacade.instance().scheduleUserDragonRequestNotification(user);
+		} else {
+			log.warning("User not logged in");
+			result.setErrorCode(ErrorCodes.APPLICATION_ERROR);
+			result.setErrorMessage("User has already requested dragon badge");
+			return result;
+
+		}
 		result.setUser(DtoToVoConverter.convert(user));
 		return result;
 	}

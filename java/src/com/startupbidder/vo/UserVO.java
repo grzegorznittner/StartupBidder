@@ -31,7 +31,7 @@ public class UserVO extends BaseVO {
 	@JsonProperty("location") private String location;
 	@JsonProperty("phone") private String phone;
 	@JsonProperty("investor") private boolean accreditedInvestor;
-	@JsonProperty("dragon") private boolean dragon;
+	@JsonProperty("class") private String userClass;
 	@JsonProperty("notify_enabled") private boolean notifyEnabled;
 	@JsonProperty("edited_listing") private String editedListing;
 	@JsonProperty("edited_status")	@JsonSerialize(using=LowecaseSerializer.class) private String editedStatus;
@@ -218,11 +218,11 @@ public class UserVO extends BaseVO {
 	public void setEditedStatus(String editedStatus) {
 		this.editedStatus = editedStatus;
 	}
-	public boolean isDragon() {
-		return dragon;
+	public String getUserClass() {
+		return userClass;
 	}
-	public void setDragon(boolean dragon) {
-		this.dragon = dragon;
+	public void setUserClass(String userClass) {
+		this.userClass = userClass;
 	}
 	public Map<String, String> getLocationHeaders() {
 		return locationHeaders;

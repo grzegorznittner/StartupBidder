@@ -325,7 +325,7 @@ public class DtoToVoConverter {
 		user.setMockData(userDTO.mockData);
 		user.setAdmin(userDTO.admin);
 		user.setAccreditedInvestor(userDTO.investor);
-		user.setDragon(userDTO.dragon);
+		user.setUserClass(userDTO.userClass);
 		user.setEmail(userDTO.email);
 		user.setName(userDTO.name);
 		user.setJoined(userDTO.joined);

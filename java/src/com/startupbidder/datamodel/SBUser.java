@@ -39,6 +39,7 @@ public class SBUser extends BaseObject<SBUser> {
 	}
 	
 	public boolean admin;
+	public String userClass;
 	@Indexed public String email;
 	@Indexed public boolean investor;
 	@Indexed public Status status;
@@ -53,8 +54,6 @@ public class SBUser extends BaseObject<SBUser> {
 	public String phone;
 	public String location;
 	@Indexed public String country;
-	
-	@Indexed public boolean dragon = false;
 	
 	public boolean notifyEnabled = true;
 
