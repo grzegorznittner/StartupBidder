@@ -92,7 +92,7 @@
 <div class="bmchorizontalbar bmcbarheight bmchalfwidthminushalfbar" style="background-color: gold;"></div>
 <div class="bmchorizontalbarextra bmcbarheight bmchalfwidthplushalfbar" style="background-color: crimson;"></div>
 
-<div class="bmcwidecolumn bmcthreefourthsheightminushalfbar bmchalfwidthminushalfbar bmccontainer" style="clear: both;">
+<div class="bmcwidecolumn bmconefourthheightminusbar bmchalfwidthminushalfbar bmccontainer" style="clear: both;">
 <div class="bmccell">
 <div class="bmcicon bmc_co_48"></div>
 <span class="bmcsection">Cost Structure</span>
@@ -103,7 +103,7 @@
 
 <div class="bmcverticalbarshort bmcbarwidth bmconefourthheightminusbar" style="background-color: crimson;"></div>
 
-<div class="bmcwidecolumn bmcthreefourthsheightminushalfbar bmchalfwidthminushalfbar bmccontainer">
+<div class="bmcwidecolumn bmconefourthheightminusbar bmchalfwidthminushalfbar bmccontainer">
 <div class="bmccell">
 <div class="bmcicon bmc_rs_48"></div>
 <span class="bmcsection">Revenue Streams</span>

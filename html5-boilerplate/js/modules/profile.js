@@ -1,6 +1,21 @@
 function ProfileClass() {}
 pl.implement(ProfileClass, {
-    setProfile: function(json) {
+    display: function(json) {
+        if (json) {
+            this.store(json);
+        }
+        this.displayFields();
+        this.displayPromote();
+    },
+
+    store: function(json) {
+        if (json) {
+            CollectionsClass.prototype.merge(this, json);
+        }
+    },
+ 
+    displayFields: function() {
+        var profile = this.profile || this.loggedin_profile || {};
 /*        var investor = json.investor ? 'Accredited Investor' : 'Entrepreneur';
             date = new DateClass(),
             joindate = json.joined_date ? date.format(json.joined_date) : 'unknown';
@@ -15,13 +30,63 @@ pl.implement(ProfileClass, {
         pl('#mylistingscount').html(json.posted ? json.posted.length : 0);
         pl('#biddedoncount').html(json.bidon ? json.bidon.length : 0);
 */
-        pl('#username').text(json.username || 'anonymous');
-        pl('#email').text(json.email || 'No email address');
-        pl('#name').text(json.name || 'Anon Anonymous');
+        pl('#username').text(profile.username || 'anonymous');
+        pl('#email').text(profile.email || 'No email address');
+        pl('#name').text(profile.name || 'Anon Anonymous');
+        pl('#dragon').text(profile.dragon ? 'DRAGON' : '');
+    },
+
+    displayPromote: function() {
+        var promotable = this.loggedin_profile && this.loggedin_profile.admin && this.profile && !this.profile.dragon;
+        if (promotable) {
+            this.bindPromoteButton();
+        }
+    },
+
+    bindPromoteButton: function() {
+        var self = this;
+        pl('#promotebox').show();
+        pl('#promotebtn').bind({
+            click: function() {
+                var complete = function() {
+                        pl('#promotebtn, #promotecancelbtn').hide();
+                        pl('#promotemsg').text('Promoted to dragon, reloading...').show();
+                        setTimeout(function() {
+                            window.location.reload();
+                        }, 3000);
+                    },
+                    url = '/user/promote_to_dragon/' + self.profile.profile_id,
+                    ajax = new AjaxClass(url, 'promotemsg', complete);
+                if (pl('#promotemsg').text() && pl('#promotemsg').text().indexOf('Error') !== -1) {
+                    pl('#promotebtn').hide();
+                }
+                else if (pl('#promotecancelbtn').css('display') === 'none') { // first call
+                    pl('#promotemsg').text('Are you sure?').show();
+                    pl('#promotecancelbtn').show();
+                    pl('#promotetext').attr({disabled: 'disabled'});
+                }
+                else {
+                    ajax.setPostData();
+                    ajax.call();
+                }
+                return false;
+            }
+        });
+        pl('#promotecancelbtn').bind({
+            click: function() {
+                pl('#promotecancelbtn').hide();
+                pl('#promotemsg').text('').show();
+                pl('#promotebtn').show();
+                pl('#promotetext').removeAttr('disabled');
+                return false;
+            }
+        });
     }
 });
 
 function ProfilePageClass() {
+    var queryString = new QueryStringClass();
+    this.passed_id = queryString.vars.id;
     this.json = {};
 };
 pl.implement(ProfilePageClass,{
@@ -73,7 +138,7 @@ pl.implement(ProfilePageClass,{
                 if (!json.loggedin_profile) { // must be logged in for this page
                     window.location = '/';
                 }
-                profile.setProfile(json.loggedin_profile);
+                profile.display(json);
                 //notifyList.display(json);
                 for (i = 0; i < listprops.length; i++) {
                     propertykey = listprops[i];
@@ -92,8 +157,9 @@ pl.implement(ProfilePageClass,{
                 }
                 pl('.preloader').hide();
                 pl('.wrapper').show();
-             },
-            ajax = new AjaxClass('/listings/discover_user', 'profilemsg', completeFunc);
+            },
+            url = this.passed_id ? '/user/get/' + this.passed_id : '/listings/discover_user',
+            ajax = new AjaxClass(url, 'profilemsg', completeFunc);
         ajax.call();
     }
 });
@@ -127,7 +193,7 @@ pl.implement(ProfileListingPageClass,{
                 if (!json.loggedin_profile) { // must be logged in for this page
                     window.location = '/';
                 }
-                profile.setProfile(json.loggedin_profile);
+                profile.display(json);
                 pl('#listingstitle').text(self.title);
                 companyList.storeList(json);
                 pl('#editprofilebutton').show();
@@ -206,7 +272,10 @@ pl.implement(EditProfileClass, {
             }
         });
     },
-    setProfile: function(discoverjson) {
+    display: function(discoverjson) {
+        this.store(discoverjson);
+    },
+    store: function(discoverjson) {
         //properties = ['profile_id', 'status', 'name', 'username', 'open_id', 'profilestatus', 'title', 'organization', 'email', 'phone', 'address'];
         var self = this,
             json = discoverjson && discoverjson.loggedin_profile || {},
@@ -332,7 +401,7 @@ pl.implement(EditProfilePageClass,{
                 var header = new HeaderClass(),
                     editProfile = new EditProfileClass();
                 header.setLogin(json);
-                editProfile.setProfile(json);
+                editProfile.display(json);
                 pl('#personalinfomsg').text('');
                 pl('.preloader').hide();
                 pl('.wrapper').show();

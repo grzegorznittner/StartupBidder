@@ -14,7 +14,7 @@ define(`companybannermacro', `
     
                 <div class="companybannertitle" id="title"></div>
                 <div class="companybannertextgrey">
-                    <span id="categoryaddresstext"></span><span> </span><span id="founderstext"></span>
+                    <span id="categoryaddresstext"></span><span> </span><span id="admintext"></span>
                     <a class="companybannertextlink hoverlink initialhidden" href="" id="sendmessagelink"><span style="color:#666;">&middot;</span> send message</a>
                 </div>
                 <div class="companybannertextgrey">

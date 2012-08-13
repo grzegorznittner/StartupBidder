@@ -220,6 +220,9 @@ a:focus, a:hover { cursor: pointer; }
     text-align: right;
     z-index: 1000;
 }
+.companybannerstatusmsg {
+    padding-top: 45px;
+}
 .companybannermantra2 { font-style: italic; line-height: 18px; padding-top: 2px; }
 .companynavcontainer {
     position: absolute;
@@ -892,6 +895,9 @@ width: 302px;
 .freezebox { display: none; }
 .freezemsg { display: none; font-weight: bold; }
 .freezecancelbtn { display: none; margin-top: 10px; }
+.promotebox { display: none; }
+.promotemsg { display: none; font-weight: bold; }
+.promotecancelbtn { display: none; margin-top: 10px; }
 .deactivatebox { display: none; }
 .deactivatemsg { display: none; font-weight: bold; }
 .deactivatecancelbtn { display: none; margin-top: 10px; }

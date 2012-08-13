@@ -588,6 +588,12 @@ pl.implement(CompanyTileClass, {
         if (!this.status) {
             this.daystext = '';
         }
+        else if (this.status === 'new') {
+            this.daystext = 'Awaiting submission';
+        }
+        else if (this.status === 'posted') {
+            this.daystext = 'Awaiting approval';
+        }
         else if (this.status === 'active' && json.asked_fund) {
             this.daystext = 'Bidding open';
         }
@@ -628,7 +634,10 @@ pl.implement(CompanyTileClass, {
         this.address = json.address || 'No Address';
         locprefix = this.type === 'company' ? 'in' : 'from';
         this.addrlinked = !addr ? '' : ' ' + locprefix + ' <a href="/main-page.html?type=location&val=' + encodeURIComponent(addr) + '">' + addr + '</a>';
-        this.categoryaddresstext = this.catlinked + this.addrlinked;
+        this.profilelink = this.options.admin
+            ? ' by <a href="/profile-page.html?id=' + this.profile_id + '">' + (this.profile_username || 'Owner') + '</a>'
+            : '';
+        this.categoryaddresstext = this.catlinked + this.addrlinked + this.profilelink;
 
         if (this.status && json.asked_fund && json.suggested_amt && json.suggested_pct) {
             this.suggested_amt = CurrencyClass.prototype.format(json.suggested_amt);
@@ -648,8 +657,6 @@ pl.implement(CompanyTileClass, {
         }
         this.mantra = json.mantra || 'No Mantra';
         this.mantraplussuggest = this.mantra + '<br/>' + this.suggested_text;
-        this.founders = json.founders || '';
-        this.founderstext = json.founders ? 'Founded by ' + json.founders : '';
         this.url = '/company-page.html?id=' + json.listing_id;
         this.websitelink = json.website || '#';
         this.websiteurl = json.website ? new URLClass(json.website) : null;
@@ -702,7 +709,6 @@ pl.implement(CompanyTileClass, {
     <div><span class="infolabel">Asking:</span> ' + this.suggested_text + '</div>\
     <div><span class="infolabel">Bidding:</span> ' + this.daystext + '</div>\
     <div><span class="infolabel">Industry:</span> ' + this.category + '</div>\
-    <div><span class="infolabel">Founders:</span> ' + this.founders + '</div>\
 </p>\
 </div>\
 ';
@@ -719,7 +725,6 @@ pl.implement(CompanyTileClass, {
     <div class="companybannertextgrey companybannermapline">\
         ' + this.categoryaddresstext + '\
     </div>\
-    <div class="companybannertextgrey">' + this.founderstext + '</div>\
     <div class="companybannertextgrey">' + this.finance_line + '</div>\
     <div class="companybannertextgrey companybannermantratile">' + this.mantra + '</div>\
 </div>\
@@ -1180,8 +1185,6 @@ pl.implement(CompanyBannerClass, {
             locprefix  = type === 'company' ? 'in' : 'from',
             addrlinked = !addr ? '' : ' ' + locprefix + ' <a href="/main-page.html?type=location&val=' + encodeURIComponent(addr) + '">' + addr + '</a>',
             categoryaddresstext = catlinked + addrlinked,
-            // founderstext = this.founders ? ' founded by ' + this.founders : '', // too long
-            founderstext = '',
             status = this.status || 'new',
             website = this.website || '/company-page.html?id=' + this.listing_id,
             listingdatetext = 
@@ -1189,7 +1192,11 @@ pl.implement(CompanyBannerClass, {
                     ? 'Listed on ' + DateClass.prototype.format(this.listing_date)
                     : (this.status === 'new' || this.status === 'posted' ? 'Not yet listed' : '')
                 )
-                + (this.website ? ' from ' : '');
+                + (this.website ? ' from ' : ''),
+            profilelink = this.loggedin_profile && this.loggedin_profile.admin
+                ? ' by <a href="/profile-page.html?id=' + this.profile_id + '">' + (this.profile_username || 'Owner') + '</a>'
+                : '',
+            admintext = profilelink;
         if (logobg) {
             pl('#companylogo').removeClass('noimage').css({background: logobg});
         }
@@ -1197,7 +1204,7 @@ pl.implement(CompanyBannerClass, {
         pl('title').text('Startupbidder Listing: ' + (this.title || 'Company / App Name'));
         pl('#mantra').text(this.mantra || 'Mantra here');
         pl('#categoryaddresstext').html(categoryaddresstext);
-        pl('#founderstext').text(founderstext);
+        pl('#admintext').html(admintext);
         pl('#listing_date_text').html(listingdatetext);
         pl('#websitelink').attr({href: website});
         if (url) {
@@ -1252,6 +1259,9 @@ pl.implement(CompanyBannerClass, {
             }
             */
         }
+        if (!this.shouldDisplaySubmit()) {
+            pl('#submiterrormsg').addClass('companybannerstatusmsg');
+        }
         pl('#submiterrormsg').html(statusmsg);
     },
             
@@ -1293,9 +1303,12 @@ pl.implement(CompanyBannerClass, {
         }).show();
     },
 
+    shouldDisplaySubmit: function() {
+        return this.loggedin_profile && this.loggedin_profile.profile_id === this.profile_id && this.status === 'new';
+    },
+
     displaySubmit: function() {
-        var self = this;
-        if (self.loggedin_profile && self.loggedin_profile.profile_id === self.profile_id && self.status === 'new') { // owner
+        if (this.shouldDisplaySubmit()) {
             this.bindSubmitButton();
         }
     },

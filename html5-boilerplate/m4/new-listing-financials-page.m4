@@ -145,7 +145,7 @@ include(company-not-found.m4)
     </div>
 
     </div>
-
+<!--
     <div class="boxtitle offertitle">
         <span class="titletext">OWNERSHIP</span>
         <div class="titleinfobtn"></div>
@@ -175,7 +175,7 @@ include(company-not-found.m4)
             <span class="newlistingmsgsmall" id="newlistingfoundersmsg">&nbsp;</span>
         </div>
     </div>
-
+-->
     <div>
         <div class="formitem clear">
             <span class="newlistingmsgsmall" id="newlistingmsg">&nbsp;</span>

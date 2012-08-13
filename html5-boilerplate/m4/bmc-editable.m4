@@ -151,7 +151,7 @@ What different customer groups do you have?  What do all the customers have in c
 <div class="bmchorizontalbar bmcbarheight bmchalfwidthminushalfbar" style="background-color: gold;"></div>
 <div class="bmchorizontalbarextra bmcbarheight bmchalfwidthplushalfbar" style="background-color: crimson;"></div>
 
-<div class="bmcwidecolumn bmcthreefourthsheightminushalfbar bmchalfwidthminushalfbar bmccontainer" style="clear: both;">
+<div class="bmcwidecolumn bmconefourthheightminusbar bmchalfwidthminushalfbar bmccontainer" style="clear: both;">
     <div class="bmccell">
         <div class="bmcicon bmc_co_48"></div>
         <div class="bmcsection">
@@ -167,7 +167,7 @@ What goes into providing the product?  How much does it cost you?  How much is f
 
 <div class="bmcverticalbarshort bmcbarwidth bmconefourthheightminusbar" style="background-color: crimson;"></div>
 
-<div class="bmcwidecolumn bmcthreefourthsheightminushalfbar bmchalfwidthminushalfbar bmccontainer">
+<div class="bmcwidecolumn bmconefourthheightminusbar bmchalfwidthminushalfbar bmccontainer">
     <div class="bmccell">
         <div class="bmcicon bmc_rs_48"></div>
         <div class="bmcsection">

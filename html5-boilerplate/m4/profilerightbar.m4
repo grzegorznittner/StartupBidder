@@ -10,7 +10,7 @@
         <div class="formcol1 clear">
             <div><span class="profiletext" id="email"></span></div>
             <div><span class="profiletext" id="name"></span></div>
-            <div><span class="profiletext" id="investor"></span></div>
+            <div><span class="profiletext profilelistdragon" id="dragon"></span></div>
         </div>
         <div>
             <a href="edit-profile-page.html">
@@ -21,5 +21,16 @@
         </div>
     </div>
 
+    <div id="promotebox" class="promotebox">
+        <input class="text sideinputtext" type="text" name="promotetext" id="promotetext" value="" length="35" maxlength="100"></input>
+        <div class="promotemsg attention" id="promotemsg">Are you sure?</div>
+        <a href="#" id="promotebtn">
+            <div class="sideboxbutton hoverlink">PROMOTE TO DRAGON</div>
+        </a>
+        <a href="#" class="promotecancelbtn" id="promotecancelbtn">
+            <div class="sideboxbutton hoverlink">CANCEL</div>
+        </a>
+    </div>
+ 
 </div> <!-- end right column -->
 '

@@ -101,7 +101,7 @@ pl.implement(NewListingDocumentsClass, {
                     pl('#' + id + 'uploadfile').removeAttr('value');
                     pl('#' + id + 'msg').removeClass('errorcolor').removeClass('inprogress').addClass('successful').text('Document deleted');
                 };
-                ajax = new AjaxClass('/listings/delete_file/?type='+id.toUpperCase(), id+'msg', completeFunc);
+                ajax = new AjaxClass('/listings/delete_file/?id=' + self.base.listing.listing_id + '&type='+id.toUpperCase(), id+'msg', completeFunc);
                 ajax.setPost();
                 ajax.call();
                 return false;

@@ -2117,6 +2117,47 @@ include(header.m4)
             </form>
             <iframe name="file-download"></iframe>
         </div>
+
+        <dt>POST /listing/delete_file</dt>
+        <dd>
+            <p>
+            Downloads a listing file with the given <var>id</var> as returned by the <var>/listing/get</var> method.  Note that logos cannot be downloaded via this method,
+            they must be downloaded via the <var>/listing/logo</var> method or via the data URI returned by <var>/listing/get</var> or in the listing list methods.
+            </p>
+        </dd>
+        <div class="apidetail">
+            <h4>Parameters</h4>
+            <ul>
+                <li><code>id</code> listing ID of the listing which you want to delete the document from
+                <li><code>type</code> document type as used in the upload, one of: BUSINESS_PLAN, PRESENTATION, FINANCIALS, LOGO, PIC1, PIC2, PIC3, PIC4 or PIC5</li>
+            </ul>
+            <h4>Response</h4>
+            <ul>
+                <li><var>none</var> HTTP status code 200 on success, otherwise 500</li>
+            </ul>
+            <h4>Test</h4>
+            <form method="POST" action="/listing/delete_file" target="listing-delete_file">
+                <div class="formitem">
+                    <label class="inputlabel" for="title">ID</label>
+                    <span class="inputfield">
+                        <input class="text inputwidetext listingid" type="text" name="id" value="0"></input>
+                    </span>
+                </div>
+                <div class="formitem">
+                    <label class="inputlabel" for="title">TYPE</label>
+                    <span class="inputfield">
+                        <input class="text inputwidetext" type="text" name="type" value="BUSINESS_PLAN"></input>
+                    </span>
+                </div>
+                <div class="formitem clear">
+                    <span class="inputlabel"></span>
+                    <span class="inputfield">
+                        <input type="submit" class="inputbutton" value="SUBMIT"></input>
+                    </span>
+                </div>
+            </form>
+            <iframe name="listing-delete_file"></iframe>
+        </div>
     </div>
 
     <div class="boxtitle">BIDDING API</div>
@@ -2591,7 +2632,11 @@ include(header.m4)
                 <li><code>loggedin_profile</code> private user profile object, see User API for profile object details</li>
                 <li><code>error_code</code> error status for this call, 0 on success</li>
                 <li><code>error_msg</code> error message for this call, null on success</li>
-                <li><code>profile</code> user object as described in method <var>/user/loggedin</var></li>
+                <li><code>profile</code> user object as described in method <var>/user/loggedin</var>, but for the used with the passed <var>id</var></li>
+                <li><code>active_listings</code> list of the four user listings most recently posted</li>
+                <li><code>withdrawn_listings</code> list of the four user listings most recently withdrawn</li>
+                <li><code>frozen_listings</code> list of the four user listings most recently frozen by an administrator</li>
+                <li><code>edited_listing</code> the logged in user&rsquo;s listing currently being edited but not yet approved, null otherwise</li>
             </ul>
             <h4>Test</h4>
             <form method="GET" action="/user/get" target="user-get">
