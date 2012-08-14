@@ -1,6 +1,7 @@
 package com.startupbidder.web;
 
 import java.io.IOException;
+import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -43,6 +44,7 @@ import com.startupbidder.datamodel.ListingDoc;
 import com.startupbidder.datamodel.PictureImport;
 import com.startupbidder.datamodel.VoToModelConverter;
 import com.startupbidder.util.HtmlConverter;
+import com.startupbidder.util.ImageHelper;
 import com.startupbidder.vo.ErrorCodes;
 import com.startupbidder.vo.ImportQueryResultsVO;
 import com.startupbidder.vo.ListingDocumentVO;
@@ -51,6 +53,8 @@ import com.startupbidder.vo.UserVO;
 
 public class ListingImportService {
 	static final Logger log = Logger.getLogger(ListingImportService.class.getName());
+	
+	private static final int MAX_RESULTS = 20;
 	
 	private static DateTimeFormatter timeStampFormatter = DateTimeFormat.forPattern("yyyyMMdd_HHmmss_SSS");
 	private static ListingImportService instance;
@@ -69,7 +73,7 @@ public class ListingImportService {
 		importMap.put("WindowsMarketplace", new WindowsMarketplaceImport());
 		importMap.put("CrunchBase", new CrunchBaseImport());
 		importMap.put("Startuply", new StartuplyImport());
-		importMap.put("AngelCo", new AngelCoImport());
+		importMap.put("Angelco", new AngelCoImport());
 	}
 	
 	private static ObjectifyDatastoreDAO getDAO() {
@@ -89,7 +93,7 @@ public class ListingImportService {
 	}
 	
 	private static String getJsonNodeValue(JsonNode nodeItem, String name) {
-		return nodeItem.get(name) != null ? nodeItem.get(name).getValueAsText() : null;
+		return nodeItem.get(name) != null ? nodeItem.get(name).getValueAsText() : "";
 	}
 	
 	private static void fetchLogo(Listing listing, String logoUrl) {
@@ -135,12 +139,30 @@ public class ListingImportService {
 	private static void fillMantraAndSummary(Listing listing, String mantra, String summary) {
 		String textMantra = HtmlConverter.convertHtmlToText(mantra);
 		String textSummary = HtmlConverter.convertHtmlToText(summary);
-		if (!StringUtils.isEmpty(textMantra)) {
-			listing.mantra = extractMantra(textMantra);
+		
+		// replacing exotic quotation marks with standard ones
+		textMantra = StringUtils.replaceChars(textMantra, '\u2018', '\'');
+		textMantra = StringUtils.replaceChars(textMantra, '\u2019', '\'');
+		textMantra = StringUtils.replaceChars(textMantra, '\u201c', '"');
+		textMantra = StringUtils.replaceChars(textMantra, '\u201d', '"');
+		textSummary = StringUtils.replaceChars(textSummary, '\u2018', '\'');
+		textSummary = StringUtils.replaceChars(textSummary, '\u2019', '\'');
+		textSummary = StringUtils.replaceChars(textSummary, '\u201c', '"');
+		textSummary = StringUtils.replaceChars(textSummary, '\u201d', '"');
+		
+		textSummary = StringUtils.trim(textSummary);
+		if (StringUtils.isNotBlank(textMantra)) {
+			listing.mantra = extractMantra(textMantra.trim());
 		} else {
 			listing.mantra = extractMantra(textSummary);
 		}
 		listing.summary = textSummary;
+		if (listing.mantra == null) {
+			listing.mantra = "";
+		}
+		if (listing.summary == null) {
+			listing.summary = "";
+		}
 	}
 
 	private static String extractMantra(String description) {
@@ -159,7 +181,22 @@ public class ListingImportService {
 			if (mantra.length() + sentence.length() < 100) {
 				mantra.append(sentence);
 			} else if (mantra.length() < 15) {
-				mantra.append(sentence.substring(0, sentence.length() < 100 ? sentence.length() : 99));
+				for (String word : sentence.split(" ")) {
+					if (mantra.length() + word.length() > 100) {
+						if (!StringUtils.isAlphanumeric(StringUtils.rightPad(word, 1))) {
+							word = StringUtils.substring(word, 0, word.length() - 1);
+						}
+						if (mantra.length() > 0) {
+							mantra.append(" ");
+						}
+						mantra.append(word).append(" ...");
+						break;
+					}
+					if (mantra.length() > 0) {
+						mantra.append(" ");
+					}
+					mantra.append(word);
+				}
 				break;
 			} else {
 				break;
@@ -284,12 +321,12 @@ public class ListingImportService {
 				String converted = removeTag(new String(bytes, "UTF-8"), "style");
 				converted = removeTag(converted, "script");
 				
-				Source source = new Source(IOUtils.toInputStream(converted));
+				Source source = new Source(new StringReader(converted));
 				List<net.htmlparser.jericho.Element> elemList = source.getAllElements(HTMLElementName.LI);
 				int index = 1;
 				Map<String, String> result = new LinkedHashMap<String, String>();
 				for (net.htmlparser.jericho.Element elem : elemList) {
-					if (index > 20) {
+					if (index > MAX_RESULTS) {
 						break;
 					}
 					String docId = elem.getAttributeValue("data-docid");
@@ -326,15 +363,17 @@ public class ListingImportService {
 				byte bytes[] = fetchBytes(appUrl);
 				String converted = removeTag(new String(bytes, "UTF-8"), "style");
 				converted = removeTag(converted, "script");
+				log.info("First lines of HTML: " + StringUtils.substring(converted, 0, 200));
 				
 				listing.type = Listing.Type.APPLICATION;
 				listing.category = "Software";
 				listing.platform = Listing.Platform.ANDROID.toString();
 	
-				Source source = new Source(IOUtils.toInputStream(converted, "UTF-8"));
+				Source source = new Source(new StringReader(converted));
 				for (net.htmlparser.jericho.Element tag : source.getAllElements("class", Pattern.compile("doc-banner-title"))) {
 					if (tag.getName().equalsIgnoreCase("h1")) {
 						listing.name = tag.getContent().toString().trim();
+						log.info("Name bytes: " + ImageHelper.printStringAsHex(listing.name));
 					}
 				}
 				for (net.htmlparser.jericho.Element tag : source.getAllElements("class", Pattern.compile("doc-header-link"))) {
@@ -431,24 +470,29 @@ public class ListingImportService {
 					Map<String, String> result = new LinkedHashMap<String, String>();
 					Iterator<JsonNode> nodeIt = rootNode.get("results").getElements();
 					for (JsonNode nodeItem; nodeIt.hasNext();) {
+						if (result.size() > MAX_RESULTS) {
+							break;
+						}
 						nodeItem = nodeIt.next();
 						String trackId = getJsonNodeValue(nodeItem, "trackId");
 						String trackName = getJsonNodeValue(nodeItem, "trackName");
 						String artistName = getJsonNodeValue(nodeItem, "artistName");
 						String version = getJsonNodeValue(nodeItem, "version");
 						String releaseDate = getJsonNodeValue(nodeItem, "releaseDate");
-						String releaseNotes = getJsonNodeValue(nodeItem, "releaseNotes");
 						
-						if (trackId != null && trackName != null && artistName != null) {
+						if (StringUtils.isNotBlank(trackId) && StringUtils.isNotBlank(trackName)
+								&& StringUtils.isNotBlank(artistName)) {
 							StringBuffer desc = new StringBuffer();
-							if (version != null) {
-								desc.append(trackName + " version " + version + " by " + artistName);
+							if (StringUtils.isNotBlank(version)) {
+								desc.append(trackName + " version " + version);
 							}
-							if (releaseDate != null) {
+							if (StringUtils.isNotBlank(artistName)) {
+								desc.append(" by " + artistName);
+							}
+							if (StringUtils.isNotBlank(releaseDate)) {
+								releaseDate = StringUtils.replace(releaseDate, "T", " ");
+								releaseDate = StringUtils.replace(releaseDate, "Z", " ");
 								desc.append(" released " + releaseDate);
-							}
-							if (releaseNotes != null) {
-								desc.append(" with notes '" + releaseNotes + "'");
 							}
 							result.put(trackId, desc.toString());
 						}
@@ -569,16 +613,23 @@ public class ListingImportService {
 				NodeList nl = rootElem.getElementsByTagName("a:entry");
 				log.info("Received " + nl.getLength() + " entries in result");
 				for (int index = 0; index < nl.getLength(); index++) {
+					if (result.size() > MAX_RESULTS) {
+						break;
+					}
 					Element entry = (Element)nl.item(index);
 					String id = getText(entry, "a:id");
 					String title = getText(entry, "a:title");
 					String released = getText(entry, "releaseDate");
 					Element publisher = getFirstElement(entry, "publisher");
+					if (publisher == null) {
+						continue;
+					}
+					String publisherName = getText(publisher, "name");
 					log.info("id: " + id + ". Title: " + title + ". Released: " + released
-							+ ". Publisher: " + publisher);
+							+ ". Publisher: " + publisherName);
 					
-					if (id != null && title != null && released != null && publisher != null) {
-						String publisherName = getText(publisher, "name");
+					if (StringUtils.isNotBlank(id) && StringUtils.isNotBlank(title)
+							&& StringUtils.isNotBlank(released) && StringUtils.isNotBlank(publisherName)) {
 						id = trimId(id);
 						result.put(id, "'" + title + "' by " + publisherName + " on " + released);
 						log.info(id + ": " + result.get(id));
@@ -711,7 +762,7 @@ public class ListingImportService {
 			try {
 				int numberOfResults = -1;
 				ObjectMapper mapper = new ObjectMapper();
-				JsonNode rootNode = mapper.readValue(response, JsonNode.class);
+				JsonNode rootNode = mapper.readValue(new String(response, "UTF-8"), JsonNode.class);
 				if (rootNode.get("total") != null) {
 					numberOfResults = rootNode.get("total").getValueAsInt(-1);
 					log.info("Fetched " + numberOfResults + " items from " + queryString);
@@ -720,15 +771,19 @@ public class ListingImportService {
 					Map<String, String> result = new LinkedHashMap<String, String>();
 					Iterator<JsonNode> nodeIt = rootNode.get("results").getElements();
 					for (JsonNode nodeItem; nodeIt.hasNext();) {
+						if (result.size() > MAX_RESULTS) {
+							break;
+						}
 						nodeItem = nodeIt.next();
 						String trackId = getJsonNodeValue(nodeItem, "permalink");
 						String trackName = getJsonNodeValue(nodeItem, "name");
 						String overview = getJsonNodeValue(nodeItem, "overview");
 						
-						if (trackId != null && trackName != null) {
+						if (StringUtils.isNotBlank(trackId) && !StringUtils.equalsIgnoreCase(trackId, "null")
+								&& StringUtils.isNotBlank(trackName) && !StringUtils.equalsIgnoreCase(trackName, "null")) {
 							StringBuffer desc = new StringBuffer();
 							desc.append(trackName);
-							if (StringUtils.isNotEmpty(overview)) {
+							if (StringUtils.isNotBlank(overview) && !StringUtils.equalsIgnoreCase(overview, "null")) {
 								desc.append(" - ").append(StringUtils.left(overview, 50)).append("...");
 							}
 							result.put(trackId, desc.toString());
@@ -754,7 +809,7 @@ public class ListingImportService {
 			}
 			try {
 				ObjectMapper mapper = new ObjectMapper();
-				JsonNode rootNode = mapper.readValue(response, JsonNode.class);
+				JsonNode rootNode = mapper.readValue(new String(response, "UTF-8"), JsonNode.class);
 				if (rootNode.has("permalink")) {
 					listing.name = getJsonNodeValue(rootNode, "name");
 					listing.founders = getFunders(rootNode.get("relationships"));
@@ -855,14 +910,14 @@ public class ListingImportService {
 				String converted = removeTag(new String(bytes, "UTF-8"), "style");
 				converted = removeTag(converted, "script");
 				
-				Source source = new Source(IOUtils.toInputStream(converted));
+				Source source = new Source(new StringReader(converted));
 				Map<String, String> result = new LinkedHashMap<String, String>();
 				
 				net.htmlparser.jericho.Element resultsPanel = source.getElementById("resultPanel");
 				List<net.htmlparser.jericho.Element> links = resultsPanel.getAllElements("href", Pattern.compile("/Companies/.*aspx"));
 				int index = 1;
 				for (net.htmlparser.jericho.Element elem : links) {
-					if (index > 20) {
+					if (index > MAX_RESULTS) {
 						break;
 					}
 					String docId = elem.getAttributeValue("href");
@@ -896,7 +951,7 @@ public class ListingImportService {
 				listing.category = "Software";
 				listing.platform = null;
 	
-				Source source = new Source(IOUtils.toInputStream(converted));
+				Source source = new Source(new StringReader(converted));
 
 				net.htmlparser.jericho.Element name = source.getElementById("companyNameHeader");
 				if (name != null) {
@@ -1018,14 +1073,13 @@ public class ListingImportService {
 				return null;
 			}
 			try {
-				int numberOfResults = 0;
 				ObjectMapper mapper = new ObjectMapper();
 				JsonNode rootNode = mapper.readValue(response, JsonNode.class);
 				Map<String, String> result = new LinkedHashMap<String, String>();
 				
 				Iterator<JsonNode> nodeIt = rootNode.getElements();
 				for (JsonNode nodeItem = null; nodeIt.hasNext();) {
-					if (numberOfResults > 20) {
+					if (result.size() > MAX_RESULTS) {
 						break;
 					}
 					nodeItem = nodeIt.next();
@@ -1033,7 +1087,6 @@ public class ListingImportService {
 					String name = getJsonNodeValue(nodeItem, "name");
 					
 					if (id != null && name != null) {
-						numberOfResults++;
 						result.put(id, name);
 					}
 				}
@@ -1060,7 +1113,7 @@ public class ListingImportService {
 					listing.platform = Listing.Platform.OTHER.toString();
 					listing.category = "Software";
 					fillMantraAndSummary(listing, getJsonNodeValue(rootNode, "high_concept"),
-							getJsonNodeValue(rootNode, "product_desc"));
+							getJsonNodeValue(rootNode, "product_desc"));					
 					listing.website = getJsonNodeValue(rootNode, "company_url");
 					listing.videoUrl = getJsonNodeValue(rootNode, "video_url");
 					if (StringUtils.isEmpty(listing.videoUrl)) {

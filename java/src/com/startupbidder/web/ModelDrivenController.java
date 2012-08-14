@@ -152,6 +152,7 @@ public abstract class ModelDrivenController {
 	public void generateJson(HttpServletResponse response) {
 		ObjectMapper mapper = new ObjectMapper();
 		try {
+			response.setContentType("application/json;charset=UTF-8");
 			mapper.writeValue(response.getWriter(), getModel());
 		} catch (JsonGenerationException e) {
 			e.printStackTrace();
@@ -165,6 +166,7 @@ public abstract class ModelDrivenController {
 	public void generateHtml(HttpServletResponse response) {
 		PrintWriter writer;
 		try {
+			response.setContentType("text/html;charset=UTF-8");
 			writer = response.getWriter();
 			writer.println("<html><head><title>Startupbidder.com</title></head><body>");
 			String modelHtml = getModel() != null ? getModel().toString() : "Result is empty.";
