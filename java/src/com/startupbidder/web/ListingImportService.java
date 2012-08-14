@@ -42,6 +42,7 @@ import com.startupbidder.datamodel.Listing;
 import com.startupbidder.datamodel.ListingDoc;
 import com.startupbidder.datamodel.PictureImport;
 import com.startupbidder.datamodel.VoToModelConverter;
+import com.startupbidder.util.HtmlConverter;
 import com.startupbidder.vo.ErrorCodes;
 import com.startupbidder.vo.ImportQueryResultsVO;
 import com.startupbidder.vo.ListingDocumentVO;
@@ -132,24 +133,32 @@ public class ListingImportService {
 	}
 	
 	private static void fillMantraAndSummary(Listing listing, String mantra, String summary) {
-		if (!StringUtils.isEmpty(mantra)) {
-			listing.mantra = mantra;
+		String textMantra = HtmlConverter.convertHtmlToText(mantra);
+		String textSummary = HtmlConverter.convertHtmlToText(summary);
+		if (!StringUtils.isEmpty(textMantra)) {
+			listing.mantra = extractMantra(textMantra);
 		} else {
-			listing.mantra = extractMantra(summary);
+			listing.mantra = extractMantra(textSummary);
 		}
-		listing.summary = summary;
-	}
-	
-	private static String fixNewLines(String text) {
-		return StringUtils.replace(text, "\\n", "\n");
+		listing.summary = textSummary;
 	}
 
 	private static String extractMantra(String description) {
 		StringBuffer mantra = new StringBuffer();
-		for (String sentence : description.split("\\.")) {
+		String sentence = null;
+		int index = 0;
+		while (index >= 0) {
+			index = StringUtils.indexOfAny(description, '.', '!', '?');
+			if (index >= 0) {
+				sentence = description.substring(0, index + 1);
+				description = description.substring(index + 2 > description.length() ? description.length() : index + 2);
+			} else {
+				sentence = description;
+			}
+			log.info(sentence + "  len=" + sentence.length() + ", total=" + (sentence.length() + mantra.length()));
 			if (mantra.length() + sentence.length() < 100) {
 				mantra.append(sentence);
-			} else if (mantra.length() < 10) {
+			} else if (mantra.length() < 15) {
 				mantra.append(sentence.substring(0, sentence.length() < 100 ? sentence.length() : 99));
 				break;
 			} else {
@@ -322,7 +331,7 @@ public class ListingImportService {
 				listing.category = "Software";
 				listing.platform = Listing.Platform.ANDROID.toString();
 	
-				Source source = new Source(IOUtils.toInputStream(converted));
+				Source source = new Source(IOUtils.toInputStream(converted, "UTF-8"));
 				for (net.htmlparser.jericho.Element tag : source.getAllElements("class", Pattern.compile("doc-banner-title"))) {
 					if (tag.getName().equalsIgnoreCase("h1")) {
 						listing.name = tag.getContent().toString().trim();
