@@ -31,7 +31,7 @@ public class UserVO extends BaseVO {
 	@JsonProperty("location") private String location;
 	@JsonProperty("phone") private String phone;
 	@JsonProperty("investor") private boolean accreditedInvestor;
-	@JsonProperty("class") private String userClass;
+	@JsonProperty("user_class") private String userClass;
 	@JsonProperty("notify_enabled") private boolean notifyEnabled;
 	@JsonProperty("edited_listing") private String editedListing;
 	@JsonProperty("edited_status")	@JsonSerialize(using=LowecaseSerializer.class) private String editedStatus;

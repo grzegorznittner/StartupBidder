@@ -25,7 +25,7 @@ public class UserBasicVO extends BaseVO {
 	@JsonProperty("edited_status")	@JsonSerialize(using=LowecaseSerializer.class) private String editedStatus;
 	@JsonProperty("num_notifications") private long numberOfNotifications;
 	@JsonProperty("admin") private boolean admin;
-	@JsonProperty("class") private String userClass;
+	@JsonProperty("user_class") private String userClass;
 	public UserBasicVO() {
 	}
 	public UserBasicVO(UserVO user) {
