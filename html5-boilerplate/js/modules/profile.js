@@ -159,18 +159,24 @@ pl.implement(ProfilePageClass,{
                 if (!listingfound) {
                     pl('#no_listings_wrapper').show();
                 }
-                if (json.loggedin_profile.admin) {
-                    pl('.titleperson').text('USER');
-                }
-                if (!json.loggedin_profile.admin || !json.profile) {
-                    pl('#editprofilebutton').show();
+                if (json.loggedin_profile) {
+                    if (!json.loggedin_profile.admin) {
+                        pl('#editprofilebutton').show();
+                    }
+                    else if (json.loggedin_profile.admin && !json.profile) {
+                        pl('#editprofilebutton').show();
+                    }
+                    else if (json.loggedin_profile.admin && json.profile && json.loggedin_profile.profile_id === json.profile.profile_id) {
+                        pl('#editprofilebutton').show();
+                    }
+                    else {
+                        pl('.titleperson').text('USER');
+                    }
                 }
                 pl('.preloader').hide();
                 pl('.wrapper').show();
             },
-            url = this.passed_id && (!json.loggedin_profile || this.passed_id !== json.loggedin_profile.profile_id)
-                ? '/user/get/' + this.passed_id
-                : '/listings/discover_user',
+            url = this.passed_id ? '/user/get/' + this.passed_id : '/listings/discover_user',
             ajax = new AjaxClass(url, 'profilemsg', completeFunc);
         ajax.call();
     }
