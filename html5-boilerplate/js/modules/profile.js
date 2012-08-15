@@ -131,14 +131,15 @@ pl.implement(ProfilePageClass,{
                         'withdrawn_listings',
                         'frozen_listings'
                     ],
+                    seeallurl = '/profile-listing-page.html?' + (self.passed_id ? 'id=' + self.passed_id + '&' : '') + 'type=',
                     options = {
                         edited_listing: { propertyissingle: true, fullWidth: true },
-                        active_listings: { seeall: '/profile-listing-page.html?type=active', fullWidth: true },
-                        monitored_listings: { seeall: '/profile-listing-page.html?type=monitored', fullWidth: true },
-                        withdrawn_listings: { seeall: '/profile-listing-page.html?type=withdrawn', fullWidth: true },
-                        frozen_listings: { seeall: '/profile-listing-page.html?type=frozen', fullWidth: true },
-                        admin_posted_listings: { seeall: '/profile-listing-page.html?type=admin_posted', fullWidth: true },
-                        admin_frozen_listings: { seeall: '/profile-listing-page.html?type=admin_frozen', fullWidth: true }
+                        active_listings: { seeall: seeallurl + 'active', fullWidth: true },
+                        monitored_listings: { seeall: seeallurl + 'monitored', fullWidth: true },
+                        withdrawn_listings: { seeall: seeallurl + 'withdrawn', fullWidth: true },
+                        frozen_listings: { seeall: seeallurl + 'frozen', fullWidth: true },
+                        admin_posted_listings: { seeall: seeallurl + 'admin_posted', fullWidth: true },
+                        admin_frozen_listings: { seeall: seeallurl + 'admin_frozen', fullWidth: true }
                     },
                     listingfound = false,
                     propertykey,
@@ -185,6 +186,7 @@ pl.implement(ProfilePageClass,{
 function ProfileListingPageClass() {
     this.json = {};
     this.queryString = new QueryStringClass();
+    this.passed_id = queryString.vars.id;
     this.type = this.queryString.vars.type || 'active';
     this.data = { max_results: 20 };
     this.urlmap = {
