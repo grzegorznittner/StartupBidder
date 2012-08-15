@@ -729,6 +729,7 @@ public class UserMgmtFacade {
 			}
 		}
 		if (userKeys.size() > 0) {
+			log.info("Getting user's avatar for " + userKeys.size() + " users");
 			Map<String, SBUser> users = getDAO().getUsers(userKeys);
 			for (UserToAvatar item : items) {
 				SBUser user = users.get(item.getUser());
