@@ -407,6 +407,13 @@ public class ObjectifyDatastoreDAO {
             user.twitterId = newUser.twitterId;
             user.twitterScreenName = newUser.twitterScreenName;
             user.twitterEmail = newUser.twitterEmail;
+            user.googleId = newUser.googleId;
+            user.googleName = newUser.googleName;
+            user.googleEmail = newUser.googleEmail;
+            user.facebookId = newUser.facebookId;
+            user.facebookName = newUser.facebookName;
+            user.facebookEmail = newUser.facebookEmail;
+            user.avatarUrl = newUser.avatarUrl;
 
 			getOfy().put(user);
 			

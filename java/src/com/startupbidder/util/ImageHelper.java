@@ -1,7 +1,12 @@
 package com.startupbidder.util;
 
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -88,6 +93,40 @@ public class ImageHelper {
 		}
 		return "";
 	}
+	
+	private static String fetchUrl(String url) {
+		try {
+			log.info("Fetching Google Plus avatar url from " + url);
+			HttpURLConnection con = (HttpURLConnection)new URL(url).openConnection();
+			con.setInstanceFollowRedirects(false);
+			IOUtils.toByteArray(con.getInputStream());
+			String locationHeader = con.getHeaderField("Location");
+			if (StringUtils.isNotEmpty(locationHeader)) {
+				return locationHeader;
+			} else {
+				return null;
+			}
+		} catch (Exception e) {
+			log.log(Level.WARNING, "Error fetching avatar url from " + url, e);
+			return null;
+		}
+	}
 
-
+	public static String getGooglePlusAvatarUrl(String googleId, String email) {
+		String avatarUrl = fetchUrl("http://profiles.google.com/s2/photos/profile/" + googleId);
+		log.info("Fetched Google Plus avatar url: " + avatarUrl);
+		if (avatarUrl == null && email != null) {
+			String emailParts[] = StringUtils.split(email, "@");
+			log.info("Trying to fetch avatar for google email address: " + emailParts[0]);
+			avatarUrl = fetchUrl("http://profiles.google.com/s2/photos/profile/" + emailParts[0]);
+			log.info("Fetched Google Plus avatar url: " + avatarUrl);
+		}
+		return avatarUrl;
+	}
+	
+	public static String getFacebookAvatarUrl(String facebookId) {
+		String avatarUrl = fetchUrl("http://graph.facebook.com/" + facebookId + "/picture");
+		log.info("Fetched Facebook avatar url: " + avatarUrl);
+		return avatarUrl;
+	}
 }

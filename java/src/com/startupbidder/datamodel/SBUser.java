@@ -57,9 +57,23 @@ public class SBUser extends BaseObject<SBUser> {
 	
 	public boolean notifyEnabled = true;
 
+	/* Twitter user data */
 	@Indexed(IfNotNull.class) public long twitterId;
 	public String twitterScreenName;
 	@Indexed(IfNotNull.class) public String twitterEmail;
+	
+	/* Facebook user data */
+	public String facebookId;
+	public String facebookName;
+	public String facebookEmail;
+	
+	/* Google user data */
+	public String googleId;
+	public String googleName;
+	public String googleEmail;
+	
+	/* Avatar data */
+	public String avatarUrl;
 	
 	public String password;
 	@Indexed(IfNotNull.class) public String activationCode;

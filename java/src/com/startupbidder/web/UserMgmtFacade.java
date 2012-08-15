@@ -23,6 +23,7 @@ import com.startupbidder.datamodel.Listing;
 import com.startupbidder.datamodel.SBUser;
 import com.startupbidder.datamodel.UserStats;
 import com.startupbidder.util.FacebookUser;
+import com.startupbidder.util.ImageHelper;
 import com.startupbidder.vo.BaseVO;
 import com.startupbidder.vo.DtoToVoConverter;
 import com.startupbidder.vo.ErrorCodes;
@@ -61,15 +62,19 @@ public class UserMgmtFacade {
 			return null;
 		}
 		String email = loggedInUser.getEmail();
-		UserVO user = null;
+		SBUser userDTO = null;
+		
 		if (StringUtils.isNotEmpty(email)) {
-			user = DtoToVoConverter.convert(getDAO().getUserByEmail(email));
+			userDTO = getDAO().getUserByEmail(email);
 		} else {
-			user = DtoToVoConverter.convert(getDAO().getUserByEmail(loggedInUser.getUserId()));
+			userDTO = getDAO().getUserByEmail(loggedInUser.getUserId());
 		}
-		if (user == null) {
+		if (userDTO == null) {
 			return null;
 		}
+		userDTO = updateUserGoogleData(loggedInUser, userDTO);
+		UserVO user = DtoToVoConverter.convert(userDTO);
+		
 		if (StringUtils.isEmpty(user.getName())) {
 			String parts[] = StringUtils.split(user.getEmail(), "@");
 			if (parts != null && parts.length > 0) {
@@ -98,7 +103,9 @@ public class UserMgmtFacade {
 		if (fbUser == null) {
 			return null;
 		}
-		UserVO user = DtoToVoConverter.convert(getDAO().getUserByEmail(fbUser.getEmail()));
+		SBUser userDTO = getDAO().getUserByEmail(fbUser.getEmail());
+		userDTO = updateUserFacebookData(fbUser, userDTO);
+		UserVO user = DtoToVoConverter.convert(userDTO);
 		if (user == null) {
 			return null;
 		}
@@ -110,7 +117,9 @@ public class UserMgmtFacade {
 		if (twitterUser == null) {
 			return null;
 		}
-		UserVO user = DtoToVoConverter.convert(getDAO().getUserByTwitter(twitterUser.getId()));
+		SBUser userDTO = getDAO().getUserByTwitter(twitterUser.getId());
+		userDTO = updateUserTwitterData(twitterUser, userDTO);
+		UserVO user = DtoToVoConverter.convert(userDTO);
 		if (user == null) {
 			return null;
 		}
@@ -229,8 +238,35 @@ public class UserMgmtFacade {
 			return null;
 		}
 		
-		UserVO user = DtoToVoConverter.convert(getDAO().createUser(loggedInUser.getEmail(), loggedInUser.getNickname()));
+		SBUser userDTO = getDAO().createUser(loggedInUser.getEmail(), loggedInUser.getNickname());
+		userDTO = updateUserGoogleData(loggedInUser, userDTO);
+		
+		UserVO user = DtoToVoConverter.convert(userDTO);
 		applyUserStatistics(user, user);
+		return user;
+	}
+	
+	private SBUser updateUserGoogleData(User googleUser, SBUser user) {
+		boolean needsUpdate = false;
+		if (StringUtils.isEmpty(user.googleId)) {
+			user.googleId = googleUser.getUserId();
+			needsUpdate = true;
+		}
+		if (StringUtils.isEmpty(user.googleEmail)) {
+			user.googleEmail = googleUser.getEmail();
+			needsUpdate = true;
+		}
+		if (StringUtils.isEmpty(user.googleName)) {
+			user.googleName = googleUser.getNickname();
+			needsUpdate = true;
+		}
+		if (StringUtils.isEmpty(user.avatarUrl) && StringUtils.isNotEmpty(user.googleId)) {
+			user.avatarUrl = ImageHelper.getGooglePlusAvatarUrl(user.googleId, user.googleEmail);
+			needsUpdate =  true;
+		}
+		if (needsUpdate) {
+			user = getDAO().updateUser(user);
+		}
 		return user;
 	}
 	
@@ -243,9 +279,35 @@ public class UserMgmtFacade {
 		}
 		
 		String fullName = fbUser.getFirstName() + " " + fbUser.getLastName();
-		UserVO user = DtoToVoConverter.convert(getDAO().createUser(
-				fbUser.getEmail(), fbUser.getFirstName(), fullName.trim()));
+		SBUser userDTO = getDAO().createUser(fbUser.getEmail(), fbUser.getFirstName(), fullName.trim());
+		
+		userDTO = updateUserFacebookData(fbUser, userDTO);
+		UserVO user = DtoToVoConverter.convert(userDTO);
 		applyUserStatistics(user, user);
+		return user;
+	}
+	
+	private SBUser updateUserFacebookData(FacebookUser facebookUser, SBUser user) {
+		boolean needsUpdate = false;
+		if (StringUtils.isEmpty(user.facebookId)) {
+			user.facebookId = facebookUser.getId();
+			needsUpdate = true;
+		}
+		if (StringUtils.isEmpty(user.facebookEmail)) {
+			user.facebookEmail = facebookUser.getEmail();
+			needsUpdate = true;
+		}
+		if (StringUtils.isEmpty(user.facebookName)) {
+			user.facebookName = facebookUser.getFirstName() + " " + facebookUser.getLastName();
+			needsUpdate = true;
+		}
+		if (StringUtils.isEmpty(user.avatarUrl) && StringUtils.isNotEmpty(user.facebookId)) {
+			user.avatarUrl = ImageHelper.getFacebookAvatarUrl(user.facebookId);
+			needsUpdate =  true;
+		}
+		if (needsUpdate) {
+			user = getDAO().updateUser(user);
+		}
 		return user;
 	}
 	
@@ -258,8 +320,22 @@ public class UserMgmtFacade {
 			return null;
 		}
 		
-		UserVO user = DtoToVoConverter.convert(getDAO().createUser(twitterUser.getId(), twitterUser.getScreenName()));
+		SBUser userDTO = getDAO().createUser(twitterUser.getId(), twitterUser.getScreenName());
+		userDTO = updateUserTwitterData(twitterUser, userDTO);
+		UserVO user = DtoToVoConverter.convert(userDTO);
 		applyUserStatistics(user, user);
+		return user;
+	}
+
+	private SBUser updateUserTwitterData(twitter4j.User twitterUser, SBUser user) {
+		boolean needsUpdate = false;
+		if (StringUtils.isEmpty(user.avatarUrl) && twitterUser.getProfileImageURL() != null) {
+			user.avatarUrl = twitterUser.getProfileImageURL().toString();
+			needsUpdate =  true;
+		}
+		if (needsUpdate) {
+			user = getDAO().updateUser(user);
+		}
 		return user;
 	}
 	

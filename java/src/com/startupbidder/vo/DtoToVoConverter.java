@@ -337,6 +337,7 @@ public class DtoToVoConverter {
 		user.setStatus(userDTO.status.toString());
 		user.setNotifyEnabled(userDTO.notifyEnabled);
 		user.setEditedListing(keyToString(userDTO.editedListing));
+		user.setAvatar(userDTO.avatarUrl);
 		return user;
 	}
 	
