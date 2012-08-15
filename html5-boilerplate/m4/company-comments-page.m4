@@ -20,9 +20,26 @@ companybannermacro(`', `', `', `', `companynavselected', `')
 </div>
 
 <div class="container initialhidden wrapper">
-'
-include(company-comments.m4)
-`
+
+    <div class="span-24 initialhidden" id="commentswrapper">
+        <div class="boxtitle smokegrey clear">PUBLIC COMMENTS</div>
+        <div class="boxpanel boxpanelfull" id="commentlistparent">
+
+            <div class="commentline addcommentline initialhidden" id="addcommentbox">
+                <div class="commentavatar" id="addcommentavatar"></div>
+                <div class="commentheaderline">
+                    <span class="commentusername" id="myusername"></span>
+                </div>
+                <textarea class="textarea commenttextarea"
+                    id="addcommenttext" name="addcommenttext" cols="20" rows="5">Put your comment here...</textarea>
+                <div class="addcommentspinner preloadericon initialhidden" id="addcommentspinner"></div>
+                <span class="span-3 inputbutton messagebutton commentreplybutton" id="addcommentbtn">SEND</span>
+                <p class="commenttext" id="commentmsg"></p>
+            </div>
+
+        </div>
+    </div>
+
 </div> <!-- end container -->
 </div> <!-- end main -->
 </div> <!-- end wrap -->

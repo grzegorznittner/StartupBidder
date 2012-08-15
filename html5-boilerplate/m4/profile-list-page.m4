@@ -22,7 +22,7 @@ include(header.m4)
     <div id="profilelistmsg"></div>
 
     <div class="addlistingcontainer" id="profilelistcontainer">
-        <div class="addlistinglist" id="profilelist"></div> 
+        <div class="profilelist" id="profilelist"></div> 
     </div>
 </div> <!-- end span-24 -->
 

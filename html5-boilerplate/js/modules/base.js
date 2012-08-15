@@ -180,7 +180,7 @@ pl.implement(DateClass, {
             today = DateClass.prototype.nowUTC(),
             dateTime = date.getTime(),
             todayTime = today.getTime(),
-            diffTime = todayTime - dateTime,
+            diffTime = todayTime >= dateTime ? todayTime - dateTime : 0, // handle accidental future
             diffDays = Math.floor(diffTime / 86400000),
             diffHours = Math.floor(diffTime / 3600000),
             diffMinutes = Math.floor(diffTime / 60000),

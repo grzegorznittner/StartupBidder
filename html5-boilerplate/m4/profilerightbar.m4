@@ -1,16 +1,18 @@
 `
 <!-- right column -->
-<div class="span-8 last">
+<div class="span-8 last profilerightbar">
 
     <div class="boxtitle boxtitleside"><span class="titleperson">YOUR</span> PROFILE</div>
     <div class="sidebox profilebox">
-        <div class="formfull">
-            <span class="formtitle" id="username"></span>
+        <div class="profileavatar" id="avatar"></div>
+        <div class="profileusername">
+            <span id="username"></span>
         </div>
-        <div class="formcol1 clear">
+        <div class="profiledetails">
             <div><span class="profiletext" id="email"></span></div>
             <div><span class="profiletext" id="name"></span></div>
-            <div><span class="profiletext profilelistdragon" id="dragon"></span></div>
+            <div><span class="profiletext" id="membersince"></span></div>
+            <div><span class="profiletext profilelistuserclass" id="user_class"></span></div>
         </div>
         <div>
             <a href="edit-profile-page.html">
@@ -22,10 +24,9 @@
     </div>
 
     <div id="promotebox" class="promotebox">
-        <input class="text sideinputtext" type="text" name="promotetext" id="promotetext" value="" length="35" maxlength="100"></input>
-        <div class="promotemsg attention" id="promotemsg">Are you sure?</div>
+        <div class="promotemsg attention" id="promotemsg">Promote this user to dragon status?</div>
         <a href="#" id="promotebtn">
-            <div class="sideboxbutton hoverlink">PROMOTE TO DRAGON</div>
+            <div class="sideboxbutton hoverlink">PROMOTE</div>
         </a>
         <a href="#" class="promotecancelbtn" id="promotecancelbtn">
             <div class="sideboxbutton hoverlink">CANCEL</div>

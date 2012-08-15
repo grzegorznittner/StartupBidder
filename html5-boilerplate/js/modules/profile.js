@@ -16,7 +16,7 @@ pl.implement(ProfileClass, {
  
     displayFields: function() {
         var profile = this.profile || this.loggedin_profile || {};
-/*        var investor = json.investor ? 'Accredited Investor' : 'Entrepreneur';
+ /*        var investor = json.investor ? 'Accredited Investor' : 'Entrepreneur';
             date = new DateClass(),
             joindate = json.joined_date ? date.format(json.joined_date) : 'unknown';
         pl('#profilestatus').html('');
@@ -32,12 +32,23 @@ pl.implement(ProfileClass, {
 */
         pl('#username').text(profile.username || 'anonymous');
         pl('#email').text(profile.email || 'No email address');
-        pl('#name').text(profile.name || 'Anon Anonymous');
-        pl('#dragon').text(profile.dragon ? 'DRAGON' : '');
+        pl('#name').text(profile.name || 'Mr. Anonymous');
+        if (profile.avatar) {
+            pl('#avatar').css('background-image', 'url(' + profile.avatar + ')');
+        }
+        if (profile.joined_date) {
+            pl('#membersince').text('Joined ' + DateClass.prototype.formatDateStr(profile.joined_date));
+        }
+        if (profile.user_class) {
+            pl('#user_class').text(profile.user_class.replace(/[_-]/g, ' ').toUpperCase());
+        }
     },
 
     displayPromote: function() {
-        var promotable = this.loggedin_profile && this.loggedin_profile.admin && this.profile && !this.profile.dragon;
+        var profile = this.profile || this.loggedin_profile,
+            is_loggedin_admin = this.loggedin_profile && this.loggedin_profile.admin,
+            not_yet_dragon = !profile.user_class || profile.user_class !== 'dragon',
+            promotable = is_loggedin_admin && not_yet_dragon;
         if (promotable) {
             this.bindPromoteButton();
         }
@@ -48,22 +59,22 @@ pl.implement(ProfileClass, {
         pl('#promotebox').show();
         pl('#promotebtn').bind({
             click: function() {
-                var complete = function() {
+                var profile = self.profile || self.loggedin_profile,
+                    complete = function() {
                         pl('#promotebtn, #promotecancelbtn').hide();
                         pl('#promotemsg').text('Promoted to dragon, reloading...').show();
                         setTimeout(function() {
                             window.location.reload();
                         }, 3000);
                     },
-                    url = '/user/promote_to_dragon/' + self.profile.profile_id,
+                    url = '/user/promote_to_dragon/' + profile.profile_id,
                     ajax = new AjaxClass(url, 'promotemsg', complete);
                 if (pl('#promotemsg').text() && pl('#promotemsg').text().indexOf('Error') !== -1) {
                     pl('#promotebtn').hide();
                 }
                 else if (pl('#promotecancelbtn').css('display') === 'none') { // first call
-                    pl('#promotemsg').text('Are you sure?').show();
+                    pl('#promotemsg').text('Promote this user to dragon status?').show();
                     pl('#promotecancelbtn').show();
-                    pl('#promotetext').attr({disabled: 'disabled'});
                 }
                 else {
                     ajax.setPostData();
@@ -77,7 +88,6 @@ pl.implement(ProfileClass, {
                 pl('#promotecancelbtn').hide();
                 pl('#promotemsg').text('').show();
                 pl('#promotebtn').show();
-                pl('#promotetext').removeAttr('disabled');
                 return false;
             }
         });
@@ -152,13 +162,15 @@ pl.implement(ProfilePageClass,{
                 if (json.loggedin_profile.admin) {
                     pl('.titleperson').text('USER');
                 }
-                else {
+                if (!json.loggedin_profile.admin || !json.profile) {
                     pl('#editprofilebutton').show();
                 }
                 pl('.preloader').hide();
                 pl('.wrapper').show();
             },
-            url = this.passed_id ? '/user/get/' + this.passed_id : '/listings/discover_user',
+            url = this.passed_id && (!json.loggedin_profile || this.passed_id !== json.loggedin_profile.profile_id)
+                ? '/user/get/' + this.passed_id
+                : '/listings/discover_user',
             ajax = new AjaxClass(url, 'profilemsg', completeFunc);
         ajax.call();
     }
@@ -459,11 +471,16 @@ pl.implement(ProfileListClass, {
 
     makeListItem: function(listitem) {
         var url = '/profile-page.html?id=' + listitem.profile_id,
-			statustext =  listitem.status !== 'active'
+            avatarstyle = listitem.avatar
+                ? ' style="background-image: url(' + listitem.avatar + ')"'
+                : '',
+           	statustext =  listitem.status !== 'active'
                 ? '<span class="profileliststatus">' + listitem.status + '</span>'
                 : '',
 			admintext =  listitem.admin ? '<span class="profilelistadmin">ADMIN</span>' : '',
-			dragontext =  listitem.dragon ? '<span class="profilelistdragon">DRAGON</span>' : '',
+			userclasstext =  listitem.user_class
+                ? '<span class="profilelistuserclass">' + listitem.user_class + '</span>'
+                : '',
             nametext = listitem.name
                 ? 'Name:<span class="profilelistlastlogin">'
                     + SafeStringClass.prototype.htmlEntities(listitem.name) + '</span></br>'
@@ -483,12 +500,14 @@ pl.implement(ProfileListClass, {
                 : '',
             html = '\
             <div class="messageline">\
-                <p class="messagetext">\
+                <div class="profilelistavatar"' + avatarstyle + '></div>\
+                <p class="messagetext profilelistheader">\
                     <a href="' + url + '">\
 			            <span class="profilelistusername">' + listitem.username + '</span>\
                     </a>\
 			        <span class="profilelistemail">' + listitem.email+ '</span>\
                     ' + statustext + '\
+                    ' + userclasstext + '\
                     ' + admintext + '\
                 </p>\
                 <p class="messagetext profilelistdetails">\

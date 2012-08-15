@@ -15,14 +15,17 @@ pl.implement(CommentClass, {
                 pl('.preloader').hide();
                 pl('.wrapper').show();
             },
+
             ajax = new AjaxClass('/listing/comments/' + this.listing_id, 'commentmsg', complete);
         ajax.call();
     },
+
     store: function(json) {
         this.loggedin_profile_id = json.loggedin_profile && json.loggedin_profile.profile_id;
         this.listing = json.listing || {};
         this.commentlist = json.comments || [];
     },
+
     display: function(json) {
         if (json) {
             this.store(json);
@@ -32,11 +35,11 @@ pl.implement(CommentClass, {
             this.displayAddCommentBox();
         }
         else if (this.listing.status !== 'active') {
-            pl('#addcommentbox').before('<div class="messageline"><p style="font-weight: bold;">Comments cannot be adding to this listing as it is not active</p></div>');
+            pl('#addcommentbox').before('<div class="commentline"><p style="font-weight: bold;">Comments cannot be adding to this listing as it is not active</p></div>');
         }
         else {
             pl('#addcommentbox').before('\
-    <div class="messageline"><p style="font-weight: bold;">Sign in to post a comment</p></div>\
+    <div class="commentline"><p style="font-weight: bold;">Sign in to post a comment</p></div>\
     <div class="addlistingloginrow">\
         <a id="google_login" href="">\
             <div class="addlistinglogin headericon headersignin"></div>\
@@ -53,6 +56,7 @@ pl.implement(CommentClass, {
         }
         pl('#commentswrapper').show();
     },
+
 
     displayLoggedOut: function() {
         var nexturl = '/company-comments-page.html?id=' + this.listing_id;
@@ -76,6 +80,7 @@ pl.implement(CommentClass, {
         }
     },
 
+
     bindAddCommentBox: function() {
         var self = this;
         if (pl('#addcommentbox').hasClass('bound')) {
@@ -88,6 +93,7 @@ pl.implement(CommentClass, {
                     pl('#commentmsg').html('&nbsp;');
                 }
             },
+
             keyup: function() {
                 var val = pl('#addcommenttext').attr('value');
                 if (!pl('#addcommenttext').hasClass('edited')) {
@@ -102,6 +108,7 @@ pl.implement(CommentClass, {
                 }
                 return false;
             },
+
             blur: function() {
                 if (!pl('#addcommenttext').hasClass('edited')) {
                     pl('#addcommenttext').attr({value: 'Put your comment here...'});
@@ -114,34 +121,47 @@ pl.implement(CommentClass, {
                 var completeFunc = function(json) {
                         // var numcomments = 1 * pl('#num_comments').text(),
                         var comment = json;
-                        pl('#addcommenttext').removeClass('edited').attr({value: 'Put your comment here...'});
-                        pl('#addcommentbtn').removeClass('editenabled');
-                        pl('#commentmsg').html('Comment posted');
+                        pl('#addcommentspinner').hide();
+                        pl('#addcommenttext').removeClass('edited').removeAttr('disabled')
+                            .attr({value: 'Put your comment here...'});
+                        pl('#addcommentbtn').removeClass('editenabled').show();
+                        pl('#commentmsg').text('');
                         // pl('#num_comments').text(numcomments + 1);
                         pl('#addcommentbox').before(self.makeComment(comment));
                         self.bindComment(comment);
                     },
+
                     text = SafeStringClass.prototype.clean(pl('#addcommenttext').attr('value')),
                     data = {
                         comment: {
                             listing_id: self.listing_id,
-                            text: SafeStringClass.prototype.htmlEntities(text)
+                            text: text
                         }
                     },
+
                     ajax = new AjaxClass('/listing/post_comment', 'commentmsg', completeFunc);
                 if (pl('#addcommentbtn').hasClass('editenabled') && text) {
+                    pl('#addcommentbtn').hide();
+                    pl('#addcommenttext').attr('disabled', 'disabled');
+                    pl('#addcommentspinner').show();
                     ajax.setPostData(data);
                     ajax.call();
                 }
                 return false;
             }
         });
+        pl('#myusername').text(this.loggedin_profile && this.loggedin_profile.username);
+        if (this.loggedin_profile && this.loggedin_profile.avatar) {
+            pl('#addcommentavatar').css('background-image', 'url(' + this.loggedin_profile.avatar + ')');
+        }
         pl('#addcommentbox').addClass('bound');
     },
+
     displayAddCommentBox: function() {
         this.bindAddCommentBox();
         pl('#addcommentbox').show();
     },
+
     displayNoComments: function() {
         if (this.loggedin_profile_id) {
             pl('#commentmsg').html('<p>Be the first to comment!</p>').show();
@@ -150,6 +170,7 @@ pl.implement(CommentClass, {
             pl('#commentmsg').html('<p>Login and be the first to comment!</p>');
         }
     },
+
     displayComments: function() {
         var self = this,
             html = '',
@@ -173,40 +194,58 @@ pl.implement(CommentClass, {
             self.bindComment(comment);
         }
     },
+
     makeComment: function(comment) {
-        var isowner = comment.profile_id === this.listing.profile_id,
-            ownermarker = isowner ? '<span class="messageowner">Owner</span> ' : '',
-            usertext = '<span class="messageusername">' + comment.profile_username + '</span>',
-            datetext = '<span class="messageinlinedate">' + (comment.ago_text || DateClass.prototype.agoText(comment.comment_date)) + '</span>',
+        var avatarstyle = comment.profile_avatar
+                ? ' style="background-image: url(' + comment.profile_avatar + ')"'
+                : '',
+            isowner = comment.profile_id === this.listing.profile_id,
+            ownermarker = isowner ? '<span class="commentowner">Owner</span> ' : '',
+            usertext = '<span class="commentusername">' + comment.profile_username + '</span>',
+			userclasstext =  comment.profile_user_class
+                ? '<span class="profilelistuserclass">' + comment.profile_user_class + '</span>'
+                : '',
+            datetext = '<span class="commentinlinedate">'
+                + (comment.ago_text || DateClass.prototype.agoText(comment.comment_date)) + '</span>',
             deletable = comment.profile_id === this.loggedin_profile_id,
-            deletemsgspan = deletable ? ' <span id="comment_delete_msg_' + comment.comment_id + '" class="push-4 span-14 messagetext inputmsg successful"></span>' : '',
-            deleteicon = deletable ? '<div id="comment_delete_' + comment.comment_id + '" class="commentdeleteicon checkboxredicon hoverlink"></div>' : '',
-            text = SafeStringClass.prototype.htmlEntities(comment.text);
+            deletemsgspan = deletable
+                ? ' <p id="comment_delete_msg_' + comment.comment_id
+                    + '" class="span-8 commentdeletemsg inputmsg successful"></span>'
+                : '',
+            deleteicon = deletable
+                ? '<div id="comment_delete_' + comment.comment_id + '" class="commentdeleteicon hoverlink"></div>'
+                    + '<div class="commentdeletespinner preloadericon initialhidden"'
+                    + ' id="comment_deletespinner_' + comment.comment_id + '"></div>'
+                : '',
+            text = HTMLMarkup.prototype.stylize(SafeStringClass.prototype.htmlEntities(comment.text));
         return '\
-        <div class="messageline" id="comment_' + comment.comment_id + '">\
-            <p class="messagetext">'
-                  + ownermarker
-                  + usertext
-                  + ' ' + datetext
-                  + deleteicon
-                  + deletemsgspan
-                  + '<br/>'
+        <div class="commentline" id="comment_' + comment.comment_id + '">\
+            <div class="commentavatar"' + avatarstyle + '></div>\
+            <div class="commentheaderline">\
+                ' + ownermarker + usertext + userclasstext + ' ' + datetext + deleteicon + deletemsgspan + '\
+            </div>\
+            <p class="commenttext">'
                   + text + '\
             </p>\
         </div>\
         ';
     },
+
     deleteComment: function() {
         var commentid = this.id.replace('comment_delete_', '');
             completefunc = function(json) {
                 pl('#comment_'+commentid).remove();
             },
+
             url = '/listing/delete_comment?id=' + commentid,
             deletemsgid = 'comment_delete_msg_' + commentid,
             ajax = new AjaxClass(url, deletemsgid, completefunc);
+        pl('#comment_delete_' + commentid).hide();
+        pl('#comment_deletespinner_' + commentid).show();
         ajax.setPost();
         ajax.call();
     },
+
     bindComment: function(comment) {
         if (comment.profile_id === this.loggedin_profile_id) {
             pl('#comment_delete_' + comment.comment_id).bind('click', this.deleteComment);
