@@ -15,10 +15,11 @@ import com.startupbidder.util.DateSerializer;
  */
 @JsonAutoDetect(getterVisibility=Visibility.NONE, setterVisibility=Visibility.NONE,
 		fieldVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE)
-public class QuestionAnswerVO extends BaseVO {
+public class QuestionAnswerVO extends BaseVO implements UserToAvatar {
 	@JsonProperty("question_id") private String id;
 	@JsonProperty("listing_id") private String listing;
 	@JsonProperty("from_user_id") private String user;
+	@JsonProperty("from_user_avatar") private String avatar;
 	@JsonProperty("from_user_nickname") private String userNickname;
 	@JsonProperty("create_date") @JsonSerialize(using=DateSerializer.class) private Date created;
 	@JsonProperty("question") private String question;
@@ -80,5 +81,11 @@ public class QuestionAnswerVO extends BaseVO {
 	}
 	public void setPublished(boolean published) {
 		this.published = published;
+	}
+	public String getAvatar() {
+		return avatar;
+	}
+	public void setAvatar(String avatar) {
+		this.avatar = avatar;
 	}
 }

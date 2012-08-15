@@ -16,9 +16,10 @@ import com.startupbidder.util.LowecaseSerializer;
  */
 @JsonAutoDetect(getterVisibility=Visibility.NONE, setterVisibility=Visibility.NONE,
 		fieldVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE)
-public class PrivateMessageUserVO extends BaseVO {
+public class PrivateMessageUserVO extends BaseVO implements UserToAvatar {
 	@JsonProperty("direction") @JsonSerialize(using=LowecaseSerializer.class) private String direction;
 	@JsonProperty("from_user_id") private String user;
+	@JsonProperty("from_user_avatar") private String avatar;
 	@JsonProperty("from_user_nickname") private String userNickname;
 	@JsonProperty("last_date") @JsonSerialize(using=DateSerializer.class) private Date lastDate;
 	@JsonProperty("last_text") private String text;
@@ -70,5 +71,11 @@ public class PrivateMessageUserVO extends BaseVO {
 	}
 	public void setRead(boolean read) {
 		this.read = read;
+	}
+	public String getAvatar() {
+		return avatar;
+	}
+	public void setAvatar(String avatar) {
+		this.avatar = avatar;
 	}
 }

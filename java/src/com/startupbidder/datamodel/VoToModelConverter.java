@@ -277,7 +277,6 @@ public class VoToModelConverter {
 		user.userClass = userVO.getUserClass();
 		user.email = userVO.getEmail();
 		user.name = userVO.getName();
-		user.joined = userVO.getJoined();
 		user.lastLoggedIn = userVO.getLastLoggedIn();
 		user.modified = userVO.getModified();
 		user.nickname = userVO.getNickname();

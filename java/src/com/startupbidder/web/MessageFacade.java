@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import org.apache.commons.lang3.StringUtils;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 
 import com.startupbidder.dao.MessageObjectifyDatastoreDAO;
 import com.startupbidder.dao.ObjectifyDatastoreDAO;
@@ -30,8 +28,6 @@ public class MessageFacade {
 	private static final Logger log = Logger.getLogger(MessageFacade.class.getName());
 	private static MessageFacade instance;
 	
-	private DateTimeFormatter timeStampFormatter = DateTimeFormat.forPattern("yyyyMMdd_HHmmss_SSS");
-
 	public static MessageFacade instance() {
 		if (instance == null) {
 			instance = new MessageFacade();
@@ -81,6 +77,7 @@ public class MessageFacade {
 		SBUser user = VoToModelConverter.convert(loggedInUser);
 		List<PrivateMessageUserVO> msgs = DtoToVoConverter.convertPrivateMessageUsers(
 				getDAO().getMessageShortList(user, listProperties));
+		UserMgmtFacade.instance().updateAvatars(msgs);
 		result.setMessages(msgs);
 		result.setMessagesProperties(listProperties);
 		return result;

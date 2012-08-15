@@ -47,8 +47,6 @@ public class ServiceFacade {
 	private static final Logger log = Logger.getLogger(ServiceFacade.class.getName());
 	private static ServiceFacade instance;
 	
-	private DateTimeFormatter timeStampFormatter = DateTimeFormat.forPattern("yyyyMMdd_HHmmss_SSS");
-
 	public static ServiceFacade instance() {
 		if (instance == null) {
 			instance = new ServiceFacade();
@@ -81,6 +79,7 @@ public class ServiceFacade {
 			ListingFacade.instance().applyListingData(loggedInUser, listing, monitor);
 			List<CommentVO> comments = DtoToVoConverter.convertComments(
 					getDAO().getCommentsForListing(BaseVO.toKeyId(listingId), commentProperties));
+			UserMgmtFacade.instance().updateAvatars(comments);
 			list.setComments(comments);
 			list.setListing(listing);
 			list.setCommentsProperties(commentProperties);
@@ -102,6 +101,7 @@ public class ServiceFacade {
 		} else {
 			List<CommentVO> comments = DtoToVoConverter.convertComments(
 					getDAO().getCommentsForUser(BaseVO.toKeyId(userId), commentProperties));
+			UserMgmtFacade.instance().updateAvatars(comments);
 			list.setComments(comments);
 		}
 		list.setCommentsProperties(commentProperties);
@@ -190,6 +190,7 @@ public class ServiceFacade {
 		comment.userNickName = user.nickname;
 		comment.comment = commentText;
 		CommentVO commentVO = DtoToVoConverter.convert(getDAO().createComment(comment));
+		commentVO.setAvatar(loggedInUser.getAvatar());
 
 		setListingMonitor(loggedInUser, listing.getWebKey());
 		
@@ -210,6 +211,7 @@ public class ServiceFacade {
 			return null;
 		}
 		comment = DtoToVoConverter.convert(getDAO().updateComment(VoToModelConverter.convert(comment)));
+		comment.setAvatar(loggedInUser.getAvatar());
 		return comment;
 	}
 
@@ -302,7 +304,9 @@ public class ServiceFacade {
 			setListingMonitor(loggedInUser, listingId);
 		}
 		NotificationFacade.instance().scheduleQANotification(qa);
-		return DtoToVoConverter.convert(qa);
+		QuestionAnswerVO result = DtoToVoConverter.convert(qa);
+		UserMgmtFacade.instance().updateAvatar(result);
+		return result;
 	}
 
 	public QuestionAnswerVO answerQuestion(UserVO loggedInUser, String messageId, String text) {
@@ -341,7 +345,9 @@ public class ServiceFacade {
         NotificationFacade.instance().scheduleQANotification(qa);
         
 		log.info("Answered q&a: " + qa);
-		return DtoToVoConverter.convert(qa);
+		QuestionAnswerVO result = DtoToVoConverter.convert(qa);
+		UserMgmtFacade.instance().updateAvatar(result);
+		return result;
 	}
 	
 	public QuestionAnswerListVO getQuestionsAndAnswers(UserVO loggedInUser, String listingId, ListPropertiesVO listProperties) {
@@ -355,6 +361,7 @@ public class ServiceFacade {
 			result.setQuestionAnswers(DtoToVoConverter.convertQuestionAnswers(
 					getDAO().getQuestionAnswersForUser(VoToModelConverter.convert(loggedInUser), listing, listProperties)));
 		}
+		UserMgmtFacade.instance().updateAvatars(result.getQuestionAnswers());
 		result.setQuestionAnswersProperties(listProperties);
 		result.setListing(DtoToVoConverter.convert(listing));
 		result.setUser(loggedInUser != null ? new UserBasicVO(loggedInUser) : null);

@@ -3,9 +3,12 @@ package com.startupbidder.dao;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Random;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -205,7 +208,6 @@ public class ObjectifyDatastoreDAO {
 		user.investor = investor;
         user.modified = user.lastLoggedIn = user.joined = new Date();
 		user.status = SBUser.Status.CREATED;
-		user.joined = new Date();
 		user.activationCode = "" + email.hashCode() + user.joined.hashCode();
 		getOfy().put(user);
         log.info("Created user with defaulted nickname " + user.nickname + " as " + user);
@@ -1366,4 +1368,14 @@ public class ObjectifyDatastoreDAO {
     		return null;
     	}
     }
+
+	public Map<String, SBUser> getUsers(Set<Key<Object>> userKeys) {
+		Map<Key<Object>, Object> map = getOfy().get(userKeys);
+		Map<String, SBUser> users = new HashMap<String, SBUser>();
+		
+		for (Map.Entry<Key<Object>, Object> entry : map.entrySet()) {
+			users.put(entry.getKey().getString(), (SBUser)entry.getValue());
+		}
+		return users;
+	}
 }

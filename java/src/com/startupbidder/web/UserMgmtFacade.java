@@ -3,7 +3,10 @@ package com.startupbidder.web;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -18,6 +21,7 @@ import com.google.appengine.api.taskqueue.QueueFactory;
 import com.google.appengine.api.taskqueue.TaskOptions;
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserServiceFactory;
+import com.googlecode.objectify.Key;
 import com.startupbidder.dao.ObjectifyDatastoreDAO;
 import com.startupbidder.datamodel.Listing;
 import com.startupbidder.datamodel.SBUser;
@@ -32,6 +36,7 @@ import com.startupbidder.vo.ListingTileVO;
 import com.startupbidder.vo.UserAndUserVO;
 import com.startupbidder.vo.UserListVO;
 import com.startupbidder.vo.UserListingsForAdminVO;
+import com.startupbidder.vo.UserToAvatar;
 import com.startupbidder.vo.UserVO;
 
 public class UserMgmtFacade {
@@ -703,5 +708,34 @@ public class UserMgmtFacade {
 	public Object requestEmailAccess(UserVO loggedInUser, String email, String url) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	public void updateAvatar(UserToAvatar item) {
+		if (item == null) {
+			return;
+		}
+		SBUser user = getDAO().getUser(item.getUser());
+		item.setAvatar(user.avatarUrl);
+	}
+	
+	public void updateAvatars(List<? extends UserToAvatar> items) {
+		if (items == null || items.size() == 0) {
+			return;
+		}
+		Set<Key<Object>> userKeys = new HashSet<Key<Object>>();
+		for (UserToAvatar item : items) {
+			if (item.getUser() != null) {
+				userKeys.add(Key.create(item.getUser()));
+			}
+		}
+		if (userKeys.size() > 0) {
+			Map<String, SBUser> users = getDAO().getUsers(userKeys);
+			for (UserToAvatar item : items) {
+				SBUser user = users.get(item.getUser());
+				if (user != null) {
+					item.setAvatar(user.avatarUrl);
+				}
+			}
+		}
 	}
 }
