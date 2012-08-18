@@ -449,7 +449,7 @@ pl.implement(HeaderClass, {
             pl('#headernumnotifications').text('').removeClass('headernumdisplay');
         }
         if (profile.admin) {
-            pl('#adminsetup,#adminhello').css({visibility:'visible'});
+            pl('#adminfooterlinks').show();
         }
         pl('#headerusername').html(username);
         if (logout_url) {

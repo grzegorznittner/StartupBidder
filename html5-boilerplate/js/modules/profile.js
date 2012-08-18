@@ -42,7 +42,35 @@ pl.implement(ProfileClass, {
         if (profile.user_class) {
             pl('#user_class').text(profile.user_class.replace(/[_-]/g, ' ').toUpperCase());
         }
+        if (this.loggedin_profile
+            && !(this.loggedin_profile.user_class === 'dragon' || this.loggedin_profile.user_class === 'requested_dragon')
+            && (!this.profile
+                || (this.loggedin_profile && this.loggedin_profile.admin && this.profile.profile_id === this.loggedin_profile.profile_id))) {
+            pl('#applydragonwrapper').show();
+            this.bindApplyDragon();
+        }
+        if (this.loggedin_profile
+            && this.loggedin_profile.user_class === 'requested_dragon'
+            && (!this.profile
+                || (this.loggedin_profile && this.loggedin_profile.admin && this.profile.profile_id === this.loggedin_profile.profile_id))) {
+            pl('#pendingdragonwrapper').show();
+            this.bindApplyDragon();
+        }
     },
+
+    bindApplyDragon: function() {
+        pl('#applydragonbutton').unbind().bind('click', function() {
+            var complete = function(json) {
+                    pl('#applydragonwrapper').hide();
+                    pl('#pendingdragonwrapper').show();
+                },
+                ajax = new AjaxClass('/user/request_dragon', 'applydragonmessage', complete);
+            pl('#applydragonbutton').hide();
+            pl('#applydragonspinner').show();
+            ajax.setPost();
+            ajax.call();
+        });
+     },
 
     displayPromote: function() {
         var profile = this.profile || this.loggedin_profile,
@@ -487,7 +515,7 @@ pl.implement(ProfileListClass, {
                 : '',
 			admintext =  listitem.admin ? '<span class="profilelistadmin">ADMIN</span>' : '',
 			userclasstext =  listitem.user_class
-                ? '<span class="profilelistuserclass">' + listitem.user_class + '</span>'
+                ? '<span class="profilelistuserclass">' + listitem.user_class.toUpperCase() + '</span>'
                 : '',
             nametext = listitem.name
                 ? 'Name:<span class="profilelistlastlogin">'
