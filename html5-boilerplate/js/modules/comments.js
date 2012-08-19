@@ -118,17 +118,13 @@ pl.implement(CommentClass, {
         });
         pl('#addcommentbtn').bind({
             click: function(event) {
-                var completeFunc = function(json) {
-                        // var numcomments = 1 * pl('#num_comments').text(),
-                        var comment = json;
+                var complete = function(json) {
                         pl('#addcommentspinner').hide();
-                        pl('#addcommenttext').removeClass('edited').removeAttr('disabled')
-                            .attr({value: 'Put your comment here...'});
+                        pl('#addcommenttext').removeClass('edited').removeAttr('disabled').attr({value: 'Put your comment here...'});
                         pl('#addcommentbtn').removeClass('editenabled').show();
                         pl('#commentmsg').text('');
-                        // pl('#num_comments').text(numcomments + 1);
-                        pl('#addcommentbox').before(self.makeComment(comment));
-                        self.bindComment(comment);
+                        pl('#addcommentbox').before(self.makeComment(json));
+                        self.bindComment(json);
                     },
 
                     text = SafeStringClass.prototype.clean(pl('#addcommenttext').attr('value')),
@@ -139,7 +135,7 @@ pl.implement(CommentClass, {
                         }
                     },
 
-                    ajax = new AjaxClass('/listing/post_comment', 'commentmsg', completeFunc);
+                    ajax = new AjaxClass('/listing/post_comment', 'commentmsg', complete);
                 if (pl('#addcommentbtn').hasClass('editenabled') && text) {
                     pl('#addcommentbtn').hide();
                     pl('#addcommenttext').attr('disabled', 'disabled');
