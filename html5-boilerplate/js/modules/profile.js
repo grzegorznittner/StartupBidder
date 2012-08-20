@@ -42,7 +42,35 @@ pl.implement(ProfileClass, {
         if (profile.user_class) {
             pl('#user_class').text(profile.user_class.replace(/[_-]/g, ' ').toUpperCase());
         }
+        if (this.loggedin_profile
+            && !(this.loggedin_profile.user_class === 'dragon' || this.loggedin_profile.user_class === 'requested_dragon')
+            && (!this.profile
+                || (this.loggedin_profile && this.loggedin_profile.admin && this.profile.profile_id === this.loggedin_profile.profile_id))) {
+            pl('#applydragonwrapper').show();
+            this.bindApplyDragon();
+        }
+        if (this.loggedin_profile
+            && this.loggedin_profile.user_class === 'requested_dragon'
+            && (!this.profile
+                || (this.loggedin_profile && this.loggedin_profile.admin && this.profile.profile_id === this.loggedin_profile.profile_id))) {
+            pl('#pendingdragonwrapper').show();
+            this.bindApplyDragon();
+        }
     },
+
+    bindApplyDragon: function() {
+        pl('#applydragonbutton').unbind().bind('click', function() {
+            var complete = function(json) {
+                    pl('#applydragonwrapper').hide();
+                    pl('#pendingdragonwrapper').show();
+                },
+                ajax = new AjaxClass('/user/request_dragon', 'applydragonmessage', complete);
+            pl('#applydragonbutton').hide();
+            pl('#applydragonspinner').show();
+            ajax.setPost();
+            ajax.call();
+        });
+     },
 
     displayPromote: function() {
         var profile = this.profile || this.loggedin_profile,
@@ -131,14 +159,15 @@ pl.implement(ProfilePageClass,{
                         'withdrawn_listings',
                         'frozen_listings'
                     ],
+                    seeallurl = '/profile-listing-page.html?' + (self.passed_id ? 'id=' + self.passed_id + '&' : '') + 'type=',
                     options = {
                         edited_listing: { propertyissingle: true, fullWidth: true },
-                        active_listings: { seeall: '/profile-listing-page.html?type=active', fullWidth: true },
-                        monitored_listings: { seeall: '/profile-listing-page.html?type=monitored', fullWidth: true },
-                        withdrawn_listings: { seeall: '/profile-listing-page.html?type=withdrawn', fullWidth: true },
-                        frozen_listings: { seeall: '/profile-listing-page.html?type=frozen', fullWidth: true },
-                        admin_posted_listings: { seeall: '/profile-listing-page.html?type=admin_posted', fullWidth: true },
-                        admin_frozen_listings: { seeall: '/profile-listing-page.html?type=admin_frozen', fullWidth: true }
+                        active_listings: { seeall: seeallurl + 'active', fullWidth: true },
+                        monitored_listings: { seeall: seeallurl + 'monitored', fullWidth: true },
+                        withdrawn_listings: { seeall: seeallurl + 'withdrawn', fullWidth: true },
+                        frozen_listings: { seeall: seeallurl + 'frozen', fullWidth: true },
+                        admin_posted_listings: { seeall: seeallurl + 'admin_posted', fullWidth: true },
+                        admin_frozen_listings: { seeall: seeallurl + 'admin_frozen', fullWidth: true }
                     },
                     listingfound = false,
                     propertykey,
@@ -159,18 +188,24 @@ pl.implement(ProfilePageClass,{
                 if (!listingfound) {
                     pl('#no_listings_wrapper').show();
                 }
-                if (json.loggedin_profile.admin) {
-                    pl('.titleperson').text('USER');
-                }
-                if (!json.loggedin_profile.admin || !json.profile) {
-                    pl('#editprofilebutton').show();
+                if (json.loggedin_profile) {
+                    if (!json.loggedin_profile.admin) {
+                        pl('#editprofilebutton').show();
+                    }
+                    else if (json.loggedin_profile.admin && !json.profile) {
+                        pl('#editprofilebutton').show();
+                    }
+                    else if (json.loggedin_profile.admin && json.profile && json.loggedin_profile.profile_id === json.profile.profile_id) {
+                        pl('#editprofilebutton').show();
+                    }
+                    else {
+                        pl('.titleperson').text('USER');
+                    }
                 }
                 pl('.preloader').hide();
                 pl('.wrapper').show();
             },
-            url = this.passed_id && (!json.loggedin_profile || this.passed_id !== json.loggedin_profile.profile_id)
-                ? '/user/get/' + this.passed_id
-                : '/listings/discover_user',
+            url = this.passed_id ? '/user/get/' + this.passed_id : '/listings/discover_user',
             ajax = new AjaxClass(url, 'profilemsg', completeFunc);
         ajax.call();
     }
@@ -179,6 +214,7 @@ pl.implement(ProfilePageClass,{
 function ProfileListingPageClass() {
     this.json = {};
     this.queryString = new QueryStringClass();
+    this.passed_id = queryString.vars.id;
     this.type = this.queryString.vars.type || 'active';
     this.data = { max_results: 20 };
     this.urlmap = {
@@ -479,7 +515,7 @@ pl.implement(ProfileListClass, {
                 : '',
 			admintext =  listitem.admin ? '<span class="profilelistadmin">ADMIN</span>' : '',
 			userclasstext =  listitem.user_class
-                ? '<span class="profilelistuserclass">' + listitem.user_class + '</span>'
+                ? '<span class="profilelistuserclass">' + listitem.user_class.toUpperCase() + '</span>'
                 : '',
             nametext = listitem.name
                 ? 'Name:<span class="profilelistlastlogin">'

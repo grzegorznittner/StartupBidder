@@ -20,9 +20,26 @@ companybannermacro(`', `', `', `', `', `companynavselected')
 </div>
 
 <div class="container initialhidden wrapper">
-'
-include(company-questions.m4)
-`
+
+    <div class="span-24 initialhidden" id="qandaswrapper">
+        <div class="boxtitle smokegrey clear">QUESTIONS AND ANSWERS WITH THE OWNER</div>
+        <div class="boxpanel boxpanelfull" id="qandalistparent">
+
+            <div class="commentline addcommentline initialhidden" id="addqandabox">
+                <div class="commentavatar" id="addqandaavatar"></div>
+                <div class="commentheaderline">
+                    <span class="commentusername" id="myusername"></span>
+                </div>
+                <textarea class="textarea commenttextarea"
+                    id="addqandatext" name="addqandatext" cols="20" rows="5">Put your question to the owner here...</textarea>
+                <div class="addcommentspinner preloadericon initialhidden" id="addqandaspinner"></div>
+                <span class="span-3 inputbutton messagebutton commentreplybutton" id="addqandabtn">SEND</span>
+                <p class="commenttext" id="qandamsg"></p>
+            </div>
+
+        </div>
+    </div>
+
 </div> <!-- end container -->
 </div> <!-- end main -->
 </div> <!-- end wrap -->

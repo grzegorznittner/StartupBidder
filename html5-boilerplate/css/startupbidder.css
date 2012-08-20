@@ -1501,6 +1501,23 @@ position: relative;
     position: relative;
     overflow: hidden;
 }
+.applydragonbox {
+    position: relative;
+}
+.applydragonbox p {
+    margin: 8px 15px 55px 15px;
+}
+.applydragonspinner {
+    position: absolute;
+    right: 50px;
+    bottom: 10px;
+}
+.pendingdragonbox {
+    position: relative;
+}
+.pendingdragonbox p {
+    margin: 8px 15px 10px 15px;
+}
 .profileboxtitle { position: relative; }
 .profileusername {
     position: absolute;
@@ -1508,6 +1525,7 @@ position: relative;
     left: 68px;
     font-size: 24px;
 }
+.profileuserclass { color: #666; font-weight: bold; }
 .profiledetails {
     position: absolute;
     left: 10px;
@@ -1528,7 +1546,7 @@ position: relative;
 .profilelistemail { padding-left: 10px; color: #666; }
 .profileliststatus { padding-left: 10px; color: #666; font-style: italic; }
 .profilelistadmin { padding-left: 10px; color: #666; font-weight: bold; }
-.profilelistuserclass { color: #666; font-weight: bold; }
+.profilelistuserclass { padding-left: 10px; color: #666; font-weight: bold; }
 .profilelistheader { padding-left: 70px !important; text-indent: 0 !important; }
 .profilelistdetails { padding-left: 70px !important; text-indent: 0 !important; }
 .profilelistlastlogin { padding-left: 10px; }

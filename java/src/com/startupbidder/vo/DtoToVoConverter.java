@@ -484,12 +484,11 @@ public class DtoToVoConverter {
 			// payments are not handled yet
 			break;
 		case ADMIN_REQUEST_TO_BECOME_DRAGON:
-			notif.setTitle("User '" + notifDTO.listingOwner + "' requested Dragon status");
+			notif.setTitle("User '" + notifDTO.listingOwner + "' Requested to Become a Dragon");
 			notif.setText1("User");
 			notif.setText2("sent request to become a Dragon on startupbidder.com");
-			notif.setText3("To be a dragon you must have founded a startup, be a corporate or venture capital executive, "
-					+ "or have invested in a startup. aybe only dragons are allowed to invest.");
-			notif.setLink("/listings/discover_user/" + notifDTO.listingOwnerUser.getString() + ".json");
+			notif.setText3("To be a dragon one must have founded a startup, invested in a startup, or be a corporate or venture capital executive.");
+			notif.setLink("/profile-page.html?id=" + notifDTO.listingOwnerUser.getString());
 			break;
 		}
 

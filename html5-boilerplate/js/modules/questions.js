@@ -21,39 +21,60 @@ pl.implement(QuestionClass, {
                 pl('.preloader').hide();
                 pl('.wrapper').show();
             },
+
             error = function(errornum, json) {
                 (new HeaderClass()).setLogin(json);
                 pl('.preloader').hide();
                 pl('.errorwrapper').show();
             },
+
             ajax = new AjaxClass('/listings/questions_answers/' + this.listing_id, 'qandamsg', complete, null, null, error);
-        ajax.setGetData({ max_results: 3 });
+        //ajax.setGetData({ max_results: 3 });
         ajax.call();
     },
+
     store: function(json) {
         this.questionlist = json.questions_answers || [];
         this.listing = json.listing || {};
+        this.loggedin_profile_id = json.loggedin_profile && json.loggedin_profile.profile_id;
         this.more_results_url = this.questionlist.length > 0 && json.questions_answers_props && json.questions_answers_props.more_results_url;
     },
+
     display: function(json) {
         if (json) {
             this.store(json);
         }
+
         this.displayQuestions();
+
         if (this.more_results_url) {
-        	pl('#addqandabox').before('<div class="showmore hoverlink" id="moreresults"><span class="initialhidden" id="moreresultsurl">' + this.more_results_url + '</span><span id="moreresultsmsg">More...</span></div>\n');
+            this.displayMoreResults();
         }
-        if (this.loggedin_profile_id && this.loggedin_profile_id !== this.listing_owner_id && this.listing.status === 'active') {
-            this.displayAddQuestionBox();
+
+        if (this.listing.status !== 'active') {
+            this.displayInactive();
         }
-        else if (this.listing.status !== 'active') {
-            pl('#addqandabox').before('<div class="messageline"><p style="font-weight: bold;">Questions cannot be asked or answered for this listing as it is not active</p></div>');
-        }
-        else if (this.loggedin_profile_id && this.loggedin_profile_id === this.listing_owner_id) {
-            pl('#addqandabox').before('<div class="messageline"><p style="font-weight: bold;">As the owner you may answer questions users ask concerning your listing</p></div>');
+        else if (this.loggedin_profile) {
+            this.displayLoggedIn();
         }
         else {
-            pl('#addqandabox').before('\
+            this.displaySignIn();
+        }
+    
+        pl('#qandaswrapper').show();
+
+        if (this.more_results_url) {
+            this.bindMoreResults();
+        }
+    },
+
+    displayMoreResults: function() {
+        pl('#addqandabox').after('<div class="showmore hoverlink" id="moreresults"><span class="initialhidden" id="moreresultsurl">'
+            + this.more_results_url + '</span><span id="moreresultsmsg">More...</span></div>\n');
+    },
+
+    displaySignIn: function() {
+        pl('#addqandabox').before('\
     <div class="messageline"><p style="font-weight: bold;">Sign in to ask a question</p></div>\
     <div class="addlistingloginrow">\
         <a id="google_login" href="">\
@@ -66,12 +87,23 @@ pl.implement(QuestionClass, {
             <div class="addlistinglogin headericon headerfbsignin"></div>\
         </a>\
     </div>\
-            ');
-            this.displayLoggedOut();
+        ');
+        this.displayLoggedOut();
+    },
+
+    displayInactive: function() {
+        pl('#addqandabox').before('<div class="messageline"><p style="font-weight: bold;">'
+            + '&nbsp;Questions cannot be asked or answered for this listing because it is not active</p></div>');
+    },
+
+    displayLoggedIn: function() {
+        var isowner = this.loggedin_profile_id === this.listing_owner_id;
+        if (!isowner) {
+            this.displayAddQuestionBox();
         }
-        pl('#qandaswrapper').show();
-        if (this.more_results_url) {
-            this.bindMoreResults();
+        else if (isowner && !this.questionlist.length) {
+            pl('#addqandabox').before('<div class="messageline"><p style="font-weight: bold;">'
+                + '&nbsp;No one has yet asked any questions for you to answer</p></div>');
         }
     },
 
@@ -96,6 +128,7 @@ pl.implement(QuestionClass, {
             pl('#fb_login').hide();
         }
     },
+
 
     // GREG START
     bindMoreResults: function() {
@@ -127,7 +160,7 @@ pl.implement(QuestionClass, {
 	                        bindlist.push([question, replyable]);
 	                    }
 	                    if (html) {
-                            pl('#moreresults').before(html);
+                            pl('#addqandabox').before(html);
                         }
                         if (more_results_url) {
                             pl('#moreresultsurl').text(more_results_url);
@@ -145,6 +178,7 @@ pl.implement(QuestionClass, {
 	                        }
 	                    }
                     },
+
                     more_results_url = pl('#moreresultsurl').text(),
                     ajax,
                     data,
@@ -161,6 +195,7 @@ pl.implement(QuestionClass, {
             }
         });
     },
+
     // GREG END
     bindAddQuestionBox: function() {
         var self = this;
@@ -171,6 +206,7 @@ pl.implement(QuestionClass, {
                     pl('#addqandamsg').html('&nbsp;');
                 }
             },
+
             keyup: function() {
                 var val = pl('#addqandatext').attr('value');
                 if (!pl('#addqandatext').hasClass('edited')) {
@@ -185,6 +221,7 @@ pl.implement(QuestionClass, {
                 }
                 return false;
             },
+
             blur: function() {
                 if (!pl('#addqandatext').hasClass('edited')) {
                     pl('#addqandatext').attr({value: 'Put your question here...'});
@@ -195,34 +232,48 @@ pl.implement(QuestionClass, {
         pl('#addqandabtn').bind({
             click: function(event) {
                 var val = SafeStringClass.prototype.clean(pl('#addqandatext').attr('value')),
-                    completeFunc = function(json) {
-                        var html = self.makeQuestion(json);
-                        pl('#addqandatext').removeClass('edited').attr({value: 'Put your question here...'});
-                        pl('#addqandabtn').removeClass('editenabled');
-                        pl('#addqandamsg').html('question posted');
-                        pl('#addqandabox').before(html);
+                    complete = function(json) {
+                        pl('#addqandaspinner').hide();
+                        pl('#addqandatext').removeClass('edited').removeAttr('disabled').attr({value: 'Put your question here...'});
+                        pl('#addqandabtn').removeClass('editenabled').show();
+                        pl('#qandamsg').text('');
+                        pl('#addqandabox').before(self.makeQuestion(json));
                     },
+
+                    text = SafeStringClass.prototype.clean(pl('#addqandatext').attr('value')),
+
                     data = {
                         message: {
                             listing_id: self.listing_id,
-                            text: val
+                            text: text
                         }
                     },
-                    ajax = new AjaxClass('/listing/ask_owner', 'addqandamsg', completeFunc);
-                if (!val || (val && !val.length > 5) || !pl('#addqandabtn').hasClass('editenabled')) {
-                    return false;
+
+
+                    ajax = new AjaxClass('/listing/ask_owner', 'qandamsg', complete);
+                if (pl('#addqandabtn').hasClass('editenabled') && text) {
+                    pl('#addqandabtn').hide();
+                    pl('#addqandatext').attr('disabled', 'disabled');
+                    pl('#addqandaspinner').show();
+                    ajax.setPostData(data);
+                    ajax.call();
                 }
-                ajax.setPostData(data);
-                ajax.call();
                 return false;
             }
         });
+        pl('#myusername').text(this.loggedin_profile && this.loggedin_profile.username);
+        if (this.loggedin_profile && this.loggedin_profile.avatar) {
+            pl('#addqandaavatar').css('background-image', 'url(' + this.loggedin_profile.avatar + ')');
+        }
     },
+
+
     bindReplyGenerator: function(questionid) {
         var self = this,
             textsel = '#qanda_replytext_' + questionid,
             msgsel = '#qanda_replymsg_' + questionid,
-            btnsel = '#qanda_replysendbtn_' + questionid;
+            btnsel = '#qanda_replysendbtn_' + questionid,
+            spinnersel = '#qanda_replyspinner_' + questionid;
         return function() {
             pl(textsel).bind({
                 focus: function() {
@@ -231,6 +282,7 @@ pl.implement(QuestionClass, {
                         pl(msgsel).html('&nbsp;');
                     }
                 },
+
                 keyup: function() {
                     var val = pl(textsel).attr('value');
                     if (!pl(textsel).hasClass('edited')) {
@@ -245,6 +297,7 @@ pl.implement(QuestionClass, {
                     }
                     return false;
                 },
+
                 blur: function() {
                     if (!pl(textsel).hasClass('edited')) {
                         pl(textsel).attr({value: 'Put your question here...'});
@@ -256,40 +309,51 @@ pl.implement(QuestionClass, {
                 click: function(event) {
                     var val = pl(textsel).attr('value'),
                         completeFunc = function(json) {
-                            var answer = SafeStringClass.prototype.htmlEntities(json.answer);
-                            pl('#qandatitlemsg').text('question posted');
-                            pl('#qanda_replyanswer_' + json.question_id).text(answer);
-                            pl('#qanda_replybox_' + json.question_id).remove();
+                            var question_id = json.question_id,
+                                answer = HTMLMarkup.prototype.stylize(SafeStringClass.prototype.htmlEntities(json.answer));
+                            pl('#qanda_replyspinner_' + question_id).hide();
+                            pl('#qandatitlemsg').text('');
+                            pl('#qanda_replyanswer_' + question_id).html(answer);
+                            pl('#qanda_replybox_' + question_id).remove();
+                            pl('#qandamsg').text('');
                         },
+
+
                         data = {
                             message: {
                                 question_id: questionid,
                                 text: SafeStringClass.prototype.clean(pl(textsel).attr('value'))
                             }
                         },
+
                         ajax = new AjaxClass('/listing/answer_question', 'qanda_replymsg_' + questionid, completeFunc);
-                    if (!val || !pl(btnsel).hasClass('editenabled')) {
-                        return false;
+                    if (val && pl(btnsel).hasClass('editenabled')) {
+                        pl(btnsel).hide();
+                        pl(textsel).attr('disabled', 'disabled');
+                        pl(spinnersel).show();
+                        ajax.setPostData(data);
+                        ajax.call();
                     }
-                    ajax.setPostData(data);
-                    ajax.call();
                     return false;
                 }
             });
         };
     },
+
     displayAddQuestionBox: function() {
         this.bindAddQuestionBox();
         pl('#addqandabox').show();
     },
+
     displayNoComments: function() {
         if (this.loggedin_profile_id) {
-            pl('#qandamsg').html('<p>Be the first to ask a question!</p>').show();
+            pl('#qandamsg').show();
         }
         else {
-            pl('#qandamsg').html('<p>Login and be the first to ask a question!</p>');
+            pl('#qandamsg').html('<p>Login to ask the owner a question</p>');
         }
     },
+
     displayQuestions: function() {
         var html = '',
             i,
@@ -315,12 +379,24 @@ pl.implement(QuestionClass, {
             }
         }
     },
+
     makeQuestion: function(question, replyable) {
-        var self = this,
-            usertext = '<span class="messageusername">' + question.from_user_nickname + '</span>',
-            datetext = '<span class="messageinlinedate">' + (question.ago_text || DateClass.prototype.agoText(question.create_date)) + '</span>',
-            questionreplybtn = replyable ? '<div class="inputbutton darkblue questionreplybtn span-3 hoverlink" id="qanda_replybtn_' + question.question_id + '">ANSWER</div>' : '',
-            questiontext = '<span class="messagequestion">' + SafeStringClass.prototype.htmlEntities(question.question) + '</span>',
+        var avatarstyle = question.from_user_avatar
+                ? ' style="background-image: url(' + question.from_user_avatar + ')"'
+                : '',
+            usertext = '<span class="commentusername">' + question.from_user_nickname + '</span>',
+			userclasstext =  question.from_user_class
+                ? '<span class="profilelistuserclass">' + question.from_user_class + '</span>'
+                : '',
+            datetext = '<span class="commentinlinedate">'
+                + (question.ago_text || DateClass.prototype.agoText(question.create_date)) + '</span>',
+            questionreplybtn = replyable
+                ? '<div class="inputbutton darkblue questionreplybtn span-3 hoverlink" id="qanda_replybtn_' + question.question_id + '">ANSWER</div>'
+                    + '<div class="addcommentspinner preloadericon initialhidden"'
+                    + ' id="qanda_replyspinner_' + question.question_id + '"></div>'
+                : '',
+            questiontext = HTMLMarkup.prototype.stylize(SafeStringClass.prototype.htmlEntities(question.question)),
+            questionline = '<span class="messagequestion">' + questiontext + '</span>',
             questionreplybox = replyable ? '\
                 <div class="questionreplyline droptransition" id="qanda_replybox_' + question.question_id + '">\
                     <p class="messageuser messagereplyuser span-4"></p>\
@@ -330,30 +406,27 @@ pl.implement(QuestionClass, {
                     <p class="messagereplymsg inputmsg successful" id="qanda_replymsg_' + question.question_id + '"></p>\
                 </div>\
             ' : '',
+            answertext = HTMLMarkup.prototype.stylize(SafeStringClass.prototype.htmlEntities(question.answer)),
             replyblock = question.answer
-                ? '<span class="messageanswer">' + SafeStringClass.prototype.htmlEntities(question.answer) + '</span>'
+                ? '<span class="messageanswer">' + answertext + '</span>'
                 : '<span class="messageanswer" id="qanda_replyanswer_' + question.question_id + '">Not yet answered by owner</span>';
-        return '\
-        <div class="messageline" id="qanda_' + question.question_id + '">\
-            <p class="messagetext">'
-                + usertext
-                + ' ' + datetext
-                + '<br/>'
-                + questiontext
-                + '<br/>'
-                + replyblock + '\
-            </p>\
-            ' + questionreplybtn + '\
-            ' + questionreplybox + '\
-        </div>\
-        ';
+        return '<div class="commentline" id="qanda_' + question.question_id + '">'
+                + '<div class="commentavatar"' + avatarstyle + '></div>'
+                + '<div class="commentheaderline">' + usertext + userclasstext + ' ' + datetext + '</div>'
+                + '<p class="commenttext">' + questionline + '</p>'
+                + '<p class="commenttext">' + replyblock + '</p>'
+                + questionreplybtn
+                + questionreplybox
+            + '</div>';
     },
+
     showReplyBox: function() {
         var questionid = this.id.replace('qanda_replybtn_', '');
         pl('#qanda_replybox_' + questionid).addClass('questionreplylineshow');
         pl('#qanda_replybtn_' + questionid).hide();
         pl('#qanda_replyanswer_' + questionid).text('');
     },
+
     bindQuestion: function(question) {
         pl('#qanda_replybtn_' + question.question_id).bind('click', this.showReplyBox);
         (this.bindReplyGenerator(question.question_id))();
