@@ -26,10 +26,6 @@ companybannermacro(`', `', `', `', `companynavselected', `')
         <div class="boxpanel boxpanelfull" id="commentlistparent">
 
             <div class="commentline addcommentline initialhidden" id="addcommentbox">
-                <div class="commentavatar" id="addcommentavatar"></div>
-                <div class="commentheaderline">
-                    <span class="commentusername" id="myusername"></span>
-                </div>
                 <textarea class="textarea commenttextarea"
                     id="addcommenttext" name="addcommenttext" cols="20" rows="5">Put your comment here...</textarea>
                 <div class="addcommentspinner preloadericon initialhidden" id="addcommentspinner"></div>

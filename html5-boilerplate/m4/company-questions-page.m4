@@ -26,10 +26,6 @@ companybannermacro(`', `', `', `', `', `companynavselected')
         <div class="boxpanel boxpanelfull" id="qandalistparent">
 
             <div class="commentline addcommentline initialhidden" id="addqandabox">
-                <div class="commentavatar" id="addqandaavatar"></div>
-                <div class="commentheaderline">
-                    <span class="commentusername" id="myusername"></span>
-                </div>
                 <textarea class="textarea commenttextarea"
                     id="addqandatext" name="addqandatext" cols="20" rows="5">Put your question to the owner here...</textarea>
                 <div class="addcommentspinner preloadericon initialhidden" id="addqandaspinner"></div>

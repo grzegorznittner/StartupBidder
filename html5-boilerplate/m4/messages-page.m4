@@ -20,13 +20,16 @@ include(header.m4)
 <div class="span-24 initialhidden wrapper">
 
     <div class="boxtitle smokegrey clear">YOUR CONVERSATION WITH <span id="from_user_nickname_upper"></span></div>
-    <div class="boxpanel boxpanelfull">
-        <div class="messageline messagereplyline initialhidden" id="messagesend">
-            <p class="messageuser messagereplyuser span-4" id="myusername"></p>
-            <textarea class="textarea messagetextarea messagereplytextarea" id="messagetext" name="messagetext" cols="20" rows="5">Put your reply here...</textarea>
-            <span class="span-3 inputbutton messagebutton messagereplybutton" id="messagebtn">SEND</span>
-            <p class="messagereplymsg inputmsg successful" id="messagemsg"></p>
+    <div class="boxpanel boxpanelfull" id="messagelistparent">
+
+        <div class="commentline addcommentline initialhidden" id="messagesend">
+            <textarea class="textarea commenttextarea"
+                id="messagetext" name="messagetext" cols="20" rows="5">Put your comment here...</textarea>
+            <div class="addcommentspinner preloadericon initialhidden" id="messagespinner"></div>
+            <span class="span-3 inputbutton messagebutton commentreplybutton" id="messagebtn">SEND</span>
+            <p class="commenttext" id="messagemsg"></p>
         </div>
+
     </div>
 
 </div>

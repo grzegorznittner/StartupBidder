@@ -1695,6 +1695,10 @@ margin: 20px auto;
     background: #ccc;
     color: #fff;
 }
+.messageline:hover {
+    background: #ccc;
+    color: #fff;
+}
 
 .firstsidebox {
     margin-top: 53px;
@@ -1731,9 +1735,9 @@ margin: 20px auto;
 .commentowner { background:#aaa; padding:2px 5px; font-size:12px; font-weight: bold; color:white; }
 .commentline { margin: 0px; padding: 0px; position: relative; min-height: 100px; }
 .commentline:nth-child(2n+1) { background: #e8e8e8; }
-.addcommentline { min-height: 150px; }
+.addcommentline { min-height: 125px; }
 .commentusername { font-weight: bold; } 
-.commentinlinedate { font-size: 12px; padding-left: 5px; }
+.commentinlinedate { color: #666; font-size: 12px; padding-left: 5px; }
 .commentdeletemsg { font-weight: normal; margin: 0; text-indent: 0; position: absolute; right: 0; }
 .commentheaderline { margin: 0; padding: 10px 10px 10px 70px; position: relative; }
 .commenttext {
@@ -1759,7 +1763,7 @@ margin: 20px auto;
     height: 90px;
     width: 725px !important;
     position: absolute;
-    top: 30px;
+    top: 5px;
     left: 70px;
 }
 .commentreplybutton {
@@ -1779,7 +1783,7 @@ margin: 20px auto;
 }
 .addcommentspinner {
     position: absolute;
-    top: 10;
+    bottom: 20px;
     right: 50px;
 }
 

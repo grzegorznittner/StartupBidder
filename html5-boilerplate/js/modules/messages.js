@@ -241,12 +241,6 @@ pl.implement(MessageGroupClass, {
         for (k in json) {
             self[k] = json[k];
         }
-        self.messagetext = self.last_text ? SafeStringClass.prototype.htmlEntities(self.last_text) : '';
-        self.messageclass = self.read ? '' : ' inputmsg'; // unread
-        self.datetext = self.last_date ? DateClass.prototype.format(self.last_date) : '';
-        self.url = self.from_user_id ? '/messages-page.html?from_user_id=' + self.from_user_id + '&from_user_nickname=' + encodeURIComponent(self.from_user_nickname) : '';
-        self.openanchor = self.url ? '<a href="' + self.url + '" class="hoverlink messagelink' + self.messageclass + '">' : '';
-        self.closeanchor = self.from_user_id ? '</a>' : '';
     },
     setEmpty: function() {
         var self = this,
@@ -260,16 +254,31 @@ pl.implement(MessageGroupClass, {
         self.store(emptyJson);
     },
     makeHtml: function() {
-        var self = this;
+        var avatarstyle = this.from_user_avatar
+                ? ' style="background-image: url(' + this.from_user_avatar + ')"'
+                : '',
+            usertext = '<span class="commentusername">' + this.from_user_nickname + '</span>',
+			userclasstext =  this.from_user_class
+                ? '<span class="profilelistuserclass">' + this.from_user_class + '</span>'
+                : '',
+            datetext = '<span class="commentinlinedate">'
+                + (this.ago_text || DateClass.prototype.agoText(this.last_date)) + '</span>',
+            text = HTMLMarkup.prototype.stylize(SafeStringClass.prototype.htmlEntities(this.last_text)),
+            messageclass = this.read ? '' : ' inputmsg',
+            url = this.from_user_id ? '/messages-page.html?from_user_id=' + this.from_user_id + '&from_user_nickname=' + encodeURIComponent(this.from_user_nickname) : '',
+            openanchor = url ? '<a href="' + url + '" class="messagelink' + messageclass + '">' : '',
+            closeanchor = url ? '</a>' : '';
         return '\
-        <div class="messageline">\
-            <p class="messageuser span-4">' + self.from_user_nickname + '</p>\
-            <p class="messagetext span-14">\
-                '+self.openanchor+'\
-                '+self.messagetext+'\
-                '+self.closeanchor+'\
+        <div class="commentline messageline">\
+        ' + openanchor + '\
+            <div class="commentavatar"' + avatarstyle + '></div>\
+            <div class="commentheaderline">\
+                ' + usertext + userclasstext + ' ' + datetext + '\
+            </div>\
+            <p class="commenttext">'
+                  + text + '\
             </p>\
-            <p class="messagedate">'+self.datetext+'</p>\
+        ' + closeanchor + '\
         </div>\
         ';
     }
@@ -333,7 +342,7 @@ pl.implement(MessageGroupListClass, {
 		                self.more_results_url = self.messages.length > 0 && json.messages_props && json.messages_props.more_results_url;
                         
 	                    if (html) {
-                            pl('#moreresults').before(html);
+                            pl('#messagesend').before(html);
                         }
                         if (self.more_results_url) {
                             pl('#moreresultsurl').text(self.more_results_url);
