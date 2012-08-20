@@ -1233,7 +1233,7 @@ public class ListingFacade {
 		return list;
 	}
 	
-	public ListingListVO getMonitoredListings(UserVO loggedInUser, ListPropertiesVO listProperties) {
+	public ListingListVO getMonitoredListings(UserVO loggedInUser, String userId, ListPropertiesVO listProperties) {
 		ListingListVO list = new ListingListVO();
 		if (loggedInUser == null) {
 			log.warning("User not logged in.");
@@ -1241,8 +1241,17 @@ public class ListingFacade {
 			list.setErrorMessage("User is not logged in.");
 			return list;
 		}
+		UserVO user = loggedInUser;
+		if (loggedInUser.isAdmin() && StringUtils.isNotEmpty(userId)) {
+			user = DtoToVoConverter.convert(getDAO().getUser(userId));
+			if (user == null) {
+				list.setErrorCode(ErrorCodes.APPLICATION_ERROR);
+				list.setErrorMessage("User doesn't exist");
+				return list;
+			}
+		}
 		List<ListingTileVO> listings = DtoToVoConverter.convertListingTiles(
-				getDAO().getMonitoredListings(loggedInUser.toKeyId(), listProperties));
+				getDAO().getMonitoredListings(user.toKeyId(), listProperties));
 		int index = listProperties.getStartIndex() > 0 ? listProperties.getStartIndex() : 1;
 		for (ListingTileVO listing : listings) {
 			listing.setOrderNumber(index++);
@@ -1373,7 +1382,7 @@ public class ListingFacade {
 	 * If queried user is logged in then returns all listings created by specified user.
 	 * If not only ACTIVE listings are returned.
 	 */
-	public ListingListVO getUserListings(UserVO loggedInUser, String stateString, ListPropertiesVO listingProperties) {
+	public ListingListVO getUserListings(UserVO loggedInUser, String stateString, String userId, ListPropertiesVO listingProperties) {
 		ListingListVO list = new ListingListVO();
 		if (loggedInUser == null) {
 			log.log(Level.WARNING, "User not logged in");
@@ -1381,9 +1390,18 @@ public class ListingFacade {
 			list.setErrorCode(ErrorCodes.NOT_LOGGED_IN);
 			return list;
 		}
+		UserVO user = loggedInUser;
+		if (loggedInUser.isAdmin() && StringUtils.isNotEmpty(userId)) {
+			user = DtoToVoConverter.convert(getDAO().getUser(userId));
+			if (user == null) {
+				list.setErrorCode(ErrorCodes.APPLICATION_ERROR);
+				list.setErrorMessage("User doesn't exist");
+				return list;
+			}
+		}
 		Listing.State state = stateString != null ? Listing.State.valueOf(stateString.toUpperCase()) : null;
 		List<ListingTileVO> listings = DtoToVoConverter.convertListingTiles(
-				getDAO().getUserListings(loggedInUser.toKeyId(), state, listingProperties));
+				getDAO().getUserListings(user.toKeyId(), state, listingProperties));
 
 		int index = listingProperties.getStartIndex() > 0 ? listingProperties.getStartIndex() : 1;
 		for (ListingTileVO listing : listings) {
@@ -1396,7 +1414,7 @@ public class ListingFacade {
 		list.setListingsProperties(listingProperties);
 		list.setCategories(getTopCategories());
 		list.setTopLocations(getTopLocations());
-		list.setUser(new UserBasicVO(loggedInUser));
+		list.setUser(new UserBasicVO(user));
 	
 		return list;
 	}

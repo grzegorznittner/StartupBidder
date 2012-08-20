@@ -558,17 +558,19 @@ public class ListingController extends ModelDrivenController {
 
 	// GET /listings/monitored
 	private HttpHeaders monitored(HttpServletRequest request) {
+		String userId = getCommandOrParameter(request, 2, "id");
 		ListPropertiesVO listingProperties = getListProperties(request);
-    	model = ListingFacade.instance().getMonitoredListings(getLoggedInUser(), listingProperties);
+    	model = ListingFacade.instance().getMonitoredListings(getLoggedInUser(), userId, listingProperties);
         return new HttpHeadersImpl("monitored").disableCaching();
 	}
 
     // GET /listings/user/<state>/
     private HttpHeaders user(HttpServletRequest request) {
     	String state = getCommandOrParameter(request, 2, "state");
+    	String id = getCommandOrParameter(request, 3, "id");
 		ListPropertiesVO listingProperties = getListProperties(request);
 
-    	model = ListingFacade.instance().getUserListings(getLoggedInUser(), state, listingProperties);
+    	model = ListingFacade.instance().getUserListings(getLoggedInUser(), state, id, listingProperties);
         return new HttpHeadersImpl("user").disableCaching();
     }
 

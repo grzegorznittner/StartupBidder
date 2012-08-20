@@ -970,7 +970,7 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 	public void testGetUserListings() {
 		// logged in user the same as the one in query
 		ListPropertiesVO listProps = new ListPropertiesVO();
-		ListingListVO list = ListingFacade.instance().getUserListings(mocks.INSIDER, mocks.INSIDER.getId(), listProps);
+		ListingListVO list = ListingFacade.instance().getUserListings(mocks.INSIDER, mocks.INSIDER.getId(), null, listProps);
 		assertNotNull("Logged in user, so list should not be empty", list);
 		checkListingsReturned(list.getListings(), listingList.get(0), listingList.get(1), listingList.get(2), listingList.get(3),
 				listingList.get(4), listingList.get(7), listingList.get(8), listingList.get(9), listingList.get(10),
@@ -981,7 +981,7 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 
 		// logged in user different to user in query, but listings exist
 		listProps = new ListPropertiesVO();
-		list = ListingFacade.instance().getUserListings(mocks.INSIDER, mocks.DRAGON.getId(), listProps);
+		list = ListingFacade.instance().getUserListings(mocks.INSIDER, mocks.DRAGON.getId(), null, listProps);
 		assertNotNull("Logged in user, so list should not be empty", list);
 		checkListingsReturned(list.getListings(), listingList.get(5), listingList.get(6));
 		checkListingsNotReturned(list.getListings(), listingList.get(14)); // 14 is POSTED listing
@@ -990,7 +990,7 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 
 		// logged in user null, but listings for user exist
 		listProps = new ListPropertiesVO();
-		list = ListingFacade.instance().getUserListings(null, mocks.JACOB.getId(), listProps);
+		list = ListingFacade.instance().getUserListings(null, mocks.JACOB.getId(), null, listProps);
 		assertNotNull("Logged in user, so list should not be empty", list);
 		checkListingsReturned(list.getListings(), listingList.get(5), listingList.get(6));
 		checkListingsNotReturned(list.getListings(), listingList.get(0), listingList.get(1), listingList.get(2),
@@ -1002,7 +1002,7 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 
 		// logged in user different to user in query, listings doesn't exist
 		listProps = new ListPropertiesVO();
-		list = ListingFacade.instance().getUserListings(mocks.INSIDER, mocks.NOT_ACTIVATED.getId(), listProps);
+		list = ListingFacade.instance().getUserListings(mocks.INSIDER, mocks.NOT_ACTIVATED.getId(), null, listProps);
 		assertNotNull("Logged in user, so list should not be empty", list);
 		assertEquals("We don't have any listings for that user in test data!", 0, list.getListings().size());
 		assertEquals("Number of result properly set", list.getListings().size(), list.getListingsProperties().getNumberOfResults());
