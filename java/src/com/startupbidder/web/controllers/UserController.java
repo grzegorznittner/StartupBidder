@@ -155,8 +155,8 @@ public class UserController extends ModelDrivenController {
 			String nickname = (String)user.get("nickname");
 			String phone = (String)user.get("phone");
 			String location = (String)user.get("location");
-			Boolean investor = BooleanUtils.toBooleanObject((String)user.get("investor"));
-			Boolean notifyEnabled = BooleanUtils.toBooleanObject((String)user.get("notify_enabled"));
+			Boolean investor = toBooleanObject(user.get("investor"));
+			Boolean notifyEnabled = toBooleanObject(user.get("notify_enabled"));
 			model = UserMgmtFacade.instance().updateUser(getLoggedInUser(),
 					name, nickname, location, phone, investor, notifyEnabled);
 			if (model == null) {
@@ -169,6 +169,16 @@ public class UserController extends ModelDrivenController {
 		}
 
 		return headers;
+	}
+	
+	private Boolean toBooleanObject(Object value) {
+		if (value instanceof Boolean) {
+			return (Boolean)value;
+		} else if (value instanceof String) {
+			return BooleanUtils.toBooleanObject((String)value);
+		} else {
+			return null;
+		}
 	}
 
 	private HttpHeaders all(HttpServletRequest request) {
