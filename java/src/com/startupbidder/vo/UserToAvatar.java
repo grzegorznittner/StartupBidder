@@ -18,4 +18,9 @@ public interface UserToAvatar {
 	 * Sets user avatar
 	 */
 	void setAvatar(String avatar);
+	
+	/**
+	 * Sets user class
+	 */
+	void setUserClass(String userClass);
 }

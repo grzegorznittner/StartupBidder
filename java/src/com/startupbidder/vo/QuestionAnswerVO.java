@@ -21,6 +21,7 @@ public class QuestionAnswerVO extends BaseVO implements UserToAvatar {
 	@JsonProperty("from_user_id") private String user;
 	@JsonProperty("from_user_avatar") private String avatar;
 	@JsonProperty("from_user_nickname") private String userNickname;
+	@JsonProperty("from_user_class") private String userClass;
 	@JsonProperty("create_date") @JsonSerialize(using=DateSerializer.class) private Date created;
 	@JsonProperty("question") private String question;
 	@JsonProperty("answer") private String answer;
@@ -87,5 +88,11 @@ public class QuestionAnswerVO extends BaseVO implements UserToAvatar {
 	}
 	public void setAvatar(String avatar) {
 		this.avatar = avatar;
+	}
+	public String getUserClass() {
+		return userClass;
+	}
+	public void setUserClass(String userClass) {
+		this.userClass = userClass;
 	}
 }

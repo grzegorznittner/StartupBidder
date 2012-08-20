@@ -77,7 +77,7 @@ public class MessageFacade {
 		SBUser user = VoToModelConverter.convert(loggedInUser);
 		List<PrivateMessageUserVO> msgs = DtoToVoConverter.convertPrivateMessageUsers(
 				getDAO().getMessageShortList(user, listProperties));
-		UserMgmtFacade.instance().updateAvatars(msgs);
+		UserMgmtFacade.instance().updateAvatarsAndClasses(msgs);
 		result.setMessages(msgs);
 		result.setMessagesProperties(listProperties);
 		return result;
