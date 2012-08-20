@@ -386,7 +386,7 @@ pl.implement(QuestionClass, {
                 : '',
             usertext = '<span class="commentusername">' + question.from_user_nickname + '</span>',
 			userclasstext =  question.from_user_class
-                ? '<span class="profilelistuserclass">' + question.from_user_class + '</span>'
+                ? '<span class="profilelistuserclass">' + ProfileUserClass.prototype.format(question.from_user_class) + '</span>'
                 : '',
             datetext = '<span class="commentinlinedate">'
                 + (question.ago_text || DateClass.prototype.agoText(question.create_date)) + '</span>',

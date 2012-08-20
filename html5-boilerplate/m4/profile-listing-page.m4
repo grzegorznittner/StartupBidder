@@ -9,6 +9,7 @@ include(head.m4)
 <div id="main">
 '
 include(header.m4)
+include(profile-not-found.m4)
 `
 <div class="container preloader">
     <div class="preloaderfloater"></div>

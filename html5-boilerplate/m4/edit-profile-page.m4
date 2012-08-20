@@ -9,11 +9,11 @@ include(head.m4)
 <div id="main">
 '
 include(header.m4)
+include(profile-not-found.m4)
 `
-
 <div class="container">
 <div class="bannersmall">
-    <span class="bannertextsmall span-16">EDITING YOUR PROFILE</span>
+    <span class="bannertextsmall span-16">EDITING PROFILE</span>
 </div> <!-- end banner -->
 </div>
 
