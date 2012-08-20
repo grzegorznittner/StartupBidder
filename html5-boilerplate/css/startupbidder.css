@@ -1550,7 +1550,7 @@ position: relative;
 .profilelistheader { padding-left: 70px !important; text-indent: 0 !important; }
 .profilelistdetails { padding-left: 70px !important; text-indent: 0 !important; }
 .profilelistlastlogin { padding-left: 10px; }
-.profilelistpending { color: #55a4f2; }
+.profilelistpending { }
 .profilelistavatar {
     height: 50px;
     width: 50px;
@@ -1570,7 +1570,7 @@ position: relative;
     margin: auto;
     border: 1px solid #ccc;
 }
-.profilelist .messageline:hover {
+.messageline:hover {
     background: #ccc;
     color: #fff;
 }
@@ -1695,11 +1695,6 @@ margin: 20px auto;
     background: #ccc;
     color: #fff;
 }
-.messageline:hover {
-    background: #ccc;
-    color: #fff;
-}
-
 .firstsidebox {
     margin-top: 53px;
 }
@@ -1735,7 +1730,9 @@ margin: 20px auto;
 .commentowner { background:#aaa; padding:2px 5px; font-size:12px; font-weight: bold; color:white; }
 .commentline { margin: 0px; padding: 0px; position: relative; min-height: 100px; }
 .commentline:nth-child(2n+1) { background: #e8e8e8; }
-.addcommentline { min-height: 125px; }
+
+
+addcommentline { min-height: 125px; }
 .commentusername { font-weight: bold; } 
 .commentinlinedate { color: #666; font-size: 12px; padding-left: 5px; }
 .commentdeletemsg { font-weight: normal; margin: 0; text-indent: 0; position: absolute; right: 0; }

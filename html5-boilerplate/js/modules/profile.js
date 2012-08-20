@@ -515,7 +515,7 @@ pl.implement(ProfileListClass, {
                 : '',
 			admintext =  listitem.admin ? '<span class="profilelistadmin">ADMIN</span>' : '',
 			userclasstext =  listitem.user_class
-                ? '<span class="profilelistuserclass">' + listitem.user_class.toUpperCase() + '</span>'
+                ? '<span class="profilelistuserclass">' + listitem.user_class.replace(/[_-]/g, ' ').toUpperCase() + '</span>'
                 : '',
             nametext = listitem.name
                 ? 'Name:<span class="profilelistlastlogin">'
@@ -530,17 +530,14 @@ pl.implement(ProfileListClass, {
                     + DateClass.prototype.format(listitem.last_login) + '</span></br>'
                 : '',
 			pendingtext =  listitem.edited_listing
-                ? '<a href="/company-page.html?id=' + listitem.edited_listing + '">'
-                    + '<span class="profilelistpending">pending listing</span>'
-                    + '</a><br/>'
+                ? '<span class="profilelistpending">has a pending listing</span><br/>'
                 : '',
             html = '\
             <div class="messageline">\
+                <a href="' + url + '">\
                 <div class="profilelistavatar"' + avatarstyle + '></div>\
                 <p class="messagetext profilelistheader">\
-                    <a href="' + url + '">\
 			            <span class="profilelistusername">' + listitem.username + '</span>\
-                    </a>\
 			        <span class="profilelistemail">' + listitem.email+ '</span>\
                     ' + statustext + '\
                     ' + userclasstext + '\
@@ -552,6 +549,7 @@ pl.implement(ProfileListClass, {
                     ' + lastlogintext + '\
                     ' + pendingtext + '\
                 </p>\
+                </a>\
             </div>\
             ';
         return html;
