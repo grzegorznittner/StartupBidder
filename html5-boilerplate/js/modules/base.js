@@ -1873,6 +1873,11 @@ pl.implement(MainPageClass,{
     }
 });
 
+function ProfileUserClass() {}
+ProfileUserClass.prototype.format = function(user_class) {
+    return user_class.replace(/[_-]/g, ' ').toUpperCase();
+}
+
 /* google analytics tracking code */
 window._gaq = [['_setAccount','UA-23942052-1'],['_trackPageview'],['_trackPageLoadTime']];
 (function() {

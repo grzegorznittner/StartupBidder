@@ -40,7 +40,7 @@ pl.implement(ProfileClass, {
             pl('#membersince').text('Joined ' + DateClass.prototype.formatDateStr(profile.joined_date));
         }
         if (profile.user_class) {
-            pl('#user_class').text(profile.user_class.replace(/[_-]/g, ' ').toUpperCase());
+            pl('#user_class').text(ProfileUserClass.prototype.format(profile.user_class));
         }
         if (this.loggedin_profile
             && !(this.loggedin_profile.user_class === 'dragon' || this.loggedin_profile.user_class === 'requested_dragon')
@@ -205,8 +205,13 @@ pl.implement(ProfilePageClass,{
                 pl('.preloader').hide();
                 pl('.wrapper').show();
             },
+            error = function(errornum, json) {
+                (new HeaderClass()).setLogin(json);
+                pl('.preloader').hide();
+                pl('.errorwrapper').show();
+            },
             url = this.passed_id ? '/user/get/' + this.passed_id : '/listings/discover_user',
-            ajax = new AjaxClass(url, 'profilemsg', completeFunc);
+            ajax = new AjaxClass(url, 'profilemsg', completeFunc, null, null, error);
         ajax.call();
     }
 });
@@ -214,7 +219,7 @@ pl.implement(ProfilePageClass,{
 function ProfileListingPageClass() {
     this.json = {};
     this.queryString = new QueryStringClass();
-    this.passed_id = queryString.vars.id;
+    this.passed_id = this.queryString.vars.id;
     this.type = this.queryString.vars.type || 'active';
     this.data = { max_results: 20 };
     this.urlmap = {
@@ -225,11 +230,13 @@ function ProfileListingPageClass() {
         admin_posted: '/listings/posted',
         admin_frozen: '/listings/frozen'
     };
-    this.url = this.urlmap[this.type] || this.urlmap['active'];
-    this.isadmin = this.type === 'admin_posted' || this.type === 'admin_frozen';
-    this.title = (this.isadmin ? 'YOUR ' : '') + this.type.toUpperCase() + ' LISTINGS';
-};
-pl.implement(ProfileListingPageClass,{
+    this.urlroot = this.urlmap[this.type] || this.urlmap['active'];
+    this.url = this.passed_id ? this.urlroot + '/' + this.passed_id : this.urlroot;
+    this.isadmin = this.type === 'admin_posted' || this.type === 'admin_frozen' || this.passed_id;
+    this.title = (this.isadmin ? 'USER' : 'YOUR') + ' ' + this.type.toUpperCase() + ' LISTINGS';
+}
+
+pl.implement(ProfileListingPageClass, {
     loadPage: function() {
         var self = this,
             completeFunc = function(json) {
@@ -242,13 +249,26 @@ pl.implement(ProfileListingPageClass,{
                     window.location = '/';
                 }
                 profile.display(json);
-                pl('#listingstitle').text(self.title);
                 companyList.storeList(json);
-                pl('#editprofilebutton').show();
+                pl('#listingstitle').text(self.title);
+
+                if (self.isadmin) {
+                    pl('#titleperson').text('USER');
+                }
+
+                if (!self.passed_id || self.passed_id === json.loggedin_profile.profile_id) {
+                    pl('#editprofilebutton').show();
+                }
+
                 pl('.preloader').hide();
                 pl('.wrapper').show();
-             },
-             ajax = new AjaxClass(self.url, 'companydiv', completeFunc);
+            },
+            error = function(errornum, json) {
+                (new HeaderClass()).setLogin(json);
+                pl('.preloader').hide();
+                pl('.errorwrapper').show();
+            },
+            ajax = new AjaxClass(self.url, 'companydiv', completeFunc, null, null, error);
         ajax.setGetData(this.data);
         ajax.call();
     }
@@ -454,7 +474,12 @@ pl.implement(EditProfilePageClass,{
                 pl('.preloader').hide();
                 pl('.wrapper').show();
             },
-            ajax = new AjaxClass('/listings/discover_user', 'personalinfomsg', completeFunc);
+            error = function(errornum, json) {
+                (new HeaderClass()).setLogin(json);
+                pl('.preloader').hide();
+                pl('.errorwrapper').show();
+            },
+            ajax = new AjaxClass('/listings/discover_user', 'personalinfomsg', completeFunc, null, null, error);
         ajax.call();
     }
 });
@@ -515,7 +540,7 @@ pl.implement(ProfileListClass, {
                 : '',
 			admintext =  listitem.admin ? '<span class="profilelistadmin">ADMIN</span>' : '',
 			userclasstext =  listitem.user_class
-                ? '<span class="profilelistuserclass">' + listitem.user_class.replace(/[_-]/g, ' ').toUpperCase() + '</span>'
+                ? '<span class="profilelistuserclass">' + ProfileUserClass.prototype.format(listitem.user_class) + '</span>'
                 : '',
             nametext = listitem.name
                 ? 'Name:<span class="profilelistlastlogin">'
@@ -564,7 +589,12 @@ pl.implement(ProfileListClass, {
                 pl('.preloader').hide();
                 pl('.wrapper').show();
             },
-            ajax = new AjaxClass('/user/all', 'profilelistmsg', complete);
+            error = function(errornum, json) {
+                (new HeaderClass()).setLogin(json);
+                pl('.preloader').hide();
+                pl('.errorwrapper').show();
+            },
+            ajax = new AjaxClass('/user/all', 'profilelistmsg', complete, null, null, error);
         ajax.call();
     }
 });

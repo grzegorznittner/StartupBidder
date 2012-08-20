@@ -199,7 +199,7 @@ pl.implement(CommentClass, {
             ownermarker = isowner ? '<span class="commentowner">Owner</span> ' : '',
             usertext = '<span class="commentusername">' + comment.profile_username + '</span>',
 			userclasstext =  comment.profile_user_class
-                ? '<span class="profilelistuserclass">' + comment.profile_user_class + '</span>'
+                ? '<span class="profilelistuserclass">' + ProfileUserClass.prototype.format(comment.profile_user_class) + '</span>'
                 : '',
             datetext = '<span class="commentinlinedate">'
                 + (comment.ago_text || DateClass.prototype.agoText(comment.comment_date)) + '</span>',
