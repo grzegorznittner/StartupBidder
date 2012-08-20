@@ -562,6 +562,13 @@ public class UserMgmtFacade {
 		}
 		UserVO user = DtoToVoConverter.convert(getDAO().updateUser(oldUser));
 		if (user != null) {
+			loggedInUser.setEmail(user.getEmail());
+			loggedInUser.setNickname(user.getNickname());
+			loggedInUser.setName(user.getName());
+			loggedInUser.setLocation(user.getLocation());
+			loggedInUser.setPhone(user.getPhone());
+			loggedInUser.setAccreditedInvestor(user.isAccreditedInvestor());
+			loggedInUser.setNotifyEnabled(user.isNotifyEnabled());
 			applyUserStatistics(loggedInUser, user);
 			//ServiceFacade.instance().createNotification(user.getId(), user.getId(), Notification.Type.YOUR_PROFILE_WAS_MODIFIED, "");
 		}
