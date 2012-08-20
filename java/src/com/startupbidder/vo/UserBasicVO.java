@@ -27,6 +27,7 @@ public class UserBasicVO extends BaseVO {
 	@JsonProperty("admin") private boolean admin;
 	@JsonProperty("user_class") private String userClass;
 	@JsonProperty("avatar") private String avatar;
+	@JsonProperty("notify_enabled") private boolean notifyEnabled;
 	public UserBasicVO() {
 	}
 	public UserBasicVO(UserVO user) {
@@ -41,6 +42,7 @@ public class UserBasicVO extends BaseVO {
 		this.admin = user.isAdmin();
 		this.userClass = user.getUserClass();
 		this.avatar = user.getAvatar();
+		this.notifyEnabled = user.isNotifyEnabled();
 	}
 	public String getId() {
 		return id;
@@ -107,5 +109,11 @@ public class UserBasicVO extends BaseVO {
 	}
 	public void setAvatar(String avatar) {
 		this.avatar = avatar;
+	}
+	public boolean isNotifyEnabled() {
+		return notifyEnabled;
+	}
+	public void setNotifyEnabled(boolean notifyEnabled) {
+		this.notifyEnabled = notifyEnabled;
 	}
 }
