@@ -16,12 +16,16 @@ public class UserShortVO extends BaseVO {
 	@JsonProperty("profile_id") private String id;
 	@JsonProperty("username") private String nickname;
 	@JsonProperty("name") private String name;
+	@JsonProperty("user_class") private String userClass;
+	@JsonProperty("avatar") private String avatar;
 	public UserShortVO() {
 	}
 	public UserShortVO(UserVO user) {
 		this.id = user.getId();
 		this.nickname = user.getNickname();
 		this.name = user.getName();
+		this.userClass = user.getUserClass();
+		this.avatar = user.getAvatar();
 	}
 	public String getId() {
 		return id;
@@ -40,5 +44,17 @@ public class UserShortVO extends BaseVO {
 	}
 	public void setName(String name) {
 		this.name = name;
+	}
+	public String getUserClass() {
+		return userClass;
+	}
+	public void setUserClass(String userClass) {
+		this.userClass = userClass;
+	}
+	public String getAvatar() {
+		return avatar;
+	}
+	public void setAvatar(String avatar) {
+		this.avatar = avatar;
 	}
 }
