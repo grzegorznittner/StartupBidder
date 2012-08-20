@@ -1248,6 +1248,8 @@ include(header.m4)
         listing_title: :title,
         profile_id: :comment_poster_id,
         profile_username: :comment_poster_username,
+        profile_user_class: :comment_poster_class,
+        profile_user_avatar: :comment_poster_avatar,
         text: :text,
         comment_date: :comment_date_yyyymmdd
     },
@@ -1291,6 +1293,8 @@ include(header.m4)
                 <li><code>listing_title</code> title for the comment listing</li>
                 <li><code>profile_id</code> id for the user who posted this comment</li>
                 <li><code>profile_username</code> username for the user who posted this comment</li>
+                <li><code>profile_user_class</code> user's class (eg. dragon)</li>
+                <li><code>profile_username</code> link to user's avatar</li>
                 <li><code>text</code> text of the comment</li>
                 <li><code>comment_date</code> date in YYYYMMDD format when the comment was posted</li>
             </ul>
@@ -1337,6 +1341,8 @@ include(header.m4)
                 <li><code>listing_title</code> title for the comment listing</li>
                 <li><code>profile_id</code> id for the user who posted this comment</li>
                 <li><code>profile_username</code> username for the user who posted this comment</li>
+                <li><code>profile_user_class</code> user's class (eg. dragon)</li>
+                <li><code>profile_username</code> link to user's avatar</li>
                 <li><code>text</code> text of the comment</li>
                 <li><code>comment_date</code> date in YYYYMMDD format when the comment was posted</li>
             </ul>
@@ -1685,6 +1691,8 @@ include(header.m4)
                 <li><code>question_id</code> unique ID for this question</li>
                 <li><code>from_user_id</code> user id who asked this question</li>
                 <li><code>from_user_nickname</code> username of user who asked this question</li>
+                <li><code>from_user_class</code> class of the user (eg. dragon)</li>
+                <li><code>from_user_avatar</code> link to the user's avatar</li>
                 <li><code>text_2</code> full question text</li>
                 <li><code>answer</code> full question answer, <var>null</var> if question is not answered yet</li>
                 <li><code>answer_date</code> date when question was answered, in YYYYMMDDHH24MMSS format, null if unanswered</li>
@@ -1770,6 +1778,8 @@ include(header.m4)
     {
         from_user_id: :uid,
         from_user_nickname: :name,
+        from_user_class: :user_class,
+        from_user_avatar: :user_avatar,
         last_text: :message,
         last_date: :date_yyyymmddhh24mmss,
         counter: :number_of_messages
