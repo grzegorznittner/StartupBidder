@@ -392,7 +392,7 @@ pl.implement(QuestionClass, {
                 + (question.ago_text || DateClass.prototype.agoText(question.create_date)) + '</span>',
             questionreplybtn = replyable
                 ? '<div class="inputbutton darkblue questionreplybtn span-3 hoverlink" id="qanda_replybtn_' + question.question_id + '">ANSWER</div>'
-                    + '<div class="commentdeletespinner preloadericon initialhidden"'
+                    + '<div class="addcommentspinner preloadericon initialhidden"'
                     + ' id="qanda_replyspinner_' + question.question_id + '"></div>'
                 : '',
             questiontext = HTMLMarkup.prototype.stylize(SafeStringClass.prototype.htmlEntities(question.question)),
