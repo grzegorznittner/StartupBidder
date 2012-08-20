@@ -710,15 +710,16 @@ public class UserMgmtFacade {
 		return null;
 	}
 	
-	public void updateAvatar(UserToAvatar item) {
+	public void updateAvatarAndClass(UserToAvatar item) {
 		if (item == null) {
 			return;
 		}
 		SBUser user = getDAO().getUser(item.getUser());
 		item.setAvatar(user.avatarUrl);
+		item.setUserClass(user.userClass);
 	}
 	
-	public void updateAvatars(List<? extends UserToAvatar> items) {
+	public void updateAvatarsAndClasses(List<? extends UserToAvatar> items) {
 		if (items == null || items.size() == 0) {
 			return;
 		}
@@ -735,6 +736,7 @@ public class UserMgmtFacade {
 				SBUser user = users.get(item.getUser());
 				if (user != null) {
 					item.setAvatar(user.avatarUrl);
+					item.setUserClass(user.userClass);
 				}
 			}
 		}

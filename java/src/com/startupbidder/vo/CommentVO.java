@@ -22,6 +22,7 @@ public class CommentVO extends BaseVO implements UserToAvatar {
 	@JsonProperty("profile_id") private String user;
 	@JsonProperty("profile_avatar") private String avatar;
 	@JsonProperty("profile_username") private String userName;
+	@JsonProperty("profile_user_class") private String userClass;
 	@JsonProperty("text") private String comment;
 	@JsonProperty("comment_date") @JsonSerialize(using=DateSerializer.class) private Date   commentedOn;
 	
@@ -89,5 +90,13 @@ public class CommentVO extends BaseVO implements UserToAvatar {
 
 	public void setAvatar(String avatar) {
 		this.avatar = avatar;
+	}
+
+	public String getUserClass() {
+		return userClass;
+	}
+
+	public void setUserClass(String userClass) {
+		this.userClass = userClass;
 	}
 }
