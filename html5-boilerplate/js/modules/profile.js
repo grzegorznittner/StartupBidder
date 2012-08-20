@@ -279,26 +279,30 @@ pl.implement(EditProfileClass, {
     getUpdater: function() {
         var self = this;
         return function(newdata, loadFunc, errorFunc, successFunc) {
-            var data, field, ajax;
-            data = { profile: {
-                name: pl('#name').attr('value'),
-                nickname: pl('#username').attr('value')
-                /*
-                profile_id: self.profile_id,
-                status: self.status,
-                open_id: self.open_id,
-                investor: pl('#investor').attr('value') ? 'true' : 'false'
-                title: pl('#title').attr('value'),
-                organization: pl('#organization').attr('value'),
-                facebook:'',
-                twitter:'',
-                linkedin:''
-                */
-            } };
+            var notify_enabled = pl('#notify_enabled').hasClass('checkboxcheckedicon') ? true : false,
+                data = {
+                    profile: {
+                        name: pl('#name').attr('value'),
+                        nickname: pl('#username').attr('value'),
+                        notify_enabled: notify_enabled
+                        /*
+                        profile_id: self.profile_id,
+                        status: self.status,
+                        open_id: self.open_id,
+                        investor: pl('#investor').attr('value') ? 'true' : 'false'
+                        title: pl('#title').attr('value'),
+                        organization: pl('#organization').attr('value'),
+                        facebook:'',
+                        twitter:'',
+                        linkedin:''
+                        */
+                    }
+                },
+                ajax = new AjaxClass('/user/autosave', '', null, successFunc, loadFunc, errorFunc),
+                field;
             for (field in newdata) {
                 data.profile[field] = newdata[field];
             }
-            ajax = new AjaxClass('/user/autosave', '', null, successFunc, loadFunc, errorFunc);
             ajax.setPostData(data);
             ajax.call();
         };
@@ -349,7 +353,7 @@ pl.implement(EditProfileClass, {
             json = discoverjson && discoverjson.loggedin_profile || {},
             properties = ['profile_id', 'username', 'email', 'name'],
             textFields = ['username', 'name'],
-            i, property, textFields, textFieldId, textFieldObj, investorCheckbox; 
+            i, property, textFields, textFieldId, textFieldObj, notifyCheckbox; 
         self.profile_id = json.profile_id;
         self.admin = json.admin;
         self.updateUrl = '/user/update?id=' + self.profile_id;
@@ -406,18 +410,20 @@ pl.implement(EditProfileClass, {
             }
             textFieldObj.bindEvents();
         }
-/*
-        investorCheckbox = new CheckboxFieldClass('investor', json.investor, self.getUpdater(), 'personalinfomsg');
-        investorCheckbox.bindEvents();
-
-        notifyCheckbox = new CheckboxFieldClass('notifyenabled', json.notifyenabled, self.getUpdater(), 'settingsmsg');
+        notifyCheckbox = new CheckboxFieldClass('notify_enabled', json.notify_enabled, self.getUpdater(), 'personalinfomsg');
         notifyCheckbox.bindEvents();
+/*
+
         newPassword = new TextFieldClass('newpassword', '', function(){}, 'passwordmsg');
         passwordOptions = {
             length: [8, 32],
             badWords: ['password', self.name, self.username, self.email, (self.email&&self.email.indexOf('@')>0?self.email.split('@')[0]:'')],
             badSequenceLength: 3
         };
+
+        investorCheckbox = new CheckboxFieldClass('investor', json.investor, self.getUpdater(), 'personalinfomsg');
+        investorCheckbox.bindEvents();
+
         newPassword.fieldBase.addValidator(newPassword.fieldBase.validator.makePasswordChecker(passwordOptions));
         newPassword.fieldBase.validator.postValidator = function(result) {
             if (result === 0) {
@@ -459,17 +465,12 @@ pl.implement(EditProfileClass, {
             blur: self.hideAllInfo
         });
         pl('.sideinfo').bind('click', self.hideAllInfo);
-    }
-});
-
-function EditProfilePageClass() {}
-pl.implement(EditProfilePageClass,{
-    loadPage: function() {
-        var completeFunc = function(json) {
-                var header = new HeaderClass(),
-                    editProfile = new EditProfileClass();
-                header.setLogin(json);
-                editProfile.display(json);
+    },
+    load: function() {
+        var self = this,
+            completeFunc = function(json) {
+                (new HeaderClass()).setLogin(json);
+                self.display(json);
                 pl('#personalinfomsg').text('');
                 pl('.preloader').hide();
                 pl('.wrapper').show();

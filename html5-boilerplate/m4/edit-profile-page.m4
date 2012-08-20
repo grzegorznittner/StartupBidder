@@ -33,7 +33,7 @@ include(profile-not-found.m4)
 
     <div class="boxpanel editprofilepanel">
         <div class="formitem sideinfoitem clear">
-            <span class="inputlabel">EMAIL</span>
+            <label class="inputlabel" for="email">EMAIL</label>
             <span class="inputfield">
                 <div class="inputhelp inputmsg" id="email"></div>
             </span>
@@ -44,7 +44,7 @@ include(profile-not-found.m4)
             </p>
         </div>
         <div class="formitem sideinfoitem clear">
-            <span class="inputlabel">NICKNAME</span>
+            <label class="inputlabel" for="username">NICKNAME</label>
             <span class="inputfield">
                 <input class="text inputwidetext" type="text" name="username" id="username" value=""></input>
             </span>
@@ -58,7 +58,7 @@ include(profile-not-found.m4)
             </span>
         </div>
         <div class="formitem sideinfoitem clear">
-            <span class="inputlabel">NAME</span>
+            <label class="inputlabel" for="name">NAME</label>
             <span class="inputfield">
                 <input class="text inputwidetext" type="text" name="name" id="name" value=""></input>
             </span>
@@ -71,6 +71,22 @@ include(profile-not-found.m4)
                 <div id="nameicon"></div>
             </span>
         </div>
+        <div class="formitem sideinfoitem clear">
+            <label class="inputlabel" for="notify_enabled">NOTIFY</label>
+            <span class="inputcheckbox">
+                <div id="notify_enabled"></div>
+            </span>
+            <span class="inputhelp">Receive a copy of each notification via email</span>
+            <p class="sideinfo">
+                <label class="sideinfoheader">Notify</label>
+                <br />
+                Send a copy of each notification to your email address, otherwise you must login to startupbidder to check notifications.
+            </p>
+            <span class="inputicon">
+                <div id="notify_enabledicon"></div>
+            </span>
+        </div>
+
 <!--
         <div class="formitem clear">
             <span class="inputlabel">INVESTOR</span>
@@ -126,17 +142,6 @@ include(profile-not-found.m4)
                 <div class="investor"></div>
             </span>
             <span class="inputhelp">Accredited investor in your jurisdiction</span>
-        </div>
-        <div class="formitem clear">
-            <span class="inputlabel">NOTIFY</span>
-            <span class="inputcheckbox">
-                <div class="notifyenabled"></div>
-            </span>
-            <span class="inputhelp">Receive a copy of each notification via email</span>
-        </div>
-        <div class="formitem clear">
-	        <span class="inputlabel"></span>
-            <span class="span-12 inputhelp inputmsg" id="settingsmsg"></span>
         </div>
     </div>
 
@@ -207,7 +212,7 @@ include(footer.m4)
 <script src="js/modules/forms.js"></script>
 <script src="js/modules/profile.js"></script>
 <script>
-(new EditProfilePageClass()).loadPage();
+(new EditProfileClass()).load();
 </script>
 '
 include(promptie.m4)
