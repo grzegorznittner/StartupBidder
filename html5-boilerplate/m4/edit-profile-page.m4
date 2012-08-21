@@ -12,9 +12,17 @@ include(header.m4)
 include(profile-not-found.m4)
 `
 <div class="container">
-<div class="bannersmall">
-    <span class="bannertextsmall span-16">EDITING PROFILE</span>
-</div> <!-- end banner -->
+    <div class="bannersmall">
+        <span class="bannertextsmall span-16">EDITING PROFILE</span>
+    </div> <!-- end banner -->
+
+    <div class="span-16">
+        <a href="profile-page.html" class="backbuttonlink">
+            <span class="push-1 span-3 inputbutton backbutton">
+                &lt;&lt; BACK
+            </span>
+        </a>
+    </div>
 </div>
 
 <div class="container preloader">

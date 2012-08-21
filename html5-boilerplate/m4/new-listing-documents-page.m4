@@ -23,7 +23,7 @@ include(company-not-found.m4)
     <div class="span-16">
         <a href="#" class="backbuttonlink">
             <span class="push-1 span-3 inputbutton backbutton">
-                << BACK
+                &lt;&lt; BACK
             </span>
         </a>
     </div>

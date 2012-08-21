@@ -279,7 +279,8 @@ pl.implement(EditProfileClass, {
     getUpdater: function() {
         var self = this;
         return function(newdata, loadFunc, errorFunc, successFunc) {
-            var notify_enabled = pl('#notify_enabled').hasClass('checkboxcheckedicon') ? true : false,
+            var old_notify_enabled = pl('#notify_enabled').hasClass('checkboxcheckedicon') ? true : false,
+                notify_enabled = !old_notify_enabled,
                 data = {
                     profile: {
                         name: pl('#name').attr('value'),
