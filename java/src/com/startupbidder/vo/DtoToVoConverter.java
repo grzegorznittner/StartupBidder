@@ -370,9 +370,6 @@ public class DtoToVoConverter {
 		notif.setListingOwner(notifDTO.listingOwner);
 		if (notifDTO.listingOwnerUser != null) {
 			notif.setListingOwnerId(notifDTO.listingOwnerUser.getString());
-		} else {
-			log.severe("Listing owner id is not set for notification " + notifDTO.getKey() +
-					" Most likely this is old Notification created without this field.");
 		}
 		notif.setListingMantra(notifDTO.listingMantra);
 		notif.setListingCategory(notifDTO.listingCategory);
