@@ -94,36 +94,6 @@ public class SetupServlet extends HttpServlet {
                     + "<input type=\"submit\" value=\"Update all listings docs\"/></form>");
 
             
-            out.println("<h1>Imports</h1>");
-
-            out.println("<form method=\"POST\" action=\"/system/delete-geocode-cache/.html\">"
-                    + "<input type=\"submit\" value=\"Delete Geocode Cache\"/></form>");
-
-            out.println("<p>Startuply Startup Import:</p>");
-            out.println("<form method=\"POST\" action=\"/system/import-startuply-data/.html\">"
-                    + "Max Count to Import: <input name=\"max\" type=\"text\" value=\"1000\"/></br>"
-                    + "<input type=\"submit\" value=\"Import Data\"/></form>");
-
-            out.println("<p>Startuply Delete Cache:</p>");
-            out.println("<form method=\"POST\" action=\"/system/delete-startuply-cache/.html\">"
-                    + "<input type=\"submit\" value=\"Delete Data\"/></form>");
-
-            out.println("<p>AngelList Startup Import:</p>");
-            out.println("<form method=\"POST\" action=\"/system/import-angellist-data/.html\">"
-                    + "From ID: <input name=\"fromId\" type=\"text\" value=\"19000\"/></br>"
-                    + "To ID: <input name=\"toId\" type=\"text\" value=\"19100\"/></br>"
-                    + "<input type=\"submit\" value=\"Import Data\"/></form>");
-
-            out.println("<p>AngelList Startup Delete Cache:</p>");
-            out.println("<form method=\"POST\" action=\"/system/delete-angellist-cache/.html\">"
-                    + "From ID: <input name=\"fromId\" type=\"text\" value=\"19000\"/></br>"
-                    + "To ID: <input name=\"toId\" type=\"text\" value=\"19100\"/></br>"
-                    + "<input type=\"submit\" value=\"Delete Data\"/></form>");
-
-            out.println("<form method=\"POST\" action=\"/system/delete-angellist-cache/.html\">"
-                    + "<input type=\"submit\" value=\"Delete Full AngelList Cache\"/></form>");
-
-
             out.println("<h1>System Settings</h1>");
 
             out.println("<p>Available system properties:");
