@@ -32,6 +32,9 @@ public class ListPropertiesVO {
         updateMoreResultsUrl(startIndex + numberOfResults);
     }
 	public void updateMoreResultsUrl(int nextStartIndex) {
+		if (nextCursor == null) {
+			return;
+		}
 		StringBuffer url = new StringBuffer();
 		url.append(requestPathInfo).append("?");
 		for (Map.Entry<String, String> param : parameters.entrySet()) {

@@ -1549,7 +1549,7 @@ public class ListingFacade {
         return list;
     }
 
-	public ListingListVO listingKeywordSearch(UserVO loggedInUser, String text, ListPropertiesVO listingProperties) {
+	public ListingListVO listingKeywordSearch(UserVO loggedInUser, String text, ListPropertiesVO listingProperties) {	
 		ListingListVO listingsList = new ListingListVO();
 		List<ListingTileVO> listings = new ArrayList<ListingTileVO>();
 		String[] keywords = splitSearchKeywords(text);
@@ -1557,83 +1557,21 @@ public class ListingFacade {
         // rational inits
         listingProperties.setStartIndex(listingProperties.getStartIndex() >= 1 ? listingProperties.getStartIndex() : 1);
         listingProperties.setMaxResults(listingProperties.getMaxResults() >= 1 && listingProperties.getMaxResults() <= 20 ? listingProperties.getMaxResults() : 20);
-        int limitSize = listingProperties.getStartIndex() + 2*listingProperties.getMaxResults(); // always ask for extra since there may be sent back/frozen/withdrawn before google docs is updated
-		log.info("Ready to query for keywords=[" + keywords[0] + "] with limitSize = [" + limitSize + "]");
+        //int limitSize = listingProperties.getStartIndex() + 2*listingProperties.getMaxResults();
+		log.info("Ready to query for keywords=[" + keywords[0] + "]");
         
 		List<Long> results = null;
 		if (!StringUtils.isEmpty(keywords[0])) {
-			results = DocService.instance().fullTextSearch(keywords[0], limitSize);
+			results = ListingSearchService.instance().fullTextSearch("status:active content:" + keywords[0], listingProperties);
 		}
         log.info("Got back results size=[" + results.size() + "]");
-        // use dedicated /listing/category and /listing/location searches instead 
-        /*
-		if (!StringUtils.isEmpty(keywords[1])) {
-			List<Long> categoryResults = getDAO().getListingsIdsForCategory(keywords[1], listingProperties);
-			log.info("Category search for '" + keywords[1] + "' returned " + categoryResults.size()
-					+ " items. Items: " + Arrays.toString(categoryResults.toArray()));
-			if (results != null) {
-				results.retainAll(categoryResults);
-			} else {
-				results = categoryResults;
-			}
-		}
-		if (!StringUtils.isEmpty(keywords[2])) {
-			String[] location = splitLocationString(keywords[2]);
-			List<Long> locationResults = getDAO().getListingsIdsForLocation(location[2], location[1], location[0], listingProperties);
-			log.info("Location search for '" + Arrays.toString(location) + "' returned " + locationResults.size()
-					+ " items. Items: " + Arrays.toString(locationResults.toArray()));
-			if (results != null) {
-				results.retainAll(locationResults);
-			} else {
-				results = locationResults;
-			}
-		}
-		*/
-
-        // limit results returned
-        if (results.size() > 0) {
-		    results = results.subList(listingProperties.getStartIndex() - 1, results.size());
-        }
-		log.info("Results to be returned contains " + results.size() + " items. Items: " + Arrays.toString(results.toArray()));
 		
         // get our final list of listings, and construct more results cursor if necessary along the way
-        boolean moreResults = false;
-        int nextStartIndex = listingProperties.getStartIndex();
 		List<Listing> listingList = getDAO().getListings(results);
 		for (Listing listingDAO : listingList) {
-            boolean potentialAdd = false;
 			ListingTileVO listing = DtoToVoConverter.convertTile(listingDAO);
-			if (Listing.State.ACTIVE.toString().equalsIgnoreCase(listing.getState())) { // should always be the case
-				log.info("Active listing potentially added to keyword search results " + listing);
-                potentialAdd = true;
-            }
-            else if (loggedInUser != null && loggedInUser.getId().equals(listing.getOwner())) {
-				log.info("Owned listing potentially added to keyword search results " + listing);
-                potentialAdd = true;
-				listings.add(listing);
-			}
-            else {
-				log.info("Listing not added to results, listing: " + listing);
-			}
-            if (potentialAdd) {
-                if (listings.size() == listingProperties.getMaxResults()) { // too big, can't add, but have more results
-                    moreResults = true;
-                    break;
-                }
-                else {
-                    listing.setOrderNumber(listings.size() + 1);
-                    listings.add(listing);
-                }
-            }
-            nextStartIndex++;
+			listings.add(listing);
 		}
-
-        // excess result calculations
-        listingProperties.setNumberOfResults(listings.size());
-        if (moreResults) {
-            listingProperties.updateMoreResultsUrl(nextStartIndex);
-        }
-        log.info("Calculated numResults=[" + listings.size() + "] with moreResults=[" + moreResults + "] and moreResultsUrl=[" + listingProperties.getMoreResultsUrl() + "]");
 
 		if (loggedInUser != null) {
 			listingsList.setUser(new UserBasicVO(loggedInUser));
@@ -1759,9 +1697,9 @@ public class ListingFacade {
     public String updateAllListingDocuments() {
         List<Listing> listings = getDAO().getAllListingsInternal();
         log.log(Level.INFO, "Starting doc update for " + listings.size() + " listings.");
-        int updatedDocs = DocService.instance().updateAllListingsData(listings);
-        log.log(Level.INFO, "Scheduled google doc update for " + updatedDocs + " listings.");
-        return "Scheduled google doc update for " + updatedDocs + " listings.";
+        int updatedDocs = ListingSearchService.instance().updateAllListingsData(listings);
+        log.log(Level.INFO, "Updated search index for " + updatedDocs + " listings.");
+        return "Updated search index for " + updatedDocs + " listings.";
     }
     
 	public void applyListingData(UserVO loggedInUser, ListingVO listing, Monitor monitor) {
@@ -2154,11 +2092,6 @@ public class ListingFacade {
 
 	public ListingDocumentVO getListingDocument(UserVO loggedInUser, String docId) {
 		return DtoToVoConverter.convert(getDAO().getListingDocument(BaseVO.toKeyId(docId)));
-	}
-
-	public List<ListingDocumentVO> getGoogleDocDocuments() {
-		DocService.instance().createFolders();
-		return DocService.instance().getAllDocuments();
 	}
 
 	public Map<String, String> getCategories() {

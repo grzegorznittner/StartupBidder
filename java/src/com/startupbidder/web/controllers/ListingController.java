@@ -98,8 +98,6 @@ public class ListingController extends ModelDrivenController {
 				return get(request);
 			} else if("keyword".equalsIgnoreCase(getCommand(1))) {
 				return keyword(request);
-			} else if("get-all-documents".equalsIgnoreCase(getCommand(1))) {
-				return getAllDocuments(request);
 			} else if("categories".equalsIgnoreCase(getCommand(1))) {
 				return getCategories(request);
 			} else if("used_categories".equalsIgnoreCase(getCommand(1))) {
@@ -660,13 +658,6 @@ public class ListingController extends ModelDrivenController {
     	String listingId = getCommandOrParameter(request, 1, "id");
     	model = ListingFacade.instance().getListing(getLoggedInUser(), listingId);
         return new HttpHeadersImpl("index").disableCaching();
-    }
-
-    // GET /listings/get-all-documents
-    private HttpHeaders getAllDocuments(HttpServletRequest request) {
-    	//String listingId = getCommandOrParameter(request, 1, "get-all-documents");
-    	model = ListingFacade.instance().getGoogleDocDocuments();
-        return new HttpHeadersImpl("get-all-documents").disableCaching();
     }
 
     // GET /listings/categories

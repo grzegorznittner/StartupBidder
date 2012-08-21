@@ -27,6 +27,7 @@ import com.startupbidder.web.HttpHeaders;
 import com.startupbidder.web.HttpHeadersImpl;
 import com.startupbidder.web.ListingFacade;
 import com.startupbidder.web.ListingFacade.UpdateReason;
+import com.startupbidder.web.ListingSearchService;
 import com.startupbidder.web.ModelDrivenController;
 import com.startupbidder.web.NotificationFacade;
 import com.startupbidder.web.UserMgmtFacade;
@@ -103,10 +104,11 @@ public class TaskController extends ModelDrivenController {
 		String updateType = getCommandOrParameter(request, 3, "update_type");
 		UpdateReason reason = UpdateReason.valueOf(updateType);
 		
-		ListingFacade.instance().calculateListingStatistics(ListingVO.toKeyId(listingId));
-		ListingVO listing = ListingFacade.instance().getListing(null, listingId).getListing();
-		DocService.instance().updateListingData(listing, reason);
-		model = listing;
+		long id = ListingVO.toKeyId(listingId);
+		ListingFacade.instance().calculateListingStatistics(id);
+		Listing listing = ObjectifyDatastoreDAO.getInstance().getListing(id);
+		ListingSearchService.instance().updateListingData(listing, reason);
+		model = DtoToVoConverter.convert(listing);
 		
 		return headers;
 	}
@@ -231,7 +233,9 @@ public class TaskController extends ModelDrivenController {
         	return headers;
         }
         Listing listing = ObjectifyDatastoreDAO.getInstance().getListing(ListingVO.toKeyId(listingId));
-        model = DocService.instance().updateListingData(listing);
+        ListingSearchService.instance().updateListingData(listing, UpdateReason.NONE);
+        model = DtoToVoConverter.convert(listing);
+        
         return headers;
     }
 
