@@ -80,6 +80,9 @@ public class ListingSearchService {
 	}
 
 	private Document getDocForListing(Listing listing) {
+        if (listing == null) {
+            return null;
+        }
 		GeoPoint geoPoint = new GeoPoint(listing.latitude, listing.longitude);
 		Document doc = Document.newBuilder()
 				.setId("" + listing.id)
