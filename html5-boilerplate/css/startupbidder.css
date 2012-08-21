@@ -1466,15 +1466,17 @@ color: #fff;
         margin-top: 50px;
 }
 .inputelevatorpitch {
-height: 223px !important;
-        margin-bottom: 21px;
+    height: 243px !important;
+    margin-bottom: 18px;
 }
 .logopanel {
-height: 157px;
-        margin-top: 17px;
+    height: 153px;
+    margin-top: 17px;
 }
 .locationpanel {
-        margin-top: 45px;
+    margin-top: 0;
+    top: 1424px;
+    position: absolute;
 }
 .askingbox {
 width: 292px;
@@ -1492,7 +1494,10 @@ height: 110px;
         padding-left: 10px;
 position: relative;
 }
-.previewbutton {
+.toppreviewbutton {
+        margin-top: 30px;
+}
+.bottompreviewbutton {
         margin-bottom: 25px;
 }
 

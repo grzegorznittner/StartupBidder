@@ -29,7 +29,7 @@
   <script>
 function StartupbidderAppspotRedirect() {
     var //hostnamepattern = /localhost$/,
-        hostnamepattern = /\.appspot\.com$/,
+        hostnamepattern = /^startupbidder\.appspot\.com$/,
         //hrefpattern = /localhost(:[0-9]*)?/,
         hrefpattern = /[A-Za-z0-9\.-]*\.appspot\.com(:[0-9]*)?/,
         hostname = window.location.hostname,
