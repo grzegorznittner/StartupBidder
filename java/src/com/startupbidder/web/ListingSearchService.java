@@ -113,6 +113,9 @@ public class ListingSearchService {
 		
 		List<Document> docs = new ArrayList<Document>();
 		for (Listing listing : listings) {
+			if (listing == null) {
+				continue;
+			}
 			docs.add(getDocForListing(listing));
 		}
 		
