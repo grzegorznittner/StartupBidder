@@ -42,7 +42,7 @@ companybannermacro(`', `', `', `', `', `')
 include(footer.m4)
 `
 <script src="js/modules/base.js"></script>
-<script src="js/modules/notification.js"></script>
+<script src="js/modules/notifications.js"></script>
 <script>
 (new SingleNotificationPageClass()).loadPage();
 </script>
