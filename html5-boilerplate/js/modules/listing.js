@@ -483,8 +483,10 @@ pl.implement(ListingClass, {
     },
 
     displayDelete: function() {
-        var deletable = (this.status === 'new' || this.status === 'posted')
-            && (this.loggedin_profile && this.loggedin_profile.profile_id === this.profile_id);
+        var deletable =
+                (this.status === 'new' || this.status === 'posted')
+                && this.loggedin_profile
+                && (this.loggedin_profile.profile_id === this.profile_id || this.loggedin_profile.admin);
         if (deletable) {
             this.bindDeleteButton();
         }
@@ -503,7 +505,7 @@ pl.implement(ListingClass, {
                         }, 3000);
                     },
 
-                    url = '/listing/delete',
+                    url = '/listing/delete/' + self.listing_id,
                     ajax = new AjaxClass(url, 'deletemsg', complete);
                 if (pl('#deletecancelbtn').css('display') === 'none') { // first call
                     pl('#deletemsg, #deletecancelbtn').show();
