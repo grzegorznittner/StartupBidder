@@ -507,14 +507,19 @@ public class ObjectifyDatastoreDAO {
 */
 	public Listing createListing(Listing listing) {
 		SBUser owner = getOfy().get(listing.owner);
-		if (owner.editedListing == null) {
-			getOfy().put(listing);
-			owner.editedListing = new Key<Listing>(Listing.class, listing.id);
-			getOfy().put(owner);
-			return listing;
-		} else {
-			return getOfy().get(owner.editedListing);
+		if (owner.editedListing != null) {
+			Listing editedListing = getOfy().find(owner.editedListing);
+			if (editedListing != null) {
+				return editedListing;
+			} else {
+				owner.editedListing = null;
+			}
 		}
+		
+		getOfy().put(listing);
+		owner.editedListing = new Key<Listing>(Listing.class, listing.id);
+		getOfy().put(owner);
+		return listing;
 	}
 
 	public Listing updateListingStateAndDates(Listing newListing, String note) {
@@ -625,13 +630,16 @@ public class ObjectifyDatastoreDAO {
 		}
 	}
 
-	public Listing deleteEditedListing(long listingId) {
-		Listing listing = getOfy().get(new Key<Listing>(Listing.class, listingId));
+	public Listing deleteListing(long listingId) {
+		Key<Listing> listingKey = new Key<Listing>(Listing.class, listingId);
+		Listing listing = getOfy().get(listingKey);
 		if (listing != null && (listing.state == Listing.State.NEW || listing.state == Listing.State.POSTED)) {
 			getOfy().delete(listing);
 			SBUser user = getOfy().get(listing.owner);
-			user.editedListing = null;
-			getOfy().put(user);
+			if (listingKey.equals(user.editedListing)) {
+				user.editedListing = null;
+				getOfy().put(user);
+			}
 		}
 		return listing;
 	}

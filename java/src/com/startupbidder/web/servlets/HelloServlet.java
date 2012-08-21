@@ -141,6 +141,8 @@ public class HelloServlet extends HttpServlet {
 			out.println("<br/><a href=\"/listings/all_listing_locations/.json\">All listing locations</a><br/><br/>");
 			out.println("<form method=\"POST\" action=\"/listing/create/.json\"><input type=\"submit\" value=\"Creates NEW listing\"/></form>");
 			out.println("<form method=\"POST\" action=\"/listing/delete/.json\"><input type=\"submit\" value=\"Deletes edited (NEW) listing\"/></form>");
+			out.println("<form method=\"POST\" action=\"/listing/delete/.json\"><textarea name=\"id\" rows=\"1\" cols=\"50\">"
+					+ "listing id</textarea><input type=\"submit\" value=\"Delete listing by id\"/></form>");
 			
 			out.println("<p style=\"background: none repeat scroll 0% 0% rgb(187, 187, 187);\">Import listing data</p>");
 			out.println("<br/><a href=\"/listing/import_types/.json\">Available import types</a><br/>");
@@ -513,6 +515,9 @@ public class HelloServlet extends HttpServlet {
 			
 			out.println("<table border=\"1\"><tr><td colspan=\"2\">Uploaded documents for edited listing</td></tr>");
 			for (ListingDocumentVO doc : docs) {
+				if (doc == null) {
+					continue;
+				}
 				ListingDoc.Type docType = ListingDoc.Type.valueOf(doc.getType());
 				out.println("<tr>");
 				out.println("<td>");

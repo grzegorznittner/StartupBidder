@@ -684,7 +684,7 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 		assertNotNull("List should exist", listing.getListing());
 		assertEquals("State should be NEW", Listing.State.NEW.toString(), listing.getListing().getState());
 
-		ListingAndUserVO deletedListing = ListingFacade.instance().deleteEditedListing(mocks.DRAGON);
+		ListingAndUserVO deletedListing = ListingFacade.instance().deleteEditedListing(mocks.DRAGON, null);
 		assertEquals("We should get OK", ErrorCodes.OK, newListing.getErrorCode());
 		assertNull("Listing should be deleted", deletedListing.getListing());
 		assertNull("Edited listing field should be set to null", mocks.DRAGON.getEditedListing());
@@ -696,7 +696,7 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 	
 	@Test
 	public void testDeleteUserNewListingWhenItDoesntExist() {
-		ListingAndUserVO deletedListing = ListingFacade.instance().deleteEditedListing(mocks.DRAGON);
+		ListingAndUserVO deletedListing = ListingFacade.instance().deleteEditedListing(mocks.DRAGON, null);
 		assertNotSame("We should get an error", ErrorCodes.OK, deletedListing.getErrorCode());
 		assertNull("Edited listing field should be null anyway", mocks.DRAGON.getEditedListing());
 	}
