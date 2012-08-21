@@ -93,13 +93,7 @@ public class SetupServlet extends HttpServlet {
             out.println("<form method=\"POST\" action=\"/cron/update-listing-docs/.html\">"
                     + "<input type=\"submit\" value=\"Update all listings docs\"/></form>");
 
-            out.println("<p>Google Doc credentials:</p>");
-            out.println("<form method=\"POST\" action=\"/system/set-property/.html\">"
-                    + "User: <input name=\"name\" type=\"hidden\" value=\"googledoc.user\"/><input name=\"value\" type=\"text\" value=\"" + currentUser.getEmail() + "\"/></br>"
-                    + "Password: <input name=\"name.1\" type=\"hidden\" value=\"googledoc.password\"/><input name=\"value.1\" type=\"password\" value=\"\"/></br>"
-                    + "<input type=\"submit\" value=\"Set Google Doc credentials\"/></form>");
-
-
+            
             out.println("<h1>Imports</h1>");
 
             out.println("<form method=\"POST\" action=\"/system/delete-geocode-cache/.html\">"
@@ -134,10 +128,10 @@ public class SetupServlet extends HttpServlet {
 
             out.println("<p>Available system properties:");
             out.println("<ul><li>twitter.consumer.key - Twitter's OAuth Consumer Key");
-            out.println("<ul><li>twitter.consumer.secret - Twitter's OAuth Consumer Secret");
-            out.println("<ul><li>facebook.client.id - Facebook's OAuth Client Id");
-            out.println("<ul><li>facebook.client.secret - Twitter's OAuth Client Secret");
-            out.println("<ul><li>notification_real_receivers - if true then notification emails are sent to real receivers");
+            out.println("<li>twitter.consumer.secret - Twitter's OAuth Consumer Secret");
+            out.println("<li>facebook.client.id - Facebook's OAuth Client Id");
+            out.println("<li>facebook.client.secret - Twitter's OAuth Client Secret");
+            out.println("<li>notification_real_receivers - if true then notification emails are sent to real receivers");
             out.println("<li>notification_no_bcc_admins - if empty or false then notification emails are BCC to admins. Only when notification_real_receivers = true");
             out.println("</ul></p>");
             
