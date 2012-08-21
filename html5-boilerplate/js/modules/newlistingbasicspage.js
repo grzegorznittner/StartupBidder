@@ -112,7 +112,7 @@ pl.implement(NewListingBasicsClass, {
                 platform: ValidatorClass.prototype.isSelected,
                 category: ValidatorClass.prototype.isSelected,
                 mantra: ValidatorClass.prototype.makeLengthChecker(5, 140),
-                summary: ValidatorClass.prototype.makeLengthChecker(50, 500),
+                summary: ValidatorClass.prototype.makeLengthChecker(50, 2000),
                 address: ValidatorClass.prototype.isNotEmpty
             },
             classes = {
@@ -318,7 +318,7 @@ pl.implement(NewListingBasicsClass, {
 
     bindPreview: function() {
         var self = this;
-        pl('#previewbutton').bind('click', function() {
+        pl('#previewbutton, #previewbutton2').bind('click', function() {
             document.location = '/company-page.html?id=' + self.base.listing.listing_id;
         });
     },

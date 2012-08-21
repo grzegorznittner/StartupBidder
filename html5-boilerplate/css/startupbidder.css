@@ -192,8 +192,10 @@ a:focus, a:hover { cursor: pointer; }
 .companybanner { height: 150px; position: relative; }
 .companybannertile { height: 150px; width: 626px; position: relative; overflow: hidden; margin-bottom: 10px; }
 .companybannertilenoborder { height:150px;overflow:hidden;position:relative;top:-9px; }
-.companybannertitle { font-size: 43px; font-weight: normal; margin-bottom: -15px; position: relative; top: -11px; width: 580px; height: 60px; overflow: hidden; }
-.companybannertiletitle { font-size: 36px; height: 48px; top: 0; margin-bottom: 0; overflow: hidden; width: 450px; }
+.companybannertitle { font-size: 43px; font-weight: normal; margin-bottom: -15px; position: relative; top: -11px; width: 580px; height: 60px; overflow: hidden; left: -3px; }
+.companybannertiletitle { font-size: 36px; height: 48px; top: 0; left: -2px; margin-bottom: 0; overflow: hidden; width: 450px; }
+.companybannertitlelong { font-size: 24px; line-height: 24px; top: -1px; }
+.companybannertiletitlelong { font-size: 24px; line-height: 24px; top: 4px; height: 52px; }
 .companybannertext { font-size: 14px; font-weight: bold; }
 .companybannertextlink { font-size: 14px; font-weight: bold; margin-left: 4px; }
 .companybannerlink { float: left; margin-right: 5px; }
@@ -1464,15 +1466,17 @@ color: #fff;
         margin-top: 50px;
 }
 .inputelevatorpitch {
-height: 223px !important;
-        margin-bottom: 21px;
+    height: 243px !important;
+    margin-bottom: 18px;
 }
 .logopanel {
-height: 157px;
-        margin-top: 17px;
+    height: 153px;
+    margin-top: 17px;
 }
 .locationpanel {
-        margin-top: 45px;
+    margin-top: 0;
+    top: 1424px;
+    position: absolute;
 }
 .askingbox {
 width: 292px;
@@ -1490,7 +1494,10 @@ height: 110px;
         padding-left: 10px;
 position: relative;
 }
-.previewbutton {
+.toppreviewbutton {
+        margin-top: 30px;
+}
+.bottompreviewbutton {
         margin-bottom: 25px;
 }
 

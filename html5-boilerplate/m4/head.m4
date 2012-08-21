@@ -25,5 +25,22 @@
   <!-- end CSS-->
 
   <link rel="canonical" href="http://startupbidder.com"/>
+
+  <script>
+function StartupbidderAppspotRedirect() {
+    var //hostnamepattern = /localhost$/,
+        hostnamepattern = /^startupbidder\.appspot\.com$/,
+        //hrefpattern = /localhost(:[0-9]*)?/,
+        hrefpattern = /[A-Za-z0-9\.-]*\.appspot\.com(:[0-9]*)?/,
+        hostname = window.location.hostname,
+        newhref;
+    if (hostname.match(hostnamepattern)) {
+        newhref = window.location.href.replace(hrefpattern, "startupbidder.com");
+        //console.log(newhref);
+        window.location = newhref;
+    }
+}
+StartupbidderAppspotRedirect();
+  </script>
 </head>
 '

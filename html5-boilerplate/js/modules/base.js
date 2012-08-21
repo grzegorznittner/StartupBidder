@@ -599,7 +599,7 @@ pl.implement(CompanyTileClass, {
         }
         else if (this.status === 'active' && !json.asked_fund && json.listing_date) {
             this.daysago = DateClass.prototype.daysBetween(DateClass.prototype.dateFromYYYYMMDD(json.listing_date), DateClass.prototype.todayDate());
-            this.daystext = this.daysago === 0 ? 'Listed today' : this.daysago + ' days ago';
+            this.daystext = this.daysago === 0 ? 'Listed today' : this.daysago + ' day' + (this.daysago > 1 ? 's' : '') + ' ago';
         }
         else {
             this.daystext = SafeStringClass.prototype.ucfirst(this.status);
@@ -720,7 +720,7 @@ pl.implement(CompanyTileClass, {
     <div class="companybannerlogo tileimg fulltileimg noimage hoverlink" style="' + this.imgStyle + '"></div>\
 ' + this.closeanchor + '\
 ' + this.openanchor + '\
-    <div class="companybannertitle companybannertiletitle hoverlink">' + this.name + '</div>\
+    <div class="companybannertitle companybannertiletitle ' + (this.name && this.name.length > 25 ? 'companybannertiletitlelong ' : '') + 'hoverlink">' + this.name + '</div>\
 ' + this.closeanchor + '\
     <div class="companybannertextgrey companybannermapline">\
         ' + this.categoryaddresstext + '\
@@ -1201,6 +1201,9 @@ pl.implement(CompanyBannerClass, {
             pl('#companylogo').removeClass('noimage').css({background: logobg});
         }
         pl('#title').text(this.title || 'Company / App Name');
+        if (this.title && this.title.length > 25) {
+            pl('#title').addClass('companybannertitlelong');
+        }
         pl('title').text('Startupbidder Listing: ' + (this.title || 'Company / App Name'));
         pl('#mantra').text(this.mantra || 'Mantra here');
         pl('#categoryaddresstext').html(categoryaddresstext);

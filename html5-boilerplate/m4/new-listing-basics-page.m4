@@ -17,20 +17,17 @@ include(company-not-found.m4)
 </div>
 <div class="container initialhidden wrapper">
 
-<!-- begin banner -->
-    <div class="bannertextsmall" id="newlistingbanner">NEW LISTING WIZARD</div>
-
 <div class="span-16">
     <div class="formitem clear">
         <span class="inputmsg" id="newlistingmsg"></span>
     </div>
 </div>
 
-<!-- end banner -->
-
 <div class="initialhidden" id="newlistingbasicswrapper">
 <!-- left column -->
 <div class="span-16">
+
+    <div class="bannertextsmall" id="newlistingbanner">NEW LISTING WIZARD</div>
 
     <div class="boxtitle basicstitle">
         <span class="titletext">MANDATORY INFO</span>
@@ -226,8 +223,10 @@ include(images-panel-editable.m4)
 <!-- right column -->
 <div class="span-8 last">
 
+    <div class="sidebox investbutton toppreviewbutton" id="previewbutton">PREVIEW &gt;&gt;</div>
+
     <a href="/new-listing-financials-page.html">
-        <div class="sidebox investbutton askfundingbutton" id="askfundingbutton">ASK FOR FUNDING</div>
+        <div class="sidebox investbutton" id="askfundingbutton">ASK FOR FUNDING</div>
     </a>
 
     <a href="/new-listing-media-page.html">
@@ -302,7 +301,7 @@ include(images-panel-editable.m4)
         <span class="inputmap" id="addressmap"></span>
     </div>
 
-    <div class="sidebox investbutton previewbutton" id="previewbutton">PREVIEW &gt;&gt;</div>
+    <div class="sidebox investbutton bottompreviewbutton" id="previewbutton2">PREVIEW &gt;&gt;</div>
 
 </div>
 <!-- end right column -->
