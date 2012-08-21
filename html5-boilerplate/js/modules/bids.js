@@ -70,7 +70,7 @@ pl.implement(PublicBidClass, {
         else {
             return '\
             <div class="messageline orderbookline ' + this.bidclass + '">\
-                <p class="span-6 attention" style="text-align: left; padding-left: 10px; ">No ' + this.amttitle + 's</p>\
+                <p class="span-6 attention investorgroupattention">No ' + this.amttitle + 's</p>\
                 <p class="orderbookdate">'+this.datetext+'</p>\
             </div>\
             ';
@@ -789,6 +789,7 @@ pl.implement(SingleInvestorBidListClass, {
         var self = this,
             btnid = type + '_btn',
             btnsel = '#' + btnid;
+        pl('#new_bid_amt, #new_bid_pct, #new_bid_text').removeAttr('disabled');
         pl(btnsel).bind('click', function() {
             var validamt = self.amtfield.validate(),
                 validpct = self.pctfield.validate(),
@@ -917,19 +918,11 @@ pl.implement(InvestorBidGroupClass, {
 
     makeHeader: function() {
         return '\
-        <style>\
-            .investorgroupheader { background: #49515a !important; }\
-            .investorgroupheader p { color: white; font-weight: bold !important; text-align: center; }\
-            .investorgroupline p { font-weight: bold; text-align: center; }\
-            .investorgroupnote { text-align: left !important; font-weight: normal !important; }\
-            .investorgroupdateheader { float: left; width: 140px; }\
-            .investorgroupdate { float: left; width: 140px; text-align: right; font-size: 12px; padding-top: 2px; }\
-        </style>\
         <div class="messageline investorgroupheader">\
             <p class="span-4">Investor</p>\
             <p class="span-2">Action</p>\
             <p class="span-3">Bid</p>\
-            <p class="span-1" style="position: relative; left:-10px;">Equity</p>\
+            <p class="span-1 investorgroupequityheader">Equity</p>\
             <p class="span-3">Valuation</p>\
             <p class="span-8">Note</p>\
             <p class="investorgroupdateheader">Date</p>\
@@ -1434,6 +1427,7 @@ pl.implement(OwnerSingleInvestorBidListClass, {
             }
         }
         if (newbidaction) {
+            pl('#new_bid_amt, #new_bid_pct, #new_bid_text').removeAttr('disabled');
             pl('#new_bid_boxtitle, #new_bid_boxparent').show();
         }
         if (existingbidaction) {

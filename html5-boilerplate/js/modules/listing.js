@@ -100,30 +100,17 @@ pl.implement(ListingClass, {
     },
 
     displayInvest: function() {
-        var self = this;
-        if (self.status === 'new' || self.status === 'posted') {
-            return;
+        var page = this.loggedin_profile
+                ? (this.loggedin_profile.profile_id === this.profile_id
+                    ? 'company-owner-bids-page.html'
+                    : 'company-investor-bids-page.html')
+                : 'company-bids-page.html',
+            url = '/' + page + '?id=' + this.listing_id;
+        if (this.status === 'active' && this.asked_fund) {
+            console.log(url);
+            pl('#investlink').attr('href', url);
+            pl('#investbutton').show();
         }
-        if (self.loggedin_profile && self.loggedin_profile.profile_id === self.profile_id) { // owner
-            pl('#investbutton').text('INVESTMENTS');
-        }
-        pl('#investbutton').bind('click', function() {
-            var page, url;
-            if (self.loggedin_profile) {
-                if (self.loggedin_profile.profile_id === self.profile_id) { // owner
-                    pl('#investbutton').text('INVESTMENTS');
-                    page = 'company-owner-bids-page.html';
-                }
-                else { // logged in user
-                    page = 'company-investor-bids-page.html';
-                }
-            }
-            else {
-                page = 'company-bids-page.html';
-            }
-            url = '/' + page + '?id=' + self.listing_id;
-            document.location = url;
-        }).show();
     },
 
     displayGoto: function() {
