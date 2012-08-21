@@ -172,7 +172,8 @@ public class ListingController extends ModelDrivenController {
     private HttpHeaders delete(HttpServletRequest request) {
     	HttpHeaders headers = new HttpHeadersImpl("delete");
 		
-    	ListingAndUserVO listing = ListingFacade.instance().deleteEditedListing(getLoggedInUser());
+    	String listingId = getCommandOrParameter(request, 2, "id");
+    	ListingAndUserVO listing = ListingFacade.instance().deleteEditedListing(getLoggedInUser(), listingId);
 		if (listing == null) {
 			log.log(Level.WARNING, "Listing not deleted, probably didn't exist!");
 			headers.setStatus(500);

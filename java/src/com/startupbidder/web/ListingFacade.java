@@ -1058,21 +1058,38 @@ public class ListingFacade {
 	/**
 	 * Deletes exising user's NEW listing.
 	 */
-	public ListingAndUserVO deleteEditedListing(UserVO loggedInUser) {
+	public ListingAndUserVO deleteEditedListing(UserVO loggedInUser, String listingId) {
 		ListingAndUserVO result = new ListingAndUserVO();
-		if (StringUtils.isEmpty(loggedInUser.getEditedListing())) {
+		long listingKey = -1;
+		
+		if (loggedInUser == null) {
+			log.info("User not logged in");
+			result.setErrorMessage("User not logged in.");
+			result.setErrorCode(ErrorCodes.NOT_LOGGED_IN);
+			return result;
+		} else if (loggedInUser.isAdmin() && StringUtils.isNotEmpty(listingId)) {
+			listingKey = ListingVO.toKeyId(listingId);
+		} else if (StringUtils.isNotEmpty(loggedInUser.getEditedListing()) && StringUtils.isEmpty(listingId)) {
+			listingKey = ListingVO.toKeyId(loggedInUser.getEditedListing());
+		} else {
+			log.info("Deletion not successful, user can only delete own listings");
 			result.setErrorCode(ErrorCodes.ENTITY_VALIDATION);
-			result.setErrorMessage("Deletion not successful, user doesn't have edited listing");
+			result.setErrorMessage("Deletion not successful, user can only delete own listings");
 			return result;
 		}
-		Listing deletedListing = getDAO().deleteEditedListing(ListingVO.toKeyId(loggedInUser.getEditedListing()));
-		if (deletedListing != null) {
+		
+		Listing deletedListing = getDAO().deleteListing(listingKey);
+		if (deletedListing == null) {
+			log.info("Listing '" + listingKey + "' has not been deleted");
+			result.setErrorCode(ErrorCodes.DATASTORE_ERROR);
+			result.setErrorMessage("Listing has not been deleted");
+			return result;
+		}
+		log.info("Listing deleted: " + deletedListing);
+		if (deletedListing != null && deletedListing.owner.getId() == loggedInUser.toKeyId()) {
 			loggedInUser.setEditedListing(null);
 			loggedInUser.setEditedStatus(null);
 			result.setListing(null);
-		} else {
-			result.setErrorCode(ErrorCodes.DATASTORE_ERROR);
-			result.setErrorMessage("Deletion not successful, user probaly doesn't have new listing or it's already active.");
 		}
 		return result;
 	}
