@@ -84,7 +84,6 @@ public class ModelConverterTest {
 		Listing before = new Listing();
 		before.id = 5555L;
 		before.name = "Name";
-		before.mockData = true;
 		before.owner = new Key<SBUser>(SBUser.class, 3001L);
 		before.state = Listing.State.FROZEN;
 		before.address = "Full address";
@@ -115,7 +114,6 @@ public class ModelConverterTest {
 		
 		assertEquals(before.id, after.id);
 		assertEquals(before.name, after.name);
-		assertEquals(before.mockData, after.mockData);
 		assertEquals(before.owner, after.owner);
 		assertEquals(before.state, after.state);
 		assertEquals(before.address, after.address);

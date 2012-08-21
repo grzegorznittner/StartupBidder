@@ -57,7 +57,6 @@ public class VoToModelConverter {
 		if (!StringUtils.isEmpty(listingVO.getId())) {
 			listing.id = listingVO.toKeyId();
 		}
-		listing.mockData = listingVO.isMockData();
 		listing.modified = listingVO.getModified();
 		listing.created = listingVO.getCreated();
 		listing.closingOn = listingVO.getClosingOn();
@@ -89,6 +88,9 @@ public class VoToModelConverter {
 			listing.type = Listing.Type.valueOf(StringUtils.upperCase(listingVO.getType()));
 		}
 		listing.platform = listingVO.getPlatform();
+		if (!StringUtils.isEmpty(listingVO.getStage())) {
+			listing.stage = Listing.Stage.valueOf(StringUtils.upperCase(listingVO.getStage()));
+		}
 		listing.notes = listingVO.getNotes();
 		listing.address = listingVO.getAddress();
 		listing.latitude = listingVO.getLatitude();
@@ -149,6 +151,8 @@ public class VoToModelConverter {
 			listing.type = Listing.Type.valueOf(property.getPropertyValue().toUpperCase());
 		} else if (name.equalsIgnoreCase("platform")) {
 			listing.platform = property.getPropertyValue().toUpperCase();
+		} else if (name.equalsIgnoreCase("stage")) {
+			listing.stage = Listing.Stage.valueOf(property.getPropertyValue().toUpperCase());
 		} else if (name.equalsIgnoreCase("city")) {
 			listing.city = property.getPropertyValue();
 		} else if (name.equalsIgnoreCase("currency")) {

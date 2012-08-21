@@ -42,6 +42,7 @@ public class ListingTileVO extends BaseVO implements Serializable {
 	@JsonProperty("category") protected String category;
 	@JsonProperty("type") @JsonSerialize(using=LowecaseSerializer.class) protected String type;
 	@JsonProperty("platform") @JsonSerialize(using=LowecaseSerializer.class) protected String platform;
+	@JsonProperty("stage") @JsonSerialize(using=LowecaseSerializer.class) protected String stage;
 	@JsonProperty("profile_id") protected String owner;
 	@JsonProperty("profile_username") protected String ownerName;
 	@JsonProperty("brief_address") protected String briefAddress;
@@ -259,5 +260,13 @@ public class ListingTileVO extends BaseVO implements Serializable {
 
 	public void setCurrency(String currency) {
 		this.currency = currency;
+	}
+
+	public String getStage() {
+		return stage;
+	}
+
+	public void setStage(String stage) {
+		this.stage = stage;
 	}
 }

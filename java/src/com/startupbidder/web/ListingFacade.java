@@ -402,7 +402,6 @@ public class ListingFacade {
 		
 		if (!propsToUpdate.isEmpty()) {
 			for (ListingPropertyVO prop : propsToUpdate) {
-				log.info(prop.getPropertyName() + ": " + ImageHelper.printStringAsHex(prop.getPropertyValue()));
 				VoToModelConverter.updateListingProperty(listing, prop);
 			}
 			log.info("Updating listing: " + listing);

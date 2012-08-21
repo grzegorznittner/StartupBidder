@@ -1096,7 +1096,6 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 		assertEquals("Listing key should be set", listingList.get(0).id, (Long)stats.listing.getId());
 		assertTrue("Created time should be set", beforeTest.isBefore(new DateTime(stats.created)));
 		assertTrue("Modified time should be set", beforeTest.isBefore(new DateTime(stats.modified)));
-		assertEquals(listingList.get(0).mockData, stats.mockData);
 		assertEquals(listingList.get(0).state, stats.state);
 		assertEquals(listingList.get(0).listedOn, stats.previousValuationDate);
 		assertEquals(listingList.get(0).suggestedValuation, stats.previousValuation, 0.0001);
@@ -1120,7 +1119,6 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 		assertEquals("Listing key should be set", listingList.get(0).id, (Long)stats.listing.getId());
 		assertTrue("Created time should be set", beforeTest.isBefore(new DateTime(stats.created)));
 		assertTrue("Modified time should be set", beforeTest.isBefore(new DateTime(stats.modified)));
-		assertEquals(listingList.get(0).mockData, stats.mockData);
 		assertEquals(listingList.get(0).state, stats.state);
 		assertEquals(previousValuationDate, stats.previousValuationDate);
 		assertEquals(previousValuation, stats.previousValuation, 0.0001);
@@ -1146,7 +1144,6 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 		assertEquals("Listing key should be set", listingList.get(0).id, (Long)stats.listing.getId());
 		assertTrue("Created time should be set", beforeTest.isBefore(new DateTime(stats.created)));
 		assertTrue("Modified time should be set", beforeTest.isBefore(new DateTime(stats.modified)));
-		assertEquals(listingList.get(0).mockData, stats.mockData);
 		assertEquals(listingList.get(0).state, stats.state);
 		assertEquals(listingList.get(0).listedOn, stats.previousValuationDate);
 		assertEquals(listingList.get(0).suggestedValuation, stats.previousValuation, 0.0001);
@@ -1166,7 +1163,6 @@ public class ListingFacadeTest extends BaseFacadeAbstractTest {
 		assertEquals("Listing key should be set", listingList.get(0).id, (Long)stats2.listing.getId());
 		assertEquals(stats.created, stats2.created);
 		assertEquals(stats.modified, stats2.modified);
-		assertEquals(listingList.get(0).mockData, stats.mockData);
 		assertEquals(listingList.get(0).state, stats.state);
 		assertEquals(stats.previousValuationDate, stats2.previousValuationDate);
 		assertEquals(stats.previousValuation, stats2.previousValuation, 0.0001);

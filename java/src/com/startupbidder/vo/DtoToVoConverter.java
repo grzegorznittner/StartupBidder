@@ -147,7 +147,6 @@ public class DtoToVoConverter {
 		}
 		ListingVO listing = new ListingVO();
 		listing.setId(new Key<Listing>(Listing.class, listingDTO.id).getString());
-		listing.setMockData(listingDTO.mockData);
 		listing.setModified(listingDTO.modified);
 		listing.setCreated(listingDTO.created);
 		listing.setClosingOn(listingDTO.closingOn);
@@ -167,6 +166,7 @@ public class DtoToVoConverter {
 		listing.setState(listingDTO.state.toString());
 		listing.setType(listingDTO.type.toString());
 		listing.setPlatform(listingDTO.platform);
+		listing.setStage(listingDTO.stage != null ? listingDTO.stage.toString() : null);
 		listing.setPresentationId(keyToString(listingDTO.presentationId));
 		listing.setBuinessPlanId(keyToString(listingDTO.businessPlanId));
 		listing.setFinancialsId(keyToString(listingDTO.financialsId));
@@ -245,7 +245,6 @@ public class DtoToVoConverter {
 		}
 		ListingTileVO listing = new ListingTileVO();
 		listing.setId(new Key<Listing>(Listing.class, listingDTO.id).getString());
-		listing.setMockData(listingDTO.mockData);
 		listing.setModified(listingDTO.modified);
 		listing.setCreated(listingDTO.created);
 		listing.setClosingOn(listingDTO.closingOn);
@@ -266,6 +265,7 @@ public class DtoToVoConverter {
 		listing.setCategory(listingDTO.category);
 		listing.setType(listingDTO.type.toString());
         listing.setPlatform(listingDTO.platform != null ? listingDTO.platform.toString() : null);
+        listing.setStage(listingDTO.stage != null ? listingDTO.stage.toString() : null);
 
 		listing.setLatitude(listingDTO.latitude);
 		listing.setLongitude(listingDTO.longitude);

@@ -48,13 +48,15 @@ public class Listing extends BaseObject<Listing> {
 	 * List of supported listing currencies.
 	 */
 	public enum Currency {USD, EUR, GBP};
+	/**
+	 * List of company stage values.
+	 */
+	public enum Stage {CONCEPT, STARTUP, ESTABLISHED};
 
 	public Key<Listing> getKey() {
 		return new Key<Listing>(Listing.class, id);
 	}
 	@Id public Long id;
-	
-	public boolean mockData;
 	
 	public Date modified;
 	@PrePersist void updateModifiedDate() {
@@ -81,6 +83,7 @@ public class Listing extends BaseObject<Listing> {
 	@Indexed public String category;
 	@Indexed public Type type = Type.APPLICATION;
 	public String platform;
+	public Stage stage = Stage.STARTUP;
 	
 	/** Notes stored by system */
 	public String notes;

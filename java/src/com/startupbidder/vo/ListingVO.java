@@ -1,5 +1,6 @@
 package com.startupbidder.vo;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -8,9 +9,6 @@ import org.codehaus.jackson.annotate.JsonAutoDetect;
 import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
-
-import com.startupbidder.util.LowecaseSerializer;
 
 /**
  * 
@@ -19,16 +17,18 @@ import com.startupbidder.util.LowecaseSerializer;
 @JsonAutoDetect(getterVisibility=Visibility.NONE, setterVisibility=Visibility.NONE,
 		fieldVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE)
 @JsonIgnoreProperties(ignoreUnknown=true)
-public class ListingVO extends ListingTileVO {
+public class ListingVO extends ListingTileVO implements Serializable {
+	private static final long serialVersionUID = 454594876798123L;
+	
 	public static final List<String> UPDATABLE_PROPERTIES = Arrays.asList(new String[] {
-			"title", "mantra", "summary", "contact_email", "founders", "website", "category", "type", "platform",
+			"title", "mantra", "summary", "contact_email", "founders", "website", "category", "type", "platform", "stage",
 			"currency", "has_bmc", "has_ip", "asked_fund", "suggested_amt", "suggested_pct", "video", "answer1", "answer2", "answer3",
 			"answer4", "answer5", "answer6", "answer7", "answer8", "answer9", "answer10", "answer11", "answer12", "answer13",
 			"answer14", "answer15", "answer16", "answer17", "answer18", "answer19", "answer20", "answer21", "answer22", "answer23",
             "answer24", "answer25", "answer26"
     });
 	public static final List<String> ACTIVE_UPDATABLE_PROPERTIES = Arrays.asList(new String[] {
-			"website", "has_bmc", "has_ip", "asked_fund", "suggested_amt", "suggested_pct", "video", "answer1", "answer2", "answer3",
+			"stage", "website", "has_bmc", "has_ip", "asked_fund", "suggested_amt", "suggested_pct", "video", "answer1", "answer2", "answer3",
 			"answer4", "answer5", "answer6", "answer7", "answer8", "answer9", "answer10", "answer11", "answer12", "answer13",
 			"answer14", "answer15", "answer16", "answer17", "answer18", "answer19", "answer20", "answer21", "answer22", "answer23",
             "answer24", "answer25", "answer26"
