@@ -113,10 +113,12 @@ public class ListingSearchService {
 		
 		List<Document> docs = new ArrayList<Document>();
 		for (Listing listing : listings) {
-			if (listing == null) {
-				continue;
+			try {
+				Document doc = getDocForListing(listing);
+				docs.add(doc);
+			} catch (Exception e) {
+				log.log(Level.WARNING, "Error while creating search doc for " + listing, e);
 			}
-			docs.add(getDocForListing(listing));
 		}
 		
 		try {
