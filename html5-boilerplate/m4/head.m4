@@ -27,17 +27,11 @@
   <link rel="canonical" href="http://startupbidder.com"/>
 
   <script>
-function SBRedir() {
-    var hostnamepattern = /^startupbidder\.appspot\.com$/,
-        hrefpattern = /[A-Za-z0-9\.-]*\.appspot\.com(:[0-9]*)?/,
-        hostname = window.location.hostname,
-        newhref;
-    if (hostname.match(hostnamepattern)) {
-        newhref = window.location.href.replace(hrefpattern, "startupbidder.com");
-        window.location = newhref;
+(function() {
+    if (window.location.hostname.match(/^startupbidder\.appspot\.com$/)) {
+        window.location = window.location.href.replace(/[A-Za-z0-9\.-]*\.appspot\.com(:[0-9]*)?/, "startupbidder.com");
     }
-}
-SBRedir();
+})();
   </script>
 </head>
 '
