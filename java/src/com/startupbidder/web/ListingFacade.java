@@ -1037,6 +1037,7 @@ public class ListingFacade {
 				returnValue.setErrorMessage("Listing not updated");
 				returnValue.setErrorCode(ErrorCodes.DATASTORE_ERROR);
 			} else {
+				scheduleUpdateOfListingStatistics(updatedListing.getWebKey(), UpdateReason.NONE);
 				NotificationFacade.instance().scheduleListingStateNotification(updatedListing);
 				if (StringUtils.isBlank(message)) {
 					message = "Your listing '" + updatedListing.name + "' has been frozen. An administrator will contact you soon.";

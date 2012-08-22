@@ -26,6 +26,7 @@ import com.startupbidder.dao.ObjectifyDatastoreDAO;
 import com.startupbidder.datamodel.Listing;
 import com.startupbidder.datamodel.ListingDoc;
 import com.startupbidder.datamodel.Monitor;
+import com.startupbidder.datamodel.Notification;
 import com.startupbidder.datamodel.PrivateMessageUser;
 import com.startupbidder.datamodel.SBUser;
 import com.startupbidder.datamodel.VoToModelConverter;
@@ -327,6 +328,10 @@ public class HelloServlet extends HttpServlet {
 			}
 			*/
 
+			out.println("<p style=\"background: none repeat scroll 0% 0% rgb(187, 187, 187);\">Email tests:</p>");
+			for(Notification.Type type : Notification.Type.values()) {
+				out.println("<a href=\"/notification/test/" + type + ".json?\">Send " + type + " email</a><br/>");
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {

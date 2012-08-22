@@ -210,7 +210,7 @@ public class NotificationFacade {
 		Notification notification = new Notification(listing, listingOwner);
 		switch (listing.state) {
 		case NEW:
-			notification.message = "Listing has been sent back for correction.";
+			notification.message = "Your listing is not yet visible for the public. You'll get private message from ADMINISTRATOR soon.";
             notification.type = Notification.Type.LISTING_SENT_BACK;
 			break;
 		case POSTED:
@@ -397,6 +397,8 @@ public class NotificationFacade {
 		notification.type = Type.PRIVATE_MESSAGE;
         notification.investor = message.userA;
 		notification.fromUserNickname = message.userANickname;
+		// we don't have field to store from user key
+		notification.listingOwnerUser = message.userA;
 		notification.message = message.text;
 		notification.read = false;
 		log.info("Creating notification: " + notification);

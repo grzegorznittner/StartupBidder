@@ -359,7 +359,7 @@ public class DtoToVoConverter {
 			return null;
 		}
 		NotificationVO notif = new NotificationVO();
-		notif.setId(new Key<Notification>(Notification.class, notifDTO.id).getString());
+		notif.setId(notifDTO.id != null ? new Key<Notification>(Notification.class, notifDTO.id).getString() : "");
 		notif.setUser(notifDTO.user.getString());
 		notif.setUserNickname(notifDTO.userNickname);
 		notif.setUserEmail(notifDTO.userEmail);
@@ -439,7 +439,9 @@ public class DtoToVoConverter {
 		    notif.setTitle("You've received a private message" + fromTitle);
             notif.setText1("A private message has been sent to you:");
 		    notif.setText2(notifDTO.message);
-            notif.setText3("Please visit <a href=\"" + listingLink + "\">company's page at startupbidder.com</a>.");
+		    String messagePageUrl = BaseVO.getServiceLocation() + "/messages-page.html?from_user_id=" + notifDTO.listingOwnerUser.getString()
+		    		+ "&from_user_nickname=" + notifDTO.fromUserNickname;
+            notif.setText3("Check your <a href=\"" + messagePageUrl + "\">conversation with " + notifDTO.fromUserNickname + " at startupbidder.com</a>.");
 			break;
 		case NEW_BID_FOR_YOUR_LISTING:
 			notif.setTitle("New bid for your listing '" + listingName + "'");
