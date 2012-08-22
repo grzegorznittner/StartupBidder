@@ -16,7 +16,7 @@ public abstract class BaseVO {
 		return Key.create(id).getId();
 	}
 	
-	protected String getServiceLocation () {
+	public static String getServiceLocation () {
 		return SystemProperty.environment.value() == SystemProperty.Environment.Value.Development ?
 				"http://localhost:7777" : "http://www.startupbidder.com";
 	}

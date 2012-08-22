@@ -210,27 +210,27 @@ public class NotificationFacade {
 		Notification notification = new Notification(listing, listingOwner);
 		switch (listing.state) {
 		case NEW:
-			notification.message = "Listing has been sent back for correction";
+			notification.message = "Listing has been sent back for correction.";
             notification.type = Notification.Type.LISTING_SENT_BACK;
 			break;
 		case POSTED:
-			notification.message = "Listing has been posted by an owner";
+			notification.message = "";
 			notification.type = Notification.Type.NEW_LISTING;
 			break;
 		case ACTIVE:
-			notification.message = "Listing has been activated";
+			notification.message = "Listing has been activated and is visible for the public on startupbidder.com";
 			notification.type = Notification.Type.LISTING_ACTIVATED;
 			break;
 		case FROZEN:
-			notification.message = "Listing has been frozen";
+			notification.message = "Listing has been frozen and is no longer visible for the public (except for those having direct link to the listing).";
 			notification.type = Notification.Type.LISTING_FROZEN;
 			break;
 		case WITHDRAWN:
-			notification.message = "Listing has been withdrawn";
+			notification.message = "Listing has been withdrawn and is no longer visible for the public (except for those having direct link to the listing).";
 			notification.type = Notification.Type.LISTING_WITHDRAWN;
 			break;
 		case CLOSED:
-			notification.message = "Listing has been closed";
+			notification.message = "Listing has been closed and is no longer visible for the public (except for those having direct link to the listing).";
 			break;
 		}
 		

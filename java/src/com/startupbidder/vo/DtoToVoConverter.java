@@ -387,7 +387,8 @@ public class DtoToVoConverter {
 		switch(notifDTO.type) {
 		case NEW_LISTING:
 			notif.setTitle("New listing '" + listingName + "' posted");
-			notif.setText1("A new listing '" + listingName + "' has been posted by '" + notifDTO.listingOwner + "' on startupbidder.com");
+			String profileUrl = BaseVO.getServiceLocation() + "/profile-page.html?id=" + notifDTO.listingOwnerUser.getString();
+			notif.setText1("Listing has been posted by <a href=\"" + profileUrl + "\">" + notifDTO.listingOwner + "</a>");
 			notif.setText2(notifDTO.message);
 			notif.setText3("Please visit <a href=\"" + listingLink + "\">company's page at startupbidder.com</a>.");
 			break;

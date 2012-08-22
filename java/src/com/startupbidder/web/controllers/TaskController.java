@@ -157,14 +157,15 @@ public class TaskController extends ModelDrivenController {
 
 		if (!notification.read) {
 			SBUser receiver = ObjectifyDatastoreDAO.getInstance().getUserByEmail(notification.userEmail);
-			if (receiver.notifyEnabled) {
+			if (receiver.notifyEnabled && receiver.email != null) {
 				log.info("Sending notification: " + notification);
 				if (EmailService.instance().sendNotificationEmail(DtoToVoConverter.convert(notification))) {
 					notification.sentDate = new Date();
 					NotificationObjectifyDatastoreDAO.getInstance().storeNotification(notification);
 				}
 			} else {
-				log.info("User doesn't have enabled notifications. " + notification);
+				log.info("Notification email not sent. Notify enabled flag: " + receiver.notifyEnabled
+						+ ", email:" + receiver.email + " " + notification);
 			}
 		} else {
 			log.info("Notification has been already read. " + notification);

@@ -149,7 +149,7 @@ public class EmailService {
 		props.put(LINK_TO_VIEW_ON_STARTUPBIDDER, "http://www.startupbidder.com/notification-page.html?id=" + notification.getId());
 		props.put(NOTIFICATION_TITLE, notification.getTitle());
 		props.put(NOTIFICATION_TITLE_ESCAPED, notification.getTitle().replaceAll("\\.", "<span>.</span>"));
-		props.put(TEXT_NO_LINK, notification.getText1().replaceAll("\\.", "<span>.</span>") + " <br/> <i>"
+		props.put(TEXT_NO_LINK, notification.getText1().replaceAll("\\.", "<span>.</span>") + " <br/> <br/> <i>"
 				+ notification.getText2().replaceAll("\\.", "<span>.</span>") + "</i>");
 		props.put(VISIT_LISTING_TEXT, notification.getText3());
 		props.put(LINK_TO_LISTING, notification.getLink());

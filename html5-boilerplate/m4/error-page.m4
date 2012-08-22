@@ -20,24 +20,12 @@ include(header.m4)
     </div>
 </div>
 
-<div class="span-8 last">
-    <div class="boxtitle" id="listingstitle"></div>
-    <div id="companydiv"></div>
-</div>
-
 </div>
 </div>
 </div>
 '
 include(footer.m4)
 `
-<script src="js/modules/base.js"></script>
-<script>
-(new InformationPageClass()).loadPage();
-</script>
-'
-include(promptie.m4)
-`	
 </body>
 </html>
 '
