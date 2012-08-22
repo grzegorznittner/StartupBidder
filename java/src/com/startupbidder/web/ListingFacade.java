@@ -153,7 +153,7 @@ public class ListingFacade {
 	public ListingAndUserVO createListing(UserVO loggedInUser) {
 		ListingAndUserVO result = new ListingAndUserVO();
 		if (loggedInUser == null) {
-			log.log(Level.WARNING, "Only logged in user can create listing");
+			log.log(Level.INFO, "Only logged in user can create listing");
 			result.setErrorCode(ErrorCodes.NOT_LOGGED_IN);
 			result.setErrorMessage("Only logged in user can create listing");
 		} else {
@@ -191,7 +191,7 @@ public class ListingFacade {
 	public ListingAndUserVO importListing(UserVO loggedInUser, String type, String id) {
 		ListingAndUserVO result = new ListingAndUserVO();
 		if (loggedInUser == null) {
-			log.log(Level.WARNING, "Only logged in user can create listing", new Exception("Not logged in"));
+			log.log(Level.INFO, "Only logged in user can create listing", new Exception("Not logged in"));
 			result.setErrorCode(ErrorCodes.NOT_LOGGED_IN);
 			result.setErrorMessage("Only logged in user can create listing");
 		} else {
@@ -245,7 +245,7 @@ public class ListingFacade {
 	 */
 	public ListingVO editedListing(UserVO loggedInUser) {
 		if (loggedInUser == null) {
-			log.log(Level.WARNING, "Only logged in user can have edited listing", new Exception("Not logged in"));
+			log.log(Level.INFO, "Only logged in user can have edited listing", new Exception("Not logged in"));
 			return null;
 		} else {
 			Listing listing = getDAO().getListing(ListingVO.toKeyId(loggedInUser.getEditedListing()));
@@ -392,7 +392,6 @@ public class ListingFacade {
 			result.setListing(DtoToVoConverter.convert(listing));
 			return result;
 		}
-		log.log(Level.INFO, infos.toString());
 		if (propsToUpdate.isEmpty() && !fetchedDoc) {
 			result.setListing(DtoToVoConverter.convert(listing));
 			result.setErrorCode(ErrorCodes.ENTITY_VALIDATION);
@@ -451,7 +450,7 @@ public class ListingFacade {
 		createMandatoryProperty(propsToUpdate, infos, properties, "formatted_address", "address");
 		
 		if (infos.length() > 0 ) {
-			log.warning("Missing mandatory address field(s): " + infos.toString());
+			log.info("Missing mandatory address field(s): " + infos.toString());
 			result.setErrorCode(ErrorCodes.ENTITY_VALIDATION);
 			result.setErrorMessage("Missing mandatory address field(s).");
 			return result;
@@ -480,7 +479,7 @@ public class ListingFacade {
             if (value != null && idx >= 0) {
                 value = value.substring(0, idx);
             }
-            log.warning("createMandatoryProperty could not find property: [" + name + "] thus falling back to: [" + (value != null ? value : "") + "]");
+            log.info("createMandatoryProperty could not find property: [" + name + "] thus falling back to: [" + (value != null ? value : "") + "]");
         }
 		if (value != null) {
 			ListingPropertyVO prop = new ListingPropertyVO(propertyName, value);
@@ -651,13 +650,13 @@ public class ListingFacade {
 		Listing dbListing = getDAO().getListing(listing.toKeyId());
 		// listing should exist, user should be logged in and an owner of the listing or admin
 		if (loggedInUser == null || dbListing == null) {
-			log.warning("Listing doesn't exist or user not logged in");
+			log.info("Listing doesn't exist or user not logged in");
 			return null;
 		}
 		boolean adminOrOwner = StringUtils.equals(loggedInUser.getId(), dbListing.owner.getString())
 				|| loggedInUser.isAdmin();
 		if (!adminOrOwner) {
-			log.warning("User must be an owner of the listing or an admin");
+			log.info("User must be an owner of the listing or an admin");
 			return null;
 		}
 		// only NEW or ACTIVE listings can be updated
@@ -684,7 +683,7 @@ public class ListingFacade {
 	public ListingAndUserVO activateListing(UserVO loggedInUser, String listingId) {
 		ListingAndUserVO returnValue = new ListingAndUserVO();
 		if (loggedInUser == null) {
-			log.log(Level.WARNING, "User is not logged in!", new Exception("Not logged in user"));
+			log.log(Level.INFO, "User is not logged in!", new Exception("Not logged in user"));
 			returnValue.setErrorCode(ErrorCodes.NOT_LOGGED_IN);
 			returnValue.setErrorMessage("User is not logged in!");
 			return returnValue;
@@ -699,7 +698,7 @@ public class ListingFacade {
 
 		Listing dbListing = getDAO().getListing(BaseVO.toKeyId(listingId));
 		if (dbListing.state != Listing.State.POSTED && dbListing.state != Listing.State.FROZEN) {
-			log.log(Level.WARNING, "Only posted and frozen listings can be activated. This listing is " + dbListing.state, new Exception("Not valid state"));
+			log.log(Level.INFO, "Only posted and frozen listings can be activated. This listing is " + dbListing.state, new Exception("Not valid state"));
 			returnValue.setErrorCode(ErrorCodes.ENTITY_VALIDATION);
 			returnValue.setErrorMessage("Only posted and frozen listings can be activated. This listing is " + dbListing.state);
 			return returnValue;
@@ -741,13 +740,13 @@ public class ListingFacade {
 		
 		Listing dbListing = getDAO().getListing(BaseVO.toKeyId(listingId));
 		if (loggedInUser == null || dbListing == null) {
-			log.log(Level.WARNING, "User " + loggedInUser + " is logged in or listing doesn't exist", new Exception("Not logged in"));
+			log.log(Level.INFO, "User " + loggedInUser + " is logged in or listing doesn't exist", new Exception("Not logged in"));
 			returnValue.setErrorMessage("User not logged in");
 			returnValue.setErrorCode(ErrorCodes.NOT_LOGGED_IN);
 			return returnValue;
 		}
 		if (!StringUtils.equals(loggedInUser.getId(), dbListing.owner.getString())) {
-			log.log(Level.WARNING, "User '" + loggedInUser + "' is not an owner of listing " + dbListing, new Exception("Not listing owner"));
+			log.log(Level.INFO, "User '" + loggedInUser + "' is not an owner of listing " + dbListing, new Exception("Not listing owner"));
 			returnValue.setErrorMessage("User is not an owner of the listing");
 			returnValue.setErrorCode(ErrorCodes.NOT_AN_OWNER);
 			return returnValue;
@@ -786,7 +785,7 @@ public class ListingFacade {
 			returnValue.setListing(toReturn);
 			return returnValue;
 		}
-		log.log(Level.WARNING, "Only NEW listing can be marked as POSTED (state is " + dbListing.state + ")", new Exception("Not valid state"));
+		log.log(Level.INFO, "Only NEW listing can be marked as POSTED (state is " + dbListing.state + ")", new Exception("Not valid state"));
 		returnValue.setErrorMessage("Listing is not in NEW state.");
 		returnValue.setErrorCode(ErrorCodes.ENTITY_VALIDATION);
 		return returnValue;
@@ -885,14 +884,14 @@ public class ListingFacade {
 		ListingAndUserVO returnValue = new ListingAndUserVO();
 		
 		if (loggedInUser == null) {
-			log.log(Level.WARNING, "User not logged in");
+			log.log(Level.INFO, "User not logged in");
 			returnValue.setErrorMessage("User not logged in");
 			returnValue.setErrorCode(ErrorCodes.NOT_LOGGED_IN);
 			return returnValue;
 		}
 		Listing dbListing = getDAO().getListing(BaseVO.toKeyId(listingId));
 		if (dbListing == null) {
-			log.log(Level.WARNING, "Listing doesn't exist", new Exception("Listing doesn't exist"));
+			log.log(Level.INFO, "Listing doesn't exist", new Exception("Listing doesn't exist"));
 			returnValue.setErrorMessage("Listing doesn't exist");
 			returnValue.setErrorCode(ErrorCodes.ENTITY_VALIDATION);
 			return returnValue;
@@ -927,7 +926,7 @@ public class ListingFacade {
             }
 			return returnValue;
 		}
-		log.log(Level.WARNING, "CLOSED or WITHDRAWN listings cannot be withdrawn (state was " + dbListing.state + ")", new Exception("Not valid state"));
+		log.log(Level.INFO, "CLOSED or WITHDRAWN listings cannot be withdrawn (state was " + dbListing.state + ")", new Exception("Not valid state"));
 		returnValue.setErrorMessage("CLOSED or WITHDRAWN listings cannot be withdrawn (state was " + dbListing.state + ")");
 		returnValue.setErrorCode(ErrorCodes.ENTITY_VALIDATION);
 		return returnValue;
@@ -941,7 +940,7 @@ public class ListingFacade {
 		
 		Listing dbListing = getDAO().getListing(BaseVO.toKeyId(listingId));
 		if (loggedInUser == null || dbListing == null || !loggedInUser.isAdmin()) {
-			log.warning("User " + loggedInUser + " is not admin");
+			log.info("User " + loggedInUser + " is not admin");
 			returnValue.setErrorMessage("User " + loggedInUser + " is not admin");
 			returnValue.setErrorCode(ErrorCodes.NOT_AN_ADMIN);
 			return returnValue;
@@ -966,7 +965,7 @@ public class ListingFacade {
                 errorStr = "Listing owner with nickname '" + nickname + "' already has an in-progress listing, cannot send back";
 			}
             if (errorStr != null) {
-				log.warning(errorStr);
+				log.info(errorStr);
 				returnValue.setErrorMessage(errorStr);
 				returnValue.setErrorCode(ErrorCodes.OPERATION_NOT_ALLOWED);
 				return returnValue;
@@ -988,8 +987,10 @@ public class ListingFacade {
 
                 }
 				NotificationFacade.instance().scheduleListingStateNotification(updatedListing);
-				if (message == null) {
-					message = "Your listing has been send back for revision, please see the private administrator message for details.";
+				if (StringUtils.isBlank(message)) {
+					message = "Your listing '" + updatedListing.name + "' has been sent back for revision, please correct listing and submit it again.";
+				} else {
+					message = "Your listing '" + updatedListing.name + "' has been sent back for revision. " + message;
 				}
 				MessageFacade.instance().sendPrivateMessage(loggedInUser, updatedListing.owner.getString(), message);
 			}
@@ -1010,7 +1011,7 @@ public class ListingFacade {
 	public ListingAndUserVO freezeListing(UserVO loggedInUser, String listingId, String message) {
 		ListingAndUserVO returnValue = new ListingAndUserVO();
 		if (loggedInUser == null || !loggedInUser.isAdmin()) {
-			log.warning("User not logged in or '" + loggedInUser + "' is not an admin");
+			log.info("User not logged in or '" + loggedInUser + "' is not an admin");
 			returnValue.setErrorMessage("Only admins can freeze listings.");
 			returnValue.setErrorCode(ErrorCodes.NOT_AN_ADMIN);
 			return returnValue;
@@ -1018,7 +1019,7 @@ public class ListingFacade {
 		
 		Listing dbListing = getDAO().getListing(BaseVO.toKeyId(listingId));
 		if (dbListing == null || dbListing.state == Listing.State.NEW || dbListing.state == Listing.State.POSTED) {
-			log.warning("Listing does not exist or is not yet activated. Listing: " + dbListing);
+			log.info("Listing does not exist or is not yet activated. Listing: " + dbListing);
 			returnValue.setErrorMessage("Listing does not exist or is not yet activated");
 			returnValue.setErrorCode(ErrorCodes.ENTITY_VALIDATION);
 			return returnValue;
@@ -1037,8 +1038,10 @@ public class ListingFacade {
 				returnValue.setErrorCode(ErrorCodes.DATASTORE_ERROR);
 			} else {
 				NotificationFacade.instance().scheduleListingStateNotification(updatedListing);
-				if (message == null) {
-					message = "Your listing has been frozen. An administrator will contact you via private message.";
+				if (StringUtils.isBlank(message)) {
+					message = "Your listing '" + updatedListing.name + "' has been frozen. An administrator will contact you soon.";
+				} else {
+					message = "Your listing '" + updatedListing.name + "' has been frozen. " + message;
 				}
 				MessageFacade.instance().sendPrivateMessage(loggedInUser, updatedListing.owner.getString(), message);
 			}
@@ -1068,7 +1071,8 @@ public class ListingFacade {
 			return result;
 		} else if (loggedInUser.isAdmin() && StringUtils.isNotEmpty(listingId)) {
 			listingKey = ListingVO.toKeyId(listingId);
-		} else if (StringUtils.isNotEmpty(loggedInUser.getEditedListing()) && StringUtils.isEmpty(listingId)) {
+		} else if (StringUtils.equals(loggedInUser.getEditedListing(), listingId)
+				|| (StringUtils.isNotEmpty(loggedInUser.getEditedListing()) && StringUtils.isEmpty(listingId))) {
 			listingKey = ListingVO.toKeyId(loggedInUser.getEditedListing());
 		} else {
 			log.info("Deletion not successful, user can only delete own listings");
@@ -1166,7 +1170,7 @@ public class ListingFacade {
 		UserListingsVO result = new UserListingsVO();
 
 		if (loggedInUser == null) {
-			log.warning("User not logged in.");
+			log.info("User not logged in.");
 			// on John's request we return 200 when user is not logged in
 			return result;
 		}
@@ -1252,7 +1256,7 @@ public class ListingFacade {
 	public ListingListVO getMonitoredListings(UserVO loggedInUser, String userId, ListPropertiesVO listProperties) {
 		ListingListVO list = new ListingListVO();
 		if (loggedInUser == null) {
-			log.warning("User not logged in.");
+			log.info("User not logged in.");
 			list.setErrorCode(ErrorCodes.NOT_LOGGED_IN);
 			list.setErrorMessage("User is not logged in.");
 			return list;
@@ -1401,7 +1405,7 @@ public class ListingFacade {
 	public ListingListVO getUserListings(UserVO loggedInUser, String stateString, String userId, ListPropertiesVO listingProperties) {
 		ListingListVO list = new ListingListVO();
 		if (loggedInUser == null) {
-			log.log(Level.WARNING, "User not logged in");
+			log.log(Level.INFO, "User not logged in");
 			list.setErrorMessage("User not logged in");
 			list.setErrorCode(ErrorCodes.NOT_LOGGED_IN);
 			return list;
@@ -1832,7 +1836,7 @@ public class ListingFacade {
 			byte logo[] = blobstoreService.fetchData(doc.getBlob(), 0, logoInfo.getSize() - 1);
             String errorMsg = setLogoBase64(listing, logo);
             if (errorMsg != null) {
-                log.warning("createListingDocument: " + errorMsg);
+                log.warning("Error while setting logo base64: " + errorMsg);
 				blobstoreService.delete(doc.getBlob());
 				doc.setErrorCode(ErrorCodes.ENTITY_VALIDATION);
 				doc.setErrorMessage(errorMsg);
