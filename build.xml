@@ -64,8 +64,15 @@
     </copy>
   </target>
   
-  <target name="compile" depends="compile-static-files, compile-java, update-version-info"
+  <target name="compile" depends="compile-static-files, check-error-page, compile-java, update-version-info"
       description="Compiles Java and static files">
+  </target>
+
+  <target name="check-error-page">
+  	<condition property="error-page-too-large">
+  	  <length file="war/error-page.html" length="10240" when="greater"/>
+  	</condition>
+  	<fail if="error-page-too-large" message="Error page is too large! Check size of the file war/error-page.html"/>
   </target>
 
   <target name="compile-java" depends="check-appengine-home, copyjars"
