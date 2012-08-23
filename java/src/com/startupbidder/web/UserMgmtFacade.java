@@ -179,13 +179,7 @@ public class UserMgmtFacade {
 	 */
 	public UserListingsForAdminVO getUser(UserVO loggedInUser, String userId) {
 		UserListingsForAdminVO result = new UserListingsForAdminVO();
-		if (loggedInUser == null || !loggedInUser.isAdmin()) {
-			result.setErrorCode(ErrorCodes.NOT_AN_ADMIN);
-			result.setErrorMessage("User is not an admin!");
-			log.info("User not logged in or not an admin.");
-			return result;
-		}
-		
+
 		UserVO user = DtoToVoConverter.convert(getDAO().getUser(userId));
 		if (user == null) {
 			result.setErrorCode(ErrorCodes.APPLICATION_ERROR);
@@ -194,41 +188,51 @@ public class UserMgmtFacade {
 			return result;
 		}
 		ListPropertiesVO props = new ListPropertiesVO();
+
 		props.setMaxResults(4);
 		List<ListingTileVO> activeListings = ListingFacade.instance().prepareListingList(
 				getDAO().getUserListings(user.toKeyId(), Listing.State.ACTIVE, props));
-		props = new ListPropertiesVO();
-		props.setMaxResults(4);
-		List<ListingTileVO> withdrawnListings = ListingFacade.instance().prepareListingList(
-				getDAO().getUserListings(user.toKeyId(), Listing.State.WITHDRAWN, props));
-		props = new ListPropertiesVO();
-		props.setMaxResults(4);
-		List<ListingTileVO> frozenListings = ListingFacade.instance().prepareListingList(
-				getDAO().getUserListings(user.toKeyId(), Listing.State.FROZEN, props));
-		props = new ListPropertiesVO();
-		props.setMaxResults(4);
-		List<ListingTileVO> closedListings = ListingFacade.instance().prepareListingList(
-				getDAO().getUserListings(user.toKeyId(), Listing.State.CLOSED, props));
-
 		if (activeListings.size() > 0) {
 			result.setActiveListings(activeListings);
 		}
-		if (withdrawnListings.size() > 0) {
-			result.setWithdrawnListings(withdrawnListings);
-		}
-		if (frozenListings.size() > 0) {
-			result.setFrozenListings(frozenListings);
-		}
-		if (closedListings.size() > 0) {
-			result.setClosedListings(closedListings);
-		}
 
-		if (user.getEditedListing() != null) {
-			Listing editedListing = getDAO().getListing(BaseVO.toKeyId(user.getEditedListing()));
-			result.setEditedListing(DtoToVoConverter.convert(editedListing));
-		}
+		if (loggedInUser != null && (loggedInUser.isAdmin() || user.toKeyId() == loggedInUser.toKeyId())) {
+			props = new ListPropertiesVO();
+			props.setMaxResults(4);
+			List<ListingTileVO> withdrawnListings = ListingFacade.instance().prepareListingList(
+					getDAO().getUserListings(user.toKeyId(), Listing.State.WITHDRAWN, props));
+			if (withdrawnListings.size() > 0) {
+				result.setWithdrawnListings(withdrawnListings);
+			}
 
-		applyUserStatistics(loggedInUser, loggedInUser);
+			props = new ListPropertiesVO();
+			props.setMaxResults(4);
+			List<ListingTileVO> frozenListings = ListingFacade.instance().prepareListingList(
+					getDAO().getUserListings(user.toKeyId(), Listing.State.FROZEN, props));
+			if (frozenListings.size() > 0) {
+				result.setFrozenListings(frozenListings);
+			}
+			
+			props = new ListPropertiesVO();
+			props.setMaxResults(4);
+			List<ListingTileVO> closedListings = ListingFacade.instance().prepareListingList(
+					getDAO().getUserListings(user.toKeyId(), Listing.State.CLOSED, props));
+			if (closedListings.size() > 0) {
+				result.setClosedListings(closedListings);
+			}
+
+			if (user.getEditedListing() != null) {
+				Listing editedListing = getDAO().getListing(BaseVO.toKeyId(user.getEditedListing()));
+				result.setEditedListing(DtoToVoConverter.convert(editedListing));
+			}
+			applyUserStatistics(loggedInUser, loggedInUser);
+		} else {
+			user.setEmail("");
+			user.setLocation("");
+			user.setPhone("");
+			user.setEditedListing("");
+			user.setEditedStatus("");
+		}
 
 		result.setUser(user);
 		return result;
