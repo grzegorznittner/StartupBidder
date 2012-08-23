@@ -36,6 +36,8 @@ import com.startupbidder.vo.ListingTileVO;
 import com.startupbidder.vo.UserAndUserVO;
 import com.startupbidder.vo.UserListVO;
 import com.startupbidder.vo.UserListingsForAdminVO;
+import com.startupbidder.vo.UserShortListVO;
+import com.startupbidder.vo.UserShortVO;
 import com.startupbidder.vo.UserToAvatar;
 import com.startupbidder.vo.UserVO;
 
@@ -464,6 +466,7 @@ public class UserMgmtFacade {
 			return result;
 		}
 		user.userClass = "dragon";
+		user.dragon = true;
 		user = getDAO().updateUser(user);
 		log.info("Promoted to Dragon: " + user);
 		
@@ -599,6 +602,36 @@ public class UserMgmtFacade {
 		}
 
 		userList.setUsers(users);
+		return userList;
+	}
+
+	/**
+	 * Returns list of all dragons
+	 */
+	public UserShortListVO getDragons(UserVO loggedInUser, ListPropertiesVO userProperties) {
+		UserShortListVO userList = new UserShortListVO();
+		
+		List<UserShortVO> users = DtoToVoConverter.convertShortUsers(getDAO().getDragons(userProperties));
+		userList.setUsers(users);
+		if (loggedInUser != null) {
+			userList.setUser(loggedInUser);
+		}
+		userList.setUsersProperties(userProperties);
+		return userList;
+	}
+
+	/**
+	 * Returns list of all listers
+	 */
+	public UserShortListVO getListers(UserVO loggedInUser, ListPropertiesVO userProperties) {
+		UserShortListVO userList = new UserShortListVO();
+		
+		List<UserShortVO> users = DtoToVoConverter.convertShortUsers(getDAO().getListers(userProperties));
+		userList.setUsers(users);
+		userList.setUsersProperties(userProperties);
+		if (loggedInUser != null) {
+			userList.setUser(loggedInUser);
+		}
 		return userList;
 	}
 

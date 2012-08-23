@@ -484,6 +484,27 @@ public class ObjectifyDatastoreDAO {
 		List<SBUser> users = new ArrayList<SBUser>(getOfy().get(usersIt).values());
 		return users;
 	}
+	
+	public List<SBUser> getDragons(ListPropertiesVO listingProperties) {
+		Query<SBUser> query = getOfy().query(SBUser.class)
+				.filter("dragon =", true)
+       			.chunkSize(listingProperties.getMaxResults())
+       			.prefetchSize(listingProperties.getMaxResults());
+		List<Key<SBUser>> keyList = new CursorHandler<SBUser>().handleQuery(listingProperties, query);
+		List<SBUser> listings = new ArrayList<SBUser>(getOfy().get(keyList).values());
+		return listings;
+	}
+
+	public List<SBUser> getListers(ListPropertiesVO listingProperties) {
+		Query<SBUser> query = getOfy().query(SBUser.class)
+				.filter("lister =", true)
+       			.chunkSize(listingProperties.getMaxResults())
+       			.prefetchSize(listingProperties.getMaxResults());
+		List<Key<SBUser>> keyList = new CursorHandler<SBUser>().handleQuery(listingProperties, query);
+		List<SBUser> listings = new ArrayList<SBUser>(getOfy().get(keyList).values());
+		return listings;
+	}
+
 /*
 	public SBUser getTopInvestor() {
 		UserStats topUserStat = getOfy().query(UserStats.class)
@@ -538,6 +559,7 @@ public class ObjectifyDatastoreDAO {
 			if (oldState == Listing.State.POSTED && newListing.state == Listing.State.ACTIVE) {
 				SBUser owner = getOfy().get(listing.owner);
 				owner.editedListing = null;
+				owner.lister = true;
 				getOfy().put(owner);
 			}
 			

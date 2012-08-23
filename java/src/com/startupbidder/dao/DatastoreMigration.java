@@ -10,6 +10,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.google.appengine.api.datastore.QueryResultIterable;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.Objectify;
@@ -20,6 +22,7 @@ import com.startupbidder.datamodel.Listing;
 import com.startupbidder.datamodel.Monitor;
 import com.startupbidder.datamodel.Notification;
 import com.startupbidder.datamodel.SBUser;
+import com.startupbidder.vo.ListPropertiesVO;
 import com.startupbidder.web.ListingFacade;
 
 /**
@@ -55,7 +58,39 @@ public class DatastoreMigration {
 		report.append("<br/>\n</ul>\n");
 		return report.toString();
 	}
-	
+
+	public static String migrate201208222146_to_current() {
+		StringBuffer report = new StringBuffer();
+		
+		/* migrating SBUser
+		 *   * setting properly dragon and lister fields
+		 */
+		Calendar listingUpdateDate = Calendar.getInstance();
+		listingUpdateDate.set(2012, 7, 5);
+		report.append("SBUser's migration:<br/>\n<ul>\n");
+		QueryResultIterable<Key<SBUser>> u = getOfy().query(SBUser.class).fetchKeys();
+		Map<Key<SBUser>, SBUser> users = getOfy().get(u);
+		List<SBUser> userMigration = new ArrayList<SBUser>();
+		for (SBUser user : users.values()) {
+			if (StringUtils.equalsIgnoreCase("dragon", user.userClass)) {
+				report.append("<li> updating dragon flag for " + user.nickname);
+				user.dragon = true;
+			}
+			if (!user.lister) {
+				ListPropertiesVO props = new ListPropertiesVO();
+				props.setMaxResults(1);
+				List<Listing> listings = ObjectifyDatastoreDAO.getInstance().getUserListings(user.id, Listing.State.ACTIVE, props);
+				report.append("<li> updating lister flag for " + user.nickname);
+				user.lister = listings.size() > 0;
+			}
+			userMigration.add(user);
+		}
+		getOfy().put(userMigration);
+		report.append("<br/>\n</ul>\n");
+		
+		return report.toString();
+	}
+
 	public static String migrate201207101218_to_current() {
 		StringBuffer report = new StringBuffer();
 		

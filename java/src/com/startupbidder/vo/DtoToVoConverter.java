@@ -590,8 +590,20 @@ public class DtoToVoConverter {
 		}
 		List<UserVO> userVoList = new ArrayList<UserVO>();
 		for (SBUser userDTO : userDtoList) {
-			UserVO bidVO = convert(userDTO);
-			userVoList.add(bidVO);
+			UserVO userVO = convert(userDTO);
+			userVoList.add(userVO);
+		}
+		return userVoList;
+	}
+	
+	public static List<UserShortVO> convertShortUsers(List<SBUser> userDtoList) {
+		if (userDtoList == null) {
+			return null;
+		}
+		List<UserShortVO> userVoList = new ArrayList<UserShortVO>();
+		for (SBUser userDTO : userDtoList) {
+			UserVO userVO = convert(userDTO);
+			userVoList.add(new UserShortVO(userVO));
 		}
 		return userVoList;
 	}

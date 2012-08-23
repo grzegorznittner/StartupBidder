@@ -4,6 +4,9 @@ import org.codehaus.jackson.annotate.JsonAutoDetect;
 import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+
+import com.startupbidder.util.LowecaseSerializer;
 
 /**
  * 
@@ -16,8 +19,10 @@ public class UserShortVO extends BaseVO {
 	@JsonProperty("profile_id") private String id;
 	@JsonProperty("username") private String nickname;
 	@JsonProperty("name") private String name;
-	@JsonProperty("user_class") private String userClass;
+	@JsonProperty("user_class")	@JsonSerialize(using=LowecaseSerializer.class) private String userClass;
 	@JsonProperty("avatar") private String avatar;
+	@JsonProperty("status") @JsonSerialize(using=LowecaseSerializer.class) private String status;
+	@JsonProperty("admin") private boolean admin;
 	public UserShortVO() {
 	}
 	public UserShortVO(UserVO user) {
@@ -26,6 +31,8 @@ public class UserShortVO extends BaseVO {
 		this.name = user.getName();
 		this.userClass = user.getUserClass();
 		this.avatar = user.getAvatar();
+		this.status = user.getStatus();
+		this.admin = user.isAdmin();
 	}
 	public String getId() {
 		return id;
@@ -56,5 +63,17 @@ public class UserShortVO extends BaseVO {
 	}
 	public void setAvatar(String avatar) {
 		this.avatar = avatar;
+	}
+	public String getStatus() {
+		return status;
+	}
+	public void setStatus(String status) {
+		this.status = status;
+	}
+	public boolean isAdmin() {
+		return admin;
+	}
+	public void setAdmin(boolean admin) {
+		this.admin = admin;
 	}
 }

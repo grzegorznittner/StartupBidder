@@ -107,7 +107,7 @@ public class HelloServlet extends HttpServlet {
 //				return;
 //			}
 			out.println("<a href=\"/setup/\">Setup page</a></p>");
-						
+			
 			ListPropertiesVO listProperties = new ListPropertiesVO();
 			listProperties.setMaxResults(1);
 			List<Listing> listings = datastore.getAllListings();
@@ -121,6 +121,8 @@ public class HelloServlet extends HttpServlet {
 			out.println("<a href=\"/user/loggedin/.json\">Direct link to logged in user data</a><br/>");
 			out.println("<a href=\"/user/get/" + currentUser.getId() + "/.json\">Logged in user data via /users/get/ </a><br/>");
 			out.println("<a href=\"/user/all/.json\">All users</a><br/>");
+			out.println("<a href=\"/user/dragons/.json\">Dragons</a><br/>");
+			out.println("<a href=\"/user/listers/.json\">Listers</a><br/>");
 			out.println("<form method=\"POST\" action=\"/user/activate/" + currentUser.getId() + "/.json\"><input type=\"submit\" value=\"Activates logged in user\"/></form>");
 			out.println("<form method=\"POST\" action=\"/user/deactivate/" + currentUser.getId() + "/.json\"><input type=\"submit\" value=\"Deactivates logged in user\"/></form>");
 			out.println("<a href=\"/user/votes/" + currentUser.getId() + "/.json\">Logged in user votes</a><br/>");

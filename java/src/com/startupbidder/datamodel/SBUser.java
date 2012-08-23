@@ -31,7 +31,7 @@ public class SBUser extends BaseObject<SBUser> {
 	}
 	@Id public Long id;
 	
-	public boolean mockData;
+	public boolean mockData = false;
 	
 	public Date modified;
 	@PrePersist void updateModifiedDate() {
@@ -40,8 +40,11 @@ public class SBUser extends BaseObject<SBUser> {
 	
 	public boolean admin;
 	public String userClass;
+	/** Two flags below duplicates userClass but they are used for search */
+	@Indexed public boolean dragon = false;
+	@Indexed public boolean lister = false;
 	@Indexed public String email;
-	@Indexed public boolean investor;
+	@Indexed public boolean investor = false;
 	@Indexed public Status status;
 	
 	public Key<Listing> editedListing;

@@ -44,6 +44,10 @@ public class UserController extends ModelDrivenController {
 				return all(request);
 			} else if("get".equalsIgnoreCase(getCommand(1))) {
 				return get(request);
+			} else if("dragons".equalsIgnoreCase(getCommand(1))) {
+				return dragons(request);
+			} else if("listers".equalsIgnoreCase(getCommand(1))) {
+				return listers(request);
 			} else if("message_users".equalsIgnoreCase(getCommand(1))) {
 				return messageUsers(request);
 			} else if("messages".equalsIgnoreCase(getCommand(1))) {
@@ -187,6 +191,20 @@ public class UserController extends ModelDrivenController {
 		return headers;
 	}
 
+	private HttpHeaders dragons(HttpServletRequest request) {
+		HttpHeaders headers = new HttpHeadersImpl("dragons");
+		ListPropertiesVO listProperties = getListProperties(request);
+		model = UserMgmtFacade.instance().getDragons(getLoggedInUser(), listProperties);
+		return headers;
+	}
+	
+	private HttpHeaders listers(HttpServletRequest request) {
+		HttpHeaders headers = new HttpHeadersImpl("listers");
+		ListPropertiesVO listProperties = getListProperties(request);
+		model = UserMgmtFacade.instance().getListers(getLoggedInUser(), listProperties);
+		return headers;
+	}
+	
 	private HttpHeaders loggedin(HttpServletRequest request) {
 		model = getLoggedInUser();
         return new HttpHeadersImpl("loggedin").disableCaching();
