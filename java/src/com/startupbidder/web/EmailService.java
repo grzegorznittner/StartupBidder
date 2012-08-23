@@ -31,7 +31,6 @@ import com.startupbidder.vo.BaseVO;
 import com.startupbidder.vo.DtoToVoConverter;
 import com.startupbidder.vo.ListPropertiesVO;
 import com.startupbidder.vo.ListingTileVO;
-import com.startupbidder.vo.ListingVO;
 import com.startupbidder.vo.NotificationVO;
 
 /**
@@ -207,7 +206,6 @@ public class EmailService {
 			Map<String, String> props = prepare3ListingNotificationProps(notification, listings);
 			String htmlTemplate = FileUtils.readFileToString(new File(htmlTemplateFile), "UTF-8");
 			String htmlBody = applyProperties(htmlTemplate, props);
-			log.info(htmlBody);
 			String subject = props.get(NOTIFICATION_TITLE);
 			send("admin@startupbidder.com", notification.getUserEmail(), subject, htmlBody);
 			return true;
