@@ -174,9 +174,6 @@ pl.implement(ProfilePageClass,{
                     i;
                 self.json = json;
                 header.setLogin(json);
-                if (!json.loggedin_profile) { // must be logged in for this page
-                    window.location = '/';
-                }
                 profile.display(json);
                 //notifyList.display(json);
                 for (i = 0; i < listprops.length; i++) {
@@ -189,7 +186,7 @@ pl.implement(ProfilePageClass,{
                     pl('#no_listings_wrapper').show();
                 }
                 if (json.loggedin_profile) {
-                    if (!json.loggedin_profile.admin) {
+                    if (!json.loggedin_profile.admin && !json.profile) {
                         pl('#editprofilebutton').show();
                     }
                     else if (json.loggedin_profile.admin && !json.profile) {
@@ -200,7 +197,12 @@ pl.implement(ProfilePageClass,{
                     }
                     else {
                         pl('.titleperson').text('USER');
+                        pl('#encourageuser').hide();
                     }
+                }
+                else {
+                    pl('.titleperson').text('USER');
+                    pl('#encourageuser').hide();
                 }
                 pl('.preloader').hide();
                 pl('.wrapper').show();
@@ -245,19 +247,15 @@ pl.implement(ProfileListingPageClass, {
                     companyList = new CompanyListClass({ fullWidth: true });
                 self.json = json;
                 header.setLogin(json);
-                if (!json.loggedin_profile) { // must be logged in for this page
-                    window.location = '/';
-                }
                 profile.display(json);
                 companyList.storeList(json);
                 pl('#listingstitle').text(self.title);
 
-                if (self.isadmin) {
-                    pl('#titleperson').text('USER');
-                }
-
-                if (!self.passed_id || self.passed_id === json.loggedin_profile.profile_id) {
+                if (!self.passed_id || json.loggedin_profile && self.passed_id === json.loggedin_profile.profile_id) {
                     pl('#editprofilebutton').show();
+                }
+                else {
+                    pl('#titleperson').text('USER');
                 }
 
                 pl('.preloader').hide();
@@ -486,7 +484,11 @@ pl.implement(EditProfileClass, {
     }
 });
 
-function ProfileListClass() {}
+function ProfileListClass() {
+    this.queryString = new QueryStringClass();
+    this.type = this.queryString.vars.type || 'all';
+}
+
 pl.implement(ProfileListClass, {
     store: function(json) {
         if (json) {
@@ -498,8 +500,8 @@ pl.implement(ProfileListClass, {
         if (json) {
             this.store(json);
         }
-        if (!this.loggedin_profile) {
-            document.location = '/';
+        if (this.type !== 'all') {
+            pl('#typetitle').text(this.type === 'listers' ? 'Entrepreneurs' : SafeStringClass.prototype.ucfirst(this.type));
         }
         this.displayList(json.users);
     },
@@ -516,12 +518,15 @@ pl.implement(ProfileListClass, {
 
     displayList: function(results) {
         var list = results || [],
+            more_results_url = this.users_props && this.users_props.more_results_url,
             listhtml = '',
             listitem,
             i;
         for (i = 0; i < list.length; i++) {
             listitem = list[i];
-            listhtml += this.makeListItem(listitem);
+            if (listitem.status === 'active' || this.loggedin_profile && this.loggedin_profile.admin) {
+                listhtml += this.makeListItem(listitem);
+            }
         }
         if (listhtml) {
             pl('#profilelistcontainer').addClass('addlistingcontainerfilled');
@@ -530,6 +535,10 @@ pl.implement(ProfileListClass, {
         else {
             this.displayEmptyList();
         }
+        if (more_results_url) {
+            pl('#profilelist').after('<div class="showmore profilelistshowmore hoverlink" id="moreresults"><span class="initialhidden" id="moreresultsurl">'
+                + more_results_url + '</span><span id="moreresultsmsg">More...</span></div>\n');
+        }
     },
 
     makeListItem: function(listitem) {
@@ -537,11 +546,14 @@ pl.implement(ProfileListClass, {
             avatarstyle = listitem.avatar
                 ? ' style="background-image: url(' + listitem.avatar + ')"'
                 : '',
+            emailtext = listitem.email
+                ? '<span class="profilelistemail">' + listitem.email+ '</span>'
+                : '',
            	statustext =  listitem.status !== 'active'
                 ? '<span class="profileliststatus">' + listitem.status + '</span>'
                 : '',
 			admintext =  listitem.admin ? '<span class="profilelistadmin">ADMIN</span>' : '',
-			userclasstext =  listitem.user_class
+			userclasstext =  listitem.user_class && this.type !== 'dragons'
                 ? '<span class="profilelistuserclass">' + ProfileUserClass.prototype.format(listitem.user_class) + '</span>'
                 : '',
             nametext = listitem.name
@@ -565,7 +577,7 @@ pl.implement(ProfileListClass, {
                 <div class="profilelistavatar"' + avatarstyle + '></div>\
                 <p class="messagetext profilelistheader">\
 			            <span class="profilelistusername">' + listitem.username + '</span>\
-			        <span class="profilelistemail">' + listitem.email+ '</span>\
+			        ' + emailtext + '\
                     ' + statustext + '\
                     ' + userclasstext + '\
                     ' + admintext + '\
@@ -596,7 +608,8 @@ pl.implement(ProfileListClass, {
                 pl('.preloader').hide();
                 pl('.errorwrapper').show();
             },
-            ajax = new AjaxClass('/user/all', 'profilelistmsg', complete, null, null, error);
+            url = '/user/' + this.type,
+            ajax = new AjaxClass(url, 'profilelistmsg', complete, null, null, error);
         ajax.call();
     }
 });

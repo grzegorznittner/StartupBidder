@@ -18,7 +18,7 @@ include(not-found.m4)
 <div class="container initialhidden wrapper">
 
 <div class="span-24">
-    <div class="addlistingtitle">All the Users on Startupbidder</div>
+    <div class="addlistingtitle">The <span id="typetitle">Users</span> on Startupbidder</div>
 
     <div id="profilelistmsg"></div>
 

@@ -114,10 +114,84 @@ pl.implement(ListingClass, {
     },
 
     displayGoto: function() {
+        this.displayValuationButton();
         this.displayModelButton();
         this.displayPresentationButton();
         this.displayAddDocumentButton();
         this.displayRequestDocumentButtons();
+    },
+
+    displayValuationButton: function() {
+        var self = this,
+            hasValuation = MicroListingClass.prototype.getHasValuation(this),
+            text,
+            ajax,
+            url;
+        if (this.status === 'new') {
+            if (hasValuation) {
+                text = 'Edit Valuation';
+            }
+            else {
+                text = 'Add Valuation';
+            }
+            url = '/new-listing-valuation-page.html';
+        }
+        else if (this.status === 'posted' || this.status === 'active') {
+            if (hasValuation) {
+                if (this.loggedin_profile && this.loggedin_profile.profile_id === this.profile_id) {
+                    text = 'Edit Valuation';
+                    url = '/active-listing-valuation-page.html?id=' + this.listing_id;
+                }
+                else {
+                    text = 'Go To Valuation';
+                    url = '/company-valuation-page.html?id=' + this.listing_id;
+                }
+            }
+            else {
+                if (this.loggedin_profile) {
+                    if (this.loggedin_profile.profile_id === this.profile_id) {
+                        text = 'Add Valuation';
+                        url = '/active-listing-valuation-page.html?id=' + this.listing_id;
+                    }
+                    else {
+                        text = 'Request Valuation';
+                        ajax = new AjaxClass('/listing/ask_owner', 'valuationbutton', function() {
+                            document.location = '/company-questions-page.html?id=' + self.listing_id;
+                        });
+                        ajax.setPostData({
+                            message: {
+                                listing_id: this.listing_id,
+                                text: 'Could you please add a valuation for this listing?  Thanks.'
+                            }
+                        })
+                    }
+                }
+                else {
+                    if (this.login_url) {
+                        text = 'Sign In to Request Valuation';
+                        url = '/login-page.html?url=' + encodeURIComponent('/company-page.html?id=' + this.listing_id);
+                    }
+                    else {
+                        text = 'No Valuation';
+                    }
+                }
+            }
+        }
+        else {
+            text = 'No Valuation';
+        }
+        pl('#valuationbutton').text(text);
+        if (ajax) {
+            pl('#valuationbutton').bind('click', function() {
+                pl('#valuationbutton').unbind();
+                ajax.call();
+            });
+        }
+        else if (url) {
+            pl('#valuationbutton').bind('click', function() {
+                document.location = url;
+            });
+        }
     },
 
     displayModelButton: function() {

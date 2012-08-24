@@ -10,6 +10,7 @@
     <div class="span-4 headerrow hoverlink">
         <a href="home-page.html">
             <div style="font-size:24px; padding-top: 7px;"><span style="color:#45a9e6;">startup</span><span style="color:#eee">bidder</span></div>
+            <div style="position: relative; top: -12px; left: 112px; font-size:16px; color: #eed;">beta</div>
         </a>
     </div>
     <div class="span-7 headerrow headerrowcenter last">

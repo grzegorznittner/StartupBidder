@@ -96,6 +96,7 @@ include(company-not-found.m4)
                 <div id="platformicon"></div>
             </span>
         </div>
+
         <div class="formitem sideinfoitem clear">
             <label class="inputlabel" for="category">CATEGORY</label>
             <span class="inputfield">
@@ -109,6 +110,27 @@ include(company-not-found.m4)
             </p>
             <span class="inputicon">
                 <div id="categoryicon"></div>
+            </span>
+        </div>
+
+        <div class="formitem sideinfoitem clear">
+            <label class="inputlabel" for="stage">STAGE</label>
+            <span class="inputfield">
+                <select id="stage" class="text inputwidetext categoryselect">
+                    <option value="concept">Concept</option>
+                    <option value="startup" selected="selected">Startup</option>
+                    <option value="established">Established</option>
+                </select>
+            </span>
+            <p class="sideinfo">
+                <label class="sideinfoheader">Stage</label>
+                <br />
+                What stage is your company or application at?  If you still don&rsquo;t have any revenue or product, it&rsquo;s at the "concept" stage.
+                If you have a company or application that has been launched but is still quite new and may not yet be profitable, you are at the "startup" stage.
+                If your company or application has been released, is earning a profit or breaking even, and has been around for awhile, you are "established".
+            </p>
+            <span class="inputicon">
+                <div id="stageicon"></div>
             </span>
         </div>
 <!--
@@ -231,6 +253,10 @@ include(images-panel-editable.m4)
 
     <a href="/new-listing-media-page.html">
         <div class="sidebox investbutton" id="videobutton">ADD VIDEO</div>
+    </a>
+
+    <a href="/new-listing-valuation-page.html">
+        <div class="sidebox investbutton" id="valuationbutton">ADD VALUATION</div>
     </a>
 
     <a href="/new-listing-bmc-page.html">

@@ -25,8 +25,10 @@ include(profile-not-found.m4)
         <div class="boxtitle smokegrey"><span class="titleperson">YOUR</span> LISTINGS</div>
         <div class="boxpanel">
             Currently there are no listings added or invested in by <span class="titleperson">you</span>.
-            <a href="/add-listing-page.html" class="inputmsg hoverlink profilelink">Add</a> a listing or
-            <a href="/main-page.html?type=top" class="inputmsg hoverlink profilelink">invest</a> in one today!
+            <div id="encourageuser">
+                <a href="/add-listing-page.html" class="inputmsg hoverlink profilelink">Add</a> a listing or
+                <a href="/main-page.html?type=top" class="inputmsg hoverlink profilelink">invest</a> in one today!
+            </div>
         </div>
     </div>
 

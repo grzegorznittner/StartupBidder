@@ -1293,8 +1293,8 @@ include(header.m4)
                 <li><code>listing_title</code> title for the comment listing</li>
                 <li><code>profile_id</code> id for the user who posted this comment</li>
                 <li><code>profile_username</code> username for the user who posted this comment</li>
-                <li><code>profile_user_class</code> user's class (eg. dragon)</li>
-                <li><code>profile_username</code> link to user's avatar</li>
+                <li><code>profile_user_class</code> user&rsquo;s class (eg. dragon)</li>
+                <li><code>profile_username</code> link to user&rsquo;s avatar</li>
                 <li><code>text</code> text of the comment</li>
                 <li><code>comment_date</code> date in YYYYMMDD format when the comment was posted</li>
             </ul>
@@ -1341,8 +1341,8 @@ include(header.m4)
                 <li><code>listing_title</code> title for the comment listing</li>
                 <li><code>profile_id</code> id for the user who posted this comment</li>
                 <li><code>profile_username</code> username for the user who posted this comment</li>
-                <li><code>profile_user_class</code> user's class (eg. dragon)</li>
-                <li><code>profile_username</code> link to user's avatar</li>
+                <li><code>profile_user_class</code> user&rsquo;s class (eg. dragon)</li>
+                <li><code>profile_username</code> link to user&rsquo;s avatar</li>
                 <li><code>text</code> text of the comment</li>
                 <li><code>comment_date</code> date in YYYYMMDD format when the comment was posted</li>
             </ul>
@@ -1692,7 +1692,7 @@ include(header.m4)
                 <li><code>from_user_id</code> user id who asked this question</li>
                 <li><code>from_user_nickname</code> username of user who asked this question</li>
                 <li><code>from_user_class</code> class of the user (eg. dragon)</li>
-                <li><code>from_user_avatar</code> link to the user's avatar</li>
+                <li><code>from_user_avatar</code> link to the user&rsquo;s avatar</li>
                 <li><code>text_2</code> full question text</li>
                 <li><code>answer</code> full question answer, <var>null</var> if question is not answered yet</li>
                 <li><code>answer_date</code> date when question was answered, in YYYYMMDDHH24MMSS format, null if unanswered</li>

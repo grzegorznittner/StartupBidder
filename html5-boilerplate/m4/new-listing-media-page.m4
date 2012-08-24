@@ -80,7 +80,7 @@ If you do not have a video ready, just record a voiceover of a quick run through
             <p class="sideinfo">
                 <label class="sideinfoheader">Link</label>
                 <br />
-                A link to the website for your application or company, or if you don't have one, then a link to your facebook page, twitter page, google profile, or blog.
+                A link to the website for your application or company, or if you don&rsquo;t have one, then a link to your facebook page, twitter page, google profile, or blog.
             </p>
             <span class="inputicon">
                 <div id="websiteicon"></div>

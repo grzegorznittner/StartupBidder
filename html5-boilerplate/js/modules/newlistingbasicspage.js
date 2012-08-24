@@ -69,6 +69,7 @@ pl.implement(NewListingBasicsClass, {
     displayButtons: function() {
         this.displayAskFundingButton();
         this.displayVideoButton();
+        this.displayValuationButton();
         this.displayModelButton();
         this.displayPresentationButton();
         this.displayDocumentButton();
@@ -83,6 +84,12 @@ pl.implement(NewListingBasicsClass, {
     displayVideoButton: function() {
         if (this.base.listing.video) {
             pl('#videobutton').text('EDIT VIDEO');
+        }
+    },
+
+    displayValuationButton: function() {
+        if (MicroListingClass.prototype.getHasValuation(this.base.listing)) {
+            pl('#vaulationbutton').text('EDIT VALUATION');
         }
     },
 
@@ -105,12 +112,13 @@ pl.implement(NewListingBasicsClass, {
     },
 
     bindEvents: function() {
-        var textFields = ['title', 'type', 'platform', 'category', 'address', 'mantra', 'summary'],
+        var textFields = ['title', 'type', 'platform', 'category', 'stage', 'address', 'mantra', 'summary'],
             validators = {
                 title: ValidatorClass.prototype.isNotEmpty,
                 type: ValidatorClass.prototype.isSelected,
                 platform: ValidatorClass.prototype.isSelected,
                 category: ValidatorClass.prototype.isSelected,
+                stage: ValidatorClass.prototype.isSelected,
                 mantra: ValidatorClass.prototype.makeLengthChecker(5, 140),
                 summary: ValidatorClass.prototype.makeLengthChecker(50, 2000),
                 address: ValidatorClass.prototype.isNotEmpty
@@ -120,11 +128,13 @@ pl.implement(NewListingBasicsClass, {
                 type: SelectFieldClass,
                 platform: SelectFieldClass,
                 category: SelectFieldClass,
+                stage: SelectFieldClass,
                 mantra: TextFieldClass,
                 summary: TextFieldClass,
                 address: TextFieldClass
             },
             typeOptions = [ ['application', 'Application'], ['company', 'Company'] ],
+            stageOptions = [ ['concept', 'Concept'], ['startup', 'Startup'], ['established', 'Established' ] ],
             platforms = [ 'ios', 'android', 'windows_phone', 'website', 'desktop', 'other' ],
             platformOptions = [],
             platform,
@@ -156,6 +166,7 @@ pl.implement(NewListingBasicsClass, {
         } 
         this.base.fieldMap['type'].setOptionsWithValues(typeOptions);
         this.base.fieldMap['platform'].setOptionsWithValues(platformOptions);
+        this.base.fieldMap['stage'].setOptionsWithValues(stageOptions);
         this.bindLogo();
         this.bindImages();
         this.setUploadUrls();

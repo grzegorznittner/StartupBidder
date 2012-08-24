@@ -509,7 +509,6 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAMA
 
 /* form styles */
 .formitem { }
-.valuationfield { height: 43px; }
 .inputlabel, .widelabel, .formlabel, .smallformlabel, .inputcaptcha, .inputhelp,
 .inputicon, .topinputicon, .inputlink, .inputimgbutton,
 .formlabelvalue, .formcol1, .formcol2, .formcol1fourth, .formcol2fourth,
@@ -715,6 +714,11 @@ height: 0;
         -ms-transition: height 300ms;
 transition: height 300ms;
 }
+.financialsvaluationfield { height: 43px; width: 312px; text-align: right; margin-right: 50px; }
+.financialsvaluationtext {
+    font-size: 30px;
+    font-weight: bold;
+}
 .remarkreply { height: 0; }
 .remarkreplyshow { height: 150px; }
 
@@ -815,7 +819,7 @@ width: 287px;
 .notifyline:nth-child(2n+1) { background: #e8e8e8; }
 .notifytext { float: left; font-weight: normal; padding-top: 5px; }
 .notifydate { float: right; font-size: 12px; padding-top: 2px; color: gray; margin-right: 10px; }
-.messageline { clear: both; padding: 5px 5px 15px 5px; overflow: auto; position: relative; }
+.messageline { clear: both; padding: 5px 5px 15px 5px; overflow: auto; position: relative; min-height: 50px; }
 .messageline:nth-child(2n+1) { background: #e8e8e8; }
 .messageline p { font-weight: normal; margin: 0; text-indent: 0; }
 .messageline p.messageuser { font-weight: bold; }
@@ -905,6 +909,7 @@ width: 302px;
 .mapaddresstext { font-weight: bold; }
 .addresstext { color: #555; font-size: 12px; font-weight: normal; padding-bottom: 8px; padding-top: 8px; margin-left: 13px; }
 .showmore { float: right; margin-right: 10px; font-weight: bold; margin-bottom: 10px; }
+.profilelistshowmore { padding-right: 165px; padding-top: 20px; }
 
 /* bids */
 .bidheader { }
@@ -1220,6 +1225,10 @@ height: 130px;
 padding: 10px;
 border: 1px solid #cccccc;
 }
+#newlistingappwrapper .sideinfo, #newlistingcompanywrapper .sideinfo {
+    left: 426px;
+    width: 530px;
+}
 .sideinfoitem { position: relative; }
 .sideinfoheader { font-size: 18px; font-weight: bold; line-height: 30px; }
 .basicspanel { overflow: visible; height: 650px; }
@@ -1471,11 +1480,11 @@ color: #fff;
 }
 .logopanel {
     height: 153px;
-    margin-top: 17px;
+    margin-top: 76px;
 }
 .locationpanel {
     margin-top: 0;
-    top: 1424px;
+    top: 1533px;
     position: absolute;
 }
 .askingbox {
@@ -1572,7 +1581,7 @@ position: relative;
     background: none;
     overflow: hidden;
     position: relative;
-    width: 590px;
+    width: 600px;
     color: #666;
     background: #fff;
     margin: auto;
@@ -1723,14 +1732,6 @@ margin: 20px auto;
 .askingamtbtn, .askingpctbtn {
     float: left; margin-top: 10px; margin-bottom: 10px; margin-right: 10px;
 }
-.valuationfield {
-}
-.valuationtext {
-    width: 140px;
-    font-size: 30px;
-    text-align: right; 
-    font-weight: bold;
-}
 .newlistingoffermsg {
     margin-top: 10px;
     margin-bottom: 10px;
@@ -1804,6 +1805,18 @@ margin: 20px auto;
 .investorgroupdate { float: left; width: 140px; text-align: right; font-size: 12px; padding-top: 2px; }
 .investorgroupequityheader { position: relative; left:-10px; }
 .investorgroupattention { text-align: left; padding-left: 10px; } 
+
+/* valuation */
+.formhelptext { padding-left: 115px; width: 800px; }
+.revenuelabel { margin-top: 5px; }
+.valuationbutton { position: relative; top: 5px; padding-top: 7px; padding-bottom: 7px; }
+.valuationinput { width: 252px !important; }
+.valuationfield { height: 100px; width: 257px; text-align: right; margin-right: 50px; }
+.valuationtext {
+    font-size: 30px;
+    font-weight: bold;
+}
+.valuationpanel { overflow: visible !important; position: relative; margin-bottom: 40px; }
 
 /* hidden */
 .initialhidden { display: none; }

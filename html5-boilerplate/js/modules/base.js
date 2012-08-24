@@ -221,7 +221,7 @@ pl.implement(NumberClass, {
     },
     clean: function(num) {
         var str = '' + num;
-            numstr = str.replace(/[^0-9]*/g, ''),
+            numstr = str.replace(/[^0-9\.]*/g, ''),
             noleadzerostr = numstr.replace(/^0*/, '');
         return noleadzerostr;
     },
@@ -542,6 +542,10 @@ ScriptClass.prototype.load = function(url, callback) {
 
 function MicroListingClass() {}
 pl.implement(MicroListingClass, {
+    getHasValuation: function(listing) {
+        return listing.has_valuation;
+    },
+
     getHasBmc: function(listing) {
         return listing.has_bmc;
     },
@@ -580,9 +584,13 @@ pl.implement(CompanyTileClass, {
             catprefix,
             catlink,
             platform,
+            platformtext,
             categorytext,
             platformprefix,
+            stagetext,
+            typetext,
             locprefix,
+            profilelinked,
             addr;
         this.status = json.status;
         if (!this.status) {
@@ -616,11 +624,13 @@ pl.implement(CompanyTileClass, {
         catprefix = !cat || (cat !== 'Other' && !cat.match(/^[aeiou]/i)) ? 'A' : 'An';
         catlink = cat && cat !== 'Other' ? '<a href="/main-page.html?type=category&val=' + encodeURIComponent(cat) + '">' + cat + '</a>' : '';
 
-        platform = json.platform || '',
-        platformtext = platform && platform !== 'other' ? PlatformClass.prototype.displayName(platform) + ' ' : '',
-        categorytext = platform && platform !== 'other' && cat === 'Software' ? '' : catprefix + ' ' + catlink + ' ',
-        platformprefix = categorytext ? '' : (platform.match(/^[aeiou]/i) ? 'An ' : 'A '),
-        this.catlinked = categorytext + platformprefix + platformtext + this.type,
+        platform = json.platform || '';
+        platformtext = platform && platform !== 'other' ? PlatformClass.prototype.displayName(platform) + ' ' : '';
+        categorytext = platform && platform !== 'other' && cat === 'Software' ? '' : catprefix + ' ' + catlink + ' ';
+        platformprefix = categorytext ? '' : (platform.match(/^[aeiou]/i) ? 'An ' : 'A ');
+        stagetext = this.stage && this.stage !== 'established' ? this.stage : '';
+        typetext = this.type === 'application' ? this.type + ' ' + stagetext : (stagetext || 'company');
+        this.catlinked = categorytext + platformprefix + platformtext + typetext;
 
         addr = json.brief_address;
         this.brief_address = json.brief_address
@@ -634,10 +644,8 @@ pl.implement(CompanyTileClass, {
         this.address = json.address || 'No Address';
         locprefix = this.type === 'company' ? 'in' : 'from';
         this.addrlinked = !addr ? '' : ' ' + locprefix + ' <a href="/main-page.html?type=location&val=' + encodeURIComponent(addr) + '">' + addr + '</a>';
-        this.profilelink = this.options.admin
-            ? ' by <a href="/profile-page.html?id=' + this.profile_id + '">' + (this.profile_username || 'Owner') + '</a>'
-            : '';
-        this.categoryaddresstext = this.catlinked + this.addrlinked + this.profilelink;
+        profilelinked = !json.profile_id ? '' : ' by <a href="/profile-page.html?id=' + json.profile_id + '">' + (json.profile_username || 'owner') + '</a>';
+        this.categoryaddresstext = this.catlinked + this.addrlinked + profilelinked;
 
         if (this.status && json.asked_fund && json.suggested_amt && json.suggested_pct) {
             this.suggested_amt = CurrencyClass.prototype.format(json.suggested_amt);
@@ -1176,15 +1184,18 @@ pl.implement(CompanyBannerClass, {
             addr = this.brief_address,
             catprefix = !cat || (cat !== 'Other' && !cat.match(/^[aeiou]/i)) ? 'A' : 'An',
             catlink = cat && cat !== 'Other' ? '<a href="/main-page.html?type=category&val=' + encodeURIComponent(cat) + '">' + cat + '</a>' : '',
-            type = this.type || 'venture',
+            type = this.type || 'company',
             platform = this.platform && this.platform !== 'other' ? PlatformClass.prototype.displayName(this.platform) + ' ' : '',
             categorytext = this.platform && this.platform !== 'other' && this.category === 'Software' ? '' : catprefix + ' ' + catlink + ' ',
             platformprefix = categorytext ? '' : (platform.match(/^[aeiou]/i) ? 'An ' : 'A '),
-            catlinked = categorytext + platformprefix + platform + type,
+            stagetext = this.stage && this.stage !== 'established' ? this.stage : '',
+            typetext = this.type === 'application' ? this.type + ' ' + stagetext : (stagetext || 'company'),
+            catlinked = categorytext + platformprefix + platform + typetext,
 
             locprefix  = type === 'company' ? 'in' : 'from',
             addrlinked = !addr ? '' : ' ' + locprefix + ' <a href="/main-page.html?type=location&val=' + encodeURIComponent(addr) + '">' + addr + '</a>',
-            categoryaddresstext = catlinked + addrlinked,
+            profilelinked = !this.profile_id ? '' : ' by <a href="/profile-page.html?id=' + this.profile_id + '">' + (this.profile_username || 'owner') + '</a>',
+            categoryaddresstext = catlinked + addrlinked + profilelinked,
             status = this.status || 'new',
             website = this.website || '/company-page.html?id=' + this.listing_id,
             listingdatetext = 
@@ -1416,6 +1427,9 @@ pl.implement(CompanyBannerClass, {
         */
         if (!this.asked_fund) {
             pl('#bidstab').hide();
+        }
+        if (!MicroListingClass.prototype.getHasValuation(this)) {
+            pl('#valuationtab').hide();
         }
         if (!MicroListingClass.prototype.getHasBmc(this)) {
             pl('#modeltab').hide();

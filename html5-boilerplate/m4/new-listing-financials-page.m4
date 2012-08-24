@@ -81,10 +81,10 @@ include(company-not-found.m4)
             <label class="inputlabel" for="suggested_amt">ASKING</label>
             <span class="inputfield">
                 <div class="span-4 investbutton askingamtbtn">$1,000</div>
-                <div class="span-4 investbutton askingamtbtn">$5,000</div>
                 <div class="span-4 investbutton askingamtbtn">$10,000</div>
                 <div class="span-4 investbutton askingamtbtn">$25,000</div>
-                <div class="span-4 investbutton askingamtbtn">$50,000</div>
+                <div class="span-4 investbutton askingamtbtn">$100,000</div>
+                <div class="span-4 investbutton askingamtbtn">$500,000</div>
             </span>
         </div>
 
@@ -133,8 +133,18 @@ include(company-not-found.m4)
 
         <div class="formitem clear">
             <span class="inputlabel">VALUATION</span>
-            <span class="inputfield valuationfield">
-                <div class="successful valuationtext" id="suggested_val"></div>
+            <span class="inputfield financialsvaluationfield">
+                <div class="financialsvaluationtext" id="suggested_val"></div>
+            </span>
+            This is the valuation implied by your offer.  This is the asking price divided by the percentage being offered.
+        </div>
+
+        <div class="formitem clear">
+            <span class="inputlabel">&nbsp;</span>
+            <span class="inputfield">
+                <a href="/new-listing-valuation-page.html">
+                    <div class="span-8 investbutton">VALUATION HELP</div>
+                </a>
             </span>
         </div>
 

@@ -36,6 +36,8 @@ include(images-panel.m4)
             <div class="sidebox investbutton gotobutton initialhidden" id="editbutton">&lt;&lt; Revise Info</div>
         </a>
 
+        <div class="sidebox investbutton gotobutton" id="valuationbutton">Go To Valuation</div>
+
         <div class="sidebox investbutton gotobutton" id="modelbutton">Go To Business Model</div>
 
         <div class="sidebox investbutton gotobutton" id="presentationbutton">Go To Presentation</div>
