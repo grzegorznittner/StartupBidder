@@ -17,7 +17,6 @@
         <a href="nearby-page.html"><span class="footerlink hoverlink">Nearby</span></a>
         <a href="profile-list-page.html?type=listers"><span class="footerlink hoverlink">Entrepreneurs</span></a>
         <a href="profile-list-page.html?type=dragons"><span class="footerlink hoverlink">Dragons</span></a>
-        <div class="footerlink">&nbsp;</div>
     </div>
     <div class="span-4 footercol">
         <div class="footerlinkheader">ADMIN</div>

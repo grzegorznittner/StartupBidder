@@ -107,7 +107,6 @@ pl.implement(ListingClass, {
                 : 'company-bids-page.html',
             url = '/' + page + '?id=' + this.listing_id;
         if (this.status === 'active' && this.asked_fund) {
-            console.log(url);
             pl('#investlink').attr('href', url);
             pl('#investbutton').show();
         }

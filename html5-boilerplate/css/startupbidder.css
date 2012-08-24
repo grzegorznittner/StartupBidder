@@ -1584,8 +1584,8 @@ position: relative;
     width: 600px;
     color: #666;
     background: #fff;
-    margin: auto;
     border: 1px solid #ccc;
+    margin: auto auto 80px auto;
 }
 .messageline:hover {
     background: #ccc;

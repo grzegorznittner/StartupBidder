@@ -519,15 +519,7 @@ pl.implement(ProfileListClass, {
     displayList: function(results) {
         var list = results || [],
             more_results_url = this.users_props && this.users_props.more_results_url,
-            listhtml = '',
-            listitem,
-            i;
-        for (i = 0; i < list.length; i++) {
-            listitem = list[i];
-            if (listitem.status === 'active' || this.loggedin_profile && this.loggedin_profile.admin) {
-                listhtml += this.makeListItem(listitem);
-            }
-        }
+            listhtml = this.makeList(list);
         if (listhtml) {
             pl('#profilelistcontainer').addClass('addlistingcontainerfilled');
             pl('#profilelist').html(listhtml);
@@ -538,7 +530,21 @@ pl.implement(ProfileListClass, {
         if (more_results_url) {
             pl('#profilelist').after('<div class="showmore profilelistshowmore hoverlink" id="moreresults"><span class="initialhidden" id="moreresultsurl">'
                 + more_results_url + '</span><span id="moreresultsmsg">More...</span></div>\n');
+            this.bindMoreResults();
         }
+    },
+
+    makeList: function(list) {
+        var listhtml = '',
+            listitem,
+            i;
+        for (i = 0; i < list.length; i++) {
+            listitem = list[i];
+            if (!listitem.status || listitem.status !== 'disabled' || this.loggedin_profile && this.loggedin_profile.admin) {
+                listhtml += this.makeListItem(listitem);
+            }
+        }
+        return listhtml;
     },
 
     makeListItem: function(listitem) {
@@ -549,7 +555,7 @@ pl.implement(ProfileListClass, {
             emailtext = listitem.email
                 ? '<span class="profilelistemail">' + listitem.email+ '</span>'
                 : '',
-           	statustext =  listitem.status !== 'active'
+           	statustext =  listitem.status && listitem.status !== 'active'
                 ? '<span class="profileliststatus">' + listitem.status + '</span>'
                 : '',
 			admintext =  listitem.admin ? '<span class="profilelistadmin">ADMIN</span>' : '',
@@ -594,6 +600,55 @@ pl.implement(ProfileListClass, {
         return html;
     },
 
+    bindMoreResults: function() {
+        var self = this;
+        pl('#moreresults').bind({
+            click: function() {
+                var completeFunc = function(json) {
+                        var users = json.users || [],
+                            more_results_url = users.length > 0 && json.users_props && json.users_props.more_results_url,
+                            listhtml = self.makeList(users);
+                        if (listhtml) {
+                            pl('#profilelist div:last-child').after(listhtml);
+                        }
+                        if (more_results_url) {
+                            pl('#moreresultsurl').text(more_results_url);
+                            pl('#moreresultsmsg').text('More...');
+                        }
+                        else {
+                            pl('#moreresultsmsg').text('');
+                            pl('#moreresults').removeClass('hoverlink').unbind();
+                        }
+                    },
+                    more_results_url = pl('#moreresultsurl').text(),
+                    index = more_results_url ? more_results_url.indexOf('?') : -1,
+                    components = more_results_url && index >= 0 ? [ more_results_url.slice(0, index), more_results_url.slice(index+1) ] : [ more_results_url, null ],
+                    url = components[0],
+                    parameters = components[1] ? components[1].split('&') : null,
+                    ajax,
+                    data,
+                    keyval,
+                    i;
+                if (more_results_url) {
+                    ajax = new AjaxClass(url, 'moreresultsmsg', completeFunc);
+                    if (parameters) {
+                        data = {};
+                        for (i = 0; i < parameters.length; i++) {
+                            keyval = parameters[i].split('=');
+                            data[keyval[0]] = keyval[1];
+                        }
+                        ajax.setGetData(data);
+                    }
+                    ajax.call();
+                }
+                else {
+                    pl('#moreresultsmsg').text('');
+                    pl('#moreresults').removeClass('hoverlink').unbind();
+                }
+            }
+        });
+    },
+
     loadPage: function() {
         var self = this,
             complete = function(json) {
@@ -608,7 +663,7 @@ pl.implement(ProfileListClass, {
                 pl('.preloader').hide();
                 pl('.errorwrapper').show();
             },
-            url = '/user/' + this.type,
+            url = '/user/' + this.type + '?max_results=20',
             ajax = new AjaxClass(url, 'profilelistmsg', complete, null, null, error);
         ajax.call();
     }
