@@ -33,10 +33,12 @@ pl.implement(MessageClass, {
             messageclass = this.read ? '' : ' inputmsg';
         return '\
         <div class="commentline">\
+            <a href="/profile-page.html?id=' + profile.profile_id + '">\
             <div class="commentavatar"' + avatarstyle + '></div>\
             <div class="commentheaderline">\
                 ' + usertext + userclasstext + ' ' + datetext + '\
             </div>\
+            </a>\
             <p class="commenttext">'
                   + text + '\
             </p>\
@@ -253,7 +255,10 @@ pl.implement(MessagePageClass,{
     }
 });
 
-function MessageGroupClass() {}
+function MessageGroupClass(messagegrouplist) {
+    this.messagegrouplist = messagegrouplist;
+    this.loggedin_profile = messagegrouplist.loggedin_profile;
+}
 pl.implement(MessageGroupClass, {
     store: function(json) {
         var self = this;
@@ -263,15 +268,17 @@ pl.implement(MessageGroupClass, {
     },
 
     setEmpty: function() {
-        var self = this,
-            emptyJson = {
-                from_user_id: null,
-                from_user_nickname: '',
+        var emptyJson = {
+                from_user_id: this.loggedin_profile.profile_id,
+                from_user_nickname: this.loggedin_profile.username,
+                from_user_avatar: this.loggedin_profile.avatar,
+                from_user_class: this.loggedin_profile.user_class,
                 last_text: 'You currently have no messages.',
                 last_date: null,
+                is_empty: true,
                 read: true
             };
-        self.store(emptyJson);
+        this.store(emptyJson);
     },
 
     makeHtml: function() {
@@ -283,10 +290,15 @@ pl.implement(MessageGroupClass, {
                 ? '<span class="profilelistuserclass">' + ProfileUserClass.prototype.format(this.from_user_class) + '</span>'
                 : '',
             datetext = '<span class="commentinlinedate">'
-                + (this.ago_text || DateClass.prototype.agoText(this.last_date)) + '</span>',
+                + (this.ago_text || (this.last_date ? DateClass.prototype.agoText(this.last_date) : '')) + '</span>',
             text = HTMLMarkup.prototype.stylize(SafeStringClass.prototype.htmlEntities(this.last_text)),
             messageclass = this.read ? '' : ' inputmsg',
-            url = this.from_user_id ? '/messages-page.html?from_user_id=' + this.from_user_id + '&from_user_nickname=' + encodeURIComponent(this.from_user_nickname) : '',
+            url = this.from_user_id
+                ? (this.is_empty
+                    ? '/profile-page.html?id=' + this.from_user_id
+                    : '/messages-page.html?from_user_id=' + this.from_user_id + '&from_user_nickname=' + encodeURIComponent(this.from_user_nickname)
+                  )
+                : '',
             openanchor = url ? '<a href="' + url + '" class="messagelink' + messageclass + '">' : '',
             closeanchor = url ? '</a>' : '';
         return '\
@@ -312,16 +324,17 @@ pl.implement(MessageGroupListClass, {
             jsonlist = json && json.users ? json.users : [],
             message,
             i;
+        self.loggedin_profile = json.loggedin_profile;
         self.messages = [];
         if (jsonlist.length) {
             for (i = 0; i < jsonlist.length; i++) {
-                message = new MessageGroupClass();
+                message = new MessageGroupClass(self);
                 message.store(jsonlist[i]);
                 self.messages.push(message);
             }
         }
         else {
-            message = new MessageGroupClass();
+            message = new MessageGroupClass(self);
             message.setEmpty();
             self.messages.push(message);
         }
@@ -341,13 +354,13 @@ pl.implement(MessageGroupListClass, {
 		                self.messages = [];
 		                if (jsonlist.length) {
 		                    for (i = 0; i < jsonlist.length; i++) {
-		                        message = new MessageGroupClass();
+		                        message = new MessageGroupClass(self);
 		                        message.store(jsonlist[i]);
 		                        self.messages.push(message);
 		                    }
 		                }
 		                else {
-		                    message = new MessageGroupClass();
+		                    message = new MessageGroupClass(self);
 		                    message.setEmpty();
 		                    self.messages.push(message);
 		                }
@@ -357,7 +370,7 @@ pl.implement(MessageGroupListClass, {
 		                    html += message.makeHtml();
 		                }
 		                if (!self.messages.length) {
-		                    message = new MessageGroupClass();
+		                    message = new MessageGroupClass(self);
 		                    message.setEmpty();
 		                    html += message.makeHtml();
 		                }
@@ -406,7 +419,7 @@ pl.implement(MessageGroupListClass, {
             html += message.makeHtml();
         }
         if (!self.messages.length) {
-            message = new MessageGroupClass();
+            message = new MessageGroupClass(self);
             message.setEmpty();
             html += message.makeHtml();
         }
