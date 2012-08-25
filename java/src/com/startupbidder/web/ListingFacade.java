@@ -1446,6 +1446,12 @@ public class ListingFacade {
 		list.setCategories(getTopCategories());
 		list.setTopLocations(getTopLocations());
 		list.setUser(new UserBasicVO(user));
+		if (!(isAdmin || ownerListings)) {
+			log.info("Not admin nor owner: removing edited listing data and email");
+			list.getUser().setEditedListing(null);
+			list.getUser().setEditedStatus(null);
+			list.getUser().setEmail(null);
+		}
 	
 		return list;
 	}
