@@ -411,8 +411,10 @@ pl.implement(QuestionClass, {
                 ? '<span class="messageanswer">' + answertext + '</span>'
                 : '<span class="messageanswer" id="qanda_replyanswer_' + question.question_id + '">Not yet answered by owner</span>';
         return '<div class="commentline" id="qanda_' + question.question_id + '">'
+                + '<a class="hoverlink" href="/profile-page.html?id=' + question.profile_id + '">'
                 + '<div class="commentavatar"' + avatarstyle + '></div>'
                 + '<div class="commentheaderline">' + usertext + userclasstext + ' ' + datetext + '</div>'
+                + '</a>'
                 + '<p class="commenttext">' + questionline + '</p>'
                 + '<p class="commenttext">' + replyblock + '</p>'
                 + questionreplybtn

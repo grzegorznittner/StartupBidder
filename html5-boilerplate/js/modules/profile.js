@@ -31,8 +31,8 @@ pl.implement(ProfileClass, {
         pl('#biddedoncount').html(json.bidon ? json.bidon.length : 0);
 */
         pl('#username').text(profile.username || 'anonymous');
-        pl('#email').text(profile.email || 'No email address');
-        pl('#name').text(profile.name || 'Mr. Anonymous');
+        pl('#email').text(profile.email || '');
+        pl('#name').text(profile.name || '');
         if (profile.avatar) {
             pl('#avatar').css('background-image', 'url(' + profile.avatar + ')');
         }
@@ -444,7 +444,7 @@ pl.implement(EditProfileClass, {
         });
         confirmPassword.bindEvents();
  */
-        pl('#email').text(json.email || 'No email address');
+        pl('#email').text(json.email || '');
         this.bindInfoButtons();
         self.displayDeactivate();
         pl('#personalcolumn').show();

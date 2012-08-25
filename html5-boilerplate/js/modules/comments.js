@@ -160,7 +160,7 @@ pl.implement(CommentClass, {
 
     displayNoComments: function() {
         if (this.loggedin_profile_id) {
-            pl('#commentmsg').html('<p>Be the first to comment!</p>').show();
+            pl('#commentmsg').html('').show();
         }
         else {
             pl('#commentmsg').html('<p>Login and be the first to comment!</p>');
@@ -216,10 +216,12 @@ pl.implement(CommentClass, {
             text = HTMLMarkup.prototype.stylize(SafeStringClass.prototype.htmlEntities(comment.text));
         return '\
         <div class="commentline" id="comment_' + comment.comment_id + '">\
+            <a class="hoverlink" href="/profile-page.html?id=' + comment.profile_id + '">\
             <div class="commentavatar"' + avatarstyle + '></div>\
             <div class="commentheaderline">\
                 ' + ownermarker + usertext + userclasstext + ' ' + datetext + deleteicon + deletemsgspan + '\
             </div>\
+            </a>\
             <p class="commenttext">'
                   + text + '\
             </p>\
