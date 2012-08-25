@@ -58,6 +58,13 @@ public class DatastoreMigration {
 		report.append("<br/>\n</ul>\n");
 		return report.toString();
 	}
+	
+	private static String[] avatars = {"http://avatarek.pl/Ic4CTRm8XN_1.jpg", "http://avatarek.pl/ZXGO4TEnES_1.jpg",
+		"http://avatarek.pl/d0JAR2p9pW_1.jpg", "http://avatarek.pl/JQaFOUNrTK_1.jpg", "http://avatarek.pl/9GOJGzep2H_1.jpg",
+		"http://avatarek.pl/tL1ULKGfbN_1.jpg", "http://avatarek.pl/AM3KKUr2NM_1.jpg", "http://avatarek.pl/4LnPRqpMFS_1.jpg",
+		"http://avatarek.pl/QNgzAiJtgK_1.jpg", "http://avatarek.pl/68qa3A8YYL_1.jpg", "http://avatarek.pl/qFTmrM20ax_1.jpg",
+		"http://avatarek.pl/ryTrzr8Qsu_1.jpg", "http://avatarek.pl/BWs3D7r2NT_1.jpg", "http://avatarek.pl/RNsTS6MRzN_1.jpg",
+		};
 
 	public static String migrate201208222146_to_current() {
 		StringBuffer report = new StringBuffer();
@@ -71,7 +78,20 @@ public class DatastoreMigration {
 		QueryResultIterable<Key<SBUser>> u = getOfy().query(SBUser.class).fetchKeys();
 		Map<Key<SBUser>, SBUser> users = getOfy().get(u);
 		List<SBUser> userMigration = new ArrayList<SBUser>();
+		int avatarIndex = 0;
 		for (SBUser user : users.values()) {
+			if (user.avatarUrl == null) {
+				user.avatarUrl = avatars[avatarIndex++];
+				avatarIndex %= avatars.length;
+				report.append("<li> setting avatar '" + user.avatarUrl + "' for user " + user.nickname);
+			}
+			if (user.name == null) {
+				user.name = StringUtils.substring(user.email, 0, StringUtils.indexOf(user.email, "@"));
+				if (StringUtils.length(user.name) < 5) {
+					user.name = user.name + " " + user.name;
+				}
+				report.append("<li> setting name '" + user.name + "' for user " + user.nickname);
+			}
 			if (StringUtils.equalsIgnoreCase("dragon", user.userClass)) {
 				report.append("<li> updating dragon flag for " + user.nickname);
 				user.dragon = true;
