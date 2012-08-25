@@ -64,13 +64,14 @@ pl.implement(ProfileClass, {
                     pl('#applydragonwrapper').hide();
                     pl('#pendingdragonwrapper').show();
                 },
+
                 ajax = new AjaxClass('/user/request_dragon', 'applydragonmessage', complete);
             pl('#applydragonbutton').hide();
             pl('#applydragonspinner').show();
             ajax.setPost();
             ajax.call();
         });
-     },
+    },
 
     displayPromote: function() {
         var profile = this.profile || this.loggedin_profile,
@@ -93,8 +94,10 @@ pl.implement(ProfileClass, {
                         pl('#promotemsg').text('Promoted to dragon, reloading...').show();
                         setTimeout(function() {
                             window.location.reload();
-                        }, 3000);
+                        },
+ 3000);
                     },
+
                     url = '/user/promote_to_dragon/' + profile.profile_id,
                     ajax = new AjaxClass(url, 'promotemsg', complete);
                 if (pl('#promotemsg').text() && pl('#promotemsg').text().indexOf('Error') !== -1) {
@@ -127,10 +130,12 @@ function ProfilePageClass() {
     this.passed_id = queryString.vars.id;
     this.json = {};
 };
+
 pl.implement(ProfilePageClass,{
     storeListings: function(propertykey, _options) {
         var self = this,
             options = _options || {},
+
             wrappersel = '#' + propertykey + '_wrapper',
             listings = self.json[propertykey],
             listingfound = false,
@@ -145,6 +150,7 @@ pl.implement(ProfilePageClass,{
         }
         return listingfound;
     },
+
     loadPage: function() {
         var self = this,
             completeFunc = function(json) {
@@ -162,13 +168,20 @@ pl.implement(ProfilePageClass,{
                     seeallurl = '/profile-listing-page.html?' + (self.passed_id ? 'id=' + self.passed_id + '&' : '') + 'type=',
                     options = {
                         edited_listing: { propertyissingle: true, fullWidth: true },
+
                         active_listings: { seeall: seeallurl + 'active', fullWidth: true },
+
                         monitored_listings: { seeall: seeallurl + 'monitored', fullWidth: true },
+
                         withdrawn_listings: { seeall: seeallurl + 'withdrawn', fullWidth: true },
+
                         frozen_listings: { seeall: seeallurl + 'frozen', fullWidth: true },
+
                         admin_posted_listings: { seeall: seeallurl + 'admin_posted', fullWidth: true },
+
                         admin_frozen_listings: { seeall: seeallurl + 'admin_frozen', fullWidth: true }
                     },
+
                     listingfound = false,
                     propertykey,
                     i;
@@ -207,11 +220,13 @@ pl.implement(ProfilePageClass,{
                 pl('.preloader').hide();
                 pl('.wrapper').show();
             },
+
             error = function(errornum, json) {
                 (new HeaderClass()).setLogin(json);
                 pl('.preloader').hide();
                 pl('.errorwrapper').show();
             },
+
             url = this.passed_id ? '/user/get/' + this.passed_id : '/listings/discover_user',
             ajax = new AjaxClass(url, 'profilemsg', completeFunc, null, null, error);
         ajax.call();
@@ -261,11 +276,13 @@ pl.implement(ProfileListingPageClass, {
                 pl('.preloader').hide();
                 pl('.wrapper').show();
             },
+
             error = function(errornum, json) {
                 (new HeaderClass()).setLogin(json);
                 pl('.preloader').hide();
                 pl('.errorwrapper').show();
             },
+
             ajax = new AjaxClass(self.url, 'companydiv', completeFunc, null, null, error);
         ajax.setGetData(this.data);
         ajax.call();
@@ -297,6 +314,7 @@ pl.implement(EditProfileClass, {
                         */
                     }
                 },
+
                 ajax = new AjaxClass('/user/autosave', '', null, successFunc, loadFunc, errorFunc),
                 field;
             for (field in newdata) {
@@ -306,12 +324,18 @@ pl.implement(EditProfileClass, {
             ajax.call();
         };
     },
+
     displayDeactivate: function() {
-        var deactivateable = true; // always returned by user/loggedin
+        var self = this,
+            deactivateable = true; // always returned by user/loggedin
         if (deactivateable) {
-            this.bindDeactivateButton();
+            pl('#deactivateguardlink').bind('click', function() {
+                pl('#deactivateguard').show();
+                self.bindDeactivateButton();
+            });
         }
     },
+
     bindDeactivateButton: function() {
         var self = this;
         pl('#deactivatebox').show();
@@ -324,6 +348,7 @@ pl.implement(EditProfileClass, {
                             window.location = pl('#logoutlink').attr('href');
                         }, 3000);
                     },
+
                     url = '/user/deactivate/' + self.profile_id,
                     ajax = new AjaxClass(url, 'deactivatemsg', completeFunc);
                 if (pl('#deactivatecancelbtn').css('display') === 'none') { // first call
@@ -343,13 +368,16 @@ pl.implement(EditProfileClass, {
             }
         });
     },
+
     display: function(discoverjson) {
         this.store(discoverjson);
     },
+
     store: function(discoverjson) {
         //properties = ['profile_id', 'status', 'name', 'username', 'open_id', 'profilestatus', 'title', 'organization', 'email', 'phone', 'address'];
         var self = this,
             json = discoverjson && discoverjson.loggedin_profile || {},
+
             properties = ['profile_id', 'username', 'email', 'name'],
             textFields = ['username', 'name'],
             i, property, textFields, textFieldId, textFieldObj, notifyCheckbox; 
@@ -382,6 +410,7 @@ pl.implement(EditProfileClass, {
                                 pl('#personalinfomsg').html('<span class="attention">Nickname already taken, please choose another</span>');
                             } 
                         },
+
                         icon = new ValidIconClass('usernameicon'),
                         ajax;
                     if (!username || !username.length) {
@@ -413,7 +442,8 @@ pl.implement(EditProfileClass, {
         notifyCheckbox.bindEvents();
 /*
 
-        newPassword = new TextFieldClass('newpassword', '', function(){}, 'passwordmsg');
+        newPassword = new TextFieldClass('newpassword', '', function(){},
+ 'passwordmsg');
         passwordOptions = {
             length: [8, 32],
             badWords: ['password', self.name, self.username, self.email, (self.email&&self.email.indexOf('@')>0?self.email.split('@')[0]:'')],
@@ -449,9 +479,11 @@ pl.implement(EditProfileClass, {
         self.displayDeactivate();
         pl('#personalcolumn').show();
     },
+
     hideAllInfo: function() {
         pl('.sideinfo').removeClass('sideinfodisplay');
     },
+
     bindInfoButtons: function() {
         var self = this;
         pl('input.text, select.text, textarea.inputwidetext').bind({
@@ -461,10 +493,12 @@ pl.implement(EditProfileClass, {
                 self.hideAllInfo();
                 pl(infoel).addClass('sideinfodisplay');
             },
+
             blur: self.hideAllInfo
         });
         pl('.sideinfo').bind('click', self.hideAllInfo);
     },
+
     load: function() {
         var self = this,
             completeFunc = function(json) {
@@ -474,11 +508,13 @@ pl.implement(EditProfileClass, {
                 pl('.preloader').hide();
                 pl('.wrapper').show();
             },
+
             error = function(errornum, json) {
                 (new HeaderClass()).setLogin(json);
                 pl('.preloader').hide();
                 pl('.errorwrapper').show();
             },
+
             ajax = new AjaxClass('/listings/discover_user', 'personalinfomsg', completeFunc, null, null, error);
         ajax.call();
     }
@@ -602,49 +638,48 @@ pl.implement(ProfileListClass, {
 
     bindMoreResults: function() {
         var self = this;
-        pl('#moreresults').bind({
-            click: function() {
-                var completeFunc = function(json) {
-                        var users = json.users || [],
-                            more_results_url = users.length > 0 && json.users_props && json.users_props.more_results_url,
-                            listhtml = self.makeList(users);
-                        if (listhtml) {
-                            pl('#profilelist div:last-child').after(listhtml);
-                        }
-                        if (more_results_url) {
-                            pl('#moreresultsurl').text(more_results_url);
-                            pl('#moreresultsmsg').text('More...');
-                        }
-                        else {
-                            pl('#moreresultsmsg').text('');
-                            pl('#moreresults').removeClass('hoverlink').unbind();
-                        }
-                    },
-                    more_results_url = pl('#moreresultsurl').text(),
-                    index = more_results_url ? more_results_url.indexOf('?') : -1,
-                    components = more_results_url && index >= 0 ? [ more_results_url.slice(0, index), more_results_url.slice(index+1) ] : [ more_results_url, null ],
-                    url = components[0],
-                    parameters = components[1] ? components[1].split('&') : null,
-                    ajax,
-                    data,
-                    keyval,
-                    i;
-                if (more_results_url) {
-                    ajax = new AjaxClass(url, 'moreresultsmsg', completeFunc);
-                    if (parameters) {
-                        data = {};
-                        for (i = 0; i < parameters.length; i++) {
-                            keyval = parameters[i].split('=');
-                            data[keyval[0]] = keyval[1];
-                        }
-                        ajax.setGetData(data);
+        pl('#moreresults').bind('click', function() {
+            var completeFunc = function(json) {
+                    var users = json.users || [],
+                        more_results_url = users.length > 0 && json.users_props && json.users_props.more_results_url,
+                        listhtml = self.makeList(users);
+                    if (listhtml) {
+                        pl('#profilelist div:last-child').after(listhtml);
                     }
-                    ajax.call();
+                    if (more_results_url) {
+                        pl('#moreresultsurl').text(more_results_url);
+                        pl('#moreresultsmsg').text('More...');
+                    }
+                    else {
+                        pl('#moreresultsmsg').text('');
+                        pl('#moreresults').removeClass('hoverlink').unbind();
+                    }
+                },
+
+                more_results_url = pl('#moreresultsurl').text(),
+                index = more_results_url ? more_results_url.indexOf('?') : -1,
+                components = more_results_url && index >= 0 ? [ more_results_url.slice(0, index), more_results_url.slice(index+1) ] : [ more_results_url, null ],
+                url = components[0],
+                parameters = components[1] ? components[1].split('&') : null,
+                ajax,
+                data,
+                keyval,
+                i;
+            if (more_results_url) {
+                ajax = new AjaxClass(url, 'moreresultsmsg', completeFunc);
+                if (parameters) {
+                    data = {};
+                    for (i = 0; i < parameters.length; i++) {
+                        keyval = parameters[i].split('=');
+                        data[keyval[0]] = keyval[1];
+                    }
+                    ajax.setGetData(data);
                 }
-                else {
-                    pl('#moreresultsmsg').text('');
-                    pl('#moreresults').removeClass('hoverlink').unbind();
-                }
+                ajax.call();
+            }
+            else {
+                pl('#moreresultsmsg').text('');
+                pl('#moreresults').removeClass('hoverlink').unbind();
             }
         });
     },
@@ -658,14 +693,17 @@ pl.implement(ProfileListClass, {
                 pl('.preloader').hide();
                 pl('.wrapper').show();
             },
+
             error = function(errornum, json) {
                 (new HeaderClass()).setLogin(json);
                 pl('.preloader').hide();
                 pl('.errorwrapper').show();
             },
+
             url = '/user/' + this.type + '?max_results=20',
             ajax = new AjaxClass(url, 'profilelistmsg', complete, null, null, error);
         ajax.call();
     }
+
 });
 

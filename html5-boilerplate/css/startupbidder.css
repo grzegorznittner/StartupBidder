@@ -740,6 +740,8 @@ transition: height 300ms;
     width: 622px;
 }
 .boxpanelfull { width: 940px; }
+.indentedtext { padding-left: 10px; }
+.indentedtextbox { padding-left: 10px; padding-top: 20px; }
 .companylistingbox { width: 622px; height: 146px; }
 .addcommentmsg { height: 20px; margin-left: 5px; font-weight: bold; }
 .addmessagemsg { height: 20px; margin-left: 5px; font-weight: bold; }
@@ -903,7 +905,8 @@ width: 302px;
 .promotebox { display: none; }
 .promotemsg { display: none; font-weight: bold; }
 .promotecancelbtn { display: none; margin-top: 10px; }
-.deactivatebox { display: none; }
+.deactivateguardbox { padding-left: 600px; }
+.deactivatebox { display: none; padding-top: 10px; }
 .deactivatemsg { display: none; font-weight: bold; }
 .deactivatecancelbtn { display: none; margin-top: 10px; }
 .mapaddresstext { font-weight: bold; }

@@ -28,7 +28,7 @@ include(company-order-book.m4)
     <span class="newlistingtitlemsg" id="bidtitlemsg"></span>
 </div>
 <div class="boxpanel boxpanelfull">
-    <p>Sign in to place a bid.</p>
+    <p class="indentedtext">Sign in to place a bid.</p>
 </div>
 
 </div> <!-- end container -->
