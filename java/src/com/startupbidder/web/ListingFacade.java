@@ -1405,14 +1405,17 @@ public class ListingFacade {
 	 */
 	public ListingListVO getUserListings(UserVO loggedInUser, String stateString, String userId, ListPropertiesVO listingProperties) {
 		ListingListVO list = new ListingListVO();
-		if (loggedInUser == null) {
-			log.log(Level.INFO, "User not logged in");
-			list.setErrorMessage("User not logged in");
+		Listing.State state = stateString != null ? Listing.State.valueOf(stateString.toUpperCase()) : null;
+		if (loggedInUser == null && state != Listing.State.ACTIVE) {
+			log.log(Level.INFO, "User not logged in but requested non active listings");
+			list.setErrorMessage("User not logged in but requested non active listings");
 			list.setErrorCode(ErrorCodes.NOT_LOGGED_IN);
 			return list;
 		}
+		boolean isAdmin = loggedInUser != null && loggedInUser.isAdmin();
+		boolean ownerListings = loggedInUser != null && (StringUtils.isEmpty(userId) || StringUtils.equals(loggedInUser.getId(), userId));
 		UserVO user = loggedInUser;
-		if (loggedInUser.isAdmin() && StringUtils.isNotEmpty(userId)) {
+		if (StringUtils.isNotEmpty(userId)) {
 			user = DtoToVoConverter.convert(getDAO().getUser(userId));
 			if (user == null) {
 				list.setErrorCode(ErrorCodes.APPLICATION_ERROR);
@@ -1420,7 +1423,12 @@ public class ListingFacade {
 				return list;
 			}
 		}
-		Listing.State state = stateString != null ? Listing.State.valueOf(stateString.toUpperCase()) : null;
+		if (!(isAdmin || ownerListings) && state != Listing.State.ACTIVE) {
+			log.log(Level.INFO, "Only admins and owner can request non active listings");
+			list.setErrorMessage("Only admins and owner can request non active listings");
+			list.setErrorCode(ErrorCodes.NOT_AN_OWNER);
+			return list;
+		}
 		List<ListingTileVO> listings = DtoToVoConverter.convertListingTiles(
 				getDAO().getUserListings(user.toKeyId(), state, listingProperties));
 
@@ -1429,7 +1437,9 @@ public class ListingFacade {
 			listing.setOrderNumber(index++);
 		}
 		
-		applyShortNotificationsAndMonitoredListings(loggedInUser, list);
+		if (loggedInUser != null) {
+			applyShortNotificationsAndMonitoredListings(loggedInUser, list);
+		}
 		
 		list.setListings(listings);
 		list.setListingsProperties(listingProperties);
