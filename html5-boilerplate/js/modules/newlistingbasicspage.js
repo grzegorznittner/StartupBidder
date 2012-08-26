@@ -172,10 +172,13 @@ pl.implement(NewListingBasicsClass, {
         this.setUploadUrls();
         this.displayCategories();
         this.addMap(this.genPlaceUpdater());
-        this.bindPreview();
         this.bindAddressEnterSubmit();
+        this.base.bindNavButtons();
         this.base.bindTitleInfo();
         this.base.bindInfoButtons();
+        if (this.base.listing.status === 'new') {
+            pl('.bottombackbutton').hide(); // no back for basic page
+        }
         pl('#newlistingbasicswrapper').show();
     },
 
@@ -325,13 +328,6 @@ pl.implement(NewListingBasicsClass, {
 
     displayImages: function() {
         this.imagepanel.setListing(this.base.listing).display();
-    },
-
-    bindPreview: function() {
-        var self = this;
-        pl('#previewbutton, #previewbutton2').bind('click', function() {
-            document.location = '/company-page.html?id=' + self.base.listing.listing_id;
-        });
     },
 
     bindAddressEnterSubmit: function() {

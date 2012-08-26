@@ -480,8 +480,8 @@ pl.implement(ListingClass, {
     },
 
     displaySocial: function() {
-        if (this.preview) { // their iframe usage busts during preview
-            pl('#socialsidebox').html('<p>Twitter, Facebook, and Google Plus buttons will be displayed here</p>');
+        if (this.preview || this.status !== 'active') { // their iframe usage busts during preview
+            pl('#socialsidebox').html('<p>Twitter tweet, Facebook like, and Google Plus +1 buttons will be displayed here once the listing is active</p>');
         }
         else {
             this.displayTwitter();

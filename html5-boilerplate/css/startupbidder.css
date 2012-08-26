@@ -169,6 +169,7 @@ a:focus, a:hover { cursor: pointer; }
 .bannertext { font-size: 30px; font-weight: bold; top: 5px; height: 40px; position: relative; }
 .bannersmall { width: 980px; height: 50px; margin-top: 10px; }
 .bannertextsmall { font-size: 30px; font-weight: bold; margin-top: 20px; }
+#newlistingbanner { margin-top: 27px; }
 .follow { top: 33px; position: relative; }
 .followpromo { top: 20px; position: relative; }
 .followimg { top: 20px; position: relative; }
@@ -195,7 +196,7 @@ a:focus, a:hover { cursor: pointer; }
 .companybannertitle { font-size: 43px; font-weight: normal; margin-bottom: -15px; position: relative; top: -11px; width: 580px; height: 60px; overflow: hidden; left: -3px; }
 .companybannertiletitle { font-size: 36px; height: 48px; top: 0; left: -2px; margin-bottom: 0; overflow: hidden; width: 450px; }
 .companybannertitlelong { font-size: 24px; line-height: 24px; top: -1px; height: 49px; margin-bottom: 0; }
-.companybannertiletitlelong { font-size: 24px; line-height: 24px; top: 4px; height: 52px; }
+.companybannertiletitlelong { font-size: 24px; line-height: 24px; top: 4px; height: 49px; }
 .companybannertext { font-size: 14px; font-weight: bold; }
 .companybannertextlink { font-size: 14px; font-weight: bold; margin-left: 4px; }
 .companybannerlink { float: left; margin-right: 5px; }
@@ -755,7 +756,7 @@ transition: height 300ms;
 .newlistingaskmsg { margin-left: 10px; }
 .newlistingmsgsmall { float: left; margin-right: 10px; padding-left: 116px; width: 420px; height: 25px; font-weight: bold; }
 .companylistingstats { position: absolute; bottom: 0; }
-.basicswrapper { margin-bottom: 80px; }
+.basicsleft { margin-bottom: 80px; }
 .boxpanel p { text-indent: 0px; font-weight: normal; }
 .boxpanel dl dt { margin-left: 0; padding: 5px 10px; color: #333333; }
 .boxpanel dl dd { margin-left: 0; padding: 5px 10px; background: #f2f2f2; font-weight: normal; }
@@ -1473,6 +1474,9 @@ color: #fff;
 .backbutton {
         margin-top: 20px;
 }
+.bottombutton {
+    margin-top: 35px;
+}
 .mapsidebox {
         margin-top: 35px;
 }
@@ -1484,12 +1488,12 @@ color: #fff;
     margin-bottom: 18px;
 }
 .logopanel {
-    height: 153px;
-    margin-top: 76px;
+    height: 157px;
+    margin-top: 60px;
 }
 .locationpanel {
     margin-top: 0;
-    top: 1533px;
+    top: 1523px;
     position: absolute;
 }
 .askingbox {
@@ -1509,10 +1513,8 @@ height: 110px;
 position: relative;
 }
 .toppreviewbutton {
-        margin-top: 30px;
-}
-.bottompreviewbutton {
-        margin-bottom: 25px;
+    margin: 35px 6px 25px auto;
+    width: 120px;
 }
 
 /* profiles */
@@ -1822,6 +1824,30 @@ margin: 20px auto;
     font-weight: bold;
 }
 .valuationpanel { overflow: visible !important; position: relative; margin-bottom: 40px; }
+
+/* new listing styles */
+.bottombuttons {
+    position: relative;
+}
+.bottombackbutton {
+    margin-top: 35px;
+    float: left;
+}
+.bottompreviewbutton {
+    float: right;
+    margin: 35px 6px 25px 30px;
+    width: 120px;
+}
+.bottomsavebutton {
+    float: right;
+    margin-top: 35px;
+    width: 120px;
+}
+.bottomsavespinner {
+    margin-top: 45px;
+    float: right;
+    margin-right: 45px;
+}
 
 /* hidden */
 .initialhidden { display: none; }

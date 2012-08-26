@@ -36,17 +36,8 @@ include(company-not-found.m4)
 '
 include(ip.m4)
 include(ip-editable.m4)
+include(new-listing-bottom-buttons.m4)
 `
-
-    <div>
-        <div class="formitem clear">
-            <a href="#" class="nextbuttonlink">
-                <span class="push-21 span-3 inputbutton">
-                    NEXT
-                </span>
-            </a>
-        </div>
-    </div>
 
 </div> <!-- end container -->
 </div> <!-- end main -->

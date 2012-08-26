@@ -36,10 +36,6 @@ pl.implement(NewListingValuationClass, {
     },
 
     display: function() {
-        var status = this.base.listing.status;
-        if (status !== 'new' && status !== 'posted') {
-            document.location = '/company-page.html?id=' + this.base.listing.id;
-        }
         this.bindShared();
         if (this.base.listing.type === 'application') {
             this.displayAppValuation();

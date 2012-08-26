@@ -7,7 +7,7 @@
         <div class="previewtext previewtext2">PREVIEW</div>
     </div>
 
-    <div class="span-16">
+    <div class="span-16 basicsleft">
         <div class="boxtitle">SUMMARY</div>
         <div class="boxpanel summarypanel darkgrey">
             <p class="indentedtext" id="summary"></p>
