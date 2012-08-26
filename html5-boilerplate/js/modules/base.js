@@ -775,7 +775,20 @@ function CompanyListClass(options) {
     this.options.companydiv = this.options.companydiv || 'companydiv';
     this.options.propertykey = this.options.propertykey || 'listings';
 }
+
 pl.implement(CompanyListClass, {
+
+    shouldDisplay: function(company) {
+        var shouldDisplay = true;
+        if ((this.options.propertykey === 'top_listings'
+            || this.options.propertykey === 'active_listings'
+            || this.options.propertykey === 'latest_listings')
+            && company.status !== 'active') {
+            shouldDisplay = false;        
+        }
+        return shouldDisplay;
+    },
+
     storeList: function(json) {
         var companiesval = json && json[this.options.propertykey],
             isadmin = json && json.loggedin_profile && json.loggedin_profile.admin,
@@ -796,13 +809,16 @@ pl.implement(CompanyListClass, {
         }
         seeall = this.options.seeall && companies && (companies.length >= this.options.colsPerRow);
         if (!companies.length) {
-            pl('#'+this.options.companydiv).html('<span class="attention">No companies found</span>');
+            pl('#'+this.options.companydiv).html('<span class="identedtext attention">No companies found</span>');
             return;
         }
         if (this.options.exponential) { // display full width, then two half width, then the rest single width
         }
         for (i = 0; i < companies.length; i++) {
             company = companies[i];
+            if (!this.shouldDisplay(company)) {
+                continue;
+            }
             tile  = new CompanyTileClass(tileoptions);
             tile.store(company);
             if (this.options.fullWidth || this.options.colsPerRow === 4 && companies.length === 1 || this.options.exponential && i === 0) {
@@ -1203,11 +1219,7 @@ pl.implement(CompanyBannerClass, {
                     ? 'Listed on ' + DateClass.prototype.format(this.listing_date)
                     : (this.status === 'new' || this.status === 'posted' ? 'Not yet listed' : '')
                 )
-                + (this.website ? ' from ' : ''),
-            profilelink = this.loggedin_profile && this.loggedin_profile.admin
-                ? ' by <a href="/profile-page.html?id=' + this.profile_id + '">' + (this.profile_username || 'Owner') + '</a>'
-                : '',
-            admintext = profilelink;
+                + (this.website ? ' from ' : '');
         if (logobg) {
             pl('#companylogo').removeClass('noimage').css({background: logobg});
         }
@@ -1218,7 +1230,6 @@ pl.implement(CompanyBannerClass, {
         pl('title').text('Startupbidder Listing: ' + (this.title || 'Company / App Name'));
         pl('#mantra').text(this.mantra || 'Mantra here');
         pl('#categoryaddresstext').html(categoryaddresstext);
-        pl('#admintext').html(admintext);
         pl('#listing_date_text').html(listingdatetext);
         pl('#websitelink').attr({href: website});
         if (url) {

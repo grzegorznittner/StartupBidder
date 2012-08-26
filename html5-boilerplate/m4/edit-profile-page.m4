@@ -33,13 +33,13 @@ include(profile-not-found.m4)
 <div class="container">
 
 <!-- left column -->
-<div class="span-16 initialhidden" id="personalcolumn">
+<div class="span-24 initialhidden" id="personalcolumn">
     <div class="boxtitle">
         PERSONAL INFO
         <span class="newlistingtitlemsg" id="personalinfomsg"></span>
     </div>
 
-    <div class="boxpanel editprofilepanel">
+    <div class="boxpanel boxpanelfull editprofilepanel">
         <div class="formitem sideinfoitem clear">
             <label class="inputlabel" for="email">EMAIL</label>
             <span class="inputfield">
@@ -180,11 +180,15 @@ include(profile-not-found.m4)
     </div>
 -->
 
-    <div id="deactivatebox" class="deactivatebox">
-    <div class="boxtitle">DEACTIVATE ACCOUNT</div>
-    <div class="deactivatemsg attention" id="deactivatemsg">Are you sure?<br/>This cannot be undone.</div>
-    <a href="#" id="deactivatebtn"><div class="sideboxbutton">DEACTIVATE</div></a>
-    <a href="#" class="deactivatecancelbtn" id="deactivatecancelbtn"><div class="sideboxbutton">CANCEL</div></a>
+    <div id="deactivatebox" class="indentedtextbox deactivateguardbox">
+        <a href="#" id="deactivateguardlink">deactivate account...</a>
+        <div class="initialhidden deactivatebox" id="deactivateguard">
+            <p>Deactivating an account will immediately freeze all your listings and investment bids,
+            and remove all your listings from any search or website results.</p>
+            <div class="deactivatemsg attention" id="deactivatemsg">Are you sure?<br/>This cannot be undone.</div>
+            <a href="#" id="deactivatebtn"><div class="sideboxbutton">DEACTIVATE</div></a>
+            <a href="#" class="deactivatecancelbtn" id="deactivatecancelbtn"><div class="sideboxbutton">CANCEL</div></a>
+        </div>
     </div>
 
 </div> <!-- end left column -->

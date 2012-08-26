@@ -10,7 +10,7 @@
     <div class="span-16">
         <div class="boxtitle">SUMMARY</div>
         <div class="boxpanel summarypanel darkgrey">
-            <p id="summary"></p>
+            <p class="indentedtext" id="summary"></p>
     	</div>
 
 '

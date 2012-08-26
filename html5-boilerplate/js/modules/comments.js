@@ -39,7 +39,7 @@ pl.implement(CommentClass, {
         }
         else {
             pl('#addcommentbox').before('\
-    <div class="commentline"><p style="font-weight: bold;">Sign in to post a comment</p></div>\
+    <div class="commentline"><p class="indentedtextbox" style="font-weight: bold;">Sign in to post a comment</p></div>\
     <div class="addlistingloginrow">\
         <a id="google_login" href="">\
             <div class="addlistinglogin headericon headersignin"></div>\
