@@ -34,8 +34,10 @@ import com.startupbidder.vo.ErrorCodes;
 import com.startupbidder.vo.ListPropertiesVO;
 import com.startupbidder.vo.ListingTileVO;
 import com.startupbidder.vo.UserAndUserVO;
+import com.startupbidder.vo.UserBasicVO;
 import com.startupbidder.vo.UserListVO;
 import com.startupbidder.vo.UserListingsForAdminVO;
+import com.startupbidder.vo.UserListingsForUsersVO;
 import com.startupbidder.vo.UserShortListVO;
 import com.startupbidder.vo.UserShortVO;
 import com.startupbidder.vo.UserToAvatar;
@@ -180,7 +182,10 @@ public class UserMgmtFacade {
 	 * @return User data as JsonNode
 	 */
 	public UserListingsForAdminVO getUser(UserVO loggedInUser, String userId) {
-		UserListingsForAdminVO result = new UserListingsForAdminVO();
+		UserListingsForAdminVO result = new UserListingsForUsersVO();
+		if (loggedInUser != null && loggedInUser.isAdmin()) {
+			result = new UserListingsForAdminVO();
+		}
 
 		UserVO user = DtoToVoConverter.convert(getDAO().getUser(userId));
 		if (user == null) {
@@ -235,8 +240,12 @@ public class UserMgmtFacade {
 			user.setEditedListing("");
 			user.setEditedStatus("");
 		}
-
-		result.setUser(user);
+		
+		if (loggedInUser != null && loggedInUser.isAdmin()) {
+			result.setUser(user);
+		} else {
+			((UserListingsForUsersVO)result).setUserBasic(new UserBasicVO(user));
+		}
 		return result;
 	}
 	
