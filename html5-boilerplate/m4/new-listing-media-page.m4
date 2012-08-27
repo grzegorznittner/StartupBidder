@@ -111,6 +111,9 @@ If you do not have a video ready, just record a voiceover of a quick run through
 <!-- end right column -->
 
 </div>
+'
+include(new-listing-bottom-buttons.m4)
+`
 
 </div> <!-- end container -->
 </div> <!-- end main -->

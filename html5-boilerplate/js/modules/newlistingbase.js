@@ -175,22 +175,46 @@ pl.implement(NewListingBaseClass, {
 
     bindNavButtons: function(nextValidator) {
         this.bindBackButton();
+        this.bindSaveButton();
+        this.bindPreviewButton();
+        this.bindWithdrawButton();
         //this.bindPrevButton();
         //this.bindNextButton(nextValidator);
-        this.bindWithdrawButton();
     },
 
     bindBackButton: function() {
         var self = this;
-        pl('.backbuttonlink').bind({
-            click: function() {
-                var url = self.listing.status === 'new'
-                    ? '/new-listing-basics-page.html'
-                    : '/company-page.html?id=' + self.listing.listing_id;
-                document.location = url;
-                return false;
-            }
+        pl('.backbuttonlink').bind('click', function() {
+            var url = self.listing.status === 'new'
+                ? '/new-listing-basics-page.html'
+                : '/company-page.html?id=' + self.listing.listing_id;
+            document.location = url;
+            return false;
         });
+    },
+
+    bindSaveButton: function() {
+        pl('.savebuttonlink').bind('click', function() {
+            pl('#savebutton').hide();
+            pl('#savebuttonspinner').show();
+            setTimeout(function() {
+                pl('#savebuttonspinner').hide();
+                pl('#savebutton').text('SAVED').show();
+            }, 1000);
+            return false;
+        });
+    },
+   
+    bindPreviewButton: function() {
+        var self = this;
+        if (this.listing.status === 'new' || this.listing.status === 'posted') {
+            pl('.previewbutton').bind('click', function() {
+                document.location = '/company-page.html?id=' + self.listing.listing_id;
+            });
+        }
+        else {
+            pl('.previewbutton').hide();
+        }
     },
 
     bindPrevButton: function() {

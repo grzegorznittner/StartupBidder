@@ -31,7 +31,7 @@
 -->
     </div>
     <span class="span-3 smallinputbutton darkblue bmctitlebtn hoverlink" id="bmc-activate-deactivate-btn"></span>
-    <span class="span-3 smallinputbutton darkblue bmctitlebtn hoverlink" id="bmc-preview-btn">PREVIEW</span>
+    <span class="span-3 smallinputbutton darkblue bmctitlebtn hoverlink" id="bmc-preview-btn">SHOW</span>
     <span class="bmctitleboxbtn"><div id="bmcfieldicon"></div></span>
     <span class="bmctitlemsg" id="bmc-editable-msg">Click a section to edit the text</span>
 </div>

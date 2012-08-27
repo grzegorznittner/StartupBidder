@@ -183,6 +183,9 @@ include(company-not-found.m4)
 <div class="span-8 last">
 </div>
 <!-- end right column -->
+'
+include(new-listing-bottom-buttons.m4)
+`
 
 </div> <!-- end container -->
 </div> <!-- end main -->

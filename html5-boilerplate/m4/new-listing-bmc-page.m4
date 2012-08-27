@@ -35,6 +35,7 @@ include(company-not-found.m4)
 '
 include(bmc.m4)
 include(bmc-editable.m4)
+include(new-listing-bottom-buttons.m4)
 `
 </div> <!-- end container -->
 </div> <!-- end main -->

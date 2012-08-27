@@ -245,7 +245,7 @@ include(images-panel-editable.m4)
 <!-- right column -->
 <div class="span-8 last">
 
-    <div class="sidebox investbutton toppreviewbutton" id="previewbutton">PREVIEW &gt;&gt;</div>
+    <div class="sidebox inputbutton previewbutton toppreviewbutton">PREVIEW &gt;&gt;</div>
 
     <a href="/new-listing-financials-page.html">
         <div class="sidebox investbutton" id="askfundingbutton">ASK FOR FUNDING</div>
@@ -326,13 +326,14 @@ include(images-panel-editable.m4)
     <div class="sidebox mapsidebox">
         <span class="inputmap" id="addressmap"></span>
     </div>
-
-    <div class="sidebox investbutton bottompreviewbutton" id="previewbutton2">PREVIEW &gt;&gt;</div>
-
 </div>
+</div>
+
+'
+include(new-listing-bottom-buttons.m4)
+`
 <!-- end right column -->
 
-</div>
 
 </div> <!-- end container -->
 </div> <!-- end main -->
