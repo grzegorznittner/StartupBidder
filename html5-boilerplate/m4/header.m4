@@ -46,7 +46,7 @@
     </div>
 
     <!-- logged in -->
-    <div class="span-5 last loginspan headerrow initialhidden" id="headerloggedin">
+    <div class="span-5 last loginspan headerrow initialhidden headerloggedin" id="headerloggedin">
         <div>
             <a id="logoutlink" href="">
                 <div class="headericon headerlogout" title="Logout"></div>
@@ -62,7 +62,7 @@
                 </div>
             </a>
             <a href="/profile-page.html">
-                <span class="headerlink hoverlink headerlinkright" id="headerusername" title="Profile">You</span>
+                <div title="View Your Profile" class="profileavatar headeravatar" id="headeravatar"></div>
             </a>
         </div>
     </div>

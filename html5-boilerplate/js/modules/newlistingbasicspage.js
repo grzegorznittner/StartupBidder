@@ -4,6 +4,12 @@ function NewListingBasicsClass() {
     this.importid = qs.vars.importid;
     this.base = new NewListingBaseClass();
     this.imagepanel = new ImagePanelClass({ editmode: true });
+    this.displayImportType = {
+        'AppStore': 'App Store',
+        'GooglePlay': 'Google Play',
+        'WindowsMarketplace': 'Windows Marketplace',
+        'ChromeWebStore': 'Chrome Web Store'
+    };
 }
 
 pl.implement(NewListingBasicsClass, {
@@ -12,6 +18,7 @@ pl.implement(NewListingBasicsClass, {
         var self = this,
             url = this.importtype && this.importid ? '/listing/import' : '/listing/create',
             data = this.importtype && this.importid ? { type: this.importtype, id: this.importid } : null,
+            displayImportType = this.displayImportType[this.importtype] || this.importtype,
             complete = function(json) {
                 var listing = json && json.listing ? json.listing : {},
                     categories = json && json.categories ? json.categories : {},
@@ -30,7 +37,7 @@ pl.implement(NewListingBasicsClass, {
             },
             ajax = new AjaxClass(url, 'newlistingmsg', complete, null, null, error);
         if (data) {
-            pl('#newlistingbanner').text('LISTING IMPORTED FROM ' + this.importtype.toUpperCase());
+            pl('#newlistingbanner').text('IMPORTED FROM ' + displayImportType.toUpperCase());
             ajax.ajaxOpts.data = data;
         }
         ajax.setPost();

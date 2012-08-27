@@ -73,6 +73,9 @@ include(header.m4)
             <a href="/import-listing-page.html?type=WindowsMarketplace">
                 <div class="addlistingbutton addlistingbuttoncol investbutton">Windows Marketplace</div>
             </a>
+             <a href="/import-listing-page.html?type=ChromeWebStore">
+                <div class="addlistingbutton addlistingbuttoncol investbutton">Chrome Web Store</div>
+            </a>
         </div>
     
         <div class="addlistingtitle">or</div>

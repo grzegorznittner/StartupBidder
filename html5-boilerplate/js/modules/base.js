@@ -129,18 +129,20 @@ pl.implement(DateClass, {
         return new Date();
     },
     dateFromYYYYMMDD: function(yyyymmdd) {
-        var yyyy = yyyymmdd.substr(0,4),
-            mm = yyyymmdd.substr(4,2) - 1,
-            dd = yyyymmdd.substr(6,2);
+        var date = yyyymmdd || DateClass.prototype.formatDate(DateClass.prototype.nowUTC()),
+            yyyy = date.substr(0,4),
+            mm = date.substr(4,2) - 1,
+            dd = date.substr(6,2);
         return new Date(yyyy, mm, dd);
     },
     dateFromYYYYMMDDHHMMSS: function(yyyymmddhhmmss) {
-        var yyyy = yyyymmddhhmmss.substr(0,4),
-            mo = yyyymmddhhmmss.substr(4,2) - 1,
-            dd = yyyymmddhhmmss.substr(6,2),
-            hh = yyyymmddhhmmss.substr(8,2),
-            mm = yyyymmddhhmmss.substr(10,2),
-            ss = yyyymmddhhmmss.substr(12,2),
+        var datetime = yyyymmddhhmmss || DateClass.prototype.formatDatetime(DateClass.prototype.nowUTC()),
+            yyyy = datetime.substr(0,4),
+            mo = datetime.substr(4,2) - 1,
+            dd = datetime.substr(6,2),
+            hh = datetime.substr(8,2),
+            mm = datetime.substr(10,2),
+            ss = datetime.substr(12,2),
             date = new Date(yyyy, mo, dd, hh, mm, ss);
         return date;
     },
@@ -277,6 +279,9 @@ pl.implement(URLClass, {
             matches = url.match(re),
             hostname = matches && matches.length >= 1 && matches[1] ? matches[1].toString() : '';
         return hostname;
+    },
+    getURL: function() {
+        return this.url;
     }
 });
 
@@ -426,16 +431,9 @@ pl.implement(HeaderClass, {
         }
     },
     setLoggedIn: function(profile, logout_url) {
-        // var username = profile.username || 'You',
-        var username = 'You',
-            num_notifications = profile.num_notifications || 0,
+        var num_notifications = profile.num_notifications || 0,
             num_messages = profile.num_messages || 0,
             notificationlinktext = num_notifications ? num_notifications + ' unread notifications' : 'no unread notifications';
-            //newlistingurl = (!profile.edited_listing || profile.edited_status === 'new') ? '/new-listing-basics-page.html' : 'company-page.html?id=' + profile.edited_listing,
-            //posttext = profile && profile.edited_listing ? 'Pending' : 'Add Listing';
-        // pl('#topheaderline').html('You have <a href="/notifications-page.html" class="topheaderlink hoverlink">' + notificationlinktext + '</a>');
-        //pl('#posttext').text(posttext);
-        //pl('#postlink').attr('href', newlistingurl);
         if (num_messages) {
             pl('#headernummessages').text(num_messages).addClass('headernumdisplay');
         }
@@ -451,17 +449,16 @@ pl.implement(HeaderClass, {
         if (profile.admin) {
             pl('#adminfooterlinks').show();
         }
-        pl('#headerusername').html(username);
+        if (profile.avatar) {
+            pl('#headeravatar').css('background-image', 'url(' + profile.avatar + ')');
+        }
         if (logout_url) {
             pl('#logoutlink').attr({href: logout_url});
         }
         pl('#headerloggedin').show();
     },
     setLoggedOut: function(login_url, twitter_login_url, fb_login_url) {
-        //var post_login_url = login_url + encodeURIComponent('/new-listing-basics-page.html');
-        // pl('#topheaderline').html('Want to raise money for startups or invest in one? <a href="/about-page.html" class="topheaderlink hoverlink">We&rsquo;ll tell you how!</a>');
         if (login_url) {
-            //pl('#postlink').attr({href: post_login_url});
             pl('#loginlink').attr({href: login_url});
             if (twitter_login_url) {
                 pl('#twitter_loginlink').attr({href: twitter_login_url}).show();
@@ -474,7 +471,6 @@ pl.implement(HeaderClass, {
                 pl('#fb_loginlink').hide();
             }
         }
-        //pl('#posttext').text('Add Listing');
         pl('#headernotloggedin').show();
     }
 });
@@ -570,6 +566,53 @@ pl.implement(MicroListingClass, {
     }
 });
 
+function CompanyFormatClass() {}
+CompanyFormatClass.prototype.daysText = function(listing) {
+    var daystext = '',
+        daysago;
+    if (listing.status === 'new') {
+        daystext = 'Awaiting submission';
+    }
+    else if (listing.status === 'posted') {
+        daystext = 'Awaiting approval';
+    }
+    else if (listing.status === 'active' && listing.asked_fund) {
+        daystext = 'Bidding open';
+    }
+    else if (listing.status === 'active' && !listing.asked_fund && listing.listing_date) {
+        daysago = DateClass.prototype.daysBetween(DateClass.prototype.dateFromYYYYMMDD(listing.listing_date), DateClass.prototype.todayDate());
+        daystext = daysago === 0 ? 'Listed today' : 'Listed ' + daysago + ' day' + (daysago > 1 ? 's' : '') + ' ago';
+    }
+    else {
+        daystext = SafeStringClass.prototype.ucfirst(listing.status);
+    }
+    return daystext;
+};
+CompanyFormatClass.prototype.suggestedText = function(listing) {
+    var suggested_text = '',
+        suggested_amt,
+        suggested_pct;
+    if (listing.asked_fund && listing.suggested_amt && listing.suggested_pct) {
+        suggested_amt = CurrencyClass.prototype.format(listing.suggested_amt);
+        suggested_pct = PercentClass.prototype.format(listing.suggested_pct) + '%';
+        suggested_text = suggested_amt + ' for ' + suggested_pct;
+    }
+    else {
+        suggested_text = 'Not raising funds';
+    }
+    return suggested_text;
+};
+CompanyFormatClass.prototype.financeLine = function(listing) {
+    var finance_line = '';
+    if (listing.asked_fund && listing.suggested_amt && listing.suggested_pct) {
+        finance_line = CompanyFormatClass.prototype.daysText(listing) + ' at ' + CompanyFormatClass.prototype.suggestedText(listing);
+    }
+    else {
+        finance_line = CompanyFormatClass.prototype.daysText(listing);
+    }
+    return finance_line;
+};
+
 /* company list stuff follows */
 function CompanyTileClass(options) {
     this.options = options || {};
@@ -593,25 +636,7 @@ pl.implement(CompanyTileClass, {
             profilelinked,
             addr;
         this.status = json.status;
-        if (!this.status) {
-            this.daystext = '';
-        }
-        else if (this.status === 'new') {
-            this.daystext = 'Awaiting submission';
-        }
-        else if (this.status === 'posted') {
-            this.daystext = 'Awaiting approval';
-        }
-        else if (this.status === 'active' && json.asked_fund) {
-            this.daystext = 'Bidding open';
-        }
-        else if (this.status === 'active' && !json.asked_fund && json.listing_date) {
-            this.daysago = DateClass.prototype.daysBetween(DateClass.prototype.dateFromYYYYMMDD(json.listing_date), DateClass.prototype.todayDate());
-            this.daystext = this.daysago === 0 ? 'Listed today' : this.daysago + ' day' + (this.daysago > 1 ? 's' : '') + ' ago';
-        }
-        else {
-            this.daystext = SafeStringClass.prototype.ucfirst(this.status);
-        }
+        this.daystext = CompanyFormatClass.prototype.daysText(json);
         this.imgClass = json.logo ? '' : 'noimage';
         this.imgStyle = json.logo ? 'background: url(' + json.logo + ') no-repeat scroll left top' : '';
         this.posted = json.posted_date ? DateClass.prototype.format(json.posted_date) : 'not posted';
@@ -646,23 +671,8 @@ pl.implement(CompanyTileClass, {
         this.addrlinked = !addr ? '' : ' ' + locprefix + ' <a href="/main-page.html?type=location&val=' + encodeURIComponent(addr) + '">' + addr + '</a>';
         profilelinked = !json.profile_id ? '' : ' by <a href="/profile-page.html?id=' + json.profile_id + '">' + (json.profile_username || 'owner') + '</a>';
         this.categoryaddresstext = this.catlinked + this.addrlinked + profilelinked;
-
-        if (this.status && json.asked_fund && json.suggested_amt && json.suggested_pct) {
-            this.suggested_amt = CurrencyClass.prototype.format(json.suggested_amt);
-            this.suggested_pct = PercentClass.prototype.format(json.suggested_pct) + '%';
-            this.suggested_text = this.suggested_amt + ' for ' + this.suggested_pct;
-            this.finance_line = this.daystext + ' at ' + this.suggested_text;
-        }
-        else if (this.status) {
-            this.suggested_amt = '';
-            this.suggested_text = 'Not raising funds';
-            this.finance_line = this.daystext;
-        }
-        else {
-            this.suggested_amt = '';
-            this.suggested_text = '';
-            this.finance_line = '';
-        }
+        this.suggested_text = CompanyFormatClass.prototype.suggestedText(json);
+        this.finance_line = CompanyFormatClass.prototype.financeLine(json);
         this.mantra = json.mantra || 'No Mantra';
         this.mantraplussuggest = this.mantra + '<br/>' + this.suggested_text;
         this.url = '/company-page.html?id=' + json.listing_id;
@@ -1195,7 +1205,8 @@ pl.implement(CompanyBannerClass, {
 
     displayBanner: function() {
         var logobg = this.logo ? 'url(' + this.logo + ') no-repeat scroll left top' : null,
-            url = this.website ? new URLClass(this.website) : null,
+            prefixedurl = this.website ? (this.website.indexOf('http') === 0 ? this.website : ('http://' + this.website)) : null,
+            url = prefixedurl ? new URLClass(prefixedurl) : null,
             cat = this.category || '',
             addr = this.brief_address,
             catprefix = !cat || (cat !== 'Other' && !cat.match(/^[aeiou]/i)) ? 'A' : 'An',
@@ -1207,19 +1218,12 @@ pl.implement(CompanyBannerClass, {
             stagetext = this.stage && this.stage !== 'established' ? this.stage : '',
             typetext = this.type === 'application' ? this.type + ' ' + stagetext : (stagetext || 'company'),
             catlinked = categorytext + platformprefix + platform + typetext,
-
             locprefix  = type === 'company' ? 'in' : 'from',
             addrlinked = !addr ? '' : ' ' + locprefix + ' <a href="/main-page.html?type=location&val=' + encodeURIComponent(addr) + '">' + addr + '</a>',
             profilelinked = !this.profile_id ? '' : ' by <a href="/profile-page.html?id=' + this.profile_id + '">' + (this.profile_username || 'owner') + '</a>',
             categoryaddresstext = catlinked + addrlinked + profilelinked,
-            status = this.status || 'new',
             website = this.website || '/company-page.html?id=' + this.listing_id,
-            listingdatetext = 
-                (this.listing_date
-                    ? 'Listed on ' + DateClass.prototype.format(this.listing_date)
-                    : (this.status === 'new' || this.status === 'posted' ? 'Not yet listed' : '')
-                )
-                + (this.website ? ' from ' : '');
+            listingdatetext = CompanyFormatClass.prototype.financeLine(this) + (url ? ' from ' : '');
         if (logobg) {
             pl('#companylogo').removeClass('noimage').css({background: logobg});
         }
@@ -1231,8 +1235,8 @@ pl.implement(CompanyBannerClass, {
         pl('#mantra').text(this.mantra || 'Mantra here');
         pl('#categoryaddresstext').html(categoryaddresstext);
         pl('#listing_date_text').html(listingdatetext);
-        pl('#websitelink').attr({href: website});
         if (url) {
+            pl('#websitelink').attr({href: url.getURL()});
             pl('#domainname').text(url.getHostname());
             pl('#websitelinkicon').bind('click', function() {
                 window.open(website);

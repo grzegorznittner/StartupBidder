@@ -22,16 +22,17 @@ companybannermacro(`', `', `', `companynavselected', `', `')
 <div class="container initialhidden wrapper">
 '
 include(company-order-book.m4)
-`
-<div class="boxtitlegap smokegrey clear">YOUR BIDS WITH THE OWNER
-    <span class="newlistingtitlemsg" id="bidtitlemsg"></span>
-</div>
-<div class="initialhidden clear" id="bidsloggedin">
-    <div class="boxpanel boxpanelfull" id="bidlistparent">
-        <div id="bidlistlast"></div>
+
+    <div class="initialhidden" id="bidhistory">
+        <div class="boxtitlegap smokegrey clear">YOUR BID HISTORY
+            <span class="newlistingtitlemsg" id="bidtitlemsg"></span>
+        </div>
+        <div class="boxpanel boxpanelfull" id="bidlistparent">
+            <div id="bidlistlast"></div>
+        </div>
     </div>
 
-    <div class="boxtitlegap smokegrey clear initialhidden" id="new_bid_boxtitle">MAKE A NEW BID
+    <div class="boxtitlegap smokegrey clear initialhidden" id="new_bid_boxtitle">MAKE A BID
         <span class="newlistingtitlemsg" id="newbidtitlemsg"></span>
     </div>
     <div class="boxpanel boxpanelfull initialhidden" id="new_bid_boxparent">
@@ -84,7 +85,6 @@ include(company-order-book.m4)
             </div>
         </div>
     </div>
-</div>
 
 </div> <!-- end container -->
 </div> <!-- end main -->

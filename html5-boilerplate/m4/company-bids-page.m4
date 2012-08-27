@@ -24,11 +24,19 @@ companybannermacro(`', `', `', `companynavselected', `', `')
 include(company-order-book.m4)
 `
 
-<div class="boxtitlegap smokegrey clear">MAKE PRIVATE BID
-    <span class="newlistingtitlemsg" id="bidtitlemsg"></span>
-</div>
+<div class="boxtitle" style="">SIGN IN TO MAKE A BID</div>
 <div class="boxpanel boxpanelfull">
-    <p class="indentedtext">Sign in to place a bid.</p>
+    <div style="height: 100px;">
+        <a id="google_login" href="">
+            <div class="addlistinglogin headericon headersignin"></div>
+        </a>
+        <a id="twitter_login" href="">
+            <div class="addlistinglogin headericon headertwittersignin"></div>
+        </a>
+        <a id="fb_login" href="">
+            <div class="addlistinglogin headericon headerfbsignin"></div>
+        </a>
+    </div>
 </div>
 
 </div> <!-- end container -->

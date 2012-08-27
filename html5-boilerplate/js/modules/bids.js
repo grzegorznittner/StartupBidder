@@ -81,6 +81,7 @@ pl.implement(PublicBidClass, {
 function OrderBookClass(listing_id) {
     this.listing_id = listing_id;
     this.bidprops = [ 'investor_bids', 'owner_bids', 'accepted_bids' ];
+    this.investmentbidprops = [ 'investor_bids', 'accepted_bids' ];
     this.nobidsmap = {
         investor_bids: 'No bids',
         owner_bids: 'No Asks',
@@ -88,6 +89,23 @@ function OrderBookClass(listing_id) {
     };
 }
 pl.implement(OrderBookClass, {
+
+    hasInvestmentBids : function() { // if has investor or accepted bids, basically any public investor interaction
+        var hasBids = false,
+            i,
+            bidprop,
+            bids;
+        for (i = 0; i < this.investmentbidprops.length; i++) {
+            bidprop = this.investmentbidprops[i];
+            bids = this.bids[bidprop];
+            if (bids && bids.length) {
+                hasBids = true;
+                break;
+            }
+        }
+        return hasBids;
+    },
+
     mock: function(ajax) {
         ajax.mock({
 investor_bids: [
@@ -132,7 +150,6 @@ accepted_bids: [
         });
     },
 
-
     load: function() {
         var self = this,
             complete = function(json) {
@@ -159,12 +176,12 @@ accepted_bids: [
     },
 
     store: function(json) {
-        var 
-            bidprop,
+        var bidprop,
             jsonlist,
             i,
             j,
             bid;
+        CollectionsClass.prototype.merge(this, json);
         this.bids = {};
         this.sortedbids = {};
         this.storeOfferBid(json);
@@ -207,14 +224,33 @@ accepted_bids: [
     },
 
     display: function(json) {
+        if (json !== undefined) {
+            this.store(json);
+        }
+//        if (!this.hasInvestmentBids()) {
+            this.displayAskingPrice();
+//        }
+//        else {
+//            this.displayFullOrderBook();
+//        }
+    },
+
+    displayAskingPrice: function() {
+       var amt = CurrencyClass.prototype.format(this.listing.suggested_amt),
+           pct = PercentClass.prototype.format(this.listing.suggested_pct),
+           val = CurrencyClass.prototype.format(ValuationClass.prototype.valuation(this.listing.suggested_amt, this.listing.suggested_pct));
+        pl('#askingamt').text(amt);
+        pl('#askingpct').text(pct);
+        pl('#askingval').text(val);
+        pl('#askingpricewrapper').show();
+    },
+
+    displayFullOrderBook: function() {
         var html,
             bidprop,
             bids,
             bid,
             i;
-        if (json !== undefined) {
-            this.store(json);
-        }
         for (bidprop in this.sortedbids) {
             bids = this.sortedbids[bidprop];
             bid = new PublicBidClass(this, bidprop);
@@ -236,7 +272,7 @@ accepted_bids: [
                 pl('#last_' + bidprop + '_date').text(bid.datetext);
             }
         }
-        pl('#last_bids_wrapper').show();
+        pl('#orderbookwrapper').show();
     }
 });
 
@@ -251,9 +287,13 @@ pl.implement(CompanyBidsPageClass,{
                 var header = new HeaderClass(),
                     companybanner = new CompanyBannerClass('bids'),
                     orderbook = new OrderBookClass(json.listing.listing_id);
+                CollectionsClass.prototype.merge(self, json);
                 header.setLogin(json);
                 companybanner.display(json);
                 orderbook.display(json);
+                if (!json.loggedin_profile) {
+                    self.displayLoggedOut();
+                }
                 pl('.preloader').hide();
                 pl('.wrapper').show();
             },
@@ -264,7 +304,30 @@ pl.implement(CompanyBidsPageClass,{
             },
             ajax = new AjaxClass('/listing/order_book/' + this.listing_id, 'orderbooktitlemsg', complete, null, null, error);
         ajax.call();
+    },
+
+    displayLoggedOut: function() {
+        var nexturl = '/company-investor-bids-page.html?id=' + this.listing_id;
+            login_url = this.login_url,
+            twitter_login_url = this.twitter_login_url,
+            fb_login_url = this.fb_login_url;
+        if (login_url) {
+            pl('#google_login').attr({href: login_url + encodeURIComponent(nexturl)});
+        } else {
+            pl('#google_login').hide();
+        }
+        if (twitter_login_url) {
+            pl('#twitter_login').attr({href: twitter_login_url + '?url=' + encodeURIComponent(nexturl)}).show();
+        } else {
+            pl('#twitter_login').hide();
+        }
+        if (fb_login_url) {
+            pl('#fb_login').attr({href: fb_login_url + '?url=' + encodeURIComponent(nexturl)}).show();
+        } else {
+            pl('#fb_login').hide();
+        }
     }
+
 });
 
 function BidClass(bidslist) {
@@ -329,7 +392,7 @@ pl.implement(BidClass, {
 
     makeHtml: function(options) {
         var addnote    = options && options.last && this.bidslist.listing.status === 'active' ? this.bidslist.makeAddNote() : ''; // removing note from accept/reject/withdraw actions
-            addbuttons = options && options.last && this.bidslist.listing.status === 'active' ? this.bidslist.makeAddButtons() : '';
+            addbuttons = options && options.last && this.bidslist.listing.status === 'active' ? this.bidslist.makeAddButtons(this) : '';
             amtidattr  = options && options.last && this.bidslist.listing.status === 'active' ? ' id="existing_bid_amt"' : '';
             pctidattr  = options && options.last && this.bidslist.listing.status === 'active' ? ' id="existing_bid_pct"' : '';
             validattr  = options && options.last && this.bidslist.listing.status === 'active' ? ' id="existing_bid_val"' : '';
@@ -376,6 +439,18 @@ function SingleInvestorBidListClass() {
         owner_accept: 'Bid accepted',
         owner_reject: 'Bid rejected',
         owner_withdraw: 'Bid withdrawn'
+    };
+    this.waitingtext = {
+        investor_post: 'Owner is evaluating bid',
+        investor_counter: 'You have proposed a counter-offer',
+        investor_accept: 'You have accepted the bid, contact the owner to conclude the legal agreement',
+        investor_reject: 'You have rejected the counter-offer',
+        investor_withdraw: 'You have withdrawn your bid',
+        owner_post: 'Owner has posted bid',
+        owner_counter: 'Owner has proposed a counter-offer',
+        owner_accept: 'Owner has accepted your offer, contact them to conclude the legal agreement',
+        owner_reject: 'Owner has rejected your bid',
+        owner_withdraw: 'Owner has withdrawn their counter-offer'
     };
 }
 pl.implement(SingleInvestorBidListClass, {
@@ -425,11 +500,6 @@ pl.implement(SingleInvestorBidListClass, {
                 this.bids.push(bid);
             }
         }
-        else {
-            bid = new BidClass(this);
-            bid.setEmpty();
-            this.bids.push(bid);
-        }
         this.more_results_url = this.bids.length > 0 && json.bids_props && json.bids_props.more_results_url;
     },
 
@@ -443,26 +513,22 @@ pl.implement(SingleInvestorBidListClass, {
         if (this.bids.length) {
             html = BidClass.prototype.makeHeader();
             if (this.more_results_url) {
-            	html += '<div class="showmore hoverlink" id="moreresults"><span class="initialhidden" id="moreresultsurl">' + self.more_results_url + '</span><span id="moreresultsmsg">Earlier bids...</span></div>\n';
+            	html += '<div class="showmore hoverlink" id="moreresults"><span class="initialhidden" id="moreresultsurl">'
+                    + self.more_results_url + '</span><span id="moreresultsmsg">Earlier bids...</span></div>\n';
             }
             for (i = 0; i < this.bids.length; i++) {
                 bid = this.bids[i];
                 html += bid.makeHtml({ last: (i === this.bids.length - 1)});
             }
+            pl('#bidlistlast').before(html);
+            pl('#bidhistory').show();
         }
-        else {
-            bid = new BidClass(this);
-            bid.setEmpty();
-            html += bid.makeHtml({ last: true });
-        }
-        pl('#bidlistlast').before(html);
         if (this.listing.status === 'active') {
             this.bindBidBox();
         }
         if (this.more_results_url) {
             this.bindMoreResults();
         }
-        pl('#bidsloggedin').show();
     },
 
     bindMoreResults: function() {
@@ -654,13 +720,14 @@ pl.implement(SingleInvestorBidListClass, {
         ';
     },
 
-    makeAddButtons: function() {
+    makeAddButtons: function(bid) {
+        var waitingtext = bid ? (this.waitingtext[bid.type] || '') : '';
         return '\
 <div class="bidactionline" id="existingbidbuttons">\
     <span class="span-3 inputbutton bidactionbutton initialhidden" id="investor_withdraw_btn">WITHDRAW</span>\
     <span class="span-3 inputbutton bidactionbutton initialhidden" id="investor_reject_btn">REJECT</span>\
     <span class="span-3 inputbutton bidactionbutton initialhidden" id="investor_accept_btn">ACCEPT</span>\
-    <span class="span-11 bidconfirmmessage" id="existingbidmsg"></span>\
+    <span class="span-11 bidconfirmmessage" id="existingbidmsg">' + waitingtext + '</span>\
 </div>\
 <div class="bidactionline initialhidden" id="existingconfirmbuttons">\
     <span class="span-3 inputbutton bidactionbutton" id="investor_existing_cancel_btn">CANCEL</span>\
