@@ -7,13 +7,15 @@ import org.codehaus.jackson.annotate.JsonAutoDetect;
 import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 import org.codehaus.jackson.annotate.JsonProperty;
 
+import com.startupbidder.web.UserMgmtFacade;
+
 /**
  * 
  * @author "Grzegorz Nittner" <grzegorz.nittner@gmail.com>
  */
 @JsonAutoDetect(getterVisibility=Visibility.NONE, setterVisibility=Visibility.NONE,
 		fieldVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE)
-public class BidListVO extends BaseResultVO implements OrderBook {
+public class BidListVO extends BaseResultVO implements OrderBook, UserDataUpdatableContainer {
 	@JsonProperty("listing") private ListingVO listing;
 	@JsonProperty("bids") private List<BidVO> bids;
 	@JsonProperty("investor") private UserShortVO investor;
@@ -22,6 +24,9 @@ public class BidListVO extends BaseResultVO implements OrderBook {
 	@JsonProperty("accepted_bids") private List<AnonBidVO> acceptedBids;
 	@JsonProperty("bids_props")	private ListPropertiesVO bidsProperties;
 	@JsonProperty("valid_actions") private String validActions[];
+	public void updateUserData() {
+		UserMgmtFacade.instance().updateUserData(listing);
+	}
 	public ListingVO getListing() {
 		return listing;
 	}

@@ -16,9 +16,11 @@ import com.startupbidder.util.LowecaseSerializer;
  */
 @JsonAutoDetect(getterVisibility=Visibility.NONE, setterVisibility=Visibility.NONE,
 		fieldVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE)
-public class BidUserVO extends BaseVO {
+public class BidUserVO extends BaseVO implements UserDataUpdatable {
 	@JsonProperty("investor_id") private String user;
 	@JsonProperty("investor_nickname") private String userNickname;
+	@JsonProperty("investor_class") private String userClass;
+	@JsonProperty("investor_avatar") private String userAvatar;
 	@JsonProperty("last_date") @JsonSerialize(using=DateSerializer.class) private Date lastDate;
 	@JsonProperty("last_text") private String text;
 	@JsonProperty("counter") private int counter;
@@ -91,5 +93,21 @@ public class BidUserVO extends BaseVO {
 	}
 	public void setType(String type) {
 		this.type = type;
+	}
+	public String getUserClass() {
+		return userClass;
+	}
+	public void setUserClass(String userClass) {
+		this.userClass = userClass;
+	}
+	public String getUserAvatar() {
+		return userAvatar;
+	}
+	public void setUserAvatar(String userAvatar) {
+		this.userAvatar = userAvatar;
+	}
+	@Override
+	public void setAvatar(String avatar) {
+		this.userAvatar = avatar;
 	}
 }

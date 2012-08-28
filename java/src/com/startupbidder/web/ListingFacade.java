@@ -1125,6 +1125,9 @@ public class ListingFacade {
 					data.remove(index);
 					if (StringUtils.equals(updated.getState(), Listing.State.ACTIVE.toString())) {
 						data.add(index, updated);
+					} else {
+						mem.delete(MEMCACHE_TOP_LISTINGS_TILES);
+						break;
 					}
 					mem.put(MEMCACHE_TOP_LISTINGS_TILES, data);
 					break;
@@ -1140,6 +1143,9 @@ public class ListingFacade {
 					data.remove(index);
 					if (StringUtils.equals(updated.getState(), Listing.State.ACTIVE.toString())) {
 						data.add(index, updated);
+					} else {
+						mem.delete(MEMCACHE_CLOSING_LISTINGS_TILES);
+						break;
 					}
 					mem.put(MEMCACHE_CLOSING_LISTINGS_TILES, data);
 					break;
@@ -1155,6 +1161,9 @@ public class ListingFacade {
 					data.remove(index);
 					if (StringUtils.equals(updated.getState(), Listing.State.ACTIVE.toString())) {
 						data.add(index, updated);
+					} else {
+						mem.delete(MEMCACHE_LATEST_LISTINGS_TILES);
+						break;
 					}
 					mem.put(MEMCACHE_LATEST_LISTINGS_TILES, data);
 					break;
