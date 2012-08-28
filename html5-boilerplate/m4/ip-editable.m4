@@ -30,7 +30,7 @@ strategy, and how you are going to change the world.
 
             <div class="ipslide ipslide1">
                 <div class="ipheader">
-                    <div class="iplogo"></div>
+                    <div class="noimage iplogo"></div>
                     <div class="iptitle ipcorpname"></div>
                 </div>
                 <div class="ipline"></div>
@@ -57,7 +57,7 @@ Venture Capitalists and you have 30 seconds to either get them interested
 enough to consider your idea, or step off and go back to sipping their latte.
 What do you say?  Avoid jargon, be specific, be exciting.
                     </p>
-                    <div class="iplogo"></div>
+                    <div class="noimage iplogo"></div>
                     <label class="iptitle" for="summary">Elevator Pitch</label>
                 </div>
                 <div class="ipline"></div>
@@ -76,7 +76,7 @@ solutions?  It it just an annoyance, or is it causing real harm?  What&rsquo;s
 the pain point that makes it worth the customer&rsquo;s time to go out of his
 way to get your product with his hard earned money?
                     </p>
-                    <div class="iplogo"></div>
+                    <div class="noimage iplogo"></div>
                     <label class="iptitle" for="answer10">The Problem</label>
                 </div>
                 <div class="ipline"></div>
@@ -96,7 +96,7 @@ this solution so much better than the current ones?  What about this solution
 is worth the money and makes people come back for more?  How is it going to
 change their life?  Where did the idea come from?
                     </p>
-                    <div class="iplogo"></div>
+                    <div class="noimage iplogo"></div>
                     <label class="iptitle" for="answer11">The Solution</label>
                 </div>
                 <div class="ipline"></div>
@@ -115,7 +115,7 @@ It is important not to focus on the features themselves, but more importantly
 how the do better what the customer is doing now.  This is an itemization of
 what your business really provides and why it provides it.
                     </p>
-                    <div class="iplogo"></div>
+                    <div class="noimage iplogo"></div>
                     <label class="iptitle" for="answer12">Features and Benefits</label>
                 </div>
                 <div class="ipline"></div>
@@ -136,7 +136,7 @@ signed, milestones reached, products developed?  What do you have in progress,
 near completion, still a pipe dream?  What&rsquo;s your sales pipeline look
 like so far?  Is it growing, shrinking, stable?
                     </p>
-                    <div class="iplogo"></div>
+                    <div class="noimage iplogo"></div>
                     <label class="iptitle" for="answer13">Current Status</label>
                 </div>
                 <div class="ipline"></div>
@@ -156,7 +156,7 @@ through to this market now?  How much of it are you going to capture?  What are
 the things that form a vital part of your market, the things everyone in your
 target frequents and discusses?
                     </p>
-                    <div class="iplogo"></div>
+                    <div class="noimage iplogo"></div>
                     <label class="iptitle" for="answer14">The Market</label>
                 </div>
                 <div class="ipline"></div>
@@ -177,7 +177,7 @@ MacBook.  In his spare time he plays in a band and self-publishes his own music
 on the side.  Twice a year he visits his family in Bilbao.  Make your customer
 specific and bring them to life.
                     </p>
-                    <div class="iplogo"></div>
+                    <div class="noimage iplogo"></div>
                     <label class="iptitle" for="answer15">The Customer</label>
                 </div>
                 <div class="ipline"></div>
@@ -198,7 +198,7 @@ competing with you?  How are you going to destroy them?  How are you going to
 partner with them to subvert their plans?  Keep your friends close, and your
 enemies closer.
                     </p>
-                    <div class="iplogo"></div>
+                    <div class="noimage iplogo"></div>
                     <label class="iptitle" for="answer16">Competitors</label>
                 </div>
                 <div class="ipline"></div>
@@ -219,7 +219,7 @@ make someone chose you over someone else?  Is the competition larger, better
 captialized, dumping products at low prices?  Do you have something no one else
 does?
                     </p>
-                    <div class="iplogo"></div>
+                    <div class="noimage iplogo"></div>
                     <label class="iptitle" for="answer17">Competitive Comparison</label>
                 </div>
                 <div class="ipline"></div>
@@ -241,7 +241,7 @@ national authorities to be able to do business?  If so, what is the typical
 time required to obtain them?  Do you need new permits for each market you plan
 to reach?
                     </p>
-                    <div class="iplogo"></div>
+                    <div class="noimage iplogo"></div>
                     <label class="iptitle" for="answer18">Business Model</label>
                 </div>
                 <div class="ipline"></div>
@@ -261,7 +261,7 @@ websites do they use to connect via sponsored blogging?  What does he search
 for where keyword ads can be used?  What could be targeted via social media
 ads?  What TV shows and sports venues could he be shown ads on?
                     </p>
-                    <div class="iplogo"></div>
+                    <div class="noimage iplogo"></div>
                     <label class="iptitle" for="answer19">Marketing Plan</label>
                 </div>
                 <div class="ipline"></div>
@@ -283,7 +283,7 @@ goods company from $0 to $100m in sales, and has been running her own brand
 consulting firm for the past two years.  She likes cats, hates dogs, and enjoys
 BarCamps.
                     </p>
-                    <div class="iplogo"></div>
+                    <div class="noimage iplogo"></div>
                     <label class="iptitle" for="answer20">The Team</label>
                 </div>
                 <div class="ipline"></div>
@@ -304,7 +304,7 @@ women?  Let us know not just what you are following, but exactly how you are
 going to implement it in your specific circumstances.  Mention any special
 conditions, such whether the team can relocate to a new area.
                     </p>
-                    <div class="iplogo"></div>
+                    <div class="noimage iplogo"></div>
                     <label class="iptitle" for="answer21">Values and Methods</label>
                 </div>
                 <div class="ipline"></div>
@@ -324,7 +324,7 @@ capital needs?  What are your current revenues and expenses over the past
 month, quarter, year?  What is your runway, in other words, how much longer can
 you continue without needing to raise more money?
                     </p>
-                    <div class="iplogo"></div>
+                    <div class="noimage iplogo"></div>
                     <label class="iptitle" for="answer22">Current Financials</label>
                 </div>
                 <div class="ipline"></div>
@@ -345,7 +345,7 @@ that timeframe?  Are you making a profit now, or when do you plan to start
 making a profit?  When are you going to have payback of the original
 investment?  What is your exit horizon if any?
                     </p>
-                    <div class="iplogo"></div>
+                    <div class="noimage iplogo"></div>
                     <label class="iptitle" for="answer23">Financial Projections</label>
                 </div>
                 <div class="ipline"></div>
@@ -367,7 +367,7 @@ stock, preferred stock, notes, loans?  Are there any special debt or preferred
 arangements with dilution or control provisions?  What option plans if any
 currently exist and who are they for?
                     </p>
-                    <div class="iplogo"></div>
+                    <div class="noimage iplogo"></div>
                     <label class="iptitle" for="answer24">Current Ownership</label>
                 </div>
                 <div class="ipline"></div>
@@ -386,7 +386,7 @@ a big chunk of money from investors or customers.  What are you going to do
 with it?  Hire more employees, purchase equipment, buy a building, sign a long-term
 lease, expand to more locations, buy an existing business, modernize operations?
                     </p>
-                    <div class="iplogo"></div>
+                    <div class="noimage iplogo"></div>
                     <label class="iptitle" for="answer25">Use of Proceeds</label>
                 </div>
                 <div class="ipline"></div>
@@ -404,7 +404,7 @@ Give a strong closing conclusion to your presentation.  List future key mileston
 with approximate dates.  Show how your plans are moving forward and gaining momentum.
 Leave everyone excited and wanting more.
                     </p>
-                    <div class="iplogo"></div>
+                    <div class="noimage iplogo"></div>
                     <label class="iptitle" for="answer26">Conclusion</label>
                 </div>
                 <div class="ipline"></div>
@@ -415,7 +415,7 @@ Leave everyone excited and wanting more.
 
             <div class="ipslide ipslide20">
                 <div class="ipheader">
-                    <div class="iplogo"></div>
+                    <div class="noimage iplogo"></div>
                     <div class="iptitle">Thank You</div>
                 </div>
                 <div class="ipline"></div>

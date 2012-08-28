@@ -194,9 +194,7 @@ your message.
         <div class="formitem sideinfoitem clear">
             <label class="inputlabel" for="address">LOGO</label>
             <span class="inputfield">
-                <div class="tileimg" id="logoimgwrapper">
-                    <img class="tileimg initialhidden" id="logoimg" src="#"></img>
-                </div>
+                <div class="tileimg noimage" id="logoimg"></div>
             </span>
             <p class="sideinfo">
                 <label class="sideinfoheader">Logo</label>

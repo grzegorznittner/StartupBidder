@@ -638,7 +638,7 @@ pl.implement(CompanyTileClass, {
         this.status = json.status;
         this.daystext = CompanyFormatClass.prototype.daysText(json);
         this.imgClass = json.logo ? '' : 'noimage';
-        this.imgStyle = json.logo ? 'background: url(' + json.logo + ') no-repeat scroll left top' : '';
+        this.imgStyle = json.logo ? 'background: url(' + json.logo + ') no-repeat scroll center center transparent' : '',
         this.posted = json.posted_date ? DateClass.prototype.format(json.posted_date) : 'not posted';
         this.name = json.title || 'No Company / App';
     
@@ -1207,7 +1207,7 @@ pl.implement(CompanyBannerClass, {
     },
 
     displayBanner: function() {
-        var logobg = this.logo ? 'url(' + this.logo + ') no-repeat scroll left top' : null,
+        var logobg = this.logo ? 'url(' + this.logo + ') no-repeat scroll center center transparent' : null,
             prefixedurl = this.website ? (this.website.indexOf('http') === 0 ? this.website : ('http://' + this.website)) : null,
             url = prefixedurl ? new URLClass(prefixedurl) : null,
             cat = this.category || '',

@@ -13,7 +13,7 @@
 
             <div class="ipslide ipslide1">
                 <div class="ipheader">
-                    <div class="iplogo"></div>
+                    <div class="noimage iplogo"></div>
                     <div class="iptitle ipcorpname"></div>
                 </div>
                 <div class="ipline"></div>
@@ -32,7 +32,7 @@
 
             <div class="ipslide ipslide2">
                 <div class="ipheader">
-                    <div class="iplogo"></div>
+                    <div class="noimage iplogo"></div>
                     <div class="iptitle">Elevator Pitch</div>
                 </div>
                 <div class="ipline"></div>
@@ -41,7 +41,7 @@
 
             <div class="ipslide ipslide3">
                 <div class="ipheader">
-                    <div class="iplogo"></div>
+                    <div class="noimage iplogo"></div>
                     <div class="iptitle">The Problem</div>
                 </div>
                 <div class="ipline"></div>
@@ -50,7 +50,7 @@
 
             <div class="ipslide ipslide4">
                 <div class="ipheader">
-                    <div class="iplogo"></div>
+                    <div class="noimage iplogo"></div>
                     <div class="iptitle">The Solution</div>
                 </div>
                 <div class="ipline"></div>
@@ -59,7 +59,7 @@
 
             <div class="ipslide ipslide5">
                 <div class="ipheader">
-                    <div class="iplogo"></div>
+                    <div class="noimage iplogo"></div>
                     <div class="iptitle">Features and Benefits</div>
                 </div>
                 <div class="ipline"></div>
@@ -68,7 +68,7 @@
 
             <div class="ipslide ipslide6">
                 <div class="ipheader">
-                    <div class="iplogo"></div>
+                    <div class="noimage iplogo"></div>
                     <div class="iptitle">Current Status</div>
                 </div>
                 <div class="ipline"></div>
@@ -77,7 +77,7 @@
 
             <div class="ipslide ipslide7">
                 <div class="ipheader">
-                    <div class="iplogo"></div>
+                    <div class="noimage iplogo"></div>
                     <div class="iptitle">The Market</div>
                 </div>
                 <div class="ipline"></div>
@@ -86,7 +86,7 @@
 
             <div class="ipslide ipslide8">
                 <div class="ipheader">
-                    <div class="iplogo"></div>
+                    <div class="noimage iplogo"></div>
                     <div class="iptitle">The Customer</div>
                 </div>
                 <div class="ipline"></div>
@@ -95,7 +95,7 @@
 
             <div class="ipslide ipslide9">
                 <div class="ipheader">
-                    <div class="iplogo"></div>
+                    <div class="noimage iplogo"></div>
                     <div class="iptitle">Competitors</div>
                 </div>
                 <div class="ipline"></div>
@@ -104,7 +104,7 @@
 
             <div class="ipslide ipslide10">
                 <div class="ipheader">
-                    <div class="iplogo"></div>
+                    <div class="noimage iplogo"></div>
                     <div class="iptitle">Competitive Comparison</div>
                 </div>
                 <div class="ipline"></div>
@@ -113,7 +113,7 @@
 
             <div class="ipslide ipslide11">
                 <div class="ipheader">
-                    <div class="iplogo"></div>
+                    <div class="noimage iplogo"></div>
                     <div class="iptitle">Business Model</div>
                 </div>
                 <div class="ipline"></div>
@@ -122,7 +122,7 @@
 
             <div class="ipslide ipslide12">
                 <div class="ipheader">
-                    <div class="iplogo"></div>
+                    <div class="noimage iplogo"></div>
                     <div class="iptitle">Marketing Plan</div>
                 </div>
                 <div class="ipline"></div>
@@ -131,7 +131,7 @@
 
             <div class="ipslide ipslide13">
                 <div class="ipheader">
-                    <div class="iplogo"></div>
+                    <div class="noimage iplogo"></div>
                     <div class="iptitle">The Team</div>
                 </div>
                 <div class="ipline"></div>
@@ -140,7 +140,7 @@
 
             <div class="ipslide ipslide14">
                 <div class="ipheader">
-                    <div class="iplogo"></div>
+                    <div class="noimage iplogo"></div>
                     <div class="iptitle">Values and Methods</div>
                 </div>
                 <div class="ipline"></div>
@@ -149,7 +149,7 @@
 
             <div class="ipslide ipslide15">
                 <div class="ipheader">
-                    <div class="iplogo"></div>
+                    <div class="noimage iplogo"></div>
                     <div class="iptitle">Current Financials</div>
                 </div>
                 <div class="ipline"></div>
@@ -158,7 +158,7 @@
 
             <div class="ipslide ipslide16">
                 <div class="ipheader">
-                    <div class="iplogo"></div>
+                    <div class="noimage iplogo"></div>
                     <div class="iptitle">Financial Projections</div>
                 </div>
                 <div class="ipline"></div>
@@ -167,7 +167,7 @@
 
             <div class="ipslide ipslide17">
                 <div class="ipheader">
-                    <div class="iplogo"></div>
+                    <div class="noimage iplogo"></div>
                     <div class="iptitle">Current Ownership</div>
                 </div>
                 <div class="ipline"></div>
@@ -176,7 +176,7 @@
 
             <div class="ipslide ipslide18">
                 <div class="ipheader">
-                    <div class="iplogo"></div>
+                    <div class="noimage iplogo"></div>
                     <div class="iptitle">Use of Proceeds</div>
                 </div>
                 <div class="ipline"></div>
@@ -185,7 +185,7 @@
 
             <div class="ipslide ipslide19">
                 <div class="ipheader">
-                    <div class="iplogo"></div>
+                    <div class="noimage iplogo"></div>
                     <div class="iptitle">Conclusion</div>
                 </div>
                 <div class="ipline"></div>
@@ -194,7 +194,7 @@
 
             <div class="ipslide ipslide20">
                 <div class="ipheader">
-                    <div class="iplogo"></div>
+                    <div class="noimage iplogo"></div>
                     <div class="iptitle">Thank You</div>
                 </div>
                 <div class="ipline"></div>

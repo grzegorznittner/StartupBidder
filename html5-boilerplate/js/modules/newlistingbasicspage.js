@@ -317,15 +317,16 @@ pl.implement(NewListingBasicsClass, {
     },
 
     displayLogo: function(dataurl) {
-        var url = dataurl && dataurl.indexOf('data:') === 0 ? dataurl : null;
+        var url = dataurl && dataurl.indexOf('data:') === 0 ? dataurl : null,
+            logobg = url ? 'url(' + url + ') no-repeat scroll center center transparent' : null;
         if (url) {
-            pl('#logoimgwrapper').removeClass('noimage');
-            pl('#logoimg').attr({src: url}).show();
+            pl('#logoimg').css({ background: logobg });
         }
+/*
         else {
-            pl('#logoimgwrapper').addClass('noimage');
-            pl('#logoimg').hide();
+            pl('#logoimg');
         }
+*/
     },
 
     setUploadUrls: function() {

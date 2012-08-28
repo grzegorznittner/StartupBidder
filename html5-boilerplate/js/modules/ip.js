@@ -6,7 +6,7 @@ function IPClass() {
 pl.implement(IPClass, {
     display: function(listing) {
         var self = this,
-            logo = 'url(' + (listing.logo || 'img/noimage_146x146.jpg') + ')',
+            logo = this.logo ? 'url(' + this.logo + ') no-repeat scroll center center transparent' : null,
             corp = listing.title || 'Company name here',
             date = listing.created_date ? DateClass.prototype.format(listing.created_date) : DateClass.prototype.today(),
             mantra = listing.mantra || 'Company mantra here',
@@ -39,7 +39,9 @@ pl.implement(IPClass, {
             val = listing[field];
             pl(sel).html(HTMLMarkup.prototype.stylize(val, 'ip'));
         }
-        pl('.iplogo').css({background: logo});
+        if (logo) {
+            pl('.iplogo').css({background: logo});
+        }
     },
     pageRight: function() {
         var self = this,
