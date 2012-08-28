@@ -1,7 +1,10 @@
 package com.startupbidder.web.controllers;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,6 +17,7 @@ import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -124,6 +128,18 @@ public class ListingController extends ModelDrivenController {
 				return queryImport(request);
 			} else if ("import_types".equalsIgnoreCase(getCommand(1))) {
 				return importTypes(request);
+			} else if ("test".equalsIgnoreCase(getCommand(1))) {
+				try {
+					URLConnection con = new URL("http://www.spidersweb.pl/wp-content/uploads/2012/08/googlelogo.jpg").openConnection();
+					byte[] docBytes = IOUtils.toByteArray(con.getInputStream());
+					String byte64 = ListingFacade.instance().convertLogoToBase64(docBytes);
+					model = "<div style=\"background-color:red; width:300px; height: 300px;\">Logo:" +
+							"<div style=\"margin:30px 30px 30px 30px; background-repeat:no-repeat; background-position:center; background:url(" + byte64 + "); width: 146px; height: 146px;\"></div></div>";
+					return new HttpHeadersImpl("test");
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+
 			}
 		} else if ("POST".equalsIgnoreCase(request.getMethod())) {
 			if ("create".equalsIgnoreCase(getCommand(1))) {
