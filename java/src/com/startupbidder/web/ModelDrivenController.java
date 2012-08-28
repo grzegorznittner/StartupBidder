@@ -28,6 +28,7 @@ import com.startupbidder.util.TwitterHelper;
 import com.startupbidder.vo.BaseResultVO;
 import com.startupbidder.vo.ErrorCodes;
 import com.startupbidder.vo.ListPropertiesVO;
+import com.startupbidder.vo.UserDataUpdatableContainer;
 import com.startupbidder.vo.UserVO;
 
 /**
@@ -114,6 +115,9 @@ public abstract class ModelDrivenController {
 				log.log(Level.INFO, request.getMethod() + " " + getCommand(1) + " is not supported!");
 			}
 			Object model = getModel();
+			if (model instanceof UserDataUpdatableContainer) {
+				((UserDataUpdatableContainer)model).updateUserData();
+			}
 			if (model instanceof BaseResultVO) {
 				String appHost = TwitterHelper.getApplicationUrl(request);
 				if (loggedInUser != null) {

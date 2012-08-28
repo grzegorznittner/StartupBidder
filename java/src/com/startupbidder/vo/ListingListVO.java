@@ -1,5 +1,6 @@
 package com.startupbidder.vo;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -7,13 +8,15 @@ import org.codehaus.jackson.annotate.JsonAutoDetect;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 
+import com.startupbidder.web.UserMgmtFacade;
+
 /**
  * 
  * @author "Grzegorz Nittner" <grzegorz.nittner@gmail.com>
  */
 @JsonAutoDetect(getterVisibility=Visibility.NONE, setterVisibility=Visibility.NONE,
 		fieldVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE)
-public class ListingListVO extends BaseResultVO {
+public class ListingListVO extends BaseResultVO implements UserDataUpdatableContainer {
 	@JsonProperty("listings") private List<ListingTileVO> listings;
 	@JsonProperty("monitored_listings") private List<ListingTileVO> monitoredListings;
 	@JsonProperty("notifications") private List<NotificationVO> notifications;
@@ -21,6 +24,14 @@ public class ListingListVO extends BaseResultVO {
 	@JsonProperty("profile") private UserBasicVO user;
 	@JsonProperty("categories") private Map<String, Integer> categories;
 	@JsonProperty("top_locations") private Map<String, Integer> topLocations;
+
+	public void updateUserData() {
+		List<UserDataUpdatable> updatable = new ArrayList<UserDataUpdatable>();
+		if (listings != null) updatable.addAll(listings);
+		if (monitoredListings != null) updatable.addAll(monitoredListings);
+		
+		UserMgmtFacade.instance().updateUserData(updatable);
+	}
 
 	public List<ListingTileVO> getListings() {
 		return listings;

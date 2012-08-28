@@ -8,7 +8,7 @@ package com.startupbidder.vo;
  * @author "Grzegorz Nittner" <grzegorz.nittner@gmail.com>
  *
  */
-public interface UserToAvatar {
+public interface UserDataUpdatable {
 	/**
 	 * Returns user profile id
 	 */
@@ -18,6 +18,11 @@ public interface UserToAvatar {
 	 * Sets user avatar
 	 */
 	void setAvatar(String avatar);
+	
+	/**
+	 * Sets user nickname
+	 */
+	void setUserNickname(String userNickname);
 	
 	/**
 	 * Sets user class

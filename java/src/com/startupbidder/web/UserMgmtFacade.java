@@ -40,7 +40,7 @@ import com.startupbidder.vo.UserListingsForAdminVO;
 import com.startupbidder.vo.UserListingsForUsersVO;
 import com.startupbidder.vo.UserShortListVO;
 import com.startupbidder.vo.UserShortVO;
-import com.startupbidder.vo.UserToAvatar;
+import com.startupbidder.vo.UserDataUpdatable;
 import com.startupbidder.vo.UserVO;
 
 public class UserMgmtFacade {
@@ -195,12 +195,15 @@ public class UserMgmtFacade {
 			return result;
 		}
 		ListPropertiesVO props = new ListPropertiesVO();
+		
+		List<ListingTileVO> allListings = new ArrayList<ListingTileVO>();
 
 		props.setMaxResults(4);
 		List<ListingTileVO> activeListings = ListingFacade.instance().prepareListingList(
 				getDAO().getUserListings(user.toKeyId(), Listing.State.ACTIVE, props));
 		if (activeListings.size() > 0) {
 			result.setActiveListings(activeListings);
+			allListings.addAll(activeListings);
 		}
 
 		if (loggedInUser != null && (loggedInUser.isAdmin() || user.toKeyId() == loggedInUser.toKeyId())) {
@@ -210,6 +213,7 @@ public class UserMgmtFacade {
 					getDAO().getUserListings(user.toKeyId(), Listing.State.WITHDRAWN, props));
 			if (withdrawnListings.size() > 0) {
 				result.setWithdrawnListings(withdrawnListings);
+				allListings.addAll(withdrawnListings);
 			}
 
 			props = new ListPropertiesVO();
@@ -218,6 +222,7 @@ public class UserMgmtFacade {
 					getDAO().getUserListings(user.toKeyId(), Listing.State.FROZEN, props));
 			if (frozenListings.size() > 0) {
 				result.setFrozenListings(frozenListings);
+				allListings.addAll(frozenListings);
 			}
 			
 			props = new ListPropertiesVO();
@@ -226,11 +231,13 @@ public class UserMgmtFacade {
 					getDAO().getUserListings(user.toKeyId(), Listing.State.CLOSED, props));
 			if (closedListings.size() > 0) {
 				result.setClosedListings(closedListings);
+				allListings.addAll(closedListings);
 			}
 
 			if (user.getEditedListing() != null) {
 				Listing editedListing = getDAO().getListing(BaseVO.toKeyId(user.getEditedListing()));
 				result.setEditedListing(DtoToVoConverter.convert(editedListing));
+				allListings.add(result.getEditedListing());
 			}
 			applyUserStatistics(loggedInUser, loggedInUser);
 		} else {
@@ -763,33 +770,35 @@ public class UserMgmtFacade {
 		return null;
 	}
 	
-	public void updateAvatarAndClass(UserToAvatar item) {
+	public void updateUserData(UserDataUpdatable item) {
 		if (item == null) {
 			return;
 		}
 		SBUser user = getDAO().getUser(item.getUser());
 		item.setAvatar(user.avatarUrl);
 		item.setUserClass(user.userClass);
+		item.setUserNickname(user.nickname);
 	}
 	
-	public void updateAvatarsAndClasses(List<? extends UserToAvatar> items) {
+	public void updateUserData(List<? extends UserDataUpdatable> items) {
 		if (items == null || items.size() == 0) {
 			return;
 		}
 		Set<Key<Object>> userKeys = new HashSet<Key<Object>>();
-		for (UserToAvatar item : items) {
+		for (UserDataUpdatable item : items) {
 			if (item.getUser() != null) {
 				userKeys.add(Key.create(item.getUser()));
 			}
 		}
 		if (userKeys.size() > 0) {
-			log.info("Getting user's avatar for " + userKeys.size() + " users");
+			log.info("Getting user's data for " + userKeys.size() + " users");
 			Map<String, SBUser> users = getDAO().getUsers(userKeys);
-			for (UserToAvatar item : items) {
+			for (UserDataUpdatable item : items) {
 				SBUser user = users.get(item.getUser());
 				if (user != null) {
 					item.setAvatar(user.avatarUrl);
 					item.setUserClass(user.userClass);
+					item.setUserNickname(user.nickname);
 				}
 			}
 		}

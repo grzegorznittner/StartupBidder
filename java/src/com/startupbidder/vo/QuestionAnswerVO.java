@@ -15,7 +15,7 @@ import com.startupbidder.util.DateSerializer;
  */
 @JsonAutoDetect(getterVisibility=Visibility.NONE, setterVisibility=Visibility.NONE,
 		fieldVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE)
-public class QuestionAnswerVO extends BaseVO implements UserToAvatar {
+public class QuestionAnswerVO extends BaseVO implements UserDataUpdatable {
 	@JsonProperty("question_id") private String id;
 	@JsonProperty("listing_id") private String listing;
 	@JsonProperty("from_user_id") private String user;

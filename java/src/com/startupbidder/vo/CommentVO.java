@@ -15,7 +15,7 @@ import com.startupbidder.util.DateSerializer;
  */
 @JsonAutoDetect(getterVisibility=Visibility.NONE, setterVisibility=Visibility.NONE,
 		fieldVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE)
-public class CommentVO extends BaseVO implements UserToAvatar {
+public class CommentVO extends BaseVO implements UserDataUpdatable {
 	@JsonProperty("comment_id")	private String id;
 	@JsonProperty("listing_id")	private String listing;
 	@JsonProperty("listing_title") private String listingName;
@@ -82,6 +82,10 @@ public class CommentVO extends BaseVO implements UserToAvatar {
 
 	public void setUserName(String userName) {
 		this.userName = userName;
+	}
+
+	public void setUserNickname(String userNickname) {
+		this.userName = userNickname;
 	}
 
 	public String getAvatar() {

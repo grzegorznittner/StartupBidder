@@ -262,6 +262,7 @@ public class ListingFacade {
 				loggedInUser.setEditedStatus(null);
 			}
 			ListingVO listingVO = DtoToVoConverter.convert(listing);
+			UserMgmtFacade.instance().updateUserData(listingVO);
 			return listingVO;
 		}
 	}
@@ -407,6 +408,7 @@ public class ListingFacade {
 			getDAO().storeListing(listing);
 		}
 		result.setListing(DtoToVoConverter.convert(listing));
+		UserMgmtFacade.instance().updateUserData(result.getListing());
 		
 		return result;
 	}
@@ -466,6 +468,7 @@ public class ListingFacade {
 			getDAO().storeListing(listing);
 		}
 		result.setListing(DtoToVoConverter.convert(listing));
+		UserMgmtFacade.instance().updateUserData(result.getListing());
 		
 		return result;
 	}
@@ -1098,6 +1101,13 @@ public class ListingFacade {
 		return result;
 	}
 	
+	private void clearTilesCache() {
+		MemcacheService mem = MemcacheServiceFactory.getMemcacheService();
+		mem.delete(MEMCACHE_TOP_LISTINGS_TILES);
+		mem.delete(MEMCACHE_CLOSING_LISTINGS_TILES);
+		mem.delete(MEMCACHE_LATEST_LISTINGS_TILES);
+	}
+	
 	private List<ListingTileVO> getTopListingsTiles() {
 		MemcacheService mem = MemcacheServiceFactory.getMemcacheService();
 		@SuppressWarnings("unchecked")
@@ -1143,7 +1153,7 @@ public class ListingFacade {
 		result.setTopListings(getTopListingsTiles());
 		result.setClosingListings(getClosingListingsTiles());
 		result.setLatestListings(getLatestListingsTiles());
-		
+				
 		if (loggedInUser != null) {
 			ListPropertiesVO props = new ListPropertiesVO();
 			props.setMaxResults(4);
@@ -1740,10 +1750,6 @@ public class ListingFacade {
     }
     
 	public void applyListingData(UserVO loggedInUser, ListingVO listing, Monitor monitor) {
-		// set user data
-		SBUser user = getDAO().getUser(listing.getOwner());
-		listing.setOwnerName(user != null ? user.nickname : "<<unknown>>");
-		
 		ListingStats listingStats = getListingStatistics(listing.toKeyId());
 		listing.setNumberOfBids(listingStats.numberOfBids);
 		listing.setNumberOfComments(listingStats.numberOfComments);

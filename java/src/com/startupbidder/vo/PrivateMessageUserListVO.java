@@ -1,10 +1,13 @@
 package com.startupbidder.vo;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.codehaus.jackson.annotate.JsonAutoDetect;
 import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 import org.codehaus.jackson.annotate.JsonProperty;
+
+import com.startupbidder.web.UserMgmtFacade;
 
 /**
  * 
@@ -12,10 +15,16 @@ import org.codehaus.jackson.annotate.JsonProperty;
  */
 @JsonAutoDetect(getterVisibility=Visibility.NONE, setterVisibility=Visibility.NONE,
 		fieldVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE)
-public class PrivateMessageUserListVO extends BaseResultVO {
+public class PrivateMessageUserListVO extends BaseResultVO implements UserDataUpdatableContainer {
 	@JsonProperty("users") private List<PrivateMessageUserVO> messages;
 	@JsonProperty("messages_props")	private ListPropertiesVO messagesProperties;
 	
+	public void updateUserData() {
+		List<UserDataUpdatable> updatable = new ArrayList<UserDataUpdatable>();
+		if (messages != null) updatable.addAll(messages);
+		
+		UserMgmtFacade.instance().updateUserData(updatable);
+	}
 	public List<PrivateMessageUserVO> getMessages() {
 		return messages;
 	}

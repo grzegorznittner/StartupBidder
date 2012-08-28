@@ -5,6 +5,7 @@
 package com.startupbidder.web.servlets;
 
 import java.io.File;
+import java.util.List;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletContextEvent;
@@ -13,6 +14,7 @@ import javax.servlet.ServletContextListener;
 import com.googlecode.objectify.ObjectifyService;
 import com.startupbidder.dao.AngelListCache;
 import com.startupbidder.dao.GeocodeLocation;
+import com.startupbidder.dao.ObjectifyDatastoreDAO;
 import com.startupbidder.dao.StartuplyCache;
 import com.startupbidder.datamodel.Bid;
 import com.startupbidder.datamodel.BidUser;
@@ -101,6 +103,8 @@ public class WarmupListener implements ServletContextListener {
 		log.info("JS_FOLDER = " + JS_FOLDER);
 		
 		TwitterHelper.configureTwitterFactory();
+		List<SBUser> users = ObjectifyDatastoreDAO.getInstance().getAllUsers();
+		log.info("Fetched " + users.size() + " users");
 		ListingFacade.instance().getDiscoverListingList(null);
 	}
 

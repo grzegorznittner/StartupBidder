@@ -79,7 +79,6 @@ public class ServiceFacade {
 			ListingFacade.instance().applyListingData(loggedInUser, listing, monitor);
 			List<CommentVO> comments = DtoToVoConverter.convertComments(
 					getDAO().getCommentsForListing(BaseVO.toKeyId(listingId), commentProperties));
-			UserMgmtFacade.instance().updateAvatarsAndClasses(comments);
 			list.setComments(comments);
 			list.setListing(listing);
 			list.setCommentsProperties(commentProperties);
@@ -101,7 +100,6 @@ public class ServiceFacade {
 		} else {
 			List<CommentVO> comments = DtoToVoConverter.convertComments(
 					getDAO().getCommentsForUser(BaseVO.toKeyId(userId), commentProperties));
-			UserMgmtFacade.instance().updateAvatarsAndClasses(comments);
 			list.setComments(comments);
 		}
 		list.setCommentsProperties(commentProperties);
@@ -305,7 +303,7 @@ public class ServiceFacade {
 		}
 		NotificationFacade.instance().scheduleQANotification(qa);
 		QuestionAnswerVO result = DtoToVoConverter.convert(qa);
-		UserMgmtFacade.instance().updateAvatarAndClass(result);
+		UserMgmtFacade.instance().updateUserData(result);
 		return result;
 	}
 
@@ -346,7 +344,7 @@ public class ServiceFacade {
         
 		log.info("Answered q&a: " + qa);
 		QuestionAnswerVO result = DtoToVoConverter.convert(qa);
-		UserMgmtFacade.instance().updateAvatarAndClass(result);
+		UserMgmtFacade.instance().updateUserData(result);
 		return result;
 	}
 	
@@ -361,7 +359,6 @@ public class ServiceFacade {
 			result.setQuestionAnswers(DtoToVoConverter.convertQuestionAnswers(
 					getDAO().getQuestionAnswersForUser(VoToModelConverter.convert(loggedInUser), listing, listProperties)));
 		}
-		UserMgmtFacade.instance().updateAvatarsAndClasses(result.getQuestionAnswers());
 		result.setQuestionAnswersProperties(listProperties);
 		result.setListing(DtoToVoConverter.convert(listing));
 		result.setUser(loggedInUser != null ? new UserBasicVO(loggedInUser) : null);

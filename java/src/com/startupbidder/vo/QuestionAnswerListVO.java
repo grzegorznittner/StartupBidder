@@ -1,10 +1,13 @@
 package com.startupbidder.vo;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.codehaus.jackson.annotate.JsonAutoDetect;
 import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 import org.codehaus.jackson.annotate.JsonProperty;
+
+import com.startupbidder.web.UserMgmtFacade;
 
 /**
  * 
@@ -12,11 +15,18 @@ import org.codehaus.jackson.annotate.JsonProperty;
  */
 @JsonAutoDetect(getterVisibility=Visibility.NONE, setterVisibility=Visibility.NONE,
 		fieldVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE)
-public class QuestionAnswerListVO extends BaseResultVO {
+public class QuestionAnswerListVO extends BaseResultVO implements UserDataUpdatableContainer {
 	@JsonProperty("questions_answers") private List<QuestionAnswerVO> questionAnswers;
 	@JsonProperty("questions_answers_props")	private ListPropertiesVO questionAnswersProperties;
 	@JsonProperty("listing") private ListingVO listing;
 	@JsonProperty("profile") private UserBasicVO user;
+	public void updateUserData() {
+		List<UserDataUpdatable> updatable = new ArrayList<UserDataUpdatable>();
+		if (questionAnswers != null) updatable.addAll(questionAnswers);
+		if (listing != null) updatable.add(listing);
+		
+		UserMgmtFacade.instance().updateUserData(updatable);
+	}
 	public List<QuestionAnswerVO> getQuestionAnswers() {
 		return questionAnswers;
 	}

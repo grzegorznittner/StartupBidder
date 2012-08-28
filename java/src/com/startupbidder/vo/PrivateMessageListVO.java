@@ -1,10 +1,13 @@
 package com.startupbidder.vo;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.codehaus.jackson.annotate.JsonAutoDetect;
 import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 import org.codehaus.jackson.annotate.JsonProperty;
+
+import com.startupbidder.web.UserMgmtFacade;
 
 /**
  * 

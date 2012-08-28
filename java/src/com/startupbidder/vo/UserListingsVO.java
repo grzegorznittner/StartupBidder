@@ -1,5 +1,6 @@
 package com.startupbidder.vo;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -7,13 +8,15 @@ import org.codehaus.jackson.annotate.JsonAutoDetect;
 import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 import org.codehaus.jackson.annotate.JsonProperty;
 
+import com.startupbidder.web.UserMgmtFacade;
+
 /**
  * 
  * @author "Grzegorz Nittner" <grzegorz.nittner@gmail.com>
  */
 @JsonAutoDetect(getterVisibility=Visibility.NONE, setterVisibility=Visibility.NONE,
 		fieldVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE)
-public class UserListingsVO extends BaseResultVO {
+public class UserListingsVO extends BaseResultVO implements UserDataUpdatableContainer {
 	@JsonProperty("active_listings") private List<ListingTileVO> activeListings;
 	@JsonProperty("withdrawn_listings") private List<ListingTileVO> withdrawnListings;
 	@JsonProperty("frozen_listings") private List<ListingTileVO> frozenListings;
@@ -25,6 +28,20 @@ public class UserListingsVO extends BaseResultVO {
 	@JsonProperty("top_locations") private Map<String, Integer> topLocations;
 	@JsonProperty("admin_posted_listings") private List<ListingTileVO> adminPostedListings;
 	@JsonProperty("admin_frozen_listings") private List<ListingTileVO> adminFrozenListings;
+
+	public void updateUserData() {
+		List<UserDataUpdatable> updatable = new ArrayList<UserDataUpdatable>();
+		if (activeListings != null) updatable.addAll(activeListings);
+		if (withdrawnListings != null) updatable.addAll(withdrawnListings);
+		if (frozenListings != null) updatable.addAll(frozenListings);
+		if (closedListings != null) updatable.addAll(closedListings);
+		if (commentedListings != null) updatable.addAll(commentedListings);
+		if (editedListing != null) updatable.add(editedListing);
+		if (adminPostedListings != null) updatable.addAll(adminPostedListings);
+		if (adminFrozenListings != null) updatable.addAll(adminFrozenListings);
+		
+		UserMgmtFacade.instance().updateUserData(updatable);
+	}
 
 	public Map<String, Integer> getCategories() {
 		return categories;

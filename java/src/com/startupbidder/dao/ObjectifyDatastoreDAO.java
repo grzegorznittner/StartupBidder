@@ -1410,4 +1410,14 @@ public class ObjectifyDatastoreDAO {
 		}
 		return users;
 	}
+
+	public Map<String, ListingStats> getListingStatistics(Set<Key<Object>> userKeys) {
+		Map<Key<Object>, Object> map = getOfy().get(userKeys);
+		Map<String, ListingStats> users = new HashMap<String, ListingStats>();
+		
+		for (Map.Entry<Key<Object>, Object> entry : map.entrySet()) {
+			users.put(entry.getKey().getString(), (ListingStats)entry.getValue());
+		}
+		return users;
+	}
 }

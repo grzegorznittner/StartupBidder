@@ -1,10 +1,13 @@
 package com.startupbidder.vo;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.codehaus.jackson.annotate.JsonAutoDetect;
 import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 import org.codehaus.jackson.annotate.JsonProperty;
+
+import com.startupbidder.web.UserMgmtFacade;
 
 /**
  * 
@@ -12,7 +15,7 @@ import org.codehaus.jackson.annotate.JsonProperty;
  */
 @JsonAutoDetect(getterVisibility=Visibility.NONE, setterVisibility=Visibility.NONE,
 		fieldVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE)
-public class UserListingsForAdminVO extends BaseResultVO {
+public class UserListingsForAdminVO extends BaseResultVO implements UserDataUpdatableContainer {
 	@JsonProperty("profile") private UserVO user;
 	@JsonProperty("active_listings") private List<ListingTileVO> activeListings;
 	@JsonProperty("withdrawn_listings") private List<ListingTileVO> withdrawnListings;
@@ -20,6 +23,16 @@ public class UserListingsForAdminVO extends BaseResultVO {
 	@JsonProperty("closed_listings") private List<ListingTileVO> closedListings;
 	@JsonProperty("edited_listing") private ListingVO editedListing;
 
+	public void updateUserData() {
+		List<UserDataUpdatable> updatable = new ArrayList<UserDataUpdatable>();
+		if (activeListings != null) updatable.addAll(activeListings);
+		if (withdrawnListings != null) updatable.addAll(withdrawnListings);
+		if (frozenListings != null) updatable.addAll(frozenListings);
+		if (closedListings != null) updatable.addAll(closedListings);
+		if (editedListing != null) updatable.add(editedListing);
+		
+		UserMgmtFacade.instance().updateUserData(updatable);
+	}
 	public ListingVO getEditedListing() {
 		return editedListing;
 	}

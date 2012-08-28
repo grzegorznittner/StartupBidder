@@ -19,7 +19,7 @@ import com.startupbidder.util.LowecaseSerializer;
 @JsonAutoDetect(getterVisibility=Visibility.NONE, setterVisibility=Visibility.NONE,
 		fieldVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE)
 @JsonIgnoreProperties(ignoreUnknown=true)
-public class ListingTileVO extends BaseVO implements Serializable {	
+public class ListingTileVO extends BaseVO implements UserDataUpdatable, Serializable {	
 	private static final long serialVersionUID = 454597852345456L;
 	
 	@JsonProperty("num") protected int orderNumber;
@@ -45,6 +45,7 @@ public class ListingTileVO extends BaseVO implements Serializable {
 	@JsonProperty("stage") @JsonSerialize(using=LowecaseSerializer.class) protected String stage;
 	@JsonProperty("profile_id") protected String owner;
 	@JsonProperty("profile_username") protected String ownerName;
+	@JsonProperty("profile_avatar") protected String ownerAvatar;
 	@JsonProperty("brief_address") protected String briefAddress;
 	@JsonProperty("latitude") protected Double latitude;
 	@JsonProperty("longitude") protected Double longitude;
@@ -268,5 +269,32 @@ public class ListingTileVO extends BaseVO implements Serializable {
 
 	public void setStage(String stage) {
 		this.stage = stage;
+	}
+
+	public String getOwnerAvatar() {
+		return ownerAvatar;
+	}
+
+	public void setOwnerAvatar(String ownerAvatar) {
+		this.ownerAvatar = ownerAvatar;
+	}
+
+	@Override
+	public String getUser() {
+		return owner;
+	}
+
+	@Override
+	public void setAvatar(String avatar) {
+		this.ownerAvatar = avatar;
+	}
+
+	@Override
+	public void setUserClass(String userClass) {
+	}
+
+	@Override
+	public void setUserNickname(String userNickname) {
+		this.ownerName = userNickname;
 	}
 }

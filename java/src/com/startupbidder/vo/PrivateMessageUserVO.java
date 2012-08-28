@@ -16,7 +16,7 @@ import com.startupbidder.util.LowecaseSerializer;
  */
 @JsonAutoDetect(getterVisibility=Visibility.NONE, setterVisibility=Visibility.NONE,
 		fieldVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE)
-public class PrivateMessageUserVO extends BaseVO implements UserToAvatar {
+public class PrivateMessageUserVO extends BaseVO implements UserDataUpdatable {
 	@JsonProperty("direction") @JsonSerialize(using=LowecaseSerializer.class) private String direction;
 	@JsonProperty("from_user_id") private String user;
 	@JsonProperty("from_user_avatar") private String avatar;
