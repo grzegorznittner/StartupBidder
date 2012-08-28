@@ -407,7 +407,11 @@ public class ListingFacade {
 			log.info("Updating listing: " + listing);
 			getDAO().storeListing(listing);
 		}
-		result.setListing(DtoToVoConverter.convert(listing));
+		ListingVO forUpdate = DtoToVoConverter.convert(listing);
+		result.setListing(forUpdate);
+		if (forUpdate != null && listing.state == Listing.State.ACTIVE) {
+			updateTilesCache(forUpdate);
+		}
 		UserMgmtFacade.instance().updateUserData(result.getListing());
 		
 		return result;
@@ -467,7 +471,11 @@ public class ListingFacade {
 			log.info("Updating listing: " + listing);
 			getDAO().storeListing(listing);
 		}
-		result.setListing(DtoToVoConverter.convert(listing));
+		ListingVO forUpdate = DtoToVoConverter.convert(listing);
+		result.setListing(forUpdate);
+		if (forUpdate != null && listing.state == Listing.State.ACTIVE) {
+			updateTilesCache(forUpdate);
+		}
 		UserMgmtFacade.instance().updateUserData(result.getListing());
 		
 		return result;
@@ -674,6 +682,7 @@ public class ListingFacade {
 			ListingVO updatedListingVO = DtoToVoConverter.convert(updatedListing);
 			Monitor monitor = getDAO().getListingMonitor(loggedInUser.toKeyId(), updatedListingVO.toKeyId());
 			applyListingData(loggedInUser, updatedListingVO, monitor);
+			updateTilesCache(updatedListingVO);
 			return updatedListingVO;
 		}
 		return null;
@@ -925,6 +934,7 @@ public class ListingFacade {
             if (toReturn != null) {
 			    Monitor monitor = getDAO().getListingMonitor(loggedInUser.toKeyId(), toReturn.toKeyId());
 			    applyListingData(loggedInUser, toReturn, monitor);
+			    updateTilesCache(toReturn);
 			    returnValue.setListing(toReturn);
             }
 			return returnValue;
@@ -1000,6 +1010,7 @@ public class ListingFacade {
 			ListingVO toReturn = DtoToVoConverter.convert(updatedListing);
 			Monitor monitor = getDAO().getListingMonitor(loggedInUser.toKeyId(), toReturn.toKeyId());
 			applyListingData(loggedInUser, toReturn, monitor);
+			updateTilesCache(toReturn);
 			returnValue.setListing(toReturn);
 			return returnValue;
 		}
@@ -1053,6 +1064,7 @@ public class ListingFacade {
 			ListingVO toReturn = DtoToVoConverter.convert(updatedListing);
 			Monitor monitor = getDAO().getListingMonitor(loggedInUser.toKeyId(), toReturn.toKeyId());
 			applyListingData(loggedInUser, toReturn, monitor);
+			updateTilesCache(toReturn);
 			returnValue.setListing(toReturn);
 			return returnValue;
 		}
@@ -1101,11 +1113,54 @@ public class ListingFacade {
 		return result;
 	}
 	
-	private void clearTilesCache() {
+	@SuppressWarnings("unchecked")
+	private void updateTilesCache(ListingTileVO updated) {
 		MemcacheService mem = MemcacheServiceFactory.getMemcacheService();
-		mem.delete(MEMCACHE_TOP_LISTINGS_TILES);
-		mem.delete(MEMCACHE_CLOSING_LISTINGS_TILES);
-		mem.delete(MEMCACHE_LATEST_LISTINGS_TILES);
+		List<ListingTileVO> data = (List<ListingTileVO>)mem.get(MEMCACHE_TOP_LISTINGS_TILES);
+		if (data != null) {
+			for (ListingTileVO item : data) {
+				if (StringUtils.equals(updated.getId(), item.getId())) {
+					log.info("************ removing " + updated.getName() + " " + updated.getState() + " from top listings cache");
+					int index = data.indexOf(item);
+					data.remove(index);
+					if (StringUtils.equals(updated.getState(), Listing.State.ACTIVE.toString())) {
+						data.add(index, updated);
+					}
+					mem.put(MEMCACHE_TOP_LISTINGS_TILES, data);
+					break;
+				}
+			}
+		}
+		data = (List<ListingTileVO>)mem.get(MEMCACHE_CLOSING_LISTINGS_TILES);
+		if (data != null) {
+			for (ListingTileVO item : data) {
+				if (StringUtils.equals(updated.getId(), item.getId())) {
+					log.info("************ removing " + updated.getName() + " " + updated.getState() + " from closing listings cache");
+					int index = data.indexOf(item);
+					data.remove(index);
+					if (StringUtils.equals(updated.getState(), Listing.State.ACTIVE.toString())) {
+						data.add(index, updated);
+					}
+					mem.put(MEMCACHE_CLOSING_LISTINGS_TILES, data);
+					break;
+				}
+			}
+		}
+		data = (List<ListingTileVO>)mem.get(MEMCACHE_LATEST_LISTINGS_TILES);
+		if (data != null) {
+			for (ListingTileVO item : data) {
+				if (StringUtils.equals(updated.getId(), item.getId())) {
+					log.info("************ removing " + updated.getName() + " " + updated.getState() + " from latest listings cache");
+					int index = data.indexOf(item);
+					data.remove(index);
+					if (StringUtils.equals(updated.getState(), Listing.State.ACTIVE.toString())) {
+						data.add(index, updated);
+					}
+					mem.put(MEMCACHE_LATEST_LISTINGS_TILES, data);
+					break;
+				}
+			}
+		}
 	}
 	
 	private List<ListingTileVO> getTopListingsTiles() {
