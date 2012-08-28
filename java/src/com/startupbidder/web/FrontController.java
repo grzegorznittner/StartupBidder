@@ -13,7 +13,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import com.google.apphosting.utils.servlet.WarmupServlet;
 import com.startupbidder.web.controllers.CommentController;
 import com.startupbidder.web.controllers.CronTaskController;
 import com.startupbidder.web.controllers.FileController;
@@ -36,7 +35,8 @@ public class FrontController extends HttpServlet {
 	@Override
 	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String pathInfo = request.getPathInfo();
-		if ("GET".equals(request.getMethod()) && "startupbidder.appspot.com".equals(request.getServerName())) {
+		if ("GET".equals(request.getMethod()) && !"true".equalsIgnoreCase(request.getHeader("X-AppEngine-Cron"))
+				&& "startupbidder.appspot.com".equals(request.getServerName())) {
 			String redirectUrl = request.getScheme() + "://www.startupbidder.com" + request.getServletPath();
 			String queryString = request.getQueryString();
 			if (StringUtils.isNotEmpty(queryString)) {

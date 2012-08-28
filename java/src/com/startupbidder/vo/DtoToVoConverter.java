@@ -418,15 +418,15 @@ public class DtoToVoConverter {
             break;
 		case NEW_COMMENT_FOR_MONITORED_LISTING:
 			notif.setTitle("New comment for listing '" + listingName + "'");
-			notif.setText1("Listing '" + listingName + "' has received a new comment.");
-			notif.setText2("");
-			notif.setText3("In order to view comment(s) please visit <a href=\"" + listingLink + "\">company's page at startupbidder.com</a>.");
+			notif.setText1("Comment from user '" + notifDTO.userNickname + "': ");
+			notif.setText2(notifDTO.message);
+			notif.setText3("You can <a href=\"" + listingLink + "\">View or Reply</a> this comment on startupbidder.");
 			break;
 		case NEW_COMMENT_FOR_YOUR_LISTING:
-			notif.setTitle("New comment for listing '" + listingName + "'");
-			notif.setText1("Your listing '" + listingName + "' has received a new comment.");
-			notif.setText2("");
-			notif.setText3("In order to view comment(s) please visit <a href=\"" + listingLink + "\">company's page at startupbidder.com</a>.");
+			notif.setTitle("Your listing '" + listingName + "' received a comment");
+			notif.setText1("Comment from user '" + notifDTO.userNickname + "': " + notifDTO.message);
+			notif.setText2(notifDTO.message);
+			notif.setText3("You can <a href=\"" + listingLink + "\">View or Reply</a> this comment on startupbidder.");
 			break;
 		case ASK_LISTING_OWNER:
 		    notif.setTitle("Question for listing '" + listingName + "'");
@@ -437,7 +437,7 @@ public class DtoToVoConverter {
 		case PRIVATE_MESSAGE:
             String fromTitle = StringUtils.isEmpty(notifDTO.fromUserNickname) ? "" : " from " + notifDTO.fromUserNickname;
 		    notif.setTitle("You've received a private message" + fromTitle);
-            notif.setText1("A private message has been sent to you:");
+            notif.setText1("A private message from user '" + notifDTO.userNickname + "':");
 		    notif.setText2(notifDTO.message);
 		    try {
 		    	String messagePageUrl = BaseVO.getServiceLocation() + "/messages-page.html?from_user_id=" + notifDTO.listingOwnerUser.getString()
@@ -449,19 +449,19 @@ public class DtoToVoConverter {
 			break;
 		case NEW_BID_FOR_YOUR_LISTING:
 			notif.setTitle("New bid for your listing '" + listingName + "'");
-			notif.setText1("Your listing '" + listingName + "' has received a new bid.");
+			notif.setText1("Your listing '" + listingName + "' has received an offer from user '" + notifDTO.userNickname + "'.");
 			notif.setText2("");
 			notif.setText3("In order to view bid(s) please visit <a href=\"" + listingLink + "\">company's page at startupbidder.com</a>.");
 			break;
 		case YOUR_BID_WAS_COUNTERED:
 			notif.setTitle("Counter offer for listing '" + listingName + "'");
-			notif.setText1("Your listing '" + listingName + "' has got counter offer.");
+			notif.setText1("Your listing '" + listingName + "' has got counter offer from user '" + notifDTO.userNickname + "'.");
 			notif.setText2("");
 			notif.setText3("In order to view bid(s) please visit <a href=\"" + listingLink + "\">company's page at startupbidder.com</a>.");
 			break;
 		case YOU_ACCEPTED_BID:
 			notif.setTitle("You accepted bid for listing '" + listingName + "'");
-			notif.setText1("You acceped bid for listing '" + listingName + "'.");
+			notif.setText1("You acceped bid for listing '" + listingName + "' from user '" + notifDTO.userNickname + "'.");
 			notif.setText2("");
 			notif.setText3("In order to view bid(s) please visit <a href=\"" + listingLink + "\">company's page at startupbidder.com</a>.");
 			break;
