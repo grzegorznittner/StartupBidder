@@ -2,7 +2,9 @@
 <!-- right column -->
 <div class="span-8 last profilerightbar">
 
-    <div class="boxtitle boxtitleside profilerightbartitle"><span class="titleperson" id="titleperson">YOUR</span> PROFILE</div>
+    <div class="boxtitle boxtitleside profilerightbartitle">
+        <span class="titleyour">YOUR </span>PROFILE<span class="titleusername"></span>
+    </div>
     <div class="sidebox profilebox">
         <div class="profileavatar" id="avatar"></div>
         <div class="profileusername">

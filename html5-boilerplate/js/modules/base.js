@@ -663,8 +663,11 @@ pl.implement(CompanyTileClass, {
                 + '<div class="locicon"></div><span class="loctext">' + json.brief_address + '</span></a>'
             : '<span class="loctext">No Address</span>';
         this.brief_address_inp = json.brief_address
-            ? '<a class="hoverlink" href="/main-page.html?type=location&val=' + encodeURIComponent(json.brief_address) + '">'
-                + '<img src="../img/icons/location-16.gif" class="lociconinp"></img>&nbsp;<span class="loctextinp">' + json.brief_address + '</span></a>'
+            ?     '</p>'
+                + '<a class="hoverlink" href="/main-page.html?type=location&val=' + encodeURIComponent(json.brief_address) + '">'
+                + '<div class="lociconinp"></div>&nbsp;<span class="loctextinp">' + json.brief_address + '</span>'
+                + '</a>'
+                + '<p>'
             : '<span class="loctext">No Address</span>';
         this.address = json.address || 'No Address';
         locprefix = this.type === 'company' ? 'in' : 'from';
@@ -699,14 +702,14 @@ pl.implement(CompanyTileClass, {
 <div class="tilepointstext">\
     <div class="tileposted">' + this.suggested_text + '</div>\
 </div>\
-<p class="tiledesc">\
+<div class="tiledesc">\
 ' + this.openanchor + '\
     <span class="tilecompany hoverlink">' + this.name + '</span><br/>\
 ' + this.closeanchor + '\
     <span class="tileloc">' + this.catlinked + '</span><br/>\
-    <span class="tileloc">' + this.brief_address_inp + '</span><br/>\
+    <span class="tileloc">' + this.brief_address + '</span><br/>\
     <span class="tiledetails">' + this.mantra + '</span>\
-</p>\
+</div>\
 </div>\
 </span>\
 ';
@@ -1288,10 +1291,15 @@ pl.implement(CompanyBannerClass, {
             }
             */
         }
-        if (!this.shouldDisplaySubmit()) {
-            pl('#submiterrormsg').addClass('companybannerstatusmsg');
+        if (this.status === 'active') {
+            pl('#submiterrormsg').hide();
         }
-        pl('#submiterrormsg').html(statusmsg);
+        else {
+            if (!this.shouldDisplaySubmit()) {
+                pl('#submiterrormsg').addClass('companybannerstatusmsg');
+            }
+            pl('#submiterrormsg').html(statusmsg);
+        }
     },
             
     postListing: function() {

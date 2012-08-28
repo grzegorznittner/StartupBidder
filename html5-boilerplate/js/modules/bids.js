@@ -156,7 +156,7 @@ accepted_bids: [
                 self.display(json);
             },
 
-            ajax = new AjaxClass('/listing/order_book/' + this.listing_id, 'orderbooktitlemsg', complete);
+            ajax = new AjaxClass('/listing/order_book/' + self.listing_id, 'orderbooktitlemsg', complete);
         // this.mock(ajax);
         ajax.call();
     },
@@ -302,7 +302,7 @@ pl.implement(CompanyBidsPageClass,{
                 pl('.preloader').hide();
                 pl('.errorwrapper').show();
             },
-            ajax = new AjaxClass('/listing/order_book/' + this.listing_id, 'orderbooktitlemsg', complete, null, null, error);
+            ajax = new AjaxClass('/listing/order_book/' + self.listing_id, 'orderbooktitlemsg', complete, null, null, error);
         ajax.call();
     },
 
@@ -358,7 +358,10 @@ pl.implement(BidClass, {
         this.typetext = this.type ? this.type.replace(/(investor_|owner_)/, '') : '';
         this.bidtext = this.text ? SafeStringClass.prototype.htmlEntities(this.text) : 'None';
         this.datetext = this.create_date ? DateClass.prototype.format(this.create_date) : '';
-        this.usertext = this.type && this.type.match(/investor/) ? 'You' : 'Owner';
+        this.whoami = this.bidslist.loggedin_profile.profile_id === this.bidslist.listing.profile_id ? 'owner' : 'investor';
+        this.whoisother = this.whoami === 'investor' ? 'owner' : 'investor';
+        this.bidtype = this.type && this.type.match(/investor/) ? 'investor' : 'owner';
+        this.usertext = this.bidtype === this.whoami ? 'You' : SafeStringClass.prototype.ucfirst(this.whoisother);
         this.typeclass = '';
         //this.typeclass = this.typeclassmap[this.type] || '';
         return this;
@@ -441,14 +444,14 @@ function SingleInvestorBidListClass() {
         owner_withdraw: 'Bid withdrawn'
     };
     this.waitingtext = {
-        investor_post: 'Owner is evaluating bid',
-        investor_counter: 'You have proposed a counter-offer',
-        investor_accept: 'You have accepted the bid, contact the owner to conclude the legal agreement',
+        investor_post: 'Owner is evaluating your bid',
+        investor_counter: 'Owner is evaluating your counter-offer',
+        investor_accept: 'You have accepted the counter-offer, contact the owner to conclude the legal agreement',
         investor_reject: 'You have rejected the counter-offer',
         investor_withdraw: 'You have withdrawn your bid',
-        owner_post: 'Owner has posted bid',
-        owner_counter: 'Owner has proposed a counter-offer',
-        owner_accept: 'Owner has accepted your offer, contact them to conclude the legal agreement',
+        owner_post: 'Owner has posted a bid',
+        owner_counter: 'Owner has proposed a counter-offer and is awaiting your response',
+        owner_accept: 'Owner has accepted your bid, contact them to conclude the legal agreement',
         owner_reject: 'Owner has rejected your bid',
         owner_withdraw: 'Owner has withdrawn their counter-offer'
     };
@@ -477,7 +480,7 @@ pl.implement(SingleInvestorBidListClass, {
                 pl('.preloader').hide();
                 pl('.errorwrapper').show();
             },
-            ajax = new AjaxClass('/listing/bids/' + this.listing_id, 'bidtitlemsg', complete, null, null, error);
+            ajax = new AjaxClass('/listing/bids/' + self.listing_id, 'bidtitlemsg', complete, null, null, error);
         ajax.setGetData({ max_results: 10 });
         ajax.call();
     },
@@ -491,6 +494,8 @@ pl.implement(SingleInvestorBidListClass, {
         this.bidsprops = bidsprops;
         this.validactions = validactions;
         this.bids = [];
+        this.loggedin_profile = json.loggedin_profile || {};
+        this.investor = json.investor || {};
         this.listing = json.listing || {};
         if (jsonlist.length) {
             jsonlist.reverse(); // we want orderdd by date
@@ -542,23 +547,26 @@ pl.implement(SingleInvestorBidListClass, {
 	                    html = '',
 	                    bid,
 	                    i;
-		                this.investor_nickname = json.investor && json.investor.username || 'Anonymous';
-		                this.bidsprops = bidsprops;
-		                this.validactions = validactions;
-		                this.bids = [];
+		                self.investor_nickname = json.investor && json.investor.username || 'Anonymous';
+		                self.bidsprops = bidsprops;
+		                self.validactions = validactions;
+		                self.bids = [];
+                        self.loggedin_profile = json.loggedin_profile || {};
+                        self.investor = json.investor || {};
+                        self.listing = json.listing || {};
 		                if (jsonlist.length) {
 		                    jsonlist.reverse(); // we want orderded by date
 		                    for (i = 0; i < jsonlist.length; i++) {
 		                        bid = new BidClass(self);
 		                        bid.store(jsonlist[i]);
-		                        this.bids.push(bid);
+		                        self.bids.push(bid);
 		                    }
-		                    for (i = 0; i < this.bids.length; i++) {
-		                        bid = this.bids[i];
-		                        html += bid.makeHtml({ last: (i === this.bids.length - 1)});
+		                    for (i = 0; i < self.bids.length; i++) {
+		                        bid = self.bids[i];
+		                        html += bid.makeHtml({ last: (i === self.bids.length - 1)});
 		                    }
 		                }
-		                self.more_results_url = this.bids.length > 0 && json.bids_props && json.bids_props.more_results_url;
+		                self.more_results_url = self.bids.length > 0 && json.bids_props && json.bids_props.more_results_url;
                 
 	                    if (html) {
                             pl('#moreresults').after(html);
@@ -603,9 +611,9 @@ pl.implement(SingleInvestorBidListClass, {
         return function(newdata, loadFunc, errorFunc, successFunc) {
             var newval = (newdata ? (cleaner ? cleaner(newdata.changeKey) : newdata.changeKey) : undefined);
             if (newval) {
-                this.newval = newval;
-                this.value = newval;
-                this.msg.show('successful', '');
+                self.newval = newval;
+                self.value = newval;
+                //self.msg.show('successful', '');
                 self.displayCalculatedIfValid();
             }
         };
@@ -671,6 +679,26 @@ pl.implement(SingleInvestorBidListClass, {
         this.amtfield = amtfield;
         this.pctfield = pctfield;
         this.bindTextNote('new_bid_text', 'new_bid_msg');
+        this.displayCalculatedIfValid();
+        this.bindQuickbidButtons();
+    },
+
+    bindQuickbidButtons: function() {
+        var self = this;
+        pl('.askingamtbtn').bind('click', function(e) {
+            var amt = e.target && pl(e.target).text();
+            if (amt && !pl('#new_bid_amt').attr('disabled')) {
+                pl('#new_bid_amt').attr('value', amt);
+                self.amtfield.update();
+            }
+        });
+        pl('.askingpctbtn').bind('click', function(e) {
+            var pct = e.target && pl(e.target).text();
+            if (pct && !pl('#new_bid_pct').attr('disabled')) {
+                pl('#new_bid_pct').attr('value', pct);
+                self.pctfield.update();
+            }
+        });
     },
 
     bindTextNote: function(textid, msgid) {
@@ -727,12 +755,12 @@ pl.implement(SingleInvestorBidListClass, {
     <span class="span-3 inputbutton bidactionbutton initialhidden" id="investor_withdraw_btn">WITHDRAW</span>\
     <span class="span-3 inputbutton bidactionbutton initialhidden" id="investor_reject_btn">REJECT</span>\
     <span class="span-3 inputbutton bidactionbutton initialhidden" id="investor_accept_btn">ACCEPT</span>\
-    <span class="span-11 bidconfirmmessage" id="existingbidmsg">' + waitingtext + '</span>\
+    <span class="span-16 bidconfirmmessage" id="existingbidmsg">' + waitingtext + '</span>\
 </div>\
 <div class="bidactionline initialhidden" id="existingconfirmbuttons">\
     <span class="span-3 inputbutton bidactionbutton" id="investor_existing_cancel_btn">CANCEL</span>\
     <span class="span-3 inputbutton bidactionbutton" id="investor_existing_confirm_btn">CONFIRM</span>\
-    <span class="span-14 bidconfirmmessage" id="investor_existing_msg"></span>\
+    <span class="span-16 bidconfirmmessage" id="investor_existing_msg"></span>\
 </div>\
         ';
     },
@@ -749,6 +777,9 @@ pl.implement(SingleInvestorBidListClass, {
             this[actionfuncname]();
             if (action === 'investor_post' || action === 'investor_counter') {
                 newbidaction = true;
+                if (action === 'investor_counter') {
+                    pl('#new_bid_titletext').text('MAKE A COUNTER OFFER');
+                }
             }
             else if (action === 'investor_accept' || action === 'investor_reject' || action === 'investor_withdraw') {
                 existingbidaction = true;
@@ -848,7 +879,7 @@ pl.implement(SingleInvestorBidListClass, {
                 pl('#existing_bid_text').removeAttr('disabled');
             }
         });
-        pl('#investor_existing_msg').html(this.confirmtext[type]);
+        pl('#investor_existing_msg').html(self.confirmtext[type]);
         pl('#existingconfirmbuttons').show();
     },
 
@@ -1076,24 +1107,24 @@ pl.implement(InvestorBidGroupListClass, {
 		            		html = '',
 		                    investor,
 		                    i;
-		                this.investors = [];
+		                self.investors = [];
 		                if (jsonlist.length) {
 		                    for (i = 0; i < jsonlist.length; i++) {
 		                        investor = new InvestorBidGroupClass(self);
 		                        investor.store(jsonlist[i]);
-		                        this.investors.push(investor);
+		                        self.investors.push(investor);
 		                    }
-		                    for (i = 0; i < this.investors.length; i++) {
-		                        investor = this.investors[i];
+		                    for (i = 0; i < self.investors.length; i++) {
+		                        investor = self.investors[i];
 		                        html += investor.makeHtml();
 		                    }
 		                }
 		                else {
 		                    investor = new InvestorBidGroupClass(this);
 		                    investor.setEmpty();
-		                    this.investors.push(investor);
+		                    self.investors.push(investor);
 		                }
-		                self.more_results_url = this.investors.length > 0 && json.investors_props && json.investors_props.more_results_url;
+		                self.more_results_url = self.investors.length > 0 && json.investors_props && json.investors_props.more_results_url;
                 
 	                    if (html) {
                             pl('#moreresults').before(html);
@@ -1147,7 +1178,7 @@ pl.implement(InvestorBidGroupListClass, {
                 pl('.preloader').hide();
                 pl('.errorwrapper').show();
             },
-            ajax = new AjaxClass('/listing/investors/' + this.listing_id, 'bidstitlemsg', complete, null, null, error);
+            ajax = new AjaxClass('/listing/investors/' + self.listing_id, 'bidstitlemsg', complete, null, null, error);
         ajax.setGetData({ max_results: 20 });
         ajax.call();
     }
@@ -1181,6 +1212,18 @@ function OwnerSingleInvestorBidListClass() {
         owner_reject: 'Bid rejected',
         owner_withdraw: 'Bid withdrawn'
     };
+    this.waitingtext = {
+        investor_post: 'Investor has made a bid and is awaiting your response',
+        investor_counter: 'Investor has proposed a counter-offer and is awaiting your response',
+        investor_accept: 'Investor has accepted your counter-offer, contact the investor to conclude the legal agreement',
+        investor_reject: 'Investor has rejected your counter-offer',
+        investor_withdraw: 'Investor has withdrawn their bid',
+        owner_post: 'You have posted a bid',
+        owner_counter: 'Investor is reviewing your counter-offer',
+        owner_accept: 'You have accepted the bid, contact the investor to conclude the legal agreement',
+        owner_reject: 'You have rejected the bid',
+        owner_withdraw: 'You have withdrawn your counter-offer'
+    };
 }
 pl.implement(OwnerSingleInvestorBidListClass, {
     load: function() {
@@ -1206,7 +1249,7 @@ pl.implement(OwnerSingleInvestorBidListClass, {
                 pl('.preloader').hide();
                 pl('.errorwrapper').show();
             },
-            ajax = new AjaxClass('/listing/bids/' + this.listing_id + '/' + this.investor_id, 'bidtitlemsg', complete, null, null, error);
+            ajax = new AjaxClass('/listing/bids/' + self.listing_id + '/' + self.investor_id, 'bidtitlemsg', complete, null, null, error);
         ajax.setGetData({ max_results: 10 });
         ajax.call();
     },
@@ -1217,11 +1260,14 @@ pl.implement(OwnerSingleInvestorBidListClass, {
             jsonlist = json && json.bids || [],
             bid,
             i;
-        this.listing = json.listing || {};
         this.investor_nickname = json.investor && json.investor.username || 'Anonymous';
+        this.investor = json.investor;
         this.bidsprops = bidsprops;
         this.validactions = validactions;
         this.bids = [];
+        this.loggedin_profile = json.loggedin_profile || {};
+        this.investor = json.investor || {};
+        this.listing = json.listing || {};
         if (jsonlist.length) {
             jsonlist.reverse(); // we want orderdd by date
             for (i = 0; i < jsonlist.length; i++) {
@@ -1245,7 +1291,8 @@ pl.implement(OwnerSingleInvestorBidListClass, {
         if (json !== undefined) {
             this.store(json);
         }
-        pl('#investor_nickname').text(this.investor_nickname.toUpperCase());
+        pl('.backbuttonlink').attr({ href: '/company-owner-bids-page.html?id=' + this.listing.listing_id });
+        pl('#investor_nickname').attr({ href: '/profile-page.html?id=' + this.investor.profile_id }).text(this.investor_nickname.toUpperCase());
         if (this.bids.length) {
             html = BidClass.prototype.makeHeader();
             if (this.more_results_url) {
@@ -1282,23 +1329,26 @@ pl.implement(OwnerSingleInvestorBidListClass, {
 	                    html = '',
 	                    bid,
 	                    i;
-		                this.investor_nickname = json.investor && json.investor.username || 'Anonymous';
-		                this.bidsprops = bidsprops;
-		                this.validactions = validactions;
-		                this.bids = [];
+		                self.investor_nickname = json.investor && json.investor.username || 'Anonymous';
+		                self.bidsprops = bidsprops;
+		                self.validactions = validactions;
+		                self.bids = [];
+                        self.loggedin_profile = json.loggedin_profile || {};
+                        self.investor = json.investor || {};
+                        self.listing = json.listing || {};
 		                if (jsonlist.length) {
 		                    jsonlist.reverse(); // we want orderded by date
 		                    for (i = 0; i < jsonlist.length; i++) {
 		                        bid = new BidClass(self);
 		                        bid.store(jsonlist[i]);
-		                        this.bids.push(bid);
+		                        self.bids.push(bid);
 		                    }
-		                    for (i = 0; i < this.bids.length; i++) {
-		                        bid = this.bids[i];
-		                        html += bid.makeHtml({ last: (i === this.bids.length - 1)});
+		                    for (i = 0; i < self.bids.length; i++) {
+		                        bid = self.bids[i];
+		                        html += bid.makeHtml({ last: (i === self.bids.length - 1)});
 		                    }
 		                }
-		                self.more_results_url = this.bids.length > 0 && json.bids_props && json.bids_props.more_results_url;
+		                self.more_results_url = self.bids.length > 0 && json.bids_props && json.bids_props.more_results_url;
                 
 	                    if (html) {
                             pl('#moreresults').after(html);
@@ -1343,9 +1393,9 @@ pl.implement(OwnerSingleInvestorBidListClass, {
         return function(newdata, loadFunc, errorFunc, successFunc) {
             var newval = (newdata ? (cleaner ? cleaner(newdata.changeKey) : newdata.changeKey) : undefined);
             if (newval) {
-                this.newval = newval;
-                this.value = newval;
-                this.msg.show('successful', '');
+                self.newval = newval;
+                self.value = newval;
+                //self.msg.show('successful', '');
                 self.displayCalculatedIfValid();
             }
         };
@@ -1411,6 +1461,26 @@ pl.implement(OwnerSingleInvestorBidListClass, {
         this.amtfield = amtfield;
         this.pctfield = pctfield;
         this.bindTextNote('new_bid_text', 'new_bid_msg');
+        this.displayCalculatedIfValid();
+        this.bindQuickbidButtons();
+    },
+
+    bindQuickbidButtons: function() {
+        var self = this;
+        pl('.askingamtbtn').bind('click', function(e) {
+            var amt = e.target && pl(e.target).text();
+            if (amt && !pl('#new_bid_amt').attr('disabled')) {
+                pl('#new_bid_amt').attr('value', amt);
+                self.amtfield.update();
+            }
+        });
+        pl('.askingpctbtn').bind('click', function(e) {
+            var pct = e.target && pl(e.target).text();
+            if (pct && !pl('#new_bid_pct').attr('disabled')) {
+                pl('#new_bid_pct').attr('value', pct);
+                self.pctfield.update();
+            }
+        });
     },
 
     bindTextNote: function(textid, msgid) {
@@ -1460,18 +1530,19 @@ pl.implement(OwnerSingleInvestorBidListClass, {
         ';
     },
 
-    makeAddButtons: function() {
+    makeAddButtons: function(bid) {
+        var waitingtext = bid ? (this.waitingtext[bid.type] || '') : '';
         return '\
 <div class="bidactionline" id="existingbidbuttons">\
     <span class="span-3 inputbutton bidactionbutton initialhidden" id="owner_withdraw_btn">WITHDRAW</span>\
     <span class="span-3 inputbutton bidactionbutton initialhidden" id="owner_reject_btn">REJECT</span>\
     <span class="span-3 inputbutton bidactionbutton initialhidden" id="owner_accept_btn">ACCEPT</span>\
-    <span class="span-11 bidconfirmmessage" id="existingbidmsg"></span>\
+    <span class="span-16 bidconfirmmessage" id="existingbidmsg">' + waitingtext + '</span>\
 </div>\
 <div class="bidactionline initialhidden" id="existingconfirmbuttons">\
     <span class="span-3 inputbutton bidactionbutton" id="owner_existing_cancel_btn">CANCEL</span>\
     <span class="span-3 inputbutton bidactionbutton" id="owner_existing_confirm_btn">CONFIRM</span>\
-    <span class="span-14 bidconfirmmessage" id="owner_existing_msg"></span>\
+    <span class="span-16 bidconfirmmessage" id="owner_existing_msg"></span>\
 </div>\
         ';
     },

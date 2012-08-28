@@ -13,7 +13,20 @@ pl.implement(ProfileClass, {
             CollectionsClass.prototype.merge(this, json);
         }
     },
- 
+
+    isMine: function() {
+        var ismine = false;
+        if (this.loggedin_profile) {
+            if (this.profile && this.loggedin_profile.profile_id === this.profile.profile_id) {
+                ismine = true;
+            }
+            else if (!this.profile) {
+                ismine = true;
+            }
+        }
+        return ismine;
+    },
+
     displayFields: function() {
         var profile = this.profile || this.loggedin_profile || {};
  /*        var investor = json.investor ? 'Accredited Investor' : 'Entrepreneur';
@@ -56,6 +69,12 @@ pl.implement(ProfileClass, {
             pl('#pendingdragonwrapper').show();
             this.bindApplyDragon();
         }
+    },
+
+    getUsername: function() {
+        var profile = this.profile || this.loggedin_profile || {},
+            username = profile.username || 'anonymous';
+        return username;
     },
 
     bindApplyDragon: function() {
@@ -198,23 +217,12 @@ pl.implement(ProfilePageClass,{
                 if (!listingfound) {
                     pl('#no_listings_wrapper').show();
                 }
-                if (json.loggedin_profile) {
-                    if (!json.loggedin_profile.admin && !json.profile) {
-                        pl('#editprofilebutton').show();
-                    }
-                    else if (json.loggedin_profile.admin && !json.profile) {
-                        pl('#editprofilebutton').show();
-                    }
-                    else if (json.loggedin_profile.admin && json.profile && json.loggedin_profile.profile_id === json.profile.profile_id) {
-                        pl('#editprofilebutton').show();
-                    }
-                    else {
-                        pl('.titleperson').text('USER');
-                        pl('#encourageuser').hide();
-                    }
+                if (profile.isMine()) {
+                    pl('#editprofilebutton').show();
                 }
                 else {
-                    pl('.titleperson').text('USER');
+                    pl('.titleyour').text('');
+                    pl('.titleusername').text(' FOR ' + profile.getUsername().toUpperCase());
                     pl('#encourageuser').hide();
                 }
                 pl('.preloader').hide();
@@ -249,8 +257,6 @@ function ProfileListingPageClass() {
     };
     this.urlroot = this.urlmap[this.type] || this.urlmap['active'];
     this.url = this.passed_id ? this.urlroot + '/' + this.passed_id : this.urlroot;
-    this.isadmin = this.type === 'admin_posted' || this.type === 'admin_frozen' || this.passed_id;
-    this.title = (this.isadmin ? 'USER' : 'YOUR') + ' ' + this.type.toUpperCase() + ' LISTINGS';
 }
 
 pl.implement(ProfileListingPageClass, {
@@ -264,13 +270,16 @@ pl.implement(ProfileListingPageClass, {
                 header.setLogin(json);
                 profile.display(json);
                 companyList.storeList(json);
-                pl('#listingstitle').text(self.title);
+                console.log(self.type);
+                pl('.titletype').text(self.type === 'monitored' ? 'WATCHED' : self.type.toUpperCase());
 
-                if (!self.passed_id || json.loggedin_profile && self.passed_id === json.loggedin_profile.profile_id) {
+                if (profile.isMine()) {
                     pl('#editprofilebutton').show();
                 }
                 else {
-                    pl('#titleperson').text('USER');
+                    pl('.titleyour').text('');
+                    pl('.titleusername').text(' FOR ' + profile.getUsername().toUpperCase());
+                    pl('#encourageuser').hide();
                 }
 
                 pl('.preloader').hide();

@@ -19,7 +19,7 @@ companybannermacro(`', `', `', `companynavselected', `', `')
      <div class="preloadericon"></div>
 </div>
 
-<div class="container initialhidden wrapper">
+<div class="container bidscontainer initialhidden wrapper">
 '
 include(company-order-book.m4)
 
@@ -32,47 +32,92 @@ include(company-order-book.m4)
         </div>
     </div>
 
-    <div class="boxtitlegap smokegrey clear initialhidden" id="new_bid_boxtitle">MAKE A BID
+    <div class="boxtitlegap clear initialhidden" id="new_bid_boxtitle"><span id="new_bid_titletext">MAKE A BID</span>
         <span class="newlistingtitlemsg" id="newbidtitlemsg"></span>
     </div>
+
     <div class="boxpanel boxpanelfull initialhidden" id="new_bid_boxparent">
+
         <div class="messageline new_bid_line" id="new_bid_box">
-            <span class="span-4">&nbsp;</span>
-            <span class="span-15">
-                <div class="formitem">
-                    <label class="inputlabel" for="amt">AMOUNT</label>
-                    <span class="inputfield">
-                        <input class="text inputwidetext" type="text" name="amt" id="new_bid_amt" value="" length="8" maxlength="8"></input>
-                    </span>
-                    <span class="inputicon">
-                        <div id="new_bid_amticon"></div>
-                    </span>
-                </div>
-                <div class="formitem clear">
-                    <label class="inputlabel" for="pct">PERCENT</label>
-                    <span class="inputfield">
-                        <input class="text inputwidetext" type="text" name="pct" id="new_bid_pct" value="" length="3" maxlength="3"></input>
-                    </span>
-                    <span class="inputicon">
-                        <div id="new_bid_pcticon"></div>
-                    </span>
-                </div>
-                <div class="formitem clear">
-                    <label class="inputlabel" for="note">NOTE</label>
-                    <span class="inputfield">
-                        <textarea class="textarea new_bid_textarea" name="note" id="new_bid_text" cols="20" rows="5">Put your note to the owner here...</textarea>
-                    </span>
-                    <span class="inputicon">
-                        <div id="new_bid_texticon"></div>
-                    </span>
-                </div>
-                <div class="formitem clear">
-                    <label class="inputlabel" for="val">VALUATION</label>
-                    <span class="inputfield">
-                        <div class="span-3 new_bid_valtext medtext inprogress" id="new_bid_val"></div>
-                    </span>
-                </div>
-            </span>
+
+            <div class="formitem clear firstinputitem">
+                <label class="inputlabel" for="new_bid_amt">&nbsp;</label>
+                <span class="inputfield">
+                    <div class="span-4 investbutton askingamtbtn">$5,000</div>
+                    <div class="span-4 investbutton askingamtbtn">$25,000</div>
+                    <div class="span-4 investbutton askingamtbtn">$50,000</div>
+                    <div class="span-4 last investbutton askingamtbtn">$100,000</div>
+                </span>
+            </div>
+    
+            <div class="formitem sideinfoitem clear">
+                <span class="inputlabel biglabel">AMOUNT</span>
+                <span class="inputfield">
+                    <input class="text askinginputtext" type="text" name="new_bid_amt" id="new_bid_amt" maxlength="8"></input>
+                </span>
+                <span class="inputicon newbidicon amountbidicon">
+                    <div id="new_bid_amticon"></div>
+                </span>
+                <span class="newbiddesc">
+                    <p>
+                    The amount of money you are providing for investment, between $100 and $500,000 USD.  This bid will be sent to the listing owner
+                    who may accept, reject or counter the offer.  You may withdraw this offer at any time prior to action by the listing owner.
+                    </p>
+                </span>
+            </div>
+
+            <div class="formitem clear">
+                <label class="inputlabel" for="new_bid_pct">&nbsp;</label>
+                <span class="inputfield">
+                    <div class="span-4 investbutton askingpctbtn">5%</div>
+                    <div class="span-4 investbutton askingpctbtn">25%</div>
+                    <div class="span-4 investbutton askingpctbtn">50%</div>
+                    <div class="span-4 last investbutton askingpctbtn">100%</div>
+                </span>
+            </div>
+    
+            <div class="formitem sideinfoitem clear">
+                <span class="inputlabel biglabel">FOR</span>
+                <span class="inputfield inputpctfield">
+                    <input class="text askinginputtext" type="text" name="new_bid_pct" id="new_bid_pct" maxlength="8"></input>
+                </span>
+                <span class="inputpcttext">%
+                </span>
+                <span class="inputicon newbidicon">
+                    <div id="new_bid_pcticon"></div>
+                </span>
+                <span class="newbiddesc">
+                    <p>
+                    For a company, how much fully diluted post-money common equity you are requiring from the owner for
+                    your investment, from 1% to 100%.
+                    For product investments, the tenancy in common ownership interest in the application including all
+                    copyrights, patents, trademarks, and trade secrets developed as part of the application.
+                    </p>
+                </span>
+            </div>
+    
+            <div class="formitem clear">
+                <span class="inputlabel newbidvallabel">VALUATION</span>
+                <span class="inputfield newbidvaluationfield">
+                    <div class="financialsvaluationtext" id="new_bid_val"></div>
+                </span>
+                <span class="newbiddesc">
+                    <p>
+                    This is the valuation implied by your offer.  This is the asking price divided by the percentage being offered.
+                    </p>
+                </span>
+            </div>
+    
+            <div class="formitem clear">
+                <label class="inputlabel newbidnotelabel" for="note">NOTE</label>
+                <span class="inputfield">
+                    <textarea class="textarea new_bid_textarea" name="note" id="new_bid_text" cols="20" rows="5">Put your note to the owner here...</textarea>
+                </span>
+                <span class="inputicon">
+                    <div id="new_bid_texticon"></div>
+                </span>
+            </div>
+    
             <div class="newbidactionline" id="newbidbuttons">
                 <span class="span-3 inputbutton bidactionbutton initialhidden" id="investor_counter_btn">COUNTER</span>
                 <span class="span-3 inputbutton bidactionbutton initialhidden" id="investor_post_btn">MAKE BID</span>
@@ -83,7 +128,9 @@ include(company-order-book.m4)
                 <span class="span-3 inputbutton bidactionbutton" id="investor_new_confirm_btn">CONFIRM</span>
                 <span class="span-17 bidconfirmmessage" id="investor_new_msg"></span>
             </div>
+
         </div>
+
     </div>
 
 </div> <!-- end container -->

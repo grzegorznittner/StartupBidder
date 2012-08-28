@@ -19,7 +19,7 @@ companybannermacro(`', `', `', `companynavselected', `', `')
      <div class="preloadericon"></div>
 </div>
 
-<div class="container initialhidden wrapper">
+<div class="container bidscontainer initialhidden wrapper">
 '
 include(company-order-book.m4)
 `
