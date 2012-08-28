@@ -2,6 +2,7 @@ package com.startupbidder.web;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -1973,22 +1974,22 @@ public class ListingFacade {
 		ImagesService imagesService = ImagesServiceFactory.getImagesService();
         Image originalImage = ImagesServiceFactory.makeImage(logo);
 		log.info("Original image: " + originalImage.getWidth() + " x " + originalImage.getHeight() + " " + format);
-        Image newImage = null;
-        if (originalImage.getWidth() != originalImage.getHeight()) {
-        	Transform crop = null;
-        	if (originalImage.getWidth() > originalImage.getHeight()) {
-        		double percentCrop = (originalImage.getWidth() - originalImage.getHeight()) / (2.0 * originalImage.getWidth());
-        		crop = ImagesServiceFactory.makeCrop(percentCrop, 0.0, 1.0 - percentCrop, 1.0);
-        	} else {
-        		double percentCrop = (originalImage.getHeight() - originalImage.getWidth()) / (2.0 * originalImage.getHeight());
-        		crop = ImagesServiceFactory.makeCrop(0.0, percentCrop, 1.0, 1.0 - percentCrop);
-        	}
-    		log.info("Center cropping image ...");
-        	newImage = imagesService.applyTransform(crop, originalImage);
-    		log.info("Cropped image: " + newImage.getWidth() + " x " + newImage.getHeight());
-        } else {
-        	newImage = originalImage;
-        }
+        Image newImage = originalImage;
+//        if (originalImage.getWidth() != originalImage.getHeight()) {
+//        	Transform crop = null;
+//        	if (originalImage.getWidth() > originalImage.getHeight()) {
+//        		double percentCrop = (originalImage.getWidth() - originalImage.getHeight()) / (2.0 * originalImage.getWidth());
+//        		crop = ImagesServiceFactory.makeCrop(percentCrop, 0.0, 1.0 - percentCrop, 1.0);
+//        	} else {
+//        		double percentCrop = (originalImage.getHeight() - originalImage.getWidth()) / (2.0 * originalImage.getHeight());
+//        		crop = ImagesServiceFactory.makeCrop(0.0, percentCrop, 1.0, 1.0 - percentCrop);
+//        	}
+//    		log.info("Center cropping image ...");
+//        	newImage = imagesService.applyTransform(crop, originalImage);
+//    		log.info("Cropped image: " + newImage.getWidth() + " x " + newImage.getHeight());
+//        } else {
+//        	newImage = originalImage;
+//        }
         if (newImage.getWidth() != LOGO_WIDTH) {
         	Transform resize = ImagesServiceFactory.makeResize(LOGO_WIDTH, LOGO_HEIGHT);
         	newImage = imagesService.applyTransform(resize, newImage);
