@@ -128,18 +128,6 @@ public class ListingController extends ModelDrivenController {
 				return queryImport(request);
 			} else if ("import_types".equalsIgnoreCase(getCommand(1))) {
 				return importTypes(request);
-			} else if ("test".equalsIgnoreCase(getCommand(1))) {
-				try {
-					URLConnection con = new URL("http://www.spidersweb.pl/wp-content/uploads/2012/08/googlelogo.jpg").openConnection();
-					byte[] docBytes = IOUtils.toByteArray(con.getInputStream());
-					String byte64 = ListingFacade.instance().convertLogoToBase64(docBytes);
-					model = "<div style=\"background-color:red; width:300px; height: 300px;\">Logo:" +
-							"<div style=\"margin:30px 30px 30px 30px; background-repeat:no-repeat; background-position:center; background:url(" + byte64 + "); width: 146px; height: 146px;\"></div></div>";
-					return new HttpHeadersImpl("test");
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-
 			}
 		} else if ("POST".equalsIgnoreCase(request.getMethod())) {
 			if ("create".equalsIgnoreCase(getCommand(1))) {
