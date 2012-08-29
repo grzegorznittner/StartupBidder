@@ -1238,12 +1238,6 @@ public class ListingImportService {
 						}
 					}
 				}
-				
-//				String idToImport = result.keySet().iterator().next();
-//				log.info("Listing import: " + idToImport);
-//				Listing listing = importListing(loggedInUser, new Listing(), idToImport);
-//				log.info(ToStringBuilder.reflectionToString(listing));
-				
 				return result;
 			} catch (Exception e) {
 				log.log(Level.WARNING, "Error parsing/loading Google response from Chrome Webstore", e);
@@ -1260,7 +1254,7 @@ public class ListingImportService {
 				String converted = removeTag(new String(bytes, "UTF-8"), "style");
 				converted = removeTag(converted, "script");
 				
-				listing.type = Listing.Type.COMPANY;
+				listing.type = Listing.Type.APPLICATION;
 				listing.platform = Listing.Platform.DESKTOP.toString();
 				listing.category = "Software";
 				listing.website = appUrl;
