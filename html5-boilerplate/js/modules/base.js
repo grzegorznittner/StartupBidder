@@ -1539,7 +1539,7 @@ pl.implement(ImagePanelClass, {
         pl('#' + pic + 'nav').removeClass('dotnavempty');
         pl('#' + pic + ' div').remove();
         pl('#' + pic).removeClass('picblank').css({ 'background-image': 'url(' + url + ')' });
-        if (pl('#picnum').text() === i) {
+        if (this.options.editmode && pl('#picnum').text() === i) {
             pl('#deleteimagebutton').show();
         }
     },
