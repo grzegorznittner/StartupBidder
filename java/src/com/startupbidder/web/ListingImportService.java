@@ -1229,6 +1229,10 @@ public class ListingImportService {
 								int end = href.indexOf("&", start);
 								String id = StringUtils.substring(href, start, end);
 								id = StringUtils.substring(id, id.lastIndexOf("/") + 1);
+								end = id.indexOf("%");
+								if (end >= 0) {
+									id = id.substring(0, end);
+								}
 								String name = anchor.getTextContent();
 								if (name != null) {
 									name = name.replace("Chrome Web Store - ", "");
@@ -1269,10 +1273,13 @@ public class ListingImportService {
 				if (mantra != null) {
 					listing.mantra = mantra.getContent().toString().trim();
 				}
-				net.htmlparser.jericho.Element desc = source.getFirstElement("class", "webstore-Gc-yb-pb-zb-Lc", true);
-				if (desc != null) {
-					listing.summary = desc.getContent().toString().trim();
-				}				
+				net.htmlparser.jericho.Element overviewBar = source.getFirstElement("class", "overview-tab-right-bar-info", true);
+				if (overviewBar != null) {
+					net.htmlparser.jericho.Element desc = overviewBar.getFirstElement("pre");
+					if (desc != null) {
+						listing.summary = desc.getContent().toString().trim();
+					}
+				}
 				fillMantraAndSummary(listing, listing.mantra, listing.summary);
 
 				net.htmlparser.jericho.Element image = source.getFirstElement("itemprop", "image", true);
