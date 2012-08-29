@@ -63,7 +63,7 @@ pl.implement(ModelPageClass,{
             },
             error = function(errornum, json) {
                 (new HeaderClass()).setLogin(json);
-                pl('.preloader').hide();
+                pl('.preloader, .companyheader').hide();
                 pl('.errorwrapper').show();
             },
             ajax = new AjaxClass('/listing/get/' + this.listing_id, 'bmcmsg', complete, null, null, error);
@@ -96,7 +96,7 @@ pl.implement(NewListingBMCClass, {
             },
             error = function(errornum, json) {
                 (new HeaderClass()).setLogin(json);
-                pl('.preloader').hide();
+                pl('.preloader, .companyheader').hide();
                 pl('.errorwrapper').show();
             },
             ajax = new AjaxClass(url, 'newlistingmsg', complete, null, null, error);

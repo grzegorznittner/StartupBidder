@@ -24,7 +24,7 @@ pl.implement(QuestionClass, {
 
             error = function(errornum, json) {
                 (new HeaderClass()).setLogin(json);
-                pl('.preloader').hide();
+                pl('.preloader, .companyheader').hide();
                 pl('.errorwrapper').show();
             },
 

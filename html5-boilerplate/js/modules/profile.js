@@ -231,7 +231,7 @@ pl.implement(ProfilePageClass,{
 
             error = function(errornum, json) {
                 (new HeaderClass()).setLogin(json);
-                pl('.preloader').hide();
+                pl('.preloader, .companyheader').hide();
                 pl('.errorwrapper').show();
             },
 
@@ -288,7 +288,7 @@ pl.implement(ProfileListingPageClass, {
 
             error = function(errornum, json) {
                 (new HeaderClass()).setLogin(json);
-                pl('.preloader').hide();
+                pl('.preloader, .companyheader').hide();
                 pl('.errorwrapper').show();
             },
 
@@ -520,7 +520,7 @@ pl.implement(EditProfileClass, {
 
             error = function(errornum, json) {
                 (new HeaderClass()).setLogin(json);
-                pl('.preloader').hide();
+                pl('.preloader, .companyheader').hide();
                 pl('.errorwrapper').show();
             },
 
@@ -705,7 +705,7 @@ pl.implement(ProfileListClass, {
 
             error = function(errornum, json) {
                 (new HeaderClass()).setLogin(json);
-                pl('.preloader').hide();
+                pl('.preloader, .companyheader').hide();
                 pl('.errorwrapper').show();
             },
 

@@ -649,6 +649,7 @@ pl.implement(CompanyTileClass, {
         catprefix = !cat || (cat !== 'Other' && !cat.match(/^[aeiou]/i)) ? 'A' : 'An';
         catlink = cat && cat !== 'Other' ? '<a href="/main-page.html?type=category&val=' + encodeURIComponent(cat) + '">' + cat + '</a>' : '';
 
+        this.platform = json.platform;
         platform = json.platform || '';
         platformtext = platform && platform !== 'other' ? PlatformClass.prototype.displayName(platform) + ' ' : '';
         categorytext = platform && platform !== 'other' && cat === 'Software' ? '' : catprefix + ' ' + catlink + ' ';
@@ -727,9 +728,10 @@ pl.implement(CompanyTileClass, {
     ' + this.closeanchor + '\
     <div>' + this.address + '</div>\
     <div class="infomantra">' + this.mantra + '</div>\
-    <div><span class="infolabel">Asking:</span> ' + this.suggested_text + '</div>\
-    <div><span class="infolabel">Bidding:</span> ' + this.daystext + '</div>\
+    <div><span class="infolabel">Type:</span> ' + SafeStringClass.prototype.ucfirst(this.type) + '</div>\
+    ' + (this.type !== 'application' ? '' : '<div><span class="infolabel">Platform:</span> ' + PlatformClass.prototype.displayName(this.platform) + '</div>') + '\
     <div><span class="infolabel">Industry:</span> ' + this.category + '</div>\
+    <div><span class="infolabel">Asking:</span> ' + this.suggested_text + '</div>\
 </p>\
 </div>\
 ';
@@ -1139,7 +1141,7 @@ function CompanyBannerClass(tab) {
         founders: 'FOUNDERS',
         address: 'LOCATION',
         contact_email: 'EMAIL',
-        summary: 'ELEVATOR PITCH',
+        summary: 'SUMMARY',
         answer1: 'KEY ACTIVITIES',
         answer2: 'KEY RESOURCES',
         answer3: 'KEY PARTNERS',

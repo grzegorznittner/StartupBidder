@@ -164,17 +164,18 @@ include(company-not-found.m4)
             </span>
         </div>
         <div class="formitem sideinfoitem clear">
-            <label class="inputlabel" for="summary">ELEVATOR PITCH</label>
+            <label class="inputlabel" for="summary">SUMMARY</label>
             <span class="inputfield">
                 <textarea class="inputtextareatwoline inputwidetext inputelevatorpitch" cols="20" rows="5" name="summary" id="summary" maxlength="2000"></textarea>
             </span>
             <p class="sideinfo">
-                <label class="sideinfoheader">Elevator Pitch</label>
+                <label class="sideinfoheader">Summary</label>
                 <br />
 
 A short summary of your application or company between 30 and 60 seconds in
-length.  This is between 50 and 100 words read at presentation speed, or
-between 200 and 500 characters.  Make it compelling and enthusiastic, but
+length.  Also known as the "elevator pitch", being between 50 and 100 words read
+at presentation speed, or between 200 and 500 characters. 
+Make it compelling and enthusiastic, but
 without flashy openers, which turn off experienced investors.  Make each
 sentence unique and engaging.  Tailor the pitch to the audience in easily
 understood language without jargon, as this is a sure way to loose interest.

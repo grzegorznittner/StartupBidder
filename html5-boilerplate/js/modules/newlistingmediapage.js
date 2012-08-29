@@ -15,7 +15,7 @@ pl.implement(NewListingMediaClass, {
             },
             error = function(errornum, json) {
                 (new HeaderClass()).setLogin(json);
-                pl('.preloader').hide();
+                pl('.preloader, .companyheader').hide();
                 pl('.errorwrapper').show();
             },
             ajax = new AjaxClass('/listings/create', 'newlistingmsg', complete, null, null, error);

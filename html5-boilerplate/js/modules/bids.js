@@ -299,7 +299,7 @@ pl.implement(CompanyBidsPageClass,{
             },
             error = function(errornum, json) {
                 (new HeaderClass()).setLogin(json);
-                pl('.preloader').hide();
+                pl('.preloader, .companyheader').hide();
                 pl('.errorwrapper').show();
             },
             ajax = new AjaxClass('/listing/order_book/' + self.listing_id, 'orderbooktitlemsg', complete, null, null, error);
@@ -477,7 +477,7 @@ pl.implement(SingleInvestorBidListClass, {
             },
             error = function(errornum, json) {
                 (new HeaderClass()).setLogin(json);
-                pl('.preloader').hide();
+                pl('.preloader, .companyheader').hide();
                 pl('.errorwrapper').show();
             },
             ajax = new AjaxClass('/listing/bids/' + self.listing_id, 'bidtitlemsg', complete, null, null, error);
@@ -1175,7 +1175,7 @@ pl.implement(InvestorBidGroupListClass, {
             },
             error = function(errornum, json) {
                 (new HeaderClass()).setLogin(json);
-                pl('.preloader').hide();
+                pl('.preloader, .companyheader').hide();
                 pl('.errorwrapper').show();
             },
             ajax = new AjaxClass('/listing/investors/' + self.listing_id, 'bidstitlemsg', complete, null, null, error);
@@ -1246,7 +1246,7 @@ pl.implement(OwnerSingleInvestorBidListClass, {
             },
             error = function(errornum, json) {
                 (new HeaderClass()).setLogin(json);
-                pl('.preloader').hide();
+                pl('.preloader, .companyheader').hide();
                 pl('.errorwrapper').show();
             },
             ajax = new AjaxClass('/listing/bids/' + self.listing_id + '/' + self.investor_id, 'bidtitlemsg', complete, null, null, error);

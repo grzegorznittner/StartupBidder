@@ -22,7 +22,7 @@ pl.implement(NewListingQAClass, {
             },
             error = function(errornum, json) {
                 (new HeaderClass()).setLogin(json);
-                pl('.preloader').hide();
+                pl('.preloader, .companyheader').hide();
                 pl('.errorwrapper').show();
             },
             ajax = new AjaxClass(url, 'newlistingmsg', complete, null, null, error);

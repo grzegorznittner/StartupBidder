@@ -50,7 +50,7 @@ strategy, and how you are going to change the world.
             <div class="ipslide ipslide2">
                 <div class="ipheader">
                     <p class="ipinfo">
-                        <label class="ipinfoheader">Elevator Pitch</label>
+                        <label class="ipinfoheader">Summary</label>
                         <br />
 You have just stepped on the elevator with one of the leading Silicon Valley
 Venture Capitalists and you have 30 seconds to either get them interested
@@ -58,7 +58,7 @@ enough to consider your idea, or step off and go back to sipping their latte.
 What do you say?  Avoid jargon, be specific, be exciting.
                     </p>
                     <div class="noimage iplogo"></div>
-                    <label class="iptitle" for="summary">Elevator Pitch</label>
+                    <label class="iptitle" for="summary">Summary</label>
                 </div>
                 <div class="ipline"></div>
                 <div class="ipcontent">

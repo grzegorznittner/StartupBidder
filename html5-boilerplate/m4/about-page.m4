@@ -29,7 +29,7 @@ include(header.m4)
    	    <iframe width="622" height="380" src="http://www.youtube.com/embed/hq5gaQ1FtAU" frameborder="0" allowfullscreen></iframe> 
     </div>
 
-    <div class="boxtitle">WHAT WE DO</div>
+    <div class="boxtitle boxtitlenoindent">WHAT WE DO</div>
     <div class="boxpanel">
     <p>
 The world of startup founding and investment is traditionally opaque and
@@ -51,7 +51,7 @@ the brave new world of startup financing.
     </p>
     </div>
 
-    <div class="boxtitle">HOW TO POST</div>
+    <div class="boxtitle boxtitlenoindent">HOW TO POST</div>
     <div class="boxpanel">
     <p>
 
@@ -109,7 +109,7 @@ Happy posting and success in all your ventures!
 
     </div>
 
-    <div class="boxtitle">HOW TO BID</div>
+    <div class="boxtitle boxtitlenoindent">HOW TO BID</div>
     <div class="boxpanel">
 
     <p>

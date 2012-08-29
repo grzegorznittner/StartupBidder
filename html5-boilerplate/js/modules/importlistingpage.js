@@ -2,12 +2,14 @@ function ImportListingClass() {
     var apptypes = {
         'AppStore': 1,
         'GooglePlay': 1,
-        'WindowsMarketplace': 1
+        'WindowsMarketplace': 1,
+        'ChromeWebStore': 1
     };
     var displaytypes = {
         'AppStore': 'the App Store',
         'GooglePlay': 'Google Play',
         'WindowsMarketplace': 'Windows Marketplace',
+        'ChromeWebStore': 'Chrome Web Store',
         'CrunchBase': 'CrunchBase',
         'Angelco': 'AngelList',
         'Startuply': 'Startuply'

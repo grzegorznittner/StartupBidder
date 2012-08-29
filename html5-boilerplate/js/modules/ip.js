@@ -141,7 +141,7 @@ pl.implement(SlidesPageClass,{
             },
             error = function(errornum, json) {
                 (new HeaderClass()).setLogin(json);
-                pl('.preloader').hide();
+                pl('.preloader, .companyheader').hide();
                 pl('.errorwrapper').show();
             },
             ajax = new AjaxClass('/listing/get/' + this.listing_id, 'ipmsg', complete, null, null, error);

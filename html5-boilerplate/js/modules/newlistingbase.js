@@ -56,7 +56,7 @@ function NewListingBaseClass() {
             founders: 'FOUNDERS',
             address: 'LOCATION',
             contact_email: 'EMAIL',
-            summary: 'ELEVATOR PITCH',
+            summary: 'SUMMARY',
             answer1: 'KEY ACTIVITIES',
             answer2: 'KEY RESOURCES',
             answer3: 'KEY PARTNERS',
