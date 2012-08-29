@@ -340,20 +340,12 @@ public class ObjectifyDatastoreDAO {
 		listingStats.numberOfMonitors = CollectionUtils.size(monitorIt.iterator());
 
 		// calculate valuation for listing (max accepted bid or suggested valuation)
-//		Bid mostValuedBid = null;
-		// calculate median for bids and set total number of bids
 		List<Integer> values = new ArrayList<Integer>();
 		for (Bid bid : BidObjectifyDatastoreDAO.getInstance().getBidsForListing(listing)) {
-//			if (mostValuedBid == null || mostValuedBid.valuation < bid.valuation) {
-//				mostValuedBid = bid;
-//			}
-			values.add(bid.value);
+			if (bid.type == Bid.Type.INVESTOR_POST || bid.type == Bid.Type.INVESTOR_COUNTER) {
+				values.add(bid.value);
+			}
 		}
-//		if (mostValuedBid != null) {
-//			listingStats.valuation = mostValuedBid.valuation;
-//		} else {
-//			listingStats.valuation = listing.suggestedValuation;
-//		}
 		listingStats.numberOfBids = values.size();
 
 		Collections.sort(values);
@@ -372,11 +364,9 @@ public class ObjectifyDatastoreDAO {
         listingStats.numberOfQuestions = getQuestionAnswersPublishedCount(listing);
 
 		double timeFactor = Math.pow((double)(Days.daysBetween(new DateTime(listing.listedOn), new DateTime()).getDays() + 2), 1.5d);
-		double score = (1 + listingStats.numberOfMonitors + listingStats.numberOfComments + 100*listingStats.numberOfBids + 10*listingStats.numberOfQuestions + (median/1000)) / timeFactor;
-		log.info("Listing '" + listing.name + "' score = (1 + " + listingStats.numberOfMonitors + " monitors + "
-				+ listingStats.numberOfComments + " comments + 100*" + listingStats.numberOfBids + " bids + 10*"
-				+ listingStats.numberOfQuestions + " qanda + " + median + " (median)/1000)" + " / " + timeFactor
-				+ " = " + score);
+		log.info("Time factor for listing '" + listing.name + "' is " + timeFactor);
+		double score = (1 + listingStats.numberOfMonitors + listingStats.numberOfComments + 100*listingStats.numberOfBids
+				+ 10*listingStats.numberOfQuestions + (median/1000)) / timeFactor;
 		listingStats.score = score;
 		
         listingStats.askedForFunding = listing.askedForFunding;
