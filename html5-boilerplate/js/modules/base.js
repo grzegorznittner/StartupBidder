@@ -1531,6 +1531,7 @@ pl.implement(ImagePanelClass, {
         this.listing = listing;
         return this;
     },
+
     enableImage: function(i) {
         var pic = 'pic' + i,
             cachebust = pl('#' + pic + 'nav').hasClass('dotnavempty') ? '' : '?id=' + Math.floor(Math.random()*1000000000),
@@ -1538,12 +1539,46 @@ pl.implement(ImagePanelClass, {
         pl('#' + pic + 'nav').removeClass('dotnavempty');
         pl('#' + pic + ' div').remove();
         pl('#' + pic).removeClass('picblank').css({ 'background-image': 'url(' + url + ')' });
+        if (pl('#picnum').text() === i) {
+            pl('#deleteimagebutton').show();
+        }
     },
+
     enableImageLoading: function(i) {
         var pic = 'pic' + i;
         pl('#' + pic + 'nav').removeClass('dotnavempty');
         pl('#' + pic).addClass('picblank').html('<div class="preloaderfloater"></div><div class="preloadericon"></div>');
     },
+
+    deleteImage: function(i) {
+        var self = this,
+            pic = 'pic' + i,
+            url = '/listing/delete_file?id=' + self.listing.listing_id + '&type=' + 'PIC' + i,
+            complete = function() {
+                pl('#' + pic).removeClass('picblank').html('');
+                pl('#picmsg').removeClass('errorcolor').removeClass('inprogress').addClass('successful').text('Image deleted');
+                self.listing[pic] = null;
+                self.deleting = false;
+            },
+            error = function(errornum, json) {
+                var msg = json.error_msg || 'Error from server: ' + errornum;
+                pl('#' + pic).removeClass('picblank').html('');
+                pl('#picmsg').removeClass('successful').removeClass('inprogress').addClass('errorcolor').text(msg);
+                self.listing[pic] = null;
+                self.deleting = false;
+            },
+            ajax = new AjaxClass(url, 'picmsg', complete, null, null, error);
+        if (self.deleting) {
+            return;
+        }
+        pl('#deleteimagebutton').hide();
+        self.deleting = true;
+        pl('#' + pic).css('background-image', '');
+        pl('#' + pic).addClass('picblank').html('<div class="preloaderfloater"></div><div class="preloadericon"></div>');
+        ajax.setPost();
+        ajax.call();
+    },
+
     display: function() {
         var self = this,
             firstpic = this.options.editmode ? 'pic1' : undefined,
@@ -1599,6 +1634,9 @@ pl.implement(ImagePanelClass, {
         }
         else { // default highlight first
             pl('#pic1nav').addClass('dotnavfilled');
+            if (self.options.editmode && self.listing['pic1']) {
+                pl('#deleteimagebutton').show();
+            }
         }
 
         if (pl('#picslideset .picblank').len()) {
@@ -1637,12 +1675,19 @@ pl.implement(ImagePanelClass, {
             if (this.options.editmode) {
                 pl('#picnum').text(newpicnum);
                 pl('#picuploadfile').attr({name: 'PIC' + newpicnum});
+                if (this.listing['pic' + newpicnum]) {
+                    pl('#deleteimagebutton').show();
+                }
+                else {
+                    pl('#deleteimagebutton').hide();
+                }
             }
             pl('.dotnav').removeClass('dotnavfilled');
             pl('#pic' + newpicnum + 'nav').addClass('dotnavfilled');
             pl('#picslideset').css({left: newleftpx});
         }
     }
+
 });
 
 /* home page */

@@ -24,7 +24,7 @@ include(header.m4)
 
 <div class="container">
 
-<div class="boxtitle">CONNECT TO STARTUPBIDDER</div>
+<div class="boxtitle boxtitlenoindent">CONNECT TO STARTUPBIDDER</div>
 <div class="boxpanel apipanel">
         <p>
         Startupbidder provides a public API for providing summary and detailed information
@@ -41,7 +41,7 @@ include(header.m4)
         </p>
 </div>
 
-<div class="boxtitle">API TERMS OF USE</div>
+<div class="boxtitle boxtitlenoindent">API TERMS OF USE</div>
 <div class="boxpanel apipanel">
         <p>
         You may use the public API royalty-free, subject to the limitation that you must
@@ -52,7 +52,7 @@ include(header.m4)
         </p>
 </div>
 
-    <span class="boxtitle">COMPANY LIST API</span>
+    <span class="boxtitle boxtitlenoindent">COMPANY LIST API</span>
     <div class="boxpanel apipanel">
     <p>Get a list of companies depending on the category, ranking, or user criteria.</p>
 
@@ -323,7 +323,7 @@ include(header.m4)
         </div>
     </div>
 
-    <div class="boxtitle">SEARCH API</div>
+    <div class="boxtitle boxtitlenoindent">SEARCH API</div>
     <div class="boxpanel apipanel">
     <p>Search for a set of listings using category, location, and keyword matches.</p>
 
@@ -509,7 +509,7 @@ include(header.m4)
         </div>
     </div>
 
-    <div class="boxtitle">LISTING API</div>
+    <div class="boxtitle boxtitlenoindent">LISTING API</div>
     <div class="boxpanel apipanel">
     <p>Get and update information on an individual company listing</p>
 
@@ -972,7 +972,7 @@ include(header.m4)
     </div>
 
 
-    <div class="boxtitle">IMPORT API</div>
+    <div class="boxtitle boxtitlenoindent">IMPORT API</div>
     <div class="boxpanel apipanel">
     <p>Import a listing from a supported site.  Supported sites for importing applications are the App Store, Google Play, and Windows Marketplace.
       Supported sites for importing companies are CrunchBase, Angelco and Startuply.</p>
@@ -1081,7 +1081,7 @@ include(header.m4)
         </div>
     </div>
 
-    <div class="boxtitle">LOCATIONS API</div>
+    <div class="boxtitle boxtitlenoindent">LOCATIONS API</div>
     <div class="boxpanel apipanel">
     <p>Find the set of location groupings, roughly city/state/country metropolitan areas, containing startups on this site</p>
 
@@ -1153,7 +1153,7 @@ include(header.m4)
         </div>
     </div>
 
-    <div class="boxtitle">CATEGORIES API</div>
+    <div class="boxtitle boxtitlenoindent">CATEGORIES API</div>
     <div class="boxpanel apipanel">
     <p>Find information on the various venture-capital categories supported by startupbidder including a list of startups for each category</p>
 
@@ -1216,7 +1216,7 @@ include(header.m4)
         </div>
     </div>
 
-    <div class="boxtitle">COMMENTS API</div>
+    <div class="boxtitle boxtitlenoindent">COMMENTS API</div>
     <div class="boxpanel apipanel">
     <p>Find and create comments on a particular listing; comments are always public to all.</p>
 
@@ -1405,7 +1405,7 @@ include(header.m4)
 
     </div>
 
-    <div class="boxtitle">MONITOR API</div>
+    <div class="boxtitle boxtitlenoindent">MONITOR API</div>
     <div class="boxpanel apipanel">
     <p>Watch listings and be automatically notified of bids, comments, and other changes to the listing</p>
 
@@ -1621,7 +1621,7 @@ include(header.m4)
 
     </div>
 
-    <div class="boxtitle">QUESTION AND ANSWER API</div>
+    <div class="boxtitle boxtitlenoindent">QUESTION AND ANSWER API</div>
     <div class="boxpanel apipanel">
     <p>Find questions and answers concerning a listing and ask new ones for the owner to answer.</p>
 
@@ -1751,7 +1751,7 @@ include(header.m4)
 
     </div>
 
-    <div class="boxtitle">PRIVATE MESSAGES API</div>
+    <div class="boxtitle boxtitlenoindent">PRIVATE MESSAGES API</div>
     <div class="boxpanel apipanel">
     <p>Send and receive private messages between users on the site.  You must be logged in to use these methods.</p>
 
@@ -1908,7 +1908,7 @@ include(header.m4)
 
     </div>
 
-    <div class="boxtitle">NOTIFICATION API</div>
+    <div class="boxtitle boxtitlenoindent">NOTIFICATION API</div>
     <div class="boxpanel apipanel">
     <p>Get notifications for the currently logged in user, which includes listing notifications such as bids and questions and also private messages.</p>
 
@@ -2031,7 +2031,7 @@ include(header.m4)
         </div>
     </div>
 
-    <div class="boxtitle">FILE API</div>
+    <div class="boxtitle boxtitlenoindent">FILE API</div>
     <div class="boxpanel apipanel">
     <p>Upload and download documents for a listing, downloads are public but uploads can only be by the owner for a <var>new</var> status listing.</p>
 
@@ -2170,7 +2170,7 @@ include(header.m4)
         </div>
     </div>
 
-    <div class="boxtitle">BIDDING API</div>
+    <div class="boxtitle boxtitlenoindent">BIDDING API</div>
     <div class="boxpanel apipanel">
         <p>Get information on investor bids for a listing.  Some bid information is available publicly in anonymous format
            with private data removed, this is the order book used to show what bids are happening for this listing.
@@ -2576,7 +2576,7 @@ include(header.m4)
         </div>
     </div>
 
-    <div class="boxtitle">USER API</div>
+    <div class="boxtitle boxtitlenoindent">USER API</div>
     <div class="boxpanel apipanel">
     <p>Get information on individual users, full information is only available to the currently logged in user and to admins.</p>
 
@@ -2787,7 +2787,7 @@ include(header.m4)
 
     </div>
 
-    <div class="boxtitle">ADMIN API</div>
+    <div class="boxtitle boxtitlenoindent">ADMIN API</div>
     <div class="boxpanel apipanel">
     <p>Perform administrative tasks on startupbidder; you must have administrative rights as a logged in user in order for these calls to work</p>
 

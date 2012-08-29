@@ -309,6 +309,10 @@ pl.implement(NewListingBasicsClass, {
                 return false;
             }
         });
+        pl('#deleteimagebutton').bind('click', function() {
+            var picnum = pl('#picnum').text();
+            self.imagepanel.deleteImage(picnum);
+        });
         picURLField.fieldBase.setDisplayName('IMAGE URL');
         picURLField.fieldBase.addValidator(ValidatorClass.prototype.isURLEmptyOk);
         picURLField.fieldBase.isEmptyNoUpdate = true;

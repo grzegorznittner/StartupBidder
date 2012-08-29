@@ -17,17 +17,18 @@ preserved.  All images are transformed into jpg and stored on startupbidder
 infrastructure.
         </p>
     </div>
-    <div class="span-12">
+    <div class="dotnavcontainer">
         <div class="dotnavwrapper dotnaveditable">
-            <ul class="dotnav dotnavempty" id="pic1nav"><li></li></ul>
-            <ul class="dotnav dotnavempty" id="pic2nav"><li></li></ul>
-            <ul class="dotnav dotnavempty" id="pic3nav"><li></li></ul>
-            <ul class="dotnav dotnavempty" id="pic4nav"><li></li></ul>
-            <ul class="dotnav dotnavempty" id="pic5nav"><li></li></ul>
+            <ul id="pic1nav" class="dotnav dotnavfilled"><li></li></ul>
+            <ul id="pic2nav" class="dotnav"><li></li></ul>
+            <ul id="pic3nav" class="dotnav"><li></li></ul>
+            <ul id="pic4nav" class="dotnav"><li></li></ul>
+            <ul id="pic5nav" class="dotnav"><li></li></ul>
         </div>
     </div>
+    <div class="span-3 smallinputbutton deleteimagebutton initialhidden" id="deleteimagebutton">DELETE</div>
 </div>
-<div class="boxpanel">
+<div class="boxpanel imagespaneleditable">
     <div class="piccontainer">
         <div class="picslideset" id="picslideset">
             <div class="picslide picslide1" id="pic1"></div>

@@ -481,8 +481,8 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAMA
 }
 
 /* header num */
-.headernum { height: 20px; text-align: center; position: absolute; top:-7px; right: -5px; color:#f8f8f8; background-color:red; font-weight:bold; font-size: 14px; }
-.headernumdisplay { padding-left: 3px; padding-right: 3px; }
+.headernum { height: 21px; text-align: center; position: absolute; top:-7px; right: -5px; color:#f8f8f8; background-color:red; font-weight:bold; font-size: 14px; }
+.headernumdisplay { padding-left: 3px; padding-right: 3px; border-radius: 5px; border: 1px solid #222; }
 
 /* preloader */
 
@@ -761,8 +761,8 @@ transition: height 300ms;
 .newlistingmsgsmall { float: left; margin-right: 10px; padding-left: 116px; width: 420px; height: 25px; font-weight: bold; }
 .companylistingstats { position: absolute; bottom: 0; }
 .boxpanel p { text-indent: 0px; font-weight: normal; }
-.boxpanel dl dt { margin-left: 0; padding: 5px 10px; color: #333333; }
-.boxpanel dl dd { margin-left: 0; padding: 5px 10px; background: #f2f2f2; font-weight: normal; }
+.boxpanel dl dt { margin-left: 0; padding: 5px 10px; color: #333333; margin-bottom: 5px; }
+.boxpanel dl dd { margin-left: 0; padding: 5px 10px; background: #f6f6f6; font-weight: normal; margin-bottom: 20px; border-radius: 5px; }
 .boxstep { width: 626px; padding: 0px; height: 30px; position: relative; }
 .boxsteptitle, .boxsteptext { padding-top: 5px; font-weight: bold; left: 0; text-align: center; position: absolute; }
 .boxsteptitle { padding-left: 5px; width: 617px; }
@@ -1369,6 +1369,8 @@ background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAQA
 .dotnav:hover { cursor: pointer; }
 .dotnavfilled { list-style-type: disc; }
 .dotnavempty { display: none }
+.dotnavcontainer { float:left; margin-left: 150px; width: 110px; }
+.deleteimagebutton { height: 22px; padding: 0px 0px 0px 0px; float: right; margin-right: 10px; margin-top: 11px; }
 .piccontainer { position: relative; overflow: hidden; width: 622px; height: 452px; }
 .picslideset {
 position: absolute;
@@ -1492,13 +1494,12 @@ color: #fff;
     margin-bottom: 18px;
 }
 .logopanel {
-    height: 157px;
-    margin-top: 60px;
+    height: 183px;
+    margin-top: 26px;
 }
-.locationpanel {
-    margin-top: 0;
-    top: 1523px;
-    position: absolute;
+.imagespaneleditable {
+    height: 452px;
+    margin-bottom: 37px;
 }
 .askingbox {
 width: 292px;

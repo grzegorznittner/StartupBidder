@@ -216,7 +216,7 @@ for a professional logo, just make something simple with text.
 include(images-panel-editable.m4)
 `
 
-    <div class="boxpanel newlistingpanel locationpanel">
+    <div class="boxpanel newlistingpanel">
         <div class="formitem sideinfoitem clear">
             <label class="inputlabel" for="address">LOCATION</label>
             <span class="inputfield">

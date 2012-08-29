@@ -49,6 +49,10 @@ the company.  Those more of the armchair-quarterback variety can sit back, ask
 questions, make comments, and see how the startup progresses.  Startupbidder is
 the brave new world of startup financing.
     </p>
+    <p>
+Startupbidder is entirely free.  There are no charges to use the service.  There
+are no fees for listing, investing, or receiving investment.
+    </p>
     </div>
 
     <div class="boxtitle boxtitlenoindent">HOW TO POST</div>

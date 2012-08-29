@@ -45,6 +45,11 @@ include(header.m4)
                         See the <a href="contact-page.html">contact page</a>.
             </dd>
 
+            <dt>How much does it cost?</dt>
+            <dd>
+                Startupbidder is an entirely free service.  No fees are charged for listing, placing bids, or accepting bids.
+            </dd>
+
             <dt>What is the algorithm you use to rank top listings?</dt>
             <dd>
 Ranking is similar to the exponential time decay as used on many social-ranking sites.  Specifically, we calculate the listing score as follows:
@@ -67,10 +72,8 @@ Reference:
             <dd>
                 When the owner of the listing accepts a bid, the lister
                 and the investor who made the bid are then notified via email of the bid
-                acceptance.  The lister will then be billed a an acceptance charge of 2% of the
-                funding amount.  For instance, funding of $10,000 would have an acceptance
-                charge of $200.  It is then the responsibility of the lister and investor to
-                follow up with each other for a formal legal funding agreement.  
+                acceptance.  It is then the responsibility of the lister and investor to
+                follow up with each other for a formal legal funding agreement.  No fees are charged for this service.
 
             </dd>
 
