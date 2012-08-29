@@ -25,7 +25,7 @@ public class ListingVO extends ListingTileVO implements Serializable {
 			"currency", "has_bmc", "has_ip", "asked_fund", "suggested_amt", "suggested_pct", "video", "answer1", "answer2", "answer3",
 			"answer4", "answer5", "answer6", "answer7", "answer8", "answer9", "answer10", "answer11", "answer12", "answer13",
 			"answer14", "answer15", "answer16", "answer17", "answer18", "answer19", "answer20", "answer21", "answer22", "answer23",
-            "answer24", "answer25", "answer26"
+            "answer24", "answer25", "answer26", "valuation_data"
     });
 	public static final List<String> ACTIVE_UPDATABLE_PROPERTIES = Arrays.asList(new String[] {
 			"stage", "website", "has_bmc", "has_ip", "asked_fund", "suggested_amt", "suggested_pct", "video", "answer1", "answer2", "answer3",
@@ -88,6 +88,7 @@ public class ListingVO extends ListingTileVO implements Serializable {
 	@JsonProperty("answer24") private String answer24;
 	@JsonProperty("answer25") private String answer25;
 	@JsonProperty("answer26") private String answer26;
+	@JsonProperty("valuation_data") private String valuationData;
 	@JsonProperty("notes") private String notes;
 	
 	public ListingVO() {
@@ -753,5 +754,13 @@ public class ListingVO extends ListingTileVO implements Serializable {
 
 	public void setHasIp(boolean hasIp) {
 		this.hasIp = hasIp;
+	}
+
+	public String getValuationData() {
+		return valuationData;
+	}
+
+	public void setValuationData(String valuationData) {
+		this.valuationData = valuationData;
 	}
 }

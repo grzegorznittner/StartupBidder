@@ -227,6 +227,8 @@ public class VoToModelConverter {
 			listing.founders = property.getPropertyValue();
 		} else if (name.equalsIgnoreCase("video")) {
 			listing.videoUrl = property.getPropertyValue();
+		} else if (name.equalsIgnoreCase("valuation_data")) {
+			listing.valuationData = property.getPropertyValue();
 		}
 	}
 

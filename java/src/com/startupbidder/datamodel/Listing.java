@@ -149,6 +149,8 @@ public class Listing extends BaseObject<Listing> {
 	public String answer25;
 	public String answer26;
 	
+	public String valuationData;
+	
 	public String getWebKey() {
 		return new Key<Listing>(Listing.class, id).getString();
 	}

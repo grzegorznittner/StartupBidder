@@ -236,6 +236,8 @@ public class DtoToVoConverter {
 		listing.setAnswer24(listingDTO.answer24);
 		listing.setAnswer25(listingDTO.answer25);
 		listing.setAnswer26(listingDTO.answer26);
+		
+		listing.setValuationData(listingDTO.valuationData);
 		return listing;
 	}
 
