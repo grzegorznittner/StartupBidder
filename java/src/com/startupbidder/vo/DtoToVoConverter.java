@@ -420,13 +420,13 @@ public class DtoToVoConverter {
 			notif.setTitle("New comment for listing '" + listingName + "'");
 			notif.setText1("Comment from user '" + notifDTO.userNickname + "': ");
 			notif.setText2(notifDTO.message);
-			notif.setText3("You can <a href=\"" + listingLink + "\">View or Reply</a> this comment on startupbidder.");
+			notif.setText3("You can <a href=\"" + listingLink + "\">View or Reply To</a> this comment on startupbidder.");
 			break;
 		case NEW_COMMENT_FOR_YOUR_LISTING:
 			notif.setTitle("Your listing '" + listingName + "' received a comment");
 			notif.setText1("Comment from user '" + notifDTO.userNickname + "': " + notifDTO.message);
 			notif.setText2(notifDTO.message);
-			notif.setText3("You can <a href=\"" + listingLink + "\">View or Reply</a> this comment on startupbidder.");
+			notif.setText3("You can <a href=\"" + listingLink + "\">View or Reply To</a> this comment on startupbidder.");
 			break;
 		case ASK_LISTING_OWNER:
 		    notif.setTitle("Question for listing '" + listingName + "'");
@@ -455,7 +455,7 @@ public class DtoToVoConverter {
 			break;
 		case YOUR_BID_WAS_COUNTERED:
 			notif.setTitle("Counter offer for listing '" + listingName + "'");
-			notif.setText1("Your listing '" + listingName + "' has got counter offer from user '" + notifDTO.userNickname + "'.");
+			notif.setText1("Your listing '" + listingName + "' has received counter offer from user '" + notifDTO.userNickname + "'.");
 			notif.setText2("");
 			notif.setText3("In order to view bid(s) please visit <a href=\"" + listingLink + "\">company's page at startupbidder.com</a>.");
 			break;
