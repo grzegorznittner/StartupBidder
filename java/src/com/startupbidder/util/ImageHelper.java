@@ -2,7 +2,6 @@ package com.startupbidder.util;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -14,8 +13,12 @@ public class ImageHelper {
 	private static final Logger log = Logger.getLogger(ImageHelper.class.getName());
 	
 	private final static byte[] JPEG = {(byte)0xff, (byte)0xd8 };
+	private final static byte[] BMP = {(byte)0x42, (byte)0x4d };
 	private final static byte[] GIF = {0x47, 0x49, 0x46, 0x38};
 	private final static byte[] PNG = {(byte)0x89, 0x50, 0x4e, 0x47};
+	private final static byte[] TIFF_II = {(byte)0x49, 0x49, 0x2a, 0x00};
+	private final static byte[] TIFF_MM = {(byte)0x4d, 0x4d, 0x00, 0x2a};
+	private final static byte[] WMF = {(byte)0x9a, (byte)0xc6, (byte)0xcd, (byte)0xd7};
 	
 	@SuppressWarnings("serial")
 	public static class ImageFormatException extends Exception {
@@ -30,10 +33,18 @@ public class ImageHelper {
 		String format = "";
 		if (ArrayUtils.isEquals(premagicNumber, JPEG)) {
 			format = "image/jpeg";
+		} else if (ArrayUtils.isEquals(premagicNumber, BMP)) {
+			format = "image/bmp";
 		} else if (ArrayUtils.isEquals(magicNumber, GIF)) {
 			format = "image/gif";
 		} else if (ArrayUtils.isEquals(magicNumber, PNG)) {
 			format = "image/png";
+		} else if (ArrayUtils.isEquals(magicNumber, TIFF_II)) {
+			format = "image/tiff";
+		} else if (ArrayUtils.isEquals(magicNumber, TIFF_MM)) {
+			format = "image/tiff";
+		} else if (ArrayUtils.isEquals(magicNumber, WMF)) {
+			format = "image/wmf";
 		} else {
 			log.warning("Image not recognized as JPG, GIF or PNG. Magic number was: " + toHexString(magicNumber));
             throw new ImageFormatException("Image not recognized as JPG, GIF or PNG. Magic number was: " + toHexString(magicNumber));
@@ -76,13 +87,26 @@ public class ImageHelper {
 	}
 
 	public static String getMimeTypeFromFileName(String propValue) {
+		propValue = StringUtils.lowerCase(propValue);
 		if (propValue.endsWith(".gif")) {
 			return "image/gif";
 		} else if (propValue.endsWith(".jpg")) {
 			return "image/jpeg";
+		} else if (propValue.endsWith(".jpeg")) {
+			return "image/jpeg";
 		} else if (propValue.endsWith(".png")) {
 			return "image/png";
+		} else if (propValue.endsWith(".bmp")) {
+			return "image/bmp";
+		} else if (propValue.endsWith(".tif")) {
+			return "image/tiff";
+		} else if (propValue.endsWith(".tiff")) {
+			return "image/tiff";
+		} else if (propValue.endsWith(".wmf")) {
+			return "image/wmf";
 		} else if (propValue.endsWith(".doc")) {
+			return "application/msword";
+		} else if (propValue.endsWith(".docx")) {
 			return "application/msword";
 		} else if (propValue.endsWith(".ppt")) {
 			return "application/vnd.ms-powerpoint";
