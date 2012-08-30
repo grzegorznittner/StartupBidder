@@ -212,6 +212,10 @@ public class ListingImportService {
 	}
 
 	private static String extractMantra(String description) {
+		log.info(ImageHelper.printStringAsHex(description));
+		description = description.replace("\n", " ");
+		description = description.replace("\r", " ");
+		description = description.replace("\t", " ");
 		StringBuffer mantra = new StringBuffer();
 		String sentence = null;
 		int index = 0;
