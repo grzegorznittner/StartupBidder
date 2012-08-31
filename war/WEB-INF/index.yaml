@@ -1,5 +1,17 @@
 indexes:
 
+- kind: SBUser
+  ancestor: no
+  properties:
+    - name: dragon
+    - name: nicknameLower
+
+- kind: SBUser
+  ancestor: no
+  properties:
+    - name: lister
+    - name: nicknameLower
+
 - kind: UserStats
   ancestor: no
   properties:

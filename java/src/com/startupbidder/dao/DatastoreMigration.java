@@ -80,7 +80,7 @@ public class DatastoreMigration {
 		List<SBUser> userMigration = new ArrayList<SBUser>();
 		int avatarIndex = 0;
 		for (SBUser user : users.values()) {
-			if (user.avatarUrl == null) {
+			if (user.avatarUrl == null && StringUtils.endsWith(user.email, "@startupbidder.com")) {
 				user.avatarUrl = avatars[avatarIndex++];
 				avatarIndex %= avatars.length;
 				report.append("<li> setting avatar '" + user.avatarUrl + "' for user " + user.nickname);

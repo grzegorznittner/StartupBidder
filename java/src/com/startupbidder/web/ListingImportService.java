@@ -839,7 +839,6 @@ public class ListingImportService {
 					listing.type = Listing.Type.COMPANY;
 					listing.platform = Listing.Platform.OTHER.toString();
 					listing.category = "Software";
-					listing.platform = Listing.Platform.IOS.toString();
 					fillMantraAndSummary(listing, getJsonNodeValue(rootNode, "description"),
 							getJsonNodeValue(rootNode, "overview"));
 					listing.website = getJsonNodeValue(rootNode, "homepage_url");

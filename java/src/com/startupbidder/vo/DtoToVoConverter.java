@@ -439,7 +439,7 @@ public class DtoToVoConverter {
 		case PRIVATE_MESSAGE:
             String fromTitle = StringUtils.isEmpty(notifDTO.fromUserNickname) ? "" : " from " + notifDTO.fromUserNickname;
 		    notif.setTitle("You've received a private message" + fromTitle);
-            notif.setText1("A private message from user '" + notifDTO.userNickname + "':");
+            notif.setText1("Message: ");
 		    notif.setText2(notifDTO.message);
 		    try {
 		    	String messagePageUrl = BaseVO.getServiceLocation() + "/messages-page.html?from_user_id=" + notifDTO.listingOwnerUser.getString()
