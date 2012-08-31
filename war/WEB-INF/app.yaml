@@ -1,5 +1,5 @@
 application: startupbidder
-version: 201208292327
+version: 201208312041
 runtime: java
 
 static_files:
@@ -12,6 +12,7 @@ static_files:
   - include: /**.txt
   - include: /crossdomain.xml
   - include: /*
+    expiration: 10m
 
 handlers:
   - url: /hello/*
