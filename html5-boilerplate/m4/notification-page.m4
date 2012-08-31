@@ -25,7 +25,7 @@ include(header.m4)
     <div class="span-24 last notificationtitle">Notification from <span class="lightblue">startup</span>bidder</div>
 
     <div class="span-24 notificationmessage" id="notificationmessage"></div>
-    <div class="span-24 notificationview initialhidden" id="notificationview">In order to view, please visit the <a href="" id="notificationlink">listing page</a>.</div>
+    <div class="span-24 notificationview initialhidden" id="notificationview">In order to view, please visit the <a href="" id="notificationlink">page</a>.</div>
 </div> <!-- end left column -->
 </div> <!-- end container -->
 

@@ -9,21 +9,31 @@ pl.implement(NotificationClass, {
         self.messageclass = self.read ? '' : ' inputmsg'; // unread
         if (!self.notify_type) {
             self.type = 'notification';
+            self.linktext = 'page';
         }
         else if (self.notify_type.match('comment')) {
             self.type = 'comment';
+            self.linktext = 'comment page';
         }
         else if (self.notify_type.match('bid')) {
             self.type = 'bid';
+            self.linktext = 'investment page';
         }
         else if (self.notify_type.match('ask_listing_owner')) {
             self.type = 'ask_listing_owner';
+            self.linktext = 'questions and answer page';
         }
         else if (self.notify_type.match('private_message')) {
             self.type = 'private_message';
+            self.linktext = 'private message page';
+        }
+        else if (self.notify_type.match(/.*listing.*/)) {
+            self.type = 'notification';
+            self.linktext = 'listing page';
         }
         else {
             self.type = 'notification';
+            self.linktext = 'page';
         }
         self.date = self.create_date || self.sent_date;
         self.datetext = self.date ? DateClass.prototype.format(self.date) : '';
@@ -31,7 +41,8 @@ pl.implement(NotificationClass, {
         self.closeanchor = self.link ? '</a>' : '';
     },
     display: function(json) {
-        var banner = new CompanyBannerClass();
+        var self = this,
+            banner = new CompanyBannerClass();
         if (json.notification) {
             this.store(json.notification);
         }
@@ -43,7 +54,7 @@ pl.implement(NotificationClass, {
         }
         pl('#notificationmessage').text(this.message);
         if (this.link) {
-            pl('#notificationlink').attr({href: this.link})
+            pl('#notificationlink').attr({href: this.link}).text(this.linktext);
             pl('#notificationview').show();
         }
         if (!json.listing && json.listing_id) { // construct virtual listing
@@ -62,6 +73,9 @@ pl.implement(NotificationClass, {
             banner.displayMinimal(json);
             pl('#notificationlistingwrapper .companyheader').addClass('notificationlistingheader');
             pl('#notificationlistingwrapper .companybanner').addClass('notificationlistingbanner');
+            pl('#notificationlistingwrapper').addClass('hoverlink').bind('click', function() {
+                document.location = self.link;
+            });
             pl('#notificationlistingwrapper').show();
         }
     },
