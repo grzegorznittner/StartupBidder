@@ -743,7 +743,7 @@ pl.implement(CompanyTileClass, {
     <div class="companybannerlogo tileimg fulltileimg noimage hoverlink" style="' + this.imgStyle + '"></div>\
 ' + this.closeanchor + '\
 ' + this.openanchor + '\
-    <div class="companybannertitle companybannertiletitle ' + (this.name && this.name.length > 25 ? 'companybannertiletitlelong ' : '') + 'hoverlink">' + this.name + '</div>\
+    <div class="companybannertitle companybannertiletitle ' + (this.name && this.name.length > 20 ? 'companybannertiletitlelong ' : '') + 'hoverlink">' + this.name + '</div>\
 ' + this.closeanchor + '\
     <div class="companybannertextgrey companybannermapline">\
         ' + this.categoryaddresstext + '\
