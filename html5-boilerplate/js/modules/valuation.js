@@ -1,6 +1,6 @@
 function ValuationClass() {
 
-    this.valuation_data = { application: {}, company: {}};
+    this.valuation_data = { application: { is_app_released: true }, company: {}};
     this.selectFields = {
         valuation_type: 1,
         is_app_released: 1,
