@@ -32,7 +32,7 @@ define(`companybannermacro', `
                 </div>
 
                 <div class="companybannerfollow">
-                    <div class="companybannersubmitbtn span-5 investbutton initialhidden" id="submitbutton">SUBMIT &gt;&gt;</div>
+                    <div class="companybannersubmitbtn span-4 smallinputbutton initialhidden" id="submitbutton">SUBMIT &gt;&gt;</div>
                     <div class="inputmsg last companybannerfollowmsg clear" id="submiterrormsg"></div>
                 </div>
     
@@ -49,28 +49,28 @@ define(`companybannermacro', `
                         VALUATION
                     </div>
                 </a>
-                 <a class="hoverlink companynavlink" href="#" id="modeltab">
-                    <div class="companynav hoverlink $2" id="modeltab">
+                <a class="hoverlink companynavlink" href="#" id="modeltab">
+                    <div class="companynav hoverlink $3" id="modeltab">
                         MODEL
                     </div>
                 </a>
                 <a class="hoverlink companynavlink" href="#" id="presentationtab">
-                    <div class="companynav hoverlink $3" id="presentationtab">
+                    <div class="companynav hoverlink $4" id="presentationtab">
                         PRESENTATION
                     </div>
                 </a>
                 <a class="hoverlink companynavlink" href="#" id="bidstab">
-                    <div class="companynav hoverlink $4" id="bidstab">
+                    <div class="companynav hoverlink $5" id="bidstab">
                         INVESTMENTS <!-- <span id="num_bids"></span> -->
                     </div>
                 </a>
                 <a class="hoverlink companynavlink" href="#" id="commentstab">
-                    <div class="companynav hoverlink $5" id="commentstab">
+                    <div class="companynav hoverlink $6" id="commentstab">
                         COMMENTS <!-- <span id="num_comments"></span> -->
                     </div>
                 </a>
                 <a class="hoverlink companynavlink" href="#" id="questionstab">
-                    <div class="companynav hoverlink $6" id="questionstab">
+                    <div class="companynav hoverlink $7" id="questionstab">
                         QUESTIONS <!-- <span id="num_qandas"></span> -->
                     </div>
                 </a>

@@ -1,5 +1,4 @@
-function BMCClass() {
-}
+function BMCClass() {}
 pl.implement(BMCClass, {
     store: function(listing) {
         var n = 9,

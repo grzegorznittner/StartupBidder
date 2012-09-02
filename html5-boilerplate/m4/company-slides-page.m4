@@ -12,7 +12,7 @@ include(head.m4)
 include(header.m4)
 include(company-not-found.m4)
 include(company-banner.m4)
-companybannermacro(`', `', `companynavselected', `', `', `')
+companybannermacro(`', `', `', `companynavselected', `', `', `')
 `
 <div class="container preloader">
      <div class="preloaderfloater"></div>

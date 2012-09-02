@@ -32,7 +32,7 @@ include(header.m4)
 <div class="initialhidden" id="notificationlistingwrapper">
 '
 include(company-banner.m4)
-companybannermacro(`', `', `', `', `', `')
+companybannermacro(`', `', `', `', `', `', `')
 `
 </div> <!-- end notificationlistingwrapper -->
 

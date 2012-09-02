@@ -193,16 +193,18 @@ pl.implement(NewListingBaseClass, {
         });
     },
 
-    bindSaveButton: function() {
-        pl('.savebuttonlink').bind('click', function() {
-            pl('#savebutton').hide();
-            pl('#savebuttonspinner').show();
-            setTimeout(function() {
-                pl('#savebuttonspinner').hide();
-                pl('#savebutton').text('SAVED').show();
-            }, 1000);
-            return false;
-        });
+    bindSaveButton: function(customClickHandler) {
+        var clickHandler = customClickHandler
+                || function() {
+                    pl('#savebutton').hide();
+                    pl('#savebuttonspinner').show();
+                    setTimeout(function() {
+                        pl('#savebuttonspinner').hide();
+                        pl('#savebutton').text('SAVED').show();
+                    }, 1000);
+                    return false;
+                };
+        pl('.savebuttonlink').bind('click', clickHandler);
     },
    
     bindPreviewButton: function() {

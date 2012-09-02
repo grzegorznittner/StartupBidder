@@ -349,6 +349,7 @@ public class ListingController extends ModelDrivenController {
 			for (Entry<String, JsonNode> node; fields.hasNext();) {
 				node = fields.next();
 				String key = node.getKey();
+                log.log(Level.INFO, "Recevied property " + key + " with value: " + node.getValue().getValueAsText());
 				if (StringUtils.equals("id", key)) {
 					listingId = node.getValue().getValueAsText();
 				} else {

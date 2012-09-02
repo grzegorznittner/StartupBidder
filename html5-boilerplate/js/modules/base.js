@@ -539,15 +539,15 @@ ScriptClass.prototype.load = function(url, callback) {
 function MicroListingClass() {}
 pl.implement(MicroListingClass, {
     getHasValuation: function(listing) {
-        return listing.has_valuation;
+        return listing.valuation_data ? true : false;
     },
 
     getHasBmc: function(listing) {
-        return listing.has_bmc;
+        return listing.has_bmc ? true : false;
     },
 
     getHasIp: function(listing) {
-        return listing.has_ip;
+        return listing.has_ip ? true : false;
     },
 
     getHasDoc: function(listing) {
@@ -1257,7 +1257,7 @@ pl.implement(CompanyBannerClass, {
         var statusmsg = '';
         if (this.loggedin_profile && this.loggedin_profile_id === this.profile_id) {
             if (this.status === 'new') {
-                statusmsg = '<span class="normal">Submit to admin for approval to list this on startupbidder</span>';
+                statusmsg = '<span class="normal">To list publicly, submit to admin for approval</span>';
             }
             else if (this.status === 'posted') {
                 statusmsg = '<span class="inprogress">An admin is reviewing your listing for activation</span>';
@@ -1276,7 +1276,7 @@ pl.implement(CompanyBannerClass, {
         }
         else {
             if (this.status === 'new') {
-                statusmsg = '<span class="normal">Submit to admin for approval to list this on startupbidder</span>';
+                statusmsg = '<span class="normal">To list publicly, submit to admin for approval</span>';
             }
             else if (this.status === 'posted') {
                 statusmsg = '<span class="inprogress">An admin is reviewing this listing for activation</span>';
@@ -1440,16 +1440,6 @@ pl.implement(CompanyBannerClass, {
             url = '/' + page + '?id=' + self.listing_id;
             pl(this).attr({href: url});
         });
-        /*
-        pl('#num_comments').text(this.num_comments || 0);
-        pl('#num_qandas').text(this.num_qandas || 0);
-        if (this.loggedin_profile_id && this.loggedin_profile_id === this.profile_id) {
-            pl('#num_bids').text(this.num_bids || 0);
-        }
-        else {
-            pl('#num_bids').text('');
-        }
-        */
         if (!this.asked_fund) {
             pl('#bidstab').hide();
         }

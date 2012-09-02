@@ -188,8 +188,8 @@ a:focus, a:hover { cursor: pointer; }
 .socialbanner { height: 100px; position: relative; top: -10px; }
 .twitterbanner { height: 23px; top: 14px; position: absolute; }
 .gplusbanner { height: 20px; top: 44px; position: absolute; }
-.facebookbanner { height: 36px; top: 74px; position: absolute; }
-.facebookbanner div span iframe { height: 36px !important; }
+.facebookbanner { height: 126px; top: 74px; position: absolute; }
+.facebookbanner div span iframe { height: 126px !important; }
 
 /* company banner styles */
 .companyheader { width: 100%; height: 150px; border-bottom: 1px solid #ccc; padding: 20px 0; }
@@ -222,7 +222,7 @@ a:focus, a:hover { cursor: pointer; }
 }
 .companybannerfollowmsg {
     padding-top: 5px;
-    width: 500px;
+    width: 300px;
     text-align: right;
     z-index: 1000;
 }
@@ -915,6 +915,9 @@ width: 302px;
 .deactivatebox { display: none; padding-top: 10px; }
 .deactivatemsg { display: none; font-weight: bold; }
 .deactivatecancelbtn { display: none; margin-top: 10px; }
+.deletebox, .withdrawbox, .approvebox, .sendbackbox, .freezebox, .promotebox, .deactivatebox {
+    margin-top: 30px;
+}
 .mapaddresstext { font-weight: bold; }
 .addresstext { color: #555; font-size: 12px; font-weight: normal; padding-bottom: 8px; padding-top: 8px; margin-left: 13px; }
 .showmore { float: right; margin-right: 10px; font-weight: bold; margin-bottom: 10px; }
@@ -1239,6 +1242,14 @@ border: 1px solid #cccccc;
     left: 426px;
     width: 530px;
 }
+.valuationpanel .sideinfo, .valuationtypepanel .sideinfodisplay  {
+    left: 420px;
+    width: 530px;
+    top: 15px;
+}
+.valuationpanel .sideinfodisplay {
+    height: 180px;
+}
 .sideinfoitem { position: relative; }
 .sideinfoheader { font-size: 18px; font-weight: bold; line-height: 30px; }
 .basicspanel { overflow: visible; height: 650px; }
@@ -1513,7 +1524,7 @@ width: 292px;
 }
 .socialsidebox {
 width: 292px;
-height: 110px;
+height: 200px;
         padding-left: 10px;
 position: relative;
 }
@@ -1620,16 +1631,26 @@ position: relative;
   
 /* sideboxbutton */
 .sideboxbutton {
-        margin-top: 10px;
-background: #87c442;
-border: 1px solid #70b030;
-color: #fff;
-width: 150px;
-height: 30px;
-        font-size: 20px;
-        font-weight: bold;
-        text-align: center;
-        margin-bottom: 10px;
+    margin-top: 20px;
+    background: #e4e4e4;
+    border: 1px solid #70b030;
+    color: #55a4f2;
+    width: 150px;
+    height: 30px;
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 10px;
+}
+.inputbutton:hover, .smallinputbutton:hover, .gotobutton:hover, .sideboxbutton:hover, .companynav:hover {
+    border-color: #b0b3b6;
+    background: #d4d4d4;
+    color: #3584d2;
+}
+.inputbutton:active, .smallinputbutton:active, .gotobutton:active, .sideboxbutton:active, .companynav:active {
+    border-color: #909396;
+    background: #c4c4c4;
+    color: #1564a2;
 }
 
 
@@ -1858,15 +1879,15 @@ margin: 20px auto;
 
 /* valuation */
 .formhelptext { padding-left: 115px; width: 800px; }
-.revenuelabel { margin-top: 5px; }
+.revenuelabel { margin-top: 6px; }
 .valuationbutton { position: relative; top: 5px; padding-top: 7px; padding-bottom: 7px; }
-.valuationinput { width: 252px !important; }
 .valuationfield { height: 100px; width: 257px; text-align: right; margin-right: 50px; }
-.valuationtext {
-    font-size: 30px;
-    font-weight: bold;
-}
 .valuationpanel { overflow: visible !important; position: relative; margin-bottom: 40px; }
+.valuationtypepanel { overflow: visible !important; position: relative; min-height: 150px; margin-top: 100px; }
+.valuationlabel { font-size: 14px; line-height: 14px; margin-top: 10px; font-weight: normal; }
+.valuationhelptext { font-size: 14px; line-height: 14px; position: relative; top: 17px; }
+.valuationtext { font-size: 30px; font-weight: bold; position: relative; top: 11px; }
+.valuationinput { width: 252px !important; padding: 0 5px !important; }
 
 /* new listing styles */
 .bottombuttons {
@@ -1908,6 +1929,12 @@ margin: 20px auto;
     width: 32px;
     background-size: 32px 32px;
 }
+.developmentstageselect, .valuationtypeselect {
+    width: 265px !important;
+    height: 40px;
+    padding-right: 0px !important;
+}
+.isappreleased { height: 80px; }
 
 /* hidden */
 .initialhidden { display: none; }

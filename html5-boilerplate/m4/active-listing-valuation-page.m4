@@ -29,7 +29,10 @@ include(footer.m4)
 <script src="js/modules/base.js"></script>
 <script src="js/modules/forms.js"></script>
 <script src="js/modules/newlistingbase.js"></script>
-<script src="js/modules/newlistingvaluationpage.js"></script>
+<script src="js/modules/valuation.js"></script>
+<script>
+(new NewListingValuationClass()).load();
+</script>
 '
 include(promptie.m4)
 `

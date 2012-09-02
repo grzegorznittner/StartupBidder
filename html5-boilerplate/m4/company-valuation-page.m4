@@ -12,7 +12,7 @@ include(head.m4)
 include(header.m4)
 include(company-not-found.m4)
 include(company-banner.m4)
-companybannermacro(`', `', `companynavselected', `', `', `', `')
+companybannermacro(`', `companynavselected', `', `', `', `', `')
 `
 <div class="container preloader">
      <div class="preloaderfloater"></div>
@@ -21,7 +21,7 @@ companybannermacro(`', `', `companynavselected', `', `', `', `')
 
 <div class="container initialhidden wrapper">
 '
-include(bmc.m4)
+include(valuation.m4)
 `
 </div> <!-- end container -->
 </div> <!-- end main -->
@@ -30,9 +30,9 @@ include(bmc.m4)
 include(footer.m4)
 `
 <script src="js/modules/base.js"></script>
-<script src="js/modules/bmc.js"></script>
+<script src="js/modules/valuation.js"></script>
 <script>
-(new ModelPageClass()).load();
+(new ValuationPageClass()).load();
 </script>
 '
 include(promptie.m4)
