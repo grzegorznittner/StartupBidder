@@ -27,7 +27,13 @@ include(header.m4)
 <div class="span-24">
 
     <div class="initialhidden" id="notloggedin">
-        <div class="addlistingtitle">Sign in to add a listing to startupbidder</div>
+
+        <div class="addlistingtitle">
+            List your startup and get noticed by our
+            <a href="http://www.startupbidder.com/profile-list-page.html?type=dragons">dragon</a> investors.
+        </div>
+
+        <div class="addlistingsubtitle">Sign in to put your application or startup company on startupbidder today.</div>
 
         <div class="addlistingloginrow">
             <a id="google_login" href="">
@@ -59,9 +65,8 @@ include(header.m4)
     </div>
 
     <div class="initialhidden" id="newlisting">
-        <div class="addlistingtitle">Add a new listing to startupbidder.</div>
-    
-        <div class="addlistingtitle">Import your application from</div>
+
+        <div class="addlistingtitle">Import your application startup from</div>
     
         <div class="addlistingbuttonrow">
             <a href="/import-listing-page.html?type=AppStore">
@@ -76,11 +81,12 @@ include(header.m4)
              <a href="/import-listing-page.html?type=ChromeWebStore">
                 <div class="addlistingbutton addlistingbuttoncol investbutton">Chrome Web Store</div>
             </a>
+
         </div>
     
         <div class="addlistingtitle">or</div>
     
-        <div class="addlistingtitle">Import your company from</div>
+        <div class="addlistingtitle">Import your startup company from</div>
     
         <div class="addlistingbuttonrow">
             <a href="/import-listing-page.html?type=CrunchBase">

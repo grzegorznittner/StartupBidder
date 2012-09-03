@@ -1787,41 +1787,73 @@ pl.implement(InformationPageClass,{
 function DiscoverPageClass() {}
 pl.implement(DiscoverPageClass,{
     loadPage: function() {
-        var completeFunc = function(json) {
-                var header = new HeaderClass(),
-                    editedListing = new CompanyListClass({ propertykey: 'edited_listing', propertyissingle: true, companydiv: 'edited_listing', fullWidth: true }),
-                    usersListings = new CompanyListClass({ propertykey: 'users_listings', companydiv: 'users_listings', seeall: '/profile-listing-page.html?type=active', fullWidth: true }),
-                    monitoredListings = new CompanyListClass({ propertykey: 'monitored_listings', companydiv: 'monitored_listings', seeall: '/profile-listing-page.html?type=monitored', fullWidth: true }),
-                    topListings = new CompanyListClass({ propertykey: 'top_listings', companydiv: 'top_listings', seeall: '/main-page.html?type=top', exponential: true, fullWidth: true }),
-                    latestListings = new CompanyListClass({ propertykey: 'latest_listings', companydiv: 'latest_listings', seeall: '/main-page.html?type=latest', fullWidth: true }),
-                    categories = json.categories || {},
-                    locations = json.top_locations || {},
-                    categoryList = new BaseListClass(categories, 'category', 1, 'category'),
-                    locationList = new BaseListClass(locations, 'location', 1, 'location');
-                header.setLogin(json);
+        var self = this,
+            complete = function(json) {
+                (new HeaderClass()).setLogin(json);
+                self.display(json);
                 pl('.preloader').hide();
                 pl('.wrapper').show();
-                categoryList.display();
-                locationList.display();
-                if (json.edited_listing) {
-                    pl('#edited_listing_wrapper').show();
-                    editedListing.storeList(json);
-                }
-                if (json.users_listings && json.users_listings.length > 0) {
-                    pl('#users_listings_wrapper').show();
-                    usersListings.storeList(json);
-                }
-                if (json.monitored_listings && json.monitored_listings.length > 0) {
-                   pl('#monitored_listings_wrapper').show();
-                    monitoredListings.storeList(json);
-                }
-                topListings.storeList(json);
-                latestListings.storeList(json);
             },
-            ajax = new AjaxClass('/listings/discover/', 'top_listings', completeFunc);
+            ajax = new AjaxClass('/listings/discover/', 'top_listings', complete);
         ajax.call();
+    },
+
+    store: function(json) {
+        if (json) {
+            CollectionsClass.prototype.merge(this, json);
+        }
+    },
+ 
+    display: function(json) {
+        if (json) {
+            this.store(json);
+        }
+        this.displayExistingListing();
+        this.displayListings();
+        this.displayCategories();
+        this.displayLocations();
+    },
+
+    displayListings: function() {
+        var monitoredListings = new CompanyListClass({
+                propertykey: 'monitored_listings', companydiv: 'monitored_listings', seeall: '/profile-listing-page.html?type=monitored', fullWidth: true }),
+            topListings = new CompanyListClass({
+                propertykey: 'top_listings', companydiv: 'top_listings', seeall: '/main-page.html?type=top', exponential: true, fullWidth: true }),
+            latestListings = new CompanyListClass({
+                propertykey: 'latest_listings', companydiv: 'latest_listings', seeall: '/main-page.html?type=latest', fullWidth: true });
+        topListings.storeList(this);
+        latestListings.storeList(this);
+        if (this.monitored_listings && this.monitored_listings.length > 0) {
+           monitoredListings.storeList(this);
+           pl('#monitored_listings_wrapper').show();
+        }
+    },
+
+    displayCategories: function() {
+        var categories = this.categories || {},
+            categoryList = new BaseListClass(categories, 'category', 1, 'category');
+        categoryList.display();
+    },
+
+    displayLocations: function() {
+        var locations = this.top_locations || {},
+            locationList = new BaseListClass(locations, 'location', 1, 'location');
+        locationList.display();
+    },
+
+    displayExistingListing: function() {
+        var self = this;
+        if (this.loggedin_profile && this.loggedin_profile.edited_listing) {
+            pl('#editlisting').bind('click', function() {
+                var url = self.loggedin_profile && self.loggedin_profile.edited_status === 'new'
+                    ? '/new-listing-basics-page.html'
+                    : '/company-page.html?id=' + self.loggedin_profile.edited_listing;
+                document.location = url;
+            });
+            pl('#existinglisting').show();
+        }
     }
-});
+ });
 
 /* add listing page */
 function AddListingClass() { }

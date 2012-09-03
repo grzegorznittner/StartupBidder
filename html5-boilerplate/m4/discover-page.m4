@@ -15,7 +15,7 @@ include(header.m4)
     <div class="container">
         <span class="bannertext span-24">
             <div class="welcometitle" id="welcometitle">
-                <div>Find a startup and invest</div>
+                <div>Getting startups funded</div>
             </div> 
             <div class="welcometext" id="welcometext">
                 <a href="/about-page.html" class="welcomelink">Learn more...</a>
@@ -31,30 +31,27 @@ include(header.m4)
     <div class="preloadericon"></div>
 </div>
 
-<!-- left column -->
-<div class="span-16">
-    <div class="initialhidden wrapper">
+<div class="span-24 initialhidden wrapper">
+    <div class="initialhidden" id="existinglisting">
+        <div class="addlistingtitle">You have a pending listing</div>
+        <div class="addlistingbutton investbutton" id="editlisting">EDIT LISTING</div>
+    </div>
+</div>
 
-        <div class="boxtitle smokegrey">TOP LISTINGS</div>
-        <div id="top_listings"></div>
-    <!--
-        <div class="boxtitle smokegrey">MOST FUNDED</div>
-        <div id="valuation_listings"></div>
-    -->
-        <div class="boxtitle smokegrey">JUST LISTED</div>
-        <div id="latest_listings"></div>
+<div class="span-16 initialhidden wrapper">
+    <div class="boxtitle">TOP LISTINGS</div>
+    <div id="top_listings"></div>
 
-    </div> <!-- end wrapper -->
-    
-</div> <!-- end left column -->
+    <div class="boxtitle">JUST LISTED</div>
+    <div id="latest_listings"></div>
+
+    <div id="monitored_listings_wrapper" class="initialhidden">
+        <div class="boxtitle">WATCHING</div>
+        <div id="monitored_listings"></div>
+    </div>
+ </div> 
 
 <div class="initialhidden wrapper">
-
-    <div class="span-8 preloader">
-        <div class="preloaderfloater"></div>
-        <div class="preloadericon"></div>
-    </div>
-
 '
 include(main-rightcol.m4)
 `

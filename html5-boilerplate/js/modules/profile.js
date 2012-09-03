@@ -548,6 +548,13 @@ pl.implement(ProfileListClass, {
         if (this.type !== 'all') {
             pl('#typetitle').text(this.type === 'listers' ? 'Entrepreneurs' : SafeStringClass.prototype.ucfirst(this.type));
         }
+        if (this.type === 'listers') {
+            pl('#listersubtitle').show();
+        }
+        else if (this.type === 'dragons') {
+            pl('#dragonsubtitle').show();
+        }
+
         this.displayList(json.users);
     },
 

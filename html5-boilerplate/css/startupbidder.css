@@ -920,7 +920,7 @@ width: 302px;
 }
 .mapaddresstext { font-weight: bold; }
 .addresstext { color: #555; font-size: 12px; font-weight: normal; padding-bottom: 8px; padding-top: 8px; margin-left: 13px; }
-.showmore { float: right; margin-right: 10px; font-weight: bold; margin-bottom: 10px; }
+.showmore { float: right; margin-right: 10px; font-weight: bold; margin-bottom: 5px; margin-top: -5px; }
 .profilelistshowmore { padding-right: 165px; padding-top: 20px; }
 
 /* bids */
@@ -1662,13 +1662,28 @@ position: relative;
     font-size: 30px;
     margin-top: 20px;
 }
+.addlistingsubtitle {
+    font-family: "Adelle","Helvetica Neue",Helvetica,Arial,sans-serif;
+    text-align:center;
+    color:#666;
+    font-size:18px;
+    margin-top:5px;
+}
+.addlistingsubtitlerightcol {
+    font-family: "Adelle","Helvetica Neue",Helvetica,Arial,sans-serif;
+    text-align:center;
+    color:#666;
+    font-size:18px;
+    margin-top: -10px;
+    margin-bottom: 35px;
+}
 .addlistingbutton {
-        text-align: center;
-width: 300px;
-margin: 20px auto;
+    text-align: center;
+    width: 300px;
+    margin: 20px auto;
 }
 .addlistingmsg {
-        text-align: center;
+    text-align: center;
     font-size: 30px;
     margin-top: 10px;
 }

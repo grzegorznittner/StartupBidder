@@ -20,6 +20,10 @@ include(not-found.m4)
 <div class="span-24">
     <div class="addlistingtitle">The <span id="typetitle">Users</span> on Startupbidder</div>
 
+    <div class="addlistingsubtitle initialhidden" id="listersubtitle">Visionaries creating great startups and applications.</div>
+
+    <div class="addlistingsubtitle initialhidden" id="dragonsubtitle">Experienced investors looking for great startups and applications.</div>
+
     <div id="profilelistmsg"></div>
 
     <div class="addlistingcontainer" id="profilelistcontainer">
