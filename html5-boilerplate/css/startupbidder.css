@@ -248,7 +248,7 @@ a:focus, a:hover { cursor: pointer; }
     margin-right: 9px;
     padding: 10px 5px 0;
     text-align: center;
-    width: 110px;
+    width: 85px;
     border-bottom: none;
 }
 .companynavlast { margin-right: 0; }
@@ -260,6 +260,12 @@ a:focus, a:hover { cursor: pointer; }
     height: 31px;
     padding-left: 4px;
     padding-right: 4px;
+}
+.companynavpresentation {
+    width: 110px;
+}
+.companynavinvestments {
+    width: 105px;
 }
 
 /* company half styles */
