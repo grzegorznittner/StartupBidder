@@ -396,6 +396,8 @@ public class ObjectifyDatastoreDAO {
 			user.location = newUser.location;
 			user.phone = newUser.phone;
 			user.investor = newUser.investor;
+			user.dragon = newUser.dragon;
+			user.lister = newUser.lister;
 			user.notifyEnabled = newUser.notifyEnabled;
 			user.userClass = newUser.userClass;
 			user.password = newUser.password;
