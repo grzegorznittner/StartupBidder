@@ -55,12 +55,12 @@ define(`companybannermacro', `
                     </div>
                 </a>
                 <a class="hoverlink companynavlink" href="#" id="presentationtab">
-                    <div class="companynav hoverlink $4" id="presentationtab">
+                    <div class="companynav hoverlink companynavpresentation $4" id="presentationtab">
                         PRESENTATION
                     </div>
                 </a>
                 <a class="hoverlink companynavlink" href="#" id="bidstab">
-                    <div class="companynav hoverlink $5" id="bidstab">
+                    <div class="companynav hoverlink companynavinvestments $5" id="bidstab">
                         INVESTMENTS <!-- <span id="num_bids"></span> -->
                     </div>
                 </a>
