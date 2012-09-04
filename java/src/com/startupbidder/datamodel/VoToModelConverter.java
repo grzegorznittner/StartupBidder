@@ -122,6 +122,7 @@ public class VoToModelConverter {
 		listing.answer24 = listingVO.getAnswer24();
 		listing.answer25 = listingVO.getAnswer25();
 		listing.answer26 = listingVO.getAnswer26();
+		listing.answer27 = listingVO.getAnswer27();
 		return listing;
 	}
 	
@@ -219,6 +220,8 @@ public class VoToModelConverter {
 			listing.answer25 = property.getPropertyValue();
 		} else if (name.equalsIgnoreCase("answer26")) {
 			listing.answer26 = property.getPropertyValue();
+		} else if (name.equalsIgnoreCase("answer27")) {
+			listing.answer27 = property.getPropertyValue();
 		} else if (name.equalsIgnoreCase("logoBase64")) {
 			listing.logoBase64 = property.getPropertyValue();
 		} else if (name.equalsIgnoreCase("contact_email")) {

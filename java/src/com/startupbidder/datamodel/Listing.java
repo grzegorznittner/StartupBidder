@@ -148,6 +148,7 @@ public class Listing extends BaseObject<Listing> {
 	public String answer24;
 	public String answer25;
 	public String answer26;
+	public String answer27;
 	
 	public String valuationData;
 	

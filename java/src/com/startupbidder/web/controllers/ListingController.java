@@ -714,6 +714,7 @@ public class ListingController extends ModelDrivenController {
 			log.log(Level.INFO, "Document not found or blob not available!");
 			headers.setStatus(500);
 		}
+		model = "Returning logo for listing " + listingId;
 		
 		return headers;
 	}
@@ -741,7 +742,7 @@ public class ListingController extends ModelDrivenController {
 			log.log(Level.INFO, "Picture not found or blob not available!");
 			headers.setStatus(500);
 		}
-		
+		model = "Returning picture " + picNr + " for listing " + listingId;
 		return headers;
 	}
 

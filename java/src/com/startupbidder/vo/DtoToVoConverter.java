@@ -236,6 +236,7 @@ public class DtoToVoConverter {
 		listing.setAnswer24(listingDTO.answer24);
 		listing.setAnswer25(listingDTO.answer25);
 		listing.setAnswer26(listingDTO.answer26);
+		listing.setAnswer27(listingDTO.answer27);
 		
 		listing.setValuationData(listingDTO.valuationData);
 		return listing;
@@ -426,7 +427,7 @@ public class DtoToVoConverter {
 			break;
 		case NEW_COMMENT_FOR_YOUR_LISTING:
 			notif.setTitle("Your listing '" + listingName + "' received a comment");
-			notif.setText1("Comment from user '" + notifDTO.userNickname + "': " + notifDTO.message);
+			notif.setText1("Comment from user '" + notifDTO.userNickname + "': ");
 			notif.setText2(notifDTO.message);
 			notif.setText3("You can <a href=\"" + listingLink + "\">View or Reply To</a> this comment on startupbidder.");
 			break;
