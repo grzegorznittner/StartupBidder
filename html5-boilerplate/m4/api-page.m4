@@ -527,7 +527,7 @@ include(header.m4)
             </ul>
             <h4>Response</h4>
                 <p>NOTE: fields answer1 through answer10 are used for the Business Model Canvas construction, fields
-                answer 11 through answer 26 are used for presentation construction</p>
+                answer 11 through answer 27 are used for presentation construction</p>
             <ul>
                 <li><code>login_url</code> URL to use for site login action</li>
                 <li><code>logout_url</code> URL to use for site logout action</li>
@@ -593,6 +593,7 @@ include(header.m4)
                 <li><code class="apiprop">.answer7</code> CUSTOMER RELATIONSHIPS</li>
                 <li><code class="apiprop">.answer8</code> COST STRUCTURE</li>
                 <li><code class="apiprop">.answer9</code> REVENUE STREAMS</li>
+                <li><code class="apiprop">.answer27</code> ELEVATOR PITCH</li>
                 <li><code class="apiprop">.answer10</code> PROBLEM</li>
                 <li><code class="apiprop">.answer11</code> SOLUTION</li>
                 <li><code class="apiprop">.answer12</code> FEATURES AND BENEFITS</li>
@@ -788,6 +789,7 @@ include(header.m4)
     answer24: :answer24,
     answer25: :answer25,
     answer26: :answer26,
+    answer27: :answer27,
     logo_url: :logo_url,
     business_plan_url: :business_plan_url,
     presentation_url: :presentation_url,

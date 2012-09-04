@@ -33,10 +33,10 @@
             <div class="ipslide ipslide2">
                 <div class="ipheader">
                     <div class="noimage iplogo"></div>
-                    <div class="iptitle">Summary</div>
+                    <div class="iptitle">Elevator Pitch</div>
                 </div>
                 <div class="ipline"></div>
-                <div class="ipcontent" id="summaryip"></div>
+                <div class="ipcontent" id="answer27ip"></div>
             </div>
 
             <div class="ipslide ipslide3">

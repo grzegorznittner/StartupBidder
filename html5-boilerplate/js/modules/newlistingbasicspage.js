@@ -96,7 +96,6 @@ pl.implement(NewListingBasicsClass, {
 
     displayValuationButton: function() {
         if (MicroListingClass.prototype.getHasValuation(this.base.listing)) {
-        console.log('foo');
             pl('#valuationbutton').text('EDIT VALUATION');
         }
     },

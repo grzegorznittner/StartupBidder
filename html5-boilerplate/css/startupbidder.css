@@ -15,7 +15,7 @@ body.nearby-page > #wrap > #main > div.container > div.nearbywrapper { height: 1
 #newlistingsubmitmain { padding-bottom: 10px; }
 #footer {
     clear: both;
-    height: 200px;
+    height: 210px;
     margin-top: -280px;
     padding-top: 80px;
     position: relative;
@@ -28,7 +28,7 @@ body.nearby-page > #wrap > #main > div.container > div.nearbywrapper { height: 1
 .footercontainer {
     background: #ddd;
     border-top: 1px dashed #ccc;
-    height: 200px;
+    height: 210px;
 }
 .footercol {
     color: #444 !important;
@@ -188,8 +188,7 @@ a:focus, a:hover { cursor: pointer; }
 .socialbanner { height: 100px; position: relative; top: -10px; }
 .twitterbanner { height: 23px; top: 14px; position: absolute; }
 .gplusbanner { height: 20px; top: 44px; position: absolute; }
-.facebookbanner { height: 126px; top: 74px; position: absolute; }
-.facebookbanner div span iframe { height: 126px !important; }
+.facebookbanner { height: 30px; top: 74px; position: absolute; overflow: visible; }
 
 /* company banner styles */
 .companyheader { width: 100%; height: 150px; border-bottom: 1px solid #ccc; padding: 20px 0; }
@@ -1523,10 +1522,11 @@ width: 292px;
        padding-bottom: 10px;
 }
 .socialsidebox {
-width: 292px;
-height: 200px;
-        padding-left: 10px;
-position: relative;
+    width: 292px;
+    height: 115px;
+    padding-left: 10px;
+    position: relative;
+    overflow: visible;
 }
 .toppreviewbutton {
     margin: 35px 6px 25px auto;

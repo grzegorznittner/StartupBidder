@@ -45,9 +45,9 @@ pl.implement(NewListingQAClass, {
     },
     bindEvents: function() {
         var self = this,
-            textFields = ['summary'],
+            textFields = [],
             m = 10,
-            n = 26,
+            n = 27,
             i,
             id,
             field;
@@ -63,16 +63,9 @@ pl.implement(NewListingQAClass, {
             if (this.base.displayNameOverrides[id]) {
                 field.fieldBase.setDisplayName(this.base.displayNameOverrides[id]);
             }
-            field.fieldBase.addValidator(ValidatorClass.prototype.makeLengthChecker(16, 1000));
+            field.fieldBase.addValidator(ValidatorClass.prototype.makeLengthChecker(1, 1000));
             field.fieldBase.validator.postValidator = this.ip.genDisplay(field, this.base.genDisplayCalculatedIfValid(field));
-            field.bindEvents({noEnterKeySubmit: true, iconid: 'ipfieldicon', customTabKey: function(e) { // tab has problems with auto-scroll
-                /*
-                var id = e && e.target && e.target.id || '',
-                    num = id === 'summary' ? 2 : 1 * (id.replace(/answer/,'') || 10) - 7;
-                setTimeout(function() {
-                    self.ip.setPage(num);
-                }, 500);
-                */
+            field.bindEvents({noEnterKeySubmit: true, iconid: 'ipfieldicon', customTabKey: function(e) {
                 return false;
             }});
             this.base.fields.push(field);

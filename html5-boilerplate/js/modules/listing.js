@@ -133,7 +133,6 @@ pl.implement(ListingClass, {
             else {
                 text = 'Add Valuation';
             }
-            console.log(text);
             url = '/new-listing-valuation-page.html';
         }
         else if (this.status === 'posted' || this.status === 'active') {

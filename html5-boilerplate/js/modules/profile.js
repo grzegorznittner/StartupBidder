@@ -270,7 +270,6 @@ pl.implement(ProfileListingPageClass, {
                 header.setLogin(json);
                 profile.display(json);
                 companyList.storeList(json);
-                console.log(self.type);
                 pl('.titletype').text(self.type === 'monitored' ? 'WATCHED' : self.type.toUpperCase());
 
                 if (profile.isMine()) {

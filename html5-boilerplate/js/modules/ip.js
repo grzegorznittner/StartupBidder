@@ -17,7 +17,7 @@ pl.implement(IPClass, {
                 ? 'Asking ' + CurrencyClass.prototype.format(listing.suggested_amt) + ' for ' + PercentClass.prototype.format(listing.suggested_pct) + '%'
                 : 'Not asking for funds at this time.',
             m = 10,
-            n = 26,
+            n = 27,
             i,
             field,
             val,
@@ -32,7 +32,6 @@ pl.implement(IPClass, {
         pl('.ipdatetext').text(date);
         pl('.ippagetotal').text(self.pagetotal);
         pl('.ippagenum').text(self.page);
-        pl('#summaryip').html(HTMLMarkup.prototype.stylize(listing.summary, 'ip'));
         for (i = m; i <= n; i++) {
             field = 'answer' + i;
             sel = '#' + field + 'ip';
