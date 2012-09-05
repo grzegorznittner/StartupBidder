@@ -434,7 +434,7 @@ Leave everyone excited and wanting more.
             <div class="iparrow ipright"></div>
             <div class="iparrow ipfirst"></div>
             <div class="ipfooter ipdata"><span class="ipcorp ipcorpname"></span><span class="ipdate ipdatetext"></span></div>
-            <div class="ipfooter ippage"><span class="ippagenum"></span> of <span class="ippagetotal"></span></div>
+            <div class="ipfooter ippage"><span class="ippagenum"></span>&nbsp;of&nbsp;<span class="ippagetotal"></span></div>
     </div>
 </div>
 <!-- end presentation -->

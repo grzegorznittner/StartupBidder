@@ -6,7 +6,7 @@ function IPClass() {
 pl.implement(IPClass, {
     display: function(listing) {
         var self = this,
-            logo = this.logo ? 'url(' + this.logo + ') no-repeat scroll center center transparent' : null,
+            logo = listing.logo ? 'url(' + listing.logo + ') no-repeat scroll center center transparent' : null,
             corp = listing.title || 'Company name here',
             date = listing.created_date ? DateClass.prototype.format(listing.created_date) : DateClass.prototype.today(),
             mantra = listing.mantra || 'Company mantra here',
