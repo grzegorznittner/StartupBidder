@@ -48,10 +48,8 @@ public class DatastoreMigration {
 		List<Listing> listingMigration = new ArrayList<Listing>();
 		
 		for (Listing listing : listings.values()) {
-			if (StringUtils.equals(listing.address, listing.briefAddress)) {
-				if (StringUtils.equalsIgnoreCase(listing.city, "dusseldorf")) {
-					listing.city = "d\u00fcsseldorf";
-				}
+			if (StringUtils.equalsIgnoreCase(listing.city, "dusseldorf")) {
+				listing.city = "d\u00fcsseldorf";
 				String previousAddress = listing.address;
 				String briefAddress = StringUtils.capitalize(listing.city)
 						+ (listing.usState != null ? ", " + listing.usState.toUpperCase() : "") + ", "

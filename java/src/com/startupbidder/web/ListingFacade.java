@@ -2,7 +2,6 @@ package com.startupbidder.web;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -53,7 +52,6 @@ import com.google.appengine.api.images.Image;
 import com.google.appengine.api.images.ImagesService;
 import com.google.appengine.api.images.ImagesServiceFactory;
 import com.google.appengine.api.images.Transform;
-import com.google.appengine.api.memcache.Expiration;
 import com.google.appengine.api.memcache.MemcacheService;
 import com.google.appengine.api.memcache.MemcacheServiceFactory;
 import com.google.appengine.api.taskqueue.Queue;
@@ -98,10 +96,7 @@ public class ListingFacade {
 	
 	public static enum UpdateReason {NEW_BID, BID_UPDATE, NEW_COMMENT, DELETE_COMMENT, NEW_MONITOR, DELETE_MONITOR, QUESTION_ANSWERED, NONE};
 	public static final String MEMCACHE_ALL_LISTING_LOCATIONS = "AllListingLocations";
-	public static final String MEMCACHE_TOP_LISTINGS_TILES = "TopListingsTiles";
-	public static final String MEMCACHE_CLOSING_LISTINGS_TILES = "ClosingListingsTiles";
-	public static final String MEMCACHE_LATEST_LISTINGS_TILES = "LatestListingsTiles";
-
+	
 	private final static int PICTURE_HEIGHT = 452;
 	private final static int PICTURE_WIDTH = 622;
 	private final static int LOGO_HEIGHT = 146;
@@ -1682,43 +1677,69 @@ public class ListingFacade {
 
         Map<String, Location> locations = new HashMap<String, Location>();
         List<Listing> listings = getDAO().getAllListingsInternal();
+        List<ListingLocation> listingLocs = new ArrayList<ListingLocation>();
         log.log(Level.INFO, "Starting listing calculation for " + listings.size() + " listings");
-          for (Listing listing : listings) {
-            if (listing.state == Listing.State.ACTIVE) {
-                // updating top locations data
-                Location loc = locations.get(listing.briefAddress);
-                if (loc != null) {
-                    loc.value++;
-                } else {
-                    locations.put(listing.briefAddress, new Location(listing.briefAddress));
-                }
-                // updating top categories data
-                Category cat = categories.get(listing.category);
-                if (cat != null) {
-                    cat.count++;
-                }
-            }
-        }
+		for (Listing listing : listings) {
+			if (listing.state == Listing.State.ACTIVE) {
+				listingLocs.add(new ListingLocation(listing));
+				// updating top locations data
+				Location loc = locations.get(listing.briefAddress);
+				if (loc != null) {
+					loc.value++;
+				} else {
+					locations.put(listing.briefAddress, new Location(
+							listing.briefAddress));
+				}
+				// updating top categories data
+				Category cat = categories.get(listing.category);
+				if (cat != null) {
+					cat.count++;
+				}
+			}
+		}
         log.log(Level.INFO, "Generated " + locations.size() + " locations for " + listings.size() + " listings");
 
         getDAO().storeCategories(new ArrayList<Category>(categories.values()));
-        log.log(Level.INFO, "Updated count statistics for " + c.size() + " categories ");
-        getDAO().storeLocations(new ArrayList<Location>(locations.values()));
-        log.log(Level.INFO, "Updated location statistics for " + locations.size() + " locations");
+        getDAO().storeLocations(new ArrayList<Location>(locations.values()), listingLocs);
+        
+        StringBuffer buf = new StringBuffer();
+        buf.append("Categories:</br>\n<ul>\n");
+        for (Category cat : c) {
+        	buf.append("<li>").append(cat.name).append("\n");
+        }
+        buf.append("</ul>\nLocations:</br>\n<ul>\n");
+        for (Location loc : locations.values()) {
+        	buf.append("<li>").append(loc.briefAddress).append(" = ").append(loc.value).append("\n");
+        }
+        buf.append("</ul>\nListing locations:</br>\n<ul>\n");
+        for (ListingLocation loc : listingLocs) {
+        	buf.append("<li>").append(loc.latitude).append(", ").append(loc.longitude).append("\n");
+        }
+        buf.append("</ul>\n\n");
+        log.log(Level.INFO, "Updated location/category data</br>\n" + buf.toString());
 
-        return "Updated statistics for " + c.size() + " categories and " + locations.size() + " locations";
+        MemcacheService mem = MemcacheServiceFactory.getMemcacheService();
+		mem.delete(MEMCACHE_ALL_LISTING_LOCATIONS);
+		
+        return "Updated statistics:</br>\n" + buf.toString();
     }
     
 	public String updateAllListingStatistics() {
 		List<Listing> listings = getDAO().getAllListingsInternal();
         log.log(Level.INFO, "Starting stat update for " + listings.size() + " listings");
+        StringBuffer buf = new StringBuffer();
+        buf.append("Statistics:</br>\n<ul>\n");
 		for (Listing listing : listings) {
-			calculateListingStatistics(listing.id);
+			ListingStats stats = calculateListingStatistics(listing.id);
+			buf.append("<li>").append(listing.name).append(" = ").append(stats.score).append("\n");
 		}
+		buf.append("</ul>\n\n");
+		
 		MemcacheService mem = MemcacheServiceFactory.getMemcacheService();
-		mem.delete(MEMCACHE_TOP_LISTINGS_TILES);
+		mem.delete(MEMCACHE_ALL_LISTING_LOCATIONS);
+		
 		log.log(Level.INFO, "Updated stats for " + listings.size() + " listings");
-        return "Updated stats for " + listings.size() + " listings";
+        return "Updated stats for " + listings.size() + " listings.</br>\n" + buf.toString();
 	}
 
     public String updateAllListingDocuments() {

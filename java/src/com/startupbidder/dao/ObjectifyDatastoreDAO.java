@@ -593,6 +593,7 @@ public class ObjectifyDatastoreDAO {
 					getOfy().put(cat);
 				}
 			}
+			mem.put(ListingFacade.MEMCACHE_ALL_LISTING_LOCATIONS, result);
 		}
 		if (listing.state == Listing.State.CLOSED || listing.state == Listing.State.WITHDRAWN) {
 			getOfy().delete(new ListingLocation(listing));
@@ -615,6 +616,7 @@ public class ObjectifyDatastoreDAO {
 					getOfy().put(cat);
 				}
 			}
+			mem.put(ListingFacade.MEMCACHE_ALL_LISTING_LOCATIONS, result);
 		}
 	}
 	
@@ -1264,15 +1266,16 @@ public class ObjectifyDatastoreDAO {
 		return categories;
 	}
 
-	public void storeLocations(List<Location> locations) {
-        log.info("Storing locations: " + locations);
-		Collections.sort(locations, new Location.TopComparator());
-		List<Location> topLocations = locations.subList(0, locations.size() > 20 ? 20 : locations.size() - 1);
-        log.info("Top locations: " + topLocations);
-		
+	public void storeLocations(List<Location> locations, List<ListingLocation> listingLocations) {
+        log.info("Storing locations: " + locations.size()
+        		+ " and listing locations: " + listingLocations.size());
 		QueryResultIterable<Key<Location>> locIt = getOfy().query(Location.class).fetchKeys();
 		getOfy().delete(locIt);
-		getOfy().put(topLocations);
+		getOfy().put(locations);
+
+		QueryResultIterable<Key<ListingLocation>> listLocIt = getOfy().query(ListingLocation.class).fetchKeys();
+		getOfy().delete(listLocIt);		
+		getOfy().put(listingLocations);
 	}
 	
 	public void storeCategories(List<Category> categories) {
