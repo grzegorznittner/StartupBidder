@@ -2398,9 +2398,9 @@ public class ListingFacade {
 			stateName = StringUtils.lowerCase(region);
 		}
 		String cityName = StringUtils.lowerCase(city);
-		String briefAddress = StringUtils.capitalize(countryName)
+		String briefAddress = StringUtils.capitalize(cityName)
 				+ (stateName != null ? ", " + stateName.toUpperCase() : "") + ", "
-				+ StringUtils.capitalize(cityName);
+				+ StringUtils.capitalize(countryName);
 		String latLongStr[] = latLong != null ? latLong.split(",") : new String[]{"", ""};
 		Double latitude = NumberUtils.toDouble(latLongStr[0]);
 		Double longitude = NumberUtils.toDouble(latLongStr[1]);

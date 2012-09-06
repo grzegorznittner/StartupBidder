@@ -57,10 +57,12 @@ public class SystemController extends ModelDrivenController {
                 return importStartuplyData(request);
 			} else if("export-datastore".equalsIgnoreCase(getCommand(1))) {
 				return exportDatastore(request);
-			} else if("migrate201208222146_to_current".equalsIgnoreCase(getCommand(1))) {
-				return migrate201208222146_to_current(request);
+			} else if("migrate201209051446_to_current".equalsIgnoreCase(getCommand(1))) {
+				return migrate201209051446_to_current(request);
 			} else if("associate_mock_images".equalsIgnoreCase(getCommand(1))) {
 				return associateMockImages(request);
+			} else if("update_avatars_dragon_lister".equalsIgnoreCase(getCommand(1))) {
+				return updateAvatarsDragonLister(request);
 			}
 		}
 		return null;
@@ -76,12 +78,22 @@ public class SystemController extends ModelDrivenController {
 		return headers;
 	}
 
-	private HttpHeaders migrate201208222146_to_current(HttpServletRequest request) {
-		HttpHeaders headers = new HttpHeadersImpl("migrate201208222146_to_current");
+	private HttpHeaders updateAvatarsDragonLister(HttpServletRequest request) {
+		HttpHeaders headers = new HttpHeadersImpl("update_avatars_dragon_lister");
 		
 		UserVO loggedInUser = getLoggedInUser();
 		if (loggedInUser != null && loggedInUser.isAdmin()) {
-			model = DatastoreMigration.migrate201208222146_to_current();
+			model = DatastoreMigration.updateAvatarsAndDragonListerFlag();
+		}
+		return headers;
+	}
+
+	private HttpHeaders migrate201209051446_to_current(HttpServletRequest request) {
+		HttpHeaders headers = new HttpHeadersImpl("migrate201209051446_to_current");
+		
+		UserVO loggedInUser = getLoggedInUser();
+		if (loggedInUser != null && loggedInUser.isAdmin()) {
+			model = DatastoreMigration.migrate201209051446_to_current();
 		}
 		return headers;
 	}

@@ -35,6 +35,43 @@ public class DatastoreMigration {
 		return ofy;
 	}
 	
+	public static String migrate201209051446_to_current() {
+		StringBuffer report = new StringBuffer();
+		
+		/* migrating Listings
+		 * - fixing address and brief_address fields - mixed position of country and city
+		 */
+		report.append("Listing migration:<br/>\n<ul>\n");
+		
+		QueryResultIterable<Key<Listing>> l = getOfy().query(Listing.class).fetchKeys();
+		Map<Key<Listing>, Listing> listings = getOfy().get(l);
+		List<Listing> listingMigration = new ArrayList<Listing>();
+		
+		for (Listing listing : listings.values()) {
+			if (StringUtils.equals(listing.address, listing.briefAddress)) {
+				if (StringUtils.equalsIgnoreCase(listing.city, "dusseldorf")) {
+					listing.city = "d\u00fcsseldorf";
+				}
+				String previousAddress = listing.address;
+				String briefAddress = StringUtils.capitalize(listing.city)
+						+ (listing.usState != null ? ", " + listing.usState.toUpperCase() : "") + ", "
+						+ StringUtils.capitalize(listing.country);
+				listing.address = listing.briefAddress = briefAddress;
+				
+				listing.notes += "Fixed brief address on " + new Date() + "\n";
+				listingMigration.add(listing);
+				report.append("<li>migrating listing '" + listing.name + "' - new address: " + listing.address
+						+ " <- old address: " + previousAddress);
+			} else {
+				report.append("<li>listing '" + listing.name + "' not migrated");
+			}
+		}
+		getOfy().put(listingMigration);
+		report.append("<br/>\n</ul>\n");
+		
+		return report.toString();
+	}
+	
 	public static String associateImages() {
 		StringBuffer report = new StringBuffer();
 		report.append("Listing's migration:<br/>\n<ul>\n");
@@ -66,7 +103,7 @@ public class DatastoreMigration {
 		"http://avatarek.pl/ryTrzr8Qsu_1.jpg", "http://avatarek.pl/BWs3D7r2NT_1.jpg", "http://avatarek.pl/RNsTS6MRzN_1.jpg",
 		};
 
-	public static String migrate201208222146_to_current() {
+	public static String updateAvatarsAndDragonListerFlag() {
 		StringBuffer report = new StringBuffer();
 		
 		/* migrating SBUser
