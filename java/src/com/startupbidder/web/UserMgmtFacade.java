@@ -113,11 +113,11 @@ public class UserMgmtFacade {
 			return null;
 		}
 		SBUser userDTO = getDAO().getUserByEmail(fbUser.getEmail());
-		userDTO = updateUserFacebookData(fbUser, userDTO);
-		UserVO user = DtoToVoConverter.convert(userDTO);
-		if (user == null) {
+		if (userDTO == null) {
 			return null;
 		}
+		userDTO = updateUserFacebookData(fbUser, userDTO);
+		UserVO user = DtoToVoConverter.convert(userDTO);
 		applyUserStatistics(user, user);
 		return user;
 	}
@@ -127,11 +127,11 @@ public class UserMgmtFacade {
 			return null;
 		}
 		SBUser userDTO = getDAO().getUserByTwitter(twitterUser.getId());
-		userDTO = updateUserTwitterData(twitterUser, userDTO);
-		UserVO user = DtoToVoConverter.convert(userDTO);
-		if (user == null) {
+		if (userDTO == null) {
 			return null;
 		}
+		userDTO = updateUserTwitterData(twitterUser, userDTO);
+		UserVO user = DtoToVoConverter.convert(userDTO);
 		applyUserStatistics(user, user);
 		return user;
 	}
