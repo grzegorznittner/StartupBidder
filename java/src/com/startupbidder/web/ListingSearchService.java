@@ -9,16 +9,15 @@ import java.util.logging.Logger;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
-import com.google.appengine.api.search.AddException;
-import com.google.appengine.api.search.Consistency;
 import com.google.appengine.api.search.Cursor;
 import com.google.appengine.api.search.Document;
 import com.google.appengine.api.search.Field;
 import com.google.appengine.api.search.GeoPoint;
+import com.google.appengine.api.search.GetRequest;
+import com.google.appengine.api.search.GetResponse;
 import com.google.appengine.api.search.Index;
 import com.google.appengine.api.search.IndexSpec;
-import com.google.appengine.api.search.ListRequest;
-import com.google.appengine.api.search.ListResponse;
+import com.google.appengine.api.search.PutException;
 import com.google.appengine.api.search.Query;
 import com.google.appengine.api.search.QueryOptions;
 import com.google.appengine.api.search.Results;
@@ -54,22 +53,21 @@ public class ListingSearchService {
 	}
 	
 	private Index getIndex() {
-		IndexSpec indexSpec = IndexSpec.newBuilder().setName(MAIN_INDEX)
-				.setConsistency(Consistency.PER_DOCUMENT).build();
+		IndexSpec indexSpec = IndexSpec.newBuilder().setName(MAIN_INDEX).build();
 		return SearchServiceFactory.getSearchService().getIndex(indexSpec);
 	}
 	
 	public void updateListingData(Listing listing, UpdateReason reason) {
 		Document doc = getDocForListing(listing);
 		try {
-			getIndex().add(doc);
-		} catch(AddException adde) {
+			getIndex().put(doc);
+		} catch(PutException adde) {
 			log.log(Level.INFO, "Error adding document to search index", adde);
 			if (StatusCode.TRANSIENT_ERROR.equals(adde.getOperationResult().getCode())) {
 				log.info("Retrying adding search document");
 		        // retry adding document
 				try {
-					getIndex().add(doc);
+					getIndex().put(doc);
 				} catch (Exception e) {
 					log.log(Level.WARNING, "Error while creating document for listing '" + listing.id + "'", e);
 				}
@@ -97,15 +95,15 @@ public class ListingSearchService {
 		    while (true) {
 		        List<String> docIds = new ArrayList<String>();
 		        // Return a set of document IDs.
-		        ListRequest request = ListRequest.newBuilder().setReturningIdsOnly(true).build();
-		        ListResponse<Document> response = getIndex().listDocuments(request);
+		        GetRequest request = GetRequest.newBuilder().setReturningIdsOnly(true).build();
+		        GetResponse<Document> response = getIndex().getRange(request);
 		        if (response.getResults().isEmpty()) {
 		            break;
 		        }
 		        for (Document doc : response) {
 		            docIds.add(doc.getId());
 		        }
-		        getIndex().remove(docIds);
+		        getIndex().delete(docIds);
 		    }
 		} catch (RuntimeException e) {
 		    log.log(Level.SEVERE, "Failed to remove documents", e);
@@ -122,15 +120,15 @@ public class ListingSearchService {
 		}
 		
 		try {
-			getIndex().add(docs);
+			getIndex().put(docs);
 			return docs.size();
-		} catch(AddException adde) {
+		} catch(PutException adde) {
 			log.log(Level.INFO, "Error adding document to search index", adde);
 			if (StatusCode.TRANSIENT_ERROR.equals(adde.getOperationResult().getCode())) {
 				log.info("Retrying adding search document");
 		        // retry adding document
 				try {
-					getIndex().add(docs);
+					getIndex().put(docs);
 					return docs.size();
 				} catch (Exception e) {
 					log.log(Level.WARNING, "Error while updating search index for documents", e);
